@@ -67,8 +67,19 @@ function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
 }
 
 function normalizeNodeType(type, id = "") {
-  if (type) return type;
-  if (id.includes(":")) return id.split(":")[0];
+  if (type) {
+    if (type === "Object") return "CustomObject";
+    if (type === "Field") return "CustomField";
+    if (type === "Trigger") return "ApexTrigger";
+    return type;
+  }
+  if (id.includes(":")) {
+    const rawType = id.split(":")[0];
+    if (rawType === "Object") return "CustomObject";
+    if (rawType === "Field") return "CustomField";
+    if (rawType === "Trigger") return "ApexTrigger";
+    return rawType;
+  }
   return "ApexClass";
 }
 
