@@ -1,0 +1,135 @@
+import React from 'react';
+import { ExplorerNode, ExplorerComponentImpactSummary } from '../types/explorer';
+
+interface DetailsPanelProps {
+  node: ExplorerNode | null;
+  impactSummary: ExplorerComponentImpactSummary | null;
+  onClose: () => void;
+}
+
+export const DetailsPanel: React.FC<DetailsPanelProps> = ({
+  node,
+  impactSummary,
+  onClose
+}) => {
+  if (!node) {
+    return (
+      <div className="details-panel details-empty">
+        <div className="details-placeholder">
+          <span className="placeholder-icon">🔍</span>
+          <h3>No Component Selected</h3>
+          <p>Click on any node in the architecture graph to view its detailed metrics, security signals, and refactoring impact summary.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="details-panel">
+      <div className="details-header">
+        <div>
+          <span className={`badge risk-badge risk-${node.risk.toLowerCase()}`}>
+            {node.risk} RISK
+          </span>
+          <h2>{node.displayName}</h2>
+          <span className="node-type-label">{node.type}</span>
+        </div>
+        <button className="close-btn" onClick={onClose} title="Close details">
+          ×
+        </button>
+      </div>
+
+      <div className="details-content">
+        <div className="details-section">
+          <h4>Source File</h4>
+          <p className="file-path">{node.file || 'N/A'}</p>
+        </div>
+
+        <div className="details-section">
+          <h4>Coupling Metrics</h4>
+          <div className="metrics-grid">
+            <div className="metric-card">
+              <span className="metric-title">Fan-In</span>
+              <span className="metric-num">{node.metrics.fanIn}</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-title">Fan-Out</span>
+              <span className="metric-num">{node.metrics.fanOut}</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-title">Coupling</span>
+              <span className="metric-num">{node.metrics.coupling}</span>
+            </div>
+            <div className="metric-card">
+              <span className="metric-title">Unresolved</span>
+              <span className="metric-num">{node.metrics.unresolved}</span>
+            </div>
+          </div>
+        </div>
+
+        {node.riskReasons.length > 0 && (
+          <div className="details-section">
+            <h4>Risk Evaluation Reasons</h4>
+            <ul className="risk-reasons-list">
+              {node.riskReasons.map((reason, idx) => (
+                <li key={idx}>• {reason}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="details-section">
+          <h4>Component Capabilities</h4>
+          <div className="behavior-grid">
+            <div>
+              <span className="label">Is Test Class:</span>{' '}
+              <span className="value">{node.behavior.isTest ? 'Yes' : 'No'}</span>
+            </div>
+            <div>
+              <span className="label">Sharing:</span>{' '}
+              <span className="value">{node.behavior.sharing || 'None'}</span>
+            </div>
+            <div>
+              <span className="label">Public Contracts:</span>{' '}
+              <span className="value">{node.behavior.publicContractsCount}</span>
+            </div>
+            <div>
+              <span className="label">SOQL Queries:</span>{' '}
+              <span className="value">{node.behavior.queryCount}</span>
+            </div>
+            <div>
+              <span className="label">DML Operations:</span>{' '}
+              <span className="value">{node.behavior.dmlCount}</span>
+            </div>
+            <div>
+              <span className="label">Callouts:</span>{' '}
+              <span className="value">{node.behavior.calloutCount}</span>
+            </div>
+          </div>
+        </div>
+
+        {impactSummary && (
+          <div className="details-section">
+            <h4>Refactoring Impact Summary</h4>
+            <div className="impact-box">
+              <p>
+                <strong>Total Impacted Components:</strong>{' '}
+                {impactSummary.totalImpactCount}
+              </p>
+              <p>
+                <strong>Direct Dependents:</strong>{' '}
+                {impactSummary.directDependents.length}
+              </p>
+              <p>
+                <strong>Impacted Test Classes:</strong>{' '}
+                {impactSummary.impactedTests.length > 0
+                  ? impactSummary.impactedTests.join(', ')
+                  : 'None'}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
