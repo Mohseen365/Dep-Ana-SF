@@ -1,0 +1,14 @@
+{
+  "name": "salesforce-architecture-refactoring-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Salesforce Architecture & Refactoring Explorer Root Command Scripts",
+  "scripts": {
+    "explorer": "node scripts/run-explorer.cjs",
+    "explorer:fresh": "node scripts/run-explorer.cjs --fresh",
+    "explorer:preview": "node scripts/run-explorer.cjs --preview",
+    "explorer:build": "node scripts/run-explorer.cjs --build",
+    "adapter": "node scripts/export-explorer.cjs",
+    "adapter:test": "node scripts/test-export-explorer.cjs"
+  }
+}

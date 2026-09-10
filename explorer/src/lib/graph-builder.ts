@@ -31,31 +31,25 @@ export function buildGraphElements(
 ): ElementDefinition[] {
   const elements: ElementDefinition[] = [];
   
-  // Track known node IDs from explicit nodes
-  const knownNodeIds = new Set<string>();
+  // Fast Set lookup for known nodes
+  const knownNodeIds = new Set<string>(nodes.map(n => n.id));
   
-  // Add all explicit nodes from the data
-  for (const node of nodes) {
-    knownNodeIds.add(node.id);
-    elements.push(createNodeElement(node));
+  // Add all explicit nodes
+  for (let i = 0; i < nodes.length; i++) {
+    elements.push(createNodeElement(nodes[i]));
   }
   
-  // Check for edge endpoints that are not in explicit nodes
-  // These may be external dependencies or unresolved references
-  for (const edge of edges) {
-    // Add source if not known
+  // Check for implicit external edge endpoints
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
     if (!knownNodeIds.has(edge.source)) {
       knownNodeIds.add(edge.source);
       elements.push(createExternalNodeElement(edge.source));
     }
-    
-    // Add target if not known
     if (!knownNodeIds.has(edge.target)) {
       knownNodeIds.add(edge.target);
       elements.push(createExternalNodeElement(edge.target));
     }
-    
-    // Add the edge
     elements.push(createEdgeElement(edge));
   }
   
@@ -84,7 +78,6 @@ function createNodeElement(node: ExplorerNode): NodeDefinition {
 }
 
 function createExternalNodeElement(nodeId: string): NodeDefinition {
-  // Parse node ID - format is typically "Type:Name"
   const parts = nodeId.split(':');
   const type = parts.length >= 2 ? parts[0] : 'External';
   const name = parts.length >= 2 ? parts.slice(1).join(':') : nodeId;
@@ -124,6 +117,14 @@ function createEdgeElement(edge: ExplorerEdge): EdgeDefinition {
     data: edgeData,
     group: 'edges'
   };
+}
+
+export function createNodeMap(nodes: ExplorerNode[]): Map<string, ExplorerNode> {
+  const map = new Map<string, ExplorerNode>();
+  for (let i = 0; i < nodes.length; i++) {
+    map.set(nodes[i].id, nodes[i]);
+  }
+  return map;
 }
 
 export function getNodeById(

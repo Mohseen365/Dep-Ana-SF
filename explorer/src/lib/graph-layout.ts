@@ -13,6 +13,7 @@ export interface GraphLayoutOptions {
   initialTemp?: number;
   coolingFactor?: number;
   minTemp?: number;
+  nodeCount?: number;
 }
 
 export function getLayoutOptions(options: GraphLayoutOptions = {}): LayoutOptions {
@@ -25,8 +26,8 @@ export function getLayoutOptions(options: GraphLayoutOptions = {}): LayoutOption
     edgeElasticity = 100,
     nestingFactor = 5,
     gravity = 80,
-    numIter = 1000,
-    initialTemp = 200,
+    numIter = options.nodeCount && options.nodeCount > 200 ? 300 : 1000,
+    initialTemp = options.nodeCount && options.nodeCount > 200 ? 100 : 200,
     coolingFactor = 0.95,
     minTemp = 1.0
   } = options;
@@ -46,35 +47,28 @@ export function getLayoutOptions(options: GraphLayoutOptions = {}): LayoutOption
     initialTemp: initialTemp,
     coolingFactor: coolingFactor,
     minTemp: minTemp,
-    // Randomize positions - set to false for reproducibility
     randomize: true,
-    // Whether to fit after layout
     fit: true
   };
 }
 
-// Preset layout configurations for different use cases
 export const LAYOUT_PRESETS = {
-  // Stable layout with no animation - good for initial load
   stable: {
     animate: false,
     numIter: 1000,
     initialTemp: 200
   },
-  // Animated layout - good for data changes
   animated: {
     animate: true,
     animationDuration: 500,
     numIter: 1000,
     initialTemp: 200
   },
-  // Fast layout - fewer iterations
   fast: {
     animate: false,
     numIter: 250,
     initialTemp: 100
   },
-  // High quality layout - more iterations
   quality: {
     animate: false,
     numIter: 2500,
