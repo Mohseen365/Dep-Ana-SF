@@ -169,16 +169,20 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
           </div>
         </div>
 
-        {node.riskReasons.length > 0 && (
-          <div className="details-section">
-            <h4>Risk Evaluation Reasons</h4>
+        <div className="details-section">
+          <h4>Risk</h4>
+          <p className={`risk-level-value risk-${node.risk.toLowerCase()}`}>{node.risk}</p>
+          <h4>Reasons</h4>
+          {node.riskReasons && node.riskReasons.length > 0 ? (
             <ul className="risk-reasons-list">
               {node.riskReasons.map((reason, idx) => (
                 <li key={idx}>• {reason}</li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p className="risk-reasons-empty">No additional risk reasons provided by analyzer.</p>
+          )}
+        </div>
 
         <div className="details-section">
           <h4>Component Capabilities</h4>

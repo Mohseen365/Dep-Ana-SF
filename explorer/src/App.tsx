@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from './types/explorer';
+import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerCycleGroup, ExplorerUnresolvedReference, ExplorerRiskLevel } from './types/explorer';
 import { Header } from './components/Header';
 import { SummaryBar } from './components/SummaryBar';
 import { GraphView } from './components/GraphView';
 import { DetailsPanel } from './components/DetailsPanel';
+import { DiagnosticsPanel } from './components/DiagnosticsPanel';
 import { SearchFilterPanel } from './components/SearchFilterPanel';
 import { FocusControls } from './components/FocusControls';
 import { SearchFilterState, applyFilters, createEmptyFilterState } from './lib/search-filter';
@@ -16,6 +17,8 @@ export const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<ExplorerNode | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<ExplorerEdge | null>(null);
+  const [selectedCycle, setSelectedCycle] = useState<ExplorerCycleGroup | null>(null);
+  const [diagnosticTab, setDiagnosticTab] = useState<'cycles' | 'unresolved' | 'none'>('none');
   const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState());
   const [focusState, setFocusState] = useState<FocusState>(createEmptyFocusState());
 
@@ -72,6 +75,56 @@ export const App: React.FC = () => {
       });
   }, []);
 
+  const handleFilterChange = useCallback((newFilterState: SearchFilterState) => {
+    setFilterState(newFilterState);
+  }, []);
+
+  const handleSelectResult = useCallback((node: ExplorerNode) => {
+    setSelectedNode(node);
+  }, []);
+
+  const handleSelectEdge = useCallback((edgeId: string) => {
+    if (!data) return;
+    const edge = data.edges.find(e => e.id === edgeId) || null;
+    setSelectedEdge(edge);
+    if (edge) {
+      setSelectedNode(null);
+    }
+  }, [data]);
+
+  const handleCloseDetails = useCallback(() => {
+    setSelectedNode(null);
+    setSelectedEdge(null);
+  }, []);
+
+  const handleRiskFilterChange = useCallback((risk: ExplorerRiskLevel) => {
+    setFilterState(prev => ({
+      ...prev,
+      riskFilter: prev.riskFilter === risk ? '' : risk
+    }));
+  }, []);
+
+  const handleCyclesClick = useCallback(() => {
+    setDiagnosticTab(prev => (prev === 'cycles' ? 'none' : 'cycles'));
+  }, []);
+
+  const handleUnresolvedClick = useCallback(() => {
+    setDiagnosticTab(prev => (prev === 'unresolved' ? 'none' : 'unresolved'));
+  }, []);
+
+  const handleSelectCycle = useCallback((cycle: ExplorerCycleGroup | null) => {
+    setSelectedCycle(cycle);
+  }, []);
+
+  const handleSelectUnresolved = useCallback((ref: ExplorerUnresolvedReference | null) => {
+    if (!ref || !data) return;
+    const edge = data.edges.find(e => e.id === ref.edgeId);
+    if (edge) {
+      setSelectedEdge(edge);
+      setSelectedNode(null);
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <div className="state-screen">
@@ -97,52 +150,36 @@ export const App: React.FC = () => {
 
   const selectedImpact = selectedNode && data ? data.impactSummaries[selectedNode.id] || null : null;
 
-  const handleFilterChange = (newFilterState: SearchFilterState) => {
-    setFilterState(newFilterState);
-  };
-
-  const handleSelectResult = (node: ExplorerNode) => {
-    setSelectedNode(node);
-  };
-
-  const handleSelectEdge = useCallback((edgeId: string) => {
-    if (!data) return;
-    const edge = data.edges.find(e => e.id === edgeId) || null;
-    setSelectedEdge(edge);
-    // Also clear node selection when edge is selected
-    if (edge) {
-      setSelectedNode(null);
-    }
-  }, [data]);
-
-  const handleCloseDetails = useCallback(() => {
-    setSelectedNode(null);
-    setSelectedEdge(null);
-  }, []);
-
   return (
     <div className="app-layout">
       <Header />
-      <SummaryBar summary={data?.summary || {
-        nodeCount: 0,
-        edgeCount: 0,
-        highRiskCount: 0,
-        mediumRiskCount: 0,
-        lowRiskCount: 0,
-        cycleCount: 0,
-        unresolvedCount: 0,
-        inventory: {
-          files: 0,
-          apexClasses: 0,
-          apexTriggers: 0,
-          lwcJs: 0,
-          lwcHtml: 0,
-          visualforce: 0,
-          flows: 0,
-          objects: 0,
-          fields: 0
-        }
-      }} />
+      <SummaryBar
+        summary={data?.summary || {
+          nodeCount: 0,
+          edgeCount: 0,
+          highRiskCount: 0,
+          mediumRiskCount: 0,
+          lowRiskCount: 0,
+          cycleCount: 0,
+          unresolvedCount: 0,
+          inventory: {
+            files: 0,
+            apexClasses: 0,
+            apexTriggers: 0,
+            lwcJs: 0,
+            lwcHtml: 0,
+            visualforce: 0,
+            flows: 0,
+            objects: 0,
+            fields: 0
+          }
+        }}
+        activeRiskFilter={filterState.riskFilter}
+        onRiskFilterChange={handleRiskFilterChange}
+        onCyclesClick={handleCyclesClick}
+        onUnresolvedClick={handleUnresolvedClick}
+        activeDiagnosticTab={diagnosticTab}
+      />
       <SearchFilterPanel
         nodes={data?.nodes || []}
         filterState={filterState}
@@ -165,7 +202,21 @@ export const App: React.FC = () => {
           onSelectEdge={handleSelectEdge}
           selectedNodeId={selectedNode?.id || null}
           selectedEdgeId={selectedEdge?.id || null}
+          selectedCycleNodeIds={selectedCycle?.nodes || null}
         />
+        {diagnosticTab !== 'none' && (
+          <DiagnosticsPanel
+            cycles={data?.cycles || []}
+            unresolvedReferences={data?.unresolvedReferences || []}
+            nodes={data?.nodes || []}
+            activeTab={diagnosticTab}
+            selectedCycleId={selectedCycle?.id || null}
+            selectedUnresolvedEdgeId={selectedEdge?.id || null}
+            onSelectCycle={handleSelectCycle}
+            onSelectUnresolved={handleSelectUnresolved}
+            onTabChange={setDiagnosticTab}
+          />
+        )}
         <DetailsPanel
           node={selectedNode}
           edge={selectedEdge}
