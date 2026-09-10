@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ExplorerDataSchema, ExplorerNode } from './types/explorer';
 import { Header } from './components/Header';
 import { SummaryBar } from './components/SummaryBar';
 import { GraphView } from './components/GraphView';
 import { DetailsPanel } from './components/DetailsPanel';
+import { SearchFilterPanel } from './components/SearchFilterPanel';
+import { SearchFilterState, applyFilters, createEmptyFilterState } from './lib/search-filter';
 import './index.css';
 
 export const App: React.FC = () => {
@@ -11,6 +13,13 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<ExplorerNode | null>(null);
+  const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState());
+
+  // Apply filters to get display nodes/edges (without modifying original data)
+  const filteredData = useMemo(() => {
+    if (!data) return { nodes: [], edges: [], matchingNodeIds: new Set<string>() };
+    return applyFilters(data.nodes, data.edges, filterState);
+  }, [data, filterState]);
 
   useEffect(() => {
     fetch('/explorer-data.json')
@@ -54,16 +63,49 @@ export const App: React.FC = () => {
     );
   }
 
-  const selectedImpact = selectedNode ? data.impactSummaries[selectedNode.id] || null : null;
+  const selectedImpact = selectedNode && data ? data.impactSummaries[selectedNode.id] || null : null;
+
+  const handleFilterChange = (newFilterState: SearchFilterState) => {
+    setFilterState(newFilterState);
+  };
+
+  const handleSelectResult = (node: ExplorerNode) => {
+    setSelectedNode(node);
+  };
 
   return (
     <div className="app-layout">
       <Header />
-      <SummaryBar summary={data.summary} />
+      <SummaryBar summary={data?.summary || {
+        nodeCount: 0,
+        edgeCount: 0,
+        highRiskCount: 0,
+        mediumRiskCount: 0,
+        lowRiskCount: 0,
+        cycleCount: 0,
+        unresolvedCount: 0,
+        inventory: {
+          files: 0,
+          apexClasses: 0,
+          apexTriggers: 0,
+          lwcJs: 0,
+          lwcHtml: 0,
+          visualforce: 0,
+          flows: 0,
+          objects: 0,
+          fields: 0
+        }
+      }} />
+      <SearchFilterPanel
+        nodes={data?.nodes || []}
+        filterState={filterState}
+        onFilterChange={handleFilterChange}
+        onSelectResult={handleSelectResult}
+      />
       <div className="main-viewport">
         <GraphView
-          nodes={data.nodes}
-          edges={data.edges}
+          nodes={filteredData.nodes}
+          edges={filteredData.edges}
           onSelectNode={setSelectedNode}
           selectedNodeId={selectedNode?.id || null}
         />
