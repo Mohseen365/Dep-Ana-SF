@@ -179,6 +179,40 @@ describe('DetailsPanel', () => {
       expect(screen.getByText(/Direct Dependencies:/)).toBeDefined();
       expect(screen.getAllByText(/ApexClass:Helper/)).toBeDefined();
     });
+
+    it('should display Show Impact button and handle click', () => {
+      const onShowImpact = vi.fn();
+      render(
+        <DetailsPanel
+          node={mockNode}
+          edge={null}
+          impactSummary={mockImpactSummary}
+          onClose={() => {}}
+          onShowImpact={onShowImpact}
+        />
+      );
+
+      const impactBtn = screen.getByText(/Show Impact/);
+      impactBtn.click();
+      expect(onShowImpact).toHaveBeenCalledWith('ApexClass:TestClass');
+    });
+
+    it('should display fallback when no impacted tests exist', () => {
+      const emptyImpactSummary: ExplorerComponentImpactSummary = {
+        ...mockImpactSummary,
+        impactedTests: []
+      };
+      render(
+        <DetailsPanel
+          node={mockNode}
+          edge={null}
+          impactSummary={emptyImpactSummary}
+          onClose={() => {}}
+        />
+      );
+
+      expect(screen.getByText(/No impacted tests identified by analyzer data/)).toBeDefined();
+    });
   });
 
   describe('edge selection', () => {

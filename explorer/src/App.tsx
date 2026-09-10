@@ -7,9 +7,11 @@ import { DetailsPanel } from './components/DetailsPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
 import { SearchFilterPanel } from './components/SearchFilterPanel';
 import { FocusControls } from './components/FocusControls';
+import { ImpactControls } from './components/ImpactControls';
 import { HotspotPanel } from './components/HotspotPanel';
 import { SearchFilterState, applyFilters, createEmptyFilterState } from './lib/search-filter';
 import { FocusState, computeFocusedGraph, createEmptyFocusState, isFocusActive } from './lib/focus-graph';
+import { ImpactState, createEmptyImpactState, computeImpactAnalysis } from './lib/impact-analysis';
 import './index.css';
 
 export const App: React.FC = () => {
@@ -22,6 +24,7 @@ export const App: React.FC = () => {
   const [diagnosticTab, setDiagnosticTab] = useState<'cycles' | 'unresolved' | 'none'>('none');
   const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState());
   const [focusState, setFocusState] = useState<FocusState>(createEmptyFocusState());
+  const [impactState, setImpactState] = useState<ImpactState>(createEmptyImpactState());
 
   // Update focus state when a node is selected
   useEffect(() => {
@@ -53,6 +56,13 @@ export const App: React.FC = () => {
     return { nodes: baseNodes, edges: baseEdges };
   }, [data, filteredData, focusState]);
 
+  const visibleNodeIds = useMemo(() => new Set(displayData.nodes.map(n => n.id)), [displayData.nodes]);
+
+  const impactResult = useMemo(() => {
+    if (!data) return null;
+    return computeImpactAnalysis(data, impactState, visibleNodeIds);
+  }, [data, impactState, visibleNodeIds]);
+
   useEffect(() => {
     fetch('/explorer-data.json')
       .then((res) => {
@@ -71,6 +81,8 @@ export const App: React.FC = () => {
         setLoading(false);
       });
   }, []);
+
+  const selectedImpact = selectedNode && data ? data.impactSummaries[selectedNode.id] || null : null;
 
   const handleFilterChange = useCallback((newFilterState: SearchFilterState) => {
     setFilterState(newFilterState);
@@ -94,6 +106,24 @@ export const App: React.FC = () => {
     setSelectedEdge(null);
   }, []);
 
+  const handleShowImpact = useCallback((nodeId: string) => {
+    setImpactState({
+      enabled: true,
+      originNodeId: nodeId,
+      depth: 'ALL'
+    });
+  }, []);
+
+  const handleExitImpact = useCallback(() => {
+    setImpactState(createEmptyImpactState());
+  }, []);
+
+  const handleSelectNodeById = useCallback((nodeId: string) => {
+    if (!data) return;
+    const found = data.nodes.find(n => n.id === nodeId);
+    if (found) {
+      setSelectedNode(found);
+      setSelectedEdge(null);
   const handleRiskFilterChange = useCallback((risk: ExplorerRiskLevel) => {
     setFilterState(prev => ({
       ...prev,
@@ -218,6 +248,14 @@ export const App: React.FC = () => {
         onFocusChange={setFocusState}
         hasSelectedNode={!!selectedNode}
       />
+      <ImpactControls
+        impactState={impactState}
+        impactResult={impactResult}
+        onImpactChange={setImpactState}
+        onExitImpact={handleExitImpact}
+        selectedNode={selectedNode}
+        onShowImpact={handleShowImpact}
+      />
       <div className="main-viewport">
         <GraphView
           nodes={displayData.nodes}
@@ -229,6 +267,7 @@ export const App: React.FC = () => {
           onSelectEdge={handleSelectEdge}
           selectedNodeId={selectedNode?.id || null}
           selectedEdgeId={selectedEdge?.id || null}
+          impactResult={impactResult}
           selectedCycleNodeIds={selectedCycle?.nodes || null}
         />
         {diagnosticTab !== 'none' && (
@@ -249,6 +288,8 @@ export const App: React.FC = () => {
           edge={selectedEdge}
           impactSummary={selectedImpact}
           onClose={handleCloseDetails}
+          onShowImpact={handleShowImpact}
+          onSelectNodeById={handleSelectNodeById}
         />
       </div>
     </div>

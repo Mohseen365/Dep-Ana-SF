@@ -223,15 +223,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'target-arrow-color': '#f97316'
       }
     },
-    // Unresolved edges - dashed and orange
-    {
-      selector: 'edge[unresolved = true]',
-      style: {
-        'line-style': 'dashed',
-        'line-color': '#f97316',
-        'target-arrow-color': '#f97316'
-      }
-    },
     // Edge selection highlight
     {
       selector: 'edge:selected',
@@ -241,6 +232,44 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'target-arrow-color': '#3b82f6'
       }
     },
+    // Impact mode styles
+    {
+      selector: 'node.impact-origin',
+      style: {
+        'border-width': 6,
+        'border-color': '#f59e0b',
+        'border-style': 'solid',
+        'opacity': 1
+      }
+    },
+    {
+      selector: 'node.impact-affected',
+      style: {
+        'border-width': 4,
+        'border-color': '#ef4444',
+        'border-style': 'solid',
+        'opacity': 1
+      }
+    },
+    {
+      selector: 'node.impact-muted',
+      style: {
+        'opacity': 0.25
+      }
+    },
+    {
+      selector: 'edge.impact-affected',
+      style: {
+        'width': 4,
+        'line-color': '#ef4444',
+        'target-arrow-color': '#ef4444',
+        'opacity': 1
+      }
+    },
+    {
+      selector: 'edge.impact-muted',
+      style: {
+        'opacity': 0.15
     // Dimmed state for non-participating elements during cycle or focus highlight
     {
       selector: '.dimmed',
