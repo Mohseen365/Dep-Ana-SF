@@ -457,3 +457,104 @@ body {
   color: var(--text-main);
   border-color: var(--text-muted);
 }
+.focus-controls {
+  height: 48px;
+  background-color: #111827;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+}
+
+.focus-controls.active {
+  background-color: #0f172a;
+}
+
+.focus-toggle {
+  flex: 0 0 auto;
+}
+
+.focus-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.focus-btn:hover:not(:disabled) {
+  background-color: #334155;
+  color: var(--text-main);
+}
+
+.focus-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.focus-btn.active {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.focus-icon {
+  font-size: 16px;
+}
+
+.focus-options {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.focus-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.focus-option label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.focus-select {
+  height: 28px;
+  padding: 0 24px 0 10px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 12px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+
+.focus-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.focus-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
