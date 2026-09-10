@@ -240,6 +240,31 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'line-color': '#3b82f6',
         'target-arrow-color': '#3b82f6'
       }
+    },
+    // Dimmed state for non-participating elements during cycle or focus highlight
+    {
+      selector: '.dimmed',
+      style: {
+        'opacity': 0.15
+      }
+    },
+    // Highlighted state for active cycle elements
+    {
+      selector: 'node.highlighted',
+      style: {
+        'opacity': 1,
+        'border-width': 4,
+        'border-color': '#f59e0b'
+      }
+    },
+    {
+      selector: 'edge.highlighted',
+      style: {
+        'opacity': 1,
+        'width': 3,
+        'line-color': '#f59e0b',
+        'target-arrow-color': '#f59e0b'
+      }
     }
   ];
 
