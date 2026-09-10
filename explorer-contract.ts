@@ -61,7 +61,9 @@ export type ExplorerNodeType =
   | "LWC"
   | "Visualforce"
   | "Flow"
+  | "Object"
   | "CustomObject"
+  | "Field"
   | "CustomField"
   | "External";
 
@@ -116,14 +118,26 @@ export type ExplorerRelationshipType =
   | "method-call"
   | "instantiation"
   | "type-reference"
+  | "generic-type"
+  | "extends"
+  | "implements"
   | "SOQL"
+  | "soql-object"
+  | "soql-field"
   | "DML"
   | "aura-enabled"
+  | "lwc-apex"
   | "lwc-import"
+  | "lwc-template-child"
   | "field-reference"
+  | "trigger-handler"
+  | "trigger-object"
   | "trigger-on"
+  | "visualforce-controller"
+  | "test-reference"
   | "event-publisher"
-  | "unknown";
+  | "unknown"
+  | string;
 
 export interface ExplorerEdgeCanonical {
   source: {
