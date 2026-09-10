@@ -270,6 +270,8 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       selector: 'edge.impact-muted',
       style: {
         'opacity': 0.15
+      }
+    },
     // Dimmed state for non-participating elements during cycle or focus highlight
     {
       selector: '.dimmed',
