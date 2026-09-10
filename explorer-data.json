@@ -1,0 +1,284 @@
+{
+  "schemaVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "generatedAt": "2026-09-10T09:25:00.000Z",
+  "sourceDirectory": "force-app/main/default",
+  "summary": {
+    "nodeCount": 3,
+    "edgeCount": 3,
+    "highRiskCount": 1,
+    "mediumRiskCount": 1,
+    "lowRiskCount": 1,
+    "cycleCount": 1,
+    "unresolvedCount": 1,
+    "inventory": {
+      "files": 3,
+      "apexClasses": 3,
+      "apexTriggers": 0,
+      "lwcJs": 0,
+      "lwcHtml": 0,
+      "visualforce": 0,
+      "flows": 0,
+      "objects": 0,
+      "fields": 0
+    }
+  },
+  "nodes": [
+    {
+      "id": "ApexClass:AssetDashboardService",
+      "displayName": "AssetDashboardService",
+      "type": "ApexClass",
+      "file": "force-app/main/default/classes/AssetDashboardService.cls",
+      "metrics": {
+        "fanIn": 2,
+        "fanOut": 3,
+        "coupling": 5,
+        "unresolved": 1,
+        "score": 12
+      },
+      "risk": "HIGH",
+      "riskReasons": [
+        "high coupling score",
+        "participates in circular dependency",
+        "has unresolved references"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": "with sharing",
+        "publicContractsCount": 2,
+        "asyncPatterns": ["Queueable"],
+        "securitySignalsCount": 1,
+        "queryCount": 3,
+        "dmlCount": 1,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": true,
+        "hasCycles": true,
+        "hasUnresolved": true,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:AssetHelper",
+      "displayName": "AssetHelper",
+      "type": "ApexClass",
+      "file": "force-app/main/default/classes/AssetHelper.cls",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 1,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 4
+      },
+      "risk": "MEDIUM",
+      "riskReasons": [
+        "participates in circular dependency"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": "with sharing",
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 1,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": true,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:AssetDashboardServiceTest",
+      "displayName": "AssetDashboardServiceTest",
+      "type": "ApexClass",
+      "file": "force-app/main/default/classes/AssetDashboardServiceTest.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 1,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 1
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexClass:AssetDashboardService|ApexClass:AssetHelper|method-call|calculateMetrics|AssetHelper.calculateMetrics()",
+      "source": "ApexClass:AssetDashboardService",
+      "target": "ApexClass:AssetHelper",
+      "relationshipType": "method-call",
+      "method": "calculateMetrics",
+      "evidence": "AssetHelper.calculateMetrics(assetList);",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 42,
+      "column": 9,
+      "methodOwner": "loadDashboardData",
+      "file": "force-app/main/default/classes/AssetDashboardService.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetDashboardService",
+          "method": "loadDashboardData"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetHelper",
+          "method": "calculateMetrics"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 42,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetHelper|ApexClass:AssetDashboardService|method-call|notifyService|AssetDashboardService.notifyService()",
+      "source": "ApexClass:AssetHelper",
+      "target": "ApexClass:AssetDashboardService",
+      "relationshipType": "method-call",
+      "method": "notifyService",
+      "evidence": "AssetDashboardService.notifyService();",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 18,
+      "column": 9,
+      "methodOwner": "calculateMetrics",
+      "file": "force-app/main/default/classes/AssetHelper.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetHelper",
+          "method": "calculateMetrics"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetDashboardService",
+          "method": "notifyService"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 18,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetDashboardService|External:ExternalPaymentGateway|instantiation||new ExternalPaymentGateway()",
+      "source": "ApexClass:AssetDashboardService",
+      "target": "External:ExternalPaymentGateway",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new ExternalPaymentGateway();",
+      "unresolved": true,
+      "resolutionClassification": "UNKNOWN",
+      "resolutionStrategy": "LLM",
+      "confidence": "low",
+      "line": 85,
+      "column": 12,
+      "methodOwner": "processPayment",
+      "file": "force-app/main/default/classes/AssetDashboardService.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetDashboardService",
+          "method": "processPayment"
+        },
+        "target": {
+          "type": "External",
+          "name": "ExternalPaymentGateway",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 85,
+          "column": 12
+        }
+      }
+    }
+  ],
+  "cycles": [
+    {
+      "id": "cycle-1",
+      "size": 2,
+      "nodes": [
+        "ApexClass:AssetDashboardService",
+        "ApexClass:AssetHelper"
+      ]
+    }
+  ],
+  "unresolvedReferences": [
+    {
+      "edgeId": "ApexClass:AssetDashboardService|External:ExternalPaymentGateway|instantiation||new ExternalPaymentGateway()",
+      "sourceNodeId": "ApexClass:AssetDashboardService",
+      "targetName": "ExternalPaymentGateway",
+      "targetType": "External",
+      "file": "force-app/main/default/classes/AssetDashboardService.cls",
+      "line": 85,
+      "evidence": "new ExternalPaymentGateway();",
+      "reason": "Class symbol ExternalPaymentGateway was not found in symbol registry."
+    }
+  ],
+  "impactSummaries": {
+    "ApexClass:AssetDashboardService": {
+      "id": "ApexClass:AssetDashboardService",
+      "directDependencies": [
+        "ApexClass:AssetHelper",
+        "External:ExternalPaymentGateway"
+      ],
+      "directDependents": [
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetDashboardServiceTest"
+      ],
+      "transitiveDependencies": [
+        "ApexClass:AssetHelper",
+        "External:ExternalPaymentGateway"
+      ],
+      "transitiveDependents": [
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetDashboardServiceTest"
+      ],
+      "impactedTests": [
+        "ApexClass:AssetDashboardServiceTest"
+      ],
+      "totalImpactCount": 3
+    }
+  }
+}
