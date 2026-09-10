@@ -1,0 +1,290 @@
+import type cytoscape from 'cytoscape';
+import type { ExplorerNode } from '../types/explorer';
+import type { GraphNodeData } from './graph-builder';
+
+/**
+ * Binds event handlers to the Cytoscape graph instance.
+ * Handles node selection, tap-to-deselect, and provides interaction callbacks.
+ */
+export interface InteractionCallbacks {
+  onNodeSelect?: (node: ExplorerNode | null) => void;
+  onNodeTap?: (nodeId: string, nodeData: GraphNodeData | undefined) => void;
+  onBackgroundTap?: () => void;
+  onEdgeTap?: (edgeId: string) => void;
+  onGraphReady?: (cy: cytoscape.Core) => void;
+}
+
+export function bindGraphInteractions(
+  cy: cytoscape.Core,
+  callbacks: InteractionCallbacks,
+  originalNodes?: ExplorerNode[]
+): void {
+  const { onNodeSelect, onNodeTap, onBackgroundTap, onEdgeTap, onGraphReady } = callbacks;
+
+  // Node tap event
+  cy.on('tap', 'node', (event) => {
+    const node = event.target;
+    const nodeId = node.id();
+    const nodeData = node.data() as GraphNodeData;
+    
+    // Find the full node object from original data if available
+    let explorerNode: ExplorerNode | null = null;
+    
+    if (originalNodes) {
+      const found = originalNodes.find(n => n.id === nodeId);
+      if (found) {
+        explorerNode = found;
+      }
+    }
+    
+    // Fallback: create minimal node object from cytoscape data
+    if (!explorerNode && nodeData) {
+      explorerNode = {
+        id: nodeData.id,
+        displayName: nodeData.label,
+        type: nodeData.type as any,
+        file: nodeData.file,
+        metrics: {
+          fanIn: nodeData.fanIn || 0,
+          fanOut: nodeData.fanOut || 0,
+          coupling: nodeData.coupling || 0,
+          unresolved: nodeData.hasUnresolved ? 1 : 0,
+          score: 0
+        },
+        risk: nodeData.risk as any,
+        riskReasons: [],
+        behavior: {
+          isTest: nodeData.isTest || false,
+          sharing: null,
+          publicContractsCount: 0,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
+          dmlCount: 0,
+          calloutCount: 0
+        },
+        refactoringReadiness: {
+          isHighRisk: nodeData.risk === 'HIGH',
+          hasCycles: nodeData.hasCycles || false,
+          hasUnresolved: nodeData.hasUnresolved || false,
+          testCoverageStatus: 'COVERED'
+        }
+      };
+    }
+    
+    if (onNodeTap) {
+      onNodeTap(nodeId, nodeData);
+    }
+    
+    if (onNodeSelect) {
+      onNodeSelect(explorerNode);
+    }
+  });
+
+  // Edge tap event
+  cy.on('tap', 'edge', (event) => {
+    const edge = event.target;
+    const edgeId = edge.id();
+    
+    if (onEdgeTap) {
+      onEdgeTap(edgeId);
+    }
+  });
+
+  // Background tap (deselect)
+  cy.on('tap', (event) => {
+    if (event.target === cy) {
+      if (onBackgroundTap) {
+        onBackgroundTap();
+      }
+      if (onNodeSelect) {
+        onNodeSelect(null);
+      }
+    }
+  });
+
+  // Mouseover for nodes - cursor change
+  cy.on('mouseover', 'node', (event) => {
+    event.target.addClass('hovered');
+    document.body.style.cursor = 'pointer';
+  });
+
+  cy.on('mouseout', 'node', (event) => {
+    event.target.removeClass('hovered');
+    document.body.style.cursor = 'default';
+  });
+
+  // Graph ready event
+  if (onGraphReady) {
+    onGraphReady(cy);
+  }
+}
+
+/**
+ * Fit the graph to the viewport with optional padding.
+ */
+export function fitToScreen(cy: cytoscape.Core, padding: number = 50): void {
+  cy.fit(undefined, padding);
+}
+
+/**
+ * Center the graph in the viewport.
+ */
+export function centerGraph(cy: cytoscape.Core, animated: boolean = true): void {
+  if (animated) {
+    cy.animate({
+      center: { eles: cy.elements() },
+      zoom: cy.zoom()
+    }, {
+      duration: 300,
+      easing: 'ease-in-out'
+    });
+  } else {
+    cy.center();
+  }
+}
+
+/**
+ * Zoom to fit all elements with padding.
+ */
+export function zoomToFit(cy: cytoscape.Core, padding: number = 50): void {
+  cy.fit(undefined, padding);
+}
+
+/**
+ * Get the currently selected node(s).
+ */
+export function getSelectedNodes(cy: cytoscape.Core): cytoscape.SingularElementReturnValue {
+  return cy.nodes(':selected') as cytoscape.SingularElementReturnValue;
+}
+
+/**
+ * Select a node by ID.
+ */
+export function selectNode(cy: cytoscape.Core, nodeId: string): boolean {
+  const node = cy.getElementById(nodeId);
+  if (node.length > 0 && node.isNode()) {
+    node.select();
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Deselect all nodes.
+ */
+export function deselectAll(cy: cytoscape.Core): void {
+  cy.elements().unselect();
+}
+
+/**
+ * Highlight a node and its connections.
+ */
+export function highlightNodeConnections(
+  cy: cytoscape.Core,
+  nodeId: string,
+  _highlightColor: string = '#3b82f6'
+): void {
+  const node = cy.getElementById(nodeId);
+  if (node.length === 0) return;
+  
+  // Get connected edges and neighbor nodes
+  const connectedEdges = node.connectedEdges();
+  const neighbors = node.neighborhood('node');
+  
+  // Dim everything first
+  cy.elements().addClass('dimmed');
+  
+  // Remove dim from the selected node and its connections
+  node.removeClass('dimmed');
+  connectedEdges.removeClass('dimmed');
+  neighbors.removeClass('dimmed');
+  
+  // Apply highlight
+  node.addClass('highlighted');
+  connectedEdges.addClass('highlighted');
+  neighbors.addClass('highlighted');
+}
+
+/**
+ * Clear all highlights.
+ */
+export function clearHighlights(cy: cytoscape.Core): void {
+  cy.elements().removeClass('dimmed highlighted');
+}
+
+/**
+ * Pan to a specific node.
+ */
+export function panToNode(cy: cytoscape.Core, nodeId: string, animated: boolean = true): boolean {
+  const node = cy.getElementById(nodeId);
+  if (node.length === 0) return false;
+  
+  if (animated) {
+    cy.animate({
+      center: { eles: node },
+      zoom: cy.zoom()
+    }, {
+      duration: 300,
+      easing: 'ease-in-out'
+    });
+  } else {
+    cy.center(node);
+  }
+  
+  return true;
+}
+
+/**
+ * Zoom in/out.
+ */
+export function zoomGraph(cy: cytoscape.Core, level: number): void {
+  cy.zoom({
+    level: level,
+    renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+  });
+}
+
+export function zoomIn(cy: cytoscape.Core): void {
+  const currentZoom = cy.zoom();
+  cy.zoom({
+    level: currentZoom * 1.2,
+    renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+  });
+}
+
+export function zoomOut(cy: cytoscape.Core): void {
+  const currentZoom = cy.zoom();
+  cy.zoom({
+    level: currentZoom / 1.2,
+    renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+  });
+}
+
+/**
+ * Enable/disable mouse wheel zoom.
+ * Note: Cytoscape 3.x uses wheelSensitivity on initialization, not as runtime method.
+ */
+export function setMouseWheelZoom(_cy: cytoscape.Core, _enabled: boolean): void {
+  // wheelSensitivity is set at initialization time
+  // Runtime changes would require re-initialization
+}
+
+/**
+ * Enable/disable panning.
+ * Note: Panning cannot be toggled at runtime in Cytoscape 3.x.
+ */
+export function setPanning(_cy: cytoscape.Core, _enabled: boolean): void {
+  // Panning is configured at initialization time via boxSelectionEnabled
+}
+
+/**
+ * Enable/disable box selection.
+ */
+export function setBoxSelection(cy: cytoscape.Core, enabled: boolean): void {
+  if (enabled) {
+    cy.boxSelectionEnabled(true);
+  } else {
+    cy.boxSelectionEnabled(false);
+  }
+}
