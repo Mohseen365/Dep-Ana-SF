@@ -16,38 +16,59 @@ export interface FocusedGraphData {
   centerNodeId: string | null;
 }
 
-/**
- * Get the set of nodes reachable from startNode within maxDepth hops in the outgoing direction.
- * Outgoing = dependencies (what this node depends on)
- * depth 1 = start node + direct dependencies
- * depth 2 = start node + direct dependencies + their dependencies
- */
+interface EdgeAdjacencyMap {
+  outgoing: Map<string, ExplorerEdge[]>;
+  incoming: Map<string, ExplorerEdge[]>;
+}
+
+function buildAdjacencyMap(edges: ExplorerEdge[]): EdgeAdjacencyMap {
+  const outgoing = new Map<string, ExplorerEdge[]>();
+  const incoming = new Map<string, ExplorerEdge[]>();
+
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
+
+    let outList = outgoing.get(edge.source);
+    if (!outList) {
+      outList = [];
+      outgoing.set(edge.source, outList);
+    }
+    outList.push(edge);
+
+    let inList = incoming.get(edge.target);
+    if (!inList) {
+      inList = [];
+      incoming.set(edge.target, inList);
+    }
+    inList.push(edge);
+  }
+
+  return { outgoing, incoming };
+}
+
 function getReachableNodesOut(
-  edges: ExplorerEdge[],
+  adj: EdgeAdjacencyMap,
   startNodeId: string,
   maxDepth: number | 'ALL'
 ): Set<string> {
   const visited = new Set<string>();
-  // Queue stores {nodeId, depth} where depth is the number of edges from startNode
   const queue: Array<{ nodeId: string; depth: number }> = [{ nodeId: startNodeId, depth: 0 }];
   
   while (queue.length > 0) {
     const { nodeId, depth } = queue.shift()!;
     
     if (visited.has(nodeId)) continue;
-    
-    // Add to visited
     visited.add(nodeId);
     
-    // Only explore further if we haven't reached max depth
-    // depth 0 = start node, depth 1 = 1 hop away, etc.
     if (maxDepth !== 'ALL' && depth >= maxDepth) continue;
     
-    // Find all outgoing edges (dependencies)
-    const outgoingEdges = edges.filter(e => e.source === nodeId);
-    for (const edge of outgoingEdges) {
-      if (!visited.has(edge.target)) {
-        queue.push({ nodeId: edge.target, depth: depth + 1 });
+    const outgoingEdges = adj.outgoing.get(nodeId);
+    if (outgoingEdges) {
+      for (let i = 0; i < outgoingEdges.length; i++) {
+        const edge = outgoingEdges[i];
+        if (!visited.has(edge.target)) {
+          queue.push({ nodeId: edge.target, depth: depth + 1 });
+        }
       }
     }
   }
@@ -55,12 +76,8 @@ function getReachableNodesOut(
   return visited;
 }
 
-/**
- * Get the set of nodes reachable from startNode within maxDepth hops in the incoming direction.
- * Incoming = dependents (what depends on this node)
- */
 function getReachableNodesIn(
-  edges: ExplorerEdge[],
+  adj: EdgeAdjacencyMap,
   startNodeId: string,
   maxDepth: number | 'ALL'
 ): Set<string> {
@@ -71,18 +88,17 @@ function getReachableNodesIn(
     const { nodeId, depth } = queue.shift()!;
     
     if (visited.has(nodeId)) continue;
-    
-    // Add to visited
     visited.add(nodeId);
     
-    // Only explore further if we haven't reached max depth
     if (maxDepth !== 'ALL' && depth >= maxDepth) continue;
     
-    // Find all incoming edges (dependents)
-    const incomingEdges = edges.filter(e => e.target === nodeId);
-    for (const edge of incomingEdges) {
-      if (!visited.has(edge.source)) {
-        queue.push({ nodeId: edge.source, depth: depth + 1 });
+    const incomingEdges = adj.incoming.get(nodeId);
+    if (incomingEdges) {
+      for (let i = 0; i < incomingEdges.length; i++) {
+        const edge = incomingEdges[i];
+        if (!visited.has(edge.source)) {
+          queue.push({ nodeId: edge.source, depth: depth + 1 });
+        }
       }
     }
   }
@@ -90,45 +106,45 @@ function getReachableNodesIn(
   return visited;
 }
 
-/**
- * Build the focused subgraph based on focus state.
- * Uses the original analyzer data and computes deterministically.
- */
 export function computeFocusedGraph(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   focusState: FocusState
 ): FocusedGraphData {
-  // If not focused, return empty (caller should use full data)
   if (!focusState.enabled || !focusState.focusNodeId) {
     return { nodes: [], edges: [], centerNodeId: null };
   }
 
   const { focusNodeId, direction, depth } = focusState;
-  
-  // Build sets of nodes based on direction
-  let reachableNodes = new Set<string>();
+  const adj = buildAdjacencyMap(edges);
+  const reachableNodes = new Set<string>();
   
   if (direction === 'dependencies' || direction === 'both') {
-    const outNodes = getReachableNodesOut(edges, focusNodeId, depth);
+    const outNodes = getReachableNodesOut(adj, focusNodeId, depth);
     outNodes.forEach(n => reachableNodes.add(n));
   }
   
   if (direction === 'dependents' || direction === 'both') {
-    const inNodes = getReachableNodesIn(edges, focusNodeId, depth);
+    const inNodes = getReachableNodesIn(adj, focusNodeId, depth);
     inNodes.forEach(n => reachableNodes.add(n));
   }
   
-  // Always include the focus node itself
   reachableNodes.add(focusNodeId);
   
-  // Filter nodes to only include reachable ones
-  const focusedNodes = nodes.filter(n => reachableNodes.has(n.id));
+  const focusedNodes: ExplorerNode[] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    if (reachableNodes.has(nodes[i].id)) {
+      focusedNodes.push(nodes[i]);
+    }
+  }
   
-  // Filter edges to only include those where both source and target are in the reachable set
-  const focusedEdges = edges.filter(
-    e => reachableNodes.has(e.source) && reachableNodes.has(e.target)
-  );
+  const focusedEdges: ExplorerEdge[] = [];
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    if (reachableNodes.has(e.source) && reachableNodes.has(e.target)) {
+      focusedEdges.push(e);
+    }
+  }
   
   return {
     nodes: focusedNodes,
@@ -137,27 +153,26 @@ export function computeFocusedGraph(
   };
 }
 
-/**
- * Check if a node has any connections.
- * Direction parameter kept for potential future use but currently checks both.
- */
 export function hasConnections(
   edges: ExplorerEdge[],
   nodeId: string,
   _direction: FocusDirection
 ): { hasDependencies: boolean; hasDependents: boolean } {
-  const outgoing = edges.filter(e => e.source === nodeId);
-  const incoming = edges.filter(e => e.target === nodeId);
-  
+  let hasDependencies = false;
+  let hasDependents = false;
+
+  for (let i = 0; i < edges.length; i++) {
+    if (edges[i].source === nodeId) hasDependencies = true;
+    if (edges[i].target === nodeId) hasDependents = true;
+    if (hasDependencies && hasDependents) break;
+  }
+
   return {
-    hasDependencies: outgoing.length > 0,
-    hasDependents: incoming.length > 0
+    hasDependencies,
+    hasDependents
   };
 }
 
-/**
- * Create empty focus state.
- */
 export function createEmptyFocusState(): FocusState {
   return {
     enabled: false,
@@ -167,9 +182,6 @@ export function createEmptyFocusState(): FocusState {
   };
 }
 
-/**
- * Check if focus is enabled and has valid state.
- */
 export function isFocusActive(focusState: FocusState): boolean {
   return focusState.enabled && !!focusState.focusNodeId;
 }

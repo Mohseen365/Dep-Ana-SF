@@ -120,26 +120,7 @@ export const App: React.FC = () => {
   return (
     <div className="app-layout">
       <Header />
-      <SummaryBar summary={data?.summary || {
-        nodeCount: 0,
-        edgeCount: 0,
-        highRiskCount: 0,
-        mediumRiskCount: 0,
-        lowRiskCount: 0,
-        cycleCount: 0,
-        unresolvedCount: 0,
-        inventory: {
-          files: 0,
-          apexClasses: 0,
-          apexTriggers: 0,
-          lwcJs: 0,
-          lwcHtml: 0,
-          visualforce: 0,
-          flows: 0,
-          objects: 0,
-          fields: 0
-        }
-      }} />
+      <SummaryBar data={data} />
       <SearchFilterPanel
         nodes={data?.nodes || []}
         filterState={filterState}

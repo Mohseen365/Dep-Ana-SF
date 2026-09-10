@@ -18,9 +18,6 @@ export interface FilteredGraphData {
   matchingNodeIds: Set<string>;
 }
 
-/**
- * Determine which fields to search and how to match.
- */
 function getSearchFields(node: ExplorerNode): Array<{ field: string; value: string }> {
   return [
     { field: 'displayName', value: node.displayName.toLowerCase() },
@@ -28,15 +25,10 @@ function getSearchFields(node: ExplorerNode): Array<{ field: string; value: stri
     { field: 'file', value: node.file.toLowerCase() },
     { field: 'type', value: node.type.toLowerCase() },
     { field: 'risk', value: node.risk.toLowerCase() },
-    // Extract name from id (e.g., "ApexClass:AssetHelper" -> "AssetHelper")
     { field: 'name', value: node.id.includes(':') ? node.id.split(':')[1].toLowerCase() : '' },
   ];
 }
 
-/**
- * Perform search on nodes - exact or partial match.
- * Returns matching nodes with information about what matched.
- */
 export function searchNodes(
   nodes: ExplorerNode[],
   query: string,
@@ -49,10 +41,12 @@ export function searchNodes(
   const normalizedQuery = query.trim().toLowerCase();
   const results: SearchResult[] = [];
 
-  for (const node of nodes) {
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
     const searchFields = getSearchFields(node);
 
-    for (const { field, value } of searchFields) {
+    for (let j = 0; j < searchFields.length; j++) {
+      const { field, value } = searchFields[j];
       if (!value) continue;
 
       const isMatch = exact 
@@ -65,7 +59,7 @@ export function searchNodes(
           matchField: field,
           matchValue: query.trim()
         });
-        break; // Only match each node once
+        break;
       }
     }
   }
@@ -73,9 +67,6 @@ export function searchNodes(
   return results;
 }
 
-/**
- * Filter nodes by type.
- */
 export function filterNodesByType(
   nodes: ExplorerNode[],
   type: ExplorerNodeType | ''
@@ -83,12 +74,15 @@ export function filterNodesByType(
   if (!type) {
     return nodes;
   }
-  return nodes.filter(node => node.type === type);
+  const result: ExplorerNode[] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].type === type) {
+      result.push(nodes[i]);
+    }
+  }
+  return result;
 }
 
-/**
- * Filter nodes by risk level.
- */
 export function filterNodesByRisk(
   nodes: ExplorerNode[],
   risk: ExplorerRiskLevel | ''
@@ -96,58 +90,61 @@ export function filterNodesByRisk(
   if (!risk) {
     return nodes;
   }
-  return nodes.filter(node => node.risk === risk);
+  const result: ExplorerNode[] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].risk === risk) {
+      result.push(nodes[i]);
+    }
+  }
+  return result;
 }
 
-/**
- * Filter edges to only include those where both source and target
- * are in the matching node set.
- */
 export function filterEdgesByNodes(
   edges: ExplorerEdge[],
   matchingNodeIds: Set<string>
 ): ExplorerEdge[] {
-  return edges.filter(edge => 
-    matchingNodeIds.has(edge.source) && matchingNodeIds.has(edge.target)
-  );
+  const result: ExplorerEdge[] = [];
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
+    if (matchingNodeIds.has(edge.source) && matchingNodeIds.has(edge.target)) {
+      result.push(edge);
+    }
+  }
+  return result;
 }
 
-/**
- * Apply all filters and return filtered graph data.
- * This does NOT modify the original analyzer data.
- */
 export function applyFilters(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   filterState: SearchFilterState
 ): FilteredGraphData {
-  let filteredNodes = [...nodes];
+  let filteredNodes = nodes;
 
-  // Apply type filter
   if (filterState.typeFilter) {
     filteredNodes = filterNodesByType(filteredNodes, filterState.typeFilter);
   }
 
-  // Apply risk filter
   if (filterState.riskFilter) {
     filteredNodes = filterNodesByRisk(filteredNodes, filterState.riskFilter);
   }
 
-  // Apply search query
   if (filterState.searchQuery) {
-    const searchResults = searchNodes(nodes, filterState.searchQuery);
+    const searchResults = searchNodes(filteredNodes, filterState.searchQuery);
     const matchedIds = new Set(searchResults.map(r => r.node.id));
-    
-    // If there's a search query, intersect with search results
-    // But also respect type/risk filters
-    const searchMatchedNodes = filteredNodes.filter(node => matchedIds.has(node.id));
+    const searchMatchedNodes: ExplorerNode[] = [];
+    for (let i = 0; i < filteredNodes.length; i++) {
+      if (matchedIds.has(filteredNodes[i].id)) {
+        searchMatchedNodes.push(filteredNodes[i]);
+      }
+    }
     filteredNodes = searchMatchedNodes;
   }
 
-  // Build set of matching node IDs for edge filtering
-  const matchingNodeIds = new Set(filteredNodes.map(n => n.id));
+  const matchingNodeIds = new Set<string>();
+  for (let i = 0; i < filteredNodes.length; i++) {
+    matchingNodeIds.add(filteredNodes[i].id);
+  }
 
-  // Filter edges to only include those connecting matching nodes
   const filteredEdges = filterEdgesByNodes(edges, matchingNodeIds);
 
   return {
@@ -157,34 +154,26 @@ export function applyFilters(
   };
 }
 
-/**
- * Check if any filters are active.
- */
 export function hasActiveFilters(filterState: SearchFilterState): boolean {
   return !!(filterState.searchQuery || filterState.typeFilter || filterState.riskFilter);
 }
 
-/**
- * Get unique node types from the data.
- */
 export function getUniqueNodeTypes(nodes: ExplorerNode[]): ExplorerNodeType[] {
   const types = new Set<ExplorerNodeType>();
-  nodes.forEach(node => types.add(node.type));
+  for (let i = 0; i < nodes.length; i++) {
+    types.add(nodes[i].type);
+  }
   return Array.from(types).sort();
 }
 
-/**
- * Get available risk levels from the data.
- */
 export function getAvailableRiskLevels(nodes: ExplorerNode[]): ExplorerRiskLevel[] {
   const risks = new Set<ExplorerRiskLevel>();
-  nodes.forEach(node => risks.add(node.risk));
+  for (let i = 0; i < nodes.length; i++) {
+    risks.add(nodes[i].risk);
+  }
   return Array.from(risks).sort();
 }
 
-/**
- * Create empty filter state.
- */
 export function createEmptyFilterState(): SearchFilterState {
   return {
     searchQuery: '',
