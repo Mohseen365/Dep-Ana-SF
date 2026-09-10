@@ -7,13 +7,17 @@ interface DetailsPanelProps {
   edge: ExplorerEdge | null;
   impactSummary: ExplorerComponentImpactSummary | null;
   onClose: () => void;
+  onShowImpact?: (nodeId: string) => void;
+  onSelectNodeById?: (nodeId: string) => void;
 }
 
 export const DetailsPanel: React.FC<DetailsPanelProps> = ({
   node,
   edge,
   impactSummary,
-  onClose
+  onClose,
+  onShowImpact,
+  onSelectNodeById
 }) => {
   // Show edge details if an edge is selected
   if (edge) {
@@ -158,6 +162,16 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
       </div>
 
       <div className="details-content">
+        {onShowImpact && (
+          <div className="details-section">
+            <button
+              className="show-impact-btn"
+              onClick={() => onShowImpact(node.id)}
+            >
+              💥 Show Impact / Blast Radius
+            </button>
+          </div>
+        )}
         <div className="details-section readiness-section">
           <h4>Refactoring Readiness</h4>
           <div className="readiness-card">
@@ -212,16 +226,20 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
           </div>
         </div>
 
-        {node.riskReasons.length > 0 && (
-          <div className="details-section">
-            <h4>Risk Evaluation Reasons</h4>
+        <div className="details-section">
+          <h4>Risk</h4>
+          <p className={`risk-level-value risk-${node.risk.toLowerCase()}`}>{node.risk}</p>
+          <h4>Reasons</h4>
+          {node.riskReasons && node.riskReasons.length > 0 ? (
             <ul className="risk-reasons-list">
               {node.riskReasons.map((reason, idx) => (
                 <li key={idx}>• {reason}</li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p className="risk-reasons-empty">No additional risk reasons provided by analyzer.</p>
+          )}
+        </div>
 
         <div className="details-section">
           <h4>Component Capabilities</h4>
@@ -273,12 +291,31 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
                   ? impactSummary.directDependents.join(', ')
                   : 'None'}
               </p>
-              <p>
-                <strong>Impacted Test Classes:</strong>{' '}
-                {impactSummary.impactedTests.length > 0
-                  ? impactSummary.impactedTests.join(', ')
-                  : 'None'}
-              </p>
+              <div className="impact-tests-subsection">
+                <strong>Impacted Tests:</strong>
+                {impactSummary.impactedTests.length > 0 ? (
+                  <ul className="impact-tests-list">
+                    {impactSummary.impactedTests.map((testId) => (
+                      <li key={testId}>
+                        {onSelectNodeById ? (
+                          <span
+                            className="test-item-link"
+                            onClick={() => onSelectNodeById(testId)}
+                          >
+                            {testId.split(':')[1] || testId}
+                          </span>
+                        ) : (
+                          <span>{testId.split(':')[1] || testId}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="no-impacted-tests">
+                    No impacted tests identified by analyzer data.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         )}

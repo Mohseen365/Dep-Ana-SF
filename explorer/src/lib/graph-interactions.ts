@@ -219,6 +219,63 @@ export function clearHighlights(cy: cytoscape.Core): void {
 }
 
 /**
+ * Highlight a cycle group on the graph and mute/dim unrelated content.
+ */
+export function highlightCycle(
+  cy: cytoscape.Core,
+  cycleNodeIds: string[]
+): void {
+  if (!cy) return;
+
+  // Clear any existing highlights/dimming first
+  cy.elements().removeClass('dimmed highlighted');
+
+  if (!cycleNodeIds || cycleNodeIds.length === 0) {
+    return;
+  }
+
+  const cycleNodeSet = new Set(cycleNodeIds);
+
+  // Dim all elements by default
+  cy.elements().addClass('dimmed');
+
+  // Find cycle nodes
+  const cycleNodes = cy.nodes().filter(node => cycleNodeSet.has(node.id()));
+
+  // Find cycle edges (edges connecting nodes in the cycle)
+  const cycleEdges = cy.edges().filter(edge => {
+    const src = edge.data('source');
+    const tgt = edge.data('target');
+    return cycleNodeSet.has(src) && cycleNodeSet.has(tgt);
+  });
+
+  // Remove dimmed and add highlighted to cycle elements
+  cycleNodes.removeClass('dimmed').addClass('highlighted');
+  cycleEdges.removeClass('dimmed').addClass('highlighted');
+
+  // Center and fit viewport to cycle nodes if any exist
+  if (cycleNodes.length > 0) {
+    cy.animate({
+      fit: {
+        eles: cycleNodes,
+        padding: 50
+      }
+    }, {
+      duration: 300,
+      easing: 'ease-in-out'
+    });
+  }
+}
+
+/**
+ * Clear cycle highlight and restore normal appearance.
+ */
+export function clearCycleHighlight(cy: cytoscape.Core): void {
+  if (!cy) return;
+  cy.elements().removeClass('dimmed highlighted');
+}
+
+/**
  * Pan to a specific node.
  */
 export function panToNode(cy: cytoscape.Core, nodeId: string, animated: boolean = true): boolean {

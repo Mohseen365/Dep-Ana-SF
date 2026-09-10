@@ -153,6 +153,17 @@ describe('DetailsPanel', () => {
       expect(screen.getByText(/has unresolved references/)).toBeDefined();
     });
 
+    it('should handle empty risk reasons safely', () => {
+      const nodeNoRiskReasons: ExplorerNode = {
+        ...mockNode,
+        risk: 'LOW',
+        riskReasons: []
+      };
+      render(<DetailsPanel node={nodeNoRiskReasons} edge={null} impactSummary={null} onClose={() => {}} />);
+
+      expect(screen.getByText('No additional risk reasons provided by analyzer.')).toBeDefined();
+    });
+
     it('should display component capabilities', () => {
       render(<DetailsPanel node={mockNode} edge={null} impactSummary={null} onClose={() => {}} />);
       
@@ -167,6 +178,40 @@ describe('DetailsPanel', () => {
       expect(screen.getByText(/Total Impacted Components:/)).toBeDefined();
       expect(screen.getByText(/Direct Dependencies:/)).toBeDefined();
       expect(screen.getAllByText(/ApexClass:Helper/)).toBeDefined();
+    });
+
+    it('should display Show Impact button and handle click', () => {
+      const onShowImpact = vi.fn();
+      render(
+        <DetailsPanel
+          node={mockNode}
+          edge={null}
+          impactSummary={mockImpactSummary}
+          onClose={() => {}}
+          onShowImpact={onShowImpact}
+        />
+      );
+
+      const impactBtn = screen.getByText(/Show Impact/);
+      impactBtn.click();
+      expect(onShowImpact).toHaveBeenCalledWith('ApexClass:TestClass');
+    });
+
+    it('should display fallback when no impacted tests exist', () => {
+      const emptyImpactSummary: ExplorerComponentImpactSummary = {
+        ...mockImpactSummary,
+        impactedTests: []
+      };
+      render(
+        <DetailsPanel
+          node={mockNode}
+          edge={null}
+          impactSummary={emptyImpactSummary}
+          onClose={() => {}}
+        />
+      );
+
+      expect(screen.getByText(/No impacted tests identified by analyzer data/)).toBeDefined();
     });
   });
 
