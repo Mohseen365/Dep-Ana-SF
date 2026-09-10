@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { ExplorerDataSchema, ExplorerNode } from './types/explorer';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from './types/explorer';
 import { Header } from './components/Header';
 import { SummaryBar } from './components/SummaryBar';
 import { GraphView } from './components/GraphView';
@@ -15,6 +15,7 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<ExplorerNode | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<ExplorerEdge | null>(null);
   const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState());
   const [focusState, setFocusState] = useState<FocusState>(createEmptyFocusState());
 
@@ -104,6 +105,21 @@ export const App: React.FC = () => {
     setSelectedNode(node);
   };
 
+  const handleSelectEdge = useCallback((edgeId: string) => {
+    if (!data) return;
+    const edge = data.edges.find(e => e.id === edgeId) || null;
+    setSelectedEdge(edge);
+    // Also clear node selection when edge is selected
+    if (edge) {
+      setSelectedNode(null);
+    }
+  }, [data]);
+
+  const handleCloseDetails = useCallback(() => {
+    setSelectedNode(null);
+    setSelectedEdge(null);
+  }, []);
+
   return (
     <div className="app-layout">
       <Header />
@@ -142,13 +158,19 @@ export const App: React.FC = () => {
         <GraphView
           nodes={displayData.nodes}
           edges={displayData.edges}
-          onSelectNode={setSelectedNode}
+          onSelectNode={(node) => {
+            setSelectedNode(node);
+            if (node) setSelectedEdge(null);
+          }}
+          onSelectEdge={handleSelectEdge}
           selectedNodeId={selectedNode?.id || null}
+          selectedEdgeId={selectedEdge?.id || null}
         />
         <DetailsPanel
           node={selectedNode}
+          edge={selectedEdge}
           impactSummary={selectedImpact}
-          onClose={() => setSelectedNode(null)}
+          onClose={handleCloseDetails}
         />
       </div>
     </div>

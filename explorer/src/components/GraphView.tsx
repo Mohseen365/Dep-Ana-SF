@@ -10,14 +10,18 @@ interface GraphViewProps {
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   onSelectNode: (node: ExplorerNode | null) => void;
+  onSelectEdge: (edgeId: string) => void;
   selectedNodeId: string | null;
+  selectedEdgeId: string | null;
 }
 
 export const GraphView: React.FC<GraphViewProps> = ({
   nodes,
   edges,
   onSelectNode,
-  selectedNodeId
+  onSelectEdge,
+  selectedNodeId,
+  selectedEdgeId
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -70,6 +74,11 @@ export const GraphView: React.FC<GraphViewProps> = ({
       onNodeSelect: (selectedNode) => {
         onSelectNode(selectedNode);
       },
+      onEdgeSelect: (edgeId) => {
+        if (edgeId) {
+          onSelectEdge(edgeId);
+        }
+      },
       onBackgroundTap: () => {
         // Background tap - deselect
       },
@@ -112,11 +121,32 @@ export const GraphView: React.FC<GraphViewProps> = ({
           easing: 'ease-out'
         });
       }
-    } else {
-      // Deselect all when no node is selected
+    } else if (!selectedEdgeId) {
+      // Deselect all when no node or edge is selected
       deselectAll(cy);
     }
   }, [selectedNodeId]);
+
+  // Handle edge selection changes
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    if (selectedEdgeId) {
+      const edge = cy.getElementById(selectedEdgeId);
+      if (edge.length > 0 && edge.isEdge()) {
+        edge.select();
+        // Center on the edge
+        cy.animate({
+          center: { eles: edge },
+          zoom: cy.zoom()
+        }, {
+          duration: 200,
+          easing: 'ease-out'
+        });
+      }
+    }
+  }, [selectedEdgeId]);
 
   return (
     <div className="graph-container">

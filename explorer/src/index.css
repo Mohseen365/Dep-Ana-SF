@@ -558,3 +558,151 @@ body {
   color: var(--text-muted);
   font-style: italic;
 }
+.edge-badge {
+  background-color: #1e3a5f;
+  color: #60a5fa;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.evidence-flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #0f172a;
+  padding: 14px;
+  border-radius: 6px;
+}
+
+.evidence-endpoint {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.evidence-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.evidence-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+.evidence-detail {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.evidence-arrow {
+  font-size: 20px;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.evidence-code {
+  background-color: #0f172a;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+.evidence-code code {
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.evidence-missing {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.evidence-location {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.resolution-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.resolution-item {
+  background-color: #0f172a;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resolution-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resolution-value {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.resolution-value.resolved {
+  color: #10b981;
+}
+
+.resolution-value.unresolved {
+  color: #ef4444;
+}
+
+.confidence-high {
+  color: #10b981;
+}
+
+.confidence-medium {
+  color: #f59e0b;
+}
+
+.confidence-low {
+  color: #ef4444;
+}
+
+.unresolved-box {
+  background-color: #450a0a;
+  border: 1px solid #7f1d1d;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.unresolved-box p {
+  margin-bottom: 8px;
+  color: #fca5a5;
+}
+
+.unresolved-box ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #fca5a5;
+}
+
+.unresolved-box li {
+  margin-bottom: 4px;
+}

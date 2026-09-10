@@ -10,6 +10,7 @@ export interface InteractionCallbacks {
   onNodeSelect?: (node: ExplorerNode | null) => void;
   onNodeTap?: (nodeId: string, nodeData: GraphNodeData | undefined) => void;
   onBackgroundTap?: () => void;
+  onEdgeSelect?: (edgeId: string) => void;
   onEdgeTap?: (edgeId: string) => void;
   onGraphReady?: (cy: cytoscape.Core) => void;
 }
@@ -19,7 +20,7 @@ export function bindGraphInteractions(
   callbacks: InteractionCallbacks,
   originalNodes?: ExplorerNode[]
 ): void {
-  const { onNodeSelect, onNodeTap, onBackgroundTap, onEdgeTap, onGraphReady } = callbacks;
+  const { onNodeSelect, onNodeTap, onBackgroundTap, onEdgeSelect, onEdgeTap, onGraphReady } = callbacks;
 
   // Node tap event
   cy.on('tap', 'node', (event) => {
@@ -85,6 +86,10 @@ export function bindGraphInteractions(
   cy.on('tap', 'edge', (event) => {
     const edge = event.target;
     const edgeId = edge.id();
+    
+    if (onEdgeSelect) {
+      onEdgeSelect(edgeId);
+    }
     
     if (onEdgeTap) {
       onEdgeTap(edgeId);
