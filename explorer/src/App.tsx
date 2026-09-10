@@ -7,6 +7,7 @@ import { DetailsPanel } from './components/DetailsPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
 import { SearchFilterPanel } from './components/SearchFilterPanel';
 import { FocusControls } from './components/FocusControls';
+import { HotspotPanel } from './components/HotspotPanel';
 import { SearchFilterState, applyFilters, createEmptyFilterState } from './lib/search-filter';
 import { FocusState, computeFocusedGraph, createEmptyFocusState, isFocusActive } from './lib/focus-graph';
 import './index.css';
@@ -25,7 +26,6 @@ export const App: React.FC = () => {
   // Update focus state when a node is selected
   useEffect(() => {
     if (selectedNode) {
-      // If focus was enabled, update the focus node; otherwise keep focus disabled
       setFocusState(prev => ({
         ...prev,
         focusNodeId: selectedNode.id
@@ -43,16 +43,13 @@ export const App: React.FC = () => {
   const displayData = useMemo(() => {
     if (!data) return { nodes: [], edges: [] };
     
-    // Use filtered data as the base
     const baseNodes = filteredData.nodes;
     const baseEdges = filteredData.edges;
     
-    // If focus is active, compute focused subgraph
     if (isFocusActive(focusState)) {
       return computeFocusedGraph(baseNodes, baseEdges, focusState);
     }
     
-    // Otherwise return filtered data as-is
     return { nodes: baseNodes, edges: baseEdges };
   }, [data, filteredData, focusState]);
 
@@ -150,6 +147,29 @@ export const App: React.FC = () => {
 
   const selectedImpact = selectedNode && data ? data.impactSummaries[selectedNode.id] || null : null;
 
+  const handleFilterChange = (newFilterState: SearchFilterState) => {
+    setFilterState(newFilterState);
+  };
+
+  const handleSelectResult = (node: ExplorerNode) => {
+    setSelectedNode(node);
+    setSelectedEdge(null);
+  };
+
+  const handleSelectEdge = useCallback((edgeId: string) => {
+    if (!data) return;
+    const edge = data.edges.find(e => e.id === edgeId) || null;
+    setSelectedEdge(edge);
+    if (edge) {
+      setSelectedNode(null);
+    }
+  }, [data]);
+
+  const handleCloseDetails = useCallback(() => {
+    setSelectedNode(null);
+    setSelectedEdge(null);
+  }, []);
+
   return (
     <div className="app-layout">
       <Header />
@@ -185,6 +205,13 @@ export const App: React.FC = () => {
         filterState={filterState}
         onFilterChange={handleFilterChange}
         onSelectResult={handleSelectResult}
+      />
+      <HotspotPanel
+        nodes={data?.nodes || []}
+        cycles={data?.cycles || []}
+        impactSummaries={data?.impactSummaries || {}}
+        onSelectHotspot={handleSelectResult}
+        selectedNodeId={selectedNode?.id || null}
       />
       <FocusControls
         focusState={focusState}
