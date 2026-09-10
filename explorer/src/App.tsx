@@ -124,6 +124,9 @@ export const App: React.FC = () => {
     if (found) {
       setSelectedNode(found);
       setSelectedEdge(null);
+    }
+  }, [data]);
+
   const handleRiskFilterChange = useCallback((risk: ExplorerRiskLevel) => {
     setFilterState(prev => ({
       ...prev,
@@ -174,31 +177,6 @@ export const App: React.FC = () => {
       </div>
     );
   }
-
-  const selectedImpact = selectedNode && data ? data.impactSummaries[selectedNode.id] || null : null;
-
-  const handleFilterChange = (newFilterState: SearchFilterState) => {
-    setFilterState(newFilterState);
-  };
-
-  const handleSelectResult = (node: ExplorerNode) => {
-    setSelectedNode(node);
-    setSelectedEdge(null);
-  };
-
-  const handleSelectEdge = useCallback((edgeId: string) => {
-    if (!data) return;
-    const edge = data.edges.find(e => e.id === edgeId) || null;
-    setSelectedEdge(edge);
-    if (edge) {
-      setSelectedNode(null);
-    }
-  }, [data]);
-
-  const handleCloseDetails = useCallback(() => {
-    setSelectedNode(null);
-    setSelectedEdge(null);
-  }, []);
 
   return (
     <div className="app-layout">

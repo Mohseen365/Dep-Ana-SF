@@ -25,7 +25,7 @@ export const GraphView: React.FC<GraphViewProps> = ({
   onSelectEdge,
   selectedNodeId,
   selectedEdgeId,
-  impactResult
+  impactResult,
   selectedCycleNodeIds
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -154,7 +154,6 @@ export const GraphView: React.FC<GraphViewProps> = ({
   }, [selectedEdgeId]);
 
   // Handle Impact Mode highlighting
-  // Handle cycle highlighting
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -188,6 +187,12 @@ export const GraphView: React.FC<GraphViewProps> = ({
       }
     });
   }, [impactResult]);
+
+  // Handle cycle highlighting
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
     if (selectedCycleNodeIds && selectedCycleNodeIds.length > 0) {
       highlightCycle(cy, selectedCycleNodeIds);
     } else {
