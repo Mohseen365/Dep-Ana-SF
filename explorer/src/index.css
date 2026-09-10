@@ -706,3 +706,256 @@ body {
 .unresolved-box li {
   margin-bottom: 4px;
 }
+
+/* Readiness & Hotspot Styles */
+.readiness-card {
+  background-color: #0f172a;
+  padding: 12px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.readiness-badge {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.readiness-good {
+  background-color: #064e3b;
+  color: #6ee7b7;
+}
+
+.readiness-caution {
+  background-color: #451a03;
+  color: #fcd34d;
+}
+
+.readiness-high-caution {
+  background-color: #450a0a;
+  color: #fca5a5;
+}
+
+.readiness-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.readiness-reasons-title {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.readiness-reasons ul {
+  list-style: none;
+  padding-left: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-main);
+}
+
+.readiness-evidence-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+}
+
+.evidence-links-title {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.evidence-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.evidence-btn {
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 8px;
+  background-color: var(--bg-secondary);
+  color: var(--accent-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.evidence-btn:hover {
+  background-color: #334155;
+  color: #60a5fa;
+}
+
+.readiness-disclaimer {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+  line-height: 1.4;
+}
+
+/* Hotspot Panel Styles */
+.hotspot-panel {
+  background-color: #111827;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.hotspot-header {
+  height: 42px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.hotspot-header:hover {
+  background-color: #1e293b;
+}
+
+.hotspot-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hotspot-icon {
+  font-size: 16px;
+}
+
+.hotspot-header h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.hotspot-badge {
+  font-size: 11px;
+  font-weight: bold;
+  background-color: #ef4444;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.collapse-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.hotspot-body {
+  padding: 8px 20px 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.hotspot-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.hotspot-tab {
+  font-size: 11px;
+  padding: 4px 10px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.hotspot-tab:hover {
+  color: var(--text-main);
+  background-color: #334155;
+}
+
+.hotspot-tab.active {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.hotspot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hotspot-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.hotspot-item {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.hotspot-item:hover {
+  background-color: #334155;
+  border-color: var(--accent-primary);
+}
+
+.hotspot-item.selected {
+  border-color: var(--accent-primary);
+  background-color: #1e3a5f;
+}
+
+.hotspot-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hotspot-rank {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--text-muted);
+}
+
+.hotspot-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.hotspot-item-details {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
