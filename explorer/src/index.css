@@ -706,3 +706,202 @@ body {
 .unresolved-box li {
   margin-bottom: 4px;
 }
+
+/* Impact Mode Controls Styling */
+.impact-controls {
+  background-color: #111827;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 20px;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.impact-controls.active {
+  background-color: #1e1b4b;
+  border-bottom-color: #4338ca;
+}
+
+.impact-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.impact-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.impact-toggle-btn:hover:not(:disabled) {
+  background-color: #334155;
+  color: var(--text-main);
+}
+
+.impact-toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.impact-toggle-btn.active {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+
+.impact-icon {
+  font-size: 14px;
+}
+
+.impact-origin-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #311b92;
+  border: 1px solid #5e35b1;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.impact-label {
+  font-size: 11px;
+  color: #b388ff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.impact-origin-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffd54f;
+}
+
+.impact-options {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.impact-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.impact-option label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.impact-direction-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fca5a5;
+  background-color: #450a0a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #7f1d1d;
+}
+
+.impact-select {
+  height: 28px;
+  padding: 0 24px 0 10px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 12px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+
+.impact-select:focus {
+  outline: none;
+  border-color: #818cf8;
+}
+
+.impact-summary-metrics {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px dashed #3730a3;
+}
+
+.impact-metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.metric-lbl {
+  color: #a5b4fc;
+}
+
+.metric-val {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.filter-visible-count {
+  font-size: 11px;
+  color: #fcd34d;
+  margin-left: 4px;
+}
+
+.impact-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.show-impact-btn {
+  margin-top: 8px;
+  width: 100%;
+  height: 32px;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.show-impact-btn:hover {
+  background-color: #b91c1c;
+}
+
+.test-item-link {
+  color: #60a5fa;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.test-item-link:hover {
+  color: #93c5fd;
+}

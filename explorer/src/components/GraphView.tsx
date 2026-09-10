@@ -5,6 +5,7 @@ import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout } from '../lib/graph-layout';
 import { bindGraphInteractions, fitToScreen, selectNode, deselectAll } from '../lib/graph-interactions';
+import { ImpactAnalysisResult } from '../lib/impact-analysis';
 
 interface GraphViewProps {
   nodes: ExplorerNode[];
@@ -13,6 +14,7 @@ interface GraphViewProps {
   onSelectEdge: (edgeId: string) => void;
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
+  impactResult?: ImpactAnalysisResult | null;
 }
 
 export const GraphView: React.FC<GraphViewProps> = ({
@@ -21,7 +23,8 @@ export const GraphView: React.FC<GraphViewProps> = ({
   onSelectNode,
   onSelectEdge,
   selectedNodeId,
-  selectedEdgeId
+  selectedEdgeId,
+  impactResult
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -147,6 +150,41 @@ export const GraphView: React.FC<GraphViewProps> = ({
       }
     }
   }, [selectedEdgeId]);
+
+  // Handle Impact Mode highlighting
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    cy.batch(() => {
+      // Remove all impact classes first
+      cy.elements().removeClass('impact-origin impact-affected impact-muted');
+
+      if (impactResult) {
+        const { originNodeId, affectedNodeIds, affectedEdgeIds } = impactResult;
+
+        cy.nodes().forEach(node => {
+          const id = node.id();
+          if (id === originNodeId) {
+            node.addClass('impact-origin');
+          } else if (affectedNodeIds.has(id)) {
+            node.addClass('impact-affected');
+          } else {
+            node.addClass('impact-muted');
+          }
+        });
+
+        cy.edges().forEach(edge => {
+          const id = edge.id();
+          if (affectedEdgeIds.has(id)) {
+            edge.addClass('impact-affected');
+          } else {
+            edge.addClass('impact-muted');
+          }
+        });
+      }
+    });
+  }, [impactResult]);
 
   return (
     <div className="graph-container">
