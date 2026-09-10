@@ -153,6 +153,17 @@ describe('DetailsPanel', () => {
       expect(screen.getByText(/has unresolved references/)).toBeDefined();
     });
 
+    it('should handle empty risk reasons safely', () => {
+      const nodeNoRiskReasons: ExplorerNode = {
+        ...mockNode,
+        risk: 'LOW',
+        riskReasons: []
+      };
+      render(<DetailsPanel node={nodeNoRiskReasons} edge={null} impactSummary={null} onClose={() => {}} />);
+
+      expect(screen.getByText('No additional risk reasons provided by analyzer.')).toBeDefined();
+    });
+
     it('should display component capabilities', () => {
       render(<DetailsPanel node={mockNode} edge={null} impactSummary={null} onClose={() => {}} />);
       

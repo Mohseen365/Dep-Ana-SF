@@ -4,8 +4,8 @@ import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout } from '../lib/graph-layout';
-import { bindGraphInteractions, fitToScreen, selectNode, deselectAll } from '../lib/graph-interactions';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
+import { bindGraphInteractions, fitToScreen, selectNode, deselectAll, highlightCycle, clearCycleHighlight } from '../lib/graph-interactions';
 
 interface GraphViewProps {
   nodes: ExplorerNode[];
@@ -15,6 +15,7 @@ interface GraphViewProps {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   impactResult?: ImpactAnalysisResult | null;
+  selectedCycleNodeIds?: string[] | null;
 }
 
 export const GraphView: React.FC<GraphViewProps> = ({
@@ -25,6 +26,7 @@ export const GraphView: React.FC<GraphViewProps> = ({
   selectedNodeId,
   selectedEdgeId,
   impactResult
+  selectedCycleNodeIds
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -152,6 +154,7 @@ export const GraphView: React.FC<GraphViewProps> = ({
   }, [selectedEdgeId]);
 
   // Handle Impact Mode highlighting
+  // Handle cycle highlighting
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -185,6 +188,12 @@ export const GraphView: React.FC<GraphViewProps> = ({
       }
     });
   }, [impactResult]);
+    if (selectedCycleNodeIds && selectedCycleNodeIds.length > 0) {
+      highlightCycle(cy, selectedCycleNodeIds);
+    } else {
+      clearCycleHighlight(cy);
+    }
+  }, [selectedCycleNodeIds]);
 
   return (
     <div className="graph-container">

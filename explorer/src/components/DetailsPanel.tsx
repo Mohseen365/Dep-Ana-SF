@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExplorerNode, ExplorerEdge, ExplorerComponentImpactSummary } from '../types/explorer';
+import { evaluateRefactoringReadiness } from '../lib/readiness';
 
 interface DetailsPanelProps {
   node: ExplorerNode | null;
@@ -130,6 +131,21 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
     );
   }
 
+  const readiness = evaluateRefactoringReadiness(node, impactSummary);
+
+  const getReadinessBadgeClass = (classification: string) => {
+    switch (classification) {
+      case 'GOOD CANDIDATE':
+        return 'readiness-good';
+      case 'CAUTION':
+        return 'readiness-caution';
+      case 'HIGH CAUTION':
+        return 'readiness-high-caution';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="details-panel">
       <div className="details-header">
@@ -156,13 +172,39 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
             </button>
           </div>
         )}
+        <div className="details-section readiness-section">
+          <h4>Refactoring Readiness</h4>
+          <div className="readiness-card">
+            <div className={`readiness-badge ${getReadinessBadgeClass(readiness.classification)}`}>
+              {readiness.classification}
+            </div>
+            <div className="readiness-reasons">
+              <span className="readiness-reasons-title">Reasons:</span>
+              <ul>
+                {readiness.reasons.map((reason, idx) => (
+                  <li key={idx}>• {reason}</li>
+                ))}
+              </ul>
+            </div>
+            {impactSummary && (
+              <div className="readiness-evidence-links">
+                <span className="evidence-links-title">Evidence:</span>
+                <div className="evidence-actions">
+                  <a href="#impact-summary" className="evidence-btn">View Impact ({impactSummary.totalImpactCount})</a>
+                  <a href="#coupling-metrics" className="evidence-btn">View Dependencies ({node.metrics.fanOut})</a>
+                </div>
+              </div>
+            )}
+            <p className="readiness-disclaimer">{readiness.disclaimer}</p>
+          </div>
+        </div>
 
         <div className="details-section">
           <h4>Source File</h4>
           <p className="file-path">{node.file || 'N/A'}</p>
         </div>
 
-        <div className="details-section">
+        <div className="details-section" id="coupling-metrics">
           <h4>Coupling Metrics</h4>
           <div className="metrics-grid">
             <div className="metric-card">
@@ -184,16 +226,20 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
           </div>
         </div>
 
-        {node.riskReasons.length > 0 && (
-          <div className="details-section">
-            <h4>Risk Evaluation Reasons</h4>
+        <div className="details-section">
+          <h4>Risk</h4>
+          <p className={`risk-level-value risk-${node.risk.toLowerCase()}`}>{node.risk}</p>
+          <h4>Reasons</h4>
+          {node.riskReasons && node.riskReasons.length > 0 ? (
             <ul className="risk-reasons-list">
               {node.riskReasons.map((reason, idx) => (
                 <li key={idx}>• {reason}</li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p className="risk-reasons-empty">No additional risk reasons provided by analyzer.</p>
+          )}
+        </div>
 
         <div className="details-section">
           <h4>Component Capabilities</h4>
@@ -226,7 +272,7 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
         </div>
 
         {impactSummary && (
-          <div className="details-section">
+          <div className="details-section" id="impact-summary">
             <h4>Refactoring Impact Summary</h4>
             <div className="impact-box">
               <p>
