@@ -3366,14 +3366,20 @@ function computeSourceHash(sourceDir) {
       .filter(Array.isArray)
       .flat()
       .filter(x => typeof x === "string")
-  ).sort();
+  ).sort((a, b) => {
+    const relA = normalizePath(path.relative(sourceDir, a));
+    const relB = normalizePath(path.relative(sourceDir, b));
+    return relA.localeCompare(relB);
+  });
 
   const hash = crypto.createHash("sha256");
   for (const file of files) {
     try {
-      const relPath = normalizePath(path.relative(PROJECT_ROOT, file));
-      const stat = fs.statSync(file);
-      hash.update(`${relPath}:${stat.size}:${stat.mtimeMs}\n`);
+      const relPath = normalizePath(path.relative(sourceDir, file));
+      const content = fs.readFileSync(file);
+      hash.update(`file:${relPath}\n`);
+      hash.update(content);
+      hash.update(`\n`);
     } catch (_) {}
   }
   return "sha256:" + hash.digest("hex");
@@ -6897,6 +6903,17 @@ if (require.main === module) {
     );
   }
   } catch (error) {
+    if (OUTPUT_DIR) {
+      const manifestPath = path.join(OUTPUT_DIR, "analysis-manifest.json");
+      if (fs.existsSync(manifestPath)) {
+        try {
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+          if (manifest.status === "COMPLETE") {
+            fs.rmSync(manifestPath, { force: true });
+          }
+        } catch (_) {}
+      }
+    }
     console.error("");
     console.error("Analyzer failed:");
     console.error(error.message);

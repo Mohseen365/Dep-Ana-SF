@@ -52,17 +52,31 @@ node dependency-analyzer.cjs analyze force-app/main/default --output-dir ./analy
 
 ---
 
-## 4. Outputs & Required Integration Artifacts
+## 4. Artifact Classification & Contract Scope
 
-When `analyze` executes, it emits a deterministic export directory containing these core integration artifacts:
+Generated artifacts are classified into three distinct tiers:
 
-| Artifact Path | Purpose | Producer | Schema / Shape | Mandatory? | Deterministic? |
+### A. Core External Contract (Mandatory for downstream consumers)
+* `analysis-manifest.json`: Manifest format v1.0.0 containing status, versions, source content hash, git commit, and artifact SHA-256 hashes.
+* `dependency-report.json`: Complete raw graph topology, symbol registry, and metrics.
+* `architecture-metrics.json`: Ranked component risk and coupling metric tables.
+
+### B. Optional Analyzer Artifacts (Available for deep context)
+* `analysis-snapshot.json`: Rehydratable analysis cache with file state tracking.
+* `dependency-report.md`: Human-readable markdown dependency tables.
+* `dependency-summary.md`: Executive repository summary report.
+* `unresolved-references.md`: Unresolved reference evidence tables.
+
+### C. Explorer / UI Artifacts (Visualization specific)
+* `explorer-data.json`: Consolidated, normalized dataset specifically schema-validated for read-only Explorer UI consumption (`explorer-contract.ts` Schema v1.0.0).
+
+| Artifact Path | Classification | Producer | Schema / Shape | Mandatory? | Deterministic? |
 | :--- | :--- | :--- | :--- | :---: | :---: |
-| `analysis-manifest.json` | Provenance, source identity, completion status, SHA-256 integrity hashes | `dependency-analyzer.cjs` | Manifest Schema v1.0.0 | YES | YES |
-| `explorer-data.json` | Primary consolidated dataset (nodes, edges, cycles, metrics, impact closures) | `scripts/export-explorer.cjs` | Explorer Contract v1.0.0 | YES | YES |
-| `dependency-report.json` | Complete raw graph, symbol registry, and metrics report | `dependency-analyzer.cjs` | Raw Fact JSON | YES | YES |
-| `analysis-snapshot.json` | Rehydratable analysis snapshot cache with file state fingerprint | `dependency-analyzer.cjs` | Snapshot Schema v4 | YES | YES |
-| `architecture-metrics.json` | Ranked component risk & coupling metric tables | `dependency-analyzer.cjs` | Metrics JSON | YES | YES |
+| `analysis-manifest.json` | Core External Contract | `dependency-analyzer.cjs` | Manifest Schema v1.0.0 | YES | YES |
+| `dependency-report.json` | Core External Contract | `dependency-analyzer.cjs` | Raw Facts JSON | YES | YES |
+| `architecture-metrics.json` | Core External Contract | `dependency-analyzer.cjs` | Metrics JSON | YES | YES |
+| `analysis-snapshot.json` | Optional Analyzer Artifact | `dependency-analyzer.cjs` | Snapshot Schema v4 | NO | YES |
+| `explorer-data.json` | Explorer / UI Artifact | `scripts/export-explorer.cjs` | Explorer Contract v1.0.0 | NO | YES |
 
 ---
 
@@ -84,30 +98,30 @@ When `analyze` executes, it emits a deterministic export directory containing th
   },
   "status": "COMPLETE",
   "artifacts": {
+    "dependencyReport": {
+      "path": "dependency-report.json",
+      "fileHash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+    },
     "explorerData": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
       "fileHash": "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
       "nodeCount": 45,
       "edgeCount": 112
-    },
-    "dependencyReport": {
-      "path": "dependency-report.json",
-      "fileHash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
     }
   }
 }
 ```
 
 ### Manifest Fields
-* `manifestVersion`: Schema version of the manifest format itself (`1.0.0`).
-* `analyzerVersion`: Version of the engine that produced the analysis (`13.0.0`).
-* `contractVersion`: Version of the integration data contract (`1.0.0`).
+* `manifestVersion`: Version of the manifest format itself (`1.0.0`).
+* `analyzerVersion`: Version of the static analysis engine implementation (`13.0.0`).
+* `contractVersion`: Version of the external data contract schema (`1.0.0`).
 * `generatedAt`: ISO 8601 generation timestamp.
 * `source.directory`: Normalized relative path to analyzed source directory.
 * `source.fileCount`: Number of Salesforce source files scanned.
-* `source.sourceHash`: SHA-256 fingerprint computed across source file paths, sizes, and mtime stamps.
-* `source.gitCommit`: Git commit hash of the analyzed source repository (if running inside a Git repository).
+* `source.sourceHash`: True content-based SHA-256 fingerprint computed over sorted relative file paths and file content bytes (independent of `mtime` or absolute path locations).
+* `source.gitCommit`: Git commit hash of the analyzed source repository if Git is present, or `null` if Git is unavailable.
 * `status`: Completion status (`COMPLETE` or `FAILED`).
 * `artifacts`: Key-value map of available artifact files and their SHA-256 file hashes.
 
@@ -115,25 +129,11 @@ When `analyze` executes, it emits a deterministic export directory containing th
 
 ## 6. Versioning & SemVer Strategy
 
-The analyzer maintains clear separation between system versions:
+System versions are strictly distinct:
 
-```text
-┌────────────────────────────────┐
-│    Analyzer Version: 13.0.0    │  -> Engine implementation & AST parsing logic
-└───────────────┬────────────────┘
-                │
-┌───────────────▼────────────────┐
-│    Contract Version: 1.0.0     │  -> explorer-data.json schema definitions
-└───────────────┬────────────────┘
-                │
-┌───────────────▼────────────────┐
-│    Manifest Version: 1.0.0     │  -> analysis-manifest.json provenance format
-└────────────────────────────────┘
-```
-
-* **Major Bump:** Breaking schema changes (e.g. Contract `2.0.0`).
-* **Minor Bump:** Additive non-breaking facts (e.g. Contract `1.1.0`).
-* **Patch Bump:** Engine bug fixes or metric weight tweaks without schema modification.
+* **`analyzerVersion` (`13.0.0`):** Bumps when static analysis parsing or metric calculation algorithms change.
+* **`contractVersion` (`1.0.0`):** Bumps when external JSON schema structures change (breaking vs additive).
+* **`manifestVersion` (`1.0.0`):** Bumps when `analysis-manifest.json` metadata format changes.
 
 ---
 
@@ -141,19 +141,8 @@ The analyzer maintains clear separation between system versions:
 
 The CLI provides deterministic, machine-detectable exit codes:
 
-* **Exit Code 0 (Success):** Analysis completed successfully; output artifacts written to disk.
-* **Exit Code 1 (Failure):** Analysis failed (e.g., missing source directory, invalid options, unexpected file read error). Error details are written to `stderr`.
-
-```bash
-# Programmatic exit code check in Node.js consumer
-const { spawnSync } = require("child_process");
-const result = spawnSync("node", ["dependency-analyzer.cjs", "analyze", sourceDir]);
-
-if (result.status !== 0) {
-  console.error("Analyzer failed:", result.stderr.toString());
-  process.exit(1);
-}
-```
+* **Exit Code 0 (Success):** Analysis completed successfully; manifest written with `status: "COMPLETE"`.
+* **Exit Code 1 (Failure):** Analysis failed (e.g. missing source directory, invalid options). Useful error message emitted to `stderr`, and any incomplete or stale `status: "COMPLETE"` manifest is removed.
 
 ---
 
@@ -162,8 +151,8 @@ if (result.status !== 0) {
 External consumers MUST verify artifact freshness before using generated datasets for refactoring:
 
 1. **Check Status:** Assert `status === "COMPLETE"` in `analysis-manifest.json`.
-2. **Verify File Integrity:** Re-compute SHA-256 hash of `explorer-data.json` and compare against `artifacts.explorerData.fileHash`.
-3. **Verify Source Identity:** Compute the SHA-256 source hash over current files in `<sourceDir>` and assert equality with `source.sourceHash`. If hashes differ, source code was modified after analysis, requiring a re-run.
+2. **Verify File Integrity:** Re-compute SHA-256 hash of `dependency-report.json` and compare against `artifacts.dependencyReport.fileHash`.
+3. **Verify Source Identity:** Compute the content-based SHA-256 source hash over current files in `<sourceDir>` and assert equality with `source.sourceHash`.
 
 ---
 
@@ -171,7 +160,7 @@ External consumers MUST verify artifact freshness before using generated dataset
 
 ### `dependency-analyzer` owns:
 * Salesforce source discovery & AST parsing.
-* Symbol registry & dependency resolution (`EXACT`, `INFERRED`, `HEURISTIC`, `UNRESOLVED`).
+* Symbol registry & dependency resolution.
 * Graph construction & directional edge evidence extractions.
 * Deterministic metrics (`fanIn`, `fanOut`, `coupling`, `risk`).
 * Circular dependency detection (Tarjan's SCC algorithm).
