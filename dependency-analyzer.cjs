@@ -3586,6 +3586,288 @@ function getAnalysis(sourceDir, options = {}) {
   return analyze(sourceDir, options, isGlobalAnalyze);
 }
 
+// ============================================================
+// Deterministic Test Gap Analysis Engine
+// ============================================================
+
+/**
+ * Deterministically analyzes test gaps for a component based on repository facts.
+ * Categorizes signals into:
+ *  - 'test-component': component itself is a test suite/class
+ *  - 'known-coverage-failure': runtime coverage metadata exists indicating failure (<75% or explicit failure status)
+ *  - 'covered': direct dependency edge or reference from a test component exists
+ *  - 'likely-covered': single matching test found by naming convention without direct graph edge
+ *  - 'ambiguous-test': multiple candidate tests matched without a single clear match
+ *  - 'no-test-evidence': no test component, dependency, reference, or naming match found
+ */
+function analyzeTestGap(target, registryInput, graphInput, options = {}) {
+  const targetId = typeof target === "string" ? target : target.id;
+  const targetParsed = (typeof target === "object" && target.parsed) ? target.parsed : {};
+  const targetType = (typeof target === "object" && target.type) ? target.type : (parseIdParts(targetId).type);
+  const targetName = (typeof target === "object" && target.name) ? target.name : (parseIdParts(targetId).name);
+
+  // 1. Is the component itself a test component?
+  const isTestComponent = Boolean(
+    targetParsed.isTest ||
+    (targetType === "ApexClass" && /Test$/i.test(targetName))
+  );
+
+  if (isTestComponent) {
+    return {
+      signal: "test-component",
+      status: "TEST_COMPONENT",
+      hasTestGap: false,
+      matchingTests: [],
+      coverageData: null,
+      reason: "Component is a test component itself.",
+      evidence: [
+        {
+          type: "isTest",
+          description: "Component flagged as test component by @isTest annotation or test naming convention."
+        }
+      ]
+    };
+  }
+
+  // 2. Is actual coverage data available (e.g. attached to parsed/target metadata)?
+  const coverageData = targetParsed.coverage || (typeof target === "object" ? target.coverage : null) || null;
+  if (coverageData) {
+    const percent = coverageData.percentCovered ?? coverageData.coveragePercent ?? coverageData.percent;
+    const isFailed = coverageData.failed === true || coverageData.status === "FAILED" || (percent !== undefined && percent < 75);
+    if (isFailed) {
+      return {
+        signal: "known-coverage-failure",
+        status: "KNOWN_COVERAGE_FAILURE",
+        hasTestGap: true,
+        matchingTests: coverageData.testClasses || targetParsed.testReferences || [],
+        coverageData,
+        reason: `Known runtime test coverage failure: ${percent !== undefined ? percent + "%" : "execution failed"} (below target threshold of 75%).`,
+        evidence: [
+          {
+            type: "coverageData",
+            status: coverageData.status || "FAILED",
+            percentCovered: percent
+          }
+        ]
+      };
+    } else {
+      return {
+        signal: "covered",
+        status: "COVERED",
+        hasTestGap: false,
+        matchingTests: coverageData.testClasses || targetParsed.testReferences || [],
+        coverageData,
+        reason: `Known runtime test coverage passed (${percent}%).`,
+        evidence: [
+          {
+            type: "coverageData",
+            status: "PASSED",
+            percentCovered: percent
+          }
+        ]
+      };
+    }
+  }
+
+  // 3. Search for test components in registry and graph edges
+  const symbols = Array.isArray(registryInput)
+    ? registryInput
+    : (registryInput?.symbols || registryInput?.registry || []);
+  const edges = Array.isArray(graphInput)
+    ? graphInput
+    : (graphInput?.edges || []);
+
+  const allTestSymbols = symbols.filter(s =>
+    Boolean(s.parsed?.isTest || (s.type === "ApexClass" && /Test$/i.test(s.name)))
+  );
+
+  // Direct graph edges involving target and test components
+  const directTestEdges = edges.filter(e => {
+    if (e.from === targetId) {
+      const targetNodeSymbol = symbols.find(s => s.id === e.to);
+      return targetNodeSymbol && Boolean(targetNodeSymbol.parsed?.isTest || (targetNodeSymbol.type === "ApexClass" && /Test$/i.test(targetNodeSymbol.name)));
+    }
+    if (e.to === targetId) {
+      const sourceNodeSymbol = symbols.find(s => s.id === e.from);
+      return sourceNodeSymbol && Boolean(sourceNodeSymbol.parsed?.isTest || (sourceNodeSymbol.type === "ApexClass" && /Test$/i.test(sourceNodeSymbol.name)));
+    }
+    return false;
+  });
+
+  const directTestIds = unique(directTestEdges.map(e => (e.from === targetId ? e.to : e.from)));
+
+  // Direct test references where test symbols reference targetName
+  const referencingTestIds = allTestSymbols
+    .filter(s => {
+      const refs = s.parsed?.testReferences || [];
+      return refs.includes(targetName) || (s.parsed?.apex || []).some(m => m.includes(targetName));
+    })
+    .map(s => s.id);
+
+  const directCandidateIds = unique([...directTestIds, ...referencingTestIds]);
+
+  // 4. Test Naming Convention Matching
+  const cleanTargetName = targetName.toLowerCase();
+  const namingMatchedTestSymbols = allTestSymbols.filter(s => {
+    const sName = s.name.toLowerCase();
+    return (
+      sName === `${cleanTargetName}test` ||
+      sName === `${cleanTargetName}_test` ||
+      sName === `test${cleanTargetName}` ||
+      sName === `test_${cleanTargetName}` ||
+      sName === `${cleanTargetName}tests` ||
+      sName === `test${cleanTargetName}test`
+    );
+  });
+
+  const namingMatchedIds = unique(namingMatchedTestSymbols.map(s => s.id));
+
+  // Combine candidates
+  const allCandidateIds = unique([...directCandidateIds, ...namingMatchedIds]);
+
+  // Evidence construction
+  const evidence = [];
+  directTestEdges.forEach(e => {
+    evidence.push({
+      type: "dependencyEdge",
+      from: e.from,
+      to: e.to,
+      edgeType: e.type,
+      evidence: e.evidence || null
+    });
+  });
+  referencingTestIds.forEach(id => {
+    evidence.push({
+      type: "testReference",
+      testId: id,
+      targetName
+    });
+  });
+  namingMatchedIds.forEach(id => {
+    evidence.push({
+      type: "namingMatch",
+      testId: id,
+      targetName
+    });
+  });
+
+  // 5. Categorize signal
+  if (allCandidateIds.length === 0) {
+    return {
+      signal: "no-test-evidence",
+      status: "NO_TEST_EVIDENCE",
+      hasTestGap: true,
+      matchingTests: [],
+      coverageData: null,
+      reason: "No deterministic test evidence found in registry, dependency graph, or naming relationships.",
+      evidence: []
+    };
+  }
+
+  const isAmbiguous = (namingMatchedIds.length > 1) || (
+    directCandidateIds.length > 1 &&
+    !directCandidateIds.some(id => parseIdParts(id).name.toLowerCase() === `${cleanTargetName}test`)
+  );
+
+  if (isAmbiguous) {
+    return {
+      signal: "ambiguous-test",
+      status: "AMBIGUOUS_TEST",
+      hasTestGap: true,
+      matchingTests: allCandidateIds,
+      coverageData: null,
+      reason: `Ambiguous test relationships detected: multiple candidate test components matched (${allCandidateIds.join(", ")}).`,
+      evidence
+    };
+  }
+
+  if (directCandidateIds.length > 0) {
+    return {
+      signal: "covered",
+      status: "COVERED",
+      hasTestGap: false,
+      matchingTests: allCandidateIds,
+      coverageData: null,
+      reason: `Direct test evidence identified: ${directCandidateIds.join(", ")}.`,
+      evidence
+    };
+  }
+
+  if (namingMatchedIds.length === 1) {
+    return {
+      signal: "likely-covered",
+      status: "LIKELY_COVERED",
+      hasTestGap: false,
+      matchingTests: namingMatchedIds,
+      coverageData: null,
+      reason: `Test component found by standard naming relationship (${namingMatchedIds[0]}), but no explicit dependency edge detected in graph.`,
+      evidence
+    };
+  }
+
+  return {
+    signal: "no-test-evidence",
+    status: "NO_TEST_EVIDENCE",
+    hasTestGap: true,
+    matchingTests: allCandidateIds,
+    coverageData: null,
+    reason: "Test relationship status could not be deterministically resolved.",
+    evidence
+  };
+}
+
+/**
+ * Computes repository-wide test gap summary metrics.
+ */
+function computeTestGapSummary(registryInput, graphInput) {
+  const symbols = Array.isArray(registryInput)
+    ? registryInput
+    : (registryInput?.symbols || registryInput?.registry || []);
+
+  const summary = {
+    totalComponents: symbols.length,
+    coveredCount: 0,
+    likelyCoveredCount: 0,
+    noTestEvidenceCount: 0,
+    knownCoverageFailureCount: 0,
+    ambiguousTestCount: 0,
+    testComponentCount: 0,
+    componentsWithTestGap: 0
+  };
+
+  for (const symbol of symbols) {
+    const gap = analyzeTestGap(symbol, registryInput, graphInput);
+    switch (gap.signal) {
+      case "covered":
+        summary.coveredCount++;
+        break;
+      case "likely-covered":
+        summary.likelyCoveredCount++;
+        break;
+      case "no-test-evidence":
+        summary.noTestEvidenceCount++;
+        summary.componentsWithTestGap++;
+        break;
+      case "known-coverage-failure":
+        summary.knownCoverageFailureCount++;
+        summary.componentsWithTestGap++;
+        break;
+      case "ambiguous-test":
+        summary.ambiguousTestCount++;
+        summary.componentsWithTestGap++;
+        break;
+      case "test-component":
+        summary.testComponentCount++;
+        break;
+      default:
+        summary.componentsWithTestGap++;
+        break;
+    }
+  }
+
+  return summary;
+}
+
 function buildComponentIntelligence(target, result, options = {}) {
   const metricById = new Map(result.metricList.map(x => [x.id, x]));
   const nodes = nodeById(result.graph);
@@ -3752,7 +4034,8 @@ function buildComponentIntelligence(target, result, options = {}) {
     tests: {
       isTest: Boolean(target.parsed?.isTest),
       references: target.parsed?.testReferences || [],
-      impacted: impact.impactedTests || []
+      impacted: impact.impactedTests || [],
+      testGap: analyzeTestGap(target, result.registry, result.graph, options)
     },
     architecture: {
       extends: target.parsed?.extends || [],
@@ -5354,7 +5637,8 @@ function writeComponentAnalysisArtifacts(
       highRiskCount: scopedMetrics.filter(x => x.risk === "HIGH").length,
       mediumRiskCount: scopedMetrics.filter(x => x.risk === "MEDIUM").length,
       lowRiskCount: scopedMetrics.filter(x => x.risk === "LOW").length,
-      cycleCount: scopedCycles.length
+      cycleCount: scopedCycles.length,
+      testGapSummary: computeTestGapSummary(scopedRegistry, scopedGraph)
     }, null, 2)
   );
 
@@ -5448,6 +5732,8 @@ function analyze(sourceDir, options, writeOutputs = true) {
     { recursive: true }
   );
 
+  const testGapSummary = computeTestGapSummary(registry, graph);
+
   const reportJson = {
     generatedAt: new Date().toISOString(),
     sourceDirectory: rel(sourceDir),
@@ -5462,6 +5748,7 @@ function analyze(sourceDir, options, writeOutputs = true) {
       objects: discovered.objects.length,
       fields: discovered.fields.length
     },
+    testGapSummary,
     nodes: graph.nodes,
     edges: graph.edges,
     metrics: metricList,
@@ -5519,6 +5806,7 @@ function analyze(sourceDir, options, writeOutputs = true) {
       options: {
         maxGraphEdges: options?.maxGraphEdges || 10000
       },
+      testGapSummary,
       registry: reportJson.registry,
       nodes: reportJson.nodes,
       edges: reportJson.edges,
@@ -5597,7 +5885,8 @@ function analyze(sourceDir, options, writeOutputs = true) {
           metricList.filter(
             x => x.risk === "LOW"
           ).length,
-        cycleCount: cycles.length
+        cycleCount: cycles.length,
+        testGapSummary
       },
       null,
       2
@@ -6932,6 +7221,8 @@ if (typeof module !== "undefined" && module.exports) {
     createCanonicalRelationship,
     determineResolution,
     parseIdParts,
+    analyzeTestGap,
+    computeTestGapSummary,
     analyze,
     getAnalysis,
     buildGraph,

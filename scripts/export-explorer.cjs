@@ -14,6 +14,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { analyzeTestGap } = require("../dependency-analyzer.cjs");
 
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
@@ -213,6 +214,9 @@ function exportExplorerData(inputPath, outputPath) {
     });
   }
 
+  const rawRegistry = Array.isArray(reportData.registry) ? reportData.registry : [];
+  const rawEdges = Array.isArray(reportData.edges) ? reportData.edges : [];
+
   // Process Nodes
   const rawNodes = Array.isArray(reportData.nodes) ? reportData.nodes : [];
   const normalizedNodes = rawNodes.map(rawNode => {
@@ -234,6 +238,27 @@ function exportExplorerData(inputPath, outputPath) {
     const riskReasons = Array.isArray(metricItem.reasons) ? [...metricItem.reasons] : [];
 
     const isTest = Boolean(parsed.isTest || (type === "ApexClass" && displayName.endsWith("Test")));
+
+    const testGapResult = analyzeTestGap(
+      { id, type, name: displayName, parsed },
+      rawRegistry,
+      rawEdges
+    );
+
+    let testCoverageStatus = "UNTESTED";
+    if (isTest || testGapResult.signal === "test-component") {
+      testCoverageStatus = "COVERED";
+    } else if (testGapResult.signal === "covered") {
+      testCoverageStatus = "COVERED";
+    } else if (testGapResult.signal === "likely-covered") {
+      testCoverageStatus = "LIKELY_COVERED";
+    } else if (testGapResult.signal === "known-coverage-failure") {
+      testCoverageStatus = "KNOWN_COVERAGE_FAILURE";
+    } else if (testGapResult.signal === "ambiguous-test") {
+      testCoverageStatus = "AMBIGUOUS";
+    } else {
+      testCoverageStatus = "UNTESTED";
+    }
 
     return {
       id,
@@ -263,7 +288,7 @@ function exportExplorerData(inputPath, outputPath) {
         isHighRisk: risk === "HIGH",
         hasCycles: false, // Updated after cycles pass
         hasUnresolved: unresolved > 0,
-        testCoverageStatus: isTest ? "COVERED" : "UNTESTED"
+        testCoverageStatus
       }
     };
   });
@@ -272,7 +297,6 @@ function exportExplorerData(inputPath, outputPath) {
   normalizedNodes.sort((a, b) => a.id.localeCompare(b.id));
 
   // Process Edges
-  const rawEdges = Array.isArray(reportData.edges) ? reportData.edges : [];
   const normalizedEdges = rawEdges.map(rawEdge => {
     const source = normalizeNodeId(rawEdge.from, "ApexClass", "");
     const target = normalizeNodeId(rawEdge.to, "ApexClass", "");

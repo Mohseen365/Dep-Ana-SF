@@ -10,6 +10,7 @@
     "explorer:build": "node scripts/run-explorer.cjs --build",
     "adapter": "node scripts/export-explorer.cjs",
     "adapter:test": "node scripts/test-export-explorer.cjs",
-    "test:cli": "node scripts/test-cli-integration.cjs"
+    "test:cli": "node scripts/test-cli-integration.cjs",
+    "test:test-gap": "node scripts/test-test-gap-analysis.cjs"
   }
 }
