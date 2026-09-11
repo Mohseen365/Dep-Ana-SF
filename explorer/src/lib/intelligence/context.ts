@@ -2,7 +2,7 @@
  * Architecture Intelligence Foundation - ArchitectureContext and ArchitectureIndexes Construction
  *
  * Provides factory functions for building read-only ArchitectureIndexes and
- * ArchitectureContext instances from ExplorerDataSchema.
+ * ArchitectureContext instances from ExplorerDataSchema with runtime immutability.
  */
 
 import type {
@@ -17,12 +17,53 @@ import type {
   ArchitectureContext,
   IntelligenceConfig
 } from "./types";
-import { DEFAULT_INTELLIGENCE_CONFIG } from "./types";
+import { ImmutableMap, DEFAULT_INTELLIGENCE_CONFIG } from "./types";
+
+/**
+ * Recursively freezes an object and all nested properties to guarantee runtime immutability.
+ */
+export function deepFreeze<T>(obj: T): Readonly<T> {
+  if (obj === null || typeof obj !== "object" || Object.isFrozen(obj)) {
+    return obj as Readonly<T>;
+  }
+
+  // Freeze Map / Set contents
+  if (obj instanceof Map) {
+    obj.forEach((val) => deepFreeze(val));
+    return Object.freeze(obj) as unknown as Readonly<T>;
+  }
+
+  if (obj instanceof Set) {
+    obj.forEach((val) => deepFreeze(val));
+    return Object.freeze(obj) as unknown as Readonly<T>;
+  }
+
+  // Freeze arrays and objects
+  const propNames = Object.getOwnPropertyNames(obj) as (keyof T)[];
+  for (const name of propNames) {
+    const value = obj[name];
+    if (value !== null && typeof value === "object") {
+      deepFreeze(value);
+    }
+  }
+
+  return Object.freeze(obj) as Readonly<T>;
+}
+
+/**
+ * Performs a deep defensive clone of a JSON-serializable object.
+ */
+function deepClone<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data));
+}
 
 /**
  * Builds read-only O(1) ArchitectureIndexes over an Explorer dataset.
  */
 export function buildArchitectureIndexes(data: ExplorerDataSchema): ArchitectureIndexes {
+  // Defensive clone of data arrays to ensure context isolation
+  const clonedData = deepClone(data);
+
   const nodeByIdMap = new Map<string, ExplorerNode>();
   const nodesByTypeMap = new Map<ExplorerNodeType, ExplorerNode[]>();
   const outgoingEdgesMap = new Map<string, ExplorerEdge[]>();
@@ -32,23 +73,24 @@ export function buildArchitectureIndexes(data: ExplorerDataSchema): Architecture
   const impactByNodeIdMap = new Map<string, ExplorerComponentImpactSummary>();
 
   // Index Nodes
-  data.nodes.forEach((node: ExplorerNode) => {
-    nodeByIdMap.set(node.id, Object.freeze({ ...node }));
+  clonedData.nodes.forEach((node: ExplorerNode) => {
+    const frozenNode = deepFreeze(node);
+    nodeByIdMap.set(node.id, frozenNode);
 
     if (!nodesByTypeMap.has(node.type)) {
       nodesByTypeMap.set(node.type, []);
     }
-    nodesByTypeMap.get(node.type)!.push(Object.freeze({ ...node }));
+    nodesByTypeMap.get(node.type)!.push(frozenNode);
   });
 
-  // Freeze node lists per type
+  const frozenNodesByType = new Map<ExplorerNodeType, readonly ExplorerNode[]>();
   nodesByTypeMap.forEach((list: ExplorerNode[], type: ExplorerNodeType) => {
-    nodesByTypeMap.set(type, Object.freeze(list) as unknown as ExplorerNode[]);
+    frozenNodesByType.set(type, deepFreeze(list));
   });
 
   // Index Edges
-  data.edges.forEach((edge: ExplorerEdge) => {
-    const frozenEdge = Object.freeze({ ...edge });
+  clonedData.edges.forEach((edge: ExplorerEdge) => {
+    const frozenEdge = deepFreeze(edge);
 
     if (!outgoingEdgesMap.has(edge.source)) {
       outgoingEdgesMap.set(edge.source, []);
@@ -61,17 +103,19 @@ export function buildArchitectureIndexes(data: ExplorerDataSchema): Architecture
     incomingEdgesMap.get(edge.target)!.push(frozenEdge);
   });
 
-  // Freeze edge lists per node
+  const frozenOutgoingEdges = new Map<string, readonly ExplorerEdge[]>();
   outgoingEdgesMap.forEach((list: ExplorerEdge[], src: string) => {
-    outgoingEdgesMap.set(src, Object.freeze(list) as unknown as ExplorerEdge[]);
+    frozenOutgoingEdges.set(src, deepFreeze(list));
   });
+
+  const frozenIncomingEdges = new Map<string, readonly ExplorerEdge[]>();
   incomingEdgesMap.forEach((list: ExplorerEdge[], tgt: string) => {
-    incomingEdgesMap.set(tgt, Object.freeze(list) as unknown as ExplorerEdge[]);
+    frozenIncomingEdges.set(tgt, deepFreeze(list));
   });
 
   // Index Cycles
-  data.cycles.forEach((cycle: ExplorerCycleGroup) => {
-    const frozenCycle = Object.freeze({ ...cycle, nodes: [...cycle.nodes] });
+  clonedData.cycles.forEach((cycle: ExplorerCycleGroup) => {
+    const frozenCycle = deepFreeze(cycle);
     cycle.nodes.forEach((nodeId: string) => {
       if (!cyclesByNodeIdMap.has(nodeId)) {
         cyclesByNodeIdMap.set(nodeId, []);
@@ -80,49 +124,41 @@ export function buildArchitectureIndexes(data: ExplorerDataSchema): Architecture
     });
   });
 
+  const frozenCyclesByNode = new Map<string, readonly ExplorerCycleGroup[]>();
   cyclesByNodeIdMap.forEach((list: ExplorerCycleGroup[], nodeId: string) => {
-    cyclesByNodeIdMap.set(nodeId, Object.freeze(list) as unknown as ExplorerCycleGroup[]);
+    frozenCyclesByNode.set(nodeId, deepFreeze(list));
   });
 
   // Index Unresolved References
-  data.unresolvedReferences.forEach((unresolved: ExplorerUnresolvedReference) => {
-    const frozenUnresolved = Object.freeze({ ...unresolved });
+  clonedData.unresolvedReferences.forEach((unresolved: ExplorerUnresolvedReference) => {
+    const frozenUnresolved = deepFreeze(unresolved);
     if (!unresolvedBySourceIdMap.has(unresolved.sourceNodeId)) {
       unresolvedBySourceIdMap.set(unresolved.sourceNodeId, []);
     }
     unresolvedBySourceIdMap.get(unresolved.sourceNodeId)!.push(frozenUnresolved);
   });
 
+  const frozenUnresolvedBySource = new Map<string, readonly ExplorerUnresolvedReference[]>();
   unresolvedBySourceIdMap.forEach((list: ExplorerUnresolvedReference[], srcId: string) => {
-    unresolvedBySourceIdMap.set(srcId, Object.freeze(list) as unknown as ExplorerUnresolvedReference[]);
+    frozenUnresolvedBySource.set(srcId, deepFreeze(list));
   });
 
   // Index Impact Summaries
-  if (data.impactSummaries) {
-    Object.entries(data.impactSummaries).forEach(([nodeId, summary]: [string, ExplorerComponentImpactSummary]) => {
-      impactByNodeIdMap.set(
-        nodeId,
-        Object.freeze({
-          ...summary,
-          directDependencies: [...summary.directDependencies],
-          directDependents: [...summary.directDependents],
-          transitiveDependencies: [...summary.transitiveDependencies],
-          transitiveDependents: [...summary.transitiveDependents],
-          impactedTests: [...summary.impactedTests]
-        })
-      );
+  if (clonedData.impactSummaries) {
+    Object.entries(clonedData.impactSummaries).forEach(([nodeId, summary]: [string, ExplorerComponentImpactSummary]) => {
+      impactByNodeIdMap.set(nodeId, deepFreeze(summary));
     });
   }
 
-  return Object.freeze({
-    nodeById: nodeByIdMap,
-    nodesByType: nodesByTypeMap,
-    outgoingEdges: outgoingEdgesMap,
-    incomingEdges: incomingEdgesMap,
-    cyclesByNodeId: cyclesByNodeIdMap,
-    unresolvedBySourceId: unresolvedBySourceIdMap,
-    impactByNodeId: impactByNodeIdMap
-  });
+  return deepFreeze({
+    nodeById: new ImmutableMap(nodeByIdMap),
+    nodesByType: new ImmutableMap(frozenNodesByType),
+    outgoingEdges: new ImmutableMap(frozenOutgoingEdges),
+    incomingEdges: new ImmutableMap(frozenIncomingEdges),
+    cyclesByNodeId: new ImmutableMap(frozenCyclesByNode),
+    unresolvedBySourceId: new ImmutableMap(frozenUnresolvedBySource),
+    impactByNodeId: new ImmutableMap(impactByNodeIdMap)
+  }) as ArchitectureIndexes;
 }
 
 /**
@@ -132,11 +168,13 @@ export function createArchitectureContext(
   data: ExplorerDataSchema,
   config: IntelligenceConfig = DEFAULT_INTELLIGENCE_CONFIG
 ): ArchitectureContext {
+  const clonedData = deepFreeze(deepClone(data));
+  const clonedConfig = deepFreeze(deepClone(config));
   const indexes = buildArchitectureIndexes(data);
 
-  return Object.freeze({
-    data: Object.freeze({ ...data }),
-    config: Object.freeze({ ...config }),
+  return deepFreeze({
+    data: clonedData,
+    config: clonedConfig,
     indexes
-  });
+  }) as ArchitectureContext;
 }

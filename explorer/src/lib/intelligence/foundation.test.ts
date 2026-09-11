@@ -3,6 +3,7 @@ import {
   createArchitectureContext,
   buildArchitectureIndexes,
   createFinding,
+  ImmutableMap,
   type ExplorerDataSchema
 } from "./index";
 
@@ -257,6 +258,92 @@ describe("Architecture Intelligence Foundation", () => {
     });
   });
 
+  describe("Runtime Immutability & Defensive Copying Hardening Tests", () => {
+    it("should prevent Map mutation attempts on ImmutableMap instances", () => {
+      const context = createArchitectureContext(mockExplorerData);
+      const nodeById = context.indexes.nodeById;
+
+      expect(nodeById).toBeInstanceOf(ImmutableMap);
+      // @ts-expect-error set method does not exist on ImmutableMap
+      expect(nodeById.set).toBeUndefined();
+
+      expect(() => {
+        // @ts-expect-error property modification on frozen object
+        nodeById._map = new Map();
+      }).toThrow(TypeError);
+    });
+
+    it("should prevent mutation on nested node, edge, and canonical properties", () => {
+      const context = createArchitectureContext(mockExplorerData);
+      const node = context.indexes.nodeById.get("ApexClass:AssetController");
+      const edge = context.indexes.outgoingEdges.get("ApexClass:AssetController")?.[0];
+
+      expect(Object.isFrozen(node)).toBe(true);
+      expect(Object.isFrozen(node?.metrics)).toBe(true);
+      expect(Object.isFrozen(edge)).toBe(true);
+      expect(Object.isFrozen(edge?.canonical)).toBe(true);
+      expect(Object.isFrozen(edge?.canonical.source)).toBe(true);
+
+      expect(() => {
+        if (node) node.displayName = "MutatedName";
+      }).toThrow(TypeError);
+
+      expect(() => {
+        if (edge) edge.canonical.source.name = "MutatedSource";
+      }).toThrow(TypeError);
+    });
+
+    it("should prevent array mutation on context data and index lists", () => {
+      const context = createArchitectureContext(mockExplorerData);
+      const nodesArray = context.data.nodes as ExplorerDataSchema["nodes"];
+      const apexClassList = context.indexes.nodesByType.get("ApexClass") as unknown as unknown[];
+
+      expect(Object.isFrozen(nodesArray)).toBe(true);
+      expect(Object.isFrozen(apexClassList)).toBe(true);
+
+      expect(() => {
+        nodesArray.push({} as never);
+      }).toThrow(TypeError);
+
+      expect(() => {
+        apexClassList.push({} as never);
+      }).toThrow(TypeError);
+    });
+
+    it("should preserve original caller input without mutating caller-owned data", () => {
+      const callerInput: ExplorerDataSchema = JSON.parse(JSON.stringify(mockExplorerData));
+      const callerSnapshot = JSON.stringify(callerInput);
+
+      createArchitectureContext(callerInput);
+
+      expect(JSON.stringify(callerInput)).toBe(callerSnapshot);
+      expect(Object.isFrozen(callerInput)).toBe(false);
+      expect(Object.isFrozen(callerInput.nodes)).toBe(false);
+    });
+
+    it("should enforce deep freezing on configuration thresholds and custom settings", () => {
+      const context = createArchitectureContext(mockExplorerData, {
+        profileName: "Custom",
+        version: "1.0",
+        thresholds: {
+          highFanInThreshold: 5,
+          highFanOutThreshold: 5,
+          highCouplingThreshold: 10
+        },
+        customSettings: { nested: { flag: true } }
+      });
+
+      expect(Object.isFrozen(context.config)).toBe(true);
+      expect(Object.isFrozen(context.config.thresholds)).toBe(true);
+      expect(Object.isFrozen(context.config.customSettings)).toBe(true);
+      expect(Object.isFrozen((context.config.customSettings as { nested: object }).nested)).toBe(true);
+
+      expect(() => {
+        context.config.thresholds.highFanInThreshold = 99;
+      }).toThrow(TypeError);
+    });
+  });
+
   describe("ArchitectureFinding & Provenance Builder", () => {
     it("should create deterministic frozen ArchitectureFinding objects", () => {
       const finding = createFinding({
@@ -294,10 +381,22 @@ describe("Architecture Intelligence Foundation", () => {
       expect(finding.provenance.origin).toBe("ANALYZER_FACT");
       expect(finding.rule.ruleId).toBe("RULE_CYCLE_001");
 
-      // Verify Object.isFrozen
+      // Verify Object.isFrozen across nested structures
       expect(Object.isFrozen(finding)).toBe(true);
+      expect(Object.isFrozen(finding.nodeIds)).toBe(true);
+      expect(Object.isFrozen(finding.edgeIds)).toBe(true);
+      expect(Object.isFrozen(finding.evidence)).toBe(true);
       expect(Object.isFrozen(finding.provenance)).toBe(true);
+      expect(Object.isFrozen(finding.provenance.facts)).toBe(true);
       expect(Object.isFrozen(finding.rule)).toBe(true);
+
+      expect(() => {
+        finding.nodeIds.push("MutatedNode");
+      }).toThrow(TypeError);
+
+      expect(() => {
+        (finding.provenance.facts as { cycleId: string }).cycleId = "MutatedCycle";
+      }).toThrow(TypeError);
     });
   });
 });

@@ -26,8 +26,8 @@ export interface ArchitectureContext {
 }
 ```
 
-### `ArchitectureIndexes`
-Pre-built read-only `Map` structures providing O(1) lookups:
+### `ArchitectureIndexes` & `ImmutableMap`
+Pre-built read-only `ImmutableMap` structures providing O(1) lookups:
 * `nodeById`: Node lookup by stable ID (`Type:Name`).
 * `nodesByType`: Nodes grouped by `ExplorerNodeType`.
 * `outgoingEdges`: Outgoing dependency edges per source node ID.
@@ -36,9 +36,19 @@ Pre-built read-only `Map` structures providing O(1) lookups:
 * `unresolvedBySourceId`: Unresolved references originating from a source node ID.
 * `impactByNodeId`: Pre-computed impact summaries per component.
 
+`ImmutableMap` wraps standard JavaScript `Map` instances and omits `.set()`, `.delete()`, and `.clear()` methods, ensuring runtime `.set()` attempts throw a `TypeError`.
+
 ---
 
-## 4. Common Architecture Finding Model
+## 4. Runtime Immutability & Defensive Cloning Mechanics
+To enforce strict runtime read-only behavior across all context consumers:
+1. **Defensive Cloning:** `createArchitectureContext` and `buildArchitectureIndexes` perform deep defensive copies of input datasets (`ExplorerDataSchema`) so that caller-owned input objects remain unaffected.
+2. **Recursive Deep Freezing (`deepFreeze`):** All context data, index maps, node arrays, edge canonical metadata, cycle arrays, unresolved references, impact summaries, configuration thresholds, and finding structures are recursively frozen using `deepFreeze`. Attempting to modify properties or push items to arrays throws a runtime `TypeError`.
+3. **`ImmutableMap` Abstraction:** Index maps expose read-only Map interfaces without mutation capabilities.
+
+---
+
+## 5. Common Architecture Finding Model
 
 All derived findings, smells, and alerts use the standardized `ArchitectureFinding` shape:
 
@@ -66,19 +76,19 @@ Every finding explicitly records its origin:
 
 ---
 
-## 5. Rule Identity & Versioning
-Every finding includes a immutable `rule` metadata object (`ruleId`, `ruleVersion`, `name`) ensuring that findings are identifiable, version-tracked, and deterministic across runs.
+## 6. Rule Identity & Versioning
+Every finding includes an immutable `rule` metadata object (`ruleId`, `ruleVersion`, `name`) ensuring that findings are identifiable, version-tracked, and deterministic across runs.
 
 ---
 
-## 6. Determinism & Performance
+## 7. Determinism & Performance
 * **Deterministic Sorting:** `nodeIds`, `edgeIds`, and `evidence` lists are lexicographically sorted upon creation.
-* **Frozen Immutability:** Contexts, maps, lists, and findings are frozen using `Object.freeze` to prevent accidental state mutation.
+* **Frozen Immutability:** Contexts, maps, lists, and findings are deeply frozen using `deepFreeze` to prevent accidental state mutation.
 * **O(1) Indexed Lookups:** Pre-built index maps prevent repeated graph traversals across intelligence evaluations.
 
 ---
 
-## 7. Configuration Boundary
+## 8. Configuration Boundary
 A lightweight `IntelligenceConfig` interface allows threshold and profile customization without hardcoding rules into individual modules:
 
 ```typescript
@@ -97,13 +107,13 @@ export interface IntelligenceConfig {
 
 ---
 
-## 8. What is Deliberately NOT Implemented
+## 9. What is Deliberately NOT Implemented
 * Feature-level logic (Roles, Layers, Smells, Paths, Entry Points, Bottlenecks) is intentionally omitted from this foundation session.
 * Contract Schema v2.0 schema extensions are NOT hardcoded into `explorer-data.json`; intelligence findings remain runtime-derived objects.
 
 ---
 
-## 9. Usage Guidelines for Future Jules Sessions
+## 10. Usage Guidelines for Future Jules Sessions
 
 To create a new intelligence module in future sessions:
 1. Accept `context: ArchitectureContext` as the primary parameter.

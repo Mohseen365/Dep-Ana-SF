@@ -29,6 +29,59 @@ export type {
 };
 
 /**
+ * Immutable ReadonlyMap wrapper that prevents runtime mutation attempts
+ * by omitting `.set()`, `.delete()`, and `.clear()` methods.
+ */
+export class ImmutableMap<K, V> implements ReadonlyMap<K, V> {
+  private readonly _map: Map<K, V>;
+
+  constructor(entries?: readonly (readonly [K, V])[] | Map<K, V> | null) {
+    if (entries instanceof Map) {
+      this._map = new Map(entries);
+    } else if (entries) {
+      this._map = new Map(entries);
+    } else {
+      this._map = new Map();
+    }
+    Object.freeze(this);
+  }
+
+  get(key: K): V | undefined {
+    return this._map.get(key);
+  }
+
+  has(key: K): boolean {
+    return this._map.has(key);
+  }
+
+  get size(): number {
+    return this._map.size;
+  }
+
+  forEach(callbackfn: (value: V, key: K, map: ReadonlyMap<K, V>) => void, thisArg?: unknown): void {
+    this._map.forEach((value, key) => {
+      callbackfn.call(thisArg, value, key, this);
+    });
+  }
+
+  keys(): IterableIterator<K> {
+    return this._map.keys();
+  }
+
+  values(): IterableIterator<V> {
+    return this._map.values();
+  }
+
+  entries(): IterableIterator<[K, V]> {
+    return this._map.entries();
+  }
+
+  [Symbol.iterator](): IterableIterator<[K, V]> {
+    return this._map[Symbol.iterator]();
+  }
+}
+
+/**
  * Severity level for deterministic architecture findings
  */
 export type FindingSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
@@ -118,11 +171,11 @@ export interface IntelligenceConfig {
 export const DEFAULT_INTELLIGENCE_CONFIG: Readonly<IntelligenceConfig> = Object.freeze({
   profileName: "Default-Salesforce-Profile",
   version: "1.0.0",
-  thresholds: {
+  thresholds: Object.freeze({
     highFanInThreshold: 10,
     highFanOutThreshold: 10,
     highCouplingThreshold: 15
-  }
+  })
 });
 
 /**
