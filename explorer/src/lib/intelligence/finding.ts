@@ -11,6 +11,7 @@ import type {
   FindingProvenance,
   RuleIdentity
 } from "./types";
+import { deepFreeze } from "./context";
 
 export interface CreateFindingParams {
   id: string;
@@ -27,7 +28,7 @@ export interface CreateFindingParams {
 
 /**
  * Creates a deterministic, standardized ArchitectureFinding.
- * Ensures arrays are sorted deterministically and object references are frozen.
+ * Ensures arrays are sorted deterministically and all structures are deeply frozen.
  */
 export function createFinding(params: CreateFindingParams): ArchitectureFinding {
   const nodeIds = [...(params.nodeIds || [])].sort();
@@ -38,7 +39,7 @@ export function createFinding(params: CreateFindingParams): ArchitectureFinding 
     return (a.line || 0) - (b.line || 0);
   });
 
-  return Object.freeze({
+  const finding: ArchitectureFinding = {
     id: params.id,
     type: params.type,
     severity: params.severity,
@@ -46,17 +47,19 @@ export function createFinding(params: CreateFindingParams): ArchitectureFinding 
     description: params.description,
     nodeIds,
     edgeIds,
-    evidence,
-    provenance: Object.freeze({
+    evidence: evidence.map(e => ({ ...e })),
+    provenance: {
       origin: params.provenance.origin,
       source: params.provenance.source,
-      facts: Object.freeze({ ...params.provenance.facts })
-    }),
-    rule: Object.freeze({
+      facts: JSON.parse(JSON.stringify(params.provenance.facts || {}))
+    },
+    rule: {
       ruleId: params.rule.ruleId,
       ruleVersion: params.rule.ruleVersion,
       name: params.rule.name,
       description: params.rule.description
-    })
-  });
+    }
+  };
+
+  return deepFreeze(finding);
 }
