@@ -13,6 +13,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
@@ -403,11 +404,54 @@ function exportExplorerData(inputPath, outputPath) {
   const jsonContent = JSON.stringify(explorerData, null, 2);
   fs.writeFileSync(resolvedOutputFile, jsonContent, "utf8");
 
+  updateManifestWithExplorerData(resolvedOutputFile, explorerData);
+
   return {
     inputFile: resolvedInputFile,
     outputFile: resolvedOutputFile,
     explorerData
   };
+}
+
+function updateManifestWithExplorerData(outputFile, explorerData) {
+  const outputDir = path.dirname(outputFile);
+  const manifestPath = path.join(outputDir, "analysis-manifest.json");
+  const fileHash = "sha256:" + crypto.createHash("sha256").update(fs.readFileSync(outputFile)).digest("hex");
+  const relFile = path.basename(outputFile);
+
+  let manifest = null;
+  if (fs.existsSync(manifestPath)) {
+    try {
+      manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    } catch (_) {}
+  }
+
+  if (!manifest) {
+    manifest = {
+      manifestVersion: "1.0.0",
+      analyzerVersion: explorerData.analyzerVersion || DEFAULT_ANALYZER_VERSION,
+      contractVersion: "1.0.0",
+      generatedAt: explorerData.generatedAt || new Date().toISOString(),
+      source: {
+        directory: explorerData.sourceDirectory || "force-app/main/default",
+        fileCount: explorerData.summary?.inventory?.files || 0
+      },
+      status: "COMPLETE",
+      artifacts: {}
+    };
+  }
+
+  if (!manifest.artifacts) manifest.artifacts = {};
+
+  manifest.artifacts.explorerData = {
+    path: relFile,
+    schemaVersion: explorerData.schemaVersion || CURRENT_SCHEMA_VERSION,
+    fileHash,
+    nodeCount: explorerData.summary?.nodeCount || 0,
+    edgeCount: explorerData.summary?.edgeCount || 0
+  };
+
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
 }
 
 // CLI Execution

@@ -129,12 +129,26 @@ const HIGH_COUPLING = 15;
 
 function resolveProjectPath(value) {
   if (!value) return DEFAULT_SOURCE_DIR;
-  return path.isAbsolute(value)
-    ? path.normalize(value)
-    : path.resolve(PROJECT_ROOT, value);
+  const normalized = String(value).replace(/\\/g, "/");
+  if (path.isAbsolute(normalized)) return path.normalize(normalized);
+
+  const cwdPath = path.resolve(process.cwd(), normalized);
+  if (fs.existsSync(cwdPath)) return cwdPath;
+
+  const projectPath = path.resolve(PROJECT_ROOT, normalized);
+  if (fs.existsSync(projectPath)) return projectPath;
+
+  return cwdPath;
 }
 
-function commandOutputDir(command, target, phase) {
+function commandOutputDir(command, target, phase, options = {}) {
+  if (options && options.outputDir) {
+    const normalized = String(options.outputDir).replace(/\\/g, "/");
+    return path.isAbsolute(normalized)
+      ? path.normalize(normalized)
+      : path.resolve(process.cwd(), normalized);
+  }
+
   const root = BASE_OUTPUT_DIR;
   const safeTarget = safeName(target);
 
@@ -168,8 +182,8 @@ function commandOutputDir(command, target, phase) {
   }
 }
 
-function activateOutputDir(command, target, phase) {
-  OUTPUT_DIR = commandOutputDir(command, target, phase);
+function activateOutputDir(command, target, phase, options = {}) {
+  OUTPUT_DIR = commandOutputDir(command, target, phase, options);
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   return OUTPUT_DIR;
 }
@@ -178,14 +192,17 @@ function parseArgs(argv) {
   const args = argv.slice(2);
 
   if (!args.length || args[0] === "analyze") {
-    const sourceDir = args[1] && !args[1].startsWith("--")
-      ? resolveProjectPath(args[1])
-      : DEFAULT_SOURCE_DIR;
+    const rawOptions = parseOptions(args.slice(args[0] === "analyze" ? 1 : 0));
+    let sourceDir = rawOptions.sourceDir ? resolveProjectPath(rawOptions.sourceDir) : null;
+    if (!sourceDir && args[0] === "analyze" && args[1] && !args[1].startsWith("--")) {
+      sourceDir = resolveProjectPath(args[1]);
+    }
+    if (!sourceDir) sourceDir = DEFAULT_SOURCE_DIR;
 
     return {
       command: "analyze",
       sourceDir,
-      options: parseOptions(args.slice(args[1] && !args[1].startsWith("--") ? 2 : 1))
+      options: rawOptions
     };
   }
 
@@ -267,10 +284,22 @@ function parseOptions(args) {
     maxContextEdges: 1000,
     maxSourceFiles: 40,
     profile: "full",
-    includeSource: false
+    includeSource: false,
+    outputDir: null,
+    sourceDir: null,
+    manifest: false
   };
 
   for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--output-dir" || args[i] === "--output") {
+      options.outputDir = args[++i];
+    }
+    if (args[i] === "--source") {
+      options.sourceDir = args[++i];
+    }
+    if (args[i] === "--manifest") {
+      options.manifest = true;
+    }
     if (args[i] === "--include-source") {
       options.includeSource = true;
     }
@@ -393,7 +422,8 @@ Options:
 // ============================================================
 
 function normalizePath(value) {
-  return value.split(path.sep).join("/");
+  if (!value) return "";
+  return String(value).replace(/\\/g, "/");
 }
 
 function rel(file) {
@@ -3305,6 +3335,109 @@ function snapshotPath() {
   return path.join(BASE_OUTPUT_DIR, "analyze", "analysis-snapshot.json");
 }
 
+function computeFileHash(filePath) {
+  if (!filePath || !fs.existsSync(filePath)) return null;
+  try {
+    const content = fs.readFileSync(filePath);
+    return "sha256:" + crypto.createHash("sha256").update(content).digest("hex");
+  } catch {
+    return null;
+  }
+}
+
+function getGitCommitHash(sourceDir) {
+  try {
+    const { execSync } = require("child_process");
+    const commit = execSync("git rev-parse HEAD", {
+      cwd: sourceDir,
+      stdio: ["ignore", "pipe", "ignore"],
+      encoding: "utf8"
+    }).trim();
+    return commit || null;
+  } catch {
+    return null;
+  }
+}
+
+function computeSourceHash(sourceDir) {
+  const discovered = discover(sourceDir);
+  const files = unique(
+    Object.values(discovered)
+      .filter(Array.isArray)
+      .flat()
+      .filter(x => typeof x === "string")
+  ).sort();
+
+  const hash = crypto.createHash("sha256");
+  for (const file of files) {
+    try {
+      const relPath = normalizePath(path.relative(PROJECT_ROOT, file));
+      const stat = fs.statSync(file);
+      hash.update(`${relPath}:${stat.size}:${stat.mtimeMs}\n`);
+    } catch (_) {}
+  }
+  return "sha256:" + hash.digest("hex");
+}
+
+function generateAnalysisManifest(sourceDir, outputDir, reportJson, status = "COMPLETE") {
+  const manifestPath = path.join(outputDir, "analysis-manifest.json");
+
+  const fileCount = reportJson.inventory?.files ?? discover(sourceDir).files.length;
+  const sourceHash = computeSourceHash(sourceDir);
+  const gitCommit = getGitCommitHash(sourceDir);
+
+  const artifacts = {};
+
+  const knownArtifacts = [
+    { key: "dependencyReport", file: "dependency-report.json" },
+    { key: "analysisSnapshot", file: "analysis-snapshot.json" },
+    { key: "architectureMetrics", file: "architecture-metrics.json" },
+    { key: "dependencyReportMd", file: "dependency-report.md" },
+    { key: "dependencySummaryMd", file: "dependency-summary.md" },
+    { key: "unresolvedReferencesMd", file: "unresolved-references.md" },
+    { key: "explorerData", file: "explorer-data.json", schemaVersion: "1.0.0" }
+  ];
+
+  for (const item of knownArtifacts) {
+    const itemPath = path.join(outputDir, item.file);
+    if (fs.existsSync(itemPath)) {
+      const art = {
+        path: item.file,
+        fileHash: computeFileHash(itemPath)
+      };
+      if (item.schemaVersion) art.schemaVersion = item.schemaVersion;
+      if (item.file === "explorer-data.json") {
+        try {
+          const parsed = JSON.parse(fs.readFileSync(itemPath, "utf8"));
+          if (parsed.summary) {
+            art.nodeCount = parsed.summary.nodeCount;
+            art.edgeCount = parsed.summary.edgeCount;
+          }
+        } catch (_) {}
+      }
+      artifacts[item.key] = art;
+    }
+  }
+
+  const manifest = {
+    manifestVersion: "1.0.0",
+    analyzerVersion: "13.0.0",
+    contractVersion: "1.0.0",
+    generatedAt: reportJson.generatedAt || new Date().toISOString(),
+    source: {
+      directory: rel(sourceDir),
+      fileCount,
+      sourceHash,
+      gitCommit
+    },
+    status,
+    artifacts
+  };
+
+  write(manifestPath, JSON.stringify(manifest, null, 2));
+  return manifest;
+}
+
 function snapshotFileState(sourceDir) {
   const discovered = discover(sourceDir);
   const files = unique(
@@ -5218,6 +5351,13 @@ function writeComponentAnalysisArtifacts(
       cycleCount: scopedCycles.length
     }, null, 2)
   );
+
+  generateAnalysisManifest(
+    result.discovered.sourceDir || DEFAULT_SOURCE_DIR,
+    outputDir,
+    reportJson,
+    "COMPLETE"
+  );
 }
 
 // Run analysis
@@ -5458,12 +5598,15 @@ function analyze(sourceDir, options, writeOutputs = true) {
     )
   );
 
+  generateAnalysisManifest(sourceDir, OUTPUT_DIR, reportJson, "COMPLETE");
+
   console.log("");
   console.log("Analysis complete.");
   console.log("");
   console.log(`Output: ${OUTPUT_DIR}`);
   console.log("");
   console.log("Generated:");
+  console.log("  analysis-manifest.json");
   console.log("  dependency-report.json");
   console.log("  dependency-report.md");
   console.log("  dependency-summary.md");
@@ -6598,13 +6741,14 @@ function buildLlmInvestigationContext(componentName) {
 // Main
 // ============================================================
 
-try {
-  const args = parseArgs(process.argv);
+if (require.main === module) {
+  try {
+    const args = parseArgs(process.argv);
 
-  // Each analyzer command gets its own deterministic output directory.
-  // This keeps CLI/subprocess invocations isolated without changing the
-  // API runner contract (the runner still invokes this CLI as a child process).
-  activateOutputDir(args.command, args.target, args.phase);
+    // Each analyzer command gets its own deterministic output directory.
+    // This keeps CLI/subprocess invocations isolated without changing the
+    // API runner contract (the runner still invokes this CLI as a child process).
+    activateOutputDir(args.command, args.target, args.phase, args.options);
 
   if (args.command === "analyze") {
     analyze(
@@ -6752,17 +6896,18 @@ try {
       )
     );
   }
-} catch (error) {
-  console.error("");
-  console.error("Analyzer failed:");
-  console.error(error.message);
-  console.error("");
+  } catch (error) {
+    console.error("");
+    console.error("Analyzer failed:");
+    console.error(error.message);
+    console.error("");
 
-  if (error.stack) {
-    console.error(error.stack);
+    if (error.stack) {
+      console.error(error.stack);
+    }
+
+    process.exit(1);
   }
-
-  process.exit(1);
 }
 
 if (typeof module !== "undefined" && module.exports) {
