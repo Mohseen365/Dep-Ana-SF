@@ -1,8 +1,0 @@
-# Unresolved Dependency References
-
-These were detected in source but could not be resolved to a local symbol.
-
-| From | To | Type | Evidence |
-|---|---|---|---|
-| ApexClass:MovieControllerHttpMock | External:HttpCalloutMock | implements | implements HttpCalloutMock |
-| LWC:movieAppContainer | External:LWC:movie-list | lwc-template-child | <c-movie-list> |

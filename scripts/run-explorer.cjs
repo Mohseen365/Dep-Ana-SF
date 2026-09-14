@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * One-Command Explorer Workflow Runner
+ * One-Command Explorer Workflow Runner (Multi-Project Aware)
  *
  * Workflow:
  *   1. Check if dependency analysis exists and is fresh using dependency-analyzer.cjs getAnalysis.
  *   2. Run analysis if missing or explicitly forced (--fresh).
- *   3. Run export-explorer.cjs adapter to transform analysis artifacts into explorer-data.json.
- *   4. Copy explorer-data.json to explorer/public/explorer-data.json and explorer/dist/explorer-data.json.
+ *   3. Run export-explorer.cjs adapter to transform analysis artifacts into project-scoped explorer-data.json.
+ *   4. Copy project contract and project-manifest.json to explorer/public and explorer/dist.
  *   5. Launch Vite Explorer dev server or preview server.
  */
 
@@ -18,43 +18,49 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const ANALYZER_SCRIPT = path.join(ROOT_DIR, "dependency-analyzer.cjs");
 const ADAPTER_SCRIPT = path.join(ROOT_DIR, "scripts", "export-explorer.cjs");
 const EXPLORER_DIR = path.join(ROOT_DIR, "explorer");
-const SOURCE_DIR = path.join(ROOT_DIR, "force-app", "main", "default");
-const OUTPUT_CONTRACT = path.join(ROOT_DIR, "explorer-data.json");
-const PUBLIC_CONTRACT = path.join(EXPLORER_DIR, "public", "explorer-data.json");
-const DIST_CONTRACT = path.join(EXPLORER_DIR, "dist", "explorer-data.json");
 
 function parseArgs(argv) {
   const args = argv.slice(2);
   let mode = "dev"; // 'dev' | 'preview' | 'build'
   let fresh = false;
+  let project = "default";
+  let source = path.join(ROOT_DIR, "force-app", "main", "default");
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === "--preview") mode = "preview";
     if (arg === "--build") mode = "build";
     if (arg === "--fresh") fresh = true;
+    if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
+      project = args[i + 1];
+      i++;
+    }
+    if (arg === "--source" && args[i + 1]) {
+      source = path.resolve(ROOT_DIR, args[i + 1]);
+      i++;
+    }
   }
 
-  return { mode, fresh };
+  return { mode, fresh, project, source };
 }
 
-function runAnalysisIfNeeded(fresh) {
+function runAnalysisIfNeeded(sourceDir, fresh) {
   const analyzeDir = path.join(ROOT_DIR, "analyze");
   const reportFile = path.join(analyzeDir, "dependency-report.json");
 
   // Check if source dir exists for running fresh analysis
-  if (!fs.existsSync(SOURCE_DIR) && !fs.existsSync(reportFile)) {
-    throw new Error(`Source directory (${SOURCE_DIR}) and existing analysis (${reportFile}) both not found.`);
+  if (!fs.existsSync(sourceDir) && !fs.existsSync(reportFile)) {
+    throw new Error(`Source directory (${sourceDir}) and existing analysis (${reportFile}) both not found.`);
   }
 
   let shouldRun = fresh || !fs.existsSync(reportFile);
 
-  if (!shouldRun && fs.existsSync(SOURCE_DIR)) {
+  if (!shouldRun && fs.existsSync(sourceDir)) {
     try {
       const analyzer = require(ANALYZER_SCRIPT);
       if (typeof analyzer.getAnalysis === "function") {
         console.log("Checking dependency analysis cache freshness...");
-        const result = analyzer.getAnalysis(SOURCE_DIR, { quiet: true });
+        const result = analyzer.getAnalysis(sourceDir, { quiet: true });
         if (!result || !result.fromSnapshot) {
           shouldRun = true;
         } else {
@@ -68,35 +74,64 @@ function runAnalysisIfNeeded(fresh) {
   }
 
   if (shouldRun) {
-    if (!fs.existsSync(SOURCE_DIR)) {
+    if (!fs.existsSync(sourceDir)) {
       console.log("Source directory not present, reusing existing analysis artifacts...");
       return;
     }
-    console.log("Running Salesforce Dependency Analyzer...");
-    execSync(`node "${ANALYZER_SCRIPT}" analyze "${SOURCE_DIR}"`, {
+    console.log(`Running Salesforce Dependency Analyzer on ${sourceDir}...`);
+    execSync(`node "${ANALYZER_SCRIPT}" analyze "${sourceDir}"`, {
       cwd: ROOT_DIR,
       stdio: "inherit"
     });
   }
 }
 
-function runAdapter() {
-  console.log("Running Explorer Data Adapter...");
-  execSync(`node "${ADAPTER_SCRIPT}" --input analyze --output "${OUTPUT_CONTRACT}"`, {
-    cwd: ROOT_DIR,
-    stdio: "inherit"
-  });
+function runAdapter(projectId, sourceDir) {
+  console.log(`Running Explorer Data Adapter for project '${projectId}'...`);
 
-  if (!fs.existsSync(OUTPUT_CONTRACT)) {
-    throw new Error(`Failed to produce data contract: ${OUTPUT_CONTRACT}`);
+  let targetOutput = path.join(ROOT_DIR, "explorer-data.json");
+  if (projectId && projectId !== "default") {
+    targetOutput = path.join(ROOT_DIR, "analyze", "projects", projectId, "explorer-data.json");
   }
 
-  // Copy data to public and dist
-  fs.mkdirSync(path.dirname(PUBLIC_CONTRACT), { recursive: true });
-  fs.copyFileSync(OUTPUT_CONTRACT, PUBLIC_CONTRACT);
+  execSync(
+    `node "${ADAPTER_SCRIPT}" --input analyze --output "${targetOutput}" --project "${projectId}" --source "${sourceDir}"`,
+    {
+      cwd: ROOT_DIR,
+      stdio: "inherit"
+    }
+  );
 
-  if (fs.existsSync(path.dirname(DIST_CONTRACT))) {
-    fs.copyFileSync(OUTPUT_CONTRACT, DIST_CONTRACT);
+  if (!fs.existsSync(targetOutput)) {
+    throw new Error(`Failed to produce project data contract: ${targetOutput}`);
+  }
+
+  // Copy contracts to explorer/public and explorer/dist
+  const publicDir = path.join(EXPLORER_DIR, "public");
+  const distDir = path.join(EXPLORER_DIR, "dist");
+
+  // Copy root fallback
+  const fallbackOutput = path.join(ROOT_DIR, "explorer-data.json");
+  if (fs.existsSync(fallbackOutput)) {
+    fs.copyFileSync(fallbackOutput, path.join(publicDir, "explorer-data.json"));
+  } else {
+    fs.copyFileSync(targetOutput, path.join(publicDir, "explorer-data.json"));
+  }
+
+  // Copy project-scoped contract if not default
+  if (projectId && projectId !== "default") {
+    const projPublicDir = path.join(publicDir, "projects", projectId);
+    fs.mkdirSync(projPublicDir, { recursive: true });
+    fs.copyFileSync(targetOutput, path.join(projPublicDir, "explorer-data.json"));
+  }
+
+  // Copy project-manifest.json
+  const analyzeManifest = path.join(ROOT_DIR, "analyze", "project-manifest.json");
+  if (fs.existsSync(analyzeManifest)) {
+    fs.copyFileSync(analyzeManifest, path.join(publicDir, "project-manifest.json"));
+    if (fs.existsSync(distDir)) {
+      fs.copyFileSync(analyzeManifest, path.join(distDir, "project-manifest.json"));
+    }
   }
 }
 
@@ -124,12 +159,14 @@ function startExplorer(mode) {
 
 function main() {
   try {
-    const { mode, fresh } = parseArgs(process.argv);
+    const { mode, fresh, project, source } = parseArgs(process.argv);
     console.log("Salesforce Architecture & Refactoring Explorer");
     console.log("=============================================");
+    console.log(`Project: ${project}`);
+    console.log(`Source:  ${source}`);
 
-    runAnalysisIfNeeded(fresh);
-    runAdapter();
+    runAnalysisIfNeeded(source, fresh);
+    runAdapter(project, source);
     startExplorer(mode);
   } catch (err) {
     console.error("\nExplorer One-Command Workflow failed:");
