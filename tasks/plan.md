@@ -101,6 +101,7 @@ verification steps lives there.
   (previously inside `DetailsPanel.tsx`) is currently removed without
   replacement. Decision pending: reinstate inside `InvestigationDrawer`
   as a "Hand off to refactor" palette action, or drop entirely.
+- Corrective pass UX-8-R completed on 2026-09-14. Audit findings resolved: orphaned imports/mounts, CSS scoping, test compilation. UX-8.5 integration (palette command, drawer action, App wiring) remains pending as a separate session.
 
 ## Ownership Boundaries
 

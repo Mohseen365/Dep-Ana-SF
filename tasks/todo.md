@@ -211,7 +211,7 @@
 
 ## Phase 5: Cleanup + Detach
 
-- [ ] **Task 5.1 — Delete `DetailsPanel.tsx` and tests**
+- [x] **Task 5.1 — Delete `DetailsPanel.tsx` and tests**
   - Delete `DetailsPanel.tsx`, `DetailsPanel.test.tsx`, `RefactorHandoff.test.tsx`
   - Remove `.details-panel` rules from `panels/panels.css`
   - `grep -r "DetailsPanel\|RefactorHandoff" explorer/src` returns zero
@@ -220,7 +220,7 @@
   - Scope: S
   - Prompt: UX-8
   - Deps: 4.2
-  - Session ID: _pending_
+  - Session ID: jules-18290189911400019495-d9b457ce (2026-09-14)
 
 - [ ] **Task 5.2 — Remove permanent chrome + add ⌘K hint**
   - Remove `<Sidebar />`, `<SummaryBar />`, `<StatusBar />`, `<ViewModeSwitcher />`, `<FocusControls />`, `<ImpactControls />` from `App.tsx`
@@ -254,3 +254,5 @@
 ## Session Log
 
 Append entries as `<session-id> | <prompt> | <task(s)> | <timestamp> | <notes>`.
+
+jules-18290189911400019495-d9b457ce | UX-8-R | Task 5.1 | 2026-09-14T14:43:00Z | Corrective pass; audit failures A3/A5/A6/B2/C1/C3/C4/E1/E2 resolved

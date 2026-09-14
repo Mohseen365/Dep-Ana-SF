@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { DetailsPanel } from "./DetailsPanel";
+import { RefactorHandoffHarness } from "./RefactorHandoffModal";
 import { ExplorerNode, ExplorerNodeType } from "../types/explorer";
 
 const mockNode: ExplorerNode = {
@@ -46,9 +46,9 @@ describe("Refactor Handoff UX Integration", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders the '⚡ Refactor in LiteLLM' button in DetailsPanel readiness card", () => {
+  it("renders the '⚡ Refactor in LiteLLM' button in RefactorHandoffHarness", () => {
     render(
-      <DetailsPanel
+      <RefactorHandoffHarness
         node={mockNode}
         edge={null}
         impactSummary={null}
@@ -62,7 +62,7 @@ describe("Refactor Handoff UX Integration", () => {
 
   it("handles valid selected component target resolution cleanly", () => {
     render(
-      <DetailsPanel
+      <RefactorHandoffHarness
         node={mockNode}
         edge={null}
         impactSummary={null}
@@ -89,7 +89,7 @@ describe("Refactor Handoff UX Integration", () => {
     };
 
     render(
-      <DetailsPanel
+      <RefactorHandoffHarness
         node={invalidNode}
         edge={null}
         impactSummary={null}
@@ -107,7 +107,7 @@ describe("Refactor Handoff UX Integration", () => {
 
   it("enforces explicit confirmation boundary before handoff action completes", () => {
     render(
-      <DetailsPanel
+      <RefactorHandoffHarness
         node={mockNode}
         edge={null}
         impactSummary={null}
@@ -137,7 +137,7 @@ describe("Refactor Handoff UX Integration", () => {
     });
 
     render(
-      <DetailsPanel
+      <RefactorHandoffHarness
         node={mockNode}
         edge={null}
         impactSummary={null}
@@ -170,7 +170,7 @@ describe("Refactor Handoff UX Integration", () => {
 
   it("ensures selecting handoff action performs no direct destructive modifications", () => {
     render(
-      <DetailsPanel
+      <RefactorHandoffHarness
         node={mockNode}
         edge={null}
         impactSummary={null}

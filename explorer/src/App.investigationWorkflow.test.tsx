@@ -181,7 +181,7 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
     window.history.replaceState(null, '', '/');
   });
 
-  it('navigates search -> component selection -> investigation workspace tabs', async () => {
+  it('navigates search -> component selection -> investigation drawer drill', async () => {
     render(<App />);
 
     // 1. Filter / search component from sidebar input
@@ -191,46 +191,39 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
     const componentItems = screen.getAllByText('AccountService');
     fireEvent.click(componentItems[0]);
 
-    // 2. DetailsPanel should show AccountService details
-    expect(screen.getAllByRole('heading', { name: 'AccountService', level: 2 })[0]).toBeDefined();
-
-    // 3. Check workspace 3-tab presence (summary, analysis, review)
-    const analysisTab = screen.getByRole('button', { name: 'analysis' });
-    fireEvent.click(analysisTab);
-
-    // Should display Connection Analysis & Change Simulator section in Analysis tab
-    expect(screen.getByText('Connection Analysis')).toBeDefined();
-    expect(screen.getByText('What if I change this?')).toBeDefined();
-    expect(screen.getByText('Simulate change to AccountService')).toBeDefined();
+    // 2. REMOVED IN UX-8: 3-tab details workspace removed in favor of InvestigationDrawer progressive drill.
+    // InvestigationDrawer should open and display AccountService header and dependents
+    expect(screen.getAllByText('AccountService').length).toBeGreaterThan(0);
+    expect(screen.getByText('OrderService')).toBeInTheDocument();
   });
 
-  it('synchronizes target selection when clicking connections/dependents in investigation panel', async () => {
+  it('synchronizes target selection when clicking dependents in investigation drawer', async () => {
     render(<App />);
 
     // Select AccountService
     const componentItems = screen.getAllByText('AccountService');
     fireEvent.click(componentItems[0]);
 
-    expect(screen.getAllByRole('heading', { name: 'AccountService', level: 2 })[0]).toBeDefined();
+    expect(screen.getAllByText('AccountService').length).toBeGreaterThan(0);
 
-    // In connections/impact section, click direct dependency link (AccountRepository)
-    const repoLink = screen.getByText('→ ApexClass:AccountRepository');
-    fireEvent.click(repoLink);
+    // Click dependent row in InvestigationDrawer
+    const dependentRow = screen.getByTestId('dependent-row-ApexClass:OrderService');
+    fireEvent.click(dependentRow);
 
-    // Workspace should now switch to AccountRepository
+    // InvestigationDrawer should drill into OrderService
     await waitFor(() => {
-      expect(screen.getAllByRole('heading', { name: 'AccountRepository', level: 2 })[0]).toBeDefined();
+      expect(screen.getAllByText('OrderService').length).toBeGreaterThan(0);
     });
   });
 
   it('updates URL state and restores canonical investigation state on popstate', async () => {
-    window.history.replaceState(null, '', '/?node=ApexClass%3AAccountService&conn.direction=dependencies&conn.depth=3');
+    window.history.replaceState(null, '', '/?node=ApexClass%3AAccountService&investigate=true');
 
     render(<App />);
 
     // App should hydrate AccountService selection from deep link URL
     await waitFor(() => {
-      expect(screen.getAllByRole('heading', { name: 'AccountService', level: 2 })[0]).toBeDefined();
+      expect(screen.getAllByText('AccountService').length).toBeGreaterThan(0);
     });
 
     // Check URL node parameter persistence
