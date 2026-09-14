@@ -221,7 +221,19 @@
   - Prompt: UX-8
   - Deps: 4.2
   - Session ID: jules-18290189911400019495-d9b457ce (2026-09-14)
-
+- [ ] **Task 5.1a — Reinstate RefactorHandoff as palette + drawer action (UX-8.5-R)**
+  - Register "Hand off to refactor" command in `CommandPalette.tsx`
+  - Add "Hand off" header action to `InvestigationDrawer.tsx`
+  - Wire `handoffTarget` state and mount `<RefactorHandoffModal />` in `App.tsx`
+  - Both entry points converge on the same modal state
+  - Command disabled when no node is investigated
+  - Files: `explorer/src/components/CommandPalette.tsx`,
+    `CommandPalette.test.tsx`, `InvestigationDrawer.tsx`,
+    `InvestigationDrawer.test.tsx`, `App.tsx`, `tasks/plan.md`
+  - Scope: M
+  - Prompt: UX-8.5-R
+  - Deps: 5.1
+  - Session ID: _pending_
 - [ ] **Task 5.2 — Remove permanent chrome + add ⌘K hint**
   - Remove `<Sidebar />`, `<SummaryBar />`, `<StatusBar />`, `<ViewModeSwitcher />`, `<FocusControls />`, `<ImpactControls />` from `App.tsx`
   - Add non-interactive ⌘K hint to `Header.tsx`
