@@ -1,6 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
-import { StatusBar } from './components/StatusBar';
 import { SelectionProvider } from './context/SelectionContext';
 import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
@@ -10,19 +9,16 @@ import { Sidebar } from './components/Sidebar';
 import { DetailsPanel } from './components/DetailsPanel';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
-import { ViewModeSwitcher } from './components/ViewModeSwitcher';
 import { applyFilters, SearchFilterState, createEmptyFilterState } from './lib/search-filter';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
-import { FocusControls } from './components/FocusControls';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { analyzeConnections, type ConnectionAnalysis } from './lib/connection-analysis';
 import { createEmptyImpactState } from './lib/impact-analysis';
-import { ComparePanel } from './components/ComparePanel';
-import { useCompareState } from './hooks/useCompareState';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
+import { useCompareState } from './hooks/useCompareState';
 
 import type {
   ExplorerDataSchema,
@@ -197,7 +193,6 @@ export function App() {
   const view = useViewState();
   const compareState = useCompareState();
   const palette = useCommandPalette();
-  const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [graphFullscreen, setGraphFullscreen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
@@ -425,9 +420,36 @@ export function App() {
           nodes={data?.nodes ?? []}
           query={palette.query}
           onQueryChange={palette.setQuery}
+          data={data}
+          selectedNodeId={selection.selectedNodeId}
+          findings={findings}
+          selectedFindingId={selectedFinding?.id ?? null}
+          onSelectFinding={handleSelectFinding}
+          onClearFinding={handleClearFinding}
+          compareState={compareState}
+          activeRiskFilter={view.filterState.riskFilter}
+          onRiskFilterChange={(risk) => view.setFilterState({ ...view.filterState, riskFilter: risk })}
           onSelectNode={(nodeId) => {
             selection.selectNode(nodeId);
             view.setIsInvestigating(true);
+          }}
+          onApplyFocus={() => {
+            if (selection.selectedNodeId) {
+              view.setFocusState({
+                enabled: true,
+                focusNodeId: selection.selectedNodeId,
+                depth: 1,
+                direction: 'both',
+              });
+            }
+          }}
+          onShowImpact={() => {
+            if (selection.selectedNodeId) {
+              view.setImpactState({ enabled: true, originNodeId: selection.selectedNodeId, depth: 'ALL' });
+            }
+          }}
+          onToggleViewMode={() => {
+            view.setViewMode(view.viewMode === 'graph' ? 'findings' : 'graph');
           }}
         />
         <Header
@@ -436,35 +458,13 @@ export function App() {
           onToggleDetails={() => setDetailsCollapsed((prev) => !prev)}
           isDetailsOpen={!detailsCollapsed}
           onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
-          onToggleCompare={() => setIsCompareOpen((prev) => !prev)}
-          isCompareOpen={isCompareOpen || compareState.isActive}
+          onToggleCompare={() => {
+            palette.open();
+          }}
+          isCompareOpen={compareState.isActive}
         />
 
         <div className={`main-viewport ${view.isInvestigating ? 'drawer-open' : 'drawer-closed'}`}>
-          {(isCompareOpen || compareState.isActive) && (
-            <div className="compare-panel-wrapper" style={{ position: 'relative', zIndex: 20, padding: '0.8rem' }}>
-              <ComparePanel
-                compareState={compareState}
-                onClose={() => setIsCompareOpen(false)}
-              />
-            </div>
-          )}
-
-          <div className="top-toolbar" style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <ViewModeSwitcher
-              viewMode={view.viewMode}
-              onChangeViewMode={view.setViewMode}
-              findingsCount={findings.length}
-            />
-            {view.viewMode === 'graph' && (
-              <FocusControls
-                focusState={effectiveFocusState}
-                onFocusChange={view.setFocusState}
-                hasSelectedNode={Boolean(selection.selectedNodeId)}
-              />
-            )}
-          </div>
-
           {view.viewMode === 'graph' ? (
             <div className="graph-view-layout">
               <div className={`sidebar-region ${sidebarCollapsed ? 'collapsed' : ''}`}>
@@ -573,23 +573,6 @@ export function App() {
           )}
         </div>
 
-        <StatusBar
-          totalNodes={data.nodes.length}
-          totalEdges={data.edges.length}
-          visibleNodes={visibleNodes.length}
-          selectedNodeName={selectedNode?.displayName ?? selection.selectedNodeId}
-          activeFilterCount={
-            (view.filterState.searchQuery ? 1 : 0) +
-            (view.filterState.typeFilter ? 1 : 0) +
-            (view.filterState.riskFilter ? 1 : 0) +
-            (view.filterState.hasCallouts ? 1 : 0) +
-            (view.filterState.withoutSharing ? 1 : 0) +
-            (view.filterState.hideTests ? 1 : 0) +
-            (view.filterState.hasAsyncPatterns ? 1 : 0)
-          }
-          cycleCount={data.summary.cycleCount}
-          unresolvedCount={data.summary.unresolvedCount}
-        />
       </div>
     </SelectionProvider>
   );

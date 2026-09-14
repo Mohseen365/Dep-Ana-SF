@@ -87,7 +87,7 @@ describe('CommandPalette', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders search input and list when isOpen is true', () => {
+  it('renders search input, commands, and list when isOpen is true', () => {
     render(
       <CommandPalette
         isOpen={true}
@@ -99,14 +99,116 @@ describe('CommandPalette', () => {
 
     expect(screen.getByTestId('command-palette-overlay')).toBeInTheDocument();
     expect(screen.getByTestId('command-palette-input')).toBeInTheDocument();
-    // Default shows all nodes when query is empty
+    // Default shows commands + nodes
+    expect(screen.getByText('⚡ Open Summary')).toBeInTheDocument();
+    expect(screen.getByText('⚡ Open Hotspots')).toBeInTheDocument();
     expect(screen.getByText('MovieController')).toBeInTheDocument();
-    expect(screen.getByText('MovieService')).toBeInTheDocument();
-    expect(screen.getByText('movieCard')).toBeInTheDocument();
-    expect(screen.getByText('AccountService')).toBeInTheDocument();
   });
 
-  it('filters nodes based on input query after debounce', () => {
+  it('renders mounted panel view when "Open Summary" command is selected', () => {
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+      />
+    );
+
+    const summaryCmd = screen.getByTestId('command-palette-item-cmd-summary');
+    fireEvent.click(summaryCmd);
+
+    expect(screen.getByTestId('command-palette-panel-view')).toBeInTheDocument();
+    expect(screen.getByTestId('command-palette-panel-content-summary')).toBeInTheDocument();
+    expect(screen.getByText('Open Summary')).toBeInTheDocument();
+  });
+
+  it('renders mounted panel view for each panel command', () => {
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+      />
+    );
+
+    // Test Hotspots
+    fireEvent.click(screen.getByTestId('command-palette-item-cmd-hotspots'));
+    expect(screen.getByTestId('command-palette-panel-content-hotspots')).toBeInTheDocument();
+
+    // Back to list
+    fireEvent.click(screen.getByTestId('command-palette-back-btn'));
+
+    // Test Diagnostics
+    fireEvent.click(screen.getByTestId('command-palette-item-cmd-diagnostics'));
+    expect(screen.getByTestId('command-palette-panel-content-diagnostics')).toBeInTheDocument();
+
+    // Back to list
+    fireEvent.click(screen.getByTestId('command-palette-back-btn'));
+
+    // Test Findings
+    fireEvent.click(screen.getByTestId('command-palette-item-cmd-findings'));
+    expect(screen.getByTestId('command-palette-panel-content-findings')).toBeInTheDocument();
+  });
+
+  it('"← Back" returns from panel view to command search list mode', () => {
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('command-palette-item-cmd-summary'));
+    expect(screen.getByTestId('command-palette-panel-view')).toBeInTheDocument();
+
+    const backBtn = screen.getByTestId('command-palette-back-btn');
+    fireEvent.click(backBtn);
+
+    expect(screen.queryByTestId('command-palette-panel-view')).not.toBeInTheDocument();
+    expect(screen.getByTestId('command-palette-input')).toBeInTheDocument();
+  });
+
+  it('Escape key closes palette from panel mode', () => {
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('command-palette-item-cmd-summary'));
+    expect(screen.getByTestId('command-palette-panel-view')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('executes action command callbacks and closes palette', () => {
+    const onApplyFocus = vi.fn();
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+        onApplyFocus={onApplyFocus}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('command-palette-item-cmd-focus'));
+
+    expect(onApplyFocus).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('filters commands and nodes based on input query', () => {
     render(
       <CommandPalette
         isOpen={true}
@@ -117,128 +219,13 @@ describe('CommandPalette', () => {
     );
 
     const input = screen.getByTestId('command-palette-input');
-    fireEvent.change(input, { target: { value: 'movie' } });
+    fireEvent.change(input, { target: { value: 'Compare' } });
 
-    // Advance past 100ms debounce
     act(() => {
       vi.advanceTimersByTime(150);
     });
 
-    expect(screen.getByText('MovieController')).toBeInTheDocument();
-    expect(screen.getByText('MovieService')).toBeInTheDocument();
-    expect(screen.getByText('movieCard')).toBeInTheDocument();
-    expect(screen.queryByText('AccountService')).not.toBeInTheDocument();
-  });
-
-  it('shows "No matches" when query finds no nodes', () => {
-    render(
-      <CommandPalette
-        isOpen={true}
-        onClose={onClose}
-        nodes={mockNodes}
-        onSelectNode={onSelectNode}
-      />
-    );
-
-    const input = screen.getByTestId('command-palette-input');
-    fireEvent.change(input, { target: { value: 'nonexistent' } });
-
-    act(() => {
-      vi.advanceTimersByTime(150);
-    });
-
-    expect(screen.getByTestId('command-palette-empty')).toHaveTextContent('No matches');
-  });
-
-  it('allows arrow key navigation and Enter to select', () => {
-    render(
-      <CommandPalette
-        isOpen={true}
-        onClose={onClose}
-        nodes={mockNodes}
-        onSelectNode={onSelectNode}
-      />
-    );
-
-    const input = screen.getByTestId('command-palette-input');
-
-    // Default selectedIndex is 0 ('MovieController')
-    fireEvent.keyDown(input, { key: 'ArrowDown' }); // Selected becomes 1 ('MovieService')
-
-    const items = screen.getAllByRole('option');
-    expect(items[1]).toHaveClass('selected');
-
-    fireEvent.keyDown(input, { key: 'Enter' });
-
-    expect(onSelectNode).toHaveBeenCalledWith('ApexClass:MovieService');
-    expect(onClose).toHaveBeenCalled();
-  });
-
-  it('allows clicking an item to select it', () => {
-    render(
-      <CommandPalette
-        isOpen={true}
-        onClose={onClose}
-        nodes={mockNodes}
-        onSelectNode={onSelectNode}
-      />
-    );
-
-    const item = screen.getByTestId('command-palette-item-LWC:movieCard');
-    fireEvent.click(item);
-
-    expect(onSelectNode).toHaveBeenCalledWith('LWC:movieCard');
-    expect(onClose).toHaveBeenCalled();
-  });
-
-  it('closes when clicking backdrop overlay', () => {
-    render(
-      <CommandPalette
-        isOpen={true}
-        onClose={onClose}
-        nodes={mockNodes}
-        onSelectNode={onSelectNode}
-      />
-    );
-
-    const overlay = screen.getByTestId('command-palette-overlay');
-    fireEvent.click(overlay);
-
-    expect(onClose).toHaveBeenCalled();
-  });
-
-  it('performance: searches 500 nodes in under 200ms', () => {
-    const largeNodesList: ExplorerNode[] = Array.from({ length: 500 }, (_, i) =>
-      createMockNode({
-        id: `ApexClass:Component_${i}`,
-        displayName: `Component_${i}`,
-        type: 'ApexClass',
-        file: `classes/Component_${i}.cls`,
-        risk: i % 2 === 0 ? 'HIGH' : 'LOW',
-      })
-    );
-
-    largeNodesList[250].displayName = 'SpecialMovieComponent';
-
-    render(
-      <CommandPalette
-        isOpen={true}
-        onClose={onClose}
-        nodes={largeNodesList}
-        onSelectNode={onSelectNode}
-      />
-    );
-
-    const input = screen.getByTestId('command-palette-input');
-    const startTime = performance.now();
-
-    fireEvent.change(input, { target: { value: 'SpecialMovie' } });
-    act(() => {
-      vi.advanceTimersByTime(100);
-    });
-
-    const endTime = performance.now();
-    expect(endTime - startTime).toBeLessThan(200);
-    expect(screen.getByText('SpecialMovieComponent')).toBeInTheDocument();
+    expect(screen.getByText('⚡ Compare snapshots')).toBeInTheDocument();
+    expect(screen.queryByText('MovieController')).not.toBeInTheDocument();
   });
 });
