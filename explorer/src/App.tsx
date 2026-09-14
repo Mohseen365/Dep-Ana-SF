@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
 import { useExplorerData } from './hooks/useExplorerData';
@@ -17,6 +17,8 @@ import { createEmptyImpactState } from './lib/impact-analysis';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
+import { RefactorHandoffModal } from './components/RefactorHandoffModal';
+import { buildHandoffPayload, openHandoff, HandoffTarget } from './lib/refactor-handoff';
 
 import type {
   ExplorerNode,
@@ -145,11 +147,21 @@ export function App() {
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
 
+  // Refactor handoff target state
+  const [handoffTarget, setHandoffTarget] = useState<HandoffTarget | null>(null);
+
   // Progressive drilling and session-only recent list state
   const [drillPath, setDrillPath] = useState<string[]>([]);
   const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
 
   const graphRef = useRef<GraphViewRef>(null);
+
+  const handleRequestHandoff = useCallback((nodeId: string) => {
+    if (!data) return;
+    const node = data.nodes.find(n => n.id === nodeId);
+    if (!node) return;
+    setHandoffTarget(buildHandoffPayload(node, data));
+  }, [data]);
 
   // Sync compare focused entity selection to SelectionContext
   useEffect(() => {
@@ -348,6 +360,7 @@ export function App() {
           onQueryChange={palette.setQuery}
           data={data}
           selectedNodeId={selection.selectedNodeId}
+          isInvestigating={view.isInvestigating}
           findings={findings}
           selectedFindingId={selectedFinding?.id ?? null}
           onSelectFinding={handleSelectFinding}
@@ -377,6 +390,7 @@ export function App() {
           onToggleViewMode={() => {
             view.setViewMode(view.viewMode === 'graph' ? 'findings' : 'graph');
           }}
+          onRequestHandoff={handleRequestHandoff}
         />
         <Header
           onResetView={handleResetView}
@@ -454,6 +468,7 @@ export function App() {
                 onNavigateBreadcrumb={handleNavigateBreadcrumb}
                 recentNodeIds={recentNodeIds}
                 onSelectRecentNode={handleSelectRecentNode}
+                onRequestHandoff={handleRequestHandoff}
               />
             </div>
           ) : (
@@ -465,6 +480,15 @@ export function App() {
             />
           )}
         </div>
+
+        <RefactorHandoffModal
+          target={handoffTarget}
+          onConfirm={() => {
+            if (handoffTarget) openHandoff(handoffTarget);
+            setHandoffTarget(null);
+          }}
+          onCancel={() => setHandoffTarget(null)}
+        />
 
       </div>
     </SelectionProvider>

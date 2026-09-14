@@ -221,7 +221,7 @@
   - Prompt: UX-8
   - Deps: 4.2
   - Session ID: jules-18290189911400019495-d9b457ce (2026-09-14)
-- [ ] **Task 5.1a — Reinstate RefactorHandoff as palette + drawer action (UX-8.5-R)**
+- [x] **Task 5.1a — Reinstate RefactorHandoff as palette + drawer action (UX-8.5-R)**
   - Register "Hand off to refactor" command in `CommandPalette.tsx`
   - Add "Hand off" header action to `InvestigationDrawer.tsx`
   - Wire `handoffTarget` state and mount `<RefactorHandoffModal />` in `App.tsx`
@@ -233,7 +233,7 @@
   - Scope: M
   - Prompt: UX-8.5-R
   - Deps: 5.1
-  - Session ID: _pending_
+  - Session ID: jules-ux-8.5-r
 - [ ] **Task 5.2 — Remove permanent chrome + add ⌘K hint**
   - Remove `<Sidebar />`, `<SummaryBar />`, `<StatusBar />`, `<ViewModeSwitcher />`, `<FocusControls />`, `<ImpactControls />` from `App.tsx`
   - Add non-interactive ⌘K hint to `Header.tsx`
@@ -268,3 +268,4 @@
 Append entries as `<session-id> | <prompt> | <task(s)> | <timestamp> | <notes>`.
 
 jules-18290189911400019495-d9b457ce | UX-8-R | Task 5.1 | 2026-09-14T14:43:00Z | Corrective pass; audit failures A3/A5/A6/B2/C1/C3/C4/E1/E2 resolved
+jules-ux-8.5-r | UX-8.5-R | Task 5.1a | 2026-09-14T15:48:00Z | Integration completed

@@ -13,6 +13,7 @@ export interface InvestigationDrawerProps {
   onNavigateBreadcrumb?: (id: string) => void;
   recentNodeIds?: string[];
   onSelectRecentNode?: (id: string) => void;
+  onRequestHandoff?: (nodeId: string) => void;
 }
 
 export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
@@ -25,6 +26,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   onNavigateBreadcrumb,
   recentNodeIds = [],
   onSelectRecentNode,
+  onRequestHandoff,
 }) => {
   if (!open) {
     return null;
@@ -60,14 +62,31 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           <h2>{node ? node.displayName : 'No Component Selected'}</h2>
           {node && <span className="drawer-node-type">{node.type}</span>}
         </div>
-        <button
-          className="drawer-close-btn"
-          onClick={onClose}
-          aria-label="Close Investigation Drawer"
-          title="Close Investigation Drawer"
-        >
-          ×
-        </button>
+        <div className="drawer-header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {onRequestHandoff && (
+            <button
+              className="drawer-handoff-btn"
+              data-testid="investigation-drawer-handoff-btn"
+              aria-label="Hand off to refactor"
+              title="Hand off to refactor"
+              onClick={() => {
+                if (currentNodeId) {
+                  onRequestHandoff(currentNodeId);
+                }
+              }}
+            >
+              Hand off
+            </button>
+          )}
+          <button
+            className="drawer-close-btn"
+            onClick={onClose}
+            aria-label="Close Investigation Drawer"
+            title="Close Investigation Drawer"
+          >
+            ×
+          </button>
+        </div>
       </header>
 
       <div className="investigation-drawer-top-toolbar">
