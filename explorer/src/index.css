@@ -179,6 +179,10 @@ body {
   z-index: 25;
 }
 
+.investigation-drawer.pinned {
+  border-left: 2px solid var(--accent-primary);
+}
+
 .investigation-drawer-header {
   padding: 16px;
   border-bottom: 1px solid var(--border-color);
@@ -202,6 +206,41 @@ body {
   letter-spacing: 0.5px;
 }
 
+.drawer-pin-btn,
+.drawer-detach-btn,
+.drawer-handoff-btn {
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.drawer-pin-btn:hover,
+.drawer-detach-btn:hover,
+.drawer-handoff-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
+}
+
+.drawer-pin-btn.active {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #ffffff;
+}
+
+.drawer-detach-btn.active {
+  background-color: #059669;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
 .drawer-close-btn {
   background: none;
   border: none;
@@ -212,8 +251,13 @@ body {
   line-height: 1;
 }
 
-.drawer-close-btn:hover {
+.drawer-close-btn:hover:not(:disabled) {
   color: var(--text-main);
+}
+
+.drawer-close-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .investigation-drawer-body {

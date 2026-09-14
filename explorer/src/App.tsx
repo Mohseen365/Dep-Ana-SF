@@ -17,6 +17,12 @@ import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
 import { RefactorHandoffModal } from './components/RefactorHandoffModal';
 import { buildHandoffPayload, openHandoff, HandoffTarget } from './lib/refactor-handoff';
+import {
+  openDetachedWindow,
+  createChannel,
+  broadcastNodeChange,
+  onDetachedDrill,
+} from './lib/detached-drawer';
 
 import type {
   ExplorerNode,
@@ -91,6 +97,23 @@ export function App() {
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
 
+  // Drawer pin & detach states with localStorage persistence
+  const [isPinned, setIsPinned] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('explorer.drawer.pinned') === 'true';
+    }
+    return false;
+  });
+
+  const [isDetached, setIsDetached] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('explorer.drawer.detached') === 'true';
+    }
+    return false;
+  });
+
+  const detachedWindowRef = useRef<Window | null>(null);
+
   // Refactor handoff target state
   const [handoffTarget, setHandoffTarget] = useState<HandoffTarget | null>(null);
 
@@ -99,6 +122,77 @@ export function App() {
   const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
 
   const graphRef = useRef<GraphViewRef>(null);
+
+  const handleTogglePin = useCallback(() => {
+    setIsPinned((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('explorer.drawer.pinned', String(next));
+      }
+      return next;
+    });
+  }, []);
+
+  const handleDetach = useCallback(() => {
+    if (!isDetached) {
+      const win = openDetachedWindow();
+      detachedWindowRef.current = win;
+      setIsDetached(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('explorer.drawer.detached', 'true');
+      }
+    } else {
+      if (detachedWindowRef.current && !detachedWindowRef.current.closed) {
+        detachedWindowRef.current.close();
+      }
+      detachedWindowRef.current = null;
+      setIsDetached(false);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('explorer.drawer.detached', 'false');
+      }
+    }
+  }, [isDetached]);
+
+  // Setup BroadcastChannel for detached drawer sync
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
+
+    const channel = createChannel();
+
+    const unsubscribe = onDetachedDrill(channel, (nodeId) => {
+      selection.selectNode(nodeId);
+      view.setIsInvestigating(true);
+    });
+
+    return () => {
+      unsubscribe();
+      channel.close();
+    };
+  }, [selection, view]);
+
+  // Broadcast node changes when selection or drill path updates
+  useEffect(() => {
+    if (!isDetached || typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
+
+    // Check if detached window is still alive
+    if (detachedWindowRef.current && detachedWindowRef.current.closed) {
+      detachedWindowRef.current = null;
+      setIsDetached(false);
+      localStorage.setItem('explorer.drawer.detached', 'false');
+      return;
+    }
+
+    const currentNodeId =
+      drillPath.length > 0
+        ? drillPath[drillPath.length - 1]
+        : selection.selectedNodeId;
+
+    if (currentNodeId) {
+      const channel = createChannel();
+      broadcastNodeChange(channel, currentNodeId);
+      channel.close();
+    }
+  }, [selection.selectedNodeId, drillPath, isDetached]);
 
   const handleRequestHandoff = useCallback((nodeId: string) => {
     if (!data) return;
@@ -283,6 +377,8 @@ export function App() {
     view.setIsInvestigating(true);
   };
 
+  const isDrawerOpen = view.isInvestigating || isPinned;
+
   if (loading) return <LoadingScreen />;
   if (error || !data) return <ErrorScreen error={error} onRetry={retry} />;
 
@@ -306,7 +402,7 @@ export function App() {
             onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
             selectedCycleNodeIds={highlightedCycleNodeIds}
             focusedNodeId={
-              view.isInvestigating
+              isDrawerOpen
                 ? drillPath.length > 0
                   ? drillPath[drillPath.length - 1]
                   : selection.selectedNodeId
@@ -314,11 +410,15 @@ export function App() {
             }
           />
         </main>
-        {view.isInvestigating && (
+        {isDrawerOpen && (
           <InvestigationDrawer
             node={selectedNode}
-            open={view.isInvestigating}
-            onClose={() => view.setIsInvestigating(false)}
+            open={isDrawerOpen}
+            onClose={() => {
+              if (!isPinned) {
+                view.setIsInvestigating(false);
+              }
+            }}
             onDrill={handleDrill}
             data={data}
             drillPath={drillPath}
@@ -326,6 +426,10 @@ export function App() {
             recentNodeIds={recentNodeIds}
             onSelectRecentNode={handleSelectRecentNode}
             onRequestHandoff={handleRequestHandoff}
+            isPinned={isPinned}
+            onTogglePin={handleTogglePin}
+            isDetached={isDetached}
+            onDetach={handleDetach}
           />
         )}
         <CommandPalette
