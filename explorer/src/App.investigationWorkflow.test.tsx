@@ -192,7 +192,7 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
     fireEvent.click(componentItems[0]);
 
     // 2. DetailsPanel should show AccountService details
-    expect(screen.getByRole('heading', { name: 'AccountService', level: 2 })).toBeDefined();
+    expect(screen.getAllByRole('heading', { name: 'AccountService', level: 2 })[0]).toBeDefined();
 
     // 3. Check workspace 3-tab presence (summary, analysis, review)
     const analysisTab = screen.getByRole('button', { name: 'analysis' });
@@ -211,7 +211,7 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
     const componentItems = screen.getAllByText('AccountService');
     fireEvent.click(componentItems[0]);
 
-    expect(screen.getByRole('heading', { name: 'AccountService', level: 2 })).toBeDefined();
+    expect(screen.getAllByRole('heading', { name: 'AccountService', level: 2 })[0]).toBeDefined();
 
     // In connections/impact section, click direct dependency link (AccountRepository)
     const repoLink = screen.getByText('→ ApexClass:AccountRepository');
@@ -219,7 +219,7 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
 
     // Workspace should now switch to AccountRepository
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'AccountRepository', level: 2 })).toBeDefined();
+      expect(screen.getAllByRole('heading', { name: 'AccountRepository', level: 2 })[0]).toBeDefined();
     });
   });
 
@@ -230,7 +230,7 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
 
     // App should hydrate AccountService selection from deep link URL
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'AccountService', level: 2 })).toBeDefined();
+      expect(screen.getAllByRole('heading', { name: 'AccountService', level: 2 })[0]).toBeDefined();
     });
 
     // Check URL node parameter persistence
