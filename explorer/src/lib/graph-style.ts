@@ -62,6 +62,7 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       selector: 'node',
       style: {
         'label': 'data(label)',
+        'min-zoomed-font-size': 10,
         'background-color': '#3b82f6',
         'color': '#f8fafc',
         'font-size': `${fontSize}px`,
@@ -109,7 +110,7 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'border-color': RISK_BORDER_COLORS.LOW
       }
     },
-    // Node type-specific base colors (overridden by risk for explicit nodes)
+    // Node type-specific base colors
     {
       selector: 'node[type = "ApexClass"]',
       style: {
@@ -180,14 +181,14 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'border-color': NODE_COLORS.External.border
       }
     },
-    // Test classes - slightly different shape indicator via style
+    // Test classes
     {
       selector: 'node[isTest = "true"]',
       style: {
         'border-style': 'dashed'
       }
     },
-    // Cycle indicator - pulsing effect simulation via color
+    // Cycle indicator
     {
       selector: 'node[hasCycles = "true"]',
       style: {
@@ -206,6 +207,7 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       selector: 'edge',
       style: {
         'width': 2,
+        'min-zoomed-font-size': 8,
         'line-color': '#94a3b8',
         'target-arrow-color': '#94a3b8',
         'target-arrow-shape': 'triangle',
@@ -272,14 +274,14 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'opacity': 0.15
       }
     },
-    // Dimmed state for non-participating elements during cycle or focus highlight
+    // Dimmed state
     {
       selector: '.dimmed',
       style: {
         'opacity': 0.15
       }
     },
-    // Highlighted state for active cycle elements
+    // Highlighted state
     {
       selector: 'node.highlighted',
       style: {
@@ -295,6 +297,52 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'width': 3,
         'line-color': '#f59e0b',
         'target-arrow-color': '#f59e0b'
+      }
+    },
+    // Semantic zoom rules:
+    // .zoom-far (zoom < 0.5): hide edge labels, hide node labels
+    {
+      selector: '.zoom-far',
+      style: {
+        'label': ''
+      }
+    },
+    {
+      selector: 'node.zoom-far',
+      style: {
+        'label': ''
+      }
+    },
+    {
+      selector: 'edge.zoom-far',
+      style: {
+        'label': ''
+      }
+    },
+    // .zoom-mid (zoom >= 0.8): show node labels, hide edge labels
+    {
+      selector: 'node.zoom-mid',
+      style: {
+        'label': 'data(label)'
+      }
+    },
+    {
+      selector: 'edge.zoom-mid',
+      style: {
+        'label': ''
+      }
+    },
+    // .zoom-near (zoom >= 1.5): show node labels & relationship labels on edges
+    {
+      selector: 'node.zoom-near',
+      style: {
+        'label': 'data(label)'
+      }
+    },
+    {
+      selector: 'edge.zoom-near',
+      style: {
+        'label': 'data(relationshipType)'
       }
     }
   ];

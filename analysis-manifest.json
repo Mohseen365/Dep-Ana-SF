@@ -1,0 +1,50 @@
+{
+  "manifestVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "contractVersion": "1.0.0",
+  "generatedAt": "2026-09-13T15:12:27.563Z",
+  "source": {
+    "directory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+    "fileCount": 9,
+    "sourceHash": "sha256:babe119a7435ac4591ab83de12b957dcb99b1eddcc2532aef845f7adfafbe61c",
+    "gitCommit": "e40c39525a99e3e893c08542bb5739ebe3d0b611"
+  },
+  "status": "COMPLETE",
+  "artifacts": {
+    "dependencyReport": {
+      "path": "dependency-report.json",
+      "fileHash": "sha256:29f7da71b80707d1f3fe760b809059ce2a4d41294fcee98c7e47683d0c8e87e1"
+    },
+    "analysisSnapshot": {
+      "path": "analysis-snapshot.json",
+      "fileHash": "sha256:777582f409ca3f487c7f0400d9cd6f7bcc9c155807494982874319614856da86"
+    },
+    "architectureSnapshot": {
+      "path": "architecture-snapshot.json",
+      "fileHash": "sha256:2bf876c0a1ae375caa05b1a7072acdd77dd129042a2f87cfd68e5be54638120e"
+    },
+    "architectureMetrics": {
+      "path": "architecture-metrics.json",
+      "fileHash": "sha256:a756805ba36cd26803b90c12deae5b2cfd6deb38b4d406b52b3c5df51a3a25e2"
+    },
+    "dependencyReportMd": {
+      "path": "dependency-report.md",
+      "fileHash": "sha256:adab46f8e2041bd5d3dafe3d20320d1f0a46eaf28c4cb54fba5e61a19a63a1af"
+    },
+    "dependencySummaryMd": {
+      "path": "dependency-summary.md",
+      "fileHash": "sha256:5c3f195639a692646a306153951290fe084066a756954818a120e6fc79e25846"
+    },
+    "unresolvedReferencesMd": {
+      "path": "unresolved-references.md",
+      "fileHash": "sha256:dc10ba54b826255265bb35a5c911f105f88f94d1bdbe25080d616adf9b15bd63"
+    },
+    "explorerData": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:2af6622d7955ca8d6d0fde089acfb10f4a3664aaa916eac6bc18b8fec4ced8d0",
+      "nodeCount": 10,
+      "edgeCount": 16
+    }
+  }
+}

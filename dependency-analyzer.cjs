@@ -38,6 +38,109 @@ const crypto = require("crypto");
 // Configuration
 // ============================================================
 
+const {
+  classifyComponentRole,
+  classifyAllRoles,
+} = require("./role-classifier.cjs");
+const { findPaths, analyzeComponentPaths } = require("./path-analyzer.cjs");
+const {
+  classifyComponentLayer,
+  classifyAllLayers,
+} = require("./layer-classifier.cjs");
+const {
+  analyzeComponentDataImpact,
+  analyzeAllDataImpact,
+} = require("./data-impact.cjs");
+const {
+  detectEntryPoint,
+  detectAllEntryPoints,
+} = require("./entry-points.cjs");
+const {
+  detectExternalBoundary,
+  detectAllExternalBoundaries,
+} = require("./external-boundaries.cjs");
+const {
+  analyzeSecurityBoundaries,
+  analyzeAllSecurityBoundaries,
+} = require("./security-boundaries.cjs");
+const {
+  detectComponentBottleneck,
+  detectAllBottlenecks,
+} = require("./bottleneck-detector.cjs");
+const {
+  detectComponentSmells,
+  detectAllSmells,
+  SMELL_THRESHOLDS,
+  SMELL_TYPES,
+} = require("./architecture-smells.cjs");
+const { classifyComponentSafetyEnvelope, classifyAllSafetyEnvelopes, SAFETY_CLASSIFICATIONS, SAFETY_THRESHOLDS } = require("./safety-envelope.cjs");
+const { simulateChange } = require("./change-simulator.cjs");
+const {
+  inferComponentDomain,
+  buildSystemMap,
+  buildDomainMap,
+  buildComponentMap,
+  buildImpactMap,
+  buildMultiLevelArchitectureMaps
+} = require("./architecture-maps.cjs");
+const {
+  classifyComponentBusinessCriticality,
+  classifyAllBusinessCriticality,
+} = require("./business-criticality.cjs");
+const {
+  classifyComponentDomain,
+  classifyAllDomains,
+} = require("./domain-classifier.cjs");
+const {
+  buildComponentArchitectureProfile,
+  buildRepositoryArchitectureProfile,
+} = require("./architecture-profile.cjs");
+const { evaluateArchitectureHealth, evaluateComponentArchitectureHealth } = require("./architecture-health.cjs");
+const { detectComponentArchitectureDebt, detectAllArchitectureDebt, DEBT_CATEGORIES, DEBT_SEVERITIES } = require("./architecture-debt.cjs");
+const { determineRefactoringSequence, buildPrerequisiteGraph, classifySafetyEnvelope, rankCandidates } = require("./refactoring-sequencer.cjs");
+const {
+  evaluateQualityGates,
+  evaluateComponentQualityGates,
+  DEFAULT_QUALITY_GATE_CONFIG,
+  GATE_RESULTS,
+  GATE_SEVERITIES
+} = require("./architecture-quality-gates.cjs");
+const {
+  detectComponentDuplicateResponsibility,
+  detectAllDuplicateResponsibilities,
+  DUPLICATION_CLASSIFICATIONS
+} = require("./duplicate-responsibility.cjs");
+const {
+  createCanonicalArchitectureSnapshot,
+  computeSnapshotIdentity,
+  validateArchitectureSnapshot,
+  SNAPSHOT_SCHEMA_VERSION
+} = require("./architecture-snapshot.cjs");
+const {
+  evaluateArchitectureChangeGate,
+  GATE_DECISIONS
+} = require("./architecture-change-gate.cjs");
+const {
+  evaluateTaskEligibility,
+  filterInvestigationTasks,
+  ELIGIBILITY_DECISIONS
+} = require("./investigation-eligibility.cjs");
+const {
+  CONTEXT_VERSION: MINIMIZER_CONTEXT_VERSION,
+  minimizeInvestigationContext,
+  minimizeInvestigationTasks
+} = require("./investigation-context-minimizer.cjs");
+const {
+  evaluateArchitectureDecisionContext,
+  buildComponentDecisionContext,
+  buildChangeDecisionContext,
+  buildRepositoryDecisionContext
+} = require("./architecture-decision-context.cjs");
+const {
+  evaluateLlmUsageAccounting,
+  ACCOUNTING_VERSION
+} = require("./llm-usage-accounting.cjs");
+
 const ANALYZER_ROOT = path.resolve(__dirname);
 
 // BASE_OUTPUT_DIR is the target directory for generated dependency analysis artifacts.
@@ -49,22 +152,21 @@ const BASE_OUTPUT_DIR = path.resolve(process.cwd());
 // project-relative Salesforce paths resolve against the Salesforce project
 // root while analyzer artifacts remain under the analyzer directory.
 // If the analyzer is deployed at the Salesforce project root, it still works.
-const PROJECT_ROOT =
-  fs.existsSync(path.join(BASE_OUTPUT_DIR, "force-app"))
-    ? BASE_OUTPUT_DIR
-    : fs.existsSync(path.join(BASE_OUTPUT_DIR, "..", "force-app"))
-      ? path.resolve(BASE_OUTPUT_DIR, "..")
-      : fs.existsSync(path.join(ANALYZER_ROOT, "force-app"))
-        ? ANALYZER_ROOT
-        : fs.existsSync(path.join(ANALYZER_ROOT, "..", "force-app"))
-          ? path.resolve(ANALYZER_ROOT, "..")
-          : BASE_OUTPUT_DIR;
+const PROJECT_ROOT = fs.existsSync(path.join(BASE_OUTPUT_DIR, "force-app"))
+  ? BASE_OUTPUT_DIR
+  : fs.existsSync(path.join(BASE_OUTPUT_DIR, "..", "force-app"))
+    ? path.resolve(BASE_OUTPUT_DIR, "..")
+    : fs.existsSync(path.join(ANALYZER_ROOT, "force-app"))
+      ? ANALYZER_ROOT
+      : fs.existsSync(path.join(ANALYZER_ROOT, "..", "force-app"))
+        ? path.resolve(ANALYZER_ROOT, "..")
+        : BASE_OUTPUT_DIR;
 
 const DEFAULT_SOURCE_DIR = path.join(
   PROJECT_ROOT,
   "force-app",
   "main",
-  "default"
+  "default",
 );
 
 // The active output directory is selected from the CLI command.
@@ -80,40 +182,159 @@ const IGNORED_DIRECTORIES = new Set([
   "dist",
   "tmp",
   ".cache",
-  ".scannerwork"
+  ".scannerwork",
 ]);
 
 const SYSTEM_TYPES = new Set([
-  "System", "Database", "Schema", "Test", "Math", "String",
-  "Date", "Datetime", "Time", "JSON", "Limits", "UserInfo",
-  "URL", "EncodingUtil", "Crypto", "Type", "Pattern",
-  "Matcher", "Blob", "Id", "Integer", "Long", "Decimal",
-  "Double", "Boolean", "Object", "Exception", "Http",
-  "HttpRequest", "HttpResponse", "Messaging", "PageReference",
-  "ApexPages", "AuraHandledException", "ConnectApi", "Cache",
-  "EventBus", "Approval", "Flow", "Metadata", "Auth",
-  "FeatureManagement", "Continuation", "AggregateResult",
-  "SObject", "SObjectType", "SObjectField"
+  "System",
+  "Database",
+  "Schema",
+  "Test",
+  "Math",
+  "String",
+  "Date",
+  "Datetime",
+  "Time",
+  "JSON",
+  "Limits",
+  "UserInfo",
+  "URL",
+  "EncodingUtil",
+  "Crypto",
+  "Type",
+  "Pattern",
+  "Matcher",
+  "Blob",
+  "Id",
+  "Integer",
+  "Long",
+  "Decimal",
+  "Double",
+  "Boolean",
+  "Object",
+  "Exception",
+  "Http",
+  "HttpRequest",
+  "HttpResponse",
+  "Messaging",
+  "PageReference",
+  "ApexPages",
+  "AuraHandledException",
+  "ConnectApi",
+  "Cache",
+  "EventBus",
+  "Approval",
+  "Flow",
+  "Metadata",
+  "Auth",
+  "FeatureManagement",
+  "Continuation",
+  "AggregateResult",
+  "SObject",
+  "SObjectType",
+  "SObjectField",
 ]);
 
 const SOQL_KEYWORDS = new Set([
-  "SELECT", "FROM", "WHERE", "WITH", "USING", "SCOPE", "ORDER",
-  "GROUP", "HAVING", "LIMIT", "OFFSET", "FOR", "UPDATE", "VIEW",
-  "REFERENCE", "TYPEOF", "WHEN", "THEN", "ELSE", "END", "AND",
-  "OR", "NOT", "IN", "LIKE", "INCLUDES", "EXCLUDES", "NULL",
-  "TRUE", "FALSE", "AS", "ASC", "DESC", "NULLS", "FIRST", "LAST",
-  "BY", "COUNT", "SUM", "MIN", "MAX", "AVG", "ROLLUP", "CUBE"
+  "SELECT",
+  "FROM",
+  "WHERE",
+  "WITH",
+  "USING",
+  "SCOPE",
+  "ORDER",
+  "GROUP",
+  "HAVING",
+  "LIMIT",
+  "OFFSET",
+  "FOR",
+  "UPDATE",
+  "VIEW",
+  "REFERENCE",
+  "TYPEOF",
+  "WHEN",
+  "THEN",
+  "ELSE",
+  "END",
+  "AND",
+  "OR",
+  "NOT",
+  "IN",
+  "LIKE",
+  "INCLUDES",
+  "EXCLUDES",
+  "NULL",
+  "TRUE",
+  "FALSE",
+  "AS",
+  "ASC",
+  "DESC",
+  "NULLS",
+  "FIRST",
+  "LAST",
+  "BY",
+  "COUNT",
+  "SUM",
+  "MIN",
+  "MAX",
+  "AVG",
+  "ROLLUP",
+  "CUBE",
 ]);
 
 const COMMON_WORDS = new Set([
-  "public", "private", "protected", "global", "static", "virtual",
-  "override", "abstract", "final", "class", "interface", "extends",
-  "implements", "return", "new", "if", "else", "for", "while",
-  "do", "switch", "case", "when", "try", "catch", "finally",
-  "throw", "throws", "this", "super", "true", "false", "null",
-  "void", "with", "sharing", "without", "inherited", "sharing",
-  "list", "map", "set", "string", "integer", "long", "decimal",
-  "double", "boolean", "date", "datetime", "id", "object"
+  "public",
+  "private",
+  "protected",
+  "global",
+  "static",
+  "virtual",
+  "override",
+  "abstract",
+  "final",
+  "class",
+  "interface",
+  "extends",
+  "implements",
+  "return",
+  "new",
+  "if",
+  "else",
+  "for",
+  "while",
+  "do",
+  "switch",
+  "case",
+  "when",
+  "try",
+  "catch",
+  "finally",
+  "throw",
+  "throws",
+  "this",
+  "super",
+  "true",
+  "false",
+  "null",
+  "void",
+  "with",
+  "sharing",
+  "without",
+  "inherited",
+  "sharing",
+  "list",
+  "map",
+  "set",
+  "string",
+  "integer",
+  "long",
+  "decimal",
+  "double",
+  "boolean",
+  "date",
+  "datetime",
+  "id",
+  "object",
 ]);
 
 const CURRENT_ANALYZER_VERSION = "13";
@@ -166,17 +387,33 @@ function commandOutputDir(command, target, phase, options = {}) {
     case "llm-context":
       return path.join(root, "llm-context", safeTarget);
     case "component-context":
+    case "investigate":
       return path.join(root, "component-context", safeTarget);
+    case "roles":
+      return path.join(root, "stats");
     case "batch-context":
-      return path.join(root, "batch-context", `batch-${String(target).padStart(2, "0")}`);
+      return path.join(
+        root,
+        "batch-context",
+        `batch-${String(target).padStart(2, "0")}`,
+      );
     case "phase-context":
-      return path.join(root, "phase-context", safeTarget, `phase-${safeName(phase)}`);
+      return path.join(
+        root,
+        "phase-context",
+        safeTarget,
+        `phase-${safeName(phase)}`,
+      );
     case "context-completeness":
       return path.join(root, "context-completeness", safeTarget);
     case "create-batches":
       return path.join(root, "create-batches");
     case "llm-context-batch":
-      return path.join(root, "llm-context-batch", `batch-${String(target).padStart(2, "0")}`);
+      return path.join(
+        root,
+        "llm-context-batch",
+        `batch-${String(target).padStart(2, "0")}`,
+      );
     default:
       return root;
   }
@@ -193,8 +430,15 @@ function parseArgs(argv) {
 
   if (!args.length || args[0] === "analyze") {
     const rawOptions = parseOptions(args.slice(args[0] === "analyze" ? 1 : 0));
-    let sourceDir = rawOptions.sourceDir ? resolveProjectPath(rawOptions.sourceDir) : null;
-    if (!sourceDir && args[0] === "analyze" && args[1] && !args[1].startsWith("--")) {
+    let sourceDir = rawOptions.sourceDir
+      ? resolveProjectPath(rawOptions.sourceDir)
+      : null;
+    if (
+      !sourceDir &&
+      args[0] === "analyze" &&
+      args[1] &&
+      !args[1].startsWith("--")
+    ) {
       sourceDir = resolveProjectPath(args[1]);
     }
     if (!sourceDir) sourceDir = DEFAULT_SOURCE_DIR;
@@ -202,66 +446,70 @@ function parseArgs(argv) {
     return {
       command: "analyze",
       sourceDir,
-      options: rawOptions
+      options: rawOptions,
     };
   }
 
   const command = args[0];
 
-  if ([
-    "impact",
-    "refactor-impact",
-    "search",
-    "llm-context",
-    "llm-context-batch",
-    "component-context",
-    "batch-context",
-    "phase-context",
-    "context-completeness",
-    "llm-investigation-context"
-  ].includes(command)) {
+  if (
+    [
+      "impact",
+      "refactor-impact",
+      "search",
+      "llm-context",
+      "llm-context-batch",
+      "component-context",
+      "batch-context",
+      "phase-context",
+      "context-completeness",
+      "llm-investigation-context",
+      "investigate",
+    ].includes(command)
+  ) {
     return {
       command,
       target: args[1],
       phase: command === "phase-context" ? args[2] : null,
-      sourceDir: command === "phase-context"
-        ? (
-            args[3] && !args[3].startsWith("--")
-              ? resolveProjectPath(args[3])
-              : DEFAULT_SOURCE_DIR
-          )
-        : (
-            args[2] && !args[2].startsWith("--")
-              ? resolveProjectPath(args[2])
-              : DEFAULT_SOURCE_DIR
-          ),
+      sourceDir:
+        command === "phase-context"
+          ? args[3] && !args[3].startsWith("--")
+            ? resolveProjectPath(args[3])
+            : DEFAULT_SOURCE_DIR
+          : args[2] && !args[2].startsWith("--")
+            ? resolveProjectPath(args[2])
+            : DEFAULT_SOURCE_DIR,
       options: parseOptions(
         command === "phase-context"
           ? args.slice(args[3] && !args[3].startsWith("--") ? 4 : 3)
-          : args.slice(args[2] && !args[2].startsWith("--") ? 3 : 2)
-      )
+          : args.slice(args[2] && !args[2].startsWith("--") ? 3 : 2),
+      ),
     };
   }
 
   if (command === "create-batches") {
     return {
       command,
-      sourceDir: args[1] && !args[1].startsWith("--")
-        ? resolveProjectPath(args[1])
-        : DEFAULT_SOURCE_DIR,
+      sourceDir:
+        args[1] && !args[1].startsWith("--")
+          ? resolveProjectPath(args[1])
+          : DEFAULT_SOURCE_DIR,
       options: parseOptions(
-        args.slice(args[1] && !args[1].startsWith("--") ? 2 : 1)
-      )
+        args.slice(args[1] && !args[1].startsWith("--") ? 2 : 1),
+      ),
     };
   }
 
-  if (command === "stats") {
+  if (command === "stats" || command === "roles") {
     return {
       command,
-      sourceDir: args[1] && !args[1].startsWith("--")
-        ? resolveProjectPath(args[1])
-        : DEFAULT_SOURCE_DIR,
-      options: parseOptions(args.slice(args[1] && !args[1].startsWith("--") ? 2 : 1))
+      sourceDir:
+        args[1] && !args[1].startsWith("--")
+          ? resolveProjectPath(args[1])
+          : DEFAULT_SOURCE_DIR,
+      options: parseOptions(
+        args.slice(args[1] && !args[1].startsWith("--") ? 2 : 1),
+      ),
     };
   }
 
@@ -287,10 +535,14 @@ function parseOptions(args) {
     includeSource: false,
     outputDir: null,
     sourceDir: null,
-    manifest: false
+    manifest: false,
+    investigate: false,
   };
 
   for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--investigate") {
+      options.investigate = true;
+    }
     if (args[i] === "--output-dir" || args[i] === "--output") {
       options.outputDir = args[++i];
     }
@@ -377,6 +629,12 @@ Commands:
 
   llm-investigation-context <name> [sourceDir]
       Generate the semantic investigation package for one component.
+
+  investigate <name> [sourceDir]
+      Generate component context and execute targeted semantic investigation.
+
+  roles [sourceDir]
+      Show deterministic component-role classifications and aggregate statistics.
 
   create-batches [sourceDir]
       Create logical dependency-based analysis batches.
@@ -469,9 +727,7 @@ function escapeMd(value) {
 }
 
 function stripComments(content) {
-  return content
-    .replace(/\/\*[\s\S]*?\*\//g, " ")
-    .replace(/\/\/.*$/gm, " ");
+  return content.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/\/\/.*$/gm, " ");
 }
 
 function looksLikeClassName(value) {
@@ -517,45 +773,37 @@ function discover(sourceDir) {
   return {
     sourceDir,
     files,
-    apexClasses: files.filter(f => f.endsWith(".cls")),
-    apexTriggers: files.filter(f => f.endsWith(".trigger")),
-    apexClassMeta: files.filter(f => f.endsWith(".cls-meta.xml")),
-    triggerMeta: files.filter(f => f.endsWith(".trigger-meta.xml")),
-    lwcJs: files.filter(f =>
-      f.endsWith(".js") &&
-      f.includes(`${path.sep}lwc${path.sep}`)
+    apexClasses: files.filter((f) => f.endsWith(".cls")),
+    apexTriggers: files.filter((f) => f.endsWith(".trigger")),
+    apexClassMeta: files.filter((f) => f.endsWith(".cls-meta.xml")),
+    triggerMeta: files.filter((f) => f.endsWith(".trigger-meta.xml")),
+    lwcJs: files.filter(
+      (f) => f.endsWith(".js") && f.includes(`${path.sep}lwc${path.sep}`),
     ),
-    lwcHtml: files.filter(f =>
-      f.endsWith(".html") &&
-      f.includes(`${path.sep}lwc${path.sep}`)
+    lwcHtml: files.filter(
+      (f) => f.endsWith(".html") && f.includes(`${path.sep}lwc${path.sep}`),
     ),
-    lwcCss: files.filter(f =>
-      f.endsWith(".css") &&
-      f.includes(`${path.sep}lwc${path.sep}`)
+    lwcCss: files.filter(
+      (f) => f.endsWith(".css") && f.includes(`${path.sep}lwc${path.sep}`),
     ),
-    lwcMeta: files.filter(f =>
-      f.endsWith(".js-meta.xml") &&
-      f.includes(`${path.sep}lwc${path.sep}`)
+    lwcMeta: files.filter(
+      (f) =>
+        f.endsWith(".js-meta.xml") && f.includes(`${path.sep}lwc${path.sep}`),
     ),
-    aura: files.filter(f =>
-      f.includes(`${path.sep}aura${path.sep}`)
+    aura: files.filter((f) => f.includes(`${path.sep}aura${path.sep}`)),
+    visualforce: files.filter(
+      (f) => f.endsWith(".page") || f.endsWith(".component"),
     ),
-    visualforce: files.filter(f =>
-      f.endsWith(".page") || f.endsWith(".component")
+    flows: files.filter(
+      (f) => f.endsWith(".flow-meta.xml") || f.endsWith(".flow"),
     ),
-    flows: files.filter(f =>
-      f.endsWith(".flow-meta.xml") || f.endsWith(".flow")
+    objects: files.filter((f) => f.endsWith(".object-meta.xml")),
+    fields: files.filter(
+      (f) =>
+        f.includes(`${path.sep}fields${path.sep}`) &&
+        f.endsWith(".field-meta.xml"),
     ),
-    objects: files.filter(f =>
-      f.endsWith(".object-meta.xml")
-    ),
-    fields: files.filter(f =>
-      f.includes(`${path.sep}fields${path.sep}`) &&
-      f.endsWith(".field-meta.xml")
-    ),
-    triggers: files.filter(f =>
-      f.endsWith(".trigger")
-    )
+    triggers: files.filter((f) => f.endsWith(".trigger")),
   };
 }
 
@@ -564,15 +812,23 @@ function lwcName(file) {
   const index = file.indexOf(marker);
   if (index < 0) return path.basename(file, ".js");
 
-  return file
-    .substring(index + marker.length)
-    .split(path.sep)[0];
+  return file.substring(index + marker.length).split(path.sep)[0];
+}
+
+function normalizeLwcName(name) {
+  if (!name || typeof name !== "string") return "";
+  let s = name.trim();
+  if (s.startsWith("c-") || s.startsWith("c/")) {
+    s = s.substring(2);
+  }
+  // Convert camelCase / PascalCase to kebab-case
+  s = s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+  return s;
 }
 
 // ============================================================
 // Apex parsing
 // ============================================================
-
 
 function lineNumberAtOffset(text, offset) {
   if (!Number.isFinite(offset) || offset < 0) return null;
@@ -587,7 +843,10 @@ function nearestMethodForOffset(methods, offset) {
   if (!methods.length || !Number.isFinite(offset)) return null;
   let best = null;
   for (const method of methods) {
-    if (method.startOffset <= offset && (!best || method.startOffset > best.startOffset)) {
+    if (
+      method.startOffset <= offset &&
+      (!best || method.startOffset > best.startOffset)
+    ) {
       best = method;
     }
   }
@@ -601,7 +860,10 @@ function enrichMethodRanges(raw, methods) {
     const next = sorted[i + 1];
     current.startLine = lineNumberAtOffset(raw, current.startOffset);
     current.endLine = next
-      ? Math.max(current.startLine || 1, lineNumberAtOffset(raw, next.startOffset) - 1)
+      ? Math.max(
+          current.startLine || 1,
+          lineNumberAtOffset(raw, next.startOffset) - 1,
+        )
       : Math.max(current.startLine || 1, countLines(raw));
     current.endOffset = next ? next.startOffset - 1 : raw.length;
   }
@@ -633,13 +895,12 @@ function parseApex(file) {
     dml: [],
     callouts: [],
     dynamicApex: [],
-    testReferences: []
+    testReferences: [],
   };
 
-  const declaration =
-    content.match(
-      /\bclass\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:extends\s+([A-Za-z_][A-Za-z0-9_]*))?\s*(?:implements\s+([^{]+))?/i
-    );
+  const declaration = content.match(
+    /\bclass\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:extends\s+([A-Za-z_][A-Za-z0-9_]*))?\s*(?:implements\s+([^{]+))?/i,
+  );
 
   if (declaration) {
     result.name = declaration[1];
@@ -653,9 +914,9 @@ function parseApex(file) {
       result.implements.push(
         ...declaration[3]
           .split(",")
-          .map(v => v.trim())
-          .map(v => v.split(/\s+/)[0])
-          .filter(Boolean)
+          .map((v) => v.trim())
+          .map((v) => v.split(/\s+/)[0])
+          .filter(Boolean),
       );
     }
   }
@@ -665,10 +926,9 @@ function parseApex(file) {
     /\btestMethod\b/i.test(content) ||
     /class\s+\w*Test\b/i.test(content);
 
-  const sharing =
-    content.match(
-      /\bclass\s+\w+[\s\S]{0,100}?\b(with\s+sharing|without\s+sharing|inherited\s+sharing)\b/i
-    );
+  const sharing = content.match(
+    /\bclass\s+\w+[\s\S]{0,100}?\b(with\s+sharing|without\s+sharing|inherited\s+sharing)\b/i,
+  );
 
   if (sharing) result.sharing = sharing[1];
 
@@ -694,7 +954,10 @@ function parseApex(file) {
         name: methodName,
         returnType: m[2].trim(),
         parameters: m[4].trim(),
-        visibility: modifiers.find(x => /^(public|private|protected|global)$/.test(x)) || null,
+        visibility:
+          modifiers.find((x) =>
+            /^(public|private|protected|global)$/.test(x),
+          ) || null,
         modifiers,
         isStatic: modifiers.includes("static"),
         isVirtual: modifiers.includes("virtual"),
@@ -702,15 +965,12 @@ function parseApex(file) {
         isAbstract: modifiers.includes("abstract"),
         isAuraEnabled: false,
         isInvocable: false,
-        startOffset: m.index
+        startOffset: m.index,
       });
     }
   }
 
-  result.methods = uniqueBy(
-    result.methods,
-    x => `${x.name}:${x.parameters}`
-  );
+  result.methods = uniqueBy(result.methods, (x) => `${x.name}:${x.parameters}`);
 
   result.methods = enrichMethodRanges(raw, result.methods);
 
@@ -719,32 +979,26 @@ function parseApex(file) {
     const nearby = content.match(
       new RegExp(
         `@(AuraEnabled|InvocableMethod)[^\\n]{0,300}?\\b${method.name}\\s*\\(`,
-        "i"
-      )
+        "i",
+      ),
     );
 
     if (nearby) {
-      method.isAuraEnabled =
-        nearby[1].toLowerCase() === "auraenabled";
-      method.isInvocable =
-        nearby[1].toLowerCase() === "invocablemethod";
+      method.isAuraEnabled = nearby[1].toLowerCase() === "auraenabled";
+      method.isInvocable = nearby[1].toLowerCase() === "invocablemethod";
     }
   }
 
   // new Class()
-  const newRegex =
-    /\bnew\s+([A-Z][A-Za-z0-9_]*)\s*\(/g;
+  const newRegex = /\bnew\s+([A-Z][A-Za-z0-9_]*)\s*\(/g;
 
   while ((m = newRegex.exec(content))) {
-    if (
-      looksLikeClassName(m[1]) &&
-      m[1] !== result.name
-    ) {
+    if (looksLikeClassName(m[1]) && m[1] !== result.name) {
       result.dependencies.push({
         from: result.id,
         toName: m[1],
         type: "instantiation",
-        evidence: `new ${m[1]}()`
+        evidence: `new ${m[1]}()`,
       });
     }
   }
@@ -757,16 +1011,13 @@ function parseApex(file) {
     const className = m[1];
     const methodName = m[2];
 
-    if (
-      looksLikeClassName(className) &&
-      className !== result.name
-    ) {
+    if (looksLikeClassName(className) && className !== result.name) {
       result.dependencies.push({
         from: result.id,
         toName: className,
         type: "method-call",
         method: methodName,
-        evidence: `${className}.${methodName}()`
+        evidence: `${className}.${methodName}()`,
       });
     }
   }
@@ -778,22 +1029,18 @@ function parseApex(file) {
   while ((m = typeRegex.exec(content))) {
     const candidate = m[1];
 
-    if (
-      candidate !== result.name &&
-      looksLikeClassName(candidate)
-    ) {
+    if (candidate !== result.name && looksLikeClassName(candidate)) {
       result.dependencies.push({
         from: result.id,
         toName: candidate,
         type: "type-reference",
-        evidence: candidate
+        evidence: candidate,
       });
     }
   }
 
   // Generic parameters: List<MyDTO>, Map<Id, MyDTO>
-  const genericRegex =
-    /<\s*([A-Z][A-Za-z0-9_]*)\s*>/g;
+  const genericRegex = /<\s*([A-Z][A-Za-z0-9_]*)\s*>/g;
 
   while ((m = genericRegex.exec(content))) {
     if (looksLikeClassName(m[1])) {
@@ -801,7 +1048,7 @@ function parseApex(file) {
         from: result.id,
         toName: m[1],
         type: "generic-type",
-        evidence: `<${m[1]}>`
+        evidence: `<${m[1]}>`,
       });
     }
   }
@@ -811,7 +1058,7 @@ function parseApex(file) {
       from: result.id,
       toName: parent,
       type: "extends",
-      evidence: `extends ${parent}`
+      evidence: `extends ${parent}`,
     });
   }
 
@@ -820,22 +1067,22 @@ function parseApex(file) {
       from: result.id,
       toName: iface,
       type: "implements",
-      evidence: `implements ${iface}`
+      evidence: `implements ${iface}`,
     });
   }
 
   // SOQL objects.
-  const fromRegex =
-    /\bFROM\s+([A-Za-z_][A-Za-z0-9_]*)/gi;
+  const fromRegex = /\bFROM\s+([A-Za-z_][A-Za-z0-9_]*)/gi;
 
   while ((m = fromRegex.exec(content))) {
     const objectName = m[1];
 
     if (!SOQL_KEYWORDS.has(objectName.toUpperCase())) {
       const line = lineNumberAtOffset(raw, m.index);
-      const owner = result.methods.find(method =>
-        line >= (method.startLine || 1) &&
-        line <= (method.endLine || Number.MAX_SAFE_INTEGER)
+      const owner = result.methods.find(
+        (method) =>
+          line >= (method.startLine || 1) &&
+          line <= (method.endLine || Number.MAX_SAFE_INTEGER),
       );
 
       result.objects.push(objectName);
@@ -846,7 +1093,7 @@ function parseApex(file) {
         column: Math.max(1, m.index - raw.lastIndexOf("\n", m.index - 1)),
         methodOwner: owner ? owner.name : null,
         evidence: `SOQL FROM ${objectName}`,
-        confidence: "high"
+        confidence: "high",
       });
     }
   }
@@ -860,7 +1107,7 @@ function parseApex(file) {
 
     const fieldTokens = m[1]
       .split(",")
-      .map(v => v.trim())
+      .map((v) => v.trim())
       .filter(Boolean);
 
     for (const token of fieldTokens) {
@@ -875,9 +1122,10 @@ function parseApex(file) {
       ) {
         const fieldOffset = m.index + m[0].indexOf(token);
         const line = lineNumberAtOffset(raw, fieldOffset);
-        const owner = result.methods.find(method =>
-          line >= (method.startLine || 1) &&
-          line <= (method.endLine || Number.MAX_SAFE_INTEGER)
+        const owner = result.methods.find(
+          (method) =>
+            line >= (method.startLine || 1) &&
+            line <= (method.endLine || Number.MAX_SAFE_INTEGER),
         );
 
         result.fields.push({
@@ -885,7 +1133,7 @@ function parseApex(file) {
           field,
           line,
           methodOwner: owner ? owner.name : null,
-          confidence: "high"
+          confidence: "high",
         });
       }
     }
@@ -897,9 +1145,10 @@ function parseApex(file) {
 
   while ((m = dmlRegex.exec(content))) {
     const line = lineNumberAtOffset(raw, m.index);
-    const owner = result.methods.find(method =>
-      line >= (method.startLine || 1) &&
-      line <= (method.endLine || Number.MAX_SAFE_INTEGER)
+    const owner = result.methods.find(
+      (method) =>
+        line >= (method.startLine || 1) &&
+        line <= (method.endLine || Number.MAX_SAFE_INTEGER),
     );
 
     result.dml.push({
@@ -907,7 +1156,7 @@ function parseApex(file) {
       variable: m[2],
       line,
       methodOwner: owner ? owner.name : null,
-      confidence: "high"
+      confidence: "high",
     });
   }
 
@@ -916,9 +1165,10 @@ function parseApex(file) {
 
   while ((m = dbDml.exec(content))) {
     const line = lineNumberAtOffset(raw, m.index);
-    const owner = result.methods.find(method =>
-      line >= (method.startLine || 1) &&
-      line <= (method.endLine || Number.MAX_SAFE_INTEGER)
+    const owner = result.methods.find(
+      (method) =>
+        line >= (method.startLine || 1) &&
+        line <= (method.endLine || Number.MAX_SAFE_INTEGER),
     );
 
     result.dml.push({
@@ -926,7 +1176,7 @@ function parseApex(file) {
       databaseMethod: true,
       line,
       methodOwner: owner ? owner.name : null,
-      confidence: "high"
+      confidence: "high",
     });
   }
 
@@ -952,7 +1202,7 @@ function parseApex(file) {
     /\bDatabase\.query\s*\(/,
     /\bDatabase\.queryWithBinds\s*\(/,
     /\bJSON\.deserialize\s*\(/,
-    /\bJSON\.deserializeUntyped\s*\(/
+    /\bJSON\.deserializeUntyped\s*\(/,
   ];
 
   for (const pattern of dynamicPatterns) {
@@ -963,16 +1213,10 @@ function parseApex(file) {
 
   // Test references.
   if (result.isTest) {
-    const refs = content.match(
-      /\b[A-Z][A-Za-z0-9_]*\b/g
-    ) || [];
+    const refs = content.match(/\b[A-Z][A-Za-z0-9_]*\b/g) || [];
 
     result.testReferences = unique(
-      refs.filter(
-        x =>
-          looksLikeClassName(x) &&
-          x !== result.name
-      )
+      refs.filter((x) => looksLikeClassName(x) && x !== result.name),
     );
   }
 
@@ -982,12 +1226,14 @@ function parseApex(file) {
   const usedEvidenceOffsets = new Set();
 
   function findDependencyOffset(dependency) {
-    const needles = unique([
-      dependency.evidence || "",
-      dependency.method && dependency.toName
-        ? `${dependency.toName}.${dependency.method}`
-        : ""
-    ].filter(Boolean));
+    const needles = unique(
+      [
+        dependency.evidence || "",
+        dependency.method && dependency.toName
+          ? `${dependency.toName}.${dependency.method}`
+          : "",
+      ].filter(Boolean),
+    );
 
     const candidates = [];
     for (const needle of needles) {
@@ -1001,19 +1247,22 @@ function parseApex(file) {
     }
 
     const ordered = unique(candidates);
-    const inMethod = ordered.find(offset => {
+    const inMethod = ordered.find((offset) => {
       if (usedEvidenceOffsets.has(offset)) return false;
       const line = lineNumberAtOffset(raw, offset);
-      return result.methods.some(method =>
-        line >= (method.startLine || 1) &&
-        line <= (method.endLine || Number.MAX_SAFE_INTEGER)
+      return result.methods.some(
+        (method) =>
+          line >= (method.startLine || 1) &&
+          line <= (method.endLine || Number.MAX_SAFE_INTEGER),
       );
     });
 
     if (inMethod !== undefined) return inMethod;
-    return ordered.find(offset => !usedEvidenceOffsets.has(offset))
-      ?? ordered[0]
-      ?? -1;
+    return (
+      ordered.find((offset) => !usedEvidenceOffsets.has(offset)) ??
+      ordered[0] ??
+      -1
+    );
   }
 
   for (const dependency of result.dependencies) {
@@ -1024,12 +1273,13 @@ function parseApex(file) {
       dependency.line = lineNumberAtOffset(raw, offset);
       dependency.column = Math.max(
         1,
-        offset - raw.lastIndexOf("\n", offset - 1)
+        offset - raw.lastIndexOf("\n", offset - 1),
       );
 
-      const owner = result.methods.find(method =>
-        dependency.line >= (method.startLine || 1) &&
-        dependency.line <= (method.endLine || Number.MAX_SAFE_INTEGER)
+      const owner = result.methods.find(
+        (method) =>
+          dependency.line >= (method.startLine || 1) &&
+          dependency.line <= (method.endLine || Number.MAX_SAFE_INTEGER),
       );
 
       if (owner) dependency.methodOwner = owner.name;
@@ -1037,18 +1287,14 @@ function parseApex(file) {
 
     dependency.confidence =
       dependency.confidence ||
-      (
-        dependency.type === "method-call" ||
-        dependency.type === "instantiation"
+      (dependency.type === "method-call" || dependency.type === "instantiation"
+        ? "high"
+        : dependency.type === "extends" || dependency.type === "implements"
           ? "high"
-          : dependency.type === "extends" ||
-            dependency.type === "implements"
-            ? "high"
-            : dependency.type === "generic-type" ||
+          : dependency.type === "generic-type" ||
               dependency.type === "type-reference"
-              ? "medium"
-              : "medium"
-      );
+            ? "medium"
+            : "medium");
 
     dependency.canonical = createCanonicalRelationship({
       from: result.id,
@@ -1059,48 +1305,46 @@ function parseApex(file) {
       line: dependency.line,
       column: dependency.column,
       confidence: dependency.confidence,
-      evidence: dependency.evidence
+      evidence: dependency.evidence,
     });
   }
 
-  result.methods = result.methods.map(method => {
+  result.methods = result.methods.map((method) => {
     const methodDeps = result.dependencies.filter(
-      dependency => dependency.methodOwner === method.name
+      (dependency) => dependency.methodOwner === method.name,
     );
     return {
       ...method,
-      dependencies: methodDeps.map(dependency => ({
+      dependencies: methodDeps.map((dependency) => ({
         to: dependency.toName,
         type: dependency.type,
         method: dependency.method || null,
         line: dependency.line || null,
         confidence: dependency.confidence || null,
         evidence: dependency.evidence || null,
-        canonical: dependency.canonical || createCanonicalRelationship({
-          from: result.id,
-          toName: dependency.toName,
-          type: dependency.type,
-          method: dependency.method,
-          methodOwner: method.name,
-          line: dependency.line,
-          column: dependency.column,
-          confidence: dependency.confidence,
-          evidence: dependency.evidence
-        })
+        canonical:
+          dependency.canonical ||
+          createCanonicalRelationship({
+            from: result.id,
+            toName: dependency.toName,
+            type: dependency.type,
+            method: dependency.method,
+            methodOwner: method.name,
+            line: dependency.line,
+            column: dependency.column,
+            confidence: dependency.confidence,
+            evidence: dependency.evidence,
+          }),
       })),
-      dependencyCount: methodDeps.length
+      dependencyCount: methodDeps.length,
     };
   });
 
   result.objects = unique(result.objects);
-  result.fields = uniqueBy(
-    result.fields,
-    x => `${x.object}.${x.field}`
-  );
+  result.fields = uniqueBy(result.fields, (x) => `${x.object}.${x.field}`);
   result.dependencies = uniqueBy(
     result.dependencies,
-    x =>
-      `${x.from}|${x.toName}|${x.type}|${x.method || ""}`
+    (x) => `${x.from}|${x.toName}|${x.type}|${x.method || ""}`,
   );
 
   return result;
@@ -1113,12 +1357,14 @@ function parseApex(file) {
 function parseLwcJs(file) {
   const raw = read(file);
   const content = stripComments(raw);
-  const name = lwcName(file);
+  const rawName = lwcName(file);
+  const name = normalizeLwcName(rawName);
 
   const result = {
     id: `LWC:${name}`,
     type: "LWC",
     name,
+    rawName,
     file: rel(file),
     lines: countLines(raw),
     apex: [],
@@ -1131,7 +1377,7 @@ function parseLwcJs(file) {
     wireAdapters: [],
     apiProperties: [],
     sourceHash: crypto.createHash("sha256").update(raw).digest("hex"),
-    lineCount: countLines(raw)
+    lineCount: countLines(raw),
   };
 
   let m;
@@ -1142,7 +1388,7 @@ function parseLwcJs(file) {
   while ((m = apexRegex.exec(content))) {
     result.apex.push({
       className: m[1],
-      methodName: m[2]
+      methodName: m[2],
     });
 
     result.dependencies.push({
@@ -1150,49 +1396,39 @@ function parseLwcJs(file) {
       toName: m[1],
       type: "lwc-apex",
       method: m[2],
-      evidence:
-        `@salesforce/apex/${m[1]}.${m[2]}`
+      evidence: `@salesforce/apex/${m[1]}.${m[2]}`,
     });
   }
 
-  const childRegex =
-    /from\s+['"]c\/([A-Za-z0-9_-]+)['"]/g;
+  const childRegex = /from\s+['"]c\/([A-Za-z0-9_-]+)['"]/g;
 
   while ((m = childRegex.exec(content))) {
-    result.childComponents.push(m[1]);
+    const normChild = normalizeLwcName(m[1]);
+    result.childComponents.push(normChild);
 
     result.dependencies.push({
       from: result.id,
-      toName: m[1],
+      toName: normChild,
       type: "lwc-import",
-      evidence: `c/${m[1]}`
+      evidence: `c/${m[1]}`,
     });
   }
 
-  const imports =
-    content.match(
-      /from\s+['"]([^'"]+)['"]/g
-    ) || [];
+  const imports = content.match(/from\s+['"]([^'"]+)['"]/g) || [];
 
   result.imports = unique(
-    imports.map(x =>
-      x.replace(/^from\s+['"]|['"]$/g, "")
-    )
+    imports.map((x) => x.replace(/^from\s+['"]|['"]$/g, "")),
   );
 
   if (/lightning\/uiRecordApi/.test(content)) {
     result.capabilities.push("UI Record API");
   }
 
-  if (
-    /lightning\/uiObjectInfoApi/.test(content)
-  ) {
+  if (/lightning\/uiObjectInfoApi/.test(content)) {
     result.capabilities.push("UI Object Info API");
   }
 
-  if (
-    /lightning\/uiRelatedListApi/.test(content)
-  ) {
+  if (/lightning\/uiRelatedListApi/.test(content)) {
     result.capabilities.push("UI Related List API");
   }
 
@@ -1208,62 +1444,60 @@ function parseLwcJs(file) {
     result.capabilities.push("Wire");
   }
 
-  const customEvent =
-    /new\s+CustomEvent\s*\(\s*['"]([^'"]+)['"]/g;
+  const customEvent = /new\s+CustomEvent\s*\(\s*['"]([^'"]+)['"]/g;
 
   while ((m = customEvent.exec(content))) {
     result.events.push({
       direction: "dispatch",
-      name: m[1]
+      name: m[1],
     });
   }
 
   if (/\bpublish\s*\(/.test(content)) {
     result.events.push({
       direction: "publish",
-      name: "Lightning Message Service"
+      name: "Lightning Message Service",
     });
   }
 
   if (/\bsubscribe\s*\(/.test(content)) {
     result.events.push({
       direction: "subscribe",
-      name: "Lightning Message Service"
+      name: "Lightning Message Service",
     });
   }
 
   result.capabilities = unique(result.capabilities);
-  result.events = uniqueBy(
-    result.events,
-    x => `${x.direction}:${x.name}`
-  );
+  result.events = uniqueBy(result.events, (x) => `${x.direction}:${x.name}`);
 
   return result;
 }
 
 function parseLwcHtml(file) {
   const content = read(file);
-  const name = lwcName(file);
+  const rawName = lwcName(file);
+  const name = normalizeLwcName(rawName);
 
   const result = {
     id: `LWC_HTML:${name}`,
     type: "LWC_HTML",
     name,
+    rawName,
     file: rel(file),
-    dependencies: []
+    dependencies: [],
   };
 
   let m;
 
-  const childRegex =
-    /<c-([A-Za-z0-9-]+)\b/g;
+  const childRegex = /<c-([A-Za-z0-9-]+)\b/g;
 
   while ((m = childRegex.exec(content))) {
+    const normChild = normalizeLwcName(m[1]);
     result.dependencies.push({
       from: `LWC:${name}`,
-      toName: m[1],
+      toName: normChild,
       type: "lwc-template-child",
-      evidence: `<c-${m[1]}>`
+      evidence: `<c-${m[1]}>`,
     });
   }
 
@@ -1287,13 +1521,12 @@ function parseTrigger(file) {
     lines: countLines(raw),
     object: null,
     events: [],
-    dependencies: []
+    dependencies: [],
   };
 
-  const declaration =
-    content.match(
-      /\btrigger\s+([A-Za-z0-9_]+)\s+on\s+([A-Za-z0-9_]+)\s*\(([^)]*)\)/i
-    );
+  const declaration = content.match(
+    /\btrigger\s+([A-Za-z0-9_]+)\s+on\s+([A-Za-z0-9_]+)\s*\(([^)]*)\)/i,
+  );
 
   if (declaration) {
     result.name = declaration[1];
@@ -1301,7 +1534,7 @@ function parseTrigger(file) {
     result.object = declaration[2];
     result.events = declaration[3]
       .split(",")
-      .map(x => x.trim())
+      .map((x) => x.trim())
       .filter(Boolean);
   }
 
@@ -1317,15 +1550,14 @@ function parseTrigger(file) {
         toName: m[1],
         type: "trigger-handler",
         method: m[2],
-        evidence: `${m[1]}.${m[2]}()`
+        evidence: `${m[1]}.${m[2]}()`,
       });
     }
   }
 
   result.dependencies = uniqueBy(
     result.dependencies,
-    x =>
-      `${x.from}|${x.toName}|${x.type}|${x.method || ""}`
+    (x) => `${x.from}|${x.toName}|${x.type}|${x.method || ""}`,
   );
 
   return result;
@@ -1337,30 +1569,24 @@ function parseTrigger(file) {
 
 function parseVisualforce(file) {
   const content = read(file);
-  const name = path.basename(
-    file,
-    path.extname(file)
-  );
+  const name = path.basename(file, path.extname(file));
 
   const dependencies = [];
 
-  const regex =
-    /\b(?:controller|extensions)\s*=\s*["']([^"']+)["']/gi;
+  const regex = /\b(?:controller|extensions)\s*=\s*["']([^"']+)["']/gi;
 
   let m;
 
   while ((m = regex.exec(content))) {
-    for (
-      const controller of m[1]
-        .split(",")
-        .map(x => x.trim())
-        .filter(Boolean)
-    ) {
+    for (const controller of m[1]
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean)) {
       dependencies.push({
         from: `Visualforce:${name}`,
         toName: controller,
         type: "visualforce-controller",
-        evidence: controller
+        evidence: controller,
       });
     }
   }
@@ -1370,7 +1596,7 @@ function parseVisualforce(file) {
     type: "Visualforce",
     name,
     file: rel(file),
-    dependencies
+    dependencies,
   };
 }
 
@@ -1382,16 +1608,13 @@ function buildObjectRegistry(discovered) {
   const objects = [];
 
   for (const file of discovered.objects) {
-    const name = path.basename(
-      file,
-      ".object-meta.xml"
-    );
+    const name = path.basename(file, ".object-meta.xml");
 
     objects.push({
       id: `Object:${name}`,
       type: "Object",
       name,
-      file: rel(file)
+      file: rel(file),
     });
   }
 
@@ -1403,23 +1626,17 @@ function buildObjectRegistry(discovered) {
 
     if (index >= 0) {
       const before = file.substring(0, index);
-      objectName =
-        path.basename(
-          before
-        );
+      objectName = path.basename(before);
     }
 
-    const fieldName = path.basename(
-      file,
-      ".field-meta.xml"
-    );
+    const fieldName = path.basename(file, ".field-meta.xml");
 
     objects.push({
       id: `Field:${objectName}.${fieldName}`,
       type: "Field",
       name: `${objectName}.${fieldName}`,
       object: objectName,
-      file: rel(file)
+      file: rel(file),
     });
   }
 
@@ -1442,6 +1659,26 @@ function buildRegistry(discovered) {
     }
 
     byName.get(symbol.name).push(symbol);
+
+    if (symbol.type === "LWC") {
+      const norm = normalizeLwcName(symbol.name);
+      const variants = new Set([
+        norm,
+        `c-${norm}`,
+        `c/${norm}`,
+        symbol.parsed?.rawName,
+      ]);
+      for (const variant of variants) {
+        if (variant) {
+          if (!byName.has(variant)) {
+            byName.set(variant, []);
+          }
+          if (!byName.get(variant).includes(symbol)) {
+            byName.get(variant).push(symbol);
+          }
+        }
+      }
+    }
   }
 
   for (const file of discovered.apexClasses) {
@@ -1452,7 +1689,7 @@ function buildRegistry(discovered) {
       type: parsed.type,
       name: parsed.name,
       file: parsed.file,
-      parsed
+      parsed,
     });
   }
 
@@ -1464,7 +1701,7 @@ function buildRegistry(discovered) {
       type: parsed.type,
       name: parsed.name,
       file: parsed.file,
-      parsed
+      parsed,
     });
   }
 
@@ -1476,7 +1713,7 @@ function buildRegistry(discovered) {
       type: parsed.type,
       name: parsed.name,
       file: parsed.file,
-      parsed
+      parsed,
     });
   }
 
@@ -1488,7 +1725,7 @@ function buildRegistry(discovered) {
       type: parsed.type,
       name: parsed.name,
       file: parsed.file,
-      parsed
+      parsed,
     });
   }
 
@@ -1498,7 +1735,7 @@ function buildRegistry(discovered) {
 
   return {
     symbols,
-    byName
+    byName,
   };
 }
 
@@ -1506,16 +1743,52 @@ function buildRegistry(discovered) {
 // Graph resolution
 // ============================================================
 
-function resolveByName(name, registry) {
-  return registry.byName.get(name) || [];
+function resolveByName(name, registry, expectedType = null) {
+  if (!name) return [];
+  const exact = registry.byName.get(name);
+  if (exact && exact.length > 0) {
+    if (expectedType) {
+      const filtered = exact.filter((x) => x.type === expectedType);
+      if (filtered.length > 0) return filtered;
+    } else {
+      return exact;
+    }
+  }
+
+  if (expectedType === "LWC" || !expectedType) {
+    const norm = normalizeLwcName(name);
+    if (norm) {
+      const lwcMatches = registry.byName.get(norm);
+      if (lwcMatches && lwcMatches.length > 0) {
+        return lwcMatches.filter((x) => x.type === "LWC");
+      }
+    }
+  }
+
+  return [];
 }
 
 function classifyUnresolvedReference(name, type) {
   const standardObjects = new Set([
-    "Account", "Asset", "Case", "Contact", "ContentDocument",
-    "ContentDocumentLink", "ContentVersion", "Event", "Lead",
-    "Opportunity", "Order", "Product2", "Task", "User",
-    "Campaign", "Contract", "Quote", "Pricebook2", "PricebookEntry"
+    "Account",
+    "Asset",
+    "Case",
+    "Contact",
+    "ContentDocument",
+    "ContentDocumentLink",
+    "ContentVersion",
+    "Event",
+    "Lead",
+    "Opportunity",
+    "Order",
+    "Product2",
+    "Task",
+    "User",
+    "Campaign",
+    "Contract",
+    "Quote",
+    "Pricebook2",
+    "PricebookEntry",
   ]);
 
   if (type === "soql-object" && standardObjects.has(name)) {
@@ -1528,12 +1801,12 @@ function classifyUnresolvedReference(name, type) {
   return "UNKNOWN";
 }
 
-function buildGraph(discovered, registry, options) {
+function buildGraph(discovered, registry, options = {}) {
   const nodes = [];
   const edgeMap = new Map();
 
   function addNode(node) {
-    if (!nodes.some(x => x.id === node.id)) {
+    if (!nodes.some((x) => x.id === node.id)) {
       nodes.push(node);
     }
   }
@@ -1548,13 +1821,10 @@ function buildGraph(discovered, registry, options) {
       edge.to,
       edge.type,
       edge.method || "",
-      edge.evidence || ""
+      edge.evidence || "",
     ].join("|");
 
-    if (
-      edgeMap.size >= options.maxGraphEdges &&
-      !edgeMap.has(key)
-    ) {
+    if (edgeMap.size >= options.maxGraphEdges && !edgeMap.has(key)) {
       return;
     }
 
@@ -1562,7 +1832,7 @@ function buildGraph(discovered, registry, options) {
       edgeMap.set(key, {
         id: key,
         ...edge,
-        canonical: createCanonicalRelationship(edge)
+        canonical: createCanonicalRelationship(edge),
       });
     }
   }
@@ -1573,25 +1843,18 @@ function buildGraph(discovered, registry, options) {
       id: symbol.id,
       name: symbol.name,
       type: symbol.type,
-      file: symbol.file
+      file: symbol.file,
     });
   }
 
   // Apex dependencies.
-  for (const symbol of registry.symbols.filter(
-    x => x.type === "ApexClass"
-  )) {
+  for (const symbol of registry.symbols.filter((x) => x.type === "ApexClass")) {
     const parsed = symbol.parsed;
 
     for (const dependency of parsed.dependencies) {
-      const targets =
-        resolveByName(
-          dependency.toName,
-          registry
-        ).filter(
-          target =>
-            target.id !== symbol.id
-        );
+      const targets = resolveByName(dependency.toName, registry).filter(
+        (target) => target.id !== symbol.id,
+      );
 
       if (targets.length) {
         for (const target of targets) {
@@ -1600,7 +1863,7 @@ function buildGraph(discovered, registry, options) {
             to: target.id,
             type: dependency.type,
             method: dependency.method || null,
-            evidence: dependency.evidence || null
+            evidence: dependency.evidence || null,
           });
         }
       } else {
@@ -1611,20 +1874,19 @@ function buildGraph(discovered, registry, options) {
           method: dependency.method || null,
           evidence: dependency.evidence || null,
           unresolved: true,
-          resolutionCategory: classifyUnresolvedReference(dependency.toName, dependency.type)
+          resolutionCategory: classifyUnresolvedReference(
+            dependency.toName,
+            dependency.type,
+          ),
         });
       }
     }
 
     // Object dependencies.
     for (const objectName of parsed.objects) {
-      const targets =
-        resolveByName(
-          objectName,
-          registry
-        ).filter(
-          x => x.type === "Object"
-        );
+      const targets = resolveByName(objectName, registry).filter(
+        (x) => x.type === "Object",
+      );
 
       if (targets.length) {
         for (const target of targets) {
@@ -1632,7 +1894,7 @@ function buildGraph(discovered, registry, options) {
             from: symbol.id,
             to: target.id,
             type: "soql-object",
-            evidence: `SOQL FROM ${objectName}`
+            evidence: `SOQL FROM ${objectName}`,
           });
         }
       } else {
@@ -1642,18 +1904,19 @@ function buildGraph(discovered, registry, options) {
           type: "soql-object",
           evidence: `SOQL FROM ${objectName}`,
           unresolved: true,
-          resolutionCategory: classifyUnresolvedReference(objectName, "soql-object")
+          resolutionCategory: classifyUnresolvedReference(
+            objectName,
+            "soql-object",
+          ),
         });
       }
 
       // Field dependencies.
       for (const field of parsed.fields.filter(
-        x => x.object === objectName
+        (x) => x.object === objectName,
       )) {
         const targets =
-          registry.byName.get(
-            `${objectName}.${field.field}`
-          ) || [];
+          registry.byName.get(`${objectName}.${field.field}`) || [];
 
         if (targets.length) {
           for (const target of targets) {
@@ -1662,8 +1925,7 @@ function buildGraph(discovered, registry, options) {
                 from: symbol.id,
                 to: target.id,
                 type: "soql-field",
-                evidence:
-                  `${objectName}.${field.field}`
+                evidence: `${objectName}.${field.field}`,
               });
             }
           }
@@ -1674,23 +1936,16 @@ function buildGraph(discovered, registry, options) {
     // Test -> production.
     if (parsed.isTest) {
       for (const referenced of parsed.testReferences) {
-        const targets =
-          resolveByName(
-            referenced,
-            registry
-          ).filter(
-            x =>
-              x.type === "ApexClass" &&
-              x.id !== symbol.id
-          );
+        const targets = resolveByName(referenced, registry).filter(
+          (x) => x.type === "ApexClass" && x.id !== symbol.id,
+        );
 
         for (const target of targets) {
           addEdge({
             from: symbol.id,
             to: target.id,
             type: "test-reference",
-            evidence:
-              `Test reference: ${referenced}`
+            evidence: `Test reference: ${referenced}`,
           });
         }
       }
@@ -1698,20 +1953,14 @@ function buildGraph(discovered, registry, options) {
   }
 
   // LWC JS.
-  for (const symbol of registry.symbols.filter(
-    x => x.type === "LWC"
-  )) {
+  for (const symbol of registry.symbols.filter((x) => x.type === "LWC")) {
     const parsed = symbol.parsed;
 
     for (const dependency of parsed.dependencies) {
       if (dependency.type === "lwc-apex") {
-        const targets =
-          resolveByName(
-            dependency.toName,
-            registry
-          ).filter(
-            x => x.type === "ApexClass"
-          );
+        const targets = resolveByName(dependency.toName, registry).filter(
+          (x) => x.type === "ApexClass",
+        );
 
         if (targets.length) {
           for (const target of targets) {
@@ -1720,7 +1969,7 @@ function buildGraph(discovered, registry, options) {
               to: target.id,
               type: dependency.type,
               method: dependency.method,
-              evidence: dependency.evidence
+              evidence: dependency.evidence,
             });
           }
         } else {
@@ -1731,21 +1980,18 @@ function buildGraph(discovered, registry, options) {
             method: dependency.method,
             evidence: dependency.evidence,
             unresolved: true,
-            resolutionCategory: classifyUnresolvedReference(dependency.toName, dependency.type)
+            resolutionCategory: classifyUnresolvedReference(
+              dependency.toName,
+              dependency.type,
+            ),
           });
         }
       }
 
-      if (
-        dependency.type === "lwc-import"
-      ) {
-        const targets =
-          resolveByName(
-            dependency.toName,
-            registry
-          ).filter(
-            x => x.type === "LWC"
-          );
+      if (dependency.type === "lwc-import") {
+        const targets = resolveByName(dependency.toName, registry).filter(
+          (x) => x.type === "LWC",
+        );
 
         if (targets.length) {
           for (const target of targets) {
@@ -1753,7 +1999,7 @@ function buildGraph(discovered, registry, options) {
               from: symbol.id,
               to: target.id,
               type: dependency.type,
-              evidence: dependency.evidence
+              evidence: dependency.evidence,
             });
           }
         } else {
@@ -1763,7 +2009,10 @@ function buildGraph(discovered, registry, options) {
             type: dependency.type,
             evidence: dependency.evidence,
             unresolved: true,
-            resolutionCategory: classifyUnresolvedReference(dependency.toName, dependency.type)
+            resolutionCategory: classifyUnresolvedReference(
+              dependency.toName,
+              dependency.type,
+            ),
           });
         }
       }
@@ -1773,16 +2022,16 @@ function buildGraph(discovered, registry, options) {
   // LWC HTML.
   for (const file of discovered.lwcHtml) {
     const parsed = parseLwcHtml(file);
-    const source = `LWC:${parsed.name}`;
+    const normName = normalizeLwcName(parsed.name);
+    const sourceSymbol = registry.symbols.find(
+      (x) => x.type === "LWC" && normalizeLwcName(x.name) === normName,
+    );
+    const source = sourceSymbol ? sourceSymbol.id : `LWC:${normName}`;
 
     for (const dependency of parsed.dependencies) {
-      const targets =
-        resolveByName(
-          dependency.toName,
-          registry
-        ).filter(
-          x => x.type === "LWC"
-        );
+      const targets = resolveByName(dependency.toName, registry).filter(
+        (x) => x.type === "LWC",
+      );
 
       if (targets.length) {
         for (const target of targets) {
@@ -1790,33 +2039,27 @@ function buildGraph(discovered, registry, options) {
             from: source,
             to: target.id,
             type: dependency.type,
-            evidence: dependency.evidence
+            evidence: dependency.evidence,
           });
         }
       } else {
         addEdge({
           from: source,
-          to: `External:LWC:${dependency.toName}`,
+          to: `External:LWC:${normalizeLwcName(dependency.toName)}`,
           type: dependency.type,
           evidence: dependency.evidence,
-          unresolved: true
+          unresolved: true,
         });
       }
     }
   }
 
   // Triggers.
-  for (const symbol of registry.symbols.filter(
-    x => x.type === "Trigger"
-  )) {
+  for (const symbol of registry.symbols.filter((x) => x.type === "Trigger")) {
     const parsed = symbol.parsed;
 
     for (const dependency of parsed.dependencies) {
-      const targets =
-        resolveByName(
-          dependency.toName,
-          registry
-        );
+      const targets = resolveByName(dependency.toName, registry);
 
       if (targets.length) {
         for (const target of targets) {
@@ -1825,7 +2068,7 @@ function buildGraph(discovered, registry, options) {
             to: target.id,
             type: dependency.type,
             method: dependency.method,
-            evidence: dependency.evidence
+            evidence: dependency.evidence,
           });
         }
       } else {
@@ -1835,27 +2078,22 @@ function buildGraph(discovered, registry, options) {
           type: dependency.type,
           method: dependency.method,
           evidence: dependency.evidence,
-          unresolved: true
+          unresolved: true,
         });
       }
     }
 
     if (parsed.object) {
-      const objectTargets =
-        resolveByName(
-          parsed.object,
-          registry
-        ).filter(
-          x => x.type === "Object"
-        );
+      const objectTargets = resolveByName(parsed.object, registry).filter(
+        (x) => x.type === "Object",
+      );
 
       for (const target of objectTargets) {
         addEdge({
           from: symbol.id,
           to: target.id,
           type: "trigger-object",
-          evidence:
-            `Trigger ${parsed.name} on ${parsed.object}`
+          evidence: `Trigger ${parsed.name} on ${parsed.object}`,
         });
       }
     }
@@ -1863,14 +2101,10 @@ function buildGraph(discovered, registry, options) {
 
   // Visualforce.
   for (const symbol of registry.symbols.filter(
-    x => x.type === "Visualforce"
+    (x) => x.type === "Visualforce",
   )) {
     for (const dependency of symbol.parsed.dependencies) {
-      const targets =
-        resolveByName(
-          dependency.toName,
-          registry
-        );
+      const targets = resolveByName(dependency.toName, registry);
 
       if (targets.length) {
         for (const target of targets) {
@@ -1878,7 +2112,7 @@ function buildGraph(discovered, registry, options) {
             from: symbol.id,
             to: target.id,
             type: dependency.type,
-            evidence: dependency.evidence
+            evidence: dependency.evidence,
           });
         }
       } else {
@@ -1887,7 +2121,7 @@ function buildGraph(discovered, registry, options) {
           to: `External:${dependency.toName}`,
           type: dependency.type,
           evidence: dependency.evidence,
-          unresolved: true
+          unresolved: true,
         });
       }
     }
@@ -1895,22 +2129,19 @@ function buildGraph(discovered, registry, options) {
 
   // Include external nodes that were actually referenced.
   for (const edge of edgeMap.values()) {
-    if (
-      edge.unresolved &&
-      !nodes.some(x => x.id === edge.to)
-    ) {
+    if (edge.unresolved && !nodes.some((x) => x.id === edge.to)) {
       nodes.push({
         id: edge.to,
         name: edge.to.replace(/^External:/, ""),
         type: "External",
-        file: null
+        file: null,
       });
     }
   }
 
   return {
     nodes,
-    edges: [...edgeMap.values()]
+    edges: [...edgeMap.values()],
   };
 }
 
@@ -1959,10 +2190,7 @@ function metrics(graph) {
     const fanIn = inEdges.length;
     const fanOut = outEdges.length;
 
-    const unresolved =
-      outEdges.filter(
-        x => x.unresolved
-      ).length;
+    const unresolved = outEdges.filter((x) => x.unresolved).length;
 
     let score = 0;
     const reasons = [];
@@ -1989,25 +2217,17 @@ function metrics(graph) {
 
     if (
       node.type === "ApexClass" &&
-      inEdges.some(e => e.from.startsWith("LWC:"))
+      inEdges.some((e) => e.from.startsWith("LWC:"))
     ) {
       score += 2;
       reasons.push("direct LWC consumer");
     }
 
-    if (
-      node.type === "ApexClass" &&
-      /Test$/i.test(node.name)
-    ) {
+    if (node.type === "ApexClass" && /Test$/i.test(node.name)) {
       score -= 1;
     }
 
-    const risk =
-      score >= 6
-        ? "HIGH"
-        : score >= 3
-          ? "MEDIUM"
-          : "LOW";
+    const risk = score >= 6 ? "HIGH" : score >= 3 ? "MEDIUM" : "LOW";
 
     output.push({
       ...node,
@@ -2017,15 +2237,13 @@ function metrics(graph) {
       unresolved,
       score: Math.max(0, score),
       risk,
-      reasons
+      reasons,
     });
   }
 
   return output.sort(
     (a, b) =>
-      b.score - a.score ||
-      b.coupling - a.coupling ||
-      b.fanOut - a.fanOut
+      b.score - a.score || b.coupling - a.coupling || b.fanOut - a.fanOut,
   );
 }
 
@@ -2057,28 +2275,13 @@ function stronglyConnectedComponents(graph) {
       if (!indices.has(w)) {
         connect(w);
 
-        low.set(
-          v,
-          Math.min(
-            low.get(v),
-            low.get(w)
-          )
-        );
+        low.set(v, Math.min(low.get(v), low.get(w)));
       } else if (onStack.has(w)) {
-        low.set(
-          v,
-          Math.min(
-            low.get(v),
-            indices.get(w)
-          )
-        );
+        low.set(v, Math.min(low.get(v), indices.get(w)));
       }
     }
 
-    if (
-      low.get(v) ===
-      indices.get(v)
-    ) {
+    if (low.get(v) === indices.get(v)) {
       const component = [];
 
       let w;
@@ -2100,13 +2303,9 @@ function stronglyConnectedComponents(graph) {
   }
 
   return components.filter(
-    component =>
+    (component) =>
       component.length > 1 ||
-      graph.edges.some(
-        e =>
-          e.from === component[0] &&
-          e.to === component[0]
-      )
+      graph.edges.some((e) => e.from === component[0] && e.to === component[0]),
   );
 }
 
@@ -2114,19 +2313,17 @@ function stronglyConnectedComponents(graph) {
 // Traversal
 // ============================================================
 
-function traverse(
-  start,
-  adjacency,
-  maxDepth
-) {
+function traverse(start, adjacency, maxDepth) {
   const results = [];
   const bestDepth = new Map();
 
-  const queue = [{
-    id: start,
-    depth: 0,
-    path: [start]
-  }];
+  const queue = [
+    {
+      id: start,
+      depth: 0,
+      path: [start],
+    },
+  ];
 
   while (queue.length) {
     const current = queue.shift();
@@ -2135,18 +2332,13 @@ function traverse(
       continue;
     }
 
-    for (const edge of adjacency.get(
-      current.id
-    ) || []) {
+    for (const edge of adjacency.get(current.id) || []) {
       const next = edge.from === current.id ? edge.to : edge.from;
       const depth = current.depth + 1;
 
       const existing = bestDepth.get(next);
 
-      if (
-        existing !== undefined &&
-        existing <= depth
-      ) {
+      if (existing !== undefined && existing <= depth) {
         continue;
       }
 
@@ -2156,7 +2348,7 @@ function traverse(
         id: next,
         depth,
         path: [...current.path, next],
-        edge
+        edge,
       };
 
       results.push(item);
@@ -2165,11 +2357,7 @@ function traverse(
     }
   }
 
-  return results.sort(
-    (a, b) =>
-      a.depth - b.depth ||
-      a.id.localeCompare(b.id)
-  );
+  return results.sort((a, b) => a.depth - b.depth || a.id.localeCompare(b.id));
 }
 
 // ============================================================
@@ -2179,26 +2367,20 @@ function traverse(
 function resolveTarget(target, registry) {
   if (!target) return [];
 
-  const exactId =
-    registry.symbols.filter(
-      x =>
-        x.id.toLowerCase() ===
-        target.toLowerCase()
-    );
+  const exactId = registry.symbols.filter(
+    (x) => x.id.toLowerCase() === target.toLowerCase(),
+  );
 
   if (exactId.length) return exactId;
 
-  const exactName =
-    registry.byName.get(target) || [];
+  const exactName = registry.byName.get(target) || [];
 
   if (exactName.length) return exactName;
 
   const q = target.toLowerCase();
 
   return registry.symbols.filter(
-    x =>
-      x.name.toLowerCase().includes(q) ||
-      x.file.toLowerCase().includes(q)
+    (x) => x.name.toLowerCase().includes(q) || x.file.toLowerCase().includes(q),
   );
 }
 
@@ -2206,74 +2388,42 @@ function resolveTarget(target, registry) {
 // Impact analysis
 // ============================================================
 
-function impactFor(
-  target,
-  graph,
-  registry,
-  maxDepth
-) {
-  const { outgoing, incoming } =
-    indexes(graph);
+function impactFor(target, graph, registry, maxDepth) {
+  const { outgoing, incoming } = indexes(graph);
 
-  const downstream =
-    traverse(
-      target.id,
-      outgoing,
-      maxDepth
-    );
+  const downstream = traverse(target.id, outgoing, maxDepth);
 
-  const upstream =
-    traverse(
-      target.id,
-      incoming,
-      maxDepth
-    );
+  const upstream = traverse(target.id, incoming, maxDepth);
 
-  const directDependencies =
-    outgoing.get(target.id) || [];
+  const directDependencies = outgoing.get(target.id) || [];
 
-  const directDependents =
-    incoming.get(target.id) || [];
+  const directDependents = incoming.get(target.id) || [];
 
-  const downstreamIds =
-    new Set(
-      downstream.map(x => x.id)
-    );
+  const downstreamIds = new Set(downstream.map((x) => x.id));
 
-  const impactedLwc =
-    [...downstreamIds].filter(
-      id => id.startsWith("LWC:")
-    );
+  const impactedLwc = [...downstreamIds].filter((id) => id.startsWith("LWC:"));
 
-  const impactedTests =
-    [...downstreamIds].filter(
-      id =>
-        id.startsWith("ApexClass:") &&
-        /Test$/i.test(id)
-    );
+  const impactedTests = [...downstreamIds].filter(
+    (id) => id.startsWith("ApexClass:") && /Test$/i.test(id),
+  );
 
-  const impactedObjects =
-    [...downstreamIds].filter(
-      id => id.startsWith("Object:")
-    );
+  const impactedObjects = [...downstreamIds].filter((id) =>
+    id.startsWith("Object:"),
+  );
 
-  const impactedFields =
-    [...downstreamIds].filter(
-      id => id.startsWith("Field:")
-    );
+  const impactedFields = [...downstreamIds].filter((id) =>
+    id.startsWith("Field:"),
+  );
 
-  const triggerImpact =
-    [...downstreamIds].filter(
-      id => id.startsWith("Trigger:")
-    );
+  const triggerImpact = [...downstreamIds].filter((id) =>
+    id.startsWith("Trigger:"),
+  );
 
-  const unresolved =
-    [...downstreamIds].filter(
-      id => id.startsWith("External:")
-    );
+  const unresolved = [...downstreamIds].filter((id) =>
+    id.startsWith("External:"),
+  );
 
-  const totalImpact =
-    downstream.length;
+  const totalImpact = downstream.length;
 
   const level =
     totalImpact >= 30
@@ -2296,7 +2446,7 @@ function impactFor(
     impactedObjects,
     impactedFields,
     triggerImpact,
-    unresolved
+    unresolved,
   };
 }
 
@@ -2304,79 +2454,48 @@ function impactFor(
 // Refactoring risk analysis
 // ============================================================
 
-function refactorAssessment(
-  impact,
-  metric
-) {
+function refactorAssessment(impact, metric) {
   const findings = [];
   let score = 0;
 
-  if (
-    impact.level === "CRITICAL"
-  ) {
+  if (impact.level === "CRITICAL") {
     score += 5;
-    findings.push(
-      "Large downstream dependency surface."
-    );
-  } else if (
-    impact.level === "HIGH"
-  ) {
+    findings.push("Large downstream dependency surface.");
+  } else if (impact.level === "HIGH") {
     score += 4;
-    findings.push(
-      "Large downstream dependency surface."
-    );
-  } else if (
-    impact.level === "MEDIUM"
-  ) {
+    findings.push("Large downstream dependency surface.");
+  } else if (impact.level === "MEDIUM") {
     score += 2;
   }
 
-  if (
-    metric &&
-    metric.fanIn >= HIGH_FAN_IN
-  ) {
+  if (metric && metric.fanIn >= HIGH_FAN_IN) {
     score += 3;
-    findings.push(
-      "Many components directly depend on this symbol."
-    );
+    findings.push("Many components directly depend on this symbol.");
   }
 
-  if (
-    metric &&
-    metric.fanOut >= HIGH_FAN_OUT
-  ) {
+  if (metric && metric.fanOut >= HIGH_FAN_OUT) {
     score += 3;
-    findings.push(
-      "This symbol has high outbound coupling."
-    );
+    findings.push("This symbol has high outbound coupling.");
   }
 
   if (impact.impactedLwc.length) {
     score += 2;
-    findings.push(
-      "LWC consumers may require coordinated changes."
-    );
+    findings.push("LWC consumers may require coordinated changes.");
   }
 
   if (impact.impactedTests.length) {
     score += 1;
-    findings.push(
-      "Existing tests are affected."
-    );
+    findings.push("Existing tests are affected.");
   }
 
   if (impact.triggerImpact.length) {
     score += 2;
-    findings.push(
-      "Trigger behavior may be affected indirectly."
-    );
+    findings.push("Trigger behavior may be affected indirectly.");
   }
 
   if (impact.unresolved.length) {
     score += 2;
-    findings.push(
-      "Unresolved/dynamic dependencies require manual review."
-    );
+    findings.push("Unresolved/dynamic dependencies require manual review.");
   }
 
   const risk =
@@ -2394,14 +2513,14 @@ function refactorAssessment(
     "Update production references.",
     "Update affected test classes.",
     "Run Apex tests for direct and transitive consumers.",
-    "Run Salesforce Code Analyzer after the refactor."
+    "Run Salesforce Code Analyzer after the refactor.",
   ];
 
   if (impact.impactedLwc.length) {
     recommendedOrder.splice(
       4,
       0,
-      "Validate LWC Apex imports and response DTO contracts."
+      "Validate LWC Apex imports and response DTO contracts.",
     );
   }
 
@@ -2409,7 +2528,7 @@ function refactorAssessment(
     recommendedOrder.splice(
       4,
       0,
-      "Validate trigger/automation behavior caused by DML."
+      "Validate trigger/automation behavior caused by DML.",
     );
   }
 
@@ -2417,7 +2536,7 @@ function refactorAssessment(
     risk,
     score,
     findings,
-    recommendedOrder
+    recommendedOrder,
   };
 }
 
@@ -2425,19 +2544,12 @@ function refactorAssessment(
 // Reports
 // ============================================================
 
-function summaryReport(
-  discovered,
-  graph,
-  metricList,
-  cycles
-) {
+function summaryReport(discovered, graph, metricList, cycles) {
   const lines = [];
 
   lines.push("# Salesforce Dependency Analysis Summary");
   lines.push("");
-  lines.push(
-    `Generated: ${new Date().toISOString()}`
-  );
+  lines.push(`Generated: ${new Date().toISOString()}`);
   lines.push("");
 
   lines.push("## Inventory");
@@ -2458,14 +2570,12 @@ function summaryReport(
 
   lines.push("## Highest Impact Components");
   lines.push("");
-  lines.push(
-    "| Component | Type | Fan-In | Fan-Out | Coupling | Risk |"
-  );
+  lines.push("| Component | Type | Fan-In | Fan-Out | Coupling | Risk |");
   lines.push("|---|---|---:|---:|---:|---|");
 
   for (const item of metricList.slice(0, 40)) {
     lines.push(
-      `| ${escapeMd(item.name)} | ${item.type} | ${item.fanIn} | ${item.fanOut} | ${item.coupling} | ${item.risk} |`
+      `| ${escapeMd(item.name)} | ${item.type} | ${item.fanIn} | ${item.fanOut} | ${item.coupling} | ${item.risk} |`,
     );
   }
 
@@ -2473,27 +2583,23 @@ function summaryReport(
   lines.push("## Interpretation");
   lines.push("");
   lines.push(
-    "- High fan-in = many consumers; changing the component has broad impact."
+    "- High fan-in = many consumers; changing the component has broad impact.",
   );
   lines.push(
-    "- High fan-out = the component knows/uses many other components."
+    "- High fan-out = the component knows/uses many other components.",
   );
   lines.push(
-    "- High coupling = both inbound and outbound dependency pressure."
+    "- High coupling = both inbound and outbound dependency pressure.",
   );
   lines.push(
-    "- Unresolved references should be checked for dynamic Apex, metadata, managed-package symbols, or parser limitations."
+    "- Unresolved references should be checked for dynamic Apex, metadata, managed-package symbols, or parser limitations.",
   );
   lines.push("");
 
   return lines.join("\n");
 }
 
-function dependencyReport(
-  graph,
-  metricList,
-  cycles
-) {
+function dependencyReport(graph, metricList, cycles) {
   const lines = [];
 
   lines.push("# Salesforce Dependency Report");
@@ -2504,15 +2610,14 @@ function dependencyReport(
   lines.push("| LWC | Apex | Method |");
   lines.push("|---|---|---|");
 
-  for (const e of graph.edges.filter(
-    x => x.type === "lwc-apex"
-  )) {
+  for (const e of graph.edges.filter((x) => x.type === "lwc-apex")) {
     const c = e.canonical || createCanonicalRelationship(e);
-    const methodStr = c.source.method && c.target.method
-      ? `${c.source.method} -> ${c.target.method}`
-      : c.target.method || c.source.method || "";
+    const methodStr =
+      c.source.method && c.target.method
+        ? `${c.source.method} -> ${c.target.method}`
+        : c.target.method || c.source.method || "";
     lines.push(
-      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${escapeMd(methodStr)} |`
+      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${escapeMd(methodStr)} |`,
     );
   }
 
@@ -2524,13 +2629,11 @@ function dependencyReport(
   lines.push("|---|---|---|");
 
   for (const e of graph.edges.filter(
-    x =>
-      x.type === "lwc-import" ||
-      x.type === "lwc-template-child"
+    (x) => x.type === "lwc-import" || x.type === "lwc-template-child",
   )) {
     const c = e.canonical || createCanonicalRelationship(e);
     lines.push(
-      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${c.relationship.type} |`
+      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${c.relationship.type} |`,
     );
   }
 
@@ -2541,25 +2644,25 @@ function dependencyReport(
   lines.push("| From | To | Type | Method |");
   lines.push("|---|---|---|---|");
 
-  for (const e of graph.edges.filter(
-    x =>
-      [
-        "instantiation",
-        "method-call",
-        "type-reference",
-        "generic-type",
-        "extends",
-        "implements",
-        "test-reference",
-        "trigger-handler"
-      ].includes(x.type)
+  for (const e of graph.edges.filter((x) =>
+    [
+      "instantiation",
+      "method-call",
+      "type-reference",
+      "generic-type",
+      "extends",
+      "implements",
+      "test-reference",
+      "trigger-handler",
+    ].includes(x.type),
   )) {
     const c = e.canonical || createCanonicalRelationship(e);
-    const methodStr = c.source.method && c.target.method
-      ? `${c.source.method} -> ${c.target.method}`
-      : c.target.method || c.source.method || "";
+    const methodStr =
+      c.source.method && c.target.method
+        ? `${c.source.method} -> ${c.target.method}`
+        : c.target.method || c.source.method || "";
     lines.push(
-      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${c.relationship.type} | ${escapeMd(methodStr)} |`
+      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${c.relationship.type} | ${escapeMd(methodStr)} |`,
     );
   }
 
@@ -2571,14 +2674,14 @@ function dependencyReport(
   lines.push("|---|---|---|---|");
 
   for (const e of graph.edges.filter(
-    x =>
+    (x) =>
       x.type === "soql-object" ||
       x.type === "soql-field" ||
-      x.type === "trigger-object"
+      x.type === "trigger-object",
   )) {
     const c = e.canonical || createCanonicalRelationship(e);
     lines.push(
-      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${c.relationship.type} | ${escapeMd(e.evidence || "")} |`
+      `| ${escapeMd(c.source.type + ":" + c.source.name)} | ${escapeMd(c.target.type + ":" + c.target.name)} | ${c.relationship.type} | ${escapeMd(e.evidence || "")} |`,
     );
   }
 
@@ -2593,7 +2696,7 @@ function dependencyReport(
     cycles.forEach((cycle, index) => {
       lines.push(`### Cycle ${index + 1}`);
       lines.push("");
-      cycle.forEach(id => lines.push(`- ${id}`));
+      cycle.forEach((id) => lines.push(`- ${id}`));
       lines.push("");
     });
   }
@@ -2605,11 +2708,9 @@ function dependencyReport(
   lines.push("| Component | Type | Fan-In | Fan-Out | Risk | Reasons |");
   lines.push("|---|---|---:|---:|---|---|");
 
-  for (const item of metricList.filter(
-    x => x.risk === "HIGH"
-  )) {
+  for (const item of metricList.filter((x) => x.risk === "HIGH")) {
     lines.push(
-      `| ${escapeMd(item.name)} | ${item.type} | ${item.fanIn} | ${item.fanOut} | ${item.risk} | ${escapeMd(item.reasons.join(", "))} |`
+      `| ${escapeMd(item.name)} | ${item.type} | ${item.fanIn} | ${item.fanOut} | ${item.risk} | ${escapeMd(item.reasons.join(", "))} |`,
     );
   }
 
@@ -2625,14 +2726,12 @@ function unresolvedReport(graph) {
     "These were detected in source but could not be resolved to a local symbol.",
     "",
     "| From | To | Type | Evidence |",
-    "|---|---|---|---|"
+    "|---|---|---|---|",
   ];
 
-  for (const e of graph.edges.filter(
-    x => x.unresolved
-  )) {
+  for (const e of graph.edges.filter((x) => x.unresolved)) {
     lines.push(
-      `| ${escapeMd(e.from)} | ${escapeMd(e.to)} | ${e.type} | ${escapeMd(e.evidence || "")} |`
+      `| ${escapeMd(e.from)} | ${escapeMd(e.to)} | ${e.type} | ${escapeMd(e.evidence || "")} |`,
     );
   }
 
@@ -2654,30 +2753,29 @@ function graphMermaid(graph) {
   }
 
   for (const node of graph.nodes) {
-    const methodLabel = Array.isArray(node.relevantMethods) && node.relevantMethods.length
-      ? `\\nMethods: ${node.relevantMethods.join(", ")}`
-      : "";
-    const label =
-      `${node.name}\\n[${node.type}]${methodLabel}`
-        .replace(/"/g, "'")
-        .replace(/[<>]/g, "");
+    const methodLabel =
+      Array.isArray(node.relevantMethods) && node.relevantMethods.length
+        ? `\\nMethods: ${node.relevantMethods.join(", ")}`
+        : "";
+    const label = `${node.name}\\n[${node.type}]${methodLabel}`
+      .replace(/"/g, "'")
+      .replace(/[<>]/g, "");
 
-    lines.push(
-      `  ${gid(node.id)}["${label}"]`
-    );
+    lines.push(`  ${gid(node.id)}["${label}"]`);
   }
 
   for (const edge of graph.edges) {
     const c = edge.canonical || createCanonicalRelationship(edge);
-    const methodStr = c.source.method && c.target.method
-      ? `${c.source.method}->${c.target.method}`
-      : c.target.method || c.source.method || "";
+    const methodStr =
+      c.source.method && c.target.method
+        ? `${c.source.method}->${c.target.method}`
+        : c.target.method || c.source.method || "";
     const label = methodStr
       ? `${c.relationship.type}: ${methodStr}`
       : c.relationship.type;
 
     lines.push(
-      `  ${gid(edge.from)} -->|"${label.replace(/"/g, "'")}"| ${gid(edge.to)}`
+      `  ${gid(edge.from)} -->|"${label.replace(/"/g, "'")}"| ${gid(edge.to)}`,
     );
   }
 
@@ -2688,7 +2786,7 @@ function graphDot(graph) {
   const lines = [
     "digraph SalesforceDependencies {",
     '  rankdir="LR";',
-    '  graph [overlap=false];'
+    "  graph [overlap=false];",
   ];
 
   const ids = new Map();
@@ -2713,25 +2811,27 @@ function graphDot(graph) {
               ? "note"
               : "box";
 
-    const methodLabel = Array.isArray(node.relevantMethods) && node.relevantMethods.length
-      ? `\\nMethods: ${node.relevantMethods.join(", ")}`
-      : "";
+    const methodLabel =
+      Array.isArray(node.relevantMethods) && node.relevantMethods.length
+        ? `\\nMethods: ${node.relevantMethods.join(", ")}`
+        : "";
     lines.push(
-      `  ${gid(node.id)} [label="${node.name}\\n${node.type}${methodLabel}", shape=${shape}];`
+      `  ${gid(node.id)} [label="${node.name}\\n${node.type}${methodLabel}", shape=${shape}];`,
     );
   }
 
   for (const edge of graph.edges) {
     const c = edge.canonical || createCanonicalRelationship(edge);
-    const methodStr = c.source.method && c.target.method
-      ? `${c.source.method}->${c.target.method}`
-      : c.target.method || c.source.method || "";
+    const methodStr =
+      c.source.method && c.target.method
+        ? `${c.source.method}->${c.target.method}`
+        : c.target.method || c.source.method || "";
     const label = methodStr
       ? `${c.relationship.type}:${methodStr}`
       : c.relationship.type;
 
     lines.push(
-      `  ${gid(edge.from)} -> ${gid(edge.to)} [label="${label.replace(/"/g, "'")}"];`
+      `  ${gid(edge.from)} -> ${gid(edge.to)} [label="${label.replace(/"/g, "'")}"];`,
     );
   }
 
@@ -2740,13 +2840,15 @@ function graphDot(graph) {
   return lines.join("\n");
 }
 
-
 // ============================================================
 // Deterministic Context / Intelligence Layer
 // ============================================================
 
 function sha256(value) {
-  return crypto.createHash("sha256").update(String(value || ""), "utf8").digest("hex");
+  return crypto
+    .createHash("sha256")
+    .update(String(value || ""), "utf8")
+    .digest("hex");
 }
 
 function lineNumberAtOffset(content, offset) {
@@ -2765,10 +2867,24 @@ function columnNumberAtOffset(content, offset) {
 }
 
 function confidenceForDependencyType(type) {
-  if (["method-call", "instantiation", "extends", "implements", "lwc-apex", "lwc-import", "lwc-template-child"].includes(type)) {
+  if (
+    [
+      "method-call",
+      "instantiation",
+      "extends",
+      "implements",
+      "lwc-apex",
+      "lwc-import",
+      "lwc-template-child",
+    ].includes(type)
+  ) {
     return "HIGH";
   }
-  if (["soql-object", "soql-field", "trigger-object", "test-reference"].includes(type)) {
+  if (
+    ["soql-object", "soql-field", "trigger-object", "test-reference"].includes(
+      type,
+    )
+  ) {
     return "MEDIUM";
   }
   if (["type-reference", "generic-type"].includes(type)) {
@@ -2783,7 +2899,10 @@ function methodRangesFromContent(content, methods = []) {
     const name = method && method.name;
     if (!name) continue;
 
-    const signature = new RegExp(`\\b${escapeRegExp(name)}\\s*\\([^)]*\\)`, "g");
+    const signature = new RegExp(
+      `\\b${escapeRegExp(name)}\\s*\\([^)]*\\)`,
+      "g",
+    );
     const match = signature.exec(content);
     if (!match) continue;
 
@@ -2792,7 +2911,7 @@ function methodRangesFromContent(content, methods = []) {
       ranges.push({
         name,
         startOffset: match.index,
-        endOffset: match.index + match[0].length
+        endOffset: match.index + match[0].length,
       });
       continue;
     }
@@ -2814,7 +2933,7 @@ function methodRangesFromContent(content, methods = []) {
     ranges.push({
       name,
       startOffset: match.index,
-      endOffset
+      endOffset,
     });
   }
   return ranges.sort((a, b) => a.startOffset - b.startOffset);
@@ -2826,10 +2945,11 @@ function escapeRegExp(value) {
 
 function nearestMethodForOffset(ranges, offset) {
   if (offset == null) return null;
-  const match = ranges.find(x => offset >= x.startOffset && offset <= x.endOffset);
+  const match = ranges.find(
+    (x) => offset >= x.startOffset && offset <= x.endOffset,
+  );
   return match ? match.name : null;
 }
-
 
 function dependencyEvidenceOffset(raw, dependency) {
   const evidence = dependency?.evidence || "";
@@ -2838,17 +2958,23 @@ function dependencyEvidenceOffset(raw, dependency) {
     if (exact >= 0) return exact;
   }
 
-  if (dependency?.type === "method-call" && dependency?.toName && dependency?.method) {
+  if (
+    dependency?.type === "method-call" &&
+    dependency?.toName &&
+    dependency?.method
+  ) {
     const pattern = new RegExp(
       `${escapeRegExp(dependency.toName)}\\s*\\.\\s*${escapeRegExp(dependency.method)}\\s*\\(`,
-      "i"
+      "i",
     );
     const match = pattern.exec(raw);
     if (match) return match.index;
   }
 
   if (dependency?.toName) {
-    const fallback = raw.toLowerCase().indexOf(String(dependency.toName).toLowerCase());
+    const fallback = raw
+      .toLowerCase()
+      .indexOf(String(dependency.toName).toLowerCase());
     if (fallback >= 0) return fallback;
   }
 
@@ -2859,7 +2985,8 @@ function enrichParsedSymbol(symbol) {
   if (!symbol || !symbol.file) return symbol;
 
   const absolute = path.resolve(PROJECT_ROOT, symbol.file);
-  if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) return symbol;
+  if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile())
+    return symbol;
 
   const raw = read(absolute);
   const parsed = symbol.parsed || {};
@@ -2871,26 +2998,36 @@ function enrichParsedSymbol(symbol) {
   const ranges = methodRangesFromContent(raw, parsed.methods || []);
 
   for (const method of parsed.methods || []) {
-    const range = ranges.find(x => x.name === method.name);
+    const range = ranges.find((x) => x.name === method.name);
     if (!range) continue;
 
     method.lineStart = lineNumberAtOffset(raw, range.startOffset);
     method.lineEnd = lineNumberAtOffset(raw, range.endOffset);
-    method.visibility =
-      /\\bglobal\\b/.test(raw.slice(range.startOffset - 120, range.startOffset))
-        ? "global"
-        : /\\bpublic\\b/.test(raw.slice(range.startOffset - 120, range.startOffset))
-          ? "public"
-          : /\\bprotected\\b/.test(raw.slice(range.startOffset - 120, range.startOffset))
-            ? "protected"
-            : "private";
+    method.visibility = /\\bglobal\\b/.test(
+      raw.slice(range.startOffset - 120, range.startOffset),
+    )
+      ? "global"
+      : /\\bpublic\\b/.test(
+            raw.slice(range.startOffset - 120, range.startOffset),
+          )
+        ? "public"
+        : /\\bprotected\\b/.test(
+              raw.slice(range.startOffset - 120, range.startOffset),
+            )
+          ? "protected"
+          : "private";
 
-    const declarationWindow = raw.slice(Math.max(0, range.startOffset - 250), range.startOffset);
+    const declarationWindow = raw.slice(
+      Math.max(0, range.startOffset - 250),
+      range.startOffset,
+    );
     method.isStatic = /\\bstatic\\b/.test(declarationWindow);
     method.isVirtual = /\\bvirtual\\b/.test(declarationWindow);
     method.isOverride = /\\boverride\\b/.test(declarationWindow);
     method.annotations = unique(
-      [...declarationWindow.matchAll(/@([A-Za-z_][A-Za-z0-9_]*)/g)].map(m => m[1])
+      [...declarationWindow.matchAll(/@([A-Za-z_][A-Za-z0-9_]*)/g)].map(
+        (m) => m[1],
+      ),
     );
   }
 
@@ -2900,7 +3037,8 @@ function enrichParsedSymbol(symbol) {
     dependency.line = offset >= 0 ? lineNumberAtOffset(raw, offset) : null;
     dependency.column = offset >= 0 ? columnNumberAtOffset(raw, offset) : null;
     dependency.methodOwner = nearestMethodForOffset(ranges, offset);
-    dependency.confidence = dependency.confidence || confidenceForDependencyType(dependency.type);
+    dependency.confidence =
+      dependency.confidence || confidenceForDependencyType(dependency.type);
     dependency.file = symbol.file;
   }
 
@@ -2922,13 +3060,14 @@ function enrichParsedSymbol(symbol) {
 
   parsed.behavior = parsed.behavior || {};
   parsed.behavior.publicContracts = (parsed.methods || [])
-    .filter(m =>
-      m.visibility === "public" ||
-      m.visibility === "global" ||
-      m.isAuraEnabled ||
-      m.isInvocable
+    .filter(
+      (m) =>
+        m.visibility === "public" ||
+        m.visibility === "global" ||
+        m.isAuraEnabled ||
+        m.isInvocable,
     )
-    .map(m => ({
+    .map((m) => ({
       name: m.name,
       visibility: m.visibility,
       returnType: m.returnType,
@@ -2937,36 +3076,52 @@ function enrichParsedSymbol(symbol) {
       isInvocable: Boolean(m.isInvocable),
       annotations: m.annotations || [],
       lineStart: m.lineStart || null,
-      lineEnd: m.lineEnd || null
+      lineEnd: m.lineEnd || null,
     }));
 
   parsed.behavior.async = [];
-  if (/\bimplements\s+(?:Database\.)?Batchable\b/i.test(raw)) parsed.behavior.async.push("Batchable");
-  if (/\bimplements\s+(?:Database\.)?Queueable\b/i.test(raw)) parsed.behavior.async.push("Queueable");
-  if (/\bimplements\s+Schedulable\b/i.test(raw)) parsed.behavior.async.push("Schedulable");
+  if (/\bimplements\s+(?:Database\.)?Batchable\b/i.test(raw))
+    parsed.behavior.async.push("Batchable");
+  if (/\bimplements\s+(?:Database\.)?Queueable\b/i.test(raw))
+    parsed.behavior.async.push("Queueable");
+  if (/\bimplements\s+Schedulable\b/i.test(raw))
+    parsed.behavior.async.push("Schedulable");
   if (/@future\b/i.test(raw)) parsed.behavior.async.push("@future");
-  if (/\bSystem\.enqueueJob\s*\(/i.test(raw)) parsed.behavior.async.push("System.enqueueJob");
-  if (/\bEventBus\./i.test(raw)) parsed.behavior.async.push("Platform Event / EventBus");
+  if (/\bSystem\.enqueueJob\s*\(/i.test(raw))
+    parsed.behavior.async.push("System.enqueueJob");
+  if (/\bEventBus\./i.test(raw))
+    parsed.behavior.async.push("Platform Event / EventBus");
   parsed.behavior.async = unique(parsed.behavior.async);
 
   parsed.behavior.securitySignals = [];
-  if (/\bwith\s+sharing\b/i.test(raw)) parsed.behavior.securitySignals.push("with sharing");
-  if (/\bwithout\s+sharing\b/i.test(raw)) parsed.behavior.securitySignals.push("without sharing");
-  if (/\binherited\s+sharing\b/i.test(raw)) parsed.behavior.securitySignals.push("inherited sharing");
-  if (/\bWITH\s+USER_MODE\b/i.test(raw)) parsed.behavior.securitySignals.push("SOQL USER_MODE");
-  if (/\bWITH\s+SECURITY_ENFORCED\b/i.test(raw)) parsed.behavior.securitySignals.push("WITH SECURITY_ENFORCED");
-  if (/\bDatabase\.[A-Za-z]+\([^)]*,\s*AccessLevel\.USER_MODE/i.test(raw)) parsed.behavior.securitySignals.push("DML USER_MODE");
+  if (/\bwith\s+sharing\b/i.test(raw))
+    parsed.behavior.securitySignals.push("with sharing");
+  if (/\bwithout\s+sharing\b/i.test(raw))
+    parsed.behavior.securitySignals.push("without sharing");
+  if (/\binherited\s+sharing\b/i.test(raw))
+    parsed.behavior.securitySignals.push("inherited sharing");
+  if (/\bWITH\s+USER_MODE\b/i.test(raw))
+    parsed.behavior.securitySignals.push("SOQL USER_MODE");
+  if (/\bWITH\s+SECURITY_ENFORCED\b/i.test(raw))
+    parsed.behavior.securitySignals.push("WITH SECURITY_ENFORCED");
+  if (/\bDatabase\.[A-Za-z]+\([^)]*,\s*AccessLevel\.USER_MODE/i.test(raw))
+    parsed.behavior.securitySignals.push("DML USER_MODE");
   parsed.behavior.securitySignals = unique(parsed.behavior.securitySignals);
 
   parsed.behavior.errorHandling = {
     throws: (raw.match(/\bthrow\s+new\s+[A-Za-z0-9_.]+/g) || []).length,
     tryCatchBlocks: (raw.match(/\btry\s*\{/g) || []).length,
-    auraHandledExceptions: (raw.match(/\bAuraHandledException\b/g) || []).length
+    auraHandledExceptions: (raw.match(/\bAuraHandledException\b/g) || [])
+      .length,
   };
 
-  parsed.behavior.queries = (parsed.objects || []).map(objectName => ({
+  parsed.behavior.queries = (parsed.objects || []).map((objectName) => ({
     object: objectName,
-    fields: unique((parsed.fields || []).filter(x => x.object === objectName).map(x => x.field))
+    fields: unique(
+      (parsed.fields || [])
+        .filter((x) => x.object === objectName)
+        .map((x) => x.field),
+    ),
   }));
 
   return symbol;
@@ -3019,10 +3174,18 @@ function determineResolution(edge) {
     }
   }
   const edgeType = edge.type || (edge.relationship && edge.relationship.type);
-  if (["extends", "implements", "lwc-import", "visualforce-controller"].includes(edgeType)) {
+  if (
+    ["extends", "implements", "lwc-import", "visualforce-controller"].includes(
+      edgeType,
+    )
+  ) {
     return "EXACT";
   }
-  if (["method-call", "instantiation", "lwc-apex", "trigger-handler"].includes(edgeType)) {
+  if (
+    ["method-call", "instantiation", "lwc-apex", "trigger-handler"].includes(
+      edgeType,
+    )
+  ) {
     if (edge.confidence === "high" || edge.confidence === "HIGH") {
       return "EXACT";
     }
@@ -3031,10 +3194,19 @@ function determineResolution(edge) {
   if (["type-reference", "generic-type", "test-reference"].includes(edgeType)) {
     return "INFERRED";
   }
-  if (["soql-object", "soql-field", "trigger-object", "lwc-template-child"].includes(edgeType)) {
+  if (
+    [
+      "soql-object",
+      "soql-field",
+      "trigger-object",
+      "lwc-template-child",
+    ].includes(edgeType)
+  ) {
     return "HEURISTIC";
   }
-  return (edge.confidence === "high" || edge.confidence === "HIGH") ? "EXACT" : "INFERRED";
+  return edge.confidence === "high" || edge.confidence === "HIGH"
+    ? "EXACT"
+    : "INFERRED";
 }
 
 function createCanonicalRelationship(raw) {
@@ -3045,40 +3217,58 @@ function createCanonicalRelationship(raw) {
       source: {
         type: String(raw.source.type || "ApexClass"),
         name: String(raw.source.name || ""),
-        method: raw.source.method || null
+        method: raw.source.method || null,
       },
       target: {
         type: String(raw.target.type || "ApexClass"),
         name: String(raw.target.name || ""),
-        method: raw.target.method || null
+        method: raw.target.method || null,
       },
       relationship: {
         type: String(raw.relationship.type || "unknown"),
-        resolution: determineResolution(raw)
+        resolution: determineResolution(raw),
       },
       location: {
         line: Number(raw.location.line) || 0,
-        column: Number(raw.location.column) || 0
-      }
+        column: Number(raw.location.column) || 0,
+      },
     };
   }
 
-  const sourceNode = parseIdParts(raw.from || raw.sourceId || (raw.source && raw.source.name));
-  const targetNode = parseIdParts(raw.to || raw.toName || raw.targetId || (raw.target && raw.target.name));
+  const sourceNode = parseIdParts(
+    raw.from || raw.sourceId || (raw.source && raw.source.name),
+  );
+  const targetNode = parseIdParts(
+    raw.to || raw.toName || raw.targetId || (raw.target && raw.target.name),
+  );
 
-  const sourceType = raw.sourceType || (raw.source && raw.source.type) || sourceNode.type;
-  const sourceName = raw.sourceClass || raw.sourceName || (raw.source && raw.source.name) || sourceNode.name;
-  const sourceMethod = raw.sourceMethod !== undefined
-    ? raw.sourceMethod
-    : (raw.methodOwner || (raw.source && raw.source.method) || null);
+  const sourceType =
+    raw.sourceType || (raw.source && raw.source.type) || sourceNode.type;
+  const sourceName =
+    raw.sourceClass ||
+    raw.sourceName ||
+    (raw.source && raw.source.name) ||
+    sourceNode.name;
+  const sourceMethod =
+    raw.sourceMethod !== undefined
+      ? raw.sourceMethod
+      : raw.methodOwner || (raw.source && raw.source.method) || null;
 
-  const targetType = raw.targetType || (raw.target && raw.target.type) || targetNode.type;
-  const targetName = raw.targetClass || raw.toName || raw.targetName || (raw.target && raw.target.name) || targetNode.name;
-  const targetMethod = raw.targetMethod !== undefined
-    ? raw.targetMethod
-    : (raw.method || (raw.target && raw.target.method) || null);
+  const targetType =
+    raw.targetType || (raw.target && raw.target.type) || targetNode.type;
+  const targetName =
+    raw.targetClass ||
+    raw.toName ||
+    raw.targetName ||
+    (raw.target && raw.target.name) ||
+    targetNode.name;
+  const targetMethod =
+    raw.targetMethod !== undefined
+      ? raw.targetMethod
+      : raw.method || (raw.target && raw.target.method) || null;
 
-  const relType = raw.type || (raw.relationship && raw.relationship.type) || "unknown";
+  const relType =
+    raw.type || (raw.relationship && raw.relationship.type) || "unknown";
   const resolution = determineResolution(raw);
 
   const line = raw.line ?? (raw.location && raw.location.line) ?? 0;
@@ -3088,21 +3278,21 @@ function createCanonicalRelationship(raw) {
     source: {
       type: sourceType,
       name: sourceName,
-      method: sourceMethod || null
+      method: sourceMethod || null,
     },
     target: {
       type: targetType,
       name: targetName,
-      method: targetMethod || null
+      method: targetMethod || null,
     },
     relationship: {
       type: relType,
-      resolution: resolution
+      resolution: resolution,
     },
     location: {
       line: Number(line) || 0,
-      column: Number(column) || 0
-    }
+      column: Number(column) || 0,
+    },
   };
 }
 
@@ -3121,21 +3311,17 @@ function edgeWithEvidence(edge) {
     methodOwner: edge.methodOwner || null,
     confidence: edge.confidence || confidenceForDependencyType(edge.type),
     unresolved: Boolean(edge.unresolved),
-    canonical: canonical
+    canonical: canonical,
   };
 }
-
 
 function buildMethodCallGraph(target, result, metricById) {
   const nodes = nodeById(result.graph);
   const targetId = target.id;
 
   const outgoing = result.graph.edges
-    .filter(edge =>
-      edge.from === targetId &&
-      edge.type === "method-call"
-    )
-    .map(edge => {
+    .filter((edge) => edge.from === targetId && edge.type === "method-call")
+    .map((edge) => {
       const targetNode = nodes.get(edge.to);
       const canonical = edge.canonical || createCanonicalRelationship(edge);
       return {
@@ -3151,16 +3337,13 @@ function buildMethodCallGraph(target, result, metricById) {
         confidence: edge.confidence || "high",
         evidence: edge.evidence || null,
         resolved: !edge.unresolved,
-        canonical
+        canonical,
       };
     });
 
   const incoming = result.graph.edges
-    .filter(edge =>
-      edge.to === targetId &&
-      edge.type === "method-call"
-    )
-    .map(edge => {
+    .filter((edge) => edge.to === targetId && edge.type === "method-call")
+    .map((edge) => {
       const sourceNode = nodes.get(edge.from);
       const canonical = edge.canonical || createCanonicalRelationship(edge);
       return {
@@ -3176,7 +3359,7 @@ function buildMethodCallGraph(target, result, metricById) {
         confidence: edge.confidence || "high",
         evidence: edge.evidence || null,
         resolved: !edge.unresolved,
-        canonical
+        canonical,
       };
     });
 
@@ -3188,7 +3371,7 @@ function buildMethodCallGraph(target, result, metricById) {
       byMethod.set(key, {
         method: name || null,
         calls: [],
-        calledBy: []
+        calledBy: [],
       });
     }
     return byMethod.get(key);
@@ -3205,48 +3388,62 @@ function buildMethodCallGraph(target, result, metricById) {
   for (const value of byMethod.values()) {
     value.calls = uniqueBy(
       value.calls,
-      x => `${x.sourceMethod}|${x.targetComponent}|${x.targetMethod}|${x.line}|${x.evidence}`
+      (x) =>
+        `${x.sourceMethod}|${x.targetComponent}|${x.targetMethod}|${x.line}|${x.evidence}`,
     );
     value.calledBy = uniqueBy(
       value.calledBy,
-      x => `${x.sourceComponent}|${x.sourceMethod}|${x.targetMethod}|${x.line}|${x.evidence}`
+      (x) =>
+        `${x.sourceComponent}|${x.sourceMethod}|${x.targetMethod}|${x.line}|${x.evidence}`,
     );
   }
 
   return {
     outgoing: uniqueBy(
       outgoing,
-      x => `${x.sourceMethod}|${x.targetComponent}|${x.targetMethod}|${x.line}|${x.evidence}`
+      (x) =>
+        `${x.sourceMethod}|${x.targetComponent}|${x.targetMethod}|${x.line}|${x.evidence}`,
     ),
     incoming: uniqueBy(
       incoming,
-      x => `${x.sourceComponent}|${x.sourceMethod}|${x.targetMethod}|${x.line}|${x.evidence}`
+      (x) =>
+        `${x.sourceComponent}|${x.sourceMethod}|${x.targetMethod}|${x.line}|${x.evidence}`,
     ),
     byMethod: [...byMethod.values()].sort((a, b) =>
-      String(a.method || "").localeCompare(String(b.method || ""))
-    )
+      String(a.method || "").localeCompare(String(b.method || "")),
+    ),
   };
 }
 
 function enrichGraphEvidence(graph, registry) {
-  const byId = new Map(registry.symbols.map(s => [s.id, s]));
+  const byId = new Map(registry.symbols.map((s) => [s.id, s]));
   for (const edge of graph.edges) {
     const source = byId.get(edge.from);
     const parsed = source && source.parsed;
-    const dep = parsed && (parsed.dependencies || []).find(d =>
-      d.toName === (byId.get(edge.to)?.name || String(edge.to).replace(/^External:/, "").split(":").pop()) &&
-      d.type === edge.type &&
-      (d.method || null) === (edge.method || null)
-    );
+    const dep =
+      parsed &&
+      (parsed.dependencies || []).find(
+        (d) =>
+          d.toName ===
+            (byId.get(edge.to)?.name ||
+              String(edge.to)
+                .replace(/^External:/, "")
+                .split(":")
+                .pop()) &&
+          d.type === edge.type &&
+          (d.method || null) === (edge.method || null),
+      );
 
     if (dep) {
       edge.file = dep.file || source.file || null;
       edge.line = dep.line || null;
       edge.column = dep.column || null;
       edge.methodOwner = dep.methodOwner || null;
-      edge.confidence = dep.confidence || confidenceForDependencyType(edge.type);
+      edge.confidence =
+        dep.confidence || confidenceForDependencyType(edge.type);
     } else {
-      edge.confidence = edge.confidence || confidenceForDependencyType(edge.type);
+      edge.confidence =
+        edge.confidence || confidenceForDependencyType(edge.type);
     }
     edge.canonical = createCanonicalRelationship(edge);
   }
@@ -3256,13 +3453,46 @@ function enrichGraphEvidence(graph, registry) {
 function nodeContextSummary(symbol, metricById) {
   if (!symbol) return null;
   const p = symbol.parsed || {};
-  const metric = metricById.get(symbol.id) || null;
-
+  const metric = metricById ? metricById.get(symbol.id) || null : null;
+  const role = classifyComponentRole(symbol, null, metric);
+  const layer = classifyComponentLayer(symbol, null, metric, role);
+  const domain = classifyComponentDomain(symbol, null, null, metric);
+  const entryPoint = detectEntryPoint(symbol, null, metric);
+  const externalBoundary = detectExternalBoundary(symbol, null, metric);
+  const securityBoundaries = analyzeSecurityBoundaries(symbol, null);
+  const smells = detectComponentSmells(symbol, null, metric);
+  const businessCriticality = classifyComponentBusinessCriticality(
+    symbol,
+    null,
+    metric,
+    role,
+    layer,
+    entryPoint,
+    externalBoundary,
+  );
+  const safetyEnvelope = classifyComponentSafetyEnvelope(symbol, null, metric, null, {
+    roleInfo: role,
+    layerInfo: layer,
+    entryPointInfo: entryPoint,
+    externalBoundaryInfo: externalBoundary,
+    securityBoundaries,
+    smellsInfo: smells,
+    criticalityInfo: businessCriticality
+  });
   return {
     id: symbol.id,
     name: symbol.name,
     type: symbol.type,
     file: symbol.file || null,
+    role,
+    layer,
+    domain,
+    entryPoint,
+    externalBoundary,
+    securityBoundaries,
+    smells,
+    businessCriticality,
+    safetyEnvelope,
     lines: p.lines || p.lineCount || null,
     sourceHash: p.sourceHash || null,
     isTest: Boolean(p.isTest),
@@ -3270,7 +3500,7 @@ function nodeContextSummary(symbol, metricById) {
     extends: p.extends || [],
     implements: p.implements || [],
     annotations: p.annotations || [],
-    methods: (p.methods || []).map(m => ({
+    methods: (p.methods || []).map((m) => ({
       name: m.name,
       returnType: m.returnType || null,
       parameters: m.parameters || "",
@@ -3282,7 +3512,7 @@ function nodeContextSummary(symbol, metricById) {
       invocable: Boolean(m.isInvocable),
       annotations: m.annotations || [],
       lineStart: m.lineStart || null,
-      lineEnd: m.lineEnd || null
+      lineEnd: m.lineEnd || null,
     })),
     contracts: p.behavior?.publicContracts || [],
     async: p.behavior?.async || [],
@@ -3299,7 +3529,7 @@ function nodeContextSummary(symbol, metricById) {
     imports: p.imports || [],
     events: p.events || [],
     capabilities: p.capabilities || [],
-    dependencies: (p.dependencies || []).map(d => ({
+    dependencies: (p.dependencies || []).map((d) => ({
       toName: d.toName,
       type: d.type,
       method: d.method || null,
@@ -3308,22 +3538,23 @@ function nodeContextSummary(symbol, metricById) {
       column: d.column || null,
       methodOwner: d.methodOwner || null,
       confidence: d.confidence || confidenceForDependencyType(d.type),
-      canonical: d.canonical || createCanonicalRelationship({
-        from: symbol.id,
-        toName: d.toName,
-        type: d.type,
-        method: d.method,
-        methodOwner: d.methodOwner,
-        line: d.line,
-        column: d.column,
-        confidence: d.confidence,
-        evidence: d.evidence
-      })
+      canonical:
+        d.canonical ||
+        createCanonicalRelationship({
+          from: symbol.id,
+          toName: d.toName,
+          type: d.type,
+          method: d.method,
+          methodOwner: d.methodOwner,
+          line: d.line,
+          column: d.column,
+          confidence: d.confidence,
+          evidence: d.evidence,
+        }),
     })),
-    metrics: metric
+    metrics: metric,
   };
 }
-
 
 // ============================================================
 // Analysis snapshot cache
@@ -3339,7 +3570,9 @@ function computeFileHash(filePath) {
   if (!filePath || !fs.existsSync(filePath)) return null;
   try {
     const content = fs.readFileSync(filePath);
-    return "sha256:" + crypto.createHash("sha256").update(content).digest("hex");
+    return (
+      "sha256:" + crypto.createHash("sha256").update(content).digest("hex")
+    );
   } catch {
     return null;
   }
@@ -3351,7 +3584,7 @@ function getGitCommitHash(sourceDir) {
     const commit = execSync("git rev-parse HEAD", {
       cwd: sourceDir,
       stdio: ["ignore", "pipe", "ignore"],
-      encoding: "utf8"
+      encoding: "utf8",
     }).trim();
     return commit || null;
   } catch {
@@ -3365,7 +3598,7 @@ function computeSourceHash(sourceDir) {
     Object.values(discovered)
       .filter(Array.isArray)
       .flat()
-      .filter(x => typeof x === "string")
+      .filter((x) => typeof x === "string"),
   ).sort((a, b) => {
     const relA = normalizePath(path.relative(sourceDir, a));
     const relB = normalizePath(path.relative(sourceDir, b));
@@ -3385,10 +3618,16 @@ function computeSourceHash(sourceDir) {
   return "sha256:" + hash.digest("hex");
 }
 
-function generateAnalysisManifest(sourceDir, outputDir, reportJson, status = "COMPLETE") {
+function generateAnalysisManifest(
+  sourceDir,
+  outputDir,
+  reportJson,
+  status = "COMPLETE",
+) {
   const manifestPath = path.join(outputDir, "analysis-manifest.json");
 
-  const fileCount = reportJson.inventory?.files ?? discover(sourceDir).files.length;
+  const fileCount =
+    reportJson.inventory?.files ?? discover(sourceDir).files.length;
   const sourceHash = computeSourceHash(sourceDir);
   const gitCommit = getGitCommitHash(sourceDir);
 
@@ -3397,11 +3636,12 @@ function generateAnalysisManifest(sourceDir, outputDir, reportJson, status = "CO
   const knownArtifacts = [
     { key: "dependencyReport", file: "dependency-report.json" },
     { key: "analysisSnapshot", file: "analysis-snapshot.json" },
+    { key: "architectureSnapshot", file: "architecture-snapshot.json" },
     { key: "architectureMetrics", file: "architecture-metrics.json" },
     { key: "dependencyReportMd", file: "dependency-report.md" },
     { key: "dependencySummaryMd", file: "dependency-summary.md" },
     { key: "unresolvedReferencesMd", file: "unresolved-references.md" },
-    { key: "explorerData", file: "explorer-data.json", schemaVersion: "1.0.0" }
+    { key: "explorerData", file: "explorer-data.json", schemaVersion: "1.0.0" },
   ];
 
   for (const item of knownArtifacts) {
@@ -3409,7 +3649,7 @@ function generateAnalysisManifest(sourceDir, outputDir, reportJson, status = "CO
     if (fs.existsSync(itemPath)) {
       const art = {
         path: item.file,
-        fileHash: computeFileHash(itemPath)
+        fileHash: computeFileHash(itemPath),
       };
       if (item.schemaVersion) art.schemaVersion = item.schemaVersion;
       if (item.file === "explorer-data.json") {
@@ -3434,10 +3674,10 @@ function generateAnalysisManifest(sourceDir, outputDir, reportJson, status = "CO
       directory: rel(sourceDir),
       fileCount,
       sourceHash,
-      gitCommit
+      gitCommit,
     },
     status,
-    artifacts
+    artifacts,
   };
 
   write(manifestPath, JSON.stringify(manifest, null, 2));
@@ -3450,21 +3690,23 @@ function snapshotFileState(sourceDir) {
     Object.values(discovered)
       .filter(Array.isArray)
       .flat()
-      .filter(x => typeof x === "string")
+      .filter((x) => typeof x === "string"),
   );
 
-  return files.map(file => {
-    try {
-      const stat = fs.statSync(file);
-      return {
-        file: normalizePath(path.relative(PROJECT_ROOT, file)),
-        size: stat.size,
-        mtimeMs: stat.mtimeMs
-      };
-    } catch {
-      return null;
-    }
-  }).filter(Boolean);
+  return files
+    .map((file) => {
+      try {
+        const stat = fs.statSync(file);
+        return {
+          file: normalizePath(path.relative(PROJECT_ROOT, file)),
+          size: stat.size,
+          mtimeMs: stat.mtimeMs,
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
 
 function snapshotIsFresh(snapshot, sourceDir, options = {}) {
@@ -3475,7 +3717,9 @@ function snapshotIsFresh(snapshot, sourceDir, options = {}) {
 
   // 2. Analyzer version check
   const snapshotAnalyzerVersion = String(
-    snapshot.analyzerVersion || (snapshot.analyzer && snapshot.analyzer.match(/v(\d+)/)?.[1]) || ""
+    snapshot.analyzerVersion ||
+      (snapshot.analyzer && snapshot.analyzer.match(/v(\d+)/)?.[1]) ||
+      "",
   );
   if (snapshotAnalyzerVersion !== CURRENT_ANALYZER_VERSION) return false;
 
@@ -3484,14 +3728,19 @@ function snapshotIsFresh(snapshot, sourceDir, options = {}) {
   const snapshotSource = normalizePath(
     path.isAbsolute(snapshot.sourceDirectory || "")
       ? path.normalize(snapshot.sourceDirectory)
-      : path.resolve(PROJECT_ROOT, snapshot.sourceDirectory || "")
+      : path.resolve(PROJECT_ROOT, snapshot.sourceDirectory || ""),
   );
   if (expectedSource !== snapshotSource) return false;
 
   // 4. Configuration check (e.g. maxGraphEdges)
   if (options && snapshot.options) {
-    if (options.maxGraphEdges !== undefined && snapshot.options.maxGraphEdges !== undefined) {
-      if (Number(options.maxGraphEdges) !== Number(snapshot.options.maxGraphEdges)) {
+    if (
+      options.maxGraphEdges !== undefined &&
+      snapshot.options.maxGraphEdges !== undefined
+    ) {
+      if (
+        Number(options.maxGraphEdges) !== Number(snapshot.options.maxGraphEdges)
+      ) {
         return false;
       }
     }
@@ -3503,7 +3752,9 @@ function snapshotIsFresh(snapshot, sourceDir, options = {}) {
 
   if (current.length !== saved.length) return false;
 
-  const savedMap = new Map(saved.map(x => [normalizePath(x.file), `${x.size}:${x.mtimeMs}`]));
+  const savedMap = new Map(
+    saved.map((x) => [normalizePath(x.file), `${x.size}:${x.mtimeMs}`]),
+  );
   for (const item of current) {
     const key = normalizePath(item.file);
     if (!savedMap.has(key)) return false;
@@ -3514,12 +3765,12 @@ function snapshotIsFresh(snapshot, sourceDir, options = {}) {
 }
 
 function rehydrateRegistry(snapshot) {
-  const symbols = (snapshot.registry || []).map(symbol => ({
+  const symbols = (snapshot.registry || []).map((symbol) => ({
     id: symbol.id,
     type: symbol.type,
     name: symbol.name,
     file: symbol.file,
-    parsed: symbol.parsed
+    parsed: symbol.parsed,
   }));
 
   const byName = new Map();
@@ -3543,17 +3794,17 @@ function loadAnalysisSnapshot(sourceDir, options = {}) {
     return {
       discovered: snapshot.discovered || {
         sourceDir: snapshot.sourceDirectory,
-        files: []
+        files: [],
       },
       registry,
       graph: {
         nodes: snapshot.nodes || [],
-        edges: snapshot.edges || []
+        edges: snapshot.edges || [],
       },
       metricList: snapshot.metrics || [],
       cycles: snapshot.cycles || [],
       fromSnapshot: true,
-      snapshotGeneratedAt: snapshot.generatedAt
+      snapshotGeneratedAt: snapshot.generatedAt,
     };
   } catch (error) {
     if (!options.quiet) {
@@ -3586,33 +3837,359 @@ function getAnalysis(sourceDir, options = {}) {
   return analyze(sourceDir, options, isGlobalAnalyze);
 }
 
+// ============================================================
+// Deterministic Test Gap Analysis Engine
+// ============================================================
+
+/**
+ * Deterministically analyzes test gaps for a component based on repository facts.
+ * Categorizes signals into:
+ *  - 'test-component': component itself is a test suite/class
+ *  - 'known-coverage-failure': runtime coverage metadata exists indicating failure (<75% or explicit failure status)
+ *  - 'covered': direct dependency edge or reference from a test component exists
+ *  - 'likely-covered': single matching test found by naming convention without direct graph edge
+ *  - 'ambiguous-test': multiple candidate tests matched without a single clear match
+ *  - 'no-test-evidence': no test component, dependency, reference, or naming match found
+ */
+function analyzeTestGap(target, registryInput, graphInput, options = {}) {
+  const targetId = typeof target === "string" ? target : target.id;
+  const targetParsed =
+    typeof target === "object" && target.parsed ? target.parsed : {};
+  const targetType =
+    typeof target === "object" && target.type
+      ? target.type
+      : parseIdParts(targetId).type;
+  const targetName =
+    typeof target === "object" && target.name
+      ? target.name
+      : parseIdParts(targetId).name;
+
+  // 1. Is the component itself a test component?
+  const isTestComponent = Boolean(
+    targetParsed.isTest ||
+    (targetType === "ApexClass" && /Test$/i.test(targetName)),
+  );
+
+  if (isTestComponent) {
+    return {
+      signal: "test-component",
+      status: "TEST_COMPONENT",
+      hasTestGap: false,
+      matchingTests: [],
+      coverageData: null,
+      reason: "Component is a test component itself.",
+      evidence: [
+        {
+          type: "isTest",
+          description:
+            "Component flagged as test component by @isTest annotation or test naming convention.",
+        },
+      ],
+    };
+  }
+
+  // 2. Is actual coverage data available (e.g. attached to parsed/target metadata)?
+  const coverageData =
+    targetParsed.coverage ||
+    (typeof target === "object" ? target.coverage : null) ||
+    null;
+  if (coverageData) {
+    const percent =
+      coverageData.percentCovered ??
+      coverageData.coveragePercent ??
+      coverageData.percent;
+    const isFailed =
+      coverageData.failed === true ||
+      coverageData.status === "FAILED" ||
+      (percent !== undefined && percent < 75);
+    if (isFailed) {
+      return {
+        signal: "known-coverage-failure",
+        status: "KNOWN_COVERAGE_FAILURE",
+        hasTestGap: true,
+        matchingTests:
+          coverageData.testClasses || targetParsed.testReferences || [],
+        coverageData,
+        reason: `Known runtime test coverage failure: ${percent !== undefined ? percent + "%" : "execution failed"} (below target threshold of 75%).`,
+        evidence: [
+          {
+            type: "coverageData",
+            status: coverageData.status || "FAILED",
+            percentCovered: percent,
+          },
+        ],
+      };
+    } else {
+      return {
+        signal: "covered",
+        status: "COVERED",
+        hasTestGap: false,
+        matchingTests:
+          coverageData.testClasses || targetParsed.testReferences || [],
+        coverageData,
+        reason: `Known runtime test coverage passed (${percent}%).`,
+        evidence: [
+          {
+            type: "coverageData",
+            status: "PASSED",
+            percentCovered: percent,
+          },
+        ],
+      };
+    }
+  }
+
+  // 3. Search for test components in registry and graph edges
+  const symbols = Array.isArray(registryInput)
+    ? registryInput
+    : registryInput?.symbols || registryInput?.registry || [];
+  const edges = Array.isArray(graphInput)
+    ? graphInput
+    : graphInput?.edges || [];
+
+  const allTestSymbols = symbols.filter((s) =>
+    Boolean(
+      s.parsed?.isTest || (s.type === "ApexClass" && /Test$/i.test(s.name)),
+    ),
+  );
+
+  // Direct graph edges involving target and test components
+  const directTestEdges = edges.filter((e) => {
+    if (e.from === targetId) {
+      const targetNodeSymbol = symbols.find((s) => s.id === e.to);
+      return (
+        targetNodeSymbol &&
+        Boolean(
+          targetNodeSymbol.parsed?.isTest ||
+          (targetNodeSymbol.type === "ApexClass" &&
+            /Test$/i.test(targetNodeSymbol.name)),
+        )
+      );
+    }
+    if (e.to === targetId) {
+      const sourceNodeSymbol = symbols.find((s) => s.id === e.from);
+      return (
+        sourceNodeSymbol &&
+        Boolean(
+          sourceNodeSymbol.parsed?.isTest ||
+          (sourceNodeSymbol.type === "ApexClass" &&
+            /Test$/i.test(sourceNodeSymbol.name)),
+        )
+      );
+    }
+    return false;
+  });
+
+  const directTestIds = unique(
+    directTestEdges.map((e) => (e.from === targetId ? e.to : e.from)),
+  );
+
+  // Direct test references where test symbols reference targetName
+  const referencingTestIds = allTestSymbols
+    .filter((s) => {
+      const refs = s.parsed?.testReferences || [];
+      return (
+        refs.includes(targetName) ||
+        (s.parsed?.apex || []).some((m) => m.includes(targetName))
+      );
+    })
+    .map((s) => s.id);
+
+  const directCandidateIds = unique([...directTestIds, ...referencingTestIds]);
+
+  // 4. Test Naming Convention Matching
+  const cleanTargetName = targetName.toLowerCase();
+  const namingMatchedTestSymbols = allTestSymbols.filter((s) => {
+    const sName = s.name.toLowerCase();
+    return (
+      sName === `${cleanTargetName}test` ||
+      sName === `${cleanTargetName}_test` ||
+      sName === `test${cleanTargetName}` ||
+      sName === `test_${cleanTargetName}` ||
+      sName === `${cleanTargetName}tests` ||
+      sName === `test${cleanTargetName}test`
+    );
+  });
+
+  const namingMatchedIds = unique(namingMatchedTestSymbols.map((s) => s.id));
+
+  // Combine candidates
+  const allCandidateIds = unique([...directCandidateIds, ...namingMatchedIds]);
+
+  // Evidence construction
+  const evidence = [];
+  directTestEdges.forEach((e) => {
+    evidence.push({
+      type: "dependencyEdge",
+      from: e.from,
+      to: e.to,
+      edgeType: e.type,
+      evidence: e.evidence || null,
+    });
+  });
+  referencingTestIds.forEach((id) => {
+    evidence.push({
+      type: "testReference",
+      testId: id,
+      targetName,
+    });
+  });
+  namingMatchedIds.forEach((id) => {
+    evidence.push({
+      type: "namingMatch",
+      testId: id,
+      targetName,
+    });
+  });
+
+  // 5. Categorize signal
+  if (allCandidateIds.length === 0) {
+    return {
+      signal: "no-test-evidence",
+      status: "NO_TEST_EVIDENCE",
+      hasTestGap: true,
+      matchingTests: [],
+      coverageData: null,
+      reason:
+        "No deterministic test evidence found in registry, dependency graph, or naming relationships.",
+      evidence: [],
+    };
+  }
+
+  const isAmbiguous =
+    namingMatchedIds.length > 1 ||
+    (directCandidateIds.length > 1 &&
+      !directCandidateIds.some(
+        (id) =>
+          parseIdParts(id).name.toLowerCase() === `${cleanTargetName}test`,
+      ));
+
+  if (isAmbiguous) {
+    return {
+      signal: "ambiguous-test",
+      status: "AMBIGUOUS_TEST",
+      hasTestGap: true,
+      matchingTests: allCandidateIds,
+      coverageData: null,
+      reason: `Ambiguous test relationships detected: multiple candidate test components matched (${allCandidateIds.join(", ")}).`,
+      evidence,
+    };
+  }
+
+  if (directCandidateIds.length > 0) {
+    return {
+      signal: "covered",
+      status: "COVERED",
+      hasTestGap: false,
+      matchingTests: allCandidateIds,
+      coverageData: null,
+      reason: `Direct test evidence identified: ${directCandidateIds.join(", ")}.`,
+      evidence,
+    };
+  }
+
+  if (namingMatchedIds.length === 1) {
+    return {
+      signal: "likely-covered",
+      status: "LIKELY_COVERED",
+      hasTestGap: false,
+      matchingTests: namingMatchedIds,
+      coverageData: null,
+      reason: `Test component found by standard naming relationship (${namingMatchedIds[0]}), but no explicit dependency edge detected in graph.`,
+      evidence,
+    };
+  }
+
+  return {
+    signal: "no-test-evidence",
+    status: "NO_TEST_EVIDENCE",
+    hasTestGap: true,
+    matchingTests: allCandidateIds,
+    coverageData: null,
+    reason: "Test relationship status could not be deterministically resolved.",
+    evidence,
+  };
+}
+
+/**
+ * Computes repository-wide test gap summary metrics.
+ */
+function computeTestGapSummary(registryInput, graphInput) {
+  const symbols = Array.isArray(registryInput)
+    ? registryInput
+    : registryInput?.symbols || registryInput?.registry || [];
+
+  const summary = {
+    totalComponents: symbols.length,
+    coveredCount: 0,
+    likelyCoveredCount: 0,
+    noTestEvidenceCount: 0,
+    knownCoverageFailureCount: 0,
+    ambiguousTestCount: 0,
+    testComponentCount: 0,
+    componentsWithTestGap: 0,
+  };
+
+  for (const symbol of symbols) {
+    const gap = analyzeTestGap(symbol, registryInput, graphInput);
+    switch (gap.signal) {
+      case "covered":
+        summary.coveredCount++;
+        break;
+      case "likely-covered":
+        summary.likelyCoveredCount++;
+        break;
+      case "no-test-evidence":
+        summary.noTestEvidenceCount++;
+        summary.componentsWithTestGap++;
+        break;
+      case "known-coverage-failure":
+        summary.knownCoverageFailureCount++;
+        summary.componentsWithTestGap++;
+        break;
+      case "ambiguous-test":
+        summary.ambiguousTestCount++;
+        summary.componentsWithTestGap++;
+        break;
+      case "test-component":
+        summary.testComponentCount++;
+        break;
+      default:
+        summary.componentsWithTestGap++;
+        break;
+    }
+  }
+
+  return summary;
+}
 function buildComponentIntelligence(target, result, options = {}) {
-  const metricById = new Map(result.metricList.map(x => [x.id, x]));
+  const metricById = new Map(result.metricList.map((x) => [x.id, x]));
   const nodes = nodeById(result.graph);
   const scopedResolution = ScopeResolver.resolve(target, result, options);
   const impact = scopedResolution.impact;
   const assessment = refactorAssessment(
     impact,
-    metricById.get(target.id) || null
+    metricById.get(target.id) || null,
   );
 
   const directDependencies = result.graph.edges
-    .filter(e => e.from === target.id)
+    .filter((e) => e.from === target.id)
     .map(edgeWithEvidence);
 
   const directDependents = result.graph.edges
-    .filter(e => e.to === target.id)
+    .filter((e) => e.to === target.id)
     .map(edgeWithEvidence);
 
   const relatedIds = scopedResolution.relatedIds;
-  const scopedNodesMap = new Map(scopedResolution.nodes.map(n => [n.id, n]));
+  const scopedNodesMap = new Map(scopedResolution.nodes.map((n) => [n.id, n]));
 
   const related = [...relatedIds]
-    .map(id => scopedNodesMap.get(id) || nodes.get(id))
+    .map((id) => scopedNodesMap.get(id) || nodes.get(id))
     .filter(Boolean)
-    .map(symbolNode => {
-      const symbol = scopedResolution.registry.find(s => s.id === symbolNode.id) ||
-        result.registry.symbols.find(s => s.id === symbolNode.id);
+    .map((symbolNode) => {
+      const symbol =
+        scopedResolution.registry.find((s) => s.id === symbolNode.id) ||
+        result.registry.symbols.find((s) => s.id === symbolNode.id);
       return symbol ? nodeContextSummary(symbol, metricById) : symbolNode;
     });
 
@@ -3621,20 +4198,31 @@ function buildComponentIntelligence(target, result, options = {}) {
     .map(edgeWithEvidence);
 
   const unresolved = scopedResolution.edges
-    .filter(e =>
-      e.unresolved &&
-      (e.from === target.id || e.to === target.id || relatedIds.has(e.from) || relatedIds.has(e.to))
+    .filter(
+      (e) =>
+        e.unresolved &&
+        (e.from === target.id ||
+          e.to === target.id ||
+          relatedIds.has(e.from) ||
+          relatedIds.has(e.to)),
     )
     .map(edgeWithEvidence);
 
   const reasoningReasons = [];
-  if ((target.parsed?.dynamicApex || []).length) reasoningReasons.push("dynamic Apex detected");
-  if (unresolved.length) reasoningReasons.push("unresolved or external dependencies detected");
-  if ((target.parsed?.behavior?.async || []).length) reasoningReasons.push("asynchronous execution detected");
-  if ((target.parsed?.behavior?.securitySignals || []).length) reasoningReasons.push("security/sharing behavior requires semantic review");
-  if ((impact.impactedLwc || []).length) reasoningReasons.push("LWC contract impact");
-  if ((impact.triggerImpact || []).length) reasoningReasons.push("trigger/automation impact");
-  if ((impact.impactedTests || []).length) reasoningReasons.push("test behavior is affected");
+  if ((target.parsed?.dynamicApex || []).length)
+    reasoningReasons.push("dynamic Apex detected");
+  if (unresolved.length)
+    reasoningReasons.push("unresolved or external dependencies detected");
+  if ((target.parsed?.behavior?.async || []).length)
+    reasoningReasons.push("asynchronous execution detected");
+  if ((target.parsed?.behavior?.securitySignals || []).length)
+    reasoningReasons.push("security/sharing behavior requires semantic review");
+  if ((impact.impactedLwc || []).length)
+    reasoningReasons.push("LWC contract impact");
+  if ((impact.triggerImpact || []).length)
+    reasoningReasons.push("trigger/automation impact");
+  if ((impact.impactedTests || []).length)
+    reasoningReasons.push("test behavior is affected");
 
   const sourceFiles = [];
   for (const id of relatedIds) {
@@ -3647,43 +4235,293 @@ function buildComponentIntelligence(target, result, options = {}) {
       name: node.name,
       type: node.type,
       file: node.file,
-      sourceHash: node.sourceHash || result.registry.symbols.find(s => s.id === node.id)?.parsed?.sourceHash || null,
-      lines: node.lines || result.registry.symbols.find(s => s.id === node.id)?.parsed?.lineCount || null,
-      role: node.id === target.id
-        ? "target"
-        : directDependencies.some(e => e.to === node.id)
-          ? "dependency"
-          : directDependents.some(e => e.from === node.id)
-            ? "dependent"
-            : node.type === "LWC"
-              ? "lwc"
-              : node.type === "ApexClass" && /Test$/i.test(node.name)
-                ? "test"
-                : "related"
+      sourceHash:
+        node.sourceHash ||
+        result.registry.symbols.find((s) => s.id === node.id)?.parsed
+          ?.sourceHash ||
+        null,
+      lines:
+        node.lines ||
+        result.registry.symbols.find((s) => s.id === node.id)?.parsed
+          ?.lineCount ||
+        null,
+      role:
+        node.id === target.id
+          ? "target"
+          : directDependencies.some((e) => e.to === node.id)
+            ? "dependency"
+            : directDependents.some((e) => e.from === node.id)
+              ? "dependent"
+              : node.type === "LWC"
+                ? "lwc"
+                : node.type === "ApexClass" && /Test$/i.test(node.name)
+                  ? "test"
+                  : "related",
     });
   }
 
   sourceFiles.sort((a, b) => {
-    const rank = { target: 0, dependency: 1, dependent: 2, test: 3, lwc: 4, related: 5 };
-    return (rank[a.role] ?? 9) - (rank[b.role] ?? 9) || a.name.localeCompare(b.name);
+    const rank = {
+      target: 0,
+      dependency: 1,
+      dependent: 2,
+      test: 3,
+      lwc: 4,
+      related: 5,
+    };
+    return (
+      (rank[a.role] ?? 9) - (rank[b.role] ?? 9) || a.name.localeCompare(b.name)
+    );
   });
 
   const profile = options.profile || "full";
   const profileFields = {
-    structural: ["identity", "metrics", "contracts", "dependencies", "dependents", "impact", "risks", "data", "frontend", "tests", "unresolved"],
-    planning: ["identity", "metrics", "contracts", "methods", "dependencies", "dependents", "impact", "risks", "data", "frontend", "tests", "architecture", "unresolved"],
-    implementation: ["identity", "metrics", "contracts", "methods", "dependencies", "dependents", "impact", "risks", "data", "frontend", "tests", "architecture", "unresolved", "sourceFiles"],
-    full: ["identity", "metrics", "contracts", "methods", "dependencies", "dependents", "impact", "risks", "data", "frontend", "tests", "architecture", "unresolved", "sourceFiles"]
+    structural: [
+      "identity",
+      "metrics",
+      "contracts",
+      "dependencies",
+      "dependents",
+      "impact",
+      "risks",
+      "data",
+      "frontend",
+      "tests",
+      "unresolved",
+    ],
+    planning: [
+      "identity",
+      "metrics",
+      "contracts",
+      "methods",
+      "dependencies",
+      "dependents",
+      "impact",
+      "risks",
+      "data",
+      "frontend",
+      "tests",
+      "architecture",
+      "unresolved",
+    ],
+    implementation: [
+      "identity",
+      "metrics",
+      "contracts",
+      "methods",
+      "dependencies",
+      "dependents",
+      "impact",
+      "risks",
+      "data",
+      "frontend",
+      "tests",
+      "architecture",
+      "unresolved",
+      "sourceFiles",
+    ],
+    full: [
+      "identity",
+      "metrics",
+      "contracts",
+      "methods",
+      "dependencies",
+      "dependents",
+      "impact",
+      "risks",
+      "data",
+      "frontend",
+      "tests",
+      "architecture",
+      "unresolved",
+      "sourceFiles",
+    ],
   };
 
   const methodCallGraph = buildMethodCallGraph(target, result, metricById);
+  const targetMetric = metricById.get(target.id) || null;
+  const role = classifyComponentRole(target, result.graph, targetMetric);
+  const layer = classifyComponentLayer(
+    target,
+    result.graph,
+    targetMetric,
+    role,
+  );
+  const domain = classifyComponentDomain(
+    target,
+    result.registry,
+    result.graph,
+    targetMetric,
+  );
+  const dataImpact = analyzeComponentDataImpact(
+    target,
+    result.graph,
+    result.registry,
+  );
+  const entryPoint = detectEntryPoint(target, result.graph, targetMetric);
+  const externalBoundary = detectExternalBoundary(
+    target,
+    result.graph,
+    targetMetric,
+  );
+  const bottleneck = detectComponentBottleneck(
+    target,
+    result.graph,
+    targetMetric,
+    result.cycles,
+  );
+  const securityBoundaries = analyzeSecurityBoundaries(target, result.graph);
+  const testGapInfo = analyzeTestGap(
+    target,
+    result.registry,
+    result.graph,
+    options,
+  );
+  const smells = detectComponentSmells(target, result.graph, targetMetric, {
+    cycles: result.cycles,
+    testGapInfo,
+  });
+  const businessCriticality = classifyComponentBusinessCriticality(target, result.graph, targetMetric, role, layer, entryPoint, externalBoundary);
+
+  const architectureDebt = detectComponentArchitectureDebt(target, result.graph, targetMetric, {
+    cycles: result.cycles,
+    testGapInfo,
+    smellInfo: smells,
+    bottleneckInfo: bottleneck,
+    entryPointInfo: entryPoint,
+    externalBoundaryInfo: externalBoundary,
+    securityInfo: securityBoundaries,
+    registry: result.registry,
+    options
+  });
+
+  const pathAnalysis = analyzeComponentPaths(target.id, result.graph, options);
+
+  const testGap = analyzeTestGap(
+    target,
+    result.registry,
+    result.graph,
+    options,
+  );
+
+  const architectureProfile = buildComponentArchitectureProfile(target, result.graph, targetMetric, {
+    role,
+    layer,
+    dataImpact,
+    entryPoint,
+    externalBoundary,
+    bottleneck,
+    securityBoundaries,
+    testGap,
+    paths: pathAnalysis
+  });
+
+  const architectureHealth = evaluateComponentArchitectureHealth(target, result.graph, targetMetric, {
+    role,
+    layer,
+    bottleneck,
+    entryPoint,
+    externalBoundary,
+    testGap,
+    securityBoundaries,
+    smells,
+    businessCriticality,
+    cycles: result.cycles
+  });
+
+  const safetyEnvelope = classifyComponentSafetyEnvelope(target, result.graph, targetMetric, result.registry, {
+    roleInfo: role,
+    layerInfo: layer,
+    entryPointInfo: entryPoint,
+    externalBoundaryInfo: externalBoundary,
+    securityBoundaries,
+    dataImpact,
+    testGapInfo: testGap,
+    smellsInfo: smells,
+    criticalityInfo: businessCriticality,
+    bottleneckInfo: bottleneck,
+    cycles: result.cycles
+  });
+
+  const qualityGates = evaluateComponentQualityGates(target, result.graph, targetMetric, {
+    smellInfo: smells,
+    debtInfo: architectureDebt,
+    bottleneckInfo: bottleneck,
+    securityInfo: securityBoundaries,
+    testGapInfo: testGap,
+    externalBoundaryInfo: externalBoundary,
+    safetyEnvelopeInfo: safetyEnvelope,
+    layerInfo: layer,
+    domainInfo: domain,
+    cycles: result.cycles
+  });
+
+  const duplicateResponsibility = detectComponentDuplicateResponsibility(target, result.registry, result.graph, targetMetric, {
+    roleInfoMap: new Map([[target.id, role]]),
+    layerInfoMap: new Map([[target.id, layer]]),
+    domainInfoMap: new Map([[target.id, domain]]),
+    entryPointInfoMap: new Map([[target.id, entryPoint]]),
+    extBoundaryInfoMap: new Map([[target.id, externalBoundary]]),
+    smellsInfoMap: new Map([[target.id, smells]])
+  });
+
+  const architectureDecisionContext = evaluateArchitectureDecisionContext(target, {
+    role,
+    layer,
+    domain,
+    profile: architectureProfile,
+    impact,
+    safetyEnvelope,
+    businessCriticality,
+    architectureHealth,
+    architectureDebt,
+    bottlenecks: bottleneck,
+    smells,
+    securityBoundaries,
+    externalBoundaries: externalBoundary,
+    testProtection: testGap,
+    qualityGates,
+    duplicateResponsibility
+  });
 
   const intelligence = {
     schemaVersion: 6,
     generatedAt: new Date().toISOString(),
     analyzer: "Salesforce Dependency Analyzer v13",
     profile,
-    target: nodeContextSummary(target, metricById),
+    architectureProfile,
+    safetyEnvelope,
+    architectureHealth,
+    qualityGates,
+    duplicateResponsibility,
+    architectureDecisionContext,
+    role,
+    entryPoint,
+    externalBoundary,
+    bottleneck,
+    securityBoundaries,
+    businessCriticality,
+    architectureDebt,
+    layer,
+    domain,
+    target: {
+      ...nodeContextSummary(target, metricById),
+      role,
+      entryPoint,
+      layer,
+      domain,
+      externalBoundary,
+      bottleneck,
+      smells,
+      businessCriticality,
+      safetyEnvelope,
+      architectureProfile,
+      architectureHealth,
+      architectureDebt,
+      architectureProfile,
+      duplicateResponsibility
+    },
+    paths: pathAnalysis,
     impact: {
       level: impact.level,
       directDependencies,
@@ -3695,24 +4533,25 @@ function buildComponentIntelligence(target, result, options = {}) {
       impactedObjects: impact.impactedObjects || [],
       impactedFields: impact.impactedFields || [],
       triggerImpact: impact.triggerImpact || [],
-      unresolved
+      unresolved,
     },
+    dataImpact,
     assessment,
     relatedComponents: related,
     graph: {
-      edges: relevantEdges
+      edges: relevantEdges,
     },
     callGraph: methodCallGraph,
     risks: {
       refactorRisk: assessment.risk,
       score: assessment.score,
       reasoningRequired: reasoningReasons.length > 0,
-      reasons: unique(reasoningReasons)
+      reasons: unique(reasoningReasons),
     },
     data: {
       objects: unique([
         ...(target.parsed?.objects || []),
-        ...((target.parsed?.fields || []).map(x => x.object))
+        ...(target.parsed?.fields || []).map((x) => x.object),
       ]),
       fields: target.parsed?.fields || [],
       dml: target.parsed?.dml || [],
@@ -3720,39 +4559,40 @@ function buildComponentIntelligence(target, result, options = {}) {
       callouts: target.parsed?.callouts || [],
       dynamicApex: target.parsed?.dynamicApex || [],
       methodUsage: {
-        soql: (target.parsed?.soql || []).map(x => ({
+        soql: (target.parsed?.soql || []).map((x) => ({
           method: x.methodOwner || null,
           object: x.object,
           line: x.line || null,
           confidence: x.confidence || null,
-          evidence: x.evidence || null
+          evidence: x.evidence || null,
         })),
-        fields: (target.parsed?.fields || []).map(x => ({
+        fields: (target.parsed?.fields || []).map((x) => ({
           method: x.methodOwner || null,
           object: x.object,
           field: x.field,
           line: x.line || null,
-          confidence: x.confidence || null
+          confidence: x.confidence || null,
         })),
-        dml: (target.parsed?.dml || []).map(x => ({
+        dml: (target.parsed?.dml || []).map((x) => ({
           method: x.methodOwner || null,
           operation: x.operation,
           variable: x.variable || null,
           line: x.line || null,
-          confidence: x.confidence || null
-        }))
-      }
+          confidence: x.confidence || null,
+        })),
+      },
     },
     frontend: {
       lwcs: impact.impactedLwc || [],
       apexMethods: target.parsed?.apex || [],
       events: target.parsed?.events || [],
-      capabilities: target.parsed?.capabilities || []
+      capabilities: target.parsed?.capabilities || [],
     },
     tests: {
       isTest: Boolean(target.parsed?.isTest),
       references: target.parsed?.testReferences || [],
-      impacted: impact.impactedTests || []
+      impacted: impact.impactedTests || [],
+      testGap,
     },
     architecture: {
       extends: target.parsed?.extends || [],
@@ -3760,15 +4600,20 @@ function buildComponentIntelligence(target, result, options = {}) {
       async: target.parsed?.behavior?.async || [],
       securitySignals: target.parsed?.behavior?.securitySignals || [],
       errorHandling: target.parsed?.behavior?.errorHandling || null,
-      cycleMembership: result.cycles.filter(group => group.includes(target.id)),
+      cycleMembership: result.cycles.filter((group) =>
+        group.includes(target.id),
+      ),
       fanIn: metricById.get(target.id)?.fanIn || 0,
-      fanOut: metricById.get(target.id)?.fanOut || 0
+      fanOut: metricById.get(target.id)?.fanOut || 0,
+      bottleneck,
+      smells,
+      architectureDebt
     },
     sourceFiles,
     evidence: {
       targetFile: target.file,
       targetSourceHash: target.parsed?.sourceHash || target.sourceHash || null,
-      dependencyEvidence: directDependencies.map(edge => ({
+      dependencyEvidence: directDependencies.map((edge) => ({
         from: edge.from,
         to: edge.to,
         type: edge.type,
@@ -3777,20 +4622,20 @@ function buildComponentIntelligence(target, result, options = {}) {
         line: edge.line || null,
         confidence: edge.confidence || null,
         evidence: edge.evidence || null,
-        canonical: edge.canonical || createCanonicalRelationship(edge)
+        canonical: edge.canonical || createCanonicalRelationship(edge),
       })),
-      unresolvedEvidence: unresolved.map(edge => ({
+      unresolvedEvidence: unresolved.map((edge) => ({
         from: edge.from,
         to: edge.to,
         type: edge.type,
         line: edge.line || null,
         evidence: edge.evidence || null,
-        canonical: edge.canonical || createCanonicalRelationship(edge)
-      }))
+        canonical: edge.canonical || createCanonicalRelationship(edge),
+      })),
     },
-    methodDetails: (target.parsed?.methods || []).map(method => {
+    methodDetails: (target.parsed?.methods || []).map((method) => {
       const methodGraph = methodCallGraph.byMethod.find(
-        entry => entry.method === method.name
+        (entry) => entry.method === method.name,
       ) || { calls: [], calledBy: [] };
 
       return {
@@ -3808,14 +4653,14 @@ function buildComponentIntelligence(target, result, options = {}) {
         startLine: method.startLine || null,
         endLine: method.endLine || null,
         dependencyCount: method.dependencyCount || 0,
-        dependencies: (method.dependencies || []).map(dependency => ({
+        dependencies: (method.dependencies || []).map((dependency) => ({
           ...dependency,
           scope: "method",
           sourceMethod: method.name,
-          sourceComponent: target.name
+          sourceComponent: target.name,
         })),
         calls: methodGraph.calls,
-        calledBy: methodGraph.calledBy
+        calledBy: methodGraph.calledBy,
       };
     }),
     uncertainty: {
@@ -3823,9 +4668,9 @@ function buildComponentIntelligence(target, result, options = {}) {
       dynamicApexCount: (target.parsed?.dynamicApex || []).length,
       asyncCount: (target.parsed?.behavior?.async || []).length,
       externalDependencyCount: directDependencies.filter(
-        edge => edge.to && /^(External|Unknown):/i.test(edge.to)
-      ).length
-    }
+        (edge) => edge.to && /^(External|Unknown):/i.test(edge.to),
+      ).length,
+    },
   };
 
   intelligence.completeness = buildContextCompleteness(intelligence);
@@ -3837,7 +4682,6 @@ function buildComponentIntelligence(target, result, options = {}) {
   // The projection is computed at serialization time instead.
   return intelligence;
 }
-
 
 function buildContextCompleteness(intelligence) {
   const target = intelligence.target || {};
@@ -3853,119 +4697,127 @@ function buildContextCompleteness(intelligence) {
       key: "identity",
       label: "Identity",
       weight: 8,
-      ok: Boolean(target.name && target.type && target.file)
+      ok: Boolean(target.name && target.type && target.file),
     },
     {
       key: "source",
       label: "Source metadata",
       weight: 5,
-      ok: Boolean(target.file && target.sourceHash)
+      ok: Boolean(target.file && target.sourceHash),
     },
     {
       key: "methods",
       label: "Method inventory",
       weight: 10,
-      ok: target.type !== "ApexClass" || methods.length > 0
+      ok: target.type !== "ApexClass" || methods.length > 0,
     },
     {
       key: "methodDependencies",
       label: "Method-level dependencies",
       weight: 12,
-      ok: target.type !== "ApexClass" || methods.every(m =>
-        Array.isArray(m.dependencies) && m.dependencies.every(d => d.sourceMethod)
-      )
+      ok:
+        target.type !== "ApexClass" ||
+        methods.every(
+          (m) =>
+            Array.isArray(m.dependencies) &&
+            m.dependencies.every((d) => d.sourceMethod),
+        ),
     },
     {
       key: "callGraph",
       label: "Method call graph",
       weight: 12,
-      ok: target.type !== "ApexClass" || (
-        Array.isArray(callGraph.outgoing) &&
-        Array.isArray(callGraph.incoming) &&
-        Array.isArray(callGraph.byMethod)
-      )
+      ok:
+        target.type !== "ApexClass" ||
+        (Array.isArray(callGraph.outgoing) &&
+          Array.isArray(callGraph.incoming) &&
+          Array.isArray(callGraph.byMethod)),
     },
     {
       key: "data",
       label: "Data / SOQL / DML",
       weight: 10,
-      ok: Boolean(data.objects && data.fields && data.soql && data.dml)
+      ok: Boolean(data.objects && data.fields && data.soql && data.dml),
     },
     {
       key: "frontend",
       label: "Frontend relationships",
       weight: 7,
-      ok: Boolean(intelligence.frontend)
+      ok: Boolean(intelligence.frontend),
     },
     {
       key: "tests",
       label: "Test relationships",
       weight: 7,
-      ok: Boolean(intelligence.tests)
+      ok: Boolean(intelligence.tests),
     },
     {
       key: "architecture",
       label: "Architecture / async / security",
       weight: 7,
-      ok: Boolean(arch)
+      ok: Boolean(arch),
     },
     {
       key: "impact",
       label: "Impact / upstream / downstream",
       weight: 8,
-      ok: Boolean(impact.downstream && impact.upstream)
+      ok: Boolean(impact.downstream && impact.upstream),
     },
     {
       key: "evidence",
       label: "Source evidence",
       weight: 7,
-      ok: Boolean(intelligence.evidence && intelligence.evidence.dependencyEvidence)
+      ok: Boolean(
+        intelligence.evidence && intelligence.evidence.dependencyEvidence,
+      ),
     },
     {
       key: "uncertainty",
       label: "Uncertainty explicitly surfaced",
       weight: 7,
-      ok: unresolved.unresolvedCount !== undefined
-    }
+      ok: unresolved.unresolvedCount !== undefined,
+    },
   ];
 
   const totalWeight = checks.reduce((n, x) => n + x.weight, 0);
-  const earnedWeight = checks.filter(x => x.ok).reduce((n, x) => n + x.weight, 0);
+  const earnedWeight = checks
+    .filter((x) => x.ok)
+    .reduce((n, x) => n + x.weight, 0);
 
   const gaps = [];
   if ((unresolved.unresolvedCount || 0) > 0) {
     gaps.push({
       type: "unresolved-references",
       count: unresolved.unresolvedCount,
-      action: "Inspect only unresolved/external references."
+      action: "Inspect only unresolved/external references.",
     });
   }
   if ((unresolved.dynamicApexCount || 0) > 0) {
     gaps.push({
       type: "dynamic-apex",
       count: unresolved.dynamicApexCount,
-      action: "Review dynamic Apex semantics."
+      action: "Review dynamic Apex semantics.",
     });
   }
   if ((unresolved.asyncCount || 0) > 0) {
     gaps.push({
       type: "async-semantics",
       count: unresolved.asyncCount,
-      action: "Review asynchronous execution semantics."
+      action: "Review asynchronous execution semantics.",
     });
   }
   if ((arch.securitySignals || []).length) {
     gaps.push({
       type: "security-semantics",
       count: arch.securitySignals.length,
-      action: "Review sharing/security behavior."
+      action: "Review sharing/security behavior.",
     });
   }
   if ((impact.impactedLwc || []).length) {
     gaps.push({
       type: "lwc-contract",
       count: impact.impactedLwc.length,
-      action: "Review UI contract changes."
+      action: "Review UI contract changes.",
     });
   }
 
@@ -3976,32 +4828,93 @@ function buildContextCompleteness(intelligence) {
     schemaVersion: 1,
     deterministicCoveragePercent: score,
     deterministicCoverageLabel:
-      score >= 95 ? "EXCELLENT" :
-      score >= 85 ? "GOOD" :
-      score >= 70 ? "PARTIAL" : "LOW",
+      score >= 95
+        ? "EXCELLENT"
+        : score >= 85
+          ? "GOOD"
+          : score >= 70
+            ? "PARTIAL"
+            : "LOW",
     reasoningRequired,
     llmInvestigationPercent: Math.max(0, 100 - score),
-    checks: checks.map(x => ({
+    checks: checks.map((x) => ({
       key: x.key,
       label: x.label,
       weight: x.weight,
-      status: x.ok ? "complete" : "gap"
+      status: x.ok ? "complete" : "gap",
     })),
     gaps,
     recommendation: reasoningRequired
       ? "Do not ask the LLM to rediscover repository structure. Send only the listed uncertainty areas plus relevant source evidence."
-      : "No structural context-discovery LLM call is required. Use the deterministic context directly."
+      : "No structural context-discovery LLM call is required. Use the deterministic context directly.",
   };
 }
 
 function projectContextForProfile(intelligence, profile) {
   if (profile === "full") return intelligence;
 
-  const allowed = {
-    structural: new Set(["schemaVersion", "generatedAt", "analyzer", "profile", "target", "impact", "assessment", "risks", "data", "frontend", "tests", "architecture", "uncertainty", "completeness"]),
-    planning: new Set(["schemaVersion", "generatedAt", "analyzer", "profile", "target", "impact", "assessment", "risks", "data", "frontend", "tests", "architecture", "relatedComponents", "graph", "callGraph", "methodDetails", "evidence", "uncertainty", "completeness"]),
-    implementation: new Set(["schemaVersion", "generatedAt", "analyzer", "profile", "target", "impact", "assessment", "risks", "data", "frontend", "tests", "architecture", "relatedComponents", "graph", "callGraph", "sourceFiles", "methodDetails", "evidence", "uncertainty", "completeness"])
-  }[profile] || null;
+  const allowed =
+    {
+      structural: new Set([
+        "schemaVersion",
+        "generatedAt",
+        "analyzer",
+        "profile",
+        "target",
+        "impact",
+        "assessment",
+        "risks",
+        "data",
+        "frontend",
+        "tests",
+        "architecture",
+        "uncertainty",
+        "completeness",
+      ]),
+      planning: new Set([
+        "schemaVersion",
+        "generatedAt",
+        "analyzer",
+        "profile",
+        "target",
+        "impact",
+        "assessment",
+        "risks",
+        "data",
+        "frontend",
+        "tests",
+        "architecture",
+        "relatedComponents",
+        "graph",
+        "callGraph",
+        "methodDetails",
+        "evidence",
+        "uncertainty",
+        "completeness",
+      ]),
+      implementation: new Set([
+        "schemaVersion",
+        "generatedAt",
+        "analyzer",
+        "profile",
+        "target",
+        "impact",
+        "assessment",
+        "risks",
+        "data",
+        "frontend",
+        "tests",
+        "architecture",
+        "relatedComponents",
+        "graph",
+        "callGraph",
+        "sourceFiles",
+        "methodDetails",
+        "evidence",
+        "uncertainty",
+        "completeness",
+      ]),
+    }[profile] || null;
 
   if (!allowed) return intelligence;
   const projected = {};
@@ -4009,32 +4922,53 @@ function projectContextForProfile(intelligence, profile) {
   return projected;
 }
 
-
-
 const SALESFORCE_STANDARD_OBJECTS = new Set([
-  "Account","Asset","Case","Contact","ContentDocument","ContentDocumentLink",
-  "ContentVersion","Event","Group","Lead","Opportunity","Order","Product2",
-  "Task","User","UserRole","Pricebook2","PricebookEntry","RecordType",
-  "Campaign","CampaignMember","Contract","Quote","QuoteLineItem",
-  "PermissionSet","PermissionSetAssignment","Profile","Organization",
-  "CollaborationGroup","ContentWorkspace","ContentWorkspaceDoc"
+  "Account",
+  "Asset",
+  "Case",
+  "Contact",
+  "ContentDocument",
+  "ContentDocumentLink",
+  "ContentVersion",
+  "Event",
+  "Group",
+  "Lead",
+  "Opportunity",
+  "Order",
+  "Product2",
+  "Task",
+  "User",
+  "UserRole",
+  "Pricebook2",
+  "PricebookEntry",
+  "RecordType",
+  "Campaign",
+  "CampaignMember",
+  "Contract",
+  "Quote",
+  "QuoteLineItem",
+  "PermissionSet",
+  "PermissionSetAssignment",
+  "Profile",
+  "Organization",
+  "CollaborationGroup",
+  "ContentWorkspace",
+  "ContentWorkspaceDoc",
 ]);
 
 function classifyUnresolvedReference(ref) {
   const name = String(
-    ref?.name || ref?.target || ref?.symbol || ref?.reference || ""
+    ref?.name || ref?.target || ref?.symbol || ref?.reference || "",
   ).trim();
 
-  const evidence = String(
-    ref?.evidence || ref?.detail || ref?.reason || ""
-  );
+  const evidence = String(ref?.evidence || ref?.detail || ref?.reason || "");
 
   if (!name) {
     return {
       classification: "UNKNOWN",
       resolution: "LLM",
       confidence: "low",
-      reason: "Reference has no identifiable symbol name."
+      reason: "Reference has no identifiable symbol name.",
     };
   }
 
@@ -4043,7 +4977,7 @@ function classifyUnresolvedReference(ref) {
       classification: "SALESFORCE_STANDARD",
       resolution: "DETERMINISTIC",
       confidence: "high",
-      reason: "Recognized Salesforce standard object."
+      reason: "Recognized Salesforce standard object.",
     };
   }
 
@@ -4052,7 +4986,7 @@ function classifyUnresolvedReference(ref) {
       classification: "CUSTOM_RELATIONSHIP",
       resolution: "INFER",
       confidence: "medium",
-      reason: "Reference uses a Salesforce relationship-name convention."
+      reason: "Reference uses a Salesforce relationship-name convention.",
     };
   }
 
@@ -4061,16 +4995,21 @@ function classifyUnresolvedReference(ref) {
       classification: "CUSTOM_SALESFORCE",
       resolution: "INFER",
       confidence: "medium",
-      reason: "Reference uses a Salesforce custom metadata/object naming convention."
+      reason:
+        "Reference uses a Salesforce custom metadata/object naming convention.",
     };
   }
 
-  if (/Type\.forName|Type\.forName|dynamic|reflection|configuration/i.test(evidence)) {
+  if (
+    /Type\.forName|Type\.forName|dynamic|reflection|configuration/i.test(
+      evidence,
+    )
+  ) {
     return {
       classification: "DYNAMIC_OR_METADATA_DRIVEN",
       resolution: "LLM",
       confidence: "medium",
-      reason: "Evidence suggests runtime or configuration-driven resolution."
+      reason: "Evidence suggests runtime or configuration-driven resolution.",
     };
   }
 
@@ -4079,7 +5018,8 @@ function classifyUnresolvedReference(ref) {
       classification: "EXTERNAL_OR_NAMESPACED",
       resolution: "LLM",
       confidence: "low",
-      reason: "Namespaced/qualified symbol could not be deterministically resolved."
+      reason:
+        "Namespaced/qualified symbol could not be deterministically resolved.",
     };
   }
 
@@ -4087,7 +5027,7 @@ function classifyUnresolvedReference(ref) {
     classification: "UNKNOWN",
     resolution: "LLM",
     confidence: "low",
-    reason: "Reference could not be deterministically classified."
+    reason: "Reference could not be deterministically classified.",
   };
 }
 
@@ -4102,37 +5042,38 @@ function enrichUnresolvedReferences(intelligence) {
   const classified = items.map((ref, index) => ({
     id: `REF-${String(index + 1).padStart(3, "0")}`,
     reference: ref,
-    ...classifyUnresolvedReference(ref)
+    ...classifyUnresolvedReference(ref),
   }));
 
   const summary = {
     detected: classified.length,
     deterministicallyResolved: classified.filter(
-      x => x.resolution === "DETERMINISTIC"
+      (x) => x.resolution === "DETERMINISTIC",
     ).length,
-    inferred: classified.filter(x => x.resolution === "INFER").length,
-    requiresReasoning: classified.filter(x => x.resolution === "LLM").length
+    inferred: classified.filter((x) => x.resolution === "INFER").length,
+    requiresReasoning: classified.filter((x) => x.resolution === "LLM").length,
   };
 
   intelligence.unresolvedReferenceAnalysis = {
     version: 1,
     summary,
-    items: classified
+    items: classified,
   };
 
   return intelligence.unresolvedReferenceAnalysis;
 }
 
 function buildSemanticCoverage(intelligence, investigationPlan) {
-  const structural =
-    Number(intelligence?.completeness?.deterministicCoveragePercent ?? 0);
+  const structural = Number(
+    intelligence?.completeness?.deterministicCoveragePercent ?? 0,
+  );
 
   const unresolved =
     intelligence?.unresolvedReferenceAnalysis?.summary?.requiresReasoning ?? 0;
 
   const security =
     investigationPlan?.tasks?.filter(
-      task => task.type === "security-semantics"
+      (task) => task.type === "security-semantics",
     ).length ?? 0;
 
   const semanticPenalty = Math.min(100, unresolved * 2 + security * 2);
@@ -4141,11 +5082,9 @@ function buildSemanticCoverage(intelligence, investigationPlan) {
     structuralCoveragePercent: structural,
     semanticCoveragePercent: Math.max(0, 100 - semanticPenalty),
     unresolvedRequiringReasoning: unresolved,
-    securitySemanticTasks: security
+    securitySemanticTasks: security,
   };
 }
-
-
 
 function scanApexSecuritySignals(sourceText, fileName = null) {
   const text = String(sourceText || "");
@@ -4164,7 +5103,7 @@ function scanApexSecuritySignals(sourceText, fileName = null) {
       file: fileName,
       line,
       method,
-      evidence: lines[line - 1]?.trim() || ""
+      evidence: lines[line - 1]?.trim() || "",
     });
   };
 
@@ -4173,7 +5112,9 @@ function scanApexSecuritySignals(sourceText, fileName = null) {
     const line = lines[i];
 
     // Class-level sharing declaration.
-    const sharing = line.match(/\b(with sharing|without sharing|inherited sharing)\b/i);
+    const sharing = line.match(
+      /\b(with sharing|without sharing|inherited sharing)\b/i,
+    );
     if (sharing) add("sharing-model", sharing[1].toLowerCase(), lineNo, null);
 
     // Method ownership.
@@ -4202,7 +5143,7 @@ function scanApexSecuritySignals(sourceText, fileName = null) {
       ["crud-accessible", "isAccessible"],
       ["crud-createable", "isCreateable"],
       ["crud-updateable", "isUpdateable"],
-      ["crud-deletable", "isDeletable"]
+      ["crud-deletable", "isDeletable"],
     ];
     for (const [type, name] of crudPatterns) {
       if (new RegExp(`\\b${name}\\s*\\(`, "i").test(line)) {
@@ -4267,16 +5208,16 @@ function analyzeSecurityIntelligence(intelligence) {
   if (!securitySignals.length && sourceText) {
     securitySignals = scanApexSecuritySignals(
       sourceText,
-      target?.file || target?.path || null
+      target?.file || target?.path || null,
     );
   }
 
   const signalText = securitySignals
-    .map(x => typeof x === "string" ? x : JSON.stringify(x))
+    .map((x) => (typeof x === "string" ? x : JSON.stringify(x)))
     .join("\n");
 
   const explicitSharing = securitySignals.find(
-    s => s && s.type === "sharing-model"
+    (s) => s && s.type === "sharing-model",
   );
 
   const sharingModel = explicitSharing?.value
@@ -4284,35 +5225,27 @@ function analyzeSecurityIntelligence(intelligence) {
     : "unspecified";
 
   const securityEnforced = securitySignals.some(
-    s => s?.type === "security-enforced"
+    (s) => s?.type === "security-enforced",
   );
 
-  const userMode = securitySignals.some(
-    s => s?.type === "user-mode"
-  );
+  const userMode = securitySignals.some((s) => s?.type === "user-mode");
 
-  const systemMode = securitySignals.some(
-    s => s?.type === "system-mode"
-  );
+  const systemMode = securitySignals.some((s) => s?.type === "system-mode");
 
   const stripInaccessible = securitySignals.some(
-    s => s?.type === "strip-inaccessible"
+    (s) => s?.type === "strip-inaccessible",
   );
 
   const crudChecks = {
-    accessible: securitySignals.some(s => s?.type === "crud-accessible"),
-    createable: securitySignals.some(s => s?.type === "crud-createable"),
-    updateable: securitySignals.some(s => s?.type === "crud-updateable"),
-    deletable: securitySignals.some(s => s?.type === "crud-deletable")
+    accessible: securitySignals.some((s) => s?.type === "crud-accessible"),
+    createable: securitySignals.some((s) => s?.type === "crud-createable"),
+    updateable: securitySignals.some((s) => s?.type === "crud-updateable"),
+    deletable: securitySignals.some((s) => s?.type === "crud-deletable"),
   };
 
-  const dynamicSoql = securitySignals.some(
-    s => s?.type === "dynamic-soql"
-  );
+  const dynamicSoql = securitySignals.some((s) => s?.type === "dynamic-soql");
 
-  const dynamicApex = securitySignals.some(
-    s => s?.type === "dynamic-apex"
-  );
+  const dynamicApex = securitySignals.some((s) => s?.type === "dynamic-apex");
 
   const facts = {
     sharingModel,
@@ -4323,7 +5256,7 @@ function analyzeSecurityIntelligence(intelligence) {
     crudChecks,
     dynamicSoql,
     dynamicApex,
-    parserSecuritySignals: securitySignals
+    parserSecuritySignals: securitySignals,
   };
 
   const unknowns = [];
@@ -4332,7 +5265,7 @@ function analyzeSecurityIntelligence(intelligence) {
     unknowns.push({
       key: "sharing-model",
       question:
-        "Determine the effective Apex sharing behavior for this class and its callers, given that no explicit sharing declaration was detected."
+        "Determine the effective Apex sharing behavior for this class and its callers, given that no explicit sharing declaration was detected.",
     });
   }
 
@@ -4345,7 +5278,7 @@ function analyzeSecurityIntelligence(intelligence) {
     unknowns.push({
       key: "crud-fls",
       question:
-        "Determine whether the component's object and field access relies on implicit platform behavior or requires explicit CRUD/FLS enforcement for the intended refactoring contract."
+        "Determine whether the component's object and field access relies on implicit platform behavior or requires explicit CRUD/FLS enforcement for the intended refactoring contract.",
     });
   }
 
@@ -4353,7 +5286,7 @@ function analyzeSecurityIntelligence(intelligence) {
     unknowns.push({
       key: "dynamic-soql-security",
       question:
-        "Determine whether dynamically constructed SOQL changes the intended security model and whether the refactoring must preserve or strengthen that behavior."
+        "Determine whether dynamically constructed SOQL changes the intended security model and whether the refactoring must preserve or strengthen that behavior.",
     });
   }
 
@@ -4361,7 +5294,7 @@ function analyzeSecurityIntelligence(intelligence) {
     unknowns.push({
       key: "dynamic-apex-security",
       question:
-        "Determine whether dynamic Apex can resolve to security-sensitive runtime behavior that cannot be established statically."
+        "Determine whether dynamic Apex can resolve to security-sensitive runtime behavior that cannot be established statically.",
     });
   }
 
@@ -4369,7 +5302,7 @@ function analyzeSecurityIntelligence(intelligence) {
     version: 3,
     facts,
     unknowns,
-    semanticReviewRequired: unknowns.length > 0
+    semanticReviewRequired: unknowns.length > 0,
   };
 }
 
@@ -4389,7 +5322,7 @@ function buildInvestigationPlan(intelligence) {
       question,
       evidence,
       instruction:
-        "Investigate only this uncertainty. Do not rediscover deterministic context already present in the component package."
+        "Investigate only this uncertainty. Do not rediscover deterministic context already present in the component package.",
     });
   };
 
@@ -4406,39 +5339,34 @@ function buildInvestigationPlan(intelligence) {
         "dynamic-apex",
         "high",
         "Determine the runtime target of the dynamic Apex behavior and identify concrete classes, methods, objects, or configuration involved.",
-        gap
+        gap,
       );
     } else if (lower.includes("async")) {
       add(
         "async-semantics",
         "medium",
         "Determine the asynchronous execution path, producer, consumer, and transaction or ordering implications.",
-        gap
+        gap,
       );
     } else if (lower.includes("lwc")) {
       add(
         "frontend-contract",
         "medium",
         "Determine the semantic contract between the component and its LWC consumers that cannot be established deterministically.",
-        gap
+        gap,
       );
     }
   }
 
   for (const unknown of securityAnalysis.unknowns) {
-    add(
-      "security-semantics",
-      "medium",
-      unknown.question,
-      {
-        key: unknown.key,
-        knownSecurityFacts: securityAnalysis.facts
-      }
-    );
+    add("security-semantics", "medium", unknown.question, {
+      key: unknown.key,
+      knownSecurityFacts: securityAnalysis.facts,
+    });
   }
 
   for (const item of referenceAnalysis.items.filter(
-    x => x.resolution === "LLM"
+    (x) => x.resolution === "LLM",
   )) {
     const name =
       item.reference?.name ||
@@ -4451,43 +5379,35 @@ function buildInvestigationPlan(intelligence) {
       "unresolved-reference",
       "high",
       `Classify the unresolved reference "${String(name)}" using the supplied evidence only.`,
-      item
+      item,
     );
   }
 
-  const priorityRank = { high: 3, medium: 2, low: 1 };
-  const unique = new Map();
-
-  for (const task of tasks) {
-    const key = `${task.type}|${task.question}`;
-    const existing = unique.get(key);
-
-    if (
-      !existing ||
-      priorityRank[task.priority] > priorityRank[existing.priority]
-    ) {
-      unique.set(key, task);
-    }
-  }
-
-  const dedupedTasks = Array.from(unique.values()).map((task, index) => ({
-    ...task,
-    id: `INV-${String(index + 1).padStart(3, "0")}`
-  }));
+  const eligibilityResult = filterInvestigationTasks(tasks, {
+    knownFacts: securityAnalysis?.facts || {},
+    securityIntelligence: securityAnalysis,
+    impact: intelligence?.impact,
+    roleInfo: intelligence?.roleInfo,
+    layerInfo: intelligence?.layerInfo,
+    domainInfo: intelligence?.domainInfo
+  });
 
   return {
     version: 2,
     component: intelligence?.target?.name || intelligence?.name || null,
-    deterministicCoveragePercent:
-      Number(intelligence?.completeness?.deterministicCoveragePercent ?? 100),
+    deterministicCoveragePercent: Number(
+      intelligence?.completeness?.deterministicCoveragePercent ?? 100,
+    ),
     semanticCoverage: buildSemanticCoverage(intelligence, {
-      tasks: dedupedTasks
+      tasks: eligibilityResult.eligibleTasks,
     }),
     unresolvedReferenceSummary: referenceAnalysis.summary,
     securityIntelligence: securityAnalysis,
-    llmInvestigationRequired: dedupedTasks.length > 0,
-    taskCount: dedupedTasks.length,
-    tasks: dedupedTasks
+    eligibilitySummary: eligibilityResult.summary,
+    rejectedTasks: eligibilityResult.rejectedTasks,
+    llmInvestigationRequired: eligibilityResult.investigationRequired,
+    taskCount: eligibilityResult.eligibleTasks.length,
+    tasks: eligibilityResult.eligibleTasks,
   };
 }
 
@@ -4496,7 +5416,7 @@ function writeInvestigationPlan(intelligence, packageDir) {
 
   write(
     path.join(packageDir, "06-INVESTIGATION-PLAN.json"),
-    JSON.stringify(plan, null, 2)
+    JSON.stringify(plan, null, 2),
   );
 
   write(
@@ -4506,11 +5426,11 @@ function writeInvestigationPlan(intelligence, packageDir) {
         component: plan.component,
         facts: plan.securityIntelligence?.facts || {},
         unknowns: plan.securityIntelligence?.unknowns || [],
-        tasks: plan.tasks.filter(task => task.type === "security-semantics")
+        tasks: plan.tasks.filter((task) => task.type === "security-semantics"),
       },
       null,
-      2
-    )
+      2,
+    ),
   );
 
   const lines = [
@@ -4536,7 +5456,7 @@ function writeInvestigationPlan(intelligence, packageDir) {
     `stripInaccessible: ${plan.securityIntelligence?.facts?.stripInaccessible ? "yes" : "no"}`,
     `Dynamic SOQL: ${plan.securityIntelligence?.facts?.dynamicSoql ? "yes" : "no"}`,
     `Dynamic Apex: ${plan.securityIntelligence?.facts?.dynamicApex ? "yes" : "no"}`,
-    ""
+    "",
   ];
 
   if (!plan.tasks.length) {
@@ -4549,21 +5469,21 @@ function writeInvestigationPlan(intelligence, packageDir) {
         "",
         `Question: ${task.question}`,
         `Evidence: ${JSON.stringify(task.evidence)}`,
-        ""
+        "",
       );
     }
   }
 
-  write(
-    path.join(packageDir, "06-INVESTIGATION-PLAN.md"),
-    lines.join("\n")
-  );
+  write(path.join(packageDir, "06-INVESTIGATION-PLAN.md"), lines.join("\n"));
 
   return plan;
 }
 
-
-function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) {
+function writeComponentIntelligencePackage(
+  targetName,
+  sourceDir,
+  options = {},
+) {
   const result = getAnalysis(sourceDir, options);
   const matches = resolveTarget(targetName, result.registry);
 
@@ -4571,7 +5491,10 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
   if (matches.length > 1) {
     throw new Error(
       `Target is ambiguous. Use the exact class/component name or ID.\n\n` +
-      matches.slice(0, 20).map(x => `- ${x.name} [${x.type}] — ${x.file}`).join("\n")
+        matches
+          .slice(0, 20)
+          .map((x) => `- ${x.name} [${x.type}] — ${x.file}`)
+          .join("\n"),
     );
   }
 
@@ -4581,36 +5504,57 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
   fs.mkdirSync(path.join(packageDir, "source"), { recursive: true });
   const investigationPlan = writeInvestigationPlan(intelligence, packageDir);
 
-  const metricById = new Map((result.metricList || []).map(x => [x.id, x]));
+  const metricById = new Map((result.metricList || []).map((x) => [x.id, x]));
   writeComponentAnalysisArtifacts(
     target,
     intelligence.impact,
     result,
     metricById.get(target.id) || null,
     intelligence.assessment,
-    packageDir
+    packageDir,
   );
 
-  write(path.join(packageDir, "00-MANIFEST.json"), JSON.stringify({
-    schemaVersion: intelligence.schemaVersion,
-    generatedAt: intelligence.generatedAt,
-    analyzer: intelligence.analyzer,
-    target: intelligence.target,
-    profile: intelligence.profile,
-    sourceFiles: intelligence.sourceFiles,
-    reasoningRequired: intelligence.risks.reasoningRequired,
-    reasoningReasons: intelligence.risks.reasons,
-    deterministicCoveragePercent: intelligence.completeness?.deterministicCoveragePercent ?? null,
-    llmInvestigationPercent: intelligence.completeness?.llmInvestigationPercent ?? null,
-    investigationTaskCount: investigationPlan.taskCount,
-    investigationPlan: "06-INVESTIGATION-PLAN.json",
-    analysisSource: result.fromSnapshot ? "cached-snapshot" : "fresh-analysis",
-    analysisGeneratedAt: result.snapshotGeneratedAt || intelligence.generatedAt
-  }, null, 2));
+  write(
+    path.join(packageDir, "00-MANIFEST.json"),
+    JSON.stringify(
+      {
+        schemaVersion: intelligence.schemaVersion,
+        generatedAt: intelligence.generatedAt,
+        analyzer: intelligence.analyzer,
+        target: intelligence.target,
+        profile: intelligence.profile,
+        sourceFiles: intelligence.sourceFiles,
+        reasoningRequired: intelligence.risks.reasoningRequired,
+        reasoningReasons: intelligence.risks.reasons,
+        deterministicCoveragePercent:
+          intelligence.completeness?.deterministicCoveragePercent ?? null,
+        llmInvestigationPercent:
+          intelligence.completeness?.llmInvestigationPercent ?? null,
+        investigationTaskCount: investigationPlan.taskCount,
+        investigationPlan: "06-INVESTIGATION-PLAN.json",
+        analysisSource: result.fromSnapshot
+          ? "cached-snapshot"
+          : "fresh-analysis",
+        analysisGeneratedAt:
+          result.snapshotGeneratedAt || intelligence.generatedAt,
+      },
+      null,
+      2,
+    ),
+  );
 
-  write(path.join(packageDir, "01-CONTEXT.json"), JSON.stringify(intelligence, null, 2));
-  write(path.join(packageDir, "01-CONTEXT-COMPLETENESS.json"), JSON.stringify(intelligence.completeness, null, 2));
-  write(path.join(packageDir, "02-GRAPH.json"), JSON.stringify(intelligence.graph, null, 2));
+  write(
+    path.join(packageDir, "01-CONTEXT.json"),
+    JSON.stringify(intelligence, null, 2),
+  );
+  write(
+    path.join(packageDir, "01-CONTEXT-COMPLETENESS.json"),
+    JSON.stringify(intelligence.completeness, null, 2),
+  );
+  write(
+    path.join(packageDir, "02-GRAPH.json"),
+    JSON.stringify(intelligence.graph, null, 2),
+  );
 
   const copied = [];
   if (options.includeSource !== false) {
@@ -4620,21 +5564,27 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
       const absolute = path.resolve(PROJECT_ROOT, item.file);
       if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) continue;
 
-      const base = safeName(`${item.type}-${item.name}-${path.basename(item.file)}`);
+      const base = safeName(
+        `${item.type}-${item.name}-${path.basename(item.file)}`,
+      );
       let destination = path.join(packageDir, "source", base);
       let n = 2;
-      while (used.has(destination)) destination = path.join(packageDir, "source", `${n++}-${base}`);
+      while (used.has(destination))
+        destination = path.join(packageDir, "source", `${n++}-${base}`);
       used.add(destination);
       fs.copyFileSync(absolute, destination);
       copied.push({
         ...item,
-        packageFile: normalizePath(path.relative(packageDir, destination))
+        packageFile: normalizePath(path.relative(packageDir, destination)),
       });
     }
   }
 
   intelligence.sourceFiles = copied.length ? copied : intelligence.sourceFiles;
-  write(path.join(packageDir, "03-SOURCE-MANIFEST.json"), JSON.stringify(intelligence.sourceFiles, null, 2));
+  write(
+    path.join(packageDir, "03-SOURCE-MANIFEST.json"),
+    JSON.stringify(intelligence.sourceFiles, null, 2),
+  );
 
   const overview = [
     `# Deterministic Component Intelligence — ${target.name}`,
@@ -4652,6 +5602,15 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
     `- Test class: ${target.parsed?.isTest ? "Yes" : "No"}`,
     `- Sharing: ${target.parsed?.sharing || "N/A"}`,
     "",
+    "## Architectural Role & Layer",
+    "",
+    `- Primary role: ${intelligence.role?.primary || "unknown"}`,
+    `- Role confidence: ${intelligence.role?.confidence || "unknown"}`,
+    `- Primary layer: ${intelligence.layer?.primary || "unknown"}`,
+    `- Layer confidence: ${intelligence.layer?.confidence || "unknown"}`,
+    `- Secondary roles: ${(intelligence.role?.secondary || []).join(", ") || "None"}`,
+    `- Evidence: ${(intelligence.role?.evidence || []).map((e) => `${e.rule}: ${e.detail}`).join("; ") || "None"}`,
+    "",
     "## Metrics",
     "",
     `- Fan-in: ${intelligence.architecture.fanIn}`,
@@ -4666,49 +5625,53 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
     "## Contracts",
     "",
     ...(target.parsed?.behavior?.publicContracts?.length
-      ? target.parsed.behavior.publicContracts.map(x =>
-          `- ${x.visibility || "private"} ${x.name}(${x.parameters || ""}) -> ${x.returnType || "void"}${x.isAuraEnabled ? " [AuraEnabled]" : ""}${x.isInvocable ? " [Invocable]" : ""} [L${x.lineStart || "?"}-${x.lineEnd || "?"}]`
+      ? target.parsed.behavior.publicContracts.map(
+          (x) =>
+            `- ${x.visibility || "private"} ${x.name}(${x.parameters || ""}) -> ${x.returnType || "void"}${x.isAuraEnabled ? " [AuraEnabled]" : ""}${x.isInvocable ? " [Invocable]" : ""} [L${x.lineStart || "?"}-${x.lineEnd || "?"}]`,
         )
       : ["- None detected."]),
     "",
     "## Methods",
     "",
     ...(target.parsed?.methods?.length
-      ? target.parsed.methods.map(x =>
-          `- ${x.name}(${x.parameters || ""}) -> ${x.returnType || "void"} [L${x.lineStart || "?"}-${x.lineEnd || "?"}]`
+      ? target.parsed.methods.map(
+          (x) =>
+            `- ${x.name}(${x.parameters || ""}) -> ${x.returnType || "void"} [L${x.lineStart || "?"}-${x.lineEnd || "?"}]`,
         )
       : ["- None detected."]),
     "",
     "## Direct Dependencies",
     "",
     ...(intelligence.impact.directDependencies.length
-      ? intelligence.impact.directDependencies.map(x =>
-          `- ${x.to} | ${x.type} | ${x.method || ""} | ${x.confidence} | L${x.line || "?"} | ${x.evidence || ""}`
+      ? intelligence.impact.directDependencies.map(
+          (x) =>
+            `- ${x.to} | ${x.type} | ${x.method || ""} | ${x.confidence} | L${x.line || "?"} | ${x.evidence || ""}`,
         )
       : ["- None detected."]),
     "",
     "## Direct Dependents",
     "",
     ...(intelligence.impact.directDependents.length
-      ? intelligence.impact.directDependents.map(x =>
-          `- ${x.from} | ${x.type} | ${x.method || ""} | ${x.confidence} | L${x.line || "?"} | ${x.evidence || ""}`
+      ? intelligence.impact.directDependents.map(
+          (x) =>
+            `- ${x.from} | ${x.type} | ${x.method || ""} | ${x.confidence} | L${x.line || "?"} | ${x.evidence || ""}`,
         )
       : ["- None detected."]),
     "",
     "## Data",
     "",
     `- Objects: ${intelligence.data.objects.join(", ") || "None"}`,
-    `- Fields: ${(intelligence.data.fields || []).map(x => `${x.object}.${x.field}`).join(", ") || "None"}`,
-    `- DML: ${(intelligence.data.dml || []).map(x => `${x.operation}${x.variable ? `(${x.variable})` : ""}`).join(", ") || "None"}`,
+    `- Fields: ${(intelligence.data.fields || []).map((x) => `${x.object}.${x.field}`).join(", ") || "None"}`,
+    `- DML: ${(intelligence.data.dml || []).map((x) => `${x.operation}${x.variable ? `(${x.variable})` : ""}`).join(", ") || "None"}`,
     `- Callouts: ${intelligence.data.callouts.join(", ") || "None"}`,
     `- Dynamic Apex: ${intelligence.data.dynamicApex.join(", ") || "None"}`,
     "",
     "## Frontend / LWC",
     "",
     `- Impacted LWCs: ${intelligence.frontend.lwcs.join(", ") || "None"}`,
-    `- Apex methods used by LWC: ${(intelligence.frontend.apexMethods || []).map(x => `${x.className}.${x.methodName}`).join(", ") || "None"}`,
+    `- Apex methods used by LWC: ${(intelligence.frontend.apexMethods || []).map((x) => `${x.className}.${x.methodName}`).join(", ") || "None"}`,
     `- Capabilities: ${intelligence.frontend.capabilities.join(", ") || "None"}`,
-    `- Events: ${(intelligence.frontend.events || []).map(x => `${x.direction}:${x.name}`).join(", ") || "None"}`,
+    `- Events: ${(intelligence.frontend.events || []).map((x) => `${x.direction}:${x.name}`).join(", ") || "None"}`,
     "",
     "## Tests",
     "",
@@ -4737,11 +5700,14 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
     "",
     "The analyzer is authoritative for structural facts. Do not spend LLM tokens rediscovering files, dependencies, callers, tests, objects, fields, or graph relationships.",
     "Use source files only for semantic reasoning that the analyzer cannot prove deterministically.",
-    ""
+    "",
   ];
   write(path.join(packageDir, "04-OVERVIEW.md"), overview.join("\n"));
 
-  const projected = projectContextForProfile(intelligence, intelligence.profile || "full");
+  const projected = projectContextForProfile(
+    intelligence,
+    intelligence.profile || "full",
+  );
   const llmContext = [
     `# Component Context — ${target.name}`,
     "",
@@ -4772,24 +5738,28 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
     `- LLM investigation estimate: ${intelligence.completeness?.llmInvestigationPercent ?? "N/A"}%`,
     `- Recommendation: ${intelligence.completeness?.recommendation || "N/A"}`,
     "",
-    ...(intelligence.completeness?.gaps || []).map(g =>
-      `- Gap: ${g.type} (${g.count}) — ${g.action}`
+    ...(intelligence.completeness?.gaps || []).map(
+      (g) => `- Gap: ${g.type} (${g.count}) — ${g.action}`,
     ),
     "",
     "## Source files",
     "",
     ...(copied.length
-      ? copied.map(x => `- ${x.packageFile} — ${x.role} — ${x.file}`)
+      ? copied.map((x) => `- ${x.packageFile} — ${x.role} — ${x.file}`)
       : ["- Source copying disabled."]),
-    ""
+    "",
   ];
   write(path.join(packageDir, "LLM_CONTEXT.md"), llmContext.join("\n"));
 
   console.log("");
   console.log(`Component context generated: ${packageDir}`);
-  console.log(`Primary LLM context: ${path.join(packageDir, "LLM_CONTEXT.md")}`);
+  console.log(
+    `Primary LLM context: ${path.join(packageDir, "LLM_CONTEXT.md")}`,
+  );
   console.log(`Canonical JSON: ${path.join(packageDir, "01-CONTEXT.json")}`);
-  console.log(`Reasoning required: ${intelligence.risks.reasoningRequired ? "YES" : "NO"}`);
+  console.log(
+    `Reasoning required: ${intelligence.risks.reasoningRequired ? "YES" : "NO"}`,
+  );
   console.log(`Investigation tasks: ${investigationPlan.taskCount}`);
   console.log(`Source files included: ${copied.length}`);
   console.log("");
@@ -4797,12 +5767,12 @@ function writeComponentIntelligencePackage(targetName, sourceDir, options = {}) 
 
 function writePhaseContext(targetName, phase, sourceDir, options = {}) {
   const profileByPhase = {
-    "1": "structural",
-    "2": "structural",
-    "3": "planning",
-    "4": "implementation",
-    "5": "implementation",
-    "6": "implementation"
+    1: "structural",
+    2: "structural",
+    3: "planning",
+    4: "implementation",
+    5: "implementation",
+    6: "implementation",
   };
   const profile = profileByPhase[String(phase)] || options.profile || "full";
   const nextOptions = { ...options, profile };
@@ -4816,28 +5786,32 @@ function writePhaseContext(targetName, phase, sourceDir, options = {}) {
   let context = canonical;
   try {
     const parsed = JSON.parse(canonical);
-    const projection = parsed.llmProjection || projectContextForProfile(parsed, parsed.profile || "full");
+    const projection =
+      parsed.llmProjection ||
+      projectContextForProfile(parsed, parsed.profile || "full");
     context = JSON.stringify(projection, null, 2);
   } catch {}
 
   write(path.join(phaseDir, "CONTEXT.json"), context);
-  write(path.join(phaseDir, "LLM_CONTEXT.md"), [
-    `# Phase ${phase} Context — ${targetName}`,
-    "",
-    `Profile: ${profile}`,
-    "",
-    "Use the deterministic analyzer context below.",
-    "Do not rediscover structural dependencies with the LLM.",
-    "",
-    "```json",
-    context,
-    "```",
-    ""
-  ].join("\n"));
+  write(
+    path.join(phaseDir, "LLM_CONTEXT.md"),
+    [
+      `# Phase ${phase} Context — ${targetName}`,
+      "",
+      `Profile: ${profile}`,
+      "",
+      "Use the deterministic analyzer context below.",
+      "Do not rediscover structural dependencies with the LLM.",
+      "",
+      "```json",
+      context,
+      "```",
+      "",
+    ].join("\n"),
+  );
 
   console.log(`Phase context generated: ${phaseDir}`);
 }
-
 
 function writeContextCompleteness(targetName, sourceDir, options = {}) {
   const result = getAnalysis(sourceDir, options);
@@ -4847,14 +5821,17 @@ function writeContextCompleteness(targetName, sourceDir, options = {}) {
   if (matches.length > 1) {
     throw new Error(
       `Target is ambiguous. Use the exact class/component name or ID.\n\n` +
-      matches.slice(0, 20).map(x => `- ${x.name} [${x.type}] — ${x.file}`).join("\n")
+        matches
+          .slice(0, 20)
+          .map((x) => `- ${x.name} [${x.type}] — ${x.file}`)
+          .join("\n"),
     );
   }
 
   const target = matches[0];
   const intelligence = buildComponentIntelligence(target, result, {
     ...options,
-    profile: "full"
+    profile: "full",
   });
 
   const packageDir = OUTPUT_DIR;
@@ -4862,13 +5839,15 @@ function writeContextCompleteness(targetName, sourceDir, options = {}) {
 
   write(
     path.join(packageDir, "01-CONTEXT-COMPLETENESS.json"),
-    JSON.stringify(intelligence.completeness, null, 2)
+    JSON.stringify(intelligence.completeness, null, 2),
   );
 
   const c = intelligence.completeness;
   console.log("");
   console.log(`Context completeness: ${target.name}`);
-  console.log(`Deterministic coverage: ${c.deterministicCoveragePercent}% (${c.deterministicCoverageLabel})`);
+  console.log(
+    `Deterministic coverage: ${c.deterministicCoveragePercent}% (${c.deterministicCoverageLabel})`,
+  );
   console.log(`LLM investigation estimate: ${c.llmInvestigationPercent}%`);
   console.log(`Reasoning required: ${c.reasoningRequired ? "YES" : "NO"}`);
   console.log("");
@@ -4890,24 +5869,38 @@ function writeContextCompleteness(targetName, sourceDir, options = {}) {
 
 function runBatchContext(batchNumber, sourceDir, options = {}) {
   const batchId = String(batchNumber).padStart(2, "0");
-  const batchFile = path.join(BASE_OUTPUT_DIR, "create-batches", "batches", `batch-${batchId}.json`);
+  const batchFile = path.join(
+    BASE_OUTPUT_DIR,
+    "create-batches",
+    "batches",
+    `batch-${batchId}.json`,
+  );
   if (!fs.existsSync(batchFile)) {
-    throw new Error(`Batch ${batchNumber} not found. Run create-batches first.`);
+    throw new Error(
+      `Batch ${batchNumber} not found. Run create-batches first.`,
+    );
   }
 
   const batch = JSON.parse(read(batchFile));
   const result = getAnalysis(sourceDir, options);
-  const metricById = new Map(result.metricList.map(m => [m.id, m]));
+  const metricById = new Map(result.metricList.map((m) => [m.id, m]));
   const nodeMap = nodeById(result.graph);
-  const ids = new Set(batch.components.map(x => x.id));
+  const ids = new Set(batch.components.map((x) => x.id));
 
-  const components = batch.components.map(component => {
-    const symbol = result.registry.symbols.find(s => s.id === component.id);
-    const directDependencies = result.graph.edges.filter(e => e.from === component.id).map(edgeWithEvidence);
-    const directDependents = result.graph.edges.filter(e => e.to === component.id).map(edgeWithEvidence);
-    const unresolved = result.graph.edges.filter(e =>
-      e.unresolved && (e.from === component.id || e.to === component.id)
-    ).map(edgeWithEvidence);
+  const components = batch.components.map((component) => {
+    const symbol = result.registry.symbols.find((s) => s.id === component.id);
+    const directDependencies = result.graph.edges
+      .filter((e) => e.from === component.id)
+      .map(edgeWithEvidence);
+    const directDependents = result.graph.edges
+      .filter((e) => e.to === component.id)
+      .map(edgeWithEvidence);
+    const unresolved = result.graph.edges
+      .filter(
+        (e) =>
+          e.unresolved && (e.from === component.id || e.to === component.id),
+      )
+      .map(edgeWithEvidence);
 
     return {
       id: component.id,
@@ -4917,21 +5910,21 @@ function runBatchContext(batchNumber, sourceDir, options = {}) {
       metrics: metricById.get(component.id) || null,
       sourceHash: symbol?.parsed?.sourceHash || null,
       contracts: symbol?.parsed?.behavior?.publicContracts || [],
-      methods: (symbol?.parsed?.methods || []).map(m => ({
+      methods: (symbol?.parsed?.methods || []).map((m) => ({
         name: m.name,
         returnType: m.returnType,
         parameters: m.parameters,
         lineStart: m.lineStart || null,
-        lineEnd: m.lineEnd || null
+        lineEnd: m.lineEnd || null,
       })),
       dependencies: directDependencies,
       dependents: directDependents,
-      unresolved
+      unresolved,
     };
   });
 
   const edges = result.graph.edges
-    .filter(e => ids.has(e.from) || ids.has(e.to))
+    .filter((e) => ids.has(e.from) || ids.has(e.to))
     .slice(0, options.maxContextEdges || 1000)
     .map(edgeWithEvidence);
 
@@ -4947,8 +5940,8 @@ function runBatchContext(batchNumber, sourceDir, options = {}) {
     instructions: {
       structuralFactsAreAuthoritative: true,
       llmShouldNotRediscoverDependencies: true,
-      llmPurpose: "selection, prioritization, semantic reasoning"
-    }
+      llmPurpose: "selection, prioritization, semantic reasoning",
+    },
   };
 
   const dir = OUTPUT_DIR;
@@ -4961,14 +5954,16 @@ function runBatchContext(batchNumber, sourceDir, options = {}) {
     `Components: ${components.length}`,
     "",
     "| Component | Type | Fan-In | Fan-Out | Coupling | Risk | Reasoning Required |",
-    "|---|---|---:|---:|---:|---|---|"
+    "|---|---|---:|---:|---:|---|---|",
   ];
 
   for (const c of components) {
     const metric = c.metrics || {};
     const unresolvedCount = c.unresolved.length;
     const reasoning = unresolvedCount ? "YES" : "NO";
-    md.push(`| ${c.name} | ${c.type} | ${metric.fanIn || 0} | ${metric.fanOut || 0} | ${metric.coupling || 0} | ${metric.risk || "LOW"} | ${reasoning} |`);
+    md.push(
+      `| ${c.name} | ${c.type} | ${metric.fanIn || 0} | ${metric.fanOut || 0} | ${metric.coupling || 0} | ${metric.risk || "LOW"} | ${reasoning} |`,
+    );
   }
 
   md.push(
@@ -4976,13 +5971,12 @@ function runBatchContext(batchNumber, sourceDir, options = {}) {
     "## LLM Boundary",
     "",
     "Use this data for component selection. Do not ask the LLM to discover dependencies, files, tests, objects, or callers.",
-    ""
+    "",
   );
   write(path.join(dir, "LLM_CONTEXT.md"), md.join("\n"));
 
   console.log(`Batch context generated: ${dir}`);
 }
-
 
 // ============================================================
 
@@ -5004,11 +5998,18 @@ class ScopeResolver {
    */
   static resolve(target, globalResult, options = {}) {
     if (!target || !target.id) {
-      throw new Error("ScopeResolver.resolve requires a valid target node with an id");
+      throw new Error(
+        "ScopeResolver.resolve requires a valid target node with an id",
+      );
     }
 
     const maxDepth = options.maxDepth || options.maxImpactDepth || 50;
-    const impact = impactFor(target, globalResult.graph, globalResult.registry, maxDepth);
+    const impact = impactFor(
+      target,
+      globalResult.graph,
+      globalResult.registry,
+      maxDepth,
+    );
 
     const relatedIds = new Set([target.id]);
     const pathPairs = new Set();
@@ -5029,18 +6030,19 @@ class ScopeResolver {
     addTraversalPaths(impact.upstream);
 
     const directPairs = new Set([
-      ...(impact.directDependencies || []).map(e => `${e.from}|${e.to}`),
-      ...(impact.directDependents || []).map(e => `${e.from}|${e.to}`)
+      ...(impact.directDependencies || []).map((e) => `${e.from}|${e.to}`),
+      ...(impact.directDependents || []).map((e) => `${e.from}|${e.to}`),
     ]);
 
-    let finalEdges = globalResult.graph.edges.filter(edge =>
-      pathPairs.has(`${edge.from}|${edge.to}`) ||
-      directPairs.has(`${edge.from}|${edge.to}`) ||
-      (relatedIds.has(edge.from) && relatedIds.has(edge.to))
+    let finalEdges = globalResult.graph.edges.filter(
+      (edge) =>
+        pathPairs.has(`${edge.from}|${edge.to}`) ||
+        directPairs.has(`${edge.from}|${edge.to}`) ||
+        (relatedIds.has(edge.from) && relatedIds.has(edge.to)),
     );
 
     // Keep method-level relationships for related classes instead of leaking unrelated methods/fields.
-    finalEdges = finalEdges.filter(edge => {
+    finalEdges = finalEdges.filter((edge) => {
       const sourceIsTarget = edge.from === target.id;
       const targetIsTarget = edge.to === target.id;
 
@@ -5058,29 +6060,37 @@ class ScopeResolver {
 
     const relevantMethodsById = new Map();
     for (const edge of finalEdges) {
-      if (!relevantMethodsById.has(edge.from)) relevantMethodsById.set(edge.from, new Set());
-      if (!relevantMethodsById.has(edge.to)) relevantMethodsById.set(edge.to, new Set());
+      if (!relevantMethodsById.has(edge.from))
+        relevantMethodsById.set(edge.from, new Set());
+      if (!relevantMethodsById.has(edge.to))
+        relevantMethodsById.set(edge.to, new Set());
 
-      if (edge.methodOwner) relevantMethodsById.get(edge.from).add(edge.methodOwner);
+      if (edge.methodOwner)
+        relevantMethodsById.get(edge.from).add(edge.methodOwner);
       if (edge.method) relevantMethodsById.get(edge.to).add(edge.method);
     }
 
     const scopedNodes = globalResult.graph.nodes
-      .filter(node => finalRelatedIds.has(node.id))
-      .map(node => ({
+      .filter((node) => finalRelatedIds.has(node.id))
+      .map((node) => ({
         ...node,
-        relevantMethods: node.id === target.id
-          ? null
-          : [...(relevantMethodsById.get(node.id) || new Set())].sort()
+        relevantMethods:
+          node.id === target.id
+            ? null
+            : [...(relevantMethodsById.get(node.id) || new Set())].sort(),
       }));
 
     const scopedRegistry = globalResult.registry.symbols
-      .filter(symbol => finalRelatedIds.has(symbol.id))
-      .map(symbol => filterSymbolForComponentScope(symbol, target, finalEdges));
+      .filter((symbol) => finalRelatedIds.has(symbol.id))
+      .map((symbol) =>
+        filterSymbolForComponentScope(symbol, target, finalEdges),
+      );
 
-    const scopedMetrics = globalResult.metricList.filter(item => finalRelatedIds.has(item.id));
-    const scopedCycles = globalResult.cycles.filter(cycle =>
-      cycle.some(id => finalRelatedIds.has(id))
+    const scopedMetrics = globalResult.metricList.filter((item) =>
+      finalRelatedIds.has(item.id),
+    );
+    const scopedCycles = globalResult.cycles.filter((cycle) =>
+      cycle.some((id) => finalRelatedIds.has(id)),
     );
 
     return {
@@ -5092,7 +6102,7 @@ class ScopeResolver {
       registry: scopedRegistry,
       metrics: scopedMetrics,
       cycles: scopedCycles,
-      relevantMethodsById
+      relevantMethodsById,
     };
   }
 }
@@ -5103,7 +6113,7 @@ function buildComponentScopedGraph(target, impact, result) {
     relatedIds: scope.relatedIds,
     nodes: scope.nodes,
     edges: scope.edges,
-    relevantMethodsById: scope.relevantMethodsById
+    relevantMethodsById: scope.relevantMethodsById,
   };
 }
 
@@ -5127,22 +6137,23 @@ function filterSymbolForComponentScope(symbol, target, scopedEdges) {
   }
 
   const filteredMethods = isTarget
-    ? (p.methods || [])
-    : (p.methods || []).filter(method =>
-        relevantMethodNames.has(method.name)
+    ? p.methods || []
+    : (p.methods || []).filter((method) =>
+        relevantMethodNames.has(method.name),
       );
 
   const filteredDependencies = isTarget
-    ? (p.dependencies || [])
-    : (p.dependencies || []).filter(dependency => {
+    ? p.dependencies || []
+    : (p.dependencies || []).filter((dependency) => {
         const targetName = dependency.toName;
-        const matchingEdge = scopedEdges.some(edge =>
-          edge.from === symbol.id &&
-          (edge.to === `ApexClass:${targetName}` ||
-            edge.to === `LWC:${targetName}` ||
-            String(edge.to).endsWith(`:${targetName}`) ||
-            edge.to === targetName) &&
-          (!dependency.method || edge.method === dependency.method)
+        const matchingEdge = scopedEdges.some(
+          (edge) =>
+            edge.from === symbol.id &&
+            (edge.to === `ApexClass:${targetName}` ||
+              edge.to === `LWC:${targetName}` ||
+              String(edge.to).endsWith(`:${targetName}`) ||
+              edge.to === targetName) &&
+            (!dependency.method || edge.method === dependency.method),
         );
         return matchingEdge || relevantMethodNames.has(dependency.methodOwner);
       });
@@ -5156,12 +6167,12 @@ function filterSymbolForComponentScope(symbol, target, scopedEdges) {
       behavior: p.behavior
         ? {
             ...p.behavior,
-            publicContracts: (p.behavior.publicContracts || []).filter(contract =>
-              isTarget || relevantMethodNames.has(contract.name)
-            )
+            publicContracts: (p.behavior.publicContracts || []).filter(
+              (contract) => isTarget || relevantMethodNames.has(contract.name),
+            ),
           }
-        : p.behavior
-    }
+        : p.behavior,
+    },
   };
 
   return filtered;
@@ -5173,40 +6184,44 @@ function writeComponentAnalysisArtifacts(
   result,
   metric,
   assessment,
-  outputDir
+  outputDir,
 ) {
   const scoped = buildComponentScopedGraph(target, impact, result);
   const scopedNodes = scoped.nodes;
   const scopedEdges = scoped.edges;
   const scopedGraph = {
     nodes: scopedNodes,
-    edges: scopedEdges
+    edges: scopedEdges,
   };
 
-  const scopedMetrics = result.metricList.filter(item => scoped.relatedIds.has(item.id));
-  const scopedCycles = result.cycles.filter(cycle =>
-    cycle.some(id => scoped.relatedIds.has(id))
+  const scopedMetrics = result.metricList.filter((item) =>
+    scoped.relatedIds.has(item.id),
+  );
+  const scopedCycles = result.cycles.filter((cycle) =>
+    cycle.some((id) => scoped.relatedIds.has(id)),
   );
 
   const scopedRegistry = result.registry.symbols
-    .filter(symbol => scoped.relatedIds.has(symbol.id))
-    .map(symbol => filterSymbolForComponentScope(symbol, target, scopedEdges));
+    .filter((symbol) => scoped.relatedIds.has(symbol.id))
+    .map((symbol) =>
+      filterSymbolForComponentScope(symbol, target, scopedEdges),
+    );
 
   const scopedFiles = new Set(
     scopedNodes
-      .map(node => node.file)
+      .map((node) => node.file)
       .filter(Boolean)
-      .map(file =>
+      .map((file) =>
         path.isAbsolute(file)
           ? path.normalize(file)
-          : path.resolve(PROJECT_ROOT, file)
-      )
+          : path.resolve(PROJECT_ROOT, file),
+      ),
   );
 
   const scopedDiscovered = {};
   for (const [key, value] of Object.entries(result.discovered || {})) {
     if (Array.isArray(value)) {
-      scopedDiscovered[key] = value.filter(file => {
+      scopedDiscovered[key] = value.filter((file) => {
         if (typeof file !== "string") return false;
         const absolute = path.isAbsolute(file)
           ? path.normalize(file)
@@ -5226,12 +6241,12 @@ function writeComponentAnalysisArtifacts(
   }
 
   const generatedAt = new Date().toISOString();
-  const filteredRegistryJson = scopedRegistry.map(symbol => ({
+  const filteredRegistryJson = scopedRegistry.map((symbol) => ({
     id: symbol.id,
     type: symbol.type,
     name: symbol.name,
     file: symbol.file,
-    parsed: symbol.parsed
+    parsed: symbol.parsed,
   }));
 
   const reportJson = {
@@ -5241,7 +6256,7 @@ function writeComponentAnalysisArtifacts(
       id: target.id,
       name: target.name,
       type: target.type,
-      file: target.file || null
+      file: target.file || null,
     },
     sourceDirectory: rel(result.discovered.sourceDir || DEFAULT_SOURCE_DIR),
     inventory: {
@@ -5253,7 +6268,7 @@ function writeComponentAnalysisArtifacts(
       visualforce: scopedDiscovered.visualforce?.length || 0,
       flows: scopedDiscovered.flows?.length || 0,
       objects: scopedDiscovered.objects?.length || 0,
-      fields: scopedDiscovered.fields?.length || 0
+      fields: scopedDiscovered.fields?.length || 0,
     },
     nodes: scopedNodes,
     edges: scopedEdges,
@@ -5264,105 +6279,116 @@ function writeComponentAnalysisArtifacts(
     metric: metric || null,
     assessment: assessment || null,
     methodScope: {
-      description: "Related components contain only methods participating in the scoped dependency relationships.",
+      description:
+        "Related components contain only methods participating in the scoped dependency relationships.",
       targetIncludesAllMethods: true,
-      edgeMethodFields: ["methodOwner", "method"]
-    }
+      edgeMethodFields: ["methodOwner", "method"],
+    },
   };
 
   write(
     path.join(outputDir, "dependency-report.json"),
-    JSON.stringify(reportJson, null, 2)
+    JSON.stringify(reportJson, null, 2),
   );
 
-  const fileState = [...scopedFiles].map(file => {
-    try {
-      const stat = fs.statSync(file);
-      return {
-        file: normalizePath(path.relative(PROJECT_ROOT, file)),
-        size: stat.size,
-        mtimeMs: stat.mtimeMs
-      };
-    } catch {
-      return null;
-    }
-  }).filter(Boolean);
+  const fileState = [...scopedFiles]
+    .map((file) => {
+      try {
+        const stat = fs.statSync(file);
+        return {
+          file: normalizePath(path.relative(PROJECT_ROOT, file)),
+          size: stat.size,
+          mtimeMs: stat.mtimeMs,
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 
   write(
     path.join(outputDir, "analysis-snapshot.json"),
-    JSON.stringify({
-      schemaVersion: 5,
-      analyzerVersion: CURRENT_ANALYZER_VERSION,
-      analyzer: `Salesforce Dependency Analyzer v${CURRENT_ANALYZER_VERSION}`,
-      scope: "component-impact",
-      generatedAt,
-      sourceDirectory: reportJson.sourceDirectory,
-      target: reportJson.target,
-      inventory: reportJson.inventory,
-      discovered: scopedDiscovered,
-      fileState,
-      options: {
-        maxGraphEdges: result.options?.maxGraphEdges || 10000
+    JSON.stringify(
+      {
+        schemaVersion: 5,
+        analyzerVersion: CURRENT_ANALYZER_VERSION,
+        analyzer: `Salesforce Dependency Analyzer v${CURRENT_ANALYZER_VERSION}`,
+        scope: "component-impact",
+        generatedAt,
+        sourceDirectory: reportJson.sourceDirectory,
+        target: reportJson.target,
+        inventory: reportJson.inventory,
+        discovered: scopedDiscovered,
+        fileState,
+        options: {
+          maxGraphEdges: result.options?.maxGraphEdges || 10000,
+        },
+        registry: filteredRegistryJson,
+        nodes: scopedNodes,
+        edges: scopedEdges,
+        metrics: scopedMetrics,
+        cycles: scopedCycles,
       },
-      registry: filteredRegistryJson,
-      nodes: scopedNodes,
-      edges: scopedEdges,
-      metrics: scopedMetrics,
-      cycles: scopedCycles
-    }, null, 2)
+      null,
+      2,
+    ),
   );
 
   write(
     path.join(outputDir, "dependency-report.md"),
-    dependencyReport(scopedGraph, scopedMetrics, scopedCycles)
+    dependencyReport(scopedGraph, scopedMetrics, scopedCycles),
   );
 
   write(
     path.join(outputDir, "dependency-summary.md"),
-    summaryReport(scopedDiscovered, scopedGraph, scopedMetrics, scopedCycles)
+    summaryReport(scopedDiscovered, scopedGraph, scopedMetrics, scopedCycles),
   );
 
   write(
     path.join(outputDir, "dependency-graph.mmd"),
-    graphMermaid(scopedGraph)
+    graphMermaid(scopedGraph),
   );
 
-  write(
-    path.join(outputDir, "dependency-graph.dot"),
-    graphDot(scopedGraph)
-  );
+  write(path.join(outputDir, "dependency-graph.dot"), graphDot(scopedGraph));
 
   write(
     path.join(outputDir, "unresolved-references.md"),
-    unresolvedReport(scopedGraph)
+    unresolvedReport(scopedGraph),
   );
 
-  const sortedMetrics = [...scopedMetrics].sort((a, b) =>
-    (b.fanIn || 0) - (a.fanIn || 0) ||
-    (b.fanOut || 0) - (a.fanOut || 0) ||
-    String(a.name || "").localeCompare(String(b.name || ""))
+  const sortedMetrics = [...scopedMetrics].sort(
+    (a, b) =>
+      (b.fanIn || 0) - (a.fanIn || 0) ||
+      (b.fanOut || 0) - (a.fanOut || 0) ||
+      String(a.name || "").localeCompare(String(b.name || "")),
   );
 
   write(
     path.join(outputDir, "architecture-metrics.json"),
-    JSON.stringify({
-      generatedAt,
-      scope: "component-impact",
-      target: reportJson.target,
-      targetMetric: metric || null,
-      highestImpact: sortedMetrics,
-      highRiskCount: scopedMetrics.filter(x => x.risk === "HIGH").length,
-      mediumRiskCount: scopedMetrics.filter(x => x.risk === "MEDIUM").length,
-      lowRiskCount: scopedMetrics.filter(x => x.risk === "LOW").length,
-      cycleCount: scopedCycles.length
-    }, null, 2)
+    JSON.stringify(
+      {
+        generatedAt,
+        scope: "component-impact",
+        target: reportJson.target,
+        targetMetric: metric || null,
+        highestImpact: sortedMetrics,
+        highRiskCount: scopedMetrics.filter((x) => x.risk === "HIGH").length,
+        mediumRiskCount: scopedMetrics.filter((x) => x.risk === "MEDIUM")
+          .length,
+        lowRiskCount: scopedMetrics.filter((x) => x.risk === "LOW").length,
+        cycleCount: scopedCycles.length,
+        testGapSummary: computeTestGapSummary(scopedRegistry, scopedGraph),
+      },
+      null,
+      2,
+    ),
   );
 
   generateAnalysisManifest(
     result.discovered.sourceDir || DEFAULT_SOURCE_DIR,
     outputDir,
     reportJson,
-    "COMPLETE"
+    "COMPLETE",
   );
 }
 
@@ -5371,9 +6397,7 @@ function writeComponentAnalysisArtifacts(
 
 function analyze(sourceDir, options, writeOutputs = true) {
   if (!fs.existsSync(sourceDir)) {
-    throw new Error(
-      `Source directory does not exist: ${sourceDir}`
-    );
+    throw new Error(`Source directory does not exist: ${sourceDir}`);
   }
 
   console.log("");
@@ -5400,38 +6424,138 @@ function analyze(sourceDir, options, writeOutputs = true) {
   console.log("Enriching deterministic component intelligence...");
   enrichRegistry(registry);
 
-  console.log(
-    `Local symbols: ${registry.symbols.length}`
-  );
+  console.log(`Local symbols: ${registry.symbols.length}`);
 
   console.log("Building dependency graph...");
-  const graph =
-    buildGraph(
-      discovered,
-      registry,
-      options
-    );
+  const graph = buildGraph(discovered, registry, options);
 
   enrichGraphEvidence(graph, registry);
 
-  console.log(
-    `Graph nodes: ${graph.nodes.length}`
-  );
+  console.log(`Graph nodes: ${graph.nodes.length}`);
 
-  console.log(
-    `Graph edges: ${graph.edges.length}`
-  );
+  console.log(`Graph edges: ${graph.edges.length}`);
 
   console.log("Calculating coupling metrics...");
   const metricList = metrics(graph);
 
   console.log("Detecting circular dependencies...");
-  const cycles =
-    stronglyConnectedComponents(graph);
+  const cycles = stronglyConnectedComponents(graph);
 
-  console.log(
-    `Circular dependency groups: ${cycles.length}`
+  console.log("Classifying deterministic component domains...");
+  const domainAnalysis = classifyAllDomains(registry, graph, metricList);
+
+  console.log("Classifying deterministic component roles...");
+  const roleAnalysis = classifyAllRoles(
+    registry,
+    graph,
+    metricList,
   );
+
+  console.log("Analyzing deterministic security boundaries...");
+  const securityBoundaryAnalysis = analyzeAllSecurityBoundaries(
+    registry,
+    graph
+  );
+
+  console.log("Classifying deterministic component layers...");
+  const layerAnalysis = classifyAllLayers(
+    registry,
+    graph,
+    metricList,
+    roleAnalysis.symbolRoles,
+  );
+
+  console.log("Detecting deterministic architectural bottlenecks...");
+  const bottleneckAnalysis = detectAllBottlenecks(
+    registry,
+    graph,
+    metricList,
+    cycles,
+  );
+
+  console.log("Detecting deterministic architectural entry points...");
+  const entryPointAnalysis = detectAllEntryPoints(registry, graph, metricList);
+
+  console.log("Detecting deterministic external system boundaries...");
+  const externalBoundaryAnalysis = detectAllExternalBoundaries(
+    registry,
+    graph,
+    metricList,
+  );
+
+  console.log("Detecting deterministic architecture smells...");
+  const smellAnalysis = detectAllSmells(registry, graph, metricList, cycles);
+
+  console.log("Detecting deterministic architecture debt...");
+  const architectureDebtAnalysis = detectAllArchitectureDebt(
+    registry,
+    graph,
+    metricList,
+    cycles, {
+    smellInfoMap: smellAnalysis.componentSmells,
+    bottleneckInfoMap: bottleneckAnalysis.componentBottlenecks,
+    entryPointInfoMap: entryPointAnalysis.symbolEntryPoints,
+    externalBoundaryInfoMap: externalBoundaryAnalysis.symbolExternalBoundaries
+  });
+
+  console.log("Classifying deterministic business criticality...");
+  const businessCriticalityAnalysis = classifyAllBusinessCriticality(
+    registry,
+    graph,
+    metricList,
+  );
+  console.log("Building deterministic repository architecture profile...");
+  const repositoryProfile = buildRepositoryArchitectureProfile(registry, graph, metricList, {
+    roles: roleAnalysis,
+    layers: layerAnalysis,
+    entryPoints: entryPointAnalysis,
+    externalBoundaries: externalBoundaryAnalysis,
+    bottlenecks: bottleneckAnalysis
+  });
+  console.log("Classifying deterministic safety envelopes...");
+  const safetyEnvelopeAnalysis = classifyAllSafetyEnvelopes(registry, graph, metricList, {
+    cycles,
+    analyzeTestGapFn: (sym, reg, gr) => analyzeTestGap(sym, reg, gr, options)
+  });
+  console.log("Evaluating deterministic architecture health...");
+  const testGapSummary = computeTestGapSummary(registry, graph);
+  const architectureHealthAnalysis = evaluateArchitectureHealth(registry, graph, metricList, {
+    roles: roleAnalysis,
+    layers: layerAnalysis,
+    entryPoints: entryPointAnalysis,
+    externalBoundaries: externalBoundaryAnalysis,
+    bottlenecks: bottleneckAnalysis,
+    smells: smellAnalysis,
+    businessCriticality: businessCriticalityAnalysis,
+    testGapSummary,
+    cycles
+  });
+
+  console.log("Evaluating deterministic architecture quality gates...");
+  const qualityGateAnalysis = evaluateQualityGates(registry, graph, metricList, {
+    smellAnalysis,
+    debtAnalysis: architectureDebtAnalysis,
+    bottleneckAnalysis,
+    securityAnalysis: securityBoundaryAnalysis,
+    externalBoundaryAnalysis,
+    testGapSummary,
+    safetyEnvelopeAnalysis,
+    layerAnalysis,
+    domainAnalysis,
+    cycles
+  });
+
+  console.log("Detecting deterministic duplicate architectural responsibilities...");
+  const duplicateResponsibilityAnalysis = detectAllDuplicateResponsibilities(registry, graph, metricList, {
+    roleInfoMap: roleAnalysis.symbolRoles,
+    layerInfoMap: layerAnalysis.symbolLayers,
+    domainInfoMap: domainAnalysis.symbolDomains,
+    entryPointInfoMap: entryPointAnalysis.symbolEntryPoints,
+    extBoundaryInfoMap: externalBoundaryAnalysis.symbolExternalBoundaries,
+    smellsInfoMap: smellAnalysis.componentSmells
+  });
+
+  console.log(`Circular dependency groups: ${cycles.length}`);
 
   if (!writeOutputs) {
     return {
@@ -5439,14 +6563,26 @@ function analyze(sourceDir, options, writeOutputs = true) {
       registry,
       graph,
       metricList,
-      cycles
+      cycles,
+      roleAnalysis,
+      layerAnalysis,
+      domainAnalysis,
+      entryPointAnalysis,
+      externalBoundaryAnalysis,
+      bottleneckAnalysis,
+      repositoryProfile,
+      safetyEnvelopeAnalysis,
+      smellAnalysis,
+      architectureDebtAnalysis,
+      businessCriticalityAnalysis,
+      repositoryProfile,
+      architectureHealthAnalysis,
+      qualityGateAnalysis,
+      duplicateResponsibilityAnalysis
     };
   }
 
-  fs.mkdirSync(
-    OUTPUT_DIR,
-    { recursive: true }
-  );
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   const reportJson = {
     generatedAt: new Date().toISOString(),
@@ -5460,148 +6596,194 @@ function analyze(sourceDir, options, writeOutputs = true) {
       visualforce: discovered.visualforce.length,
       flows: discovered.flows.length,
       objects: discovered.objects.length,
-      fields: discovered.fields.length
+      fields: discovered.fields.length,
     },
+    testGapSummary,
     nodes: graph.nodes,
     edges: graph.edges,
     metrics: metricList,
     cycles,
+    roles: roleAnalysis.roles,
+    layers: layerAnalysis.layers,
+    entryPoints: entryPointAnalysis.summary,
+    externalBoundaries: externalBoundaryAnalysis.summary,
+    bottlenecks: bottleneckAnalysis.summary,
+    smells: smellAnalysis.summary,
+    architectureDebt: architectureDebtAnalysis.summary,
+    businessCriticality: businessCriticalityAnalysis.summary,
+    architectureProfileSummary: repositoryProfile.summary,
+    safetyEnvelopes: safetyEnvelopeAnalysis.summary,
+    architectureHealth: {
+      overallHealth: architectureHealthAnalysis.overallHealth,
+      confidence: architectureHealthAnalysis.confidence,
+      dimensions: architectureHealthAnalysis.dimensions,
+      strongestPositiveSignals: architectureHealthAnalysis.strongestPositiveSignals,
+      strongestNegativeSignals: architectureHealthAnalysis.strongestNegativeSignals,
+      unknownIncompleteAreas: architectureHealthAnalysis.unknownIncompleteAreas
+    },
+    qualityGates: {
+      overallResult: qualityGateAnalysis.overallResult,
+      confidence: qualityGateAnalysis.confidence,
+      ruleResults: qualityGateAnalysis.ruleResults,
+      failures: qualityGateAnalysis.failures,
+      warnings: qualityGateAnalysis.warnings,
+      unknownChecks: qualityGateAnalysis.unknownChecks
+    },
+    duplicateResponsibility: {
+      summary: duplicateResponsibilityAnalysis.summary
+    },
     registry: registry.symbols.map(symbol => ({
       id: symbol.id,
       type: symbol.type,
       name: symbol.name,
       file: symbol.file,
-      parsed: symbol.parsed
-    }))
+      parsed: symbol.parsed,
+    })),
   };
 
+  const canonicalArchitectureSnapshot = createCanonicalArchitectureSnapshot({
+    registry,
+    graph,
+    metricList,
+    cycles,
+    roleAnalysis,
+    layerAnalysis,
+    domainAnalysis,
+    entryPointAnalysis,
+    externalBoundaryAnalysis,
+    bottleneckAnalysis,
+    smellAnalysis,
+    architectureDebtAnalysis,
+    businessCriticalityAnalysis,
+    repositoryProfile,
+    safetyEnvelopeAnalysis,
+    architectureHealthAnalysis,
+    qualityGateAnalysis,
+    duplicateResponsibilityAnalysis,
+    testGapSummary,
+    sourceDir,
+    options
+  });
+
   write(
-    path.join(
-      OUTPUT_DIR,
-      "dependency-report.json"
-    ),
-    JSON.stringify(
-      reportJson,
-      null,
-      2
-    )
+    path.join(OUTPUT_DIR, "architecture-snapshot.json"),
+    JSON.stringify(canonicalArchitectureSnapshot, null, 2),
+  );
+
+  write(
+    path.join(OUTPUT_DIR, "dependency-report.json"),
+    JSON.stringify(reportJson, null, 2),
   );
 
   const snapshotFiles = unique(
     Object.values(discovered)
       .filter(Array.isArray)
       .flat()
-      .filter(x => typeof x === "string")
-  ).map(file => {
-    try {
-      const stat = fs.statSync(file);
-      return {
-        file: normalizePath(path.relative(PROJECT_ROOT, file)),
-        size: stat.size,
-        mtimeMs: stat.mtimeMs
-      };
-    } catch {
-      return null;
-    }
-  }).filter(Boolean);
+      .filter((x) => typeof x === "string"),
+  )
+    .map((file) => {
+      try {
+        const stat = fs.statSync(file);
+        return {
+          file: normalizePath(path.relative(PROJECT_ROOT, file)),
+          size: stat.size,
+          mtimeMs: stat.mtimeMs,
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 
   write(
     path.join(OUTPUT_DIR, "analysis-snapshot.json"),
-    JSON.stringify({
-      schemaVersion: CURRENT_SCHEMA_VERSION,
-      analyzerVersion: CURRENT_ANALYZER_VERSION,
-      analyzer: `Salesforce Dependency Analyzer v${CURRENT_ANALYZER_VERSION}`,
-      generatedAt: reportJson.generatedAt,
-      sourceDirectory: reportJson.sourceDirectory,
-      inventory: reportJson.inventory,
-      discovered,
-      fileState: snapshotFiles,
-      options: {
-        maxGraphEdges: options?.maxGraphEdges || 10000
+    JSON.stringify(
+      {
+        schemaVersion: CURRENT_SCHEMA_VERSION,
+        analyzerVersion: CURRENT_ANALYZER_VERSION,
+        analyzer: `Salesforce Dependency Analyzer v${CURRENT_ANALYZER_VERSION}`,
+        generatedAt: reportJson.generatedAt,
+        sourceDirectory: reportJson.sourceDirectory,
+        inventory: reportJson.inventory,
+        discovered,
+        fileState: snapshotFiles,
+        options: {
+          maxGraphEdges: options?.maxGraphEdges || 10000,
+        },
+        testGapSummary,
+        registry: reportJson.registry,
+        nodes: reportJson.nodes,
+        edges: reportJson.edges,
+        metrics: reportJson.metrics,
+        cycles: reportJson.cycles,
       },
-      registry: reportJson.registry,
-      nodes: reportJson.nodes,
-      edges: reportJson.edges,
-      metrics: reportJson.metrics,
-      cycles: reportJson.cycles
-    }, null, 2)
+      null,
+      2,
+    ),
   );
 
   write(
-    path.join(
-      OUTPUT_DIR,
-      "dependency-report.md"
-    ),
-    dependencyReport(
-      graph,
-      metricList,
-      cycles
-    )
+    path.join(OUTPUT_DIR, "dependency-report.md"),
+    dependencyReport(graph, metricList, cycles),
   );
 
   write(
-    path.join(
-      OUTPUT_DIR,
-      "dependency-summary.md"
-    ),
-    summaryReport(
-      discovered,
-      graph,
-      metricList,
-      cycles
-    )
+    path.join(OUTPUT_DIR, "dependency-summary.md"),
+    summaryReport(discovered, graph, metricList, cycles),
+  );
+
+  write(path.join(OUTPUT_DIR, "dependency-graph.mmd"), graphMermaid(graph));
+
+  write(path.join(OUTPUT_DIR, "dependency-graph.dot"), graphDot(graph));
+
+  write(
+    path.join(OUTPUT_DIR, "unresolved-references.md"),
+    unresolvedReport(graph),
   );
 
   write(
-    path.join(
-      OUTPUT_DIR,
-      "dependency-graph.mmd"
-    ),
-    graphMermaid(graph)
-  );
-
-  write(
-    path.join(
-      OUTPUT_DIR,
-      "dependency-graph.dot"
-    ),
-    graphDot(graph)
-  );
-
-  write(
-    path.join(
-      OUTPUT_DIR,
-      "unresolved-references.md"
-    ),
-    unresolvedReport(graph)
-  );
-
-  write(
-    path.join(
-      OUTPUT_DIR,
-      "architecture-metrics.json"
-    ),
+    path.join(OUTPUT_DIR, "architecture-metrics.json"),
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
         highestImpact: metricList.slice(0, 50),
-        highRiskCount:
-          metricList.filter(
-            x => x.risk === "HIGH"
-          ).length,
-        mediumRiskCount:
-          metricList.filter(
-            x => x.risk === "MEDIUM"
-          ).length,
-        lowRiskCount:
-          metricList.filter(
-            x => x.risk === "LOW"
-          ).length,
-        cycleCount: cycles.length
+        highRiskCount: metricList.filter((x) => x.risk === "HIGH").length,
+        mediumRiskCount: metricList.filter((x) => x.risk === "MEDIUM").length,
+        lowRiskCount: metricList.filter((x) => x.risk === "LOW").length,
+        cycleCount: cycles.length,
+        roles: roleAnalysis.roles,
+        layers: layerAnalysis.layers,
+        domains: domainAnalysis.domains,
+        entryPoints: entryPointAnalysis.summary,
+        externalBoundaries: externalBoundaryAnalysis.summary,
+        bottlenecks: bottleneckAnalysis.summary,
+        smells: smellAnalysis.summary,
+        architectureDebt: architectureDebtAnalysis.summary,
+        businessCriticality: businessCriticalityAnalysis.summary,
+        architectureProfileSummary: repositoryProfile.summary,
+        safetyEnvelopes: safetyEnvelopeAnalysis.summary,
+        architectureHealth: {
+          overallHealth: architectureHealthAnalysis.overallHealth,
+          confidence: architectureHealthAnalysis.confidence,
+          dimensions: architectureHealthAnalysis.dimensions,
+          strongestPositiveSignals: architectureHealthAnalysis.strongestPositiveSignals,
+          strongestNegativeSignals: architectureHealthAnalysis.strongestNegativeSignals,
+          unknownIncompleteAreas: architectureHealthAnalysis.unknownIncompleteAreas
+        },
+        qualityGates: {
+          overallResult: qualityGateAnalysis.overallResult,
+          confidence: qualityGateAnalysis.confidence,
+          ruleResults: qualityGateAnalysis.ruleResults,
+          failures: qualityGateAnalysis.failures,
+          warnings: qualityGateAnalysis.warnings,
+          unknownChecks: qualityGateAnalysis.unknownChecks
+        },
+        duplicateResponsibilitySummary: duplicateResponsibilityAnalysis.summary,
+        testGapSummary,
       },
       null,
-      2
-    )
+      2,
+    ),
   );
 
   generateAnalysisManifest(sourceDir, OUTPUT_DIR, reportJson, "COMPLETE");
@@ -5613,6 +6795,7 @@ function analyze(sourceDir, options, writeOutputs = true) {
   console.log("");
   console.log("Generated:");
   console.log("  analysis-manifest.json");
+  console.log("  architecture-snapshot.json");
   console.log("  dependency-report.json");
   console.log("  dependency-report.md");
   console.log("  dependency-summary.md");
@@ -5622,18 +6805,16 @@ function analyze(sourceDir, options, writeOutputs = true) {
   console.log("  architecture-metrics.json");
   console.log("");
 
-  if (metricList.some(x => x.risk === "HIGH")) {
+  if (metricList.some((x) => x.risk === "HIGH")) {
     console.log(
-      `HIGH RISK COMPONENTS: ${metricList.filter(x => x.risk === "HIGH").length}`
+      `HIGH RISK COMPONENTS: ${metricList.filter((x) => x.risk === "HIGH").length}`,
     );
 
-    for (
-      const item of metricList
-        .filter(x => x.risk === "HIGH")
-        .slice(0, 15)
-    ) {
+    for (const item of metricList
+      .filter((x) => x.risk === "HIGH")
+      .slice(0, 15)) {
       console.log(
-        `  ${item.name} [${item.type}] - Fan-In ${item.fanIn}, Fan-Out ${item.fanOut}`
+        `  ${item.name} [${item.type}] - Fan-In ${item.fanIn}, Fan-Out ${item.fanOut}`,
       );
     }
 
@@ -5645,7 +6826,7 @@ function analyze(sourceDir, options, writeOutputs = true) {
     registry,
     graph,
     metricList,
-    cycles
+    cycles,
   };
 }
 
@@ -5653,92 +6834,50 @@ function analyze(sourceDir, options, writeOutputs = true) {
 // Impact command
 // ============================================================
 
-function runImpact(
-  targetName,
-  sourceDir,
-  options,
-  refactorMode
-) {
-  const result =
-    analyze(
-      sourceDir,
-      options,
-      false
-    );
+function runImpact(targetName, sourceDir, options, refactorMode) {
+  const result = analyze(sourceDir, options, false);
 
-  const targets =
-    resolveTarget(
-      targetName,
-      result.registry
-    );
+  const targets = resolveTarget(targetName, result.registry);
 
   if (!targets.length) {
-    console.error(
-      `No local symbol found for: ${targetName}`
-    );
+    console.error(`No local symbol found for: ${targetName}`);
     process.exit(1);
   }
 
-  const metricById = new Map(
-    result.metricList.map(
-      x => [x.id, x]
-    )
-  );
+  const metricById = new Map(result.metricList.map((x) => [x.id, x]));
 
   for (const target of targets) {
-    const impact =
-      impactFor(
-        target,
-        result.graph,
-        result.registry,
-        options.maxImpactDepth
-      );
+    const impact = impactFor(
+      target,
+      result.graph,
+      result.registry,
+      options.maxImpactDepth,
+    );
 
-    const metric =
-      metricById.get(target.id);
+    const metric = metricById.get(target.id);
 
-    const assessment =
-      refactorAssessment(
-        impact,
-        metric
-      );
+    const assessment = refactorAssessment(impact, metric);
 
     const lines = [];
 
     lines.push(
-      `# ${refactorMode ? "Refactor Impact" : "Impact Analysis"}: ${target.name}`
+      `# ${refactorMode ? "Refactor Impact" : "Impact Analysis"}: ${target.name}`,
     );
     lines.push("");
 
-    lines.push(
-      `**Type:** ${target.type}`
-    );
-    lines.push(
-      `**File:** ${target.file}`
-    );
-    lines.push(
-      `**Impact Level:** ${impact.level}`
-    );
+    lines.push(`**Type:** ${target.type}`);
+    lines.push(`**File:** ${target.file}`);
+    lines.push(`**Impact Level:** ${impact.level}`);
 
     if (metric) {
-      lines.push(
-        `**Fan-In:** ${metric.fanIn}`
-      );
-      lines.push(
-        `**Fan-Out:** ${metric.fanOut}`
-      );
-      lines.push(
-        `**Coupling:** ${metric.coupling}`
-      );
+      lines.push(`**Fan-In:** ${metric.fanIn}`);
+      lines.push(`**Fan-Out:** ${metric.fanOut}`);
+      lines.push(`**Coupling:** ${metric.coupling}`);
     }
 
     if (refactorMode) {
-      lines.push(
-        `**Refactoring Risk:** ${assessment.risk}`
-      );
-      lines.push(
-        `**Risk Score:** ${assessment.score}`
-      );
+      lines.push(`**Refactoring Risk:** ${assessment.risk}`);
+      lines.push(`**Risk Score:** ${assessment.score}`);
     }
 
     lines.push("");
@@ -5751,7 +6890,7 @@ function runImpact(
     } else {
       for (const edge of impact.directDependencies) {
         lines.push(
-          `- **${edge.to}** — ${edge.type}${edge.method ? ` (${edge.method})` : ""}`
+          `- **${edge.to}** — ${edge.type}${edge.method ? ` (${edge.method})` : ""}`,
         );
       }
     }
@@ -5766,7 +6905,7 @@ function runImpact(
     } else {
       for (const edge of impact.directDependents) {
         lines.push(
-          `- **${edge.from}** — ${edge.type}${edge.method ? ` (${edge.method})` : ""}`
+          `- **${edge.from}** — ${edge.type}${edge.method ? ` (${edge.method})` : ""}`,
         );
       }
     }
@@ -5779,9 +6918,7 @@ function runImpact(
     if (!impact.impactedLwc.length) {
       lines.push("- None detected.");
     } else {
-      impact.impactedLwc.forEach(
-        id => lines.push(`- ${id}`)
-      );
+      impact.impactedLwc.forEach((id) => lines.push(`- ${id}`));
     }
 
     lines.push("");
@@ -5792,9 +6929,7 @@ function runImpact(
     if (!impact.impactedTests.length) {
       lines.push("- None detected.");
     } else {
-      impact.impactedTests.forEach(
-        id => lines.push(`- ${id}`)
-      );
+      impact.impactedTests.forEach((id) => lines.push(`- ${id}`));
     }
 
     lines.push("");
@@ -5805,9 +6940,7 @@ function runImpact(
     if (!impact.triggerImpact.length) {
       lines.push("- None detected.");
     } else {
-      impact.triggerImpact.forEach(
-        id => lines.push(`- ${id}`)
-      );
+      impact.triggerImpact.forEach((id) => lines.push(`- ${id}`));
     }
 
     lines.push("");
@@ -5818,9 +6951,7 @@ function runImpact(
     if (!impact.impactedObjects.length) {
       lines.push("- None detected.");
     } else {
-      impact.impactedObjects.forEach(
-        id => lines.push(`- ${id}`)
-      );
+      impact.impactedObjects.forEach((id) => lines.push(`- ${id}`));
     }
 
     lines.push("");
@@ -5831,9 +6962,7 @@ function runImpact(
     if (!impact.impactedFields.length) {
       lines.push("- None detected.");
     } else {
-      impact.impactedFields.forEach(
-        id => lines.push(`- ${id}`)
-      );
+      impact.impactedFields.forEach((id) => lines.push(`- ${id}`));
     }
 
     lines.push("");
@@ -5842,13 +6971,9 @@ function runImpact(
     lines.push("");
 
     if (!impact.unresolved.length) {
-      lines.push(
-        "- No unresolved downstream dependencies detected."
-      );
+      lines.push("- No unresolved downstream dependencies detected.");
     } else {
-      impact.unresolved.forEach(
-        id => lines.push(`- ${id}`)
-      );
+      impact.unresolved.forEach((id) => lines.push(`- ${id}`));
     }
 
     lines.push("");
@@ -5856,12 +6981,8 @@ function runImpact(
     lines.push("## Downstream Paths");
     lines.push("");
 
-    for (
-      const item of impact.downstream.slice(0, 150)
-    ) {
-      lines.push(
-        `- Depth ${item.depth}: ${item.path.join(" → ")}`
-      );
+    for (const item of impact.downstream.slice(0, 150)) {
+      lines.push(`- Depth ${item.depth}: ${item.path.join(" → ")}`);
     }
 
     if (!impact.downstream.length) {
@@ -5873,12 +6994,8 @@ function runImpact(
     lines.push("## Upstream Paths");
     lines.push("");
 
-    for (
-      const item of impact.upstream.slice(0, 150)
-    ) {
-      lines.push(
-        `- Depth ${item.depth}: ${item.path.join(" → ")}`
-      );
+    for (const item of impact.upstream.slice(0, 150)) {
+      lines.push(`- Depth ${item.depth}: ${item.path.join(" → ")}`);
     }
 
     if (!impact.upstream.length) {
@@ -5896,23 +7013,16 @@ function runImpact(
       }
 
       if (!assessment.findings.length) {
-        lines.push(
-          "- No major structural risk detected."
-        );
+        lines.push("- No major structural risk detected.");
       }
 
       lines.push("");
 
-      lines.push(
-        "## Recommended Refactoring Order"
-      );
+      lines.push("## Recommended Refactoring Order");
       lines.push("");
 
-      assessment.recommendedOrder.forEach(
-        (step, index) =>
-          lines.push(
-            `${index + 1}. ${step}`
-          )
+      assessment.recommendedOrder.forEach((step, index) =>
+        lines.push(`${index + 1}. ${step}`),
       );
 
       lines.push("");
@@ -5941,42 +7051,31 @@ function runImpact(
       result,
       metric,
       refactorMode ? assessment : null,
-      OUTPUT_DIR
+      OUTPUT_DIR,
     );
 
-    const prefix =
-      refactorMode
-        ? "refactor-impact"
-        : "impact";
+    const prefix = refactorMode ? "refactor-impact" : "impact";
 
     write(
-      path.join(
-        OUTPUT_DIR,
-        `${prefix}-${safeName(target.name)}.md`
-      ),
-      lines.join("\n")
+      path.join(OUTPUT_DIR, `${prefix}-${safeName(target.name)}.md`),
+      lines.join("\n"),
     );
 
     write(
-      path.join(
-        OUTPUT_DIR,
-        `${prefix}-${safeName(target.name)}.json`
-      ),
+      path.join(OUTPUT_DIR, `${prefix}-${safeName(target.name)}.json`),
       JSON.stringify(
         {
           impact,
           metric,
-          assessment: refactorMode
-            ? assessment
-            : null
+          assessment: refactorMode ? assessment : null,
         },
         null,
-        2
-      )
+        2,
+      ),
     );
 
     console.log(
-      `${refactorMode ? "Refactor impact" : "Impact"} report written for ${target.name}`
+      `${refactorMode ? "Refactor impact" : "Impact"} report written for ${target.name}`,
     );
   }
 }
@@ -5985,17 +7084,15 @@ function runImpact(
 // Analysis Batches
 // ============================================================
 
-const BATCHABLE_TYPES = new Set([
-  "ApexClass",
-  "Trigger",
-  "LWC"
-]);
+const BATCHABLE_TYPES = new Set(["ApexClass", "Trigger", "LWC"]);
 
 function createAnalysisBatches(graph, metricList, batchSize) {
   const nodeMap = nodeById(graph);
-  const batchableNodes = graph.nodes.filter(node => BATCHABLE_TYPES.has(node.type));
-  const batchableIds = new Set(batchableNodes.map(node => node.id));
-  const metricById = new Map(metricList.map(metric => [metric.id, metric]));
+  const batchableNodes = graph.nodes.filter((node) =>
+    BATCHABLE_TYPES.has(node.type),
+  );
+  const batchableIds = new Set(batchableNodes.map((node) => node.id));
+  const metricById = new Map(metricList.map((metric) => [metric.id, metric]));
 
   const outgoing = new Map();
   const incoming = new Map();
@@ -6014,33 +7111,34 @@ function createAnalysisBatches(graph, metricList, batchSize) {
   const ranked = [...batchableNodes].sort((a, b) => {
     const ma = metricById.get(a.id) || {};
     const mb = metricById.get(b.id) || {};
-    const scoreA = (ma.fanIn || 0) * 4 + (ma.fanOut || 0) * 3 + (ma.coupling || 0) * 2;
-    const scoreB = (mb.fanIn || 0) * 4 + (mb.fanOut || 0) * 3 + (mb.coupling || 0) * 2;
+    const scoreA =
+      (ma.fanIn || 0) * 4 + (ma.fanOut || 0) * 3 + (ma.coupling || 0) * 2;
+    const scoreB =
+      (mb.fanIn || 0) * 4 + (mb.fanOut || 0) * 3 + (mb.coupling || 0) * 2;
     return scoreB - scoreA || a.name.localeCompare(b.name);
   });
 
-  const unassigned = new Set(ranked.map(node => node.id));
+  const unassigned = new Set(ranked.map((node) => node.id));
   const batches = [];
 
   function neighbors(id) {
-    return new Set([
-      ...(outgoing.get(id) || []),
-      ...(incoming.get(id) || [])
-    ]);
+    return new Set([...(outgoing.get(id) || []), ...(incoming.get(id) || [])]);
   }
 
   while (unassigned.size) {
-    const seed = ranked.find(node => unassigned.has(node.id));
+    const seed = ranked.find((node) => unassigned.has(node.id));
     if (!seed) break;
 
     const batchIds = [seed.id];
     unassigned.delete(seed.id);
-    const candidateQueue = [...neighbors(seed.id)].filter(id => unassigned.has(id));
+    const candidateQueue = [...neighbors(seed.id)].filter((id) =>
+      unassigned.has(id),
+    );
 
     while (candidateQueue.length && batchIds.length < batchSize) {
       const scored = [...new Set(candidateQueue)]
-        .filter(id => unassigned.has(id))
-        .map(id => {
+        .filter((id) => unassigned.has(id))
+        .map((id) => {
           let score = 0;
           for (const existingId of batchIds) {
             if (outgoing.get(existingId)?.has(id)) score += 10;
@@ -6067,7 +7165,7 @@ function createAnalysisBatches(graph, metricList, batchSize) {
     }
 
     const components = batchIds
-      .map(id => {
+      .map((id) => {
         const node = nodeMap.get(id);
         const metric = metricById.get(id) || {};
         return {
@@ -6078,17 +7176,20 @@ function createAnalysisBatches(graph, metricList, batchSize) {
           fanIn: metric.fanIn || 0,
           fanOut: metric.fanOut || 0,
           coupling: metric.coupling || 0,
-          risk: metric.risk || "LOW"
+          risk: metric.risk || "LOW",
         };
       })
-      .sort((a, b) =>
-        b.fanIn - a.fanIn || b.fanOut - a.fanOut || a.name.localeCompare(b.name)
+      .sort(
+        (a, b) =>
+          b.fanIn - a.fanIn ||
+          b.fanOut - a.fanOut ||
+          a.name.localeCompare(b.name),
       );
 
     batches.push({
       number: batches.length + 1,
       seed: { id: seed.id, name: seed.name, type: seed.type },
-      components
+      components,
     });
   }
 
@@ -6105,10 +7206,13 @@ function writeBatchPlan(batches, sourceDir, options) {
     sourceDirectory: rel(sourceDir),
     batchSize: options.batchSize,
     batchCount: batches.length,
-    batches
+    batches,
   };
 
-  write(path.join(batchesDir, "batch-plan.json"), JSON.stringify(plan, null, 2));
+  write(
+    path.join(batchesDir, "batch-plan.json"),
+    JSON.stringify(plan, null, 2),
+  );
 
   const lines = [
     "# Salesforce Analysis Batch Plan",
@@ -6120,16 +7224,20 @@ function writeBatchPlan(batches, sourceDir, options) {
     `Total batches: ${batches.length}`,
     "",
     "Batches are dependency-oriented. High-impact components are used as seeds and strongly related components are grouped together where possible.",
-    ""
+    "",
   ];
 
   for (const batch of batches) {
     lines.push(`## Batch ${String(batch.number).padStart(2, "0")}`, "");
     lines.push(`**Seed:** ${batch.seed.name} [${batch.seed.type}]`, "");
-    lines.push("| Component | Type | Fan-In | Fan-Out | Coupling | Risk | File |");
+    lines.push(
+      "| Component | Type | Fan-In | Fan-Out | Coupling | Risk | File |",
+    );
     lines.push("|---|---|---:|---:|---:|---|---|");
     for (const component of batch.components) {
-      lines.push(`| ${component.name} | ${component.type} | ${component.fanIn} | ${component.fanOut} | ${component.coupling} | ${component.risk} | ${component.file} |`);
+      lines.push(
+        `| ${component.name} | ${component.type} | ${component.fanIn} | ${component.fanOut} | ${component.coupling} | ${component.risk} | ${component.file} |`,
+      );
     }
     lines.push("");
   }
@@ -6138,8 +7246,20 @@ function writeBatchPlan(batches, sourceDir, options) {
 
   for (const batch of batches) {
     write(
-      path.join(batchesDir, `batch-${String(batch.number).padStart(2, "0")}.json`),
-      JSON.stringify({ generatedAt, sourceDirectory: rel(sourceDir), batchSize: options.batchSize, ...batch }, null, 2)
+      path.join(
+        batchesDir,
+        `batch-${String(batch.number).padStart(2, "0")}.json`,
+      ),
+      JSON.stringify(
+        {
+          generatedAt,
+          sourceDirectory: rel(sourceDir),
+          batchSize: options.batchSize,
+          ...batch,
+        },
+        null,
+        2,
+      ),
     );
   }
 
@@ -6153,29 +7273,48 @@ function writeBatchPlan(batches, sourceDir, options) {
 
 function runCreateBatches(sourceDir, options) {
   const result = analyze(sourceDir, options, false);
-  const batches = createAnalysisBatches(result.graph, result.metricList, options.batchSize);
+  const batches = createAnalysisBatches(
+    result.graph,
+    result.metricList,
+    options.batchSize,
+  );
   writeBatchPlan(batches, sourceDir, options);
 }
 
 function runLlmContextBatch(batchNumber, sourceDir, options) {
   const batchId = String(batchNumber).padStart(2, "0");
-  const batchFile = path.join(BASE_OUTPUT_DIR, "create-batches", "batches", `batch-${batchId}.json`);
+  const batchFile = path.join(
+    BASE_OUTPUT_DIR,
+    "create-batches",
+    "batches",
+    `batch-${batchId}.json`,
+  );
 
   if (!fs.existsSync(batchFile)) {
     throw new Error(
-      `Batch ${batchNumber} not found. Run:\n\nnode dependency-analyzer.js create-batches ${rel(sourceDir)}`
+      `Batch ${batchNumber} not found. Run:\n\nnode dependency-analyzer.js create-batches ${rel(sourceDir)}`,
     );
   }
 
   const batch = JSON.parse(read(batchFile));
   const result = analyze(sourceDir, options, false);
-  const batchIds = new Set(batch.components.map(component => component.id));
-  const metricById = new Map(result.metricList.map(metric => [metric.id, metric]));
+  const batchIds = new Set(batch.components.map((component) => component.id));
+  const metricById = new Map(
+    result.metricList.map((metric) => [metric.id, metric]),
+  );
 
-  const relevantNodes = result.graph.nodes.filter(node => batchIds.has(node.id));
-  const relevantEdges = result.graph.edges.filter(edge => batchIds.has(edge.from) || batchIds.has(edge.to));
-  const internalEdges = relevantEdges.filter(edge => batchIds.has(edge.from) && batchIds.has(edge.to));
-  const externalEdges = relevantEdges.filter(edge => batchIds.has(edge.from) !== batchIds.has(edge.to));
+  const relevantNodes = result.graph.nodes.filter((node) =>
+    batchIds.has(node.id),
+  );
+  const relevantEdges = result.graph.edges.filter(
+    (edge) => batchIds.has(edge.from) || batchIds.has(edge.to),
+  );
+  const internalEdges = relevantEdges.filter(
+    (edge) => batchIds.has(edge.from) && batchIds.has(edge.to),
+  );
+  const externalEdges = relevantEdges.filter(
+    (edge) => batchIds.has(edge.from) !== batchIds.has(edge.to),
+  );
 
   const batchDir = path.join(OUTPUT_DIR, "llm-context", `batch-${batchId}`);
   fs.mkdirSync(batchDir, { recursive: true });
@@ -6199,18 +7338,22 @@ function runLlmContextBatch(batchNumber, sourceDir, options) {
     "## Components",
     "",
     "| Component | Type | Fan-In | Fan-Out | Coupling | Risk | File |",
-    "|---|---|---:|---:|---:|---|---|"
+    "|---|---|---:|---:|---:|---|---|",
   ];
 
   for (const component of batch.components) {
     const metric = metricById.get(component.id) || {};
-    lines.push(`| ${component.name} | ${component.type} | ${metric.fanIn || 0} | ${metric.fanOut || 0} | ${metric.coupling || 0} | ${metric.risk || "LOW"} | ${component.file} |`);
+    lines.push(
+      `| ${component.name} | ${component.type} | ${metric.fanIn || 0} | ${metric.fanOut || 0} | ${metric.coupling || 0} | ${metric.risk || "LOW"} | ${component.file} |`,
+    );
   }
 
   lines.push("", "## Dependencies Inside Batch", "");
   if (internalEdges.length) {
     for (const edge of internalEdges.slice(0, 1000)) {
-      lines.push(`- ${edge.from} -> ${edge.to} | ${edge.type}${edge.method ? ` | method: ${edge.method}` : ""}${edge.evidence ? ` | evidence: ${edge.evidence}` : ""}`);
+      lines.push(
+        `- ${edge.from} -> ${edge.to} | ${edge.type}${edge.method ? ` | method: ${edge.method}` : ""}${edge.evidence ? ` | evidence: ${edge.evidence}` : ""}`,
+      );
     }
   } else {
     lines.push("- None detected.");
@@ -6219,7 +7362,9 @@ function runLlmContextBatch(batchNumber, sourceDir, options) {
   lines.push("", "## External Dependencies Touching Batch", "");
   if (externalEdges.length) {
     for (const edge of externalEdges.slice(0, 1000)) {
-      lines.push(`- ${edge.from} -> ${edge.to} | ${edge.type}${edge.method ? ` | method: ${edge.method}` : ""}${edge.evidence ? ` | evidence: ${edge.evidence}` : ""}`);
+      lines.push(
+        `- ${edge.from} -> ${edge.to} | ${edge.type}${edge.method ? ` | method: ${edge.method}` : ""}${edge.evidence ? ` | evidence: ${edge.evidence}` : ""}`,
+      );
     }
   } else {
     lines.push("- None detected.");
@@ -6238,31 +7383,48 @@ function runLlmContextBatch(batchNumber, sourceDir, options) {
     "6. Whether full source code is actually required",
     "7. Exactly which source files should be requested",
     "",
-    "Do not design or implement a refactoring in this phase."
+    "Do not design or implement a refactoring in this phase.",
   );
 
   write(path.join(batchDir, "LLM_CONTEXT.md"), lines.join("\n"));
 
   write(
     path.join(batchDir, "context.json"),
-    JSON.stringify({ generatedAt: new Date().toISOString(), batch, nodes: relevantNodes, edges: relevantEdges, metrics: batch.components.map(component => metricById.get(component.id) || null) }, null, 2)
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        batch,
+        nodes: relevantNodes,
+        edges: relevantEdges,
+        metrics: batch.components.map(
+          (component) => metricById.get(component.id) || null,
+        ),
+      },
+      null,
+      2,
+    ),
   );
 
-  const sourceManifest = batch.components.map(component => ({
+  const sourceManifest = batch.components.map((component) => ({
     name: component.name,
     type: component.type,
     file: component.file,
-    absolutePath: path.resolve(PROJECT_ROOT, component.file)
+    absolutePath: path.resolve(PROJECT_ROOT, component.file),
   }));
 
-  write(path.join(batchDir, "source-manifest.json"), JSON.stringify(sourceManifest, null, 2));
+  write(
+    path.join(batchDir, "source-manifest.json"),
+    JSON.stringify(sourceManifest, null, 2),
+  );
 
   console.log("");
   console.log(`LLM batch context generated for Batch ${batchId}`);
   console.log(`Primary file: ${path.join(batchDir, "LLM_CONTEXT.md")}`);
   console.log(`Components: ${batch.components.length}`);
   console.log("Full source code was NOT copied.");
-  console.log(`Source manifest: ${path.join(batchDir, "source-manifest.json")}`);
+  console.log(
+    `Source manifest: ${path.join(batchDir, "source-manifest.json")}`,
+  );
   console.log("");
 }
 
@@ -6270,20 +7432,10 @@ function runLlmContextBatch(batchNumber, sourceDir, options) {
 // Search
 // ============================================================
 
-function runSearch(
-  query,
-  sourceDir,
-  options
-) {
-  const result =
-    analyze(
-      sourceDir,
-      options,
-      false
-    );
+function runSearch(query, sourceDir, options) {
+  const result = analyze(sourceDir, options, false);
 
-  const q =
-    query.toLowerCase();
+  const q = query.toLowerCase();
 
   const matches = [];
 
@@ -6294,7 +7446,7 @@ function runSearch(
     ) {
       matches.push({
         kind: "symbol",
-        value: symbol
+        value: symbol,
       });
     }
   }
@@ -6305,13 +7457,13 @@ function runSearch(
       edge.to,
       edge.type,
       edge.method || "",
-      edge.evidence || ""
+      edge.evidence || "",
     ].join(" ");
 
     if (text.toLowerCase().includes(q)) {
       matches.push({
         kind: "dependency",
-        value: edge
+        value: edge,
       });
     }
   }
@@ -6327,30 +7479,18 @@ function runSearch(
 
   for (const match of matches.slice(0, 500)) {
     if (match.kind === "symbol") {
-      console.log(
-        `[SYMBOL] ${match.value.name} [${match.value.type}]`
-      );
-      console.log(
-        `         ${match.value.file}`
-      );
+      console.log(`[SYMBOL] ${match.value.name} [${match.value.type}]`);
+      console.log(`         ${match.value.file}`);
     } else {
-      console.log(
-        `[DEPENDENCY] ${match.value.from} -> ${match.value.to}`
-      );
-      console.log(
-        `             ${match.value.type}`
-      );
+      console.log(`[DEPENDENCY] ${match.value.from} -> ${match.value.to}`);
+      console.log(`             ${match.value.type}`);
 
       if (match.value.method) {
-        console.log(
-          `             method: ${match.value.method}`
-        );
+        console.log(`             method: ${match.value.method}`);
       }
 
       if (match.value.evidence) {
-        console.log(
-          `             ${match.value.evidence}`
-        );
+        console.log(`             ${match.value.evidence}`);
       }
     }
 
@@ -6358,13 +7498,12 @@ function runSearch(
   }
 }
 
-
 // ============================================================
 // LLM Context Package
 // ============================================================
 
 function nodeById(graph) {
-  return new Map(graph.nodes.map(node => [node.id, node]));
+  return new Map(graph.nodes.map((node) => [node.id, node]));
 }
 
 function compactEdge(edge) {
@@ -6374,7 +7513,7 @@ function compactEdge(edge) {
     type: edge.type,
     method: edge.method || null,
     evidence: edge.evidence || null,
-    unresolved: Boolean(edge.unresolved)
+    unresolved: Boolean(edge.unresolved),
   };
 }
 
@@ -6383,7 +7522,7 @@ function writeLlmContextPackage(targetName, sourceDir, options = {}) {
   // moving the implementation to the deterministic intelligence package.
   writeComponentIntelligencePackage(targetName, sourceDir, {
     ...options,
-    profile: options.profile || "full"
+    profile: options.profile || "full",
   });
 
   // The llm-context command has its own isolated output directory.
@@ -6398,19 +7537,23 @@ function writeLlmContextPackage(targetName, sourceDir, options = {}) {
     "02-GRAPH.json",
     "03-SOURCE-MANIFEST.json",
     "01-CONTEXT.json",
-    "LLM_CONTEXT.md"
+    "LLM_CONTEXT.md",
   ];
 
   for (const name of filesToCopy) {
     const from = path.join(sourcePackage, name);
-    if (fs.existsSync(from)) fs.copyFileSync(from, path.join(legacyPackage, name));
+    if (fs.existsSync(from))
+      fs.copyFileSync(from, path.join(legacyPackage, name));
   }
 
   const sourceDirPath = path.join(sourcePackage, "source");
   const legacySource = path.join(legacyPackage, "source");
   if (fs.existsSync(sourceDirPath)) {
     for (const name of fs.readdirSync(sourceDirPath)) {
-      fs.copyFileSync(path.join(sourceDirPath, name), path.join(legacySource, name));
+      fs.copyFileSync(
+        path.join(sourceDirPath, name),
+        path.join(legacySource, name),
+      );
     }
   }
 
@@ -6422,92 +7565,130 @@ function writeLlmContextPackage(targetName, sourceDir, options = {}) {
   const frontend = context.frontend || {};
   const data = context.data || {};
 
-  write(path.join(legacyPackage, "01-overview.md"), read(path.join(sourcePackage, "04-OVERVIEW.md")));
-  write(path.join(legacyPackage, "02-dependencies.md"), [
-    `# Dependencies — ${targetName}`,
-    "",
-    "## Direct Dependencies",
-    "",
-    ...(impact.directDependencies || []).map(e => `- ${e.from} -> ${e.to} | ${e.type} | ${e.method || ""} | ${e.evidence || ""} | ${e.confidence || ""} | L${e.line || "?"}`),
-    "",
-    "## Direct Dependents",
-    "",
-    ...(impact.directDependents || []).map(e => `- ${e.from} -> ${e.to} | ${e.type} | ${e.method || ""} | ${e.evidence || ""} | ${e.confidence || ""} | L${e.line || "?"}`),
-    "",
-    "## Downstream Paths",
-    "",
-    ...(impact.downstream || []).slice(0, 300).map(x => `- Depth ${x.depth}: ${x.path.join(" -> ")}`),
-    "",
-    "## Upstream Paths",
-    "",
-    ...(impact.upstream || []).slice(0, 300).map(x => `- Depth ${x.depth}: ${x.path.join(" -> ")}`),
-    ""
-  ].join("\n"));
+  write(
+    path.join(legacyPackage, "01-overview.md"),
+    read(path.join(sourcePackage, "04-OVERVIEW.md")),
+  );
+  write(
+    path.join(legacyPackage, "02-dependencies.md"),
+    [
+      `# Dependencies — ${targetName}`,
+      "",
+      "## Direct Dependencies",
+      "",
+      ...(impact.directDependencies || []).map(
+        (e) =>
+          `- ${e.from} -> ${e.to} | ${e.type} | ${e.method || ""} | ${e.evidence || ""} | ${e.confidence || ""} | L${e.line || "?"}`,
+      ),
+      "",
+      "## Direct Dependents",
+      "",
+      ...(impact.directDependents || []).map(
+        (e) =>
+          `- ${e.from} -> ${e.to} | ${e.type} | ${e.method || ""} | ${e.evidence || ""} | ${e.confidence || ""} | L${e.line || "?"}`,
+      ),
+      "",
+      "## Downstream Paths",
+      "",
+      ...(impact.downstream || [])
+        .slice(0, 300)
+        .map((x) => `- Depth ${x.depth}: ${x.path.join(" -> ")}`),
+      "",
+      "## Upstream Paths",
+      "",
+      ...(impact.upstream || [])
+        .slice(0, 300)
+        .map((x) => `- Depth ${x.depth}: ${x.path.join(" -> ")}`),
+      "",
+    ].join("\n"),
+  );
 
-  write(path.join(legacyPackage, "03-refactor-impact.md"), [
-    `# Refactoring Impact — ${targetName}`,
-    "",
-    `- Level: ${impact.level || "UNKNOWN"}`,
-    `- Risk: ${assessment.risk || "UNKNOWN"}`,
-    `- Score: ${assessment.score ?? "N/A"}`,
-    "",
-    "## Findings",
-    "",
-    ...(assessment.findings || []).map(x => `- ${x}`),
-    "",
-    "## Recommended Order",
-    "",
-    ...(assessment.recommendedOrder || []).map((x, i) => `${i + 1}. ${x}`),
-    ""
-  ].join("\n"));
+  write(
+    path.join(legacyPackage, "03-refactor-impact.md"),
+    [
+      `# Refactoring Impact — ${targetName}`,
+      "",
+      `- Level: ${impact.level || "UNKNOWN"}`,
+      `- Risk: ${assessment.risk || "UNKNOWN"}`,
+      `- Score: ${assessment.score ?? "N/A"}`,
+      "",
+      "## Findings",
+      "",
+      ...(assessment.findings || []).map((x) => `- ${x}`),
+      "",
+      "## Recommended Order",
+      "",
+      ...(assessment.recommendedOrder || []).map((x, i) => `${i + 1}. ${x}`),
+      "",
+    ].join("\n"),
+  );
 
-  write(path.join(legacyPackage, "04-tests.md"), [
-    `# Test Impact — ${targetName}`,
-    "",
-    `- Is test class: ${tests.isTest ? "Yes" : "No"}`,
-    `- Test references: ${(tests.references || []).join(", ") || "None"}`,
-    `- Impacted tests: ${(tests.impacted || []).join(", ") || "None"}`,
-    ""
-  ].join("\n"));
+  write(
+    path.join(legacyPackage, "04-tests.md"),
+    [
+      `# Test Impact — ${targetName}`,
+      "",
+      `- Is test class: ${tests.isTest ? "Yes" : "No"}`,
+      `- Test references: ${(tests.references || []).join(", ") || "None"}`,
+      `- Impacted tests: ${(tests.impacted || []).join(", ") || "None"}`,
+      "",
+    ].join("\n"),
+  );
 
-  write(path.join(legacyPackage, "05-lwc.md"), [
-    `# LWC Impact — ${targetName}`,
-    "",
-    `- Impacted LWCs: ${(frontend.lwcs || []).join(", ") || "None"}`,
-    `- Apex methods used: ${(frontend.apexMethods || []).map(x => `${x.className}.${x.methodName}`).join(", ") || "None"}`,
-    `- Capabilities: ${(frontend.capabilities || []).join(", ") || "None"}`,
-    ""
-  ].join("\n"));
+  write(
+    path.join(legacyPackage, "05-lwc.md"),
+    [
+      `# LWC Impact — ${targetName}`,
+      "",
+      `- Impacted LWCs: ${(frontend.lwcs || []).join(", ") || "None"}`,
+      `- Apex methods used: ${(frontend.apexMethods || []).map((x) => `${x.className}.${x.methodName}`).join(", ") || "None"}`,
+      `- Capabilities: ${(frontend.capabilities || []).join(", ") || "None"}`,
+      "",
+    ].join("\n"),
+  );
 
-  write(path.join(legacyPackage, "06-data.md"), [
-    `# Salesforce Data Impact — ${targetName}`,
-    "",
-    `- Objects: ${(data.objects || []).join(", ") || "None"}`,
-    `- Fields: ${(data.fields || []).map(x => `${x.object}.${x.field}`).join(", ") || "None"}`,
-    `- DML: ${(data.dml || []).map(x => `${x.operation}${x.variable ? `(${x.variable})` : ""}`).join(", ") || "None"}`,
-    `- Callouts: ${(data.callouts || []).join(", ") || "None"}`,
-    `- Dynamic Apex: ${(data.dynamicApex || []).join(", ") || "None"}`,
-    ""
-  ].join("\n"));
+  write(
+    path.join(legacyPackage, "06-data.md"),
+    [
+      `# Salesforce Data Impact — ${targetName}`,
+      "",
+      `- Objects: ${(data.objects || []).join(", ") || "None"}`,
+      `- Fields: ${(data.fields || []).map((x) => `${x.object}.${x.field}`).join(", ") || "None"}`,
+      `- DML: ${(data.dml || []).map((x) => `${x.operation}${x.variable ? `(${x.variable})` : ""}`).join(", ") || "None"}`,
+      `- Callouts: ${(data.callouts || []).join(", ") || "None"}`,
+      `- Dynamic Apex: ${(data.dynamicApex || []).join(", ") || "None"}`,
+      "",
+    ].join("\n"),
+  );
 
-  write(path.join(legacyPackage, "07-unresolved.md"), [
-    `# Unresolved References — ${targetName}`,
-    "",
-    ...((impact.unresolved || []).length
-      ? impact.unresolved.map(e => `- ${e.from} -> ${e.to} | ${e.type} | ${e.evidence || ""} | ${e.confidence || ""}`)
-      : ["- None detected."]),
-    ""
-  ].join("\n"));
+  write(
+    path.join(legacyPackage, "07-unresolved.md"),
+    [
+      `# Unresolved References — ${targetName}`,
+      "",
+      ...((impact.unresolved || []).length
+        ? impact.unresolved.map(
+            (e) =>
+              `- ${e.from} -> ${e.to} | ${e.type} | ${e.evidence || ""} | ${e.confidence || ""}`,
+          )
+        : ["- None detected."]),
+      "",
+    ].join("\n"),
+  );
 
-  write(path.join(legacyPackage, "08-context.json"), JSON.stringify(context, null, 2));
+  write(
+    path.join(legacyPackage, "08-context.json"),
+    JSON.stringify(context, null, 2),
+  );
 
   console.log("");
   console.log(`LLM context package generated: ${legacyPackage}`);
   console.log(`Primary file: ${path.join(legacyPackage, "LLM_CONTEXT.md")}`);
-  console.log(`Canonical intelligence: ${path.join(sourcePackage, "01-CONTEXT.json")}`);
+  console.log(
+    `Canonical intelligence: ${path.join(sourcePackage, "01-CONTEXT.json")}`,
+  );
   console.log("");
 }
-
 
 // ============================================================
 // LLM Investigation Context
@@ -6515,99 +7696,108 @@ function writeLlmContextPackage(targetName, sourceDir, options = {}) {
 
 function buildLlmInvestigationContext(componentName) {
   const safe = safeName(componentName);
-  const packageDir = path.join(
-    OUTPUT_DIR,
-    "component-context",
-    safe
-  );
+  const packageDir = path.join(OUTPUT_DIR, "component-context", safe);
 
-  const planPath = path.join(
-    packageDir,
-    "06-INVESTIGATION-PLAN.json"
-  );
+  const planPath = path.join(packageDir, "06-INVESTIGATION-PLAN.json");
 
   if (!fs.existsSync(planPath)) {
     throw new Error(
-      `Investigation plan not found for ${componentName}. Run component-context first.`
+      `Investigation plan not found for ${componentName}. Run component-context first.`,
     );
   }
 
-  const plan = JSON.parse(
-    fs.readFileSync(planPath, "utf8")
-  );
+  const plan = JSON.parse(fs.readFileSync(planPath, "utf8"));
 
-  const allTasks = Array.isArray(plan.tasks)
-    ? plan.tasks
-    : [];
+  const allTasks = Array.isArray(plan.tasks) ? plan.tasks : [];
 
   // Only forward tasks that genuinely require semantic reasoning.
   // Deterministic facts stay in the analyzer package and are not duplicated
   // into a generic repository-discovery prompt.
-  const tasks = allTasks.filter(task =>
-    task?.llmRequired === true ||
-    task?.evidence?.resolution === "LLM" ||
-    [
-      "security-semantics",
-      "dynamic-apex",
-      "dynamic-soql-security",
-      "unresolved-reference",
-      "async-semantics",
-      "frontend-contract",
-      "semantic-gap"
-    ].includes(task?.type)
+  const tasks = allTasks.filter(
+    (task) =>
+      task?.llmRequired === true ||
+      task?.evidence?.resolution === "LLM" ||
+      [
+        "security-semantics",
+        "dynamic-apex",
+        "dynamic-soql-security",
+        "unresolved-reference",
+        "async-semantics",
+        "frontend-contract",
+        "semantic-gap",
+      ].includes(task?.type),
   );
 
-  const securityPath = path.join(
-    packageDir,
-    "07-SECURITY-INTELLIGENCE.json"
-  );
+  const securityPath = path.join(packageDir, "07-SECURITY-INTELLIGENCE.json");
 
   let security = null;
 
   if (fs.existsSync(securityPath)) {
-    security = JSON.parse(
-      fs.readFileSync(securityPath, "utf8")
-    );
+    security = JSON.parse(fs.readFileSync(securityPath, "utf8"));
   }
 
-  const investigations = tasks.map(task => {
+  const rawInvestigations = tasks.map((task) => {
     const result = {
       id: task.id,
       type: task.type,
       priority: task.priority,
       question: task.question,
-      evidence: task.evidence || {}
+      evidence: task.evidence || {},
     };
 
-    if (
-      task.type === "security-semantics" &&
-      security
-    ) {
-      result.knownFacts =
-        security.facts || {};
+    if (task.type === "security-semantics" && security) {
+      result.knownFacts = security.facts || {};
 
-      result.knownUnknowns =
-        security.unknowns || [];
+      result.knownUnknowns = security.unknowns || [];
     }
 
     return result;
   });
 
+  const eligibilityResult = filterInvestigationTasks(rawInvestigations, {
+    knownFacts: security?.facts || {},
+    securityIntelligence: security
+  });
+
+  let d5DecisionContext = null;
+  const context01Path = path.join(packageDir, "01-CONTEXT.json");
+  if (fs.existsSync(context01Path)) {
+    try {
+      const c01 = JSON.parse(fs.readFileSync(context01Path, "utf8"));
+      d5DecisionContext = c01.architectureDecisionContext || c01;
+    } catch (_) {}
+  }
+
+  const investigations = minimizeInvestigationTasks(eligibilityResult.eligibleTasks, d5DecisionContext, {
+    componentName
+  });
+
+  // Evaluate Deterministic Architecture Change Gate (WAVE-E2)
+  const changeContext = {
+    component: plan.component || componentName,
+    hasChange: true,
+    affectedComponents: [plan.component || componentName],
+    hasDynamicApex: investigations.some(t => t.type === "dynamic-apex"),
+    hasDynamicSoql: investigations.some(t => t.type === "dynamic-soql-security"),
+    hasSemanticGap: investigations.some(t => t.type === "semantic-gap"),
+    unresolvedReferences: investigations.filter(t => t.type === "unresolved-reference").map(t => t.question || t.id),
+    unresolvedQuestions: investigations.map(t => t.question).filter(Boolean),
+    safetyEnvelope: plan.safetyEnvelope || null,
+    qualityGates: plan.qualityGates || null,
+    duplicateResponsibility: plan.duplicateResponsibility || null
+  };
+
+  const gateResult = evaluateArchitectureChangeGate(changeContext);
+
   const payload = {
     version: 1,
-    component:
-      plan.component ||
-      componentName,
+    component: plan.component || componentName,
 
-    purpose:
-      "semantic-investigation",
+    purpose: "semantic-investigation",
 
-    analyzerVersion:
-      plan.analyzerVersion ||
-      "13",
+    analyzerVersion: plan.analyzerVersion || "13",
 
-    deterministicContextAvailable:
-      true,
+    deterministicContextAvailable: true,
 
     structuralCoveragePercent:
       plan.semanticCoverage?.structuralCoveragePercent ??
@@ -6615,14 +7805,17 @@ function buildLlmInvestigationContext(componentName) {
       null,
 
     semanticCoveragePercent:
-      plan.semanticCoverage?.semanticCoveragePercent ??
-      null,
+      plan.semanticCoverage?.semanticCoveragePercent ?? null,
 
-    investigationRequired:
-      investigations.length > 0,
+    changeGate: gateResult.changeGate,
 
-    taskCount:
-      investigations.length,
+    eligibilitySummary: eligibilityResult.summary,
+
+    rejectedTasks: eligibilityResult.rejectedTasks,
+
+    investigationRequired: gateResult.changeGate.semanticInvestigationRequired && eligibilityResult.investigationRequired,
+
+    taskCount: investigations.length,
 
     investigations,
 
@@ -6632,20 +7825,27 @@ function buildLlmInvestigationContext(componentName) {
       doNotReconstructComponentContext: true,
       answerOnlyProvidedQuestions: true,
       distinguishFactsFromInference: true,
-      reportAdditionalUnknownsExplicitly: true
-    }
+      reportAdditionalUnknownsExplicitly: true,
+    },
   };
 
   fs.writeFileSync(
-    path.join(
-      packageDir,
-      "08-LLM-INVESTIGATION.json"
-    ),
-    JSON.stringify(
-      payload,
-      null,
-      2
-    )
+    path.join(packageDir, "08-LLM-INVESTIGATION.json"),
+    JSON.stringify(payload, null, 2),
+  );
+
+  const initialAccounting = evaluateLlmUsageAccounting({
+    candidates: rawInvestigations,
+    changeGate: gateResult,
+    eligibility: eligibilityResult,
+    minimization: investigations,
+    p4Result: null,
+    telemetry: { llmCalls: 0, cacheHits: 0, cacheMisses: 0 }
+  });
+
+  fs.writeFileSync(
+    path.join(packageDir, "09-LLM-USAGE-ACCOUNTING-SNAPSHOT.json"),
+    JSON.stringify(initialAccounting.accounting, null, 2),
   );
 
   const markdown = [
@@ -6660,16 +7860,13 @@ function buildLlmInvestigationContext(componentName) {
     "",
     "## Rules",
     ...Object.entries(payload.llmRules).map(
-      ([key, value]) =>
-        `- ${key}: ${value ? "true" : "false"}`
+      ([key, value]) => `- ${key}: ${value ? "true" : "false"}`,
     ),
-    ""
+    "",
   ];
 
   if (!investigations.length) {
-    markdown.push(
-      "No LLM investigation is required."
-    );
+    markdown.push("No LLM investigation is required.");
   } else {
     for (const task of investigations) {
       markdown.push(
@@ -6680,26 +7877,18 @@ function buildLlmInvestigationContext(componentName) {
         "",
         "Evidence:",
         "```json",
-        JSON.stringify(
-          task.evidence,
-          null,
-          2
-        ),
+        JSON.stringify(task.evidence, null, 2),
         "```",
-        ""
+        "",
       );
 
       if (task.knownFacts) {
         markdown.push(
           "Known deterministic facts:",
           "```json",
-          JSON.stringify(
-            task.knownFacts,
-            null,
-            2
-          ),
+          JSON.stringify(task.knownFacts, null, 2),
           "```",
-          ""
+          "",
         );
       }
 
@@ -6707,41 +7896,84 @@ function buildLlmInvestigationContext(componentName) {
         markdown.push(
           "Known unresolved semantics:",
           "```json",
-          JSON.stringify(
-            task.knownUnknowns,
-            null,
-            2
-          ),
+          JSON.stringify(task.knownUnknowns, null, 2),
           "```",
-          ""
+          "",
         );
       }
     }
   }
 
   fs.writeFileSync(
-    path.join(
-      packageDir,
-      "08-LLM-INVESTIGATION.md"
-    ),
-    markdown.join("\n")
+    path.join(packageDir, "08-LLM-INVESTIGATION.md"),
+    markdown.join("\n"),
   );
 
   console.log("");
-  console.log(
-    `LLM investigation context generated: ${packageDir}`
-  );
-  console.log(
-    `JSON: ${path.join(packageDir, "08-LLM-INVESTIGATION.json")}`
-  );
-  console.log(
-    `Tasks requiring investigation: ${investigations.length}`
-  );
+  console.log(`LLM investigation context generated: ${packageDir}`);
+  console.log(`JSON: ${path.join(packageDir, "08-LLM-INVESTIGATION.json")}`);
+  console.log(`Tasks requiring investigation: ${investigations.length}`);
   console.log("");
 
   return payload;
 }
 
+function runRoles(sourceDir, options = {}) {
+  const result = analyze(sourceDir, options, false);
+  const roleAnalysis = classifyAllRoles(
+    result.registry,
+    result.graph,
+    result.metricList,
+  );
+
+  console.log("");
+  console.log("Deterministic Component Roles Summary");
+  console.log("=====================================");
+  console.log("");
+  for (const [roleName, count] of Object.entries(roleAnalysis.roles)) {
+    console.log(`  ${roleName.padEnd(15)}: ${count}`);
+  }
+  console.log("");
+  console.log("Component Classifications:");
+  console.log("--------------------------");
+  for (const symbol of result.registry.symbols) {
+    const r = roleAnalysis.symbolRoles.get(symbol.id) || {
+      primary: "unknown",
+      confidence: "unknown",
+    };
+    console.log(
+      `  ${symbol.name.padEnd(35)} [${symbol.type.padEnd(10)}] -> Role: ${r.primary} (${r.confidence} confidence)`,
+    );
+  }
+  console.log("");
+  return roleAnalysis;
+}
+
+function runInvestigate(targetName, sourceDir, options = {}) {
+  writeComponentIntelligencePackage(targetName, sourceDir, options);
+  buildLlmInvestigationContext(targetName, sourceDir, options);
+  const semanticAdapter = require("./semantic-investigation-adapter.cjs");
+  const result = semanticAdapter.investigateComponentContext({
+    component: targetName,
+    contextDir: OUTPUT_DIR,
+    options,
+  });
+
+  console.log("");
+  console.log(`Semantic investigation summary for ${targetName}:`);
+  console.log(`Status: ${result.status}`);
+  console.log(`Executed LLM calls: ${result.executedLlmCalls}`);
+  console.log(`Cached LLM calls: ${result.cachedLlmCalls}`);
+  console.log(
+    `Task results: ${result.taskResults ? result.taskResults.length : 0}`,
+  );
+  if (result.contradictions && result.contradictions.length > 0) {
+    console.log(`Contradictions detected: ${result.contradictions.length}`);
+  }
+  console.log("");
+
+  return result;
+}
 
 // ============================================================
 // Main
@@ -6756,152 +7988,120 @@ if (require.main === module) {
     // API runner contract (the runner still invokes this CLI as a child process).
     activateOutputDir(args.command, args.target, args.phase, args.options);
 
-  if (args.command === "analyze") {
-    analyze(
-      args.sourceDir,
-      args.options
-    );
-  } else if (args.command === "create-batches") {
-    runCreateBatches(
-      args.sourceDir,
-      args.options
-    );
-  } else if (args.command === "llm-context-batch") {
-    runLlmContextBatch(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "impact"
-  ) {
-    runImpact(
-      args.target,
-      args.sourceDir,
-      args.options,
-      false
-    );
-  } else if (
-    args.command === "refactor-impact"
-  ) {
-    runImpact(
-      args.target,
-      args.sourceDir,
-      args.options,
-      true
-    );
-  } else if (
-    args.command === "search"
-  ) {
-    runSearch(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "llm-context"
-  ) {
-    writeLlmContextPackage(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "component-context"
-  ) {
-    writeComponentIntelligencePackage(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "llm-investigation-context"
-  ) {
-    buildLlmInvestigationContext(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "batch-context"
-  ) {
-    runBatchContext(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "phase-context"
-  ) {
-    writePhaseContext(
-      args.target,
-      args.phase,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "context-completeness"
-  ) {
-    writeContextCompleteness(
-      args.target,
-      args.sourceDir,
-      args.options
-    );
-  } else if (
-    args.command === "stats"
-  ) {
-    const result =
-      analyze(
+    if (args.command === "analyze") {
+      analyze(args.sourceDir, args.options);
+    } else if (args.command === "create-batches") {
+      runCreateBatches(args.sourceDir, args.options);
+    } else if (args.command === "llm-context-batch") {
+      runLlmContextBatch(args.target, args.sourceDir, args.options);
+      if (args.options.investigate) {
+        const semanticAdapter = require("./semantic-investigation-adapter.cjs");
+        semanticAdapter.investigateComponentContext({
+          component: args.target,
+          contextDir: OUTPUT_DIR,
+          options: args.options,
+        });
+      }
+    } else if (args.command === "investigate") {
+      runInvestigate(args.target, args.sourceDir, args.options);
+    } else if (args.command === "impact") {
+      runImpact(args.target, args.sourceDir, args.options, false);
+    } else if (args.command === "refactor-impact") {
+      runImpact(args.target, args.sourceDir, args.options, true);
+    } else if (args.command === "search") {
+      runSearch(args.target, args.sourceDir, args.options);
+    } else if (args.command === "llm-context") {
+      writeLlmContextPackage(args.target, args.sourceDir, args.options);
+    } else if (args.command === "component-context") {
+      writeComponentIntelligencePackage(
+        args.target,
         args.sourceDir,
         args.options,
-        false
+      );
+    } else if (args.command === "llm-investigation-context") {
+      buildLlmInvestigationContext(args.target, args.sourceDir, args.options);
+    } else if (args.command === "batch-context") {
+      runBatchContext(args.target, args.sourceDir, args.options);
+    } else if (args.command === "phase-context") {
+      writePhaseContext(args.target, args.phase, args.sourceDir, args.options);
+    } else if (args.command === "context-completeness") {
+      writeContextCompleteness(args.target, args.sourceDir, args.options);
+    } else if (args.command === "roles") {
+      runRoles(args.sourceDir, args.options);
+    } else if (args.command === "stats") {
+      const result = analyze(args.sourceDir, args.options, false);
+
+      const high = result.metricList.filter((x) => x.risk === "HIGH").length;
+
+      const medium = result.metricList.filter(
+        (x) => x.risk === "MEDIUM",
+      ).length;
+
+      const low = result.metricList.filter((x) => x.risk === "LOW").length;
+
+      const roleAnalysis = classifyAllRoles(
+        result.registry,
+        result.graph,
+        result.metricList,
+      );
+      const entryPointAnalysis = detectAllEntryPoints(
+        result.registry,
+        result.graph,
+        result.metricList,
+      );
+      const externalBoundaryAnalysis = detectAllExternalBoundaries(
+        result.registry,
+        result.graph,
+        result.metricList,
       );
 
-    const high =
-      result.metricList.filter(
-        x => x.risk === "HIGH"
-      ).length;
+      console.log(
+        JSON.stringify(
+          {
+            files: result.discovered.files.length,
+            apexClasses: result.discovered.apexClasses.length,
+            apexTriggers: result.discovered.apexTriggers.length,
+            lwc: result.discovered.lwcJs.length,
+            objects: result.discovered.objects.length,
+            fields: result.discovered.fields.length,
+            graphNodes: result.graph.nodes.length,
+            graphEdges: result.graph.edges.length,
+            circularGroups: result.cycles.length,
+            highRisk: high,
+            mediumRisk: medium,
+            lowRisk: low,
+            roles: roleAnalysis.roles,
+            entryPoints: entryPointAnalysis.summary,
+            externalBoundaries: externalBoundaryAnalysis.summary,
+          },
+          null,
+          2,
+        ),
+      );
 
-    const medium =
-      result.metricList.filter(
-        x => x.risk === "MEDIUM"
-      ).length;
-
-    const low =
-      result.metricList.filter(
-        x => x.risk === "LOW"
-      ).length;
-
-    console.log(
-      JSON.stringify(
-        {
-          files:
-            result.discovered.files.length,
-          apexClasses:
-            result.discovered.apexClasses.length,
-          apexTriggers:
-            result.discovered.apexTriggers.length,
-          lwc:
-            result.discovered.lwcJs.length,
-          objects:
-            result.discovered.objects.length,
-          fields:
-            result.discovered.fields.length,
-          graphNodes:
-            result.graph.nodes.length,
-          graphEdges:
-            result.graph.edges.length,
-          circularGroups:
-            result.cycles.length,
-          highRisk: high,
-          mediumRisk: medium,
-          lowRisk: low
-        },
-        null,
-        2
-      )
-    );
-  }
+      console.log(
+        JSON.stringify(
+          {
+            files: result.discovered.files.length,
+            apexClasses: result.discovered.apexClasses.length,
+            apexTriggers: result.discovered.apexTriggers.length,
+            lwc: result.discovered.lwcJs.length,
+            objects: result.discovered.objects.length,
+            fields: result.discovered.fields.length,
+            graphNodes: result.graph.nodes.length,
+            graphEdges: result.graph.edges.length,
+            circularGroups: result.cycles.length,
+            highRisk: high,
+            mediumRisk: medium,
+            lowRisk: low,
+            roles: roleAnalysis.roles,
+            layers: layerAnalysis.layers,
+          },
+          null,
+          2,
+        ),
+      );
+    }
   } catch (error) {
     if (OUTPUT_DIR) {
       const manifestPath = path.join(OUTPUT_DIR, "analysis-manifest.json");
@@ -6932,10 +8132,74 @@ if (typeof module !== "undefined" && module.exports) {
     createCanonicalRelationship,
     determineResolution,
     parseIdParts,
+    analyzeTestGap,
+    computeTestGapSummary,
     analyze,
     getAnalysis,
     buildGraph,
     buildComponentIntelligence,
-    impactFor
+    impactFor,
+    findPaths,
+    analyzeComponentPaths,
+    analyzeSecurityBoundaries,
+    analyzeAllSecurityBoundaries,
+    detectComponentSmells,
+    detectAllSmells,
+    SMELL_THRESHOLDS,
+    SMELL_TYPES,
+    simulateChange,
+    classifyComponentBusinessCriticality,
+    classifyAllBusinessCriticality,
+    classifyComponentDomain,
+    classifyAllDomains,
+    buildComponentArchitectureProfile,
+    buildRepositoryArchitectureProfile,
+    classifyComponentSafetyEnvelope,
+    classifyAllSafetyEnvelopes,
+    SAFETY_CLASSIFICATIONS,
+    SAFETY_THRESHOLDS,
+    inferComponentDomain,
+    buildSystemMap,
+    buildDomainMap,
+    buildComponentMap,
+    buildImpactMap,
+    buildMultiLevelArchitectureMaps,
+    evaluateArchitectureHealth,
+    evaluateComponentArchitectureHealth,
+    detectComponentArchitectureDebt,
+    detectAllArchitectureDebt,
+    DEBT_CATEGORIES,
+    DEBT_SEVERITIES,
+    determineRefactoringSequence,
+    buildPrerequisiteGraph,
+    classifySafetyEnvelope,
+    rankCandidates,
+    evaluateQualityGates,
+    evaluateComponentQualityGates,
+    DEFAULT_QUALITY_GATE_CONFIG,
+    GATE_RESULTS,
+    GATE_SEVERITIES,
+    detectComponentDuplicateResponsibility,
+    detectAllDuplicateResponsibilities,
+    DUPLICATION_CLASSIFICATIONS,
+    createCanonicalArchitectureSnapshot,
+    computeSnapshotIdentity,
+    validateArchitectureSnapshot,
+    SNAPSHOT_SCHEMA_VERSION,
+    evaluateArchitectureChangeGate,
+    GATE_DECISIONS,
+    evaluateTaskEligibility,
+    filterInvestigationTasks,
+    ELIGIBILITY_DECISIONS,
+    evaluateArchitectureDecisionContext,
+    buildComponentDecisionContext,
+    buildChangeDecisionContext,
+    buildRepositoryDecisionContext,
+    minimizeInvestigationContext,
+    minimizeInvestigationTasks,
+    CONTEXT_VERSION: MINIMIZER_CONTEXT_VERSION,
+    evaluateLlmUsageAccounting,
+    ACCOUNTING_VERSION,
+    normalizeLwcName
   };
 }

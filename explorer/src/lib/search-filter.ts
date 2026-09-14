@@ -1,9 +1,18 @@
-import { ExplorerNode, ExplorerEdge, ExplorerRiskLevel, ExplorerNodeType } from '../types/explorer';
+import {
+  ExplorerNode,
+  ExplorerEdge,
+  ExplorerRiskLevel,
+  ExplorerNodeType,
+} from "../types/explorer";
 
 export interface SearchFilterState {
   searchQuery: string;
-  typeFilter: ExplorerNodeType | '';
-  riskFilter: ExplorerRiskLevel | '';
+  typeFilter: ExplorerNodeType | "";
+  riskFilter: ExplorerRiskLevel | "";
+  hasCallouts?: boolean;
+  withoutSharing?: boolean;
+  hideTests?: boolean;
+  hasAsyncPatterns?: boolean;
 }
 
 export interface SearchResult {
@@ -18,23 +27,28 @@ export interface FilteredGraphData {
   matchingNodeIds: Set<string>;
 }
 
-function getSearchFields(node: ExplorerNode): Array<{ field: string; value: string }> {
+function getSearchFields(
+  node: ExplorerNode,
+): Array<{ field: string; value: string }> {
   return [
-    { field: 'displayName', value: node.displayName.toLowerCase() },
-    { field: 'id', value: node.id.toLowerCase() },
-    { field: 'file', value: node.file.toLowerCase() },
-    { field: 'type', value: node.type.toLowerCase() },
-    { field: 'risk', value: node.risk.toLowerCase() },
-    { field: 'name', value: node.id.includes(':') ? node.id.split(':')[1].toLowerCase() : '' },
+    { field: "displayName", value: node.displayName.toLowerCase() },
+    { field: "id", value: node.id.toLowerCase() },
+    { field: "file", value: node.file.toLowerCase() },
+    { field: "type", value: node.type.toLowerCase() },
+    { field: "risk", value: node.risk.toLowerCase() },
+    {
+      field: "name",
+      value: node.id.includes(":") ? node.id.split(":")[1].toLowerCase() : "",
+    },
   ];
 }
 
 export function searchNodes(
   nodes: ExplorerNode[],
   query: string,
-  exact: boolean = false
+  exact: boolean = false,
 ): SearchResult[] {
-  if (!query || query.trim() === '') {
+  if (!query || query.trim() === "") {
     return [];
   }
 
@@ -49,15 +63,15 @@ export function searchNodes(
       const { field, value } = searchFields[j];
       if (!value) continue;
 
-      const isMatch = exact 
-        ? value === normalizedQuery 
+      const isMatch = exact
+        ? value === normalizedQuery
         : value.includes(normalizedQuery);
 
       if (isMatch) {
         results.push({
           node,
           matchField: field,
-          matchValue: query.trim()
+          matchValue: query.trim(),
         });
         break;
       }
@@ -69,7 +83,7 @@ export function searchNodes(
 
 export function filterNodesByType(
   nodes: ExplorerNode[],
-  type: ExplorerNodeType | ''
+  type: ExplorerNodeType | "",
 ): ExplorerNode[] {
   if (!type) {
     return nodes;
@@ -85,7 +99,7 @@ export function filterNodesByType(
 
 export function filterNodesByRisk(
   nodes: ExplorerNode[],
-  risk: ExplorerRiskLevel | ''
+  risk: ExplorerRiskLevel | "",
 ): ExplorerNode[] {
   if (!risk) {
     return nodes;
@@ -101,7 +115,7 @@ export function filterNodesByRisk(
 
 export function filterEdgesByNodes(
   edges: ExplorerEdge[],
-  matchingNodeIds: Set<string>
+  matchingNodeIds: Set<string>,
 ): ExplorerEdge[] {
   const result: ExplorerEdge[] = [];
   for (let i = 0; i < edges.length; i++) {
@@ -116,7 +130,7 @@ export function filterEdgesByNodes(
 export function applyFilters(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
-  filterState: SearchFilterState
+  filterState: SearchFilterState,
 ): FilteredGraphData {
   let filteredNodes = nodes;
 
@@ -127,10 +141,31 @@ export function applyFilters(
   if (filterState.riskFilter) {
     filteredNodes = filterNodesByRisk(filteredNodes, filterState.riskFilter);
   }
+  if (filterState.hasCallouts) {
+    filteredNodes = filteredNodes.filter(
+      (n) => (n.behavior?.calloutCount ?? 0) > 0,
+    );
+  }
+
+  if (filterState.withoutSharing) {
+    filteredNodes = filteredNodes.filter(
+      (n) => n.behavior?.sharing === "without sharing",
+    );
+  }
+
+  if (filterState.hideTests) {
+    filteredNodes = filteredNodes.filter((n) => !n.behavior?.isTest);
+  }
+
+  if (filterState.hasAsyncPatterns) {
+    filteredNodes = filteredNodes.filter(
+      (n) => (n.behavior?.asyncPatterns?.length ?? 0) > 0,
+    );
+  }
 
   if (filterState.searchQuery) {
     const searchResults = searchNodes(filteredNodes, filterState.searchQuery);
-    const matchedIds = new Set(searchResults.map(r => r.node.id));
+    const matchedIds = new Set(searchResults.map((r) => r.node.id));
     const searchMatchedNodes: ExplorerNode[] = [];
     for (let i = 0; i < filteredNodes.length; i++) {
       if (matchedIds.has(filteredNodes[i].id)) {
@@ -150,12 +185,20 @@ export function applyFilters(
   return {
     nodes: filteredNodes,
     edges: filteredEdges,
-    matchingNodeIds
+    matchingNodeIds,
   };
 }
 
 export function hasActiveFilters(filterState: SearchFilterState): boolean {
-  return !!(filterState.searchQuery || filterState.typeFilter || filterState.riskFilter);
+  return !!(
+    filterState.searchQuery ||
+    filterState.typeFilter ||
+    filterState.riskFilter ||
+    filterState.hasCallouts ||
+    filterState.withoutSharing ||
+    filterState.hideTests ||
+    filterState.hasAsyncPatterns
+  );
 }
 
 export function getUniqueNodeTypes(nodes: ExplorerNode[]): ExplorerNodeType[] {
@@ -166,7 +209,9 @@ export function getUniqueNodeTypes(nodes: ExplorerNode[]): ExplorerNodeType[] {
   return Array.from(types).sort();
 }
 
-export function getAvailableRiskLevels(nodes: ExplorerNode[]): ExplorerRiskLevel[] {
+export function getAvailableRiskLevels(
+  nodes: ExplorerNode[],
+): ExplorerRiskLevel[] {
   const risks = new Set<ExplorerRiskLevel>();
   for (let i = 0; i < nodes.length; i++) {
     risks.add(nodes[i].risk);
@@ -176,8 +221,12 @@ export function getAvailableRiskLevels(nodes: ExplorerNode[]): ExplorerRiskLevel
 
 export function createEmptyFilterState(): SearchFilterState {
   return {
-    searchQuery: '',
-    typeFilter: '',
-    riskFilter: ''
+    searchQuery: "",
+    typeFilter: "",
+    riskFilter: "",
+    hasCallouts: false,
+    withoutSharing: false,
+    hideTests: false,
+    hasAsyncPatterns: false,
   };
 }

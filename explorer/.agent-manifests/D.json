@@ -1,0 +1,41 @@
+{
+  "agent": "D",
+  "provides": {
+    "hooks": [
+      { "name": "useExplorerData", "path": "src/hooks/useExplorerData.ts" },
+      { "name": "useGraphSelection", "path": "src/hooks/useGraphSelection.ts" },
+      { "name": "useViewState", "path": "src/hooks/useViewState.ts" }
+    ],
+    "context": [
+      { "name": "SelectionProvider", "path": "src/context/SelectionContext.tsx" },
+      { "name": "useSelection", "path": "src/context/SelectionContext.tsx" }
+    ],
+    "components": [
+      { "name": "ErrorBoundary", "path": "src/components/ErrorBoundary.tsx" }
+    ],
+    "slots": [
+      {
+        "name": "GraphSlot",
+        "dataSlot": "graph",
+        "expects": "GraphView from Agent A"
+      },
+      {
+        "name": "SidebarSlot",
+        "dataSlot": "sidebar",
+        "expects": "Sidebar from Agent B"
+      },
+      {
+        "name": "DetailsSlot",
+        "dataSlot": "details",
+        "expects": "DetailsPanel from Agent B"
+      },
+      {
+        "name": "FindingsSlot",
+        "dataSlot": "findings",
+        "expects": "FindingsPanel from Agent C, shown when viewMode === 'findings'"
+      }
+    ]
+  },
+  "cssOwner": "src/index.css",
+  "notes": "Slots must be replaced by integration agent using A/B/C manifests."
+}

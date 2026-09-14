@@ -117,3 +117,16 @@ The stable contract is defined in `explorer-contract.ts` and detailed in `EXPLOR
 * **Change Simulator:** All simulator outputs represent an **Architectural Impact Estimate** based on static graph reachability and do not guarantee runtime execution or compile-time outcome.
 * **Refactoring Readiness:** Readiness flags provide decision support indicators; human review remains mandatory before refactoring.
 * **Graph Performance:** WebGL/Canvas rendering via Cytoscape supports graphs up to several thousand nodes efficiently. Extremely large repositories (>5,000 nodes) may experience rendering delays during initial layout.
+
+---
+
+## 6. Canonical Architecture Snapshot (`architecture-snapshot.json`)
+
+The Canonical Architecture Snapshot (WAVE-E1) provides a deterministic, persisted representation of the repository's architectural state generated during analysis.
+
+### Features & Guarantees:
+* **Purpose:** Stable, authoritative input for architecture diffing, change gating, investigation eligibility, LLM-context minimization, and regression comparison workflows.
+* **Schema Versioning:** Uses explicit schema versioning (`schemaVersion: 5`).
+* **Snapshot Identity:** Computes a stable `snapshotIdentity` (`arch-snap-sha256:...`) using SHA-256 over normalized logical architecture state. Execution metadata (`generatedAt`, file timestamps, absolute paths) is excluded from identity calculation to ensure identical analysis inputs produce equivalent identities.
+* **Deterministic Authority:** 0 LLM runtime calls or dependencies. Preserves `UNKNOWN` classifications when evidence is absent and enforces deterministic facts over conflicting semantic claims.
+* **Persistence Location:** Saved as `architecture-snapshot.json` in the active output directory (`analyze/architecture-snapshot.json` or target output folder) and registered in `analysis-manifest.json`.

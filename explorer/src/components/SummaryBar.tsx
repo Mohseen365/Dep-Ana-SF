@@ -11,6 +11,7 @@ interface SummaryBarProps {
   onCyclesClick?: () => void;
   onUnresolvedClick?: () => void;
   activeDiagnosticTab?: 'cycles' | 'unresolved' | 'none';
+  sidebarCollapsed?: boolean;
 }
 
 export const SummaryBar: React.FC<SummaryBarProps> = ({
@@ -20,9 +21,11 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
   onRiskFilterChange,
   onCyclesClick,
   onUnresolvedClick,
-  activeDiagnosticTab = 'none'
+  activeDiagnosticTab = 'none',
+  sidebarCollapsed = true
 }) => {
   const [showHealthModal, setShowHealthModal] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const health = useMemo(() => {
     return calculateArchitectureHealth(data);
@@ -63,7 +66,17 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
 
   return (
     <>
-      <div className="summary-bar">
+      <div className={`summary-bar-container ${collapsed ? 'collapsed' : ''} ${!sidebarCollapsed ? 'sidebar-open' : ''}`}>
+        <button
+          className="summary-collapse-toggle"
+          onClick={() => setCollapsed(prev => !prev)}
+          title={collapsed ? "Expand Summary" : "Collapse Summary"}
+          aria-label="Toggle Summary View"
+        >
+          ▾ {collapsed && <span className="summary-chip-label">Summary ({summary.nodeCount} nodes)</span>}
+        </button>
+        {!collapsed && (
+          <div className="summary-bar">
         <div
           className="summary-item health-summary-trigger summary-clickable"
           onClick={() => setShowHealthModal(true)}
@@ -192,6 +205,8 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
             {summary.unresolvedCount}
           </span>
         </div>
+      </div>
+        )}
       </div>
 
       {showHealthModal && (

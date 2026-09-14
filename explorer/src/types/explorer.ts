@@ -80,7 +80,7 @@ export interface ExplorerNode {
     isHighRisk: boolean;
     hasCycles: boolean;
     hasUnresolved: boolean;
-    testCoverageStatus: "COVERED" | "NO_TESTS" | "UNTESTED";
+    testCoverageStatus: "COVERED" | "NO_TESTS" | "UNTESTED" | "AMBIGUOUS";
   };
 }
 
@@ -106,8 +106,7 @@ export type ExplorerRelationshipType =
   | "visualforce-controller"
   | "test-reference"
   | "event-publisher"
-  | "unknown"
-  | string;
+  | "unknown";
 
 export interface ExplorerEdgeCanonical {
   source: {
@@ -122,7 +121,7 @@ export interface ExplorerEdgeCanonical {
   };
   relationship: {
     type: ExplorerRelationshipType;
-    resolution: "EXACT" | "INFERRED" | "UNRESOLVED";
+    resolution: "EXACT" | "INFERRED" | "HEURISTIC" | "UNRESOLVED";
   };
   location: {
     line?: number | null;
@@ -138,8 +137,8 @@ export interface ExplorerEdge {
   method: string | null;
   evidence: string;
   unresolved: boolean;
-  resolutionClassification: string;
-  resolutionStrategy: string;
+  resolutionClassification: "RESOLVED_LOCAL" | "UNKNOWN";
+  resolutionStrategy: "EXACT" | "HEURISTIC" | "LLM";
   confidence: string;
   line: number | null;
   column: number | null;

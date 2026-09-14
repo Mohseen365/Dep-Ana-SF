@@ -1,59 +1,48 @@
 import { describe, it, expect } from 'vitest';
 import { getArchitecturalHotspots, sortNodesDeterministically } from './hotspots';
-import { ExplorerNode, ExplorerCycleGroup } from '../types/explorer';
+import { createSampleNode } from '../test/fixtures/sample-nodes';
+import { sampleCycles } from '../test/fixtures/sample-cycles';
+import type { ExplorerNode, ExplorerCycleGroup } from '../types/explorer';
 
 describe('getArchitecturalHotspots', () => {
   const nodes: ExplorerNode[] = [
-    {
+    createSampleNode({
       id: 'ApexClass:CommonSelector',
       displayName: 'CommonSelector',
-      type: 'ApexClass',
-      file: 'force-app/main/default/classes/CommonSelector.cls',
       metrics: { fanIn: 82, fanOut: 5, coupling: 87, unresolved: 0, score: 20 },
       risk: 'HIGH',
       riskReasons: ['high fan-in'],
-      behavior: { isTest: false, publicContractsCount: 5, asyncPatterns: [], securitySignalsCount: 0, queryCount: 10, dmlCount: 0, calloutCount: 0 },
-      refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
-    },
-    {
+      refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    }),
+    createSampleNode({
       id: 'ApexClass:UserService',
       displayName: 'UserService',
-      type: 'ApexClass',
-      file: 'force-app/main/default/classes/UserService.cls',
       metrics: { fanIn: 67, fanOut: 10, coupling: 77, unresolved: 0, score: 18 },
       risk: 'HIGH',
       riskReasons: ['high fan-in'],
-      behavior: { isTest: false, publicContractsCount: 3, asyncPatterns: [], securitySignalsCount: 0, queryCount: 2, dmlCount: 1, calloutCount: 0 },
-      refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
-    },
-    {
+      refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    }),
+    createSampleNode({
       id: 'ApexClass:ApprovalService',
       displayName: 'ApprovalService',
-      type: 'ApexClass',
-      file: 'force-app/main/default/classes/ApprovalService.cls',
       metrics: { fanIn: 3, fanOut: 4, coupling: 7, unresolved: 1, score: 8 },
       risk: 'HIGH',
       riskReasons: ['participates in cycle'],
-      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 1, dmlCount: 0, calloutCount: 0 },
-      refactoringReadiness: { isHighRisk: true, hasCycles: true, hasUnresolved: true, testCoverageStatus: 'COVERED' }
-    },
-    {
+      refactoringReadiness: { isHighRisk: true, hasCycles: true, hasUnresolved: true, testCoverageStatus: 'COVERED' },
+    }),
+    createSampleNode({
       id: 'ApexClass:LowRiskHelper',
       displayName: 'LowRiskHelper',
-      type: 'ApexClass',
-      file: 'force-app/main/default/classes/LowRiskHelper.cls',
       metrics: { fanIn: 1, fanOut: 1, coupling: 2, unresolved: 0, score: 1 },
       risk: 'LOW',
       riskReasons: [],
-      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
-      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
-    }
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    }),
   ];
 
   const cycles: ExplorerCycleGroup[] = [
     {
-      id: 'cycle-1',
-      size: 2,
+      ...sampleCycles[0],
       nodes: ['ApexClass:ApprovalService', 'ApexClass:ApprovalHelper']
     }
   ];

@@ -1,0 +1,2546 @@
+{
+  "schemaVersion": 4,
+  "analyzerVersion": "13",
+  "analyzer": "Salesforce Dependency Analyzer v13",
+  "generatedAt": "2026-09-13T15:12:27.563Z",
+  "sourceDirectory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+  "inventory": {
+    "files": 9,
+    "apexClasses": 9,
+    "apexTriggers": 0,
+    "lwcJs": 0,
+    "lwcHtml": 0,
+    "visualforce": 0,
+    "flows": 0,
+    "objects": 0,
+    "fields": 0
+  },
+  "discovered": {
+    "sourceDir": "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+    "files": [
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls"
+    ],
+    "apexClasses": [
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
+      "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls"
+    ],
+    "apexTriggers": [],
+    "apexClassMeta": [],
+    "triggerMeta": [],
+    "lwcJs": [],
+    "lwcHtml": [],
+    "lwcCss": [],
+    "lwcMeta": [],
+    "aura": [],
+    "visualforce": [],
+    "flows": [],
+    "objects": [],
+    "fields": [],
+    "triggers": []
+  },
+  "fileState": [
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "size": 204,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "size": 322,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "size": 204,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "size": 425,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "size": 93,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "size": 93,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
+      "size": 136,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
+      "size": 111,
+      "mtimeMs": 1789311976227.6816
+    },
+    {
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
+      "size": 70,
+      "mtimeMs": 1789311976227.6816
+    }
+  ],
+  "options": {
+    "maxGraphEdges": 10000
+  },
+  "testGapSummary": {
+    "totalComponents": 9,
+    "coveredCount": 0,
+    "likelyCoveredCount": 0,
+    "noTestEvidenceCount": 9,
+    "knownCoverageFailureCount": 0,
+    "ambiguousTestCount": 0,
+    "testComponentCount": 0,
+    "componentsWithTestGap": 9
+  },
+  "registry": [
+    {
+      "id": "ApexClass:BouquetOrderController",
+      "type": "ApexClass",
+      "name": "BouquetOrderController",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "parsed": {
+        "id": "ApexClass:BouquetOrderController",
+        "type": "ApexClass",
+        "name": "BouquetOrderController",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+        "lines": 7,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "submitOrder",
+            "returnType": "void",
+            "parameters": "Id userId",
+            "visibility": "private",
+            "modifiers": [
+              "public"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 42,
+            "startLine": 2,
+            "endLine": 7,
+            "endOffset": 204,
+            "dependencies": [
+              {
+                "to": "BouquetOrderFormService",
+                "type": "instantiation",
+                "method": null,
+                "line": 3,
+                "confidence": "high",
+                "evidence": "new BouquetOrderFormService()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderController",
+                    "method": "submitOrder"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderFormService",
+                    "method": null
+                  },
+                  "relationship": {
+                    "type": "instantiation",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 47
+                  }
+                }
+              },
+              {
+                "to": "BouquetOrderFormService",
+                "type": "type-reference",
+                "method": null,
+                "line": 3,
+                "confidence": "medium",
+                "evidence": "BouquetOrderFormService",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderController",
+                    "method": "submitOrder"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderFormService",
+                    "method": null
+                  },
+                  "relationship": {
+                    "type": "type-reference",
+                    "resolution": "INFERRED"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 9
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 2,
+            "lineStart": 2,
+            "lineEnd": 5,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:BouquetOrderController",
+            "toName": "BouquetOrderFormService",
+            "type": "instantiation",
+            "evidence": "new BouquetOrderFormService()",
+            "line": 3,
+            "column": 47,
+            "methodOwner": "submitOrder",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderController",
+                "method": "submitOrder"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "BouquetOrderFormService",
+                "method": null
+              },
+              "relationship": {
+                "type": "instantiation",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 3,
+                "column": 47
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderController",
+            "toName": "BouquetOrderFormService",
+            "type": "type-reference",
+            "evidence": "BouquetOrderFormService",
+            "line": 3,
+            "column": 9,
+            "methodOwner": "submitOrder",
+            "confidence": "medium",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderController",
+                "method": "submitOrder"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "BouquetOrderFormService",
+                "method": null
+              },
+              "relationship": {
+                "type": "type-reference",
+                "resolution": "INFERRED"
+              },
+              "location": {
+                "line": 3,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls"
+          }
+        ],
+        "sourceHash": "bfabd734a083af0fe302dda588f1a9eb2b2c50e3d71e874ac7699c1f19890395",
+        "lineCount": 7,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 204,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService",
+      "type": "ApexClass",
+      "name": "BouquetOrderFormService",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "parsed": {
+        "id": "ApexClass:BouquetOrderFormService",
+        "type": "ApexClass",
+        "name": "BouquetOrderFormService",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+        "lines": 12,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "someMethod",
+            "returnType": "Id",
+            "parameters": "Id userId",
+            "visibility": "private",
+            "modifiers": [
+              "public"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 43,
+            "startLine": 2,
+            "endLine": 5,
+            "endOffset": 153,
+            "dependencies": [
+              {
+                "to": "BouquetOrderSelector",
+                "type": "method-call",
+                "method": "getContactIdByUserId",
+                "line": 3,
+                "confidence": "high",
+                "evidence": "BouquetOrderSelector.getContactIdByUserId()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderFormService",
+                    "method": "someMethod"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderSelector",
+                    "method": "getContactIdByUserId"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 16
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 2,
+            "lineEnd": 4,
+            "annotations": []
+          },
+          {
+            "name": "secondMethod",
+            "returnType": "void",
+            "parameters": "Id accountId",
+            "visibility": "private",
+            "modifiers": [
+              "public"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 154,
+            "startLine": 6,
+            "endLine": 12,
+            "endOffset": 322,
+            "dependencies": [
+              {
+                "to": "HelperService",
+                "type": "method-call",
+                "method": "resolve",
+                "line": 7,
+                "confidence": "high",
+                "evidence": "HelperService.resolve()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderFormService",
+                    "method": "secondMethod"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "HelperService",
+                    "method": "resolve"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 7,
+                    "column": 9
+                  }
+                }
+              },
+              {
+                "to": "MultiCallService",
+                "type": "method-call",
+                "method": "firstCall",
+                "line": 8,
+                "confidence": "high",
+                "evidence": "MultiCallService.firstCall()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderFormService",
+                    "method": "secondMethod"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "MultiCallService",
+                    "method": "firstCall"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 8,
+                    "column": 9
+                  }
+                }
+              },
+              {
+                "to": "MultiCallService",
+                "type": "method-call",
+                "method": "secondCall",
+                "line": 9,
+                "confidence": "high",
+                "evidence": "MultiCallService.secondCall()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderFormService",
+                    "method": "secondMethod"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "MultiCallService",
+                    "method": "secondCall"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 9,
+                    "column": 9
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 3,
+            "lineStart": 6,
+            "lineEnd": 10,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:BouquetOrderFormService",
+            "toName": "BouquetOrderSelector",
+            "type": "method-call",
+            "method": "getContactIdByUserId",
+            "evidence": "BouquetOrderSelector.getContactIdByUserId()",
+            "line": 3,
+            "column": 16,
+            "methodOwner": "someMethod",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderFormService",
+                "method": "someMethod"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "BouquetOrderSelector",
+                "method": "getContactIdByUserId"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 3,
+                "column": 16
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderFormService",
+            "toName": "HelperService",
+            "type": "method-call",
+            "method": "resolve",
+            "evidence": "HelperService.resolve()",
+            "line": 7,
+            "column": 9,
+            "methodOwner": "secondMethod",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderFormService",
+                "method": "secondMethod"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "HelperService",
+                "method": "resolve"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 7,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderFormService",
+            "toName": "MultiCallService",
+            "type": "method-call",
+            "method": "firstCall",
+            "evidence": "MultiCallService.firstCall()",
+            "line": 8,
+            "column": 9,
+            "methodOwner": "secondMethod",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderFormService",
+                "method": "secondMethod"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "MultiCallService",
+                "method": "firstCall"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 8,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderFormService",
+            "toName": "MultiCallService",
+            "type": "method-call",
+            "method": "secondCall",
+            "evidence": "MultiCallService.secondCall()",
+            "line": 9,
+            "column": 9,
+            "methodOwner": "secondMethod",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderFormService",
+                "method": "secondMethod"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "MultiCallService",
+                "method": "secondCall"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 9,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls"
+          }
+        ],
+        "sourceHash": "8d464ee68d7b04a9626b17c6f9ab7400e11f18692364efc0fa6ee538fcb94955",
+        "lineCount": 12,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 322,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BouquetOrderPageHandler",
+      "type": "ApexClass",
+      "name": "BouquetOrderPageHandler",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "parsed": {
+        "id": "ApexClass:BouquetOrderPageHandler",
+        "type": "ApexClass",
+        "name": "BouquetOrderPageHandler",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+        "lines": 7,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "handleRequest",
+            "returnType": "void",
+            "parameters": "Id userId",
+            "visibility": "private",
+            "modifiers": [
+              "public"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 43,
+            "startLine": 2,
+            "endLine": 7,
+            "endOffset": 204,
+            "dependencies": [
+              {
+                "to": "BouquetOrderController",
+                "type": "instantiation",
+                "method": null,
+                "line": 3,
+                "confidence": "high",
+                "evidence": "new BouquetOrderController()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderPageHandler",
+                    "method": "handleRequest"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderController",
+                    "method": null
+                  },
+                  "relationship": {
+                    "type": "instantiation",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 45
+                  }
+                }
+              },
+              {
+                "to": "BouquetOrderController",
+                "type": "type-reference",
+                "method": null,
+                "line": 3,
+                "confidence": "medium",
+                "evidence": "BouquetOrderController",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderPageHandler",
+                    "method": "handleRequest"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderController",
+                    "method": null
+                  },
+                  "relationship": {
+                    "type": "type-reference",
+                    "resolution": "INFERRED"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 9
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 2,
+            "lineStart": 2,
+            "lineEnd": 5,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:BouquetOrderPageHandler",
+            "toName": "BouquetOrderController",
+            "type": "instantiation",
+            "evidence": "new BouquetOrderController()",
+            "line": 3,
+            "column": 45,
+            "methodOwner": "handleRequest",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderPageHandler",
+                "method": "handleRequest"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "BouquetOrderController",
+                "method": null
+              },
+              "relationship": {
+                "type": "instantiation",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 3,
+                "column": 45
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderPageHandler",
+            "toName": "BouquetOrderController",
+            "type": "type-reference",
+            "evidence": "BouquetOrderController",
+            "line": 3,
+            "column": 9,
+            "methodOwner": "handleRequest",
+            "confidence": "medium",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderPageHandler",
+                "method": "handleRequest"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "BouquetOrderController",
+                "method": null
+              },
+              "relationship": {
+                "type": "type-reference",
+                "resolution": "INFERRED"
+              },
+              "location": {
+                "line": 3,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls"
+          }
+        ],
+        "sourceHash": "6a44a800c3cc03f73c1c277c49dc0242f6e2665a5ae48dc5679ebe941a3d42e0",
+        "lineCount": 7,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 204,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector",
+      "type": "ApexClass",
+      "name": "BouquetOrderSelector",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "parsed": {
+        "id": "ApexClass:BouquetOrderSelector",
+        "type": "ApexClass",
+        "name": "BouquetOrderSelector",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+        "lines": 18,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "getContactIdByUserId",
+            "returnType": "Id",
+            "parameters": "Id userId",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 40,
+            "startLine": 2,
+            "endLine": 5,
+            "endOffset": 147,
+            "dependencies": [
+              {
+                "to": "HelperService",
+                "type": "method-call",
+                "method": "resolve",
+                "line": 3,
+                "confidence": "high",
+                "evidence": "HelperService.resolve()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderSelector",
+                    "method": "getContactIdByUserId"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "HelperService",
+                    "method": "resolve"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 16
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 2,
+            "lineEnd": 4,
+            "annotations": []
+          },
+          {
+            "name": "getAccounts",
+            "returnType": "List<Account>",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 148,
+            "startLine": 6,
+            "endLine": 9,
+            "endOffset": 243,
+            "dependencies": [
+              {
+                "to": "Account",
+                "type": "generic-type",
+                "method": null,
+                "line": 6,
+                "confidence": "medium",
+                "evidence": "<Account>",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderSelector",
+                    "method": "getAccounts"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "Account",
+                    "method": null
+                  },
+                  "relationship": {
+                    "type": "generic-type",
+                    "resolution": "INFERRED"
+                  },
+                  "location": {
+                    "line": 6,
+                    "column": 23
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 6,
+            "lineEnd": 8,
+            "annotations": []
+          },
+          {
+            "name": "getContacts",
+            "returnType": "List<Contact>",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 244,
+            "startLine": 10,
+            "endLine": 13,
+            "endOffset": 339,
+            "dependencies": [
+              {
+                "to": "Contact",
+                "type": "generic-type",
+                "method": null,
+                "line": 10,
+                "confidence": "medium",
+                "evidence": "<Contact>",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "BouquetOrderSelector",
+                    "method": "getContacts"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "Contact",
+                    "method": null
+                  },
+                  "relationship": {
+                    "type": "generic-type",
+                    "resolution": "INFERRED"
+                  },
+                  "location": {
+                    "line": 10,
+                    "column": 23
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 10,
+            "lineEnd": 12,
+            "annotations": []
+          },
+          {
+            "name": "getOrders",
+            "returnType": "List<Case>",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 340,
+            "startLine": 14,
+            "endLine": 18,
+            "endOffset": 425,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 14,
+            "lineEnd": 16,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:BouquetOrderSelector",
+            "toName": "HelperService",
+            "type": "method-call",
+            "method": "resolve",
+            "evidence": "HelperService.resolve()",
+            "line": 3,
+            "column": 16,
+            "methodOwner": "getContactIdByUserId",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderSelector",
+                "method": "getContactIdByUserId"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "HelperService",
+                "method": "resolve"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 3,
+                "column": 16
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderSelector",
+            "toName": "Account",
+            "type": "generic-type",
+            "evidence": "<Account>",
+            "line": 6,
+            "column": 23,
+            "methodOwner": null,
+            "confidence": "medium",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderSelector",
+                "method": "getAccounts"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "Account",
+                "method": null
+              },
+              "relationship": {
+                "type": "generic-type",
+                "resolution": "INFERRED"
+              },
+              "location": {
+                "line": 6,
+                "column": 23
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls"
+          },
+          {
+            "from": "ApexClass:BouquetOrderSelector",
+            "toName": "Contact",
+            "type": "generic-type",
+            "evidence": "<Contact>",
+            "line": 10,
+            "column": 23,
+            "methodOwner": null,
+            "confidence": "medium",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "BouquetOrderSelector",
+                "method": "getContacts"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "Contact",
+                "method": null
+              },
+              "relationship": {
+                "type": "generic-type",
+                "resolution": "INFERRED"
+              },
+              "location": {
+                "line": 10,
+                "column": 23
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls"
+          }
+        ],
+        "sourceHash": "bab26c28f4e41d24803b837eb78b3d96e1ae271ae8e178c7419c018a6547a8c6",
+        "lineCount": 18,
+        "objects": [
+          "Account",
+          "Contact",
+          "Case"
+        ],
+        "fields": [
+          {
+            "object": "Account",
+            "field": "Id",
+            "line": null,
+            "methodOwner": "getAccounts",
+            "confidence": "MEDIUM"
+          },
+          {
+            "object": "Contact",
+            "field": "Id",
+            "line": null,
+            "methodOwner": "getContacts",
+            "confidence": "MEDIUM"
+          },
+          {
+            "object": "Case",
+            "field": "Id",
+            "line": null,
+            "methodOwner": "getOrders",
+            "confidence": "MEDIUM"
+          }
+        ],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "soql": [
+          {
+            "object": "Account",
+            "line": 7,
+            "column": 27,
+            "methodOwner": "getAccounts",
+            "evidence": "SOQL FROM Account",
+            "confidence": "high"
+          },
+          {
+            "object": "Contact",
+            "line": 11,
+            "column": 27,
+            "methodOwner": "getContacts",
+            "evidence": "SOQL FROM Contact",
+            "confidence": "high"
+          },
+          {
+            "object": "Case",
+            "line": 15,
+            "column": 27,
+            "methodOwner": "getOrders",
+            "evidence": "SOQL FROM Case",
+            "confidence": "high"
+          }
+        ],
+        "sourceBytes": 425,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": [
+            {
+              "object": "Account",
+              "fields": [
+                "Id"
+              ]
+            },
+            {
+              "object": "Contact",
+              "fields": [
+                "Id"
+              ]
+            },
+            {
+              "object": "Case",
+              "fields": [
+                "Id"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ApexClass:CircularA",
+      "type": "ApexClass",
+      "name": "CircularA",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "parsed": {
+        "id": "ApexClass:CircularA",
+        "type": "ApexClass",
+        "name": "CircularA",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+        "lines": 6,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "callB",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 29,
+            "startLine": 2,
+            "endLine": 6,
+            "endOffset": 93,
+            "dependencies": [
+              {
+                "to": "CircularB",
+                "type": "method-call",
+                "method": "callA",
+                "line": 3,
+                "confidence": "high",
+                "evidence": "CircularB.callA()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "CircularA",
+                    "method": "callB"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "CircularB",
+                    "method": "callA"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 9
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 2,
+            "lineEnd": 4,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:CircularA",
+            "toName": "CircularB",
+            "type": "method-call",
+            "method": "callA",
+            "evidence": "CircularB.callA()",
+            "line": 3,
+            "column": 9,
+            "methodOwner": "callB",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "CircularA",
+                "method": "callB"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "CircularB",
+                "method": "callA"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 3,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls"
+          }
+        ],
+        "sourceHash": "bd9a4c001633479012f0214c97e26ec05e39d15e1511ffebd90b16e043a8dc11",
+        "lineCount": 6,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 93,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:CircularB",
+      "type": "ApexClass",
+      "name": "CircularB",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "parsed": {
+        "id": "ApexClass:CircularB",
+        "type": "ApexClass",
+        "name": "CircularB",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+        "lines": 6,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "callA",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 29,
+            "startLine": 2,
+            "endLine": 6,
+            "endOffset": 93,
+            "dependencies": [
+              {
+                "to": "CircularA",
+                "type": "method-call",
+                "method": "callB",
+                "line": 3,
+                "confidence": "high",
+                "evidence": "CircularA.callB()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "CircularB",
+                    "method": "callA"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "CircularA",
+                    "method": "callB"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 3,
+                    "column": 9
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 2,
+            "lineEnd": 4,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:CircularB",
+            "toName": "CircularA",
+            "type": "method-call",
+            "method": "callB",
+            "evidence": "CircularA.callB()",
+            "line": 3,
+            "column": 9,
+            "methodOwner": "callA",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "CircularB",
+                "method": "callA"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "CircularA",
+                "method": "callB"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 3,
+                "column": 9
+              }
+            },
+            "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls"
+          }
+        ],
+        "sourceHash": "7487224b91196cd93ada0917c95c498c91e19fd522adf9cefc2f4dafcb57ec4c",
+        "lineCount": 6,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 93,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:HelperService",
+      "type": "ApexClass",
+      "name": "HelperService",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
+      "parsed": {
+        "id": "ApexClass:HelperService",
+        "type": "ApexClass",
+        "name": "HelperService",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
+        "lines": 8,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "resolve",
+            "returnType": "Id",
+            "parameters": "Id id",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 33,
+            "startLine": 2,
+            "endLine": 5,
+            "endOffset": 96,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 2,
+            "lineEnd": 4,
+            "annotations": []
+          },
+          {
+            "name": "unusedMethod",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 97,
+            "startLine": 6,
+            "endLine": 8,
+            "endOffset": 136,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 6,
+            "lineEnd": 6,
+            "annotations": []
+          }
+        ],
+        "dependencies": [],
+        "sourceHash": "33d112d7bf215c5e8c29ecb98b657043699381f931e3a18277ce4e4d59a9f97a",
+        "lineCount": 8,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 136,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MultiCallService",
+      "type": "ApexClass",
+      "name": "MultiCallService",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
+      "parsed": {
+        "id": "ApexClass:MultiCallService",
+        "type": "ApexClass",
+        "name": "MultiCallService",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
+        "lines": 5,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "firstCall",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 36,
+            "startLine": 2,
+            "endLine": 2,
+            "endOffset": 73,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 2,
+            "lineEnd": 2,
+            "annotations": []
+          },
+          {
+            "name": "secondCall",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 74,
+            "startLine": 3,
+            "endLine": 5,
+            "endOffset": 111,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 3,
+            "lineEnd": 3,
+            "annotations": []
+          }
+        ],
+        "dependencies": [],
+        "sourceHash": "c3063f3e580ac7dfec34ed8b90f98f0c3b44ac40ef8dd7a2af2ff2957141771f",
+        "lineCount": 5,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 111,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:UnrelatedService",
+      "type": "ApexClass",
+      "name": "UnrelatedService",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
+      "parsed": {
+        "id": "ApexClass:UnrelatedService",
+        "type": "ApexClass",
+        "name": "UnrelatedService",
+        "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
+        "lines": 4,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "execute",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 36,
+            "startLine": 2,
+            "endLine": 4,
+            "endOffset": 70,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 2,
+            "lineEnd": 2,
+            "annotations": []
+          }
+        ],
+        "dependencies": [],
+        "sourceHash": "e4c34c27e25e654bde95ae3d81532d2352a6784c9c6553742e623ebc5709e2fc",
+        "lineCount": 4,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 70,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ApexClass:BouquetOrderController",
+      "name": "BouquetOrderController",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls"
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService",
+      "name": "BouquetOrderFormService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls"
+    },
+    {
+      "id": "ApexClass:BouquetOrderPageHandler",
+      "name": "BouquetOrderPageHandler",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector",
+      "name": "BouquetOrderSelector",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls"
+    },
+    {
+      "id": "ApexClass:CircularA",
+      "name": "CircularA",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls"
+    },
+    {
+      "id": "ApexClass:CircularB",
+      "name": "CircularB",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls"
+    },
+    {
+      "id": "ApexClass:HelperService",
+      "name": "HelperService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls"
+    },
+    {
+      "id": "ApexClass:MultiCallService",
+      "name": "MultiCallService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls"
+    },
+    {
+      "id": "ApexClass:UnrelatedService",
+      "name": "UnrelatedService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls"
+    },
+    {
+      "id": "External:Account",
+      "name": "Account",
+      "type": "External",
+      "file": null
+    },
+    {
+      "id": "External:Contact",
+      "name": "Contact",
+      "type": "External",
+      "file": null
+    },
+    {
+      "id": "External:Object:Account",
+      "name": "Object:Account",
+      "type": "External",
+      "file": null
+    },
+    {
+      "id": "External:Object:Contact",
+      "name": "Object:Contact",
+      "type": "External",
+      "file": null
+    },
+    {
+      "id": "External:Object:Case",
+      "name": "Object:Case",
+      "type": "External",
+      "file": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexClass:BouquetOrderController|ApexClass:BouquetOrderFormService|instantiation||new BouquetOrderFormService()",
+      "from": "ApexClass:BouquetOrderController",
+      "to": "ApexClass:BouquetOrderFormService",
+      "type": "instantiation",
+      "method": null,
+      "evidence": "new BouquetOrderFormService()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderController",
+          "method": "submitOrder"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BouquetOrderFormService",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 47
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "line": 3,
+      "column": 47,
+      "methodOwner": "submitOrder",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderController|ApexClass:BouquetOrderFormService|type-reference||BouquetOrderFormService",
+      "from": "ApexClass:BouquetOrderController",
+      "to": "ApexClass:BouquetOrderFormService",
+      "type": "type-reference",
+      "method": null,
+      "evidence": "BouquetOrderFormService",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderController",
+          "method": "submitOrder"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BouquetOrderFormService",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 3,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "line": 3,
+      "column": 9,
+      "methodOwner": "submitOrder",
+      "confidence": "medium"
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService|ApexClass:BouquetOrderSelector|method-call|getContactIdByUserId|BouquetOrderSelector.getContactIdByUserId()",
+      "from": "ApexClass:BouquetOrderFormService",
+      "to": "ApexClass:BouquetOrderSelector",
+      "type": "method-call",
+      "method": "getContactIdByUserId",
+      "evidence": "BouquetOrderSelector.getContactIdByUserId()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderFormService",
+          "method": "someMethod"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": "getContactIdByUserId"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 16
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "line": 3,
+      "column": 16,
+      "methodOwner": "someMethod",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService|ApexClass:HelperService|method-call|resolve|HelperService.resolve()",
+      "from": "ApexClass:BouquetOrderFormService",
+      "to": "ApexClass:HelperService",
+      "type": "method-call",
+      "method": "resolve",
+      "evidence": "HelperService.resolve()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderFormService",
+          "method": "secondMethod"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "HelperService",
+          "method": "resolve"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 7,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "line": 7,
+      "column": 9,
+      "methodOwner": "secondMethod",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService|ApexClass:MultiCallService|method-call|firstCall|MultiCallService.firstCall()",
+      "from": "ApexClass:BouquetOrderFormService",
+      "to": "ApexClass:MultiCallService",
+      "type": "method-call",
+      "method": "firstCall",
+      "evidence": "MultiCallService.firstCall()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderFormService",
+          "method": "secondMethod"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MultiCallService",
+          "method": "firstCall"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 8,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "line": 8,
+      "column": 9,
+      "methodOwner": "secondMethod",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService|ApexClass:MultiCallService|method-call|secondCall|MultiCallService.secondCall()",
+      "from": "ApexClass:BouquetOrderFormService",
+      "to": "ApexClass:MultiCallService",
+      "type": "method-call",
+      "method": "secondCall",
+      "evidence": "MultiCallService.secondCall()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderFormService",
+          "method": "secondMethod"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MultiCallService",
+          "method": "secondCall"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "secondMethod",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderPageHandler|ApexClass:BouquetOrderController|instantiation||new BouquetOrderController()",
+      "from": "ApexClass:BouquetOrderPageHandler",
+      "to": "ApexClass:BouquetOrderController",
+      "type": "instantiation",
+      "method": null,
+      "evidence": "new BouquetOrderController()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderPageHandler",
+          "method": "handleRequest"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BouquetOrderController",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 45
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "line": 3,
+      "column": 45,
+      "methodOwner": "handleRequest",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderPageHandler|ApexClass:BouquetOrderController|type-reference||BouquetOrderController",
+      "from": "ApexClass:BouquetOrderPageHandler",
+      "to": "ApexClass:BouquetOrderController",
+      "type": "type-reference",
+      "method": null,
+      "evidence": "BouquetOrderController",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderPageHandler",
+          "method": "handleRequest"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BouquetOrderController",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 3,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "line": 3,
+      "column": 9,
+      "methodOwner": "handleRequest",
+      "confidence": "medium"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector|ApexClass:HelperService|method-call|resolve|HelperService.resolve()",
+      "from": "ApexClass:BouquetOrderSelector",
+      "to": "ApexClass:HelperService",
+      "type": "method-call",
+      "method": "resolve",
+      "evidence": "HelperService.resolve()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": "getContactIdByUserId"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "HelperService",
+          "method": "resolve"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 16
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "line": 3,
+      "column": 16,
+      "methodOwner": "getContactIdByUserId",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector|External:Account|generic-type||<Account>",
+      "from": "ApexClass:BouquetOrderSelector",
+      "to": "External:Account",
+      "type": "generic-type",
+      "method": null,
+      "evidence": "<Account>",
+      "unresolved": true,
+      "resolutionCategory": {
+        "classification": "UNKNOWN",
+        "resolution": "LLM",
+        "confidence": "low",
+        "reason": "Reference has no identifiable symbol name."
+      },
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": null
+        },
+        "target": {
+          "type": "External",
+          "name": "Account",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 6,
+          "column": 23
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "line": 6,
+      "column": 23,
+      "methodOwner": null,
+      "confidence": "medium"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector|External:Contact|generic-type||<Contact>",
+      "from": "ApexClass:BouquetOrderSelector",
+      "to": "External:Contact",
+      "type": "generic-type",
+      "method": null,
+      "evidence": "<Contact>",
+      "unresolved": true,
+      "resolutionCategory": {
+        "classification": "UNKNOWN",
+        "resolution": "LLM",
+        "confidence": "low",
+        "reason": "Reference has no identifiable symbol name."
+      },
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": null
+        },
+        "target": {
+          "type": "External",
+          "name": "Contact",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 10,
+          "column": 23
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "line": 10,
+      "column": 23,
+      "methodOwner": null,
+      "confidence": "medium"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector|External:Object:Account|soql-object||SOQL FROM Account",
+      "from": "ApexClass:BouquetOrderSelector",
+      "to": "External:Object:Account",
+      "type": "soql-object",
+      "evidence": "SOQL FROM Account",
+      "unresolved": true,
+      "resolutionCategory": {
+        "classification": "UNKNOWN",
+        "resolution": "LLM",
+        "confidence": "low",
+        "reason": "Reference has no identifiable symbol name."
+      },
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Account",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      },
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector|External:Object:Contact|soql-object||SOQL FROM Contact",
+      "from": "ApexClass:BouquetOrderSelector",
+      "to": "External:Object:Contact",
+      "type": "soql-object",
+      "evidence": "SOQL FROM Contact",
+      "unresolved": true,
+      "resolutionCategory": {
+        "classification": "UNKNOWN",
+        "resolution": "LLM",
+        "confidence": "low",
+        "reason": "Reference has no identifiable symbol name."
+      },
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Contact",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      },
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "ApexClass:BouquetOrderSelector|External:Object:Case|soql-object||SOQL FROM Case",
+      "from": "ApexClass:BouquetOrderSelector",
+      "to": "External:Object:Case",
+      "type": "soql-object",
+      "evidence": "SOQL FROM Case",
+      "unresolved": true,
+      "resolutionCategory": {
+        "classification": "UNKNOWN",
+        "resolution": "LLM",
+        "confidence": "low",
+        "reason": "Reference has no identifiable symbol name."
+      },
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BouquetOrderSelector",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Case",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      },
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "ApexClass:CircularA|ApexClass:CircularB|method-call|callA|CircularB.callA()",
+      "from": "ApexClass:CircularA",
+      "to": "ApexClass:CircularB",
+      "type": "method-call",
+      "method": "callA",
+      "evidence": "CircularB.callA()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "CircularA",
+          "method": "callB"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "CircularB",
+          "method": "callA"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "line": 3,
+      "column": 9,
+      "methodOwner": "callB",
+      "confidence": "high"
+    },
+    {
+      "id": "ApexClass:CircularB|ApexClass:CircularA|method-call|callB|CircularA.callB()",
+      "from": "ApexClass:CircularB",
+      "to": "ApexClass:CircularA",
+      "type": "method-call",
+      "method": "callB",
+      "evidence": "CircularA.callB()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "CircularB",
+          "method": "callA"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "CircularA",
+          "method": "callB"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 9
+        }
+      },
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "line": 3,
+      "column": 9,
+      "methodOwner": "callA",
+      "confidence": "high"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "ApexClass:BouquetOrderSelector",
+      "name": "BouquetOrderSelector",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "fanIn": 1,
+      "fanOut": 6,
+      "coupling": 7,
+      "unresolved": 5,
+      "score": 1,
+      "risk": "LOW",
+      "reasons": [
+        "unresolved references"
+      ]
+    },
+    {
+      "id": "ApexClass:BouquetOrderFormService",
+      "name": "BouquetOrderFormService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "fanIn": 2,
+      "fanOut": 4,
+      "coupling": 6,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:BouquetOrderController",
+      "name": "BouquetOrderController",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "fanIn": 2,
+      "fanOut": 2,
+      "coupling": 4,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:BouquetOrderPageHandler",
+      "name": "BouquetOrderPageHandler",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "fanIn": 0,
+      "fanOut": 2,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:CircularA",
+      "name": "CircularA",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "fanIn": 1,
+      "fanOut": 1,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:CircularB",
+      "name": "CircularB",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "fanIn": 1,
+      "fanOut": 1,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:HelperService",
+      "name": "HelperService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
+      "fanIn": 2,
+      "fanOut": 0,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:MultiCallService",
+      "name": "MultiCallService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
+      "fanIn": 2,
+      "fanOut": 0,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "External:Account",
+      "name": "Account",
+      "type": "External",
+      "file": null,
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "External:Contact",
+      "name": "Contact",
+      "type": "External",
+      "file": null,
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "External:Object:Account",
+      "name": "Object:Account",
+      "type": "External",
+      "file": null,
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "External:Object:Contact",
+      "name": "Object:Contact",
+      "type": "External",
+      "file": null,
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "External:Object:Case",
+      "name": "Object:Case",
+      "type": "External",
+      "file": null,
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:UnrelatedService",
+      "name": "UnrelatedService",
+      "type": "ApexClass",
+      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
+      "fanIn": 0,
+      "fanOut": 0,
+      "coupling": 0,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    }
+  ],
+  "cycles": [
+    [
+      "ApexClass:CircularB",
+      "ApexClass:CircularA"
+    ]
+  ]
+}

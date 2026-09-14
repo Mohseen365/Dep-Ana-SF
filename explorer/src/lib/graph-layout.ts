@@ -1,55 +1,31 @@
 import type { LayoutOptions } from 'cytoscape';
 
 export interface GraphLayoutOptions {
+  nodeCount?: number;
   padding?: number;
   animate?: boolean;
   nodeRepulsion?: number | ((node: any) => number);
-  nodeOverlap?: number;
   idealEdgeLength?: number | ((edge: any) => number);
-  edgeElasticity?: number | ((edge: any) => number);
-  nestingFactor?: number;
   gravity?: number;
-  numIter?: number;
-  initialTemp?: number;
-  coolingFactor?: number;
-  minTemp?: number;
-  nodeCount?: number;
+  animationDuration?: number;
+  packComponents?: boolean;
+  [key: string]: any;
 }
 
 export function getLayoutOptions(options: GraphLayoutOptions = {}): LayoutOptions {
-  const {
-    padding = 50,
-    animate = false,
-    nodeRepulsion = 4500,
-    nodeOverlap = 10,
-    idealEdgeLength = 100,
-    edgeElasticity = 100,
-    nestingFactor = 5,
-    gravity = 80,
-    numIter = options.nodeCount && options.nodeCount > 200 ? 300 : 1000,
-    initialTemp = options.nodeCount && options.nodeCount > 200 ? 100 : 200,
-    coolingFactor = 0.95,
-    minTemp = 1.0
-  } = options;
-
+  const { nodeCount = 0, ...rest } = options;
+  const density = Math.max(1, Math.sqrt(nodeCount / 20));
   return {
-    name: 'cose',
-    padding: padding,
-    animate: animate,
+    name: 'fcose',
+    padding: 80 * density,
+    idealEdgeLength: 120 * density,
+    nodeRepulsion: 8000 * density,
+    gravity: 0.15,
+    animate: nodeCount < 100,
     animationDuration: 500,
-    nodeRepulsion: nodeRepulsion,
-    nodeOverlap: nodeOverlap,
-    idealEdgeLength: idealEdgeLength,
-    edgeElasticity: edgeElasticity,
-    nestingFactor: nestingFactor,
-    gravity: gravity,
-    numIter: numIter,
-    initialTemp: initialTemp,
-    coolingFactor: coolingFactor,
-    minTemp: minTemp,
-    randomize: true,
-    fit: true
-  };
+    packComponents: true,
+    ...rest,
+  } as LayoutOptions;
 }
 
 export const LAYOUT_PRESETS = {

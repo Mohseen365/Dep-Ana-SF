@@ -1,0 +1,268 @@
+/* Graph Canvas & Container Styles */
+.graph-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  outline: none;
+}
+
+.cytoscape-view {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Floating Controls - Bottom Right */
+.graph-controls-floating {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.graph-control-btn {
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.graph-control-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.graph-control-divider {
+  width: 1px;
+  height: 18px;
+  background-color: rgba(255, 255, 255, 0.15);
+  margin: 0 2px;
+}
+
+/* Floating Legend - Bottom Left */
+.graph-legend-floating {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 20;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-width: 240px;
+}
+
+.graph-legend-floating .legend-title {
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+
+.graph-legend-floating .legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.graph-legend-floating .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+}
+
+.graph-legend-floating .legend-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Minimap Navigator Container - Bottom Right above controls */
+.minimap-container {
+  position: absolute;
+  bottom: 60px;
+  right: 16px;
+  width: 150px;
+  height: 100px;
+  z-index: 15;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.minimap-container .cytoscape-navigator {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Hover Cards */
+.graph-hover-card {
+  position: fixed;
+  z-index: 100;
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  max-width: 280px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #334155;
+}
+
+.hover-card-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #f1f5f9;
+  word-break: break-word;
+}
+
+.hover-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.hover-card-badge.risk-high {
+  background-color: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(220, 38, 38, 0.4);
+}
+
+.hover-card-badge.risk-medium {
+  background-color: rgba(234, 88, 12, 0.2);
+  color: #fb923c;
+  border: 1px solid rgba(234, 88, 12, 0.4);
+}
+
+.hover-card-badge.risk-low {
+  background-color: rgba(5, 150, 105, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(5, 150, 105, 0.4);
+}
+
+.hover-card-badge.rel-type {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.hover-card-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #94a3b8;
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+.hover-card-detail .label {
+  color: #64748b;
+}
+
+.hover-card-detail .value {
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.hover-card-detail .divider {
+  color: #475569;
+}
+
+.hover-card-detail.file-path {
+  font-family: monospace;
+  font-size: 10px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hover-card-action {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #334155;
+}
+
+.hover-card-link {
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hover-card-link:hover {
+  text-decoration: underline;
+  color: #7dd3fc;
+}
+
+/* Screen reader accessible tree element */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

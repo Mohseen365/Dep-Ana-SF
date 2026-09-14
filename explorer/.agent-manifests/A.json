@@ -1,0 +1,29 @@
+{
+  "agent": "A",
+  "exports": [
+    { "path": "src/components/GraphView.tsx", "exportName": "GraphView",
+      "kind": "component-forwardRef", "ref": "GraphViewRef",
+      "propsFile": "src/components/GraphView.tsx" },
+    { "path": "src/lib/graph-layout.ts", "exportName": "getLayoutOptions", "kind": "function" }
+  ],
+  "requires": [
+    { "name": "nodes", "type": "ExplorerNode[]" },
+    { "name": "edges", "type": "ExplorerEdge[]" },
+    { "name": "selectedNodeId", "type": "string | null" },
+    { "name": "selectedEdgeId", "type": "string | null" },
+    { "name": "onSelectNode", "type": "(node: ExplorerNode | null) => void" },
+    { "name": "onSelectEdge", "type": "(edgeId: string) => void" }
+  ],
+  "mountInstructions": [
+    { "target": "App.tsx", "action": "render-forwardRef",
+      "component": "GraphView", "ref": "graphRef",
+      "position": "inside div.graph-container",
+      "props": { "nodes": "data.nodes", "edges": "visibleEdges",
+                 "selectedNodeId": "selection.selectedNodeId",
+                 "selectedEdgeId": "selection.selectedEdgeId",
+                 "onSelectNode": "selection.selectNode",
+                 "onSelectEdge": "selection.selectEdge" } }
+  ],
+  "dependencies": ["cytoscape-fcose", "cytoscape-navigator"],
+  "notes": "GraphView fills parent 100%. Parent must give it space (position absolute or flex:1)."
+}

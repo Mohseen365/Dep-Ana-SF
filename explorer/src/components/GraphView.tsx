@@ -1,13 +1,33 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
 import cytoscape from 'cytoscape';
+import fcose from 'cytoscape-fcose';
+import navigator from 'cytoscape-navigator';
+import 'cytoscape-navigator/cytoscape.js-navigator.css';
+
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
-import { bindGraphInteractions, fitToScreen, selectNode, deselectAll, highlightCycle, clearCycleHighlight } from '../lib/graph-interactions';
+import {
+  bindGraphInteractions,
+  fitToScreen,
+  selectNode,
+  deselectAll,
+  highlightCycle,
+  clearCycleHighlight
+} from '../lib/graph-interactions';
 
-interface GraphViewProps {
+import { GraphControls } from './GraphControls';
+import { GraphLegend } from './GraphLegend';
+import { NodeHoverCard } from './graph-internals/NodeHoverCard';
+import { EdgeHoverCard } from './graph-internals/EdgeHoverCard';
+import './graph-internals/graph.css';
+
+cytoscape.use(fcose);
+cytoscape.use(navigator);
+
+export interface GraphViewProps {
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   onSelectNode: (node: ExplorerNode | null) => void;
@@ -16,9 +36,35 @@ interface GraphViewProps {
   selectedEdgeId: string | null;
   impactResult?: ImpactAnalysisResult | null;
   selectedCycleNodeIds?: string[] | null;
+  onToggleFullscreen?: () => void;
+  isFullscreen?: boolean;
 }
 
-export const GraphView: React.FC<GraphViewProps> = ({
+export interface GraphViewRef {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  fitView: () => void;
+  centerSelected: () => void;
+  resetLayout: () => void;
+}
+
+interface NodeHoverCardData {
+  type: 'node';
+  node: ExplorerNode;
+  x: number;
+  y: number;
+}
+
+interface EdgeHoverCardData {
+  type: 'edge';
+  edge: ExplorerEdge;
+  x: number;
+  y: number;
+}
+
+type HoverCardState = NodeHoverCardData | EdgeHoverCardData | null;
+
+export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   nodes,
   edges,
   onSelectNode,
@@ -26,55 +72,209 @@ export const GraphView: React.FC<GraphViewProps> = ({
   selectedNodeId,
   selectedEdgeId,
   impactResult,
-  selectedCycleNodeIds
-}) => {
+  selectedCycleNodeIds,
+  onToggleFullscreen,
+  isFullscreen = false,
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const minimapRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
-  const nodesRef = useRef<ExplorerNode[]>(nodes);
+  const navRef = useRef<any>(null);
 
-  // Keep nodes ref updated
+  const nodesRef = useRef<ExplorerNode[]>(nodes);
+  const edgesRef = useRef<ExplorerEdge[]>(edges);
+
+  const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
+  const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep internal refs synchronized with latest props
   useEffect(() => {
     nodesRef.current = nodes;
-  }, [nodes]);
+    edgesRef.current = edges;
+  }, [nodes, edges]);
 
-  // Initialize Cytoscape graph
+  // Synchronize navigator DOM container visibility
+  useEffect(() => {
+    if (minimapRef.current) {
+      minimapRef.current.style.display = isNavigatorVisible ? 'block' : 'none';
+    }
+  }, [isNavigatorVisible]);
+
+  // Expose imperative control methods via Ref
+  useImperativeHandle(ref, () => ({
+    zoomIn: () => {
+      if (cyRef.current) {
+        cyRef.current.zoom({
+          level: cyRef.current.zoom() * 1.2,
+          renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+        });
+      }
+    },
+    zoomOut: () => {
+      if (cyRef.current) {
+        cyRef.current.zoom({
+          level: cyRef.current.zoom() * 0.8,
+          renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+        });
+      }
+    },
+    fitView: () => {
+      if (cyRef.current) {
+        fitToScreen(cyRef.current, 50);
+      }
+    },
+    centerSelected: () => {
+      if (cyRef.current && selectedNodeId) {
+        const ele = cyRef.current.getElementById(selectedNodeId);
+        if (ele.length > 0) {
+          cyRef.current.animate({ center: { eles: ele } }, { duration: 250 });
+        }
+      }
+    },
+    resetLayout: () => {
+      if (cyRef.current) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        runLayout(cyRef.current, {
+          nodeCount: nodes.length,
+          animate: !prefersReducedMotion && nodes.length < 100
+        });
+      }
+    }
+  }), [selectedNodeId, nodes.length]);
+
+  // Main Cytoscape Initialization & Teardown
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Build graph elements using the separated module
     const elements = buildGraphElements(nodes, edges);
-    
-    // Get styles using the separated module
     const styles = getGraphStyles({
       nodeWidth: 50,
       nodeHeight: 50,
       fontSize: 12
     });
 
-    // Get layout options using the separated module
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const layoutOptions = getLayoutOptions({
+      nodeCount: nodes.length,
       padding: 50,
-      animate: false
+      animate: !prefersReducedMotion && nodes.length < 100
     });
 
-    // Initialize Cytoscape
+    // A5. Cytoscape instance creation with wheelSensitivity & boxSelectionEnabled
     const cy = cytoscape({
       container: containerRef.current,
       elements: elements,
       style: styles,
       layout: layoutOptions,
-      // Enable interactions
       minZoom: 0.1,
       maxZoom: 5,
       wheelSensitivity: 0.2,
-      boxSelectionEnabled: false,
+      boxSelectionEnabled: true,
       autounselectify: false
     });
 
-    // Store reference
     cyRef.current = cy;
 
-    // Bind interactions using the separated module
+    // A6. Minimap Initialization
+    if (minimapRef.current) {
+      try {
+        navRef.current = (cy as any).navigator({
+          container: minimapRef.current,
+          scale: 0.15
+        });
+      } catch (err) {
+        console.warn('Cytoscape navigator init notice:', err);
+      }
+    }
+
+    // A7. Initial Zoom by Node Count
+    const nodeCount = nodes.length;
+    const initialZoom = nodeCount < 15 ? 1.4
+                      : nodeCount < 50 ? 1.0
+                      : nodeCount < 200 ? 0.7
+                      : 0.4;
+    cy.zoom(initialZoom);
+    cy.center();
+
+    // A4. Throttled (60ms) Zoom Listener for Semantic Zoom
+    let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
+    const updateZoomClass = () => {
+      const currentZoom = cy.zoom();
+      cy.batch(() => {
+        cy.elements().removeClass('zoom-far zoom-mid zoom-near');
+        if (currentZoom < 0.5) {
+          cy.elements().addClass('zoom-far');
+        } else if (currentZoom < 1.5) {
+          cy.elements().addClass('zoom-mid');
+        } else {
+          cy.elements().addClass('zoom-near');
+        }
+      });
+    };
+
+    cy.on('zoom', () => {
+      if (zoomTimeout) return;
+      zoomTimeout = setTimeout(() => {
+        zoomTimeout = null;
+        updateZoomClass();
+      }, 60);
+    });
+
+    updateZoomClass();
+
+    // A9. Hover Cards with 250ms Delay
+    cy.on('mouseover', 'node', (evt) => {
+      const node = evt.target;
+      const pos = evt.renderedPosition;
+      const nodeId = node.id();
+      const nodeObj = nodesRef.current.find(n => n.id === nodeId);
+
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+
+      if (nodeObj) {
+        hoverTimerRef.current = setTimeout(() => {
+          setHoverCard({
+            type: 'node',
+            node: nodeObj,
+            x: pos.x,
+            y: pos.y
+          });
+        }, 250);
+      }
+    });
+
+    cy.on('mouseout', 'node', () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      setHoverCard(null);
+    });
+
+    cy.on('mouseover', 'edge', (evt) => {
+      const edge = evt.target;
+      const pos = evt.renderedPosition;
+      const edgeId = edge.id();
+      const edgeObj = edgesRef.current.find(e => e.id === edgeId);
+
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+
+      if (edgeObj) {
+        hoverTimerRef.current = setTimeout(() => {
+          setHoverCard({
+            type: 'edge',
+            edge: edgeObj,
+            x: pos.x,
+            y: pos.y
+          });
+        }, 250);
+      }
+    });
+
+    cy.on('mouseout', 'edge', () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      setHoverCard(null);
+    });
+
+    // Interaction bindings
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
         onSelectNode(selectedNode);
@@ -85,41 +285,45 @@ export const GraphView: React.FC<GraphViewProps> = ({
         }
       },
       onBackgroundTap: () => {
-        // Background tap - deselect
-      },
-      onGraphReady: (graph) => {
-        // Fit to screen after layout completes
-        fitToScreen(graph, 50);
+        onSelectNode(null);
       }
     }, nodes);
 
-    // Initial fit-to-screen after layout
-    cy.one('layoutstop', () => {
-      fitToScreen(cy, 50);
+    // A3. ResizeObserver calling cy.resize()
+    const resizeObserver = new ResizeObserver(() => {
+      if (cyRef.current) {
+        cyRef.current.resize();
+      }
     });
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
 
-    // Run initial layout
-    runLayout(cy, { animate: false });
-
-    // Cleanup on unmount
     return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      if (zoomTimeout) clearTimeout(zoomTimeout);
+      resizeObserver.disconnect();
+
+      if (navRef.current && typeof navRef.current.destroy === 'function') {
+        try { navRef.current.destroy(); } catch (e) {}
+      }
+
       cy.destroy();
       cyRef.current = null;
     };
-  }, [nodes, edges, onSelectNode]);
+  }, [nodes, edges, onSelectNode, onSelectEdge]);
 
-  // Handle external selection changes
+  // Handle selected node changes
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
     if (selectedNodeId) {
-      // Select the node in Cytoscape
       const success = selectNode(cy, selectedNodeId);
       if (success) {
-        // Center on the selected node
+        const node = cy.getElementById(selectedNodeId);
         cy.animate({
-          center: { eles: cy.getElementById(selectedNodeId) },
+          center: { eles: node },
           zoom: cy.zoom()
         }, {
           duration: 200,
@@ -127,12 +331,11 @@ export const GraphView: React.FC<GraphViewProps> = ({
         });
       }
     } else if (!selectedEdgeId) {
-      // Deselect all when no node or edge is selected
       deselectAll(cy);
     }
-  }, [selectedNodeId]);
+  }, [selectedNodeId, selectedEdgeId]);
 
-  // Handle edge selection changes
+  // Handle selected edge changes
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -141,7 +344,6 @@ export const GraphView: React.FC<GraphViewProps> = ({
       const edge = cy.getElementById(selectedEdgeId);
       if (edge.length > 0 && edge.isEdge()) {
         edge.select();
-        // Center on the edge
         cy.animate({
           center: { eles: edge },
           zoom: cy.zoom()
@@ -159,12 +361,9 @@ export const GraphView: React.FC<GraphViewProps> = ({
     const cy = cyRef.current;
 
     cy.batch(() => {
-      // Remove all impact classes first
       cy.elements().removeClass('impact-origin impact-affected impact-muted');
-
       if (impactResult) {
         const { originNodeId, affectedNodeIds, affectedEdgeIds } = impactResult;
-
         cy.nodes().forEach(node => {
           const id = node.id();
           if (id === originNodeId) {
@@ -188,7 +387,7 @@ export const GraphView: React.FC<GraphViewProps> = ({
     });
   }, [impactResult]);
 
-  // Handle cycle highlighting
+  // Handle Cycle Mode highlighting
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -200,9 +399,173 @@ export const GraphView: React.FC<GraphViewProps> = ({
     }
   }, [selectedCycleNodeIds]);
 
+  // A8. Keyboard Navigation Handler
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    if (e.key === 'f' || e.key === 'F' || e.key === '0') {
+      fitToScreen(cy, 50);
+    } else if (e.key === '+' || e.key === '=') {
+      cy.zoom(cy.zoom() * 1.2);
+    } else if (e.key === '-' || e.key === '_') {
+      cy.zoom(cy.zoom() * 0.8);
+    } else if (e.key === 'Escape') {
+      onSelectNode(null);
+      onSelectEdge('');
+    } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+      if (selectedNodeId) {
+        const currNode = cy.getElementById(selectedNodeId);
+        if (currNode.length > 0) {
+          const neighbors = currNode.neighborhood('node');
+          if (neighbors.length > 0) {
+            const currPos = currNode.renderedPosition();
+            let chosenNeighbor = neighbors[0];
+
+            let bestDist = Infinity;
+            neighbors.forEach(neighbor => {
+              const pos = neighbor.renderedPosition();
+              const dx = pos.x - currPos.x;
+              const dy = pos.y - currPos.y;
+
+              let isDirectionMatch = false;
+              if (e.key === 'ArrowUp' && dy < 0) isDirectionMatch = true;
+              if (e.key === 'ArrowDown' && dy > 0) isDirectionMatch = true;
+              if (e.key === 'ArrowLeft' && dx < 0) isDirectionMatch = true;
+              if (e.key === 'ArrowRight' && dx > 0) isDirectionMatch = true;
+
+              if (isDirectionMatch) {
+                const dist = dx * dx + dy * dy;
+                if (dist < bestDist) {
+                  bestDist = dist;
+                  chosenNeighbor = neighbor;
+                }
+              }
+            });
+
+            const nextNodeObj = nodes.find(n => n.id === chosenNeighbor.id());
+            if (nextNodeObj) {
+              onSelectNode(nextNodeObj);
+            }
+          }
+        }
+      }
+    }
+  };
+
   return (
-    <div className="graph-container">
+    <div
+      className="graph-container"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="region"
+      aria-label="Salesforce Architecture Dependency Graph"
+    >
       <div ref={containerRef} className="cytoscape-view" />
+
+      {/* A6. Minimap Container Floating Bottom Right */}
+      <div
+        id="minimap"
+        ref={minimapRef}
+        className={`minimap-container ${isNavigatorVisible ? '' : 'hidden'}`}
+        style={{ display: isNavigatorVisible ? 'block' : 'none' }}
+      >
+        <button
+          className="navigator-close-btn"
+          onClick={() => setIsNavigatorVisible(false)}
+          title="Close navigator"
+          aria-label="Close navigator"
+          type="button"
+        >
+          ×
+        </button>
+      </div>
+
+      {/* A8. Screen Reader Accessible Node List */}
+      <ul role="tree" className="sr-only" aria-label="Component Nodes">
+        {nodes.map(n => (
+          <li
+            key={n.id}
+            role="treeitem"
+            tabIndex={0}
+            aria-selected={n.id === selectedNodeId}
+            aria-label={`${n.displayName}, ${n.type}, risk ${n.risk}`}
+            onClick={() => onSelectNode(n)}
+            onKeyDown={(evt) => {
+              if (evt.key === 'Enter' || evt.key === ' ') {
+                evt.preventDefault();
+                onSelectNode(n);
+              }
+            }}
+          >
+            {n.displayName}
+          </li>
+        ))}
+      </ul>
+
+      {/* A9. Hover Cards */}
+      {hoverCard && hoverCard.type === 'node' && (
+        <NodeHoverCard
+          node={hoverCard.node}
+          x={hoverCard.x}
+          y={hoverCard.y}
+        />
+      )}
+
+      {hoverCard && hoverCard.type === 'edge' && (
+        <EdgeHoverCard
+          edge={hoverCard.edge}
+          x={hoverCard.x}
+          y={hoverCard.y}
+        />
+      )}
+
+      {/* A10. Floating Controls (Bottom Right) & Legend (Bottom Left) */}
+      <GraphControls
+        onZoomIn={() => {
+          if (cyRef.current) {
+            cyRef.current.zoom({
+              level: cyRef.current.zoom() * 1.2,
+              renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+            });
+          }
+        }}
+        onZoomOut={() => {
+          if (cyRef.current) {
+            cyRef.current.zoom({
+              level: cyRef.current.zoom() * 0.8,
+              renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+            });
+          }
+        }}
+        onFitView={() => {
+          if (cyRef.current) fitToScreen(cyRef.current, 50);
+        }}
+        onCenterSelected={() => {
+          if (cyRef.current && selectedNodeId) {
+            const ele = cyRef.current.getElementById(selectedNodeId);
+            if (ele.length > 0) cyRef.current.animate({ center: { eles: ele } }, { duration: 200 });
+          }
+        }}
+        onResetLayout={() => {
+          if (cyRef.current) {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            runLayout(cyRef.current, {
+              nodeCount: nodes.length,
+              animate: !prefersReducedMotion && nodes.length < 100
+            });
+          }
+        }}
+        hasSelectedNode={!!selectedNodeId}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={onToggleFullscreen}
+        isNavigatorVisible={isNavigatorVisible}
+        onToggleNavigator={() => setIsNavigatorVisible((prev) => !prev)}
+      />
+      <GraphLegend nodes={nodes} />
     </div>
   );
-};
+});
+
+GraphView.displayName = 'GraphView';

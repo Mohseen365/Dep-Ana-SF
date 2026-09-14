@@ -1,0 +1,43 @@
+{
+  "manifestVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "contractVersion": "1.0.0",
+  "generatedAt": "2026-09-14T05:53:26.900Z",
+  "source": {
+    "directory": "../../Movie-App/force-app/main/default",
+    "fileCount": 29,
+    "sourceHash": "sha256:4633338c07ce6ba2b6de7a90806bb5d672fb55f2232b9054f5d5fd87abb75c25",
+    "gitCommit": "e38234771b34de5d5b2e657f938648fe4a52700e"
+  },
+  "status": "COMPLETE",
+  "artifacts": {
+    "dependencyReport": {
+      "path": "dependency-report.json",
+      "fileHash": "sha256:c3a249cb84f4fa9901092c853214723f009a6202f08145b1212722cdab8a03ad"
+    },
+    "analysisSnapshot": {
+      "path": "analysis-snapshot.json",
+      "fileHash": "sha256:87b3854d29b3bd96e26d4ae0809846513c0906c448c23053958c728dcf22c633"
+    },
+    "architectureSnapshot": {
+      "path": "architecture-snapshot.json",
+      "fileHash": "sha256:9fc72ac037bdf4806baa28be794c32892c1a20020d691926782eed298f8b48f8"
+    },
+    "architectureMetrics": {
+      "path": "architecture-metrics.json",
+      "fileHash": "sha256:00360a5b29e4d32b51e9aab62c5a588467a4253e4d570250c76bfa4e2e3e9a15"
+    },
+    "dependencyReportMd": {
+      "path": "dependency-report.md",
+      "fileHash": "sha256:1bbcab61763305868adc6920bc269a893dcc4c2e49d5a08f4f3e38260b4de891"
+    },
+    "dependencySummaryMd": {
+      "path": "dependency-summary.md",
+      "fileHash": "sha256:b61db07af5c58628c5e84bab5fcefcc99531ad5ee3d226e6cc564a3e27d97711"
+    },
+    "unresolvedReferencesMd": {
+      "path": "unresolved-references.md",
+      "fileHash": "sha256:d39fbf0c42f5a3af8ec80d056ece12f8da4c0fe4455745c482a105b994d3a992"
+    }
+  }
+}

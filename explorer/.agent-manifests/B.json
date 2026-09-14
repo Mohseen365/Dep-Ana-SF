@@ -1,0 +1,25 @@
+{
+  "agent": "B",
+  "exports": [
+    {
+      "path": "src/components/DetailsPanel.tsx",
+      "exportName": "DetailsPanel",
+      "kind": "component",
+      "newProps": [
+        { "name": "data", "type": "ExplorerDataSchema | null", "optional": true },
+        { "name": "nodes", "type": "ExplorerNode[]", "optional": true },
+        { "name": "cycles", "type": "ExplorerCycleGroup[]", "optional": true },
+        { "name": "impactSummaries", "type": "Record<string, ExplorerComponentImpactSummary>", "optional": true },
+        { "name": "onHighlightImpact", "type": "(nodeIds: string[], edgeIds: string[]) => void", "optional": true }
+      ]
+    }
+  ],
+  "searchFilterState_newFields": [
+    { "name": "hasCallouts", "type": "boolean | undefined" },
+    { "name": "withoutSharing", "type": "boolean | undefined" },
+    { "name": "hideTests", "type": "boolean | undefined" },
+    { "name": "hasAsyncPatterns", "type": "boolean | undefined" }
+  ],
+  "cssImports": ["src/components/panels/panels.css"],
+  "notes": "All new props are optional. Backward compatible."
+}

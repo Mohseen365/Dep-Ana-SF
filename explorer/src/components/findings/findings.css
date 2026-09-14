@@ -1,0 +1,304 @@
+/**
+ * Scoped styles for FindingsPanel component
+ * All selectors MUST be scoped under .findings-panel
+ */
+
+.findings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.findings-panel.empty-state {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #64748b;
+  min-height: 250px;
+}
+
+.findings-panel.empty-state .empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.findings-panel .findings-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
+
+.findings-panel .findings-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.findings-panel .findings-title h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.findings-panel .clear-selection-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: #475569;
+}
+
+.findings-panel .clear-selection-btn:hover {
+  background: #e2e8f0;
+}
+
+.findings-panel .severity-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.findings-panel .filter-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.findings-panel .severity-chip {
+  border-radius: 9999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s ease;
+}
+
+.findings-panel .severity-chip.inactive {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+}
+
+.findings-panel .severity-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.findings-panel .severity-critical {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.findings-panel .severity-high {
+  background-color: #fff7ed;
+  color: #ea580c;
+  border-color: #fdba74;
+}
+
+.findings-panel .severity-medium {
+  background-color: #fefce8;
+  color: #ca8a04;
+  border-color: #fde047;
+}
+
+.findings-panel .severity-low {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border-color: #86efac;
+}
+
+.findings-panel .severity-info {
+  background-color: #f0f9ff;
+  color: #0284c7;
+  border-color: #7dd3fc;
+}
+
+.findings-panel .findings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.findings-panel .finding-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.findings-panel .finding-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.findings-panel .finding-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.findings-panel .finding-row {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.75rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.findings-panel .finding-row:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.findings-panel .finding-row.selected {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.findings-panel .finding-row-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.findings-panel .severity-chip-sm {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+
+}
+
+.findings-panel .finding-row-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  flex: 1;
+}
+
+.findings-panel .finding-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.findings-panel .badge {
+  font-size: 0.7rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.findings-panel .expand-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.7rem;
+  cursor: pointer;
+  color: #64748b;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+}
+
+.findings-panel .expand-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.findings-panel .finding-description {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.findings-panel .finding-evidence-box {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.findings-panel .finding-evidence-box h5 {
+  margin: 0 0 0.35rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.findings-panel .evidence-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.findings-panel .evidence-item {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.findings-panel .evidence-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.findings-panel .evidence-file {
+  font-family: monospace;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.findings-panel .open-in-editor {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.findings-panel .open-in-editor:hover {
+  text-decoration: underline;
+}
+
+.findings-panel .evidence-snippet {
+  margin: 0.25rem 0;
+  padding: 0.35rem 0.5rem;
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.7rem;
+  overflow-x: auto;
+}
+
+.findings-panel .evidence-desc {
+  color: #64748b;
+  font-size: 0.7rem;
+  margin-top: 0.25rem;
+}

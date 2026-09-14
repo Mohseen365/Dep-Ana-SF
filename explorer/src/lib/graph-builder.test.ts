@@ -243,7 +243,7 @@ describe('graph-builder', () => {
           evidence: '',
           unresolved: false,
           resolutionClassification: 'UNKNOWN',
-          resolutionStrategy: 'NONE',
+          resolutionStrategy: 'EXACT',
           confidence: 'low',
           line: null,
           column: null,

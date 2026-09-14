@@ -1,0 +1,264 @@
+/* src/components/panels/panels.css */
+/* Namespaced CSS rules for panel components */
+
+/* DetailsPanel Scoped Styles */
+.details-panel .behavior-chips-section {
+  margin-bottom: 4px;
+}
+
+.details-panel .behavior-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.details-panel .behavior-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: #1e293b;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.details-panel .chip-without-sharing {
+  background-color: #450a0a;
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+/* Change Simulator in DetailsPanel */
+.details-panel .simulator-section {
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.details-panel .simulator-card {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.details-panel .simulator-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.details-panel .simulator-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.details-panel .simulator-radio {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.details-panel .simulator-radio input {
+  cursor: pointer;
+}
+
+.details-panel .simulator-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #1e293b;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.details-panel .sim-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.details-panel .sim-metric-row span:last-child {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.details-panel .blast-radius-badge {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.details-panel .blast-small {
+  background-color: #064e3b;
+  color: #6ee7b7;
+}
+
+.details-panel .blast-medium {
+  background-color: #451a03;
+  color: #fcd34d;
+}
+
+.details-panel .blast-large {
+  background-color: #450a0a;
+  color: #fca5a5;
+}
+
+.details-panel .sim-explanation {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.details-panel .highlight-affected-btn {
+  width: 100%;
+  padding: 6px 10px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.details-panel .highlight-affected-btn:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.details-panel .highlight-affected-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Empty-State Hotspot Dashboard in DetailsPanel */
+.details-panel .hotspot-dashboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.details-panel .hotspot-dashboard-item {
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.details-panel .hotspot-dashboard-item:hover {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-card);
+}
+
+.details-panel .hotspot-dashboard-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.details-panel .hotspot-details {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* SearchFilterPanel Scoped Styles */
+.search-filter-panel .advanced-filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.search-filter-panel .advanced-filter-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  padding: 2px 0;
+}
+
+.search-filter-panel .advanced-filter-toggle:hover {
+  color: var(--text-main);
+}
+
+.search-filter-panel .advanced-filter-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 6px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.search-filter-panel .checkbox-label {
+  font-size: 11px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* HotspotPanel Scoped Styles */
+.hotspot-panel .readiness-filter-bar {
+  padding: 4px 0;
+}
+
+.hotspot-panel .readiness-groups-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.hotspot-panel .readiness-group-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+}
+
+.hotspot-panel .readiness-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.hotspot-panel .readiness-good-candidate,
+.hotspot-panel .readiness-good {
+  background-color: #064e3b;
+  color: #6ee7b7;
+}
+
+.hotspot-panel .readiness-caution {
+  background-color: #451a03;
+  color: #fcd34d;
+}
+
+.hotspot-panel .readiness-high-caution {
+  background-color: #450a0a;
+  color: #fca5a5;
+}

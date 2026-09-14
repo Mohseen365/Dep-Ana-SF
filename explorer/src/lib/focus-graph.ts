@@ -53,15 +53,15 @@ function getReachableNodesOut(
 ): Set<string> {
   const visited = new Set<string>();
   const queue: Array<{ nodeId: string; depth: number }> = [{ nodeId: startNodeId, depth: 0 }];
-  
+
   while (queue.length > 0) {
     const { nodeId, depth } = queue.shift()!;
-    
+
     if (visited.has(nodeId)) continue;
     visited.add(nodeId);
-    
+
     if (maxDepth !== 'ALL' && depth >= maxDepth) continue;
-    
+
     const outgoingEdges = adj.outgoing.get(nodeId);
     if (outgoingEdges) {
       for (let i = 0; i < outgoingEdges.length; i++) {
@@ -72,7 +72,7 @@ function getReachableNodesOut(
       }
     }
   }
-  
+
   return visited;
 }
 
@@ -83,15 +83,15 @@ function getReachableNodesIn(
 ): Set<string> {
   const visited = new Set<string>();
   const queue: Array<{ nodeId: string; depth: number }> = [{ nodeId: startNodeId, depth: 0 }];
-  
+
   while (queue.length > 0) {
     const { nodeId, depth } = queue.shift()!;
-    
+
     if (visited.has(nodeId)) continue;
     visited.add(nodeId);
-    
+
     if (maxDepth !== 'ALL' && depth >= maxDepth) continue;
-    
+
     const incomingEdges = adj.incoming.get(nodeId);
     if (incomingEdges) {
       for (let i = 0; i < incomingEdges.length; i++) {
@@ -102,7 +102,7 @@ function getReachableNodesIn(
       }
     }
   }
-  
+
   return visited;
 }
 
@@ -118,26 +118,26 @@ export function computeFocusedGraph(
   const { focusNodeId, direction, depth } = focusState;
   const adj = buildAdjacencyMap(edges);
   const reachableNodes = new Set<string>();
-  
+
   if (direction === 'dependencies' || direction === 'both') {
     const outNodes = getReachableNodesOut(adj, focusNodeId, depth);
     outNodes.forEach(n => reachableNodes.add(n));
   }
-  
+
   if (direction === 'dependents' || direction === 'both') {
     const inNodes = getReachableNodesIn(adj, focusNodeId, depth);
     inNodes.forEach(n => reachableNodes.add(n));
   }
-  
+
   reachableNodes.add(focusNodeId);
-  
+
   const focusedNodes: ExplorerNode[] = [];
   for (let i = 0; i < nodes.length; i++) {
     if (reachableNodes.has(nodes[i].id)) {
       focusedNodes.push(nodes[i]);
     }
   }
-  
+
   const focusedEdges: ExplorerEdge[] = [];
   for (let i = 0; i < edges.length; i++) {
     const e = edges[i];
@@ -145,7 +145,7 @@ export function computeFocusedGraph(
       focusedEdges.push(e);
     }
   }
-  
+
   return {
     nodes: focusedNodes,
     edges: focusedEdges,

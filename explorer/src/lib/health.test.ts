@@ -1,14 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { calculateArchitectureHealth } from './health';
-import { ExplorerDataSchema } from '../types/explorer';
+import { sampleExplorerData } from '../test/fixtures/sample-data';
+import type { ExplorerDataSchema } from '../types/explorer';
 
 describe('calculateArchitectureHealth', () => {
   const baseData: ExplorerDataSchema = {
-    schemaVersion: '1.0.0',
-    analyzerVersion: '13.0.0',
-    generatedAt: new Date().toISOString(),
-    sourceDirectory: 'force-app/main/default',
+    ...sampleExplorerData,
+    nodes: [],
+    edges: [],
+    cycles: [],
     summary: {
+      ...sampleExplorerData.summary,
       nodeCount: 10,
       edgeCount: 15,
       highRiskCount: 0,
@@ -16,13 +18,7 @@ describe('calculateArchitectureHealth', () => {
       lowRiskCount: 10,
       cycleCount: 0,
       unresolvedCount: 0,
-      inventory: { files: 10, apexClasses: 10, apexTriggers: 0, lwcJs: 0, lwcHtml: 0, visualforce: 0, flows: 0, objects: 0, fields: 0 }
     },
-    nodes: [],
-    edges: [],
-    cycles: [],
-    unresolvedReferences: [],
-    impactSummaries: {}
   };
 
   it('calculates score 100 and level GOOD for pristine architecture', () => {

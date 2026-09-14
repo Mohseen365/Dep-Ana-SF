@@ -1,0 +1,55 @@
+{
+  "agent": "C",
+  "exports": [
+    {
+      "path": "src/components/findings/FindingsPanel.tsx",
+      "exportName": "FindingsPanel",
+      "kind": "component",
+      "props": {
+        "findings": "ArchitectureFinding[]",
+        "selectedFindingId": "string | null",
+        "onSelectFinding": "(finding: ArchitectureFinding) => void",
+        "onClearSelection": "() => void"
+      }
+    },
+    {
+      "path": "src/lib/intelligence/rules/index.ts",
+      "exportName": "runAllRules",
+      "kind": "function",
+      "signature": "(ctx: ArchitectureContext) => ArchitectureFinding[]"
+    },
+    {
+      "path": "src/lib/views.ts",
+      "exportName": "*",
+      "kind": "library"
+    },
+    {
+      "path": "src/lib/annotations.ts",
+      "exportName": "*",
+      "kind": "library"
+    }
+  ],
+  "requires": [
+    {
+      "name": "ArchitectureContext",
+      "source": "src/lib/intelligence/context.ts"
+    }
+  ],
+  "mountInstructions": [
+    {
+      "target": "App.tsx",
+      "action": "memo-import",
+      "code": "const ctx = useMemo(() => data ? createArchitectureContext(data) : null, [data]);\nconst findings = useMemo(() => ctx ? runAllRules(ctx) : [], [ctx]);"
+    },
+    {
+      "target": "App.tsx",
+      "action": "conditional-render",
+      "component": "FindingsPanel",
+      "condition": "viewMode === 'findings'"
+    }
+  ],
+  "cssImports": [
+    "src/components/findings/findings.css"
+  ],
+  "notes": "Views and annotations are libraries only. UI wiring is out of scope."
+}

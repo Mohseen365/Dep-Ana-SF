@@ -1,48 +1,27 @@
 import { describe, it, expect } from 'vitest';
 import { evaluateRefactoringReadiness, READINESS_DISCLAIMER } from './readiness';
-import { ExplorerNode, ExplorerComponentImpactSummary } from '../types/explorer';
+import { createSampleNode } from '../test/fixtures/sample-nodes';
+import { createSampleImpactSummary } from '../test/fixtures/sample-impact-summaries';
+import type { ExplorerNode, ExplorerComponentImpactSummary } from '../types/explorer';
 
 describe('evaluateRefactoringReadiness', () => {
-  const baseNode: ExplorerNode = {
+  const baseNode: ExplorerNode = createSampleNode({
     id: 'ApexClass:SampleService',
     displayName: 'SampleService',
-    type: 'ApexClass',
-    file: 'force-app/main/default/classes/SampleService.cls',
-    metrics: {
-      fanIn: 1,
-      fanOut: 1,
-      coupling: 2,
-      unresolved: 0,
-      score: 1
-    },
     risk: 'LOW',
-    riskReasons: [],
-    behavior: {
-      isTest: false,
-      publicContractsCount: 1,
-      asyncPatterns: [],
-      securitySignalsCount: 0,
-      queryCount: 0,
-      dmlCount: 0,
-      calloutCount: 0
-    },
+    metrics: { fanIn: 1, fanOut: 1, coupling: 2, unresolved: 0, score: 1 },
     refactoringReadiness: {
       isHighRisk: false,
       hasCycles: false,
       hasUnresolved: false,
-      testCoverageStatus: 'COVERED'
-    }
-  };
+      testCoverageStatus: 'COVERED',
+    },
+  });
 
-  const baseImpact: ExplorerComponentImpactSummary = {
-    id: 'ApexClass:SampleService',
-    directDependencies: [],
-    directDependents: [],
-    transitiveDependencies: [],
-    transitiveDependents: [],
+  const baseImpact: ExplorerComponentImpactSummary = createSampleImpactSummary('ApexClass:SampleService', {
     impactedTests: ['ApexClass:SampleServiceTest'],
-    totalImpactCount: 2
-  };
+    totalImpactCount: 2,
+  });
 
   it('classifies a low-risk, well-tested, low-impact component as GOOD CANDIDATE', () => {
     const res = evaluateRefactoringReadiness(baseNode, baseImpact);

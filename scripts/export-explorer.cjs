@@ -14,6 +14,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { analyzeTestGap } = require("../dependency-analyzer.cjs");
 
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
@@ -87,26 +88,26 @@ function normalizeNodeType(type, id = "") {
 function buildImpactSummaries(nodes, edges) {
   const impactMap = {};
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     impactMap[node.id] = {
       id: node.id,
       directDependencies: new Set(),
       directDependents: new Set(),
       transitiveDependencies: new Set(),
       transitiveDependents: new Set(),
-      impactedTests: new Set()
+      impactedTests: new Set(),
     };
   });
 
   const outgoing = {};
   const incoming = {};
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     outgoing[node.id] = new Set();
     incoming[node.id] = new Set();
   });
 
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     const fromId = edge.source;
     const toId = edge.target;
     if (outgoing[fromId]) outgoing[fromId].add(toId);
@@ -116,7 +117,7 @@ function buildImpactSummaries(nodes, edges) {
   });
 
   // BFS for transitive closures
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     const startId = node.id;
 
     // Transitive dependencies
@@ -125,7 +126,7 @@ function buildImpactSummaries(nodes, edges) {
     while (queueDep.length > 0) {
       const curr = queueDep.shift();
       const nextTargets = outgoing[curr] || new Set();
-      nextTargets.forEach(nxt => {
+      nextTargets.forEach((nxt) => {
         if (!visitedDep.has(nxt) && nxt !== startId) {
           visitedDep.add(nxt);
           queueDep.push(nxt);
@@ -140,7 +141,7 @@ function buildImpactSummaries(nodes, edges) {
     while (queueDepnd.length > 0) {
       const curr = queueDepnd.shift();
       const nextSources = incoming[curr] || new Set();
-      nextSources.forEach(src => {
+      nextSources.forEach((src) => {
         if (!visitedDepnd.has(src) && src !== startId) {
           visitedDepnd.add(src);
           queueDepnd.push(src);
@@ -150,9 +151,11 @@ function buildImpactSummaries(nodes, edges) {
     impactMap[startId].transitiveDependents = visitedDepnd;
 
     // Identify impacted tests among transitive dependents
-    const isTestNode = n => n.type === "ApexClass" && (n.behavior?.isTest || n.displayName.endsWith("Test"));
-    visitedDepnd.forEach(depndId => {
-      const depndNode = nodes.find(n => n.id === depndId);
+    const isTestNode = (n) =>
+      n.type === "ApexClass" &&
+      (n.behavior?.isTest || n.displayName.endsWith("Test"));
+    visitedDepnd.forEach((depndId) => {
+      const depndNode = nodes.find((n) => n.id === depndId);
       if (depndNode && isTestNode(depndNode)) {
         impactMap[startId].impactedTests.add(depndId);
       }
@@ -160,26 +163,33 @@ function buildImpactSummaries(nodes, edges) {
   });
 
   const finalImpactSummaries = {};
-  Object.keys(impactMap).sort().forEach(nodeId => {
-    const item = impactMap[nodeId];
-    const directDeps = Array.from(item.directDependencies).sort();
-    const directDepnds = Array.from(item.directDependents).sort();
-    const transDeps = Array.from(item.transitiveDependencies).sort();
-    const transDepnds = Array.from(item.transitiveDependents).sort();
-    const testList = Array.from(item.impactedTests).sort();
+  Object.keys(impactMap)
+    .sort()
+    .forEach((nodeId) => {
+      const item = impactMap[nodeId];
+      const directDeps = Array.from(item.directDependencies).sort();
+      const directDepnds = Array.from(item.directDependents).sort();
+      const transDeps = Array.from(item.transitiveDependencies).sort();
+      const transDepnds = Array.from(item.transitiveDependents).sort();
+      const testList = Array.from(item.impactedTests).sort();
 
-    const uniqueImpacted = new Set([...directDeps, ...directDepnds, ...transDeps, ...transDepnds]);
+      const uniqueImpacted = new Set([
+        ...directDeps,
+        ...directDepnds,
+        ...transDeps,
+        ...transDepnds,
+      ]);
 
-    finalImpactSummaries[nodeId] = {
-      id: nodeId,
-      directDependencies: directDeps,
-      directDependents: directDepnds,
-      transitiveDependencies: transDeps,
-      transitiveDependents: transDepnds,
-      impactedTests: testList,
-      totalImpactCount: uniqueImpacted.size
-    };
-  });
+      finalImpactSummaries[nodeId] = {
+        id: nodeId,
+        directDependencies: directDeps,
+        directDependents: directDepnds,
+        transitiveDependencies: transDeps,
+        transitiveDependents: transDepnds,
+        impactedTests: testList,
+        totalImpactCount: uniqueImpacted.size,
+      };
+    });
 
   return finalImpactSummaries;
 }
@@ -189,14 +199,18 @@ function exportExplorerData(inputPath, outputPath) {
   const rawContent = fs.readFileSync(resolvedInputFile, "utf8");
   const reportData = JSON.parse(rawContent);
 
-  const analyzerVersion = reportData.analyzerVersion || reportData.analyzer || DEFAULT_ANALYZER_VERSION;
+  const analyzerVersion =
+    reportData.analyzerVersion ||
+    reportData.analyzer ||
+    DEFAULT_ANALYZER_VERSION;
   const generatedAt = reportData.generatedAt || new Date().toISOString();
-  const sourceDirectory = reportData.sourceDirectory || "force-app/main/default";
+  const sourceDirectory =
+    reportData.sourceDirectory || "force-app/main/default";
 
   // Build Registry Lookup Map
   const registryMap = {};
   if (Array.isArray(reportData.registry)) {
-    reportData.registry.forEach(item => {
+    reportData.registry.forEach((item) => {
       if (item && item.id) {
         registryMap[item.id] = item;
       }
@@ -206,34 +220,70 @@ function exportExplorerData(inputPath, outputPath) {
   // Build Metrics Lookup Map
   const metricsMap = {};
   if (Array.isArray(reportData.metrics)) {
-    reportData.metrics.forEach(item => {
+    reportData.metrics.forEach((item) => {
       if (item && item.id) {
         metricsMap[item.id] = item;
       }
     });
   }
+  const rawRegistry = Array.isArray(reportData.registry)
+    ? reportData.registry
+    : [];
+  const rawEdges = Array.isArray(reportData.edges) ? reportData.edges : [];
 
   // Process Nodes
   const rawNodes = Array.isArray(reportData.nodes) ? reportData.nodes : [];
-  const normalizedNodes = rawNodes.map(rawNode => {
+  const normalizedNodes = rawNodes.map((rawNode) => {
     const type = normalizeNodeType(rawNode.type, rawNode.id);
     const id = normalizeNodeId(rawNode.id, type, rawNode.name);
-    const displayName = rawNode.name || (id.includes(":") ? id.split(":")[1] : id);
+    const displayName =
+      rawNode.name || (id.includes(":") ? id.split(":")[1] : id);
     const metricItem = metricsMap[id] || metricsMap[rawNode.id] || {};
     const registryItem = registryMap[id] || registryMap[rawNode.id] || {};
     const parsed = registryItem.parsed || {};
     const behaviorRaw = parsed.behavior || {};
 
     const fanIn = typeof metricItem.fanIn === "number" ? metricItem.fanIn : 0;
-    const fanOut = typeof metricItem.fanOut === "number" ? metricItem.fanOut : 0;
-    const coupling = typeof metricItem.coupling === "number" ? metricItem.coupling : fanIn + fanOut;
-    const unresolved = typeof metricItem.unresolved === "number" ? metricItem.unresolved : 0;
-    const score = typeof metricItem.score === "number" ? metricItem.score : coupling;
+    const fanOut =
+      typeof metricItem.fanOut === "number" ? metricItem.fanOut : 0;
+    const coupling =
+      typeof metricItem.coupling === "number"
+        ? metricItem.coupling
+        : fanIn + fanOut;
+    const unresolved =
+      typeof metricItem.unresolved === "number" ? metricItem.unresolved : 0;
+    const score =
+      typeof metricItem.score === "number" ? metricItem.score : coupling;
 
     const risk = (metricItem.risk || "LOW").toUpperCase();
-    const riskReasons = Array.isArray(metricItem.reasons) ? [...metricItem.reasons] : [];
+    const riskReasons = Array.isArray(metricItem.reasons)
+      ? [...metricItem.reasons]
+      : [];
 
-    const isTest = Boolean(parsed.isTest || (type === "ApexClass" && displayName.endsWith("Test")));
+    const isTest = Boolean(
+      parsed.isTest || (type === "ApexClass" && displayName.endsWith("Test")),
+    );
+
+    const testGapResult = analyzeTestGap(
+      { id, type, name: displayName, parsed },
+      rawRegistry,
+      rawEdges,
+    );
+
+    let testCoverageStatus = "UNTESTED";
+    if (isTest || testGapResult.signal === "test-component") {
+      testCoverageStatus = "COVERED";
+    } else if (testGapResult.signal === "covered") {
+      testCoverageStatus = "COVERED";
+    } else if (testGapResult.signal === "likely-covered") {
+      testCoverageStatus = "LIKELY_COVERED";
+    } else if (testGapResult.signal === "known-coverage-failure") {
+      testCoverageStatus = "KNOWN_COVERAGE_FAILURE";
+    } else if (testGapResult.signal === "ambiguous-test") {
+      testCoverageStatus = "AMBIGUOUS";
+    } else {
+      testCoverageStatus = "UNTESTED";
+    }
 
     return {
       id,
@@ -245,26 +295,36 @@ function exportExplorerData(inputPath, outputPath) {
         fanOut,
         coupling,
         unresolved,
-        score
+        score,
       },
       risk,
       riskReasons,
       behavior: {
         isTest,
         sharing: parsed.sharing || null,
-        publicContractsCount: Array.isArray(behaviorRaw.publicContracts) ? behaviorRaw.publicContracts.length : 0,
-        asyncPatterns: Array.isArray(behaviorRaw.async) ? [...behaviorRaw.async] : [],
-        securitySignalsCount: Array.isArray(behaviorRaw.securitySignals) ? behaviorRaw.securitySignals.length : 0,
-        queryCount: Array.isArray(behaviorRaw.queries) ? behaviorRaw.queries.length : 0,
+        publicContractsCount: Array.isArray(behaviorRaw.publicContracts)
+          ? behaviorRaw.publicContracts.length
+          : 0,
+        asyncPatterns: Array.isArray(behaviorRaw.async)
+          ? [...behaviorRaw.async]
+          : [],
+        securitySignalsCount: Array.isArray(behaviorRaw.securitySignals)
+          ? behaviorRaw.securitySignals.length
+          : 0,
+        queryCount: Array.isArray(behaviorRaw.queries)
+          ? behaviorRaw.queries.length
+          : 0,
         dmlCount: Array.isArray(parsed.dml) ? parsed.dml.length : 0,
-        calloutCount: Array.isArray(parsed.callouts) ? parsed.callouts.length : 0
+        calloutCount: Array.isArray(parsed.callouts)
+          ? parsed.callouts.length
+          : 0,
       },
       refactoringReadiness: {
         isHighRisk: risk === "HIGH",
         hasCycles: false, // Updated after cycles pass
         hasUnresolved: unresolved > 0,
-        testCoverageStatus: isTest ? "COVERED" : "UNTESTED"
-      }
+        testCoverageStatus,
+      },
     };
   });
 
@@ -272,8 +332,8 @@ function exportExplorerData(inputPath, outputPath) {
   normalizedNodes.sort((a, b) => a.id.localeCompare(b.id));
 
   // Process Edges
-  const rawEdges = Array.isArray(reportData.edges) ? reportData.edges : [];
-  const normalizedEdges = rawEdges.map(rawEdge => {
+
+  const normalizedEdges = rawEdges.map((rawEdge) => {
     const source = normalizeNodeId(rawEdge.from, "ApexClass", "");
     const target = normalizeNodeId(rawEdge.to, "ApexClass", "");
     const relationshipType = rawEdge.type || "unknown";
@@ -287,13 +347,26 @@ function exportExplorerData(inputPath, outputPath) {
 
     const resCat = rawEdge.resolutionCategory || {};
     const canonical = rawEdge.canonical || {
-      source: { type: source.split(":")[0], name: source.split(":")[1] || "", method: methodOwner },
-      target: { type: target.split(":")[0], name: target.split(":")[1] || "", method },
-      relationship: { type: relationshipType, resolution: unresolved ? "UNRESOLVED" : "EXACT" },
-      location: { line, column }
+      source: {
+        type: source.split(":")[0],
+        name: source.split(":")[1] || "",
+        method: methodOwner,
+      },
+      target: {
+        type: target.split(":")[0],
+        name: target.split(":")[1] || "",
+        method,
+      },
+      relationship: {
+        type: relationshipType,
+        resolution: unresolved ? "UNRESOLVED" : "EXACT",
+      },
+      location: { line, column },
     };
 
-    const edgeId = rawEdge.id || `${source}|${target}|${relationshipType}|${method || ""}|${evidence}`;
+    const edgeId =
+      rawEdge.id ||
+      `${source}|${target}|${relationshipType}|${method || ""}|${evidence}`;
 
     return {
       id: edgeId,
@@ -303,14 +376,18 @@ function exportExplorerData(inputPath, outputPath) {
       method,
       evidence,
       unresolved,
-      resolutionClassification: resCat.classification || (unresolved ? "UNKNOWN" : "RESOLVED_LOCAL"),
+      resolutionClassification:
+        resCat.classification || (unresolved ? "UNKNOWN" : "RESOLVED_LOCAL"),
       resolutionStrategy: resCat.resolution || (unresolved ? "LLM" : "EXACT"),
-      confidence: rawEdge.confidence || resCat.confidence || (unresolved ? "low" : "high"),
+      confidence:
+        rawEdge.confidence ||
+        resCat.confidence ||
+        (unresolved ? "low" : "high"),
       line,
       column,
       methodOwner,
       file,
-      canonical
+      canonical,
     };
   });
 
@@ -321,17 +398,19 @@ function exportExplorerData(inputPath, outputPath) {
   const rawCycles = Array.isArray(reportData.cycles) ? reportData.cycles : [];
   const cycleNodeSet = new Set();
   const normalizedCycles = rawCycles.map((cycleArr, idx) => {
-    const cycleNodes = (Array.isArray(cycleArr) ? cycleArr : []).map(nodeId => normalizeNodeId(nodeId)).sort();
-    cycleNodes.forEach(nid => cycleNodeSet.add(nid));
+    const cycleNodes = (Array.isArray(cycleArr) ? cycleArr : [])
+      .map((nodeId) => normalizeNodeId(nodeId))
+      .sort();
+    cycleNodes.forEach((nid) => cycleNodeSet.add(nid));
     return {
       id: `cycle-${idx + 1}`,
       size: cycleNodes.length,
-      nodes: cycleNodes
+      nodes: cycleNodes,
     };
   });
 
   // Update node cycle readiness flags
-  normalizedNodes.forEach(node => {
+  normalizedNodes.forEach((node) => {
     if (cycleNodeSet.has(node.id)) {
       node.refactoringReadiness.hasCycles = true;
     }
@@ -339,8 +418,8 @@ function exportExplorerData(inputPath, outputPath) {
 
   // Process Unresolved References
   const unresolvedReferences = normalizedEdges
-    .filter(e => e.unresolved)
-    .map(e => ({
+    .filter((e) => e.unresolved)
+    .map((e) => ({
       edgeId: e.id,
       sourceNodeId: e.source,
       targetName: e.target.includes(":") ? e.target.split(":")[1] : e.target,
@@ -348,28 +427,58 @@ function exportExplorerData(inputPath, outputPath) {
       file: e.file,
       line: e.line,
       evidence: e.evidence,
-      reason: `Unresolved reference to ${e.target}`
+      reason: `Unresolved reference to ${e.target}`,
     }));
 
   // Build Pre-computed Impact Summaries
-  const impactSummaries = buildImpactSummaries(normalizedNodes, normalizedEdges);
+  const impactSummaries = buildImpactSummaries(
+    normalizedNodes,
+    normalizedEdges,
+  );
 
   // Compute Summary Statistics
-  const highRiskCount = normalizedNodes.filter(n => n.risk === "HIGH").length;
-  const mediumRiskCount = normalizedNodes.filter(n => n.risk === "MEDIUM").length;
-  const lowRiskCount = normalizedNodes.filter(n => n.risk === "LOW").length;
+  const highRiskCount = normalizedNodes.filter((n) => n.risk === "HIGH").length;
+  const mediumRiskCount = normalizedNodes.filter(
+    (n) => n.risk === "MEDIUM",
+  ).length;
+  const lowRiskCount = normalizedNodes.filter((n) => n.risk === "LOW").length;
 
   const rawInventory = reportData.inventory || {};
   const inventory = {
-    files: typeof rawInventory.files === "number" ? rawInventory.files : normalizedNodes.length,
-    apexClasses: typeof rawInventory.apexClasses === "number" ? rawInventory.apexClasses : normalizedNodes.filter(n => n.type === "ApexClass").length,
-    apexTriggers: typeof rawInventory.apexTriggers === "number" ? rawInventory.apexTriggers : normalizedNodes.filter(n => n.type === "ApexTrigger").length,
-    lwcJs: typeof rawInventory.lwcJs === "number" ? rawInventory.lwcJs : normalizedNodes.filter(n => n.type === "LWC").length,
-    lwcHtml: typeof rawInventory.lwcHtml === "number" ? rawInventory.lwcHtml : 0,
-    visualforce: typeof rawInventory.visualforce === "number" ? rawInventory.visualforce : normalizedNodes.filter(n => n.type === "Visualforce").length,
-    flows: typeof rawInventory.flows === "number" ? rawInventory.flows : normalizedNodes.filter(n => n.type === "Flow").length,
-    objects: typeof rawInventory.objects === "number" ? rawInventory.objects : normalizedNodes.filter(n => n.type === "CustomObject").length,
-    fields: typeof rawInventory.fields === "number" ? rawInventory.fields : normalizedNodes.filter(n => n.type === "CustomField").length
+    files:
+      typeof rawInventory.files === "number"
+        ? rawInventory.files
+        : normalizedNodes.length,
+    apexClasses:
+      typeof rawInventory.apexClasses === "number"
+        ? rawInventory.apexClasses
+        : normalizedNodes.filter((n) => n.type === "ApexClass").length,
+    apexTriggers:
+      typeof rawInventory.apexTriggers === "number"
+        ? rawInventory.apexTriggers
+        : normalizedNodes.filter((n) => n.type === "ApexTrigger").length,
+    lwcJs:
+      typeof rawInventory.lwcJs === "number"
+        ? rawInventory.lwcJs
+        : normalizedNodes.filter((n) => n.type === "LWC").length,
+    lwcHtml:
+      typeof rawInventory.lwcHtml === "number" ? rawInventory.lwcHtml : 0,
+    visualforce:
+      typeof rawInventory.visualforce === "number"
+        ? rawInventory.visualforce
+        : normalizedNodes.filter((n) => n.type === "Visualforce").length,
+    flows:
+      typeof rawInventory.flows === "number"
+        ? rawInventory.flows
+        : normalizedNodes.filter((n) => n.type === "Flow").length,
+    objects:
+      typeof rawInventory.objects === "number"
+        ? rawInventory.objects
+        : normalizedNodes.filter((n) => n.type === "CustomObject").length,
+    fields:
+      typeof rawInventory.fields === "number"
+        ? rawInventory.fields
+        : normalizedNodes.filter((n) => n.type === "CustomField").length,
   };
 
   const explorerData = {
@@ -385,13 +494,13 @@ function exportExplorerData(inputPath, outputPath) {
       lowRiskCount,
       cycleCount: normalizedCycles.length,
       unresolvedCount: unresolvedReferences.length,
-      inventory
+      inventory,
     },
     nodes: normalizedNodes,
     edges: normalizedEdges,
     cycles: normalizedCycles,
     unresolvedReferences,
-    impactSummaries
+    impactSummaries,
   };
 
   // Ensure output parent directory exists
@@ -409,14 +518,19 @@ function exportExplorerData(inputPath, outputPath) {
   return {
     inputFile: resolvedInputFile,
     outputFile: resolvedOutputFile,
-    explorerData
+    explorerData,
   };
 }
 
 function updateManifestWithExplorerData(outputFile, explorerData) {
   const outputDir = path.dirname(outputFile);
   const manifestPath = path.join(outputDir, "analysis-manifest.json");
-  const fileHash = "sha256:" + crypto.createHash("sha256").update(fs.readFileSync(outputFile)).digest("hex");
+  const fileHash =
+    "sha256:" +
+    crypto
+      .createHash("sha256")
+      .update(fs.readFileSync(outputFile))
+      .digest("hex");
   const relFile = path.basename(outputFile);
 
   let manifest = null;
@@ -434,10 +548,10 @@ function updateManifestWithExplorerData(outputFile, explorerData) {
       generatedAt: explorerData.generatedAt || new Date().toISOString(),
       source: {
         directory: explorerData.sourceDirectory || "force-app/main/default",
-        fileCount: explorerData.summary?.inventory?.files || 0
+        fileCount: explorerData.summary?.inventory?.files || 0,
       },
       status: "COMPLETE",
-      artifacts: {}
+      artifacts: {},
     };
   }
 
@@ -448,7 +562,7 @@ function updateManifestWithExplorerData(outputFile, explorerData) {
     schemaVersion: explorerData.schemaVersion || CURRENT_SCHEMA_VERSION,
     fileHash,
     nodeCount: explorerData.summary?.nodeCount || 0,
-    edgeCount: explorerData.summary?.edgeCount || 0
+    edgeCount: explorerData.summary?.edgeCount || 0,
   };
 
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
@@ -483,5 +597,5 @@ module.exports = {
   exportExplorerData,
   normalizeNodeId,
   normalizeNodeType,
-  buildImpactSummaries
+  buildImpactSummaries,
 };

@@ -1,277 +1,505 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerCycleGroup, ExplorerUnresolvedReference, ExplorerRiskLevel } from './types/explorer';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
-import { SummaryBar } from './components/SummaryBar';
-import { GraphView } from './components/GraphView';
+import { StatusBar } from './components/StatusBar';
+import { SelectionProvider } from './context/SelectionContext';
+import { useExplorerData } from './hooks/useExplorerData';
+import { useGraphSelection } from './hooks/useGraphSelection';
+import { useViewState } from './hooks/useViewState';
+import { GraphView, GraphViewRef } from './components/GraphView';
+import { Sidebar } from './components/Sidebar';
 import { DetailsPanel } from './components/DetailsPanel';
-import { DiagnosticsPanel } from './components/DiagnosticsPanel';
-import { SearchFilterPanel } from './components/SearchFilterPanel';
+import { FindingsPanel } from './components/findings/FindingsPanel';
+import { ViewModeSwitcher } from './components/ViewModeSwitcher';
+import { applyFilters, SearchFilterState, createEmptyFilterState } from './lib/search-filter';
+import { createArchitectureContext } from './lib/intelligence/context';
+import { runAllRules } from './lib/intelligence/rules';
+import type { ArchitectureFinding } from './lib/intelligence';
 import { FocusControls } from './components/FocusControls';
-import { ImpactControls } from './components/ImpactControls';
-import { HotspotPanel } from './components/HotspotPanel';
-import { SearchFilterState, applyFilters, createEmptyFilterState } from './lib/search-filter';
-import { FocusState, computeFocusedGraph, createEmptyFocusState, isFocusActive } from './lib/focus-graph';
-import { ImpactState, createEmptyImpactState, computeImpactAnalysis } from './lib/impact-analysis';
+import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
+import { analyzeConnections, type ConnectionAnalysis } from './lib/connection-analysis';
+import { createEmptyImpactState } from './lib/impact-analysis';
+import { ComparePanel } from './components/ComparePanel';
+import { useCompareState } from './hooks/useCompareState';
+
+import type {
+  ExplorerDataSchema,
+  ExplorerNode,
+  ExplorerEdge,
+  ExplorerComponentImpactSummary,
+  ExplorerCycleGroup,
+} from './types/explorer';
 import './index.css';
 
-export const App: React.FC = () => {
-  const [data, setData] = useState<ExplorerDataSchema | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedNode, setSelectedNode] = useState<ExplorerNode | null>(null);
-  const [selectedEdge, setSelectedEdge] = useState<ExplorerEdge | null>(null);
-  const [selectedCycle, setSelectedCycle] = useState<ExplorerCycleGroup | null>(null);
-  const [diagnosticTab, setDiagnosticTab] = useState<'cycles' | 'unresolved' | 'none'>('none');
-  const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState());
-  const [focusState, setFocusState] = useState<FocusState>(createEmptyFocusState());
-  const [impactState, setImpactState] = useState<ImpactState>(createEmptyImpactState());
-
-  // Update focus state when a node is selected
-  useEffect(() => {
-    if (selectedNode) {
-      setFocusState(prev => ({
-        ...prev,
-        focusNodeId: selectedNode.id
-      }));
-    }
-  }, [selectedNode]);
-
-  // Apply filters to get display nodes/edges (without modifying original data)
-  const filteredData = useMemo(() => {
-    if (!data) return { nodes: [], edges: [], matchingNodeIds: new Set<string>() };
-    return applyFilters(data.nodes, data.edges, filterState);
-  }, [data, filterState]);
-
-  // Compute focused graph from filtered data
-  const displayData = useMemo(() => {
-    if (!data) return { nodes: [], edges: [] };
-    
-    const baseNodes = filteredData.nodes;
-    const baseEdges = filteredData.edges;
-    
-    if (isFocusActive(focusState)) {
-      return computeFocusedGraph(baseNodes, baseEdges, focusState);
-    }
-    
-    return { nodes: baseNodes, edges: baseEdges };
-  }, [data, filteredData, focusState]);
-
-  const visibleNodeIds = useMemo(() => new Set(displayData.nodes.map(n => n.id)), [displayData.nodes]);
-
-  const impactResult = useMemo(() => {
-    if (!data) return null;
-    return computeImpactAnalysis(data, impactState, visibleNodeIds);
-  }, [data, impactState, visibleNodeIds]);
-
-  useEffect(() => {
-    fetch('/explorer-data.json')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to load explorer data: HTTP ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((json: ExplorerDataSchema) => {
-        setData(json);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching explorer-data.json:', err);
-        setError(err.message || 'Failed to load Explorer data');
-        setLoading(false);
-      });
-  }, []);
-
-  const selectedImpact = selectedNode && data ? data.impactSummaries[selectedNode.id] || null : null;
-
-  const handleFilterChange = useCallback((newFilterState: SearchFilterState) => {
-    setFilterState(newFilterState);
-  }, []);
-
-  const handleSelectResult = useCallback((node: ExplorerNode) => {
-    setSelectedNode(node);
-  }, []);
-
-  const handleSelectEdge = useCallback((edgeId: string) => {
-    if (!data) return;
-    const edge = data.edges.find(e => e.id === edgeId) || null;
-    setSelectedEdge(edge);
-    if (edge) {
-      setSelectedNode(null);
-    }
-  }, [data]);
-
-  const handleCloseDetails = useCallback(() => {
-    setSelectedNode(null);
-    setSelectedEdge(null);
-  }, []);
-
-  const handleShowImpact = useCallback((nodeId: string) => {
-    setImpactState({
-      enabled: true,
-      originNodeId: nodeId,
-      depth: 'ALL'
-    });
-  }, []);
-
-  const handleExitImpact = useCallback(() => {
-    setImpactState(createEmptyImpactState());
-  }, []);
-
-  const handleSelectNodeById = useCallback((nodeId: string) => {
-    if (!data) return;
-    const found = data.nodes.find(n => n.id === nodeId);
-    if (found) {
-      setSelectedNode(found);
-      setSelectedEdge(null);
-    }
-  }, [data]);
-
-  const handleRiskFilterChange = useCallback((risk: ExplorerRiskLevel) => {
-    setFilterState(prev => ({
-      ...prev,
-      riskFilter: prev.riskFilter === risk ? '' : risk
-    }));
-  }, []);
-
-  const handleCyclesClick = useCallback(() => {
-    setDiagnosticTab(prev => (prev === 'cycles' ? 'none' : 'cycles'));
-  }, []);
-
-  const handleUnresolvedClick = useCallback(() => {
-    setDiagnosticTab(prev => (prev === 'unresolved' ? 'none' : 'unresolved'));
-  }, []);
-
-  const handleSelectCycle = useCallback((cycle: ExplorerCycleGroup | null) => {
-    setSelectedCycle(cycle);
-  }, []);
-
-  const handleSelectUnresolved = useCallback((ref: ExplorerUnresolvedReference | null) => {
-    if (!ref || !data) return;
-    const edge = data.edges.find(e => e.id === ref.edgeId);
-    if (edge) {
-      setSelectedEdge(edge);
-      setSelectedNode(null);
-    }
-  }, [data]);
-
-  if (loading) {
-    return (
-      <div className="state-screen">
-        <div className="spinner" />
-        <h2>Loading Architecture Graph...</h2>
-        <p>Parsing explorer-data.json contract and constructing view model.</p>
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="state-screen state-error">
-        <span className="error-icon">⚠️</span>
-        <h2>Failed to Load Explorer</h2>
-        <p>{error || 'No data available'}</p>
-        <button onClick={() => window.location.reload()} className="retry-btn">
-          Retry
-        </button>
-      </div>
-    );
-  }
-
+/**
+ * GraphSlot renders the main interactive Cytoscape graph canvas.
+ */
+export function GraphSlot(props: {
+  nodes: ExplorerNode[];
+  edges: ExplorerEdge[];
+  selectedNodeId: string | null;
+  selectedEdgeId: string | null;
+  onSelectNode: (node: ExplorerNode | null) => void;
+  onSelectEdge: (edgeId: string) => void;
+  impactResult?: any;
+  selectedCycleNodeIds?: string[] | null;
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
+  graphRef?: React.RefObject<GraphViewRef>;
+}) {
   return (
-    <div className="app-layout">
-      <Header />
-      <SummaryBar
-        summary={data?.summary || {
-          nodeCount: 0,
-          edgeCount: 0,
-          highRiskCount: 0,
-          mediumRiskCount: 0,
-          lowRiskCount: 0,
-          cycleCount: 0,
-          unresolvedCount: 0,
-          inventory: {
-            files: 0,
-            apexClasses: 0,
-            apexTriggers: 0,
-            lwcJs: 0,
-            lwcHtml: 0,
-            visualforce: 0,
-            flows: 0,
-            objects: 0,
-            fields: 0
-          }
-        }}
-        activeRiskFilter={filterState.riskFilter}
-        onRiskFilterChange={handleRiskFilterChange}
-        onCyclesClick={handleCyclesClick}
-        onUnresolvedClick={handleUnresolvedClick}
-        activeDiagnosticTab={diagnosticTab}
+    <div className="graph-container" data-slot="graph">
+      <GraphView
+        ref={props.graphRef}
+        nodes={props.nodes}
+        edges={props.edges}
+        selectedNodeId={props.selectedNodeId}
+        selectedEdgeId={props.selectedEdgeId}
+        onSelectNode={props.onSelectNode}
+        onSelectEdge={props.onSelectEdge}
+        impactResult={props.impactResult}
+        selectedCycleNodeIds={props.selectedCycleNodeIds}
+        isFullscreen={props.isFullscreen}
+        onToggleFullscreen={props.onToggleFullscreen}
       />
-      <SearchFilterPanel
-        nodes={data?.nodes || []}
-        filterState={filterState}
-        onFilterChange={handleFilterChange}
-        onSelectResult={handleSelectResult}
-      />
-      <HotspotPanel
-        nodes={data?.nodes || []}
-        cycles={data?.cycles || []}
-        impactSummaries={data?.impactSummaries || {}}
-        onSelectHotspot={handleSelectResult}
-        selectedNodeId={selectedNode?.id || null}
-      />
-      <FocusControls
-        focusState={focusState}
-        onFocusChange={setFocusState}
-        hasSelectedNode={!!selectedNode}
-      />
-      <ImpactControls
-        impactState={impactState}
-        impactResult={impactResult}
-        onImpactChange={setImpactState}
-        onExitImpact={handleExitImpact}
-        selectedNode={selectedNode}
-        onShowImpact={handleShowImpact}
-      />
-      <div className="main-viewport">
-        <GraphView
-          nodes={displayData.nodes}
-          edges={displayData.edges}
-          onSelectNode={(node) => {
-            setSelectedNode(node);
-            if (node) setSelectedEdge(null);
-          }}
-          onSelectEdge={handleSelectEdge}
-          selectedNodeId={selectedNode?.id || null}
-          selectedEdgeId={selectedEdge?.id || null}
-          impactResult={impactResult}
-          selectedCycleNodeIds={selectedCycle?.nodes || null}
-        />
-        {diagnosticTab !== 'none' && (
-          <DiagnosticsPanel
-            cycles={data?.cycles || []}
-            unresolvedReferences={data?.unresolvedReferences || []}
-            nodes={data?.nodes || []}
-            activeTab={diagnosticTab}
-            selectedCycleId={selectedCycle?.id || null}
-            selectedUnresolvedEdgeId={selectedEdge?.id || null}
-            onSelectCycle={handleSelectCycle}
-            onSelectUnresolved={handleSelectUnresolved}
-            onTabChange={setDiagnosticTab}
-          />
-        )}
-        <DetailsPanel
-          node={selectedNode}
-          edge={selectedEdge}
-          impactSummary={selectedImpact}
-          onClose={handleCloseDetails}
-          onShowImpact={handleShowImpact}
-          onSelectNodeById={handleSelectNodeById}
-        />
-      </div>
     </div>
   );
-};
+}
+
+/**
+ * SidebarSlot renders component search, risk filters, and component navigation list.
+ */
+export function SidebarSlot(props: {
+  nodes: ExplorerNode[];
+  displayNodes: ExplorerNode[];
+  filterState: SearchFilterState;
+  selectedNodeId: string | null;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  onFilterChange: (filterState: SearchFilterState) => void;
+  onSelectNode: (node: ExplorerNode) => void;
+}) {
+  return (
+    <div className="sidebar-slot" data-slot="sidebar">
+      <Sidebar
+        nodes={props.nodes}
+        displayNodes={props.displayNodes}
+        filterState={props.filterState}
+        selectedNodeId={props.selectedNodeId}
+        collapsed={props.collapsed}
+        onToggleCollapse={props.onToggleCollapse}
+        onFilterChange={props.onFilterChange}
+        onSelectNode={props.onSelectNode}
+      />
+    </div>
+  );
+}
+
+/**
+ * DetailsSlot renders component or relationship details, blast radius, metrics, and simulator.
+ */
+export function DetailsSlot(props: {
+  node: ExplorerNode | null;
+  edge: ExplorerEdge | null;
+  impactSummary: ExplorerComponentImpactSummary | null;
+  history: string[];
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+  onClose: () => void;
+  onShowImpact?: (nodeId: string) => void;
+  onSelectNodeById?: (nodeId: string) => void;
+  data?: ExplorerDataSchema | null;
+  nodes?: ExplorerNode[];
+  cycles?: ExplorerCycleGroup[];
+  impactSummaries?: Record<string, ExplorerComponentImpactSummary>;
+  onHighlightImpact?: (nodeIds: string[], edgeIds: string[]) => void;
+  connectionAnalysis?: ConnectionAnalysis | null;
+  connectionState?: any;
+  onConnectionStateChange?: (state: any) => void;
+}) {
+  return (
+    <div
+      className={`details-panel-slot ${props.collapsed ? 'collapsed hidden' : ''}`}
+      data-slot="details"
+    >
+      <DetailsPanel
+        node={props.node}
+        edge={props.edge}
+        impactSummary={props.impactSummary}
+        history={props.history}
+        collapsed={props.collapsed}
+        onToggleCollapse={props.onToggleCollapse}
+        onClose={props.onClose}
+        onShowImpact={props.onShowImpact}
+        onSelectNodeById={props.onSelectNodeById}
+        data={props.data}
+        nodes={props.nodes}
+        cycles={props.cycles}
+        impactSummaries={props.impactSummaries}
+        onHighlightImpact={props.onHighlightImpact}
+        connectionAnalysis={props.connectionAnalysis}
+        connectionState={props.connectionState}
+        onConnectionStateChange={props.onConnectionStateChange}
+      />
+    </div>
+  );
+}
+
+/**
+ * FindingsSlot renders the deterministic architecture intelligence findings panel.
+ */
+export function FindingsSlot(props: {
+  findings: ArchitectureFinding[];
+  selectedFindingId: string | null;
+  onSelectFinding: (finding: ArchitectureFinding) => void;
+  onClearSelection: () => void;
+}) {
+  return (
+    <div data-slot="findings">
+      <FindingsPanel
+        findings={props.findings}
+        selectedFindingId={props.selectedFindingId}
+        onSelectFinding={props.onSelectFinding}
+        onClearSelection={props.onClearSelection}
+      />
+    </div>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <div className="state-screen">
+      <div className="spinner" />
+      <h2>Loading Architecture Graph…</h2>
+      <p>Parsing explorer-data.json contract and constructing view model.</p>
+    </div>
+  );
+}
+
+function ErrorScreen({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
+  return (
+    <div className="state-screen state-error">
+      <span className="error-icon">⚠️</span>
+      <h2>Failed to Load Explorer</h2>
+      <p>{error?.message || 'No data available'}</p>
+      <button onClick={onRetry} className="retry-btn">Retry</button>
+    </div>
+  );
+}
+
+export function App() {
+  const { data, loading, error, retry } = useExplorerData('/explorer-data.json');
+  const selection = useGraphSelection();
+  const view = useViewState();
+  const compareState = useCompareState();
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [graphFullscreen, setGraphFullscreen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
+  const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
+  const graphRef = useRef<GraphViewRef>(null);
+
+  // Sync compare focused entity selection to SelectionContext
+  useEffect(() => {
+    if (compareState.focusedEntityId) {
+      if (data?.nodes.some((n) => n.id === compareState.focusedEntityId)) {
+        selection.selectNode(compareState.focusedEntityId);
+      } else if (data?.edges.some((e) => e.id === compareState.focusedEntityId)) {
+        selection.selectEdge(compareState.focusedEntityId);
+      }
+    }
+  }, [compareState.focusedEntityId, data]);
+
+// Compute architecture context and findings
+  const ctx = useMemo(() => (data ? createArchitectureContext(data as any) : null), [data]);
+  const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
+
+  // Sync node selection from view state (URL) to SelectionContext
+  // Sync initial selection from URL params
+  useEffect(() => {
+    if (!data) return;
+    const urlNode = (view as any).selectedNodeId || view.urlNodeId;
+    if (urlNode) {
+      // Find matching node ID by exact match or name / displayName
+      const matchedNode = data.nodes.find(
+        (n: any) => n.id === urlNode || n.name === urlNode || n.displayName === urlNode
+      );
+      const targetId = matchedNode ? matchedNode.id : urlNode;
+      if (selection.selectedNodeId !== targetId) {
+        selection.selectNode(targetId);
+      }
+    } else if (selection.selectedNodeId) {
+      selection.selectNode(null);
+    }
+  }, [data, (view as any).selectedNodeId, view.urlNodeId]);
+
+  // Sync selection changes back to view state
+  useEffect(() => {
+    if (selection.selectedNodeId !== (view as any).selectedNodeId) {
+      (view as any).setSelectedNodeId?.(selection.selectedNodeId);
+    }
+  }, [selection.selectedNodeId]);
+
+  // Sync edge selection from URL
+  useEffect(() => {
+    if (view.urlEdgeId && selection.selectedEdgeId !== view.urlEdgeId) {
+      if (view.urlNodeId) {
+        selection.selectNode(view.urlNodeId);
+      }
+    }
+    if (view.urlEdgeId && !selection.selectedEdgeId) {
+      selection.selectEdge(view.urlEdgeId);
+    }
+  }, [view.urlEdgeId]);
+
+  // Sync finding selection from view state (URL)
+  useEffect(() => {
+    if (!findings || findings.length === 0) return;
+    const findingId = view.selectedFindingId;
+    if (findingId) {
+      const targetFinding = findings.find(
+        (f) =>
+          f.id === findingId ||
+          f.id.endsWith(`:${findingId}`) ||
+          f.id.includes(findingId)
+      );
+      if (targetFinding && selectedFinding?.id !== targetFinding.id) {
+        setSelectedFinding(targetFinding);
+      }
+    } else if (selectedFinding) {
+      setSelectedFinding(null);
+    }
+  }, [findings, view.selectedFindingId, view.urlNodeId, view.urlEdgeId]);
+
+  // Compute filtered graph data based on search and behavior filters
+  const { visibleNodes, visibleEdges } = useMemo(() => {
+    if (!data) return { visibleNodes: [], visibleEdges: [] };
+    const filtered = applyFilters(data.nodes, data.edges, view.filterState);
+    return { visibleNodes: filtered.nodes, visibleEdges: filtered.edges };
+  }, [data, view.filterState]);
+
+  // Derive effective focus state with current selection
+  const effectiveFocusState = useMemo(() => ({
+    ...view.focusState,
+    focusNodeId: selection.selectedNodeId || view.focusState.focusNodeId,
+  }), [view.focusState, selection.selectedNodeId]);
+
+  // Compute focused sub-graph when focus mode is active
+  const focusedGraphData = useMemo(() => {
+    if (!effectiveFocusState.enabled || !effectiveFocusState.focusNodeId) {
+      return { nodes: visibleNodes, edges: visibleEdges };
+    }
+    const res = computeFocusedGraph(visibleNodes, visibleEdges, effectiveFocusState);
+    return { nodes: res.nodes, edges: res.edges };
+  }, [visibleNodes, visibleEdges, effectiveFocusState]);
+
+  // Compute method-aware connection analysis when a node is selected
+  const connectionAnalysis = useMemo(() => {
+    if (!data || !selection.selectedNodeId) return null;
+    return analyzeConnections(data.nodes, data.edges, {
+      origin: selection.selectedNodeId,
+      direction: view.connectionState.direction,
+      depth: view.connectionState.depth,
+    });
+  }, [data, selection.selectedNodeId, view.connectionState]);
+
+  // Determine node IDs to highlight on the graph (finding selection or simulator impact)
+  const highlightedCycleNodeIds = useMemo(() => {
+    if (selectedFinding?.nodeIds && selectedFinding.nodeIds.length > 0) {
+      return selectedFinding.nodeIds;
+    }
+    if (highlightedImpactNodeIds && highlightedImpactNodeIds.length > 0) {
+      return highlightedImpactNodeIds;
+    }
+    return null;
+  }, [selectedFinding, highlightedImpactNodeIds]);
+
+  const selectedNode = useMemo(() => {
+    if (!data || !selection.selectedNodeId) return null;
+    return data.nodes.find((n) => n.id === selection.selectedNodeId) ?? null;
+  }, [data, selection.selectedNodeId]);
+
+  const selectedEdge = useMemo(() => {
+    if (!data || !selection.selectedEdgeId) return null;
+    return data.edges.find((e) => e.id === selection.selectedEdgeId) ?? null;
+  }, [data, selection.selectedEdgeId]);
+
+  const selectedImpactSummary = useMemo(() => {
+    if (!data || !selection.selectedNodeId) return null;
+    return data.impactSummaries?.[selection.selectedNodeId] ?? null;
+  }, [data, selection.selectedNodeId]);
+
+  const handleResetView = () => {
+    selection.clear();
+    view.setFilterState(createEmptyFilterState());
+    view.setFocusState(createEmptyFocusState());
+    view.setImpactState(createEmptyImpactState());
+    (view as any).setSelectedNodeId?.(null);
+    (view as any).setSelectedFindingId?.(null);
+    setSelectedFinding(null);
+    setHighlightedImpactNodeIds(null);
+    if (graphRef.current) {
+      graphRef.current.fitView();
+    }
+  };
+
+  const handleSelectFinding = (finding: ArchitectureFinding) => {
+    setSelectedFinding(finding);
+    (view as any).setSelectedFindingId?.(finding.id);
+    // If a finding is clicked, highlight its nodes and switch view mode to graph to display
+    if (finding.nodeIds && finding.nodeIds.length > 0) {
+      selection.selectNode(finding.nodeIds[0]);
+      (view as any).setSelectedNodeId?.(finding.nodeIds[0]);
+    }
+  };
+
+  const handleClearFinding = () => {
+    setSelectedFinding(null);
+    (view as any).setSelectedFindingId?.(null);
+  };
+
+  if (loading) return <LoadingScreen />;
+  if (error || !data) return <ErrorScreen error={error} onRetry={retry} />;
+
+  return (
+    <SelectionProvider value={selection}>
+      <div className={`app-layout ${graphFullscreen ? 'graph-fullscreen' : ''}`}>
+        <Header
+          onResetView={handleResetView}
+          onToggleSidebar={() => setSidebarCollapsed((prev) => !prev)}
+          onToggleDetails={() => setDetailsCollapsed((prev) => !prev)}
+          isDetailsOpen={!detailsCollapsed}
+          onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
+          onToggleCompare={() => setIsCompareOpen((prev) => !prev)}
+          isCompareOpen={isCompareOpen || compareState.isActive}
+        />
+
+        <div className="main-viewport">
+          {(isCompareOpen || compareState.isActive) && (
+            <div className="compare-panel-wrapper" style={{ position: 'relative', zIndex: 20, padding: '0.8rem' }}>
+              <ComparePanel
+                compareState={compareState}
+                onClose={() => setIsCompareOpen(false)}
+              />
+            </div>
+          )}
+
+          <div className="top-toolbar" style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <ViewModeSwitcher
+              viewMode={view.viewMode}
+              onChangeViewMode={view.setViewMode}
+              findingsCount={findings.length}
+            />
+            {view.viewMode === 'graph' && (
+              <FocusControls
+                focusState={effectiveFocusState}
+                onFocusChange={view.setFocusState}
+                hasSelectedNode={Boolean(selection.selectedNodeId)}
+              />
+            )}
+          </div>
+
+          {view.viewMode === 'graph' ? (
+            <>
+              <div className={`sidebar-region ${sidebarCollapsed ? 'collapsed' : ''}`}>
+                <SidebarSlot
+                  nodes={data.nodes}
+                  displayNodes={visibleNodes}
+                  filterState={view.filterState}
+                  selectedNodeId={selection.selectedNodeId}
+                  collapsed={sidebarCollapsed}
+                  onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
+                  onFilterChange={view.setFilterState}
+                  onSelectNode={(node) => selection.selectNode(node.id)}
+                />
+                <button
+                  className="sidebar-toggle-btn sidebar-reopen-handle"
+                  onClick={() => setSidebarCollapsed((c) => !c)}
+                  aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  data-testid="sidebar-toggle-btn"
+                >
+                  {sidebarCollapsed ? '▶' : '◀'}
+                </button>
+              </div>
+
+              <GraphSlot
+                graphRef={graphRef}
+                nodes={focusedGraphData.nodes}
+                edges={focusedGraphData.edges}
+                selectedNodeId={selection.selectedNodeId}
+                selectedEdgeId={selection.selectedEdgeId}
+                onSelectNode={(node) => selection.selectNode(node ? node.id : null)}
+                onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
+                selectedCycleNodeIds={highlightedCycleNodeIds}
+                isFullscreen={graphFullscreen}
+                onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
+              />
+
+              <div className={`details-region ${detailsCollapsed ? 'collapsed' : ''}`}>
+                <button
+                  className="details-toggle-btn details-reopen-handle"
+                  onClick={() => setDetailsCollapsed((c) => !c)}
+                  aria-label={detailsCollapsed ? "Expand details panel" : "Collapse details panel"}
+                  title={detailsCollapsed ? "Expand details panel" : "Collapse details panel"}
+                  data-testid="details-toggle-btn"
+                >
+                  {detailsCollapsed ? '◀' : '▶'}
+                </button>
+                <DetailsSlot
+                  node={selectedNode}
+                  edge={selectedEdge}
+                  impactSummary={selectedImpactSummary}
+                  history={selection.history}
+                  collapsed={detailsCollapsed}
+                  onToggleCollapse={() => setDetailsCollapsed((prev) => !prev)}
+                  onClose={() => selection.clear()}
+                  onShowImpact={(nodeId) => {
+                    view.setImpactState({ enabled: true, originNodeId: nodeId, depth: 'ALL' });
+                    (view as any).setSelectedNodeId?.(nodeId);
+                  }}
+                  onSelectNodeById={(id) => selection.selectNode(id)}
+                  data={data}
+                  nodes={data.nodes}
+                  cycles={data.cycles}
+                  impactSummaries={data.impactSummaries}
+                  onHighlightImpact={(nodeIds) => setHighlightedImpactNodeIds(nodeIds)}
+                  connectionAnalysis={connectionAnalysis}
+                  connectionState={view.connectionState}
+                  onConnectionStateChange={view.setConnectionState}
+                />
+              </div>
+            </>
+          ) : (
+            <FindingsSlot
+              findings={findings}
+              selectedFindingId={selectedFinding?.id ?? null}
+              onSelectFinding={handleSelectFinding}
+              onClearSelection={handleClearFinding}
+            />
+          )}
+        </div>
+
+        <StatusBar
+          totalNodes={data.nodes.length}
+          totalEdges={data.edges.length}
+          visibleNodes={visibleNodes.length}
+          selectedNodeName={selectedNode?.displayName ?? selection.selectedNodeId}
+          activeFilterCount={
+            (view.filterState.searchQuery ? 1 : 0) +
+            (view.filterState.typeFilter ? 1 : 0) +
+            (view.filterState.riskFilter ? 1 : 0) +
+            (view.filterState.hasCallouts ? 1 : 0) +
+            (view.filterState.withoutSharing ? 1 : 0) +
+            (view.filterState.hideTests ? 1 : 0) +
+            (view.filterState.hasAsyncPatterns ? 1 : 0)
+          }
+          cycleCount={data.summary.cycleCount}
+          unresolvedCount={data.summary.unresolvedCount}
+        />
+      </div>
+    </SelectionProvider>
+  );
+}
 
 export default App;

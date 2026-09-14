@@ -1,0 +1,31 @@
+graph TD
+  N1["BouquetOrderController\n[ApexClass]"]
+  N2["BouquetOrderFormService\n[ApexClass]"]
+  N3["BouquetOrderPageHandler\n[ApexClass]"]
+  N4["BouquetOrderSelector\n[ApexClass]"]
+  N5["CircularA\n[ApexClass]"]
+  N6["CircularB\n[ApexClass]"]
+  N7["HelperService\n[ApexClass]"]
+  N8["MultiCallService\n[ApexClass]"]
+  N9["UnrelatedService\n[ApexClass]"]
+  N10["Account\n[External]"]
+  N11["Contact\n[External]"]
+  N12["Object:Account\n[External]"]
+  N13["Object:Contact\n[External]"]
+  N14["Object:Case\n[External]"]
+  N1 -->|"instantiation: submitOrder"| N2
+  N1 -->|"type-reference: submitOrder"| N2
+  N2 -->|"method-call: someMethod->getContactIdByUserId"| N4
+  N2 -->|"method-call: secondMethod->resolve"| N7
+  N2 -->|"method-call: secondMethod->firstCall"| N8
+  N2 -->|"method-call: secondMethod->secondCall"| N8
+  N3 -->|"instantiation: handleRequest"| N1
+  N3 -->|"type-reference: handleRequest"| N1
+  N4 -->|"method-call: getContactIdByUserId->resolve"| N7
+  N4 -->|"generic-type"| N10
+  N4 -->|"generic-type"| N11
+  N4 -->|"soql-object"| N12
+  N4 -->|"soql-object"| N13
+  N4 -->|"soql-object"| N14
+  N5 -->|"method-call: callB->callA"| N6
+  N6 -->|"method-call: callA->callB"| N5
