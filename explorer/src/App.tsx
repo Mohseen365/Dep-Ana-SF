@@ -21,6 +21,8 @@ import { analyzeConnections, type ConnectionAnalysis } from './lib/connection-an
 import { createEmptyImpactState } from './lib/impact-analysis';
 import { ComparePanel } from './components/ComparePanel';
 import { useCompareState } from './hooks/useCompareState';
+import { CommandPalette } from './components/CommandPalette';
+import { useCommandPalette } from './hooks/useCommandPalette';
 
 import type {
   ExplorerDataSchema,
@@ -194,6 +196,7 @@ export function App() {
   const selection = useGraphSelection();
   const view = useViewState();
   const compareState = useCompareState();
+  const palette = useCommandPalette();
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [graphFullscreen, setGraphFullscreen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -416,6 +419,17 @@ export function App() {
   return (
     <SelectionProvider value={selection}>
       <div className={`app-layout ${graphFullscreen ? 'graph-fullscreen' : ''}`}>
+        <CommandPalette
+          isOpen={palette.isOpen}
+          onClose={palette.close}
+          nodes={data?.nodes ?? []}
+          query={palette.query}
+          onQueryChange={palette.setQuery}
+          onSelectNode={(nodeId) => {
+            selection.selectNode(nodeId);
+            view.setIsInvestigating(true);
+          }}
+        />
         <Header
           onResetView={handleResetView}
           onToggleSidebar={() => setSidebarCollapsed((prev) => !prev)}
