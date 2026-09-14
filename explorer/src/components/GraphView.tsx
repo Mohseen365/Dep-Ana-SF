@@ -15,7 +15,9 @@ import {
   selectNode,
   deselectAll,
   highlightCycle,
-  clearCycleHighlight
+  clearCycleHighlight,
+  focusOnNode,
+  clearHighlights,
 } from '../lib/graph-interactions';
 
 import { GraphControls } from './GraphControls';
@@ -38,6 +40,7 @@ export interface GraphViewProps {
   selectedCycleNodeIds?: string[] | null;
   onToggleFullscreen?: () => void;
   isFullscreen?: boolean;
+  focusedNodeId?: string | null;
 }
 
 export interface GraphViewRef {
@@ -75,6 +78,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   selectedCycleNodeIds,
   onToggleFullscreen,
   isFullscreen = false,
+  focusedNodeId,
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
@@ -299,10 +303,27 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       resizeObserver.observe(containerRef.current);
     }
 
+    // Grid transition hardening: fire cy.resize() on transitionend of parent layout containers
+    const handleTransitionEnd = (e: TransitionEvent) => {
+      if (
+        e.target instanceof HTMLElement &&
+        (e.target.classList.contains('main-viewport') ||
+          e.target.classList.contains('graph-view-layout') ||
+          e.target.classList.contains('investigation-drawer'))
+      ) {
+        if (cyRef.current) {
+          cyRef.current.resize();
+        }
+      }
+    };
+
+    window.addEventListener('transitionend', handleTransitionEnd);
+
     return () => {
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       if (zoomTimeout) clearTimeout(zoomTimeout);
       resizeObserver.disconnect();
+      window.removeEventListener('transitionend', handleTransitionEnd);
 
       if (navRef.current && typeof navRef.current.destroy === 'function') {
         try { navRef.current.destroy(); } catch (e) {}
@@ -398,6 +419,18 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       clearCycleHighlight(cy);
     }
   }, [selectedCycleNodeIds]);
+
+  // Handle focusedNodeId for progressive drilling centering and dimming
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    if (focusedNodeId) {
+      focusOnNode(cy, focusedNodeId);
+    } else {
+      clearHighlights(cy);
+    }
+  }, [focusedNodeId]);
 
   // A8. Keyboard Navigation Handler
   const handleKeyDown = (e: React.KeyboardEvent) => {
