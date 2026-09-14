@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { InvestigationDrawer } from './InvestigationDrawer';
-import type { ExplorerNode } from '../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode } from '../types/explorer';
 
 describe('InvestigationDrawer', () => {
-  const mockNode: ExplorerNode = {
-    id: 'ApexClass:AccountService',
-    displayName: 'AccountService',
+  const mockNodeServiceX: ExplorerNode = {
+    id: 'ServiceX',
+    displayName: 'ServiceX',
     type: 'ApexClass',
-    file: 'force-app/main/default/classes/AccountService.cls',
+    file: 'force-app/main/default/classes/ServiceX.cls',
     metrics: { fanIn: 1, fanOut: 2, coupling: 3, unresolved: 0, score: 5 },
     risk: 'MEDIUM',
     riskReasons: ['Medium risk'],
@@ -29,10 +29,82 @@ describe('InvestigationDrawer', () => {
     },
   };
 
+  const mockNodeOrderController: ExplorerNode = {
+    ...mockNodeServiceX,
+    id: 'OrderController',
+    displayName: 'OrderController',
+  };
+
+  const mockNodeCartService: ExplorerNode = {
+    ...mockNodeServiceX,
+    id: 'CartService',
+    displayName: 'CartService',
+  };
+
+  const mockData: ExplorerDataSchema = {
+    schemaVersion: '1.0.0',
+    analyzerVersion: '1.0.0',
+    generatedAt: '2026-01-01T00:00:00Z',
+    sourceDirectory: 'force-app',
+    summary: {
+      nodeCount: 3,
+      edgeCount: 2,
+      highRiskCount: 0,
+      mediumRiskCount: 0,
+      lowRiskCount: 3,
+      cycleCount: 0,
+      unresolvedCount: 0,
+      inventory: {
+        files: 3,
+        apexClasses: 3,
+        apexTriggers: 0,
+        lwcJs: 0,
+        lwcHtml: 0,
+        visualforce: 0,
+        flows: 0,
+        objects: 0,
+        fields: 0,
+      },
+    },
+    nodes: [mockNodeServiceX, mockNodeOrderController, mockNodeCartService],
+    edges: [],
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {
+      ServiceX: {
+        id: 'ServiceX',
+        directDependents: ['OrderController'],
+        transitiveDependents: ['CartService'],
+        directDependencies: ['CartService'],
+        transitiveDependencies: [],
+        impactedTests: [],
+        totalImpactCount: 10,
+      },
+      OrderController: {
+        id: 'OrderController',
+        directDependents: ['CartService'],
+        transitiveDependents: [],
+        directDependencies: [],
+        transitiveDependencies: [],
+        impactedTests: [],
+        totalImpactCount: 5,
+      },
+      CartService: {
+        id: 'CartService',
+        directDependents: [],
+        transitiveDependents: [],
+        directDependencies: [],
+        transitiveDependencies: [],
+        impactedTests: [],
+        totalImpactCount: 2,
+      },
+    },
+  };
+
   it('renders null when open=false', () => {
     const { container } = render(
       <InvestigationDrawer
-        node={mockNode}
+        node={mockNodeServiceX}
         open={false}
         onClose={vi.fn()}
       />
@@ -41,18 +113,61 @@ describe('InvestigationDrawer', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders node name and type when open=true', () => {
+  it('renders header, breadcrumb trail, and ranked dependents/dependencies when open=true', () => {
     render(
       <InvestigationDrawer
-        node={mockNode}
+        node={mockNodeServiceX}
         open={true}
         onClose={vi.fn()}
+        data={mockData}
+        drillPath={['ServiceX']}
+        recentNodeIds={['ServiceX', 'OrderController']}
       />
     );
 
-    expect(screen.getByText('AccountService')).toBeInTheDocument();
-    expect(screen.getByText('ApexClass')).toBeInTheDocument();
-    expect(screen.getByText('Drilling content coming in UX-4')).toBeInTheDocument();
+    expect(screen.getAllByText('ServiceX').length).toBeGreaterThan(0);
+    expect(screen.getByTestId('breadcrumbs')).toBeInTheDocument();
+    expect(screen.getByTestId('recent-investigations')).toBeInTheDocument();
+
+    expect(screen.getByTestId('dependents-section')).toBeInTheDocument();
+    expect(screen.getByTestId('dependencies-section')).toBeInTheDocument();
+
+    expect(screen.getAllByText('OrderController').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('CartService').length).toBeGreaterThan(0);
+  });
+
+  it('triggers onDrill when clicking a dependent or dependency row', () => {
+    const handleDrill = vi.fn();
+    render(
+      <InvestigationDrawer
+        node={mockNodeServiceX}
+        open={true}
+        onClose={vi.fn()}
+        onDrill={handleDrill}
+        data={mockData}
+        drillPath={['ServiceX']}
+      />
+    );
+
+    const orderRow = screen.getByTestId('dependent-row-OrderController');
+    fireEvent.click(orderRow);
+
+    expect(handleDrill).toHaveBeenCalledWith('OrderController');
+  });
+
+  it('renders empty states cleanly when node has zero dependents/dependencies', () => {
+    render(
+      <InvestigationDrawer
+        node={mockNodeCartService}
+        open={true}
+        onClose={vi.fn()}
+        data={mockData}
+        drillPath={['CartService']}
+      />
+    );
+
+    expect(screen.getByText('No dependents detected')).toBeInTheDocument();
+    expect(screen.getByText('No dependencies detected')).toBeInTheDocument();
   });
 
   it('onClose fires on close button click', () => {
@@ -60,7 +175,7 @@ describe('InvestigationDrawer', () => {
 
     render(
       <InvestigationDrawer
-        node={mockNode}
+        node={mockNodeServiceX}
         open={true}
         onClose={handleClose}
       />
