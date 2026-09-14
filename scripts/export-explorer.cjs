@@ -8,7 +8,7 @@
  *
  * Usage:
  *   node scripts/export-explorer.cjs [inputDirOrFile] [outputFile]
- *   node scripts/export-explorer.cjs --input analyze --output analyze/explorer-data.json
+ *   node scripts/export-explorer.cjs --input analyze --output analyze/explorer-data.json --project core-crm
  */
 
 const fs = require("fs");
@@ -22,7 +22,11 @@ const DEFAULT_ANALYZER_VERSION = "13.0.0";
 function parseArgs(argv) {
   const args = argv.slice(2);
   let input = "analyze";
-  let output = "analyze/explorer-data.json";
+  let output = "";
+  let project = "default";
+  let projectName = "";
+  let projectDesc = "";
+  let source = "";
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -32,6 +36,18 @@ function parseArgs(argv) {
     } else if (arg === "--output" && args[i + 1]) {
       output = args[i + 1];
       i++;
+    } else if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
+      project = args[i + 1];
+      i++;
+    } else if (arg === "--project-name" && args[i + 1]) {
+      projectName = args[i + 1];
+      i++;
+    } else if (arg === "--project-desc" && args[i + 1]) {
+      projectDesc = args[i + 1];
+      i++;
+    } else if (arg === "--source" && args[i + 1]) {
+      source = args[i + 1];
+      i++;
     } else if (!arg.startsWith("--")) {
       if (i === 0 || (i === 1 && !args[0].startsWith("--"))) {
         if (i === 0) input = arg;
@@ -40,7 +56,15 @@ function parseArgs(argv) {
     }
   }
 
-  return { input, output };
+  if (!output) {
+    if (project && project !== "default") {
+      output = path.join("analyze", "projects", project, "explorer-data.json");
+    } else {
+      output = "analyze/explorer-data.json";
+    }
+  }
+
+  return { input, output, project, projectName, projectDesc, source };
 }
 
 function resolveInputFile(inputPath) {
@@ -55,8 +79,8 @@ function resolveInputFile(inputPath) {
     }
   }
 
-  if (!fs.existsSync(targetFile)) {
-    throw new Error(`Analyzer output file not found: ${targetFile}`);
+  if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
+    throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
   }
 
   return targetFile;
@@ -194,7 +218,7 @@ function buildImpactSummaries(nodes, edges) {
   return finalImpactSummaries;
 }
 
-function exportExplorerData(inputPath, outputPath) {
+function exportExplorerData(inputPath, outputPath, options = {}) {
   const resolvedInputFile = resolveInputFile(inputPath);
   const rawContent = fs.readFileSync(resolvedInputFile, "utf8");
   const reportData = JSON.parse(rawContent);
@@ -205,7 +229,14 @@ function exportExplorerData(inputPath, outputPath) {
     DEFAULT_ANALYZER_VERSION;
   const generatedAt = reportData.generatedAt || new Date().toISOString();
   const sourceDirectory =
-    reportData.sourceDirectory || "force-app/main/default";
+    options.source || reportData.sourceDirectory || "force-app/main/default";
+
+  const projectId = options.project || options.projectId || "default";
+  const projectName =
+    options.projectName ||
+    (projectId !== "default" ? projectId : "Default Salesforce Project");
+  const projectDesc =
+    options.projectDesc || "Salesforce DX Architecture Analysis";
 
   // Build Registry Lookup Map
   const registryMap = {};
@@ -332,7 +363,6 @@ function exportExplorerData(inputPath, outputPath) {
   normalizedNodes.sort((a, b) => a.id.localeCompare(b.id));
 
   // Process Edges
-
   const normalizedEdges = rawEdges.map((rawEdge) => {
     const source = normalizeNodeId(rawEdge.from, "ApexClass", "");
     const target = normalizeNodeId(rawEdge.to, "ApexClass", "");
@@ -481,11 +511,29 @@ function exportExplorerData(inputPath, outputPath) {
         : normalizedNodes.filter((n) => n.type === "CustomField").length,
   };
 
+  const projectMetadata = {
+    id: projectId,
+    name: projectName,
+    description: projectDesc,
+    sourcePath: sourceDirectory,
+    createdAt: generatedAt,
+    updatedAt: generatedAt,
+    lastAnalyzedAt: generatedAt,
+    analysisStatus: "COMPLETE",
+    componentCount: normalizedNodes.length,
+    dependencyCount: normalizedEdges.length,
+    analysisPath:
+      projectId !== "default"
+        ? `/projects/${projectId}/explorer-data.json`
+        : "/explorer-data.json",
+  };
+
   const explorerData = {
     schemaVersion: CURRENT_SCHEMA_VERSION,
     analyzerVersion,
     generatedAt,
     sourceDirectory,
+    project: projectMetadata,
     summary: {
       nodeCount: normalizedNodes.length,
       edgeCount: normalizedEdges.length,
@@ -513,18 +561,33 @@ function exportExplorerData(inputPath, outputPath) {
   const jsonContent = JSON.stringify(explorerData, null, 2);
   fs.writeFileSync(resolvedOutputFile, jsonContent, "utf8");
 
-  updateManifestWithExplorerData(resolvedOutputFile, explorerData);
+  // Save project-metadata.json alongside explorer-data.json
+  const metadataPath = path.join(parentDir, "project-metadata.json");
+  fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
+
+  updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
 
   return {
     inputFile: resolvedInputFile,
     outputFile: resolvedOutputFile,
+    projectMetadata,
     explorerData,
   };
 }
 
-function updateManifestWithExplorerData(outputFile, explorerData) {
+function updateManifestWithExplorerData(outputFile, explorerData, projectMetadata) {
   const outputDir = path.dirname(outputFile);
-  const manifestPath = path.join(outputDir, "analysis-manifest.json");
+  let manifestDir = outputDir;
+
+  if (manifestDir.includes("/projects/") || manifestDir.includes("\\projects\\") || manifestDir.endsWith("/projects") || manifestDir.endsWith("\\projects")) {
+    const idx = manifestDir.lastIndexOf("projects");
+    if (idx > 0) {
+      manifestDir = manifestDir.substring(0, idx);
+    }
+  }
+
+  const manifestPath = path.join(manifestDir, "project-manifest.json");
+
   const fileHash =
     "sha256:" +
     crypto
@@ -543,21 +606,26 @@ function updateManifestWithExplorerData(outputFile, explorerData) {
   if (!manifest) {
     manifest = {
       manifestVersion: "1.0.0",
-      analyzerVersion: explorerData.analyzerVersion || DEFAULT_ANALYZER_VERSION,
-      contractVersion: "1.0.0",
-      generatedAt: explorerData.generatedAt || new Date().toISOString(),
-      source: {
-        directory: explorerData.sourceDirectory || "force-app/main/default",
-        fileCount: explorerData.summary?.inventory?.files || 0,
-      },
-      status: "COMPLETE",
+      activeProjectId: projectMetadata?.id || "default",
+      projects: [],
       artifacts: {},
     };
   }
 
+  if (!Array.isArray(manifest.projects)) manifest.projects = [];
   if (!manifest.artifacts) manifest.artifacts = {};
 
-  manifest.artifacts.explorerData = {
+  if (projectMetadata) {
+    const existingIdx = manifest.projects.findIndex((p) => p.id === projectMetadata.id);
+    if (existingIdx >= 0) {
+      manifest.projects[existingIdx] = projectMetadata;
+    } else {
+      manifest.projects.push(projectMetadata);
+    }
+    manifest.activeProjectId = projectMetadata.id;
+  }
+
+  manifest.artifacts[projectMetadata?.id || "explorerData"] = {
     path: relFile,
     schemaVersion: explorerData.schemaVersion || CURRENT_SCHEMA_VERSION,
     fileHash,
@@ -565,22 +633,34 @@ function updateManifestWithExplorerData(outputFile, explorerData) {
     edgeCount: explorerData.summary?.edgeCount || 0,
   };
 
+  if (!fs.existsSync(manifestDir)) {
+    fs.mkdirSync(manifestDir, { recursive: true });
+  }
+
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
 }
 
 // CLI Execution
 if (require.main === module) {
   try {
-    const { input, output } = parseArgs(process.argv);
+    const parsed = parseArgs(process.argv);
     console.log(`Salesforce Architecture Explorer Data Adapter`);
     console.log(`============================================`);
-    console.log(`Input:  ${input}`);
-    console.log(`Output: ${output}`);
+    console.log(`Input:   ${parsed.input}`);
+    console.log(`Output:  ${parsed.output}`);
+    console.log(`Project: ${parsed.project}`);
 
-    const res = exportExplorerData(input, output);
+    const res = exportExplorerData(parsed.input, parsed.output, {
+      project: parsed.project,
+      projectName: parsed.projectName,
+      projectDesc: parsed.projectDesc,
+      source: parsed.source,
+    });
 
     console.log(``);
     console.log(`Successfully generated explorer data contract!`);
+    console.log(`  Project ID: ${res.projectMetadata.id}`);
+    console.log(`  Project Name: ${res.projectMetadata.name}`);
     console.log(`  Nodes: ${res.explorerData.summary.nodeCount}`);
     console.log(`  Edges: ${res.explorerData.summary.edgeCount}`);
     console.log(`  High Risk: ${res.explorerData.summary.highRiskCount}`);

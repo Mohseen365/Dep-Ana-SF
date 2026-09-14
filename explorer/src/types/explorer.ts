@@ -1,8 +1,31 @@
+export type ProjectAnalysisStatus = 'NOT_ANALYZED' | 'ANALYZING' | 'COMPLETE' | 'FAILED';
+
+export interface ProjectMetadata {
+  id: string;
+  name: string;
+  description?: string;
+  sourcePath: string;
+  createdAt: string;
+  updatedAt: string;
+  lastAnalyzedAt?: string | null;
+  analysisStatus: ProjectAnalysisStatus;
+  componentCount: number;
+  dependencyCount: number;
+  analysisPath?: string;
+}
+
+export interface MultiProjectManifest {
+  manifestVersion: string;
+  activeProjectId: string;
+  projects: ProjectMetadata[];
+}
+
 export interface ExplorerDataSchema {
   schemaVersion: string;
   analyzerVersion: string;
   generatedAt: string;
   sourceDirectory: string;
+  project?: ProjectMetadata;
   summary: ExplorerSummary;
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];

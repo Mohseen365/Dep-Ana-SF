@@ -2,7 +2,42 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ExplorerDataSchema } from '../types/explorer';
 import { parseExplorerData } from '../lib/schema';
 
-export function useExplorerData(url: string = '/explorer-data.json'): {
+function resolveDataUrl(projectIdOrUrl?: string): string {
+  if (!projectIdOrUrl) {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlProject = urlParams.get('project');
+        if (urlProject && urlProject !== 'default') {
+          return `/projects/${urlProject}/explorer-data.json`;
+        }
+        const savedProject = localStorage.getItem('explorer.activeProjectId');
+        if (savedProject && savedProject !== 'default') {
+          return `/projects/${savedProject}/explorer-data.json`;
+        }
+      } catch (_) {
+        // Ignore
+      }
+    }
+    return '/explorer-data.json';
+  }
+
+  if (
+    projectIdOrUrl.startsWith('/') ||
+    projectIdOrUrl.startsWith('http') ||
+    projectIdOrUrl.endsWith('.json')
+  ) {
+    return projectIdOrUrl;
+  }
+
+  if (projectIdOrUrl === 'default') {
+    return '/explorer-data.json';
+  }
+
+  return `/projects/${projectIdOrUrl}/explorer-data.json`;
+}
+
+export function useExplorerData(projectIdOrUrl?: string): {
   data: ExplorerDataSchema | null;
   loading: boolean;
   error: Error | null;
@@ -15,9 +50,28 @@ export function useExplorerData(url: string = '/explorer-data.json'): {
 
   const retryCountRef = useRef<number>(0);
 
+  const resolvedUrl = resolveDataUrl(projectIdOrUrl);
+
   const retry = useCallback(() => {
     retryCountRef.current = 0;
     setRetryTrigger((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    const handleProjectChange = () => {
+      retryCountRef.current = 0;
+      setRetryTrigger((prev) => prev + 1);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('explorer:project-changed', handleProjectChange);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('explorer:project-changed', handleProjectChange);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -29,8 +83,21 @@ export function useExplorerData(url: string = '/explorer-data.json'): {
       setError(null);
 
       try {
-        const res = await fetch(url, { signal: controller.signal });
+        const res = await fetch(resolvedUrl, { signal: controller.signal });
         if (!res.ok) {
+          // Fallback to default /explorer-data.json if project-specific file 404s
+          if (res.status === 404 && resolvedUrl !== '/explorer-data.json') {
+            const fallbackRes = await fetch('/explorer-data.json', { signal: controller.signal });
+            if (fallbackRes.ok) {
+              const fallbackJson = await fallbackRes.json();
+              const parsedFallback = parseExplorerData(fallbackJson);
+              if (isSubscribed) {
+                setData(parsedFallback);
+                setLoading(false);
+              }
+              return;
+            }
+          }
           throw new Error(`Failed to load explorer data: HTTP ${res.status}`);
         }
         const json = await res.json();
@@ -60,7 +127,7 @@ export function useExplorerData(url: string = '/explorer-data.json'): {
       isSubscribed = false;
       controller.abort();
     };
-  }, [url, retryTrigger]);
+  }, [resolvedUrl, retryTrigger]);
 
   return { data, loading, error, retry };
 }
