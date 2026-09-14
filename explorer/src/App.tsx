@@ -9,6 +9,7 @@ import { GraphView, GraphViewRef } from './components/GraphView';
 import { Sidebar } from './components/Sidebar';
 import { DetailsPanel } from './components/DetailsPanel';
 import { FindingsPanel } from './components/findings/FindingsPanel';
+import { InvestigationDrawer } from './components/InvestigationDrawer';
 import { ViewModeSwitcher } from './components/ViewModeSwitcher';
 import { applyFilters, SearchFilterState, createEmptyFilterState } from './lib/search-filter';
 import { createArchitectureContext } from './lib/intelligence/context';
@@ -374,7 +375,7 @@ export function App() {
           isCompareOpen={isCompareOpen || compareState.isActive}
         />
 
-        <div className="main-viewport">
+        <div className={`main-viewport ${view.isInvestigating ? 'drawer-open' : 'drawer-closed'}`}>
           {(isCompareOpen || compareState.isActive) && (
             <div className="compare-panel-wrapper" style={{ position: 'relative', zIndex: 20, padding: '0.8rem' }}>
               <ComparePanel
@@ -400,7 +401,7 @@ export function App() {
           </div>
 
           {view.viewMode === 'graph' ? (
-            <>
+            <div className="graph-view-layout">
               <div className={`sidebar-region ${sidebarCollapsed ? 'collapsed' : ''}`}>
                 <SidebarSlot
                   nodes={data.nodes}
@@ -410,7 +411,10 @@ export function App() {
                   collapsed={sidebarCollapsed}
                   onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
                   onFilterChange={view.setFilterState}
-                  onSelectNode={(node) => selection.selectNode(node.id)}
+                  onSelectNode={(node) => {
+                    selection.selectNode(node.id);
+                    view.setIsInvestigating(true);
+                  }}
                 />
                 <button
                   className="sidebar-toggle-btn sidebar-reopen-handle"
@@ -429,7 +433,12 @@ export function App() {
                 edges={focusedGraphData.edges}
                 selectedNodeId={selection.selectedNodeId}
                 selectedEdgeId={selection.selectedEdgeId}
-                onSelectNode={(node) => selection.selectNode(node ? node.id : null)}
+                onSelectNode={(node) => {
+                  selection.selectNode(node ? node.id : null);
+                  if (node) {
+                    view.setIsInvestigating(true);
+                  }
+                }}
                 onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
                 selectedCycleNodeIds={highlightedCycleNodeIds}
                 isFullscreen={graphFullscreen}
@@ -469,7 +478,13 @@ export function App() {
                   onConnectionStateChange={view.setConnectionState}
                 />
               </div>
-            </>
+
+              <InvestigationDrawer
+                node={selectedNode}
+                open={view.isInvestigating}
+                onClose={() => view.setIsInvestigating(false)}
+              />
+            </div>
           ) : (
             <FindingsSlot
               findings={findings}
