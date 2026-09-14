@@ -1,6 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
-import { StatusBar } from './components/StatusBar';
 import { SelectionProvider } from './context/SelectionContext';
 import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
@@ -9,16 +8,16 @@ import { GraphView, GraphViewRef } from './components/GraphView';
 import { Sidebar } from './components/Sidebar';
 import { DetailsPanel } from './components/DetailsPanel';
 import { FindingsPanel } from './components/findings/FindingsPanel';
-import { ViewModeSwitcher } from './components/ViewModeSwitcher';
+import { InvestigationDrawer } from './components/InvestigationDrawer';
 import { applyFilters, SearchFilterState, createEmptyFilterState } from './lib/search-filter';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
-import { FocusControls } from './components/FocusControls';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { analyzeConnections, type ConnectionAnalysis } from './lib/connection-analysis';
 import { createEmptyImpactState } from './lib/impact-analysis';
-import { ComparePanel } from './components/ComparePanel';
+import { CommandPalette } from './components/CommandPalette';
+import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
 
 import type {
@@ -45,6 +44,7 @@ export function GraphSlot(props: {
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
+  focusedNodeId?: string | null;
 }) {
   return (
     <div className="graph-container" data-slot="graph">
@@ -60,6 +60,7 @@ export function GraphSlot(props: {
         selectedCycleNodeIds={props.selectedCycleNodeIds}
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
+        focusedNodeId={props.focusedNodeId}
       />
     </div>
   );
@@ -191,12 +192,17 @@ export function App() {
   const selection = useGraphSelection();
   const view = useViewState();
   const compareState = useCompareState();
-  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const palette = useCommandPalette();
   const [graphFullscreen, setGraphFullscreen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
+
+  // Progressive drilling and session-only recent list state
+  const [drillPath, setDrillPath] = useState<string[]>([]);
+  const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
+
   const graphRef = useRef<GraphViewRef>(null);
 
   // Sync compare focused entity selection to SelectionContext
@@ -210,7 +216,29 @@ export function App() {
     }
   }, [compareState.focusedEntityId, data]);
 
-// Compute architecture context and findings
+  // Sync drill path and recent items when selection.selectedNodeId changes
+  useEffect(() => {
+    const id = selection.selectedNodeId;
+    if (!id) return;
+
+    setRecentNodeIds((prev) => {
+      const filtered = prev.filter((item) => item !== id);
+      return [id, ...filtered].slice(0, 5);
+    });
+
+    setDrillPath((prev) => {
+      if (prev.length > 0 && prev[prev.length - 1] === id) {
+        return prev;
+      }
+      const existingIndex = prev.indexOf(id);
+      if (existingIndex !== -1) {
+        return prev.slice(0, existingIndex + 1);
+      }
+      return [id];
+    });
+  }, [selection.selectedNodeId]);
+
+  // Compute architecture context and findings
   const ctx = useMemo(() => (data ? createArchitectureContext(data as any) : null), [data]);
   const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
 
@@ -338,6 +366,7 @@ export function App() {
     (view as any).setSelectedFindingId?.(null);
     setSelectedFinding(null);
     setHighlightedImpactNodeIds(null);
+    setDrillPath([]);
     if (graphRef.current) {
       graphRef.current.fitView();
     }
@@ -346,7 +375,6 @@ export function App() {
   const handleSelectFinding = (finding: ArchitectureFinding) => {
     setSelectedFinding(finding);
     (view as any).setSelectedFindingId?.(finding.id);
-    // If a finding is clicked, highlight its nodes and switch view mode to graph to display
     if (finding.nodeIds && finding.nodeIds.length > 0) {
       selection.selectNode(finding.nodeIds[0]);
       (view as any).setSelectedNodeId?.(finding.nodeIds[0]);
@@ -358,49 +386,87 @@ export function App() {
     (view as any).setSelectedFindingId?.(null);
   };
 
+  const handleDrill = (targetId: string) => {
+    setDrillPath((prev) => [...prev, targetId]);
+    selection.selectNode(targetId);
+    view.setIsInvestigating(true);
+  };
+
+  const handleNavigateBreadcrumb = (targetId: string) => {
+    setDrillPath((prev) => {
+      const idx = prev.indexOf(targetId);
+      if (idx !== -1) {
+        return prev.slice(0, idx + 1);
+      }
+      return [targetId];
+    });
+    selection.selectNode(targetId);
+  };
+
+  const handleSelectRecentNode = (targetId: string) => {
+    selection.selectNode(targetId);
+    view.setIsInvestigating(true);
+  };
+
   if (loading) return <LoadingScreen />;
   if (error || !data) return <ErrorScreen error={error} onRetry={retry} />;
 
   return (
     <SelectionProvider value={selection}>
       <div className={`app-layout ${graphFullscreen ? 'graph-fullscreen' : ''}`}>
+        <CommandPalette
+          isOpen={palette.isOpen}
+          onClose={palette.close}
+          nodes={data?.nodes ?? []}
+          query={palette.query}
+          onQueryChange={palette.setQuery}
+          data={data}
+          selectedNodeId={selection.selectedNodeId}
+          findings={findings}
+          selectedFindingId={selectedFinding?.id ?? null}
+          onSelectFinding={handleSelectFinding}
+          onClearFinding={handleClearFinding}
+          compareState={compareState}
+          activeRiskFilter={view.filterState.riskFilter}
+          onRiskFilterChange={(risk) => view.setFilterState({ ...view.filterState, riskFilter: risk })}
+          onSelectNode={(nodeId) => {
+            selection.selectNode(nodeId);
+            view.setIsInvestigating(true);
+          }}
+          onApplyFocus={() => {
+            if (selection.selectedNodeId) {
+              view.setFocusState({
+                enabled: true,
+                focusNodeId: selection.selectedNodeId,
+                depth: 1,
+                direction: 'both',
+              });
+            }
+          }}
+          onShowImpact={() => {
+            if (selection.selectedNodeId) {
+              view.setImpactState({ enabled: true, originNodeId: selection.selectedNodeId, depth: 'ALL' });
+            }
+          }}
+          onToggleViewMode={() => {
+            view.setViewMode(view.viewMode === 'graph' ? 'findings' : 'graph');
+          }}
+        />
         <Header
           onResetView={handleResetView}
           onToggleSidebar={() => setSidebarCollapsed((prev) => !prev)}
           onToggleDetails={() => setDetailsCollapsed((prev) => !prev)}
           isDetailsOpen={!detailsCollapsed}
           onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
-          onToggleCompare={() => setIsCompareOpen((prev) => !prev)}
-          isCompareOpen={isCompareOpen || compareState.isActive}
+          onToggleCompare={() => {
+            palette.open();
+          }}
+          isCompareOpen={compareState.isActive}
         />
 
-        <div className="main-viewport">
-          {(isCompareOpen || compareState.isActive) && (
-            <div className="compare-panel-wrapper" style={{ position: 'relative', zIndex: 20, padding: '0.8rem' }}>
-              <ComparePanel
-                compareState={compareState}
-                onClose={() => setIsCompareOpen(false)}
-              />
-            </div>
-          )}
-
-          <div className="top-toolbar" style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <ViewModeSwitcher
-              viewMode={view.viewMode}
-              onChangeViewMode={view.setViewMode}
-              findingsCount={findings.length}
-            />
-            {view.viewMode === 'graph' && (
-              <FocusControls
-                focusState={effectiveFocusState}
-                onFocusChange={view.setFocusState}
-                hasSelectedNode={Boolean(selection.selectedNodeId)}
-              />
-            )}
-          </div>
-
+        <div className={`main-viewport ${view.isInvestigating ? 'drawer-open' : 'drawer-closed'}`}>
           {view.viewMode === 'graph' ? (
-            <>
+            <div className="graph-view-layout">
               <div className={`sidebar-region ${sidebarCollapsed ? 'collapsed' : ''}`}>
                 <SidebarSlot
                   nodes={data.nodes}
@@ -410,7 +476,10 @@ export function App() {
                   collapsed={sidebarCollapsed}
                   onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
                   onFilterChange={view.setFilterState}
-                  onSelectNode={(node) => selection.selectNode(node.id)}
+                  onSelectNode={(node) => {
+                    selection.selectNode(node.id);
+                    view.setIsInvestigating(true);
+                  }}
                 />
                 <button
                   className="sidebar-toggle-btn sidebar-reopen-handle"
@@ -429,11 +498,23 @@ export function App() {
                 edges={focusedGraphData.edges}
                 selectedNodeId={selection.selectedNodeId}
                 selectedEdgeId={selection.selectedEdgeId}
-                onSelectNode={(node) => selection.selectNode(node ? node.id : null)}
+                onSelectNode={(node) => {
+                  selection.selectNode(node ? node.id : null);
+                  if (node) {
+                    view.setIsInvestigating(true);
+                  }
+                }}
                 onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
                 selectedCycleNodeIds={highlightedCycleNodeIds}
                 isFullscreen={graphFullscreen}
                 onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
+                focusedNodeId={
+                  view.isInvestigating
+                    ? drillPath.length > 0
+                      ? drillPath[drillPath.length - 1]
+                      : selection.selectedNodeId
+                    : null
+                }
               />
 
               <div className={`details-region ${detailsCollapsed ? 'collapsed' : ''}`}>
@@ -469,7 +550,19 @@ export function App() {
                   onConnectionStateChange={view.setConnectionState}
                 />
               </div>
-            </>
+
+              <InvestigationDrawer
+                node={selectedNode}
+                open={view.isInvestigating}
+                onClose={() => view.setIsInvestigating(false)}
+                onDrill={handleDrill}
+                data={data}
+                drillPath={drillPath}
+                onNavigateBreadcrumb={handleNavigateBreadcrumb}
+                recentNodeIds={recentNodeIds}
+                onSelectRecentNode={handleSelectRecentNode}
+              />
+            </div>
           ) : (
             <FindingsSlot
               findings={findings}
@@ -480,23 +573,6 @@ export function App() {
           )}
         </div>
 
-        <StatusBar
-          totalNodes={data.nodes.length}
-          totalEdges={data.edges.length}
-          visibleNodes={visibleNodes.length}
-          selectedNodeName={selectedNode?.displayName ?? selection.selectedNodeId}
-          activeFilterCount={
-            (view.filterState.searchQuery ? 1 : 0) +
-            (view.filterState.typeFilter ? 1 : 0) +
-            (view.filterState.riskFilter ? 1 : 0) +
-            (view.filterState.hasCallouts ? 1 : 0) +
-            (view.filterState.withoutSharing ? 1 : 0) +
-            (view.filterState.hideTests ? 1 : 0) +
-            (view.filterState.hasAsyncPatterns ? 1 : 0)
-          }
-          cycleCount={data.summary.cycleCount}
-          unresolvedCount={data.summary.unresolvedCount}
-        />
       </div>
     </SelectionProvider>
   );
