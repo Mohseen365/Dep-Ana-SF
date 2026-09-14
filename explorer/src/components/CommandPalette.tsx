@@ -29,6 +29,7 @@ export interface CommandEntry {
   panelId?: PalettePanelId;
   action?: () => void;
   description?: string;
+  disabled?: boolean;
 }
 
 export interface CommandPaletteProps {
@@ -42,6 +43,7 @@ export interface CommandPaletteProps {
   // Data & Panel Props for relocated panels
   data?: ExplorerDataSchema | null;
   selectedNodeId?: string | null;
+  isInvestigating?: boolean;
   findings?: ArchitectureFinding[];
   selectedFindingId?: string | null;
   onSelectFinding?: (finding: ArchitectureFinding) => void;
@@ -60,6 +62,7 @@ export interface CommandPaletteProps {
   onApplyFocus?: () => void;
   onShowImpact?: () => void;
   onToggleViewMode?: () => void;
+  onRequestHandoff?: (nodeId: string) => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
@@ -84,9 +87,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onSelectCycle,
   selectedUnresolvedEdgeId = null,
   onSelectUnresolved,
+  isInvestigating,
   onApplyFocus,
   onShowImpact,
   onToggleViewMode,
+  onRequestHandoff,
 }) => {
   const [inputVal, setInputVal] = useState(query);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -95,6 +100,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const isNodeInvestigated = Boolean(selectedNodeId) && (isInvestigating ?? true);
 
   // Command entries definition
   const commandEntries: CommandEntry[] = useMemo(
@@ -135,6 +142,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         description: 'Compare current architecture with previous snapshot',
       },
       {
+        id: 'handoff-to-refactor',
+        title: 'Hand off to refactor',
+        category: 'Action',
+        disabled: !isNodeInvestigated,
+        action: () => {
+          if (selectedNodeId && onRequestHandoff) {
+            onRequestHandoff(selectedNodeId);
+          }
+        },
+        description: 'Open the refactor handoff confirmation for the currently investigated node.',
+      },
+      {
         id: 'cmd-focus',
         title: 'Focus on selected node',
         category: 'Action',
@@ -162,7 +181,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         description: 'Switch between Graph and Findings view modes',
       },
     ],
-    [onApplyFocus, onShowImpact, onToggleViewMode]
+    [isNodeInvestigated, selectedNodeId, onRequestHandoff, onApplyFocus, onShowImpact, onToggleViewMode]
   );
 
   // Reset state when opening/closing
@@ -252,6 +271,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const handleSelectCommand = useCallback(
     (cmd: CommandEntry) => {
+      if (cmd.disabled) return;
       if (cmd.category === 'Panel' && cmd.panelId) {
         setActivePanel(cmd.panelId);
       } else if (cmd.category === 'Action' && cmd.action) {
@@ -460,11 +480,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                         }}
                         className={`command-palette-item command-palette-command-item ${
                           isSelected ? 'selected' : ''
-                        }`}
-                        onClick={() => handleSelectCommand(cmd)}
+                        } ${cmd.disabled ? 'disabled' : ''}`}
+                        style={cmd.disabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+                        onClick={() => !cmd.disabled && handleSelectCommand(cmd)}
                         onMouseEnter={() => setSelectedIndex(index)}
                         role="option"
                         aria-selected={isSelected}
+                        aria-disabled={cmd.disabled}
                         data-testid={`command-palette-item-${cmd.id}`}
                       >
                         <div className="command-palette-item-main">

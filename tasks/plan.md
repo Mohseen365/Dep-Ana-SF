@@ -97,12 +97,7 @@ verification steps lives there.
 - When the user closes the drawer, does `?node=X` persist? Recommendation: persist.
 - Is the "recent investigations" stack persisted across reloads? Recommendation: session-only for v1.
 - Does a thin status strip survive at the bottom of the graph pane, or does Cmd+K absorb everything? Recommendation: Cmd+K absorbs all; header hint is enough.
-- **Removed in UX-8:** The refactor-handoff confirmation modal
-  (previously inside `DetailsPanel.tsx`) is currently removed without
-  replacement. Decision pending: reinstate inside `InvestigationDrawer`
-  as a "Hand off to refactor" palette action, or drop entirely.
-- Corrective pass UX-8-R completed on 2026-09-14. Audit findings resolved: orphaned imports/mounts, CSS scoping, test compilation. UX-8.5 integration (palette command, drawer action, App wiring) remains pending as a separate session.
-- current "pending" UX-8.5-R resolves it.
+- RESOLVED (UX-8.5-R, 2026-09-14): RefactorHandoff modal reinstated as both a Cmd+K palette command and an InvestigationDrawer header action. Original window.parent.postMessage transport preserved in lib/refactor-handoff.ts.
 
 ## Ownership Boundaries
 
