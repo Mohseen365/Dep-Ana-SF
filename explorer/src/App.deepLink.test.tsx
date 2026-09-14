@@ -144,7 +144,7 @@ describe("App Deep-Link Restoration", () => {
       "/?component=AccountService&direction=dependencies&depth=2&finding=finding:high-fan-in-hub:ApexClass:AccountService",
     );
 
-    const { container } = render(<App />);
+    render(<App />);
 
     await waitFor(() => {
       expect(
@@ -152,14 +152,10 @@ describe("App Deep-Link Restoration", () => {
       ).toBeInTheDocument();
     });
 
-    // Check that details panel shows the restored component AccountService
+    // Check that selected component AccountService is restored
     await waitFor(() => {
       expect(screen.getAllByText("AccountService").length).toBeGreaterThan(0);
     });
-
-    expect(
-      container.querySelector('[data-slot="details"]'),
-    ).toBeInTheDocument();
   });
 
   it("restores view mode findings when specified in URL", async () => {

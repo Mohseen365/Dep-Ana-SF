@@ -1805,7 +1805,7 @@ body {
 
 /* Additional Panel & Filter Styles */
 
-/* Behavior Chips in DetailsPanel */
+/* Behavior Chips */
 .behavior-chips-container {
   display: flex;
   flex-wrap: wrap;
@@ -1832,7 +1832,7 @@ body {
   color: #fca5a5;
 }
 
-/* Change Simulator in DetailsPanel */
+/* Change Simulator */
 .simulator-section {
   background-color: #0f172a;
   border: 1px solid var(--border-color);
@@ -1984,7 +1984,7 @@ body {
   cursor: pointer;
 }
 
-/* Empty-State Hotspot Dashboard in DetailsPanel */
+/* Empty-State Hotspot Dashboard */
 .hotspot-dashboard-list {
   display: flex;
   flex-direction: column;

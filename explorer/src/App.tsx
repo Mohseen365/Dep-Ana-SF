@@ -6,7 +6,6 @@ import { useGraphSelection } from './hooks/useGraphSelection';
 import { useViewState } from './hooks/useViewState';
 import { GraphView, GraphViewRef } from './components/GraphView';
 import { Sidebar } from './components/Sidebar';
-import { DetailsPanel } from './components/DetailsPanel';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
 import { applyFilters, SearchFilterState, createEmptyFilterState } from './lib/search-filter';
@@ -14,18 +13,14 @@ import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
-import { analyzeConnections, type ConnectionAnalysis } from './lib/connection-analysis';
 import { createEmptyImpactState } from './lib/impact-analysis';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
 
 import type {
-  ExplorerDataSchema,
   ExplorerNode,
   ExplorerEdge,
-  ExplorerComponentImpactSummary,
-  ExplorerCycleGroup,
 } from './types/explorer';
 import './index.css';
 
@@ -95,55 +90,6 @@ export function SidebarSlot(props: {
   );
 }
 
-/**
- * DetailsSlot renders component or relationship details, blast radius, metrics, and simulator.
- */
-export function DetailsSlot(props: {
-  node: ExplorerNode | null;
-  edge: ExplorerEdge | null;
-  impactSummary: ExplorerComponentImpactSummary | null;
-  history: string[];
-  collapsed?: boolean;
-  onToggleCollapse?: () => void;
-  onClose: () => void;
-  onShowImpact?: (nodeId: string) => void;
-  onSelectNodeById?: (nodeId: string) => void;
-  data?: ExplorerDataSchema | null;
-  nodes?: ExplorerNode[];
-  cycles?: ExplorerCycleGroup[];
-  impactSummaries?: Record<string, ExplorerComponentImpactSummary>;
-  onHighlightImpact?: (nodeIds: string[], edgeIds: string[]) => void;
-  connectionAnalysis?: ConnectionAnalysis | null;
-  connectionState?: any;
-  onConnectionStateChange?: (state: any) => void;
-}) {
-  return (
-    <div
-      className={`details-panel-slot ${props.collapsed ? 'collapsed hidden' : ''}`}
-      data-slot="details"
-    >
-      <DetailsPanel
-        node={props.node}
-        edge={props.edge}
-        impactSummary={props.impactSummary}
-        history={props.history}
-        collapsed={props.collapsed}
-        onToggleCollapse={props.onToggleCollapse}
-        onClose={props.onClose}
-        onShowImpact={props.onShowImpact}
-        onSelectNodeById={props.onSelectNodeById}
-        data={props.data}
-        nodes={props.nodes}
-        cycles={props.cycles}
-        impactSummaries={props.impactSummaries}
-        onHighlightImpact={props.onHighlightImpact}
-        connectionAnalysis={props.connectionAnalysis}
-        connectionState={props.connectionState}
-        onConnectionStateChange={props.onConnectionStateChange}
-      />
-    </div>
-  );
-}
 
 /**
  * FindingsSlot renders the deterministic architecture intelligence findings panel.
@@ -321,16 +267,6 @@ export function App() {
     return { nodes: res.nodes, edges: res.edges };
   }, [visibleNodes, visibleEdges, effectiveFocusState]);
 
-  // Compute method-aware connection analysis when a node is selected
-  const connectionAnalysis = useMemo(() => {
-    if (!data || !selection.selectedNodeId) return null;
-    return analyzeConnections(data.nodes, data.edges, {
-      origin: selection.selectedNodeId,
-      direction: view.connectionState.direction,
-      depth: view.connectionState.depth,
-    });
-  }, [data, selection.selectedNodeId, view.connectionState]);
-
   // Determine node IDs to highlight on the graph (finding selection or simulator impact)
   const highlightedCycleNodeIds = useMemo(() => {
     if (selectedFinding?.nodeIds && selectedFinding.nodeIds.length > 0) {
@@ -345,16 +281,6 @@ export function App() {
   const selectedNode = useMemo(() => {
     if (!data || !selection.selectedNodeId) return null;
     return data.nodes.find((n) => n.id === selection.selectedNodeId) ?? null;
-  }, [data, selection.selectedNodeId]);
-
-  const selectedEdge = useMemo(() => {
-    if (!data || !selection.selectedEdgeId) return null;
-    return data.edges.find((e) => e.id === selection.selectedEdgeId) ?? null;
-  }, [data, selection.selectedEdgeId]);
-
-  const selectedImpactSummary = useMemo(() => {
-    if (!data || !selection.selectedNodeId) return null;
-    return data.impactSummaries?.[selection.selectedNodeId] ?? null;
   }, [data, selection.selectedNodeId]);
 
   const handleResetView = () => {
@@ -517,39 +443,6 @@ export function App() {
                 }
               />
 
-              <div className={`details-region ${detailsCollapsed ? 'collapsed' : ''}`}>
-                <button
-                  className="details-toggle-btn details-reopen-handle"
-                  onClick={() => setDetailsCollapsed((c) => !c)}
-                  aria-label={detailsCollapsed ? "Expand details panel" : "Collapse details panel"}
-                  title={detailsCollapsed ? "Expand details panel" : "Collapse details panel"}
-                  data-testid="details-toggle-btn"
-                >
-                  {detailsCollapsed ? '◀' : '▶'}
-                </button>
-                <DetailsSlot
-                  node={selectedNode}
-                  edge={selectedEdge}
-                  impactSummary={selectedImpactSummary}
-                  history={selection.history}
-                  collapsed={detailsCollapsed}
-                  onToggleCollapse={() => setDetailsCollapsed((prev) => !prev)}
-                  onClose={() => selection.clear()}
-                  onShowImpact={(nodeId) => {
-                    view.setImpactState({ enabled: true, originNodeId: nodeId, depth: 'ALL' });
-                    (view as any).setSelectedNodeId?.(nodeId);
-                  }}
-                  onSelectNodeById={(id) => selection.selectNode(id)}
-                  data={data}
-                  nodes={data.nodes}
-                  cycles={data.cycles}
-                  impactSummaries={data.impactSummaries}
-                  onHighlightImpact={(nodeIds) => setHighlightedImpactNodeIds(nodeIds)}
-                  connectionAnalysis={connectionAnalysis}
-                  connectionState={view.connectionState}
-                  onConnectionStateChange={view.setConnectionState}
-                />
-              </div>
 
               <InvestigationDrawer
                 node={selectedNode}

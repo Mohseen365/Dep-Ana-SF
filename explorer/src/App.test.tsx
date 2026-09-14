@@ -94,6 +94,5 @@ describe('App composed shell', () => {
 
     expect(container.querySelector('[data-slot="graph"]')).toBeInTheDocument();
     expect(container.querySelector('[data-slot="sidebar"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="details"]')).toBeInTheDocument();
   });
 });
