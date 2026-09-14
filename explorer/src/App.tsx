@@ -5,20 +5,24 @@ import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
 import { useViewState } from './hooks/useViewState';
 import { GraphView, GraphViewRef } from './components/GraphView';
-import { Sidebar } from './components/Sidebar';
-import { FindingsPanel } from './components/findings/FindingsPanel';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
-import { applyFilters, SearchFilterState, createEmptyFilterState } from './lib/search-filter';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { createEmptyImpactState } from './lib/impact-analysis';
+import { createEmptyFilterState } from './lib/search-filter';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
 import { RefactorHandoffModal } from './components/RefactorHandoffModal';
 import { buildHandoffPayload, openHandoff, HandoffTarget } from './lib/refactor-handoff';
+import {
+  openDetachedWindow,
+  createChannel,
+  broadcastNodeChange,
+  onDetachedDrill,
+} from './lib/detached-drawer';
 
 import type {
   ExplorerNode,
@@ -63,57 +67,6 @@ export function GraphSlot(props: {
   );
 }
 
-/**
- * SidebarSlot renders component search, risk filters, and component navigation list.
- */
-export function SidebarSlot(props: {
-  nodes: ExplorerNode[];
-  displayNodes: ExplorerNode[];
-  filterState: SearchFilterState;
-  selectedNodeId: string | null;
-  collapsed: boolean;
-  onToggleCollapse: () => void;
-  onFilterChange: (filterState: SearchFilterState) => void;
-  onSelectNode: (node: ExplorerNode) => void;
-}) {
-  return (
-    <div className="sidebar-slot" data-slot="sidebar">
-      <Sidebar
-        nodes={props.nodes}
-        displayNodes={props.displayNodes}
-        filterState={props.filterState}
-        selectedNodeId={props.selectedNodeId}
-        collapsed={props.collapsed}
-        onToggleCollapse={props.onToggleCollapse}
-        onFilterChange={props.onFilterChange}
-        onSelectNode={props.onSelectNode}
-      />
-    </div>
-  );
-}
-
-
-/**
- * FindingsSlot renders the deterministic architecture intelligence findings panel.
- */
-export function FindingsSlot(props: {
-  findings: ArchitectureFinding[];
-  selectedFindingId: string | null;
-  onSelectFinding: (finding: ArchitectureFinding) => void;
-  onClearSelection: () => void;
-}) {
-  return (
-    <div data-slot="findings">
-      <FindingsPanel
-        findings={props.findings}
-        selectedFindingId={props.selectedFindingId}
-        onSelectFinding={props.onSelectFinding}
-        onClearSelection={props.onClearSelection}
-      />
-    </div>
-  );
-}
-
 function LoadingScreen() {
   return (
     <div className="state-screen">
@@ -141,11 +94,25 @@ export function App() {
   const view = useViewState();
   const compareState = useCompareState();
   const palette = useCommandPalette();
-  const [graphFullscreen, setGraphFullscreen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
+
+  // Drawer pin & detach states with localStorage persistence
+  const [isPinned, setIsPinned] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('explorer.drawer.pinned') === 'true';
+    }
+    return false;
+  });
+
+  const [isDetached, setIsDetached] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('explorer.drawer.detached') === 'true';
+    }
+    return false;
+  });
+
+  const detachedWindowRef = useRef<Window | null>(null);
 
   // Refactor handoff target state
   const [handoffTarget, setHandoffTarget] = useState<HandoffTarget | null>(null);
@@ -155,6 +122,77 @@ export function App() {
   const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
 
   const graphRef = useRef<GraphViewRef>(null);
+
+  const handleTogglePin = useCallback(() => {
+    setIsPinned((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('explorer.drawer.pinned', String(next));
+      }
+      return next;
+    });
+  }, []);
+
+  const handleDetach = useCallback(() => {
+    if (!isDetached) {
+      const win = openDetachedWindow();
+      detachedWindowRef.current = win;
+      setIsDetached(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('explorer.drawer.detached', 'true');
+      }
+    } else {
+      if (detachedWindowRef.current && !detachedWindowRef.current.closed) {
+        detachedWindowRef.current.close();
+      }
+      detachedWindowRef.current = null;
+      setIsDetached(false);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('explorer.drawer.detached', 'false');
+      }
+    }
+  }, [isDetached]);
+
+  // Setup BroadcastChannel for detached drawer sync
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
+
+    const channel = createChannel();
+
+    const unsubscribe = onDetachedDrill(channel, (nodeId) => {
+      selection.selectNode(nodeId);
+      view.setIsInvestigating(true);
+    });
+
+    return () => {
+      unsubscribe();
+      channel.close();
+    };
+  }, [selection, view]);
+
+  // Broadcast node changes when selection or drill path updates
+  useEffect(() => {
+    if (!isDetached || typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
+
+    // Check if detached window is still alive
+    if (detachedWindowRef.current && detachedWindowRef.current.closed) {
+      detachedWindowRef.current = null;
+      setIsDetached(false);
+      localStorage.setItem('explorer.drawer.detached', 'false');
+      return;
+    }
+
+    const currentNodeId =
+      drillPath.length > 0
+        ? drillPath[drillPath.length - 1]
+        : selection.selectedNodeId;
+
+    if (currentNodeId) {
+      const channel = createChannel();
+      broadcastNodeChange(channel, currentNodeId);
+      channel.close();
+    }
+  }, [selection.selectedNodeId, drillPath, isDetached]);
 
   const handleRequestHandoff = useCallback((nodeId: string) => {
     if (!data) return;
@@ -201,7 +239,6 @@ export function App() {
   const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
 
   // Sync node selection from view state (URL) to SelectionContext
-  // Sync initial selection from URL params
   useEffect(() => {
     if (!data) return;
     const urlNode = (view as any).selectedNodeId || view.urlNodeId;
@@ -257,13 +294,6 @@ export function App() {
     }
   }, [findings, view.selectedFindingId, view.urlNodeId, view.urlEdgeId]);
 
-  // Compute filtered graph data based on search and behavior filters
-  const { visibleNodes, visibleEdges } = useMemo(() => {
-    if (!data) return { visibleNodes: [], visibleEdges: [] };
-    const filtered = applyFilters(data.nodes, data.edges, view.filterState);
-    return { visibleNodes: filtered.nodes, visibleEdges: filtered.edges };
-  }, [data, view.filterState]);
-
   // Derive effective focus state with current selection
   const effectiveFocusState = useMemo(() => ({
     ...view.focusState,
@@ -272,12 +302,13 @@ export function App() {
 
   // Compute focused sub-graph when focus mode is active
   const focusedGraphData = useMemo(() => {
+    if (!data) return { nodes: [], edges: [] };
     if (!effectiveFocusState.enabled || !effectiveFocusState.focusNodeId) {
-      return { nodes: visibleNodes, edges: visibleEdges };
+      return { nodes: data.nodes, edges: data.edges };
     }
-    const res = computeFocusedGraph(visibleNodes, visibleEdges, effectiveFocusState);
+    const res = computeFocusedGraph(data.nodes, data.edges, effectiveFocusState);
     return { nodes: res.nodes, edges: res.edges };
-  }, [visibleNodes, visibleEdges, effectiveFocusState]);
+  }, [data, effectiveFocusState]);
 
   // Determine node IDs to highlight on the graph (finding selection or simulator impact)
   const highlightedCycleNodeIds = useMemo(() => {
@@ -346,12 +377,61 @@ export function App() {
     view.setIsInvestigating(true);
   };
 
+  const isDrawerOpen = view.isInvestigating || isPinned;
+
   if (loading) return <LoadingScreen />;
   if (error || !data) return <ErrorScreen error={error} onRetry={retry} />;
 
   return (
     <SelectionProvider value={selection}>
-      <div className={`app-layout ${graphFullscreen ? 'graph-fullscreen' : ''}`}>
+      <div className="app-layout">
+        <Header onResetView={handleResetView} />
+        <main className="graph-pane">
+          <GraphSlot
+            graphRef={graphRef}
+            nodes={focusedGraphData.nodes}
+            edges={focusedGraphData.edges}
+            selectedNodeId={selection.selectedNodeId}
+            selectedEdgeId={selection.selectedEdgeId}
+            onSelectNode={(node) => {
+              selection.selectNode(node ? node.id : null);
+              if (node) {
+                view.setIsInvestigating(true);
+              }
+            }}
+            onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
+            selectedCycleNodeIds={highlightedCycleNodeIds}
+            focusedNodeId={
+              isDrawerOpen
+                ? drillPath.length > 0
+                  ? drillPath[drillPath.length - 1]
+                  : selection.selectedNodeId
+                : null
+            }
+          />
+        </main>
+        {isDrawerOpen && (
+          <InvestigationDrawer
+            node={selectedNode}
+            open={isDrawerOpen}
+            onClose={() => {
+              if (!isPinned) {
+                view.setIsInvestigating(false);
+              }
+            }}
+            onDrill={handleDrill}
+            data={data}
+            drillPath={drillPath}
+            onNavigateBreadcrumb={handleNavigateBreadcrumb}
+            recentNodeIds={recentNodeIds}
+            onSelectRecentNode={handleSelectRecentNode}
+            onRequestHandoff={handleRequestHandoff}
+            isPinned={isPinned}
+            onTogglePin={handleTogglePin}
+            isDetached={isDetached}
+            onDetach={handleDetach}
+          />
+        )}
         <CommandPalette
           isOpen={palette.isOpen}
           onClose={palette.close}
@@ -392,95 +472,6 @@ export function App() {
           }}
           onRequestHandoff={handleRequestHandoff}
         />
-        <Header
-          onResetView={handleResetView}
-          onToggleSidebar={() => setSidebarCollapsed((prev) => !prev)}
-          onToggleDetails={() => setDetailsCollapsed((prev) => !prev)}
-          isDetailsOpen={!detailsCollapsed}
-          onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
-          onToggleCompare={() => {
-            palette.open();
-          }}
-          isCompareOpen={compareState.isActive}
-        />
-
-        <div className={`main-viewport ${view.isInvestigating ? 'drawer-open' : 'drawer-closed'}`}>
-          {view.viewMode === 'graph' ? (
-            <div className="graph-view-layout">
-              <div className={`sidebar-region ${sidebarCollapsed ? 'collapsed' : ''}`}>
-                <SidebarSlot
-                  nodes={data.nodes}
-                  displayNodes={visibleNodes}
-                  filterState={view.filterState}
-                  selectedNodeId={selection.selectedNodeId}
-                  collapsed={sidebarCollapsed}
-                  onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
-                  onFilterChange={view.setFilterState}
-                  onSelectNode={(node) => {
-                    selection.selectNode(node.id);
-                    view.setIsInvestigating(true);
-                  }}
-                />
-                <button
-                  className="sidebar-toggle-btn sidebar-reopen-handle"
-                  onClick={() => setSidebarCollapsed((c) => !c)}
-                  aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                  title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                  data-testid="sidebar-toggle-btn"
-                >
-                  {sidebarCollapsed ? '▶' : '◀'}
-                </button>
-              </div>
-
-              <GraphSlot
-                graphRef={graphRef}
-                nodes={focusedGraphData.nodes}
-                edges={focusedGraphData.edges}
-                selectedNodeId={selection.selectedNodeId}
-                selectedEdgeId={selection.selectedEdgeId}
-                onSelectNode={(node) => {
-                  selection.selectNode(node ? node.id : null);
-                  if (node) {
-                    view.setIsInvestigating(true);
-                  }
-                }}
-                onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
-                selectedCycleNodeIds={highlightedCycleNodeIds}
-                isFullscreen={graphFullscreen}
-                onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
-                focusedNodeId={
-                  view.isInvestigating
-                    ? drillPath.length > 0
-                      ? drillPath[drillPath.length - 1]
-                      : selection.selectedNodeId
-                    : null
-                }
-              />
-
-
-              <InvestigationDrawer
-                node={selectedNode}
-                open={view.isInvestigating}
-                onClose={() => view.setIsInvestigating(false)}
-                onDrill={handleDrill}
-                data={data}
-                drillPath={drillPath}
-                onNavigateBreadcrumb={handleNavigateBreadcrumb}
-                recentNodeIds={recentNodeIds}
-                onSelectRecentNode={handleSelectRecentNode}
-                onRequestHandoff={handleRequestHandoff}
-              />
-            </div>
-          ) : (
-            <FindingsSlot
-              findings={findings}
-              selectedFindingId={selectedFinding?.id ?? null}
-              onSelectFinding={handleSelectFinding}
-              onClearSelection={handleClearFinding}
-            />
-          )}
-        </div>
-
         <RefactorHandoffModal
           target={handoffTarget}
           onConfirm={() => {
@@ -489,7 +480,6 @@ export function App() {
           }}
           onCancel={() => setHandoffTarget(null)}
         />
-
       </div>
     </SelectionProvider>
   );

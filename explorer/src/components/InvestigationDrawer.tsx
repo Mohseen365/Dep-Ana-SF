@@ -14,6 +14,10 @@ export interface InvestigationDrawerProps {
   recentNodeIds?: string[];
   onSelectRecentNode?: (id: string) => void;
   onRequestHandoff?: (nodeId: string) => void;
+  isPinned?: boolean;
+  onTogglePin?: () => void;
+  isDetached?: boolean;
+  onDetach?: () => void;
 }
 
 export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
@@ -27,6 +31,10 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   recentNodeIds = [],
   onSelectRecentNode,
   onRequestHandoff,
+  isPinned = false,
+  onTogglePin,
+  isDetached = false,
+  onDetach,
 }) => {
   if (!open) {
     return null;
@@ -53,7 +61,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
 
   return (
     <aside
-      className="investigation-drawer"
+      className={`investigation-drawer ${isPinned ? 'pinned' : ''} ${isDetached ? 'detached' : ''}`}
       data-testid="investigation-drawer"
       aria-label="Investigation Drawer"
     >
@@ -63,8 +71,35 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           {node && <span className="drawer-node-type">{node.type}</span>}
         </div>
         <div className="drawer-header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {onTogglePin && (
+            <button
+              type="button"
+              className={`drawer-pin-btn ${isPinned ? 'active' : ''}`}
+              data-testid="investigation-drawer-pin-btn"
+              aria-label={isPinned ? 'Unpin drawer' : 'Pin drawer'}
+              title={isPinned ? 'Unpin drawer (stay open across selection changes)' : 'Pin drawer'}
+              onClick={onTogglePin}
+            >
+              📌
+            </button>
+          )}
+
+          {onDetach && (
+            <button
+              type="button"
+              className={`drawer-detach-btn ${isDetached ? 'active' : ''}`}
+              data-testid="investigation-drawer-detach-btn"
+              aria-label={isDetached ? 'Drawer is detached in second window' : 'Detach drawer'}
+              title={isDetached ? 'Drawer is detached in second window' : 'Detach drawer'}
+              onClick={onDetach}
+            >
+              ↗
+            </button>
+          )}
+
           {onRequestHandoff && (
             <button
+              type="button"
               className="drawer-handoff-btn"
               data-testid="investigation-drawer-handoff-btn"
               aria-label="Hand off to refactor"
@@ -78,11 +113,14 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
               Hand off
             </button>
           )}
+
           <button
+            type="button"
             className="drawer-close-btn"
             onClick={onClose}
+            disabled={isPinned}
             aria-label="Close Investigation Drawer"
-            title="Close Investigation Drawer"
+            title={isPinned ? 'Drawer is pinned. Unpin to close.' : 'Close Investigation Drawer'}
           >
             ×
           </button>

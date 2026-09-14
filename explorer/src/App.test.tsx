@@ -80,7 +80,7 @@ describe('App composed shell', () => {
     });
   });
 
-  it('renders shell layout with slots when data loads successfully', async () => {
+  it('renders shell layout with graph pane when data loads successfully without permanent chrome', async () => {
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => validData,
@@ -92,7 +92,10 @@ describe('App composed shell', () => {
       expect(screen.getByText('Dependency Explorer')).toBeInTheDocument();
     });
 
+    expect(container.querySelector('main.graph-pane')).toBeInTheDocument();
     expect(container.querySelector('[data-slot="graph"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="sidebar"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-slot="sidebar"]')).not.toBeInTheDocument();
+    expect(container.querySelector('.summary-bar')).not.toBeInTheDocument();
+    expect(container.querySelector('.status-bar')).not.toBeInTheDocument();
   });
 });

@@ -181,24 +181,31 @@ describe('Phase 3 Unified Investigation Workflow Integration', () => {
     window.history.replaceState(null, '', '/');
   });
 
-  it('navigates search -> component selection -> investigation drawer drill', async () => {
+  it('navigates command palette search -> component selection -> investigation drawer drill', async () => {
     render(<App />);
 
-    // 1. Filter / search component from sidebar input
-    const filterInput = screen.getByPlaceholderText(/Filter or search/i);
-    fireEvent.change(filterInput, { target: { value: 'AccountService' } });
+    // 1. Open CommandPalette via Cmd+K
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+
+    // 2. Search for AccountService
+    const paletteInput = screen.getByPlaceholderText(/Type a command or search components/i);
+    fireEvent.change(paletteInput, { target: { value: 'AccountService' } });
 
     const componentItems = screen.getAllByText('AccountService');
     fireEvent.click(componentItems[0]);
 
-    // 2. REMOVED IN UX-8: 3-tab details workspace removed in favor of InvestigationDrawer progressive drill.
     // InvestigationDrawer should open and display AccountService header and dependents
     expect(screen.getAllByText('AccountService').length).toBeGreaterThan(0);
-    expect(screen.getByText('OrderService')).toBeInTheDocument();
+    expect(screen.getByTestId('dependent-row-ApexClass:OrderService')).toBeInTheDocument();
   });
 
   it('synchronizes target selection when clicking dependents in investigation drawer', async () => {
     render(<App />);
+
+    // Open CommandPalette via Cmd+K
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    const paletteInput = screen.getByPlaceholderText(/Type a command or search components/i);
+    fireEvent.change(paletteInput, { target: { value: 'AccountService' } });
 
     // Select AccountService
     const componentItems = screen.getAllByText('AccountService');

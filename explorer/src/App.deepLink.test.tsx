@@ -158,29 +158,6 @@ describe("App Deep-Link Restoration", () => {
     });
   });
 
-  it("restores view mode findings when specified in URL", async () => {
-    window.history.replaceState(
-      null,
-      "",
-      "/?viewMode=findings&component=AccountService",
-    );
-
-    const { container } = render(<App />);
-
-    await waitFor(() => {
-      expect(
-        screen.getByText("Salesforce Architecture Explorer"),
-      ).toBeInTheDocument();
-    });
-
-    // Findings slot should be active
-    await waitFor(() => {
-      expect(
-        container.querySelector('[data-slot="findings"]'),
-      ).toBeInTheDocument();
-    });
-  });
-
   it("updates selection on browser back/forward popstate events", async () => {
     window.history.replaceState(null, "", "/?component=AccountService");
 

@@ -170,7 +170,7 @@ describe('InvestigationDrawer', () => {
     expect(screen.getByText('No dependencies detected')).toBeInTheDocument();
   });
 
-  it('onClose fires on close button click', () => {
+  it('onClose fires on close button click when not pinned', () => {
     const handleClose = vi.fn();
 
     render(
@@ -185,6 +185,52 @@ describe('InvestigationDrawer', () => {
     fireEvent.click(closeBtn);
 
     expect(handleClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables close button when drawer is pinned', () => {
+    const handleClose = vi.fn();
+
+    render(
+      <InvestigationDrawer
+        node={mockNodeServiceX}
+        open={true}
+        onClose={handleClose}
+        isPinned={true}
+        onTogglePin={vi.fn()}
+      />
+    );
+
+    const closeBtn = screen.getByRole('button', { name: /close investigation drawer/i });
+    expect(closeBtn).toBeDisabled();
+
+    fireEvent.click(closeBtn);
+    expect(handleClose).not.toHaveBeenCalled();
+  });
+
+  it('triggers onTogglePin and onDetach when clicking header buttons', () => {
+    const handleTogglePin = vi.fn();
+    const handleDetach = vi.fn();
+
+    render(
+      <InvestigationDrawer
+        node={mockNodeServiceX}
+        open={true}
+        onClose={vi.fn()}
+        isPinned={false}
+        onTogglePin={handleTogglePin}
+        isDetached={false}
+        onDetach={handleDetach}
+      />
+    );
+
+    const pinBtn = screen.getByTestId('investigation-drawer-pin-btn');
+    const detachBtn = screen.getByTestId('investigation-drawer-detach-btn');
+
+    fireEvent.click(pinBtn);
+    expect(handleTogglePin).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(detachBtn);
+    expect(handleDetach).toHaveBeenCalledTimes(1);
   });
 
   it('renders "Hand off" header button and calls onRequestHandoff when provided', () => {
