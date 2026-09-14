@@ -42,21 +42,22 @@ export const StatusBar: React.FC<StatusBarProps> = ({
         {selectedNodeName && (
           <div className="status-item">
             <span>Selected:</span>
-            <span className="status-val" style={{ color: '#60a5fa' }}>{selectedNodeName}</span>
+            <span className="status-val status-selected">{selectedNodeName}</span>
           </div>
         )}
         {cycleCount > 0 && (
-          <div className="status-item">
-            <span style={{ color: '#f59e0b' }}>⚠️ Cycles: {cycleCount}</span>
+          <div className="status-item status-warning">
+            <span>⚠️ Cycles: {cycleCount}</span>
           </div>
         )}
         {unresolvedCount > 0 && (
-          <div className="status-item">
-            <span style={{ color: '#ef4444' }}>⚠️ Unresolved: {unresolvedCount}</span>
+          <div className="status-item status-error">
+            <span>⚠️ Unresolved: {unresolvedCount}</span>
           </div>
         )}
-        <div className="status-item">
-          <span style={{ color: '#10b981' }}>● Ready</span>
+        <div className="status-item ui-status-indicator">
+          <span className="ui-status-dot ui-status-success" aria-hidden="true" />
+          <span>Ready</span>
         </div>
       </div>
     </footer>
