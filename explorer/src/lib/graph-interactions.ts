@@ -350,3 +350,44 @@ export function setBoxSelection(cy: cytoscape.Core, enabled: boolean): void {
     cy.boxSelectionEnabled(false);
   }
 }
+
+/**
+ * Focuses on a node during drilling:
+ * - Centers viewport on the node (animated, 300ms) without changing zoom level.
+ * - If the node has zero neighbors in the current visible set, falls back to fitToScreen.
+ * - Dims all unrelated nodes/edges, keeping current node + direct neighbors highlighted.
+ */
+export function focusOnNode(cy: cytoscape.Core, nodeId: string): void {
+  if (!cy || !nodeId) return;
+
+  const node = cy.getElementById(nodeId);
+  if (node.length === 0 || !node.isNode()) {
+    fitToScreen(cy, 50);
+    return;
+  }
+
+  const neighbors = node.neighborhood('node');
+
+  if (neighbors.length === 0) {
+    fitToScreen(cy, 50);
+  } else {
+    cy.animate(
+      {
+        center: { eles: node },
+        zoom: cy.zoom(),
+      },
+      {
+        duration: 300,
+        easing: 'ease-in-out',
+      }
+    );
+  }
+
+  // Dim unrelated nodes and edges, keeping current node + direct neighbors highlighted
+  cy.batch(() => {
+    cy.elements().addClass('dimmed');
+    node.removeClass('dimmed');
+    node.connectedEdges().removeClass('dimmed');
+    neighbors.removeClass('dimmed');
+  });
+}

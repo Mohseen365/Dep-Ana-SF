@@ -46,6 +46,7 @@ export function GraphSlot(props: {
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
+  focusedNodeId?: string | null;
 }) {
   return (
     <div className="graph-container" data-slot="graph">
@@ -61,6 +62,7 @@ export function GraphSlot(props: {
         selectedCycleNodeIds={props.selectedCycleNodeIds}
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
+        focusedNodeId={props.focusedNodeId}
       />
     </div>
   );
@@ -198,6 +200,11 @@ export function App() {
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
+
+  // Progressive drilling and session-only recent list state
+  const [drillPath, setDrillPath] = useState<string[]>([]);
+  const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
+
   const graphRef = useRef<GraphViewRef>(null);
 
   // Sync compare focused entity selection to SelectionContext
@@ -211,7 +218,29 @@ export function App() {
     }
   }, [compareState.focusedEntityId, data]);
 
-// Compute architecture context and findings
+  // Sync drill path and recent items when selection.selectedNodeId changes
+  useEffect(() => {
+    const id = selection.selectedNodeId;
+    if (!id) return;
+
+    setRecentNodeIds((prev) => {
+      const filtered = prev.filter((item) => item !== id);
+      return [id, ...filtered].slice(0, 5);
+    });
+
+    setDrillPath((prev) => {
+      if (prev.length > 0 && prev[prev.length - 1] === id) {
+        return prev;
+      }
+      const existingIndex = prev.indexOf(id);
+      if (existingIndex !== -1) {
+        return prev.slice(0, existingIndex + 1);
+      }
+      return [id];
+    });
+  }, [selection.selectedNodeId]);
+
+  // Compute architecture context and findings
   const ctx = useMemo(() => (data ? createArchitectureContext(data as any) : null), [data]);
   const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
 
@@ -339,6 +368,7 @@ export function App() {
     (view as any).setSelectedFindingId?.(null);
     setSelectedFinding(null);
     setHighlightedImpactNodeIds(null);
+    setDrillPath([]);
     if (graphRef.current) {
       graphRef.current.fitView();
     }
@@ -347,7 +377,6 @@ export function App() {
   const handleSelectFinding = (finding: ArchitectureFinding) => {
     setSelectedFinding(finding);
     (view as any).setSelectedFindingId?.(finding.id);
-    // If a finding is clicked, highlight its nodes and switch view mode to graph to display
     if (finding.nodeIds && finding.nodeIds.length > 0) {
       selection.selectNode(finding.nodeIds[0]);
       (view as any).setSelectedNodeId?.(finding.nodeIds[0]);
@@ -357,6 +386,28 @@ export function App() {
   const handleClearFinding = () => {
     setSelectedFinding(null);
     (view as any).setSelectedFindingId?.(null);
+  };
+
+  const handleDrill = (targetId: string) => {
+    setDrillPath((prev) => [...prev, targetId]);
+    selection.selectNode(targetId);
+    view.setIsInvestigating(true);
+  };
+
+  const handleNavigateBreadcrumb = (targetId: string) => {
+    setDrillPath((prev) => {
+      const idx = prev.indexOf(targetId);
+      if (idx !== -1) {
+        return prev.slice(0, idx + 1);
+      }
+      return [targetId];
+    });
+    selection.selectNode(targetId);
+  };
+
+  const handleSelectRecentNode = (targetId: string) => {
+    selection.selectNode(targetId);
+    view.setIsInvestigating(true);
   };
 
   if (loading) return <LoadingScreen />;
@@ -443,6 +494,13 @@ export function App() {
                 selectedCycleNodeIds={highlightedCycleNodeIds}
                 isFullscreen={graphFullscreen}
                 onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
+                focusedNodeId={
+                  view.isInvestigating
+                    ? drillPath.length > 0
+                      ? drillPath[drillPath.length - 1]
+                      : selection.selectedNodeId
+                    : null
+                }
               />
 
               <div className={`details-region ${detailsCollapsed ? 'collapsed' : ''}`}>
@@ -483,6 +541,12 @@ export function App() {
                 node={selectedNode}
                 open={view.isInvestigating}
                 onClose={() => view.setIsInvestigating(false)}
+                onDrill={handleDrill}
+                data={data}
+                drillPath={drillPath}
+                onNavigateBreadcrumb={handleNavigateBreadcrumb}
+                recentNodeIds={recentNodeIds}
+                onSelectRecentNode={handleSelectRecentNode}
               />
             </div>
           ) : (

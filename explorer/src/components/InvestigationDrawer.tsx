@@ -1,11 +1,18 @@
 import React from 'react';
-import type { ExplorerNode } from '../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode } from '../types/explorer';
+import { Breadcrumbs, BreadcrumbItem } from './Breadcrumbs';
+import { rankDependents, rankDependencies } from '../lib/drill';
 
 export interface InvestigationDrawerProps {
   node: ExplorerNode | null;
   open: boolean;
   onClose: () => void;
   onDrill?: (id: string) => void;
+  data?: ExplorerDataSchema | null;
+  drillPath?: string[];
+  onNavigateBreadcrumb?: (id: string) => void;
+  recentNodeIds?: string[];
+  onSelectRecentNode?: (id: string) => void;
 }
 
 export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
@@ -13,11 +20,34 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   open,
   onClose,
   onDrill,
+  data,
+  drillPath = [],
+  onNavigateBreadcrumb,
+  recentNodeIds = [],
+  onSelectRecentNode,
 }) => {
-  void onDrill;
   if (!open) {
     return null;
   }
+
+  const currentNodeId = node?.id ?? (drillPath.length > 0 ? drillPath[drillPath.length - 1] : null);
+
+  const breadcrumbItems: BreadcrumbItem[] = drillPath.map((id) => {
+    const foundNode = data?.nodes.find((n) => n.id === id);
+    return {
+      id,
+      label: foundNode ? foundNode.displayName : id,
+    };
+  });
+
+  const rankedDeps = data && currentNodeId ? rankDependents(currentNodeId, data) : [];
+  const rankedDependencies = data && currentNodeId ? rankDependencies(currentNodeId, data) : [];
+
+  const handleRowClick = (targetId: string) => {
+    if (onDrill) {
+      onDrill(targetId);
+    }
+  };
 
   return (
     <aside
@@ -39,8 +69,115 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           ×
         </button>
       </header>
+
+      <div className="investigation-drawer-top-toolbar">
+        {breadcrumbItems.length > 0 && (
+          <Breadcrumbs
+            items={breadcrumbItems}
+            onNavigate={(id) => onNavigateBreadcrumb && onNavigateBreadcrumb(id)}
+          />
+        )}
+
+        {recentNodeIds.length > 0 && (
+          <div className="drawer-recent-list" data-testid="recent-investigations">
+            <span className="recent-label">Recent:</span>
+            <ul className="recent-items">
+              {recentNodeIds.map((recId) => {
+                const recNode = data?.nodes.find((n) => n.id === recId);
+                const recLabel = recNode ? recNode.displayName : recId;
+                return (
+                  <li key={recId}>
+                    <button
+                      type="button"
+                      className="recent-item-btn"
+                      onClick={() => onSelectRecentNode && onSelectRecentNode(recId)}
+                      title={`Jump to ${recLabel}`}
+                    >
+                      {recLabel}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+
       <div className="investigation-drawer-body">
-        <p className="drawer-placeholder">Drilling content coming in UX-4</p>
+        {/* Dependents Section */}
+        <section className="drawer-section" data-testid="dependents-section">
+          <h3>Dependents ({rankedDeps.length})</h3>
+          {rankedDeps.length === 0 ? (
+            <p className="empty-state">No dependents detected</p>
+          ) : (
+            <ul className="drill-list dependents-list">
+              {rankedDeps.map(({ node: depNode, impactCount, isDirect }) => (
+                <li
+                  key={depNode.id}
+                  className="drill-row-item"
+                  onClick={() => handleRowClick(depNode.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleRowClick(depNode.id);
+                    }
+                  }}
+                  data-testid={`dependent-row-${depNode.id}`}
+                >
+                  <div className="drill-row-main">
+                    <span className="drill-row-name">{depNode.displayName}</span>
+                    <span className="drill-row-type">{depNode.type}</span>
+                  </div>
+                  <div className="drill-row-meta">
+                    <span className={`hop-badge ${isDirect ? 'direct' : 'transitive'}`}>
+                      {isDirect ? 'Direct' : 'Transitive'}
+                    </span>
+                    <span className="impact-count-badge" title="Impact Count">
+                      Impact: {impactCount}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Dependencies Section */}
+        <section className="drawer-section" data-testid="dependencies-section">
+          <h3>Dependencies ({rankedDependencies.length})</h3>
+          {rankedDependencies.length === 0 ? (
+            <p className="empty-state">No dependencies detected</p>
+          ) : (
+            <ul className="drill-list dependencies-list">
+              {rankedDependencies.map(({ node: depNode, impactCount }) => (
+                <li
+                  key={depNode.id}
+                  className="drill-row-item"
+                  onClick={() => handleRowClick(depNode.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleRowClick(depNode.id);
+                    }
+                  }}
+                  data-testid={`dependency-row-${depNode.id}`}
+                >
+                  <div className="drill-row-main">
+                    <span className="drill-row-name">{depNode.displayName}</span>
+                    <span className="drill-row-type">{depNode.type}</span>
+                  </div>
+                  <div className="drill-row-meta">
+                    <span className="impact-count-badge" title="Impact Count">
+                      Impact: {impactCount}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </aside>
   );
