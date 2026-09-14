@@ -35,6 +35,37 @@ const STATUS_BADGE_CLASSES: Record<ReviewStatus, string> = {
   RESOLVED: "status-resolved"
 };
 
+export const getWhyItMatters = (finding: ArchitectureFinding): string => {
+  const type = finding.type || finding.rule?.ruleId || "";
+  if (type.includes("FAN_IN") || type.includes("fan-in")) {
+    return "High fan-in components act as critical architectural hubs. Modifications carry significant blast radius and regression risk across dependents.";
+  }
+  if (type.includes("CYCLE") || type.includes("circular")) {
+    return "Circular dependencies break modular isolation, increase compilation complexity, and make unit testing difficult.";
+  }
+  if (type.includes("UNRESOLVED") || type.includes("unresolved")) {
+    return "Unresolved symbol references indicate missing dependencies or unindexed external boundaries, which can cause runtime or deployment failures.";
+  }
+  if (type.includes("COUPLING") || type.includes("coupling")) {
+    return "Excessive inter-module coupling creates fragile architecture where changes ripple across unintended boundaries.";
+  }
+  return "Rule violation impacts architecture health, maintainability, and refactoring readiness.";
+};
+
+export const getWhatToDoNext = (finding: ArchitectureFinding): string => {
+  const type = finding.type || finding.rule?.ruleId || "";
+  if (type.includes("FAN_IN") || type.includes("fan-in")) {
+    return "Extract shared interfaces or delegate responsibilities to reduce direct dependent coupling.";
+  }
+  if (type.includes("CYCLE") || type.includes("circular")) {
+    return "Apply Dependency Inversion or introduce an abstraction layer to decouple the circular reference chain.";
+  }
+  if (type.includes("UNRESOLVED") || type.includes("unresolved")) {
+    return "Verify symbol declaration files, package dependencies, or register target external boundaries.";
+  }
+  return "Inspect evidence locations, investigate participating components, and apply recommended decoupling patterns.";
+};
+
 export const FindingsPanel: React.FC<FindingsPanelProps> = ({
   findings,
   selectedFindingId,
@@ -148,6 +179,17 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
     [findingsWithReview]
   );
 
+  const friendlySeverityLabel = (sev: FindingSeverity): string => {
+    switch (sev) {
+      case "CRITICAL": return "Critical";
+      case "HIGH": return "High";
+      case "MEDIUM": return "Warning";
+      case "LOW":
+      case "INFO": return "Informational";
+      default: return sev;
+    }
+  };
+
   if (findings.length === 0) {
     return (
       <div className="findings-panel empty-state">
@@ -160,6 +202,15 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
 
   return (
     <div className="findings-panel">
+      {/* Consistent Navigation Banner */}
+      <div className="analysis-mode-nav">
+        <span className="nav-mode-item">Graph</span>
+        <span className="nav-mode-item active">Findings</span>
+        <span className="nav-mode-item">Hotspots</span>
+        <span className="nav-mode-item">Impact</span>
+        <span className="nav-mode-item">Compare</span>
+      </div>
+
       <div className="findings-header">
         <div className="findings-title">
           <h2>Architecture Intelligence Findings ({filteredFindings.length})</h2>
@@ -205,7 +256,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                   onClick={() => toggleSeverity(sev)}
                   disabled={count === 0}
                 >
-                  {sev} ({count})
+                  {friendlySeverityLabel(sev)} ({count})
                 </button>
               );
             })}
@@ -224,13 +275,15 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
             return (
               <div key={severity} className="finding-group">
                 <div className={`finding-group-header ${SEVERITY_BADGE_CLASSES[severity]}`}>
-                  <span className="group-title">{severity}</span>
+                  <span className="group-title">{friendlySeverityLabel(severity)} Issues</span>
                   <span className="group-count">{groupItems.length}</span>
                 </div>
                 <div className="finding-rows">
                   {groupItems.map(({ finding, review }) => {
                     const isSelected = finding.id === selectedFindingId;
                     const isExpanded = expandedFindingIds.has(finding.id);
+                    const whyItMatters = getWhyItMatters(finding);
+                    const whatToDoNext = getWhatToDoNext(finding);
 
                     return (
                       <div
@@ -240,7 +293,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                       >
                         <div className="finding-row-top">
                           <span className={`severity-chip-sm ${SEVERITY_BADGE_CLASSES[finding.severity]}`}>
-                            {finding.severity}
+                            {friendlySeverityLabel(finding.severity)}
                           </span>
                           <span className={`status-chip-sm ${STATUS_BADGE_CLASSES[review.status]}`}>
                             {review.status}
@@ -258,86 +311,114 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                               onClick={e => toggleExpand(e, finding.id)}
                               title={isExpanded ? "Collapse Evidence" : "Expand Evidence"}
                             >
-                              {isExpanded ? "▲" : "▼"}
+                              {isExpanded ? "▲ Details" : "▼ Details"}
                             </button>
                           </div>
                         </div>
 
-                        <p className="finding-description">{finding.description}</p>
+                        {/* Structured Sections: WHAT / WHY IT MATTERS / WHERE / WHAT TO DO NEXT */}
+                        <div className="finding-structured-card">
+                          <div className="finding-section-what">
+                            <span className="section-label">WHAT:</span>
+                            <p className="finding-description">{finding.description}</p>
+                          </div>
 
-                        <div className="finding-actions">
-                          {finding.nodeIds.length > 0 && (
-                            <button
-                              className="action-btn investigate-btn"
-                              onClick={e => handleInvestigate(e, finding)}
-                              title={`Investigate ${finding.nodeIds[0]}`}
-                            >
-                              🔍 Investigate {finding.nodeIds[0].split(":")[1] || finding.nodeIds[0]}
-                            </button>
-                          )}
-                          {review.status === "RESOLVED" ? (
-                            <button
-                              className="action-btn reopen-btn"
-                              onClick={e => handleReopenFinding(e, finding.id)}
-                            >
-                              🔄 Reopen
-                            </button>
-                          ) : (
+                          <div className="finding-section-why">
+                            <span className="section-label">WHY IT MATTERS:</span>
+                            <p className="finding-why-text">{whyItMatters}</p>
+                          </div>
+
+                          {isExpanded && (
                             <>
-                              {review.status === "OPEN" && (
-                                <button
-                                  className="action-btn review-btn"
-                                  onClick={e => handleSetInReview(e, finding)}
-                                >
-                                  ⏳ Mark In Review
-                                </button>
-                              )}
-                              <button
-                                className="action-btn resolve-btn"
-                                onClick={e => handleResolveFinding(e, finding)}
-                              >
-                                ✓ Resolve
-                              </button>
+                              <div className="finding-section-where">
+                                <span className="section-label">WHERE:</span>
+                                <div className="where-meta">
+                                  <span className="node-list-summary">
+                                    Components: {finding.nodeIds.join(", ") || "N/A"}
+                                  </span>
+                                </div>
+                                {finding.evidence.length > 0 && (
+                                  <div className="finding-evidence-box">
+                                    <h5>Evidence & Source Locations:</h5>
+                                    <ul className="evidence-list">
+                                      {finding.evidence.map((item, idx) => {
+                                        const lineStr = item.line ? `:${item.line}` : "";
+                                        const vsCodeUrl = `vscode://file/${item.file}${lineStr}`;
+                                        return (
+                                          <li key={idx} className="evidence-item">
+                                            <div className="evidence-meta">
+                                              <span className="evidence-file">
+                                                {item.file}
+                                                {lineStr}
+                                              </span>
+                                              <a
+                                                href={vsCodeUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="open-in-editor"
+                                                onClick={e => e.stopPropagation()}
+                                              >
+                                                Open in editor
+                                              </a>
+                                            </div>
+                                            {item.snippet && (
+                                              <pre className="evidence-snippet">{item.snippet}</pre>
+                                            )}
+                                            {item.description && (
+                                              <div className="evidence-desc">{item.description}</div>
+                                            )}
+                                          </li>
+                                        );
+                                      })}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="finding-section-next">
+                                <span className="section-label">WHAT TO DO NEXT:</span>
+                                <p className="finding-next-text">{whatToDoNext}</p>
+                              </div>
                             </>
                           )}
-                        </div>
 
-                        {isExpanded && finding.evidence.length > 0 && (
-                          <div className="finding-evidence-box">
-                            <h5>Evidence & Source Locations:</h5>
-                            <ul className="evidence-list">
-                              {finding.evidence.map((item, idx) => {
-                                const lineStr = item.line ? `:${item.line}` : "";
-                                const vsCodeUrl = `vscode://file/${item.file}${lineStr}`;
-                                return (
-                                  <li key={idx} className="evidence-item">
-                                    <div className="evidence-meta">
-                                      <span className="evidence-file">
-                                        {item.file}
-                                        {lineStr}
-                                      </span>
-                                      <a
-                                        href={vsCodeUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="open-in-editor"
-                                        onClick={e => e.stopPropagation()}
-                                      >
-                                        Open in editor
-                                      </a>
-                                    </div>
-                                    {item.snippet && (
-                                      <pre className="evidence-snippet">{item.snippet}</pre>
-                                    )}
-                                    {item.description && (
-                                      <div className="evidence-desc">{item.description}</div>
-                                    )}
-                                  </li>
-                                );
-                              })}
-                            </ul>
+                          <div className="finding-actions">
+                            {finding.nodeIds.length > 0 && (
+                              <button
+                                className="action-btn investigate-btn"
+                                onClick={e => handleInvestigate(e, finding)}
+                                title={`Investigate ${finding.nodeIds[0]}`}
+                              >
+                                🔍 Investigate {finding.nodeIds[0].split(":")[1] || finding.nodeIds[0]}
+                              </button>
+                            )}
+                            {review.status === "RESOLVED" ? (
+                              <button
+                                className="action-btn reopen-btn"
+                                onClick={e => handleReopenFinding(e, finding.id)}
+                              >
+                                🔄 Reopen
+                              </button>
+                            ) : (
+                              <>
+                                {review.status === "OPEN" && (
+                                  <button
+                                    className="action-btn review-btn"
+                                    onClick={e => handleSetInReview(e, finding)}
+                                  >
+                                    ⏳ Mark In Review
+                                  </button>
+                                )}
+                                <button
+                                  className="action-btn resolve-btn"
+                                  onClick={e => handleResolveFinding(e, finding)}
+                                >
+                                  ✓ Resolve
+                                </button>
+                              </>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
                     );
                   })}

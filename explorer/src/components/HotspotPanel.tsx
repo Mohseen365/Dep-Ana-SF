@@ -17,6 +17,7 @@ interface HotspotPanelProps {
   impactSummaries: Record<string, ExplorerComponentImpactSummary>;
   onSelectHotspot: (node: ExplorerNode) => void;
   selectedNodeId: string | null;
+  onShowImpact?: (nodeId: string) => void;
 }
 
 type TabType =
@@ -34,15 +35,18 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
   impactSummaries,
   onSelectHotspot,
   selectedNodeId,
+  onShowImpact,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("ranked");
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [hideHighCautionDependents, setHideHighCautionDependents] =
     useState<boolean>(false);
+  const [expandedHotspotId, setExpandedHotspotId] = useState<string | null>(null);
 
   const hotspots: CategorizedHotspots = useMemo(() => {
     return getArchitecturalHotspots(nodes, cycles, impactSummaries);
   }, [nodes, cycles, impactSummaries]);
+
   const nodeMap = useMemo(() => {
     const map = new Map<string, ExplorerNode>();
     nodes.forEach((n) => map.set(n.id, n));
@@ -88,10 +92,25 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
     });
     return groups;
   }, [readinessFilteredNodes]);
+
   const totalHotspots = hotspots.topRanked.length;
+
+  const toggleExpand = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setExpandedHotspotId((prev) => (prev === id ? null : id));
+  };
 
   return (
     <div className="hotspot-panel">
+      {/* Consistent Navigation Banner */}
+      <div className="analysis-mode-nav">
+        <span className="nav-mode-item">Graph</span>
+        <span className="nav-mode-item">Findings</span>
+        <span className="nav-mode-item active">Hotspots</span>
+        <span className="nav-mode-item">Impact</span>
+        <span className="nav-mode-item">Compare</span>
+      </div>
+
       <div
         className="hotspot-header"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -155,6 +174,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
               Readiness ({readinessFilteredNodes.length})
             </button>
           </div>
+
           {activeTab === "readiness" && (
             <div className="readiness-filter-bar">
               <label
@@ -178,6 +198,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
               </label>
             </div>
           )}
+
           <div className="hotspot-list">
             {activeTab === "readiness" &&
               (readinessFilteredNodes.length === 0 ? (
@@ -236,32 +257,86 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
                   )}
                 </div>
               ))}
+
             {activeTab === "ranked" &&
               (hotspots.topRanked.length === 0 ? (
                 <div className="hotspot-empty">
                   No architectural hotspots identified.
                 </div>
               ) : (
-                hotspots.topRanked.map((item, idx) => (
-                  <div
-                    key={item.node.id}
-                    className={`hotspot-item ${selectedNodeId === item.node.id ? "selected" : ""}`}
-                    onClick={() => onSelectHotspot(item.node)}
-                  >
-                    <div className="hotspot-item-header">
-                      <span className="hotspot-rank">{idx + 1}.</span>
-                      <span className="hotspot-name">
-                        {item.node.displayName}
-                      </span>
-                      <span
-                        className={`badge risk-badge risk-${item.node.risk.toLowerCase()}`}
-                      >
-                        {item.node.risk}
-                      </span>
+                hotspots.topRanked.map((item, idx) => {
+                  const isExpanded = expandedHotspotId === item.node.id;
+                  return (
+                    <div
+                      key={item.node.id}
+                      className={`hotspot-item ranked-item ${selectedNodeId === item.node.id ? "selected" : ""}`}
+                      onClick={() => onSelectHotspot(item.node)}
+                    >
+                      <div className="hotspot-item-header">
+                        <span className="hotspot-rank-badge">#{idx + 1}</span>
+                        <span className="hotspot-name">{item.node.displayName}</span>
+                        <span className={`badge risk-badge risk-${item.node.risk.toLowerCase()}`}>
+                          {item.node.risk}
+                        </span>
+                        <button
+                          className="hotspot-expand-btn"
+                          onClick={(e) => toggleExpand(e, item.node.id)}
+                          title="Toggle Detailed Metrics"
+                        >
+                          {isExpanded ? "▲" : "▼"}
+                        </button>
+                      </div>
+
+                      <div className="hotspot-item-details">{item.details}</div>
+
+                      {isExpanded && (
+                        <div className="hotspot-expanded-metrics">
+                          <div className="metrics-grid">
+                            <div className="metric-cell">
+                              <span className="metric-lbl">Fan-In:</span>
+                              <span className="metric-val">{item.node.metrics.fanIn}</span>
+                            </div>
+                            <div className="metric-cell">
+                              <span className="metric-lbl">Fan-Out:</span>
+                              <span className="metric-val">{item.node.metrics.fanOut}</span>
+                            </div>
+                            <div className="metric-cell">
+                              <span className="metric-lbl">Coupling:</span>
+                              <span className="metric-val">{item.node.metrics.coupling}</span>
+                            </div>
+                            <div className="metric-cell">
+                              <span className="metric-lbl">Score:</span>
+                              <span className="metric-val">{item.node.metrics.score}</span>
+                            </div>
+                          </div>
+
+                          <div className="hotspot-action-row">
+                            <button
+                              className="hotspot-action-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectHotspot(item.node);
+                              }}
+                            >
+                              🔍 Select Component
+                            </button>
+                            {onShowImpact && (
+                              <button
+                                className="hotspot-action-btn impact-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onShowImpact(item.node.id);
+                                }}
+                              >
+                                💥 Analyze Impact
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="hotspot-item-details">{item.details}</div>
-                  </div>
-                ))
+                  );
+                })
               ))}
 
             {activeTab !== "ranked" &&
@@ -278,7 +353,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
                     onClick={() => onSelectHotspot(node)}
                   >
                     <div className="hotspot-item-header">
-                      <span className="hotspot-rank">{idx + 1}.</span>
+                      <span className="hotspot-rank">#{idx + 1}</span>
                       <span className="hotspot-name">{node.displayName}</span>
                       <span
                         className={`badge risk-badge risk-${node.risk.toLowerCase()}`}
