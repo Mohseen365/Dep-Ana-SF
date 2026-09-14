@@ -46,6 +46,7 @@ export function GraphSlot(props: {
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
+  focusedNodeId?: string | null;
 }) {
   return (
     <div className="graph-container" data-slot="graph">
@@ -61,6 +62,7 @@ export function GraphSlot(props: {
         selectedCycleNodeIds={props.selectedCycleNodeIds}
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
+        focusedNodeId={props.focusedNodeId}
       />
     </div>
   );
@@ -492,6 +494,13 @@ export function App() {
                 selectedCycleNodeIds={highlightedCycleNodeIds}
                 isFullscreen={graphFullscreen}
                 onToggleFullscreen={() => setGraphFullscreen((f) => !f)}
+                focusedNodeId={
+                  view.isInvestigating
+                    ? drillPath.length > 0
+                      ? drillPath[drillPath.length - 1]
+                      : selection.selectedNodeId
+                    : null
+                }
               />
 
               <div className={`details-region ${detailsCollapsed ? 'collapsed' : ''}`}>
