@@ -33,8 +33,13 @@ detachable to a second browser window via `BroadcastChannel`.
 - **Graph pane never unmounts.** Drawer open/close is a CSS
   `grid-template-columns` transition; `cy.resize()` fires on
   `transitionend`. No remount, no re-layout, no flash.
-- **URL state is two params, period.** Deleted query modules are
-  removed from disk, not just unused.
+- **URL state is two params by default, opt-in beyond that**. All
+  five URL query modules (focusQuery, impactQuery,
+  findingsQuery, connectionQuery, investigationQuery) remain
+  on disk and remain the serialization layer. The change is write
+  policy: a feature's params are only written to the URL when that
+  feature is actively invoked, and removed when it's dismissed.
+  Legacy deep-links with all params present still parse correctly.
 - **No changes to deterministic analyzer or contract.** All UI-layer.
   `dependency-analyzer.cjs`, `explorer-contract.ts`, and
   `explorer-data.json` are read-only inputs.
@@ -106,6 +111,11 @@ verification steps lives there.
 
 - **Production files this track may modify:** `explorer/src/**` only.
 - **Production files this track MUST NOT modify:**
+  - explorer/src/lib/url/focusQuery.ts
+  - explorer/src/lib/url/impactQuery.ts
+  - explorer/src/lib/url/findingsQuery.ts
+  - explorer/src/lib/url/connectionQuery.ts
+  - explorer/src/lib/url/investigationQuery.ts
   - `dependency-analyzer.cjs`
   - `explorer-contract.ts`
   - `explorer-data.json` (generated, read-only input)

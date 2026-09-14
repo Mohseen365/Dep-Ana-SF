@@ -62,12 +62,21 @@
   - Deps: 0.3
   - Session ID: _pending_
 
-- [ ] **Task 1.2 — Delete obsolete URL modules**
-  - Delete `focusQuery.ts`, `impactQuery.ts`, `findingsQuery.ts`, `connectionQuery.ts`, `investigationQuery.ts`
-  - Update `lib/url/index.ts` and `lib/url/urlQuery.test.ts`
-  - Files: `explorer/src/lib/url/*`
+- [ ] **Task 1.2 — Adopt opt-in URL write policy**
+  - Keep all 5 URL modules on disk (focusQuery, impactQuery,
+    findingsQuery, connectionQuery, investigationQuery)
+  - Change write policy: each module's `toQuery` is only invoked
+    when its feature is actively enabled
+  - Default session URL: `?node=X` or `?node=X&investigate=true`
+  - After invoking Focus via Cmd+K: URL gains `focus.*` params
+  - After closing Focus: `focus.*` params are removed from URL
+  - Legacy deep-links with all params present parse correctly on load
+  - Files: `explorer/src/hooks/useViewState.ts`,
+    `explorer/src/hooks/useViewState.test.ts`,
+    `explorer/src/lib/url/index.ts`,
+    `explorer/src/lib/url/urlQuery.test.ts`
   - Scope: S
-  - Prompt: UX-2
+  - Prompt: UX-2 (amended)
   - Deps: 1.1
   - Session ID: _pending_
 
