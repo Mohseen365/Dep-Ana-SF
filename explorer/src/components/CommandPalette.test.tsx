@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { CommandPalette } from './CommandPalette';
-import { ExplorerNode } from '../types/explorer';
+import { ExplorerNode, ProjectMetadata } from '../types/explorer';
 
 const createMockNode = (overrides: Partial<ExplorerNode> & { id: string; displayName: string }): ExplorerNode => ({
   type: 'ApexClass',
@@ -65,6 +65,29 @@ const mockNodes: ExplorerNode[] = [
   }),
 ];
 
+const mockProjects: ProjectMetadata[] = [
+  {
+    id: 'default',
+    name: 'Default Salesforce Project',
+    sourcePath: 'force-app/main/default',
+    createdAt: new Date(0).toISOString(),
+    updatedAt: new Date(0).toISOString(),
+    analysisStatus: 'COMPLETE',
+    componentCount: 120,
+    dependencyCount: 300,
+  },
+  {
+    id: 'core-crm',
+    name: 'Core CRM',
+    sourcePath: 'force-app/core-crm',
+    createdAt: new Date(0).toISOString(),
+    updatedAt: new Date(0).toISOString(),
+    analysisStatus: 'COMPLETE',
+    componentCount: 85,
+    dependencyCount: 210,
+  },
+];
+
 describe('CommandPalette', () => {
   let onClose: ReturnType<typeof vi.fn>;
   let onSelectNode: ReturnType<typeof vi.fn>;
@@ -99,7 +122,7 @@ describe('CommandPalette', () => {
 
     expect(screen.getByTestId('command-palette-overlay')).toBeInTheDocument();
     expect(screen.getByTestId('command-palette-input')).toBeInTheDocument();
-    // Default shows commands + nodes
+
     expect(screen.getByText('⚡ Open Summary')).toBeInTheDocument();
     expect(screen.getByText('⚡ Open Hotspots')).toBeInTheDocument();
     expect(screen.getByText('MovieController')).toBeInTheDocument();
@@ -150,6 +173,48 @@ describe('CommandPalette', () => {
     // Test Findings
     fireEvent.click(screen.getByTestId('command-palette-item-cmd-findings'));
     expect(screen.getByTestId('command-palette-panel-content-findings')).toBeInTheDocument();
+  });
+
+  it('executes "Reset graph" command and closes palette', () => {
+    const onResetView = vi.fn();
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+        onResetView={onResetView}
+      />
+    );
+
+    const resetCmd = screen.getByTestId('command-palette-item-cmd-reset-graph');
+    fireEvent.click(resetCmd);
+
+    expect(onResetView).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('executes project switch command when selecting a project', () => {
+    const onSelectProject = vi.fn();
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+        projects={mockProjects}
+        activeProjectId="default"
+        onSelectProject={onSelectProject}
+      />
+    );
+
+    const projCmd = screen.getByTestId('command-palette-item-cmd-project-core-crm');
+    expect(projCmd).toBeInTheDocument();
+
+    fireEvent.click(projCmd);
+
+    expect(onSelectProject).toHaveBeenCalledWith('core-crm');
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('"← Back" returns from panel view to command search list mode', () => {
