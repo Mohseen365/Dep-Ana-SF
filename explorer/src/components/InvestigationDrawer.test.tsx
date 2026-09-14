@@ -186,4 +186,35 @@ describe('InvestigationDrawer', () => {
 
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
+
+  it('renders "Hand off" button when onRequestHandoff is provided and calls callback on click', () => {
+    const handleHandoff = vi.fn();
+
+    render(
+      <InvestigationDrawer
+        node={mockNodeServiceX}
+        open={true}
+        onClose={vi.fn()}
+        onRequestHandoff={handleHandoff}
+      />
+    );
+
+    const handoffBtn = screen.getByTestId('investigation-drawer-handoff-btn');
+    expect(handoffBtn).toBeInTheDocument();
+
+    fireEvent.click(handoffBtn);
+    expect(handleHandoff).toHaveBeenCalledWith('ServiceX');
+  });
+
+  it('does NOT render "Hand off" button when onRequestHandoff is undefined', () => {
+    render(
+      <InvestigationDrawer
+        node={mockNodeServiceX}
+        open={true}
+        onClose={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByTestId('investigation-drawer-handoff-btn')).not.toBeInTheDocument();
+  });
 });

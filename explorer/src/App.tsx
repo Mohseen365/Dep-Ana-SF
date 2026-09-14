@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
 import { useExplorerData } from './hooks/useExplorerData';
@@ -17,6 +17,8 @@ import { createEmptyImpactState } from './lib/impact-analysis';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
+import { HandoffTarget, buildHandoffPayload, openHandoff } from './lib/refactor-handoff';
+import { RefactorHandoffModal } from './components/RefactorHandoffModal';
 
 import type {
   ExplorerNode,
@@ -144,6 +146,7 @@ export function App() {
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
+  const [handoffTarget, setHandoffTarget] = useState<HandoffTarget | null>(null);
 
   // Progressive drilling and session-only recent list state
   const [drillPath, setDrillPath] = useState<string[]>([]);
@@ -334,6 +337,16 @@ export function App() {
     view.setIsInvestigating(true);
   };
 
+  const handleRequestHandoff = useCallback(
+    (nodeId: string) => {
+      if (!data) return;
+      const node = data.nodes.find((n) => n.id === nodeId);
+      if (!node) return;
+      setHandoffTarget(buildHandoffPayload(node, data));
+    },
+    [data]
+  );
+
   if (loading) return <LoadingScreen />;
   if (error || !data) return <ErrorScreen error={error} onRetry={retry} />;
 
@@ -377,6 +390,7 @@ export function App() {
           onToggleViewMode={() => {
             view.setViewMode(view.viewMode === 'graph' ? 'findings' : 'graph');
           }}
+          onRequestHandoff={handleRequestHandoff}
         />
         <Header
           onResetView={handleResetView}
@@ -454,6 +468,7 @@ export function App() {
                 onNavigateBreadcrumb={handleNavigateBreadcrumb}
                 recentNodeIds={recentNodeIds}
                 onSelectRecentNode={handleSelectRecentNode}
+                onRequestHandoff={handleRequestHandoff}
               />
             </div>
           ) : (
@@ -466,6 +481,14 @@ export function App() {
           )}
         </div>
 
+        <RefactorHandoffModal
+          target={handoffTarget}
+          onConfirm={() => {
+            if (handoffTarget) openHandoff(handoffTarget);
+            setHandoffTarget(null);
+          }}
+          onCancel={() => setHandoffTarget(null)}
+        />
       </div>
     </SelectionProvider>
   );
