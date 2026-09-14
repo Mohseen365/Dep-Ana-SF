@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useViewState } from './useViewState';
 
@@ -105,6 +105,138 @@ describe('useViewState', () => {
     const search = window.location.search;
     expect(search).toContain('conn.direction=dependencies');
     expect(search).toContain('conn.depth=3');
+  });
+
+  it('default session URL contains only node (and investigate if open)', () => {
+    const { result } = renderHook(() => useViewState());
+
+    act(() => {
+      result.current.setSelectedNodeId('ApexClass:AccountController');
+    });
+
+    expect(window.location.search).toBe('?node=ApexClass%3AAccountController');
+
+    act(() => {
+      result.current.setIsInvestigating(true);
+    });
+
+    expect(window.location.search).toBe('?node=ApexClass%3AAccountController&investigate=true');
+  });
+
+  it('invoking Focus adds focus.* params and closing Focus removes them', () => {
+    const { result } = renderHook(() => useViewState());
+
+    act(() => {
+      result.current.setSelectedNodeId('ApexClass:AccountController');
+    });
+
+    expect(window.location.search).toBe('?node=ApexClass%3AAccountController');
+
+    // Enable focus
+    act(() => {
+      result.current.setFocusState({
+        enabled: true,
+        focusNodeId: 'ApexClass:AccountController',
+        direction: 'dependents',
+        depth: 2,
+      });
+    });
+
+    expect(window.location.search).toContain('focus.enabled=true');
+    expect(window.location.search).toContain('focus.direction=dependents');
+
+    // Close focus
+    act(() => {
+      result.current.setFocusState({
+        enabled: false,
+        focusNodeId: null,
+        direction: 'both',
+        depth: 2,
+      });
+    });
+
+    expect(window.location.search).toBe('?node=ApexClass%3AAccountController');
+    expect(window.location.search).not.toContain('focus.');
+  });
+
+  it('legacy deep-link with all params present parses correctly', () => {
+    window.history.replaceState(
+      null,
+      '',
+      '/?node=ApexClass:Test&investigate=true&focus.enabled=true&focus.direction=dependents&focus.depth=2&impact.enabled=true&impact.depth=3&diag.tab=unresolved&conn.direction=dependencies&conn.depth=3&investigation=inv-123'
+    );
+
+    const { result } = renderHook(() => useViewState());
+
+    expect(result.current.selectedNodeId).toBe('ApexClass:Test');
+    expect(result.current.isInvestigating).toBe(true);
+    expect(result.current.focusState.enabled).toBe(true);
+    expect(result.current.focusState.direction).toBe('dependents');
+    expect(result.current.impactState.enabled).toBe(true);
+    expect(result.current.impactState.depth).toBe(3);
+    expect(result.current.diagnosticsTab).toBe('unresolved');
+    expect(result.current.connectionState).toEqual({ direction: 'dependencies', depth: 3 });
+    expect(result.current.selectedInvestigationId).toBe('inv-123');
+  });
+
+  it('reordering feature invocation does not change final URL', () => {
+    // Session A: Enable focus first, then impact
+    const { result: resA } = renderHook(() => useViewState());
+    act(() => {
+      resA.current.setSelectedNodeId('ApexClass:OrderService');
+      resA.current.setFocusState({
+        enabled: true,
+        focusNodeId: 'ApexClass:OrderService',
+        direction: 'both',
+        depth: 1,
+      });
+      resA.current.setImpactState({
+        enabled: true,
+        originNodeId: 'ApexClass:OrderService',
+        depth: 2,
+      });
+    });
+    const urlA = window.location.search;
+
+    // Reset URL
+    window.history.replaceState(null, '', '/');
+
+    // Session B: Enable impact first, then focus
+    const { result: resB } = renderHook(() => useViewState());
+    act(() => {
+      resB.current.setSelectedNodeId('ApexClass:OrderService');
+      resB.current.setImpactState({
+        enabled: true,
+        originNodeId: 'ApexClass:OrderService',
+        depth: 2,
+      });
+      resB.current.setFocusState({
+        enabled: true,
+        focusNodeId: 'ApexClass:OrderService',
+        direction: 'both',
+        depth: 1,
+      });
+    });
+    const urlB = window.location.search;
+
+    expect(urlA).toBe(urlB);
+  });
+
+  it('idempotent write: re-rendering with no changes does not modify URL or call replaceState repeatedly', () => {
+    const replaceStateSpy = vi.spyOn(window.history, 'replaceState');
+
+    const { result, rerender } = renderHook(() => useViewState());
+
+    act(() => {
+      result.current.setSelectedNodeId('ApexClass:Service');
+    });
+
+    const callCountBefore = replaceStateSpy.mock.calls.length;
+
+    rerender();
+
+    expect(replaceStateSpy.mock.calls.length).toBe(callCountBefore);
+    replaceStateSpy.mockRestore();
   });
 
   it('safely falls back for invalid query values and old URL parameters', () => {

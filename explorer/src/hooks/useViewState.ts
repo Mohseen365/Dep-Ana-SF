@@ -27,6 +27,7 @@ export function useViewState() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(null);
   const [selectedInvestigationId, setSelectedInvestigationId] = useState<string | null>(null);
+  const [isInvestigating, setIsInvestigating] = useState<boolean>(false);
   const [urlNodeId, setUrlNodeId] = useState<string | null>(null);
   const [urlEdgeId, setUrlEdgeId] = useState<string | null>(null);
 
@@ -73,6 +74,8 @@ export function useViewState() {
 
     const invParsed = investigationQuery.fromQuery(params);
     setSelectedInvestigationId(invParsed.selectedInvestigationId);
+
+    setIsInvestigating(params.get('investigate') === 'true');
   }, []);
 
   // Read initial values from URL on mount
@@ -99,34 +102,65 @@ export function useViewState() {
 
     const params = new URLSearchParams();
 
-    filterQuery.toQuery({ viewMode, filterState }, params);
-    focusQuery.toQuery(focusState, params);
-    connectionQuery.toQuery(connectionState, params);
-    impactQuery.toQuery(impactState, params);
-    findingsQuery.toQuery(
-      {
-        diagnosticsTab,
-        selectedCycleId,
-        selectedUnresolvedEdgeId,
-        selectedFindingId,
-      },
-      params,
-    );
-    investigationQuery.toQuery(
-      {
-        selectedInvestigationId,
-        investigationStatus: null,
-      },
-      params,
-    );
-
     const effectiveNode = selectedNodeId || focusState.focusNodeId || impactState.originNodeId;
     if (effectiveNode) {
       params.set('node', effectiveNode);
     }
 
-    const newUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}`;
-    if (window.location.search !== (params.toString() ? `?${params.toString()}` : '')) {
+    if (isInvestigating) {
+      params.set('investigate', 'true');
+    }
+
+    if (focusState.enabled) {
+      focusQuery.toQuery(focusState, params);
+    }
+
+    if (impactState.enabled) {
+      impactQuery.toQuery(impactState, params);
+    }
+
+    if (diagnosticsTab !== 'none' || selectedFindingId !== null) {
+      findingsQuery.toQuery(
+        {
+          diagnosticsTab,
+          selectedCycleId,
+          selectedUnresolvedEdgeId,
+          selectedFindingId,
+        },
+        params,
+      );
+    }
+
+    if (connectionState.direction !== 'both' || connectionState.depth !== 2) {
+      connectionQuery.toQuery(connectionState, params);
+    }
+
+    if (selectedInvestigationId !== null) {
+      investigationQuery.toQuery(
+        {
+          selectedInvestigationId,
+          investigationStatus: null,
+        },
+        params,
+      );
+    }
+
+    const isFilterActive =
+      filterState.searchQuery !== '' ||
+      filterState.typeFilter !== '' ||
+      filterState.riskFilter !== '' ||
+      filterState.hasCallouts ||
+      filterState.withoutSharing ||
+      filterState.hideTests ||
+      filterState.hasAsyncPatterns;
+
+    if (viewMode !== 'graph' || isFilterActive) {
+      filterQuery.toQuery({ viewMode, filterState }, params);
+    }
+
+    const searchString = params.toString() ? `?${params.toString()}` : '';
+    const newUrl = `${window.location.pathname}${searchString}`;
+    if (window.location.search !== searchString) {
       window.history.replaceState(null, '', newUrl);
     }
   }, [
@@ -141,6 +175,7 @@ export function useViewState() {
     selectedNodeId,
     selectedFindingId,
     selectedInvestigationId,
+    isInvestigating,
   ]);
 
   useEffect(() => {
@@ -170,6 +205,8 @@ export function useViewState() {
     setSelectedFindingId,
     selectedInvestigationId,
     setSelectedInvestigationId,
+    isInvestigating,
+    setIsInvestigating,
     urlNodeId,
     urlEdgeId,
   };
