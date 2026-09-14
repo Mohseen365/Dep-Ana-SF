@@ -228,4 +228,46 @@ describe('CommandPalette', () => {
     expect(screen.getByText('⚡ Compare snapshots')).toBeInTheDocument();
     expect(screen.queryByText('MovieController')).not.toBeInTheDocument();
   });
+
+  it('renders "Hand off to refactor" command disabled when no node is investigated', () => {
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+        selectedNodeId={null}
+      />
+    );
+
+    const handoffCmd = screen.getByTestId('command-palette-item-handoff-to-refactor');
+    expect(handoffCmd).toBeInTheDocument();
+    expect(handoffCmd).toHaveAttribute('aria-disabled', 'true');
+
+    const onRequestHandoff = vi.fn();
+    fireEvent.click(handoffCmd);
+    expect(onRequestHandoff).not.toHaveBeenCalled();
+  });
+
+  it('executes onRequestHandoff and closes palette when "Hand off to refactor" is selected with active node', () => {
+    const onRequestHandoff = vi.fn();
+    render(
+      <CommandPalette
+        isOpen={true}
+        onClose={onClose}
+        nodes={mockNodes}
+        onSelectNode={onSelectNode}
+        selectedNodeId="ApexClass:MovieController"
+        onRequestHandoff={onRequestHandoff}
+      />
+    );
+
+    const handoffCmd = screen.getByTestId('command-palette-item-handoff-to-refactor');
+    expect(handoffCmd).toHaveAttribute('aria-disabled', 'false');
+
+    fireEvent.click(handoffCmd);
+
+    expect(onRequestHandoff).toHaveBeenCalledWith('ApexClass:MovieController');
+    expect(onClose).toHaveBeenCalled();
+  });
 });

@@ -29,6 +29,7 @@ export interface CommandEntry {
   panelId?: PalettePanelId;
   action?: () => void;
   description?: string;
+  disabled?: boolean;
 }
 
 export interface CommandPaletteProps {
@@ -60,6 +61,7 @@ export interface CommandPaletteProps {
   onApplyFocus?: () => void;
   onShowImpact?: () => void;
   onToggleViewMode?: () => void;
+  onRequestHandoff?: (nodeId: string) => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
@@ -87,6 +89,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onApplyFocus,
   onShowImpact,
   onToggleViewMode,
+  onRequestHandoff,
 }) => {
   const [inputVal, setInputVal] = useState(query);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -135,6 +138,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         description: 'Compare current architecture with previous snapshot',
       },
       {
+        id: 'handoff-to-refactor',
+        title: 'Hand off to refactor',
+        category: 'Action',
+        disabled: !selectedNodeId,
+        action: () => {
+          if (selectedNodeId && onRequestHandoff) {
+            onRequestHandoff(selectedNodeId);
+          }
+        },
+        description: 'Open the refactor handoff confirmation for the currently investigated node.',
+      },
+      {
         id: 'cmd-focus',
         title: 'Focus on selected node',
         category: 'Action',
@@ -162,7 +177,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         description: 'Switch between Graph and Findings view modes',
       },
     ],
-    [onApplyFocus, onShowImpact, onToggleViewMode]
+    [selectedNodeId, onRequestHandoff, onApplyFocus, onShowImpact, onToggleViewMode]
   );
 
   // Reset state when opening/closing
@@ -252,6 +267,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const handleSelectCommand = useCallback(
     (cmd: CommandEntry) => {
+      if (cmd.disabled) return;
       if (cmd.category === 'Panel' && cmd.panelId) {
         setActivePanel(cmd.panelId);
       } else if (cmd.category === 'Action' && cmd.action) {
@@ -460,11 +476,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                         }}
                         className={`command-palette-item command-palette-command-item ${
                           isSelected ? 'selected' : ''
-                        }`}
+                        } ${cmd.disabled ? 'disabled' : ''}`}
                         onClick={() => handleSelectCommand(cmd)}
                         onMouseEnter={() => setSelectedIndex(index)}
                         role="option"
                         aria-selected={isSelected}
+                        aria-disabled={cmd.disabled}
                         data-testid={`command-palette-item-${cmd.id}`}
                       >
                         <div className="command-palette-item-main">
