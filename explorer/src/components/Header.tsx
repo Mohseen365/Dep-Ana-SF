@@ -1,61 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export interface HeaderProps {
   onResetView?: () => void;
-  onToggleSidebar?: () => void;
-  onToggleDetails?: () => void;
-  isDetailsOpen?: boolean;
-  onToggleFullscreen?: () => void;
   onToggleCompare?: () => void;
   isCompareOpen?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onResetView,
-  onToggleSidebar,
-  onToggleDetails,
-  isDetailsOpen,
-  onToggleFullscreen,
   onToggleCompare,
   isCompareOpen,
 }) => {
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const platform = navigator.platform || navigator.userAgent || '';
+      setIsMac(/(Mac|iPhone|iPod|iPad)/i.test(platform));
+    }
+  }, []);
+
   return (
     <header className="header">
       <div className="header-title">
-        {onToggleSidebar && (
-          <button
-            className="sidebar-toggle-btn"
-            onClick={onToggleSidebar}
-            title="Toggle Sidebar"
-            aria-label="Toggle Sidebar"
-          >
-            ☰
-          </button>
-        )}
         <span className="icon">⚡</span>
         <h1>Dependency Explorer</h1>
       </div>
       <div className="header-actions">
-        {onToggleFullscreen && (
-          <button
-            className="clear-filters-btn"
-            onClick={onToggleFullscreen}
-            title="Toggle Fullscreen"
-            aria-label="Toggle Fullscreen"
-          >
-            ⛶
-          </button>
-        )}
-        {onToggleDetails && (
-          <button
-            className={`clear-filters-btn ${isDetailsOpen ? 'active' : ''}`}
-            onClick={onToggleDetails}
-            title="Toggle Details Panel"
-            aria-label="Toggle Details Panel"
-          >
-            📋 Details
-          </button>
-        )}
+        <div className="header-shortcut-hint">
+          <kbd>{isMac ? '⌘K' : 'Ctrl+K'}</kbd> to search
+        </div>
         {onToggleCompare && (
           <button
             className={`clear-filters-btn ${isCompareOpen ? 'active' : ''}`}
