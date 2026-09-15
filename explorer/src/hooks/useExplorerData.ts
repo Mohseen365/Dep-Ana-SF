@@ -82,38 +82,74 @@ export function useExplorerData(projectIdOrUrl?: string): {
       setLoading(true);
       setError(null);
 
+      const isDefaultUrl = resolvedUrl === '/explorer-data.json';
+
       try {
         const res = await fetch(resolvedUrl, { signal: controller.signal });
+
         if (!res.ok) {
-          // Fallback to default /explorer-data.json if project-specific file 404s
-          if (res.status === 404 && resolvedUrl !== '/explorer-data.json') {
-            const fallbackRes = await fetch('/explorer-data.json', { signal: controller.signal });
-            if (fallbackRes.ok) {
-              const fallbackJson = await fallbackRes.json();
-              const parsedFallback = parseExplorerData(fallbackJson);
-              if (isSubscribed) {
-                setData(parsedFallback);
-                setLoading(false);
-              }
-              return;
-            }
+          if (!isDefaultUrl) {
+            throw new Error(`NOT_ANALYZED: Project analysis data not found (HTTP ${res.status})`);
           }
           throw new Error(`Failed to load explorer data: HTTP ${res.status}`);
         }
-        const json = await res.json();
+
+        const contentType =
+          res.headers && typeof res.headers.get === 'function'
+            ? res.headers.get('content-type') || ''
+            : '';
+
+        let text = '';
+        if (typeof res.text === 'function') {
+          text = await res.text();
+        } else if (typeof res.json === 'function') {
+          const jsonVal = await res.json();
+          text = typeof jsonVal === 'string' ? jsonVal : JSON.stringify(jsonVal);
+        }
+
+        const trimmedText = text.trim();
+
+        const isHtml =
+          contentType.includes('text/html') ||
+          trimmedText.startsWith('<') ||
+          trimmedText.startsWith('<!DOCTYPE') ||
+          trimmedText.startsWith('<!doctype');
+
+        if (isHtml) {
+          if (!isDefaultUrl) {
+            throw new Error(`NOT_ANALYZED: Project analysis data not found (HTML SPA fallback)`);
+          }
+          throw new Error('Failed to load explorer data: Server returned HTML instead of JSON');
+        }
+
+        let json: unknown;
+        try {
+          json = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error(
+            `Failed to parse explorer data: ${parseErr instanceof Error ? parseErr.message : 'Invalid JSON'}`
+          );
+        }
+
         const parsed = parseExplorerData(json);
         if (isSubscribed) {
           setData(parsed);
+          setError(null);
           setLoading(false);
         }
       } catch (err: unknown) {
         if (controller.signal.aborted) return;
 
-        if (retryCountRef.current < 1) {
+        const errMessage = err instanceof Error ? err.message : String(err);
+        const isNotAnalyzed = errMessage.startsWith('NOT_ANALYZED:');
+        const isParseError = errMessage.includes('Failed to parse explorer data');
+
+        if (retryCountRef.current < 1 && !isNotAnalyzed && !isParseError) {
           retryCountRef.current += 1;
           fetchData();
         } else {
           if (isSubscribed) {
+            setData(null);
             setError(err instanceof Error ? err : new Error(String(err)));
             setLoading(false);
           }

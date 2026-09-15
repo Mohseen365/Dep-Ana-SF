@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { App } from './App';
+import { ProjectProvider } from './context/ProjectContext';
 
 const validData = {
   schemaVersion: '1.0',
@@ -83,8 +84,9 @@ describe('App composed shell', () => {
   it('renders shell layout with graph pane when data loads successfully without permanent chrome', async () => {
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
-      json: async () => validData,
-    } as Response);
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(validData),
+    } as unknown as Response);
 
     const { container } = render(<App />);
 
@@ -97,5 +99,51 @@ describe('App composed shell', () => {
     expect(container.querySelector('[data-slot="sidebar"]')).not.toBeInTheDocument();
     expect(container.querySelector('.summary-bar')).not.toBeInTheDocument();
     expect(container.querySelector('.status-bar')).toBeInTheDocument();
+  });
+
+  it('renders NOT_ANALYZED empty state view cleanly when active project has no analysis data', async () => {
+    // Mock project manifest fetch & project-specific analysis fetch returning 404 or HTML
+    vi.mocked(fetch).mockImplementation(async (url) => {
+      if (typeof url === 'string' && url.includes('project-manifest.json')) {
+        return {
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            projects: [
+              {
+                id: 'new-unparsed-proj',
+                name: 'New Unparsed Project',
+                description: 'Test proj',
+                sourcePath: 'force-app',
+                analysisStatus: 'NOT_ANALYZED',
+                analysisPath: '/projects/new-unparsed-proj/explorer-data.json',
+              },
+            ],
+            activeProjectId: 'new-unparsed-proj',
+          }),
+        } as Response;
+      }
+      return {
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        text: async () => '<!DOCTYPE html><html><body>SPA HTML Fallback</body></html>',
+      } as unknown as Response;
+    });
+
+    window.history.pushState({}, '', '/?project=new-unparsed-proj');
+
+    render(
+      <ProjectProvider initialProjectId="new-unparsed-proj">
+        <App />
+      </ProjectProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Project created successfully.')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('This project has not been analyzed yet.')).toBeInTheDocument();
+    expect(screen.getByText(/Run analysis to generate dependency data:/)).toBeInTheDocument();
+    expect(screen.getByTestId('not-analyzed-screen')).toBeInTheDocument();
   });
 });
