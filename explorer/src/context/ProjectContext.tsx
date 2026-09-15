@@ -3,10 +3,12 @@ import type { ProjectMetadata, MultiProjectManifest } from '../types/explorer';
 
 export interface ProjectContextValue {
   projects: ProjectMetadata[];
+  recentProjects: ProjectMetadata[];
   activeProject: ProjectMetadata | null;
   activeProjectId: string;
   loading: boolean;
   error: Error | null;
+  clearError: () => void;
   selectProject: (projectId: string) => void;
   createProject: (
     input: {
@@ -37,6 +39,7 @@ export const DEFAULT_PROJECT: ProjectMetadata = {
 const ProjectContext = createContext<ProjectContextValue | null>(null);
 
 const ACTIVE_PROJECT_KEY = 'explorer.activeProjectId';
+const RECENT_PROJECTS_KEY = 'explorer.recentProjectIds';
 const LOCAL_PROJECTS_KEY = 'explorer.localProjects';
 
 function getInitialProjectId(): string {
@@ -52,6 +55,20 @@ function getInitialProjectId(): string {
     // Ignore storage/URL access errors
   }
   return DEFAULT_PROJECT.id;
+}
+
+function getStoredRecentIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem(RECENT_PROJECTS_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed.map(String);
+    }
+  } catch (_) {
+    // Ignore
+  }
+  return [];
 }
 
 function slugify(text: string): string {
@@ -72,8 +89,13 @@ export const ProjectProvider: React.FC<{
   const [activeProjectId, setActiveProjectId] = useState<string>(
     initialProjectId || getInitialProjectId()
   );
+  const [recentIds, setRecentIds] = useState<string[]>(getStoredRecentIds());
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
 
   const refreshProjects = useCallback(async () => {
     setLoading(true);
@@ -141,6 +163,17 @@ export const ProjectProvider: React.FC<{
       try {
         localStorage.setItem(ACTIVE_PROJECT_KEY, projectId);
 
+        // Update recent IDs
+        setRecentIds((prev) => {
+          const updated = [projectId, ...prev.filter((id) => id !== projectId)].slice(0, 5);
+          try {
+            localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
+          } catch (_) {
+            // Ignore
+          }
+          return updated;
+        });
+
         // Update URL query parameter
         if (typeof window !== 'undefined' && window.history) {
           const url = new URL(window.location.href);
@@ -173,13 +206,26 @@ export const ProjectProvider: React.FC<{
       description?: string;
       sourcePath?: string;
     }): Promise<ProjectMetadata> => {
-      const rawId = input.id || slugify(input.name) || `project-${Date.now()}`;
+      const trimmedName = input.name.trim();
+      if (!trimmedName) {
+        const err = new Error('Project name cannot be empty');
+        setError(err);
+        throw err;
+      }
+
+      const rawId = input.id?.trim() || slugify(trimmedName) || `project-${Date.now()}`;
       const id = slugify(rawId);
+
+      if (!id) {
+        const err = new Error('Invalid project ID generated');
+        setError(err);
+        throw err;
+      }
 
       const now = new Date().toISOString();
       const newProject: ProjectMetadata = {
         id,
-        name: input.name.trim(),
+        name: trimmedName,
         description: input.description?.trim() || '',
         sourcePath: input.sourcePath?.trim() || 'force-app/main/default',
         createdAt: now,
@@ -236,13 +282,26 @@ export const ProjectProvider: React.FC<{
     return projects.find((p) => p.id === activeProjectId) || DEFAULT_PROJECT;
   }, [projects, activeProjectId]);
 
+  const recentProjects = useMemo(() => {
+    const result: ProjectMetadata[] = [];
+    recentIds.forEach((id) => {
+      if (id !== activeProjectId) {
+        const found = projects.find((p) => p.id === id);
+        if (found) result.push(found);
+      }
+    });
+    return result;
+  }, [recentIds, projects, activeProjectId]);
+
   const value = useMemo(
     () => ({
       projects,
+      recentProjects,
       activeProject,
       activeProjectId,
       loading,
       error,
+      clearError,
       selectProject,
       createProject,
       refreshProjects,
@@ -250,10 +309,12 @@ export const ProjectProvider: React.FC<{
     }),
     [
       projects,
+      recentProjects,
       activeProject,
       activeProjectId,
       loading,
       error,
+      clearError,
       selectProject,
       createProject,
       refreshProjects,
