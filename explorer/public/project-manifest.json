@@ -1,68 +1,28 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "project-b",
+  "activeProjectId": "default",
   "projects": [
     {
-      "id": "movie-app",
-      "name": "Movie App",
-      "description": "Movie database",
-      "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
-      "createdAt": "2026-09-13T15:12:27.563Z",
-      "updatedAt": "2026-09-13T15:12:27.563Z",
-      "lastAnalyzedAt": "2026-09-13T15:12:27.563Z",
+      "id": "default",
+      "name": "Default Salesforce Project",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../temp-test-fixture-realistic",
+      "createdAt": "2026-09-15T16:14:55.614Z",
+      "updatedAt": "2026-09-15T16:14:55.614Z",
+      "lastAnalyzedAt": "2026-09-15T16:14:55.614Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 14,
-      "dependencyCount": 16,
-      "analysisPath": "/projects/movie-app/explorer-data.json"
-    },
-    {
-      "id": "project-a",
-      "name": "Project A",
-      "description": "Project A",
-      "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
-      "createdAt": "2026-09-13T15:12:27.563Z",
-      "updatedAt": "2026-09-13T15:12:27.563Z",
-      "lastAnalyzedAt": "2026-09-13T15:12:27.563Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 14,
-      "dependencyCount": 16,
-      "analysisPath": "/projects/project-a/explorer-data.json"
-    },
-    {
-      "id": "project-b",
-      "name": "Project B",
-      "description": "Project B",
-      "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
-      "createdAt": "2026-09-13T15:12:27.563Z",
-      "updatedAt": "2026-09-13T15:12:27.563Z",
-      "lastAnalyzedAt": "2026-09-13T15:12:27.563Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 14,
-      "dependencyCount": 16,
-      "analysisPath": "/projects/project-b/explorer-data.json"
+      "componentCount": 10,
+      "dependencyCount": 13,
+      "analysisPath": "/explorer-data.json"
     }
   ],
   "artifacts": {
-    "movie-app": {
+    "default": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:a48f45b9f0684ceab7c2b3e1dc8d1f877a69838efadd57e8bb79c0687a35abed",
-      "nodeCount": 14,
-      "edgeCount": 16
-    },
-    "project-a": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:36f64cdd09a978b2238dc1f5059926cbde3ed1b2d1d5bc36e045dafd587137ce",
-      "nodeCount": 14,
-      "edgeCount": 16
-    },
-    "project-b": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:e3115c3778debf5e9916f7cb86dd99a3e263188460c4230afcbeb75e69cb0621",
-      "nodeCount": 14,
-      "edgeCount": 16
+      "fileHash": "sha256:64bd7f1fd888ed164f0dd68ce45e37f104ae7e89b13b57713f7831133b1bfd61",
+      "nodeCount": 10,
+      "edgeCount": 13
     }
   }
 }

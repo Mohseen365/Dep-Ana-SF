@@ -5,8 +5,8 @@
   "sourceDirectory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
   "project": {
     "id": "movie-app",
-    "name": "Movie App",
-    "description": "Movie database",
+    "name": "movie-app",
+    "description": "Salesforce DX Architecture Analysis",
     "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
     "createdAt": "2026-09-13T15:12:27.563Z",
     "updatedAt": "2026-09-13T15:12:27.563Z",
