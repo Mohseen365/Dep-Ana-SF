@@ -586,8 +586,6 @@ function updateManifestWithExplorerData(outputFile, explorerData, projectMetadat
     }
   }
 
-  const manifestPath = path.join(manifestDir, "project-manifest.json");
-
   const fileHash =
     "sha256:" +
     crypto
@@ -596,15 +594,17 @@ function updateManifestWithExplorerData(outputFile, explorerData, projectMetadat
       .digest("hex");
   const relFile = path.basename(outputFile);
 
-  let manifest = null;
-  if (fs.existsSync(manifestPath)) {
+  // 1. Update project-manifest.json
+  const projectManifestPath = path.join(manifestDir, "project-manifest.json");
+  let projectManifest = null;
+  if (fs.existsSync(projectManifestPath)) {
     try {
-      manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      projectManifest = JSON.parse(fs.readFileSync(projectManifestPath, "utf8"));
     } catch (_) {}
   }
 
-  if (!manifest) {
-    manifest = {
+  if (!projectManifest) {
+    projectManifest = {
       manifestVersion: "1.0.0",
       activeProjectId: projectMetadata?.id || "default",
       projects: [],
@@ -612,20 +612,20 @@ function updateManifestWithExplorerData(outputFile, explorerData, projectMetadat
     };
   }
 
-  if (!Array.isArray(manifest.projects)) manifest.projects = [];
-  if (!manifest.artifacts) manifest.artifacts = {};
+  if (!Array.isArray(projectManifest.projects)) projectManifest.projects = [];
+  if (!projectManifest.artifacts) projectManifest.artifacts = {};
 
   if (projectMetadata) {
-    const existingIdx = manifest.projects.findIndex((p) => p.id === projectMetadata.id);
+    const existingIdx = projectManifest.projects.findIndex((p) => p.id === projectMetadata.id);
     if (existingIdx >= 0) {
-      manifest.projects[existingIdx] = projectMetadata;
+      projectManifest.projects[existingIdx] = projectMetadata;
     } else {
-      manifest.projects.push(projectMetadata);
+      projectManifest.projects.push(projectMetadata);
     }
-    manifest.activeProjectId = projectMetadata.id;
+    projectManifest.activeProjectId = projectMetadata.id;
   }
 
-  manifest.artifacts[projectMetadata?.id || "explorerData"] = {
+  projectManifest.artifacts[projectMetadata?.id || "explorerData"] = {
     path: relFile,
     schemaVersion: explorerData.schemaVersion || CURRENT_SCHEMA_VERSION,
     fileHash,
@@ -637,7 +637,29 @@ function updateManifestWithExplorerData(outputFile, explorerData, projectMetadat
     fs.mkdirSync(manifestDir, { recursive: true });
   }
 
-  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
+  fs.writeFileSync(projectManifestPath, JSON.stringify(projectManifest, null, 2), "utf8");
+
+  // 2. Also update analysis-manifest.json if it exists in outputDir or manifestDir
+  const analysisManifestCandidates = [
+    path.join(outputDir, "analysis-manifest.json"),
+    path.join(manifestDir, "analysis-manifest.json")
+  ];
+  for (const analysisManifestPath of analysisManifestCandidates) {
+    if (fs.existsSync(analysisManifestPath)) {
+      try {
+        const analysisManifest = JSON.parse(fs.readFileSync(analysisManifestPath, "utf8"));
+        if (!analysisManifest.artifacts) analysisManifest.artifacts = {};
+        analysisManifest.artifacts.explorerData = {
+          path: relFile,
+          schemaVersion: explorerData.schemaVersion || CURRENT_SCHEMA_VERSION,
+          fileHash,
+          nodeCount: explorerData.summary?.nodeCount || 0,
+          edgeCount: explorerData.summary?.edgeCount || 0,
+        };
+        fs.writeFileSync(analysisManifestPath, JSON.stringify(analysisManifest, null, 2), "utf8");
+      } catch (_) {}
+    }
+  }
 }
 
 // CLI Execution
