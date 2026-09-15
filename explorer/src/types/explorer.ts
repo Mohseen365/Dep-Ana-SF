@@ -21,6 +21,30 @@ export interface MultiProjectManifest {
   projects: ProjectMetadata[];
 }
 
+export interface ProjectSnapshot {
+  id: string;
+  projectId: string;
+  createdAt: string;
+  dateDisplay: string;
+  componentCount: number;
+  dependencyCount: number;
+  highRiskCount?: number;
+  mediumRiskCount?: number;
+  lowRiskCount?: number;
+  cycleCount?: number;
+  unresolvedCount?: number;
+  isActive?: boolean;
+  rawSchemaJson?: string;
+  analysisPath?: string;
+}
+
+export interface ProjectAnalysisHistory {
+  projectId: string;
+  activeSnapshotId: string;
+  snapshots: ProjectSnapshot[];
+  updatedAt: string;
+}
+
 export interface ExplorerDataSchema {
   schemaVersion: string;
   analyzerVersion: string;
