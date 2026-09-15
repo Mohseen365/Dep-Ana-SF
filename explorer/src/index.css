@@ -651,34 +651,54 @@ body {
 
 /* App Main Layout */
 .app-layout {
-  display: grid;
-  grid-template-rows: 44px 1fr 28px;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas:
-    "header header header"
-    "sidebar graph drawer"
-    "status status status";
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   position: relative;
-  transition: grid-template-columns 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-body-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Sidebar Slot Layout Participation */
+.sidebar-slot {
+  width: 280px;
+  min-width: 280px;
+  height: 100%;
+  border-right: 1px solid var(--border-default);
+  flex-shrink: 0;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-slot.collapsed,
+.sidebar-slot[data-collapsed="true"] {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 /* Sidebar Styling & Dock Layout */
 .sidebar {
-  grid-area: sidebar;
-  width: 280px;
-  min-width: 280px;
-  max-width: 380px;
+  width: 100%;
   height: 100%;
   background-color: var(--bg-panel);
-  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 20;
-  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1), margin 0.2s ease, padding 0.2s ease, opacity 0.15s ease;
 }
 
 .sidebar.collapsed {
@@ -687,7 +707,7 @@ body {
   max-width: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
-  border-right: none !important;
+  border: none !important;
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
@@ -805,9 +825,19 @@ body {
   color: var(--text-main);
 }
 
-/* Main Graph Pane Layout */
+/* Main Workspace Center Pane & Graph Pane Layout */
+.workspace-center-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
 .graph-pane {
-  grid-area: graph;
+  flex: 1;
   position: relative;
   width: 100%;
   height: 100%;
@@ -835,20 +865,38 @@ body {
   height: 100%;
 }
 
+/* Drawer Slot Layout Participation */
+.drawer-slot {
+  width: 380px;
+  min-width: 380px;
+  height: 100%;
+  border-left: 1px solid var(--border-default);
+  flex-shrink: 0;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-slot.closed,
+.drawer-slot[data-closed="true"] {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 /* Investigation Drawer Styling */
 .investigation-drawer {
-  grid-area: drawer;
-  width: 400px;
-  min-width: 400px;
+  width: 100%;
   height: 100%;
   background-color: var(--bg-panel);
-  border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
   z-index: 25;
-  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1), margin 0.2s ease, padding 0.2s ease;
 }
 
 .investigation-drawer.closed,
@@ -973,15 +1021,36 @@ body {
   box-shadow: var(--shadow-lg) !important;
 }
 
-/* Responsive Overrides */
+/* Responsive Overrides Across Viewports (1920x1080, 1440x900, 1280x800, 1024x768, <1024px, <768px) */
+@media (max-width: 1024px) {
+  .drawer-slot {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 30;
+    box-shadow: var(--shadow-overlay);
+    background-color: var(--surface-panel);
+  }
+}
+
 @media (max-width: 768px) {
+  .sidebar-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 35;
+    box-shadow: var(--shadow-overlay);
+    background-color: var(--surface-panel);
+  }
   .graph-legend-floating {
     display: none !important;
   }
   .minimap-container {
     width: 150px !important;
     height: 100px !important;
-    right: 48px !important;
+    right: 12px !important;
     bottom: 12px !important;
   }
 }
