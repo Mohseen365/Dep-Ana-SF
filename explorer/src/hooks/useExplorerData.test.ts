@@ -218,6 +218,9 @@ describe('useExplorerData', () => {
 
     rerender({ projectId: 'proj-b' });
 
+    // Verify old data is immediately cleared upon project switch
+    expect(result.current.data).toBeNull();
+
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });

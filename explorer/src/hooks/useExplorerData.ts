@@ -95,9 +95,11 @@ export function useExplorerData(projectIdOrUrl?: string): {
     const controller = new AbortController();
     let isSubscribed = true;
 
+    setData(null);
+    setLoading(true);
+    setError(null);
+
     async function fetchData() {
-      setLoading(true);
-      setError(null);
 
       const isDefaultUrl = resolvedUrl === '/explorer-data.json';
 
