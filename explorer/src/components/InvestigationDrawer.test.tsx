@@ -210,7 +210,7 @@ describe('InvestigationDrawer', () => {
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 
-  it('disables close button when drawer is pinned', () => {
+  it('allows closing drawer when pinned without requiring unpinning first', () => {
     const handleClose = vi.fn();
 
     render(
@@ -224,10 +224,10 @@ describe('InvestigationDrawer', () => {
     );
 
     const closeBtn = screen.getByRole('button', { name: /close investigation drawer/i });
-    expect(closeBtn).toBeDisabled();
+    expect(closeBtn).not.toBeDisabled();
 
     fireEvent.click(closeBtn);
-    expect(handleClose).not.toHaveBeenCalled();
+    expect(handleClose).toHaveBeenCalledTimes(1);
   });
 
   it('triggers onTogglePin and onDetach when clicking header buttons', () => {
