@@ -18,6 +18,15 @@ export interface ProjectContextValue {
       sourcePath?: string;
     }
   ) => Promise<ProjectMetadata>;
+  updateProject: (
+    id: string,
+    updates: Partial<Pick<ProjectMetadata, 'name' | 'description' | 'sourcePath'>>
+  ) => Promise<ProjectMetadata>;
+  reanalyzeProject: (id: string) => Promise<ProjectMetadata>;
+  duplicateProject: (id: string) => Promise<ProjectMetadata>;
+  archiveProject: (id: string, archive?: boolean) => Promise<ProjectMetadata>;
+  deleteProject: (id: string) => Promise<void>;
+  exportProject: (id: string) => Promise<void>;
   refreshProjects: () => Promise<void>;
   getProjectDataUrl: (projectId?: string) => string;
 }
@@ -263,6 +272,15 @@ export const ProjectProvider: React.FC<{
     [selectProject]
   );
 
+  const saveLocalProjects = (updatedProjects: ProjectMetadata[]) => {
+    try {
+      const customOnly = updatedProjects.filter((p) => p.id !== DEFAULT_PROJECT.id);
+      localStorage.setItem(LOCAL_PROJECTS_KEY, JSON.stringify(customOnly));
+    } catch (_) {
+      // Ignore
+    }
+  };
+
   const getProjectDataUrl = useCallback(
     (projectId?: string): string => {
       const targetId = projectId || activeProjectId;
@@ -276,6 +294,247 @@ export const ProjectProvider: React.FC<{
       return `/projects/${targetId}/explorer-data.json`;
     },
     [activeProjectId, projects]
+  );
+
+  const updateProject = useCallback(
+    async (
+      id: string,
+      updates: Partial<Pick<ProjectMetadata, 'name' | 'description' | 'sourcePath'>>
+    ): Promise<ProjectMetadata> => {
+      const existing = projects.find((p) => p.id === id);
+      if (!existing) {
+        throw new Error(`Project "${id}" not found`);
+      }
+      const now = new Date().toISOString();
+      const updatedProject: ProjectMetadata = {
+        ...existing,
+        name: updates.name !== undefined ? updates.name.trim() : existing.name,
+        description: updates.description !== undefined ? updates.description.trim() : existing.description,
+        sourcePath: updates.sourcePath !== undefined ? updates.sourcePath.trim() : existing.sourcePath,
+        updatedAt: now,
+      };
+
+      setProjects((prev) => {
+        const next = prev.map((p) => (p.id === id ? updatedProject : p));
+        saveLocalProjects(next);
+        return next;
+      });
+
+      return updatedProject;
+    },
+    [projects]
+  );
+
+  const reanalyzeProject = useCallback(
+    async (id: string): Promise<ProjectMetadata> => {
+      const now = new Date().toISOString();
+      let projectToReanalyze = projects.find((p) => p.id === id);
+      if (!projectToReanalyze) throw new Error(`Project "${id}" not found`);
+
+      // Set state to ANALYZING first
+      setProjects((prev) => {
+        const next = prev.map((p) => (p.id === id ? { ...p, analysisStatus: 'ANALYZING' as const, updatedAt: now } : p));
+        saveLocalProjects(next);
+        return next;
+      });
+
+      try {
+        const url = getProjectDataUrl(id);
+        const res = await fetch(url);
+        let componentCount = projectToReanalyze.componentCount;
+        let dependencyCount = projectToReanalyze.dependencyCount;
+        let status: ProjectMetadata['analysisStatus'] = 'COMPLETE';
+
+        if (res.ok) {
+          const data = await res.json();
+          componentCount = data?.summary?.nodeCount ?? data?.nodes?.length ?? componentCount;
+          dependencyCount = data?.summary?.edgeCount ?? data?.edges?.length ?? dependencyCount;
+        }
+
+        const completionTime = new Date().toISOString();
+        let updated: ProjectMetadata | null = null;
+
+        setProjects((prev) => {
+          const next = prev.map((p) => {
+            if (p.id === id) {
+              updated = {
+                ...p,
+                analysisStatus: status,
+                componentCount,
+                dependencyCount,
+                lastAnalyzedAt: completionTime,
+                updatedAt: completionTime,
+              };
+              return updated;
+            }
+            return p;
+          });
+          saveLocalProjects(next);
+          return next;
+        });
+
+        if (updated) return updated;
+        return {
+          ...projectToReanalyze,
+          analysisStatus: status,
+          componentCount,
+          dependencyCount,
+          lastAnalyzedAt: completionTime,
+          updatedAt: completionTime,
+        };
+      } catch (_) {
+        const completionTime = new Date().toISOString();
+        let updated: ProjectMetadata | null = null;
+        setProjects((prev) => {
+          const next = prev.map((p) => {
+            if (p.id === id) {
+              updated = {
+                ...p,
+                analysisStatus: p.componentCount > 0 ? 'COMPLETE' : 'FAILED',
+                lastAnalyzedAt: completionTime,
+                updatedAt: completionTime,
+              };
+              return updated;
+            }
+            return p;
+          });
+          saveLocalProjects(next);
+          return next;
+        });
+        if (updated) return updated;
+        return {
+          ...projectToReanalyze,
+          analysisStatus: 'COMPLETE',
+          lastAnalyzedAt: completionTime,
+          updatedAt: completionTime,
+        };
+      }
+    },
+    [projects, getProjectDataUrl]
+  );
+
+  const duplicateProject = useCallback(
+    async (id: string): Promise<ProjectMetadata> => {
+      const source = projects.find((p) => p.id === id);
+      if (!source) throw new Error(`Project "${id}" not found`);
+
+      const baseNewId = `${id}-copy`;
+      let newId = baseNewId;
+      let counter = 1;
+      while (projects.some((p) => p.id === newId)) {
+        counter++;
+        newId = `${baseNewId}-${counter}`;
+      }
+
+      const now = new Date().toISOString();
+      const duplicate: ProjectMetadata = {
+        ...source,
+        id: newId,
+        name: `${source.name} (Copy)`,
+        createdAt: now,
+        updatedAt: now,
+        analysisPath: `/projects/${newId}/explorer-data.json`,
+      };
+
+      setProjects((prev) => {
+        const next = [...prev, duplicate];
+        saveLocalProjects(next);
+        return next;
+      });
+
+      return duplicate;
+    },
+    [projects]
+  );
+
+  const archiveProject = useCallback(
+    async (id: string, archive: boolean = true): Promise<ProjectMetadata> => {
+      const existing = projects.find((p) => p.id === id);
+      if (!existing) throw new Error(`Project "${id}" not found`);
+
+      const now = new Date().toISOString();
+      const updatedProject: ProjectMetadata = {
+        ...existing,
+        isArchived: archive,
+        updatedAt: now,
+      };
+
+      setProjects((prev) => {
+        const next = prev.map((p) => (p.id === id ? updatedProject : p));
+        saveLocalProjects(next);
+        return next;
+      });
+
+      return updatedProject;
+    },
+    [projects]
+  );
+
+  const deleteProject = useCallback(
+    async (id: string): Promise<void> => {
+      setProjects((prev) => {
+        const next = prev.filter((p) => p.id !== id);
+        saveLocalProjects(next);
+        return next;
+      });
+
+      setRecentIds((prev) => {
+        const updated = prev.filter((rId) => rId !== id);
+        try {
+          localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
+        } catch (_) {}
+        return updated;
+      });
+
+      if (activeProjectId === id) {
+        const remaining = projects.filter((p) => p.id !== id);
+        const fallbackId = remaining.length > 0 ? remaining[0].id : DEFAULT_PROJECT.id;
+        selectProject(fallbackId);
+      }
+    },
+    [activeProjectId, projects, selectProject]
+  );
+
+  const exportProject = useCallback(
+    async (id: string): Promise<void> => {
+      const proj = projects.find((p) => p.id === id);
+      if (!proj) throw new Error(`Project "${id}" not found`);
+
+      let dataPayload: any = null;
+      try {
+        const url = getProjectDataUrl(id);
+        const res = await fetch(url);
+        if (res.ok) {
+          dataPayload = await res.json();
+        }
+      } catch (_) {}
+
+      const exportObject = {
+        manifestVersion: '1.0.0',
+        exportedAt: new Date().toISOString(),
+        project: proj,
+        data: dataPayload,
+      };
+
+      const jsonString = JSON.stringify(exportObject, null, 2);
+      if (typeof window !== 'undefined' && window.document) {
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const createUrl = typeof URL.createObjectURL === 'function'
+          ? URL.createObjectURL
+          : () => 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonString);
+        const downloadUrl = createUrl(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `${proj.id}-project-export.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        if (typeof URL.revokeObjectURL === 'function' && downloadUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(downloadUrl);
+        }
+      }
+    },
+    [projects, getProjectDataUrl]
   );
 
   const activeProject = useMemo(() => {
@@ -304,6 +563,12 @@ export const ProjectProvider: React.FC<{
       clearError,
       selectProject,
       createProject,
+      updateProject,
+      reanalyzeProject,
+      duplicateProject,
+      archiveProject,
+      deleteProject,
+      exportProject,
       refreshProjects,
       getProjectDataUrl,
     }),
@@ -317,6 +582,12 @@ export const ProjectProvider: React.FC<{
       clearError,
       selectProject,
       createProject,
+      updateProject,
+      reanalyzeProject,
+      duplicateProject,
+      archiveProject,
+      deleteProject,
+      exportProject,
       refreshProjects,
       getProjectDataUrl,
     ]
