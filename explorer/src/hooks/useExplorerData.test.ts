@@ -45,13 +45,16 @@ describe('useExplorerData', () => {
     localStorage.clear();
   });
 
-  it('fetches and parses data successfully', async () => {
+  it('Case A — default project loads normally from /explorer-data.json', async () => {
+    const jsonSpy = vi.fn();
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
-      json: async () => validData,
-    } as Response);
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(validData),
+      json: jsonSpy,
+    } as unknown as Response);
 
-    const { result } = renderHook(() => useExplorerData('/test-url.json'));
+    const { result } = renderHook(() => useExplorerData('/explorer-data.json'));
 
     expect(result.current.loading).toBe(true);
 
@@ -63,11 +66,56 @@ describe('useExplorerData', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('fetches project-specific dataset when given a project ID', async () => {
+  it('Case B1 — newly created project with missing analysis (HTTP 404) does not fallback to default', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      headers: new Headers(),
+      text: async () => '404 Not Found',
+    } as Response);
+
+    const { result } = renderHook(() => useExplorerData('test-project'));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith('/projects/test-project/explorer-data.json', expect.any(Object));
+    expect(result.current.data).toBeNull();
+    expect(result.current.error?.message).toContain('NOT_ANALYZED');
+  });
+
+  it('Case B2 — newly created project with HTML SPA fallback does NOT parse HTML as JSON', async () => {
+    const mockJson = vi.fn().mockImplementation(() => {
+      throw new SyntaxError("Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON");
+    });
+
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
-      json: async () => validData,
-    } as Response);
+      headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
+      text: async () => '<!DOCTYPE html><html><body>SPA Index</body></html>',
+      json: mockJson,
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useExplorerData('test-project'));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    // Verify mockJson (res.json) was NEVER called on HTML
+    expect(mockJson).not.toHaveBeenCalled();
+    expect(result.current.data).toBeNull();
+    expect(result.current.error?.message).toContain('NOT_ANALYZED');
+  });
+
+  it('Case C — real project analysis exists and loads correctly', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(validData),
+    } as unknown as Response);
 
     const { result } = renderHook(() => useExplorerData('core-crm'));
 
@@ -76,28 +124,26 @@ describe('useExplorerData', () => {
     });
 
     expect(fetch).toHaveBeenCalledWith('/projects/core-crm/explorer-data.json', expect.any(Object));
+    expect(result.current.data).toEqual(validData);
+    expect(result.current.error).toBeNull();
   });
 
-  it('falls back to default /explorer-data.json if project dataset returns 404', async () => {
-    vi.mocked(fetch)
-      .mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      } as Response)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => validData,
-      } as Response);
+  it('Case D — malformed JSON produces a controlled error state without uncaught exception', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => '{ malformed json string',
+    } as unknown as Response);
 
-    const { result } = renderHook(() => useExplorerData('missing-proj'));
+    const { result } = renderHook(() => useExplorerData('/explorer-data.json'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(fetch).toHaveBeenCalledWith('/projects/missing-proj/explorer-data.json', expect.any(Object));
-    expect(fetch).toHaveBeenCalledWith('/explorer-data.json', expect.any(Object));
-    expect(result.current.data).toEqual(validData);
+    expect(result.current.data).toBeNull();
+    expect(result.current.error).not.toBeNull();
+    expect(result.current.error?.message).toContain('Failed to parse explorer data');
   });
 
   it('retries once on network failure before setting error', async () => {

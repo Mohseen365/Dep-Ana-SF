@@ -85,6 +85,108 @@ export function GraphSlot(props: {
   );
 }
 
+function NotAnalyzedScreen({
+  project,
+}: {
+  project?: { name: string; id: string; sourcePath?: string } | null;
+}) {
+  const sourcePath = project?.sourcePath || 'force-app/main/default';
+  const projectId = project?.id || 'project-id';
+
+  return (
+    <div
+      className="state-screen state-empty"
+      data-testid="not-analyzed-screen"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '48px 24px',
+        textAlign: 'center',
+        maxWidth: '640px',
+        margin: '40px auto',
+        backgroundColor: 'var(--surface-panel, #111827)',
+        border: '1px solid var(--border-default, #334155)',
+        borderRadius: 'var(--radius-lg, 8px)',
+        boxShadow: 'var(--shadow-sm, 0 1px 2px 0 rgba(0,0,0,0.3))',
+      }}
+    >
+      <span style={{ fontSize: '48px', marginBottom: '16px', lineHeight: 1 }} aria-hidden="true">
+        ⚡
+      </span>
+      <h2
+        style={{
+          fontSize: '20px',
+          fontWeight: 700,
+          color: 'var(--text-primary, #f8fafc)',
+          margin: '0 0 12px 0',
+        }}
+      >
+        Project created successfully.
+      </h2>
+      <p
+        style={{
+          fontSize: '14px',
+          color: 'var(--text-secondary, #cbd5e1)',
+          margin: '0 0 24px 0',
+          lineHeight: '1.5',
+        }}
+      >
+        This project has not been analyzed yet.
+      </p>
+
+      <div
+        style={{
+          width: '100%',
+          backgroundColor: 'var(--surface-subtle, #0f172a)',
+          border: '1px solid var(--border-subtle, #1e293b)',
+          borderRadius: 'var(--radius-md, 6px)',
+          padding: '16px',
+          marginBottom: '24px',
+          textAlign: 'left',
+          boxSizing: 'border-box',
+        }}
+      >
+        <p
+          style={{
+            fontSize: '12px',
+            fontWeight: 600,
+            color: 'var(--text-muted, #94a3b8)',
+            margin: '0 0 8px 0',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          Run analysis to generate dependency data:
+        </p>
+        <code
+          style={{
+            fontSize: '13px',
+            color: 'var(--accent-primary, #3b82f6)',
+            fontFamily: 'var(--font-mono, monospace)',
+            display: 'block',
+            wordBreak: 'break-all',
+          }}
+        >
+          node scripts/export-explorer.cjs --project {projectId} --source {sourcePath}
+        </code>
+      </div>
+
+      <p
+        style={{
+          fontSize: '12px',
+          color: 'var(--text-muted, #94a3b8)',
+          margin: 0,
+          lineHeight: '1.4',
+        }}
+      >
+        You can switch back to the <strong>Default Salesforce Project</strong> or another active project using the project selector in the top header.
+      </p>
+    </div>
+  );
+}
+
 function LoadingScreen() {
   return (
     <div className="state-screen">
@@ -110,9 +212,15 @@ export function App() {
   const projectContext = useProjectSafe();
 
   const activeProjectId = projectContext?.activeProjectId || 'default';
+  const activeProject = projectContext?.activeProject;
   const dataUrl = projectContext?.getProjectDataUrl(activeProjectId) || '/explorer-data.json';
 
   const { data, loading, error, retry } = useExplorerData(dataUrl);
+
+  const isNotAnalyzed =
+    activeProject?.analysisStatus === 'NOT_ANALYZED' ||
+    (error && error.message.startsWith('NOT_ANALYZED:')) ||
+    (!data && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:')));
 
   const selection = useGraphSelection();
   const view = useViewState();
@@ -436,7 +544,7 @@ export function App() {
   const isDrawerOpen = view.isInvestigating || isPinned;
 
   if (loading) return <LoadingScreen />;
-  if (error || !data) return <ErrorScreen error={error} onRetry={retry} />;
+  if (error && !isNotAnalyzed) return <ErrorScreen error={error} onRetry={retry} />;
 
   return (
     <SelectionProvider value={selection}>
@@ -458,7 +566,7 @@ export function App() {
           {!isSidebarCollapsed && (
             <div className="sidebar-slot" style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
               <Sidebar
-                nodes={data.nodes}
+                nodes={data?.nodes ?? []}
                 displayNodes={displayNodes}
                 filterState={view.filterState}
                 selectedNodeId={selection.selectedNodeId}
@@ -497,34 +605,38 @@ export function App() {
             {/* Active View Container */}
             <main className="graph-pane" style={{ flex: 1, position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
               {workspaceViewMode === 'graph' && (
-                <GraphSlot
-                  graphRef={graphRef}
-                  nodes={focusedGraphData.nodes}
-                  edges={focusedGraphData.edges}
-                  selectedNodeId={selection.selectedNodeId}
-                  selectedEdgeId={selection.selectedEdgeId}
-                  onSelectNode={(node) => {
-                    selection.selectNode(node ? node.id : null);
-                    if (node) {
-                      view.setIsInvestigating(true);
+                isNotAnalyzed || !data ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <GraphSlot
+                    graphRef={graphRef}
+                    nodes={focusedGraphData.nodes}
+                    edges={focusedGraphData.edges}
+                    selectedNodeId={selection.selectedNodeId}
+                    selectedEdgeId={selection.selectedEdgeId}
+                    onSelectNode={(node) => {
+                      selection.selectNode(node ? node.id : null);
+                      if (node) {
+                        view.setIsInvestigating(true);
+                      }
+                    }}
+                    onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
+                    selectedCycleNodeIds={highlightedCycleNodeIds}
+                    focusedNodeId={
+                      isDrawerOpen
+                        ? drillPath.length > 0
+                          ? drillPath[drillPath.length - 1]
+                          : selection.selectedNodeId
+                        : null
                     }
-                  }}
-                  onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
-                  selectedCycleNodeIds={highlightedCycleNodeIds}
-                  focusedNodeId={
-                    isDrawerOpen
-                      ? drillPath.length > 0
-                        ? drillPath[drillPath.length - 1]
-                        : selection.selectedNodeId
-                      : null
-                  }
-                />
+                  />
+                )
               )}
 
               {workspaceViewMode === 'dashboard' && (
                 <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                   <ProjectDashboard
-                    project={data.project}
+                    project={data?.project ?? activeProject}
                     data={data}
                     findings={findings}
                     onExploreGraph={() => setWorkspaceViewMode('graph')}
@@ -535,63 +647,75 @@ export function App() {
               )}
 
               {workspaceViewMode === 'findings' && (
-                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                  <FindingsPanel
-                    findings={findings}
-                    selectedFindingId={selectedFinding?.id ?? null}
-                    onSelectFinding={handleSelectFinding}
-                    onClearSelection={handleClearFinding}
-                    onInvestigateNode={(nodeId) => {
-                      selection.selectNode(nodeId);
-                      view.setIsInvestigating(true);
-                      setWorkspaceViewMode('graph');
-                    }}
-                  />
-                </div>
+                isNotAnalyzed || !data ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <FindingsPanel
+                      findings={findings}
+                      selectedFindingId={selectedFinding?.id ?? null}
+                      onSelectFinding={handleSelectFinding}
+                      onClearSelection={handleClearFinding}
+                      onInvestigateNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
               )}
 
               {workspaceViewMode === 'hotspots' && (
-                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                  <HotspotPanel
-                    nodes={data.nodes}
-                    cycles={data.cycles}
-                    impactSummaries={data.impactSummaries ?? {}}
-                    onSelectHotspot={(node) => {
-                      selection.selectNode(node.id);
-                      view.setIsInvestigating(true);
-                      setWorkspaceViewMode('graph');
-                    }}
-                    selectedNodeId={selection.selectedNodeId}
-                  />
-                </div>
+                isNotAnalyzed || !data ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <HotspotPanel
+                      nodes={data?.nodes ?? []}
+                      cycles={data?.cycles ?? []}
+                      impactSummaries={data?.impactSummaries ?? {}}
+                      onSelectHotspot={(node) => {
+                        selection.selectNode(node.id);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                      selectedNodeId={selection.selectedNodeId}
+                    />
+                  </div>
+                )
               )}
 
               {workspaceViewMode === 'diagnostics' && (
-                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                  <DiagnosticsPanel
-                    cycles={data.cycles}
-                    unresolvedReferences={data.unresolvedReferences}
-                    nodes={data.nodes}
-                    activeTab={diagnosticsTab}
-                    selectedCycleId={selectedCycleId}
-                    selectedUnresolvedEdgeId={selection.selectedEdgeId}
-                    onSelectCycle={(cycle) => {
-                      setSelectedCycleId(cycle ? cycle.id : null);
-                      if (cycle && cycle.nodes.length > 0) {
-                        selection.selectNode(cycle.nodes[0]);
-                      }
-                    }}
-                    onSelectUnresolved={(ref) => {
-                      if (ref) {
-                        selection.selectEdge(ref.edgeId);
-                        selection.selectNode(ref.sourceNodeId);
-                      } else {
-                        selection.clear();
-                      }
-                    }}
-                    onTabChange={(tab) => setDiagnosticsTab(tab)}
-                  />
-                </div>
+                isNotAnalyzed || !data ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <DiagnosticsPanel
+                      cycles={data?.cycles ?? []}
+                      unresolvedReferences={data?.unresolvedReferences ?? []}
+                      nodes={data?.nodes ?? []}
+                      activeTab={diagnosticsTab}
+                      selectedCycleId={selectedCycleId}
+                      selectedUnresolvedEdgeId={selection.selectedEdgeId}
+                      onSelectCycle={(cycle) => {
+                        setSelectedCycleId(cycle ? cycle.id : null);
+                        if (cycle && cycle.nodes.length > 0) {
+                          selection.selectNode(cycle.nodes[0]);
+                        }
+                      }}
+                      onSelectUnresolved={(ref) => {
+                        if (ref) {
+                          selection.selectEdge(ref.edgeId);
+                          selection.selectNode(ref.sourceNodeId);
+                        } else {
+                          selection.clear();
+                        }
+                      }}
+                      onTabChange={(tab) => setDiagnosticsTab(tab)}
+                    />
+                  </div>
+                )
               )}
 
               {workspaceViewMode === 'compare' && (
@@ -607,7 +731,7 @@ export function App() {
                 <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                   <AnalysisHistoryPanel
                     projectId={activeProjectId}
-                    projectMeta={data.project}
+                    projectMeta={data?.project ?? activeProject}
                     currentData={data}
                     compareState={compareState}
                     onCompareSnapshots={(snapA, snapB) => {
@@ -650,13 +774,13 @@ export function App() {
 
         {/* Bottom Status Indicator Bar */}
         <StatusBar
-          totalNodes={data.summary?.nodeCount ?? data.nodes.length}
-          totalEdges={data.summary?.edgeCount ?? data.edges.length}
+          totalNodes={data?.summary?.nodeCount ?? data?.nodes?.length ?? 0}
+          totalEdges={data?.summary?.edgeCount ?? data?.edges?.length ?? 0}
           visibleNodes={displayNodes.length}
           selectedNodeName={selectedNode?.displayName ?? null}
           activeFilterCount={view.filterState.searchQuery ? 1 : 0}
-          cycleCount={data.summary?.cycleCount ?? data.cycles.length}
-          unresolvedCount={data.summary?.unresolvedCount ?? data.unresolvedReferences.length}
+          cycleCount={data?.summary?.cycleCount ?? data?.cycles?.length ?? 0}
+          unresolvedCount={data?.summary?.unresolvedCount ?? data?.unresolvedReferences?.length ?? 0}
         />
 
         {/* Command Palette Modal */}

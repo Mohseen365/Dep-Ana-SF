@@ -191,7 +191,7 @@ export const ProjectProvider: React.FC<{
             // Clear single-project component selection on project switch for isolation
             url.searchParams.delete('node');
             url.searchParams.delete('finding');
-            window.history.pushState({}, '', url.toString());
+            window.history.pushState({}, '', url.pathname + url.search + url.hash);
           }
         }
 
@@ -265,6 +265,11 @@ export const ProjectProvider: React.FC<{
 
         return updated;
       });
+
+      try {
+        const customOnly = projects.concat(newProject).filter((p) => p.id !== DEFAULT_PROJECT.id);
+        localStorage.setItem(LOCAL_PROJECTS_KEY, JSON.stringify(customOnly));
+      } catch (_) {}
 
       selectProject(id);
       return newProject;
