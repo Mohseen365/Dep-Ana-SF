@@ -1,0 +1,48 @@
+{
+  "manifestVersion": "1.0.0",
+  "activeProjectId": "movie-app",
+  "projects": [
+    {
+      "id": "default",
+      "name": "Default Salesforce Project",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+      "createdAt": "2026-09-13T15:12:27.563Z",
+      "updatedAt": "2026-09-13T15:12:27.563Z",
+      "lastAnalyzedAt": "2026-09-13T15:12:27.563Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 14,
+      "dependencyCount": 16,
+      "analysisPath": "/explorer-data.json"
+    },
+    {
+      "id": "movie-app",
+      "name": "movie-app",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Movie-App\\force-app\\main\\default",
+      "createdAt": "2026-09-13T15:12:27.563Z",
+      "updatedAt": "2026-09-13T15:12:27.563Z",
+      "lastAnalyzedAt": "2026-09-13T15:12:27.563Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 14,
+      "dependencyCount": 16,
+      "analysisPath": "/projects/movie-app/explorer-data.json"
+    }
+  ],
+  "artifacts": {
+    "default": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:e15f33b9822faae6075c10cd5081ca916b6d87bd3f1c022e554c1d79fb950618",
+      "nodeCount": 14,
+      "edgeCount": 16
+    },
+    "movie-app": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:14af125fbc8885036146535dbccae0f5000dde820ecd26e86e448231f5df570a",
+      "nodeCount": 14,
+      "edgeCount": 16
+    }
+  }
+}

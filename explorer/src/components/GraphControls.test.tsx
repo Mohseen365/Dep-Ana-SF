@@ -31,4 +31,31 @@ describe('GraphControls Component', () => {
     expect(screen.getByLabelText('Reset Layout')).toBeInTheDocument();
     expect(screen.getByLabelText('Maximize Graph')).toBeInTheDocument();
   });
+
+  it('renders FocusControls when focusState and onFocusChange are provided', () => {
+    const onFocusChange = vi.fn();
+    const focusState = {
+      enabled: true,
+      focusNodeId: 'A',
+      direction: 'both' as const,
+      depth: 2 as const,
+    };
+
+    render(
+      <GraphControls
+        onZoomIn={vi.fn()}
+        onZoomOut={vi.fn()}
+        onFitView={vi.fn()}
+        onCenterSelected={vi.fn()}
+        onResetLayout={vi.fn()}
+        hasSelectedNode={true}
+        focusState={focusState}
+        onFocusChange={onFocusChange}
+      />
+    );
+
+    expect(screen.getByText('Focus')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Direction' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Depth' })).toBeInTheDocument();
+  });
 });

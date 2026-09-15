@@ -88,4 +88,28 @@ describe('FocusControls component', () => {
       depth: 'ALL',
     });
   });
+
+  it('toggles focus on and off when Focus button is clicked', () => {
+    const handleFocusChange = vi.fn();
+    render(
+      <FocusControls
+        focusState={{ enabled: false, focusNodeId: null, direction: 'both', depth: 2 }}
+        onFocusChange={handleFocusChange}
+        hasSelectedNode={true}
+        selectedNodeId="ApexClass:Service"
+      />
+    );
+
+    const focusBtn = screen.getByText('Focus').closest('button')!;
+    expect(focusBtn?.disabled).toBe(false);
+
+    fireEvent.click(focusBtn!);
+
+    expect(handleFocusChange).toHaveBeenCalledWith({
+      enabled: true,
+      focusNodeId: 'ApexClass:Service',
+      direction: 'both',
+      depth: 2,
+    });
+  });
 });

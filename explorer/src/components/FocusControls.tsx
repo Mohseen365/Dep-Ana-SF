@@ -5,21 +5,25 @@ interface FocusControlsProps {
   focusState: FocusState;
   onFocusChange: (focusState: FocusState) => void;
   hasSelectedNode: boolean;
+  selectedNodeId?: string | null;
 }
 
 export const FocusControls: React.FC<FocusControlsProps> = ({
   focusState,
   onFocusChange,
-  hasSelectedNode
+  hasSelectedNode,
+  selectedNodeId
 }) => {
   const handleToggleFocus = useCallback(() => {
-    if (!focusState.focusNodeId) return;
+    const targetNodeId = focusState.focusNodeId || selectedNodeId || null;
+    if (!targetNodeId && !focusState.enabled) return;
     
     onFocusChange({
       ...focusState,
-      enabled: !focusState.enabled
+      enabled: !focusState.enabled,
+      focusNodeId: targetNodeId
     });
-  }, [focusState, onFocusChange]);
+  }, [focusState, onFocusChange, selectedNodeId]);
 
   const handleDirectionChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     onFocusChange({
@@ -37,8 +41,8 @@ export const FocusControls: React.FC<FocusControlsProps> = ({
     });
   }, [focusState, onFocusChange]);
 
-  const isDisabled = !hasSelectedNode;
-  const isActive = focusState.enabled && hasSelectedNode;
+  const isDisabled = !hasSelectedNode && !focusState.focusNodeId;
+  const isActive = focusState.enabled && (hasSelectedNode || !!focusState.focusNodeId);
 
   return (
     <div className={`focus-controls ${isActive ? 'active' : ''}`}>
@@ -47,7 +51,7 @@ export const FocusControls: React.FC<FocusControlsProps> = ({
           className={`focus-btn ${isActive ? 'active' : ''}`}
           onClick={handleToggleFocus}
           disabled={isDisabled}
-          title={hasSelectedNode ? 'Focus on selected node' : 'Select a node to focus'}
+          title={hasSelectedNode || focusState.focusNodeId ? 'Focus on selected node' : 'Select a node to focus'}
         >
           <span className="focus-icon">◎</span>
           Focus

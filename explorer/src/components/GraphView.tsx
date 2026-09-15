@@ -614,6 +614,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
           }
         }}
         hasSelectedNode={!!selectedNodeId}
+        selectedNodeId={selectedNodeId}
         isFullscreen={isFullscreen}
         onToggleFullscreen={onToggleFullscreen}
         isNavigatorVisible={isNavigatorVisible}

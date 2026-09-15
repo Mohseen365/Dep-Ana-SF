@@ -61,6 +61,89 @@
   margin: 0 2px;
 }
 
+/* Focus Controls inside Floating Toolbar */
+.focus-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.focus-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  height: 28px;
+}
+
+.focus-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.focus-btn.active {
+  background-color: rgba(59, 130, 246, 0.25);
+  border-color: #3b82f6;
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.focus-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.focus-options {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.focus-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.focus-option label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.focus-select {
+  background: #0f172a;
+  color: #f1f5f9;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 11px;
+  height: 28px;
+  cursor: pointer;
+  outline: none;
+}
+
+.focus-select:focus {
+  border-color: #3b82f6;
+}
+
+.focus-hint {
+  display: none;
+}
+
 /* Floating Legend - Bottom Left */
 .graph-legend-floating {
   position: absolute;
