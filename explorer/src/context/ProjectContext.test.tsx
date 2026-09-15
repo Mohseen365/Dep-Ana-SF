@@ -130,6 +130,66 @@ describe('ProjectContext & Provider', () => {
     window.removeEventListener('explorer:project-changed', eventSpy);
   });
 
+  it('supports update, reanalyze, duplicate, archive, delete, and export operations', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return {
+        ok: true,
+        json: async () => ({
+          summary: { nodeCount: 25, edgeCount: 50 },
+        }),
+      } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    // 1. Create project
+    await act(async () => {
+      await result.current.createProject({ name: 'CRM App', id: 'crm-app' });
+    });
+
+    // 2. Update project
+    await act(async () => {
+      await result.current.updateProject('crm-app', { name: 'Core CRM App', sourcePath: 'force-app/crm' });
+    });
+    expect(result.current.projects.find((p) => p.id === 'crm-app')?.name).toBe('Core CRM App');
+
+    // 3. Duplicate project
+    await act(async () => {
+      await result.current.duplicateProject('crm-app');
+    });
+    expect(result.current.projects.some((p) => p.id === 'crm-app-copy')).toBe(true);
+
+    // 4. Archive project
+    await act(async () => {
+      await result.current.archiveProject('crm-app', true);
+    });
+    expect(result.current.projects.find((p) => p.id === 'crm-app')?.isArchived).toBe(true);
+
+    // 5. Reanalyze project
+    await act(async () => {
+      await result.current.reanalyzeProject('crm-app');
+    });
+    expect(result.current.projects.find((p) => p.id === 'crm-app')?.componentCount).toBe(25);
+
+    // 6. Export project
+    const linkSpy = vi.spyOn(document, 'createElement');
+    await act(async () => {
+      await result.current.exportProject('crm-app');
+    });
+    expect(linkSpy).toHaveBeenCalledWith('a');
+
+    // 7. Delete project
+    await act(async () => {
+      await result.current.deleteProject('crm-app');
+    });
+    expect(result.current.projects.some((p) => p.id === 'crm-app')).toBe(false);
+  });
+
   it('resolves project data URLs correctly', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
       return { ok: false } as Response;

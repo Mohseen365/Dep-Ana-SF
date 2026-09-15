@@ -12,6 +12,7 @@ export interface ProjectMetadata {
   componentCount: number;
   dependencyCount: number;
   analysisPath?: string;
+  isArchived?: boolean;
 }
 
 export interface MultiProjectManifest {
