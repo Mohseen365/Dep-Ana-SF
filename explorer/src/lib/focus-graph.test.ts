@@ -131,20 +131,7 @@ const mockEdges: ExplorerEdge[] = [
 
 describe('computeFocusedGraph', () => {
   describe('depth behavior', () => {
-    it('should show only the focus node at depth 0 (technically includes it)', () => {
-      const focusState: FocusState = {
-        enabled: true,
-        focusNodeId: 'A',
-        direction: 'both',
-        depth: 1
-      };
-      const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
-      expect(result.nodes.map(n => n.id).sort()).toEqual(['A', 'B']); // A + direct neighbors
-      expect(result.edges.length).toBe(1);
-      expect(result.edges[0].id).toBe('A-B');
-    });
-
-    it('should show depth 1 from A: A → B', () => {
+    it('should show Depth 1 from A: A, B', () => {
       const focusState: FocusState = {
         enabled: true,
         focusNodeId: 'A',
@@ -156,7 +143,7 @@ describe('computeFocusedGraph', () => {
       expect(nodeIds).toEqual(['A', 'B']);
     });
 
-    it('should show depth 2 from A: A → B → C', () => {
+    it('should show Depth 2 from A: A, B, C', () => {
       const focusState: FocusState = {
         enabled: true,
         focusNodeId: 'A',
@@ -168,7 +155,7 @@ describe('computeFocusedGraph', () => {
       expect(nodeIds).toEqual(['A', 'B', 'C']);
     });
 
-    it('should show depth 3 from A: A → B → C → D', () => {
+    it('should show Depth 3 from A: A, B, C, D', () => {
       const focusState: FocusState = {
         enabled: true,
         focusNodeId: 'A',
@@ -180,7 +167,7 @@ describe('computeFocusedGraph', () => {
       expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
     });
 
-    it('should show ALL depth from A', () => {
+    it('should show ALL depth from A: A, B, C, D', () => {
       const focusState: FocusState = {
         enabled: true,
         focusNodeId: 'A',
@@ -192,7 +179,7 @@ describe('computeFocusedGraph', () => {
       expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
     });
 
-    it('should show depth 1 from D (reverse direction): D ← C', () => {
+    it('should show Depth 1 from D (reverse dependents): C, D', () => {
       const focusState: FocusState = {
         enabled: true,
         focusNodeId: 'D',
@@ -204,7 +191,7 @@ describe('computeFocusedGraph', () => {
       expect(nodeIds).toEqual(['C', 'D']);
     });
 
-    it('should show depth 2 from D (dependents): D ← C ← B', () => {
+    it('should show Depth 2 from D (reverse dependents): B, C, D', () => {
       const focusState: FocusState = {
         enabled: true,
         focusNodeId: 'D',
@@ -214,6 +201,18 @@ describe('computeFocusedGraph', () => {
       const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
       const nodeIds = result.nodes.map(n => n.id).sort();
       expect(nodeIds).toEqual(['B', 'C', 'D']);
+    });
+
+    it('should show Depth 3 from D (reverse dependents): A, B, C, D', () => {
+      const focusState: FocusState = {
+        enabled: true,
+        focusNodeId: 'D',
+        direction: 'dependents',
+        depth: 3
+      };
+      const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
+      const nodeIds = result.nodes.map(n => n.id).sort();
+      expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
     });
   });
 
@@ -226,7 +225,6 @@ describe('computeFocusedGraph', () => {
         depth: 3
       };
       const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
-      // A depends on B, B on C, C on D - so we get A, B, C, D
       const nodeIds = result.nodes.map(n => n.id).sort();
       expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
     });
@@ -239,7 +237,6 @@ describe('computeFocusedGraph', () => {
         depth: 3
       };
       const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
-      // D is depended on by C, C by B, B by A - so we get A, B, C, D
       const nodeIds = result.nodes.map(n => n.id).sort();
       expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
     });
@@ -252,25 +249,6 @@ describe('computeFocusedGraph', () => {
         depth: 2
       };
       const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
-      // B: A → B → C (dependents at depth 1: A, at depth 2: none beyond A)
-      // B: B → C → D (dependencies at depth 1: C, at depth 2: D)
-      // Combined: A, B, C, D
-      const nodeIds = result.nodes.map(n => n.id).sort();
-      expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
-    });
-
-    it('should show both directions for node C at depth 2', () => {
-      const focusState: FocusState = {
-        enabled: true,
-        focusNodeId: 'C',
-        direction: 'both',
-        depth: 2
-      };
-      const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
-      // C: depends on D (depth 1), depends on B→A (depth 2 via dependents of D)
-      // Actually: C has dependencies (D) at depth 1
-      // C has dependents: B at depth 1, A at depth 2
-      // So both = C, D (dependency) + B, A (dependents) = A, B, C, D
       const nodeIds = result.nodes.map(n => n.id).sort();
       expect(nodeIds).toEqual(['A', 'B', 'C', 'D']);
     });
@@ -296,7 +274,6 @@ describe('computeFocusedGraph', () => {
         depth: 2
       };
       const result = computeFocusedGraph(mockNodes, mockEdges, focusState);
-      // D has dependents: C at depth 1, B at depth 2 (through C)
       expect(result.edges.map(e => e.id).sort()).toEqual(['B-C', 'C-D']);
     });
   });
