@@ -67,7 +67,30 @@ describe('InvestigationDrawer', () => {
       },
     },
     nodes: [mockNodeServiceX, mockNodeOrderController, mockNodeCartService],
-    edges: [],
+    edges: [
+      {
+        id: 'edge1',
+        source: 'OrderController',
+        target: 'ServiceX',
+        relationshipType: 'method-call',
+        method: 'executeProcess',
+        evidence: 'ServiceX.executeProcess();',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'high',
+        line: 42,
+        column: 10,
+        methodOwner: 'executeProcess',
+        file: 'force-app/main/default/classes/OrderController.cls',
+        canonical: {
+          source: { type: 'ApexClass', name: 'OrderController' },
+          target: { type: 'ApexClass', name: 'ServiceX' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: { line: 42, column: 10 },
+        },
+      },
+    ],
     cycles: [],
     unresolvedReferences: [],
     impactSummaries: {
@@ -263,5 +286,46 @@ describe('InvestigationDrawer', () => {
     );
 
     expect(screen.queryByTestId('investigation-drawer-handoff-btn')).not.toBeInTheDocument();
+  });
+
+  it('switches tabs and renders progressive disclosure sections cleanly', () => {
+    render(
+      <InvestigationDrawer
+        node={mockNodeServiceX}
+        open={true}
+        onClose={vi.fn()}
+        data={mockData}
+        drillPath={['ServiceX']}
+      />
+    );
+
+    // Verify Tab bar exists
+    expect(screen.getByTestId('inspector-tabs')).toBeInTheDocument();
+    expect(screen.getByTestId('drawer-risk-summary')).toBeInTheDocument();
+    expect(screen.getByTestId('drawer-key-metrics')).toBeInTheDocument();
+
+    // Switch to Evidence Tab
+    const evidenceTab = screen.getByTestId('tab-evidence');
+    fireEvent.click(evidenceTab);
+    expect(screen.getByTestId('tab-content-evidence')).toBeInTheDocument();
+    expect(screen.getByText('ServiceX.executeProcess();')).toBeInTheDocument();
+
+    // Switch to Actions Tab
+    const actionsTab = screen.getByTestId('tab-actions');
+    fireEvent.click(actionsTab);
+    expect(screen.getByTestId('tab-content-actions')).toBeInTheDocument();
+  });
+
+  it('renders empty state when node is null', () => {
+    render(
+      <InvestigationDrawer
+        node={null}
+        open={true}
+        onClose={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTestId('inspector-empty-state')).toBeInTheDocument();
+    expect(screen.getByText('No Component Selected')).toBeInTheDocument();
   });
 });
