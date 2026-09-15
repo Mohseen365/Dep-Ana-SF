@@ -1,0 +1,28 @@
+{
+  "manifestVersion": "1.0.0",
+  "activeProjectId": "food-app",
+  "projects": [
+    {
+      "id": "food-app",
+      "name": "Food App",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "temp-food-app-src",
+      "createdAt": "2026-09-15T17:24:05.547Z",
+      "updatedAt": "2026-09-15T17:24:05.547Z",
+      "lastAnalyzedAt": "2026-09-15T17:24:05.547Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 3,
+      "dependencyCount": 2,
+      "analysisPath": "/projects/food-app/explorer-data.json"
+    }
+  ],
+  "artifacts": {
+    "food-app": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:7e6c1f76118e0ba372d2c8d98fe66d664193706f1c16900b91a062d295806146",
+      "nodeCount": 3,
+      "edgeCount": 2
+    }
+  }
+}

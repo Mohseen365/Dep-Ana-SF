@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 4,
+  "analyzerVersion": "13",
+  "analyzer": "Salesforce Dependency Analyzer v13",
+  "generatedAt": "2026-09-15T17:24:05.547Z",
+  "sourceDirectory": "temp-food-app-src",
+  "inventory": {
+    "files": 3,
+    "apexClasses": 2,
+    "apexTriggers": 1,
+    "lwcJs": 0,
+    "lwcHtml": 0,
+    "visualforce": 0,
+    "flows": 0,
+    "objects": 0,
+    "fields": 0
+  },
+  "discovered": {
+    "sourceDir": "/app/temp-food-app-src",
+    "files": [
+      "/app/temp-food-app-src/classes/FoodHelper.cls",
+      "/app/temp-food-app-src/classes/FoodService.cls",
+      "/app/temp-food-app-src/triggers/FoodTrigger.trigger"
+    ],
+    "apexClasses": [
+      "/app/temp-food-app-src/classes/FoodHelper.cls",
+      "/app/temp-food-app-src/classes/FoodService.cls"
+    ],
+    "apexTriggers": [
+      "/app/temp-food-app-src/triggers/FoodTrigger.trigger"
+    ],
+    "apexClassMeta": [],
+    "triggerMeta": [],
+    "lwcJs": [],
+    "lwcHtml": [],
+    "lwcCss": [],
+    "lwcMeta": [],
+    "aura": [],
+    "visualforce": [],
+    "flows": [],
+    "objects": [],
+    "fields": [],
+    "triggers": [
+      "/app/temp-food-app-src/triggers/FoodTrigger.trigger"
+    ]
+  },
+  "fileState": [
+    {
+      "file": "temp-food-app-src/classes/FoodHelper.cls",
+      "size": 56,
+      "mtimeMs": 1789493045417.2288
+    },
+    {
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "size": 77,
+      "mtimeMs": 1789493045417.2288
+    },
+    {
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "size": 70,
+      "mtimeMs": 1789493045417.2288
+    }
+  ],
+  "options": {
+    "maxGraphEdges": 10000
+  },
+  "testGapSummary": {
+    "totalComponents": 3,
+    "coveredCount": 0,
+    "likelyCoveredCount": 0,
+    "noTestEvidenceCount": 3,
+    "knownCoverageFailureCount": 0,
+    "ambiguousTestCount": 0,
+    "testComponentCount": 0,
+    "componentsWithTestGap": 3
+  },
+  "registry": [
+    {
+      "id": "ApexClass:FoodHelper",
+      "type": "ApexClass",
+      "name": "FoodHelper",
+      "file": "temp-food-app-src/classes/FoodHelper.cls",
+      "parsed": {
+        "id": "ApexClass:FoodHelper",
+        "type": "ApexClass",
+        "name": "FoodHelper",
+        "file": "temp-food-app-src/classes/FoodHelper.cls",
+        "lines": 1,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "prep",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 26,
+            "startLine": 1,
+            "endLine": 1,
+            "endOffset": 56,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 1,
+            "lineEnd": 1,
+            "annotations": []
+          }
+        ],
+        "dependencies": [],
+        "sourceHash": "4b088d6bc745edc71929bb9bfcb8eb93d5b3d61c5e517298784e0cd005aa1af8",
+        "lineCount": 1,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 56,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:FoodService",
+      "type": "ApexClass",
+      "name": "FoodService",
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "parsed": {
+        "id": "ApexClass:FoodService",
+        "type": "ApexClass",
+        "name": "FoodService",
+        "file": "temp-food-app-src/classes/FoodService.cls",
+        "lines": 1,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "cook",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 27,
+            "startLine": 1,
+            "endLine": 1,
+            "endOffset": 77,
+            "dependencies": [
+              {
+                "to": "FoodHelper",
+                "type": "method-call",
+                "method": "prep",
+                "line": 1,
+                "confidence": "high",
+                "evidence": "FoodHelper.prep()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "FoodService",
+                    "method": "cook"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "FoodHelper",
+                    "method": "prep"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 1,
+                    "column": 56
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 1,
+            "lineEnd": 1,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:FoodService",
+            "toName": "FoodHelper",
+            "type": "method-call",
+            "method": "prep",
+            "evidence": "FoodHelper.prep()",
+            "line": 1,
+            "column": 56,
+            "methodOwner": "cook",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "FoodService",
+                "method": "cook"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "FoodHelper",
+                "method": "prep"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 1,
+                "column": 56
+              }
+            },
+            "file": "temp-food-app-src/classes/FoodService.cls"
+          }
+        ],
+        "sourceHash": "7dfc7f7fde64e34bf3e37c470f834ca8e8999c379e0f21b42d39d6a5ceaff79f",
+        "lineCount": 1,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 77,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "Trigger:FoodTrigger",
+      "type": "Trigger",
+      "name": "FoodTrigger",
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "parsed": {
+        "id": "Trigger:FoodTrigger",
+        "type": "Trigger",
+        "name": "FoodTrigger",
+        "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+        "lines": 1,
+        "object": "Account",
+        "events": [
+          "before insert"
+        ],
+        "dependencies": [
+          {
+            "from": "Trigger:FoodTrigger",
+            "toName": "FoodService",
+            "type": "trigger-handler",
+            "method": "cook",
+            "evidence": "FoodService.cook()",
+            "line": 1,
+            "column": 50,
+            "methodOwner": null,
+            "confidence": "LOW",
+            "file": "temp-food-app-src/triggers/FoodTrigger.trigger"
+          }
+        ],
+        "sourceHash": "e766bb90ea4ebbb58aadc382b1b774fa69ad0ca34db6b1f325b2d8b41f5a2708",
+        "sourceBytes": 70,
+        "lineCount": 1,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ApexClass:FoodHelper",
+      "name": "FoodHelper",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodHelper.cls"
+    },
+    {
+      "id": "ApexClass:FoodService",
+      "name": "FoodService",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodService.cls"
+    },
+    {
+      "id": "Trigger:FoodTrigger",
+      "name": "FoodTrigger",
+      "type": "Trigger",
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexClass:FoodService|ApexClass:FoodHelper|method-call|prep|FoodHelper.prep()",
+      "from": "ApexClass:FoodService",
+      "to": "ApexClass:FoodHelper",
+      "type": "method-call",
+      "method": "prep",
+      "evidence": "FoodHelper.prep()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "FoodService",
+          "method": "cook"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "FoodHelper",
+          "method": "prep"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 1,
+          "column": 56
+        }
+      },
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "line": 1,
+      "column": 56,
+      "methodOwner": "cook",
+      "confidence": "high"
+    },
+    {
+      "id": "Trigger:FoodTrigger|ApexClass:FoodService|trigger-handler|cook|FoodService.cook()",
+      "from": "Trigger:FoodTrigger",
+      "to": "ApexClass:FoodService",
+      "type": "trigger-handler",
+      "method": "cook",
+      "evidence": "FoodService.cook()",
+      "canonical": {
+        "source": {
+          "type": "ApexTrigger",
+          "name": "FoodTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "FoodService",
+          "method": "cook"
+        },
+        "relationship": {
+          "type": "trigger-handler",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 1,
+          "column": 50
+        }
+      },
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "line": 1,
+      "column": 50,
+      "methodOwner": null,
+      "confidence": "LOW"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "ApexClass:FoodService",
+      "name": "FoodService",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "fanIn": 1,
+      "fanOut": 1,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "Trigger:FoodTrigger",
+      "name": "FoodTrigger",
+      "type": "Trigger",
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "fanIn": 0,
+      "fanOut": 1,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:FoodHelper",
+      "name": "FoodHelper",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodHelper.cls",
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    }
+  ],
+  "cycles": []
+}

@@ -38,10 +38,25 @@ const {
 
 const { enforceDeterministicAuthority } = require("../deterministic/contract.cjs");
 
-const FIXTURE_DIR = path.resolve(
+let FIXTURE_DIR = path.resolve(
   __dirname,
   "../../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default"
 );
+
+if (!fs.existsSync(FIXTURE_DIR)) {
+  FIXTURE_DIR = path.join(__dirname, "temp-snapshot-test-fixture");
+  if (!fs.existsSync(FIXTURE_DIR)) {
+    fs.mkdirSync(path.join(FIXTURE_DIR, "classes"), { recursive: true });
+    fs.writeFileSync(
+      path.join(FIXTURE_DIR, "classes/ClassA.cls"),
+      `public class ClassA { public static void doWork() { ClassB.doHelp(); } }`
+    );
+    fs.writeFileSync(
+      path.join(FIXTURE_DIR, "classes/ClassB.cls"),
+      `public class ClassB { public static void doHelp() { ClassA.doWork(); } }`
+    );
+  }
+}
 
 console.log("Running Canonical Architecture Snapshot Test Suite (WAVE-E1)...");
 console.log("================================================================");

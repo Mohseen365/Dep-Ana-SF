@@ -53,8 +53,11 @@ function parseArgs(argv) {
   return { mode, fresh, project, source };
 }
 
-function runAnalysisIfNeeded(sourceDir, fresh) {
-  const analyzeDir = path.join(ROOT_DIR, "analyze");
+function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default") {
+  const slugId = slugify(projectId) || "default";
+  const analyzeDir = slugId !== "default"
+    ? path.join(ROOT_DIR, "analyze", "projects", slugId)
+    : path.join(ROOT_DIR, "analyze");
   const reportFile = path.join(analyzeDir, "dependency-report.json");
 
   // Check if source dir exists for running fresh analysis
@@ -69,7 +72,7 @@ function runAnalysisIfNeeded(sourceDir, fresh) {
       const analyzer = require(ANALYZER_SCRIPT);
       if (typeof analyzer.getAnalysis === "function") {
         console.log("Checking dependency analysis cache freshness...");
-        const result = analyzer.getAnalysis(sourceDir, { quiet: true });
+        const result = analyzer.getAnalysis(sourceDir, { quiet: true, project: slugId });
         if (!result || !result.fromSnapshot) {
           shouldRun = true;
         } else {
@@ -88,7 +91,8 @@ function runAnalysisIfNeeded(sourceDir, fresh) {
       return;
     }
     console.log(`Running Salesforce Dependency Analyzer on ${sourceDir}...`);
-    execSync(`node "${ANALYZER_SCRIPT}" analyze "${sourceDir}"`, {
+    const projectFlag = slugId !== "default" ? ` --project "${slugId}"` : "";
+    execSync(`node "${ANALYZER_SCRIPT}" analyze "${sourceDir}"${projectFlag}`, {
       cwd: ROOT_DIR,
       stdio: "inherit"
     });
@@ -99,13 +103,15 @@ function runAdapter(projectId, sourceDir) {
   const slugId = slugify(projectId) || "default";
   console.log(`Running Explorer Data Adapter for project '${slugId}'...`);
 
+  let inputDir = "analyze";
   let targetOutput = path.join(ROOT_DIR, "analyze", "explorer-data.json");
   if (slugId !== "default") {
+    inputDir = path.join(ROOT_DIR, "analyze", "projects", slugId);
     targetOutput = path.join(ROOT_DIR, "analyze", "projects", slugId, "explorer-data.json");
   }
 
   execSync(
-    `node "${ADAPTER_SCRIPT}" --input analyze --output "${targetOutput}" --project "${slugId}" --source "${sourceDir}"`,
+    `node "${ADAPTER_SCRIPT}" --input "${inputDir}" --output "${targetOutput}" --project "${slugId}" --source "${sourceDir}"`,
     {
       cwd: ROOT_DIR,
       stdio: "inherit"
@@ -147,7 +153,7 @@ function main() {
     console.log(`Project: ${project}`);
     console.log(`Source:  ${source}`);
 
-    runAnalysisIfNeeded(source, fresh);
+    runAnalysisIfNeeded(source, fresh, project);
     runAdapter(project, source);
     startExplorer(mode);
   } catch (err) {

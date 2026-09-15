@@ -1,28 +1,28 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "default",
+  "activeProjectId": "food-app",
   "projects": [
     {
-      "id": "default",
-      "name": "Default Salesforce Project",
+      "id": "food-app",
+      "name": "Food App",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "../temp-test-fixture-realistic",
-      "createdAt": "2026-09-15T16:14:55.614Z",
-      "updatedAt": "2026-09-15T16:14:55.614Z",
-      "lastAnalyzedAt": "2026-09-15T16:14:55.614Z",
+      "sourcePath": "temp-food-app-src",
+      "createdAt": "2026-09-15T17:24:05.547Z",
+      "updatedAt": "2026-09-15T17:24:05.547Z",
+      "lastAnalyzedAt": "2026-09-15T17:24:05.547Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 10,
-      "dependencyCount": 13,
-      "analysisPath": "/explorer-data.json"
+      "componentCount": 3,
+      "dependencyCount": 2,
+      "analysisPath": "/projects/food-app/explorer-data.json"
     }
   ],
   "artifacts": {
-    "default": {
+    "food-app": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:64bd7f1fd888ed164f0dd68ce45e37f104ae7e89b13b57713f7831133b1bfd61",
-      "nodeCount": 10,
-      "edgeCount": 13
+      "fileHash": "sha256:7e6c1f76118e0ba372d2c8d98fe66d664193706f1c16900b91a062d295806146",
+      "nodeCount": 3,
+      "edgeCount": 2
     }
   }
 }

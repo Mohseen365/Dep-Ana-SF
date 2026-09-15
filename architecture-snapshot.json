@@ -2,737 +2,26 @@
   "schemaVersion": 5,
   "analyzerVersion": "13",
   "analyzer": "Salesforce Dependency Analyzer v13",
-  "snapshotIdentity": "arch-snap-sha256:b03d65dabd8d7cb9feef533b754e96de001c222c685776e5a21bb92835afa008",
-  "generatedAt": "2026-09-13T15:12:27.567Z",
-  "sourceDirectory": "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+  "snapshotIdentity": "arch-snap-sha256:b3da298d355d52e03a4cfcfadc49a50106b15ba369eddc392db0fa6a6b285d05",
+  "generatedAt": "2026-09-15T17:20:58.822Z",
+  "sourceDirectory": "/app/scripts/temp-snapshot-test-fixture",
   "metadata": {
-    "fileCount": 9,
-    "componentCount": 9,
-    "relationshipCount": 16,
+    "fileCount": 2,
+    "componentCount": 2,
+    "relationshipCount": 2,
     "cycleCount": 1
   },
   "inventory": {
-    "components": 9,
-    "relationships": 16,
+    "components": 2,
+    "relationships": 2,
     "cycles": 1
   },
   "components": [
     {
-      "id": "ApexClass:BouquetOrderController",
-      "name": "BouquetOrderController",
+      "id": "ApexClass:ClassA",
+      "name": "ClassA",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
-      "metrics": {
-        "fanIn": 2,
-        "fanOut": 2,
-        "coupling": 4,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "controller",
-        "primary": "controller",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-controller",
-            "detail": "Component name 'BouquetOrderController' matches UI Controller naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "application",
-        "primary": "application",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-application",
-            "detail": "Component name 'BouquetOrderController' matches Application/Controller naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "BouquetOrder",
-        "primary": "BouquetOrder",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-prefix-domain",
-            "detail": "Component name 'BouquetOrderController' matches domain stem 'BouquetOrder' (supported by repository evidence)."
-          }
-        ],
-        "secondary": [
-          "BouquetOrderForm",
-          "BouquetOrderPage"
-        ]
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-external-boundary-criteria",
-            "detail": "Component does not exhibit any deterministic external boundary interactions."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": []
-        },
-        "hasExternalBoundary": false,
-        "boundaryTypes": [],
-        "targets": []
-      },
-      "bottleneck": {
-        "value": "normal",
-        "primary": "normal",
-        "confidence": "low",
-        "evidence": [],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 0,
-          "signals": [],
-          "fanIn": 2,
-          "fanOut": 2,
-          "coupling": 4,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 0,
-        "signals": []
-      },
-      "smells": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-smells",
-            "detail": "No architecture smells detected for component 'BouquetOrderController'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasSmells": false,
-          "smellCount": 0,
-          "smells": []
-        },
-        "hasSmells": false,
-        "smells": []
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'BouquetOrderController'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService",
-      "name": "BouquetOrderFormService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
-      "metrics": {
-        "fanIn": 2,
-        "fanOut": 4,
-        "coupling": 6,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'BouquetOrderFormService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'BouquetOrderFormService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "BouquetOrder",
-        "primary": "BouquetOrder",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "graph-cluster-domain",
-            "detail": "Component is structurally connected via dependency graph to component in domain 'BouquetOrder'."
-          },
-          {
-            "rule": "graph-cluster-domain",
-            "detail": "Component is structurally connected via dependency graph to component in domain 'BouquetOrder'."
-          }
-        ],
-        "secondary": [
-          "BouquetOrderForm",
-          "HelperService",
-          "MultiCall"
-        ]
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-external-boundary-criteria",
-            "detail": "Component does not exhibit any deterministic external boundary interactions."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": []
-        },
-        "hasExternalBoundary": false,
-        "boundaryTypes": [],
-        "targets": []
-      },
-      "bottleneck": {
-        "value": "normal",
-        "primary": "normal",
-        "confidence": "medium",
-        "evidence": [
-          {
-            "rule": "bridge-position",
-            "detail": "Component occupies a bridge-like graph position connecting entry-point/UI consumers to data/selector targets."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 20,
-          "signals": [
-            {
-              "rule": "bridge-position",
-              "detail": "Component occupies a bridge-like graph position connecting entry-point/UI consumers to data/selector targets."
-            }
-          ],
-          "fanIn": 2,
-          "fanOut": 4,
-          "coupling": 6,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 20,
-        "signals": [
-          {
-            "rule": "bridge-position",
-            "detail": "Component occupies a bridge-like graph position connecting entry-point/UI consumers to data/selector targets."
-          }
-        ]
-      },
-      "smells": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-smells",
-            "detail": "No architecture smells detected for component 'BouquetOrderFormService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasSmells": false,
-          "smellCount": 0,
-          "smells": []
-        },
-        "hasSmells": false,
-        "smells": []
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'BouquetOrderFormService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderPageHandler",
-      "name": "BouquetOrderPageHandler",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
-      "metrics": {
-        "fanIn": 0,
-        "fanOut": 2,
-        "coupling": 2,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'BouquetOrderPageHandler' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "application",
-        "primary": "application",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-application",
-            "detail": "Component name 'BouquetOrderPageHandler' matches Application/Controller naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "BouquetOrderPage",
-        "primary": "BouquetOrderPage",
-        "confidence": "medium",
-        "evidence": [
-          {
-            "rule": "name-prefix-domain",
-            "detail": "Component name 'BouquetOrderPageHandler' matches domain stem candidate 'BouquetOrderPage'."
-          }
-        ],
-        "secondary": [
-          "BouquetOrder"
-        ]
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-external-boundary-criteria",
-            "detail": "Component does not exhibit any deterministic external boundary interactions."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": []
-        },
-        "hasExternalBoundary": false,
-        "boundaryTypes": [],
-        "targets": []
-      },
-      "bottleneck": {
-        "value": "normal",
-        "primary": "normal",
-        "confidence": "medium",
-        "evidence": [
-          {
-            "rule": "high-dependency-impact",
-            "detail": "Component has a broad downstream dependency surface impacting 10 component(s) (threshold >= 10)."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 15,
-          "signals": [
-            {
-              "rule": "high-dependency-impact",
-              "detail": "Component has a broad downstream dependency surface impacting 10 component(s) (threshold >= 10)."
-            }
-          ],
-          "fanIn": 0,
-          "fanOut": 2,
-          "coupling": 2,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 15,
-        "signals": [
-          {
-            "rule": "high-dependency-impact",
-            "detail": "Component has a broad downstream dependency surface impacting 10 component(s) (threshold >= 10)."
-          }
-        ]
-      },
-      "smells": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-smells",
-            "detail": "No architecture smells detected for component 'BouquetOrderPageHandler'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasSmells": false,
-          "smellCount": 0,
-          "smells": []
-        },
-        "hasSmells": false,
-        "smells": []
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'BouquetOrderPageHandler'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector",
-      "name": "BouquetOrderSelector",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "metrics": {
-        "fanIn": 1,
-        "fanOut": 6,
-        "coupling": 7,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "selector",
-        "primary": "selector",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-selector",
-            "detail": "Component name 'BouquetOrderSelector' matches Selector querying naming convention."
-          },
-          {
-            "rule": "soql-pure-encapsulation",
-            "detail": "Component performs SOQL data queries without DML operations."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "data",
-        "primary": "data",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-data",
-            "detail": "Component name 'BouquetOrderSelector' matches Data/Selector/Repository naming convention."
-          },
-          {
-            "rule": "data-operations",
-            "detail": "Component directly performs SOQL or DML data operations."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "BouquetOrder",
-        "primary": "BouquetOrder",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-prefix-domain",
-            "detail": "Component name 'BouquetOrderSelector' matches domain stem 'BouquetOrder' (supported by repository evidence)."
-          }
-        ],
-        "secondary": [
-          "Account",
-          "BouquetOrderForm",
-          "Case",
-          "Contact",
-          "HelperService"
-        ]
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "ExternalService",
-        "primary": "ExternalService",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "graph-external-edge",
-            "detail": "Component is connected to external reference 'External:Account'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": [
-            "External:Account"
-          ]
-        },
-        "hasExternalBoundary": true,
-        "boundaryTypes": [
-          "ExternalService"
-        ],
-        "targets": [
-          "External:Account"
-        ]
-      },
-      "bottleneck": {
-        "value": "normal",
-        "primary": "normal",
-        "confidence": "low",
-        "evidence": [],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 0,
-          "signals": [],
-          "fanIn": 1,
-          "fanOut": 6,
-          "coupling": 7,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 0,
-        "signals": []
-      },
-      "smells": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-smells",
-            "detail": "No architecture smells detected for component 'BouquetOrderSelector'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasSmells": false,
-          "smellCount": 0,
-          "smells": []
-        },
-        "hasSmells": false,
-        "smells": []
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'BouquetOrderSelector'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:CircularA",
-      "name": "CircularA",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
       "metrics": {
         "fanIn": 1,
         "fanOut": 1,
@@ -764,17 +53,17 @@
         "secondary": []
       },
       "domain": {
-        "value": "CircularA",
-        "primary": "CircularA",
+        "value": "ClassA",
+        "primary": "ClassA",
         "confidence": "medium",
         "evidence": [
           {
             "rule": "name-prefix-domain",
-            "detail": "Component name 'CircularA' matches domain stem candidate 'CircularA'."
+            "detail": "Component name 'ClassA' matches domain stem candidate 'ClassA'."
           }
         ],
         "secondary": [
-          "CircularB"
+          "ClassB"
         ]
       },
       "entryPoint": {
@@ -862,8 +151,8 @@
           "smells": [
             {
               "smell": "circular-dependency",
-              "component": "CircularA",
-              "componentId": "ApexClass:CircularA",
+              "component": "ClassA",
+              "componentId": "ApexClass:ClassA",
               "confidence": "high",
               "evidence": [
                 {
@@ -878,8 +167,8 @@
         "smells": [
           {
             "smell": "circular-dependency",
-            "component": "CircularA",
-            "componentId": "ApexClass:CircularA",
+            "component": "ClassA",
+            "componentId": "ApexClass:ClassA",
             "confidence": "high",
             "evidence": [
               {
@@ -901,7 +190,7 @@
           },
           {
             "rule": "architectural-bottleneck-signal",
-            "detail": "Component 'CircularA' is an architectural bottleneck (score 25) with high fan-in or centrality."
+            "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
           }
         ],
         "secondary": [
@@ -915,7 +204,7 @@
             {
               "debtCategory": "boundary-violation",
               "affectedComponents": [
-                "CircularA"
+                "ClassA"
               ],
               "severity": "high",
               "confidence": "high",
@@ -932,14 +221,14 @@
             {
               "debtCategory": "architectural-bottleneck",
               "affectedComponents": [
-                "CircularA"
+                "ClassA"
               ],
               "severity": "high",
               "confidence": "high",
               "evidence": [
                 {
                   "rule": "architectural-bottleneck-signal",
-                  "detail": "Component 'CircularA' is an architectural bottleneck (score 25) with high fan-in or centrality."
+                  "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
                 }
               ],
               "sourceCapability": "bottleneck-detector",
@@ -953,7 +242,7 @@
           {
             "debtCategory": "boundary-violation",
             "affectedComponents": [
-              "CircularA"
+              "ClassA"
             ],
             "severity": "high",
             "confidence": "high",
@@ -970,14 +259,14 @@
           {
             "debtCategory": "architectural-bottleneck",
             "affectedComponents": [
-              "CircularA"
+              "ClassA"
             ],
             "severity": "high",
             "confidence": "high",
             "evidence": [
               {
                 "rule": "architectural-bottleneck-signal",
-                "detail": "Component 'CircularA' is an architectural bottleneck (score 25) with high fan-in or centrality."
+                "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
               }
             ],
             "sourceCapability": "bottleneck-detector",
@@ -1013,10 +302,10 @@
       }
     },
     {
-      "id": "ApexClass:CircularB",
-      "name": "CircularB",
+      "id": "ApexClass:ClassB",
+      "name": "ClassB",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
       "metrics": {
         "fanIn": 1,
         "fanOut": 1,
@@ -1048,17 +337,17 @@
         "secondary": []
       },
       "domain": {
-        "value": "CircularB",
-        "primary": "CircularB",
+        "value": "ClassB",
+        "primary": "ClassB",
         "confidence": "medium",
         "evidence": [
           {
             "rule": "name-prefix-domain",
-            "detail": "Component name 'CircularB' matches domain stem candidate 'CircularB'."
+            "detail": "Component name 'ClassB' matches domain stem candidate 'ClassB'."
           }
         ],
         "secondary": [
-          "CircularA"
+          "ClassA"
         ]
       },
       "entryPoint": {
@@ -1146,8 +435,8 @@
           "smells": [
             {
               "smell": "circular-dependency",
-              "component": "CircularB",
-              "componentId": "ApexClass:CircularB",
+              "component": "ClassB",
+              "componentId": "ApexClass:ClassB",
               "confidence": "high",
               "evidence": [
                 {
@@ -1162,8 +451,8 @@
         "smells": [
           {
             "smell": "circular-dependency",
-            "component": "CircularB",
-            "componentId": "ApexClass:CircularB",
+            "component": "ClassB",
+            "componentId": "ApexClass:ClassB",
             "confidence": "high",
             "evidence": [
               {
@@ -1185,7 +474,7 @@
           },
           {
             "rule": "architectural-bottleneck-signal",
-            "detail": "Component 'CircularB' is an architectural bottleneck (score 25) with high fan-in or centrality."
+            "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
           }
         ],
         "secondary": [
@@ -1199,7 +488,7 @@
             {
               "debtCategory": "boundary-violation",
               "affectedComponents": [
-                "CircularB"
+                "ClassB"
               ],
               "severity": "high",
               "confidence": "high",
@@ -1216,14 +505,14 @@
             {
               "debtCategory": "architectural-bottleneck",
               "affectedComponents": [
-                "CircularB"
+                "ClassB"
               ],
               "severity": "high",
               "confidence": "high",
               "evidence": [
                 {
                   "rule": "architectural-bottleneck-signal",
-                  "detail": "Component 'CircularB' is an architectural bottleneck (score 25) with high fan-in or centrality."
+                  "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
                 }
               ],
               "sourceCapability": "bottleneck-detector",
@@ -1237,7 +526,7 @@
           {
             "debtCategory": "boundary-violation",
             "affectedComponents": [
-              "CircularB"
+              "ClassB"
             ],
             "severity": "high",
             "confidence": "high",
@@ -1254,14 +543,14 @@
           {
             "debtCategory": "architectural-bottleneck",
             "affectedComponents": [
-              "CircularB"
+              "ClassB"
             ],
             "severity": "high",
             "confidence": "high",
             "evidence": [
               {
                 "rule": "architectural-bottleneck-signal",
-                "detail": "Component 'CircularB' is an architectural bottleneck (score 25) with high fan-in or centrality."
+                "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
               }
             ],
             "sourceCapability": "bottleneck-detector",
@@ -1269,525 +558,6 @@
             "remediationDirection": "Distribute responsibilities or introduce message/event abstraction to relieve bottleneck centrality."
           }
         ]
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:HelperService",
-      "name": "HelperService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
-      "metrics": {
-        "fanIn": 2,
-        "fanOut": 0,
-        "coupling": 2,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'HelperService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'HelperService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "HelperService",
-        "primary": "HelperService",
-        "confidence": "medium",
-        "evidence": [
-          {
-            "rule": "name-prefix-domain",
-            "detail": "Component name 'HelperService' matches domain stem candidate 'HelperService'."
-          }
-        ],
-        "secondary": [
-          "BouquetOrder",
-          "BouquetOrderForm"
-        ]
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-external-boundary-criteria",
-            "detail": "Component does not exhibit any deterministic external boundary interactions."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": []
-        },
-        "hasExternalBoundary": false,
-        "boundaryTypes": [],
-        "targets": []
-      },
-      "bottleneck": {
-        "value": "normal",
-        "primary": "normal",
-        "confidence": "low",
-        "evidence": [],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 0,
-          "signals": [],
-          "fanIn": 2,
-          "fanOut": 0,
-          "coupling": 2,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 0,
-        "signals": []
-      },
-      "smells": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-smells",
-            "detail": "No architecture smells detected for component 'HelperService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasSmells": false,
-          "smellCount": 0,
-          "smells": []
-        },
-        "hasSmells": false,
-        "smells": []
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'HelperService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:MultiCallService",
-      "name": "MultiCallService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
-      "metrics": {
-        "fanIn": 2,
-        "fanOut": 0,
-        "coupling": 2,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'MultiCallService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'MultiCallService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "MultiCall",
-        "primary": "MultiCall",
-        "confidence": "medium",
-        "evidence": [
-          {
-            "rule": "name-prefix-domain",
-            "detail": "Component name 'MultiCallService' matches domain stem candidate 'MultiCall'."
-          }
-        ],
-        "secondary": [
-          "BouquetOrderForm"
-        ]
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-external-boundary-criteria",
-            "detail": "Component does not exhibit any deterministic external boundary interactions."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": []
-        },
-        "hasExternalBoundary": false,
-        "boundaryTypes": [],
-        "targets": []
-      },
-      "bottleneck": {
-        "value": "normal",
-        "primary": "normal",
-        "confidence": "low",
-        "evidence": [],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 0,
-          "signals": [],
-          "fanIn": 2,
-          "fanOut": 0,
-          "coupling": 2,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 0,
-        "signals": []
-      },
-      "smells": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-smells",
-            "detail": "No architecture smells detected for component 'MultiCallService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasSmells": false,
-          "smellCount": 0,
-          "smells": []
-        },
-        "hasSmells": false,
-        "smells": []
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'MultiCallService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
-      },
-      "testGap": {
-        "signal": "no-test-evidence",
-        "status": "NO_TEST_EVIDENCE",
-        "hasTestGap": true
-      },
-      "securityBoundaries": {
-        "sharingModel": "unspecified",
-        "securitySignals": []
-      },
-      "businessCriticality": {
-        "classification": "MEDIUM",
-        "score": 0
-      },
-      "safetyEnvelope": {
-        "classification": "UNKNOWN",
-        "score": 0,
-        "factors": []
-      },
-      "architectureHealth": {
-        "level": "UNKNOWN",
-        "score": 0
-      },
-      "duplicateResponsibility": {
-        "classification": "NO_DUPLICATION_SIGNAL"
-      }
-    },
-    {
-      "id": "ApexClass:UnrelatedService",
-      "name": "UnrelatedService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
-      "metrics": {
-        "fanIn": 0,
-        "fanOut": 0,
-        "coupling": 0,
-        "risk": "LOW"
-      },
-      "role": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'UnrelatedService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "layer": {
-        "value": "service",
-        "primary": "service",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "name-suffix-service",
-            "detail": "Component name 'UnrelatedService' matches Service layer naming convention."
-          }
-        ],
-        "secondary": []
-      },
-      "domain": {
-        "value": "Unrelated",
-        "primary": "Unrelated",
-        "confidence": "medium",
-        "evidence": [
-          {
-            "rule": "name-prefix-domain",
-            "detail": "Component name 'UnrelatedService' matches domain stem candidate 'Unrelated'."
-          }
-        ],
-        "secondary": []
-      },
-      "entryPoint": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-entry-point-criteria",
-            "detail": "Component does not match any deterministic entry-point criteria."
-          }
-        ],
-        "secondary": [],
-        "isEntryPoint": false,
-        "entryPointTypes": []
-      },
-      "externalBoundary": {
-        "value": "none",
-        "primary": "none",
-        "confidence": "unknown",
-        "evidence": [
-          {
-            "rule": "no-external-boundary-criteria",
-            "detail": "Component does not exhibit any deterministic external boundary interactions."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "targets": []
-        },
-        "hasExternalBoundary": false,
-        "boundaryTypes": [],
-        "targets": []
-      },
-      "bottleneck": {
-        "value": "disconnected",
-        "primary": "disconnected",
-        "confidence": "medium",
-        "evidence": [],
-        "secondary": [],
-        "metadata": {
-          "isBottleneck": false,
-          "score": 0,
-          "signals": [],
-          "fanIn": 0,
-          "fanOut": 0,
-          "coupling": 0,
-          "isCycleParticipant": false
-        },
-        "isBottleneck": false,
-        "score": 0,
-        "signals": []
-      },
-      "smells": {
-        "value": "has-smells",
-        "primary": "has-smells",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "zero-coupling-orphan",
-            "detail": "Component 'UnrelatedService' has 0 inbound and 0 outbound graph dependencies, and is not an entry-point, test, or configuration component."
-          }
-        ],
-        "secondary": [
-          "orphan-component"
-        ],
-        "metadata": {
-          "hasSmells": true,
-          "smellCount": 1,
-          "smells": [
-            {
-              "smell": "orphan-component",
-              "component": "UnrelatedService",
-              "componentId": "ApexClass:UnrelatedService",
-              "confidence": "medium",
-              "evidence": [
-                {
-                  "rule": "zero-coupling-orphan",
-                  "detail": "Component 'UnrelatedService' has 0 inbound and 0 outbound graph dependencies, and is not an entry-point, test, or configuration component."
-                }
-              ]
-            }
-          ]
-        },
-        "hasSmells": true,
-        "smells": [
-          {
-            "smell": "orphan-component",
-            "component": "UnrelatedService",
-            "componentId": "ApexClass:UnrelatedService",
-            "confidence": "medium",
-            "evidence": [
-              {
-                "rule": "zero-coupling-orphan",
-                "detail": "Component 'UnrelatedService' has 0 inbound and 0 outbound graph dependencies, and is not an entry-point, test, or configuration component."
-              }
-            ]
-          }
-        ]
-      },
-      "architectureDebt": {
-        "value": "clean",
-        "primary": "clean",
-        "confidence": "high",
-        "evidence": [
-          {
-            "rule": "no-debt",
-            "detail": "No architecture debt detected for component 'UnrelatedService'."
-          }
-        ],
-        "secondary": [],
-        "metadata": {
-          "hasDebt": false,
-          "debtCount": 0,
-          "debtItems": []
-        },
-        "hasDebt": false,
-        "debtItems": []
       },
       "testGap": {
         "signal": "no-test-evidence",
@@ -1818,497 +588,77 @@
   ],
   "relationships": [
     {
-      "id": "ApexClass:BouquetOrderController|ApexClass:BouquetOrderFormService|instantiation||new BouquetOrderFormService()",
-      "from": "ApexClass:BouquetOrderController",
-      "to": "ApexClass:BouquetOrderFormService",
-      "type": "instantiation",
-      "method": null,
-      "evidence": "new BouquetOrderFormService()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": "submitOrder"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": null
-        },
-        "relationship": {
-          "type": "instantiation",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 47
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderController|ApexClass:BouquetOrderFormService|type-reference||BouquetOrderFormService",
-      "from": "ApexClass:BouquetOrderController",
-      "to": "ApexClass:BouquetOrderFormService",
-      "type": "type-reference",
-      "method": null,
-      "evidence": "BouquetOrderFormService",
-      "confidence": "medium",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": "submitOrder"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": null
-        },
-        "relationship": {
-          "type": "type-reference",
-          "resolution": "INFERRED"
-        },
-        "location": {
-          "line": 3,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:BouquetOrderSelector|method-call|getContactIdByUserId|BouquetOrderSelector.getContactIdByUserId()",
-      "from": "ApexClass:BouquetOrderFormService",
-      "to": "ApexClass:BouquetOrderSelector",
+      "id": "ApexClass:ClassA|ApexClass:ClassB|method-call|doHelp|ClassB.doHelp()",
+      "from": "ApexClass:ClassA",
+      "to": "ApexClass:ClassB",
       "type": "method-call",
-      "method": "getContactIdByUserId",
-      "evidence": "BouquetOrderSelector.getContactIdByUserId()",
+      "method": "doHelp",
+      "evidence": "ClassB.doHelp()",
       "confidence": "high",
       "unresolved": false,
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "someMethod"
+          "name": "ClassA",
+          "method": "doWork"
         },
         "target": {
           "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": "getContactIdByUserId"
+          "name": "ClassB",
+          "method": "doHelp"
         },
         "relationship": {
           "type": "method-call",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 3,
-          "column": 16
+          "line": 1,
+          "column": 53
         }
       }
     },
     {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:HelperService|method-call|resolve|HelperService.resolve()",
-      "from": "ApexClass:BouquetOrderFormService",
-      "to": "ApexClass:HelperService",
+      "id": "ApexClass:ClassB|ApexClass:ClassA|method-call|doWork|ClassA.doWork()",
+      "from": "ApexClass:ClassB",
+      "to": "ApexClass:ClassA",
       "type": "method-call",
-      "method": "resolve",
-      "evidence": "HelperService.resolve()",
+      "method": "doWork",
+      "evidence": "ClassA.doWork()",
       "confidence": "high",
       "unresolved": false,
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "secondMethod"
+          "name": "ClassB",
+          "method": "doHelp"
         },
         "target": {
           "type": "ApexClass",
-          "name": "HelperService",
-          "method": "resolve"
+          "name": "ClassA",
+          "method": "doWork"
         },
         "relationship": {
           "type": "method-call",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 7,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:MultiCallService|method-call|firstCall|MultiCallService.firstCall()",
-      "from": "ApexClass:BouquetOrderFormService",
-      "to": "ApexClass:MultiCallService",
-      "type": "method-call",
-      "method": "firstCall",
-      "evidence": "MultiCallService.firstCall()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "secondMethod"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "MultiCallService",
-          "method": "firstCall"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 8,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:MultiCallService|method-call|secondCall|MultiCallService.secondCall()",
-      "from": "ApexClass:BouquetOrderFormService",
-      "to": "ApexClass:MultiCallService",
-      "type": "method-call",
-      "method": "secondCall",
-      "evidence": "MultiCallService.secondCall()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "secondMethod"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "MultiCallService",
-          "method": "secondCall"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 9,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderPageHandler|ApexClass:BouquetOrderController|instantiation||new BouquetOrderController()",
-      "from": "ApexClass:BouquetOrderPageHandler",
-      "to": "ApexClass:BouquetOrderController",
-      "type": "instantiation",
-      "method": null,
-      "evidence": "new BouquetOrderController()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderPageHandler",
-          "method": "handleRequest"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": null
-        },
-        "relationship": {
-          "type": "instantiation",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 45
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderPageHandler|ApexClass:BouquetOrderController|type-reference||BouquetOrderController",
-      "from": "ApexClass:BouquetOrderPageHandler",
-      "to": "ApexClass:BouquetOrderController",
-      "type": "type-reference",
-      "method": null,
-      "evidence": "BouquetOrderController",
-      "confidence": "medium",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderPageHandler",
-          "method": "handleRequest"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": null
-        },
-        "relationship": {
-          "type": "type-reference",
-          "resolution": "INFERRED"
-        },
-        "location": {
-          "line": 3,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|ApexClass:HelperService|method-call|resolve|HelperService.resolve()",
-      "from": "ApexClass:BouquetOrderSelector",
-      "to": "ApexClass:HelperService",
-      "type": "method-call",
-      "method": "resolve",
-      "evidence": "HelperService.resolve()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": "getContactIdByUserId"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "HelperService",
-          "method": "resolve"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 16
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Account|generic-type||<Account>",
-      "from": "ApexClass:BouquetOrderSelector",
-      "to": "External:Account",
-      "type": "generic-type",
-      "method": null,
-      "evidence": "<Account>",
-      "confidence": "medium",
-      "unresolved": true,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "External",
-          "name": "Account",
-          "method": null
-        },
-        "relationship": {
-          "type": "generic-type",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 6,
-          "column": 23
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Contact|generic-type||<Contact>",
-      "from": "ApexClass:BouquetOrderSelector",
-      "to": "External:Contact",
-      "type": "generic-type",
-      "method": null,
-      "evidence": "<Contact>",
-      "confidence": "medium",
-      "unresolved": true,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "External",
-          "name": "Contact",
-          "method": null
-        },
-        "relationship": {
-          "type": "generic-type",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 10,
-          "column": 23
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Object:Account|soql-object||SOQL FROM Account",
-      "from": "ApexClass:BouquetOrderSelector",
-      "to": "External:Object:Account",
-      "type": "soql-object",
-      "method": null,
-      "evidence": "SOQL FROM Account",
-      "confidence": "medium",
-      "unresolved": true,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "Object",
-          "name": "Account",
-          "method": null
-        },
-        "relationship": {
-          "type": "soql-object",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 0,
-          "column": 0
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Object:Case|soql-object||SOQL FROM Case",
-      "from": "ApexClass:BouquetOrderSelector",
-      "to": "External:Object:Case",
-      "type": "soql-object",
-      "method": null,
-      "evidence": "SOQL FROM Case",
-      "confidence": "medium",
-      "unresolved": true,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "Object",
-          "name": "Case",
-          "method": null
-        },
-        "relationship": {
-          "type": "soql-object",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 0,
-          "column": 0
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Object:Contact|soql-object||SOQL FROM Contact",
-      "from": "ApexClass:BouquetOrderSelector",
-      "to": "External:Object:Contact",
-      "type": "soql-object",
-      "method": null,
-      "evidence": "SOQL FROM Contact",
-      "confidence": "medium",
-      "unresolved": true,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "Object",
-          "name": "Contact",
-          "method": null
-        },
-        "relationship": {
-          "type": "soql-object",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 0,
-          "column": 0
-        }
-      }
-    },
-    {
-      "id": "ApexClass:CircularA|ApexClass:CircularB|method-call|callA|CircularB.callA()",
-      "from": "ApexClass:CircularA",
-      "to": "ApexClass:CircularB",
-      "type": "method-call",
-      "method": "callA",
-      "evidence": "CircularB.callA()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "CircularA",
-          "method": "callB"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "CircularB",
-          "method": "callA"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:CircularB|ApexClass:CircularA|method-call|callB|CircularA.callB()",
-      "from": "ApexClass:CircularB",
-      "to": "ApexClass:CircularA",
-      "type": "method-call",
-      "method": "callB",
-      "evidence": "CircularA.callB()",
-      "confidence": "high",
-      "unresolved": false,
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "CircularB",
-          "method": "callA"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "CircularA",
-          "method": "callB"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 9
+          "line": 1,
+          "column": 53
         }
       }
     }
   ],
   "cycles": [
     [
-      "ApexClass:CircularA",
-      "ApexClass:CircularB"
+      "ApexClass:ClassA",
+      "ApexClass:ClassB"
     ]
   ],
   "roles": {
     "entry-point": 0,
-    "controller": 1,
-    "service": 5,
-    "selector": 1,
+    "controller": 0,
+    "service": 0,
+    "selector": 0,
     "repository": 0,
     "data-access": 0,
     "domain": 0,
@@ -2320,38 +670,27 @@
   "layers": {
     "presentation": 0,
     "entry": 0,
-    "application": 2,
-    "service": 4,
+    "application": 0,
+    "service": 0,
     "domain": 0,
-    "data": 1,
+    "data": 0,
     "integration": 0,
     "configuration": 0,
     "test": 0,
     "unknown": 2
   },
   "domains": {
-    "BouquetOrder": 3,
-    "BouquetOrderPage": 1,
-    "CircularA": 1,
-    "CircularB": 1,
-    "HelperService": 1,
-    "MultiCall": 1,
-    "Unrelated": 1
+    "ClassA": 1,
+    "ClassB": 1
   },
   "profiles": {
     "componentProfiles": {},
     "summary": {
-      "totalComponents": 9,
+      "totalComponents": 2,
       "roles": {
-        "controller": 1,
-        "service": 5,
-        "selector": 1,
         "unknown": 2
       },
       "layers": {
-        "application": 2,
-        "service": 4,
-        "data": 1,
         "unknown": 2
       },
       "entryPoints": {
@@ -2361,21 +700,21 @@
         "count": 2
       },
       "testStatus": {
-        "unknown": 9
+        "unknown": 2
       },
       "externalBoundaries": {
-        "count": 1
+        "count": 0
       },
       "securitySharingModels": {
-        "unspecified": 9
+        "unspecified": 2
       },
       "impactedObjects": []
     }
   },
   "entryPoints": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "totalEntryPoints": 0,
-    "nonEntryPoints": 9,
+    "nonEntryPoints": 2,
     "byType": {
       "Trigger": 0,
       "LWC": 0,
@@ -2388,13 +727,13 @@
     }
   },
   "externalBoundaries": {
-    "totalComponents": 9,
-    "componentsWithExternalBoundary": 1,
-    "componentsWithoutExternalBoundary": 8,
+    "totalComponents": 2,
+    "componentsWithExternalBoundary": 0,
+    "componentsWithoutExternalBoundary": 2,
     "byType": {
       "HTTPCallout": 0,
       "NamedCredential": 0,
-      "ExternalService": 1,
+      "ExternalService": 0,
       "PlatformEvent": 0,
       "OutboundMessaging": 0,
       "InboundEmail": 0,
@@ -2403,31 +742,31 @@
     }
   },
   "bottlenecks": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "bottleneckCount": 2,
-    "normalCount": 6,
-    "disconnectedCount": 1,
+    "normalCount": 0,
+    "disconnectedCount": 0,
     "signalCounts": {
       "high-fan-in": 0,
       "high-fan-out": 0,
       "cycle-participant": 2,
-      "bridge-position": 1,
+      "bridge-position": 0,
       "many-dependents": 0,
       "many-dependency-paths": 0,
-      "high-dependency-impact": 1
+      "high-dependency-impact": 0
     }
   },
   "smells": {
-    "totalComponents": 9,
-    "componentsWithSmellsCount": 3,
-    "cleanComponentsCount": 6,
-    "totalSmellsCount": 3,
+    "totalComponents": 2,
+    "componentsWithSmellsCount": 2,
+    "cleanComponentsCount": 0,
+    "totalSmellsCount": 2,
     "smellCounts": {
       "god-component": 0,
       "hub-component": 0,
       "high-coupling": 0,
       "circular-dependency": 2,
-      "orphan-component": 1,
+      "orphan-component": 0,
       "uncovered-critical-path": 0,
       "layer-violation": 0,
       "mixed-responsibility": 0,
@@ -2435,9 +774,9 @@
     }
   },
   "architectureDebt": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "componentsWithDebtCount": 2,
-    "cleanComponentsCount": 7,
+    "cleanComponentsCount": 0,
     "totalDebtItemsCount": 4,
     "categoryCounts": {
       "excessive-coupling": 0,
@@ -2460,38 +799,38 @@
     }
   },
   "testGaps": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "coveredCount": 0,
     "likelyCoveredCount": 0,
-    "noTestEvidenceCount": 9,
+    "noTestEvidenceCount": 2,
     "knownCoverageFailureCount": 0,
     "ambiguousTestCount": 0,
     "testComponentCount": 0,
-    "componentsWithTestGap": 9
+    "componentsWithTestGap": 2
   },
   "businessCriticality": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "explicitBusinessCriticalityCount": 0,
-    "unknownBusinessCriticalityCount": 9,
+    "unknownBusinessCriticalityCount": 2,
     "byBusinessLevel": {
       "high": 0,
       "medium": 0,
       "low": 0,
-      "unknown": 9
+      "unknown": 2
     },
     "byStructuralLevel": {
       "high": 0,
       "medium": 0,
-      "low": 1,
-      "unknown": 8
+      "low": 0,
+      "unknown": 2
     }
   },
   "safetyEnvelopes": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "byClassification": {
       "SAFE": 0,
-      "SAFE_WITH_REVIEW": 5,
-      "HIGH_RISK": 2,
+      "SAFE_WITH_REVIEW": 0,
+      "HIGH_RISK": 0,
       "BLOCKED": 2,
       "UNKNOWN": 0
     },
@@ -2499,11 +838,10 @@
       "broad-transitive-impact-unprotected": 2
     },
     "riskFactorCounts": {
-      "test-gap-present": 9,
-      "external-boundary-exposure": 1,
       "broad-transitive-impact": 2,
       "architectural-bottleneck": 2,
-      "architecture-smells-present": 3,
+      "architecture-smells-present": 2,
+      "test-gap-present": 2,
       "cycle-participant": 2
     }
   },
@@ -2517,7 +855,7 @@
         "evidence": [
           {
             "rule": "healthy-coupling-distribution",
-            "detail": "Low coupling pressure across all 9 repository components."
+            "detail": "Low coupling pressure across all 2 repository components."
           }
         ],
         "signals": {
@@ -2551,16 +889,16 @@
         }
       },
       "testProtection": {
-        "classification": "DEGRADED",
+        "classification": "ATTENTION",
         "confidence": "high",
         "evidence": [
           {
-            "rule": "high-test-gap-ratio",
-            "detail": "High test gap ratio: 9 of 9 component(s) (100%) lack test protection."
+            "rule": "test-gaps-identified",
+            "detail": "2 component(s) exhibit test gap status."
           }
         ],
         "signals": {
-          "gapsCount": 9
+          "gapsCount": 2
         }
       },
       "boundaryRisk": {
@@ -2582,11 +920,11 @@
         "evidence": [
           {
             "rule": "unspecified-sharing-concentration",
-            "detail": "9 Apex class(es) lack explicit sharing model declarations."
+            "detail": "2 Apex class(es) lack explicit sharing model declarations."
           }
         ],
         "signals": {
-          "unspecifiedSharingCount": 9
+          "unspecifiedSharingCount": 2
         }
       },
       "architecturalDebt": {
@@ -2595,11 +933,11 @@
         "evidence": [
           {
             "rule": "architectural-smells-detected",
-            "detail": "Architectural debt identified: 3 smell(s) present across repository."
+            "detail": "Architectural debt identified: 2 smell(s) present across repository."
           }
         ],
         "signals": {
-          "totalSmells": 3,
+          "totalSmells": 2,
           "godCount": 0
         }
       },
@@ -2617,12 +955,12 @@
         }
       },
       "architecturalClarity": {
-        "classification": "HEALTHY",
+        "classification": "ATTENTION",
         "confidence": "high",
         "evidence": [
           {
-            "rule": "clear-architectural-structure",
-            "detail": "Clear role and layer separation established for repository components."
+            "rule": "ambiguous-component-roles",
+            "detail": "2 component(s) have unclassified/unknown architectural roles."
           }
         ],
         "signals": {
@@ -2631,19 +969,19 @@
       }
     },
     "strongestPositiveSignals": [
-      "Low coupling pressure across all 9 repository components.",
-      "Managed external boundary exposure across 0 component(s).",
-      "Clear role and layer separation established for repository components."
+      "Low coupling pressure across all 2 repository components.",
+      "Managed external boundary exposure across 0 component(s)."
     ],
     "strongestNegativeSignals": [
       "Repository contains 1 circular dependency group(s).",
       "2 high-risk bottleneck component(s) expand change blast radius.",
-      "High test gap ratio: 9 of 9 component(s) (100%) lack test protection.",
-      "Architectural debt identified: 3 smell(s) present across repository.",
+      "2 component(s) exhibit test gap status.",
+      "Architectural debt identified: 2 smell(s) present across repository.",
       "2 central architectural bottlenecks identified."
     ],
     "unknownIncompleteAreas": [
-      "9 Apex class(es) have unspecified sharing mode."
+      "2 Apex class(es) have unspecified sharing mode.",
+      "2 component(s) have unknown architectural roles."
     ]
   },
   "qualityGates": {
@@ -2678,21 +1016,21 @@
         "result": "FAIL",
         "confidence": "high",
         "affectedComponents": [
-          "CircularA",
-          "CircularB"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularA' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassA' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularB' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassB' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "repository-cycles-detected",
-            "detail": "Repository contains 1 circular dependency loop(s) touching components: CircularA, CircularB."
+            "detail": "Repository contains 1 circular dependency loop(s) touching components: ClassA, ClassB."
           }
         ]
       },
@@ -2704,17 +1042,17 @@
         "result": "WARN",
         "confidence": "high",
         "affectedComponents": [
-          "CircularA",
-          "CircularB"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularA' is an identified architectural bottleneck (score: 25)."
+            "detail": "Component 'ClassA' is an identified architectural bottleneck (score: 25)."
           },
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularB' is an identified architectural bottleneck (score: 25)."
+            "detail": "Component 'ClassB' is an identified architectural bottleneck (score: 25)."
           }
         ]
       },
@@ -2726,52 +1064,17 @@
         "result": "UNKNOWN",
         "confidence": "high",
         "affectedComponents": [
-          "BouquetOrderController",
-          "BouquetOrderFormService",
-          "BouquetOrderPageHandler",
-          "BouquetOrderSelector",
-          "CircularA",
-          "CircularB",
-          "HelperService",
-          "MultiCallService",
-          "UnrelatedService"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
             "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderController'."
+            "detail": "Test gap evidence is missing for component 'ClassA'."
           },
           {
             "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderFormService'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderPageHandler'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderSelector'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'CircularA'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'CircularB'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'HelperService'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'MultiCallService'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'UnrelatedService'."
+            "detail": "Test gap evidence is missing for component 'ClassB'."
           }
         ]
       },
@@ -2780,17 +1083,10 @@
         "name": "Unsafe External Boundaries",
         "description": "Detects unisolated or concentrated external boundary integration points.",
         "severity": "HIGH",
-        "result": "WARN",
+        "result": "PASS",
         "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderSelector"
-        ],
-        "evidence": [
-          {
-            "rule": "unsafe-external-boundary-warn",
-            "detail": "Component 'BouquetOrderSelector' exposes an external boundary (ExternalService)."
-          }
-        ]
+        "affectedComponents": [],
+        "evidence": []
       },
       {
         "ruleId": "RULE-SECURITY-BOUNDARY-VIOLATION",
@@ -2820,27 +1116,17 @@
         "result": "FAIL",
         "confidence": "high",
         "affectedComponents": [
-          "BouquetOrderSelector",
-          "CircularA",
-          "CircularB",
-          "UnrelatedService"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'BouquetOrderSelector' is classified as HIGH_RISK."
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassA' is BLOCKED due to architectural safety blockers."
           },
           {
             "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularA' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularB' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'UnrelatedService' is classified as HIGH_RISK."
+            "detail": "Safety envelope for component 'ClassB' is BLOCKED due to architectural safety blockers."
           }
         ]
       },
@@ -2874,21 +1160,21 @@
         "result": "FAIL",
         "confidence": "high",
         "affectedComponents": [
-          "CircularA",
-          "CircularB"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularA' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassA' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularB' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassB' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "repository-cycles-detected",
-            "detail": "Repository contains 1 circular dependency loop(s) touching components: CircularA, CircularB."
+            "detail": "Repository contains 1 circular dependency loop(s) touching components: ClassA, ClassB."
           }
         ]
       },
@@ -2900,27 +1186,17 @@
         "result": "FAIL",
         "confidence": "high",
         "affectedComponents": [
-          "BouquetOrderSelector",
-          "CircularA",
-          "CircularB",
-          "UnrelatedService"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'BouquetOrderSelector' is classified as HIGH_RISK."
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassA' is BLOCKED due to architectural safety blockers."
           },
           {
             "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularA' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularB' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'UnrelatedService' is classified as HIGH_RISK."
+            "detail": "Safety envelope for component 'ClassB' is BLOCKED due to architectural safety blockers."
           }
         ]
       }
@@ -2934,34 +1210,17 @@
         "result": "WARN",
         "confidence": "high",
         "affectedComponents": [
-          "CircularA",
-          "CircularB"
+          "ClassA",
+          "ClassB"
         ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularA' is an identified architectural bottleneck (score: 25)."
+            "detail": "Component 'ClassA' is an identified architectural bottleneck (score: 25)."
           },
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularB' is an identified architectural bottleneck (score: 25)."
-          }
-        ]
-      },
-      {
-        "ruleId": "RULE-UNSAFE-EXTERNAL-BOUNDARY",
-        "name": "Unsafe External Boundaries",
-        "description": "Detects unisolated or concentrated external boundary integration points.",
-        "severity": "HIGH",
-        "result": "WARN",
-        "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderSelector"
-        ],
-        "evidence": [
-          {
-            "rule": "unsafe-external-boundary-warn",
-            "detail": "Component 'BouquetOrderSelector' exposes an external boundary (ExternalService)."
+            "detail": "Component 'ClassB' is an identified architectural bottleneck (score: 25)."
           }
         ]
       }
@@ -2971,11 +1230,11 @@
     ]
   },
   "duplicateResponsibility": {
-    "totalComponents": 9,
-    "componentsWithOverlapCount": 6,
+    "totalComponents": 2,
+    "componentsWithOverlapCount": 0,
     "strongOverlapCount": 0,
-    "possibleOverlapCount": 6,
-    "noOverlapCount": 3,
-    "uniqueOverlappingPairsCount": 6
+    "possibleOverlapCount": 0,
+    "noOverlapCount": 2,
+    "uniqueOverlappingPairsCount": 0
   }
 }
