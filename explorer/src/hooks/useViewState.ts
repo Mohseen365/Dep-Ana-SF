@@ -92,6 +92,32 @@ export function useViewState() {
     };
   }, [readStateFromUrl]);
 
+  // Reset view state completely on project switch to enforce project isolation
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleProjectChanged = () => {
+      setSelectedNodeId(null);
+      setSelectedFindingId(null);
+      setSelectedCycleId(null);
+      setSelectedUnresolvedEdgeId(null);
+      setSelectedInvestigationId(null);
+      setIsInvestigating(false);
+      setUrlNodeId(null);
+      setUrlEdgeId(null);
+      setFilterState(createEmptyFilterState());
+      setFocusState(createEmptyFocusState());
+      setImpactState(createEmptyImpactState());
+      setConnectionState({ direction: 'both', depth: 2 });
+      setDiagnosticsTab('none');
+    };
+
+    window.addEventListener('explorer:project-changed', handleProjectChanged);
+    return () => {
+      window.removeEventListener('explorer:project-changed', handleProjectChanged);
+    };
+  }, []);
+
   // Sync state to URL search params
   const syncToUrl = useCallback(() => {
     if (typeof window === 'undefined') return;
