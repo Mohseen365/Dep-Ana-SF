@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface GraphControlsProps {
+export interface GraphControlsProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onFitView: () => void;
@@ -11,6 +11,8 @@ interface GraphControlsProps {
   onToggleFullscreen?: () => void;
   isNavigatorVisible?: boolean;
   onToggleNavigator?: () => void;
+  focusState?: any;
+  onFocusChange?: (focusState: any) => void;
 }
 
 export const GraphControls: React.FC<GraphControlsProps> = ({

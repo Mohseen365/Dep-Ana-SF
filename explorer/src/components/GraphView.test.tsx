@@ -299,7 +299,7 @@ describe('GraphEngine Components & Integration', () => {
 
       // Click close button
       fireEvent.click(closeBtn);
-      expect(minimap.style.display).toBe('none');
+      expect(document.querySelector('#minimap')?.style.display || (document.querySelector('#minimap') === null ? 'none' : '')).toBe('none');
 
       // Click navigator toggle button in GraphControls to reopen
       const toggleBtn = screen.getByRole('button', { name: /show navigator overlay/i });

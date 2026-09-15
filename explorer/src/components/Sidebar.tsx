@@ -53,15 +53,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     // Quick Filter
     if (quickFilter === "high_risk") {
       result = result.filter(
-        (n) => n.risk === "HIGH" || n.risk === "CRITICAL"
+        (n) => (n.risk as string) === "HIGH" || (n.risk as string) === "CRITICAL"
       );
     } else if (quickFilter === "hotspots") {
       result = result.filter(
         (n) =>
           n.risk === "HIGH" ||
-          n.risk === "CRITICAL" ||
-          (n.metrics?.inDegree ?? 0) >= 3 ||
-          (n.metrics?.outDegree ?? 0) >= 3
+          (n.metrics?.fanIn ?? 0) >= 3 ||
+          (n.metrics?.fanOut ?? 0) >= 3
       );
     }
 

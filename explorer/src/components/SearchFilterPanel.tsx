@@ -235,13 +235,13 @@ export const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
                     borderRadius: "4px",
                     textTransform: "uppercase",
                     backgroundColor:
-                      result.node.risk === "HIGH" || result.node.risk === "CRITICAL"
+                      result.node.risk === "HIGH"
                         ? "rgba(239,68,68,0.18)"
                         : result.node.risk === "MEDIUM"
                         ? "rgba(245,158,11,0.18)"
                         : "rgba(16,185,129,0.18)",
                     color:
-                      result.node.risk === "HIGH" || result.node.risk === "CRITICAL"
+                      result.node.risk === "HIGH"
                         ? "#f87171"
                         : result.node.risk === "MEDIUM"
                         ? "#f59e0b"

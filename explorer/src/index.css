@@ -959,10 +959,10 @@ body {
 .minimap-container,
 .cytoscape-navigator {
   position: absolute !important;
-  bottom: 14px !important;
-  right: 14px !important;
-  width: 200px !important;
-  height: 150px !important;
+  top: 14px !important;
+  right: 58px !important;
+  width: 180px !important;
+  height: 130px !important;
   background-color: rgba(17, 24, 39, 0.95) !important;
   backdrop-filter: blur(4px);
   border: 1px solid var(--border-color) !important;
