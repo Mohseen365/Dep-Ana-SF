@@ -1,4 +1,6 @@
 import React from 'react';
+import { FocusState } from '../lib/focus-graph';
+import { FocusControls } from './FocusControls';
 
 export interface GraphControlsProps {
   onZoomIn: () => void;
@@ -7,12 +9,13 @@ export interface GraphControlsProps {
   onCenterSelected: () => void;
   onResetLayout: () => void;
   hasSelectedNode: boolean;
+  selectedNodeId?: string | null;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   isNavigatorVisible?: boolean;
   onToggleNavigator?: () => void;
-  focusState?: any;
-  onFocusChange?: (focusState: any) => void;
+  focusState?: FocusState;
+  onFocusChange?: (focusState: FocusState) => void;
 }
 
 export const GraphControls: React.FC<GraphControlsProps> = ({
@@ -22,13 +25,27 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
   onCenterSelected,
   onResetLayout,
   hasSelectedNode,
+  selectedNodeId,
   isFullscreen = false,
   onToggleFullscreen,
   isNavigatorVisible = true,
-  onToggleNavigator
+  onToggleNavigator,
+  focusState,
+  onFocusChange,
 }) => {
   return (
     <div className="graph-controls-floating" role="toolbar" aria-label="Graph controls">
+      {focusState && onFocusChange && (
+        <>
+          <FocusControls
+            focusState={focusState}
+            onFocusChange={onFocusChange}
+            hasSelectedNode={hasSelectedNode}
+            selectedNodeId={selectedNodeId}
+          />
+          <div className="graph-control-divider" />
+        </>
+      )}
       <button
         className="graph-control-btn"
         onClick={onZoomIn}

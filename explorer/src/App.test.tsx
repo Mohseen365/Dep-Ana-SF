@@ -101,6 +101,127 @@ describe('App composed shell', () => {
     expect(container.querySelector('.status-bar')).toBeInTheDocument();
   });
 
+  it('updates focused graph when focus depth and direction change', async () => {
+    const makeNode = (id: string, name: string) => ({
+      id,
+      displayName: name,
+      type: 'ApexClass',
+      file: `${name}.cls`,
+      metrics: { fanIn: 1, fanOut: 1, coupling: 2, unresolved: 0, score: 2 },
+      risk: 'LOW',
+      riskReasons: [],
+      behavior: {
+        isTest: false,
+        publicContractsCount: 0,
+        asyncPatterns: [],
+        securitySignalsCount: 0,
+        queryCount: 0,
+        dmlCount: 0,
+        calloutCount: 0,
+      },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
+    });
+
+    const makeEdge = (id: string, src: string, tgt: string) => ({
+      id,
+      source: src,
+      target: tgt,
+      relationshipType: 'method-call',
+      method: null,
+      evidence: 'Call()',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: 'high',
+      line: 10,
+      column: 5,
+      methodOwner: null,
+      file: 'A.cls',
+      canonical: {
+        source: { type: 'ApexClass', name: src.split(':')[1], method: null },
+        target: { type: 'ApexClass', name: tgt.split(':')[1], method: null },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: { line: 10, column: 5 },
+      },
+    });
+
+    const multiHopData = {
+      schemaVersion: '1.0.0',
+      analyzerVersion: '13.0.0',
+      generatedAt: '2025-01-01T00:00:00Z',
+      sourceDirectory: 'force-app',
+      summary: {
+        nodeCount: 4,
+        edgeCount: 3,
+        highRiskCount: 0,
+        mediumRiskCount: 0,
+        lowRiskCount: 4,
+        cycleCount: 0,
+        unresolvedCount: 0,
+        inventory: { files: 4, apexClasses: 4, apexTriggers: 0, lwcJs: 0, lwcHtml: 0, visualforce: 0, flows: 0, objects: 0, fields: 0 },
+      },
+      nodes: [
+        makeNode('ApexClass:A', 'A'),
+        makeNode('ApexClass:B', 'B'),
+        makeNode('ApexClass:C', 'C'),
+        makeNode('ApexClass:D', 'D'),
+      ],
+      edges: [
+        makeEdge('A|B', 'ApexClass:A', 'ApexClass:B'),
+        makeEdge('B|C', 'ApexClass:B', 'ApexClass:C'),
+        makeEdge('C|D', 'ApexClass:C', 'ApexClass:D'),
+      ],
+      cycles: [],
+      unresolvedReferences: [],
+      impactSummaries: {},
+    };
+
+    vi.mocked(fetch).mockImplementation(async (url) => {
+      if (typeof url === 'string' && url.includes('project-manifest.json')) {
+        return {
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            projects: [
+              {
+                id: 'default',
+                name: 'Default Salesforce Project',
+                description: 'Test proj',
+                sourcePath: 'force-app',
+                analysisStatus: 'COMPLETE',
+                analysisPath: '/explorer-data.json',
+              },
+            ],
+            activeProjectId: 'default',
+          }),
+        } as Response;
+      }
+      return {
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        text: async () => JSON.stringify(multiHopData),
+      } as unknown as Response;
+    });
+
+    // Deep link with Node A selected and Focus active with depth 1
+    window.history.replaceState(null, '', '/?node=ApexClass:A&focus.enabled=true&focus.direction=both&focus.depth=1');
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Dependency Explorer')).toBeInTheDocument();
+    });
+
+    // Check Focus controls are rendered
+    expect(screen.getByText('Focus')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Depth' })).toBeInTheDocument();
+  });
+
   it('renders NOT_ANALYZED empty state view cleanly when active project has no analysis data', async () => {
     // Mock project manifest fetch & project-specific analysis fetch returning 404 or HTML
     vi.mocked(fetch).mockImplementation(async (url) => {

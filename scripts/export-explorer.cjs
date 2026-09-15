@@ -67,7 +67,7 @@ function parseArgs(argv) {
   return { input, output, project, projectName, projectDesc, source };
 }
 
-function resolveInputFile(inputPath) {
+function resolveInputFile(inputPath, options = {}) {
   let targetFile = inputPath;
   if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
     const reportFile = path.join(inputPath, "dependency-report.json");
@@ -80,6 +80,41 @@ function resolveInputFile(inputPath) {
   }
 
   if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
+    const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
+    const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
+
+    if (fs.existsSync(rootReport)) {
+      targetFile = rootReport;
+    } else if (fs.existsSync(rootSnapshot)) {
+      targetFile = rootSnapshot;
+    }
+  }
+
+  if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
+    if (options.source) {
+      console.log(`Analyzer output not found in '${inputPath}'. Running analyzer on '${options.source}'...`);
+      const analyzerScript = path.join(__dirname, "..", "dependency-analyzer.cjs");
+      const execSync = require("child_process").execSync;
+      try {
+        execSync(`node "${analyzerScript}" analyze "${options.source}"`, {
+          cwd: path.resolve(__dirname, ".."),
+          stdio: "inherit"
+        });
+      } catch (err) {
+        console.warn(`Analyzer execution notice: ${err.message}`);
+      }
+
+      if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
+        const reportFile = path.join(inputPath, "dependency-report.json");
+        if (fs.existsSync(reportFile)) {
+          return reportFile;
+        }
+      }
+      const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
+      if (fs.existsSync(rootReport)) {
+        return rootReport;
+      }
+    }
     throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
   }
 
@@ -219,7 +254,7 @@ function buildImpactSummaries(nodes, edges) {
 }
 
 function exportExplorerData(inputPath, outputPath, options = {}) {
-  const resolvedInputFile = resolveInputFile(inputPath);
+  const resolvedInputFile = resolveInputFile(inputPath, options);
   const rawContent = fs.readFileSync(resolvedInputFile, "utf8");
   const reportData = JSON.parse(rawContent);
 
@@ -376,22 +411,25 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     const file = rawEdge.file || "";
 
     const resCat = rawEdge.resolutionCategory || {};
-    const canonical = rawEdge.canonical || {
+    const sourceNormType = normalizeNodeType(source.split(":")[0]);
+    const targetNormType = normalizeNodeType(target.split(":")[0]);
+
+    const canonical = {
       source: {
-        type: source.split(":")[0],
-        name: source.split(":")[1] || "",
-        method: methodOwner,
+        type: normalizeNodeType(rawEdge.canonical?.source?.type || sourceNormType),
+        name: rawEdge.canonical?.source?.name || (source.includes(":") ? source.split(":")[1] : source),
+        method: rawEdge.canonical?.source?.method || methodOwner,
       },
       target: {
-        type: target.split(":")[0],
-        name: target.split(":")[1] || "",
-        method,
+        type: normalizeNodeType(rawEdge.canonical?.target?.type || targetNormType),
+        name: rawEdge.canonical?.target?.name || (target.includes(":") ? target.split(":")[1] : target),
+        method: rawEdge.canonical?.target?.method || method,
       },
       relationship: {
-        type: relationshipType,
-        resolution: unresolved ? "UNRESOLVED" : "EXACT",
+        type: rawEdge.canonical?.relationship?.type || relationshipType,
+        resolution: rawEdge.canonical?.relationship?.resolution || (unresolved ? "UNRESOLVED" : "EXACT"),
       },
-      location: { line, column },
+      location: rawEdge.canonical?.location || { line, column },
     };
 
     const edgeId =
@@ -566,6 +604,7 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
 
   updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
+  publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
 
   return {
     inputFile: resolvedInputFile,
@@ -573,6 +612,53 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     projectMetadata,
     explorerData,
   };
+}
+
+function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata) {
+  const rootDir = path.resolve(__dirname, "..");
+  const explorerPublicDir = path.join(rootDir, "explorer", "public");
+  const explorerDistDir = path.join(rootDir, "explorer", "dist");
+
+  if (!fs.existsSync(explorerPublicDir)) {
+    return;
+  }
+
+  const projectId = projectMetadata?.id || "default";
+
+  // 1. Publish project contract file
+  if (projectId !== "default") {
+    const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
+    fs.mkdirSync(projPublicDir, { recursive: true });
+    fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
+
+    if (fs.existsSync(explorerDistDir)) {
+      const projDistDir = path.join(explorerDistDir, "projects", projectId);
+      fs.mkdirSync(projDistDir, { recursive: true });
+      fs.copyFileSync(resolvedOutputFile, path.join(projDistDir, "explorer-data.json"));
+    }
+  } else {
+    fs.copyFileSync(resolvedOutputFile, path.join(explorerPublicDir, "explorer-data.json"));
+    if (fs.existsSync(explorerDistDir)) {
+      fs.copyFileSync(resolvedOutputFile, path.join(explorerDistDir, "explorer-data.json"));
+    }
+  }
+
+  // 2. Publish project-manifest.json
+  let manifestDir = path.dirname(resolvedOutputFile);
+  if (manifestDir.includes("projects")) {
+    const idx = manifestDir.lastIndexOf("projects");
+    if (idx > 0) {
+      manifestDir = manifestDir.substring(0, idx);
+    }
+  }
+
+  const analyzeManifest = path.join(manifestDir, "project-manifest.json");
+  if (fs.existsSync(analyzeManifest)) {
+    fs.copyFileSync(analyzeManifest, path.join(explorerPublicDir, "project-manifest.json"));
+    if (fs.existsSync(explorerDistDir)) {
+      fs.copyFileSync(analyzeManifest, path.join(explorerDistDir, "project-manifest.json"));
+    }
+  }
 }
 
 function updateManifestWithExplorerData(outputFile, explorerData, projectMetadata) {

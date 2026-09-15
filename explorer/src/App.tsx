@@ -64,6 +64,8 @@ export function GraphSlot(props: {
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
   focusedNodeId?: string | null;
+  focusState?: any;
+  onFocusChange?: (focusState: any) => void;
 }) {
   return (
     <div className="graph-container" data-slot="graph" style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -80,6 +82,8 @@ export function GraphSlot(props: {
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
         focusedNodeId={props.focusedNodeId}
+        focusState={props.focusState}
+        onFocusChange={props.onFocusChange}
       />
     </div>
   );
@@ -464,6 +468,16 @@ export function App() {
     focusNodeId: selection.selectedNodeId || view.focusState.focusNodeId,
   }), [view.focusState, selection.selectedNodeId]);
 
+  // Keep view.focusState.focusNodeId in sync with selection.selectedNodeId when focus is active
+  useEffect(() => {
+    if (view.focusState.enabled && selection.selectedNodeId && selection.selectedNodeId !== view.focusState.focusNodeId) {
+      view.setFocusState({
+        ...view.focusState,
+        focusNodeId: selection.selectedNodeId,
+      });
+    }
+  }, [selection.selectedNodeId, view.focusState, view.setFocusState]);
+
   // Compute focused sub-graph when focus mode is active
   const focusedGraphData = useMemo(() => {
     if (!data) return { nodes: [], edges: [] };
@@ -629,6 +643,8 @@ export function App() {
                           : selection.selectedNodeId
                         : null
                     }
+                    focusState={effectiveFocusState}
+                    onFocusChange={view.setFocusState}
                   />
                 )
               )}
