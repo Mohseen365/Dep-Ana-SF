@@ -1,9 +1,0 @@
-digraph SalesforceDependencies {
-  rankdir="LR";
-  graph [overlap=false];
-  N1 [label="FoodHelper\nApexClass", shape=box];
-  N2 [label="FoodService\nApexClass", shape=box];
-  N3 [label="FoodTrigger\nTrigger", shape=diamond];
-  N2 -> N1 [label="method-call:cook->prep"];
-  N3 -> N2 [label="trigger-handler:cook"];
-}

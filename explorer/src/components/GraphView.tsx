@@ -167,7 +167,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const elements = buildGraphElements(nodes, edges);
+    const elements = buildGraphElements(nodesRef.current, edgesRef.current);
     const styles = getGraphStyles({
       nodeWidth: 50,
       nodeHeight: 50,
@@ -176,9 +176,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const layoutOptions = getLayoutOptions({
-      nodeCount: nodes.length,
+      nodeCount: nodesRef.current.length,
       padding: 50,
-      animate: !prefersReducedMotion && nodes.length < 100
+      animate: !prefersReducedMotion && nodesRef.current.length < 100
     });
 
     // A5. Cytoscape instance creation with wheelSensitivity & boxSelectionEnabled
@@ -210,7 +210,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     }
 
     // A7. Initial Zoom by Node Count
-    const nodeCount = nodes.length;
+    const nodeCount = nodesRef.current.length;
     const initialZoom = nodeCount < 15 ? 1.4
                       : nodeCount < 50 ? 1.0
                       : nodeCount < 200 ? 0.7
@@ -298,7 +298,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     // Interaction bindings
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
-        onSelectNode(selectedNode);
+        const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
+        onSelectNode(fullNode);
       },
       onEdgeSelect: (edgeId) => {
         if (edgeId) {
@@ -308,7 +309,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       onBackgroundTap: () => {
         onSelectNode(null);
       }
-    }, nodes);
+    }, nodesRef.current);
 
     // A3. ResizeObserver calling cy.resize()
     const resizeObserver = new ResizeObserver(() => {
@@ -349,7 +350,74 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       cy.destroy();
       cyRef.current = null;
     };
-  }, [nodes, edges, onSelectNode, onSelectEdge]);
+  }, [onSelectNode, onSelectEdge]);
+
+  // Element Synchronization Effect: Syncs React nodes/edges props with Cytoscape cy.elements()
+  useEffect(() => {
+    nodesRef.current = nodes;
+    edgesRef.current = edges;
+
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    const newElements = buildGraphElements(nodes, edges);
+
+    cy.batch(() => {
+      cy.elements().remove();
+      cy.add(newElements);
+    });
+
+    if (typeof cy.layout === 'function') {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      runLayout(cy, {
+        nodeCount: nodes.length,
+        animate: !prefersReducedMotion && nodes.length < 100
+      });
+    }
+
+    if (selectedNodeId) {
+      selectNode(cy, selectedNodeId);
+    } else if (selectedEdgeId) {
+      const edge = cy.getElementById(selectedEdgeId);
+      if (edge.length > 0 && edge.isEdge()) {
+        edge.select();
+      }
+    }
+
+    if (impactResult) {
+      const { originNodeId, affectedNodeIds, affectedEdgeIds } = impactResult;
+      cy.batch(() => {
+        cy.elements().removeClass('impact-origin impact-affected impact-muted');
+        cy.nodes().forEach(node => {
+          const id = node.id();
+          if (id === originNodeId) {
+            node.addClass('impact-origin');
+          } else if (affectedNodeIds.has(id)) {
+            node.addClass('impact-affected');
+          } else {
+            node.addClass('impact-muted');
+          }
+        });
+
+        cy.edges().forEach(edge => {
+          const id = edge.id();
+          if (affectedEdgeIds.has(id)) {
+            edge.addClass('impact-affected');
+          } else {
+            edge.addClass('impact-muted');
+          }
+        });
+      });
+    }
+
+    if (selectedCycleNodeIds && selectedCycleNodeIds.length > 0) {
+      highlightCycle(cy, selectedCycleNodeIds);
+    }
+
+    if (focusedNodeId) {
+      focusOnNode(cy, focusedNodeId);
+    }
+  }, [nodes, edges]);
 
   // Handle selected node changes
   useEffect(() => {
