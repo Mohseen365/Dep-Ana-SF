@@ -14,7 +14,7 @@ describe('useViewState', () => {
     expect(result.current.selectedNodeId).toBeNull();
     expect(result.current.urlNodeId).toBeNull();
     expect(result.current.selectedFindingId).toBeNull();
-    expect(result.current.connectionState).toEqual({ direction: 'both', depth: 2 });
+    expect(result.current.connectionState).toEqual({ direction: 'both', depth: 2, enabled: false, originNodeId: null });
     expect(result.current.focusState.enabled).toBe(false);
     expect(result.current.impactState.enabled).toBe(false);
     expect(result.current.diagnosticsTab).toBe('none');
@@ -99,7 +99,7 @@ describe('useViewState', () => {
     const { result } = renderHook(() => useViewState());
 
     act(() => {
-      result.current.setConnectionState({ direction: 'dependencies', depth: 3 });
+      result.current.setConnectionState({ enabled: true, direction: 'dependencies', depth: 3 });
     });
 
     const search = window.location.search;
@@ -175,7 +175,7 @@ describe('useViewState', () => {
     expect(result.current.impactState.enabled).toBe(true);
     expect(result.current.impactState.depth).toBe(3);
     expect(result.current.diagnosticsTab).toBe('unresolved');
-    expect(result.current.connectionState).toEqual({ direction: 'dependencies', depth: 3 });
+    expect(result.current.connectionState).toEqual({ direction: 'dependencies', depth: 3, enabled: true, originNodeId: null });
     expect(result.current.selectedInvestigationId).toBe('inv-123');
   });
 
