@@ -222,6 +222,23 @@ describe('App composed shell', () => {
     expect(screen.getByRole('combobox', { name: 'Depth' })).toBeInTheDocument();
   });
 
+  it('verifies drawer-slot is absent when no node is selected and present when node is selected', async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(validData),
+    } as unknown as Response);
+
+    const { container } = render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Dependency Explorer')).toBeInTheDocument();
+    });
+
+    // Initially no node is selected -> no drawer slot in DOM
+    expect(container.querySelector('.drawer-slot')).toBeNull();
+  });
+
   it('renders NOT_ANALYZED empty state view cleanly when active project has no analysis data', async () => {
     // Mock project manifest fetch & project-specific analysis fetch returning 404 or HTML
     vi.mocked(fetch).mockImplementation(async (url) => {
