@@ -1,7 +1,7 @@
 {
-  "id": "default",
-  "name": "Default Salesforce Project",
-  "description": "Salesforce DX Architecture Analysis",
+  "id": "project-a",
+  "name": "Project A",
+  "description": "Project A",
   "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
   "createdAt": "2026-09-13T15:12:27.563Z",
   "updatedAt": "2026-09-13T15:12:27.563Z",
@@ -9,5 +9,5 @@
   "analysisStatus": "COMPLETE",
   "componentCount": 14,
   "dependencyCount": 16,
-  "analysisPath": "/explorer-data.json"
+  "analysisPath": "/projects/project-a/explorer-data.json"
 }

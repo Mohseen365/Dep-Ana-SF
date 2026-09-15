@@ -1,62 +1,64 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-09-13T15:12:27.563Z",
-  "sourceDirectory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+  "generatedAt": "2026-09-15T11:35:56.909Z",
+  "sourceDirectory": "temp-test-fixture-realistic",
   "project": {
     "id": "default",
     "name": "Default Salesforce Project",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
-    "createdAt": "2026-09-13T15:12:27.563Z",
-    "updatedAt": "2026-09-13T15:12:27.563Z",
-    "lastAnalyzedAt": "2026-09-13T15:12:27.563Z",
+    "sourcePath": "temp-test-fixture-realistic",
+    "createdAt": "2026-09-15T11:35:56.909Z",
+    "updatedAt": "2026-09-15T11:35:56.909Z",
+    "lastAnalyzedAt": "2026-09-15T11:35:56.909Z",
     "analysisStatus": "COMPLETE",
-    "componentCount": 14,
-    "dependencyCount": 16,
+    "componentCount": 10,
+    "dependencyCount": 13,
     "analysisPath": "/explorer-data.json"
   },
   "summary": {
-    "nodeCount": 14,
-    "edgeCount": 16,
+    "nodeCount": 10,
+    "edgeCount": 13,
     "highRiskCount": 0,
     "mediumRiskCount": 0,
-    "lowRiskCount": 14,
+    "lowRiskCount": 10,
     "cycleCount": 1,
-    "unresolvedCount": 5,
+    "unresolvedCount": 1,
     "inventory": {
-      "files": 9,
-      "apexClasses": 9,
-      "apexTriggers": 0,
-      "lwcJs": 0,
-      "lwcHtml": 0,
-      "visualforce": 0,
+      "files": 10,
+      "apexClasses": 4,
+      "apexTriggers": 1,
+      "lwcJs": 1,
+      "lwcHtml": 1,
+      "visualforce": 1,
       "flows": 0,
-      "objects": 0,
-      "fields": 0
+      "objects": 1,
+      "fields": 1
     }
   },
   "nodes": [
     {
-      "id": "ApexClass:BouquetOrderController",
-      "displayName": "BouquetOrderController",
+      "id": "ApexClass:AssetController",
+      "displayName": "AssetController",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
+      "file": "temp-test-fixture-realistic/classes/AssetController.cls",
       "metrics": {
         "fanIn": 2,
-        "fanOut": 2,
-        "coupling": 4,
+        "fanOut": 1,
+        "coupling": 3,
         "unresolved": 0,
-        "score": 0
+        "score": 2
       },
       "risk": "LOW",
-      "riskReasons": [],
+      "riskReasons": [
+        "direct LWC consumer"
+      ],
       "behavior": {
         "isTest": false,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 0,
+        "securitySignalsCount": 1,
         "queryCount": 0,
         "dmlCount": 0,
         "calloutCount": 0
@@ -69,44 +71,13 @@
       }
     },
     {
-      "id": "ApexClass:BouquetOrderFormService",
-      "displayName": "BouquetOrderFormService",
+      "id": "ApexClass:AssetHelper",
+      "displayName": "AssetHelper",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
+      "file": "temp-test-fixture-realistic/classes/AssetHelper.cls",
       "metrics": {
-        "fanIn": 2,
-        "fanOut": 4,
-        "coupling": 6,
-        "unresolved": 0,
-        "score": 0
-      },
-      "risk": "LOW",
-      "riskReasons": [],
-      "behavior": {
-        "isTest": false,
-        "sharing": null,
-        "publicContractsCount": 0,
-        "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 0,
-        "dmlCount": 0,
-        "calloutCount": 0
-      },
-      "refactoringReadiness": {
-        "isHighRisk": false,
-        "hasCycles": false,
-        "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderPageHandler",
-      "displayName": "BouquetOrderPageHandler",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
-      "metrics": {
-        "fanIn": 0,
-        "fanOut": 2,
+        "fanIn": 1,
+        "fanOut": 1,
         "coupling": 2,
         "unresolved": 0,
         "score": 0
@@ -118,28 +89,28 @@
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 0,
+        "securitySignalsCount": 1,
         "queryCount": 0,
         "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
         "isHighRisk": false,
-        "hasCycles": false,
+        "hasCycles": true,
         "hasUnresolved": false,
         "testCoverageStatus": "UNTESTED"
       }
     },
     {
-      "id": "ApexClass:BouquetOrderSelector",
-      "displayName": "BouquetOrderSelector",
+      "id": "ApexClass:AssetService",
+      "displayName": "AssetService",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
+      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
       "metrics": {
-        "fanIn": 1,
-        "fanOut": 6,
-        "coupling": 7,
-        "unresolved": 5,
+        "fanIn": 5,
+        "fanOut": 5,
+        "coupling": 10,
+        "unresolved": 1,
         "score": 1
       },
       "risk": "LOW",
@@ -151,158 +122,34 @@
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 3,
+        "securitySignalsCount": 1,
+        "queryCount": 1,
         "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
         "isHighRisk": false,
-        "hasCycles": false,
+        "hasCycles": true,
         "hasUnresolved": true,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "COVERED"
       }
     },
     {
-      "id": "ApexClass:CircularA",
-      "displayName": "CircularA",
+      "id": "ApexClass:AssetServiceTest",
+      "displayName": "AssetServiceTest",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
-      "metrics": {
-        "fanIn": 1,
-        "fanOut": 1,
-        "coupling": 2,
-        "unresolved": 0,
-        "score": 0
-      },
-      "risk": "LOW",
-      "riskReasons": [],
-      "behavior": {
-        "isTest": false,
-        "sharing": null,
-        "publicContractsCount": 0,
-        "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 0,
-        "dmlCount": 0,
-        "calloutCount": 0
-      },
-      "refactoringReadiness": {
-        "isHighRisk": false,
-        "hasCycles": true,
-        "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
-      }
-    },
-    {
-      "id": "ApexClass:CircularB",
-      "displayName": "CircularB",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
-      "metrics": {
-        "fanIn": 1,
-        "fanOut": 1,
-        "coupling": 2,
-        "unresolved": 0,
-        "score": 0
-      },
-      "risk": "LOW",
-      "riskReasons": [],
-      "behavior": {
-        "isTest": false,
-        "sharing": null,
-        "publicContractsCount": 0,
-        "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 0,
-        "dmlCount": 0,
-        "calloutCount": 0
-      },
-      "refactoringReadiness": {
-        "isHighRisk": false,
-        "hasCycles": true,
-        "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
-      }
-    },
-    {
-      "id": "ApexClass:HelperService",
-      "displayName": "HelperService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
-      "metrics": {
-        "fanIn": 2,
-        "fanOut": 0,
-        "coupling": 2,
-        "unresolved": 0,
-        "score": 0
-      },
-      "risk": "LOW",
-      "riskReasons": [],
-      "behavior": {
-        "isTest": false,
-        "sharing": null,
-        "publicContractsCount": 0,
-        "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 0,
-        "dmlCount": 0,
-        "calloutCount": 0
-      },
-      "refactoringReadiness": {
-        "isHighRisk": false,
-        "hasCycles": false,
-        "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
-      }
-    },
-    {
-      "id": "ApexClass:MultiCallService",
-      "displayName": "MultiCallService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
-      "metrics": {
-        "fanIn": 2,
-        "fanOut": 0,
-        "coupling": 2,
-        "unresolved": 0,
-        "score": 0
-      },
-      "risk": "LOW",
-      "riskReasons": [],
-      "behavior": {
-        "isTest": false,
-        "sharing": null,
-        "publicContractsCount": 0,
-        "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 0,
-        "dmlCount": 0,
-        "calloutCount": 0
-      },
-      "refactoringReadiness": {
-        "isHighRisk": false,
-        "hasCycles": false,
-        "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
-      }
-    },
-    {
-      "id": "ApexClass:UnrelatedService",
-      "displayName": "UnrelatedService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
+      "file": "temp-test-fixture-realistic/classes/AssetServiceTest.cls",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 0,
-        "coupling": 0,
+        "fanOut": 2,
+        "coupling": 2,
         "unresolved": 0,
         "score": 0
       },
       "risk": "LOW",
       "riskReasons": [],
       "behavior": {
-        "isTest": false,
+        "isTest": true,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
@@ -315,12 +162,12 @@
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "COVERED"
       }
     },
     {
-      "id": "External:Account",
-      "displayName": "Account",
+      "id": "External:NonExistentClass",
+      "displayName": "NonExistentClass",
       "type": "External",
       "file": "",
       "metrics": {
@@ -350,10 +197,10 @@
       }
     },
     {
-      "id": "External:Contact",
-      "displayName": "Contact",
-      "type": "External",
-      "file": "",
+      "id": "Field:Asset__c.Status__c",
+      "displayName": "Asset__c.Status__c",
+      "type": "CustomField",
+      "file": "temp-test-fixture-realistic/objects/Asset__c/fields/Status__c.field-meta.xml",
       "metrics": {
         "fanIn": 1,
         "fanOut": 0,
@@ -381,13 +228,13 @@
       }
     },
     {
-      "id": "External:Object:Account",
-      "displayName": "Object:Account",
-      "type": "External",
-      "file": "",
+      "id": "LWC:asset-card",
+      "displayName": "asset-card",
+      "type": "LWC",
+      "file": "temp-test-fixture-realistic/lwc/assetCard/assetCard.js",
       "metrics": {
-        "fanIn": 1,
-        "fanOut": 0,
+        "fanIn": 0,
+        "fanOut": 1,
         "coupling": 1,
         "unresolved": 0,
         "score": 0
@@ -412,14 +259,14 @@
       }
     },
     {
-      "id": "External:Object:Case",
-      "displayName": "Object:Case",
-      "type": "External",
-      "file": "",
+      "id": "Object:Asset__c",
+      "displayName": "Asset__c",
+      "type": "CustomObject",
+      "file": "temp-test-fixture-realistic/objects/Asset__c/Asset__c.object-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 3,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 3,
         "unresolved": 0,
         "score": 0
       },
@@ -443,13 +290,44 @@
       }
     },
     {
-      "id": "External:Object:Contact",
-      "displayName": "Object:Contact",
-      "type": "External",
-      "file": "",
+      "id": "Trigger:AssetTrigger",
+      "displayName": "AssetTrigger",
+      "type": "ApexTrigger",
+      "file": "temp-test-fixture-realistic/triggers/AssetTrigger.trigger",
       "metrics": {
-        "fanIn": 1,
-        "fanOut": 0,
+        "fanIn": 0,
+        "fanOut": 2,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Visualforce:AssetDashboard",
+      "displayName": "AssetDashboard",
+      "type": "Visualforce",
+      "file": "temp-test-fixture-realistic/pages/AssetDashboard.page",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 1,
         "coupling": 1,
         "unresolved": 0,
         "score": 0
@@ -476,578 +354,470 @@
   ],
   "edges": [
     {
-      "id": "ApexClass:BouquetOrderController|ApexClass:BouquetOrderFormService|instantiation||new BouquetOrderFormService()",
-      "source": "ApexClass:BouquetOrderController",
-      "target": "ApexClass:BouquetOrderFormService",
-      "relationshipType": "instantiation",
-      "method": null,
-      "evidence": "new BouquetOrderFormService()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 3,
-      "column": 47,
-      "methodOwner": "submitOrder",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": "submitOrder"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": null
-        },
-        "relationship": {
-          "type": "instantiation",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 47
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderController|ApexClass:BouquetOrderFormService|type-reference||BouquetOrderFormService",
-      "source": "ApexClass:BouquetOrderController",
-      "target": "ApexClass:BouquetOrderFormService",
-      "relationshipType": "type-reference",
-      "method": null,
-      "evidence": "BouquetOrderFormService",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "medium",
-      "line": 3,
-      "column": 9,
-      "methodOwner": "submitOrder",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": "submitOrder"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": null
-        },
-        "relationship": {
-          "type": "type-reference",
-          "resolution": "INFERRED"
-        },
-        "location": {
-          "line": 3,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:BouquetOrderSelector|method-call|getContactIdByUserId|BouquetOrderSelector.getContactIdByUserId()",
-      "source": "ApexClass:BouquetOrderFormService",
-      "target": "ApexClass:BouquetOrderSelector",
+      "id": "ApexClass:AssetController|ApexClass:AssetService|method-call|processAssets|AssetService.processAssets()",
+      "source": "ApexClass:AssetController",
+      "target": "ApexClass:AssetService",
       "relationshipType": "method-call",
-      "method": "getContactIdByUserId",
-      "evidence": "BouquetOrderSelector.getContactIdByUserId()",
+      "method": "processAssets",
+      "evidence": "AssetService.processAssets()",
       "unresolved": false,
       "resolutionClassification": "RESOLVED_LOCAL",
       "resolutionStrategy": "EXACT",
       "confidence": "high",
-      "line": 3,
-      "column": 16,
-      "methodOwner": "someMethod",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "someMethod"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": "getContactIdByUserId"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 16
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:HelperService|method-call|resolve|HelperService.resolve()",
-      "source": "ApexClass:BouquetOrderFormService",
-      "target": "ApexClass:HelperService",
-      "relationshipType": "method-call",
-      "method": "resolve",
-      "evidence": "HelperService.resolve()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 7,
+      "line": 4,
       "column": 9,
-      "methodOwner": "secondMethod",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "secondMethod"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "HelperService",
-          "method": "resolve"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 7,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:MultiCallService|method-call|firstCall|MultiCallService.firstCall()",
-      "source": "ApexClass:BouquetOrderFormService",
-      "target": "ApexClass:MultiCallService",
-      "relationshipType": "method-call",
-      "method": "firstCall",
-      "evidence": "MultiCallService.firstCall()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 8,
-      "column": 9,
-      "methodOwner": "secondMethod",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "secondMethod"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "MultiCallService",
-          "method": "firstCall"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 8,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService|ApexClass:MultiCallService|method-call|secondCall|MultiCallService.secondCall()",
-      "source": "ApexClass:BouquetOrderFormService",
-      "target": "ApexClass:MultiCallService",
-      "relationshipType": "method-call",
-      "method": "secondCall",
-      "evidence": "MultiCallService.secondCall()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 9,
-      "column": 9,
-      "methodOwner": "secondMethod",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderFormService",
-          "method": "secondMethod"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "MultiCallService",
-          "method": "secondCall"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 9,
-          "column": 9
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderPageHandler|ApexClass:BouquetOrderController|instantiation||new BouquetOrderController()",
-      "source": "ApexClass:BouquetOrderPageHandler",
-      "target": "ApexClass:BouquetOrderController",
-      "relationshipType": "instantiation",
-      "method": null,
-      "evidence": "new BouquetOrderController()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 3,
-      "column": 45,
       "methodOwner": "handleRequest",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "file": "temp-test-fixture-realistic/classes/AssetController.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "BouquetOrderPageHandler",
+          "name": "AssetController",
           "method": "handleRequest"
         },
         "target": {
           "type": "ApexClass",
-          "name": "BouquetOrderController",
-          "method": null
+          "name": "AssetService",
+          "method": "processAssets"
         },
         "relationship": {
-          "type": "instantiation",
+          "type": "method-call",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 3,
-          "column": 45
+          "line": 4,
+          "column": 9
         }
       }
     },
     {
-      "id": "ApexClass:BouquetOrderPageHandler|ApexClass:BouquetOrderController|type-reference||BouquetOrderController",
-      "source": "ApexClass:BouquetOrderPageHandler",
-      "target": "ApexClass:BouquetOrderController",
-      "relationshipType": "type-reference",
+      "id": "ApexClass:AssetHelper|ApexClass:AssetService|method-call|processAssets|AssetService.processAssets()",
+      "source": "ApexClass:AssetHelper",
+      "target": "ApexClass:AssetService",
+      "relationshipType": "method-call",
+      "method": "processAssets",
+      "evidence": "AssetService.processAssets()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 3,
+      "column": 9,
+      "methodOwner": "calculate",
+      "file": "temp-test-fixture-realistic/classes/AssetHelper.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetHelper",
+          "method": "calculate"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetService",
+          "method": "processAssets"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetService|ApexClass:AssetHelper|method-call|calculate|AssetHelper.calculate()",
+      "source": "ApexClass:AssetService",
+      "target": "ApexClass:AssetHelper",
+      "relationshipType": "method-call",
+      "method": "calculate",
+      "evidence": "AssetHelper.calculate()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 3,
+      "column": 9,
+      "methodOwner": "processAssets",
+      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetService",
+          "method": "processAssets"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetHelper",
+          "method": "calculate"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetService|External:NonExistentClass|method-call|doMagic|NonExistentClass.doMagic()",
+      "source": "ApexClass:AssetService",
+      "target": "External:NonExistentClass",
+      "relationshipType": "method-call",
+      "method": "doMagic",
+      "evidence": "NonExistentClass.doMagic()",
+      "unresolved": true,
+      "resolutionClassification": "UNKNOWN",
+      "resolutionStrategy": "LLM",
+      "confidence": "high",
+      "line": 4,
+      "column": 9,
+      "methodOwner": "processAssets",
+      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetService",
+          "method": "processAssets"
+        },
+        "target": {
+          "type": "External",
+          "name": "NonExistentClass",
+          "method": "doMagic"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 4,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetService|Field:Asset__c.Status__c|soql-field||Asset__c.Status__c",
+      "source": "ApexClass:AssetService",
+      "target": "Field:Asset__c.Status__c",
+      "relationshipType": "soql-field",
       "method": null,
-      "evidence": "BouquetOrderController",
+      "evidence": "Asset__c.Status__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetService",
+          "method": null
+        },
+        "target": {
+          "type": "CustomField",
+          "name": "Asset__c.Status__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetService|Object:Asset__c|generic-type||<Asset__c>",
+      "source": "ApexClass:AssetService",
+      "target": "Object:Asset__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Asset__c>",
       "unresolved": false,
       "resolutionClassification": "RESOLVED_LOCAL",
       "resolutionStrategy": "EXACT",
       "confidence": "medium",
-      "line": 3,
-      "column": 9,
-      "methodOwner": "handleRequest",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
+      "line": 5,
+      "column": 13,
+      "methodOwner": "processAssets",
+      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "BouquetOrderPageHandler",
-          "method": "handleRequest"
+          "name": "AssetService",
+          "method": "processAssets"
         },
         "target": {
-          "type": "ApexClass",
-          "name": "BouquetOrderController",
+          "type": "CustomObject",
+          "name": "Asset__c",
           "method": null
         },
         "relationship": {
-          "type": "type-reference",
+          "type": "generic-type",
           "resolution": "INFERRED"
         },
         "location": {
-          "line": 3,
-          "column": 9
+          "line": 5,
+          "column": 13
         }
       }
     },
     {
-      "id": "ApexClass:BouquetOrderSelector|ApexClass:HelperService|method-call|resolve|HelperService.resolve()",
-      "source": "ApexClass:BouquetOrderSelector",
-      "target": "ApexClass:HelperService",
+      "id": "ApexClass:AssetService|Object:Asset__c|soql-object||SOQL FROM Asset__c",
+      "source": "ApexClass:AssetService",
+      "target": "Object:Asset__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Asset__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "AssetService",
+          "method": null
+        },
+        "target": {
+          "type": "CustomObject",
+          "name": "Asset__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:AssetServiceTest|ApexClass:AssetService|method-call|processAssets|AssetService.processAssets()",
+      "source": "ApexClass:AssetServiceTest",
+      "target": "ApexClass:AssetService",
       "relationshipType": "method-call",
-      "method": "resolve",
-      "evidence": "HelperService.resolve()",
+      "method": "processAssets",
+      "evidence": "AssetService.processAssets()",
       "unresolved": false,
       "resolutionClassification": "RESOLVED_LOCAL",
       "resolutionStrategy": "EXACT",
       "confidence": "high",
-      "line": 3,
-      "column": 16,
-      "methodOwner": "getContactIdByUserId",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": "getContactIdByUserId"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "HelperService",
-          "method": "resolve"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 3,
-          "column": 16
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Account|generic-type||<Account>",
-      "source": "ApexClass:BouquetOrderSelector",
-      "target": "External:Account",
-      "relationshipType": "generic-type",
-      "method": null,
-      "evidence": "<Account>",
-      "unresolved": true,
-      "resolutionClassification": "UNKNOWN",
-      "resolutionStrategy": "LLM",
-      "confidence": "medium",
-      "line": 6,
-      "column": 23,
-      "methodOwner": null,
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "External",
-          "name": "Account",
-          "method": null
-        },
-        "relationship": {
-          "type": "generic-type",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 6,
-          "column": 23
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Contact|generic-type||<Contact>",
-      "source": "ApexClass:BouquetOrderSelector",
-      "target": "External:Contact",
-      "relationshipType": "generic-type",
-      "method": null,
-      "evidence": "<Contact>",
-      "unresolved": true,
-      "resolutionClassification": "UNKNOWN",
-      "resolutionStrategy": "LLM",
-      "confidence": "medium",
-      "line": 10,
-      "column": 23,
-      "methodOwner": null,
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "External",
-          "name": "Contact",
-          "method": null
-        },
-        "relationship": {
-          "type": "generic-type",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 10,
-          "column": 23
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Object:Account|soql-object||SOQL FROM Account",
-      "source": "ApexClass:BouquetOrderSelector",
-      "target": "External:Object:Account",
-      "relationshipType": "soql-object",
-      "method": null,
-      "evidence": "SOQL FROM Account",
-      "unresolved": true,
-      "resolutionClassification": "UNKNOWN",
-      "resolutionStrategy": "LLM",
-      "confidence": "MEDIUM",
-      "line": null,
-      "column": null,
-      "methodOwner": null,
-      "file": "",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "CustomObject",
-          "name": "Account",
-          "method": null
-        },
-        "relationship": {
-          "type": "soql-object",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 0,
-          "column": 0
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Object:Case|soql-object||SOQL FROM Case",
-      "source": "ApexClass:BouquetOrderSelector",
-      "target": "External:Object:Case",
-      "relationshipType": "soql-object",
-      "method": null,
-      "evidence": "SOQL FROM Case",
-      "unresolved": true,
-      "resolutionClassification": "UNKNOWN",
-      "resolutionStrategy": "LLM",
-      "confidence": "MEDIUM",
-      "line": null,
-      "column": null,
-      "methodOwner": null,
-      "file": "",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "CustomObject",
-          "name": "Case",
-          "method": null
-        },
-        "relationship": {
-          "type": "soql-object",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 0,
-          "column": 0
-        }
-      }
-    },
-    {
-      "id": "ApexClass:BouquetOrderSelector|External:Object:Contact|soql-object||SOQL FROM Contact",
-      "source": "ApexClass:BouquetOrderSelector",
-      "target": "External:Object:Contact",
-      "relationshipType": "soql-object",
-      "method": null,
-      "evidence": "SOQL FROM Contact",
-      "unresolved": true,
-      "resolutionClassification": "UNKNOWN",
-      "resolutionStrategy": "LLM",
-      "confidence": "MEDIUM",
-      "line": null,
-      "column": null,
-      "methodOwner": null,
-      "file": "",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "BouquetOrderSelector",
-          "method": null
-        },
-        "target": {
-          "type": "CustomObject",
-          "name": "Contact",
-          "method": null
-        },
-        "relationship": {
-          "type": "soql-object",
-          "resolution": "UNRESOLVED"
-        },
-        "location": {
-          "line": 0,
-          "column": 0
-        }
-      }
-    },
-    {
-      "id": "ApexClass:CircularA|ApexClass:CircularB|method-call|callA|CircularB.callA()",
-      "source": "ApexClass:CircularA",
-      "target": "ApexClass:CircularB",
-      "relationshipType": "method-call",
-      "method": "callA",
-      "evidence": "CircularB.callA()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 3,
+      "line": 5,
       "column": 9,
-      "methodOwner": "callB",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "methodOwner": "testProcess",
+      "file": "temp-test-fixture-realistic/classes/AssetServiceTest.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "CircularA",
-          "method": "callB"
+          "name": "AssetServiceTest",
+          "method": "testProcess"
         },
         "target": {
           "type": "ApexClass",
-          "name": "CircularB",
-          "method": "callA"
+          "name": "AssetService",
+          "method": "processAssets"
         },
         "relationship": {
           "type": "method-call",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 3,
+          "line": 5,
           "column": 9
         }
       }
     },
     {
-      "id": "ApexClass:CircularB|ApexClass:CircularA|method-call|callB|CircularA.callB()",
-      "source": "ApexClass:CircularB",
-      "target": "ApexClass:CircularA",
-      "relationshipType": "method-call",
-      "method": "callB",
-      "evidence": "CircularA.callB()",
+      "id": "ApexClass:AssetServiceTest|ApexClass:AssetService|test-reference||Test reference: AssetService",
+      "source": "ApexClass:AssetServiceTest",
+      "target": "ApexClass:AssetService",
+      "relationshipType": "test-reference",
+      "method": null,
+      "evidence": "Test reference: AssetService",
       "unresolved": false,
       "resolutionClassification": "RESOLVED_LOCAL",
       "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 3,
-      "column": 9,
-      "methodOwner": "callA",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "CircularB",
-          "method": "callA"
+          "name": "AssetServiceTest",
+          "method": null
         },
         "target": {
           "type": "ApexClass",
-          "name": "CircularA",
-          "method": "callB"
+          "name": "AssetService",
+          "method": null
         },
         "relationship": {
-          "type": "method-call",
+          "type": "test-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "LWC:asset-card|ApexClass:AssetController|lwc-apex|handleRequest|@salesforce/apex/AssetController.handleRequest",
+      "source": "LWC:asset-card",
+      "target": "ApexClass:AssetController",
+      "relationshipType": "lwc-apex",
+      "method": "handleRequest",
+      "evidence": "@salesforce/apex/AssetController.handleRequest",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 32,
+      "methodOwner": null,
+      "file": "temp-test-fixture-realistic/lwc/assetCard/assetCard.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "asset-card",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetController",
+          "method": "handleRequest"
+        },
+        "relationship": {
+          "type": "lwc-apex",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 3,
-          "column": 9
+          "line": 2,
+          "column": 32
+        }
+      }
+    },
+    {
+      "id": "Trigger:AssetTrigger|ApexClass:AssetService|trigger-handler|processAssets|AssetService.processAssets()",
+      "source": "Trigger:AssetTrigger",
+      "target": "ApexClass:AssetService",
+      "relationshipType": "trigger-handler",
+      "method": "processAssets",
+      "evidence": "AssetService.processAssets()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "LOW",
+      "line": 2,
+      "column": 7,
+      "methodOwner": null,
+      "file": "temp-test-fixture-realistic/triggers/AssetTrigger.trigger",
+      "canonical": {
+        "source": {
+          "type": "ApexTrigger",
+          "name": "AssetTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetService",
+          "method": "processAssets"
+        },
+        "relationship": {
+          "type": "trigger-handler",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 2,
+          "column": 7
+        }
+      }
+    },
+    {
+      "id": "Trigger:AssetTrigger|Object:Asset__c|trigger-object||Trigger AssetTrigger on Asset__c",
+      "source": "Trigger:AssetTrigger",
+      "target": "Object:Asset__c",
+      "relationshipType": "trigger-object",
+      "method": null,
+      "evidence": "Trigger AssetTrigger on Asset__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexTrigger",
+          "name": "AssetTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "CustomObject",
+          "name": "Asset__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "trigger-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "Visualforce:AssetDashboard|ApexClass:AssetController|visualforce-controller||AssetController",
+      "source": "Visualforce:AssetDashboard",
+      "target": "ApexClass:AssetController",
+      "relationshipType": "visualforce-controller",
+      "method": null,
+      "evidence": "AssetController",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "LOW",
+      "line": 1,
+      "column": 24,
+      "methodOwner": null,
+      "file": "temp-test-fixture-realistic/pages/AssetDashboard.page",
+      "canonical": {
+        "source": {
+          "type": "Visualforce",
+          "name": "AssetDashboard",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "AssetController",
+          "method": null
+        },
+        "relationship": {
+          "type": "visualforce-controller",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 1,
+          "column": 24
         }
       }
     }
@@ -1057,321 +827,241 @@
       "id": "cycle-1",
       "size": 2,
       "nodes": [
-        "ApexClass:CircularA",
-        "ApexClass:CircularB"
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService"
       ]
     }
   ],
   "unresolvedReferences": [
     {
-      "edgeId": "ApexClass:BouquetOrderSelector|External:Account|generic-type||<Account>",
-      "sourceNodeId": "ApexClass:BouquetOrderSelector",
-      "targetName": "Account",
+      "edgeId": "ApexClass:AssetService|External:NonExistentClass|method-call|doMagic|NonExistentClass.doMagic()",
+      "sourceNodeId": "ApexClass:AssetService",
+      "targetName": "NonExistentClass",
       "targetType": "External",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "line": 6,
-      "evidence": "<Account>",
-      "reason": "Unresolved reference to External:Account"
-    },
-    {
-      "edgeId": "ApexClass:BouquetOrderSelector|External:Contact|generic-type||<Contact>",
-      "sourceNodeId": "ApexClass:BouquetOrderSelector",
-      "targetName": "Contact",
-      "targetType": "External",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "line": 10,
-      "evidence": "<Contact>",
-      "reason": "Unresolved reference to External:Contact"
-    },
-    {
-      "edgeId": "ApexClass:BouquetOrderSelector|External:Object:Account|soql-object||SOQL FROM Account",
-      "sourceNodeId": "ApexClass:BouquetOrderSelector",
-      "targetName": "Object",
-      "targetType": "External",
-      "file": "",
-      "line": null,
-      "evidence": "SOQL FROM Account",
-      "reason": "Unresolved reference to External:Object:Account"
-    },
-    {
-      "edgeId": "ApexClass:BouquetOrderSelector|External:Object:Case|soql-object||SOQL FROM Case",
-      "sourceNodeId": "ApexClass:BouquetOrderSelector",
-      "targetName": "Object",
-      "targetType": "External",
-      "file": "",
-      "line": null,
-      "evidence": "SOQL FROM Case",
-      "reason": "Unresolved reference to External:Object:Case"
-    },
-    {
-      "edgeId": "ApexClass:BouquetOrderSelector|External:Object:Contact|soql-object||SOQL FROM Contact",
-      "sourceNodeId": "ApexClass:BouquetOrderSelector",
-      "targetName": "Object",
-      "targetType": "External",
-      "file": "",
-      "line": null,
-      "evidence": "SOQL FROM Contact",
-      "reason": "Unresolved reference to External:Object:Contact"
+      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "line": 4,
+      "evidence": "NonExistentClass.doMagic()",
+      "reason": "Unresolved reference to External:NonExistentClass"
     }
   ],
   "impactSummaries": {
-    "ApexClass:BouquetOrderController": {
-      "id": "ApexClass:BouquetOrderController",
+    "ApexClass:AssetController": {
+      "id": "ApexClass:AssetController",
       "directDependencies": [
-        "ApexClass:BouquetOrderFormService"
+        "ApexClass:AssetService"
       ],
       "directDependents": [
-        "ApexClass:BouquetOrderPageHandler"
+        "LWC:asset-card",
+        "Visualforce:AssetDashboard"
       ],
       "transitiveDependencies": [
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderSelector",
-        "ApexClass:HelperService",
-        "ApexClass:MultiCallService",
-        "External:Account",
-        "External:Contact",
-        "External:Object:Account",
-        "External:Object:Case",
-        "External:Object:Contact"
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
       ],
       "transitiveDependents": [
-        "ApexClass:BouquetOrderPageHandler"
+        "LWC:asset-card",
+        "Visualforce:AssetDashboard"
       ],
       "impactedTests": [],
-      "totalImpactCount": 10
+      "totalImpactCount": 7
     },
-    "ApexClass:BouquetOrderFormService": {
-      "id": "ApexClass:BouquetOrderFormService",
+    "ApexClass:AssetHelper": {
+      "id": "ApexClass:AssetHelper",
       "directDependencies": [
-        "ApexClass:BouquetOrderSelector",
-        "ApexClass:HelperService",
-        "ApexClass:MultiCallService"
+        "ApexClass:AssetService"
       ],
       "directDependents": [
-        "ApexClass:BouquetOrderController"
+        "ApexClass:AssetService"
       ],
       "transitiveDependencies": [
-        "ApexClass:BouquetOrderSelector",
-        "ApexClass:HelperService",
-        "ApexClass:MultiCallService",
-        "External:Account",
-        "External:Contact",
-        "External:Object:Account",
-        "External:Object:Case",
-        "External:Object:Contact"
+        "ApexClass:AssetService",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
       ],
       "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderPageHandler"
+        "ApexClass:AssetController",
+        "ApexClass:AssetService",
+        "ApexClass:AssetServiceTest",
+        "LWC:asset-card",
+        "Trigger:AssetTrigger",
+        "Visualforce:AssetDashboard"
       ],
-      "impactedTests": [],
-      "totalImpactCount": 10
-    },
-    "ApexClass:BouquetOrderPageHandler": {
-      "id": "ApexClass:BouquetOrderPageHandler",
-      "directDependencies": [
-        "ApexClass:BouquetOrderController"
+      "impactedTests": [
+        "ApexClass:AssetServiceTest"
       ],
-      "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderSelector",
-        "ApexClass:HelperService",
-        "ApexClass:MultiCallService",
-        "External:Account",
-        "External:Contact",
-        "External:Object:Account",
-        "External:Object:Case",
-        "External:Object:Contact"
-      ],
-      "transitiveDependents": [],
-      "impactedTests": [],
-      "totalImpactCount": 10
-    },
-    "ApexClass:BouquetOrderSelector": {
-      "id": "ApexClass:BouquetOrderSelector",
-      "directDependencies": [
-        "ApexClass:HelperService",
-        "External:Account",
-        "External:Contact",
-        "External:Object:Account",
-        "External:Object:Case",
-        "External:Object:Contact"
-      ],
-      "directDependents": [
-        "ApexClass:BouquetOrderFormService"
-      ],
-      "transitiveDependencies": [
-        "ApexClass:HelperService",
-        "External:Account",
-        "External:Contact",
-        "External:Object:Account",
-        "External:Object:Case",
-        "External:Object:Contact"
-      ],
-      "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler"
-      ],
-      "impactedTests": [],
       "totalImpactCount": 9
     },
-    "ApexClass:CircularA": {
-      "id": "ApexClass:CircularA",
+    "ApexClass:AssetService": {
+      "id": "ApexClass:AssetService",
       "directDependencies": [
-        "ApexClass:CircularB"
+        "ApexClass:AssetHelper",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
       ],
       "directDependents": [
-        "ApexClass:CircularB"
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetServiceTest",
+        "Trigger:AssetTrigger"
       ],
       "transitiveDependencies": [
-        "ApexClass:CircularB"
+        "ApexClass:AssetHelper",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
       ],
       "transitiveDependents": [
-        "ApexClass:CircularB"
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetServiceTest",
+        "LWC:asset-card",
+        "Trigger:AssetTrigger",
+        "Visualforce:AssetDashboard"
       ],
-      "impactedTests": [],
-      "totalImpactCount": 1
+      "impactedTests": [
+        "ApexClass:AssetServiceTest"
+      ],
+      "totalImpactCount": 9
     },
-    "ApexClass:CircularB": {
-      "id": "ApexClass:CircularB",
+    "ApexClass:AssetServiceTest": {
+      "id": "ApexClass:AssetServiceTest",
       "directDependencies": [
-        "ApexClass:CircularA"
+        "ApexClass:AssetService"
       ],
-      "directDependents": [
-        "ApexClass:CircularA"
-      ],
-      "transitiveDependencies": [
-        "ApexClass:CircularA"
-      ],
-      "transitiveDependents": [
-        "ApexClass:CircularA"
-      ],
-      "impactedTests": [],
-      "totalImpactCount": 1
-    },
-    "ApexClass:HelperService": {
-      "id": "ApexClass:HelperService",
-      "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderSelector"
-      ],
-      "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler",
-        "ApexClass:BouquetOrderSelector"
-      ],
-      "impactedTests": [],
-      "totalImpactCount": 4
-    },
-    "ApexClass:MultiCallService": {
-      "id": "ApexClass:MultiCallService",
-      "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BouquetOrderFormService"
-      ],
-      "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler"
-      ],
-      "impactedTests": [],
-      "totalImpactCount": 3
-    },
-    "ApexClass:UnrelatedService": {
-      "id": "ApexClass:UnrelatedService",
-      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [],
+      "transitiveDependencies": [
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
+      ],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 0
+      "totalImpactCount": 5
     },
-    "External:Account": {
-      "id": "External:Account",
+    "External:NonExistentClass": {
+      "id": "External:NonExistentClass",
       "directDependencies": [],
       "directDependents": [
-        "ApexClass:BouquetOrderSelector"
+        "ApexClass:AssetService"
       ],
       "transitiveDependencies": [],
       "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler",
-        "ApexClass:BouquetOrderSelector"
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "ApexClass:AssetServiceTest",
+        "LWC:asset-card",
+        "Trigger:AssetTrigger",
+        "Visualforce:AssetDashboard"
       ],
-      "impactedTests": [],
-      "totalImpactCount": 4
+      "impactedTests": [
+        "ApexClass:AssetServiceTest"
+      ],
+      "totalImpactCount": 7
     },
-    "External:Contact": {
-      "id": "External:Contact",
+    "Field:Asset__c.Status__c": {
+      "id": "Field:Asset__c.Status__c",
       "directDependencies": [],
       "directDependents": [
-        "ApexClass:BouquetOrderSelector"
+        "ApexClass:AssetService"
       ],
       "transitiveDependencies": [],
       "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler",
-        "ApexClass:BouquetOrderSelector"
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "ApexClass:AssetServiceTest",
+        "LWC:asset-card",
+        "Trigger:AssetTrigger",
+        "Visualforce:AssetDashboard"
       ],
-      "impactedTests": [],
-      "totalImpactCount": 4
+      "impactedTests": [
+        "ApexClass:AssetServiceTest"
+      ],
+      "totalImpactCount": 7
     },
-    "External:Object:Account": {
-      "id": "External:Object:Account",
+    "LWC:asset-card": {
+      "id": "LWC:asset-card",
+      "directDependencies": [
+        "ApexClass:AssetController"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 6
+    },
+    "Object:Asset__c": {
+      "id": "Object:Asset__c",
       "directDependencies": [],
       "directDependents": [
-        "ApexClass:BouquetOrderSelector"
+        "ApexClass:AssetService",
+        "Trigger:AssetTrigger"
       ],
       "transitiveDependencies": [],
       "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler",
-        "ApexClass:BouquetOrderSelector"
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "ApexClass:AssetServiceTest",
+        "LWC:asset-card",
+        "Trigger:AssetTrigger",
+        "Visualforce:AssetDashboard"
       ],
-      "impactedTests": [],
-      "totalImpactCount": 4
+      "impactedTests": [
+        "ApexClass:AssetServiceTest"
+      ],
+      "totalImpactCount": 7
     },
-    "External:Object:Case": {
-      "id": "External:Object:Case",
-      "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BouquetOrderSelector"
+    "Trigger:AssetTrigger": {
+      "id": "Trigger:AssetTrigger",
+      "directDependencies": [
+        "ApexClass:AssetService",
+        "Object:Asset__c"
       ],
-      "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler",
-        "ApexClass:BouquetOrderSelector"
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
       ],
+      "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 4
+      "totalImpactCount": 5
     },
-    "External:Object:Contact": {
-      "id": "External:Object:Contact",
-      "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BouquetOrderSelector"
+    "Visualforce:AssetDashboard": {
+      "id": "Visualforce:AssetDashboard",
+      "directDependencies": [
+        "ApexClass:AssetController"
       ],
-      "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BouquetOrderController",
-        "ApexClass:BouquetOrderFormService",
-        "ApexClass:BouquetOrderPageHandler",
-        "ApexClass:BouquetOrderSelector"
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:AssetController",
+        "ApexClass:AssetHelper",
+        "ApexClass:AssetService",
+        "External:NonExistentClass",
+        "Field:Asset__c.Status__c",
+        "Object:Asset__c"
       ],
+      "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 4
+      "totalImpactCount": 6
     }
   }
 }
