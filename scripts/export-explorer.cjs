@@ -488,16 +488,19 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     const sourceNormType = normalizeNodeType(source.split(":")[0]);
     const targetNormType = normalizeNodeType(target.split(":")[0]);
 
+    const rawCanSource = rawEdge.canonical?.source;
+    const rawCanTarget = rawEdge.canonical?.target;
+
     const canonical = {
       source: {
-        type: normalizeNodeType(rawEdge.canonical?.source?.type || sourceNormType),
-        name: rawEdge.canonical?.source?.name || (source.includes(":") ? source.split(":")[1] : source),
-        method: rawEdge.canonical?.source?.method || methodOwner,
+        type: normalizeNodeType(rawCanSource?.type || sourceNormType),
+        name: rawCanSource?.name || (source.includes(":") ? source.split(":")[1] : source),
+        method: rawCanSource?.method !== undefined ? rawCanSource.method : methodOwner,
       },
       target: {
-        type: normalizeNodeType(rawEdge.canonical?.target?.type || targetNormType),
-        name: rawEdge.canonical?.target?.name || (target.includes(":") ? target.split(":")[1] : target),
-        method: rawEdge.canonical?.target?.method || method,
+        type: normalizeNodeType(rawCanTarget?.type || targetNormType),
+        name: rawCanTarget?.name || (target.includes(":") ? target.split(":")[1] : target),
+        method: rawCanTarget?.method !== undefined ? rawCanTarget.method : method,
       },
       relationship: {
         type: rawEdge.canonical?.relationship?.type || relationshipType,
