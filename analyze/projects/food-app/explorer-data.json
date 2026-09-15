@@ -19,17 +19,17 @@
   "summary": {
     "nodeCount": 31,
     "edgeCount": 84,
-    "highRiskCount": 3,
-    "mediumRiskCount": 2,
-    "lowRiskCount": 26,
+    "highRiskCount": 0,
+    "mediumRiskCount": 0,
+    "lowRiskCount": 31,
     "cycleCount": 0,
     "unresolvedCount": 0,
     "inventory": {
-      "files": 64,
+      "files": 31,
       "apexClasses": 8,
       "apexTriggers": 1,
       "lwcJs": 7,
-      "lwcHtml": 7,
+      "lwcHtml": 0,
       "visualforce": 0,
       "flows": 0,
       "objects": 3,
@@ -43,24 +43,22 @@
       "type": "ApexClass",
       "file": "../Food-App/force-app/main/default/classes/BookingController.cls",
       "metrics": {
-        "fanIn": 7,
-        "fanOut": 6,
-        "coupling": 13,
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 2
+        "score": 0
       },
       "risk": "LOW",
-      "riskReasons": [
-        "direct LWC consumer"
-      ],
+      "riskReasons": [],
       "behavior": {
         "isTest": false,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 1,
-        "queryCount": 1,
-        "dmlCount": 2,
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
@@ -77,23 +75,21 @@
       "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 12,
-        "coupling": 12,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 2
+        "score": 0
       },
       "risk": "LOW",
-      "riskReasons": [
-        "high fan-out"
-      ],
+      "riskReasons": [],
       "behavior": {
         "isTest": true,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
         "securitySignalsCount": 0,
-        "queryCount": 2,
-        "dmlCount": 2,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
@@ -109,30 +105,26 @@
       "type": "ApexClass",
       "file": "../Food-App/force-app/main/default/classes/PlanController.cls",
       "metrics": {
-        "fanIn": 14,
-        "fanOut": 7,
-        "coupling": 21,
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 8
+        "score": 0
       },
-      "risk": "HIGH",
-      "riskReasons": [
-        "high fan-in",
-        "high coupling",
-        "direct LWC consumer"
-      ],
+      "risk": "LOW",
+      "riskReasons": [],
       "behavior": {
         "isTest": false,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 2,
-        "queryCount": 1,
-        "dmlCount": 3,
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
-        "isHighRisk": true,
+        "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
         "testCoverageStatus": "COVERED"
@@ -145,23 +137,21 @@
       "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 12,
-        "coupling": 12,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 2
+        "score": 0
       },
       "risk": "LOW",
-      "riskReasons": [
-        "high fan-out"
-      ],
+      "riskReasons": [],
       "behavior": {
         "isTest": true,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
         "securitySignalsCount": 0,
-        "queryCount": 1,
-        "dmlCount": 1,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
@@ -177,30 +167,26 @@
       "type": "ApexClass",
       "file": "../Food-App/force-app/main/default/classes/ReviewController.cls",
       "metrics": {
-        "fanIn": 11,
-        "fanOut": 6,
-        "coupling": 17,
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 8
+        "score": 0
       },
-      "risk": "HIGH",
-      "riskReasons": [
-        "high fan-in",
-        "high coupling",
-        "direct LWC consumer"
-      ],
+      "risk": "LOW",
+      "riskReasons": [],
       "behavior": {
         "isTest": false,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 2,
-        "queryCount": 1,
-        "dmlCount": 3,
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
-        "isHighRisk": true,
+        "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
         "testCoverageStatus": "COVERED"
@@ -213,24 +199,21 @@
       "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 15,
-        "coupling": 15,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 5
+        "score": 0
       },
-      "risk": "MEDIUM",
-      "riskReasons": [
-        "high fan-out",
-        "high coupling"
-      ],
+      "risk": "LOW",
+      "riskReasons": [],
       "behavior": {
         "isTest": true,
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
         "securitySignalsCount": 0,
-        "queryCount": 2,
-        "dmlCount": 2,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
@@ -246,9 +229,9 @@
       "type": "ApexClass",
       "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandler.cls",
       "metrics": {
-        "fanIn": 1,
-        "fanOut": 5,
-        "coupling": 6,
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -259,16 +242,16 @@
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 2,
-        "queryCount": 1,
-        "dmlCount": 1,
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "LIKELY_COVERED"
+        "testCoverageStatus": "COVERED"
       }
     },
     {
@@ -278,8 +261,8 @@
       "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandlerTest.cls",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 6,
-        "coupling": 6,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -291,8 +274,8 @@
         "publicContractsCount": 0,
         "asyncPatterns": [],
         "securitySignalsCount": 0,
-        "queryCount": 1,
-        "dmlCount": 4,
+        "queryCount": 0,
+        "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
@@ -308,9 +291,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/Plan__c.field-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -339,9 +322,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/Price__c.field-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -370,9 +353,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/Status__c.field-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -432,9 +415,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/Discount__c.field-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -463,9 +446,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/Duration__c.field-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -494,9 +477,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/Price__c.field-meta.xml",
       "metrics": {
-        "fanIn": 2,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 2,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -525,9 +508,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/RatingsAverage__c.field-meta.xml",
       "metrics": {
-        "fanIn": 2,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 2,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -556,9 +539,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Review__c/fields/Plan__c.field-meta.xml",
       "metrics": {
-        "fanIn": 2,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 2,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -587,9 +570,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Review__c/fields/Rating__c.field-meta.xml",
       "metrics": {
-        "fanIn": 2,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 2,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -618,9 +601,9 @@
       "type": "CustomField",
       "file": "../Food-App/force-app/main/default/objects/Review__c/fields/Review__c.field-meta.xml",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 1,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -681,8 +664,8 @@
       "file": "../Food-App/force-app/main/default/lwc/bookingList/bookingList.js",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 2,
-        "coupling": 2,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -712,8 +695,8 @@
       "file": "../Food-App/force-app/main/default/lwc/foodLandingPage/foodLandingPage.js",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 2,
-        "coupling": 2,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -743,8 +726,8 @@
       "file": "../Food-App/force-app/main/default/lwc/planAdmin/planAdmin.js",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 4,
-        "coupling": 4,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -774,8 +757,8 @@
       "file": "../Food-App/force-app/main/default/lwc/planDetail/planDetail.js",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 4,
-        "coupling": 4,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -805,8 +788,8 @@
       "file": "../Food-App/force-app/main/default/lwc/planList/planList.js",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 1,
-        "coupling": 1,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -897,9 +880,9 @@
       "type": "CustomObject",
       "file": "../Food-App/force-app/main/default/objects/Booking__c/Booking__c.object-meta.xml",
       "metrics": {
-        "fanIn": 7,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 7,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -928,17 +911,14 @@
       "type": "CustomObject",
       "file": "../Food-App/force-app/main/default/objects/Plan__c/Plan__c.object-meta.xml",
       "metrics": {
-        "fanIn": 18,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 18,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 6
+        "score": 0
       },
-      "risk": "HIGH",
-      "riskReasons": [
-        "high fan-in",
-        "high coupling"
-      ],
+      "risk": "LOW",
+      "riskReasons": [],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -950,7 +930,7 @@
         "calloutCount": 0
       },
       "refactoringReadiness": {
-        "isHighRisk": true,
+        "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
         "testCoverageStatus": "AMBIGUOUS"
@@ -962,16 +942,14 @@
       "type": "CustomObject",
       "file": "../Food-App/force-app/main/default/objects/Review__c/Review__c.object-meta.xml",
       "metrics": {
-        "fanIn": 12,
+        "fanIn": 0,
         "fanOut": 0,
-        "coupling": 12,
+        "coupling": 0,
         "unresolved": 0,
-        "score": 3
+        "score": 0
       },
-      "risk": "MEDIUM",
-      "riskReasons": [
-        "high fan-in"
-      ],
+      "risk": "LOW",
+      "riskReasons": [],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -996,8 +974,8 @@
       "file": "../Food-App/force-app/main/default/triggers/ReviewTrigger.trigger",
       "metrics": {
         "fanIn": 0,
-        "fanOut": 2,
-        "coupling": 2,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -1024,9 +1002,9 @@
   "edges": [
     {
       "id": "ApexClass:BookingController|Field:Booking__c.Plan__c|soql-field||Booking__c.Plan__c",
-      "source": "ApexClass:BookingController",
-      "target": "Field:Booking__c.Plan__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Booking__c.Plan__c",
       "unresolved": false,
@@ -1044,7 +1022,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Booking__c.Plan__c",
           "method": null
         },
@@ -1060,9 +1038,9 @@
     },
     {
       "id": "ApexClass:BookingController|Field:Booking__c.Price__c|soql-field||Booking__c.Price__c",
-      "source": "ApexClass:BookingController",
-      "target": "Field:Booking__c.Price__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Booking__c.Price__c",
       "unresolved": false,
@@ -1080,7 +1058,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Booking__c.Price__c",
           "method": null
         },
@@ -1096,9 +1074,9 @@
     },
     {
       "id": "ApexClass:BookingController|Field:Booking__c.Status__c|soql-field||Booking__c.Status__c",
-      "source": "ApexClass:BookingController",
-      "target": "Field:Booking__c.Status__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Booking__c.Status__c",
       "unresolved": false,
@@ -1116,7 +1094,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Booking__c.Status__c",
           "method": null
         },
@@ -1132,9 +1110,9 @@
     },
     {
       "id": "ApexClass:BookingController|Object:Booking__c|generic-type||<Booking__c>",
-      "source": "ApexClass:BookingController",
-      "target": "Object:Booking__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Booking__c>",
       "unresolved": false,
@@ -1152,7 +1130,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1168,9 +1146,9 @@
     },
     {
       "id": "ApexClass:BookingController|Object:Booking__c|soql-object||SOQL FROM Booking__c",
-      "source": "ApexClass:BookingController",
-      "target": "Object:Booking__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Booking__c",
       "unresolved": false,
@@ -1188,7 +1166,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1204,9 +1182,9 @@
     },
     {
       "id": "ApexClass:BookingController|Object:Booking__c|type-reference||Booking__c",
-      "source": "ApexClass:BookingController",
-      "target": "Object:Booking__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Booking__c",
       "unresolved": false,
@@ -1224,7 +1202,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1240,9 +1218,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|createBooking|BookingController.createBooking()",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "createBooking",
       "evidence": "BookingController.createBooking()",
       "unresolved": false,
@@ -1276,9 +1254,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|deleteBooking|BookingController.deleteBooking()",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "deleteBooking",
       "evidence": "BookingController.deleteBooking()",
       "unresolved": false,
@@ -1312,9 +1290,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|getAllBookings|BookingController.getAllBookings()",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllBookings",
       "evidence": "BookingController.getAllBookings()",
       "unresolved": false,
@@ -1348,9 +1326,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|getBooking|BookingController.getBooking()",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getBooking",
       "evidence": "BookingController.getBooking()",
       "unresolved": false,
@@ -1384,9 +1362,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|test-reference||Test reference: BookingController",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "test-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Test reference: BookingController",
       "unresolved": false,
@@ -1420,9 +1398,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Booking__c|generic-type||<Booking__c>",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Booking__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Booking__c>",
       "unresolved": false,
@@ -1440,7 +1418,7 @@
           "method": "testGetAllBookings"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1456,9 +1434,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Booking__c|instantiation||new Booking__c()",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Booking__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Booking__c()",
       "unresolved": false,
@@ -1476,7 +1454,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1492,9 +1470,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Booking__c|soql-object||SOQL FROM Booking__c",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Booking__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Booking__c",
       "unresolved": false,
@@ -1512,7 +1490,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1528,9 +1506,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Booking__c|type-reference||Booking__c",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Booking__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Booking__c",
       "unresolved": false,
@@ -1548,7 +1526,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Booking__c",
           "method": null
         },
@@ -1564,9 +1542,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Plan__c|instantiation||new Plan__c()",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Plan__c()",
       "unresolved": false,
@@ -1584,7 +1562,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -1600,9 +1578,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Plan__c",
       "unresolved": false,
@@ -1620,7 +1598,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -1636,9 +1614,9 @@
     },
     {
       "id": "ApexClass:BookingControllerTest|Object:Plan__c|type-reference||Plan__c",
-      "source": "ApexClass:BookingControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c",
       "unresolved": false,
@@ -1656,7 +1634,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -1672,9 +1650,9 @@
     },
     {
       "id": "ApexClass:PlanController|Field:Plan__c.Discount__c|soql-field||Plan__c.Discount__c",
-      "source": "ApexClass:PlanController",
-      "target": "Field:Plan__c.Discount__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c.Discount__c",
       "unresolved": false,
@@ -1692,7 +1670,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Plan__c.Discount__c",
           "method": null
         },
@@ -1708,9 +1686,9 @@
     },
     {
       "id": "ApexClass:PlanController|Field:Plan__c.Duration__c|soql-field||Plan__c.Duration__c",
-      "source": "ApexClass:PlanController",
-      "target": "Field:Plan__c.Duration__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c.Duration__c",
       "unresolved": false,
@@ -1728,7 +1706,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Plan__c.Duration__c",
           "method": null
         },
@@ -1744,9 +1722,9 @@
     },
     {
       "id": "ApexClass:PlanController|Field:Plan__c.Price__c|soql-field||Plan__c.Price__c",
-      "source": "ApexClass:PlanController",
-      "target": "Field:Plan__c.Price__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c.Price__c",
       "unresolved": false,
@@ -1764,7 +1742,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Plan__c.Price__c",
           "method": null
         },
@@ -1780,9 +1758,9 @@
     },
     {
       "id": "ApexClass:PlanController|Field:Plan__c.RatingsAverage__c|soql-field||Plan__c.RatingsAverage__c",
-      "source": "ApexClass:PlanController",
-      "target": "Field:Plan__c.RatingsAverage__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c.RatingsAverage__c",
       "unresolved": false,
@@ -1800,7 +1778,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Plan__c.RatingsAverage__c",
           "method": null
         },
@@ -1816,9 +1794,9 @@
     },
     {
       "id": "ApexClass:PlanController|Object:Plan__c|generic-type||<Plan__c>",
-      "source": "ApexClass:PlanController",
-      "target": "Object:Plan__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Plan__c>",
       "unresolved": false,
@@ -1836,7 +1814,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -1852,9 +1830,9 @@
     },
     {
       "id": "ApexClass:PlanController|Object:Plan__c|soql-object||SOQL FROM Plan__c",
-      "source": "ApexClass:PlanController",
-      "target": "Object:Plan__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Plan__c",
       "unresolved": false,
@@ -1872,7 +1850,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -1888,9 +1866,9 @@
     },
     {
       "id": "ApexClass:PlanController|Object:Plan__c|type-reference||Plan__c",
-      "source": "ApexClass:PlanController",
-      "target": "Object:Plan__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c",
       "unresolved": false,
@@ -1908,7 +1886,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -1924,9 +1902,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|createPlan|PlanController.createPlan()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "createPlan",
       "evidence": "PlanController.createPlan()",
       "unresolved": false,
@@ -1960,9 +1938,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|deletePlan|PlanController.deletePlan()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "deletePlan",
       "evidence": "PlanController.deletePlan()",
       "unresolved": false,
@@ -1996,9 +1974,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|getAllPlans|PlanController.getAllPlans()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllPlans",
       "evidence": "PlanController.getAllPlans()",
       "unresolved": false,
@@ -2032,9 +2010,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|getPlan|PlanController.getPlan()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getPlan",
       "evidence": "PlanController.getPlan()",
       "unresolved": false,
@@ -2068,9 +2046,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|top3Plans|PlanController.top3Plans()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "top3Plans",
       "evidence": "PlanController.top3Plans()",
       "unresolved": false,
@@ -2104,9 +2082,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|updatePlan|PlanController.updatePlan()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "updatePlan",
       "evidence": "PlanController.updatePlan()",
       "unresolved": false,
@@ -2140,9 +2118,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|test-reference||Test reference: PlanController",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "test-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Test reference: PlanController",
       "unresolved": false,
@@ -2176,9 +2154,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|Field:Plan__c.Price__c|soql-field||Plan__c.Price__c",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "Field:Plan__c.Price__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c.Price__c",
       "unresolved": false,
@@ -2196,7 +2174,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Plan__c.Price__c",
           "method": null
         },
@@ -2212,9 +2190,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|Object:Plan__c|generic-type||<Plan__c>",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Plan__c>",
       "unresolved": false,
@@ -2232,7 +2210,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2248,9 +2226,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|Object:Plan__c|instantiation||new Plan__c()",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Plan__c()",
       "unresolved": false,
@@ -2268,7 +2246,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2284,9 +2262,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Plan__c",
       "unresolved": false,
@@ -2304,7 +2282,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2320,9 +2298,9 @@
     },
     {
       "id": "ApexClass:PlanControllerTest|Object:Plan__c|type-reference||Plan__c",
-      "source": "ApexClass:PlanControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c",
       "unresolved": false,
@@ -2340,7 +2318,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2356,9 +2334,9 @@
     },
     {
       "id": "ApexClass:ReviewController|Field:Review__c.Plan__c|soql-field||Review__c.Plan__c",
-      "source": "ApexClass:ReviewController",
-      "target": "Field:Review__c.Plan__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c.Plan__c",
       "unresolved": false,
@@ -2376,7 +2354,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Review__c.Plan__c",
           "method": null
         },
@@ -2392,9 +2370,9 @@
     },
     {
       "id": "ApexClass:ReviewController|Field:Review__c.Rating__c|soql-field||Review__c.Rating__c",
-      "source": "ApexClass:ReviewController",
-      "target": "Field:Review__c.Rating__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c.Rating__c",
       "unresolved": false,
@@ -2412,7 +2390,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Review__c.Rating__c",
           "method": null
         },
@@ -2428,9 +2406,9 @@
     },
     {
       "id": "ApexClass:ReviewController|Field:Review__c.Review__c|soql-field||Review__c.Review__c",
-      "source": "ApexClass:ReviewController",
-      "target": "Field:Review__c.Review__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c.Review__c",
       "unresolved": false,
@@ -2448,7 +2426,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Review__c.Review__c",
           "method": null
         },
@@ -2464,9 +2442,9 @@
     },
     {
       "id": "ApexClass:ReviewController|Object:Review__c|generic-type||<Review__c>",
-      "source": "ApexClass:ReviewController",
-      "target": "Object:Review__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Review__c>",
       "unresolved": false,
@@ -2484,7 +2462,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -2500,9 +2478,9 @@
     },
     {
       "id": "ApexClass:ReviewController|Object:Review__c|soql-object||SOQL FROM Review__c",
-      "source": "ApexClass:ReviewController",
-      "target": "Object:Review__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Review__c",
       "unresolved": false,
@@ -2520,7 +2498,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -2536,9 +2514,9 @@
     },
     {
       "id": "ApexClass:ReviewController|Object:Review__c|type-reference||Review__c",
-      "source": "ApexClass:ReviewController",
-      "target": "Object:Review__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c",
       "unresolved": false,
@@ -2556,7 +2534,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -2572,9 +2550,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|createReview|ReviewController.createReview()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "createReview",
       "evidence": "ReviewController.createReview()",
       "unresolved": false,
@@ -2608,9 +2586,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|deleteReview|ReviewController.deleteReview()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "deleteReview",
       "evidence": "ReviewController.deleteReview()",
       "unresolved": false,
@@ -2644,9 +2622,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|getAllReviews|ReviewController.getAllReviews()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllReviews",
       "evidence": "ReviewController.getAllReviews()",
       "unresolved": false,
@@ -2680,9 +2658,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|getPlanReviews|ReviewController.getPlanReviews()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getPlanReviews",
       "evidence": "ReviewController.getPlanReviews()",
       "unresolved": false,
@@ -2716,9 +2694,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|getReview|ReviewController.getReview()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getReview",
       "evidence": "ReviewController.getReview()",
       "unresolved": false,
@@ -2752,9 +2730,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|updateReview|ReviewController.updateReview()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "method-call",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "updateReview",
       "evidence": "ReviewController.updateReview()",
       "unresolved": false,
@@ -2788,9 +2766,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|test-reference||Test reference: ReviewController",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "test-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Test reference: ReviewController",
       "unresolved": false,
@@ -2824,9 +2802,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Field:Review__c.Rating__c|soql-field||Review__c.Rating__c",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Field:Review__c.Rating__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c.Rating__c",
       "unresolved": false,
@@ -2844,7 +2822,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Review__c.Rating__c",
           "method": null
         },
@@ -2860,9 +2838,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Plan__c|instantiation||new Plan__c()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Plan__c()",
       "unresolved": false,
@@ -2880,7 +2858,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2896,9 +2874,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Plan__c",
       "unresolved": false,
@@ -2916,7 +2894,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2932,9 +2910,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Plan__c|type-reference||Plan__c",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c",
       "unresolved": false,
@@ -2952,7 +2930,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -2968,9 +2946,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Review__c|generic-type||<Review__c>",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Review__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Review__c>",
       "unresolved": false,
@@ -2988,7 +2966,7 @@
           "method": "testGetAllReviews"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3004,9 +2982,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Review__c|instantiation||new Review__c()",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Review__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Review__c()",
       "unresolved": false,
@@ -3024,7 +3002,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3040,9 +3018,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Review__c|soql-object||SOQL FROM Review__c",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Review__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Review__c",
       "unresolved": false,
@@ -3060,7 +3038,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3076,9 +3054,9 @@
     },
     {
       "id": "ApexClass:ReviewControllerTest|Object:Review__c|type-reference||Review__c",
-      "source": "ApexClass:ReviewControllerTest",
-      "target": "Object:Review__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c",
       "unresolved": false,
@@ -3096,7 +3074,7 @@
           "method": "setupData"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3112,9 +3090,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandler|Field:Review__c.Plan__c|soql-field||Review__c.Plan__c",
-      "source": "ApexClass:ReviewTriggerHandler",
-      "target": "Field:Review__c.Plan__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c.Plan__c",
       "unresolved": false,
@@ -3132,7 +3110,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Review__c.Plan__c",
           "method": null
         },
@@ -3148,9 +3126,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandler|Object:Plan__c|generic-type||<Plan__c>",
-      "source": "ApexClass:ReviewTriggerHandler",
-      "target": "Object:Plan__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Plan__c>",
       "unresolved": false,
@@ -3168,7 +3146,7 @@
           "method": "updatePlanRatings"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -3184,9 +3162,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandler|Object:Plan__c|instantiation||new Plan__c()",
-      "source": "ApexClass:ReviewTriggerHandler",
-      "target": "Object:Plan__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Plan__c()",
       "unresolved": false,
@@ -3204,7 +3182,7 @@
           "method": "updatePlanRatings"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -3220,9 +3198,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandler|Object:Review__c|generic-type||<Review__c>",
-      "source": "ApexClass:ReviewTriggerHandler",
-      "target": "Object:Review__c",
-      "relationshipType": "generic-type",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "<Review__c>",
       "unresolved": false,
@@ -3240,7 +3218,7 @@
           "method": "updatePlanRatings"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3256,9 +3234,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandler|Object:Review__c|soql-object||SOQL FROM Review__c",
-      "source": "ApexClass:ReviewTriggerHandler",
-      "target": "Object:Review__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Review__c",
       "unresolved": false,
@@ -3276,7 +3254,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3292,9 +3270,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandlerTest|Field:Plan__c.RatingsAverage__c|soql-field||Plan__c.RatingsAverage__c",
-      "source": "ApexClass:ReviewTriggerHandlerTest",
-      "target": "Field:Plan__c.RatingsAverage__c",
-      "relationshipType": "soql-field",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c.RatingsAverage__c",
       "unresolved": false,
@@ -3312,7 +3290,7 @@
           "method": null
         },
         "target": {
-          "type": "Field",
+          "type": "CustomField",
           "name": "Plan__c.RatingsAverage__c",
           "method": null
         },
@@ -3328,9 +3306,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandlerTest|Object:Plan__c|instantiation||new Plan__c()",
-      "source": "ApexClass:ReviewTriggerHandlerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Plan__c()",
       "unresolved": false,
@@ -3348,7 +3326,7 @@
           "method": "testReviewTriggerRatingCalculation"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -3364,9 +3342,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandlerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
-      "source": "ApexClass:ReviewTriggerHandlerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "soql-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "SOQL FROM Plan__c",
       "unresolved": false,
@@ -3384,7 +3362,7 @@
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -3400,9 +3378,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandlerTest|Object:Plan__c|type-reference||Plan__c",
-      "source": "ApexClass:ReviewTriggerHandlerTest",
-      "target": "Object:Plan__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Plan__c",
       "unresolved": false,
@@ -3420,7 +3398,7 @@
           "method": "testReviewTriggerRatingCalculation"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Plan__c",
           "method": null
         },
@@ -3436,9 +3414,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandlerTest|Object:Review__c|instantiation||new Review__c()",
-      "source": "ApexClass:ReviewTriggerHandlerTest",
-      "target": "Object:Review__c",
-      "relationshipType": "instantiation",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "new Review__c()",
       "unresolved": false,
@@ -3456,7 +3434,7 @@
           "method": "testReviewTriggerRatingCalculation"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3472,9 +3450,9 @@
     },
     {
       "id": "ApexClass:ReviewTriggerHandlerTest|Object:Review__c|type-reference||Review__c",
-      "source": "ApexClass:ReviewTriggerHandlerTest",
-      "target": "Object:Review__c",
-      "relationshipType": "type-reference",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Review__c",
       "unresolved": false,
@@ -3492,7 +3470,7 @@
           "method": "testReviewTriggerRatingCalculation"
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -3508,9 +3486,9 @@
     },
     {
       "id": "LWC:booking-list|ApexClass:BookingController|lwc-apex|deleteBooking|@salesforce/apex/BookingController.deleteBooking",
-      "source": "LWC:booking-list",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "deleteBooking",
       "evidence": "@salesforce/apex/BookingController.deleteBooking",
       "unresolved": false,
@@ -3544,9 +3522,9 @@
     },
     {
       "id": "LWC:booking-list|ApexClass:BookingController|lwc-apex|getAllBookings|@salesforce/apex/BookingController.getAllBookings",
-      "source": "LWC:booking-list",
-      "target": "ApexClass:BookingController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllBookings",
       "evidence": "@salesforce/apex/BookingController.getAllBookings",
       "unresolved": false,
@@ -3580,9 +3558,9 @@
     },
     {
       "id": "LWC:food-landing-page|ApexClass:PlanController|lwc-apex|getAllPlans|@salesforce/apex/PlanController.getAllPlans",
-      "source": "LWC:food-landing-page",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllPlans",
       "evidence": "@salesforce/apex/PlanController.getAllPlans",
       "unresolved": false,
@@ -3616,9 +3594,9 @@
     },
     {
       "id": "LWC:food-landing-page|ApexClass:ReviewController|lwc-apex|getAllReviews|@salesforce/apex/ReviewController.getAllReviews",
-      "source": "LWC:food-landing-page",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllReviews",
       "evidence": "@salesforce/apex/ReviewController.getAllReviews",
       "unresolved": false,
@@ -3652,9 +3630,9 @@
     },
     {
       "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|createPlan|@salesforce/apex/PlanController.createPlan",
-      "source": "LWC:plan-admin",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "createPlan",
       "evidence": "@salesforce/apex/PlanController.createPlan",
       "unresolved": false,
@@ -3688,9 +3666,9 @@
     },
     {
       "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|deletePlan|@salesforce/apex/PlanController.deletePlan",
-      "source": "LWC:plan-admin",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "deletePlan",
       "evidence": "@salesforce/apex/PlanController.deletePlan",
       "unresolved": false,
@@ -3724,9 +3702,9 @@
     },
     {
       "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|getAllPlans|@salesforce/apex/PlanController.getAllPlans",
-      "source": "LWC:plan-admin",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllPlans",
       "evidence": "@salesforce/apex/PlanController.getAllPlans",
       "unresolved": false,
@@ -3760,9 +3738,9 @@
     },
     {
       "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|updatePlan|@salesforce/apex/PlanController.updatePlan",
-      "source": "LWC:plan-admin",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "updatePlan",
       "evidence": "@salesforce/apex/PlanController.updatePlan",
       "unresolved": false,
@@ -3796,9 +3774,9 @@
     },
     {
       "id": "LWC:plan-detail|ApexClass:PlanController|lwc-apex|getPlan|@salesforce/apex/PlanController.getPlan",
-      "source": "LWC:plan-detail",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getPlan",
       "evidence": "@salesforce/apex/PlanController.getPlan",
       "unresolved": false,
@@ -3832,9 +3810,9 @@
     },
     {
       "id": "LWC:plan-detail|ApexClass:ReviewController|lwc-apex|createReview|@salesforce/apex/ReviewController.createReview",
-      "source": "LWC:plan-detail",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "createReview",
       "evidence": "@salesforce/apex/ReviewController.createReview",
       "unresolved": false,
@@ -3868,9 +3846,9 @@
     },
     {
       "id": "LWC:plan-detail|ApexClass:ReviewController|lwc-apex|deleteReview|@salesforce/apex/ReviewController.deleteReview",
-      "source": "LWC:plan-detail",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "deleteReview",
       "evidence": "@salesforce/apex/ReviewController.deleteReview",
       "unresolved": false,
@@ -3904,9 +3882,9 @@
     },
     {
       "id": "LWC:plan-detail|ApexClass:ReviewController|lwc-apex|getAllReviews|@salesforce/apex/ReviewController.getAllReviews",
-      "source": "LWC:plan-detail",
-      "target": "ApexClass:ReviewController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllReviews",
       "evidence": "@salesforce/apex/ReviewController.getAllReviews",
       "unresolved": false,
@@ -3940,9 +3918,9 @@
     },
     {
       "id": "LWC:plan-list|ApexClass:PlanController|lwc-apex|getAllPlans|@salesforce/apex/PlanController.getAllPlans",
-      "source": "LWC:plan-list",
-      "target": "ApexClass:PlanController",
-      "relationshipType": "lwc-apex",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "getAllPlans",
       "evidence": "@salesforce/apex/PlanController.getAllPlans",
       "unresolved": false,
@@ -3976,9 +3954,9 @@
     },
     {
       "id": "Trigger:ReviewTrigger|ApexClass:ReviewTriggerHandler|trigger-handler|updatePlanRatings|ReviewTriggerHandler.updatePlanRatings()",
-      "source": "Trigger:ReviewTrigger",
-      "target": "ApexClass:ReviewTriggerHandler",
-      "relationshipType": "trigger-handler",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": "updatePlanRatings",
       "evidence": "ReviewTriggerHandler.updatePlanRatings()",
       "unresolved": false,
@@ -3991,7 +3969,7 @@
       "file": "../Food-App/force-app/main/default/triggers/ReviewTrigger.trigger",
       "canonical": {
         "source": {
-          "type": "Trigger",
+          "type": "ApexTrigger",
           "name": "ReviewTrigger",
           "method": null
         },
@@ -4012,9 +3990,9 @@
     },
     {
       "id": "Trigger:ReviewTrigger|Object:Review__c|trigger-object||Trigger ReviewTrigger on Review__c",
-      "source": "Trigger:ReviewTrigger",
-      "target": "Object:Review__c",
-      "relationshipType": "trigger-object",
+      "source": "ApexClass:",
+      "target": "ApexClass:",
+      "relationshipType": "unknown",
       "method": null,
       "evidence": "Trigger ReviewTrigger on Review__c",
       "unresolved": false,
@@ -4027,12 +4005,12 @@
       "file": "",
       "canonical": {
         "source": {
-          "type": "Trigger",
+          "type": "ApexTrigger",
           "name": "ReviewTrigger",
           "method": null
         },
         "target": {
-          "type": "Object",
+          "type": "CustomObject",
           "name": "Review__c",
           "method": null
         },
@@ -4052,244 +4030,102 @@
   "impactSummaries": {
     "ApexClass:BookingController": {
       "id": "ApexClass:BookingController",
-      "directDependencies": [
-        "Field:Booking__c.Plan__c",
-        "Field:Booking__c.Price__c",
-        "Field:Booking__c.Status__c",
-        "Object:Booking__c"
-      ],
-      "directDependents": [
-        "ApexClass:BookingControllerTest",
-        "LWC:booking-list"
-      ],
-      "transitiveDependencies": [
-        "Field:Booking__c.Plan__c",
-        "Field:Booking__c.Price__c",
-        "Field:Booking__c.Status__c",
-        "Object:Booking__c"
-      ],
-      "transitiveDependents": [
-        "ApexClass:BookingControllerTest",
-        "LWC:booking-list"
-      ],
-      "impactedTests": [
-        "ApexClass:BookingControllerTest"
-      ],
-      "totalImpactCount": 6
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "ApexClass:BookingControllerTest": {
       "id": "ApexClass:BookingControllerTest",
-      "directDependencies": [
-        "ApexClass:BookingController",
-        "Object:Booking__c",
-        "Object:Plan__c"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:BookingController",
-        "Field:Booking__c.Plan__c",
-        "Field:Booking__c.Price__c",
-        "Field:Booking__c.Status__c",
-        "Object:Booking__c",
-        "Object:Plan__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 6
+      "totalImpactCount": 0
     },
     "ApexClass:PlanController": {
       "id": "ApexClass:PlanController",
-      "directDependencies": [
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c"
-      ],
-      "directDependents": [
-        "ApexClass:PlanControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list"
-      ],
-      "transitiveDependencies": [
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c"
-      ],
-      "transitiveDependents": [
-        "ApexClass:PlanControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list"
-      ],
-      "impactedTests": [
-        "ApexClass:PlanControllerTest"
-      ],
-      "totalImpactCount": 10
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "ApexClass:PlanControllerTest": {
       "id": "ApexClass:PlanControllerTest",
-      "directDependencies": [
-        "ApexClass:PlanController",
-        "Field:Plan__c.Price__c",
-        "Object:Plan__c"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:PlanController",
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 6
+      "totalImpactCount": 0
     },
     "ApexClass:ReviewController": {
       "id": "ApexClass:ReviewController",
-      "directDependencies": [
-        "Field:Review__c.Plan__c",
-        "Field:Review__c.Rating__c",
-        "Field:Review__c.Review__c",
-        "Object:Review__c"
-      ],
-      "directDependents": [
-        "ApexClass:ReviewControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-detail"
-      ],
-      "transitiveDependencies": [
-        "Field:Review__c.Plan__c",
-        "Field:Review__c.Rating__c",
-        "Field:Review__c.Review__c",
-        "Object:Review__c"
-      ],
-      "transitiveDependents": [
-        "ApexClass:ReviewControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-detail"
-      ],
-      "impactedTests": [
-        "ApexClass:ReviewControllerTest"
-      ],
-      "totalImpactCount": 7
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "ApexClass:ReviewControllerTest": {
       "id": "ApexClass:ReviewControllerTest",
-      "directDependencies": [
-        "ApexClass:ReviewController",
-        "Field:Review__c.Rating__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:ReviewController",
-        "Field:Review__c.Plan__c",
-        "Field:Review__c.Rating__c",
-        "Field:Review__c.Review__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 6
+      "totalImpactCount": 0
     },
     "ApexClass:ReviewTriggerHandler": {
       "id": "ApexClass:ReviewTriggerHandler",
-      "directDependencies": [
-        "Field:Review__c.Plan__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
-      "directDependents": [
-        "Trigger:ReviewTrigger"
-      ],
-      "transitiveDependencies": [
-        "Field:Review__c.Plan__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
-      "transitiveDependents": [
-        "Trigger:ReviewTrigger"
-      ],
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 4
+      "totalImpactCount": 0
     },
     "ApexClass:ReviewTriggerHandlerTest": {
       "id": "ApexClass:ReviewTriggerHandlerTest",
-      "directDependencies": [
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 3
+      "totalImpactCount": 0
     },
     "Field:Booking__c.Plan__c": {
       "id": "Field:Booking__c.Plan__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BookingController"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BookingController",
-        "ApexClass:BookingControllerTest",
-        "LWC:booking-list"
-      ],
-      "impactedTests": [
-        "ApexClass:BookingControllerTest"
-      ],
-      "totalImpactCount": 3
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Booking__c.Price__c": {
       "id": "Field:Booking__c.Price__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BookingController"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BookingController",
-        "ApexClass:BookingControllerTest",
-        "LWC:booking-list"
-      ],
-      "impactedTests": [
-        "ApexClass:BookingControllerTest"
-      ],
-      "totalImpactCount": 3
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Booking__c.Status__c": {
       "id": "Field:Booking__c.Status__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BookingController"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BookingController",
-        "ApexClass:BookingControllerTest",
-        "LWC:booking-list"
-      ],
-      "impactedTests": [
-        "ApexClass:BookingControllerTest"
-      ],
-      "totalImpactCount": 3
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Booking__c.User__c": {
       "id": "Field:Booking__c.User__c",
@@ -4303,144 +4139,65 @@
     "Field:Plan__c.Discount__c": {
       "id": "Field:Plan__c.Discount__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:PlanController"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list"
-      ],
-      "impactedTests": [
-        "ApexClass:PlanControllerTest"
-      ],
-      "totalImpactCount": 6
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Plan__c.Duration__c": {
       "id": "Field:Plan__c.Duration__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:PlanController"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list"
-      ],
-      "impactedTests": [
-        "ApexClass:PlanControllerTest"
-      ],
-      "totalImpactCount": 6
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Plan__c.Price__c": {
       "id": "Field:Plan__c.Price__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list"
-      ],
-      "impactedTests": [
-        "ApexClass:PlanControllerTest"
-      ],
-      "totalImpactCount": 6
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Plan__c.RatingsAverage__c": {
       "id": "Field:Plan__c.RatingsAverage__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:PlanController",
-        "ApexClass:ReviewTriggerHandlerTest"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest",
-        "ApexClass:ReviewTriggerHandlerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list"
-      ],
-      "impactedTests": [
-        "ApexClass:PlanControllerTest",
-        "ApexClass:ReviewTriggerHandlerTest"
-      ],
-      "totalImpactCount": 7
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Review__c.Plan__c": {
       "id": "Field:Review__c.Plan__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewTriggerHandler"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandler",
-        "LWC:food-landing-page",
-        "LWC:plan-detail",
-        "Trigger:ReviewTrigger"
-      ],
-      "impactedTests": [
-        "ApexClass:ReviewControllerTest"
-      ],
-      "totalImpactCount": 6
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Review__c.Rating__c": {
       "id": "Field:Review__c.Rating__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewControllerTest"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-detail"
-      ],
-      "impactedTests": [
-        "ApexClass:ReviewControllerTest"
-      ],
-      "totalImpactCount": 4
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Review__c.Review__c": {
       "id": "Field:Review__c.Review__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:ReviewController"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewControllerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-detail"
-      ],
-      "impactedTests": [
-        "ApexClass:ReviewControllerTest"
-      ],
-      "totalImpactCount": 4
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Field:Review__c.User__c": {
       "id": "Field:Review__c.User__c",
@@ -4453,104 +4210,48 @@
     },
     "LWC:booking-list": {
       "id": "LWC:booking-list",
-      "directDependencies": [
-        "ApexClass:BookingController"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:BookingController",
-        "Field:Booking__c.Plan__c",
-        "Field:Booking__c.Price__c",
-        "Field:Booking__c.Status__c",
-        "Object:Booking__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 5
+      "totalImpactCount": 0
     },
     "LWC:food-landing-page": {
       "id": "LWC:food-landing-page",
-      "directDependencies": [
-        "ApexClass:PlanController",
-        "ApexClass:ReviewController"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:PlanController",
-        "ApexClass:ReviewController",
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Field:Review__c.Plan__c",
-        "Field:Review__c.Rating__c",
-        "Field:Review__c.Review__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 11
+      "totalImpactCount": 0
     },
     "LWC:plan-admin": {
       "id": "LWC:plan-admin",
-      "directDependencies": [
-        "ApexClass:PlanController"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:PlanController",
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 6
+      "totalImpactCount": 0
     },
     "LWC:plan-detail": {
       "id": "LWC:plan-detail",
-      "directDependencies": [
-        "ApexClass:PlanController",
-        "ApexClass:ReviewController"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:PlanController",
-        "ApexClass:ReviewController",
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Field:Review__c.Plan__c",
-        "Field:Review__c.Rating__c",
-        "Field:Review__c.Review__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 11
+      "totalImpactCount": 0
     },
     "LWC:plan-list": {
       "id": "LWC:plan-list",
-      "directDependencies": [
-        "ApexClass:PlanController"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:PlanController",
-        "Field:Plan__c.Discount__c",
-        "Field:Plan__c.Duration__c",
-        "Field:Plan__c.Price__c",
-        "Field:Plan__c.RatingsAverage__c",
-        "Object:Plan__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 6
+      "totalImpactCount": 0
     },
     "LWC:user-auth": {
       "id": "LWC:user-auth",
@@ -4573,96 +4274,38 @@
     "Object:Booking__c": {
       "id": "Object:Booking__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BookingController",
-        "ApexClass:BookingControllerTest"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BookingController",
-        "ApexClass:BookingControllerTest",
-        "LWC:booking-list"
-      ],
-      "impactedTests": [
-        "ApexClass:BookingControllerTest"
-      ],
-      "totalImpactCount": 3
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Object:Plan__c": {
       "id": "Object:Plan__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:BookingControllerTest",
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest",
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandler",
-        "ApexClass:ReviewTriggerHandlerTest"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:BookingControllerTest",
-        "ApexClass:PlanController",
-        "ApexClass:PlanControllerTest",
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandler",
-        "ApexClass:ReviewTriggerHandlerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-admin",
-        "LWC:plan-detail",
-        "LWC:plan-list",
-        "Trigger:ReviewTrigger"
-      ],
-      "impactedTests": [
-        "ApexClass:BookingControllerTest",
-        "ApexClass:PlanControllerTest",
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandlerTest"
-      ],
-      "totalImpactCount": 11
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Object:Review__c": {
       "id": "Object:Review__c",
       "directDependencies": [],
-      "directDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandler",
-        "ApexClass:ReviewTriggerHandlerTest",
-        "Trigger:ReviewTrigger"
-      ],
+      "directDependents": [],
       "transitiveDependencies": [],
-      "transitiveDependents": [
-        "ApexClass:ReviewController",
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandler",
-        "ApexClass:ReviewTriggerHandlerTest",
-        "LWC:food-landing-page",
-        "LWC:plan-detail",
-        "Trigger:ReviewTrigger"
-      ],
-      "impactedTests": [
-        "ApexClass:ReviewControllerTest",
-        "ApexClass:ReviewTriggerHandlerTest"
-      ],
-      "totalImpactCount": 7
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
     },
     "Trigger:ReviewTrigger": {
       "id": "Trigger:ReviewTrigger",
-      "directDependencies": [
-        "ApexClass:ReviewTriggerHandler",
-        "Object:Review__c"
-      ],
+      "directDependencies": [],
       "directDependents": [],
-      "transitiveDependencies": [
-        "ApexClass:ReviewTriggerHandler",
-        "Field:Review__c.Plan__c",
-        "Object:Plan__c",
-        "Object:Review__c"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 4
+      "totalImpactCount": 0
     }
   }
 }

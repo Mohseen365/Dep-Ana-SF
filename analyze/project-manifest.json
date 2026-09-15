@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "food-delivery-app",
+  "activeProjectId": "food-app",
   "projects": [
     {
       "id": "default",
@@ -73,7 +73,7 @@
     "food-app": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:c12f3ff0f640c1045fb2c6e394b6c15338e9013b42f7c47ba56437e49ae3938f",
+      "fileHash": "sha256:7dcadfb29b5e87afa6a09f9725be8814b715ebafdd7ae15ebeb867cdeef41e62",
       "nodeCount": 31,
       "edgeCount": 84
     },

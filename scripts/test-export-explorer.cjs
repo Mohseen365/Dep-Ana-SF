@@ -9,7 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
-const { exportExplorerData, normalizeNodeId, normalizeNodeType } = require("./export-explorer.cjs");
+const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR = path.join(__dirname, "../temp-test-fixture-realistic");
 const ANALYZE_OUT_DIR = path.join(FIXTURE_DIR, "analyze");
@@ -367,9 +367,101 @@ function runTests() {
   }
 }
 
+function runSpecificRegressionTests() {
+  console.log("\nRunning Specific Regression Tests (Test A - D)...");
+  console.log("-------------------------------------------------");
+
+  // TEST A: Coverage Mapping
+  console.log("Test A: testCoverageStatus mapping");
+  assert.strictEqual(normalizeTestCoverageStatus("LIKELY_COVERED"), "COVERED");
+  assert.strictEqual(normalizeTestCoverageStatus("likely-covered"), "COVERED");
+  assert.strictEqual(normalizeTestCoverageStatus("COVERED"), "COVERED");
+  assert.strictEqual(normalizeTestCoverageStatus("covered"), "COVERED");
+  assert.strictEqual(normalizeTestCoverageStatus("KNOWN_COVERAGE_FAILURE"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("known-coverage-failure"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("UNTESTED"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("untested"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("NO_TESTS"), "NO_TESTS");
+  assert.strictEqual(normalizeTestCoverageStatus("no-tests"), "NO_TESTS");
+  assert.strictEqual(normalizeTestCoverageStatus("AMBIGUOUS_TEST"), "AMBIGUOUS");
+  assert.strictEqual(normalizeTestCoverageStatus("ambiguous-test"), "AMBIGUOUS");
+  console.log("  ✓ Test A PASSED: All testCoverageStatus mappings match schema requirement");
+
+  // TEST B: Canonical Edge Types Normalization
+  console.log("Test B: Canonical Edge Types Normalization");
+  assert.strictEqual(normalizeNodeType("Trigger"), "ApexTrigger");
+  assert.strictEqual(normalizeNodeType("Object"), "CustomObject");
+  assert.strictEqual(normalizeNodeType("Field"), "CustomField");
+
+  const tempTestDir = path.join(__dirname, "../temp-test-canonical");
+  fs.mkdirSync(tempTestDir, { recursive: true });
+  try {
+    const rawReport = {
+      nodes: [
+        { id: "ApexTrigger:MyTrigger", name: "MyTrigger", type: "Trigger" },
+        { id: "CustomObject:Account", name: "Account", type: "Object" }
+      ],
+      edges: [
+        {
+          from: "ApexTrigger:MyTrigger",
+          to: "CustomObject:Account",
+          type: "trigger-object",
+          canonical: {
+            source: { type: "Trigger", name: "MyTrigger" },
+            target: { type: "Object", name: "Account" }
+          }
+        }
+      ]
+    };
+    const reportFile = path.join(tempTestDir, "dependency-report.json");
+    fs.writeFileSync(reportFile, JSON.stringify(rawReport));
+
+    const exportOut = path.join(tempTestDir, "explorer-data.json");
+    const exported = exportExplorerData(tempTestDir, exportOut, { project: "test-canonical-project" });
+    const edge = exported.explorerData.edges[0];
+    assert.strictEqual(edge.canonical.source.type, "ApexTrigger", "canonical.source.type must be ApexTrigger");
+    assert.strictEqual(edge.canonical.target.type, "CustomObject", "canonical.target.type must be CustomObject");
+    console.log("  ✓ Test B PASSED: Raw edge types in canonical.source and canonical.target normalized");
+  } finally {
+    if (fs.existsSync(tempTestDir)) fs.rmSync(tempTestDir, { recursive: true, force: true });
+  }
+
+  // TEST C & D: Public Project Artifact & Multi-Project Isolation
+  console.log("Test C & D: Public Project Artifact Synchronization & Multi-Project Isolation");
+  const tempProjectDir = path.join(__dirname, "../temp-test-projects");
+  fs.mkdirSync(tempProjectDir, { recursive: true });
+  try {
+    const minReport = { nodes: [{ id: "ApexClass:Foo", name: "Foo", type: "ApexClass" }], edges: [] };
+    const repFile = path.join(tempProjectDir, "dependency-report.json");
+    fs.writeFileSync(repFile, JSON.stringify(minReport));
+
+    const movieOut = path.join(tempProjectDir, "projects", "movie-app", "explorer-data.json");
+    const foodOut = path.join(tempProjectDir, "projects", "food-app", "explorer-data.json");
+
+    exportExplorerData(repFile, movieOut, { project: "movie-app", projectName: "Movie App" });
+    exportExplorerData(repFile, foodOut, { project: "food-app", projectName: "Food App" });
+
+    const moviePublicPath = path.resolve(__dirname, "../explorer/public/projects/movie-app/explorer-data.json");
+    const foodPublicPath = path.resolve(__dirname, "../explorer/public/projects/food-app/explorer-data.json");
+
+    assert.ok(fs.existsSync(moviePublicPath), "movie-app public contract file must exist");
+    assert.ok(fs.existsSync(foodPublicPath), "food-app public contract file must exist");
+
+    const movieContent = JSON.parse(fs.readFileSync(moviePublicPath, "utf8"));
+    const foodContent = JSON.parse(fs.readFileSync(foodPublicPath, "utf8"));
+
+    assert.strictEqual(movieContent.project.id, "movie-app");
+    assert.strictEqual(foodContent.project.id, "food-app");
+    console.log("  ✓ Test C & D PASSED: Public artifacts automatically synchronized for multiple distinct projects");
+  } finally {
+    if (fs.existsSync(tempProjectDir)) fs.rmSync(tempProjectDir, { recursive: true, force: true });
+  }
+}
+
 if (require.main === module) {
   try {
     runTests();
+    runSpecificRegressionTests();
   } catch (err) {
     console.error(`\nValidation failure: ${err.message}`);
     console.error(err.stack);
