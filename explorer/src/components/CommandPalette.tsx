@@ -6,7 +6,9 @@ import {
   ExplorerCycleGroup,
   ExplorerUnresolvedReference,
   ExplorerRiskLevel,
+  ProjectMetadata,
 } from '../types/explorer';
+import { useProject } from '../context/ProjectContext';
 import { SummaryBar } from './SummaryBar';
 import { HotspotPanel } from './HotspotPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
@@ -25,11 +27,12 @@ export type PalettePanelId =
 export interface CommandEntry {
   id: string;
   title: string;
-  category: 'Panel' | 'Action';
+  category: 'Panel' | 'Action' | 'Project';
   panelId?: PalettePanelId;
   action?: () => void;
   description?: string;
   disabled?: boolean;
+  projectId?: string;
 }
 
 export interface CommandPaletteProps {
@@ -58,11 +61,26 @@ export interface CommandPaletteProps {
   selectedUnresolvedEdgeId?: string | null;
   onSelectUnresolved?: (ref: ExplorerUnresolvedReference | null) => void;
 
+  // Multi-Project Props (Optional fallback)
+  projects?: ProjectMetadata[];
+  activeProjectId?: string;
+  onSelectProject?: (projectId: string) => void;
+
   // Action callbacks
   onApplyFocus?: () => void;
   onShowImpact?: () => void;
   onToggleViewMode?: () => void;
   onRequestHandoff?: (nodeId: string) => void;
+  onResetView?: () => void;
+  onToggleCompare?: () => void;
+}
+
+function useProjectSafe() {
+  try {
+    return useProject();
+  } catch (_) {
+    return null;
+  }
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
@@ -88,10 +106,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   selectedUnresolvedEdgeId = null,
   onSelectUnresolved,
   isInvestigating,
+  projects: propProjects,
+  activeProjectId: propActiveProjectId,
+  onSelectProject: propSelectProject,
   onApplyFocus,
   onShowImpact,
   onToggleViewMode,
   onRequestHandoff,
+  onResetView,
+  onToggleCompare,
 }) => {
   const [inputVal, setInputVal] = useState(query);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -101,11 +124,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const projectContext = useProjectSafe();
+  const availableProjects = projectContext?.projects || propProjects || [];
+  const currentProjectId = projectContext?.activeProjectId || propActiveProjectId;
+  const handleSelectProject = projectContext?.selectProject || propSelectProject;
+
   const isNodeInvestigated = Boolean(selectedNodeId) && (isInvestigating ?? true);
 
   // Command entries definition
-  const commandEntries: CommandEntry[] = useMemo(
-    () => [
+  const commandEntries: CommandEntry[] = useMemo(() => {
+    const entries: CommandEntry[] = [
       {
         id: 'cmd-summary',
         title: 'Open Summary',
@@ -128,6 +156,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         description: 'View circular dependencies & unresolved references',
       },
       {
+        id: 'cmd-cycles',
+        title: 'Find cycles',
+        category: 'Panel',
+        panelId: 'diagnostics',
+        action: () => {
+          onDiagnosticTabChange?.('cycles');
+        },
+        description: 'Find circular dependencies and risk cycles in the active project',
+      },
+      {
         id: 'cmd-findings',
         title: 'Open Findings',
         category: 'Panel',
@@ -139,7 +177,19 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         title: 'Compare snapshots',
         category: 'Panel',
         panelId: 'compare',
+        action: () => {
+          onToggleCompare?.();
+        },
         description: 'Compare current architecture with previous snapshot',
+      },
+      {
+        id: 'cmd-reset-graph',
+        title: 'Reset graph',
+        category: 'Action',
+        action: () => {
+          onResetView?.();
+        },
+        description: 'Reset active graph filters, selection, and zoom level',
       },
       {
         id: 'handoff-to-refactor',
@@ -180,9 +230,38 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         },
         description: 'Switch between Graph and Findings view modes',
       },
-    ],
-    [isNodeInvestigated, selectedNodeId, onRequestHandoff, onApplyFocus, onShowImpact, onToggleViewMode]
-  );
+    ];
+
+    // Add project entries if available
+    availableProjects.forEach((proj) => {
+      entries.push({
+        id: `cmd-project-${proj.id}`,
+        title: `Switch project: ${proj.name}`,
+        category: 'Project',
+        projectId: proj.id,
+        disabled: proj.id === currentProjectId,
+        action: () => {
+          handleSelectProject?.(proj.id);
+        },
+        description: `Open/Switch to project dataset (${proj.id})`,
+      });
+    });
+
+    return entries;
+  }, [
+    isNodeInvestigated,
+    selectedNodeId,
+    onRequestHandoff,
+    onApplyFocus,
+    onShowImpact,
+    onToggleViewMode,
+    onResetView,
+    onToggleCompare,
+    onDiagnosticTabChange,
+    availableProjects,
+    currentProjectId,
+    handleSelectProject,
+  ]);
 
   // Reset state when opening/closing
   useEffect(() => {
@@ -272,10 +351,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const handleSelectCommand = useCallback(
     (cmd: CommandEntry) => {
       if (cmd.disabled) return;
+      if (cmd.action) {
+        cmd.action();
+      }
       if (cmd.category === 'Panel' && cmd.panelId) {
         setActivePanel(cmd.panelId);
-      } else if (cmd.category === 'Action' && cmd.action) {
-        cmd.action();
+      } else {
         onClose();
       }
     },
