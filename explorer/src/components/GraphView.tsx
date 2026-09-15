@@ -9,6 +9,7 @@ import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
+import { FocusState } from '../lib/focus-graph';
 import {
   bindGraphInteractions,
   fitToScreen,
@@ -41,6 +42,8 @@ export interface GraphViewProps {
   onToggleFullscreen?: () => void;
   isFullscreen?: boolean;
   focusedNodeId?: string | null;
+  focusState?: FocusState;
+  onFocusChange?: (focusState: FocusState) => void;
 }
 
 export interface GraphViewRef {
@@ -79,6 +82,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   onToggleFullscreen,
   isFullscreen = false,
   focusedNodeId,
+  focusState,
+  onFocusChange,
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
@@ -98,10 +103,21 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     edgesRef.current = edges;
   }, [nodes, edges]);
 
-  // Synchronize navigator DOM container visibility
+  // Re-attach cytoscape navigator when isNavigatorVisible becomes true or cy changes
   useEffect(() => {
-    if (minimapRef.current) {
-      minimapRef.current.style.display = isNavigatorVisible ? 'block' : 'none';
+    if (isNavigatorVisible && cyRef.current && minimapRef.current) {
+      if (navRef.current && typeof navRef.current.destroy === 'function') {
+        try { navRef.current.destroy(); } catch (e) {}
+      }
+      try {
+        const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
+        navRef.current = (cyRef.current as any).navigator({
+          container: bodyEl,
+          scale: 0.15
+        });
+      } catch (err) {
+        console.warn('Cytoscape navigator re-init notice:', err);
+      }
     }
   }, [isNavigatorVisible]);
 
@@ -181,10 +197,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     cyRef.current = cy;
 
     // A6. Minimap Initialization
-    if (minimapRef.current) {
+    if (minimapRef.current && isNavigatorVisible) {
       try {
+        const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
         navRef.current = (cy as any).navigator({
-          container: minimapRef.current,
+          container: bodyEl,
           scale: 0.15
         });
       } catch (err) {
@@ -497,23 +514,29 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     >
       <div ref={containerRef} className="cytoscape-view" />
 
-      {/* A6. Minimap Container Floating Bottom Right */}
-      <div
-        id="minimap"
-        ref={minimapRef}
-        className={`minimap-container ${isNavigatorVisible ? '' : 'hidden'}`}
-        style={{ display: isNavigatorVisible ? 'block' : 'none' }}
-      >
-        <button
-          className="navigator-close-btn"
-          onClick={() => setIsNavigatorVisible(false)}
-          title="Close navigator"
-          aria-label="Close navigator"
-          type="button"
+      {/* Product-Grade Navigator Container Floating Bottom Right */}
+      {isNavigatorVisible && (
+        <div
+          id="minimap"
+          ref={minimapRef}
+          className="minimap-container"
+          data-testid="minimap-container"
         >
-          ×
-        </button>
-      </div>
+          <div className="navigator-header">
+            <span className="navigator-title">Graph Navigator</span>
+            <button
+              className="navigator-close-btn"
+              onClick={() => setIsNavigatorVisible(false)}
+              title="Close navigator"
+              aria-label="Close navigator"
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+          <div className="navigator-body" />
+        </div>
+      )}
 
       {/* A8. Screen Reader Accessible Node List */}
       <ul role="tree" className="sr-only" aria-label="Component Nodes">
@@ -595,6 +618,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         onToggleFullscreen={onToggleFullscreen}
         isNavigatorVisible={isNavigatorVisible}
         onToggleNavigator={() => setIsNavigatorVisible((prev) => !prev)}
+        focusState={focusState}
+        onFocusChange={onFocusChange}
       />
       <GraphLegend nodes={nodes} />
     </div>
