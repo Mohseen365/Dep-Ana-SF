@@ -1,16 +1,16 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-09-15T11:35:56.909Z",
-  "sourceDirectory": "temp-test-fixture-realistic",
+  "generatedAt": "2026-09-15T16:14:55.614Z",
+  "sourceDirectory": "../temp-test-fixture-realistic",
   "project": {
     "id": "default",
     "name": "Default Salesforce Project",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "temp-test-fixture-realistic",
-    "createdAt": "2026-09-15T11:35:56.909Z",
-    "updatedAt": "2026-09-15T11:35:56.909Z",
-    "lastAnalyzedAt": "2026-09-15T11:35:56.909Z",
+    "sourcePath": "../temp-test-fixture-realistic",
+    "createdAt": "2026-09-15T16:14:55.614Z",
+    "updatedAt": "2026-09-15T16:14:55.614Z",
+    "lastAnalyzedAt": "2026-09-15T16:14:55.614Z",
     "analysisStatus": "COMPLETE",
     "componentCount": 10,
     "dependencyCount": 13,
@@ -41,7 +41,7 @@
       "id": "ApexClass:AssetController",
       "displayName": "AssetController",
       "type": "ApexClass",
-      "file": "temp-test-fixture-realistic/classes/AssetController.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetController.cls",
       "metrics": {
         "fanIn": 2,
         "fanOut": 1,
@@ -74,7 +74,7 @@
       "id": "ApexClass:AssetHelper",
       "displayName": "AssetHelper",
       "type": "ApexClass",
-      "file": "temp-test-fixture-realistic/classes/AssetHelper.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetHelper.cls",
       "metrics": {
         "fanIn": 1,
         "fanOut": 1,
@@ -105,7 +105,7 @@
       "id": "ApexClass:AssetService",
       "displayName": "AssetService",
       "type": "ApexClass",
-      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetService.cls",
       "metrics": {
         "fanIn": 5,
         "fanOut": 5,
@@ -138,7 +138,7 @@
       "id": "ApexClass:AssetServiceTest",
       "displayName": "AssetServiceTest",
       "type": "ApexClass",
-      "file": "temp-test-fixture-realistic/classes/AssetServiceTest.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetServiceTest.cls",
       "metrics": {
         "fanIn": 0,
         "fanOut": 2,
@@ -200,7 +200,7 @@
       "id": "Field:Asset__c.Status__c",
       "displayName": "Asset__c.Status__c",
       "type": "CustomField",
-      "file": "temp-test-fixture-realistic/objects/Asset__c/fields/Status__c.field-meta.xml",
+      "file": "../temp-test-fixture-realistic/objects/Asset__c/fields/Status__c.field-meta.xml",
       "metrics": {
         "fanIn": 1,
         "fanOut": 0,
@@ -231,7 +231,7 @@
       "id": "LWC:asset-card",
       "displayName": "asset-card",
       "type": "LWC",
-      "file": "temp-test-fixture-realistic/lwc/assetCard/assetCard.js",
+      "file": "../temp-test-fixture-realistic/lwc/assetCard/assetCard.js",
       "metrics": {
         "fanIn": 0,
         "fanOut": 1,
@@ -262,7 +262,7 @@
       "id": "Object:Asset__c",
       "displayName": "Asset__c",
       "type": "CustomObject",
-      "file": "temp-test-fixture-realistic/objects/Asset__c/Asset__c.object-meta.xml",
+      "file": "../temp-test-fixture-realistic/objects/Asset__c/Asset__c.object-meta.xml",
       "metrics": {
         "fanIn": 3,
         "fanOut": 0,
@@ -293,7 +293,7 @@
       "id": "Trigger:AssetTrigger",
       "displayName": "AssetTrigger",
       "type": "ApexTrigger",
-      "file": "temp-test-fixture-realistic/triggers/AssetTrigger.trigger",
+      "file": "../temp-test-fixture-realistic/triggers/AssetTrigger.trigger",
       "metrics": {
         "fanIn": 0,
         "fanOut": 2,
@@ -324,7 +324,7 @@
       "id": "Visualforce:AssetDashboard",
       "displayName": "AssetDashboard",
       "type": "Visualforce",
-      "file": "temp-test-fixture-realistic/pages/AssetDashboard.page",
+      "file": "../temp-test-fixture-realistic/pages/AssetDashboard.page",
       "metrics": {
         "fanIn": 0,
         "fanOut": 1,
@@ -367,7 +367,7 @@
       "line": 4,
       "column": 9,
       "methodOwner": "handleRequest",
-      "file": "temp-test-fixture-realistic/classes/AssetController.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetController.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
@@ -403,7 +403,7 @@
       "line": 3,
       "column": 9,
       "methodOwner": "calculate",
-      "file": "temp-test-fixture-realistic/classes/AssetHelper.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetHelper.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
@@ -439,7 +439,7 @@
       "line": 3,
       "column": 9,
       "methodOwner": "processAssets",
-      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetService.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
@@ -475,7 +475,7 @@
       "line": 4,
       "column": 9,
       "methodOwner": "processAssets",
-      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetService.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
@@ -547,7 +547,7 @@
       "line": 5,
       "column": 13,
       "methodOwner": "processAssets",
-      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetService.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
@@ -619,7 +619,7 @@
       "line": 5,
       "column": 9,
       "methodOwner": "testProcess",
-      "file": "temp-test-fixture-realistic/classes/AssetServiceTest.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetServiceTest.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
@@ -691,7 +691,7 @@
       "line": 2,
       "column": 32,
       "methodOwner": null,
-      "file": "temp-test-fixture-realistic/lwc/assetCard/assetCard.js",
+      "file": "../temp-test-fixture-realistic/lwc/assetCard/assetCard.js",
       "canonical": {
         "source": {
           "type": "LWC",
@@ -727,7 +727,7 @@
       "line": 2,
       "column": 7,
       "methodOwner": null,
-      "file": "temp-test-fixture-realistic/triggers/AssetTrigger.trigger",
+      "file": "../temp-test-fixture-realistic/triggers/AssetTrigger.trigger",
       "canonical": {
         "source": {
           "type": "ApexTrigger",
@@ -799,7 +799,7 @@
       "line": 1,
       "column": 24,
       "methodOwner": null,
-      "file": "temp-test-fixture-realistic/pages/AssetDashboard.page",
+      "file": "../temp-test-fixture-realistic/pages/AssetDashboard.page",
       "canonical": {
         "source": {
           "type": "Visualforce",
@@ -838,7 +838,7 @@
       "sourceNodeId": "ApexClass:AssetService",
       "targetName": "NonExistentClass",
       "targetType": "External",
-      "file": "temp-test-fixture-realistic/classes/AssetService.cls",
+      "file": "../temp-test-fixture-realistic/classes/AssetService.cls",
       "line": 4,
       "evidence": "NonExistentClass.doMagic()",
       "reason": "Unresolved reference to External:NonExistentClass"

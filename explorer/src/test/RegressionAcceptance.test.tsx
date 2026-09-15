@@ -243,13 +243,15 @@ describe('Parallel Agent E Acceptance Suite', () => {
       }
     });
 
-    it('verifies drawer open vs closed space reservation requirement', async () => {
+    it('verifies drawer layout participation: no selected node -> no drawer-slot even if pinned', async () => {
       vi.stubGlobal('fetch', vi.fn().mockImplementation(() =>
         Promise.resolve({
           ok: true,
           json: () => Promise.resolve(mockValidDataPayload),
         })
       ));
+
+      localStorage.setItem('explorer.drawer.pinned', 'true');
 
       const { container } = render(
         <ProjectProvider>
@@ -262,7 +264,7 @@ describe('Parallel Agent E Acceptance Suite', () => {
         expect(container.querySelector('.sidebar-slot')).not.toBeNull();
       });
 
-      // Initially drawer is closed and NOT in DOM
+      // Crucial Fix Check: pinned is true but no node selected -> no drawer-slot in layout
       expect(container.querySelector('.drawer-slot')).toBeNull();
     });
 

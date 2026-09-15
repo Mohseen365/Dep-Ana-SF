@@ -1148,7 +1148,7 @@ body {
   padding: 4px 8px;
   z-index: 10;
   box-shadow: var(--shadow-md);
-  max-height: 38px;
+  min-height: 38px;
   white-space: nowrap;
 }
 

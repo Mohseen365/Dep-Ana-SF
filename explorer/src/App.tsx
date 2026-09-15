@@ -277,13 +277,32 @@ export function App() {
       setRecentNodeIds([]);
       setHighlightedImpactNodeIds(null);
       setSelectedCycleId(null);
+      view.setIsInvestigating(false);
+      view.setFocusState(createEmptyFocusState());
+      view.setImpactState(createEmptyImpactState());
+      view.setFilterState(createEmptyFilterState());
+      (view as any).setSelectedNodeId?.(null);
+      (view as any).setSelectedFindingId?.(null);
     };
 
     window.addEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     return () => {
       window.removeEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     };
-  }, [selection]);
+  }, [selection, view]);
+
+  // Defensive validation: clear stale node selection if selectedNodeId does not belong to data.nodes
+  useEffect(() => {
+    if (!data) return;
+    if (selection.selectedNodeId) {
+      const exists = data.nodes.some((n) => n.id === selection.selectedNodeId);
+      if (!exists) {
+        selection.clear();
+        setDrillPath([]);
+        view.setIsInvestigating(false);
+      }
+    }
+  }, [data, selection, view]);
 
   const handleTogglePin = useCallback(() => {
     setIsPinned((prev) => {
@@ -555,7 +574,8 @@ export function App() {
     view.setIsInvestigating(true);
   };
 
-  const isDrawerOpen = view.isInvestigating || isPinned;
+  const hasDrawerContent = selectedNode !== null;
+  const isDrawerOpen = hasDrawerContent && (view.isInvestigating || isPinned);
 
   if (loading) return <LoadingScreen />;
   if (error && !isNotAnalyzed) return <ErrorScreen error={error} onRetry={retry} />;
