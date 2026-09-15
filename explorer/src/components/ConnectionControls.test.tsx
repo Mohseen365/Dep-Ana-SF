@@ -8,7 +8,26 @@ describe('ConnectionControls component', () => {
     id: 'ApexClass:Service',
     displayName: 'Service',
     type: 'ApexClass',
+    file: 'force-app/main/default/classes/Service.cls',
+    metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
     risk: 'HIGH',
+    riskReasons: ['High coupling'],
+    behavior: {
+      isTest: false,
+      sharing: 'with sharing',
+      publicContractsCount: 2,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 2,
+      dmlCount: 1,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: true,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
   };
 
   const defaultConnectionState = {
