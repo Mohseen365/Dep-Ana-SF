@@ -199,33 +199,58 @@ function runTests() {
     });
     console.log(`  ✓ Checked ${data.edges.length} edge targets`);
 
-    // VALIDATION 4: Node types are valid
-    console.log("Validation 4: Node types are valid");
+    // VALIDATION 4: Node types are valid & testCoverageStatus is valid
+    console.log("Validation 4: Node types and testCoverageStatus are valid");
     const validNodeTypes = new Set([
       "ApexClass",
       "ApexTrigger",
       "LWC",
       "Visualforce",
       "Flow",
+      "Object",
       "CustomObject",
+      "Field",
       "CustomField",
       "External"
+    ]);
+    const validTestCoverageStates = new Set([
+      "COVERED",
+      "NO_TESTS",
+      "UNTESTED",
+      "AMBIGUOUS"
     ]);
     data.nodes.forEach(node => {
       assert.ok(
         validNodeTypes.has(node.type),
         `Node '${node.id}' has invalid metadata type: ${node.type}`
       );
+      const testCov = node.refactoringReadiness?.testCoverageStatus;
+      assert.ok(
+        validTestCoverageStates.has(testCov),
+        `Node '${node.id}' has invalid testCoverageStatus: ${testCov}`
+      );
+      assert.notStrictEqual(testCov, "LIKELY_COVERED", "testCoverageStatus must not be LIKELY_COVERED");
+      assert.notStrictEqual(testCov, "KNOWN_COVERAGE_FAILURE", "testCoverageStatus must not be KNOWN_COVERAGE_FAILURE");
     });
-    console.log(`  ✓ Validated all node types`);
+    console.log(`  ✓ Validated all node types and testCoverageStatus enum values`);
 
-    // VALIDATION 5: Edge types are valid
-    console.log("Validation 5: Edge types are valid");
+    // VALIDATION 5: Edge types & Canonical component types are valid
+    console.log("Validation 5: Edge types and canonical component types are valid");
     data.edges.forEach(edge => {
       assert.strictEqual(typeof edge.relationshipType, "string");
       assert.ok(edge.relationshipType.length > 0, `Edge '${edge.id}' must have a non-empty relationshipType`);
+      if (edge.canonical) {
+        assert.ok(
+          validNodeTypes.has(edge.canonical.source.type),
+          `Edge '${edge.id}' canonical source type invalid: ${edge.canonical.source.type}`
+        );
+        assert.ok(
+          validNodeTypes.has(edge.canonical.target.type),
+          `Edge '${edge.id}' canonical target type invalid: ${edge.canonical.target.type}`
+        );
+      }
     });
-    console.log(`  ✓ Validated all edge relationship types`);
+    console.log(`  ✓ Validated all edge relationship types and canonical component types`);
 
     // VALIDATION 6: Risk values are valid
     console.log("Validation 6: Risk values are valid");

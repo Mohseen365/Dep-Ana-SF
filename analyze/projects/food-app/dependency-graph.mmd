@@ -1,0 +1,6 @@
+graph TD
+  N1["FoodHelper\n[ApexClass]"]
+  N2["FoodService\n[ApexClass]"]
+  N3["FoodTrigger\n[Trigger]"]
+  N2 -->|"method-call: cook->prep"| N1
+  N3 -->|"trigger-handler: cook"| N2

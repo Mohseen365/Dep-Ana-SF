@@ -1,0 +1,882 @@
+{
+  "generatedAt": "2026-09-15T17:24:05.547Z",
+  "sourceDirectory": "temp-food-app-src",
+  "inventory": {
+    "files": 3,
+    "apexClasses": 2,
+    "apexTriggers": 1,
+    "lwcJs": 0,
+    "lwcHtml": 0,
+    "visualforce": 0,
+    "flows": 0,
+    "objects": 0,
+    "fields": 0
+  },
+  "testGapSummary": {
+    "totalComponents": 3,
+    "coveredCount": 0,
+    "likelyCoveredCount": 0,
+    "noTestEvidenceCount": 3,
+    "knownCoverageFailureCount": 0,
+    "ambiguousTestCount": 0,
+    "testComponentCount": 0,
+    "componentsWithTestGap": 3
+  },
+  "nodes": [
+    {
+      "id": "ApexClass:FoodHelper",
+      "name": "FoodHelper",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodHelper.cls"
+    },
+    {
+      "id": "ApexClass:FoodService",
+      "name": "FoodService",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodService.cls"
+    },
+    {
+      "id": "Trigger:FoodTrigger",
+      "name": "FoodTrigger",
+      "type": "Trigger",
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexClass:FoodService|ApexClass:FoodHelper|method-call|prep|FoodHelper.prep()",
+      "from": "ApexClass:FoodService",
+      "to": "ApexClass:FoodHelper",
+      "type": "method-call",
+      "method": "prep",
+      "evidence": "FoodHelper.prep()",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "FoodService",
+          "method": "cook"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "FoodHelper",
+          "method": "prep"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 1,
+          "column": 56
+        }
+      },
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "line": 1,
+      "column": 56,
+      "methodOwner": "cook",
+      "confidence": "high"
+    },
+    {
+      "id": "Trigger:FoodTrigger|ApexClass:FoodService|trigger-handler|cook|FoodService.cook()",
+      "from": "Trigger:FoodTrigger",
+      "to": "ApexClass:FoodService",
+      "type": "trigger-handler",
+      "method": "cook",
+      "evidence": "FoodService.cook()",
+      "canonical": {
+        "source": {
+          "type": "ApexTrigger",
+          "name": "FoodTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "FoodService",
+          "method": "cook"
+        },
+        "relationship": {
+          "type": "trigger-handler",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 1,
+          "column": 50
+        }
+      },
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "line": 1,
+      "column": 50,
+      "methodOwner": null,
+      "confidence": "LOW"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "ApexClass:FoodService",
+      "name": "FoodService",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "fanIn": 1,
+      "fanOut": 1,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "Trigger:FoodTrigger",
+      "name": "FoodTrigger",
+      "type": "Trigger",
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "fanIn": 0,
+      "fanOut": 1,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "ApexClass:FoodHelper",
+      "name": "FoodHelper",
+      "type": "ApexClass",
+      "file": "temp-food-app-src/classes/FoodHelper.cls",
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    }
+  ],
+  "cycles": [],
+  "roles": {
+    "entry-point": 1,
+    "controller": 0,
+    "service": 1,
+    "selector": 0,
+    "repository": 0,
+    "data-access": 0,
+    "domain": 0,
+    "utility": 1,
+    "configuration": 0,
+    "test": 0,
+    "unknown": 0
+  },
+  "layers": {
+    "presentation": 0,
+    "entry": 1,
+    "application": 0,
+    "service": 1,
+    "domain": 0,
+    "data": 0,
+    "integration": 0,
+    "configuration": 0,
+    "test": 0,
+    "unknown": 1
+  },
+  "entryPoints": {
+    "totalComponents": 3,
+    "totalEntryPoints": 1,
+    "nonEntryPoints": 2,
+    "byType": {
+      "Trigger": 1,
+      "LWC": 0,
+      "Visualforce": 0,
+      "REST": 0,
+      "Async": 0,
+      "Invocable": 0,
+      "AuraEnabled": 0,
+      "InboundEmail": 0
+    }
+  },
+  "externalBoundaries": {
+    "totalComponents": 3,
+    "componentsWithExternalBoundary": 0,
+    "componentsWithoutExternalBoundary": 3,
+    "byType": {
+      "HTTPCallout": 0,
+      "NamedCredential": 0,
+      "ExternalService": 0,
+      "PlatformEvent": 0,
+      "OutboundMessaging": 0,
+      "InboundEmail": 0,
+      "ExternalObject": 0,
+      "RESTService": 0
+    }
+  },
+  "bottlenecks": {
+    "totalComponents": 3,
+    "bottleneckCount": 0,
+    "normalCount": 3,
+    "disconnectedCount": 0,
+    "signalCounts": {
+      "high-fan-in": 0,
+      "high-fan-out": 0,
+      "cycle-participant": 0,
+      "bridge-position": 0,
+      "many-dependents": 0,
+      "many-dependency-paths": 0,
+      "high-dependency-impact": 0
+    }
+  },
+  "smells": {
+    "totalComponents": 3,
+    "componentsWithSmellsCount": 0,
+    "cleanComponentsCount": 3,
+    "totalSmellsCount": 0,
+    "smellCounts": {
+      "god-component": 0,
+      "hub-component": 0,
+      "high-coupling": 0,
+      "circular-dependency": 0,
+      "orphan-component": 0,
+      "uncovered-critical-path": 0,
+      "layer-violation": 0,
+      "mixed-responsibility": 0,
+      "external-boundary-concentration": 0
+    }
+  },
+  "architectureDebt": {
+    "totalComponents": 3,
+    "componentsWithDebtCount": 0,
+    "cleanComponentsCount": 3,
+    "totalDebtItemsCount": 0,
+    "categoryCounts": {
+      "excessive-coupling": 0,
+      "excessive-dependency-breadth": 0,
+      "architectural-bottleneck": 0,
+      "boundary-violation": 0,
+      "layering-violation": 0,
+      "insufficient-test-protection": 0,
+      "excessive-change-amplification": 0,
+      "duplicated-responsibility": 0,
+      "risky-external-coupling": 0,
+      "security-boundary-risk": 0,
+      "architectural-ambiguity": 0
+    },
+    "severityCounts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "businessCriticality": {
+    "totalComponents": 3,
+    "explicitBusinessCriticalityCount": 0,
+    "unknownBusinessCriticalityCount": 3,
+    "byBusinessLevel": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "unknown": 3
+    },
+    "byStructuralLevel": {
+      "high": 0,
+      "medium": 1,
+      "low": 0,
+      "unknown": 2
+    }
+  },
+  "architectureProfileSummary": {
+    "totalComponents": 3,
+    "roles": {
+      "utility": 1,
+      "service": 1,
+      "entry-point": 1
+    },
+    "layers": {
+      "unknown": 1,
+      "service": 1,
+      "entry": 1
+    },
+    "entryPoints": {
+      "count": 1
+    },
+    "bottlenecks": {
+      "count": 0
+    },
+    "testStatus": {
+      "unknown": 3
+    },
+    "externalBoundaries": {
+      "count": 0
+    },
+    "securitySharingModels": {
+      "unspecified": 3
+    },
+    "impactedObjects": []
+  },
+  "safetyEnvelopes": {
+    "totalComponents": 3,
+    "byClassification": {
+      "SAFE": 0,
+      "SAFE_WITH_REVIEW": 2,
+      "HIGH_RISK": 1,
+      "BLOCKED": 0,
+      "UNKNOWN": 0
+    },
+    "blockerCounts": {},
+    "riskFactorCounts": {
+      "test-gap-present": 3,
+      "architecture-smells-present": 1,
+      "entry-point-exposure": 1
+    }
+  },
+  "architectureHealth": {
+    "overallHealth": "DEGRADED",
+    "confidence": "medium",
+    "dimensions": {
+      "structuralCoupling": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "healthy-coupling-distribution",
+            "detail": "Low coupling pressure across all 3 repository components."
+          }
+        ],
+        "signals": {
+          "highCouplingCount": 0
+        }
+      },
+      "dependencyComplexity": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "zero-circular-dependencies",
+            "detail": "Repository contains 0 circular dependency loops."
+          }
+        ],
+        "signals": {
+          "cycleCount": 0
+        }
+      },
+      "changeRisk": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "small-change-propagation-risk",
+            "detail": "Repository has low change propagation pressure."
+          }
+        ],
+        "signals": {
+          "bottleneckCount": 0
+        }
+      },
+      "testProtection": {
+        "classification": "DEGRADED",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "high-test-gap-ratio",
+            "detail": "High test gap ratio: 3 of 3 component(s) (100%) lack test protection."
+          }
+        ],
+        "signals": {
+          "gapsCount": 3
+        }
+      },
+      "boundaryRisk": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "controlled-external-boundaries",
+            "detail": "Managed external boundary exposure across 0 component(s)."
+          }
+        ],
+        "signals": {
+          "extBoundaryCount": 0
+        }
+      },
+      "securityRisk": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "unspecified-sharing-concentration",
+            "detail": "2 Apex class(es) lack explicit sharing model declarations."
+          }
+        ],
+        "signals": {
+          "unspecifiedSharingCount": 2
+        }
+      },
+      "architecturalDebt": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "zero-architectural-smells",
+            "detail": "0 architectural smells detected across the repository."
+          }
+        ],
+        "signals": {
+          "totalSmells": 0,
+          "godCount": 0
+        }
+      },
+      "concentrationBottlenecks": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "zero-bottlenecks",
+            "detail": "Zero central architectural bottlenecks detected."
+          }
+        ],
+        "signals": {
+          "bottleneckCount": 0
+        }
+      },
+      "architecturalClarity": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "clear-architectural-structure",
+            "detail": "Clear role and layer separation established for repository components."
+          }
+        ],
+        "signals": {
+          "unknownRoles": 0
+        }
+      }
+    },
+    "strongestPositiveSignals": [
+      "Low coupling pressure across all 3 repository components.",
+      "Repository contains 0 circular dependency loops.",
+      "Repository has low change propagation pressure.",
+      "Managed external boundary exposure across 0 component(s).",
+      "0 architectural smells detected across the repository.",
+      "Zero central architectural bottlenecks detected.",
+      "Clear role and layer separation established for repository components."
+    ],
+    "strongestNegativeSignals": [
+      "High test gap ratio: 3 of 3 component(s) (100%) lack test protection."
+    ],
+    "unknownIncompleteAreas": [
+      "2 Apex class(es) have unspecified sharing mode."
+    ]
+  },
+  "qualityGates": {
+    "overallResult": "WARN",
+    "confidence": "medium",
+    "ruleResults": [
+      {
+        "ruleId": "RULE-EXCESSIVE-COUPLING",
+        "name": "Excessive Component Coupling",
+        "description": "Detects components with severe total coupling or god-component characteristics that violate structural safety thresholds.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-EXCESSIVE-BREADTH",
+        "name": "Excessive Dependency Breadth",
+        "description": "Detects structural dependency hub components with fan-in or fan-out exceeding threshold.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-CIRCULAR-DEPENDENCIES",
+        "name": "Circular Dependency Loops",
+        "description": "Detects participation in circular dependency loops across architecture components.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-ARCHITECTURAL-BOTTLENECK",
+        "name": "Architectural Bottlenecks",
+        "description": "Detects central flow bottleneck components that concentrate graph dependencies and change risk.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-MISSING-TEST-PROTECTION",
+        "name": "Missing Test Protection on Critical Paths",
+        "description": "Detects structurally critical or business-critical components that lack adequate test protection.",
+        "severity": "CRITICAL",
+        "result": "UNKNOWN",
+        "confidence": "high",
+        "affectedComponents": [
+          "FoodHelper",
+          "FoodService",
+          "FoodTrigger"
+        ],
+        "evidence": [
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'FoodHelper'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'FoodService'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'FoodTrigger'."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UNSAFE-EXTERNAL-BOUNDARY",
+        "name": "Unsafe External Boundaries",
+        "description": "Detects unisolated or concentrated external boundary integration points.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-SECURITY-BOUNDARY-VIOLATION",
+        "name": "Security Boundary Violations",
+        "description": "Detects security boundary risks such as 'without sharing' declarations on entry or persistence paths.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-SEVERE-ARCHITECTURE-DEBT",
+        "name": "Severe Architecture Debt Accumulation",
+        "description": "Detects critical or high-severity architecture debt items accumulating across components.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-UNSAFE-CHANGE-IMPACT",
+        "name": "Unsafe Change Impact & Blast Radius",
+        "description": "Detects components whose modification produces unsafe change propagation or BLOCKED safety envelopes.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "FoodTrigger"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'FoodTrigger' is classified as HIGH_RISK."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-INVALID-ROLE-LAYER-RELATIONSHIPS",
+        "name": "Invalid Role / Layer Relationships",
+        "description": "Detects illegal cross-layer dependencies or mixed control/persistence responsibilities.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-DOMAIN-INCONSISTENCIES",
+        "name": "Domain Architectural Ambiguity & Inconsistencies",
+        "description": "Detects ambiguous static references or domain boundary conflicts in component flows.",
+        "severity": "MEDIUM",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      }
+    ],
+    "failures": [],
+    "warnings": [
+      {
+        "ruleId": "RULE-UNSAFE-CHANGE-IMPACT",
+        "name": "Unsafe Change Impact & Blast Radius",
+        "description": "Detects components whose modification produces unsafe change propagation or BLOCKED safety envelopes.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "FoodTrigger"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'FoodTrigger' is classified as HIGH_RISK."
+          }
+        ]
+      }
+    ],
+    "unknownChecks": [
+      "Missing Test Protection on Critical Paths"
+    ]
+  },
+  "duplicateResponsibility": {
+    "summary": {
+      "totalComponents": 3,
+      "componentsWithOverlapCount": 0,
+      "strongOverlapCount": 0,
+      "possibleOverlapCount": 0,
+      "noOverlapCount": 3,
+      "uniqueOverlappingPairsCount": 0
+    }
+  },
+  "registry": [
+    {
+      "id": "ApexClass:FoodHelper",
+      "type": "ApexClass",
+      "name": "FoodHelper",
+      "file": "temp-food-app-src/classes/FoodHelper.cls",
+      "parsed": {
+        "id": "ApexClass:FoodHelper",
+        "type": "ApexClass",
+        "name": "FoodHelper",
+        "file": "temp-food-app-src/classes/FoodHelper.cls",
+        "lines": 1,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "prep",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 26,
+            "startLine": 1,
+            "endLine": 1,
+            "endOffset": 56,
+            "dependencies": [],
+            "dependencyCount": 0,
+            "lineStart": 1,
+            "lineEnd": 1,
+            "annotations": []
+          }
+        ],
+        "dependencies": [],
+        "sourceHash": "4b088d6bc745edc71929bb9bfcb8eb93d5b3d61c5e517298784e0cd005aa1af8",
+        "lineCount": 1,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 56,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "ApexClass:FoodService",
+      "type": "ApexClass",
+      "name": "FoodService",
+      "file": "temp-food-app-src/classes/FoodService.cls",
+      "parsed": {
+        "id": "ApexClass:FoodService",
+        "type": "ApexClass",
+        "name": "FoodService",
+        "file": "temp-food-app-src/classes/FoodService.cls",
+        "lines": 1,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [
+          {
+            "name": "cook",
+            "returnType": "void",
+            "parameters": "",
+            "visibility": "private",
+            "modifiers": [
+              "public",
+              "static"
+            ],
+            "isStatic": false,
+            "isVirtual": false,
+            "isOverride": false,
+            "isAbstract": false,
+            "isAuraEnabled": false,
+            "isInvocable": false,
+            "startOffset": 27,
+            "startLine": 1,
+            "endLine": 1,
+            "endOffset": 77,
+            "dependencies": [
+              {
+                "to": "FoodHelper",
+                "type": "method-call",
+                "method": "prep",
+                "line": 1,
+                "confidence": "high",
+                "evidence": "FoodHelper.prep()",
+                "canonical": {
+                  "source": {
+                    "type": "ApexClass",
+                    "name": "FoodService",
+                    "method": "cook"
+                  },
+                  "target": {
+                    "type": "ApexClass",
+                    "name": "FoodHelper",
+                    "method": "prep"
+                  },
+                  "relationship": {
+                    "type": "method-call",
+                    "resolution": "EXACT"
+                  },
+                  "location": {
+                    "line": 1,
+                    "column": 56
+                  }
+                }
+              }
+            ],
+            "dependencyCount": 1,
+            "lineStart": 1,
+            "lineEnd": 1,
+            "annotations": []
+          }
+        ],
+        "dependencies": [
+          {
+            "from": "ApexClass:FoodService",
+            "toName": "FoodHelper",
+            "type": "method-call",
+            "method": "prep",
+            "evidence": "FoodHelper.prep()",
+            "line": 1,
+            "column": 56,
+            "methodOwner": "cook",
+            "confidence": "high",
+            "canonical": {
+              "source": {
+                "type": "ApexClass",
+                "name": "FoodService",
+                "method": "cook"
+              },
+              "target": {
+                "type": "ApexClass",
+                "name": "FoodHelper",
+                "method": "prep"
+              },
+              "relationship": {
+                "type": "method-call",
+                "resolution": "EXACT"
+              },
+              "location": {
+                "line": 1,
+                "column": 56
+              }
+            },
+            "file": "temp-food-app-src/classes/FoodService.cls"
+          }
+        ],
+        "sourceHash": "7dfc7f7fde64e34bf3e37c470f834ca8e8999c379e0f21b42d39d6a5ceaff79f",
+        "lineCount": 1,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 77,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    },
+    {
+      "id": "Trigger:FoodTrigger",
+      "type": "Trigger",
+      "name": "FoodTrigger",
+      "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+      "parsed": {
+        "id": "Trigger:FoodTrigger",
+        "type": "Trigger",
+        "name": "FoodTrigger",
+        "file": "temp-food-app-src/triggers/FoodTrigger.trigger",
+        "lines": 1,
+        "object": "Account",
+        "events": [
+          "before insert"
+        ],
+        "dependencies": [
+          {
+            "from": "Trigger:FoodTrigger",
+            "toName": "FoodService",
+            "type": "trigger-handler",
+            "method": "cook",
+            "evidence": "FoodService.cook()",
+            "line": 1,
+            "column": 50,
+            "methodOwner": null,
+            "confidence": "LOW",
+            "file": "temp-food-app-src/triggers/FoodTrigger.trigger"
+          }
+        ],
+        "sourceHash": "e766bb90ea4ebbb58aadc382b1b774fa69ad0ca34db6b1f325b2d8b41f5a2708",
+        "sourceBytes": 70,
+        "lineCount": 1,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    }
+  ]
+}

@@ -32,6 +32,7 @@ function parseArgs(argv) {
   const args = argv.slice(2);
   let input = "analyze";
   let output = "";
+  let outputDir = "";
   let project = "default";
   let projectName = "";
   let projectDesc = "";
@@ -44,6 +45,9 @@ function parseArgs(argv) {
       i++;
     } else if (arg === "--output" && args[i + 1]) {
       output = args[i + 1];
+      i++;
+    } else if (arg === "--output-dir" && args[i + 1]) {
+      outputDir = args[i + 1];
       i++;
     } else if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
       project = slugify(args[i + 1]) || "default";
@@ -69,14 +73,16 @@ function parseArgs(argv) {
   }
 
   if (!output) {
-    if (project && project !== "default") {
+    if (outputDir) {
+      output = path.join(outputDir, "explorer-data.json");
+    } else if (project && project !== "default") {
       output = path.join("analyze", "projects", project, "explorer-data.json");
     } else {
       output = "analyze/explorer-data.json";
     }
   }
 
-  return { input, output, project, projectName, projectDesc, source };
+  return { input, output, outputDir, project, projectName, projectDesc, source };
 }
 
 function isSameSource(sourceA, sourceB) {
@@ -105,7 +111,7 @@ function resolveInputFile(inputPath, options = {}) {
     if (!candidateFile || !fs.existsSync(candidateFile)) return false;
     if (!explicitSource) return true;
     const candidateSource = getReportSourceDir(candidateFile);
-    return candidateSource ? isSameSource(candidateSource, explicitSource) : true;
+    return candidateSource ? isSameSource(candidateSource, explicitSource) : false;
   };
 
   // 1. Check explicit inputPath if provided
@@ -173,19 +179,35 @@ function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
 }
 
 function normalizeNodeType(type, id = "") {
-  if (type) {
-    if (type === "Object") return "CustomObject";
-    if (type === "Field") return "CustomField";
-    if (type === "Trigger") return "ApexTrigger";
-    return type;
+  let candidate = type;
+  if (!candidate && id && id.includes(":")) {
+    candidate = id.split(":")[0];
   }
-  if (id.includes(":")) {
-    const rawType = id.split(":")[0];
-    if (rawType === "Object") return "CustomObject";
-    if (rawType === "Field") return "CustomField";
-    if (rawType === "Trigger") return "ApexTrigger";
-    return rawType;
-  }
+  if (!candidate) return "ApexClass";
+
+  const t = String(candidate).trim();
+  if (t === "Trigger" || t === "ApexTrigger") return "ApexTrigger";
+  if (t === "Object" || t === "CustomObject") return "CustomObject";
+  if (t === "Field" || t === "CustomField") return "CustomField";
+  if (t === "LWC" || t === "LWC_HTML" || t === "LWC_JS") return "LWC";
+  if (t === "Visualforce" || t === "ApexPage" || t === "VF") return "Visualforce";
+  if (t === "Flow") return "Flow";
+  if (t === "External") return "External";
+  if (t === "ApexClass") return "ApexClass";
+
+  const valid = [
+    "ApexClass",
+    "ApexTrigger",
+    "LWC",
+    "Visualforce",
+    "Flow",
+    "Object",
+    "CustomObject",
+    "Field",
+    "CustomField",
+    "External",
+  ];
+  if (valid.includes(t)) return t;
   return "ApexClass";
 }
 
@@ -391,14 +413,14 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     let testCoverageStatus = "UNTESTED";
     if (isTest || testGapResult.signal === "test-component") {
       testCoverageStatus = "COVERED";
-    } else if (testGapResult.signal === "covered") {
+    } else if (testGapResult.signal === "covered" || testGapResult.signal === "likely-covered") {
       testCoverageStatus = "COVERED";
-    } else if (testGapResult.signal === "likely-covered") {
-      testCoverageStatus = "LIKELY_COVERED";
     } else if (testGapResult.signal === "known-coverage-failure") {
-      testCoverageStatus = "KNOWN_COVERAGE_FAILURE";
+      testCoverageStatus = "UNTESTED";
     } else if (testGapResult.signal === "ambiguous-test") {
       testCoverageStatus = "AMBIGUOUS";
+    } else if (testGapResult.signal === "no-test-evidence") {
+      testCoverageStatus = "NO_TESTS";
     } else {
       testCoverageStatus = "UNTESTED";
     }
@@ -672,7 +694,7 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
   const explorerDistDir = path.join(rootDir, "explorer", "dist");
 
   if (!fs.existsSync(explorerPublicDir)) {
-    return;
+    fs.mkdirSync(explorerPublicDir, { recursive: true });
   }
 
   const projectId = projectMetadata?.id || "default";

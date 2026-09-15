@@ -1,11 +1,11 @@
 # Salesforce Dependency Analysis Summary
 
-Generated: 2026-09-13T15:12:27.572Z
+Generated: 2026-09-15T17:20:58.826Z
 
 ## Inventory
 
-- Source files: 9
-- Apex classes: 9
+- Source files: 2
+- Apex classes: 2
 - Apex triggers: 0
 - LWC JS: 0
 - LWC HTML: 0
@@ -13,28 +13,16 @@ Generated: 2026-09-13T15:12:27.572Z
 - Flows: 0
 - Objects: 0
 - Fields: 0
-- Graph nodes: 14
-- Graph edges: 16
+- Graph nodes: 2
+- Graph edges: 2
 - Circular groups: 1
 
 ## Highest Impact Components
 
 | Component | Type | Fan-In | Fan-Out | Coupling | Risk |
 |---|---|---:|---:|---:|---|
-| BouquetOrderSelector | ApexClass | 1 | 6 | 7 | LOW |
-| BouquetOrderFormService | ApexClass | 2 | 4 | 6 | LOW |
-| BouquetOrderController | ApexClass | 2 | 2 | 4 | LOW |
-| BouquetOrderPageHandler | ApexClass | 0 | 2 | 2 | LOW |
-| CircularA | ApexClass | 1 | 1 | 2 | LOW |
-| CircularB | ApexClass | 1 | 1 | 2 | LOW |
-| HelperService | ApexClass | 2 | 0 | 2 | LOW |
-| MultiCallService | ApexClass | 2 | 0 | 2 | LOW |
-| Account | External | 1 | 0 | 1 | LOW |
-| Contact | External | 1 | 0 | 1 | LOW |
-| Object:Account | External | 1 | 0 | 1 | LOW |
-| Object:Contact | External | 1 | 0 | 1 | LOW |
-| Object:Case | External | 1 | 0 | 1 | LOW |
-| UnrelatedService | ApexClass | 0 | 0 | 0 | LOW |
+| ClassA | ApexClass | 1 | 1 | 2 | LOW |
+| ClassB | ApexClass | 1 | 1 | 2 | LOW |
 
 ## Interpretation
 

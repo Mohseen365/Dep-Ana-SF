@@ -215,7 +215,40 @@ function runMultiProjectTests() {
     );
     console.log("  ✓ Stale report prevention verified: explicit unmatched --source rejected");
 
-    console.log("\nALL 8 REGRESSION TESTS PASSED SUCCESSFULLY!");
+    // REGRESSION TEST 9: Food-App Project Pipeline & Public Asset Auto-Creation
+    console.log("Regression Test 9: Food-App Project Pipeline & Public Asset Auto-Creation");
+    const foodAppOut = path.join(TEST_ANALYZE_DIR, "projects", "food-app", "explorer-data.json");
+    const foodPublicOut = path.join(PUBLIC_DIR, "projects", "food-app", "explorer-data.json");
+
+    const resFood = exportExplorerData(inputA, foodAppOut, {
+      project: "food-app",
+      projectName: "Food App",
+      source: FIXTURE_DIR_A,
+    });
+
+    assert.ok(fs.existsSync(foodAppOut), "analyze/projects/food-app/explorer-data.json must exist");
+    assert.ok(fs.existsSync(foodPublicOut), "explorer/public/projects/food-app/explorer-data.json must be created automatically");
+    assert.strictEqual(resFood.projectMetadata.id, "food-app");
+
+    // Validate canonical component types and testCoverageStatus in Food-App contract
+    const validNodeTypes = new Set(["ApexClass", "ApexTrigger", "LWC", "Visualforce", "Flow", "Object", "CustomObject", "Field", "CustomField", "External"]);
+    const validTestCov = new Set(["COVERED", "NO_TESTS", "UNTESTED", "AMBIGUOUS"]);
+
+    resFood.explorerData.nodes.forEach((n) => {
+      assert.ok(validNodeTypes.has(n.type), `Node ${n.id} type invalid: ${n.type}`);
+      assert.ok(validTestCov.has(n.refactoringReadiness.testCoverageStatus), `Node ${n.id} testCoverageStatus invalid: ${n.refactoringReadiness.testCoverageStatus}`);
+    });
+
+    resFood.explorerData.edges.forEach((e) => {
+      if (e.canonical) {
+        assert.ok(validNodeTypes.has(e.canonical.source.type), `Edge ${e.id} canonical source type invalid: ${e.canonical.source.type}`);
+        assert.ok(validNodeTypes.has(e.canonical.target.type), `Edge ${e.id} canonical target type invalid: ${e.canonical.target.type}`);
+      }
+    });
+
+    console.log("  ✓ Verified Food-App contract generation and automatic explorer/public/projects/food-app/ publication");
+
+    console.log("\nALL 9 REGRESSION TESTS PASSED SUCCESSFULLY!");
   } finally {
     cleanupFixtures();
   }

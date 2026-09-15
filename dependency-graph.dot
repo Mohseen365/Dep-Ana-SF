@@ -1,34 +1,8 @@
 digraph SalesforceDependencies {
   rankdir="LR";
   graph [overlap=false];
-  N1 [label="BouquetOrderController\nApexClass", shape=box];
-  N2 [label="BouquetOrderFormService\nApexClass", shape=box];
-  N3 [label="BouquetOrderPageHandler\nApexClass", shape=box];
-  N4 [label="BouquetOrderSelector\nApexClass", shape=box];
-  N5 [label="CircularA\nApexClass", shape=box];
-  N6 [label="CircularB\nApexClass", shape=box];
-  N7 [label="HelperService\nApexClass", shape=box];
-  N8 [label="MultiCallService\nApexClass", shape=box];
-  N9 [label="UnrelatedService\nApexClass", shape=box];
-  N10 [label="Account\nExternal", shape=note];
-  N11 [label="Contact\nExternal", shape=note];
-  N12 [label="Object:Account\nExternal", shape=note];
-  N13 [label="Object:Contact\nExternal", shape=note];
-  N14 [label="Object:Case\nExternal", shape=note];
-  N1 -> N2 [label="instantiation:submitOrder"];
-  N1 -> N2 [label="type-reference:submitOrder"];
-  N2 -> N4 [label="method-call:someMethod->getContactIdByUserId"];
-  N2 -> N7 [label="method-call:secondMethod->resolve"];
-  N2 -> N8 [label="method-call:secondMethod->firstCall"];
-  N2 -> N8 [label="method-call:secondMethod->secondCall"];
-  N3 -> N1 [label="instantiation:handleRequest"];
-  N3 -> N1 [label="type-reference:handleRequest"];
-  N4 -> N7 [label="method-call:getContactIdByUserId->resolve"];
-  N4 -> N10 [label="generic-type"];
-  N4 -> N11 [label="generic-type"];
-  N4 -> N12 [label="soql-object"];
-  N4 -> N13 [label="soql-object"];
-  N4 -> N14 [label="soql-object"];
-  N5 -> N6 [label="method-call:callB->callA"];
-  N6 -> N5 [label="method-call:callA->callB"];
+  N1 [label="ClassA\nApexClass", shape=box];
+  N2 [label="ClassB\nApexClass", shape=box];
+  N1 -> N2 [label="method-call:doWork->doHelp"];
+  N2 -> N1 [label="method-call:doHelp->doWork"];
 }
