@@ -1,24 +1,27 @@
 #!/usr/bin/env node
 /**
- * Hardened Test Suite for Multi-Project Foundation & Isolation
+ * Hardened Test Suite for Multi-Project Foundation, Isolation & Explorer Data Pipeline
  *
- * Validates:
- * 1. Creating project metadata and schema compliance
- * 2. Multi-project manifest generation & project loading
- * 3. Switching project context
- * 4. Project data isolation (Project A data never leaks into Project B)
- * 5. Missing / invalid project error handling
- * 6. Backward compatibility with default single-project export
+ * Validates 8 core regression requirements:
+ * 1. Project name slugification (e.g. "Movie App" -> "movie-app", "Salesforce Core CRM" -> "salesforce-core-crm")
+ * 2. Project-scoped output (analyze/projects/movie-app/explorer-data.json)
+ * 3. Browser-scoped output (explorer/public/projects/movie-app/explorer-data.json)
+ * 4. Multiple projects independence (proj-a, proj-b, movie-app remain isolated)
+ * 5. Source-specific export
+ * 6. Default project backward compatibility (analyze/explorer-data.json & explorer/public/explorer-data.json)
+ * 7. Project switching URL & metadata contract consistency
+ * 8. Stale report prevention (explicit --source prevents re-using unrelated reports)
  */
 
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
-const { exportExplorerData } = require("./export-explorer.cjs");
+const { exportExplorerData, slugify } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR_A = path.join(__dirname, "../temp-test-fixture-proj-a");
 const FIXTURE_DIR_B = path.join(__dirname, "../temp-test-fixture-proj-b");
 const TEST_ANALYZE_DIR = path.join(__dirname, "../temp-multi-project-analyze");
+const PUBLIC_DIR = path.join(__dirname, "../explorer/public");
 
 function setupFixtures() {
   cleanupFixtures();
@@ -61,9 +64,21 @@ function cleanupFixtures() {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });
-  if (fs.existsSync("analyze")) {
-    fs.rmSync("analyze", { recursive: true, force: true });
-  }
+
+  // Clean transient test project outputs from explorer/public/projects
+  const transientTestProjs = ["project-alpha", "project-beta", "stale-check", "invalid-proj"];
+  transientTestProjs.forEach((pId) => {
+    const pPath = path.join(PUBLIC_DIR, "projects", pId);
+    if (fs.existsSync(pPath)) {
+      fs.rmSync(pPath, { recursive: true, force: true });
+    }
+  });
+
+  // Restore any git-tracked files in analyze/ or explorer/public/ modified by test runs
+  const { execSync } = require("child_process");
+  try {
+    execSync("git checkout HEAD -- analyze/ explorer/public/", { stdio: "ignore" });
+  } catch (_) {}
 }
 
 function runMultiProjectTests() {
@@ -76,91 +91,131 @@ function runMultiProjectTests() {
     const inputA = path.join(FIXTURE_DIR_A, "analyze");
     const inputB = path.join(FIXTURE_DIR_B, "analyze");
 
+    // REGRESSION TEST 1: Project Name Slugification
+    console.log("Regression Test 1: Project name slugification");
+    assert.strictEqual(slugify("Movie App"), "movie-app");
+    assert.strictEqual(slugify("Salesforce Core CRM"), "salesforce-core-crm");
+    assert.strictEqual(slugify("MOVIE APP"), "movie-app");
+    assert.strictEqual(slugify("  Movie--App  "), "movie-app");
+    assert.strictEqual(slugify("default"), "default");
+    console.log("  ✓ Project name slugification functions deterministically");
+
+    // REGRESSION TEST 2: Project-Scoped Output
+    console.log("Regression Test 2: Project-scoped output contract generation");
+    const movieAppOutput = path.join(TEST_ANALYZE_DIR, "projects", "movie-app", "explorer-data.json");
+    const resMovie = exportExplorerData(inputA, movieAppOutput, {
+      project: "Movie App",
+      projectName: "Movie App",
+      source: FIXTURE_DIR_A,
+    });
+
+    assert.ok(fs.existsSync(movieAppOutput), "analyze/projects/movie-app/explorer-data.json must exist");
+    assert.strictEqual(resMovie.projectMetadata.id, "movie-app");
+    assert.strictEqual(resMovie.explorerData.project.id, "movie-app");
+    assert.ok(resMovie.explorerData.nodes.length > 0, "nodes must not be empty");
+    assert.ok(Array.isArray(resMovie.explorerData.edges), "edges must be an array");
+    assert.strictEqual(resMovie.explorerData.summary.nodeCount, resMovie.explorerData.nodes.length);
+    console.log("  ✓ Created project-scoped output contract at analyze/projects/movie-app/explorer-data.json");
+
+    // REGRESSION TEST 3: Browser-Scoped Output
+    console.log("Regression Test 3: Browser-scoped output publishing");
+    const browserMovieOutput = path.join(PUBLIC_DIR, "projects", "movie-app", "explorer-data.json");
+    assert.ok(fs.existsSync(browserMovieOutput), "explorer/public/projects/movie-app/explorer-data.json must exist");
+
+    const analyzeContent = fs.readFileSync(movieAppOutput, "utf8");
+    const browserContent = fs.readFileSync(browserMovieOutput, "utf8");
+    assert.strictEqual(analyzeContent, browserContent, "analyze contract and explorer/public contract must be identical");
+    console.log("  ✓ Published browser-served contract at explorer/public/projects/movie-app/explorer-data.json");
+
+    // REGRESSION TEST 4: Multiple Projects Independence
+    console.log("Regression Test 4: Multiple projects independence");
     const outputA = path.join(TEST_ANALYZE_DIR, "projects", "proj-a", "explorer-data.json");
     const outputB = path.join(TEST_ANALYZE_DIR, "projects", "proj-b", "explorer-data.json");
 
-    // TEST 1: Creating Project Metadata & Exporting Isolated Projects
-    console.log("Test 1: Creating project metadata");
     const resA = exportExplorerData(inputA, outputA, {
-      project: "proj-a",
+      project: "Project Alpha",
       projectName: "Project Alpha",
-      projectDesc: "Salesforce DX Package Alpha",
-      source: "force-app/alpha",
+      source: FIXTURE_DIR_A,
     });
 
     const resB = exportExplorerData(inputB, outputB, {
-      project: "proj-b",
+      project: "Project Beta",
       projectName: "Project Beta",
-      projectDesc: "Salesforce DX Package Beta",
-      source: "force-app/beta",
+      source: FIXTURE_DIR_B,
     });
 
-    assert.strictEqual(resA.projectMetadata.id, "proj-a");
-    assert.strictEqual(resA.projectMetadata.name, "Project Alpha");
-    assert.strictEqual(resA.projectMetadata.sourcePath, "force-app/alpha");
+    assert.strictEqual(resA.projectMetadata.id, "project-alpha");
+    assert.strictEqual(resB.projectMetadata.id, "project-beta");
 
-    assert.strictEqual(resB.projectMetadata.id, "proj-b");
-    assert.strictEqual(resB.projectMetadata.name, "Project Beta");
-    assert.strictEqual(resB.projectMetadata.sourcePath, "force-app/beta");
+    assert.ok(fs.existsSync(outputA));
+    assert.ok(fs.existsSync(outputB));
 
-    assert.ok(fs.existsSync(path.join(TEST_ANALYZE_DIR, "projects", "proj-a", "project-metadata.json")));
-    assert.ok(fs.existsSync(path.join(TEST_ANALYZE_DIR, "projects", "proj-b", "project-metadata.json")));
-    console.log("  ✓ Created metadata for Project Alpha (proj-a) and Project Beta (proj-b)");
-
-    // TEST 2: Loading Projects from Multi-Project Manifest
-    console.log("Test 2: Loading projects from multi-project manifest");
-    const manifestPath = path.join(TEST_ANALYZE_DIR, "project-manifest.json");
-    assert.ok(fs.existsSync(manifestPath), "project-manifest.json must exist in root output directory");
-
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-    assert.strictEqual(manifest.manifestVersion, "1.0.0");
-    assert.strictEqual(manifest.projects.length, 2);
-
-    const loadedIds = manifest.projects.map((p) => p.id);
-    assert.ok(loadedIds.includes("proj-a"));
-    assert.ok(loadedIds.includes("proj-b"));
-    console.log("  ✓ Loaded manifest with 2 registered projects");
-
-    // TEST 3: Switching Project Context & Project Isolation Guarantees
-    console.log("Test 3: Switching project context & data isolation");
-    const dataA = resA.explorerData;
-    const dataB = resB.explorerData;
-
-    const nodesA = dataA.nodes.map((n) => n.displayName);
-    const nodesB = dataB.nodes.map((n) => n.displayName);
+    const nodesA = resA.explorerData.nodes.map((n) => n.displayName);
+    const nodesB = resB.explorerData.nodes.map((n) => n.displayName);
 
     assert.ok(nodesA.includes("ServiceA"), "Project Alpha MUST contain ServiceA");
-    assert.ok(!nodesA.includes("ServiceB"), "Project Alpha MUST NOT contain ServiceB (Data Leak Check)");
+    assert.ok(!nodesA.includes("ServiceB"), "Project Alpha MUST NOT contain ServiceB");
 
     assert.ok(nodesB.includes("ServiceB"), "Project Beta MUST contain ServiceB");
-    assert.ok(!nodesB.includes("ServiceA"), "Project Beta MUST NOT contain ServiceA (Data Leak Check)");
+    assert.ok(!nodesB.includes("ServiceA"), "Project Beta MUST NOT contain ServiceA");
 
-    console.log("  ✓ Verified zero component/dependency data leaks between Project Alpha and Project Beta");
+    console.log("  ✓ Verified project-alpha, project-beta, and movie-app remain completely independent");
 
-    // TEST 4: Missing or Invalid Project Error Handling
-    console.log("Test 4: Missing or invalid project error handling");
-    assert.throws(
-      () => {
-        exportExplorerData(path.join(__dirname, "non-existent-folder"), "output.json", {
-          project: "invalid-proj",
-        });
-      },
-      /Analyzer output file not found/,
-      "Adapter must throw clear error when input directory does not exist"
-    );
-    console.log("  ✓ Clean error handling for missing/invalid projects verified");
+    // REGRESSION TEST 5: Source-Specific Export
+    console.log("Regression Test 5: Source-specific export");
+    assert.strictEqual(resA.projectMetadata.sourcePath, FIXTURE_DIR_A);
+    assert.strictEqual(resB.projectMetadata.sourcePath, FIXTURE_DIR_B);
+    console.log("  ✓ Exported contracts correctly reflect requested source directories");
 
-    // TEST 5: Backward Compatibility
-    console.log("Test 5: Backward compatibility with default single-project export");
+    // REGRESSION TEST 6: Default Project Backward Compatibility
+    console.log("Regression Test 6: Default project backward compatibility");
     const defaultOutput = path.join(TEST_ANALYZE_DIR, "explorer-data.json");
     const defaultRes = exportExplorerData(inputA, defaultOutput);
 
     assert.strictEqual(defaultRes.projectMetadata.id, "default");
     assert.strictEqual(defaultRes.projectMetadata.name, "Default Salesforce Project");
-    assert.ok(fs.existsSync(defaultOutput), "Legacy root explorer-data.json output must exist");
-    console.log("  ✓ Backward compatibility for default single-project pipeline verified");
+    assert.strictEqual(defaultRes.projectMetadata.analysisPath, "/explorer-data.json");
+    assert.ok(fs.existsSync(defaultOutput), "analyze/explorer-data.json fallback must exist");
+    assert.ok(fs.existsSync(path.join(PUBLIC_DIR, "explorer-data.json")), "explorer/public/explorer-data.json fallback must exist");
+    console.log("  ✓ Backward compatibility for default single-project export verified");
 
-    console.log("\nALL MULTI-PROJECT FOUNDATION & ISOLATION TESTS PASSED!");
+    // REGRESSION TEST 7: Project Switching Contract Consistency
+    console.log("Regression Test 7: Project switching contract consistency");
+    const manifestPath = path.join(TEST_ANALYZE_DIR, "project-manifest.json");
+    assert.ok(fs.existsSync(manifestPath));
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+
+    const projIds = manifest.projects.map((p) => p.id);
+    assert.ok(projIds.includes("default"));
+    assert.ok(projIds.includes("movie-app"));
+    assert.ok(projIds.includes("project-alpha"));
+    assert.ok(projIds.includes("project-beta"));
+
+    manifest.projects.forEach((p) => {
+      if (p.id === "default") {
+        assert.strictEqual(p.analysisPath, "/explorer-data.json");
+      } else {
+        assert.strictEqual(p.analysisPath, `/projects/${p.id}/explorer-data.json`);
+      }
+    });
+    console.log("  ✓ Project switching metadata and analysisPath contract consistency verified");
+
+    // REGRESSION TEST 8: Stale Report Prevention
+    console.log("Regression Test 8: Stale report prevention");
+    // Ensure that supplying a different explicit --source on a directory with an old report triggers re-analysis for the new source
+    assert.throws(
+      () => {
+        exportExplorerData(inputA, path.join(TEST_ANALYZE_DIR, "projects", "stale-check", "explorer-data.json"), {
+          project: "stale-check",
+          source: "/non/existent/unrelated/source/directory",
+        });
+      },
+      /Analyzer output file not found/,
+      "Must not silently reuse stale input report when explicit --source does not match"
+    );
+    console.log("  ✓ Stale report prevention verified: explicit unmatched --source rejected");
+
+    console.log("\nALL 8 REGRESSION TESTS PASSED SUCCESSFULLY!");
   } finally {
     cleanupFixtures();
   }

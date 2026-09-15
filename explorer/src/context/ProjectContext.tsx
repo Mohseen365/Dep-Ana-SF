@@ -51,15 +51,24 @@ const ACTIVE_PROJECT_KEY = 'explorer.activeProjectId';
 const RECENT_PROJECTS_KEY = 'explorer.recentProjectIds';
 const LOCAL_PROJECTS_KEY = 'explorer.localProjects';
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function getInitialProjectId(): string {
   if (typeof window === 'undefined') return DEFAULT_PROJECT.id;
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const urlProject = urlParams.get('project');
-    if (urlProject) return urlProject;
+    if (urlProject) return slugify(urlProject) || DEFAULT_PROJECT.id;
 
     const savedProject = localStorage.getItem(ACTIVE_PROJECT_KEY);
-    if (savedProject) return savedProject;
+    if (savedProject) return slugify(savedProject) || DEFAULT_PROJECT.id;
   } catch (_) {
     // Ignore storage/URL access errors
   }
@@ -72,21 +81,12 @@ function getStoredRecentIds(): string[] {
     const stored = localStorage.getItem(RECENT_PROJECTS_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed.map(String);
+      if (Array.isArray(parsed)) return parsed.map((x) => slugify(String(x))).filter(Boolean);
     }
   } catch (_) {
     // Ignore
   }
   return [];
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 export const ProjectProvider: React.FC<{
@@ -96,7 +96,7 @@ export const ProjectProvider: React.FC<{
 }> = ({ children, initialProjectId, manifestUrl = '/project-manifest.json' }) => {
   const [projects, setProjects] = useState<ProjectMetadata[]>([DEFAULT_PROJECT]);
   const [activeProjectId, setActiveProjectId] = useState<string>(
-    initialProjectId || getInitialProjectId()
+    initialProjectId ? slugify(initialProjectId) || DEFAULT_PROJECT.id : getInitialProjectId()
   );
   const [recentIds, setRecentIds] = useState<string[]>(getStoredRecentIds());
   const [loading, setLoading] = useState<boolean>(true);
@@ -121,7 +121,7 @@ export const ProjectProvider: React.FC<{
           manifestProjects = manifest.projects;
         }
         if (manifest.activeProjectId) {
-          activeIdFromManifest = manifest.activeProjectId;
+          activeIdFromManifest = slugify(manifest.activeProjectId);
         }
       }
     } catch (_) {
@@ -143,14 +143,28 @@ export const ProjectProvider: React.FC<{
     const mergedMap = new Map<string, ProjectMetadata>();
     mergedMap.set(DEFAULT_PROJECT.id, DEFAULT_PROJECT);
 
-    manifestProjects.forEach((p) => mergedMap.set(p.id, p));
-    localProjects.forEach((p) => mergedMap.set(p.id, p));
+    manifestProjects.forEach((p) => {
+      const pId = slugify(p.id) || p.id;
+      mergedMap.set(pId, {
+        ...p,
+        id: pId,
+        analysisPath: pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json',
+      });
+    });
+    localProjects.forEach((p) => {
+      const pId = slugify(p.id) || p.id;
+      mergedMap.set(pId, {
+        ...p,
+        id: pId,
+        analysisPath: pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json',
+      });
+    });
 
     const allProjects = Array.from(mergedMap.values());
     setProjects(allProjects);
 
     // Determine target active project
-    const currentId = initialProjectId || getInitialProjectId();
+    const currentId = initialProjectId ? slugify(initialProjectId) : getInitialProjectId();
     const validId = mergedMap.has(currentId)
       ? currentId
       : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
@@ -167,14 +181,15 @@ export const ProjectProvider: React.FC<{
 
   const selectProject = useCallback(
     (projectId: string) => {
-      setActiveProjectId(projectId);
+      const targetId = slugify(projectId) || DEFAULT_PROJECT.id;
+      setActiveProjectId(targetId);
 
       try {
-        localStorage.setItem(ACTIVE_PROJECT_KEY, projectId);
+        localStorage.setItem(ACTIVE_PROJECT_KEY, targetId);
 
         // Update recent IDs
         setRecentIds((prev) => {
-          const updated = [projectId, ...prev.filter((id) => id !== projectId)].slice(0, 5);
+          const updated = [targetId, ...prev.filter((id) => id !== targetId)].slice(0, 5);
           try {
             localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
           } catch (_) {
@@ -186,8 +201,8 @@ export const ProjectProvider: React.FC<{
         // Update URL query parameter
         if (typeof window !== 'undefined' && window.history) {
           const url = new URL(window.location.href);
-          if (url.searchParams.get('project') !== projectId) {
-            url.searchParams.set('project', projectId);
+          if (url.searchParams.get('project') !== targetId) {
+            url.searchParams.set('project', targetId);
             // Clear single-project component selection on project switch for isolation
             url.searchParams.delete('node');
             url.searchParams.delete('finding');
@@ -198,7 +213,7 @@ export const ProjectProvider: React.FC<{
         // Notify app of project change
         window.dispatchEvent(
           new CustomEvent('explorer:project-changed', {
-            detail: { projectId },
+            detail: { projectId: targetId },
           })
         );
       } catch (_) {
@@ -222,7 +237,7 @@ export const ProjectProvider: React.FC<{
         throw err;
       }
 
-      const rawId = input.id?.trim() || slugify(trimmedName) || `project-${Date.now()}`;
+      const rawId = input.id?.trim() || slugify(trimmedName);
       const id = slugify(rawId);
 
       if (!id) {
@@ -243,7 +258,7 @@ export const ProjectProvider: React.FC<{
         analysisStatus: 'NOT_ANALYZED',
         componentCount: 0,
         dependencyCount: 0,
-        analysisPath: `/projects/${id}/explorer-data.json`,
+        analysisPath: id !== 'default' ? `/projects/${id}/explorer-data.json` : '/explorer-data.json',
       };
 
       setProjects((prev) => {
@@ -274,7 +289,7 @@ export const ProjectProvider: React.FC<{
       selectProject(id);
       return newProject;
     },
-    [selectProject]
+    [selectProject, projects]
   );
 
   const saveLocalProjects = (updatedProjects: ProjectMetadata[]) => {
@@ -288,8 +303,9 @@ export const ProjectProvider: React.FC<{
 
   const getProjectDataUrl = useCallback(
     (projectId?: string): string => {
-      const targetId = projectId || activeProjectId;
-      if (targetId === 'default' || !targetId) {
+      const rawId = projectId || activeProjectId;
+      const targetId = slugify(rawId) || DEFAULT_PROJECT.id;
+      if (targetId === 'default') {
         return '/explorer-data.json';
       }
       const proj = projects.find((p) => p.id === targetId);
@@ -306,7 +322,8 @@ export const ProjectProvider: React.FC<{
       id: string,
       updates: Partial<Pick<ProjectMetadata, 'name' | 'description' | 'sourcePath'>>
     ): Promise<ProjectMetadata> => {
-      const existing = projects.find((p) => p.id === id);
+      const targetId = slugify(id);
+      const existing = projects.find((p) => p.id === targetId);
       if (!existing) {
         throw new Error(`Project "${id}" not found`);
       }
@@ -320,7 +337,7 @@ export const ProjectProvider: React.FC<{
       };
 
       setProjects((prev) => {
-        const next = prev.map((p) => (p.id === id ? updatedProject : p));
+        const next = prev.map((p) => (p.id === targetId ? updatedProject : p));
         saveLocalProjects(next);
         return next;
       });
@@ -332,19 +349,20 @@ export const ProjectProvider: React.FC<{
 
   const reanalyzeProject = useCallback(
     async (id: string): Promise<ProjectMetadata> => {
+      const targetId = slugify(id);
       const now = new Date().toISOString();
-      let projectToReanalyze = projects.find((p) => p.id === id);
+      let projectToReanalyze = projects.find((p) => p.id === targetId);
       if (!projectToReanalyze) throw new Error(`Project "${id}" not found`);
 
       // Set state to ANALYZING first
       setProjects((prev) => {
-        const next = prev.map((p) => (p.id === id ? { ...p, analysisStatus: 'ANALYZING' as const, updatedAt: now } : p));
+        const next = prev.map((p) => (p.id === targetId ? { ...p, analysisStatus: 'ANALYZING' as const, updatedAt: now } : p));
         saveLocalProjects(next);
         return next;
       });
 
       try {
-        const url = getProjectDataUrl(id);
+        const url = getProjectDataUrl(targetId);
         const res = await fetch(url);
         let componentCount = projectToReanalyze.componentCount;
         let dependencyCount = projectToReanalyze.dependencyCount;
@@ -361,7 +379,7 @@ export const ProjectProvider: React.FC<{
 
         setProjects((prev) => {
           const next = prev.map((p) => {
-            if (p.id === id) {
+            if (p.id === targetId) {
               updated = {
                 ...p,
                 analysisStatus: status,
@@ -392,7 +410,7 @@ export const ProjectProvider: React.FC<{
         let updated: ProjectMetadata | null = null;
         setProjects((prev) => {
           const next = prev.map((p) => {
-            if (p.id === id) {
+            if (p.id === targetId) {
               updated = {
                 ...p,
                 analysisStatus: p.componentCount > 0 ? 'COMPLETE' : 'FAILED',
@@ -420,10 +438,11 @@ export const ProjectProvider: React.FC<{
 
   const duplicateProject = useCallback(
     async (id: string): Promise<ProjectMetadata> => {
-      const source = projects.find((p) => p.id === id);
+      const targetId = slugify(id);
+      const source = projects.find((p) => p.id === targetId);
       if (!source) throw new Error(`Project "${id}" not found`);
 
-      const baseNewId = `${id}-copy`;
+      const baseNewId = `${targetId}-copy`;
       let newId = baseNewId;
       let counter = 1;
       while (projects.some((p) => p.id === newId)) {
@@ -454,7 +473,8 @@ export const ProjectProvider: React.FC<{
 
   const archiveProject = useCallback(
     async (id: string, archive: boolean = true): Promise<ProjectMetadata> => {
-      const existing = projects.find((p) => p.id === id);
+      const targetId = slugify(id);
+      const existing = projects.find((p) => p.id === targetId);
       if (!existing) throw new Error(`Project "${id}" not found`);
 
       const now = new Date().toISOString();
@@ -465,7 +485,7 @@ export const ProjectProvider: React.FC<{
       };
 
       setProjects((prev) => {
-        const next = prev.map((p) => (p.id === id ? updatedProject : p));
+        const next = prev.map((p) => (p.id === targetId ? updatedProject : p));
         saveLocalProjects(next);
         return next;
       });
@@ -477,22 +497,23 @@ export const ProjectProvider: React.FC<{
 
   const deleteProject = useCallback(
     async (id: string): Promise<void> => {
+      const targetId = slugify(id);
       setProjects((prev) => {
-        const next = prev.filter((p) => p.id !== id);
+        const next = prev.filter((p) => p.id !== targetId);
         saveLocalProjects(next);
         return next;
       });
 
       setRecentIds((prev) => {
-        const updated = prev.filter((rId) => rId !== id);
+        const updated = prev.filter((rId) => rId !== targetId);
         try {
           localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
         } catch (_) {}
         return updated;
       });
 
-      if (activeProjectId === id) {
-        const remaining = projects.filter((p) => p.id !== id);
+      if (activeProjectId === targetId) {
+        const remaining = projects.filter((p) => p.id !== targetId);
         const fallbackId = remaining.length > 0 ? remaining[0].id : DEFAULT_PROJECT.id;
         selectProject(fallbackId);
       }
@@ -502,12 +523,13 @@ export const ProjectProvider: React.FC<{
 
   const exportProject = useCallback(
     async (id: string): Promise<void> => {
-      const proj = projects.find((p) => p.id === id);
+      const targetId = slugify(id);
+      const proj = projects.find((p) => p.id === targetId);
       if (!proj) throw new Error(`Project "${id}" not found`);
 
       let dataPayload: any = null;
       try {
-        const url = getProjectDataUrl(id);
+        const url = getProjectDataUrl(targetId);
         const res = await fetch(url);
         if (res.ok) {
           dataPayload = await res.json();
