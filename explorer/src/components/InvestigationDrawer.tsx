@@ -14,6 +14,9 @@ export interface InvestigationDrawerProps {
   recentNodeIds?: string[];
   onSelectRecentNode?: (id: string) => void;
   onRequestHandoff?: (nodeId: string) => void;
+  onApplyFocus?: (nodeId: string) => void;
+  onShowImpact?: (nodeId: string) => void;
+  onAnalyzeConnections?: (nodeId: string) => void;
   isPinned?: boolean;
   onTogglePin?: () => void;
   isDetached?: boolean;
@@ -33,6 +36,9 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   recentNodeIds = [],
   onSelectRecentNode,
   onRequestHandoff,
+  onApplyFocus,
+  onShowImpact,
+  onAnalyzeConnections,
   isPinned = false,
   onTogglePin,
   isDetached = false,
@@ -144,6 +150,47 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
       <div className="tab-content-overview" data-testid="tab-content-overview">
         {renderRiskSummary()}
         {renderKeyMetrics()}
+
+        {/* Quick Depth Analysis Actions */}
+        {(onApplyFocus || onShowImpact || onAnalyzeConnections) && currentNodeId && (
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface-subtle, #0f172a)', borderRadius: '8px', border: '1px solid var(--border-subtle, #1e293b)', marginBottom: '16px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted, #94a3b8)', letterSpacing: '0.5px', display: 'block', marginBottom: '8px' }}>
+              Graph Depth Analysis
+            </span>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {onApplyFocus && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-secondary ui-btn-sm"
+                  onClick={() => onApplyFocus(currentNodeId)}
+                  data-testid="drawer-action-focus"
+                >
+                  🎯 Focus
+                </button>
+              )}
+              {onShowImpact && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-secondary ui-btn-sm"
+                  onClick={() => onShowImpact(currentNodeId)}
+                  data-testid="drawer-action-impact"
+                >
+                  💥 Impact
+                </button>
+              )}
+              {onAnalyzeConnections && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-secondary ui-btn-sm"
+                  onClick={() => onAnalyzeConnections(currentNodeId)}
+                  data-testid="drawer-action-connections"
+                >
+                  🔗 Connections
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Behavioral Summary */}
         {node.behavior && (

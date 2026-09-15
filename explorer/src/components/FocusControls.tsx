@@ -57,11 +57,13 @@ export const FocusControls: React.FC<FocusControlsProps> = ({
       {isActive && (
         <div className="focus-options">
           <div className="focus-option">
-            <label>Direction</label>
+            <label htmlFor="focus-direction-select">Direction</label>
             <select 
+              id="focus-direction-select"
               value={focusState.direction} 
               onChange={handleDirectionChange}
               className="focus-select"
+              aria-label="Direction"
             >
               <option value="both">↔ Both</option>
               <option value="dependencies">→ Dependencies</option>
@@ -70,11 +72,13 @@ export const FocusControls: React.FC<FocusControlsProps> = ({
           </div>
 
           <div className="focus-option">
-            <label>Depth</label>
+            <label htmlFor="focus-depth-select">Depth</label>
             <select 
+              id="focus-depth-select"
               value={focusState.depth === 'ALL' ? 'ALL' : String(focusState.depth)} 
               onChange={handleDepthChange}
               className="focus-select"
+              aria-label="Depth"
             >
               <option value="1">1</option>
               <option value="2">2</option>
