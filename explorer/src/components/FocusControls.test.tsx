@@ -11,7 +11,7 @@ describe('FocusControls component', () => {
     depth: 2,
   };
 
-  it('renders Focus button disabled when no node selected', () => {
+  it('renders Focus button disabled when no node selected and no focusNodeId', () => {
     const handleFocusChange = vi.fn();
     render(
       <FocusControls
@@ -21,11 +21,31 @@ describe('FocusControls component', () => {
       />
     );
 
-    expect(screen.getByText('Focus')).toBeDefined();
-    expect(screen.getByText('Select a node to enable focus')).toBeDefined();
+    const focusBtn = screen.getByRole('button', { name: /Focus: OFF/i });
+    expect(focusBtn).toBeDisabled();
+    expect(screen.getByText('Focus')).toBeInTheDocument();
+    expect(screen.getByText('OFF')).toBeInTheDocument();
+    expect(screen.getByText('Select a node to enable focus')).toBeInTheDocument();
   });
 
-  it('renders direction and depth options when focus is active', () => {
+  it('renders Focus OFF when enabled is false but a node is selected', () => {
+    const handleFocusChange = vi.fn();
+    render(
+      <FocusControls
+        focusState={{ enabled: false, focusNodeId: null, direction: 'both', depth: 2 }}
+        onFocusChange={handleFocusChange}
+        hasSelectedNode={true}
+        selectedNodeId="ApexClass:Service"
+      />
+    );
+
+    const focusBtn = screen.getByRole('button', { name: /Focus: OFF/i });
+    expect(focusBtn).not.toBeDisabled();
+    expect(screen.getByText('OFF')).toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Direction' })).not.toBeInTheDocument();
+  });
+
+  it('renders Focus ON with direction and depth options when focus is active', () => {
     const handleFocusChange = vi.fn();
     render(
       <FocusControls
@@ -35,11 +55,20 @@ describe('FocusControls component', () => {
       />
     );
 
-    expect(screen.getByRole('combobox', { name: 'Direction' })).toBeDefined();
-    expect(screen.getByRole('combobox', { name: 'Depth' })).toBeDefined();
+    const focusBtn = screen.getByRole('button', { name: /Focus: ON/i });
+    expect(focusBtn).not.toBeDisabled();
+    expect(screen.getByText('ON')).toBeInTheDocument();
+
+    const dirSelect = screen.getByRole('combobox', { name: 'Direction' }) as HTMLSelectElement;
+    expect(dirSelect).toBeInTheDocument();
+    expect(dirSelect.value).toBe('both');
+
+    const depthSelect = screen.getByRole('combobox', { name: 'Depth' }) as HTMLSelectElement;
+    expect(depthSelect).toBeInTheDocument();
+    expect(depthSelect.value).toBe('2');
   });
 
-  it('calls onFocusChange with updated direction on direction selection', () => {
+  it('calls onFocusChange with updated direction on direction selection for Both, Dependencies, Dependents', () => {
     const handleFocusChange = vi.fn();
     render(
       <FocusControls
@@ -50,11 +79,26 @@ describe('FocusControls component', () => {
     );
 
     const dirSelect = screen.getByRole('combobox', { name: 'Direction' });
-    fireEvent.change(dirSelect, { target: { value: 'dependencies' } });
 
+    // Both
+    fireEvent.change(dirSelect, { target: { value: 'both' } });
+    expect(handleFocusChange).toHaveBeenCalledWith({
+      ...defaultFocusState,
+      direction: 'both',
+    });
+
+    // Dependencies
+    fireEvent.change(dirSelect, { target: { value: 'dependencies' } });
     expect(handleFocusChange).toHaveBeenCalledWith({
       ...defaultFocusState,
       direction: 'dependencies',
+    });
+
+    // Dependents
+    fireEvent.change(dirSelect, { target: { value: 'dependents' } });
+    expect(handleFocusChange).toHaveBeenCalledWith({
+      ...defaultFocusState,
+      direction: 'dependents',
     });
   });
 
@@ -76,6 +120,12 @@ describe('FocusControls component', () => {
       depth: 1,
     });
 
+    fireEvent.change(depthSelect, { target: { value: '2' } });
+    expect(handleFocusChange).toHaveBeenCalledWith({
+      ...defaultFocusState,
+      depth: 2,
+    });
+
     fireEvent.change(depthSelect, { target: { value: '3' } });
     expect(handleFocusChange).toHaveBeenCalledWith({
       ...defaultFocusState,
@@ -89,7 +139,7 @@ describe('FocusControls component', () => {
     });
   });
 
-  it('toggles focus on and off when Focus button is clicked', () => {
+  it('toggles focus on when clicking Focus button when focus is OFF', () => {
     const handleFocusChange = vi.fn();
     render(
       <FocusControls
@@ -100,13 +150,37 @@ describe('FocusControls component', () => {
       />
     );
 
-    const focusBtn = screen.getByText('Focus').closest('button')!;
-    expect(focusBtn?.disabled).toBe(false);
+    const focusBtn = screen.getByRole('button', { name: /Focus: OFF/i });
+    expect(focusBtn).not.toBeDisabled();
 
-    fireEvent.click(focusBtn!);
+    fireEvent.click(focusBtn);
 
     expect(handleFocusChange).toHaveBeenCalledWith({
       enabled: true,
+      focusNodeId: 'ApexClass:Service',
+      direction: 'both',
+      depth: 2,
+    });
+  });
+
+  it('toggles focus off when clicking Focus button when focus is ON', () => {
+    const handleFocusChange = vi.fn();
+    render(
+      <FocusControls
+        focusState={{ enabled: true, focusNodeId: 'ApexClass:Service', direction: 'both', depth: 2 }}
+        onFocusChange={handleFocusChange}
+        hasSelectedNode={true}
+        selectedNodeId="ApexClass:Service"
+      />
+    );
+
+    const focusBtn = screen.getByRole('button', { name: /Focus: ON/i });
+    expect(focusBtn).not.toBeDisabled();
+
+    fireEvent.click(focusBtn);
+
+    expect(handleFocusChange).toHaveBeenCalledWith({
+      enabled: false,
       focusNodeId: 'ApexClass:Service',
       direction: 'both',
       depth: 2,
