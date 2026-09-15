@@ -392,7 +392,45 @@ function runTests() {
     assert.ok(requiredSourceHash.startsWith("sha256:"));
     console.log("  ✓ External consumer validation flow successfully simulated");
 
-    console.log("\nALL 20 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!");
+    // -------------------------------------------------------------
+    // Test 21: Upstream Project-Scoped Artifact Pipeline (Food-App Style)
+    // -------------------------------------------------------------
+    console.log("Test 21: Upstream Project-Scoped Artifact Pipeline (Food-App Style)");
+    const foodAppSrc = path.join(TEST_TMP_DIR, "food-app-src");
+    const foodAppClasses = path.join(foodAppSrc, "classes");
+    fs.mkdirSync(foodAppClasses, { recursive: true });
+    fs.writeFileSync(path.join(foodAppClasses, "FoodService.cls"), "public class FoodService {}");
+
+    const foodAppOut = path.join(__dirname, "..", "analyze", "projects", "food-app-test");
+    execSync(`node "${ANALYZER_SCRIPT}" analyze "${foodAppSrc}" --project food-app-test`, { stdio: "ignore" });
+
+    const expectedArtifacts = [
+      "analysis-manifest.json",
+      "analysis-snapshot.json",
+      "architecture-metrics.json",
+      "dependency-report.json",
+      "dependency-report.md",
+      "dependency-summary.md",
+      "dependency-graph.mmd",
+      "dependency-graph.dot",
+      "unresolved-references.md",
+    ];
+
+    for (const art of expectedArtifacts) {
+      assert.ok(fs.existsSync(path.join(foodAppOut, art)), `Upstream artifact ${art} must be created in project output dir`);
+    }
+
+    const foodManifest = JSON.parse(fs.readFileSync(path.join(foodAppOut, "analysis-manifest.json"), "utf8"));
+    assert.strictEqual(foodManifest.status, "COMPLETE");
+    assert.ok(foodManifest.source.sourceDir, "Source dir present in analysis manifest");
+
+    // Clean up transient test project dir
+    if (fs.existsSync(foodAppOut)) {
+      fs.rmSync(foodAppOut, { recursive: true, force: true });
+    }
+    console.log("  ✓ Upstream project-scoped artifact pipeline verified for food-app-style analysis");
+
+    console.log("\nALL 21 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!");
 
   } finally {
     cleanup();
