@@ -1,0 +1,4668 @@
+{
+  "schemaVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "generatedAt": "2026-09-15T16:57:24.929Z",
+  "sourceDirectory": "C:\\Users\\User\\Downloads\\Food-App\\force-app\\main\\default",
+  "project": {
+    "id": "food-app",
+    "name": "food-app",
+    "description": "Salesforce DX Architecture Analysis",
+    "sourcePath": "C:\\Users\\User\\Downloads\\Food-App\\force-app\\main\\default",
+    "createdAt": "2026-09-15T16:57:24.929Z",
+    "updatedAt": "2026-09-15T16:57:24.929Z",
+    "lastAnalyzedAt": "2026-09-15T16:57:24.929Z",
+    "analysisStatus": "COMPLETE",
+    "componentCount": 31,
+    "dependencyCount": 84,
+    "analysisPath": "/projects/food-app/explorer-data.json"
+  },
+  "summary": {
+    "nodeCount": 31,
+    "edgeCount": 84,
+    "highRiskCount": 3,
+    "mediumRiskCount": 2,
+    "lowRiskCount": 26,
+    "cycleCount": 0,
+    "unresolvedCount": 0,
+    "inventory": {
+      "files": 64,
+      "apexClasses": 8,
+      "apexTriggers": 1,
+      "lwcJs": 7,
+      "lwcHtml": 7,
+      "visualforce": 0,
+      "flows": 0,
+      "objects": 3,
+      "fields": 12
+    }
+  },
+  "nodes": [
+    {
+      "id": "ApexClass:BookingController",
+      "displayName": "BookingController",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/BookingController.cls",
+      "metrics": {
+        "fanIn": 7,
+        "fanOut": 6,
+        "coupling": 13,
+        "unresolved": 0,
+        "score": 2
+      },
+      "risk": "LOW",
+      "riskReasons": [
+        "direct LWC consumer"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 1,
+        "queryCount": 1,
+        "dmlCount": 2,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest",
+      "displayName": "BookingControllerTest",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 12,
+        "coupling": 12,
+        "unresolved": 0,
+        "score": 2
+      },
+      "risk": "LOW",
+      "riskReasons": [
+        "high fan-out"
+      ],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 2,
+        "dmlCount": 2,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:PlanController",
+      "displayName": "PlanController",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/PlanController.cls",
+      "metrics": {
+        "fanIn": 14,
+        "fanOut": 7,
+        "coupling": 21,
+        "unresolved": 0,
+        "score": 8
+      },
+      "risk": "HIGH",
+      "riskReasons": [
+        "high fan-in",
+        "high coupling",
+        "direct LWC consumer"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 2,
+        "queryCount": 1,
+        "dmlCount": 3,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": true,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest",
+      "displayName": "PlanControllerTest",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 12,
+        "coupling": 12,
+        "unresolved": 0,
+        "score": 2
+      },
+      "risk": "LOW",
+      "riskReasons": [
+        "high fan-out"
+      ],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 1,
+        "dmlCount": 1,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController",
+      "displayName": "ReviewController",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/ReviewController.cls",
+      "metrics": {
+        "fanIn": 11,
+        "fanOut": 6,
+        "coupling": 17,
+        "unresolved": 0,
+        "score": 8
+      },
+      "risk": "HIGH",
+      "riskReasons": [
+        "high fan-in",
+        "high coupling",
+        "direct LWC consumer"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 2,
+        "queryCount": 1,
+        "dmlCount": 3,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": true,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest",
+      "displayName": "ReviewControllerTest",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 15,
+        "coupling": 15,
+        "unresolved": 0,
+        "score": 5
+      },
+      "risk": "MEDIUM",
+      "riskReasons": [
+        "high fan-out",
+        "high coupling"
+      ],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 2,
+        "dmlCount": 2,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandler",
+      "displayName": "ReviewTriggerHandler",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandler.cls",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 5,
+        "coupling": 6,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 2,
+        "queryCount": 1,
+        "dmlCount": 1,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "LIKELY_COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest",
+      "displayName": "ReviewTriggerHandlerTest",
+      "type": "ApexClass",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandlerTest.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 6,
+        "coupling": 6,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 1,
+        "dmlCount": 4,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "Field:Booking__c.Plan__c",
+      "displayName": "Booking__c.Plan__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/Plan__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Booking__c.Price__c",
+      "displayName": "Booking__c.Price__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/Price__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Booking__c.Status__c",
+      "displayName": "Booking__c.Status__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/Status__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Booking__c.User__c",
+      "displayName": "Booking__c.User__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Booking__c/fields/User__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Plan__c.Discount__c",
+      "displayName": "Plan__c.Discount__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/Discount__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Plan__c.Duration__c",
+      "displayName": "Plan__c.Duration__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/Duration__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Plan__c.Price__c",
+      "displayName": "Plan__c.Price__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/Price__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 2,
+        "fanOut": 0,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "Field:Plan__c.RatingsAverage__c",
+      "displayName": "Plan__c.RatingsAverage__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Plan__c/fields/RatingsAverage__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 2,
+        "fanOut": 0,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "Field:Review__c.Plan__c",
+      "displayName": "Review__c.Plan__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Review__c/fields/Plan__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 2,
+        "fanOut": 0,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Review__c.Rating__c",
+      "displayName": "Review__c.Rating__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Review__c/fields/Rating__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 2,
+        "fanOut": 0,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "Field:Review__c.Review__c",
+      "displayName": "Review__c.Review__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Review__c/fields/Review__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Field:Review__c.User__c",
+      "displayName": "Review__c.User__c",
+      "type": "CustomField",
+      "file": "../Food-App/force-app/main/default/objects/Review__c/fields/User__c.field-meta.xml",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:booking-list",
+      "displayName": "booking-list",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/bookingList/bookingList.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 2,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:food-landing-page",
+      "displayName": "food-landing-page",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/foodLandingPage/foodLandingPage.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 2,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:plan-admin",
+      "displayName": "plan-admin",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/planAdmin/planAdmin.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 4,
+        "coupling": 4,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:plan-detail",
+      "displayName": "plan-detail",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/planDetail/planDetail.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 4,
+        "coupling": 4,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:plan-list",
+      "displayName": "plan-list",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/planList/planList.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 1,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:user-auth",
+      "displayName": "user-auth",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/userAuth/userAuth.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:user-profile",
+      "displayName": "user-profile",
+      "type": "LWC",
+      "file": "../Food-App/force-app/main/default/lwc/userProfile/userProfile.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "Object:Booking__c",
+      "displayName": "Booking__c",
+      "type": "CustomObject",
+      "file": "../Food-App/force-app/main/default/objects/Booking__c/Booking__c.object-meta.xml",
+      "metrics": {
+        "fanIn": 7,
+        "fanOut": 0,
+        "coupling": 7,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "Object:Plan__c",
+      "displayName": "Plan__c",
+      "type": "CustomObject",
+      "file": "../Food-App/force-app/main/default/objects/Plan__c/Plan__c.object-meta.xml",
+      "metrics": {
+        "fanIn": 18,
+        "fanOut": 0,
+        "coupling": 18,
+        "unresolved": 0,
+        "score": 6
+      },
+      "risk": "HIGH",
+      "riskReasons": [
+        "high fan-in",
+        "high coupling"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": true,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "AMBIGUOUS"
+      }
+    },
+    {
+      "id": "Object:Review__c",
+      "displayName": "Review__c",
+      "type": "CustomObject",
+      "file": "../Food-App/force-app/main/default/objects/Review__c/Review__c.object-meta.xml",
+      "metrics": {
+        "fanIn": 12,
+        "fanOut": 0,
+        "coupling": 12,
+        "unresolved": 0,
+        "score": 3
+      },
+      "risk": "MEDIUM",
+      "riskReasons": [
+        "high fan-in"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "AMBIGUOUS"
+      }
+    },
+    {
+      "id": "Trigger:ReviewTrigger",
+      "displayName": "ReviewTrigger",
+      "type": "ApexTrigger",
+      "file": "../Food-App/force-app/main/default/triggers/ReviewTrigger.trigger",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 2,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexClass:BookingController|Field:Booking__c.Plan__c|soql-field||Booking__c.Plan__c",
+      "source": "ApexClass:BookingController",
+      "target": "Field:Booking__c.Plan__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Booking__c.Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Booking__c.Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingController|Field:Booking__c.Price__c|soql-field||Booking__c.Price__c",
+      "source": "ApexClass:BookingController",
+      "target": "Field:Booking__c.Price__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Booking__c.Price__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Booking__c.Price__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingController|Field:Booking__c.Status__c|soql-field||Booking__c.Status__c",
+      "source": "ApexClass:BookingController",
+      "target": "Field:Booking__c.Status__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Booking__c.Status__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Booking__c.Status__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingController|Object:Booking__c|generic-type||<Booking__c>",
+      "source": "ApexClass:BookingController",
+      "target": "Object:Booking__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Booking__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 4,
+      "column": 23,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/classes/BookingController.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 4,
+          "column": 23
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingController|Object:Booking__c|soql-object||SOQL FROM Booking__c",
+      "source": "ApexClass:BookingController",
+      "target": "Object:Booking__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Booking__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingController|Object:Booking__c|type-reference||Booking__c",
+      "source": "ApexClass:BookingController",
+      "target": "Object:Booking__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Booking__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 4,
+      "column": 24,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/classes/BookingController.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 4,
+          "column": 24
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|createBooking|BookingController.createBooking()",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "method-call",
+      "method": "createBooking",
+      "evidence": "BookingController.createBooking()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 45,
+      "column": 30,
+      "methodOwner": "testCreateBooking",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "testCreateBooking"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": "createBooking"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 45,
+          "column": 30
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|deleteBooking|BookingController.deleteBooking()",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "method-call",
+      "method": "deleteBooking",
+      "evidence": "BookingController.deleteBooking()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 54,
+      "column": 9,
+      "methodOwner": "testDeleteBooking",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "testDeleteBooking"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": "deleteBooking"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 54,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|getAllBookings|BookingController.getAllBookings()",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "method-call",
+      "method": "getAllBookings",
+      "evidence": "BookingController.getAllBookings()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 21,
+      "column": 37,
+      "methodOwner": "testGetAllBookings",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "testGetAllBookings"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": "getAllBookings"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 21,
+          "column": 37
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|method-call|getBooking|BookingController.getBooking()",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "method-call",
+      "method": "getBooking",
+      "evidence": "BookingController.getBooking()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 30,
+      "column": 36,
+      "methodOwner": "testGetBooking",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "testGetBooking"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": "getBooking"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 30,
+          "column": 36
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|ApexClass:BookingController|test-reference||Test reference: BookingController",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "test-reference",
+      "method": null,
+      "evidence": "Test reference: BookingController",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": null
+        },
+        "relationship": {
+          "type": "test-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Booking__c|generic-type||<Booking__c>",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Booking__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Booking__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 21,
+      "column": 13,
+      "methodOwner": "testGetAllBookings",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "testGetAllBookings"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 21,
+          "column": 13
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Booking__c|instantiation||new Booking__c()",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Booking__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Booking__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Booking__c|soql-object||SOQL FROM Booking__c",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Booking__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Booking__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Booking__c|type-reference||Booking__c",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Booking__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Booking__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Booking__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Plan__c|instantiation||new Plan__c()",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Plan__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 6,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 6,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:BookingControllerTest|Object:Plan__c|type-reference||Plan__c",
+      "source": "ApexClass:BookingControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 6,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/BookingControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "BookingControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 6,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Field:Plan__c.Discount__c|soql-field||Plan__c.Discount__c",
+      "source": "ApexClass:PlanController",
+      "target": "Field:Plan__c.Discount__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Plan__c.Discount__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Plan__c.Discount__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Field:Plan__c.Duration__c|soql-field||Plan__c.Duration__c",
+      "source": "ApexClass:PlanController",
+      "target": "Field:Plan__c.Duration__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Plan__c.Duration__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Plan__c.Duration__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Field:Plan__c.Price__c|soql-field||Plan__c.Price__c",
+      "source": "ApexClass:PlanController",
+      "target": "Field:Plan__c.Price__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Plan__c.Price__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Plan__c.Price__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Field:Plan__c.RatingsAverage__c|soql-field||Plan__c.RatingsAverage__c",
+      "source": "ApexClass:PlanController",
+      "target": "Field:Plan__c.RatingsAverage__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Plan__c.RatingsAverage__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Plan__c.RatingsAverage__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Object:Plan__c|generic-type||<Plan__c>",
+      "source": "ApexClass:PlanController",
+      "target": "Object:Plan__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Plan__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 4,
+      "column": 23,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/classes/PlanController.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 4,
+          "column": 23
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Object:Plan__c|soql-object||SOQL FROM Plan__c",
+      "source": "ApexClass:PlanController",
+      "target": "Object:Plan__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanController|Object:Plan__c|type-reference||Plan__c",
+      "source": "ApexClass:PlanController",
+      "target": "Object:Plan__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 4,
+      "column": 24,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/classes/PlanController.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 4,
+          "column": 24
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|createPlan|PlanController.createPlan()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "method-call",
+      "method": "createPlan",
+      "evidence": "PlanController.createPlan()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 35,
+      "column": 31,
+      "methodOwner": "testCreatePlan",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "testCreatePlan"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "createPlan"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 35,
+          "column": 31
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|deletePlan|PlanController.deletePlan()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "method-call",
+      "method": "deletePlan",
+      "evidence": "PlanController.deletePlan()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 54,
+      "column": 9,
+      "methodOwner": "testDeletePlan",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "testDeletePlan"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "deletePlan"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 54,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|getAllPlans|PlanController.getAllPlans()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "method-call",
+      "method": "getAllPlans",
+      "evidence": "PlanController.getAllPlans()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 17,
+      "column": 31,
+      "methodOwner": "testGetAllPlans",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "testGetAllPlans"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "getAllPlans"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 17,
+          "column": 31
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|getPlan|PlanController.getPlan()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "method-call",
+      "method": "getPlan",
+      "evidence": "PlanController.getPlan()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 26,
+      "column": 30,
+      "methodOwner": "testGetPlan",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "testGetPlan"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "getPlan"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 26,
+          "column": 30
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|top3Plans|PlanController.top3Plans()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "method-call",
+      "method": "top3Plans",
+      "evidence": "PlanController.top3Plans()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 63,
+      "column": 34,
+      "methodOwner": "testTop3Plans",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "testTop3Plans"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "top3Plans"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 63,
+          "column": 34
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|method-call|updatePlan|PlanController.updatePlan()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "method-call",
+      "method": "updatePlan",
+      "evidence": "PlanController.updatePlan()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 45,
+      "column": 31,
+      "methodOwner": "testUpdatePlan",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "testUpdatePlan"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "updatePlan"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 45,
+          "column": 31
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|ApexClass:PlanController|test-reference||Test reference: PlanController",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "test-reference",
+      "method": null,
+      "evidence": "Test reference: PlanController",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": null
+        },
+        "relationship": {
+          "type": "test-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|Field:Plan__c.Price__c|soql-field||Plan__c.Price__c",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "Field:Plan__c.Price__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Plan__c.Price__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Plan__c.Price__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|Object:Plan__c|generic-type||<Plan__c>",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Plan__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 6,
+      "column": 13,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 6,
+          "column": 13
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|Object:Plan__c|instantiation||new Plan__c()",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Plan__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 6,
+      "column": 14,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 6,
+          "column": 14
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:PlanControllerTest|Object:Plan__c|type-reference||Plan__c",
+      "source": "ApexClass:PlanControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 6,
+      "column": 14,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/PlanControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "PlanControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 6,
+          "column": 14
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController|Field:Review__c.Plan__c|soql-field||Review__c.Plan__c",
+      "source": "ApexClass:ReviewController",
+      "target": "Field:Review__c.Plan__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Review__c.Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Review__c.Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController|Field:Review__c.Rating__c|soql-field||Review__c.Rating__c",
+      "source": "ApexClass:ReviewController",
+      "target": "Field:Review__c.Rating__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Review__c.Rating__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Review__c.Rating__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController|Field:Review__c.Review__c|soql-field||Review__c.Review__c",
+      "source": "ApexClass:ReviewController",
+      "target": "Field:Review__c.Review__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Review__c.Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Review__c.Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController|Object:Review__c|generic-type||<Review__c>",
+      "source": "ApexClass:ReviewController",
+      "target": "Object:Review__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Review__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 4,
+      "column": 23,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/classes/ReviewController.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 4,
+          "column": 23
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController|Object:Review__c|soql-object||SOQL FROM Review__c",
+      "source": "ApexClass:ReviewController",
+      "target": "Object:Review__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewController|Object:Review__c|type-reference||Review__c",
+      "source": "ApexClass:ReviewController",
+      "target": "Object:Review__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 4,
+      "column": 24,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/classes/ReviewController.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 4,
+          "column": 24
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|createReview|ReviewController.createReview()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "method-call",
+      "method": "createReview",
+      "evidence": "ReviewController.createReview()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 45,
+      "column": 29,
+      "methodOwner": "testCreateReview",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testCreateReview"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "createReview"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 45,
+          "column": 29
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|deleteReview|ReviewController.deleteReview()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "method-call",
+      "method": "deleteReview",
+      "evidence": "ReviewController.deleteReview()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 64,
+      "column": 9,
+      "methodOwner": "testDeleteReview",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testDeleteReview"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "deleteReview"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 64,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|getAllReviews|ReviewController.getAllReviews()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "method-call",
+      "method": "getAllReviews",
+      "evidence": "ReviewController.getAllReviews()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 21,
+      "column": 35,
+      "methodOwner": "testGetAllReviews",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testGetAllReviews"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "getAllReviews"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 21,
+          "column": 35
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|getPlanReviews|ReviewController.getPlanReviews()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "method-call",
+      "method": "getPlanReviews",
+      "evidence": "ReviewController.getPlanReviews()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 74,
+      "column": 39,
+      "methodOwner": "testGetPlanReviews",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testGetPlanReviews"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "getPlanReviews"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 74,
+          "column": 39
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|getReview|ReviewController.getReview()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "method-call",
+      "method": "getReview",
+      "evidence": "ReviewController.getReview()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 30,
+      "column": 34,
+      "methodOwner": "testGetReview",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testGetReview"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "getReview"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 30,
+          "column": 34
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|method-call|updateReview|ReviewController.updateReview()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "method-call",
+      "method": "updateReview",
+      "evidence": "ReviewController.updateReview()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 55,
+      "column": 29,
+      "methodOwner": "testUpdateReview",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testUpdateReview"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "updateReview"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 55,
+          "column": 29
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|ApexClass:ReviewController|test-reference||Test reference: ReviewController",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "test-reference",
+      "method": null,
+      "evidence": "Test reference: ReviewController",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": null
+        },
+        "relationship": {
+          "type": "test-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Field:Review__c.Rating__c|soql-field||Review__c.Rating__c",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Field:Review__c.Rating__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Review__c.Rating__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Review__c.Rating__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Plan__c|instantiation||new Plan__c()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Plan__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 6,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 6,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Plan__c|type-reference||Plan__c",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 6,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 6,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Review__c|generic-type||<Review__c>",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Review__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Review__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 21,
+      "column": 13,
+      "methodOwner": "testGetAllReviews",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "testGetAllReviews"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 21,
+          "column": 13
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Review__c|instantiation||new Review__c()",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Review__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Review__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Review__c|soql-object||SOQL FROM Review__c",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Review__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewControllerTest|Object:Review__c|type-reference||Review__c",
+      "source": "ApexClass:ReviewControllerTest",
+      "target": "Object:Review__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "setupData",
+      "file": "../Food-App/force-app/main/default/classes/ReviewControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewControllerTest",
+          "method": "setupData"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandler|Field:Review__c.Plan__c|soql-field||Review__c.Plan__c",
+      "source": "ApexClass:ReviewTriggerHandler",
+      "target": "Field:Review__c.Plan__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Review__c.Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandler",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Review__c.Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandler|Object:Plan__c|generic-type||<Plan__c>",
+      "source": "ApexClass:ReviewTriggerHandler",
+      "target": "Object:Plan__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Plan__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 30,
+      "column": 13,
+      "methodOwner": "updatePlanRatings",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandler.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandler",
+          "method": "updatePlanRatings"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 30,
+          "column": 13
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandler|Object:Plan__c|instantiation||new Plan__c()",
+      "source": "ApexClass:ReviewTriggerHandler",
+      "target": "Object:Plan__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Plan__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 6,
+      "column": 21,
+      "methodOwner": "updatePlanRatings",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandler.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandler",
+          "method": "updatePlanRatings"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 6,
+          "column": 21
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandler|Object:Review__c|generic-type||<Review__c>",
+      "source": "ApexClass:ReviewTriggerHandler",
+      "target": "Object:Review__c",
+      "relationshipType": "generic-type",
+      "method": null,
+      "evidence": "<Review__c>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 3,
+      "column": 46,
+      "methodOwner": "updatePlanRatings",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandler.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandler",
+          "method": "updatePlanRatings"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "generic-type",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 3,
+          "column": 46
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandler|Object:Review__c|soql-object||SOQL FROM Review__c",
+      "source": "ApexClass:ReviewTriggerHandler",
+      "target": "Object:Review__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandler",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest|Field:Plan__c.RatingsAverage__c|soql-field||Plan__c.RatingsAverage__c",
+      "source": "ApexClass:ReviewTriggerHandlerTest",
+      "target": "Field:Plan__c.RatingsAverage__c",
+      "relationshipType": "soql-field",
+      "method": null,
+      "evidence": "Plan__c.RatingsAverage__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandlerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Field",
+          "name": "Plan__c.RatingsAverage__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-field",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest|Object:Plan__c|instantiation||new Plan__c()",
+      "source": "ApexClass:ReviewTriggerHandlerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Plan__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 6,
+      "column": 9,
+      "methodOwner": "testReviewTriggerRatingCalculation",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandlerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandlerTest",
+          "method": "testReviewTriggerRatingCalculation"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 6,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest|Object:Plan__c|soql-object||SOQL FROM Plan__c",
+      "source": "ApexClass:ReviewTriggerHandlerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "soql-object",
+      "method": null,
+      "evidence": "SOQL FROM Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandlerTest",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "soql-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest|Object:Plan__c|type-reference||Plan__c",
+      "source": "ApexClass:ReviewTriggerHandlerTest",
+      "target": "Object:Plan__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Plan__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 6,
+      "column": 9,
+      "methodOwner": "testReviewTriggerRatingCalculation",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandlerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandlerTest",
+          "method": "testReviewTriggerRatingCalculation"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Plan__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 6,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest|Object:Review__c|instantiation||new Review__c()",
+      "source": "ApexClass:ReviewTriggerHandlerTest",
+      "target": "Object:Review__c",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new Review__c()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "testReviewTriggerRatingCalculation",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandlerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandlerTest",
+          "method": "testReviewTriggerRatingCalculation"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ReviewTriggerHandlerTest|Object:Review__c|type-reference||Review__c",
+      "source": "ApexClass:ReviewTriggerHandlerTest",
+      "target": "Object:Review__c",
+      "relationshipType": "type-reference",
+      "method": null,
+      "evidence": "Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "medium",
+      "line": 9,
+      "column": 9,
+      "methodOwner": "testReviewTriggerRatingCalculation",
+      "file": "../Food-App/force-app/main/default/classes/ReviewTriggerHandlerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandlerTest",
+          "method": "testReviewTriggerRatingCalculation"
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "type-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 9,
+          "column": 9
+        }
+      }
+    },
+    {
+      "id": "LWC:booking-list|ApexClass:BookingController|lwc-apex|deleteBooking|@salesforce/apex/BookingController.deleteBooking",
+      "source": "LWC:booking-list",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "lwc-apex",
+      "method": "deleteBooking",
+      "evidence": "@salesforce/apex/BookingController.deleteBooking",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 3,
+      "column": 28,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/bookingList/bookingList.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "booking-list",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": "deleteBooking"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 28
+        }
+      }
+    },
+    {
+      "id": "LWC:booking-list|ApexClass:BookingController|lwc-apex|getAllBookings|@salesforce/apex/BookingController.getAllBookings",
+      "source": "LWC:booking-list",
+      "target": "ApexClass:BookingController",
+      "relationshipType": "lwc-apex",
+      "method": "getAllBookings",
+      "evidence": "@salesforce/apex/BookingController.getAllBookings",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 29,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/bookingList/bookingList.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "booking-list",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "BookingController",
+          "method": "getAllBookings"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 29
+        }
+      }
+    },
+    {
+      "id": "LWC:food-landing-page|ApexClass:PlanController|lwc-apex|getAllPlans|@salesforce/apex/PlanController.getAllPlans",
+      "source": "LWC:food-landing-page",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "getAllPlans",
+      "evidence": "@salesforce/apex/PlanController.getAllPlans",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 26,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/foodLandingPage/foodLandingPage.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "food-landing-page",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "getAllPlans"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 26
+        }
+      }
+    },
+    {
+      "id": "LWC:food-landing-page|ApexClass:ReviewController|lwc-apex|getAllReviews|@salesforce/apex/ReviewController.getAllReviews",
+      "source": "LWC:food-landing-page",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "lwc-apex",
+      "method": "getAllReviews",
+      "evidence": "@salesforce/apex/ReviewController.getAllReviews",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 3,
+      "column": 28,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/foodLandingPage/foodLandingPage.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "food-landing-page",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "getAllReviews"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 28
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|createPlan|@salesforce/apex/PlanController.createPlan",
+      "source": "LWC:plan-admin",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "createPlan",
+      "evidence": "@salesforce/apex/PlanController.createPlan",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 3,
+      "column": 25,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planAdmin/planAdmin.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-admin",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "createPlan"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 25
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|deletePlan|@salesforce/apex/PlanController.deletePlan",
+      "source": "LWC:plan-admin",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "deletePlan",
+      "evidence": "@salesforce/apex/PlanController.deletePlan",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 5,
+      "column": 25,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planAdmin/planAdmin.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-admin",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "deletePlan"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 5,
+          "column": 25
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|getAllPlans|@salesforce/apex/PlanController.getAllPlans",
+      "source": "LWC:plan-admin",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "getAllPlans",
+      "evidence": "@salesforce/apex/PlanController.getAllPlans",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 26,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planAdmin/planAdmin.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-admin",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "getAllPlans"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 26
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-admin|ApexClass:PlanController|lwc-apex|updatePlan|@salesforce/apex/PlanController.updatePlan",
+      "source": "LWC:plan-admin",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "updatePlan",
+      "evidence": "@salesforce/apex/PlanController.updatePlan",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 4,
+      "column": 25,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planAdmin/planAdmin.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-admin",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "updatePlan"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 4,
+          "column": 25
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-detail|ApexClass:PlanController|lwc-apex|getPlan|@salesforce/apex/PlanController.getPlan",
+      "source": "LWC:plan-detail",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "getPlan",
+      "evidence": "@salesforce/apex/PlanController.getPlan",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 22,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planDetail/planDetail.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-detail",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "getPlan"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 22
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-detail|ApexClass:ReviewController|lwc-apex|createReview|@salesforce/apex/ReviewController.createReview",
+      "source": "LWC:plan-detail",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "lwc-apex",
+      "method": "createReview",
+      "evidence": "@salesforce/apex/ReviewController.createReview",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 4,
+      "column": 27,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planDetail/planDetail.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-detail",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "createReview"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 4,
+          "column": 27
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-detail|ApexClass:ReviewController|lwc-apex|deleteReview|@salesforce/apex/ReviewController.deleteReview",
+      "source": "LWC:plan-detail",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "lwc-apex",
+      "method": "deleteReview",
+      "evidence": "@salesforce/apex/ReviewController.deleteReview",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 5,
+      "column": 27,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planDetail/planDetail.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-detail",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "deleteReview"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 5,
+          "column": 27
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-detail|ApexClass:ReviewController|lwc-apex|getAllReviews|@salesforce/apex/ReviewController.getAllReviews",
+      "source": "LWC:plan-detail",
+      "target": "ApexClass:ReviewController",
+      "relationshipType": "lwc-apex",
+      "method": "getAllReviews",
+      "evidence": "@salesforce/apex/ReviewController.getAllReviews",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 3,
+      "column": 28,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planDetail/planDetail.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-detail",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewController",
+          "method": "getAllReviews"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 28
+        }
+      }
+    },
+    {
+      "id": "LWC:plan-list|ApexClass:PlanController|lwc-apex|getAllPlans|@salesforce/apex/PlanController.getAllPlans",
+      "source": "LWC:plan-list",
+      "target": "ApexClass:PlanController",
+      "relationshipType": "lwc-apex",
+      "method": "getAllPlans",
+      "evidence": "@salesforce/apex/PlanController.getAllPlans",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 26,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/lwc/planList/planList.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "plan-list",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "PlanController",
+          "method": "getAllPlans"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 26
+        }
+      }
+    },
+    {
+      "id": "Trigger:ReviewTrigger|ApexClass:ReviewTriggerHandler|trigger-handler|updatePlanRatings|ReviewTriggerHandler.updatePlanRatings()",
+      "source": "Trigger:ReviewTrigger",
+      "target": "ApexClass:ReviewTriggerHandler",
+      "relationshipType": "trigger-handler",
+      "method": "updatePlanRatings",
+      "evidence": "ReviewTriggerHandler.updatePlanRatings()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "LOW",
+      "line": 3,
+      "column": 5,
+      "methodOwner": null,
+      "file": "../Food-App/force-app/main/default/triggers/ReviewTrigger.trigger",
+      "canonical": {
+        "source": {
+          "type": "Trigger",
+          "name": "ReviewTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ReviewTriggerHandler",
+          "method": "updatePlanRatings"
+        },
+        "relationship": {
+          "type": "trigger-handler",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 3,
+          "column": 5
+        }
+      }
+    },
+    {
+      "id": "Trigger:ReviewTrigger|Object:Review__c|trigger-object||Trigger ReviewTrigger on Review__c",
+      "source": "Trigger:ReviewTrigger",
+      "target": "Object:Review__c",
+      "relationshipType": "trigger-object",
+      "method": null,
+      "evidence": "Trigger ReviewTrigger on Review__c",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "Trigger",
+          "name": "ReviewTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "Object",
+          "name": "Review__c",
+          "method": null
+        },
+        "relationship": {
+          "type": "trigger-object",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    }
+  ],
+  "cycles": [],
+  "unresolvedReferences": [],
+  "impactSummaries": {
+    "ApexClass:BookingController": {
+      "id": "ApexClass:BookingController",
+      "directDependencies": [
+        "Field:Booking__c.Plan__c",
+        "Field:Booking__c.Price__c",
+        "Field:Booking__c.Status__c",
+        "Object:Booking__c"
+      ],
+      "directDependents": [
+        "ApexClass:BookingControllerTest",
+        "LWC:booking-list"
+      ],
+      "transitiveDependencies": [
+        "Field:Booking__c.Plan__c",
+        "Field:Booking__c.Price__c",
+        "Field:Booking__c.Status__c",
+        "Object:Booking__c"
+      ],
+      "transitiveDependents": [
+        "ApexClass:BookingControllerTest",
+        "LWC:booking-list"
+      ],
+      "impactedTests": [
+        "ApexClass:BookingControllerTest"
+      ],
+      "totalImpactCount": 6
+    },
+    "ApexClass:BookingControllerTest": {
+      "id": "ApexClass:BookingControllerTest",
+      "directDependencies": [
+        "ApexClass:BookingController",
+        "Object:Booking__c",
+        "Object:Plan__c"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:BookingController",
+        "Field:Booking__c.Plan__c",
+        "Field:Booking__c.Price__c",
+        "Field:Booking__c.Status__c",
+        "Object:Booking__c",
+        "Object:Plan__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 6
+    },
+    "ApexClass:PlanController": {
+      "id": "ApexClass:PlanController",
+      "directDependencies": [
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c"
+      ],
+      "directDependents": [
+        "ApexClass:PlanControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list"
+      ],
+      "transitiveDependencies": [
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c"
+      ],
+      "transitiveDependents": [
+        "ApexClass:PlanControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list"
+      ],
+      "impactedTests": [
+        "ApexClass:PlanControllerTest"
+      ],
+      "totalImpactCount": 10
+    },
+    "ApexClass:PlanControllerTest": {
+      "id": "ApexClass:PlanControllerTest",
+      "directDependencies": [
+        "ApexClass:PlanController",
+        "Field:Plan__c.Price__c",
+        "Object:Plan__c"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:PlanController",
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 6
+    },
+    "ApexClass:ReviewController": {
+      "id": "ApexClass:ReviewController",
+      "directDependencies": [
+        "Field:Review__c.Plan__c",
+        "Field:Review__c.Rating__c",
+        "Field:Review__c.Review__c",
+        "Object:Review__c"
+      ],
+      "directDependents": [
+        "ApexClass:ReviewControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-detail"
+      ],
+      "transitiveDependencies": [
+        "Field:Review__c.Plan__c",
+        "Field:Review__c.Rating__c",
+        "Field:Review__c.Review__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [
+        "ApexClass:ReviewControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-detail"
+      ],
+      "impactedTests": [
+        "ApexClass:ReviewControllerTest"
+      ],
+      "totalImpactCount": 7
+    },
+    "ApexClass:ReviewControllerTest": {
+      "id": "ApexClass:ReviewControllerTest",
+      "directDependencies": [
+        "ApexClass:ReviewController",
+        "Field:Review__c.Rating__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:ReviewController",
+        "Field:Review__c.Plan__c",
+        "Field:Review__c.Rating__c",
+        "Field:Review__c.Review__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 6
+    },
+    "ApexClass:ReviewTriggerHandler": {
+      "id": "ApexClass:ReviewTriggerHandler",
+      "directDependencies": [
+        "Field:Review__c.Plan__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "directDependents": [
+        "Trigger:ReviewTrigger"
+      ],
+      "transitiveDependencies": [
+        "Field:Review__c.Plan__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [
+        "Trigger:ReviewTrigger"
+      ],
+      "impactedTests": [],
+      "totalImpactCount": 4
+    },
+    "ApexClass:ReviewTriggerHandlerTest": {
+      "id": "ApexClass:ReviewTriggerHandlerTest",
+      "directDependencies": [
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 3
+    },
+    "Field:Booking__c.Plan__c": {
+      "id": "Field:Booking__c.Plan__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:BookingController"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:BookingController",
+        "ApexClass:BookingControllerTest",
+        "LWC:booking-list"
+      ],
+      "impactedTests": [
+        "ApexClass:BookingControllerTest"
+      ],
+      "totalImpactCount": 3
+    },
+    "Field:Booking__c.Price__c": {
+      "id": "Field:Booking__c.Price__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:BookingController"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:BookingController",
+        "ApexClass:BookingControllerTest",
+        "LWC:booking-list"
+      ],
+      "impactedTests": [
+        "ApexClass:BookingControllerTest"
+      ],
+      "totalImpactCount": 3
+    },
+    "Field:Booking__c.Status__c": {
+      "id": "Field:Booking__c.Status__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:BookingController"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:BookingController",
+        "ApexClass:BookingControllerTest",
+        "LWC:booking-list"
+      ],
+      "impactedTests": [
+        "ApexClass:BookingControllerTest"
+      ],
+      "totalImpactCount": 3
+    },
+    "Field:Booking__c.User__c": {
+      "id": "Field:Booking__c.User__c",
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
+    },
+    "Field:Plan__c.Discount__c": {
+      "id": "Field:Plan__c.Discount__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:PlanController"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list"
+      ],
+      "impactedTests": [
+        "ApexClass:PlanControllerTest"
+      ],
+      "totalImpactCount": 6
+    },
+    "Field:Plan__c.Duration__c": {
+      "id": "Field:Plan__c.Duration__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:PlanController"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list"
+      ],
+      "impactedTests": [
+        "ApexClass:PlanControllerTest"
+      ],
+      "totalImpactCount": 6
+    },
+    "Field:Plan__c.Price__c": {
+      "id": "Field:Plan__c.Price__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list"
+      ],
+      "impactedTests": [
+        "ApexClass:PlanControllerTest"
+      ],
+      "totalImpactCount": 6
+    },
+    "Field:Plan__c.RatingsAverage__c": {
+      "id": "Field:Plan__c.RatingsAverage__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:PlanController",
+        "ApexClass:ReviewTriggerHandlerTest"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest",
+        "ApexClass:ReviewTriggerHandlerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list"
+      ],
+      "impactedTests": [
+        "ApexClass:PlanControllerTest",
+        "ApexClass:ReviewTriggerHandlerTest"
+      ],
+      "totalImpactCount": 7
+    },
+    "Field:Review__c.Plan__c": {
+      "id": "Field:Review__c.Plan__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewTriggerHandler"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandler",
+        "LWC:food-landing-page",
+        "LWC:plan-detail",
+        "Trigger:ReviewTrigger"
+      ],
+      "impactedTests": [
+        "ApexClass:ReviewControllerTest"
+      ],
+      "totalImpactCount": 6
+    },
+    "Field:Review__c.Rating__c": {
+      "id": "Field:Review__c.Rating__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewControllerTest"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-detail"
+      ],
+      "impactedTests": [
+        "ApexClass:ReviewControllerTest"
+      ],
+      "totalImpactCount": 4
+    },
+    "Field:Review__c.Review__c": {
+      "id": "Field:Review__c.Review__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:ReviewController"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewControllerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-detail"
+      ],
+      "impactedTests": [
+        "ApexClass:ReviewControllerTest"
+      ],
+      "totalImpactCount": 4
+    },
+    "Field:Review__c.User__c": {
+      "id": "Field:Review__c.User__c",
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
+    },
+    "LWC:booking-list": {
+      "id": "LWC:booking-list",
+      "directDependencies": [
+        "ApexClass:BookingController"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:BookingController",
+        "Field:Booking__c.Plan__c",
+        "Field:Booking__c.Price__c",
+        "Field:Booking__c.Status__c",
+        "Object:Booking__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 5
+    },
+    "LWC:food-landing-page": {
+      "id": "LWC:food-landing-page",
+      "directDependencies": [
+        "ApexClass:PlanController",
+        "ApexClass:ReviewController"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:PlanController",
+        "ApexClass:ReviewController",
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Field:Review__c.Plan__c",
+        "Field:Review__c.Rating__c",
+        "Field:Review__c.Review__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 11
+    },
+    "LWC:plan-admin": {
+      "id": "LWC:plan-admin",
+      "directDependencies": [
+        "ApexClass:PlanController"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:PlanController",
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 6
+    },
+    "LWC:plan-detail": {
+      "id": "LWC:plan-detail",
+      "directDependencies": [
+        "ApexClass:PlanController",
+        "ApexClass:ReviewController"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:PlanController",
+        "ApexClass:ReviewController",
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Field:Review__c.Plan__c",
+        "Field:Review__c.Rating__c",
+        "Field:Review__c.Review__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 11
+    },
+    "LWC:plan-list": {
+      "id": "LWC:plan-list",
+      "directDependencies": [
+        "ApexClass:PlanController"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:PlanController",
+        "Field:Plan__c.Discount__c",
+        "Field:Plan__c.Duration__c",
+        "Field:Plan__c.Price__c",
+        "Field:Plan__c.RatingsAverage__c",
+        "Object:Plan__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 6
+    },
+    "LWC:user-auth": {
+      "id": "LWC:user-auth",
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
+    },
+    "LWC:user-profile": {
+      "id": "LWC:user-profile",
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
+    },
+    "Object:Booking__c": {
+      "id": "Object:Booking__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:BookingController",
+        "ApexClass:BookingControllerTest"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:BookingController",
+        "ApexClass:BookingControllerTest",
+        "LWC:booking-list"
+      ],
+      "impactedTests": [
+        "ApexClass:BookingControllerTest"
+      ],
+      "totalImpactCount": 3
+    },
+    "Object:Plan__c": {
+      "id": "Object:Plan__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:BookingControllerTest",
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest",
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandler",
+        "ApexClass:ReviewTriggerHandlerTest"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:BookingControllerTest",
+        "ApexClass:PlanController",
+        "ApexClass:PlanControllerTest",
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandler",
+        "ApexClass:ReviewTriggerHandlerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-admin",
+        "LWC:plan-detail",
+        "LWC:plan-list",
+        "Trigger:ReviewTrigger"
+      ],
+      "impactedTests": [
+        "ApexClass:BookingControllerTest",
+        "ApexClass:PlanControllerTest",
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandlerTest"
+      ],
+      "totalImpactCount": 11
+    },
+    "Object:Review__c": {
+      "id": "Object:Review__c",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandler",
+        "ApexClass:ReviewTriggerHandlerTest",
+        "Trigger:ReviewTrigger"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:ReviewController",
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandler",
+        "ApexClass:ReviewTriggerHandlerTest",
+        "LWC:food-landing-page",
+        "LWC:plan-detail",
+        "Trigger:ReviewTrigger"
+      ],
+      "impactedTests": [
+        "ApexClass:ReviewControllerTest",
+        "ApexClass:ReviewTriggerHandlerTest"
+      ],
+      "totalImpactCount": 7
+    },
+    "Trigger:ReviewTrigger": {
+      "id": "Trigger:ReviewTrigger",
+      "directDependencies": [
+        "ApexClass:ReviewTriggerHandler",
+        "Object:Review__c"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:ReviewTriggerHandler",
+        "Field:Review__c.Plan__c",
+        "Object:Plan__c",
+        "Object:Review__c"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 4
+    }
+  }
+}

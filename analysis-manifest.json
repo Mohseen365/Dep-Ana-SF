@@ -2,30 +2,30 @@
   "manifestVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-09-13T15:12:27.563Z",
+  "generatedAt": "2026-09-15T07:17:31.214Z",
   "source": {
     "directory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
     "fileCount": 9,
-    "sourceHash": "sha256:babe119a7435ac4591ab83de12b957dcb99b1eddcc2532aef845f7adfafbe61c",
-    "gitCommit": "e40c39525a99e3e893c08542bb5739ebe3d0b611"
+    "sourceHash": "sha256:28c93757d3df37fb47bd4bb64d08adf807ad416ddc5c21844d39c1bae0f0a407",
+    "gitCommit": "2629e11150e0178e8e8a91217e662564085412e0"
   },
   "status": "COMPLETE",
   "artifacts": {
     "dependencyReport": {
       "path": "dependency-report.json",
-      "fileHash": "sha256:29f7da71b80707d1f3fe760b809059ce2a4d41294fcee98c7e47683d0c8e87e1"
+      "fileHash": "sha256:f054aea4c58f3751d7be2b11f8559e7454a11173e7a06d9d9a64c07739d2cc1c"
     },
     "analysisSnapshot": {
       "path": "analysis-snapshot.json",
-      "fileHash": "sha256:777582f409ca3f487c7f0400d9cd6f7bcc9c155807494982874319614856da86"
+      "fileHash": "sha256:4ef0d9f36a8e542e578176b1c75597733aa7f79afe75c7de612c61d9b0e0a774"
     },
     "architectureSnapshot": {
       "path": "architecture-snapshot.json",
-      "fileHash": "sha256:2bf876c0a1ae375caa05b1a7072acdd77dd129042a2f87cfd68e5be54638120e"
+      "fileHash": "sha256:115fa455a8ff2ea90291d189e717c8c0ac397e1d4f5f26cc702f7b8d0eb676e0"
     },
     "architectureMetrics": {
       "path": "architecture-metrics.json",
-      "fileHash": "sha256:a756805ba36cd26803b90c12deae5b2cfd6deb38b4d406b52b3c5df51a3a25e2"
+      "fileHash": "sha256:c05b6afc0cb61525d47b2bcabea065204ee9c025a5bb3d3d8d52b5b65ddcaee0"
     },
     "dependencyReportMd": {
       "path": "dependency-report.md",
@@ -33,7 +33,7 @@
     },
     "dependencySummaryMd": {
       "path": "dependency-summary.md",
-      "fileHash": "sha256:5c3f195639a692646a306153951290fe084066a756954818a120e6fc79e25846"
+      "fileHash": "sha256:dc311a35f82cf7e4457110f7e16603d0d36f66e5f84569d22e339ec00c1842f2"
     },
     "unresolvedReferencesMd": {
       "path": "unresolved-references.md",
@@ -42,9 +42,9 @@
     "explorerData": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:2af6622d7955ca8d6d0fde089acfb10f4a3664aaa916eac6bc18b8fec4ced8d0",
-      "nodeCount": 10,
-      "edgeCount": 16
+      "fileHash": "sha256:4b4641d677cec08373b36ccf70ada545314c1d4da904cc3850ca3db9fee36afb",
+      "nodeCount": 31,
+      "edgeCount": 84
     }
   }
 }

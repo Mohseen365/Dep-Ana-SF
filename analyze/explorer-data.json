@@ -1,0 +1,1076 @@
+{
+  "schemaVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "generatedAt": "2026-09-15T05:48:04.216Z",
+  "sourceDirectory": "C:\\Users\\User\\Downloads\\Movie-App\\force-app\\main\\default",
+  "project": {
+    "id": "default",
+    "name": "Default Salesforce Project",
+    "description": "Salesforce DX Architecture Analysis",
+    "sourcePath": "C:\\Users\\User\\Downloads\\Movie-App\\force-app\\main\\default",
+    "createdAt": "2026-09-15T05:48:04.216Z",
+    "updatedAt": "2026-09-15T05:48:04.216Z",
+    "lastAnalyzedAt": "2026-09-15T05:48:04.216Z",
+    "analysisStatus": "COMPLETE",
+    "componentCount": 9,
+    "dependencyCount": 16,
+    "analysisPath": "/explorer-data.json"
+  },
+  "summary": {
+    "nodeCount": 9,
+    "edgeCount": 16,
+    "highRiskCount": 0,
+    "mediumRiskCount": 1,
+    "lowRiskCount": 8,
+    "cycleCount": 0,
+    "unresolvedCount": 1,
+    "inventory": {
+      "files": 29,
+      "apexClasses": 3,
+      "apexTriggers": 0,
+      "lwcJs": 5,
+      "lwcHtml": 5,
+      "visualforce": 0,
+      "flows": 0,
+      "objects": 0,
+      "fields": 0
+    }
+  },
+  "nodes": [
+    {
+      "id": "ApexClass:MovieController",
+      "displayName": "MovieController",
+      "type": "ApexClass",
+      "file": "../Movie-App/force-app/main/default/classes/MovieController.cls",
+      "metrics": {
+        "fanIn": 9,
+        "fanOut": 0,
+        "coupling": 9,
+        "unresolved": 0,
+        "score": 5
+      },
+      "risk": "MEDIUM",
+      "riskReasons": [
+        "high fan-in",
+        "direct LWC consumer"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 1,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 1
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerHttpMock",
+      "displayName": "MovieControllerHttpMock",
+      "type": "ApexClass",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerHttpMock.cls",
+      "metrics": {
+        "fanIn": 2,
+        "fanOut": 1,
+        "coupling": 3,
+        "unresolved": 1,
+        "score": 1
+      },
+      "risk": "LOW",
+      "riskReasons": [
+        "unresolved references"
+      ],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 1
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": true,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest",
+      "displayName": "MovieControllerTest",
+      "type": "ApexClass",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerTest.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 6,
+        "coupling": 6,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": true,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "COVERED"
+      }
+    },
+    {
+      "id": "External:HttpCalloutMock",
+      "displayName": "HttpCalloutMock",
+      "type": "External",
+      "file": "",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "AMBIGUOUS"
+      }
+    },
+    {
+      "id": "LWC:banner",
+      "displayName": "banner",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/banner/banner.js",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 1,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:favourites",
+      "displayName": "favourites",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/favourites/favourites.js",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 1,
+        "coupling": 2,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:movie-app-container",
+      "displayName": "movie-app-container",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/movieAppContainer/movieAppContainer.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 4,
+        "coupling": 4,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:movie-list",
+      "displayName": "movie-list",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/movieList/movieList.js",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 3,
+        "coupling": 4,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    },
+    {
+      "id": "LWC:navbar",
+      "displayName": "navbar",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/navbar/navbar.js",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 0,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "UNTESTED"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexClass:MovieControllerHttpMock|External:HttpCalloutMock|implements||implements HttpCalloutMock",
+      "source": "ApexClass:MovieControllerHttpMock",
+      "target": "External:HttpCalloutMock",
+      "relationshipType": "implements",
+      "method": null,
+      "evidence": "implements HttpCalloutMock",
+      "unresolved": true,
+      "resolutionClassification": "UNKNOWN",
+      "resolutionStrategy": "LLM",
+      "confidence": "high",
+      "line": 2,
+      "column": 38,
+      "methodOwner": null,
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerHttpMock.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerHttpMock",
+          "method": null
+        },
+        "target": {
+          "type": "External",
+          "name": "HttpCalloutMock",
+          "method": null
+        },
+        "relationship": {
+          "type": "implements",
+          "resolution": "UNRESOLVED"
+        },
+        "location": {
+          "line": 2,
+          "column": 38
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest|ApexClass:MovieController|method-call|getMovieDetails|MovieController.getMovieDetails()",
+      "source": "ApexClass:MovieControllerTest",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "method-call",
+      "method": "getMovieDetails",
+      "evidence": "MovieController.getMovieDetails()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 92,
+      "column": 21,
+      "methodOwner": "testGetMovieDetailsSuccess",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerTest",
+          "method": "testGetMovieDetailsSuccess"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getMovieDetails"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 92,
+          "column": 21
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest|ApexClass:MovieController|method-call|getPopularMovies|MovieController.getPopularMovies()",
+      "source": "ApexClass:MovieControllerTest",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "method-call",
+      "method": "getPopularMovies",
+      "evidence": "MovieController.getPopularMovies()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 8,
+      "column": 21,
+      "methodOwner": "testGetPopularMoviesSuccess",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerTest",
+          "method": "testGetPopularMoviesSuccess"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getPopularMovies"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 8,
+          "column": 21
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest|ApexClass:MovieController|method-call|searchMovies|MovieController.searchMovies()",
+      "source": "ApexClass:MovieControllerTest",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "method-call",
+      "method": "searchMovies",
+      "evidence": "MovieController.searchMovies()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 58,
+      "column": 21,
+      "methodOwner": "testSearchMoviesSuccess",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerTest",
+          "method": "testSearchMoviesSuccess"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "searchMovies"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 58,
+          "column": 21
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest|ApexClass:MovieController|test-reference||Test reference: MovieController",
+      "source": "ApexClass:MovieControllerTest",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "test-reference",
+      "method": null,
+      "evidence": "Test reference: MovieController",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": null
+        },
+        "relationship": {
+          "type": "test-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest|ApexClass:MovieControllerHttpMock|instantiation||new MovieControllerHttpMock()",
+      "source": "ApexClass:MovieControllerTest",
+      "target": "ApexClass:MovieControllerHttpMock",
+      "relationshipType": "instantiation",
+      "method": null,
+      "evidence": "new MovieControllerHttpMock()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": 5,
+      "column": 45,
+      "methodOwner": "testGetPopularMoviesSuccess",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerTest.cls",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerTest",
+          "method": "testGetPopularMoviesSuccess"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieControllerHttpMock",
+          "method": null
+        },
+        "relationship": {
+          "type": "instantiation",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 5,
+          "column": 45
+        }
+      }
+    },
+    {
+      "id": "ApexClass:MovieControllerTest|ApexClass:MovieControllerHttpMock|test-reference||Test reference: MovieControllerHttpMock",
+      "source": "ApexClass:MovieControllerTest",
+      "target": "ApexClass:MovieControllerHttpMock",
+      "relationshipType": "test-reference",
+      "method": null,
+      "evidence": "Test reference: MovieControllerHttpMock",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "MEDIUM",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "MovieControllerTest",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieControllerHttpMock",
+          "method": null
+        },
+        "relationship": {
+          "type": "test-reference",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "LWC:banner|ApexClass:MovieController|lwc-apex|getPopularMovies|@salesforce/apex/MovieController.getPopularMovies",
+      "source": "LWC:banner",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "lwc-apex",
+      "method": "getPopularMovies",
+      "evidence": "@salesforce/apex/MovieController.getPopularMovies",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 31,
+      "methodOwner": null,
+      "file": "../Movie-App/force-app/main/default/lwc/banner/banner.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "banner",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getPopularMovies"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 31
+        }
+      }
+    },
+    {
+      "id": "LWC:favourites|ApexClass:MovieController|lwc-apex|getMovieDetails|@salesforce/apex/MovieController.getMovieDetails",
+      "source": "LWC:favourites",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "lwc-apex",
+      "method": "getMovieDetails",
+      "evidence": "@salesforce/apex/MovieController.getMovieDetails",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 30,
+      "methodOwner": null,
+      "file": "../Movie-App/force-app/main/default/lwc/favourites/favourites.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "favourites",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getMovieDetails"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 30
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-app-container|LWC:banner|lwc-template-child||<c-banner>",
+      "source": "LWC:movie-app-container",
+      "target": "LWC:banner",
+      "relationshipType": "lwc-template-child",
+      "method": null,
+      "evidence": "<c-banner>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-app-container",
+          "method": null
+        },
+        "target": {
+          "type": "LWC",
+          "name": "banner",
+          "method": null
+        },
+        "relationship": {
+          "type": "lwc-template-child",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-app-container|LWC:favourites|lwc-template-child||<c-favourites>",
+      "source": "LWC:movie-app-container",
+      "target": "LWC:favourites",
+      "relationshipType": "lwc-template-child",
+      "method": null,
+      "evidence": "<c-favourites>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-app-container",
+          "method": null
+        },
+        "target": {
+          "type": "LWC",
+          "name": "favourites",
+          "method": null
+        },
+        "relationship": {
+          "type": "lwc-template-child",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-app-container|LWC:movie-list|lwc-template-child||<c-movie-list>",
+      "source": "LWC:movie-app-container",
+      "target": "LWC:movie-list",
+      "relationshipType": "lwc-template-child",
+      "method": null,
+      "evidence": "<c-movie-list>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-app-container",
+          "method": null
+        },
+        "target": {
+          "type": "LWC",
+          "name": "movie-list",
+          "method": null
+        },
+        "relationship": {
+          "type": "lwc-template-child",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-app-container|LWC:navbar|lwc-template-child||<c-navbar>",
+      "source": "LWC:movie-app-container",
+      "target": "LWC:navbar",
+      "relationshipType": "lwc-template-child",
+      "method": null,
+      "evidence": "<c-navbar>",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-app-container",
+          "method": null
+        },
+        "target": {
+          "type": "LWC",
+          "name": "navbar",
+          "method": null
+        },
+        "relationship": {
+          "type": "lwc-template-child",
+          "resolution": "HEURISTIC"
+        },
+        "location": {
+          "line": 0,
+          "column": 0
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-list|ApexClass:MovieController|lwc-apex|getMovieDetails|@salesforce/apex/MovieController.getMovieDetails",
+      "source": "LWC:movie-list",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "lwc-apex",
+      "method": "getMovieDetails",
+      "evidence": "@salesforce/apex/MovieController.getMovieDetails",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 4,
+      "column": 30,
+      "methodOwner": null,
+      "file": "../Movie-App/force-app/main/default/lwc/movieList/movieList.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-list",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getMovieDetails"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 4,
+          "column": 30
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-list|ApexClass:MovieController|lwc-apex|getPopularMovies|@salesforce/apex/MovieController.getPopularMovies",
+      "source": "LWC:movie-list",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "lwc-apex",
+      "method": "getPopularMovies",
+      "evidence": "@salesforce/apex/MovieController.getPopularMovies",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 31,
+      "methodOwner": null,
+      "file": "../Movie-App/force-app/main/default/lwc/movieList/movieList.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-list",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getPopularMovies"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 2,
+          "column": 31
+        }
+      }
+    },
+    {
+      "id": "LWC:movie-list|ApexClass:MovieController|lwc-apex|searchMovies|@salesforce/apex/MovieController.searchMovies",
+      "source": "LWC:movie-list",
+      "target": "ApexClass:MovieController",
+      "relationshipType": "lwc-apex",
+      "method": "searchMovies",
+      "evidence": "@salesforce/apex/MovieController.searchMovies",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "HIGH",
+      "line": 3,
+      "column": 27,
+      "methodOwner": null,
+      "file": "../Movie-App/force-app/main/default/lwc/movieList/movieList.js",
+      "canonical": {
+        "source": {
+          "type": "LWC",
+          "name": "movie-list",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "searchMovies"
+        },
+        "relationship": {
+          "type": "lwc-apex",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 3,
+          "column": 27
+        }
+      }
+    }
+  ],
+  "cycles": [],
+  "unresolvedReferences": [
+    {
+      "edgeId": "ApexClass:MovieControllerHttpMock|External:HttpCalloutMock|implements||implements HttpCalloutMock",
+      "sourceNodeId": "ApexClass:MovieControllerHttpMock",
+      "targetName": "HttpCalloutMock",
+      "targetType": "External",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerHttpMock.cls",
+      "line": 2,
+      "evidence": "implements HttpCalloutMock",
+      "reason": "Unresolved reference to External:HttpCalloutMock"
+    }
+  ],
+  "impactSummaries": {
+    "ApexClass:MovieController": {
+      "id": "ApexClass:MovieController",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:MovieControllerTest",
+        "LWC:banner",
+        "LWC:favourites",
+        "LWC:movie-list"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:MovieControllerTest",
+        "LWC:banner",
+        "LWC:favourites",
+        "LWC:movie-app-container",
+        "LWC:movie-list"
+      ],
+      "impactedTests": [
+        "ApexClass:MovieControllerTest"
+      ],
+      "totalImpactCount": 5
+    },
+    "ApexClass:MovieControllerHttpMock": {
+      "id": "ApexClass:MovieControllerHttpMock",
+      "directDependencies": [
+        "External:HttpCalloutMock"
+      ],
+      "directDependents": [
+        "ApexClass:MovieControllerTest"
+      ],
+      "transitiveDependencies": [
+        "External:HttpCalloutMock"
+      ],
+      "transitiveDependents": [
+        "ApexClass:MovieControllerTest"
+      ],
+      "impactedTests": [
+        "ApexClass:MovieControllerTest"
+      ],
+      "totalImpactCount": 2
+    },
+    "ApexClass:MovieControllerTest": {
+      "id": "ApexClass:MovieControllerTest",
+      "directDependencies": [
+        "ApexClass:MovieController",
+        "ApexClass:MovieControllerHttpMock"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:MovieController",
+        "ApexClass:MovieControllerHttpMock",
+        "External:HttpCalloutMock"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 3
+    },
+    "External:HttpCalloutMock": {
+      "id": "External:HttpCalloutMock",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexClass:MovieControllerHttpMock"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexClass:MovieControllerHttpMock",
+        "ApexClass:MovieControllerTest"
+      ],
+      "impactedTests": [
+        "ApexClass:MovieControllerHttpMock",
+        "ApexClass:MovieControllerTest"
+      ],
+      "totalImpactCount": 2
+    },
+    "LWC:banner": {
+      "id": "LWC:banner",
+      "directDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "directDependents": [
+        "LWC:movie-app-container"
+      ],
+      "transitiveDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "transitiveDependents": [
+        "LWC:movie-app-container"
+      ],
+      "impactedTests": [],
+      "totalImpactCount": 2
+    },
+    "LWC:favourites": {
+      "id": "LWC:favourites",
+      "directDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "directDependents": [
+        "LWC:movie-app-container"
+      ],
+      "transitiveDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "transitiveDependents": [
+        "LWC:movie-app-container"
+      ],
+      "impactedTests": [],
+      "totalImpactCount": 2
+    },
+    "LWC:movie-app-container": {
+      "id": "LWC:movie-app-container",
+      "directDependencies": [
+        "LWC:banner",
+        "LWC:favourites",
+        "LWC:movie-list",
+        "LWC:navbar"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:MovieController",
+        "LWC:banner",
+        "LWC:favourites",
+        "LWC:movie-list",
+        "LWC:navbar"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 5
+    },
+    "LWC:movie-list": {
+      "id": "LWC:movie-list",
+      "directDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "directDependents": [
+        "LWC:movie-app-container"
+      ],
+      "transitiveDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "transitiveDependents": [
+        "LWC:movie-app-container"
+      ],
+      "impactedTests": [],
+      "totalImpactCount": 2
+    },
+    "LWC:navbar": {
+      "id": "LWC:navbar",
+      "directDependencies": [],
+      "directDependents": [
+        "LWC:movie-app-container"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "LWC:movie-app-container"
+      ],
+      "impactedTests": [],
+      "totalImpactCount": 1
+    }
+  }
+}

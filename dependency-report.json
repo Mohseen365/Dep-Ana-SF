@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T15:12:27.563Z",
+  "generatedAt": "2026-09-15T07:17:31.214Z",
   "sourceDirectory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
   "inventory": {
     "files": 9,
@@ -1536,10 +1536,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 42,
+            "startOffset": 43,
             "startLine": 2,
             "endLine": 7,
-            "endOffset": 204,
+            "endOffset": 210,
             "dependencies": [
               {
                 "to": "BouquetOrderFormService",
@@ -1668,7 +1668,7 @@
             "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls"
           }
         ],
-        "sourceHash": "bfabd734a083af0fe302dda588f1a9eb2b2c50e3d71e874ac7699c1f19890395",
+        "sourceHash": "812ab5c71b831e57be22aee540b77a899024cdd019ed085ec2f69ffa71b30fc6",
         "lineCount": 7,
         "objects": [],
         "fields": [],
@@ -1676,7 +1676,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 204,
+        "sourceBytes": 210,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -1721,10 +1721,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 43,
+            "startOffset": 44,
             "startLine": 2,
             "endLine": 5,
-            "endOffset": 153,
+            "endOffset": 158,
             "dependencies": [
               {
                 "to": "BouquetOrderSelector",
@@ -1774,10 +1774,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 154,
+            "startOffset": 159,
             "startLine": 6,
             "endLine": 12,
-            "endOffset": 322,
+            "endOffset": 333,
             "dependencies": [
               {
                 "to": "HelperService",
@@ -2000,7 +2000,7 @@
             "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls"
           }
         ],
-        "sourceHash": "8d464ee68d7b04a9626b17c6f9ab7400e11f18692364efc0fa6ee538fcb94955",
+        "sourceHash": "ffacc3aadbd1ea313478d2c0145f26d237342f74d27eede4e779fcb1c0261aa1",
         "lineCount": 12,
         "objects": [],
         "fields": [],
@@ -2008,7 +2008,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 322,
+        "sourceBytes": 333,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -2053,10 +2053,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 43,
+            "startOffset": 44,
             "startLine": 2,
             "endLine": 7,
-            "endOffset": 204,
+            "endOffset": 210,
             "dependencies": [
               {
                 "to": "BouquetOrderController",
@@ -2185,7 +2185,7 @@
             "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls"
           }
         ],
-        "sourceHash": "6a44a800c3cc03f73c1c277c49dc0242f6e2665a5ae48dc5679ebe941a3d42e0",
+        "sourceHash": "78040fedb594958f4f5150e0e3c1c39a37e10bbe1207a1ea2fac1c0c8036fad3",
         "lineCount": 7,
         "objects": [],
         "fields": [],
@@ -2193,7 +2193,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 204,
+        "sourceBytes": 210,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -2239,10 +2239,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 40,
+            "startOffset": 41,
             "startLine": 2,
             "endLine": 5,
-            "endOffset": 147,
+            "endOffset": 152,
             "dependencies": [
               {
                 "to": "HelperService",
@@ -2293,10 +2293,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 148,
+            "startOffset": 153,
             "startLine": 6,
             "endLine": 9,
-            "endOffset": 243,
+            "endOffset": 252,
             "dependencies": [
               {
                 "to": "Account",
@@ -2347,10 +2347,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 244,
+            "startOffset": 253,
             "startLine": 10,
             "endLine": 13,
-            "endOffset": 339,
+            "endOffset": 352,
             "dependencies": [
               {
                 "to": "Contact",
@@ -2401,10 +2401,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 340,
+            "startOffset": 353,
             "startLine": 14,
             "endLine": 18,
-            "endOffset": 425,
+            "endOffset": 442,
             "dependencies": [],
             "dependencyCount": 0,
             "lineStart": 14,
@@ -2508,7 +2508,7 @@
             "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls"
           }
         ],
-        "sourceHash": "bab26c28f4e41d24803b837eb78b3d96e1ae271ae8e178c7419c018a6547a8c6",
+        "sourceHash": "cf2f4d70ea0fbba8c69c54ac91f0879179702198d02ed0942934bed1fd26e552",
         "lineCount": 18,
         "objects": [
           "Account",
@@ -2568,7 +2568,7 @@
             "confidence": "high"
           }
         ],
-        "sourceBytes": 425,
+        "sourceBytes": 442,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -2633,10 +2633,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 29,
+            "startOffset": 30,
             "startLine": 2,
             "endLine": 6,
-            "endOffset": 93,
+            "endOffset": 98,
             "dependencies": [
               {
                 "to": "CircularB",
@@ -2707,7 +2707,7 @@
             "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls"
           }
         ],
-        "sourceHash": "bd9a4c001633479012f0214c97e26ec05e39d15e1511ffebd90b16e043a8dc11",
+        "sourceHash": "85f2401d4f125fe1be02f5e72fc8747c35963c9f303b19d54aaf46e7d46b91b0",
         "lineCount": 6,
         "objects": [],
         "fields": [],
@@ -2715,7 +2715,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 93,
+        "sourceBytes": 98,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -2761,10 +2761,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 29,
+            "startOffset": 30,
             "startLine": 2,
             "endLine": 6,
-            "endOffset": 93,
+            "endOffset": 98,
             "dependencies": [
               {
                 "to": "CircularA",
@@ -2835,7 +2835,7 @@
             "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls"
           }
         ],
-        "sourceHash": "7487224b91196cd93ada0917c95c498c91e19fd522adf9cefc2f4dafcb57ec4c",
+        "sourceHash": "8b59281c88a9774fd5bfc96230f620a7a64d0f16210a10d27ec365eb33ab189e",
         "lineCount": 6,
         "objects": [],
         "fields": [],
@@ -2843,7 +2843,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 93,
+        "sourceBytes": 98,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -2889,10 +2889,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 33,
+            "startOffset": 34,
             "startLine": 2,
             "endLine": 5,
-            "endOffset": 96,
+            "endOffset": 101,
             "dependencies": [],
             "dependencyCount": 0,
             "lineStart": 2,
@@ -2914,10 +2914,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 97,
+            "startOffset": 102,
             "startLine": 6,
             "endLine": 8,
-            "endOffset": 136,
+            "endOffset": 143,
             "dependencies": [],
             "dependencyCount": 0,
             "lineStart": 6,
@@ -2926,7 +2926,7 @@
           }
         ],
         "dependencies": [],
-        "sourceHash": "33d112d7bf215c5e8c29ecb98b657043699381f931e3a18277ce4e4d59a9f97a",
+        "sourceHash": "074ffde2a8b0c1722ee6af62708b09d033bd27a102e4a1ef882f52cf98291eac",
         "lineCount": 8,
         "objects": [],
         "fields": [],
@@ -2934,7 +2934,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 136,
+        "sourceBytes": 143,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -2980,10 +2980,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 36,
+            "startOffset": 37,
             "startLine": 2,
             "endLine": 2,
-            "endOffset": 73,
+            "endOffset": 75,
             "dependencies": [],
             "dependencyCount": 0,
             "lineStart": 2,
@@ -3005,10 +3005,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 74,
+            "startOffset": 76,
             "startLine": 3,
             "endLine": 5,
-            "endOffset": 111,
+            "endOffset": 115,
             "dependencies": [],
             "dependencyCount": 0,
             "lineStart": 3,
@@ -3017,7 +3017,7 @@
           }
         ],
         "dependencies": [],
-        "sourceHash": "c3063f3e580ac7dfec34ed8b90f98f0c3b44ac40ef8dd7a2af2ff2957141771f",
+        "sourceHash": "cd34cc596a7c6103e8b2d663db7b71c7c7acac2c3845dd94e128ed326c3eb289",
         "lineCount": 5,
         "objects": [],
         "fields": [],
@@ -3025,7 +3025,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 111,
+        "sourceBytes": 115,
         "behavior": {
           "publicContracts": [],
           "async": [],
@@ -3071,10 +3071,10 @@
             "isAbstract": false,
             "isAuraEnabled": false,
             "isInvocable": false,
-            "startOffset": 36,
+            "startOffset": 37,
             "startLine": 2,
             "endLine": 4,
-            "endOffset": 70,
+            "endOffset": 73,
             "dependencies": [],
             "dependencyCount": 0,
             "lineStart": 2,
@@ -3083,7 +3083,7 @@
           }
         ],
         "dependencies": [],
-        "sourceHash": "e4c34c27e25e654bde95ae3d81532d2352a6784c9c6553742e623ebc5709e2fc",
+        "sourceHash": "9957e7cb4d18e818c8a6e9f7902c1ea135858bd132a92010942bc420ba9fb226",
         "lineCount": 4,
         "objects": [],
         "fields": [],
@@ -3091,7 +3091,7 @@
         "callouts": [],
         "dynamicApex": [],
         "testReferences": [],
-        "sourceBytes": 70,
+        "sourceBytes": 73,
         "behavior": {
           "publicContracts": [],
           "async": [],

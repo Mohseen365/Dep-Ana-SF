@@ -2,9 +2,9 @@
   "schemaVersion": 5,
   "analyzerVersion": "13",
   "analyzer": "Salesforce Dependency Analyzer v13",
-  "snapshotIdentity": "arch-snap-sha256:b03d65dabd8d7cb9feef533b754e96de001c222c685776e5a21bb92835afa008",
-  "generatedAt": "2026-09-13T15:12:27.567Z",
-  "sourceDirectory": "/app/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
+  "snapshotIdentity": "arch-snap-sha256:f8ccf3b734093cab76371866d1257e961ad9cc8c2bba943e4034b8449eb2dec1",
+  "generatedAt": "2026-09-15T07:17:31.217Z",
+  "sourceDirectory": "C:/Users/User/Downloads/refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
   "metadata": {
     "fileCount": 9,
     "componentCount": 9,

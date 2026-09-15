@@ -1,0 +1,50 @@
+{
+  "manifestVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "contractVersion": "1.0.0",
+  "generatedAt": "2026-09-15T16:57:24.929Z",
+  "source": {
+    "directory": "../Food-App/force-app/main/default",
+    "fileCount": 64,
+    "sourceHash": "sha256:4a97d4a8dba92c3dc11402304465291bf09f27d358e52cbcd10a38ef98be0ff8",
+    "gitCommit": null
+  },
+  "status": "COMPLETE",
+  "artifacts": {
+    "dependencyReport": {
+      "path": "dependency-report.json",
+      "fileHash": "sha256:b9f12158f4d23bfb222e354a5f5e8a95ced65df6af67b9a89e9367c5efce49de"
+    },
+    "analysisSnapshot": {
+      "path": "analysis-snapshot.json",
+      "fileHash": "sha256:71136a30f26c2bbab5901555c83b073f898fd0b4220468e2faa619f4ec904db0"
+    },
+    "architectureSnapshot": {
+      "path": "architecture-snapshot.json",
+      "fileHash": "sha256:ab6450fb1900dc80704d92661006b283e42f2fe31fa97bccbfb306eb6a2cb32d"
+    },
+    "architectureMetrics": {
+      "path": "architecture-metrics.json",
+      "fileHash": "sha256:59a9beda519c8912ae00c96562e9d5c996f6c87b7bf08a58960c8f79afb8cc51"
+    },
+    "dependencyReportMd": {
+      "path": "dependency-report.md",
+      "fileHash": "sha256:553706d383b9e8143606f2dbfd5bdab279d5b8e1e34e4fa9f42ec1371d1c34bf"
+    },
+    "dependencySummaryMd": {
+      "path": "dependency-summary.md",
+      "fileHash": "sha256:cc24ad2aa360febb13287076739fed250401182a713f93e74f3d6da9c6ec4a50"
+    },
+    "unresolvedReferencesMd": {
+      "path": "unresolved-references.md",
+      "fileHash": "sha256:35bbe5a695057ca74e916ca4be3645d7189b433fb21e494593b6df9da8543392"
+    },
+    "explorerData": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:94205cf62cfcb6de3eb08575db8ae9f68a89d552b038088489457b7dfccb5bd5",
+      "nodeCount": 31,
+      "edgeCount": 84
+    }
+  }
+}
