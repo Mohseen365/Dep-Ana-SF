@@ -42,6 +42,7 @@ export const AnalysisHistoryPanel: React.FC<AnalysisHistoryPanelProps> = ({
   useEffect(() => {
     const loaded = loadProjectHistory(projectId, projectMeta, currentData);
     setHistory(loaded);
+    setSelectedForCompare([]);
   }, [projectId, projectMeta, currentData]);
 
   const handleActivateSnapshot = (snap: ProjectSnapshot) => {

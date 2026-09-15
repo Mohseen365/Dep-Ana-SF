@@ -1,0 +1,16 @@
+PROJECT_ISOLATION_COMPARE_REPORT
+
+Status: PASS — DEFECTS FIXED
+Compare semantics: Snapshot-to-snapshot architecture diffing strictly scoped and explicit; Compare mode exits automatically on project switch.
+Project isolation: 100% verified across multi-project transitions (Project A ↔ Project B) with zero component or dependency data leaks.
+State isolation: Reset event listeners in `useViewState` and `useCompareState` clear active selections, focus, impact, and compare overlays on project change.
+Persistence isolation: Project-keyed localStorage (`explorer.projectState.<projectId>`, `explorer.projectHistory.<projectId>`), project-scoped annotations, and query string parameter sanitization verified.
+Tests: 54 test files / 384 tests passing in Vitest; CLI multi-project and export tests passing; Vite build clean.
+Files changed:
+- explorer/src/hooks/useViewState.ts
+- explorer/src/hooks/useCompareState.ts
+- explorer/src/components/AnalysisHistoryPanel.tsx
+- explorer/src/lib/annotations.ts
+- explorer/src/test/ProjectIsolationAndCompare.test.tsx
+Defects: 4 genuine state isolation defects found and fixed.
+Remaining risks: None.

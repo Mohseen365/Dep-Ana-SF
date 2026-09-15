@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   diffSnapshots,
   buildDiffOverlayGraph,
@@ -77,6 +77,22 @@ export function useCompareState(): UseCompareStateReturn {
     setFocusedEntityId(null);
     setError(null);
   }, []);
+
+  // Exit compare mode on project switch to enforce multi-project data isolation
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleProjectChanged = () => {
+      exitCompare();
+      setBeforeRaw('');
+      setAfterRaw('');
+    };
+
+    window.addEventListener('explorer:project-changed', handleProjectChanged);
+    return () => {
+      window.removeEventListener('explorer:project-changed', handleProjectChanged);
+    };
+  }, [exitCompare]);
 
   return {
     isActive,

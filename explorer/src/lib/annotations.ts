@@ -20,6 +20,7 @@ export interface FindingReviewMetadata {
 
 export interface Annotation {
   id: string;
+  projectId?: string;
   nodeId: string;
   author: string;
   text: string;
@@ -60,6 +61,7 @@ function normalizeAnnotation(rawItem: any): Annotation {
 
   return {
     id: String(rawItem.id),
+    projectId: rawItem.projectId ? String(rawItem.projectId) : undefined,
     nodeId: String(rawItem.nodeId || ""),
     author: String(rawItem.author || "Anonymous"),
     text: String(rawItem.text || ""),
@@ -106,6 +108,7 @@ function writeStorage(annotations: Annotation[]): void {
 }
 
 export interface AddAnnotationOptions {
+  projectId?: string;
   findingId?: string;
   findingReviewMetadata?: FindingReviewMetadata;
   status?: ReviewStatus;
@@ -125,6 +128,7 @@ export function addAnnotation(
 
   const newAnnotation: Annotation = {
     id,
+    projectId: options?.projectId,
     nodeId,
     author: author || "Anonymous",
     text,
@@ -141,13 +145,17 @@ export function addAnnotation(
   return newAnnotation;
 }
 
-export function getAnnotationsForNode(nodeId: string): Annotation[] {
+export function getAnnotationsForNode(nodeId: string, projectId?: string): Annotation[] {
   const annotations = readStorage();
-  return annotations.filter(a => a.nodeId === nodeId);
+  return annotations.filter(a => a.nodeId === nodeId && (!projectId || !a.projectId || a.projectId === projectId));
 }
 
-export function getAllAnnotations(): Annotation[] {
-  return readStorage();
+export function getAllAnnotations(projectId?: string): Annotation[] {
+  const annotations = readStorage();
+  if (projectId) {
+    return annotations.filter(a => !a.projectId || a.projectId === projectId);
+  }
+  return annotations;
 }
 
 export function deleteAnnotation(id: string): void {
@@ -341,9 +349,12 @@ export function setFindingInReview(
  */
 export function formatFindingReviewItem(
   finding: ArchitectureFinding,
-  annotations: Annotation[] = readStorage()
+  annotations: Annotation[] = readStorage(),
+  projectId?: string
 ): FindingReviewItem {
-  const findingAnnotations = annotations.filter(a => a.findingId === finding.id);
+  const findingAnnotations = annotations.filter(
+    a => a.findingId === finding.id && (!projectId || !a.projectId || a.projectId === projectId)
+  );
 
   let status: ReviewStatus = "OPEN";
   let resolvedAt: string | undefined = undefined;
