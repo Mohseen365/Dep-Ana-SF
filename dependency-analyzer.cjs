@@ -362,6 +362,15 @@ function resolveProjectPath(value) {
   return cwdPath;
 }
 
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function commandOutputDir(command, target, phase, options = {}) {
   if (options && options.outputDir) {
     const normalized = String(options.outputDir).replace(/\\/g, "/");
@@ -372,6 +381,13 @@ function commandOutputDir(command, target, phase, options = {}) {
 
   const root = BASE_OUTPUT_DIR;
   const safeTarget = safeName(target);
+
+  if (options && (options.project || options.projectId)) {
+    const projId = slugify(options.project || options.projectId);
+    if (projId && projId !== "default") {
+      return path.resolve(root, "analyze", "projects", projId);
+    }
+  }
 
   switch (command) {
     case "analyze":
@@ -545,6 +561,9 @@ function parseOptions(args) {
     }
     if (args[i] === "--output-dir" || args[i] === "--output") {
       options.outputDir = args[++i];
+    }
+    if (args[i] === "--project" || args[i] === "--project-id") {
+      options.project = args[++i];
     }
     if (args[i] === "--source") {
       options.sourceDir = args[++i];
@@ -3672,6 +3691,7 @@ function generateAnalysisManifest(
     generatedAt: reportJson.generatedAt || new Date().toISOString(),
     source: {
       directory: rel(sourceDir),
+      sourceDir: path.resolve(sourceDir).replace(/\\/g, "/"),
       fileCount,
       sourceHash,
       gitCommit,

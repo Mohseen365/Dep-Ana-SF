@@ -86,20 +86,38 @@ function isSameSource(sourceA, sourceB) {
   return normA === normB;
 }
 
+function getReportSourceDir(reportFilePath) {
+  try {
+    if (!reportFilePath || !fs.existsSync(reportFilePath)) return null;
+    const content = JSON.parse(fs.readFileSync(reportFilePath, "utf8"));
+    return content.sourceDirectory || content.discovered?.sourceDir || content.source?.sourceDir || null;
+  } catch (_) {
+    return null;
+  }
+}
+
 function resolveInputFile(inputPath, options = {}) {
   const rawProjectId = options.project || options.projectId || "default";
   const projectId = slugify(rawProjectId) || "default";
+  const explicitSource = options.source || null;
+
+  const matchesSource = (candidateFile) => {
+    if (!candidateFile || !fs.existsSync(candidateFile)) return false;
+    if (!explicitSource) return true;
+    const candidateSource = getReportSourceDir(candidateFile);
+    return candidateSource ? isSameSource(candidateSource, explicitSource) : true;
+  };
 
   // 1. Check explicit inputPath if provided
   if (inputPath && inputPath !== "analyze") {
     if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
-      return inputPath;
+      if (matchesSource(inputPath)) return inputPath;
     }
     if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
       const reportFile = path.join(inputPath, "dependency-report.json");
       const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
       const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
-      if (foundFile) return foundFile;
+      if (foundFile && matchesSource(foundFile)) return foundFile;
     }
   }
 
@@ -108,21 +126,12 @@ function resolveInputFile(inputPath, options = {}) {
     const projReport = path.resolve(__dirname, "..", "analyze", "projects", projectId, "dependency-report.json");
     const projSnapshot = path.resolve(__dirname, "..", "analyze", "projects", projectId, "analysis-snapshot.json");
     const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
-    if (foundProj) return foundProj;
+    if (foundProj && matchesSource(foundProj)) return foundProj;
   }
 
-  // 3. Check root or default analyze directory for report
-  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
-  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
-  const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
-  const analyzeSnapshot = path.resolve(__dirname, "..", "analyze", "analysis-snapshot.json");
-
-  const foundDefault = [rootReport, rootSnapshot, analyzeReport, analyzeSnapshot].find((f) => fs.existsSync(f));
-  if (foundDefault) return foundDefault;
-
-  // 4. If options.source was explicitly provided and exists, run analyzer on options.source
-  if (options.source && fs.existsSync(options.source)) {
-    console.log(`Analyzer output not found for source '${options.source}'. Running analyzer...`);
+  // 3. If explicit source was provided and exists, run analyzer on explicit source
+  if (explicitSource && fs.existsSync(explicitSource)) {
+    console.log(`Analyzer output not found or stale for source '${explicitSource}'. Running analyzer...`);
     const analyzerScript = path.join(__dirname, "..", "dependency-analyzer.cjs");
     const execSync = require("child_process").execSync;
 
@@ -131,7 +140,7 @@ function resolveInputFile(inputPath, options = {}) {
       : path.resolve(__dirname, "..", "analyze");
 
     try {
-      execSync(`node "${analyzerScript}" analyze "${options.source}" --output-dir "${outputDir}"`, {
+      execSync(`node "${analyzerScript}" analyze "${explicitSource}" --output-dir "${outputDir}"`, {
         cwd: path.resolve(__dirname, ".."),
         stdio: "inherit"
       });
@@ -144,6 +153,15 @@ function resolveInputFile(inputPath, options = {}) {
       return generatedReport;
     }
   }
+
+  // 4. Check root or default analyze directory for report
+  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
+  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
+  const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
+  const analyzeSnapshot = path.resolve(__dirname, "..", "analyze", "analysis-snapshot.json");
+
+  const foundDefault = [rootReport, rootSnapshot, analyzeReport, analyzeSnapshot].find((f) => fs.existsSync(f) && matchesSource(f));
+  if (foundDefault) return foundDefault;
 
   throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
 }
