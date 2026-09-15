@@ -19,6 +19,15 @@ const ANALYZER_SCRIPT = path.join(ROOT_DIR, "dependency-analyzer.cjs");
 const ADAPTER_SCRIPT = path.join(ROOT_DIR, "scripts", "export-explorer.cjs");
 const EXPLORER_DIR = path.join(ROOT_DIR, "explorer");
 
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   let mode = "dev"; // 'dev' | 'preview' | 'build'
@@ -32,7 +41,7 @@ function parseArgs(argv) {
     if (arg === "--build") mode = "build";
     if (arg === "--fresh") fresh = true;
     if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
-      project = args[i + 1];
+      project = slugify(args[i + 1]) || "default";
       i++;
     }
     if (arg === "--source" && args[i + 1]) {
@@ -87,15 +96,16 @@ function runAnalysisIfNeeded(sourceDir, fresh) {
 }
 
 function runAdapter(projectId, sourceDir) {
-  console.log(`Running Explorer Data Adapter for project '${projectId}'...`);
+  const slugId = slugify(projectId) || "default";
+  console.log(`Running Explorer Data Adapter for project '${slugId}'...`);
 
-  let targetOutput = path.join(ROOT_DIR, "explorer-data.json");
-  if (projectId && projectId !== "default") {
-    targetOutput = path.join(ROOT_DIR, "analyze", "projects", projectId, "explorer-data.json");
+  let targetOutput = path.join(ROOT_DIR, "analyze", "explorer-data.json");
+  if (slugId !== "default") {
+    targetOutput = path.join(ROOT_DIR, "analyze", "projects", slugId, "explorer-data.json");
   }
 
   execSync(
-    `node "${ADAPTER_SCRIPT}" --input analyze --output "${targetOutput}" --project "${projectId}" --source "${sourceDir}"`,
+    `node "${ADAPTER_SCRIPT}" --input analyze --output "${targetOutput}" --project "${slugId}" --source "${sourceDir}"`,
     {
       cwd: ROOT_DIR,
       stdio: "inherit"
@@ -104,34 +114,6 @@ function runAdapter(projectId, sourceDir) {
 
   if (!fs.existsSync(targetOutput)) {
     throw new Error(`Failed to produce project data contract: ${targetOutput}`);
-  }
-
-  // Copy contracts to explorer/public and explorer/dist
-  const publicDir = path.join(EXPLORER_DIR, "public");
-  const distDir = path.join(EXPLORER_DIR, "dist");
-
-  // Copy root fallback
-  const fallbackOutput = path.join(ROOT_DIR, "explorer-data.json");
-  if (fs.existsSync(fallbackOutput)) {
-    fs.copyFileSync(fallbackOutput, path.join(publicDir, "explorer-data.json"));
-  } else {
-    fs.copyFileSync(targetOutput, path.join(publicDir, "explorer-data.json"));
-  }
-
-  // Copy project-scoped contract if not default
-  if (projectId && projectId !== "default") {
-    const projPublicDir = path.join(publicDir, "projects", projectId);
-    fs.mkdirSync(projPublicDir, { recursive: true });
-    fs.copyFileSync(targetOutput, path.join(projPublicDir, "explorer-data.json"));
-  }
-
-  // Copy project-manifest.json
-  const analyzeManifest = path.join(ROOT_DIR, "analyze", "project-manifest.json");
-  if (fs.existsSync(analyzeManifest)) {
-    fs.copyFileSync(analyzeManifest, path.join(publicDir, "project-manifest.json"));
-    if (fs.existsSync(distDir)) {
-      fs.copyFileSync(analyzeManifest, path.join(distDir, "project-manifest.json"));
-    }
   }
 }
 

@@ -8,7 +8,7 @@
  *
  * Usage:
  *   node scripts/export-explorer.cjs [inputDirOrFile] [outputFile]
- *   node scripts/export-explorer.cjs --input analyze --output analyze/explorer-data.json --project core-crm
+ *   node scripts/export-explorer.cjs --input analyze --output analyze/projects/movie-app/explorer-data.json --project movie-app
  */
 
 const fs = require("fs");
@@ -18,6 +18,15 @@ const { analyzeTestGap } = require("../dependency-analyzer.cjs");
 
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
+
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -37,10 +46,13 @@ function parseArgs(argv) {
       output = args[i + 1];
       i++;
     } else if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
-      project = args[i + 1];
+      project = slugify(args[i + 1]) || "default";
       i++;
     } else if (arg === "--project-name" && args[i + 1]) {
       projectName = args[i + 1];
+      if (project === "default" && projectName) {
+        project = slugify(projectName) || "default";
+      }
       i++;
     } else if (arg === "--project-desc" && args[i + 1]) {
       projectDesc = args[i + 1];
@@ -67,36 +79,79 @@ function parseArgs(argv) {
   return { input, output, project, projectName, projectDesc, source };
 }
 
+function isSameSource(sourceA, sourceB) {
+  if (!sourceA || !sourceB) return false;
+  const normA = path.resolve(sourceA).toLowerCase().replace(/\\/g, "/");
+  const normB = path.resolve(sourceB).toLowerCase().replace(/\\/g, "/");
+  return normA === normB;
+}
+
 function resolveInputFile(inputPath, options = {}) {
-  let targetFile = inputPath;
-  if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
-    const reportFile = path.join(inputPath, "dependency-report.json");
-    const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
-    if (fs.existsSync(reportFile)) {
-      targetFile = reportFile;
-    } else if (fs.existsSync(snapshotFile)) {
-      targetFile = snapshotFile;
+  const rawProjectId = options.project || options.projectId || "default";
+  const projectId = slugify(rawProjectId) || "default";
+
+  // 1. Check explicit inputPath
+  if (inputPath) {
+    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
+      if (!options.source) return inputPath;
+      try {
+        const content = JSON.parse(fs.readFileSync(inputPath, "utf8"));
+        const reportSource = content.sourceDirectory || (content.source && content.source.directory) || "";
+        if (isSameSource(reportSource, options.source)) {
+          return inputPath;
+        }
+      } catch (_) {}
+    } else if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
+      const reportFile = path.join(inputPath, "dependency-report.json");
+      const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
+      const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
+
+      if (foundFile) {
+        if (!options.source) {
+          return foundFile;
+        }
+        try {
+          const content = JSON.parse(fs.readFileSync(foundFile, "utf8"));
+          const reportSource = content.sourceDirectory || (content.source && content.source.directory) || "";
+          if (isSameSource(reportSource, options.source)) {
+            return foundFile;
+          }
+        } catch (_) {}
+      }
     }
   }
 
-  if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
-    const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
-    const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
+  // 2. Check project-specific analyze directory
+  if (projectId !== "default") {
+    const projReport = path.resolve(__dirname, "..", "analyze", "projects", projectId, "dependency-report.json");
+    const projSnapshot = path.resolve(__dirname, "..", "analyze", "projects", projectId, "analysis-snapshot.json");
+    const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
 
-    if (fs.existsSync(rootReport)) {
-      targetFile = rootReport;
-    } else if (fs.existsSync(rootSnapshot)) {
-      targetFile = rootSnapshot;
+    if (foundProj) {
+      if (!options.source) return foundProj;
+      try {
+        const content = JSON.parse(fs.readFileSync(foundProj, "utf8"));
+        const reportSource = content.sourceDirectory || (content.source && content.source.directory) || "";
+        if (isSameSource(reportSource, options.source)) {
+          return foundProj;
+        }
+      } catch (_) {}
     }
   }
 
-  if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
-    if (options.source) {
-      console.log(`Analyzer output not found in '${inputPath}'. Running analyzer on '${options.source}'...`);
+  // 3. If options.source was explicitly provided and exists, run analyzer on options.source
+  if (options.source) {
+    if (fs.existsSync(options.source)) {
+      console.log(`Analyzer output not found for source '${options.source}'. Running analyzer...`);
       const analyzerScript = path.join(__dirname, "..", "dependency-analyzer.cjs");
       const execSync = require("child_process").execSync;
+
+      const outputDir = projectId !== "default"
+        ? path.resolve(__dirname, "..", "analyze", "projects", projectId)
+        : path.resolve(__dirname, "..", "analyze");
+
       try {
-        execSync(`node "${analyzerScript}" analyze "${options.source}"`, {
+        execSync(`node "${analyzerScript}" analyze "${options.source}" --output-dir "${outputDir}"`, {
           cwd: path.resolve(__dirname, ".."),
           stdio: "inherit"
         });
@@ -104,21 +159,14 @@ function resolveInputFile(inputPath, options = {}) {
         console.warn(`Analyzer execution notice: ${err.message}`);
       }
 
-      if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
-        const reportFile = path.join(inputPath, "dependency-report.json");
-        if (fs.existsSync(reportFile)) {
-          return reportFile;
-        }
-      }
-      const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
-      if (fs.existsSync(rootReport)) {
-        return rootReport;
+      const generatedReport = path.join(outputDir, "dependency-report.json");
+      if (fs.existsSync(generatedReport)) {
+        return generatedReport;
       }
     }
-    throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
   }
 
-  return targetFile;
+  throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
 }
 
 function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
@@ -254,7 +302,15 @@ function buildImpactSummaries(nodes, edges) {
 }
 
 function exportExplorerData(inputPath, outputPath, options = {}) {
-  const resolvedInputFile = resolveInputFile(inputPath, options);
+  const rawProjectId = options.project || options.projectId || "default";
+  const projectId = slugify(rawProjectId) || "default";
+
+  let effectiveOutputPath = outputPath;
+  if (!effectiveOutputPath || (projectId !== "default" && (effectiveOutputPath === "analyze/explorer-data.json" || effectiveOutputPath === "explorer-data.json"))) {
+    effectiveOutputPath = path.join("analyze", "projects", projectId, "explorer-data.json");
+  }
+
+  const resolvedInputFile = resolveInputFile(inputPath, { ...options, project: projectId });
   const rawContent = fs.readFileSync(resolvedInputFile, "utf8");
   const reportData = JSON.parse(rawContent);
 
@@ -266,7 +322,6 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   const sourceDirectory =
     options.source || reportData.sourceDirectory || "force-app/main/default";
 
-  const projectId = options.project || options.projectId || "default";
   const projectName =
     options.projectName ||
     (projectId !== "default" ? projectId : "Default Salesforce Project");
@@ -590,7 +645,7 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   };
 
   // Ensure output parent directory exists
-  const resolvedOutputFile = path.resolve(outputPath);
+  const resolvedOutputFile = path.resolve(effectiveOutputPath);
   const parentDir = path.dirname(resolvedOutputFile);
   if (!fs.existsSync(parentDir)) {
     fs.mkdirSync(parentDir, { recursive: true });
@@ -786,4 +841,5 @@ module.exports = {
   normalizeNodeId,
   normalizeNodeType,
   buildImpactSummaries,
+  slugify,
 };
