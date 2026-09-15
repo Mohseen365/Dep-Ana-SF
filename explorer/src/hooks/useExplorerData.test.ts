@@ -123,9 +123,149 @@ describe('useExplorerData', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(fetch).toHaveBeenCalledWith('/projects/core-crm/explorer-data.json', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith('/projects/core-crm/explorer-data.json', expect.any(Object));
     expect(result.current.data).toEqual(validData);
     expect(result.current.error).toBeNull();
+  });
+
+  it('Case E — default project key resolves to /explorer-data.json not /projects/default/explorer-data.json', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(validData),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useExplorerData('default'));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(fetch).toHaveBeenCalledWith('/explorer-data.json', expect.any(Object));
+    expect(result.current.data).toEqual(validData);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('Case F — browser reload with custom project in URL parameter loads project-specific data', async () => {
+    const mockProjectData = {
+      ...validData,
+      summary: {
+        ...validData.summary,
+        nodeCount: 9,
+        edgeCount: 16,
+      },
+      project: {
+        id: 'movie-app',
+        name: 'movie-app',
+        analysisStatus: 'COMPLETE',
+        analysisPath: '/projects/movie-app/explorer-data.json',
+      },
+    };
+
+    vi.spyOn(globalThis, 'localStorage', 'get').mockReturnValue({
+      getItem: (key: string) => key === 'explorer.activeProjectId' ? 'movie-app' : null,
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+      length: 0,
+      key: vi.fn(),
+    } as Storage);
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(mockProjectData),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useExplorerData());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(fetch).toHaveBeenCalledWith('/projects/movie-app/explorer-data.json', expect.any(Object));
+    expect(result.current.data?.summary.nodeCount).toBe(9);
+    expect(result.current.data?.summary.edgeCount).toBe(16);
+  });
+
+  it('Case G — project switch to different project loads correct project-specific data', async () => {
+    const projectAData = { ...validData, summary: { ...validData.summary, nodeCount: 5, edgeCount: 10 } };
+    const projectBData = { ...validData, summary: { ...validData.summary, nodeCount: 3, edgeCount: 7 } };
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        text: async () => JSON.stringify(projectAData),
+      } as unknown as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers({ 'content-type': 'application/json' }),
+        text: async () => JSON.stringify(projectBData),
+      } as unknown as Response);
+
+    const { result, rerender } = renderHook(
+      ({ projectId }) => useExplorerData(projectId),
+      { initialProps: { projectId: 'proj-a' } }
+    );
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(fetch).toHaveBeenCalledWith('/projects/proj-a/explorer-data.json', expect.any(Object));
+    expect(result.current.data?.summary.nodeCount).toBe(5);
+
+    rerender({ projectId: 'proj-b' });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(fetch).toHaveBeenCalledWith('/projects/proj-b/explorer-data.json', expect.any(Object));
+    expect(result.current.data?.summary.nodeCount).toBe(3);
+  });
+
+  it('Case H — project with empty but valid JSON loads correctly (edge case)', async () => {
+    const emptyData = {
+      ...validData,
+      nodes: [],
+      edges: [],
+      summary: { ...validData.summary, nodeCount: 0, edgeCount: 0 },
+    };
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      text: async () => JSON.stringify(emptyData),
+    } as unknown as Response);
+
+    const { result } = renderHook(() => useExplorerData('empty-project'));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.data).toEqual(emptyData);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('Case I — HTTP 403 for project analysis returns NOT_ANALYZED (not default fallback)', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 403,
+      headers: new Headers(),
+      text: async () => '403 Forbidden',
+    } as Response);
+
+    const { result } = renderHook(() => useExplorerData('forbidden-project'));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.data).toBeNull();
+    expect(result.current.error?.message).toContain('NOT_ANALYZED');
   });
 
   it('Case D — malformed JSON produces a controlled error state without uncaught exception', async () => {

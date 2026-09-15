@@ -206,4 +206,80 @@ describe('ProjectContext & Provider', () => {
     expect(result.current.getProjectDataUrl('default')).toBe('/explorer-data.json');
     expect(result.current.getProjectDataUrl('billing')).toBe('/projects/billing/explorer-data.json');
   });
+
+  it('newly created project has NOT_ANALYZED status and project-specific analysisPath', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return { ok: false } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.createProject({
+        name: 'Movie App',
+        id: 'movie-app',
+        description: 'Movie application package',
+        sourcePath: 'force-app/main/default',
+      });
+    });
+
+    const createdProject = result.current.projects.find((p) => p.id === 'movie-app');
+    expect(createdProject).toBeDefined();
+    expect(createdProject?.analysisStatus).toBe('NOT_ANALYZED');
+    expect(createdProject?.analysisPath).toBe('/projects/movie-app/explorer-data.json');
+    expect(createdProject?.lastAnalyzedAt).toBeNull();
+    expect(createdProject?.componentCount).toBe(0);
+    expect(createdProject?.dependencyCount).toBe(0);
+    expect(result.current.getProjectDataUrl('movie-app')).toBe('/projects/movie-app/explorer-data.json');
+    expect(result.current.getProjectDataUrl('default')).toBe('/explorer-data.json');
+  });
+
+  it('browser reload with custom project in URL restores that project as active', async () => {
+    window.history.pushState({}, '', '/?project=movie-app');
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url === '/project-manifest.json') {
+        return {
+          ok: false,
+          status: 404,
+        } as Response;
+      }
+      return { ok: false } as Response;
+    });
+
+    const storedProjects = [
+      {
+        id: 'movie-app',
+        name: 'Movie App',
+        sourcePath: 'force-app/main/default',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastAnalyzedAt: null,
+        analysisStatus: 'NOT_ANALYZED',
+        componentCount: 0,
+        dependencyCount: 0,
+        analysisPath: '/projects/movie-app/explorer-data.json',
+      },
+    ];
+    localStorage.setItem('explorer.localProjects', JSON.stringify(storedProjects));
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.activeProjectId).toBe('movie-app');
+    expect(result.current.activeProject?.id).toBe('movie-app');
+    expect(result.current.getProjectDataUrl()).toBe('/projects/movie-app/explorer-data.json');
+  });
 });
