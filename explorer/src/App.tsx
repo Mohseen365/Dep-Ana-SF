@@ -1,17 +1,27 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
+import { useProject } from './context/ProjectContext';
 import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
 import { useViewState } from './hooks/useViewState';
 import { GraphView, GraphViewRef } from './components/GraphView';
+import { Sidebar } from './components/Sidebar';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
+import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
+import { ProjectDashboard } from './components/ProjectDashboard';
+import { FindingsPanel } from './components/findings/FindingsPanel';
+import { HotspotPanel } from './components/HotspotPanel';
+import { DiagnosticsPanel } from './components/DiagnosticsPanel';
+import { ComparePanel } from './components/ComparePanel';
+import { AnalysisHistoryPanel } from './components/AnalysisHistoryPanel';
+import { StatusBar } from './components/StatusBar';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { createEmptyImpactState } from './lib/impact-analysis';
-import { createEmptyFilterState } from './lib/search-filter';
+import { createEmptyFilterState, searchNodes } from './lib/search-filter';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
@@ -29,6 +39,14 @@ import type {
   ExplorerEdge,
 } from './types/explorer';
 import './index.css';
+
+function useProjectSafe() {
+  try {
+    return useProject();
+  } catch (_) {
+    return null;
+  }
+}
 
 /**
  * GraphSlot renders the main interactive Cytoscape graph canvas.
@@ -48,7 +66,7 @@ export function GraphSlot(props: {
   focusedNodeId?: string | null;
 }) {
   return (
-    <div className="graph-container" data-slot="graph">
+    <div className="graph-container" data-slot="graph" style={{ width: '100%', height: '100%', position: 'relative' }}>
       <GraphView
         ref={props.graphRef}
         nodes={props.nodes}
@@ -89,13 +107,28 @@ function ErrorScreen({ error, onRetry }: { error: Error | null; onRetry: () => v
 }
 
 export function App() {
-  const { data, loading, error, retry } = useExplorerData('/explorer-data.json');
+  const projectContext = useProjectSafe();
+
+  const activeProjectId = projectContext?.activeProjectId || 'default';
+  const dataUrl = projectContext?.getProjectDataUrl(activeProjectId) || '/explorer-data.json';
+
+  const { data, loading, error, retry } = useExplorerData(dataUrl);
+
   const selection = useGraphSelection();
   const view = useViewState();
   const compareState = useCompareState();
   const palette = useCommandPalette();
+
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
+  const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
+  const [diagnosticsTab, setDiagnosticsTab] = useState<'cycles' | 'unresolved' | 'none'>('cycles');
+
+  // Active workspace view mode: 'graph' | 'dashboard' | 'findings' | 'hotspots' | 'diagnostics' | 'compare' | 'history'
+  const [workspaceViewMode, setWorkspaceViewMode] = useState<WorkspaceViewMode>('graph');
+
+  // Sidebar collapse state
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   // Drawer pin & detach states with localStorage persistence
   const [isPinned, setIsPinned] = useState<boolean>(() => {
@@ -122,6 +155,23 @@ export function App() {
   const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
 
   const graphRef = useRef<GraphViewRef>(null);
+
+  // Listen for project change events to flush single-project selection & history
+  useEffect(() => {
+    const handleProjectChanged = () => {
+      selection.clear();
+      setSelectedFinding(null);
+      setDrillPath([]);
+      setRecentNodeIds([]);
+      setHighlightedImpactNodeIds(null);
+      setSelectedCycleId(null);
+    };
+
+    window.addEventListener('explorer:project-changed', handleProjectChanged as EventListener);
+    return () => {
+      window.removeEventListener('explorer:project-changed', handleProjectChanged as EventListener);
+    };
+  }, [selection]);
 
   const handleTogglePin = useCallback(() => {
     setIsPinned((prev) => {
@@ -174,7 +224,6 @@ export function App() {
   useEffect(() => {
     if (!isDetached || typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
 
-    // Check if detached window is still alive
     if (detachedWindowRef.current && detachedWindowRef.current.closed) {
       detachedWindowRef.current = null;
       setIsDetached(false);
@@ -238,12 +287,19 @@ export function App() {
   const ctx = useMemo(() => (data ? createArchitectureContext(data as any) : null), [data]);
   const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
 
+  // Filtered nodes for sidebar display
+  const displayNodes = useMemo(() => {
+    if (!data) return [];
+    if (!view.filterState.searchQuery) return data.nodes;
+    const results = searchNodes(data.nodes, view.filterState.searchQuery);
+    return results.map((r) => r.node);
+  }, [data, view.filterState.searchQuery]);
+
   // Sync node selection from view state (URL) to SelectionContext
   useEffect(() => {
     if (!data) return;
     const urlNode = (view as any).selectedNodeId || view.urlNodeId;
     if (urlNode) {
-      // Find matching node ID by exact match or name / displayName
       const matchedNode = data.nodes.find(
         (n: any) => n.id === urlNode || n.name === urlNode || n.displayName === urlNode
       );
@@ -384,54 +440,226 @@ export function App() {
 
   return (
     <SelectionProvider value={selection}>
-      <div className="app-layout">
-        <Header onResetView={handleResetView} />
-        <main className="graph-pane">
-          <GraphSlot
-            graphRef={graphRef}
-            nodes={focusedGraphData.nodes}
-            edges={focusedGraphData.edges}
-            selectedNodeId={selection.selectedNodeId}
-            selectedEdgeId={selection.selectedEdgeId}
-            onSelectNode={(node) => {
-              selection.selectNode(node ? node.id : null);
-              if (node) {
-                view.setIsInvestigating(true);
-              }
-            }}
-            onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
-            selectedCycleNodeIds={highlightedCycleNodeIds}
-            focusedNodeId={
-              isDrawerOpen
-                ? drillPath.length > 0
-                  ? drillPath[drillPath.length - 1]
-                  : selection.selectedNodeId
-                : null
-            }
-          />
-        </main>
-        {isDrawerOpen && (
-          <InvestigationDrawer
-            node={selectedNode}
-            open={isDrawerOpen}
-            onClose={() => {
-              if (!isPinned) {
-                view.setIsInvestigating(false);
-              }
-            }}
-            onDrill={handleDrill}
-            data={data}
-            drillPath={drillPath}
-            onNavigateBreadcrumb={handleNavigateBreadcrumb}
-            recentNodeIds={recentNodeIds}
-            onSelectRecentNode={handleSelectRecentNode}
-            onRequestHandoff={handleRequestHandoff}
-            isPinned={isPinned}
-            onTogglePin={handleTogglePin}
-            isDetached={isDetached}
-            onDetach={handleDetach}
-          />
-        )}
+      <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+        {/* Top Header */}
+        <Header
+          onResetView={handleResetView}
+          onToggleCompare={() =>
+            setWorkspaceViewMode((prev) => (prev === 'compare' ? 'graph' : 'compare'))
+          }
+          isCompareOpen={workspaceViewMode === 'compare'}
+          onOpenCommandPalette={() => palette.open()}
+          onOpenPanel={(panelId) => setWorkspaceViewMode(panelId as WorkspaceViewMode)}
+        />
+
+        {/* Main Body Container: [Sidebar 280px] | [Workspace 1fr] | [Drawer 380px] */}
+        <div className="app-body-container" style={{ display: 'flex', flex: 1, width: '100%', height: 'calc(100vh - 76px)', overflow: 'hidden', position: 'relative' }}>
+          {/* Collapsible Left Sidebar */}
+          {!isSidebarCollapsed && (
+            <div className="sidebar-slot" style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
+              <Sidebar
+                nodes={data.nodes}
+                displayNodes={displayNodes}
+                filterState={view.filterState}
+                selectedNodeId={selection.selectedNodeId}
+                collapsed={isSidebarCollapsed}
+                onToggleCollapse={() => setIsSidebarCollapsed(true)}
+                onFilterChange={view.setFilterState}
+                onSelectNode={(node) => {
+                  selection.selectNode(node.id);
+                  view.setIsInvestigating(true);
+                }}
+              />
+            </div>
+          )}
+
+          {/* Center Workspace (Takes ALL remaining width: flex: 1) */}
+          <div className="workspace-center-pane" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minWidth: 0, overflow: 'hidden', position: 'relative' }}>
+            {/* View Mode Switcher Action Bar at top of Workspace */}
+            <div className="app-workspace-bar" style={{ background: 'var(--surface-panel, #111827)', borderBottom: '1px solid var(--border-default, #334155)', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <ViewModeSwitcher
+                viewMode={workspaceViewMode}
+                onChangeViewMode={setWorkspaceViewMode}
+                findingsCount={findings.length}
+              />
+              {isSidebarCollapsed && (
+                <button
+                  className="ui-btn ui-btn-secondary ui-btn-sm"
+                  onClick={() => setIsSidebarCollapsed(false)}
+                  title="Expand Component Inventory Sidebar"
+                  data-testid="expand-sidebar-btn"
+                >
+                  ▶ Component Sidebar
+                </button>
+              )}
+            </div>
+
+            {/* Active View Container */}
+            <main className="graph-pane" style={{ flex: 1, position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
+              {workspaceViewMode === 'graph' && (
+                <GraphSlot
+                  graphRef={graphRef}
+                  nodes={focusedGraphData.nodes}
+                  edges={focusedGraphData.edges}
+                  selectedNodeId={selection.selectedNodeId}
+                  selectedEdgeId={selection.selectedEdgeId}
+                  onSelectNode={(node) => {
+                    selection.selectNode(node ? node.id : null);
+                    if (node) {
+                      view.setIsInvestigating(true);
+                    }
+                  }}
+                  onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
+                  selectedCycleNodeIds={highlightedCycleNodeIds}
+                  focusedNodeId={
+                    isDrawerOpen
+                      ? drillPath.length > 0
+                        ? drillPath[drillPath.length - 1]
+                        : selection.selectedNodeId
+                      : null
+                  }
+                />
+              )}
+
+              {workspaceViewMode === 'dashboard' && (
+                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                  <ProjectDashboard
+                    project={data.project}
+                    data={data}
+                    findings={findings}
+                    onExploreGraph={() => setWorkspaceViewMode('graph')}
+                    onViewFindings={() => setWorkspaceViewMode('findings')}
+                    onViewHistory={() => setWorkspaceViewMode('history')}
+                  />
+                </div>
+              )}
+
+              {workspaceViewMode === 'findings' && (
+                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                  <FindingsPanel
+                    findings={findings}
+                    selectedFindingId={selectedFinding?.id ?? null}
+                    onSelectFinding={handleSelectFinding}
+                    onClearSelection={handleClearFinding}
+                    onInvestigateNode={(nodeId) => {
+                      selection.selectNode(nodeId);
+                      view.setIsInvestigating(true);
+                      setWorkspaceViewMode('graph');
+                    }}
+                  />
+                </div>
+              )}
+
+              {workspaceViewMode === 'hotspots' && (
+                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                  <HotspotPanel
+                    nodes={data.nodes}
+                    cycles={data.cycles}
+                    impactSummaries={data.impactSummaries ?? {}}
+                    onSelectHotspot={(node) => {
+                      selection.selectNode(node.id);
+                      view.setIsInvestigating(true);
+                      setWorkspaceViewMode('graph');
+                    }}
+                    selectedNodeId={selection.selectedNodeId}
+                  />
+                </div>
+              )}
+
+              {workspaceViewMode === 'diagnostics' && (
+                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                  <DiagnosticsPanel
+                    cycles={data.cycles}
+                    unresolvedReferences={data.unresolvedReferences}
+                    nodes={data.nodes}
+                    activeTab={diagnosticsTab}
+                    selectedCycleId={selectedCycleId}
+                    selectedUnresolvedEdgeId={selection.selectedEdgeId}
+                    onSelectCycle={(cycle) => {
+                      setSelectedCycleId(cycle ? cycle.id : null);
+                      if (cycle && cycle.nodes.length > 0) {
+                        selection.selectNode(cycle.nodes[0]);
+                      }
+                    }}
+                    onSelectUnresolved={(ref) => {
+                      if (ref) {
+                        selection.selectEdge(ref.edgeId);
+                        selection.selectNode(ref.sourceNodeId);
+                      } else {
+                        selection.clear();
+                      }
+                    }}
+                    onTabChange={(tab) => setDiagnosticsTab(tab)}
+                  />
+                </div>
+              )}
+
+              {workspaceViewMode === 'compare' && (
+                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                  <ComparePanel
+                    compareState={compareState}
+                    onClose={() => setWorkspaceViewMode('graph')}
+                  />
+                </div>
+              )}
+
+              {workspaceViewMode === 'history' && (
+                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                  <AnalysisHistoryPanel
+                    projectId={activeProjectId}
+                    projectMeta={data.project}
+                    currentData={data}
+                    compareState={compareState}
+                    onCompareSnapshots={(snapA, snapB) => {
+                      if (snapA.rawSchemaJson) compareState.setBeforeRaw(snapA.rawSchemaJson);
+                      if (snapB.rawSchemaJson) compareState.setAfterRaw(snapB.rawSchemaJson);
+                      compareState.runCompare();
+                      setWorkspaceViewMode('compare');
+                    }}
+                  />
+                </div>
+              )}
+            </main>
+          </div>
+
+          {/* Collapsible Right Inspector Drawer Slot */}
+          {isDrawerOpen && (
+            <div className="drawer-slot" style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
+              <InvestigationDrawer
+                node={selectedNode}
+                open={isDrawerOpen}
+                onClose={() => {
+                  view.setIsInvestigating(false);
+                  if (isPinned) setIsPinned(false);
+                }}
+                onDrill={handleDrill}
+                data={data}
+                drillPath={drillPath}
+                onNavigateBreadcrumb={handleNavigateBreadcrumb}
+                recentNodeIds={recentNodeIds}
+                onSelectRecentNode={handleSelectRecentNode}
+                onRequestHandoff={handleRequestHandoff}
+                isPinned={isPinned}
+                onTogglePin={handleTogglePin}
+                isDetached={isDetached}
+                onDetach={handleDetach}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Status Indicator Bar */}
+        <StatusBar
+          totalNodes={data.summary?.nodeCount ?? data.nodes.length}
+          totalEdges={data.summary?.edgeCount ?? data.edges.length}
+          visibleNodes={displayNodes.length}
+          selectedNodeName={selectedNode?.displayName ?? null}
+          activeFilterCount={view.filterState.searchQuery ? 1 : 0}
+          cycleCount={data.summary?.cycleCount ?? data.cycles.length}
+          unresolvedCount={data.summary?.unresolvedCount ?? data.unresolvedReferences.length}
+        />
+
+        {/* Command Palette Modal */}
         <CommandPalette
           isOpen={palette.isOpen}
           onClose={palette.close}
@@ -443,7 +671,10 @@ export function App() {
           isInvestigating={view.isInvestigating}
           findings={findings}
           selectedFindingId={selectedFinding?.id ?? null}
-          onSelectFinding={handleSelectFinding}
+          onSelectFinding={(f) => {
+            handleSelectFinding(f);
+            palette.close();
+          }}
           onClearFinding={handleClearFinding}
           compareState={compareState}
           activeRiskFilter={view.filterState.riskFilter}
@@ -451,6 +682,7 @@ export function App() {
           onSelectNode={(nodeId) => {
             selection.selectNode(nodeId);
             view.setIsInvestigating(true);
+            palette.close();
           }}
           onApplyFocus={() => {
             if (selection.selectedNodeId) {
@@ -461,17 +693,21 @@ export function App() {
                 direction: 'both',
               });
             }
+            palette.close();
           }}
           onShowImpact={() => {
             if (selection.selectedNodeId) {
               view.setImpactState({ enabled: true, originNodeId: selection.selectedNodeId, depth: 'ALL' });
             }
+            palette.close();
           }}
           onToggleViewMode={() => {
-            view.setViewMode(view.viewMode === 'graph' ? 'findings' : 'graph');
+            setWorkspaceViewMode((prev) => (prev === 'graph' ? 'findings' : 'graph'));
+            palette.close();
           }}
           onRequestHandoff={handleRequestHandoff}
         />
+
         <RefactorHandoffModal
           target={handoffTarget}
           onConfirm={() => {
