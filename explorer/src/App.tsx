@@ -562,7 +562,12 @@ export function App() {
 
   return (
     <SelectionProvider value={selection}>
-      <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      <div
+        className="app-layout"
+        data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
+        data-drawer={isDrawerOpen ? 'open' : 'closed'}
+        style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}
+      >
         {/* Top Header */}
         <Header
           onResetView={handleResetView}
@@ -575,10 +580,18 @@ export function App() {
         />
 
         {/* Main Body Container: [Sidebar 280px] | [Workspace 1fr] | [Drawer 380px] */}
-        <div className="app-body-container" style={{ display: 'flex', flex: 1, width: '100%', height: 'calc(100vh - 76px)', overflow: 'hidden', position: 'relative' }}>
-          {/* Collapsible Left Sidebar */}
+        <div
+          className="app-body-container"
+          data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
+          data-drawer={isDrawerOpen ? 'open' : 'closed'}
+          style={{ display: 'flex', flex: 1, width: '100%', minHeight: 0, overflow: 'hidden', position: 'relative' }}
+        >
+          {/* Collapsible Left Sidebar Slot */}
           {!isSidebarCollapsed && (
-            <div className="sidebar-slot" style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
+            <div
+              className="sidebar-slot"
+              style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
+            >
               <Sidebar
                 nodes={data?.nodes ?? []}
                 displayNodes={displayNodes}
@@ -764,7 +777,10 @@ export function App() {
 
           {/* Collapsible Right Inspector Drawer Slot */}
           {isDrawerOpen && (
-            <div className="drawer-slot" style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
+            <div
+              className="drawer-slot"
+              style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
+            >
               <InvestigationDrawer
                 node={selectedNode}
                 open={isDrawerOpen}
