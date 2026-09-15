@@ -959,17 +959,31 @@ body {
 .minimap-container,
 .cytoscape-navigator {
   position: absolute !important;
-  top: 14px !important;
+  bottom: 18px !important;
   right: 58px !important;
-  width: 180px !important;
-  height: 130px !important;
+  top: auto !important;
+  width: 200px !important;
+  height: 140px !important;
   background-color: rgba(17, 24, 39, 0.95) !important;
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--border-color) !important;
-  border-radius: 8px !important;
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-default) !important;
+  border-radius: var(--radius-lg) !important;
   z-index: 25 !important;
   overflow: hidden !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .graph-legend-floating {
+    display: none !important;
+  }
+  .minimap-container {
+    width: 150px !important;
+    height: 100px !important;
+    right: 48px !important;
+    bottom: 12px !important;
+  }
 }
 
 .minimap-container.hidden,
@@ -1057,13 +1071,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background-color: rgba(30, 41, 59, 0.9);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
   padding: 4px;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .graph-control-btn {
@@ -1144,17 +1158,18 @@ body {
   position: absolute;
   bottom: 14px;
   left: 14px;
-  background-color: rgba(17, 24, 39, 0.9);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 10px 12px;
+  background-color: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 8px 12px;
   font-size: 11px;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-width: 320px;
 }
 
 .legend-title {
