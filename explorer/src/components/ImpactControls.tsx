@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ImpactState, ImpactDepth, ImpactAnalysisResult, isImpactActive } from '../lib/impact-analysis';
 import { ExplorerNode } from '../types/explorer';
 
@@ -20,6 +20,7 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
   onShowImpact
 }) => {
   const active = isImpactActive(impactState) && impactResult !== null;
+  const [showAffectedList, setShowAffectedList] = useState<boolean>(false);
 
   const handleDepthChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -39,9 +40,20 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
   }, [active, selectedNode, onExitImpact, onShowImpact]);
 
   const originName = impactResult?.originNode?.displayName || selectedNode?.displayName || '';
+  const originType = impactResult?.originNode?.type || selectedNode?.type || '';
+  const originRisk = impactResult?.originNode?.risk || selectedNode?.risk || 'LOW';
 
   return (
     <div className={`impact-controls ${active ? 'active' : ''}`}>
+      {/* Consistent Navigation Banner */}
+      <div className="analysis-mode-nav">
+        <span className="nav-mode-item">Graph</span>
+        <span className="nav-mode-item">Findings</span>
+        <span className="nav-mode-item">Hotspots</span>
+        <span className="nav-mode-item active">Impact</span>
+        <span className="nav-mode-item">Compare</span>
+      </div>
+
       <div className="impact-header">
         <button
           className={`impact-toggle-btn ${active ? 'active' : ''}`}
@@ -63,6 +75,9 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
           <div className="impact-origin-tag">
             <span className="impact-label">IMPACT MODE:</span>
             <span className="impact-origin-name">★ {originName} ★</span>
+            <span className={`badge risk-badge risk-${originRisk.toLowerCase()}`}>
+              {originType} • {originRisk} RISK
+            </span>
           </div>
         )}
       </div>
@@ -90,6 +105,7 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
             </div>
           </div>
 
+          {/* Structured Summary Cards Grid */}
           <div className="impact-summary-metrics">
             <div className="impact-metric">
               <span className="metric-lbl">Direct Dependents:</span>
@@ -122,6 +138,55 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
               <span className="metric-lbl">Unresolved Refs:</span>
               <span className="metric-val">{impactResult.summaryMetrics.unresolvedCount}</span>
             </div>
+          </div>
+
+          {/* Progressive Disclosure Section for Direct & Transitive Dependents Breakdown */}
+          <div className="impact-breakdown-section">
+            <div
+              className="breakdown-header"
+              onClick={() => setShowAffectedList(!showAffectedList)}
+            >
+              <span className="breakdown-title">
+                🔍 Affected Dependents & Test Breakdown ({impactResult.affectedNodeIds.size - 1})
+              </span>
+              <button className="breakdown-toggle-btn">
+                {showAffectedList ? '▲ Hide' : '▼ Details'}
+              </button>
+            </div>
+
+            {showAffectedList && (
+              <div className="breakdown-content">
+                <div className="breakdown-group">
+                  <h5>Direct Dependents ({impactResult.directDependentIds.length}):</h5>
+                  <div className="breakdown-pills">
+                    {impactResult.directDependentIds.length === 0 ? (
+                      <span className="no-items-text">No direct dependents.</span>
+                    ) : (
+                      impactResult.directDependentIds.map(id => (
+                        <span key={id} className="pill direct-pill">
+                          {id.split(':')[1] || id}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className="breakdown-group">
+                  <h5>Impacted Tests ({impactResult.impactedTestNodeIds.length}):</h5>
+                  <div className="breakdown-pills">
+                    {impactResult.impactedTestNodeIds.length === 0 ? (
+                      <span className="no-items-text">No impacted unit tests detected.</span>
+                    ) : (
+                      impactResult.impactedTestNodeIds.map(id => (
+                        <span key={id} className="pill test-pill">
+                          🧪 {id.split(':')[1] || id}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}
