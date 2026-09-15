@@ -7,20 +7,26 @@ import { EdgeHoverCard } from './graph-internals/EdgeHoverCard';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 // Mock cytoscape and plugins
-vi.mock('cytoscape', () => {
+const { mockElementsRemove, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
+  const mockElementsRemove = vi.fn();
+  const mockElementsCollection = {
+    removeClass: vi.fn().mockReturnThis(),
+    addClass: vi.fn().mockReturnThis(),
+    unselect: vi.fn().mockReturnThis(),
+    remove: mockElementsRemove
+  };
+
   const mockCy = {
     zoom: vi.fn().mockReturnValue(1),
     center: vi.fn(),
     width: vi.fn().mockReturnValue(800),
     height: vi.fn().mockReturnValue(600),
     resize: vi.fn(),
-    elements: vi.fn().mockReturnValue({
-      removeClass: vi.fn().mockReturnThis(),
-      addClass: vi.fn().mockReturnThis(),
-      unselect: vi.fn().mockReturnThis()
-    }),
+    elements: vi.fn().mockReturnValue(mockElementsCollection),
     nodes: vi.fn().mockReturnValue([]),
     edges: vi.fn().mockReturnValue([]),
+    add: vi.fn(),
+    layout: vi.fn().mockReturnValue({ run: vi.fn() }),
     batch: vi.fn((fn: () => void) => fn()),
     on: vi.fn(),
     animate: vi.fn(),
@@ -35,9 +41,14 @@ vi.mock('cytoscape', () => {
     navigator: vi.fn().mockReturnValue({ destroy: vi.fn() })
   };
 
-  const cytoscapeFn: any = vi.fn().mockReturnValue(mockCy);
-  cytoscapeFn.use = vi.fn();
-  return { default: cytoscapeFn };
+  const mockCytoscapeFn: any = vi.fn().mockReturnValue(mockCy);
+  mockCytoscapeFn.use = vi.fn();
+
+  return { mockElementsRemove, mockCy, mockCytoscapeFn };
+});
+
+vi.mock('cytoscape', () => {
+  return { default: mockCytoscapeFn };
 });
 
 vi.mock('cytoscape-fcose', () => ({ default: vi.fn() }));
@@ -307,6 +318,133 @@ describe('GraphEngine Components & Integration', () => {
       expect(toggleBtn).toBeInTheDocument();
       fireEvent.click(toggleBtn);
       expect(minimap.style.display).not.toBe('none');
+    });
+
+    it('synchronizes elements on the SAME Cytoscape instance when nodes/edges props update', () => {
+      const onSelectNode = vi.fn();
+      const onSelectEdge = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={mockNodes}
+          edges={mockEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={onSelectEdge}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+        />
+      );
+
+      // Verify Cytoscape constructor was called once for initial mount
+      const initialCallCount = mockCytoscapeFn.mock.calls.length;
+      expect(initialCallCount).toBeGreaterThan(0);
+
+      // Re-render GraphView with updated node/edge props (e.g. filtered focus graph)
+      const updatedNodes = [mockNodes[0]];
+      const updatedEdges: ExplorerEdge[] = [];
+
+      rerender(
+        <GraphView
+          nodes={updatedNodes}
+          edges={updatedEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={onSelectEdge}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+        />
+      );
+
+      // Verify Cytoscape constructor was NOT called again (same instance preserved!)
+      expect(mockCytoscapeFn.mock.calls.length).toBe(initialCallCount);
+
+      // Verify old elements were removed and new elements added
+      expect(mockElementsRemove).toHaveBeenCalled();
+      expect(mockCy.add).toHaveBeenCalled();
+
+      // Verify the added elements match the updated node definitions
+      const lastAddCall = mockCy.add.mock.calls[mockCy.add.mock.calls.length - 1][0];
+      expect(lastAddCall.some((el: any) => el.data?.id === 'ApexClass:AccountController')).toBe(true);
+      expect(lastAddCall.some((el: any) => el.data?.id === 'ApexClass:AccountService')).toBe(false);
+    });
+
+    it('handles element synchronization across Focus Depth and Direction changes', () => {
+      const onSelectNode = vi.fn();
+      const onSelectEdge = vi.fn();
+
+      // Depth 1 dataset
+      const depth1Nodes = [mockNodes[0]];
+      // Depth 2 dataset
+      const depth2Nodes = [mockNodes[0], mockNodes[1]];
+
+      const { rerender } = render(
+        <GraphView
+          nodes={depth1Nodes}
+          edges={[]}
+          onSelectNode={onSelectNode}
+          onSelectEdge={onSelectEdge}
+          selectedNodeId="ApexClass:AccountController"
+          selectedEdgeId={null}
+          focusState={{ enabled: true, focusNodeId: 'ApexClass:AccountController', direction: 'dependencies', depth: 1 }}
+        />
+      );
+
+      mockCy.add.mockClear();
+      mockElementsRemove.mockClear();
+
+      // Change Depth to 2
+      rerender(
+        <GraphView
+          nodes={depth2Nodes}
+          edges={mockEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={onSelectEdge}
+          selectedNodeId="ApexClass:AccountController"
+          selectedEdgeId={null}
+          focusState={{ enabled: true, focusNodeId: 'ApexClass:AccountController', direction: 'dependencies', depth: 2 }}
+        />
+      );
+
+      // Expect element removal and new element addition for Depth 2
+      expect(mockElementsRemove).toHaveBeenCalled();
+      expect(mockCy.add).toHaveBeenCalled();
+      const depth2ElementsAdded = mockCy.add.mock.calls[mockCy.add.mock.calls.length - 1][0];
+      expect(depth2ElementsAdded).toHaveLength(3); // 2 nodes + 1 edge
+    });
+
+    it('clears previous elements and adds new elements on project switching', () => {
+      const projectANodes = [mockNodes[0]];
+      const projectBNodes = [mockNodes[1]];
+
+      const { rerender } = render(
+        <GraphView
+          nodes={projectANodes}
+          edges={[]}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+        />
+      );
+
+      mockCy.add.mockClear();
+      mockElementsRemove.mockClear();
+
+      // Switch to Project B
+      rerender(
+        <GraphView
+          nodes={projectBNodes}
+          edges={[]}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+        />
+      );
+
+      expect(mockElementsRemove).toHaveBeenCalled();
+      const projectBElements = mockCy.add.mock.calls[mockCy.add.mock.calls.length - 1][0];
+      expect(projectBElements.some((el: any) => el.data?.id === 'ApexClass:AccountService')).toBe(true);
+      expect(projectBElements.some((el: any) => el.data?.id === 'ApexClass:AccountController')).toBe(false);
     });
   });
 });

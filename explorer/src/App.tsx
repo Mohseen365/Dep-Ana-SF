@@ -64,6 +64,8 @@ export function GraphSlot(props: {
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
   focusedNodeId?: string | null;
+  focusState?: any;
+  onFocusChange?: (focusState: any) => void;
 }) {
   return (
     <div className="graph-container" data-slot="graph" style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -80,6 +82,8 @@ export function GraphSlot(props: {
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
         focusedNodeId={props.focusedNodeId}
+        focusState={props.focusState}
+        onFocusChange={props.onFocusChange}
       />
     </div>
   );
@@ -273,13 +277,32 @@ export function App() {
       setRecentNodeIds([]);
       setHighlightedImpactNodeIds(null);
       setSelectedCycleId(null);
+      view.setIsInvestigating(false);
+      view.setFocusState(createEmptyFocusState());
+      view.setImpactState(createEmptyImpactState());
+      view.setFilterState(createEmptyFilterState());
+      (view as any).setSelectedNodeId?.(null);
+      (view as any).setSelectedFindingId?.(null);
     };
 
     window.addEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     return () => {
       window.removeEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     };
-  }, [selection]);
+  }, [selection, view]);
+
+  // Defensive validation: clear stale node selection if selectedNodeId does not belong to data.nodes
+  useEffect(() => {
+    if (!data) return;
+    if (selection.selectedNodeId) {
+      const exists = data.nodes.some((n) => n.id === selection.selectedNodeId);
+      if (!exists) {
+        selection.clear();
+        setDrillPath([]);
+        view.setIsInvestigating(false);
+      }
+    }
+  }, [data, selection, view]);
 
   const handleTogglePin = useCallback(() => {
     setIsPinned((prev) => {
@@ -464,6 +487,16 @@ export function App() {
     focusNodeId: selection.selectedNodeId || view.focusState.focusNodeId,
   }), [view.focusState, selection.selectedNodeId]);
 
+  // Keep view.focusState.focusNodeId in sync with selection.selectedNodeId when focus is active
+  useEffect(() => {
+    if (view.focusState.enabled && selection.selectedNodeId && selection.selectedNodeId !== view.focusState.focusNodeId) {
+      view.setFocusState({
+        ...view.focusState,
+        focusNodeId: selection.selectedNodeId,
+      });
+    }
+  }, [selection.selectedNodeId, view.focusState, view.setFocusState]);
+
   // Compute focused sub-graph when focus mode is active
   const focusedGraphData = useMemo(() => {
     if (!data) return { nodes: [], edges: [] };
@@ -541,14 +574,20 @@ export function App() {
     view.setIsInvestigating(true);
   };
 
-  const isDrawerOpen = view.isInvestigating || isPinned;
+  const hasDrawerContent = selectedNode !== null;
+  const isDrawerOpen = hasDrawerContent && (view.isInvestigating || isPinned);
 
   if (loading) return <LoadingScreen />;
   if (error && !isNotAnalyzed) return <ErrorScreen error={error} onRetry={retry} />;
 
   return (
     <SelectionProvider value={selection}>
-      <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      <div
+        className="app-layout"
+        data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
+        data-drawer={isDrawerOpen ? 'open' : 'closed'}
+        style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}
+      >
         {/* Top Header */}
         <Header
           onResetView={handleResetView}
@@ -561,10 +600,18 @@ export function App() {
         />
 
         {/* Main Body Container: [Sidebar 280px] | [Workspace 1fr] | [Drawer 380px] */}
-        <div className="app-body-container" style={{ display: 'flex', flex: 1, width: '100%', height: 'calc(100vh - 76px)', overflow: 'hidden', position: 'relative' }}>
-          {/* Collapsible Left Sidebar */}
+        <div
+          className="app-body-container"
+          data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
+          data-drawer={isDrawerOpen ? 'open' : 'closed'}
+          style={{ display: 'flex', flex: 1, width: '100%', minHeight: 0, overflow: 'hidden', position: 'relative' }}
+        >
+          {/* Collapsible Left Sidebar Slot */}
           {!isSidebarCollapsed && (
-            <div className="sidebar-slot" style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
+            <div
+              className="sidebar-slot"
+              style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
+            >
               <Sidebar
                 nodes={data?.nodes ?? []}
                 displayNodes={displayNodes}
@@ -629,6 +676,8 @@ export function App() {
                           : selection.selectedNodeId
                         : null
                     }
+                    focusState={effectiveFocusState}
+                    onFocusChange={view.setFocusState}
                   />
                 )
               )}
@@ -748,7 +797,10 @@ export function App() {
 
           {/* Collapsible Right Inspector Drawer Slot */}
           {isDrawerOpen && (
-            <div className="drawer-slot" style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}>
+            <div
+              className="drawer-slot"
+              style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
+            >
               <InvestigationDrawer
                 node={selectedNode}
                 open={isDrawerOpen}

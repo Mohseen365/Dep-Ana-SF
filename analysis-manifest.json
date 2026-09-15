@@ -2,49 +2,50 @@
   "manifestVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-09-15T07:17:31.214Z",
+  "generatedAt": "2026-09-15T18:12:13.823Z",
   "source": {
-    "directory": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default",
-    "fileCount": 9,
-    "sourceHash": "sha256:28c93757d3df37fb47bd4bb64d08adf807ad416ddc5c21844d39c1bae0f0a407",
-    "gitCommit": "2629e11150e0178e8e8a91217e662564085412e0"
+    "directory": "scripts/temp-snapshot-test-fixture",
+    "sourceDir": "/app/scripts/temp-snapshot-test-fixture",
+    "fileCount": 2,
+    "sourceHash": "sha256:204c9f8c56e337fbbe9a6da038e0a5d83203fc3a483f79757f9609d1cc8dcc15",
+    "gitCommit": "5df98cd5f98774cd68f59dbf37c7446dbfa0b2f3"
   },
   "status": "COMPLETE",
   "artifacts": {
     "dependencyReport": {
       "path": "dependency-report.json",
-      "fileHash": "sha256:f054aea4c58f3751d7be2b11f8559e7454a11173e7a06d9d9a64c07739d2cc1c"
+      "fileHash": "sha256:4e65b2dc145431efd42cae6ddc863cb638551e9e5113c5c4c40286988399297d"
     },
     "analysisSnapshot": {
       "path": "analysis-snapshot.json",
-      "fileHash": "sha256:4ef0d9f36a8e542e578176b1c75597733aa7f79afe75c7de612c61d9b0e0a774"
+      "fileHash": "sha256:080f2ae9e2d75bb0f7678abdedf25189dbba2510c27744517a29b92615321e18"
     },
     "architectureSnapshot": {
       "path": "architecture-snapshot.json",
-      "fileHash": "sha256:115fa455a8ff2ea90291d189e717c8c0ac397e1d4f5f26cc702f7b8d0eb676e0"
+      "fileHash": "sha256:c4f283dceffe6fb6b672a8553b59d62e44ee2eb16f9c46780b45dad805ed07e6"
     },
     "architectureMetrics": {
       "path": "architecture-metrics.json",
-      "fileHash": "sha256:c05b6afc0cb61525d47b2bcabea065204ee9c025a5bb3d3d8d52b5b65ddcaee0"
+      "fileHash": "sha256:5dca82842b166aa14431f451ca6940b3a9e6ac35cc07e52b65968d68ee4a2dd2"
     },
     "dependencyReportMd": {
       "path": "dependency-report.md",
-      "fileHash": "sha256:adab46f8e2041bd5d3dafe3d20320d1f0a46eaf28c4cb54fba5e61a19a63a1af"
+      "fileHash": "sha256:032cc169423b8ebba8a8e46241247ebf6beb80229e086c44354f4a81fab88046"
     },
     "dependencySummaryMd": {
       "path": "dependency-summary.md",
-      "fileHash": "sha256:dc311a35f82cf7e4457110f7e16603d0d36f66e5f84569d22e339ec00c1842f2"
+      "fileHash": "sha256:f7fbde7d494f5981150e1d032df640c160de4ddfc3dc752f489a8d473f016116"
     },
     "unresolvedReferencesMd": {
       "path": "unresolved-references.md",
-      "fileHash": "sha256:dc10ba54b826255265bb35a5c911f105f88f94d1bdbe25080d616adf9b15bd63"
+      "fileHash": "sha256:35bbe5a695057ca74e916ca4be3645d7189b433fb21e494593b6df9da8543392"
     },
     "explorerData": {
       "path": "explorer-data.json",
+      "fileHash": "sha256:2af6622d7955ca8d6d0fde089acfb10f4a3664aaa916eac6bc18b8fec4ced8d0",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:4b4641d677cec08373b36ccf70ada545314c1d4da904cc3850ca3db9fee36afb",
-      "nodeCount": 31,
-      "edgeCount": 84
+      "nodeCount": 10,
+      "edgeCount": 16
     }
   }
 }

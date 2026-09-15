@@ -1,0 +1,1 @@
+public class ClassA { public static void doWork() { ClassB.doHelp(); } }

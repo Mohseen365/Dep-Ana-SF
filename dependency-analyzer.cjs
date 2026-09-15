@@ -362,6 +362,15 @@ function resolveProjectPath(value) {
   return cwdPath;
 }
 
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function commandOutputDir(command, target, phase, options = {}) {
   if (options && options.outputDir) {
     const normalized = String(options.outputDir).replace(/\\/g, "/");
@@ -372,6 +381,13 @@ function commandOutputDir(command, target, phase, options = {}) {
 
   const root = BASE_OUTPUT_DIR;
   const safeTarget = safeName(target);
+
+  if (options && (options.project || options.projectId)) {
+    const projId = slugify(options.project || options.projectId);
+    if (projId && projId !== "default") {
+      return path.resolve(root, "analyze", "projects", projId);
+    }
+  }
 
   switch (command) {
     case "analyze":
@@ -545,6 +561,9 @@ function parseOptions(args) {
     }
     if (args[i] === "--output-dir" || args[i] === "--output") {
       options.outputDir = args[++i];
+    }
+    if (args[i] === "--project" || args[i] === "--project-id") {
+      options.project = args[++i];
     }
     if (args[i] === "--source") {
       options.sourceDir = args[++i];
@@ -3209,18 +3228,46 @@ function determineResolution(edge) {
     : "INFERRED";
 }
 
+function toCanonicalNodeType(rawType) {
+  if (!rawType) return "ApexClass";
+  const t = String(rawType).trim();
+  if (t === "Trigger" || t === "ApexTrigger") return "ApexTrigger";
+  if (t === "Object" || t === "CustomObject") return "CustomObject";
+  if (t === "Field" || t === "CustomField") return "CustomField";
+  if (t === "LWC" || t === "LWC_HTML" || t === "LWC_JS") return "LWC";
+  if (t === "Visualforce" || t === "ApexPage" || t === "VF") return "Visualforce";
+  if (t === "Flow") return "Flow";
+  if (t === "External") return "External";
+  if (t === "ApexClass") return "ApexClass";
+
+  const valid = [
+    "ApexClass",
+    "ApexTrigger",
+    "LWC",
+    "Visualforce",
+    "Flow",
+    "Object",
+    "CustomObject",
+    "Field",
+    "CustomField",
+    "External",
+  ];
+  if (valid.includes(t)) return t;
+  return "ApexClass";
+}
+
 function createCanonicalRelationship(raw) {
   if (!raw) return null;
 
   if (raw.source && raw.target && raw.relationship && raw.location) {
     return {
       source: {
-        type: String(raw.source.type || "ApexClass"),
+        type: toCanonicalNodeType(raw.source.type || "ApexClass"),
         name: String(raw.source.name || ""),
         method: raw.source.method || null,
       },
       target: {
-        type: String(raw.target.type || "ApexClass"),
+        type: toCanonicalNodeType(raw.target.type || "ApexClass"),
         name: String(raw.target.name || ""),
         method: raw.target.method || null,
       },
@@ -3276,12 +3323,12 @@ function createCanonicalRelationship(raw) {
 
   return {
     source: {
-      type: sourceType,
+      type: toCanonicalNodeType(sourceType),
       name: sourceName,
       method: sourceMethod || null,
     },
     target: {
-      type: targetType,
+      type: toCanonicalNodeType(targetType),
       name: targetName,
       method: targetMethod || null,
     },
@@ -3672,6 +3719,7 @@ function generateAnalysisManifest(
     generatedAt: reportJson.generatedAt || new Date().toISOString(),
     source: {
       directory: rel(sourceDir),
+      sourceDir: path.resolve(sourceDir).replace(/\\/g, "/"),
       fileCount,
       sourceHash,
       gitCommit,

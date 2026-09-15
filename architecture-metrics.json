@@ -1,65 +1,11 @@
 {
-  "generatedAt": "2026-09-15T07:17:31.228Z",
+  "generatedAt": "2026-09-15T18:12:13.830Z",
   "highestImpact": [
     {
-      "id": "ApexClass:BouquetOrderSelector",
-      "name": "BouquetOrderSelector",
+      "id": "ApexClass:ClassA",
+      "name": "ClassA",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderSelector.cls",
-      "fanIn": 1,
-      "fanOut": 6,
-      "coupling": 7,
-      "unresolved": 5,
-      "score": 1,
-      "risk": "LOW",
-      "reasons": [
-        "unresolved references"
-      ]
-    },
-    {
-      "id": "ApexClass:BouquetOrderFormService",
-      "name": "BouquetOrderFormService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderFormService.cls",
-      "fanIn": 2,
-      "fanOut": 4,
-      "coupling": 6,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "ApexClass:BouquetOrderController",
-      "name": "BouquetOrderController",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderController.cls",
-      "fanIn": 2,
-      "fanOut": 2,
-      "coupling": 4,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "ApexClass:BouquetOrderPageHandler",
-      "name": "BouquetOrderPageHandler",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/BouquetOrderPageHandler.cls",
-      "fanIn": 0,
-      "fanOut": 2,
-      "coupling": 2,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "ApexClass:CircularA",
-      "name": "CircularA",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularA.cls",
+      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
       "fanIn": 1,
       "fanOut": 1,
       "coupling": 2,
@@ -69,117 +15,13 @@
       "reasons": []
     },
     {
-      "id": "ApexClass:CircularB",
-      "name": "CircularB",
+      "id": "ApexClass:ClassB",
+      "name": "ClassB",
       "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/CircularB.cls",
+      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
       "fanIn": 1,
       "fanOut": 1,
       "coupling": 2,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "ApexClass:HelperService",
-      "name": "HelperService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/HelperService.cls",
-      "fanIn": 2,
-      "fanOut": 0,
-      "coupling": 2,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "ApexClass:MultiCallService",
-      "name": "MultiCallService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/MultiCallService.cls",
-      "fanIn": 2,
-      "fanOut": 0,
-      "coupling": 2,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "External:Account",
-      "name": "Account",
-      "type": "External",
-      "file": null,
-      "fanIn": 1,
-      "fanOut": 0,
-      "coupling": 1,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "External:Contact",
-      "name": "Contact",
-      "type": "External",
-      "file": null,
-      "fanIn": 1,
-      "fanOut": 0,
-      "coupling": 1,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "External:Object:Account",
-      "name": "Object:Account",
-      "type": "External",
-      "file": null,
-      "fanIn": 1,
-      "fanOut": 0,
-      "coupling": 1,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "External:Object:Contact",
-      "name": "Object:Contact",
-      "type": "External",
-      "file": null,
-      "fanIn": 1,
-      "fanOut": 0,
-      "coupling": 1,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "External:Object:Case",
-      "name": "Object:Case",
-      "type": "External",
-      "file": null,
-      "fanIn": 1,
-      "fanOut": 0,
-      "coupling": 1,
-      "unresolved": 0,
-      "score": 0,
-      "risk": "LOW",
-      "reasons": []
-    },
-    {
-      "id": "ApexClass:UnrelatedService",
-      "name": "UnrelatedService",
-      "type": "ApexClass",
-      "file": "../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default/classes/UnrelatedService.cls",
-      "fanIn": 0,
-      "fanOut": 0,
-      "coupling": 0,
       "unresolved": 0,
       "score": 0,
       "risk": "LOW",
@@ -188,13 +30,13 @@
   ],
   "highRiskCount": 0,
   "mediumRiskCount": 0,
-  "lowRiskCount": 14,
+  "lowRiskCount": 2,
   "cycleCount": 1,
   "roles": {
     "entry-point": 0,
-    "controller": 1,
-    "service": 5,
-    "selector": 1,
+    "controller": 0,
+    "service": 0,
+    "selector": 0,
     "repository": 0,
     "data-access": 0,
     "domain": 0,
@@ -206,28 +48,23 @@
   "layers": {
     "presentation": 0,
     "entry": 0,
-    "application": 2,
-    "service": 4,
+    "application": 0,
+    "service": 0,
     "domain": 0,
-    "data": 1,
+    "data": 0,
     "integration": 0,
     "configuration": 0,
     "test": 0,
     "unknown": 2
   },
   "domains": {
-    "BouquetOrder": 3,
-    "BouquetOrderPage": 1,
-    "CircularA": 1,
-    "CircularB": 1,
-    "HelperService": 1,
-    "MultiCall": 1,
-    "Unrelated": 1
+    "ClassA": 1,
+    "ClassB": 1
   },
   "entryPoints": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "totalEntryPoints": 0,
-    "nonEntryPoints": 9,
+    "nonEntryPoints": 2,
     "byType": {
       "Trigger": 0,
       "LWC": 0,
@@ -240,13 +77,13 @@
     }
   },
   "externalBoundaries": {
-    "totalComponents": 9,
-    "componentsWithExternalBoundary": 1,
-    "componentsWithoutExternalBoundary": 8,
+    "totalComponents": 2,
+    "componentsWithExternalBoundary": 0,
+    "componentsWithoutExternalBoundary": 2,
     "byType": {
       "HTTPCallout": 0,
       "NamedCredential": 0,
-      "ExternalService": 1,
+      "ExternalService": 0,
       "PlatformEvent": 0,
       "OutboundMessaging": 0,
       "InboundEmail": 0,
@@ -255,31 +92,31 @@
     }
   },
   "bottlenecks": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "bottleneckCount": 2,
-    "normalCount": 6,
-    "disconnectedCount": 1,
+    "normalCount": 0,
+    "disconnectedCount": 0,
     "signalCounts": {
       "high-fan-in": 0,
       "high-fan-out": 0,
       "cycle-participant": 2,
-      "bridge-position": 1,
+      "bridge-position": 0,
       "many-dependents": 0,
       "many-dependency-paths": 0,
-      "high-dependency-impact": 1
+      "high-dependency-impact": 0
     }
   },
   "smells": {
-    "totalComponents": 9,
-    "componentsWithSmellsCount": 3,
-    "cleanComponentsCount": 6,
-    "totalSmellsCount": 3,
+    "totalComponents": 2,
+    "componentsWithSmellsCount": 2,
+    "cleanComponentsCount": 0,
+    "totalSmellsCount": 2,
     "smellCounts": {
       "god-component": 0,
       "hub-component": 0,
       "high-coupling": 0,
       "circular-dependency": 2,
-      "orphan-component": 1,
+      "orphan-component": 0,
       "uncovered-critical-path": 0,
       "layer-violation": 0,
       "mixed-responsibility": 0,
@@ -287,9 +124,9 @@
     }
   },
   "architectureDebt": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "componentsWithDebtCount": 2,
-    "cleanComponentsCount": 7,
+    "cleanComponentsCount": 0,
     "totalDebtItemsCount": 4,
     "categoryCounts": {
       "excessive-coupling": 0,
@@ -312,34 +149,28 @@
     }
   },
   "businessCriticality": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "explicitBusinessCriticalityCount": 0,
-    "unknownBusinessCriticalityCount": 9,
+    "unknownBusinessCriticalityCount": 2,
     "byBusinessLevel": {
       "high": 0,
       "medium": 0,
       "low": 0,
-      "unknown": 9
+      "unknown": 2
     },
     "byStructuralLevel": {
       "high": 0,
       "medium": 0,
-      "low": 1,
-      "unknown": 8
+      "low": 0,
+      "unknown": 2
     }
   },
   "architectureProfileSummary": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "roles": {
-      "controller": 1,
-      "service": 5,
-      "selector": 1,
       "unknown": 2
     },
     "layers": {
-      "application": 2,
-      "service": 4,
-      "data": 1,
       "unknown": 2
     },
     "entryPoints": {
@@ -349,22 +180,22 @@
       "count": 2
     },
     "testStatus": {
-      "unknown": 9
+      "unknown": 2
     },
     "externalBoundaries": {
-      "count": 1
+      "count": 0
     },
     "securitySharingModels": {
-      "unspecified": 9
+      "unspecified": 2
     },
     "impactedObjects": []
   },
   "safetyEnvelopes": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "byClassification": {
       "SAFE": 0,
-      "SAFE_WITH_REVIEW": 5,
-      "HIGH_RISK": 2,
+      "SAFE_WITH_REVIEW": 0,
+      "HIGH_RISK": 0,
       "BLOCKED": 2,
       "UNKNOWN": 0
     },
@@ -372,11 +203,10 @@
       "broad-transitive-impact-unprotected": 2
     },
     "riskFactorCounts": {
-      "test-gap-present": 9,
-      "external-boundary-exposure": 1,
       "broad-transitive-impact": 2,
       "architectural-bottleneck": 2,
-      "architecture-smells-present": 3,
+      "architecture-smells-present": 2,
+      "test-gap-present": 2,
       "cycle-participant": 2
     }
   },
@@ -390,7 +220,7 @@
         "evidence": [
           {
             "rule": "healthy-coupling-distribution",
-            "detail": "Low coupling pressure across all 9 repository components."
+            "detail": "Low coupling pressure across all 2 repository components."
           }
         ],
         "signals": {
@@ -424,16 +254,16 @@
         }
       },
       "testProtection": {
-        "classification": "DEGRADED",
+        "classification": "ATTENTION",
         "confidence": "high",
         "evidence": [
           {
-            "rule": "high-test-gap-ratio",
-            "detail": "High test gap ratio: 9 of 9 component(s) (100%) lack test protection."
+            "rule": "test-gaps-identified",
+            "detail": "2 component(s) exhibit test gap status."
           }
         ],
         "signals": {
-          "gapsCount": 9
+          "gapsCount": 2
         }
       },
       "boundaryRisk": {
@@ -455,11 +285,11 @@
         "evidence": [
           {
             "rule": "unspecified-sharing-concentration",
-            "detail": "9 Apex class(es) lack explicit sharing model declarations."
+            "detail": "2 Apex class(es) lack explicit sharing model declarations."
           }
         ],
         "signals": {
-          "unspecifiedSharingCount": 9
+          "unspecifiedSharingCount": 2
         }
       },
       "architecturalDebt": {
@@ -468,11 +298,11 @@
         "evidence": [
           {
             "rule": "architectural-smells-detected",
-            "detail": "Architectural debt identified: 3 smell(s) present across repository."
+            "detail": "Architectural debt identified: 2 smell(s) present across repository."
           }
         ],
         "signals": {
-          "totalSmells": 3,
+          "totalSmells": 2,
           "godCount": 0
         }
       },
@@ -490,12 +320,12 @@
         }
       },
       "architecturalClarity": {
-        "classification": "HEALTHY",
+        "classification": "ATTENTION",
         "confidence": "high",
         "evidence": [
           {
-            "rule": "clear-architectural-structure",
-            "detail": "Clear role and layer separation established for repository components."
+            "rule": "ambiguous-component-roles",
+            "detail": "2 component(s) have unclassified/unknown architectural roles."
           }
         ],
         "signals": {
@@ -504,19 +334,19 @@
       }
     },
     "strongestPositiveSignals": [
-      "Low coupling pressure across all 9 repository components.",
-      "Managed external boundary exposure across 0 component(s).",
-      "Clear role and layer separation established for repository components."
+      "Low coupling pressure across all 2 repository components.",
+      "Managed external boundary exposure across 0 component(s)."
     ],
     "strongestNegativeSignals": [
       "Repository contains 1 circular dependency group(s).",
       "2 high-risk bottleneck component(s) expand change blast radius.",
-      "High test gap ratio: 9 of 9 component(s) (100%) lack test protection.",
-      "Architectural debt identified: 3 smell(s) present across repository.",
+      "2 component(s) exhibit test gap status.",
+      "Architectural debt identified: 2 smell(s) present across repository.",
       "2 central architectural bottlenecks identified."
     ],
     "unknownIncompleteAreas": [
-      "9 Apex class(es) have unspecified sharing mode."
+      "2 Apex class(es) have unspecified sharing mode.",
+      "2 component(s) have unknown architectural roles."
     ]
   },
   "qualityGates": {
@@ -550,22 +380,19 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": [
-          "CircularA",
-          "CircularB"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularA' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassA' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularB' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassB' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "repository-cycles-detected",
-            "detail": "Repository contains 1 circular dependency loop(s) touching components: CircularA, CircularB."
+            "detail": "Repository contains 1 circular dependency loop(s) touching components: ClassA, ClassB."
           }
         ]
       },
@@ -576,18 +403,15 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": [
-          "CircularA",
-          "CircularB"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularA' is an identified architectural bottleneck (score: 25)."
+            "detail": "Component 'ClassA' is an identified architectural bottleneck (score: 25)."
           },
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularB' is an identified architectural bottleneck (score: 25)."
+            "detail": "Component 'ClassB' is an identified architectural bottleneck (score: 25)."
           }
         ]
       },
@@ -598,53 +422,15 @@
         "severity": "CRITICAL",
         "result": "UNKNOWN",
         "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderController",
-          "BouquetOrderFormService",
-          "BouquetOrderPageHandler",
-          "BouquetOrderSelector",
-          "CircularA",
-          "CircularB",
-          "HelperService",
-          "MultiCallService",
-          "UnrelatedService"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
             "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderController'."
+            "detail": "Test gap evidence is missing for component 'ClassA'."
           },
           {
             "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderFormService'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderPageHandler'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'BouquetOrderSelector'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'CircularA'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'CircularB'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'HelperService'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'MultiCallService'."
-          },
-          {
-            "rule": "missing-test-protection-unknown",
-            "detail": "Test gap evidence is missing for component 'UnrelatedService'."
+            "detail": "Test gap evidence is missing for component 'ClassB'."
           }
         ]
       },
@@ -653,17 +439,10 @@
         "name": "Unsafe External Boundaries",
         "description": "Detects unisolated or concentrated external boundary integration points.",
         "severity": "HIGH",
-        "result": "WARN",
+        "result": "PASS",
         "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderSelector"
-        ],
-        "evidence": [
-          {
-            "rule": "unsafe-external-boundary-warn",
-            "detail": "Component 'BouquetOrderSelector' exposes an external boundary (ExternalService)."
-          }
-        ]
+        "affectedComponents": [],
+        "evidence": []
       },
       {
         "ruleId": "RULE-SECURITY-BOUNDARY-VIOLATION",
@@ -692,28 +471,15 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderSelector",
-          "CircularA",
-          "CircularB",
-          "UnrelatedService"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'BouquetOrderSelector' is classified as HIGH_RISK."
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassA' is BLOCKED due to architectural safety blockers."
           },
           {
             "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularA' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularB' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'UnrelatedService' is classified as HIGH_RISK."
+            "detail": "Safety envelope for component 'ClassB' is BLOCKED due to architectural safety blockers."
           }
         ]
       },
@@ -746,22 +512,19 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": [
-          "CircularA",
-          "CircularB"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularA' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassA' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "circular-dependency-violation",
-            "detail": "Component 'CircularB' participates in 1 circular dependency loop(s)."
+            "detail": "Component 'ClassB' participates in 1 circular dependency loop(s)."
           },
           {
             "rule": "repository-cycles-detected",
-            "detail": "Repository contains 1 circular dependency loop(s) touching components: CircularA, CircularB."
+            "detail": "Repository contains 1 circular dependency loop(s) touching components: ClassA, ClassB."
           }
         ]
       },
@@ -772,28 +535,15 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderSelector",
-          "CircularA",
-          "CircularB",
-          "UnrelatedService"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'BouquetOrderSelector' is classified as HIGH_RISK."
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassA' is BLOCKED due to architectural safety blockers."
           },
           {
             "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularA' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-blocked-fail",
-            "detail": "Safety envelope for component 'CircularB' is BLOCKED due to architectural safety blockers."
-          },
-          {
-            "rule": "unsafe-change-impact-high-risk-warn",
-            "detail": "Safety envelope for component 'UnrelatedService' is classified as HIGH_RISK."
+            "detail": "Safety envelope for component 'ClassB' is BLOCKED due to architectural safety blockers."
           }
         ]
       }
@@ -806,59 +556,37 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": [
-          "CircularA",
-          "CircularB"
-        ],
+        "affectedComponents": ["ClassA", "ClassB"],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularA' is an identified architectural bottleneck (score: 25)."
+            "detail": "Component 'ClassA' is an identified architectural bottleneck (score: 25)."
           },
           {
             "rule": "architectural-bottleneck-warning",
-            "detail": "Component 'CircularB' is an identified architectural bottleneck (score: 25)."
-          }
-        ]
-      },
-      {
-        "ruleId": "RULE-UNSAFE-EXTERNAL-BOUNDARY",
-        "name": "Unsafe External Boundaries",
-        "description": "Detects unisolated or concentrated external boundary integration points.",
-        "severity": "HIGH",
-        "result": "WARN",
-        "confidence": "high",
-        "affectedComponents": [
-          "BouquetOrderSelector"
-        ],
-        "evidence": [
-          {
-            "rule": "unsafe-external-boundary-warn",
-            "detail": "Component 'BouquetOrderSelector' exposes an external boundary (ExternalService)."
+            "detail": "Component 'ClassB' is an identified architectural bottleneck (score: 25)."
           }
         ]
       }
     ],
-    "unknownChecks": [
-      "Missing Test Protection on Critical Paths"
-    ]
+    "unknownChecks": ["Missing Test Protection on Critical Paths"]
   },
   "duplicateResponsibilitySummary": {
-    "totalComponents": 9,
-    "componentsWithOverlapCount": 6,
+    "totalComponents": 2,
+    "componentsWithOverlapCount": 0,
     "strongOverlapCount": 0,
-    "possibleOverlapCount": 6,
-    "noOverlapCount": 3,
-    "uniqueOverlappingPairsCount": 6
+    "possibleOverlapCount": 0,
+    "noOverlapCount": 2,
+    "uniqueOverlappingPairsCount": 0
   },
   "testGapSummary": {
-    "totalComponents": 9,
+    "totalComponents": 2,
     "coveredCount": 0,
     "likelyCoveredCount": 0,
-    "noTestEvidenceCount": 9,
+    "noTestEvidenceCount": 2,
     "knownCoverageFailureCount": 0,
     "ambiguousTestCount": 0,
     "testComponentCount": 0,
-    "componentsWithTestGap": 9
+    "componentsWithTestGap": 2
   }
 }

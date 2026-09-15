@@ -2,6 +2,15 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ExplorerDataSchema } from '../types/explorer';
 import { parseExplorerData } from '../lib/schema';
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function resolveDataUrl(projectIdOrUrl?: string): string {
   if (!projectIdOrUrl) {
     if (typeof window !== 'undefined') {
@@ -9,11 +18,17 @@ function resolveDataUrl(projectIdOrUrl?: string): string {
         const urlParams = new URLSearchParams(window.location.search);
         const urlProject = urlParams.get('project');
         if (urlProject && urlProject !== 'default') {
-          return `/projects/${urlProject}/explorer-data.json`;
+          const slugProject = slugify(urlProject);
+          if (slugProject && slugProject !== 'default') {
+            return `/projects/${slugProject}/explorer-data.json`;
+          }
         }
         const savedProject = localStorage.getItem('explorer.activeProjectId');
         if (savedProject && savedProject !== 'default') {
-          return `/projects/${savedProject}/explorer-data.json`;
+          const slugProject = slugify(savedProject);
+          if (slugProject && slugProject !== 'default') {
+            return `/projects/${slugProject}/explorer-data.json`;
+          }
         }
       } catch (_) {
         // Ignore
@@ -30,11 +45,13 @@ function resolveDataUrl(projectIdOrUrl?: string): string {
     return projectIdOrUrl;
   }
 
-  if (projectIdOrUrl === 'default') {
+  const slugId = slugify(projectIdOrUrl);
+
+  if (slugId === 'default' || !slugId) {
     return '/explorer-data.json';
   }
 
-  return `/projects/${projectIdOrUrl}/explorer-data.json`;
+  return `/projects/${slugId}/explorer-data.json`;
 }
 
 export function useExplorerData(projectIdOrUrl?: string): {
@@ -78,9 +95,11 @@ export function useExplorerData(projectIdOrUrl?: string): {
     const controller = new AbortController();
     let isSubscribed = true;
 
+    setData(null);
+    setLoading(true);
+    setError(null);
+
     async function fetchData() {
-      setLoading(true);
-      setError(null);
 
       const isDefaultUrl = resolvedUrl === '/explorer-data.json';
 

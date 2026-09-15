@@ -8,7 +8,7 @@
  *
  * Usage:
  *   node scripts/export-explorer.cjs [inputDirOrFile] [outputFile]
- *   node scripts/export-explorer.cjs --input analyze --output analyze/explorer-data.json --project core-crm
+ *   node scripts/export-explorer.cjs --input analyze --output analyze/projects/movie-app/explorer-data.json --project movie-app
  */
 
 const fs = require("fs");
@@ -19,10 +19,20 @@ const { analyzeTestGap } = require("../dependency-analyzer.cjs");
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
 
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   let input = "analyze";
   let output = "";
+  let outputDir = "";
   let project = "default";
   let projectName = "";
   let projectDesc = "";
@@ -36,11 +46,17 @@ function parseArgs(argv) {
     } else if (arg === "--output" && args[i + 1]) {
       output = args[i + 1];
       i++;
+    } else if (arg === "--output-dir" && args[i + 1]) {
+      outputDir = args[i + 1];
+      i++;
     } else if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
-      project = args[i + 1];
+      project = slugify(args[i + 1]) || "default";
       i++;
     } else if (arg === "--project-name" && args[i + 1]) {
       projectName = args[i + 1];
+      if (project === "default" && projectName) {
+        project = slugify(projectName) || "default";
+      }
       i++;
     } else if (arg === "--project-desc" && args[i + 1]) {
       projectDesc = args[i + 1];
@@ -57,33 +73,103 @@ function parseArgs(argv) {
   }
 
   if (!output) {
-    if (project && project !== "default") {
+    if (outputDir) {
+      output = path.join(outputDir, "explorer-data.json");
+    } else if (project && project !== "default") {
       output = path.join("analyze", "projects", project, "explorer-data.json");
     } else {
       output = "analyze/explorer-data.json";
     }
   }
 
-  return { input, output, project, projectName, projectDesc, source };
+  return { input, output, outputDir, project, projectName, projectDesc, source };
 }
 
-function resolveInputFile(inputPath) {
-  let targetFile = inputPath;
-  if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
-    const reportFile = path.join(inputPath, "dependency-report.json");
-    const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
-    if (fs.existsSync(reportFile)) {
-      targetFile = reportFile;
-    } else if (fs.existsSync(snapshotFile)) {
-      targetFile = snapshotFile;
+function isSameSource(sourceA, sourceB) {
+  if (!sourceA || !sourceB) return false;
+  const normA = path.resolve(sourceA).toLowerCase().replace(/\\/g, "/");
+  const normB = path.resolve(sourceB).toLowerCase().replace(/\\/g, "/");
+  return normA === normB;
+}
+
+function getReportSourceDir(reportFilePath) {
+  try {
+    if (!reportFilePath || !fs.existsSync(reportFilePath)) return null;
+    const content = JSON.parse(fs.readFileSync(reportFilePath, "utf8"));
+    return content.sourceDirectory || content.discovered?.sourceDir || content.source?.sourceDir || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function resolveInputFile(inputPath, options = {}) {
+  const rawProjectId = options.project || options.projectId || "default";
+  const projectId = slugify(rawProjectId) || "default";
+  const explicitSource = options.source || null;
+
+  const matchesSource = (candidateFile) => {
+    if (!candidateFile || !fs.existsSync(candidateFile)) return false;
+    if (!explicitSource) return true;
+    const candidateSource = getReportSourceDir(candidateFile);
+    return candidateSource ? isSameSource(candidateSource, explicitSource) : false;
+  };
+
+  // 1. Check explicit inputPath if provided
+  if (inputPath && inputPath !== "analyze") {
+    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
+      if (matchesSource(inputPath)) return inputPath;
+    }
+    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
+      const reportFile = path.join(inputPath, "dependency-report.json");
+      const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
+      const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
+      if (foundFile && matchesSource(foundFile)) return foundFile;
     }
   }
 
-  if (!fs.existsSync(targetFile) || fs.statSync(targetFile).isDirectory()) {
-    throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+  // 2. Check project-specific analyze directory
+  if (projectId !== "default") {
+    const projReport = path.resolve(__dirname, "..", "analyze", "projects", projectId, "dependency-report.json");
+    const projSnapshot = path.resolve(__dirname, "..", "analyze", "projects", projectId, "analysis-snapshot.json");
+    const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
+    if (foundProj && matchesSource(foundProj)) return foundProj;
   }
 
-  return targetFile;
+  // 3. If explicit source was provided and exists, run analyzer on explicit source
+  if (explicitSource && fs.existsSync(explicitSource)) {
+    console.log(`Analyzer output not found or stale for source '${explicitSource}'. Running analyzer...`);
+    const analyzerScript = path.join(__dirname, "..", "dependency-analyzer.cjs");
+    const execSync = require("child_process").execSync;
+
+    const outputDir = projectId !== "default"
+      ? path.resolve(__dirname, "..", "analyze", "projects", projectId)
+      : path.resolve(__dirname, "..", "analyze");
+
+    try {
+      execSync(`node "${analyzerScript}" analyze "${explicitSource}" --output-dir "${outputDir}"`, {
+        cwd: path.resolve(__dirname, ".."),
+        stdio: "inherit"
+      });
+    } catch (err) {
+      console.warn(`Analyzer execution notice: ${err.message}`);
+    }
+
+    const generatedReport = path.join(outputDir, "dependency-report.json");
+    if (fs.existsSync(generatedReport)) {
+      return generatedReport;
+    }
+  }
+
+  // 4. Check root or default analyze directory for report
+  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
+  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
+  const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
+  const analyzeSnapshot = path.resolve(__dirname, "..", "analyze", "analysis-snapshot.json");
+
+  const foundDefault = [rootReport, rootSnapshot, analyzeReport, analyzeSnapshot].find((f) => fs.existsSync(f) && matchesSource(f));
+  if (foundDefault) return foundDefault;
+
+  throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
 }
 
 function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
@@ -93,19 +179,35 @@ function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
 }
 
 function normalizeNodeType(type, id = "") {
-  if (type) {
-    if (type === "Object") return "CustomObject";
-    if (type === "Field") return "CustomField";
-    if (type === "Trigger") return "ApexTrigger";
-    return type;
+  let candidate = type;
+  if (!candidate && id && id.includes(":")) {
+    candidate = id.split(":")[0];
   }
-  if (id.includes(":")) {
-    const rawType = id.split(":")[0];
-    if (rawType === "Object") return "CustomObject";
-    if (rawType === "Field") return "CustomField";
-    if (rawType === "Trigger") return "ApexTrigger";
-    return rawType;
-  }
+  if (!candidate) return "ApexClass";
+
+  const t = String(candidate).trim();
+  if (t === "Trigger" || t === "ApexTrigger") return "ApexTrigger";
+  if (t === "Object" || t === "CustomObject") return "CustomObject";
+  if (t === "Field" || t === "CustomField") return "CustomField";
+  if (t === "LWC" || t === "LWC_HTML" || t === "LWC_JS") return "LWC";
+  if (t === "Visualforce" || t === "ApexPage" || t === "VF") return "Visualforce";
+  if (t === "Flow") return "Flow";
+  if (t === "External") return "External";
+  if (t === "ApexClass") return "ApexClass";
+
+  const valid = [
+    "ApexClass",
+    "ApexTrigger",
+    "LWC",
+    "Visualforce",
+    "Flow",
+    "Object",
+    "CustomObject",
+    "Field",
+    "CustomField",
+    "External",
+  ];
+  if (valid.includes(t)) return t;
   return "ApexClass";
 }
 
@@ -219,7 +321,15 @@ function buildImpactSummaries(nodes, edges) {
 }
 
 function exportExplorerData(inputPath, outputPath, options = {}) {
-  const resolvedInputFile = resolveInputFile(inputPath);
+  const rawProjectId = options.project || options.projectId || "default";
+  const projectId = slugify(rawProjectId) || "default";
+
+  let effectiveOutputPath = outputPath;
+  if (!effectiveOutputPath || (projectId !== "default" && (effectiveOutputPath === "analyze/explorer-data.json" || effectiveOutputPath === "explorer-data.json"))) {
+    effectiveOutputPath = path.join("analyze", "projects", projectId, "explorer-data.json");
+  }
+
+  const resolvedInputFile = resolveInputFile(inputPath, { ...options, project: projectId });
   const rawContent = fs.readFileSync(resolvedInputFile, "utf8");
   const reportData = JSON.parse(rawContent);
 
@@ -231,7 +341,6 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   const sourceDirectory =
     options.source || reportData.sourceDirectory || "force-app/main/default";
 
-  const projectId = options.project || options.projectId || "default";
   const projectName =
     options.projectName ||
     (projectId !== "default" ? projectId : "Default Salesforce Project");
@@ -304,14 +413,14 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     let testCoverageStatus = "UNTESTED";
     if (isTest || testGapResult.signal === "test-component") {
       testCoverageStatus = "COVERED";
-    } else if (testGapResult.signal === "covered") {
+    } else if (testGapResult.signal === "covered" || testGapResult.signal === "likely-covered") {
       testCoverageStatus = "COVERED";
-    } else if (testGapResult.signal === "likely-covered") {
-      testCoverageStatus = "LIKELY_COVERED";
     } else if (testGapResult.signal === "known-coverage-failure") {
-      testCoverageStatus = "KNOWN_COVERAGE_FAILURE";
+      testCoverageStatus = "UNTESTED";
     } else if (testGapResult.signal === "ambiguous-test") {
       testCoverageStatus = "AMBIGUOUS";
+    } else if (testGapResult.signal === "no-test-evidence") {
+      testCoverageStatus = "NO_TESTS";
     } else {
       testCoverageStatus = "UNTESTED";
     }
@@ -376,22 +485,25 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     const file = rawEdge.file || "";
 
     const resCat = rawEdge.resolutionCategory || {};
-    const canonical = rawEdge.canonical || {
+    const sourceNormType = normalizeNodeType(source.split(":")[0]);
+    const targetNormType = normalizeNodeType(target.split(":")[0]);
+
+    const canonical = {
       source: {
-        type: source.split(":")[0],
-        name: source.split(":")[1] || "",
-        method: methodOwner,
+        type: normalizeNodeType(rawEdge.canonical?.source?.type || sourceNormType),
+        name: rawEdge.canonical?.source?.name || (source.includes(":") ? source.split(":")[1] : source),
+        method: rawEdge.canonical?.source?.method || methodOwner,
       },
       target: {
-        type: target.split(":")[0],
-        name: target.split(":")[1] || "",
-        method,
+        type: normalizeNodeType(rawEdge.canonical?.target?.type || targetNormType),
+        name: rawEdge.canonical?.target?.name || (target.includes(":") ? target.split(":")[1] : target),
+        method: rawEdge.canonical?.target?.method || method,
       },
       relationship: {
-        type: relationshipType,
-        resolution: unresolved ? "UNRESOLVED" : "EXACT",
+        type: rawEdge.canonical?.relationship?.type || relationshipType,
+        resolution: rawEdge.canonical?.relationship?.resolution || (unresolved ? "UNRESOLVED" : "EXACT"),
       },
-      location: { line, column },
+      location: rawEdge.canonical?.location || { line, column },
     };
 
     const edgeId =
@@ -552,7 +664,7 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   };
 
   // Ensure output parent directory exists
-  const resolvedOutputFile = path.resolve(outputPath);
+  const resolvedOutputFile = path.resolve(effectiveOutputPath);
   const parentDir = path.dirname(resolvedOutputFile);
   if (!fs.existsSync(parentDir)) {
     fs.mkdirSync(parentDir, { recursive: true });
@@ -566,6 +678,7 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
 
   updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
+  publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
 
   return {
     inputFile: resolvedInputFile,
@@ -573,6 +686,53 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     projectMetadata,
     explorerData,
   };
+}
+
+function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata) {
+  const rootDir = path.resolve(__dirname, "..");
+  const explorerPublicDir = path.join(rootDir, "explorer", "public");
+  const explorerDistDir = path.join(rootDir, "explorer", "dist");
+
+  if (!fs.existsSync(explorerPublicDir)) {
+    fs.mkdirSync(explorerPublicDir, { recursive: true });
+  }
+
+  const projectId = projectMetadata?.id || "default";
+
+  // 1. Publish project contract file
+  if (projectId !== "default") {
+    const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
+    fs.mkdirSync(projPublicDir, { recursive: true });
+    fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
+
+    if (fs.existsSync(explorerDistDir)) {
+      const projDistDir = path.join(explorerDistDir, "projects", projectId);
+      fs.mkdirSync(projDistDir, { recursive: true });
+      fs.copyFileSync(resolvedOutputFile, path.join(projDistDir, "explorer-data.json"));
+    }
+  } else {
+    fs.copyFileSync(resolvedOutputFile, path.join(explorerPublicDir, "explorer-data.json"));
+    if (fs.existsSync(explorerDistDir)) {
+      fs.copyFileSync(resolvedOutputFile, path.join(explorerDistDir, "explorer-data.json"));
+    }
+  }
+
+  // 2. Publish project-manifest.json
+  let manifestDir = path.dirname(resolvedOutputFile);
+  if (manifestDir.includes("projects")) {
+    const idx = manifestDir.lastIndexOf("projects");
+    if (idx > 0) {
+      manifestDir = manifestDir.substring(0, idx);
+    }
+  }
+
+  const analyzeManifest = path.join(manifestDir, "project-manifest.json");
+  if (fs.existsSync(analyzeManifest)) {
+    fs.copyFileSync(analyzeManifest, path.join(explorerPublicDir, "project-manifest.json"));
+    if (fs.existsSync(explorerDistDir)) {
+      fs.copyFileSync(analyzeManifest, path.join(explorerDistDir, "project-manifest.json"));
+    }
+  }
 }
 
 function updateManifestWithExplorerData(outputFile, explorerData, projectMetadata) {
@@ -700,4 +860,5 @@ module.exports = {
   normalizeNodeId,
   normalizeNodeType,
   buildImpactSummaries,
+  slugify,
 };

@@ -42,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const listContainerRef = useRef<HTMLDivElement>(null);
 
+  // Closed state: return null to ensure zero background, border, padding, or phantom hitbox remain
   if (collapsed) {
     return null;
   }
@@ -165,7 +166,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="sidebar ui-panel" style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", backgroundColor: "var(--surface-panel, #111827)" }}>
+    <aside
+      className="sidebar ui-panel"
+      aria-label="Component Inventory Sidebar"
+      data-testid="component-sidebar"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+        backgroundColor: "var(--surface-panel, #111827)",
+        overflow: "hidden"
+      }}
+    >
       {/* Header Bar */}
       <div
         className="sidebar-header"
@@ -173,8 +186,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "12px",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.06)"
+          padding: "10px 12px",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          backgroundColor: "var(--surface-subtle, #0f172a)"
         }}
       >
         <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
@@ -192,7 +206,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </span>
           <span
             style={{
-              fontSize: "13px",
+              fontSize: "12px",
               fontWeight: 700,
               color: "var(--text-primary, #f8fafc)"
             }}
@@ -201,20 +215,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </span>
         </div>
         <button
+          type="button"
           className="ui-icon-btn ui-icon-btn-sm"
           onClick={onToggleCollapse}
           title="Collapse Sidebar"
-          aria-label="Collapse Sidebar"
+          aria-label="Collapse Component Sidebar"
+          data-testid="collapse-sidebar-btn"
           style={{
-            background: "none",
-            border: "none",
+            background: "transparent",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "4px",
             color: "#94a3b8",
             cursor: "pointer",
-            fontSize: "12px",
-            padding: "4px"
+            fontSize: "11px",
+            padding: "3px 6px",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
-          ◀
+          <span aria-hidden="true">◀</span>
         </button>
       </div>
 
@@ -238,7 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           tabIndex={0}
           onKeyDown={handleKeyDown}
           role="listbox"
-          aria-label="Component Inventory"
+          aria-label="Component Inventory List"
           style={{
             flex: 1,
             overflowY: "auto",
@@ -253,10 +273,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div
                   key={i}
                   style={{
-                    height: "48px",
+                    height: "44px",
                     borderRadius: "6px",
-                    backgroundColor: "rgba(255, 255, 255, 0.04)",
-                    animation: "pulse 1.5s infinite"
+                    backgroundColor: "rgba(255, 255, 255, 0.04)"
                   }}
                 />
               ))}
@@ -271,7 +290,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 color: "#ef4444"
               }}
             >
-              <div style={{ fontSize: "20px", marginBottom: "6px" }}>⚠️</div>
+              <div style={{ fontSize: "20px", marginBottom: "6px" }} aria-hidden="true">⚠️</div>
               <div style={{ fontSize: "12px", fontWeight: 600, marginBottom: "4px" }}>
                 Error Loading Components
               </div>
@@ -290,7 +309,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 justifyContent: "center"
               }}
             >
-              <div style={{ fontSize: "24px", marginBottom: "8px", opacity: 0.6 }}>🔍</div>
+              <div style={{ fontSize: "24px", marginBottom: "8px", opacity: 0.6 }} aria-hidden="true">🔍</div>
               <div style={{ fontSize: "13px", fontWeight: 600, color: "#f8fafc", marginBottom: "4px" }}>
                 No components match your search
               </div>
@@ -320,6 +339,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={node.id}
                   role="option"
                   aria-selected={isSelected}
+                  aria-label={`${node.displayName}, ${node.type}, risk ${node.risk}`}
                   tabIndex={-1}
                   className={`component-list-item ${isSelected ? 'selected' : ''}`}
                   onClick={() => {
@@ -330,7 +350,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    padding: "8px 10px",
+                    padding: "6px 8px",
                     marginBottom: "4px",
                     borderRadius: "6px",
                     cursor: "pointer",
@@ -350,22 +370,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                   {/* Top Row: Dot + Name + Risk Badge */}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", overflow: "hidden", paddingRight: "8px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", overflow: "hidden", paddingRight: "6px" }}>
                       <span
                         style={{
                           display: "inline-block",
-                          width: "8px",
-                          height: "8px",
+                          width: "7px",
+                          height: "7px",
                           borderRadius: "50%",
                           backgroundColor: getRiskDotColor(node.risk),
                           flexShrink: 0
                         }}
-                        title={`Risk: ${node.risk}`}
+                        title={`Risk level: ${node.risk}`}
+                        aria-hidden="true"
                       />
                       <span
                         className="component-item-name"
                         style={{
-                          fontSize: "13px",
+                          fontSize: "12px",
                           fontWeight: isSelected ? 700 : 600,
                           color: isSelected ? "#ffffff" : "#f8fafc",
                           whiteSpace: "nowrap",
@@ -381,7 +402,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       style={{
                         fontSize: "9px",
                         fontWeight: 700,
-                        padding: "2px 6px",
+                        padding: "1px 5px",
                         borderRadius: "4px",
                         letterSpacing: "0.02em",
                         textTransform: "uppercase",
@@ -395,11 +416,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
 
                   {/* Subtitle Row: Type */}
-                  <div style={{ display: "flex", alignItems: "center", paddingLeft: "16px", marginTop: "2px" }}>
+                  <div style={{ display: "flex", alignItems: "center", paddingLeft: "13px", marginTop: "1px" }}>
                     <span
                       className="component-item-type"
                       style={{
-                        fontSize: "11px",
+                        fontSize: "10px",
                         color: "var(--text-muted, #94a3b8)",
                         fontWeight: 400
                       }}
@@ -407,25 +428,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       {node.type}
                     </span>
                   </div>
-
-                  {/* Selected State Banner */}
-                  {isSelected && (
-                    <div
-                      style={{
-                        marginTop: "6px",
-                        paddingLeft: "16px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        fontSize: "10px",
-                        fontWeight: 500,
-                        color: "#60a5fa"
-                      }}
-                    >
-                      <span style={{ fontSize: "11px" }}>🔍</span>
-                      <span>Currently under investigation</span>
-                    </div>
-                  )}
                 </div>
               );
             })
