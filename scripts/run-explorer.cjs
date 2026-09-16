@@ -33,7 +33,10 @@ function parseArgs(argv) {
   let mode = "dev"; // 'dev' | 'preview' | 'build'
   let fresh = false;
   let project = "default";
-  let source = path.join(ROOT_DIR, "force-app", "main", "default");
+  let source = "";
+  let explicitSource = false;
+
+  const defaultSourcePath = path.join(ROOT_DIR, "force-app", "main", "default");
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -46,28 +49,39 @@ function parseArgs(argv) {
     }
     if (arg === "--source" && args[i + 1]) {
       source = path.resolve(ROOT_DIR, args[i + 1]);
+      explicitSource = true;
       i++;
     }
   }
 
-  return { mode, fresh, project, source };
+  if (!explicitSource && fs.existsSync(defaultSourcePath)) {
+    source = defaultSourcePath;
+  }
+
+  return { mode, fresh, project, source, explicitSource };
 }
 
-function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default") {
+function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default", explicitSource = false) {
   const slugId = slugify(projectId) || "default";
   const analyzeDir = slugId !== "default"
     ? path.join(ROOT_DIR, "analyze", "projects", slugId)
     : path.join(ROOT_DIR, "analyze");
   const reportFile = path.join(analyzeDir, "dependency-report.json");
 
-  // Check if source dir exists for running fresh analysis
-  if (!fs.existsSync(sourceDir) && !fs.existsSync(reportFile)) {
-    throw new Error(`Source directory (${sourceDir}) and existing analysis (${reportFile}) both not found.`);
+  const hasSource = Boolean(sourceDir && fs.existsSync(sourceDir));
+  const hasReport = fs.existsSync(reportFile);
+
+  if (explicitSource && !hasSource) {
+    throw new Error(`Explicitly supplied source directory does not exist: ${sourceDir}`);
   }
 
-  let shouldRun = fresh || !fs.existsSync(reportFile);
+  if (!hasSource && !hasReport) {
+    throw new Error(`Source directory (${sourceDir || path.join(ROOT_DIR, "force-app", "main", "default")}) and existing analysis (${reportFile}) both not found.`);
+  }
 
-  if (!shouldRun && fs.existsSync(sourceDir)) {
+  let shouldRun = fresh || !hasReport;
+
+  if (!shouldRun && hasSource) {
     try {
       const analyzer = require(ANALYZER_SCRIPT);
       if (typeof analyzer.getAnalysis === "function") {
@@ -86,7 +100,7 @@ function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default") {
   }
 
   if (shouldRun) {
-    if (!fs.existsSync(sourceDir)) {
+    if (!hasSource) {
       console.log("Source directory not present, reusing existing analysis artifacts...");
       return;
     }
@@ -110,8 +124,9 @@ function runAdapter(projectId, sourceDir) {
     targetOutput = path.join(ROOT_DIR, "analyze", "projects", slugId, "explorer-data.json");
   }
 
+  const sourceFlag = sourceDir ? ` --source "${sourceDir}"` : "";
   execSync(
-    `node "${ADAPTER_SCRIPT}" --input "${inputDir}" --output "${targetOutput}" --project "${slugId}" --source "${sourceDir}"`,
+    `node "${ADAPTER_SCRIPT}" --input "${inputDir}" --output "${targetOutput}" --project "${slugId}"${sourceFlag}`,
     {
       cwd: ROOT_DIR,
       stdio: "inherit"
@@ -147,13 +162,17 @@ function startExplorer(mode) {
 
 function main() {
   try {
-    const { mode, fresh, project, source } = parseArgs(process.argv);
+    const { mode, fresh, project, source, explicitSource } = parseArgs(process.argv);
     console.log("Salesforce Architecture & Refactoring Explorer");
     console.log("=============================================");
     console.log(`Project: ${project}`);
-    console.log(`Source:  ${source}`);
+    console.log(`Source:  ${source || "(none)"}`);
 
-    runAnalysisIfNeeded(source, fresh, project);
+    if (explicitSource && source && !fs.existsSync(source)) {
+      throw new Error(`Explicitly supplied source directory does not exist: ${source}`);
+    }
+
+    runAnalysisIfNeeded(source, fresh, project, explicitSource);
     runAdapter(project, source);
     startExplorer(mode);
   } catch (err) {
