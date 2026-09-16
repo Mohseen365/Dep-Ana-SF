@@ -6,41 +6,21 @@
       "id": "movie",
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "/app/scripts/temp-snapshot-test-fixture",
-      "createdAt": "2026-09-16T08:22:07.526Z",
-      "updatedAt": "2026-09-16T08:22:07.526Z",
-      "lastAnalyzedAt": "2026-09-16T08:22:07.526Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 2,
-      "dependencyCount": 2,
-      "analysisPath": "/projects/movie/explorer-data.json"
-    },
-    {
-      "id": "test-norm-proj",
-      "name": "test-norm-proj",
-      "description": "Salesforce DX Architecture Analysis",
       "sourcePath": "/app/tmp-cli-forwarding-test/src/force-app/main/default",
-      "createdAt": "2026-09-16T08:18:36.340Z",
-      "updatedAt": "2026-09-16T08:18:36.340Z",
-      "lastAnalyzedAt": "2026-09-16T08:18:36.340Z",
+      "createdAt": "2026-09-16T17:35:17.474Z",
+      "updatedAt": "2026-09-16T17:35:17.474Z",
+      "lastAnalyzedAt": "2026-09-16T17:35:17.474Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 1,
       "dependencyCount": 0,
-      "analysisPath": "/projects/test-norm-proj/explorer-data.json"
+      "analysisPath": "/projects/movie/explorer-data.json"
     }
   ],
   "artifacts": {
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:c62fb8162cad864905fde382dd02ff8b83e6fef495e66ec20143ee72cb9dfda2",
-      "nodeCount": 2,
-      "edgeCount": 2
-    },
-    "test-norm-proj": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:dcda46f9af919a7c0667c70a561cf18e07801f702e6cc3c86b99ae40def01927",
+      "fileHash": "sha256:d6ee3d5af745aa9b8288ff8dee3cda8c19858514489bbd980a963b2edc2f664f",
       "nodeCount": 1,
       "edgeCount": 0
     }

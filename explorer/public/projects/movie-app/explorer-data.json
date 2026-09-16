@@ -1,32 +1,32 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-09-16T08:22:07.526Z",
-  "sourceDirectory": "/app/scripts/temp-snapshot-test-fixture",
+  "generatedAt": "2026-09-16T17:35:17.474Z",
+  "sourceDirectory": "/app/tmp-cli-forwarding-test/src/force-app/main/default",
   "project": {
     "id": "movie",
     "name": "movie",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "/app/scripts/temp-snapshot-test-fixture",
-    "createdAt": "2026-09-16T08:22:07.526Z",
-    "updatedAt": "2026-09-16T08:22:07.526Z",
-    "lastAnalyzedAt": "2026-09-16T08:22:07.526Z",
+    "sourcePath": "/app/tmp-cli-forwarding-test/src/force-app/main/default",
+    "createdAt": "2026-09-16T17:35:17.474Z",
+    "updatedAt": "2026-09-16T17:35:17.474Z",
+    "lastAnalyzedAt": "2026-09-16T17:35:17.474Z",
     "analysisStatus": "COMPLETE",
-    "componentCount": 2,
-    "dependencyCount": 2,
+    "componentCount": 1,
+    "dependencyCount": 0,
     "analysisPath": "/projects/movie/explorer-data.json"
   },
   "summary": {
-    "nodeCount": 2,
-    "edgeCount": 2,
+    "nodeCount": 1,
+    "edgeCount": 0,
     "highRiskCount": 0,
     "mediumRiskCount": 0,
-    "lowRiskCount": 2,
-    "cycleCount": 1,
+    "lowRiskCount": 1,
+    "cycleCount": 0,
     "unresolvedCount": 0,
     "inventory": {
-      "files": 2,
-      "apexClasses": 2,
+      "files": 1,
+      "apexClasses": 1,
       "apexTriggers": 0,
       "lwcJs": 0,
       "lwcHtml": 0,
@@ -38,14 +38,14 @@
   },
   "nodes": [
     {
-      "id": "ApexClass:ClassA",
-      "displayName": "ClassA",
+      "id": "ApexClass:MovieService",
+      "displayName": "MovieService",
       "type": "ApexClass",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
+      "file": "tmp-cli-forwarding-test/src/force-app/main/default/classes/MovieService.cls",
       "metrics": {
-        "fanIn": 1,
-        "fanOut": 1,
-        "coupling": 2,
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
         "unresolved": 0,
         "score": 0
       },
@@ -56,169 +56,31 @@
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 0,
+        "securitySignalsCount": 1,
         "queryCount": 0,
         "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
         "isHighRisk": false,
-        "hasCycles": true,
-        "hasUnresolved": false,
-        "testCoverageStatus": "NO_TESTS"
-      }
-    },
-    {
-      "id": "ApexClass:ClassB",
-      "displayName": "ClassB",
-      "type": "ApexClass",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
-      "metrics": {
-        "fanIn": 1,
-        "fanOut": 1,
-        "coupling": 2,
-        "unresolved": 0,
-        "score": 0
-      },
-      "risk": "LOW",
-      "riskReasons": [],
-      "behavior": {
-        "isTest": false,
-        "sharing": null,
-        "publicContractsCount": 0,
-        "asyncPatterns": [],
-        "securitySignalsCount": 0,
-        "queryCount": 0,
-        "dmlCount": 0,
-        "calloutCount": 0
-      },
-      "refactoringReadiness": {
-        "isHighRisk": false,
-        "hasCycles": true,
+        "hasCycles": false,
         "hasUnresolved": false,
         "testCoverageStatus": "NO_TESTS"
       }
     }
   ],
-  "edges": [
-    {
-      "id": "ApexClass:ClassA|ApexClass:ClassB|method-call|doHelp|ClassB.doHelp()",
-      "source": "ApexClass:ClassA",
-      "target": "ApexClass:ClassB",
-      "relationshipType": "method-call",
-      "method": "doHelp",
-      "evidence": "ClassB.doHelp()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 1,
-      "column": 53,
-      "methodOwner": "doWork",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "ClassA",
-          "method": "doWork"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "ClassB",
-          "method": "doHelp"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 1,
-          "column": 53
-        }
-      }
-    },
-    {
-      "id": "ApexClass:ClassB|ApexClass:ClassA|method-call|doWork|ClassA.doWork()",
-      "source": "ApexClass:ClassB",
-      "target": "ApexClass:ClassA",
-      "relationshipType": "method-call",
-      "method": "doWork",
-      "evidence": "ClassA.doWork()",
-      "unresolved": false,
-      "resolutionClassification": "RESOLVED_LOCAL",
-      "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 1,
-      "column": 53,
-      "methodOwner": "doHelp",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
-      "canonical": {
-        "source": {
-          "type": "ApexClass",
-          "name": "ClassB",
-          "method": "doHelp"
-        },
-        "target": {
-          "type": "ApexClass",
-          "name": "ClassA",
-          "method": "doWork"
-        },
-        "relationship": {
-          "type": "method-call",
-          "resolution": "EXACT"
-        },
-        "location": {
-          "line": 1,
-          "column": 53
-        }
-      }
-    }
-  ],
-  "cycles": [
-    {
-      "id": "cycle-1",
-      "size": 2,
-      "nodes": [
-        "ApexClass:ClassA",
-        "ApexClass:ClassB"
-      ]
-    }
-  ],
+  "edges": [],
+  "cycles": [],
   "unresolvedReferences": [],
   "impactSummaries": {
-    "ApexClass:ClassA": {
-      "id": "ApexClass:ClassA",
-      "directDependencies": [
-        "ApexClass:ClassB"
-      ],
-      "directDependents": [
-        "ApexClass:ClassB"
-      ],
-      "transitiveDependencies": [
-        "ApexClass:ClassB"
-      ],
-      "transitiveDependents": [
-        "ApexClass:ClassB"
-      ],
+    "ApexClass:MovieService": {
+      "id": "ApexClass:MovieService",
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
       "impactedTests": [],
-      "totalImpactCount": 1
-    },
-    "ApexClass:ClassB": {
-      "id": "ApexClass:ClassB",
-      "directDependencies": [
-        "ApexClass:ClassA"
-      ],
-      "directDependents": [
-        "ApexClass:ClassA"
-      ],
-      "transitiveDependencies": [
-        "ApexClass:ClassA"
-      ],
-      "transitiveDependents": [
-        "ApexClass:ClassA"
-      ],
-      "impactedTests": [],
-      "totalImpactCount": 1
+      "totalImpactCount": 0
     }
   }
 }
