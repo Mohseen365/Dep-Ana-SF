@@ -16,6 +16,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { analyzeTestGap } = require("../dependency-analyzer.cjs");
 
+const ROOT_DIR = path.resolve(__dirname, "..");
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
 
@@ -39,25 +40,34 @@ function parseArgs(argv) {
   let source = "";
   const positionals = [];
 
+  let inputExplicit = false;
+  let outputExplicit = false;
+  let projectExplicit = false;
+  let sourceExplicit = false;
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
     if (arg.startsWith("--input=") || arg.startsWith("-input=")) {
       input = arg.split("=").slice(1).join("=");
+      inputExplicit = true;
       continue;
     }
     if ((arg === "--input" || arg === "-input") && args[i + 1]) {
       input = args[i + 1];
+      inputExplicit = true;
       i++;
       continue;
     }
 
     if (arg.startsWith("--output=") || arg.startsWith("-output=")) {
       output = arg.split("=").slice(1).join("=");
+      outputExplicit = true;
       continue;
     }
     if ((arg === "--output" || arg === "-output") && args[i + 1]) {
       output = args[i + 1];
+      outputExplicit = true;
       i++;
       continue;
     }
@@ -74,21 +84,27 @@ function parseArgs(argv) {
 
     if (arg.startsWith("--project=") || arg.startsWith("-project=") || arg.startsWith("--project-id=") || arg.startsWith("-project-id=")) {
       const val = arg.split("=").slice(1).join("=");
-      if (val) project = slugify(val) || "default";
+      if (val) {
+        project = slugify(val) || "default";
+        projectExplicit = true;
+      }
       continue;
     }
     if ((arg === "--project" || arg === "-project" || arg === "--project-id" || arg === "-project-id") && args[i + 1]) {
       project = slugify(args[i + 1]) || "default";
+      projectExplicit = true;
       i++;
       continue;
     }
 
     if (arg.startsWith("--source=") || arg.startsWith("-source=")) {
       source = arg.split("=").slice(1).join("=");
+      sourceExplicit = true;
       continue;
     }
     if ((arg === "--source" || arg === "-source") && args[i + 1]) {
       source = args[i + 1];
+      sourceExplicit = true;
       i++;
       continue;
     }
@@ -98,11 +114,41 @@ function parseArgs(argv) {
     }
   }
 
-  if (positionals.length > 0 && input === "analyze") {
-    input = positionals[0];
+  // Safely classify positional arguments
+  for (const pos of positionals) {
+    const resolvedPath = path.resolve(ROOT_DIR, pos);
+    const exists = fs.existsSync(resolvedPath);
+    const isDir = exists && fs.statSync(resolvedPath).isDirectory();
+    const isJsonFile = pos.endsWith(".json");
+    const containsPathSep = pos.includes("/") || pos.includes("\\");
+
+    if ((isDir || containsPathSep) && !sourceExplicit && !pos.startsWith("analyze")) {
+      source = pos;
+      sourceExplicit = true;
+    } else if (!inputExplicit && (isDir || isJsonFile || pos.startsWith("analyze") || exists)) {
+      if (isJsonFile || (containsPathSep && !isDir)) {
+        if (!outputExplicit && inputExplicit) {
+          output = pos;
+          outputExplicit = true;
+        } else if (!inputExplicit) {
+          input = pos;
+          inputExplicit = true;
+        }
+      } else {
+        input = pos;
+        inputExplicit = true;
+      }
+    } else if (!projectExplicit && !isJsonFile && !isDir && !containsPathSep) {
+      project = slugify(pos) || "default";
+      projectExplicit = true;
+    }
   }
-  if (positionals.length > 1 && !output) {
-    output = positionals[1];
+
+  if (input && !projectExplicit) {
+    const m = input.match(/projects[/\\]([^/\\]+)/);
+    if (m && m[1]) {
+      project = slugify(m[1]) || "default";
+    }
   }
 
   if (!output) {
@@ -120,8 +166,8 @@ function parseArgs(argv) {
 
 function isSameSource(sourceA, sourceB) {
   if (!sourceA || !sourceB) return false;
-  const normA = path.resolve(sourceA).toLowerCase().replace(/\\/g, "/");
-  const normB = path.resolve(sourceB).toLowerCase().replace(/\\/g, "/");
+  const normA = path.resolve(ROOT_DIR, sourceA).toLowerCase().replace(/\\/g, "/").replace(/\/+$/, "");
+  const normB = path.resolve(ROOT_DIR, sourceB).toLowerCase().replace(/\\/g, "/").replace(/\/+$/, "");
   return normA === normB;
 }
 
@@ -138,10 +184,10 @@ function getReportSourceDir(reportFilePath) {
 function resolveInputFile(inputPath, options = {}) {
   const rawProjectId = options.project || options.projectId || "default";
   const projectId = slugify(rawProjectId) || "default";
-  const explicitSource = options.source || null;
+  const explicitSource = options.source ? path.resolve(ROOT_DIR, options.source) : null;
 
   if (explicitSource && !fs.existsSync(explicitSource)) {
-    throw new Error(`Explicitly supplied source directory does not exist: ${explicitSource}`);
+    throw new Error(`Explicitly supplied source directory does not exist: ${options.source}`);
   }
 
   const matchesSource = (candidateFile) => {
@@ -151,44 +197,53 @@ function resolveInputFile(inputPath, options = {}) {
     return candidateSource ? isSameSource(candidateSource, explicitSource) : false;
   };
 
-  // 1. Check explicit inputPath if provided
+  // 1. Check explicit inputPath if provided and not generic default "analyze"
   if (inputPath && inputPath !== "analyze") {
-    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
-      if (matchesSource(inputPath)) {
-        return inputPath;
-      } else {
-        throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+    const resolvedInput = path.resolve(ROOT_DIR, inputPath);
+    if (fs.existsSync(resolvedInput)) {
+      const stat = fs.statSync(resolvedInput);
+      if (stat.isFile()) {
+        if (matchesSource(resolvedInput)) {
+          return resolvedInput;
+        } else if (explicitSource) {
+          throw new Error(`Analyzer output file '${inputPath}' does not match explicit source: ${options.source}`);
+        }
       }
-    }
-    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
-      const reportFile = path.join(inputPath, "dependency-report.json");
-      const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
-      const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
-      if (foundFile && matchesSource(foundFile)) {
-        return foundFile;
-      } else if (foundFile) {
-        throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+      if (stat.isDirectory()) {
+        const reportFile = path.join(resolvedInput, "dependency-report.json");
+        const snapshotFile = path.join(resolvedInput, "analysis-snapshot.json");
+        const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
+        if (foundFile && matchesSource(foundFile)) {
+          return foundFile;
+        } else if (foundFile && explicitSource) {
+          throw new Error(`Analyzer output file in directory '${inputPath}' does not match explicit source: ${options.source}`);
+        }
       }
     }
   }
 
   // 2. Check project-specific analyze directory
   if (projectId !== "default") {
-    const projReport = path.resolve(__dirname, "..", "analyze", "projects", projectId, "dependency-report.json");
-    const projSnapshot = path.resolve(__dirname, "..", "analyze", "projects", projectId, "analysis-snapshot.json");
+    const projReport = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "dependency-report.json");
+    const projSnapshot = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "analysis-snapshot.json");
     const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
     if (foundProj && matchesSource(foundProj)) return foundProj;
   }
 
   // 3. Check root or default analyze directory for report
-  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
-  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
-  const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
-  const analyzeSnapshot = path.resolve(__dirname, "..", "analyze", "analysis-snapshot.json");
+  const analyzeReport = path.resolve(ROOT_DIR, "analyze", "dependency-report.json");
+  const analyzeSnapshot = path.resolve(ROOT_DIR, "analyze", "analysis-snapshot.json");
+  const rootReport = path.resolve(ROOT_DIR, "dependency-report.json");
+  const rootSnapshot = path.resolve(ROOT_DIR, "analysis-snapshot.json");
 
-  const foundDefault = [rootReport, rootSnapshot, analyzeReport, analyzeSnapshot].find((f) => fs.existsSync(f) && matchesSource(f));
+  // Prefer analyze/ directory over root test artifacts
+  const candidateDefaults = [analyzeReport, analyzeSnapshot, rootReport, rootSnapshot];
+  const foundDefault = candidateDefaults.find((f) => fs.existsSync(f) && matchesSource(f));
   if (foundDefault) return foundDefault;
 
+  if (explicitSource) {
+    throw new Error(`Analyzer output file not found matching explicit source '${options.source}' in directory: ${inputPath}`);
+  }
   throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
 }
 

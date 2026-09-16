@@ -1,0 +1,13 @@
+{
+  "id": "movie",
+  "name": "movie",
+  "description": "Salesforce DX Architecture Analysis",
+  "sourcePath": "/app/temp-test-source-resolution/movie_src_a",
+  "createdAt": "2026-09-16T06:37:03.221Z",
+  "updatedAt": "2026-09-16T06:37:03.221Z",
+  "lastAnalyzedAt": "2026-09-16T06:37:03.221Z",
+  "analysisStatus": "COMPLETE",
+  "componentCount": 1,
+  "dependencyCount": 0,
+  "analysisPath": "/projects/movie/explorer-data.json"
+}

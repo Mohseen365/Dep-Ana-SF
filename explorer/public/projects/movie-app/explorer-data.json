@@ -1,16 +1,16 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-09-15T17:20:04.750Z",
-  "sourceDirectory": "/app/temp-test-fixture-proj-a",
+  "generatedAt": "2026-09-16T06:38:00.754Z",
+  "sourceDirectory": "force-app/main/default",
   "project": {
     "id": "movie-app",
     "name": "Movie App",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "/app/temp-test-fixture-proj-a",
-    "createdAt": "2026-09-15T17:20:04.750Z",
-    "updatedAt": "2026-09-15T17:20:04.750Z",
-    "lastAnalyzedAt": "2026-09-15T17:20:04.750Z",
+    "sourcePath": "force-app/main/default",
+    "createdAt": "2026-09-16T06:38:00.754Z",
+    "updatedAt": "2026-09-16T06:38:00.754Z",
+    "lastAnalyzedAt": "2026-09-16T06:38:00.754Z",
     "analysisStatus": "COMPLETE",
     "componentCount": 1,
     "dependencyCount": 0,
@@ -38,10 +38,10 @@
   },
   "nodes": [
     {
-      "id": "ApexClass:ServiceA",
-      "displayName": "ServiceA",
+      "id": "ApexClass:Foo",
+      "displayName": "Foo",
       "type": "ApexClass",
-      "file": "temp-test-fixture-proj-a/classes/ServiceA.cls",
+      "file": "",
       "metrics": {
         "fanIn": 0,
         "fanOut": 0,
@@ -73,8 +73,8 @@
   "cycles": [],
   "unresolvedReferences": [],
   "impactSummaries": {
-    "ApexClass:ServiceA": {
-      "id": "ApexClass:ServiceA",
+    "ApexClass:Foo": {
+      "id": "ApexClass:Foo",
       "directDependencies": [],
       "directDependents": [],
       "transitiveDependencies": [],
