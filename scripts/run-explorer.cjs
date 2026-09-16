@@ -130,9 +130,11 @@ function runAnalysisIfNeeded(
       ? path.join(ROOT_DIR, "analyze", "projects", slugId)
       : path.join(ROOT_DIR, "analyze");
   const reportFile = path.join(analyzeDir, "dependency-report.json");
+  const explorerDataFile = path.join(analyzeDir, "explorer-data.json");
 
   const hasSource = Boolean(sourceDir && fs.existsSync(sourceDir));
   const hasReport = fs.existsSync(reportFile);
+  const hasExplorerData = fs.existsSync(explorerDataFile);
 
   if (explicitSource && !hasSource) {
     throw new Error(
@@ -140,13 +142,13 @@ function runAnalysisIfNeeded(
     );
   }
 
-  if (!hasSource && !hasReport) {
+  if (!hasSource && !hasReport && !hasExplorerData) {
     throw new Error(
       `Source directory (${sourceDir || path.join(ROOT_DIR, "force-app", "main", "default")}) and existing analysis (${reportFile}) both not found.`,
     );
   }
 
-  let shouldRun = fresh || !hasReport;
+  let shouldRun = fresh || (!hasReport && !hasExplorerData);
 
   if (!shouldRun && hasSource) {
     try {
