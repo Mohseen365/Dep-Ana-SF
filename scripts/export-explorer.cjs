@@ -37,39 +37,72 @@ function parseArgs(argv) {
   let projectName = "";
   let projectDesc = "";
   let source = "";
+  const positionals = [];
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === "--input" && args[i + 1]) {
+
+    if (arg.startsWith("--input=") || arg.startsWith("-input=")) {
+      input = arg.split("=").slice(1).join("=");
+      continue;
+    }
+    if ((arg === "--input" || arg === "-input") && args[i + 1]) {
       input = args[i + 1];
       i++;
-    } else if (arg === "--output" && args[i + 1]) {
+      continue;
+    }
+
+    if (arg.startsWith("--output=") || arg.startsWith("-output=")) {
+      output = arg.split("=").slice(1).join("=");
+      continue;
+    }
+    if ((arg === "--output" || arg === "-output") && args[i + 1]) {
       output = args[i + 1];
       i++;
-    } else if (arg === "--output-dir" && args[i + 1]) {
+      continue;
+    }
+
+    if (arg.startsWith("--output-dir=") || arg.startsWith("-output-dir=")) {
+      outputDir = arg.split("=").slice(1).join("=");
+      continue;
+    }
+    if ((arg === "--output-dir" || arg === "-output-dir") && args[i + 1]) {
       outputDir = args[i + 1];
       i++;
-    } else if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
+      continue;
+    }
+
+    if (arg.startsWith("--project=") || arg.startsWith("-project=") || arg.startsWith("--project-id=") || arg.startsWith("-project-id=")) {
+      const val = arg.split("=").slice(1).join("=");
+      if (val) project = slugify(val) || "default";
+      continue;
+    }
+    if ((arg === "--project" || arg === "-project" || arg === "--project-id" || arg === "-project-id") && args[i + 1]) {
       project = slugify(args[i + 1]) || "default";
       i++;
-    } else if (arg === "--project-name" && args[i + 1]) {
-      projectName = args[i + 1];
-      if (project === "default" && projectName) {
-        project = slugify(projectName) || "default";
-      }
-      i++;
-    } else if (arg === "--project-desc" && args[i + 1]) {
-      projectDesc = args[i + 1];
-      i++;
-    } else if (arg === "--source" && args[i + 1]) {
+      continue;
+    }
+
+    if (arg.startsWith("--source=") || arg.startsWith("-source=")) {
+      source = arg.split("=").slice(1).join("=");
+      continue;
+    }
+    if ((arg === "--source" || arg === "-source") && args[i + 1]) {
       source = args[i + 1];
       i++;
-    } else if (!arg.startsWith("--")) {
-      if (i === 0 || (i === 1 && !args[0].startsWith("--"))) {
-        if (i === 0) input = arg;
-        if (i === 1) output = arg;
-      }
+      continue;
     }
+
+    if (!arg.startsWith("-")) {
+      positionals.push(arg);
+    }
+  }
+
+  if (positionals.length > 0 && input === "analyze") {
+    input = positionals[0];
+  }
+  if (positionals.length > 1 && !output) {
+    output = positionals[1];
   }
 
   if (!output) {

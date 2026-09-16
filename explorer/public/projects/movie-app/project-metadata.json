@@ -1,0 +1,13 @@
+{
+  "id": "movie-app",
+  "name": "movie-app",
+  "description": "Salesforce DX Architecture Analysis",
+  "sourcePath": "analyze/projects/movie-app",
+  "createdAt": "2026-09-16T04:07:13.059Z",
+  "updatedAt": "2026-09-16T04:07:13.059Z",
+  "lastAnalyzedAt": "2026-09-16T04:07:13.059Z",
+  "analysisStatus": "COMPLETE",
+  "componentCount": 1,
+  "dependencyCount": 0,
+  "analysisPath": "/projects/movie-app/explorer-data.json"
+}

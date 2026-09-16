@@ -116,6 +116,21 @@ function runTests() {
     console.log("  ✓ Test 4 PASSED: Explicit source mismatch rejected");
 
     // -------------------------------------------------------------
+    // Test 4B: Positional and key=value argument parsing
+    // -------------------------------------------------------------
+    console.log("Test 4B: Positional and key=value argument parsing");
+    const test4bSrc = path.join(TEMP_TEST_DIR, "src_4b");
+    fs.mkdirSync(path.join(test4bSrc, "classes"), { recursive: true });
+    fs.writeFileSync(path.join(test4bSrc, "classes", "Service4B.cls"), "public class Service4B {}");
+
+    // Test run-explorer.cjs with positional args (like `npm run explorer Food-App C:\path\to\src`)
+    const { execSync: execSub } = require("child_process");
+    const r4b = execSub(`node "${RUN_EXPLORER_SCRIPT}" Food-App "${test4bSrc}" --build`, { cwd: ROOT_DIR, encoding: "utf8" });
+    assert.ok(r4b.includes("Project: food-app"), `Project should be parsed as food-app, got output:\n${r4b}`);
+    assert.ok(r4b.includes(test4bSrc), `Source should be parsed as ${test4bSrc}`);
+    console.log("  ✓ Test 4B PASSED: Positional arguments correctly inferred for project and source");
+
+    // -------------------------------------------------------------
     // Test 5: Movie project workflow
     // -------------------------------------------------------------
     console.log("Test 5: Movie project workflow");

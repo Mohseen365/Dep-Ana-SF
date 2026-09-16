@@ -35,22 +35,65 @@ function parseArgs(argv) {
   let project = "default";
   let source = "";
   let explicitSource = false;
+  const positionals = [];
 
   const defaultSourcePath = path.join(ROOT_DIR, "force-app", "main", "default");
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === "--preview") mode = "preview";
-    if (arg === "--build") mode = "build";
-    if (arg === "--fresh") fresh = true;
-    if ((arg === "--project" || arg === "--project-id") && args[i + 1]) {
+
+    if (arg === "--preview" || arg === "-preview") {
+      mode = "preview";
+      continue;
+    }
+    if (arg === "--build" || arg === "-build") {
+      mode = "build";
+      continue;
+    }
+    if (arg === "--fresh" || arg === "-fresh") {
+      fresh = true;
+      continue;
+    }
+
+    if (arg.startsWith("--project=") || arg.startsWith("-project=") || arg.startsWith("--project-id=") || arg.startsWith("-project-id=")) {
+      const val = arg.split("=").slice(1).join("=");
+      if (val) project = slugify(val) || "default";
+      continue;
+    }
+    if ((arg === "--project" || arg === "-project" || arg === "--project-id" || arg === "-project-id") && args[i + 1]) {
       project = slugify(args[i + 1]) || "default";
       i++;
+      continue;
     }
-    if (arg === "--source" && args[i + 1]) {
+
+    if (arg.startsWith("--source=") || arg.startsWith("-source=")) {
+      const val = arg.split("=").slice(1).join("=");
+      if (val) {
+        source = path.resolve(ROOT_DIR, val);
+        explicitSource = true;
+      }
+      continue;
+    }
+    if ((arg === "--source" || arg === "-source") && args[i + 1]) {
       source = path.resolve(ROOT_DIR, args[i + 1]);
       explicitSource = true;
       i++;
+      continue;
+    }
+
+    if (!arg.startsWith("-")) {
+      positionals.push(arg);
+    }
+  }
+
+  // Process positional arguments if flags were stripped (e.g. `npm run explorer Food-App C:\path\to\src`)
+  for (const pos of positionals) {
+    const looksLikePath = pos.includes("/") || pos.includes("\\") || fs.existsSync(path.resolve(ROOT_DIR, pos));
+    if (looksLikePath && !explicitSource) {
+      source = path.resolve(ROOT_DIR, pos);
+      explicitSource = true;
+    } else if (!looksLikePath && project === "default") {
+      project = slugify(pos) || "default";
     }
   }
 
