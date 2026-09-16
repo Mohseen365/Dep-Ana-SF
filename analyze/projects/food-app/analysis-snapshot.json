@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 4,
+  "analyzerVersion": "13",
+  "analyzer": "Salesforce Dependency Analyzer v13",
+  "generatedAt": "2026-09-16T04:06:59.837Z",
+  "sourceDirectory": "temp-test-source-resolution/src_4b",
+  "inventory": {
+    "files": 1,
+    "apexClasses": 1,
+    "apexTriggers": 0,
+    "lwcJs": 0,
+    "lwcHtml": 0,
+    "visualforce": 0,
+    "flows": 0,
+    "objects": 0,
+    "fields": 0
+  },
+  "discovered": {
+    "sourceDir": "/app/temp-test-source-resolution/src_4b",
+    "files": [
+      "/app/temp-test-source-resolution/src_4b/classes/Service4B.cls"
+    ],
+    "apexClasses": [
+      "/app/temp-test-source-resolution/src_4b/classes/Service4B.cls"
+    ],
+    "apexTriggers": [],
+    "apexClassMeta": [],
+    "triggerMeta": [],
+    "lwcJs": [],
+    "lwcHtml": [],
+    "lwcCss": [],
+    "lwcMeta": [],
+    "aura": [],
+    "visualforce": [],
+    "flows": [],
+    "objects": [],
+    "fields": [],
+    "triggers": []
+  },
+  "fileState": [
+    {
+      "file": "temp-test-source-resolution/src_4b/classes/Service4B.cls",
+      "size": 25,
+      "mtimeMs": 1789531619676.2732
+    }
+  ],
+  "options": {
+    "maxGraphEdges": 10000
+  },
+  "testGapSummary": {
+    "totalComponents": 1,
+    "coveredCount": 0,
+    "likelyCoveredCount": 0,
+    "noTestEvidenceCount": 1,
+    "knownCoverageFailureCount": 0,
+    "ambiguousTestCount": 0,
+    "testComponentCount": 0,
+    "componentsWithTestGap": 1
+  },
+  "registry": [
+    {
+      "id": "ApexClass:Service4B",
+      "type": "ApexClass",
+      "name": "Service4B",
+      "file": "temp-test-source-resolution/src_4b/classes/Service4B.cls",
+      "parsed": {
+        "id": "ApexClass:Service4B",
+        "type": "ApexClass",
+        "name": "Service4B",
+        "file": "temp-test-source-resolution/src_4b/classes/Service4B.cls",
+        "lines": 1,
+        "isTest": false,
+        "sharing": null,
+        "extends": [],
+        "implements": [],
+        "annotations": [],
+        "methods": [],
+        "dependencies": [],
+        "sourceHash": "5c76e999d7656fdd800242da24e1cdaf7c69f35295878f07091d1f385954740c",
+        "lineCount": 1,
+        "objects": [],
+        "fields": [],
+        "dml": [],
+        "callouts": [],
+        "dynamicApex": [],
+        "testReferences": [],
+        "sourceBytes": 25,
+        "behavior": {
+          "publicContracts": [],
+          "async": [],
+          "securitySignals": [],
+          "errorHandling": {
+            "throws": 0,
+            "tryCatchBlocks": 0,
+            "auraHandledExceptions": 0
+          },
+          "queries": []
+        }
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ApexClass:Service4B",
+      "name": "Service4B",
+      "type": "ApexClass",
+      "file": "temp-test-source-resolution/src_4b/classes/Service4B.cls"
+    }
+  ],
+  "edges": [],
+  "metrics": [
+    {
+      "id": "ApexClass:Service4B",
+      "name": "Service4B",
+      "type": "ApexClass",
+      "file": "temp-test-source-resolution/src_4b/classes/Service4B.cls",
+      "fanIn": 0,
+      "fanOut": 0,
+      "coupling": 0,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    }
+  ],
+  "cycles": []
+}
