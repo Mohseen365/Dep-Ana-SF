@@ -1,6 +1,6 @@
 # Salesforce Dependency Analysis Summary
 
-Generated: 2026-09-15T18:12:13.829Z
+Generated: 2026-09-16T03:26:30.949Z
 
 ## Inventory
 
@@ -19,10 +19,10 @@ Generated: 2026-09-15T18:12:13.829Z
 
 ## Highest Impact Components
 
-| Component | Type      | Fan-In | Fan-Out | Coupling | Risk |
-| --------- | --------- | -----: | ------: | -------: | ---- |
-| ClassA    | ApexClass |      1 |       1 |        2 | LOW  |
-| ClassB    | ApexClass |      1 |       1 |        2 | LOW  |
+| Component | Type | Fan-In | Fan-Out | Coupling | Risk |
+|---|---|---:|---:|---:|---|
+| ClassA | ApexClass | 1 | 1 | 2 | LOW |
+| ClassB | ApexClass | 1 | 1 | 2 | LOW |
 
 ## Interpretation
 
