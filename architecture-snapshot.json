@@ -3,7 +3,7 @@
   "analyzerVersion": "13",
   "analyzer": "Salesforce Dependency Analyzer v13",
   "snapshotIdentity": "arch-snap-sha256:b3da298d355d52e03a4cfcfadc49a50106b15ba369eddc392db0fa6a6b285d05",
-  "generatedAt": "2026-09-15T18:12:13.825Z",
+  "generatedAt": "2026-09-16T03:26:30.946Z",
   "sourceDirectory": "/app/scripts/temp-snapshot-test-fixture",
   "metadata": {
     "fileCount": 2,
@@ -62,7 +62,9 @@
             "detail": "Component name 'ClassA' matches domain stem candidate 'ClassA'."
           }
         ],
-        "secondary": ["ClassB"]
+        "secondary": [
+          "ClassB"
+        ]
       },
       "entryPoint": {
         "value": "none",
@@ -140,7 +142,9 @@
             "detail": "Component participates in 1 circular dependency loop(s)."
           }
         ],
-        "secondary": ["circular-dependency"],
+        "secondary": [
+          "circular-dependency"
+        ],
         "metadata": {
           "hasSmells": true,
           "smellCount": 1,
@@ -189,14 +193,19 @@
             "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
           }
         ],
-        "secondary": ["boundary-violation", "architectural-bottleneck"],
+        "secondary": [
+          "boundary-violation",
+          "architectural-bottleneck"
+        ],
         "metadata": {
           "hasDebt": true,
           "debtCount": 2,
           "debtItems": [
             {
               "debtCategory": "boundary-violation",
-              "affectedComponents": ["ClassA"],
+              "affectedComponents": [
+                "ClassA"
+              ],
               "severity": "high",
               "confidence": "high",
               "evidence": [
@@ -211,7 +220,9 @@
             },
             {
               "debtCategory": "architectural-bottleneck",
-              "affectedComponents": ["ClassA"],
+              "affectedComponents": [
+                "ClassA"
+              ],
               "severity": "high",
               "confidence": "high",
               "evidence": [
@@ -230,7 +241,9 @@
         "debtItems": [
           {
             "debtCategory": "boundary-violation",
-            "affectedComponents": ["ClassA"],
+            "affectedComponents": [
+              "ClassA"
+            ],
             "severity": "high",
             "confidence": "high",
             "evidence": [
@@ -245,7 +258,9 @@
           },
           {
             "debtCategory": "architectural-bottleneck",
-            "affectedComponents": ["ClassA"],
+            "affectedComponents": [
+              "ClassA"
+            ],
             "severity": "high",
             "confidence": "high",
             "evidence": [
@@ -331,7 +346,9 @@
             "detail": "Component name 'ClassB' matches domain stem candidate 'ClassB'."
           }
         ],
-        "secondary": ["ClassA"]
+        "secondary": [
+          "ClassA"
+        ]
       },
       "entryPoint": {
         "value": "none",
@@ -409,7 +426,9 @@
             "detail": "Component participates in 1 circular dependency loop(s)."
           }
         ],
-        "secondary": ["circular-dependency"],
+        "secondary": [
+          "circular-dependency"
+        ],
         "metadata": {
           "hasSmells": true,
           "smellCount": 1,
@@ -458,14 +477,19 @@
             "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
           }
         ],
-        "secondary": ["boundary-violation", "architectural-bottleneck"],
+        "secondary": [
+          "boundary-violation",
+          "architectural-bottleneck"
+        ],
         "metadata": {
           "hasDebt": true,
           "debtCount": 2,
           "debtItems": [
             {
               "debtCategory": "boundary-violation",
-              "affectedComponents": ["ClassB"],
+              "affectedComponents": [
+                "ClassB"
+              ],
               "severity": "high",
               "confidence": "high",
               "evidence": [
@@ -480,7 +504,9 @@
             },
             {
               "debtCategory": "architectural-bottleneck",
-              "affectedComponents": ["ClassB"],
+              "affectedComponents": [
+                "ClassB"
+              ],
               "severity": "high",
               "confidence": "high",
               "evidence": [
@@ -499,7 +525,9 @@
         "debtItems": [
           {
             "debtCategory": "boundary-violation",
-            "affectedComponents": ["ClassB"],
+            "affectedComponents": [
+              "ClassB"
+            ],
             "severity": "high",
             "confidence": "high",
             "evidence": [
@@ -514,7 +542,9 @@
           },
           {
             "debtCategory": "architectural-bottleneck",
-            "affectedComponents": ["ClassB"],
+            "affectedComponents": [
+              "ClassB"
+            ],
             "severity": "high",
             "confidence": "high",
             "evidence": [
@@ -618,7 +648,12 @@
       }
     }
   ],
-  "cycles": [["ApexClass:ClassA", "ApexClass:ClassB"]],
+  "cycles": [
+    [
+      "ApexClass:ClassA",
+      "ApexClass:ClassB"
+    ]
+  ],
   "roles": {
     "entry-point": 0,
     "controller": 0,
@@ -980,7 +1015,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
@@ -1003,7 +1041,10 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
@@ -1022,7 +1063,10 @@
         "severity": "CRITICAL",
         "result": "UNKNOWN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "missing-test-protection-unknown",
@@ -1071,7 +1115,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "unsafe-change-impact-blocked-fail",
@@ -1112,7 +1159,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
@@ -1135,7 +1185,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "unsafe-change-impact-blocked-fail",
@@ -1156,7 +1209,10 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
@@ -1169,7 +1225,9 @@
         ]
       }
     ],
-    "unknownChecks": ["Missing Test Protection on Critical Paths"]
+    "unknownChecks": [
+      "Missing Test Protection on Critical Paths"
+    ]
   },
   "duplicateResponsibility": {
     "totalComponents": 2,

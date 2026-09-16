@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T18:12:13.830Z",
+  "generatedAt": "2026-09-16T03:26:30.950Z",
   "highestImpact": [
     {
       "id": "ApexClass:ClassA",
@@ -380,7 +380,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
@@ -403,7 +406,10 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
@@ -422,7 +428,10 @@
         "severity": "CRITICAL",
         "result": "UNKNOWN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "missing-test-protection-unknown",
@@ -471,7 +480,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "unsafe-change-impact-blocked-fail",
@@ -512,7 +524,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
@@ -535,7 +550,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "unsafe-change-impact-blocked-fail",
@@ -556,7 +574,10 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
@@ -569,7 +590,9 @@
         ]
       }
     ],
-    "unknownChecks": ["Missing Test Protection on Critical Paths"]
+    "unknownChecks": [
+      "Missing Test Protection on Critical Paths"
+    ]
   },
   "duplicateResponsibilitySummary": {
     "totalComponents": 2,

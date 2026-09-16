@@ -55,12 +55,23 @@ function parseArgs(argv) {
       continue;
     }
 
-    if (arg.startsWith("--project=") || arg.startsWith("-project=") || arg.startsWith("--project-id=") || arg.startsWith("-project-id=")) {
+    if (
+      arg.startsWith("--project=") ||
+      arg.startsWith("-project=") ||
+      arg.startsWith("--project-id=") ||
+      arg.startsWith("-project-id=")
+    ) {
       const val = arg.split("=").slice(1).join("=");
       if (val) project = slugify(val) || "default";
       continue;
     }
-    if ((arg === "--project" || arg === "-project" || arg === "--project-id" || arg === "-project-id") && args[i + 1]) {
+    if (
+      (arg === "--project" ||
+        arg === "-project" ||
+        arg === "--project-id" ||
+        arg === "-project-id") &&
+      args[i + 1]
+    ) {
       project = slugify(args[i + 1]) || "default";
       i++;
       continue;
@@ -88,7 +99,10 @@ function parseArgs(argv) {
 
   // Process positional arguments if flags were stripped (e.g. `npm run explorer Food-App C:\path\to\src`)
   for (const pos of positionals) {
-    const looksLikePath = pos.includes("/") || pos.includes("\\") || fs.existsSync(path.resolve(ROOT_DIR, pos));
+    const looksLikePath =
+      pos.includes("/") ||
+      pos.includes("\\") ||
+      fs.existsSync(path.resolve(ROOT_DIR, pos));
     if (looksLikePath && !explicitSource) {
       source = path.resolve(ROOT_DIR, pos);
       explicitSource = true;
@@ -104,22 +118,32 @@ function parseArgs(argv) {
   return { mode, fresh, project, source, explicitSource };
 }
 
-function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default", explicitSource = false) {
+function runAnalysisIfNeeded(
+  sourceDir,
+  fresh,
+  projectId = "default",
+  explicitSource = false,
+) {
   const slugId = slugify(projectId) || "default";
-  const analyzeDir = slugId !== "default"
-    ? path.join(ROOT_DIR, "analyze", "projects", slugId)
-    : path.join(ROOT_DIR, "analyze");
+  const analyzeDir =
+    slugId !== "default"
+      ? path.join(ROOT_DIR, "analyze", "projects", slugId)
+      : path.join(ROOT_DIR, "analyze");
   const reportFile = path.join(analyzeDir, "dependency-report.json");
 
   const hasSource = Boolean(sourceDir && fs.existsSync(sourceDir));
   const hasReport = fs.existsSync(reportFile);
 
   if (explicitSource && !hasSource) {
-    throw new Error(`Explicitly supplied source directory does not exist: ${sourceDir}`);
+    throw new Error(
+      `Explicitly supplied source directory does not exist: ${sourceDir}`,
+    );
   }
 
   if (!hasSource && !hasReport) {
-    throw new Error(`Source directory (${sourceDir || path.join(ROOT_DIR, "force-app", "main", "default")}) and existing analysis (${reportFile}) both not found.`);
+    throw new Error(
+      `Source directory (${sourceDir || path.join(ROOT_DIR, "force-app", "main", "default")}) and existing analysis (${reportFile}) both not found.`,
+    );
   }
 
   let shouldRun = fresh || !hasReport;
@@ -129,7 +153,10 @@ function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default", explicitSo
       const analyzer = require(ANALYZER_SCRIPT);
       if (typeof analyzer.getAnalysis === "function") {
         console.log("Checking dependency analysis cache freshness...");
-        const result = analyzer.getAnalysis(sourceDir, { quiet: true, project: slugId });
+        const result = analyzer.getAnalysis(sourceDir, {
+          quiet: true,
+          project: slugId,
+        });
         if (!result || !result.fromSnapshot) {
           shouldRun = true;
         } else {
@@ -144,14 +171,16 @@ function runAnalysisIfNeeded(sourceDir, fresh, projectId = "default", explicitSo
 
   if (shouldRun) {
     if (!hasSource) {
-      console.log("Source directory not present, reusing existing analysis artifacts...");
+      console.log(
+        "Source directory not present, reusing existing analysis artifacts...",
+      );
       return;
     }
     console.log(`Running Salesforce Dependency Analyzer on ${sourceDir}...`);
     const projectFlag = slugId !== "default" ? ` --project "${slugId}"` : "";
     execSync(`node "${ANALYZER_SCRIPT}" analyze "${sourceDir}"${projectFlag}`, {
       cwd: ROOT_DIR,
-      stdio: "inherit"
+      stdio: "inherit",
     });
   }
 }
@@ -164,7 +193,13 @@ function runAdapter(projectId, sourceDir) {
   let targetOutput = path.join(ROOT_DIR, "analyze", "explorer-data.json");
   if (slugId !== "default") {
     inputDir = path.join(ROOT_DIR, "analyze", "projects", slugId);
-    targetOutput = path.join(ROOT_DIR, "analyze", "projects", slugId, "explorer-data.json");
+    targetOutput = path.join(
+      ROOT_DIR,
+      "analyze",
+      "projects",
+      slugId,
+      "explorer-data.json",
+    );
   }
 
   const sourceFlag = sourceDir ? ` --source "${sourceDir}"` : "";
@@ -172,8 +207,8 @@ function runAdapter(projectId, sourceDir) {
     `node "${ADAPTER_SCRIPT}" --input "${inputDir}" --output "${targetOutput}" --project "${slugId}"${sourceFlag}`,
     {
       cwd: ROOT_DIR,
-      stdio: "inherit"
-    }
+      stdio: "inherit",
+    },
   );
 
   if (!fs.existsSync(targetOutput)) {
@@ -194,7 +229,7 @@ function startExplorer(mode) {
   const child = spawn("npm", ["run", script], {
     cwd: EXPLORER_DIR,
     stdio: "inherit",
-    shell: true
+    shell: true,
   });
 
   child.on("error", (err) => {
@@ -205,14 +240,18 @@ function startExplorer(mode) {
 
 function main() {
   try {
-    const { mode, fresh, project, source, explicitSource } = parseArgs(process.argv);
+    const { mode, fresh, project, source, explicitSource } = parseArgs(
+      process.argv,
+    );
     console.log("Salesforce Architecture & Refactoring Explorer");
     console.log("=============================================");
     console.log(`Project: ${project}`);
     console.log(`Source:  ${source || "(none)"}`);
 
     if (explicitSource && source && !fs.existsSync(source)) {
-      throw new Error(`Explicitly supplied source directory does not exist: ${source}`);
+      throw new Error(
+        `Explicitly supplied source directory does not exist: ${source}`,
+      );
     }
 
     runAnalysisIfNeeded(source, fresh, project, explicitSource);
