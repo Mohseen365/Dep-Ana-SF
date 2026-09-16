@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "generatedAt": "2026-09-16T06:37:03.221Z",
+  "sourceDirectory": "/app/temp-test-source-resolution/movie_src_a",
+  "project": {
+    "id": "movie",
+    "name": "movie",
+    "description": "Salesforce DX Architecture Analysis",
+    "sourcePath": "/app/temp-test-source-resolution/movie_src_a",
+    "createdAt": "2026-09-16T06:37:03.221Z",
+    "updatedAt": "2026-09-16T06:37:03.221Z",
+    "lastAnalyzedAt": "2026-09-16T06:37:03.221Z",
+    "analysisStatus": "COMPLETE",
+    "componentCount": 1,
+    "dependencyCount": 0,
+    "analysisPath": "/projects/movie/explorer-data.json"
+  },
+  "summary": {
+    "nodeCount": 1,
+    "edgeCount": 0,
+    "highRiskCount": 0,
+    "mediumRiskCount": 0,
+    "lowRiskCount": 1,
+    "cycleCount": 0,
+    "unresolvedCount": 0,
+    "inventory": {
+      "files": 1,
+      "apexClasses": 1,
+      "apexTriggers": 0,
+      "lwcJs": 0,
+      "lwcHtml": 0,
+      "visualforce": 0,
+      "flows": 0,
+      "objects": 0,
+      "fields": 0
+    }
+  },
+  "nodes": [
+    {
+      "id": "ApexClass:MovieControllerA",
+      "displayName": "MovieControllerA",
+      "type": "ApexClass",
+      "file": "temp-test-source-resolution/movie_src_a/classes/MovieControllerA.cls",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "NO_TESTS"
+      }
+    }
+  ],
+  "edges": [],
+  "cycles": [],
+  "unresolvedReferences": [],
+  "impactSummaries": {
+    "ApexClass:MovieControllerA": {
+      "id": "ApexClass:MovieControllerA",
+      "directDependencies": [],
+      "directDependents": [],
+      "transitiveDependencies": [],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 0
+    }
+  }
+}

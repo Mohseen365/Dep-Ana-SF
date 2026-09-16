@@ -99,12 +99,15 @@ function parseArgs(argv) {
 
   // Process positional arguments if flags were stripped (e.g. `npm run explorer Food-App C:\path\to\src`)
   for (const pos of positionals) {
-    const looksLikePath =
-      pos.includes("/") ||
-      pos.includes("\\") ||
-      fs.existsSync(path.resolve(ROOT_DIR, pos));
+    const resolvedPos = path.resolve(ROOT_DIR, pos);
+    const exists = fs.existsSync(resolvedPos);
+    const isDir = exists && fs.statSync(resolvedPos).isDirectory();
+    const hasPathSep = pos.includes("/") || pos.includes("\\");
+
+    const looksLikePath = hasPathSep || isDir;
+
     if (looksLikePath && !explicitSource) {
-      source = path.resolve(ROOT_DIR, pos);
+      source = resolvedPos;
       explicitSource = true;
     } else if (!looksLikePath && project === "default") {
       project = slugify(pos) || "default";
@@ -185,7 +188,7 @@ function runAnalysisIfNeeded(
   }
 }
 
-function runAdapter(projectId, sourceDir) {
+function runAdapter(projectId, sourceDir, explicitSource = false) {
   const slugId = slugify(projectId) || "default";
   console.log(`Running Explorer Data Adapter for project '${slugId}'...`);
 
@@ -202,7 +205,8 @@ function runAdapter(projectId, sourceDir) {
     );
   }
 
-  const sourceFlag = sourceDir ? ` --source "${sourceDir}"` : "";
+  const hasSourceOnDisk = Boolean(sourceDir && fs.existsSync(sourceDir));
+  const sourceFlag = hasSourceOnDisk ? ` --source "${sourceDir}"` : "";
   execSync(
     `node "${ADAPTER_SCRIPT}" --input "${inputDir}" --output "${targetOutput}" --project "${slugId}"${sourceFlag}`,
     {
@@ -255,7 +259,7 @@ function main() {
     }
 
     runAnalysisIfNeeded(source, fresh, project, explicitSource);
-    runAdapter(project, source);
+    runAdapter(project, source, explicitSource);
     startExplorer(mode);
   } catch (err) {
     console.error("\nExplorer One-Command Workflow failed:");

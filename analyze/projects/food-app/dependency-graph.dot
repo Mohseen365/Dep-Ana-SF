@@ -1,5 +1,0 @@
-digraph SalesforceDependencies {
-  rankdir="LR";
-  graph [overlap=false];
-  N1 [label="Service4B\nApexClass", shape=box];
-}
