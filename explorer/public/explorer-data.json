@@ -37,7 +37,10 @@
         "score": 5
       },
       "risk": "MEDIUM",
-      "riskReasons": ["high fan-in", "direct LWC consumer"],
+      "riskReasons": [
+        "high fan-in",
+        "direct LWC consumer"
+      ],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -68,7 +71,9 @@
         "score": 1
       },
       "risk": "LOW",
-      "riskReasons": ["unresolved references"],
+      "riskReasons": [
+        "unresolved references"
+      ],
       "behavior": {
         "isTest": true,
         "sharing": null,
@@ -192,7 +197,9 @@
         "score": 2
       },
       "risk": "LOW",
-      "riskReasons": ["direct LWC consumer"],
+      "riskReasons": [
+        "direct LWC consumer"
+      ],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -254,7 +261,9 @@
         "score": 1
       },
       "risk": "LOW",
-      "riskReasons": ["unresolved references"],
+      "riskReasons": [
+        "unresolved references"
+      ],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -440,7 +449,10 @@
         "score": 6
       },
       "risk": "HIGH",
-      "riskReasons": ["high fan-in", "high coupling"],
+      "riskReasons": [
+        "high fan-in",
+        "high coupling"
+      ],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -471,7 +483,9 @@
         "score": 3
       },
       "risk": "MEDIUM",
-      "riskReasons": ["high fan-in"],
+      "riskReasons": [
+        "high fan-in"
+      ],
       "behavior": {
         "isTest": false,
         "sharing": null,
@@ -796,17 +810,17 @@
           "method": null
         },
         "target": {
-          "type": "Field",
-          "name": "Plan__c.Duration__c",
-          "method": null
+          "type": "ApexClass",
+          "name": "MovieController",
+          "method": "getPopularMovies"
         },
         "relationship": {
-          "type": "soql-field",
-          "resolution": "HEURISTIC"
+          "type": "lwc-apex",
+          "resolution": "EXACT"
         },
         "location": {
-          "line": 0,
-          "column": 0
+          "line": 2,
+          "column": 31
         }
       }
     },
@@ -828,8 +842,13 @@
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "MovieController",
-          "method": "getPopularMovies"
+          "name": "PlanController",
+          "method": null
+        },
+        "target": {
+          "type": "CustomField",
+          "name": "Plan__c.Price__c",
+          "method": null
         },
         "relationship": {
           "type": "soql-field",
@@ -1356,16 +1375,28 @@
         "LWC:movieAppContainer",
         "LWC:movieList"
       ],
-      "impactedTests": ["ApexClass:MovieControllerTest"],
+      "impactedTests": [
+        "ApexClass:MovieControllerTest"
+      ],
       "totalImpactCount": 5
     },
     "ApexClass:MovieControllerHttpMock": {
       "id": "ApexClass:MovieControllerHttpMock",
-      "directDependencies": ["External:HttpCalloutMock"],
-      "directDependents": ["ApexClass:MovieControllerTest"],
-      "transitiveDependencies": ["External:HttpCalloutMock"],
-      "transitiveDependents": ["ApexClass:MovieControllerTest"],
-      "impactedTests": ["ApexClass:MovieControllerTest"],
+      "directDependencies": [
+        "External:HttpCalloutMock"
+      ],
+      "directDependents": [
+        "ApexClass:MovieControllerTest"
+      ],
+      "transitiveDependencies": [
+        "External:HttpCalloutMock"
+      ],
+      "transitiveDependents": [
+        "ApexClass:MovieControllerTest"
+      ],
+      "impactedTests": [
+        "ApexClass:MovieControllerTest"
+      ],
       "totalImpactCount": 2
     },
     "ApexClass:MovieControllerTest": {
@@ -1387,7 +1418,9 @@
     "External:HttpCalloutMock": {
       "id": "External:HttpCalloutMock",
       "directDependencies": [],
-      "directDependents": ["ApexClass:MovieControllerHttpMock"],
+      "directDependents": [
+        "ApexClass:MovieControllerHttpMock"
+      ],
       "transitiveDependencies": [],
       "transitiveDependents": [
         "ApexClass:MovieControllerHttpMock",
@@ -1402,28 +1435,45 @@
     "External:LWC:movie-list": {
       "id": "External:LWC:movie-list",
       "directDependencies": [],
-      "directDependents": ["LWC:movieAppContainer"],
+      "directDependents": [
+        "LWC:movieAppContainer"
+      ],
       "transitiveDependencies": [],
-      "transitiveDependents": ["LWC:movieAppContainer"],
+      "transitiveDependents": [
+        "LWC:movieAppContainer"
+      ],
       "impactedTests": [],
       "totalImpactCount": 1
     },
     "LWC:banner": {
       "id": "LWC:banner",
-      "directDependencies": ["ApexClass:MovieController"],
-      "directDependents": ["LWC:movieAppContainer"],
-      "transitiveDependencies": ["ApexClass:MovieController"],
+      "directDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "directDependents": [
+        "LWC:movieAppContainer"
+      ],
       "transitiveDependencies": [],
-      "transitiveDependents": ["LWC:movieAppContainer"],
+      "transitiveDependents": [
+        "LWC:movieAppContainer"
+      ],
       "impactedTests": [],
       "totalImpactCount": 2
     },
     "LWC:favourites": {
       "id": "LWC:favourites",
-      "directDependencies": ["ApexClass:MovieController"],
-      "directDependents": ["LWC:movieAppContainer"],
-      "transitiveDependencies": ["ApexClass:MovieController"],
-      "transitiveDependents": ["LWC:movieAppContainer"],
+      "directDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "directDependents": [
+        "LWC:movieAppContainer"
+      ],
+      "transitiveDependencies": [
+        "ApexClass:MovieController"
+      ],
+      "transitiveDependents": [
+        "LWC:movieAppContainer"
+      ],
       "impactedTests": [],
       "totalImpactCount": 2
     },
@@ -1449,9 +1499,13 @@
     },
     "LWC:movieList": {
       "id": "LWC:movieList",
-      "directDependencies": ["ApexClass:MovieController"],
+      "directDependencies": [
+        "ApexClass:MovieController"
+      ],
       "directDependents": [],
-      "transitiveDependencies": ["ApexClass:MovieController"],
+      "transitiveDependencies": [
+        "ApexClass:MovieController"
+      ],
       "transitiveDependents": [],
       "impactedTests": [],
       "totalImpactCount": 1
@@ -1459,9 +1513,13 @@
     "LWC:navbar": {
       "id": "LWC:navbar",
       "directDependencies": [],
-      "directDependents": ["LWC:movieAppContainer"],
+      "directDependents": [
+        "LWC:movieAppContainer"
+      ],
       "transitiveDependencies": [],
-      "transitiveDependents": ["LWC:movieAppContainer"],
+      "transitiveDependents": [
+        "LWC:movieAppContainer"
+      ],
       "impactedTests": [],
       "totalImpactCount": 1
     }
