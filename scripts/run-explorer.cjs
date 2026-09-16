@@ -13,6 +13,15 @@
 const fs = require("fs");
 const path = require("path");
 const { execSync, spawn } = require("child_process");
+// Debug instrumentation: dump raw argv and npm env vars
+console.log('DEBUG RAW ARGV:', JSON.stringify(process.argv));
+console.log('DEBUG NPM_ENV:', JSON.stringify({
+  npm_lifecycle_script: process.env.npm_lifecycle_script,
+  npm_config_argv: process.env.npm_config_argv,
+  npm_config_project: process.env.npm_config_project,
+  npm_config_source: process.env.npm_config_source,
+}));
+
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const ANALYZER_SCRIPT = path.join(ROOT_DIR, "dependency-analyzer.cjs");
