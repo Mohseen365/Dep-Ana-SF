@@ -254,7 +254,87 @@ function runTests() {
     );
     console.log("  ✓ ROOT/dependency-report.json does not override project-scoped report for --project movie");
 
-    console.log("\nALL 9 EXPLORER CLI REGRESSION TESTS PASSED SUCCESSFULLY!");
+    // -------------------------------------------------------------
+    // Test 10: Positional project name when ROOT/Movie directory exists
+    // -------------------------------------------------------------
+    console.log("Test 10: Positional project name when ROOT/Movie directory exists");
+    const rootMovieDir = path.join(ROOT_DIR, "Movie");
+    if (!fs.existsSync(rootMovieDir)) {
+      fs.mkdirSync(rootMovieDir, { recursive: true });
+    }
+    try {
+      const out10 = execSync(`node "${RUNNER_SCRIPT}" Movie --build`, {
+        cwd: ROOT_DIR,
+        encoding: "utf8",
+        stdio: "pipe",
+      });
+      assert.ok(out10.includes("Project: movie"), "Positional 'Movie' must set project to movie");
+      assert.ok(
+        !out10.includes(`Source:  ${rootMovieDir}`),
+        `Source must NOT be set to ROOT/Movie directory, got output: ${out10}`
+      );
+    } catch (err) {
+      const stdout = err.stdout ? err.stdout.toString() : "";
+      assert.ok(stdout.includes("Project: movie"), `Expected 'Project: movie' in stdout, got: ${stdout}`);
+      assert.ok(!stdout.includes(`Source:  ${rootMovieDir}`), `Source must not be ROOT/Movie, got: ${stdout}`);
+    } finally {
+      if (fs.existsSync(rootMovieDir)) {
+        fs.rmdirSync(rootMovieDir);
+      }
+    }
+    console.log("  ✓ Positional 'Movie' correctly resolved to project = movie without treating ROOT/Movie as source");
+
+    // -------------------------------------------------------------
+    // Test 11: npm run explorer argument forwarding with positional argument
+    // -------------------------------------------------------------
+    console.log("Test 11: npm run explorer forwarding with positional argument and ROOT/Movie present");
+    if (!fs.existsSync(rootMovieDir)) {
+      fs.mkdirSync(rootMovieDir, { recursive: true });
+    }
+    try {
+      const out11 = execSync(`npm run explorer -- --project Movie --build`, {
+        cwd: ROOT_DIR,
+        encoding: "utf8",
+        stdio: "pipe",
+      });
+      assert.ok(out11.includes("Project: movie"), "npm run explorer output must show Project: movie");
+      assert.ok(
+        !out11.includes(`Source:  ${rootMovieDir}`),
+        "Source must NOT be set to ROOT/Movie when --project Movie --build is passed"
+      );
+    } catch (err) {
+      const stdout = err.stdout ? err.stdout.toString() : "";
+      assert.ok(stdout.includes("Project: movie"), `Expected 'Project: movie' in stdout, got: ${stdout}`);
+      assert.ok(!stdout.includes(`Source:  ${rootMovieDir}`), `Source must not be ROOT/Movie, got: ${stdout}`);
+    } finally {
+      if (fs.existsSync(rootMovieDir)) {
+        fs.rmdirSync(rootMovieDir);
+      }
+    }
+    console.log("  ✓ npm run explorer -- --project Movie --build correctly sets project = movie and source != ROOT/Movie");
+
+    // -------------------------------------------------------------
+    // Test 12: npm adapter forwarding with positional project argument
+    // -------------------------------------------------------------
+    console.log("Test 12: npm adapter argument forwarding with positional project argument");
+    if (!fs.existsSync(rootMovieDir)) {
+      fs.mkdirSync(rootMovieDir, { recursive: true });
+    }
+    try {
+      const out12 = execSync(
+        `npm run adapter -- --input analyze/projects/movie --project movie Movie`,
+        { cwd: ROOT_DIR, encoding: "utf8" }
+      );
+      assert.ok(out12.includes("Project: movie"), "Adapter output must show Project: movie");
+      assert.ok(!out12.includes("Source:  Movie"), "Source must not be set to Movie");
+    } finally {
+      if (fs.existsSync(rootMovieDir)) {
+        fs.rmdirSync(rootMovieDir);
+      }
+    }
+    console.log("  ✓ npm run adapter correctly parses project = movie without misinterpreting positional Movie as source");
+
+    console.log("\nALL 12 EXPLORER CLI REGRESSION TESTS PASSED SUCCESSFULLY!");
 
   } finally {
     cleanup();
