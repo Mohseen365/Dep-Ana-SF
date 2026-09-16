@@ -107,6 +107,10 @@ function resolveInputFile(inputPath, options = {}) {
   const projectId = slugify(rawProjectId) || "default";
   const explicitSource = options.source || null;
 
+  if (explicitSource && !fs.existsSync(explicitSource)) {
+    throw new Error(`Explicitly supplied source directory does not exist: ${explicitSource}`);
+  }
+
   const matchesSource = (candidateFile) => {
     if (!candidateFile || !fs.existsSync(candidateFile)) return false;
     if (!explicitSource) return true;
@@ -117,13 +121,21 @@ function resolveInputFile(inputPath, options = {}) {
   // 1. Check explicit inputPath if provided
   if (inputPath && inputPath !== "analyze") {
     if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
-      if (matchesSource(inputPath)) return inputPath;
+      if (matchesSource(inputPath)) {
+        return inputPath;
+      } else {
+        throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+      }
     }
     if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
       const reportFile = path.join(inputPath, "dependency-report.json");
       const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
       const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
-      if (foundFile && matchesSource(foundFile)) return foundFile;
+      if (foundFile && matchesSource(foundFile)) {
+        return foundFile;
+      } else if (foundFile) {
+        throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+      }
     }
   }
 
@@ -135,32 +147,7 @@ function resolveInputFile(inputPath, options = {}) {
     if (foundProj && matchesSource(foundProj)) return foundProj;
   }
 
-  // 3. If explicit source was provided and exists, run analyzer on explicit source
-  if (explicitSource && fs.existsSync(explicitSource)) {
-    console.log(`Analyzer output not found or stale for source '${explicitSource}'. Running analyzer...`);
-    const analyzerScript = path.join(__dirname, "..", "dependency-analyzer.cjs");
-    const execSync = require("child_process").execSync;
-
-    const outputDir = projectId !== "default"
-      ? path.resolve(__dirname, "..", "analyze", "projects", projectId)
-      : path.resolve(__dirname, "..", "analyze");
-
-    try {
-      execSync(`node "${analyzerScript}" analyze "${explicitSource}" --output-dir "${outputDir}"`, {
-        cwd: path.resolve(__dirname, ".."),
-        stdio: "inherit"
-      });
-    } catch (err) {
-      console.warn(`Analyzer execution notice: ${err.message}`);
-    }
-
-    const generatedReport = path.join(outputDir, "dependency-report.json");
-    if (fs.existsSync(generatedReport)) {
-      return generatedReport;
-    }
-  }
-
-  // 4. Check root or default analyze directory for report
+  // 3. Check root or default analyze directory for report
   const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
   const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
   const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
