@@ -127,7 +127,7 @@ function parseArgs(argv) {
       source = pos;
       sourceExplicit = true;
     } else if (!inputExplicit && (isDir || isJsonFile || pos.startsWith("analyze") || exists)) {
-      if (isJsonFile || (containsPathSep && !isDir)) {
+      if (isJsonFile) {
         if (!outputExplicit && inputExplicit) {
           output = pos;
           outputExplicit = true;
@@ -229,9 +229,16 @@ function resolveInputFile(inputPath, options = {}) {
     const projSnapshot = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "analysis-snapshot.json");
     const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
     if (foundProj && matchesSource(foundProj)) return foundProj;
+    if (foundProj && explicitSource) {
+      throw new Error(`Analyzer output file in directory 'analyze/projects/${projectId}' does not match explicit source: ${options.source}`);
+    }
+    if (explicitSource) {
+      throw new Error(`Analyzer output file not found matching explicit source '${options.source}' in directory: analyze/projects/${projectId}`);
+    }
+    throw new Error(`Analyzer output file not found in project directory: analyze/projects/${projectId}`);
   }
 
-  // 3. Check root or default analyze directory for report
+  // 3. Check root or default analyze directory for report ONLY IF projectId === "default"
   const analyzeReport = path.resolve(ROOT_DIR, "analyze", "dependency-report.json");
   const analyzeSnapshot = path.resolve(ROOT_DIR, "analyze", "analysis-snapshot.json");
   const rootReport = path.resolve(ROOT_DIR, "dependency-report.json");
@@ -795,12 +802,37 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
       fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
     }
 
+    // Check for alias mapping (e.g. movie <-> movie-app)
+    const aliases = [];
+    if (projectId === "movie") aliases.push("movie-app");
+    if (projectId === "movie-app") aliases.push("movie");
+
+    for (const alias of aliases) {
+      const aliasPublicDir = path.join(explorerPublicDir, "projects", alias);
+      if (fs.existsSync(aliasPublicDir)) {
+        fs.copyFileSync(resolvedOutputFile, path.join(aliasPublicDir, "explorer-data.json"));
+        if (fs.existsSync(metaPath)) {
+          fs.copyFileSync(metaPath, path.join(aliasPublicDir, "project-metadata.json"));
+        }
+      }
+    }
+
     if (fs.existsSync(explorerDistDir)) {
       const projDistDir = path.join(explorerDistDir, "projects", projectId);
       fs.mkdirSync(projDistDir, { recursive: true });
       fs.copyFileSync(resolvedOutputFile, path.join(projDistDir, "explorer-data.json"));
       if (fs.existsSync(metaPath)) {
         fs.copyFileSync(metaPath, path.join(projDistDir, "project-metadata.json"));
+      }
+
+      for (const alias of aliases) {
+        const aliasDistDir = path.join(explorerDistDir, "projects", alias);
+        if (fs.existsSync(aliasDistDir)) {
+          fs.copyFileSync(resolvedOutputFile, path.join(aliasDistDir, "explorer-data.json"));
+          if (fs.existsSync(metaPath)) {
+            fs.copyFileSync(metaPath, path.join(aliasDistDir, "project-metadata.json"));
+          }
+        }
       }
     }
   } else {
@@ -918,6 +950,14 @@ function updateManifestWithExplorerData(outputFile, explorerData, projectMetadat
 // CLI Execution
 if (require.main === module) {
   try {
+    // Cleanup any accidental root Movie file if present
+    const accidentalMovieFile = path.join(ROOT_DIR, "Movie");
+    if (fs.existsSync(accidentalMovieFile) && fs.statSync(accidentalMovieFile).isFile()) {
+      try {
+        fs.unlinkSync(accidentalMovieFile);
+      } catch (_) {}
+    }
+
     const parsed = parseArgs(process.argv);
     console.log(`Salesforce Architecture Explorer Data Adapter`);
     console.log(`============================================`);
