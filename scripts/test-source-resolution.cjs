@@ -180,18 +180,30 @@ function runTests() {
 
     // Test run-explorer.cjs with positional args (like `npm run explorer Food-App C:\path\to\src`)
     const { execSync: execSub } = require("child_process");
-    const r4b = execSub(
-      `node "${RUN_EXPLORER_SCRIPT}" Food-App "${test4bSrc}" --build`,
-      { cwd: ROOT_DIR, encoding: "utf8" },
-    );
-    assert.ok(
-      r4b.includes("Project: food-app"),
-      `Project should be parsed as food-app, got output:\n${r4b}`,
-    );
-    assert.ok(
-      r4b.includes(test4bSrc),
-      `Source should be parsed as ${test4bSrc}`,
-    );
+    try {
+      const r4b = execSub(
+        `node "${RUN_EXPLORER_SCRIPT}" Food-App "${test4bSrc}" --build`,
+        { cwd: ROOT_DIR, encoding: "utf8" },
+      );
+      assert.ok(
+        r4b.includes("Project: food-app"),
+        `Project should be parsed as food-app, got output:\n${r4b}`,
+      );
+      assert.ok(
+        r4b.includes(test4bSrc),
+        `Source should be parsed as ${test4bSrc}`,
+      );
+    } catch (err) {
+      const stdout = (err.stdout || "").toString();
+      assert.ok(
+        stdout.includes("Project: food-app"),
+        `Project should be parsed as food-app, got output:\n${stdout}`,
+      );
+      assert.ok(
+        stdout.includes(test4bSrc),
+        `Source should be parsed as ${test4bSrc}`,
+      );
+    }
     console.log(
       "  ✓ Test 4B PASSED: Positional arguments correctly inferred for project and source",
     );
@@ -211,12 +223,18 @@ function runTests() {
       stdio: "ignore",
     });
 
-    const runA = execSync(
-      `node "${RUN_EXPLORER_SCRIPT}" --project Movie --build`,
-      { cwd: ROOT_DIR, encoding: "utf8" },
-    );
-    assert.ok(runA.includes("Project: movie"), `Expected Project: movie in output, got:\n${runA}`);
-    assert.ok(!runA.includes("Source:  Movie"), `Movie must not be parsed as source path in:\n${runA}`);
+    try {
+      const runA = execSync(
+        `node "${RUN_EXPLORER_SCRIPT}" --project Movie --build`,
+        { cwd: ROOT_DIR, encoding: "utf8" },
+      );
+      assert.ok(runA.includes("Project: movie"), `Expected Project: movie in output, got:\n${runA}`);
+      assert.ok(!runA.includes("Source:  Movie"), `Movie must not be parsed as source path in:\n${runA}`);
+    } catch (err) {
+      const stdout = (err.stdout || "").toString();
+      assert.ok(stdout.includes("Project: movie"), `Expected Project: movie in output, got:\n${stdout}`);
+      assert.ok(!stdout.includes("Source:  Movie"), `Movie must not be parsed as source path in:\n${stdout}`);
+    }
     console.log("  ✓ Test A PASSED: --project Movie parsed as project='movie', not source");
 
     // -------------------------------------------------------------

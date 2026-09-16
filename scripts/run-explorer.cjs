@@ -33,6 +33,7 @@ function parseArgs(argv) {
   let mode = "dev"; // 'dev' | 'preview' | 'build'
   let fresh = false;
   let project = "default";
+  let projectExplicit = false;
   let source = "";
   let explicitSource = false;
   const positionals = [];
@@ -62,7 +63,10 @@ function parseArgs(argv) {
       arg.startsWith("-project-id=")
     ) {
       const val = arg.split("=").slice(1).join("=");
-      if (val) project = slugify(val) || "default";
+      if (val) {
+        project = slugify(val) || "default";
+        projectExplicit = true;
+      }
       continue;
     }
     if (
@@ -73,6 +77,7 @@ function parseArgs(argv) {
       args[i + 1]
     ) {
       project = slugify(args[i + 1]) || "default";
+      projectExplicit = true;
       i++;
       continue;
     }
@@ -97,20 +102,22 @@ function parseArgs(argv) {
     }
   }
 
-  // Process positional arguments if flags were stripped (e.g. `npm run explorer Food-App C:\path\to\src`)
+  // Process positional arguments if flags were stripped or passed positionally
   for (const pos of positionals) {
     const resolvedPos = path.resolve(ROOT_DIR, pos);
     const exists = fs.existsSync(resolvedPos);
     const isDir = exists && fs.statSync(resolvedPos).isDirectory();
+    const isFile = exists && fs.statSync(resolvedPos).isFile();
     const hasPathSep = pos.includes("/") || pos.includes("\\");
 
-    const looksLikePath = hasPathSep || isDir;
+    const looksLikePath = (hasPathSep || isDir) && !isFile;
 
     if (looksLikePath && !explicitSource) {
       source = resolvedPos;
       explicitSource = true;
-    } else if (!looksLikePath && project === "default") {
+    } else if (!looksLikePath && !projectExplicit && project === "default") {
       project = slugify(pos) || "default";
+      projectExplicit = true;
     }
   }
 
