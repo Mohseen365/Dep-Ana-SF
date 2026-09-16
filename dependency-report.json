@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T18:12:13.823Z",
+  "generatedAt": "2026-09-16T03:26:30.945Z",
   "sourceDirectory": "scripts/temp-snapshot-test-fixture",
   "inventory": {
     "files": 2,
@@ -132,7 +132,12 @@
       "reasons": []
     }
   ],
-  "cycles": [["ApexClass:ClassB", "ApexClass:ClassA"]],
+  "cycles": [
+    [
+      "ApexClass:ClassB",
+      "ApexClass:ClassA"
+    ]
+  ],
   "roles": {
     "entry-point": 0,
     "controller": 0,
@@ -477,7 +482,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
@@ -500,7 +508,10 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
@@ -519,7 +530,10 @@
         "severity": "CRITICAL",
         "result": "UNKNOWN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "missing-test-protection-unknown",
@@ -568,7 +582,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "unsafe-change-impact-blocked-fail",
@@ -609,7 +626,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "circular-dependency-violation",
@@ -632,7 +652,10 @@
         "severity": "HIGH",
         "result": "FAIL",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "unsafe-change-impact-blocked-fail",
@@ -653,7 +676,10 @@
         "severity": "HIGH",
         "result": "WARN",
         "confidence": "high",
-        "affectedComponents": ["ClassA", "ClassB"],
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
         "evidence": [
           {
             "rule": "architectural-bottleneck-warning",
@@ -666,7 +692,9 @@
         ]
       }
     ],
-    "unknownChecks": ["Missing Test Protection on Critical Paths"]
+    "unknownChecks": [
+      "Missing Test Protection on Critical Paths"
+    ]
   },
   "duplicateResponsibility": {
     "summary": {
@@ -701,7 +729,10 @@
             "returnType": "void",
             "parameters": "",
             "visibility": "private",
-            "modifiers": ["public", "static"],
+            "modifiers": [
+              "public",
+              "static"
+            ],
             "isStatic": false,
             "isVirtual": false,
             "isOverride": false,
@@ -826,7 +857,10 @@
             "returnType": "void",
             "parameters": "",
             "visibility": "private",
-            "modifiers": ["public", "static"],
+            "modifiers": [
+              "public",
+              "static"
+            ],
             "isStatic": false,
             "isVirtual": false,
             "isOverride": false,

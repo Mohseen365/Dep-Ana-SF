@@ -1136,10 +1136,12 @@ body {
 .graph-controls-floating {
   position: absolute;
   top: 14px;
+  bottom: auto;
   right: 14px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
   background-color: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(6px);
@@ -1148,7 +1150,9 @@ body {
   padding: 4px 8px;
   z-index: 10;
   box-shadow: var(--shadow-md);
+  height: auto;
   min-height: 38px;
+  max-height: max-content;
   white-space: nowrap;
 }
 

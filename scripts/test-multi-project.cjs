@@ -207,7 +207,7 @@ function runMultiProjectTests() {
       () => {
         exportExplorerData(inputA, path.join(TEST_ANALYZE_DIR, "projects", "stale-check", "explorer-data.json"), {
           project: "stale-check",
-          source: "/non/existent/unrelated/source/directory",
+          source: FIXTURE_DIR_B,
         });
       },
       /Analyzer output file not found/,
