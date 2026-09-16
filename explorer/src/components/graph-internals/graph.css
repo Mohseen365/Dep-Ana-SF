@@ -23,9 +23,15 @@
   top: 14px;
   bottom: auto;
   right: 14px;
+  left: auto;
+  width: max-content;
+  max-width: calc(100% - 28px);
   z-index: 20;
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 4px;
   background: rgba(30, 41, 59, 0.85);
   backdrop-filter: blur(8px);
@@ -33,8 +39,11 @@
   border-radius: 8px;
   padding: 4px 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
   height: auto;
   min-height: 38px;
+  max-height: max-content;
+  white-space: nowrap;
 }
 
 .graph-control-btn {
