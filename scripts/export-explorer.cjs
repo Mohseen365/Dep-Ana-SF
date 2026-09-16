@@ -129,10 +129,51 @@ function getReportSourceDir(reportFilePath) {
   try {
     if (!reportFilePath || !fs.existsSync(reportFilePath)) return null;
     const content = JSON.parse(fs.readFileSync(reportFilePath, "utf8"));
-    return content.sourceDirectory || content.discovered?.sourceDir || content.source?.sourceDir || null;
+    return content.sourceDirectory || content.discovered?.sourceDir || content.source?.sourceDir || content.project?.sourcePath || null;
   } catch (_) {
     return null;
   }
+}
+
+function validateExistingExplorerData(explorerData, projectId, explicitSource) {
+  if (!explorerData || typeof explorerData !== "object") {
+    throw new Error("Invalid explorer data: Content is not a JSON object");
+  }
+
+  if (!explorerData.schemaVersion) {
+    throw new Error("Invalid explorer data: Missing schemaVersion");
+  }
+
+  if (!Array.isArray(explorerData.nodes) || !Array.isArray(explorerData.edges)) {
+    throw new Error("Invalid explorer data: Missing nodes or edges array");
+  }
+
+  const dataProjectId = explorerData.project?.id || slugify(explorerData.project?.name) || "default";
+  if (projectId && projectId !== "default" && dataProjectId !== projectId) {
+    throw new Error(
+      `Project isolation error: Artifact project '${dataProjectId}' does not match requested project '${projectId}'`
+    );
+  }
+
+  if (explicitSource) {
+    if (!fs.existsSync(explicitSource)) {
+      throw new Error(`Explicitly supplied source directory does not exist: ${explicitSource}`);
+    }
+    const dataPath = explorerData.sourceDirectory || explorerData.project?.sourcePath;
+    if (!dataPath || !isSameSource(dataPath, explicitSource)) {
+      throw new Error(
+        `Source mismatch: Explorer data source '${dataPath}' does not match explicit source '${explicitSource}'`
+      );
+    }
+  }
+
+  for (const edge of explorerData.edges) {
+    if (!edge.id || !edge.source || !edge.target || !edge.canonical || !edge.canonical.target) {
+      throw new Error(`Invalid explorer data edge schema: Edge '${edge.id || 'unknown'}' missing required canonical target`);
+    }
+  }
+
+  return true;
 }
 
 function resolveInputFile(inputPath, options = {}) {
@@ -151,7 +192,7 @@ function resolveInputFile(inputPath, options = {}) {
     return candidateSource ? isSameSource(candidateSource, explicitSource) : false;
   };
 
-  // 1. Check explicit inputPath if provided
+  // 1. Check explicit custom inputPath if provided (and not default "analyze")
   if (inputPath && inputPath !== "analyze") {
     if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
       if (matchesSource(inputPath)) {
@@ -163,30 +204,44 @@ function resolveInputFile(inputPath, options = {}) {
     if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
       const reportFile = path.join(inputPath, "dependency-report.json");
       const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
+      const explorerFile = path.join(inputPath, "explorer-data.json");
+
       const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
       if (foundFile && matchesSource(foundFile)) {
         return foundFile;
-      } else if (foundFile) {
+      } else if (foundFile && explicitSource) {
         throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+      }
+
+      if (fs.existsSync(explorerFile) && matchesSource(explorerFile)) {
+        return explorerFile;
+      }
+
+      if (foundFile) {
+        return foundFile;
       }
     }
   }
 
-  // 2. Check project-specific analyze directory
+  // 2. Check project-specific analyze directory FIRST for non-default projects
   if (projectId !== "default") {
     const projReport = path.resolve(__dirname, "..", "analyze", "projects", projectId, "dependency-report.json");
     const projSnapshot = path.resolve(__dirname, "..", "analyze", "projects", projectId, "analysis-snapshot.json");
+    const projExplorer = path.resolve(__dirname, "..", "analyze", "projects", projectId, "explorer-data.json");
+
     const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
     if (foundProj && matchesSource(foundProj)) return foundProj;
+    if (fs.existsSync(projExplorer) && matchesSource(projExplorer)) return projExplorer;
   }
 
-  // 3. Check root or default analyze directory for report
-  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
-  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
+  // 3. Check default analyze directory or root directory for report (analyze/ preferred over root fixture)
   const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
   const analyzeSnapshot = path.resolve(__dirname, "..", "analyze", "analysis-snapshot.json");
+  const analyzeExplorer = path.resolve(__dirname, "..", "analyze", "explorer-data.json");
+  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
+  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
 
-  const foundDefault = [rootReport, rootSnapshot, analyzeReport, analyzeSnapshot].find((f) => fs.existsSync(f) && matchesSource(f));
+  const foundDefault = [analyzeReport, analyzeSnapshot, analyzeExplorer, rootReport, rootSnapshot].find((f) => fs.existsSync(f) && matchesSource(f));
   if (foundDefault) return foundDefault;
 
   throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
@@ -362,6 +417,52 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   const resolvedInputFile = resolveInputFile(inputPath, { ...options, project: projectId });
   const rawContent = fs.readFileSync(resolvedInputFile, "utf8");
   const reportData = JSON.parse(rawContent);
+
+  // If input is already an explorer-data contract (e.g. when raw analyzer outputs are absent)
+  if (reportData.schemaVersion && Array.isArray(reportData.nodes) && Array.isArray(reportData.edges) && reportData.summary) {
+    validateExistingExplorerData(reportData, projectId, options.source);
+
+    // Ensure output parent directory exists and write contract
+    const resolvedOutputFile = path.resolve(effectiveOutputPath);
+    const parentDir = path.dirname(resolvedOutputFile);
+    if (!fs.existsSync(parentDir)) {
+      fs.mkdirSync(parentDir, { recursive: true });
+    }
+
+    const updatedData = { ...reportData };
+    if (projectId !== "default" && updatedData.project) {
+      updatedData.project.id = projectId;
+      if (options.projectName) updatedData.project.name = options.projectName;
+    }
+
+    const projectMetadata = updatedData.project || {
+      id: projectId,
+      name: options.projectName || (projectId !== "default" ? projectId : "Default Salesforce Project"),
+      description: options.projectDesc || "Salesforce DX Architecture Analysis",
+      sourcePath: options.source || reportData.sourceDirectory || "force-app/main/default",
+      createdAt: reportData.generatedAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastAnalyzedAt: reportData.generatedAt || new Date().toISOString(),
+      analysisStatus: "COMPLETE",
+      componentCount: reportData.nodes.length,
+      dependencyCount: reportData.edges.length,
+      analysisPath: projectId !== "default" ? `/projects/${projectId}/explorer-data.json` : "/explorer-data.json",
+    };
+
+    fs.writeFileSync(resolvedOutputFile, JSON.stringify(updatedData, null, 2), "utf8");
+    const metadataPath = path.join(parentDir, "project-metadata.json");
+    fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
+
+    updateManifestWithExplorerData(resolvedOutputFile, updatedData, projectMetadata);
+    publishProjectToExplorerAssets(resolvedOutputFile, updatedData, projectMetadata);
+
+    return {
+      inputFile: resolvedInputFile,
+      outputFile: resolvedOutputFile,
+      projectMetadata,
+      explorerData: updatedData,
+    };
+  }
 
   const analyzerVersion =
     reportData.analyzerVersion ||

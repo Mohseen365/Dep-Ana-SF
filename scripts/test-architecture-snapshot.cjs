@@ -43,6 +43,14 @@ let FIXTURE_DIR = path.resolve(
   "../../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default"
 );
 
+const TEMP_OUTPUT_DIR = path.join(__dirname, "temp-snapshot-test-output");
+
+function cleanupTempOutput() {
+  if (fs.existsSync(TEMP_OUTPUT_DIR)) {
+    fs.rmSync(TEMP_OUTPUT_DIR, { recursive: true, force: true });
+  }
+}
+
 if (!fs.existsSync(FIXTURE_DIR)) {
   FIXTURE_DIR = path.join(__dirname, "temp-snapshot-test-fixture");
   if (!fs.existsSync(FIXTURE_DIR)) {
@@ -272,7 +280,7 @@ console.log("Test 9: Minimal / empty architecture...");
 // ---------------------------------------------------------------------------
 console.log("Test 10: Representative full architecture...");
 {
-  const result = analyze(FIXTURE_DIR, { maxGraphEdges: 10000 });
+  const result = analyze(FIXTURE_DIR, { maxGraphEdges: 10000, outputDir: TEMP_OUTPUT_DIR });
 
   const snap = createCanonicalArchitectureSnapshot({
     registry: result.registry,
@@ -296,12 +304,13 @@ console.log("Test 10: Representative full architecture...");
 console.log("Test 11: Backward compatibility...");
 {
   const candidateDirs = [
-    path.resolve(__dirname, ".."),
+    TEMP_OUTPUT_DIR,
     path.resolve(__dirname, "../analyze"),
+    path.resolve(__dirname, ".."),
     process.cwd()
   ];
 
-  const manifestDir = candidateDirs.find(d => fs.existsSync(path.join(d, "analysis-manifest.json")));
+  const manifestDir = candidateDirs.find(d => fs.existsSync(path.join(d, "analysis-manifest.json")) && fs.existsSync(path.join(d, "dependency-report.json")));
   assert.ok(manifestDir, "analysis-manifest.json must exist after analyze in one of the expected output directories");
 
   const manifestPath = path.join(manifestDir, "analysis-manifest.json");
