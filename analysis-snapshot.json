@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "analyzerVersion": "13",
   "analyzer": "Salesforce Dependency Analyzer v13",
-  "generatedAt": "2026-09-15T18:12:13.823Z",
+  "generatedAt": "2026-09-16T03:26:30.945Z",
   "sourceDirectory": "scripts/temp-snapshot-test-fixture",
   "inventory": {
     "files": 2,
@@ -43,12 +43,12 @@
     {
       "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
       "size": 72,
-      "mtimeMs": 1789495195995.0886
+      "mtimeMs": 1789528635905.071
     },
     {
       "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
       "size": 72,
-      "mtimeMs": 1789495195995.0886
+      "mtimeMs": 1789528635905.071
     }
   ],
   "options": {
@@ -87,7 +87,10 @@
             "returnType": "void",
             "parameters": "",
             "visibility": "private",
-            "modifiers": ["public", "static"],
+            "modifiers": [
+              "public",
+              "static"
+            ],
             "isStatic": false,
             "isVirtual": false,
             "isOverride": false,
@@ -212,7 +215,10 @@
             "returnType": "void",
             "parameters": "",
             "visibility": "private",
-            "modifiers": ["public", "static"],
+            "modifiers": [
+              "public",
+              "static"
+            ],
             "isStatic": false,
             "isVirtual": false,
             "isOverride": false,
@@ -426,5 +432,10 @@
       "reasons": []
     }
   ],
-  "cycles": [["ApexClass:ClassB", "ApexClass:ClassA"]]
+  "cycles": [
+    [
+      "ApexClass:ClassB",
+      "ApexClass:ClassA"
+    ]
+  ]
 }

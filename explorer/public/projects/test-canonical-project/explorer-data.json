@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "generatedAt": "2026-09-16T03:19:19.184Z",
+  "sourceDirectory": "force-app/main/default",
+  "project": {
+    "id": "test-canonical-project",
+    "name": "test-canonical-project",
+    "description": "Salesforce DX Architecture Analysis",
+    "sourcePath": "force-app/main/default",
+    "createdAt": "2026-09-16T03:19:19.184Z",
+    "updatedAt": "2026-09-16T03:19:19.184Z",
+    "lastAnalyzedAt": "2026-09-16T03:19:19.184Z",
+    "analysisStatus": "COMPLETE",
+    "componentCount": 2,
+    "dependencyCount": 1,
+    "analysisPath": "/projects/test-canonical-project/explorer-data.json"
+  },
+  "summary": {
+    "nodeCount": 2,
+    "edgeCount": 1,
+    "highRiskCount": 0,
+    "mediumRiskCount": 0,
+    "lowRiskCount": 2,
+    "cycleCount": 0,
+    "unresolvedCount": 0,
+    "inventory": {
+      "files": 2,
+      "apexClasses": 0,
+      "apexTriggers": 1,
+      "lwcJs": 0,
+      "lwcHtml": 0,
+      "visualforce": 0,
+      "flows": 0,
+      "objects": 1,
+      "fields": 0
+    }
+  },
+  "nodes": [
+    {
+      "id": "ApexTrigger:MyTrigger",
+      "displayName": "MyTrigger",
+      "type": "ApexTrigger",
+      "file": "",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "NO_TESTS"
+      }
+    },
+    {
+      "id": "CustomObject:Account",
+      "displayName": "Account",
+      "type": "CustomObject",
+      "file": "",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 0,
+        "coupling": 0,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "NO_TESTS"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "ApexTrigger:MyTrigger|CustomObject:Account|trigger-object||",
+      "source": "ApexTrigger:MyTrigger",
+      "target": "CustomObject:Account",
+      "relationshipType": "trigger-object",
+      "method": null,
+      "evidence": "",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "high",
+      "line": null,
+      "column": null,
+      "methodOwner": null,
+      "file": "",
+      "canonical": {
+        "source": {
+          "type": "ApexTrigger",
+          "name": "MyTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "CustomObject",
+          "name": "Account",
+          "method": null
+        },
+        "relationship": {
+          "type": "trigger-object",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": null,
+          "column": null
+        }
+      }
+    }
+  ],
+  "cycles": [],
+  "unresolvedReferences": [],
+  "impactSummaries": {
+    "ApexTrigger:MyTrigger": {
+      "id": "ApexTrigger:MyTrigger",
+      "directDependencies": [
+        "CustomObject:Account"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "CustomObject:Account"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 1
+    },
+    "CustomObject:Account": {
+      "id": "CustomObject:Account",
+      "directDependencies": [],
+      "directDependents": [
+        "ApexTrigger:MyTrigger"
+      ],
+      "transitiveDependencies": [],
+      "transitiveDependents": [
+        "ApexTrigger:MyTrigger"
+      ],
+      "impactedTests": [],
+      "totalImpactCount": 1
+    }
+  }
+}

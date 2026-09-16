@@ -17,11 +17,12 @@
   left: 0;
 }
 
-/* Floating Controls - Bottom Right */
+/* Floating Controls - Top Right */
 .graph-controls-floating {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
+  top: 14px;
+  bottom: auto;
+  right: 14px;
   z-index: 20;
   display: flex;
   align-items: center;
@@ -32,6 +33,8 @@
   border-radius: 8px;
   padding: 4px 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  height: auto;
+  min-height: 38px;
 }
 
 .graph-control-btn {
