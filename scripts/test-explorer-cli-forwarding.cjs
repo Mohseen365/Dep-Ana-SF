@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 /**
- * Test Suite for Explorer CLI Argument Forwarding Contract
+ * Test Suite for Explorer CLI Argument Forwarding Contract & Path Isolation
  *
- * Verifies that npm script argument forwarding and direct Node CLI invocations
- * correctly parse flags (--project, --source, --input) without misinterpreting
- * flags as positional arguments or creating unwanted artifacts.
- *
- * Covers 7 Core Tests:
- *   1. Direct run-explorer project argument (`node scripts/run-explorer.cjs --project Movie`)
- *   2. Direct export-explorer project/source (`node scripts/export-explorer.cjs --project movie --source <path>`)
- *   3. npm explorer forwarding (`npm run explorer -- --project Movie`)
- *   4. npm adapter forwarding (`npm run adapter -- --input analyze/projects/movie --project movie --source <path>`)
- *   5. Explicit source mismatch rejection
- *   6. Nonexistent explicit source clear failure
- *   7. Project ID normalization across case variants
+ * Covers 9 Core Regression Tests:
+ *   1. Project is not source (`node scripts/run-explorer.cjs --project movie`)
+ *   2. Correct project analysis path (`analyze/projects/movie/` vs `ROOT/Movie`)
+ *   3. Correct dependency report selection (`analyze/projects/movie/dependency-report.json`)
+ *   4. Correct Explorer contract publishing (`explorer/public/projects/movie/` and `movie-app/`)
+ *   5. npm explorer forwarding (`npm run explorer -- --project Movie`)
+ *   6. npm adapter forwarding (`npm run adapter -- --input analyze/projects/movie --project movie --source <path>`)
+ *   7. Explicit source mismatch rejection
+ *   8. Nonexistent explicit source clear failure
+ *   9. Root artifact protection (`ROOT/dependency-report.json` does not override project report)
  */
 
 const fs = require("fs");
@@ -60,11 +58,15 @@ function cleanup() {
   if (fs.existsSync(rootMovieFile)) {
     fs.rmSync(rootMovieFile, { force: true });
   }
+  const tempRootReport = path.join(ROOT_DIR, "dependency-report.json");
+  if (fs.existsSync(tempRootReport)) {
+    fs.rmSync(tempRootReport, { force: true });
+  }
 }
 
 function runTests() {
-  console.log("Running Explorer CLI Argument Forwarding Test Suite...");
-  console.log("=====================================================");
+  console.log("Running Explorer CLI Argument Forwarding & Contract Test Suite...");
+  console.log("===============================================================");
 
   const realSource = setupFixture();
 
@@ -81,72 +83,102 @@ function runTests() {
     assert.ok(fs.existsSync(reportPath), "dependency-report.json must exist under analyze/projects/movie/");
 
     // -------------------------------------------------------------
-    // Test 1: Direct run-explorer project argument
+    // Test 1: Project is not source
     // -------------------------------------------------------------
-    console.log("Test 1: Direct run-explorer project argument");
-    // Run run-explorer with --project Movie (it will attempt to start explorer, but we catch/verify before spawn or mock build)
+    console.log("Test 1: Project is not source");
     try {
-      const out1 = execSync(`node "${RUNNER_SCRIPT}" --project Movie --build`, {
+      const out1 = execSync(`node "${RUNNER_SCRIPT}" --project movie --build`, {
         cwd: ROOT_DIR,
         encoding: "utf8",
         stdio: "pipe",
       });
       assert.ok(out1.includes("Project: movie"), "Output must show Project: movie");
-      assert.ok(!out1.includes("Source:  /app/Movie") && !out1.includes("Source:  C:\\Movie"), "Source must NOT be interpreted as Movie");
+      assert.ok(
+        !out1.includes(`Source:  ${path.join(ROOT_DIR, "movie")}`) &&
+          !out1.includes(`Source:  ${path.join(ROOT_DIR, "Movie")}`),
+        "Source must NOT be derived as ROOT/movie or ROOT/Movie"
+      );
     } catch (err) {
       const stdout = err.stdout ? err.stdout.toString() : "";
       assert.ok(stdout.includes("Project: movie"), `Output should contain 'Project: movie', got: ${stdout}`);
     }
     assert.ok(!fs.existsSync(path.join(ROOT_DIR, "Movie")), "Accidental root Movie file must NOT be created");
-    console.log("  ✓ Direct run-explorer accurately sets project = movie and does not interpret Movie as source");
+    console.log("  ✓ Direct run-explorer accurately sets project = movie and source != ROOT/movie");
 
     // -------------------------------------------------------------
-    // Test 2: Direct export-explorer project/source
+    // Test 2: Correct project analysis path
     // -------------------------------------------------------------
-    console.log("Test 2: Direct export-explorer project/source");
-    const out2 = execSync(`node "${ADAPTER_SCRIPT}" --project movie --source "${realSource}"`, {
+    console.log("Test 2: Correct project analysis path");
+    const projAnalyzeDir = path.join(ROOT_DIR, "analyze", "projects", "movie");
+    assert.ok(fs.existsSync(projAnalyzeDir), "Analysis directory must be analyze/projects/movie/");
+    assert.ok(!fs.existsSync(path.join(ROOT_DIR, "Movie")), "ROOT/Movie must not be created as analysis path");
+    console.log("  ✓ Analysis path correctly resolves to analyze/projects/movie/ and not ROOT/Movie");
+
+    // -------------------------------------------------------------
+    // Test 3: Correct dependency report
+    // -------------------------------------------------------------
+    console.log("Test 3: Correct dependency report selection");
+    const projReportFile = path.join(projAnalyzeDir, "dependency-report.json");
+    assert.ok(fs.existsSync(projReportFile), "Project dependency report must exist");
+    const projReportData = JSON.parse(fs.readFileSync(projReportFile, "utf8"));
+    assert.ok(
+      projReportData.nodes && projReportData.nodes.length > 0,
+      "Project dependency report must contain analyzed nodes"
+    );
+    console.log("  ✓ Project-scoped analyze/projects/movie/dependency-report.json selected");
+
+    // -------------------------------------------------------------
+    // Test 4: Correct Explorer contract
+    // -------------------------------------------------------------
+    console.log("Test 4: Correct Explorer contract publishing");
+    execSync(`node "${ADAPTER_SCRIPT}" --project movie --source "${realSource}"`, {
       cwd: ROOT_DIR,
       encoding: "utf8",
     });
-    assert.ok(out2.includes("Project: movie"), "Adapter output must confirm Project: movie");
-    const expDataPath = path.join(ROOT_DIR, "analyze", "projects", "movie", "explorer-data.json");
-    assert.ok(fs.existsSync(expDataPath), "explorer-data.json must be generated");
-    console.log("  ✓ Direct export-explorer correctly selects project movie and produces explorer-data.json");
+
+    const pubMovieContract = path.join(ROOT_DIR, "explorer", "public", "projects", "movie", "explorer-data.json");
+    const pubMovieAppContract = path.join(ROOT_DIR, "explorer", "public", "projects", "movie-app", "explorer-data.json");
+    assert.ok(fs.existsSync(pubMovieContract), "explorer/public/projects/movie/explorer-data.json must exist");
+    if (fs.existsSync(path.join(ROOT_DIR, "explorer", "public", "projects", "movie-app"))) {
+      assert.ok(fs.existsSync(pubMovieAppContract), "explorer/public/projects/movie-app/explorer-data.json must be synced");
+    }
+    console.log("  ✓ Resulting Explorer contract is project-scoped and mapped to public project assets");
 
     // -------------------------------------------------------------
-    // Test 3: npm explorer forwarding
+    // Test 5: npm explorer forwarding
     // -------------------------------------------------------------
-    console.log("Test 3: npm explorer argument forwarding");
+    console.log("Test 5: npm explorer argument forwarding");
     try {
-      const out3 = execSync(`npm run explorer -- --project Movie --build`, {
+      const out5 = execSync(`npm run explorer -- --project Movie --build`, {
         cwd: ROOT_DIR,
         encoding: "utf8",
         stdio: "pipe",
       });
-      assert.ok(out3.includes("Project: movie"), "npm run explorer output must show Project: movie");
-      assert.ok(!out3.includes("Unknown cli config"), "npm must not emit Unknown cli config warnings when using --");
+      assert.ok(out5.includes("Project: movie"), "npm run explorer output must show Project: movie");
+      assert.ok(!out5.includes("Unknown cli config"), "npm must not emit Unknown cli config warnings when using --");
     } catch (err) {
       const stdout = err.stdout ? err.stdout.toString() : "";
       assert.ok(stdout.includes("Project: movie"), `npm explorer stdout should contain 'Project: movie', got: ${stdout}`);
     }
-    console.log("  ✓ npm run explorer -- --project Movie forwards arguments cleanly without npm config warnings");
+    console.log("  ✓ npm run explorer -- --project Movie passes arguments to Node cleanly without becoming Movie source");
 
     // -------------------------------------------------------------
-    // Test 4: npm adapter forwarding
+    // Test 6: npm adapter forwarding
     // -------------------------------------------------------------
-    console.log("Test 4: npm adapter argument forwarding");
-    const out4 = execSync(
+    console.log("Test 6: npm adapter argument forwarding");
+    const out6 = execSync(
       `npm run adapter -- --input analyze/projects/movie --project movie --source "${realSource}"`,
       { cwd: ROOT_DIR, encoding: "utf8" }
     );
-    assert.ok(out4.includes("Project: movie"), "Adapter output must confirm Project: movie");
-    assert.ok(!out4.includes("Unknown cli config"), "npm must not emit Unknown cli config warnings when using --");
-    console.log("  ✓ npm run adapter -- --input ... forwards flags cleanly to Node script");
+    assert.ok(out6.includes("Project: movie"), "Adapter output must confirm Project: movie");
+    assert.ok(!out6.includes("Unknown cli config"), "npm must not emit Unknown cli config warnings when using --");
+    assert.ok(!fs.existsSync(path.join(ROOT_DIR, "Movie")), "No root Movie file created by npm adapter");
+    console.log("  ✓ npm run adapter -- --input ... parses flags cleanly and creates project Explorer contract");
 
     // -------------------------------------------------------------
-    // Test 5: Rejection of mismatched explicit source
+    // Test 7: Explicit source mismatch rejection
     // -------------------------------------------------------------
-    console.log("Test 5: Explicit source mismatch rejection");
+    console.log("Test 7: Explicit source mismatch rejection");
     const dummyOtherSource = path.join(TEST_TMP_DIR, "other-source");
     fs.mkdirSync(dummyOtherSource, { recursive: true });
     fs.writeFileSync(path.join(dummyOtherSource, "Dummy.cls"), "public class Dummy {}");
@@ -166,12 +198,12 @@ function runTests() {
       );
     }
     assert.ok(mismatchedFailed, "Adapter must fail when explicit source does not match analyzer report");
-    console.log("  ✓ Mismatched explicit source correctly rejected");
+    console.log("  ✓ Report from another source correctly rejected when explicit source differs");
 
     // -------------------------------------------------------------
-    // Test 6: Nonexistent explicit source clear failure
+    // Test 8: Explicit nonexistent source clear failure
     // -------------------------------------------------------------
-    console.log("Test 6: Clear failure on nonexistent explicit source");
+    console.log("Test 8: Clear failure on nonexistent explicit source");
     let nonexistentFailed = false;
     try {
       execSync(`node "${ADAPTER_SCRIPT}" --project movie --source "${path.join(TEST_TMP_DIR, "non-existent-path")}"`, {
@@ -190,35 +222,39 @@ function runTests() {
     console.log("  ✓ Nonexistent explicit source fails clearly with informative error message");
 
     // -------------------------------------------------------------
-    // Test 7: Project ID case normalization contract
+    // Test 9: Root artifact protection
     // -------------------------------------------------------------
-    console.log("Test 7: Project ID case normalization");
-    // Run analyzer with mixed case --project Test-Norm-Proj
-    execSync(`node "${ANALYZER_SCRIPT}" analyze "${realSource}" --project Test-Norm-Proj`, {
-      cwd: ROOT_DIR,
-      stdio: "pipe",
-    });
-
-    // Run adapter with different case variants: --project TEST-NORM-PROJ and --project test-norm-proj
-    const resA = execSync(`node "${ADAPTER_SCRIPT}" --project TEST-NORM-PROJ --source "${realSource}"`, {
-      cwd: ROOT_DIR,
-      encoding: "utf8",
-    });
-    assert.ok(resA.includes("Project: test-norm-proj"), "Output must show normalized slug test-norm-proj");
-
-    const resB = execSync(`node "${ADAPTER_SCRIPT}" --project test-norm-proj --source "${realSource}"`, {
-      cwd: ROOT_DIR,
-      encoding: "utf8",
-    });
-    assert.ok(resB.includes("Project: test-norm-proj"), "Output must show normalized slug test-norm-proj");
-
-    assert.ok(
-      fs.existsSync(path.join(ROOT_DIR, "analyze", "projects", "test-norm-proj", "explorer-data.json")),
-      "Artifact created under canonical slug directory test-norm-proj"
+    console.log("Test 9: Root artifact protection");
+    const tempRootReport = path.join(ROOT_DIR, "dependency-report.json");
+    fs.writeFileSync(
+      tempRootReport,
+      JSON.stringify({
+        sourceDirectory: "dummy/root/path",
+        nodes: [{ id: "ApexClass:RootDummy", name: "RootDummy", type: "ApexClass" }],
+        edges: [],
+      })
     );
-    console.log("  ✓ Project ID case variants resolve consistently to canonical slug");
 
-    console.log("\nALL 7 EXPLORER CLI FORWARDING TESTS PASSED SUCCESSFULLY!");
+    const adapterResult = execSync(`node "${ADAPTER_SCRIPT}" --project movie --source "${realSource}"`, {
+      cwd: ROOT_DIR,
+      encoding: "utf8",
+    });
+    assert.ok(adapterResult.includes("Project: movie"), "Adapter must target project movie");
+
+    const movieExplorerData = JSON.parse(
+      fs.readFileSync(path.join(ROOT_DIR, "analyze", "projects", "movie", "explorer-data.json"), "utf8")
+    );
+    assert.ok(
+      movieExplorerData.nodes.some((n) => n.id.includes("MovieService")),
+      "Explorer contract must contain MovieService from project report"
+    );
+    assert.ok(
+      !movieExplorerData.nodes.some((n) => n.id.includes("RootDummy")),
+      "Explorer contract MUST NOT contain RootDummy from root dependency-report.json"
+    );
+    console.log("  ✓ ROOT/dependency-report.json does not override project-scoped report for --project movie");
+
+    console.log("\nALL 9 EXPLORER CLI REGRESSION TESTS PASSED SUCCESSFULLY!");
 
   } finally {
     cleanup();

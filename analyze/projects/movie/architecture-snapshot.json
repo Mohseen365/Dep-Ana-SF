@@ -1,0 +1,1240 @@
+{
+  "schemaVersion": 5,
+  "analyzerVersion": "13",
+  "analyzer": "Salesforce Dependency Analyzer v13",
+  "snapshotIdentity": "arch-snap-sha256:b3da298d355d52e03a4cfcfadc49a50106b15ba369eddc392db0fa6a6b285d05",
+  "generatedAt": "2026-09-16T08:22:07.528Z",
+  "sourceDirectory": "/app/scripts/temp-snapshot-test-fixture",
+  "metadata": {
+    "fileCount": 2,
+    "componentCount": 2,
+    "relationshipCount": 2,
+    "cycleCount": 1
+  },
+  "inventory": {
+    "components": 2,
+    "relationships": 2,
+    "cycles": 1
+  },
+  "components": [
+    {
+      "id": "ApexClass:ClassA",
+      "name": "ClassA",
+      "type": "ApexClass",
+      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 1,
+        "coupling": 2,
+        "risk": "LOW"
+      },
+      "role": {
+        "value": "unknown",
+        "primary": "unknown",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "default-fallback",
+            "detail": "Insufficient deterministic evidence to assign a specific architectural role."
+          }
+        ],
+        "secondary": []
+      },
+      "layer": {
+        "value": "unknown",
+        "primary": "unknown",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "default-fallback",
+            "detail": "Insufficient deterministic evidence to assign a specific architectural layer."
+          }
+        ],
+        "secondary": []
+      },
+      "domain": {
+        "value": "ClassA",
+        "primary": "ClassA",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "rule": "name-prefix-domain",
+            "detail": "Component name 'ClassA' matches domain stem candidate 'ClassA'."
+          }
+        ],
+        "secondary": [
+          "ClassB"
+        ]
+      },
+      "entryPoint": {
+        "value": "none",
+        "primary": "none",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "no-entry-point-criteria",
+            "detail": "Component does not match any deterministic entry-point criteria."
+          }
+        ],
+        "secondary": [],
+        "isEntryPoint": false,
+        "entryPointTypes": []
+      },
+      "externalBoundary": {
+        "value": "none",
+        "primary": "none",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "no-external-boundary-criteria",
+            "detail": "Component does not exhibit any deterministic external boundary interactions."
+          }
+        ],
+        "secondary": [],
+        "metadata": {
+          "targets": []
+        },
+        "hasExternalBoundary": false,
+        "boundaryTypes": [],
+        "targets": []
+      },
+      "bottleneck": {
+        "value": "bottleneck",
+        "primary": "bottleneck",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency group(s)."
+          }
+        ],
+        "secondary": [],
+        "metadata": {
+          "isBottleneck": true,
+          "score": 25,
+          "signals": [
+            {
+              "rule": "cycle-participant",
+              "detail": "Component participates in 1 circular dependency group(s)."
+            }
+          ],
+          "fanIn": 1,
+          "fanOut": 1,
+          "coupling": 2,
+          "isCycleParticipant": true
+        },
+        "isBottleneck": true,
+        "score": 25,
+        "signals": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency group(s)."
+          }
+        ]
+      },
+      "smells": {
+        "value": "has-smells",
+        "primary": "has-smells",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency loop(s)."
+          }
+        ],
+        "secondary": [
+          "circular-dependency"
+        ],
+        "metadata": {
+          "hasSmells": true,
+          "smellCount": 1,
+          "smells": [
+            {
+              "smell": "circular-dependency",
+              "component": "ClassA",
+              "componentId": "ApexClass:ClassA",
+              "confidence": "high",
+              "evidence": [
+                {
+                  "rule": "cycle-participant",
+                  "detail": "Component participates in 1 circular dependency loop(s)."
+                }
+              ]
+            }
+          ]
+        },
+        "hasSmells": true,
+        "smells": [
+          {
+            "smell": "circular-dependency",
+            "component": "ClassA",
+            "componentId": "ApexClass:ClassA",
+            "confidence": "high",
+            "evidence": [
+              {
+                "rule": "cycle-participant",
+                "detail": "Component participates in 1 circular dependency loop(s)."
+              }
+            ]
+          }
+        ]
+      },
+      "architectureDebt": {
+        "value": "has-debt",
+        "primary": "has-debt",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency loop(s)."
+          },
+          {
+            "rule": "architectural-bottleneck-signal",
+            "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
+          }
+        ],
+        "secondary": [
+          "boundary-violation",
+          "architectural-bottleneck"
+        ],
+        "metadata": {
+          "hasDebt": true,
+          "debtCount": 2,
+          "debtItems": [
+            {
+              "debtCategory": "boundary-violation",
+              "affectedComponents": [
+                "ClassA"
+              ],
+              "severity": "high",
+              "confidence": "high",
+              "evidence": [
+                {
+                  "rule": "cycle-participant",
+                  "detail": "Component participates in 1 circular dependency loop(s)."
+                }
+              ],
+              "sourceCapability": "architecture-smells",
+              "architecturalConsequence": "Boundary violations break architectural encapsulation and cyclic boundaries, creating tight structural loops that prevent isolated compilation and testing.",
+              "remediationDirection": "Break circular dependencies by applying dependency inversion or event-driven decoupling."
+            },
+            {
+              "debtCategory": "architectural-bottleneck",
+              "affectedComponents": [
+                "ClassA"
+              ],
+              "severity": "high",
+              "confidence": "high",
+              "evidence": [
+                {
+                  "rule": "architectural-bottleneck-signal",
+                  "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
+                }
+              ],
+              "sourceCapability": "bottleneck-detector",
+              "architecturalConsequence": "Architectural bottlenecks concentrate system flow and coupling, creating single points of failure and change congestion.",
+              "remediationDirection": "Distribute responsibilities or introduce message/event abstraction to relieve bottleneck centrality."
+            }
+          ]
+        },
+        "hasDebt": true,
+        "debtItems": [
+          {
+            "debtCategory": "boundary-violation",
+            "affectedComponents": [
+              "ClassA"
+            ],
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              {
+                "rule": "cycle-participant",
+                "detail": "Component participates in 1 circular dependency loop(s)."
+              }
+            ],
+            "sourceCapability": "architecture-smells",
+            "architecturalConsequence": "Boundary violations break architectural encapsulation and cyclic boundaries, creating tight structural loops that prevent isolated compilation and testing.",
+            "remediationDirection": "Break circular dependencies by applying dependency inversion or event-driven decoupling."
+          },
+          {
+            "debtCategory": "architectural-bottleneck",
+            "affectedComponents": [
+              "ClassA"
+            ],
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              {
+                "rule": "architectural-bottleneck-signal",
+                "detail": "Component 'ClassA' is an architectural bottleneck (score 25) with high fan-in or centrality."
+              }
+            ],
+            "sourceCapability": "bottleneck-detector",
+            "architecturalConsequence": "Architectural bottlenecks concentrate system flow and coupling, creating single points of failure and change congestion.",
+            "remediationDirection": "Distribute responsibilities or introduce message/event abstraction to relieve bottleneck centrality."
+          }
+        ]
+      },
+      "testGap": {
+        "signal": "no-test-evidence",
+        "status": "NO_TEST_EVIDENCE",
+        "hasTestGap": true
+      },
+      "securityBoundaries": {
+        "sharingModel": "unspecified",
+        "securitySignals": []
+      },
+      "businessCriticality": {
+        "classification": "MEDIUM",
+        "score": 0
+      },
+      "safetyEnvelope": {
+        "classification": "UNKNOWN",
+        "score": 0,
+        "factors": []
+      },
+      "architectureHealth": {
+        "level": "UNKNOWN",
+        "score": 0
+      },
+      "duplicateResponsibility": {
+        "classification": "NO_DUPLICATION_SIGNAL"
+      }
+    },
+    {
+      "id": "ApexClass:ClassB",
+      "name": "ClassB",
+      "type": "ApexClass",
+      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
+      "metrics": {
+        "fanIn": 1,
+        "fanOut": 1,
+        "coupling": 2,
+        "risk": "LOW"
+      },
+      "role": {
+        "value": "unknown",
+        "primary": "unknown",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "default-fallback",
+            "detail": "Insufficient deterministic evidence to assign a specific architectural role."
+          }
+        ],
+        "secondary": []
+      },
+      "layer": {
+        "value": "unknown",
+        "primary": "unknown",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "default-fallback",
+            "detail": "Insufficient deterministic evidence to assign a specific architectural layer."
+          }
+        ],
+        "secondary": []
+      },
+      "domain": {
+        "value": "ClassB",
+        "primary": "ClassB",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "rule": "name-prefix-domain",
+            "detail": "Component name 'ClassB' matches domain stem candidate 'ClassB'."
+          }
+        ],
+        "secondary": [
+          "ClassA"
+        ]
+      },
+      "entryPoint": {
+        "value": "none",
+        "primary": "none",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "no-entry-point-criteria",
+            "detail": "Component does not match any deterministic entry-point criteria."
+          }
+        ],
+        "secondary": [],
+        "isEntryPoint": false,
+        "entryPointTypes": []
+      },
+      "externalBoundary": {
+        "value": "none",
+        "primary": "none",
+        "confidence": "unknown",
+        "evidence": [
+          {
+            "rule": "no-external-boundary-criteria",
+            "detail": "Component does not exhibit any deterministic external boundary interactions."
+          }
+        ],
+        "secondary": [],
+        "metadata": {
+          "targets": []
+        },
+        "hasExternalBoundary": false,
+        "boundaryTypes": [],
+        "targets": []
+      },
+      "bottleneck": {
+        "value": "bottleneck",
+        "primary": "bottleneck",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency group(s)."
+          }
+        ],
+        "secondary": [],
+        "metadata": {
+          "isBottleneck": true,
+          "score": 25,
+          "signals": [
+            {
+              "rule": "cycle-participant",
+              "detail": "Component participates in 1 circular dependency group(s)."
+            }
+          ],
+          "fanIn": 1,
+          "fanOut": 1,
+          "coupling": 2,
+          "isCycleParticipant": true
+        },
+        "isBottleneck": true,
+        "score": 25,
+        "signals": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency group(s)."
+          }
+        ]
+      },
+      "smells": {
+        "value": "has-smells",
+        "primary": "has-smells",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency loop(s)."
+          }
+        ],
+        "secondary": [
+          "circular-dependency"
+        ],
+        "metadata": {
+          "hasSmells": true,
+          "smellCount": 1,
+          "smells": [
+            {
+              "smell": "circular-dependency",
+              "component": "ClassB",
+              "componentId": "ApexClass:ClassB",
+              "confidence": "high",
+              "evidence": [
+                {
+                  "rule": "cycle-participant",
+                  "detail": "Component participates in 1 circular dependency loop(s)."
+                }
+              ]
+            }
+          ]
+        },
+        "hasSmells": true,
+        "smells": [
+          {
+            "smell": "circular-dependency",
+            "component": "ClassB",
+            "componentId": "ApexClass:ClassB",
+            "confidence": "high",
+            "evidence": [
+              {
+                "rule": "cycle-participant",
+                "detail": "Component participates in 1 circular dependency loop(s)."
+              }
+            ]
+          }
+        ]
+      },
+      "architectureDebt": {
+        "value": "has-debt",
+        "primary": "has-debt",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "cycle-participant",
+            "detail": "Component participates in 1 circular dependency loop(s)."
+          },
+          {
+            "rule": "architectural-bottleneck-signal",
+            "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
+          }
+        ],
+        "secondary": [
+          "boundary-violation",
+          "architectural-bottleneck"
+        ],
+        "metadata": {
+          "hasDebt": true,
+          "debtCount": 2,
+          "debtItems": [
+            {
+              "debtCategory": "boundary-violation",
+              "affectedComponents": [
+                "ClassB"
+              ],
+              "severity": "high",
+              "confidence": "high",
+              "evidence": [
+                {
+                  "rule": "cycle-participant",
+                  "detail": "Component participates in 1 circular dependency loop(s)."
+                }
+              ],
+              "sourceCapability": "architecture-smells",
+              "architecturalConsequence": "Boundary violations break architectural encapsulation and cyclic boundaries, creating tight structural loops that prevent isolated compilation and testing.",
+              "remediationDirection": "Break circular dependencies by applying dependency inversion or event-driven decoupling."
+            },
+            {
+              "debtCategory": "architectural-bottleneck",
+              "affectedComponents": [
+                "ClassB"
+              ],
+              "severity": "high",
+              "confidence": "high",
+              "evidence": [
+                {
+                  "rule": "architectural-bottleneck-signal",
+                  "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
+                }
+              ],
+              "sourceCapability": "bottleneck-detector",
+              "architecturalConsequence": "Architectural bottlenecks concentrate system flow and coupling, creating single points of failure and change congestion.",
+              "remediationDirection": "Distribute responsibilities or introduce message/event abstraction to relieve bottleneck centrality."
+            }
+          ]
+        },
+        "hasDebt": true,
+        "debtItems": [
+          {
+            "debtCategory": "boundary-violation",
+            "affectedComponents": [
+              "ClassB"
+            ],
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              {
+                "rule": "cycle-participant",
+                "detail": "Component participates in 1 circular dependency loop(s)."
+              }
+            ],
+            "sourceCapability": "architecture-smells",
+            "architecturalConsequence": "Boundary violations break architectural encapsulation and cyclic boundaries, creating tight structural loops that prevent isolated compilation and testing.",
+            "remediationDirection": "Break circular dependencies by applying dependency inversion or event-driven decoupling."
+          },
+          {
+            "debtCategory": "architectural-bottleneck",
+            "affectedComponents": [
+              "ClassB"
+            ],
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              {
+                "rule": "architectural-bottleneck-signal",
+                "detail": "Component 'ClassB' is an architectural bottleneck (score 25) with high fan-in or centrality."
+              }
+            ],
+            "sourceCapability": "bottleneck-detector",
+            "architecturalConsequence": "Architectural bottlenecks concentrate system flow and coupling, creating single points of failure and change congestion.",
+            "remediationDirection": "Distribute responsibilities or introduce message/event abstraction to relieve bottleneck centrality."
+          }
+        ]
+      },
+      "testGap": {
+        "signal": "no-test-evidence",
+        "status": "NO_TEST_EVIDENCE",
+        "hasTestGap": true
+      },
+      "securityBoundaries": {
+        "sharingModel": "unspecified",
+        "securitySignals": []
+      },
+      "businessCriticality": {
+        "classification": "MEDIUM",
+        "score": 0
+      },
+      "safetyEnvelope": {
+        "classification": "UNKNOWN",
+        "score": 0,
+        "factors": []
+      },
+      "architectureHealth": {
+        "level": "UNKNOWN",
+        "score": 0
+      },
+      "duplicateResponsibility": {
+        "classification": "NO_DUPLICATION_SIGNAL"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "ApexClass:ClassA|ApexClass:ClassB|method-call|doHelp|ClassB.doHelp()",
+      "from": "ApexClass:ClassA",
+      "to": "ApexClass:ClassB",
+      "type": "method-call",
+      "method": "doHelp",
+      "evidence": "ClassB.doHelp()",
+      "confidence": "high",
+      "unresolved": false,
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ClassA",
+          "method": "doWork"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ClassB",
+          "method": "doHelp"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 1,
+          "column": 53
+        }
+      }
+    },
+    {
+      "id": "ApexClass:ClassB|ApexClass:ClassA|method-call|doWork|ClassA.doWork()",
+      "from": "ApexClass:ClassB",
+      "to": "ApexClass:ClassA",
+      "type": "method-call",
+      "method": "doWork",
+      "evidence": "ClassA.doWork()",
+      "confidence": "high",
+      "unresolved": false,
+      "canonical": {
+        "source": {
+          "type": "ApexClass",
+          "name": "ClassB",
+          "method": "doHelp"
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "ClassA",
+          "method": "doWork"
+        },
+        "relationship": {
+          "type": "method-call",
+          "resolution": "EXACT"
+        },
+        "location": {
+          "line": 1,
+          "column": 53
+        }
+      }
+    }
+  ],
+  "cycles": [
+    [
+      "ApexClass:ClassA",
+      "ApexClass:ClassB"
+    ]
+  ],
+  "roles": {
+    "entry-point": 0,
+    "controller": 0,
+    "service": 0,
+    "selector": 0,
+    "repository": 0,
+    "data-access": 0,
+    "domain": 0,
+    "utility": 0,
+    "configuration": 0,
+    "test": 0,
+    "unknown": 2
+  },
+  "layers": {
+    "presentation": 0,
+    "entry": 0,
+    "application": 0,
+    "service": 0,
+    "domain": 0,
+    "data": 0,
+    "integration": 0,
+    "configuration": 0,
+    "test": 0,
+    "unknown": 2
+  },
+  "domains": {
+    "ClassA": 1,
+    "ClassB": 1
+  },
+  "profiles": {
+    "componentProfiles": {},
+    "summary": {
+      "totalComponents": 2,
+      "roles": {
+        "unknown": 2
+      },
+      "layers": {
+        "unknown": 2
+      },
+      "entryPoints": {
+        "count": 0
+      },
+      "bottlenecks": {
+        "count": 2
+      },
+      "testStatus": {
+        "unknown": 2
+      },
+      "externalBoundaries": {
+        "count": 0
+      },
+      "securitySharingModels": {
+        "unspecified": 2
+      },
+      "impactedObjects": []
+    }
+  },
+  "entryPoints": {
+    "totalComponents": 2,
+    "totalEntryPoints": 0,
+    "nonEntryPoints": 2,
+    "byType": {
+      "Trigger": 0,
+      "LWC": 0,
+      "Visualforce": 0,
+      "REST": 0,
+      "Async": 0,
+      "Invocable": 0,
+      "AuraEnabled": 0,
+      "InboundEmail": 0
+    }
+  },
+  "externalBoundaries": {
+    "totalComponents": 2,
+    "componentsWithExternalBoundary": 0,
+    "componentsWithoutExternalBoundary": 2,
+    "byType": {
+      "HTTPCallout": 0,
+      "NamedCredential": 0,
+      "ExternalService": 0,
+      "PlatformEvent": 0,
+      "OutboundMessaging": 0,
+      "InboundEmail": 0,
+      "ExternalObject": 0,
+      "RESTService": 0
+    }
+  },
+  "bottlenecks": {
+    "totalComponents": 2,
+    "bottleneckCount": 2,
+    "normalCount": 0,
+    "disconnectedCount": 0,
+    "signalCounts": {
+      "high-fan-in": 0,
+      "high-fan-out": 0,
+      "cycle-participant": 2,
+      "bridge-position": 0,
+      "many-dependents": 0,
+      "many-dependency-paths": 0,
+      "high-dependency-impact": 0
+    }
+  },
+  "smells": {
+    "totalComponents": 2,
+    "componentsWithSmellsCount": 2,
+    "cleanComponentsCount": 0,
+    "totalSmellsCount": 2,
+    "smellCounts": {
+      "god-component": 0,
+      "hub-component": 0,
+      "high-coupling": 0,
+      "circular-dependency": 2,
+      "orphan-component": 0,
+      "uncovered-critical-path": 0,
+      "layer-violation": 0,
+      "mixed-responsibility": 0,
+      "external-boundary-concentration": 0
+    }
+  },
+  "architectureDebt": {
+    "totalComponents": 2,
+    "componentsWithDebtCount": 2,
+    "cleanComponentsCount": 0,
+    "totalDebtItemsCount": 4,
+    "categoryCounts": {
+      "excessive-coupling": 0,
+      "excessive-dependency-breadth": 0,
+      "architectural-bottleneck": 2,
+      "boundary-violation": 2,
+      "layering-violation": 0,
+      "insufficient-test-protection": 0,
+      "excessive-change-amplification": 0,
+      "duplicated-responsibility": 0,
+      "risky-external-coupling": 0,
+      "security-boundary-risk": 0,
+      "architectural-ambiguity": 0
+    },
+    "severityCounts": {
+      "critical": 0,
+      "high": 4,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "testGaps": {
+    "totalComponents": 2,
+    "coveredCount": 0,
+    "likelyCoveredCount": 0,
+    "noTestEvidenceCount": 2,
+    "knownCoverageFailureCount": 0,
+    "ambiguousTestCount": 0,
+    "testComponentCount": 0,
+    "componentsWithTestGap": 2
+  },
+  "businessCriticality": {
+    "totalComponents": 2,
+    "explicitBusinessCriticalityCount": 0,
+    "unknownBusinessCriticalityCount": 2,
+    "byBusinessLevel": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "unknown": 2
+    },
+    "byStructuralLevel": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "unknown": 2
+    }
+  },
+  "safetyEnvelopes": {
+    "totalComponents": 2,
+    "byClassification": {
+      "SAFE": 0,
+      "SAFE_WITH_REVIEW": 0,
+      "HIGH_RISK": 0,
+      "BLOCKED": 2,
+      "UNKNOWN": 0
+    },
+    "blockerCounts": {
+      "broad-transitive-impact-unprotected": 2
+    },
+    "riskFactorCounts": {
+      "broad-transitive-impact": 2,
+      "architectural-bottleneck": 2,
+      "architecture-smells-present": 2,
+      "test-gap-present": 2,
+      "cycle-participant": 2
+    }
+  },
+  "architectureHealth": {
+    "overallHealth": "HIGH_RISK",
+    "confidence": "medium",
+    "dimensions": {
+      "structuralCoupling": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "healthy-coupling-distribution",
+            "detail": "Low coupling pressure across all 2 repository components."
+          }
+        ],
+        "signals": {
+          "highCouplingCount": 0
+        }
+      },
+      "dependencyComplexity": {
+        "classification": "DEGRADED",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "circular-dependencies-present",
+            "detail": "Repository contains 1 circular dependency group(s)."
+          }
+        ],
+        "signals": {
+          "cycleCount": 1
+        }
+      },
+      "changeRisk": {
+        "classification": "HIGH_RISK",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "high-change-blast-radius",
+            "detail": "2 high-risk bottleneck component(s) expand change blast radius."
+          }
+        ],
+        "signals": {
+          "bottleneckCount": 2
+        }
+      },
+      "testProtection": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "test-gaps-identified",
+            "detail": "2 component(s) exhibit test gap status."
+          }
+        ],
+        "signals": {
+          "gapsCount": 2
+        }
+      },
+      "boundaryRisk": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "controlled-external-boundaries",
+            "detail": "Managed external boundary exposure across 0 component(s)."
+          }
+        ],
+        "signals": {
+          "extBoundaryCount": 0
+        }
+      },
+      "securityRisk": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "unspecified-sharing-concentration",
+            "detail": "2 Apex class(es) lack explicit sharing model declarations."
+          }
+        ],
+        "signals": {
+          "unspecifiedSharingCount": 2
+        }
+      },
+      "architecturalDebt": {
+        "classification": "DEGRADED",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "architectural-smells-detected",
+            "detail": "Architectural debt identified: 2 smell(s) present across repository."
+          }
+        ],
+        "signals": {
+          "totalSmells": 2,
+          "godCount": 0
+        }
+      },
+      "concentrationBottlenecks": {
+        "classification": "HIGH_RISK",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "multiple-bottlenecks-present",
+            "detail": "2 central architectural bottlenecks identified."
+          }
+        ],
+        "signals": {
+          "bottleneckCount": 2
+        }
+      },
+      "architecturalClarity": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "ambiguous-component-roles",
+            "detail": "2 component(s) have unclassified/unknown architectural roles."
+          }
+        ],
+        "signals": {
+          "unknownRoles": 2
+        }
+      }
+    },
+    "strongestPositiveSignals": [
+      "Low coupling pressure across all 2 repository components.",
+      "Managed external boundary exposure across 0 component(s)."
+    ],
+    "strongestNegativeSignals": [
+      "Repository contains 1 circular dependency group(s).",
+      "2 high-risk bottleneck component(s) expand change blast radius.",
+      "2 component(s) exhibit test gap status.",
+      "Architectural debt identified: 2 smell(s) present across repository.",
+      "2 central architectural bottlenecks identified."
+    ],
+    "unknownIncompleteAreas": [
+      "2 Apex class(es) have unspecified sharing mode.",
+      "2 component(s) have unknown architectural roles."
+    ]
+  },
+  "qualityGates": {
+    "overallResult": "FAIL",
+    "confidence": "medium",
+    "ruleResults": [
+      {
+        "ruleId": "RULE-EXCESSIVE-COUPLING",
+        "name": "Excessive Component Coupling",
+        "description": "Detects components with severe total coupling or god-component characteristics that violate structural safety thresholds.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-EXCESSIVE-BREADTH",
+        "name": "Excessive Dependency Breadth",
+        "description": "Detects structural dependency hub components with fan-in or fan-out exceeding threshold.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-CIRCULAR-DEPENDENCIES",
+        "name": "Circular Dependency Loops",
+        "description": "Detects participation in circular dependency loops across architecture components.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "circular-dependency-violation",
+            "detail": "Component 'ClassA' participates in 1 circular dependency loop(s)."
+          },
+          {
+            "rule": "circular-dependency-violation",
+            "detail": "Component 'ClassB' participates in 1 circular dependency loop(s)."
+          },
+          {
+            "rule": "repository-cycles-detected",
+            "detail": "Repository contains 1 circular dependency loop(s) touching components: ClassA, ClassB."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-ARCHITECTURAL-BOTTLENECK",
+        "name": "Architectural Bottlenecks",
+        "description": "Detects central flow bottleneck components that concentrate graph dependencies and change risk.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "architectural-bottleneck-warning",
+            "detail": "Component 'ClassA' is an identified architectural bottleneck (score: 25)."
+          },
+          {
+            "rule": "architectural-bottleneck-warning",
+            "detail": "Component 'ClassB' is an identified architectural bottleneck (score: 25)."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-MISSING-TEST-PROTECTION",
+        "name": "Missing Test Protection on Critical Paths",
+        "description": "Detects structurally critical or business-critical components that lack adequate test protection.",
+        "severity": "CRITICAL",
+        "result": "UNKNOWN",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'ClassA'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'ClassB'."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UNSAFE-EXTERNAL-BOUNDARY",
+        "name": "Unsafe External Boundaries",
+        "description": "Detects unisolated or concentrated external boundary integration points.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-SECURITY-BOUNDARY-VIOLATION",
+        "name": "Security Boundary Violations",
+        "description": "Detects security boundary risks such as 'without sharing' declarations on entry or persistence paths.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-SEVERE-ARCHITECTURE-DEBT",
+        "name": "Severe Architecture Debt Accumulation",
+        "description": "Detects critical or high-severity architecture debt items accumulating across components.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-UNSAFE-CHANGE-IMPACT",
+        "name": "Unsafe Change Impact & Blast Radius",
+        "description": "Detects components whose modification produces unsafe change propagation or BLOCKED safety envelopes.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassA' is BLOCKED due to architectural safety blockers."
+          },
+          {
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassB' is BLOCKED due to architectural safety blockers."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-INVALID-ROLE-LAYER-RELATIONSHIPS",
+        "name": "Invalid Role / Layer Relationships",
+        "description": "Detects illegal cross-layer dependencies or mixed control/persistence responsibilities.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-DOMAIN-INCONSISTENCIES",
+        "name": "Domain Architectural Ambiguity & Inconsistencies",
+        "description": "Detects ambiguous static references or domain boundary conflicts in component flows.",
+        "severity": "MEDIUM",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      }
+    ],
+    "failures": [
+      {
+        "ruleId": "RULE-CIRCULAR-DEPENDENCIES",
+        "name": "Circular Dependency Loops",
+        "description": "Detects participation in circular dependency loops across architecture components.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "circular-dependency-violation",
+            "detail": "Component 'ClassA' participates in 1 circular dependency loop(s)."
+          },
+          {
+            "rule": "circular-dependency-violation",
+            "detail": "Component 'ClassB' participates in 1 circular dependency loop(s)."
+          },
+          {
+            "rule": "repository-cycles-detected",
+            "detail": "Repository contains 1 circular dependency loop(s) touching components: ClassA, ClassB."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UNSAFE-CHANGE-IMPACT",
+        "name": "Unsafe Change Impact & Blast Radius",
+        "description": "Detects components whose modification produces unsafe change propagation or BLOCKED safety envelopes.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassA' is BLOCKED due to architectural safety blockers."
+          },
+          {
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'ClassB' is BLOCKED due to architectural safety blockers."
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      {
+        "ruleId": "RULE-ARCHITECTURAL-BOTTLENECK",
+        "name": "Architectural Bottlenecks",
+        "description": "Detects central flow bottleneck components that concentrate graph dependencies and change risk.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "ClassA",
+          "ClassB"
+        ],
+        "evidence": [
+          {
+            "rule": "architectural-bottleneck-warning",
+            "detail": "Component 'ClassA' is an identified architectural bottleneck (score: 25)."
+          },
+          {
+            "rule": "architectural-bottleneck-warning",
+            "detail": "Component 'ClassB' is an identified architectural bottleneck (score: 25)."
+          }
+        ]
+      }
+    ],
+    "unknownChecks": [
+      "Missing Test Protection on Critical Paths"
+    ]
+  },
+  "duplicateResponsibility": {
+    "totalComponents": 2,
+    "componentsWithOverlapCount": 0,
+    "strongOverlapCount": 0,
+    "possibleOverlapCount": 0,
+    "noOverlapCount": 2,
+    "uniqueOverlappingPairsCount": 0
+  }
+}
