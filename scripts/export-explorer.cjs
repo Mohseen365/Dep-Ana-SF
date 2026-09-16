@@ -178,6 +178,16 @@ function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
   return `${fallbackType}:${id}`;
 }
 
+function normalizeTestCoverageStatus(status) {
+  if (!status) return "UNTESTED";
+  const s = String(status).trim().toLowerCase().replace(/_/g, "-");
+  if (s === "likely-covered" || s === "covered") return "COVERED";
+  if (s === "known-coverage-failure" || s === "untested") return "UNTESTED";
+  if (s === "no-tests" || s === "no-test-evidence") return "NO_TESTS";
+  if (s === "ambiguous-test" || s === "ambiguous" || s === "ambiguous-tests") return "AMBIGUOUS";
+  return "UNTESTED";
+}
+
 function normalizeNodeType(type, id = "") {
   let candidate = type;
   if (!candidate && id && id.includes(":")) {
@@ -410,20 +420,15 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
       rawEdges,
     );
 
-    let testCoverageStatus = "UNTESTED";
-    if (isTest || testGapResult.signal === "test-component") {
-      testCoverageStatus = "COVERED";
-    } else if (testGapResult.signal === "covered" || testGapResult.signal === "likely-covered") {
-      testCoverageStatus = "COVERED";
-    } else if (testGapResult.signal === "known-coverage-failure") {
-      testCoverageStatus = "UNTESTED";
-    } else if (testGapResult.signal === "ambiguous-test") {
-      testCoverageStatus = "AMBIGUOUS";
-    } else if (testGapResult.signal === "no-test-evidence") {
-      testCoverageStatus = "NO_TESTS";
-    } else {
-      testCoverageStatus = "UNTESTED";
+    let rawStatus = rawNode.refactoringReadiness?.testCoverageStatus;
+    if (!rawStatus) {
+      if (isTest || testGapResult.signal === "test-component") {
+        rawStatus = "COVERED";
+      } else {
+        rawStatus = testGapResult.signal;
+      }
     }
+    const testCoverageStatus = normalizeTestCoverageStatus(rawStatus);
 
     return {
       id,
@@ -705,10 +710,19 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
     fs.mkdirSync(projPublicDir, { recursive: true });
     fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
 
+    const parentDir = path.dirname(resolvedOutputFile);
+    const metaPath = path.join(parentDir, "project-metadata.json");
+    if (fs.existsSync(metaPath)) {
+      fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
+    }
+
     if (fs.existsSync(explorerDistDir)) {
       const projDistDir = path.join(explorerDistDir, "projects", projectId);
       fs.mkdirSync(projDistDir, { recursive: true });
       fs.copyFileSync(resolvedOutputFile, path.join(projDistDir, "explorer-data.json"));
+      if (fs.existsSync(metaPath)) {
+        fs.copyFileSync(metaPath, path.join(projDistDir, "project-metadata.json"));
+      }
     }
   } else {
     fs.copyFileSync(resolvedOutputFile, path.join(explorerPublicDir, "explorer-data.json"));
@@ -859,6 +873,7 @@ module.exports = {
   exportExplorerData,
   normalizeNodeId,
   normalizeNodeType,
+  normalizeTestCoverageStatus,
   buildImpactSummaries,
   slugify,
 };
