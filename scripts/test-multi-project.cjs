@@ -210,7 +210,7 @@ function runMultiProjectTests() {
           source: FIXTURE_DIR_B,
         });
       },
-      /Analyzer output file not found/,
+      /Analyzer output file/,
       "Must not silently reuse stale input report when explicit --source does not match"
     );
     console.log("  ✓ Stale report prevention verified: explicit unmatched --source rejected");

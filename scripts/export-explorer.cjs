@@ -119,10 +119,11 @@ function parseArgs(argv) {
     const resolvedPath = path.resolve(ROOT_DIR, pos);
     const exists = fs.existsSync(resolvedPath);
     const isDir = exists && fs.statSync(resolvedPath).isDirectory();
+    const isFile = exists && fs.statSync(resolvedPath).isFile();
     const isJsonFile = pos.endsWith(".json");
     const containsPathSep = pos.includes("/") || pos.includes("\\");
 
-    if ((isDir || containsPathSep) && !sourceExplicit && !pos.startsWith("analyze")) {
+    if ((isDir || containsPathSep) && !isFile && !sourceExplicit && !pos.startsWith("analyze")) {
       source = pos;
       sourceExplicit = true;
     } else if (!inputExplicit && (isDir || isJsonFile || pos.startsWith("analyze") || exists)) {
@@ -138,7 +139,7 @@ function parseArgs(argv) {
         input = pos;
         inputExplicit = true;
       }
-    } else if (!projectExplicit && !isJsonFile && !isDir && !containsPathSep) {
+    } else if (!projectExplicit && !isJsonFile && !isDir && !isFile && !containsPathSep) {
       project = slugify(pos) || "default";
       projectExplicit = true;
     }
@@ -151,7 +152,7 @@ function parseArgs(argv) {
     }
   }
 
-  if (!output) {
+  if (!output || !output.endsWith(".json")) {
     if (outputDir) {
       output = path.join(outputDir, "explorer-data.json");
     } else if (project && project !== "default") {
