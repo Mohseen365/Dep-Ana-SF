@@ -21,7 +21,8 @@ import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { createEmptyImpactState } from './lib/impact-analysis';
-import { createEmptyFilterState, searchNodes } from './lib/search-filter';
+import { createEmptyFilterState, searchNodes, filterGraphByNodeTypes } from './lib/search-filter';
+import { loadProjectState, saveProjectState } from './lib/projectState';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
@@ -34,9 +35,10 @@ import {
   onDetachedDrill,
 } from './lib/detached-drawer';
 
-import type {
-  ExplorerNode,
-  ExplorerEdge,
+import {
+  ALL_EXPLORER_NODE_TYPES,
+  type ExplorerNode,
+  type ExplorerEdge,
 } from './types/explorer';
 import './index.css';
 
@@ -268,9 +270,10 @@ export function App() {
 
   const graphRef = useRef<GraphViewRef>(null);
 
-  // Listen for project change events to flush single-project selection & history
+  // Listen for project change events to flush single-project selection & history and load project-isolated filter state
   useEffect(() => {
     const handleProjectChanged = () => {
+      const projState = loadProjectState(activeProjectId);
       selection.clear();
       setSelectedFinding(null);
       setDrillPath([]);
@@ -280,7 +283,10 @@ export function App() {
       view.setIsInvestigating(false);
       view.setFocusState(createEmptyFocusState());
       view.setImpactState(createEmptyImpactState());
-      view.setFilterState(createEmptyFilterState());
+      view.setFilterState({
+        ...createEmptyFilterState(),
+        visibleNodeTypes: projState.filters?.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES,
+      });
       (view as any).setSelectedNodeId?.(null);
       (view as any).setSelectedFindingId?.(null);
     };
@@ -289,20 +295,46 @@ export function App() {
     return () => {
       window.removeEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     };
-  }, [selection, view]);
+  }, [activeProjectId, selection, view]);
 
-  // Defensive validation: clear stale node selection if selectedNodeId does not belong to data.nodes
+  // Sync visibleNodeTypes state persistence on filter change
+  useEffect(() => {
+    if (!activeProjectId) return;
+    const currentProjState = loadProjectState(activeProjectId);
+    const activeVisibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+    if (
+      JSON.stringify(currentProjState.filters?.visibleNodeTypes) !==
+      JSON.stringify(activeVisibleTypes)
+    ) {
+      saveProjectState(activeProjectId, {
+        ...currentProjState,
+        filters: {
+          ...currentProjState.filters,
+          visibleNodeTypes: activeVisibleTypes,
+        },
+      });
+    }
+  }, [activeProjectId, view.filterState.visibleNodeTypes]);
+
+  // Defensive validation: clear stale node selection if selectedNodeId does not belong to data.nodes or is hidden by visibility filter
   useEffect(() => {
     if (!data) return;
     if (selection.selectedNodeId) {
-      const exists = data.nodes.some((n) => n.id === selection.selectedNodeId);
-      if (!exists) {
+      const selectedNode = data.nodes.find((n) => n.id === selection.selectedNodeId);
+      if (!selectedNode) {
+        selection.clear();
+        setDrillPath([]);
+        view.setIsInvestigating(false);
+        return;
+      }
+      const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+      if (!visibleTypes.includes(selectedNode.type)) {
         selection.clear();
         setDrillPath([]);
         view.setIsInvestigating(false);
       }
     }
-  }, [data, selection, view]);
+  }, [data, selection, view, view.filterState.visibleNodeTypes]);
 
   const handleTogglePin = useCallback(() => {
     setIsPinned((prev) => {
@@ -507,6 +539,12 @@ export function App() {
     return { nodes: res.nodes, edges: res.edges };
   }, [data, effectiveFocusState]);
 
+  // Apply node-type visibility filter AFTER focus depth calculation
+  const visibleGraphData = useMemo(() => {
+    const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+    return filterGraphByNodeTypes(focusedGraphData.nodes, focusedGraphData.edges, visibleTypes);
+  }, [focusedGraphData, view.filterState.visibleNodeTypes]);
+
   // Determine node IDs to highlight on the graph (finding selection or simulator impact)
   const highlightedCycleNodeIds = useMemo(() => {
     if (selectedFinding?.nodeIds && selectedFinding.nodeIds.length > 0) {
@@ -657,8 +695,8 @@ export function App() {
                 ) : (
                   <GraphSlot
                     graphRef={graphRef}
-                    nodes={focusedGraphData.nodes}
-                    edges={focusedGraphData.edges}
+                    nodes={visibleGraphData.nodes}
+                    edges={visibleGraphData.edges}
                     selectedNodeId={selection.selectedNodeId}
                     selectedEdgeId={selection.selectedEdgeId}
                     onSelectNode={(node) => {
@@ -828,7 +866,7 @@ export function App() {
         <StatusBar
           totalNodes={data?.summary?.nodeCount ?? data?.nodes?.length ?? 0}
           totalEdges={data?.summary?.edgeCount ?? data?.edges?.length ?? 0}
-          visibleNodes={displayNodes.length}
+          visibleNodes={visibleGraphData.nodes.length}
           selectedNodeName={selectedNode?.displayName ?? null}
           activeFilterCount={view.filterState.searchQuery ? 1 : 0}
           cycleCount={data?.summary?.cycleCount ?? data?.cycles?.length ?? 0}

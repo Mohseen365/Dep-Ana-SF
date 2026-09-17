@@ -42,7 +42,14 @@ describe("URL Query Serializers", () => {
       const params = filterQuery.toQuery(initial);
       const parsed = filterQuery.fromQuery(params);
 
-      expect(parsed).toEqual(initial);
+      expect(parsed.viewMode).toBe(initial.viewMode);
+      expect(parsed.filterState.searchQuery).toBe(initial.filterState.searchQuery);
+      expect(parsed.filterState.typeFilter).toBe(initial.filterState.typeFilter);
+      expect(parsed.filterState.riskFilter).toBe(initial.filterState.riskFilter);
+      expect(parsed.filterState.hasCallouts).toBe(initial.filterState.hasCallouts);
+      expect(parsed.filterState.withoutSharing).toBe(initial.filterState.withoutSharing);
+      expect(parsed.filterState.hideTests).toBe(initial.filterState.hideTests);
+      expect(parsed.filterState.hasAsyncPatterns).toBe(initial.filterState.hasAsyncPatterns);
     });
 
     it("safely falls back for invalid query values", () => {

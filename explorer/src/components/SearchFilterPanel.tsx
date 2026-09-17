@@ -12,7 +12,21 @@ import {
   ExplorerNode,
   ExplorerNodeType,
   ExplorerRiskLevel,
+  ALL_EXPLORER_NODE_TYPES,
 } from "../types/explorer";
+
+const NODE_TYPE_LABELS: Record<ExplorerNodeType, string> = {
+  ApexClass: "Apex Class",
+  ApexTrigger: "Apex Trigger",
+  LWC: "LWC",
+  Visualforce: "Visualforce",
+  Flow: "Flow",
+  Object: "Object",
+  CustomObject: "Custom Object",
+  Field: "Field",
+  CustomField: "Custom Field",
+  External: "External",
+};
 
 export type QuickFilterPreset = "all" | "high_risk" | "hotspots";
 export type SortOption = "risk" | "name" | "type";
@@ -42,6 +56,9 @@ export const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showGraphVisibility, setShowGraphVisibility] = useState(true);
+
+  const activeVisibleTypes = filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
 
   const nodeTypes = getUniqueNodeTypes(nodes);
   const riskLevels = getAvailableRiskLevels(nodes);
@@ -74,6 +91,25 @@ export const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
     },
     [filterState, onFilterChange]
   );
+
+  const handleToggleNodeType = useCallback(
+    (nodeType: ExplorerNodeType) => {
+      const current = filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+      const updated = current.includes(nodeType)
+        ? current.filter((t) => t !== nodeType)
+        : [...current, nodeType];
+      onFilterChange({ ...filterState, visibleNodeTypes: updated });
+    },
+    [filterState, onFilterChange]
+  );
+
+  const handleSelectAllNodeTypes = useCallback(() => {
+    onFilterChange({ ...filterState, visibleNodeTypes: [...ALL_EXPLORER_NODE_TYPES] });
+  }, [filterState, onFilterChange]);
+
+  const handleClearAllNodeTypes = useCallback(() => {
+    onFilterChange({ ...filterState, visibleNodeTypes: [] });
+  }, [filterState, onFilterChange]);
 
   const handleClearQuery = useCallback(() => {
     setLocalQuery("");
@@ -135,6 +171,145 @@ export const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
 
   return (
     <div className="sidebar-search-filter-panel" style={{ padding: "0 12px 12px 12px", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
+      {/* Graph Visibility Filter Control */}
+      <div
+        className="graph-visibility-control"
+        data-testid="graph-visibility-panel"
+        style={{
+          marginBottom: "10px",
+          padding: "8px 10px",
+          backgroundColor: "rgba(15, 23, 42, 0.6)",
+          border: "1px solid var(--border-default, #334155)",
+          borderRadius: "6px"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            cursor: "pointer"
+          }}
+          onClick={() => setShowGraphVisibility((prev) => !prev)}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "10px", color: "var(--text-muted, #94a3b8)" }}>
+              {showGraphVisibility ? "▼" : "►"}
+            </span>
+            <span
+              style={{
+                fontSize: "11px",
+                fontWeight: 700,
+                color: "var(--text-primary, #f8fafc)",
+                letterSpacing: "0.02em"
+              }}
+            >
+              Graph Canvas Visibility
+            </span>
+          </div>
+          <span
+            data-testid="graph-visibility-counter"
+            style={{
+              fontSize: "10px",
+              fontWeight: 700,
+              padding: "1px 6px",
+              borderRadius: "10px",
+              backgroundColor: "rgba(59, 130, 246, 0.18)",
+              color: "#60a5fa",
+              fontFamily: "var(--font-mono, monospace)"
+            }}
+          >
+            {activeVisibleTypes.length}/{ALL_EXPLORER_NODE_TYPES.length}
+          </span>
+        </div>
+
+        {showGraphVisibility && (
+          <div style={{ marginTop: "8px" }}>
+            {/* Action buttons: Select all / Clear all */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "6px",
+                paddingBottom: "4px",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.06)"
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleSelectAllNodeTypes}
+                data-testid="select-all-node-types-btn"
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#3b82f6",
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: "0"
+                }}
+              >
+                Select all
+              </button>
+              <button
+                type="button"
+                onClick={handleClearAllNodeTypes}
+                data-testid="clear-all-node-types-btn"
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#94a3b8",
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: "0"
+                }}
+              >
+                Clear all
+              </button>
+            </div>
+
+            {/* Checkbox grid for all 10 node types */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "4px 8px",
+                fontSize: "11px",
+                color: "var(--text-secondary, #cbd5e1)"
+              }}
+            >
+              {ALL_EXPLORER_NODE_TYPES.map((nodeType) => {
+                const isChecked = activeVisibleTypes.includes(nodeType);
+                return (
+                  <label
+                    key={nodeType}
+                    data-testid={`node-type-checkbox-${nodeType}`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      cursor: "pointer",
+                      fontSize: "10px",
+                      userSelect: "none"
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => handleToggleNodeType(nodeType)}
+                      aria-label={`Toggle ${NODE_TYPE_LABELS[nodeType]} visibility on graph`}
+                      style={{ cursor: "pointer", accentColor: "#3b82f6" }}
+                    />
+                    <span>{NODE_TYPE_LABELS[nodeType]}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Search Bar */}
       <div className="ui-search-field" style={{ position: "relative", marginBottom: "8px" }}>
         <span className="ui-search-icon" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", fontSize: "12px", opacity: 0.6, pointerEvents: "none" }}>
