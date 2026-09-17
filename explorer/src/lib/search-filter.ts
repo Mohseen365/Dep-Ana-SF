@@ -3,6 +3,7 @@ import {
   ExplorerEdge,
   ExplorerRiskLevel,
   ExplorerNodeType,
+  ALL_EXPLORER_NODE_TYPES,
 } from "../types/explorer";
 
 export interface SearchFilterState {
@@ -13,6 +14,7 @@ export interface SearchFilterState {
   withoutSharing?: boolean;
   hideTests?: boolean;
   hasAsyncPatterns?: boolean;
+  visibleNodeTypes?: ExplorerNodeType[];
 }
 
 export interface SearchResult {
@@ -219,6 +221,54 @@ export function getAvailableRiskLevels(
   return Array.from(risks).sort();
 }
 
+export function filterNodesByVisibleTypes(
+  nodes: ExplorerNode[],
+  visibleTypes?: ExplorerNodeType[],
+): ExplorerNode[] {
+  if (!visibleTypes) {
+    return nodes;
+  }
+  const typeSet = new Set<ExplorerNodeType>(visibleTypes);
+  const result: ExplorerNode[] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    if (typeSet.has(nodes[i].type)) {
+      result.push(nodes[i]);
+    }
+  }
+  return result;
+}
+
+export function filterEdgesByVisibleNodes(
+  edges: ExplorerEdge[],
+  visibleNodeIds: Set<string>,
+): ExplorerEdge[] {
+  const result: ExplorerEdge[] = [];
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
+    if (visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target)) {
+      result.push(edge);
+    }
+  }
+  return result;
+}
+
+export function filterGraphByNodeTypes(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  visibleTypes?: ExplorerNodeType[],
+): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
+  const visibleNodes = filterNodesByVisibleTypes(nodes, visibleTypes);
+  const visibleNodeIds = new Set<string>();
+  for (let i = 0; i < visibleNodes.length; i++) {
+    visibleNodeIds.add(visibleNodes[i].id);
+  }
+  const visibleEdges = filterEdgesByVisibleNodes(edges, visibleNodeIds);
+  return {
+    nodes: visibleNodes,
+    edges: visibleEdges,
+  };
+}
+
 export function createEmptyFilterState(): SearchFilterState {
   return {
     searchQuery: "",
@@ -228,5 +278,6 @@ export function createEmptyFilterState(): SearchFilterState {
     withoutSharing: false,
     hideTests: false,
     hasAsyncPatterns: false,
+    visibleNodeTypes: [...ALL_EXPLORER_NODE_TYPES],
   };
 }

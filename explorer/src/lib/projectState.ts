@@ -6,6 +6,8 @@
  * never pollutes or overwrites state for Project B (e.g., sidebar expanded, zoom 120%).
  */
 
+import { ExplorerNodeType, ALL_EXPLORER_NODE_TYPES } from '../types/explorer';
+
 export interface SelectedComponentState {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
@@ -21,6 +23,7 @@ export interface FilterUIState {
   hideTests: boolean;
   hasAsyncPatterns: boolean;
   customTags?: string[];
+  visibleNodeTypes?: ExplorerNodeType[];
 }
 
 export interface GraphLayoutState {
@@ -103,6 +106,7 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
       hideTests: false,
       hasAsyncPatterns: false,
       customTags: [],
+      visibleNodeTypes: [...ALL_EXPLORER_NODE_TYPES],
     },
     graphLayout: {
       layoutName: 'cola',
@@ -189,6 +193,9 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
     filters: {
       ...defaults.filters,
       ...(loaded.filters || {}),
+      visibleNodeTypes: Array.isArray(loaded.filters?.visibleNodeTypes)
+        ? loaded.filters.visibleNodeTypes
+        : defaults.filters.visibleNodeTypes,
     },
     graphLayout: {
       ...defaults.graphLayout,

@@ -7,8 +7,10 @@ import {
   clearProjectState,
   getAllSavedProjectIds,
   getProjectStorageKey,
+  getProjectStorageKey as getStorageKey,
   type ProjectUIState,
 } from './projectState';
+import { ALL_EXPLORER_NODE_TYPES } from '../types/explorer';
 
 describe('Project-Scoped UI State Storage Manager', () => {
   beforeEach(() => {
@@ -27,6 +29,7 @@ describe('Project-Scoped UI State Storage Manager', () => {
       selectedInvestigationId: null,
     });
     expect(state.filters.searchQuery).toBe('');
+    expect(state.filters.visibleNodeTypes).toEqual(ALL_EXPLORER_NODE_TYPES);
     expect(state.graphLayout.layoutName).toBe('cola');
     expect(state.zoom).toEqual({ zoom: 1.0, pan: { x: 0, y: 0 } });
     expect(state.sidebarState.collapsed).toBe(false);
@@ -242,5 +245,43 @@ describe('Project-Scoped UI State Storage Manager', () => {
     const idsAfter = getAllSavedProjectIds();
     expect(idsAfter).not.toContain('proj-x');
     expect(idsAfter).toContain('proj-y');
+  });
+
+  it('handles visibleNodeTypes state persistence and missing state fallback', () => {
+    // 1. Custom visibleNodeTypes persist
+    updateProjectState('proj-visibility', {
+      filters: {
+        searchQuery: '',
+        typeFilter: '',
+        riskFilter: '',
+        hasCallouts: false,
+        withoutSharing: false,
+        hideTests: false,
+        hasAsyncPatterns: false,
+        visibleNodeTypes: ['LWC', 'ApexClass'],
+      },
+    });
+
+    const loaded = loadProjectState('proj-visibility');
+    expect(loaded.filters.visibleNodeTypes).toEqual(['LWC', 'ApexClass']);
+
+    // 2. Old saved state missing visibleNodeTypes defaults to ALL_EXPLORER_NODE_TYPES
+    const oldSavedStateRaw = JSON.stringify({
+      projectId: 'proj-old',
+      filters: {
+        searchQuery: 'OldSearch',
+        typeFilter: '',
+        riskFilter: '',
+        hasCallouts: false,
+        withoutSharing: false,
+        hideTests: false,
+        hasAsyncPatterns: false,
+      },
+    });
+    localStorage.setItem(getStorageKey('proj-old'), oldSavedStateRaw);
+
+    const loadedOld = loadProjectState('proj-old');
+    expect(loadedOld.filters.searchQuery).toBe('OldSearch');
+    expect(loadedOld.filters.visibleNodeTypes).toEqual(ALL_EXPLORER_NODE_TYPES);
   });
 });
