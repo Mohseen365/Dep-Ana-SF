@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
 import { useProject } from './context/ProjectContext';
+import { useProjectState } from './context/ProjectStateContext';
 import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
 import { useViewState } from './hooks/useViewState';
@@ -50,6 +51,14 @@ function useProjectSafe() {
   }
 }
 
+function useProjectStateSafe() {
+  try {
+    return useProjectState();
+  } catch (_) {
+    return null;
+  }
+}
+
 /**
  * GraphSlot renders the main interactive Cytoscape graph canvas.
  */
@@ -68,6 +77,10 @@ export function GraphSlot(props: {
   focusedNodeId?: string | null;
   focusState?: any;
   onFocusChange?: (focusState: any) => void;
+  nodePositions?: Record<string, { x: number; y: number }>;
+  onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>) => void;
+  layoutMode?: 'static' | 'interactive';
+  onLayoutModeChange?: (mode: 'static' | 'interactive') => void;
 }) {
   return (
     <div className="graph-container" data-slot="graph" style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -86,6 +99,10 @@ export function GraphSlot(props: {
         focusedNodeId={props.focusedNodeId}
         focusState={props.focusState}
         onFocusChange={props.onFocusChange}
+        nodePositions={props.nodePositions}
+        onNodePositionsChange={props.onNodePositionsChange}
+        layoutMode={props.layoutMode}
+        onLayoutModeChange={props.onLayoutModeChange}
       />
     </div>
   );
@@ -216,8 +233,11 @@ function ErrorScreen({ error, onRetry }: { error: Error | null; onRetry: () => v
 
 export function App() {
   const projectContext = useProjectSafe();
+  const projectStateContext = useProjectStateSafe();
 
   const activeProjectId = projectContext?.activeProjectId || 'default';
+  const nodePositions = projectStateContext?.projectState.graphLayout.nodePositions;
+  const layoutMode = projectStateContext?.projectState.graphLayout.layoutMode || 'interactive';
   const activeProject = projectContext?.activeProject;
   const dataUrl = projectContext?.getProjectDataUrl(activeProjectId) || '/explorer-data.json';
 
@@ -716,6 +736,10 @@ export function App() {
                     }
                     focusState={effectiveFocusState}
                     onFocusChange={view.setFocusState}
+                    nodePositions={nodePositions}
+                    onNodePositionsChange={(positions) => projectStateContext?.updateGraphLayout({ nodePositions: positions })}
+                    layoutMode={layoutMode}
+                    onLayoutModeChange={(mode) => projectStateContext?.updateGraphLayout({ layoutMode: mode })}
                   />
                 )
               )}

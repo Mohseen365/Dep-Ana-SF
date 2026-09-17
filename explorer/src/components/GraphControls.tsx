@@ -16,6 +16,8 @@ export interface GraphControlsProps {
   onToggleNavigator?: () => void;
   focusState?: FocusState;
   onFocusChange?: (focusState: FocusState) => void;
+  layoutMode?: 'static' | 'interactive';
+  onToggleLayoutMode?: () => void;
 }
 
 export const GraphControls: React.FC<GraphControlsProps> = ({
@@ -32,6 +34,8 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
   onToggleNavigator,
   focusState,
   onFocusChange,
+  layoutMode = 'interactive',
+  onToggleLayoutMode,
 }) => {
   return (
     <div className="graph-controls-floating" role="toolbar" aria-label="Graph controls">
@@ -94,6 +98,18 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
 
       {/* Layout Section */}
       <div className="graph-control-group layout-group" role="group" aria-label="Layout controls">
+        {onToggleLayoutMode && (
+          <button
+            className={`graph-control-btn ${layoutMode === 'static' ? 'active' : ''}`}
+            onClick={onToggleLayoutMode}
+            title={layoutMode === 'static' ? 'Static Layout (Positions Locked)' : 'Interactive Layout'}
+            aria-label={layoutMode === 'static' ? 'Switch to Interactive Layout' : 'Switch to Static Layout'}
+            aria-pressed={layoutMode === 'static'}
+            type="button"
+          >
+            {layoutMode === 'static' ? '📌' : '🔀'}
+          </button>
+        )}
         <button
           className="graph-control-btn"
           onClick={onResetLayout}
