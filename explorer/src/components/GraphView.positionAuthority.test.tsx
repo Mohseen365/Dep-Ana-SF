@@ -23,7 +23,11 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
       const mockEles = {
         length: 1,
         id: () => id,
-        data: vi.fn().mockReturnValue({ id, displayName: id, type: 'ApexClass' }),
+        data: vi.fn().mockReturnValue({
+          id,
+          displayName: id,
+          type: 'ApexClass',
+        }),
         isNode: () => true,
         isEdge: () => false,
         position: vi.fn((newPos?: { x: number; y: number }) => {

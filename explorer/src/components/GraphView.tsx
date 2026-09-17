@@ -54,6 +54,10 @@ export interface GraphViewProps {
   focusState?: FocusState;
   onFocusChange?: (focusState: FocusState) => void;
   graphLayout?: GraphLayoutState;
+  nodePositions?: Record<string, { x: number; y: number }>;
+  onNodePositionsChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
+  layoutMode?: LayoutMode;
+  onLayoutModeChange?: (mode: LayoutMode) => void;
   onNodeDragEnd?: (nodeId: string, position: { x: number; y: number }) => void;
   onNodePositionChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
   nodePositions?: Record<string, { x: number; y: number }>;
@@ -102,6 +106,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   focusState,
   onFocusChange,
   graphLayout,
+  nodePositions,
+  onNodePositionsChange,
+  layoutMode = 'interactive',
+  onLayoutModeChange,
   onNodeDragEnd,
   onNodePositionChange,
   nodePositions: propNodePositions,
@@ -121,6 +129,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
   const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
+  const nodePositionsRef = useRef<Record<string, { x: number; y: number }> | undefined>(nodePositions);
+  const onNodePositionsChangeRef = useRef<((positions: Record<string, { x: number; y: number }>) => void) | undefined>(onNodePositionsChange);
+  const layoutModeRef = useRef<LayoutMode>(layoutMode);
 
   const nodePositionsRef = useRef<Record<string, Position> | undefined>(nodePositions);
   const onNodePositionsChangeRef = useRef<
@@ -358,7 +369,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         onNodeDragEndRef.current(nodeId, rounded);
       }
       if (onNodePositionChangeRef.current) {
-        const currentStoredPositions = graphLayoutRef.current?.nodePositions || {};
+        const currentStoredPositions = graphLayoutRef.current?.nodePositions || nodePositionsRef.current || {};
         const updatedPositions = {
           ...currentStoredPositions,
           [nodeId]: rounded,
@@ -541,7 +552,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     const cyPositionsBefore: Record<string, Position> = {};
     cy.nodes().forEach((n) => {
       const pos = n.position();
-      cyPositionsBefore[n.id()] = { x: pos.x, y: pos.y };
+      const posObj = { x: Math.round(pos.x), y: Math.round(pos.y) };
+      cyPositionsBefore[n.id()] = posObj;
+      sessionPositionsRef.current.set(n.id(), posObj);
     });
 
     // Check if any incoming node is genuinely new
