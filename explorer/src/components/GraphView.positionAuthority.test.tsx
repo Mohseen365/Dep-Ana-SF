@@ -23,6 +23,7 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
       const mockEles = {
         length: 1,
         id: () => id,
+        data: vi.fn(() => ({ id, name: id })),
         isNode: () => true,
         isEdge: () => false,
         position: vi.fn((newPos?: { x: number; y: number }) => {
