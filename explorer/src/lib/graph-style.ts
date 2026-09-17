@@ -6,12 +6,15 @@ export type NodeShape =
   | 'triangle'
   | 'rectangle'
   | 'round-rectangle'
+  | 'bottom-round-rectangle'
   | 'hexagon'
   | 'diamond'
   | 'octagon'
   | 'rhomboid'
   | 'cut-rectangle'
   | 'star';
+
+export const APEX_TEST_CLASS_SHAPE: NodeShape = 'bottom-round-rectangle';
 
 export const NODE_SHAPE_BY_TYPE: Record<ExplorerNodeType, NodeShape> = {
   ApexClass: 'ellipse',
@@ -26,7 +29,10 @@ export const NODE_SHAPE_BY_TYPE: Record<ExplorerNodeType, NodeShape> = {
   External: 'star'
 };
 
-export function getNodeShape(type: ExplorerNodeType): NodeShape {
+export function getNodeShape(type: ExplorerNodeType, isTest?: boolean): NodeShape {
+  if (type === 'ApexClass' && isTest) {
+    return APEX_TEST_CLASS_SHAPE;
+  }
   return NODE_SHAPE_BY_TYPE[type] || 'ellipse';
 }
 
@@ -147,6 +153,12 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'background-color': NODE_COLORS.ApexClass.background,
         'border-color': NODE_COLORS.ApexClass.border,
         'shape': NODE_SHAPE_BY_TYPE.ApexClass
+      }
+    },
+    {
+      selector: 'node[type = "ApexClass"][isTest = "true"]',
+      style: {
+        'shape': APEX_TEST_CLASS_SHAPE
       }
     },
     {
