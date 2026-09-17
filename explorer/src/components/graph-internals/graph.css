@@ -17,6 +17,39 @@
   left: 0;
 }
 
+/* Graph Mode Badge Overlay - Top Left */
+.graph-mode-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 20;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.graph-mode-badge.static {
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.graph-mode-badge.interactive {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
 /* Floating Controls - Top Right */
 .graph-controls-floating {
   position: absolute;

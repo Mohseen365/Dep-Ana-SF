@@ -133,6 +133,7 @@ describe('Project-Scoped UI State Storage Manager', () => {
       },
       graphLayout: {
         layoutName: 'concentric',
+        mode: 'static',
         nodePositions: { 'node-1': { x: 10, y: 20 } },
       },
       zoom: { zoom: 0.75, pan: { x: 5, y: 10 } },
@@ -172,6 +173,7 @@ describe('Project-Scoped UI State Storage Manager', () => {
       },
       graphLayout: {
         layoutName: 'dagre',
+        mode: 'interactive',
         nodePositions: { 'node-2': { x: 100, y: 200 } },
       },
       zoom: { zoom: 1.5, pan: { x: 30, y: 40 } },

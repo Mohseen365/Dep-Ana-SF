@@ -56,16 +56,18 @@ export interface GraphViewProps {
   graphLayout?: GraphLayoutState;
   nodePositions?: Record<string, { x: number; y: number }>;
   onNodePositionsChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
-  layoutMode?: LayoutMode;
-  onLayoutModeChange?: (mode: LayoutMode) => void;
-  onNodeDragEnd?: (nodeId: string, position: { x: number; y: number }) => void;
-  onNodePositionChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
-  nodePositions?: Record<string, { x: number; y: number }>;
-  onNodePositionsChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
-  layoutMode?: LayoutMode;
-  onLayoutModeChange?: (mode: LayoutMode) => void;
-  onNodeDoubleTap?: (nodeId: string, node: ExplorerNode | null) => void;
-}
+  graphLayout?: GraphLayoutState;
+  onNodePositionChange?: (
+    nodePositions: Record<string, { x: number; y: number }>
+  ) => void;
+  onNodeDragEnd?: (
+    nodeId: string,
+    position: { x: number; y: number }
+  ) => void;
+  onNodeDoubleTap?: (
+    nodeId: string,
+    node: ExplorerNode | null
+  ) => void;
 
 export interface GraphViewRef {
   zoomIn: () => void;
@@ -91,36 +93,32 @@ interface EdgeHoverCardData {
 
 type HoverCardState = NodeHoverCardData | EdgeHoverCardData | null;
 
-export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
-  nodes,
-  edges,
-  onSelectNode,
-  onSelectEdge,
-  selectedNodeId,
-  selectedEdgeId,
-  impactResult,
-  selectedCycleNodeIds,
-  onToggleFullscreen,
-  isFullscreen = false,
-  focusedNodeId,
-  focusState,
-  onFocusChange,
-  graphLayout,
-  nodePositions,
-  onNodePositionsChange,
-  layoutMode = 'interactive',
-  onLayoutModeChange,
-  onNodeDragEnd,
-  onNodePositionChange,
-  nodePositions: propNodePositions,
-  onNodePositionsChange: propOnNodePositionsChange,
-  layoutMode: propLayoutMode,
-  onLayoutModeChange,
-  onNodeDoubleTap: onNodeDoubleTapProp,
-}, ref) => {
-  const nodePositions = propNodePositions ?? graphLayout?.nodePositions;
-  const layoutMode = propLayoutMode ?? graphLayout?.mode ?? 'interactive';
-  const onNodePositionsChange = propOnNodePositionsChange ?? onNodePositionChange;
+export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) => {
+  const {
+    nodes,
+    edges,
+    onSelectNode,
+    onSelectEdge,
+    selectedNodeId,
+    selectedEdgeId,
+    impactResult,
+    selectedCycleNodeIds,
+    onToggleFullscreen,
+    isFullscreen = false,
+    focusedNodeId,
+    focusState,
+    onFocusChange,
+    graphLayout,
+    onNodeDragEnd,
+    onNodePositionChange,
+    onNodeDoubleTap: onNodeDoubleTapProp,
+  } = props;
+
+  const nodePositions = graphLayout?.nodePositions;
+  const layoutMode: GraphLayoutState['mode'] =
+    graphLayout?.mode ?? 'interactive';
+
+  const onNodePositionsChange = onNodePositionChange;
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -139,13 +137,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   >(onNodePositionsChange);
   const layoutModeRef = useRef<LayoutMode>(layoutMode);
 
+  const nodePositionsRef = useRef<Record<string, { x: number; y: number }> | undefined>(nodePositions);
+  const onNodePositionsChangeRef = useRef<
+    ((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined
+  >(onNodePositionsChange);
+  const layoutModeRef = useRef<LayoutMode>(layoutMode);
+
   const onNodeDragEndRef = useRef<
     ((nodeId: string, position: { x: number; y: number }) => void) | undefined
   >(onNodeDragEnd);
-
-  const onNodePositionChangeRef = useRef<
-    ((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined
-  >(onNodePositionChange);
 
   // In-session explicit drag positions.
   // This represents the highest position authority.
@@ -154,9 +154,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   );
 
   // Track previous mode for Interactive ↔ Static transitions.
-  const prevLayoutModeRef = useRef<
-    GraphLayoutState['mode']
-  >(layoutMode);
+const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -169,9 +167,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     nodePositionsRef.current = nodePositions;
     onNodePositionsChangeRef.current = onNodePositionsChange;
     layoutModeRef.current = layoutMode;
+    graphLayoutRef.current = graphLayout;
     onNodeDragEndRef.current = onNodeDragEnd;
     onNodePositionChangeRef.current = onNodePositionChange;
-  }, [nodes, edges, nodePositions, onNodePositionsChange, layoutMode, onNodeDragEnd, onNodePositionChange]);
+  }, [
+    nodes,
+    edges,
+    nodePositions,
+    onNodePositionsChange,
+    layoutMode,
+    graphLayout,
+    onNodeDragEnd,
+    onNodePositionChange,
+  ]);
 
   // Capture all current canvas node positions and notify parent listener
   const captureAndPersistPositions = useCallback(() => {
@@ -363,17 +371,22 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
 
       sessionPositionsRef.current.set(nodeId, rounded);
-      captureAndPersistPositions();
+      captureAndPersistPositions();     
 
       if (onNodeDragEndRef.current) {
         onNodeDragEndRef.current(nodeId, rounded);
       }
       if (onNodePositionChangeRef.current) {
-        const currentStoredPositions = graphLayoutRef.current?.nodePositions || nodePositionsRef.current || {};
+        const currentStoredPositions =
+          graphLayoutRef.current?.nodePositions ||
+          nodePositionsRef.current ||
+          {};
+
         const updatedPositions = {
           ...currentStoredPositions,
           [nodeId]: rounded,
         };
+
         onNodePositionChangeRef.current(updatedPositions);
       }
     });
@@ -625,8 +638,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       captureAndPersistPositions();
     }
 
-    // Apply stored node positions if present in graphLayout
-    const storedPositions = graphLayoutRef.current?.nodePositions || graphLayout?.nodePositions;
+    // Apply stored node positions if present in graphLayout or nodePositions
+    const storedPositions = nodePositionsRef.current || graphLayoutRef.current?.nodePositions || graphLayout?.nodePositions;
     if (storedPositions && Object.keys(storedPositions).length > 0) {
       cy.batch(() => {
         cy.nodes().forEach((n) => {
@@ -854,6 +867,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       aria-label="Salesforce Architecture Dependency Graph"
     >
       <div ref={containerRef} className="cytoscape-view" />
+
+      {/* Mode Indicator Overlay Badge */}
+      <div
+        className={`graph-mode-badge ${layoutMode === 'static' ? 'static' : 'interactive'}`}
+        data-testid="graph-mode-indicator"
+        title={layoutMode === 'static' ? 'Node positions are preserved' : 'Graph automatically arranges nodes'}
+      >
+        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : '🔀 Interactive Mode'}
+      </div>
 
       {/* Product-Grade Navigator Container Floating Bottom Right */}
       {isNavigatorVisible && (
