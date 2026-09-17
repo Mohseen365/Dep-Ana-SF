@@ -56,18 +56,12 @@ export interface GraphViewProps {
   graphLayout?: GraphLayoutState;
   nodePositions?: Record<string, { x: number; y: number }>;
   onNodePositionsChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
-  graphLayout?: GraphLayoutState;
-  onNodePositionChange?: (
-    nodePositions: Record<string, { x: number; y: number }>
-  ) => void;
-  onNodeDragEnd?: (
-    nodeId: string,
-    position: { x: number; y: number }
-  ) => void;
-  onNodeDoubleTap?: (
-    nodeId: string,
-    node: ExplorerNode | null
-  ) => void;
+  onNodePositionChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
+  onNodeDragEnd?: (nodeId: string, position: { x: number; y: number }) => void;
+  onNodeDoubleTap?: (nodeId: string, node: ExplorerNode | null) => void;
+  layoutMode?: LayoutMode;
+  onLayoutModeChange?: (mode: LayoutMode) => void;
+}
 
 export interface GraphViewRef {
   zoomIn: () => void;
@@ -111,14 +105,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     graphLayout,
     onNodeDragEnd,
     onNodePositionChange,
+    onNodePositionsChange: onNodePositionsChangeProp,
     onNodeDoubleTap: onNodeDoubleTapProp,
+    layoutMode: layoutModeProp,
+    onLayoutModeChange,
   } = props;
 
-  const nodePositions = graphLayout?.nodePositions;
-  const layoutMode: GraphLayoutState['mode'] =
-    graphLayout?.mode ?? 'interactive';
+  const nodePositions = props.nodePositions || graphLayout?.nodePositions;
+  const layoutMode: LayoutMode = layoutModeProp || graphLayout?.mode || 'interactive';
+  const onNodePositionsChange = onNodePositionsChangeProp || onNodePositionChange;
 
-  const onNodePositionsChange = onNodePositionChange;
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -127,34 +123,17 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
   const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
-  const nodePositionsRef = useRef<Record<string, { x: number; y: number }> | undefined>(nodePositions);
-  const onNodePositionsChangeRef = useRef<((positions: Record<string, { x: number; y: number }>) => void) | undefined>(onNodePositionsChange);
-  const layoutModeRef = useRef<LayoutMode>(layoutMode);
-
   const nodePositionsRef = useRef<Record<string, Position> | undefined>(nodePositions);
-  const onNodePositionsChangeRef = useRef<
-    ((nodePositions: Record<string, Position>) => void) | undefined
-  >(onNodePositionsChange);
+  const onNodePositionsChangeRef = useRef<((positions: Record<string, Position>) => void) | undefined>(onNodePositionsChange);
   const layoutModeRef = useRef<LayoutMode>(layoutMode);
-
-  const nodePositionsRef = useRef<Record<string, { x: number; y: number }> | undefined>(nodePositions);
-  const onNodePositionsChangeRef = useRef<
-    ((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined
-  >(onNodePositionsChange);
-  const layoutModeRef = useRef<LayoutMode>(layoutMode);
-
-  const onNodeDragEndRef = useRef<
-    ((nodeId: string, position: { x: number; y: number }) => void) | undefined
-  >(onNodeDragEnd);
+  const onNodeDragEndRef = useRef<((nodeId: string, position: Position) => void) | undefined>(onNodeDragEnd);
 
   // In-session explicit drag positions.
   // This represents the highest position authority.
-  const sessionPositionsRef = useRef<Map<string, { x: number; y: number }>>(
-    new Map()
-  );
+  const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
 
-  // Track previous mode for Interactive ↔ Static transitions.
-const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
+  // Track previous mode for Interactive <-> Static transitions.
+  const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -169,7 +148,6 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
     layoutModeRef.current = layoutMode;
     graphLayoutRef.current = graphLayout;
     onNodeDragEndRef.current = onNodeDragEnd;
-    onNodePositionChangeRef.current = onNodePositionChange;
   }, [
     nodes,
     edges,
@@ -178,7 +156,6 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
     layoutMode,
     graphLayout,
     onNodeDragEnd,
-    onNodePositionChange,
   ]);
 
   // Capture all current canvas node positions and notify parent listener
@@ -371,12 +348,13 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
 
       sessionPositionsRef.current.set(nodeId, rounded);
-      captureAndPersistPositions();     
+      captureAndPersistPositions();
 
       if (onNodeDragEndRef.current) {
         onNodeDragEndRef.current(nodeId, rounded);
       }
-      if (onNodePositionChangeRef.current) {
+
+      if (onNodePositionsChangeRef.current) {
         const currentStoredPositions =
           graphLayoutRef.current?.nodePositions ||
           nodePositionsRef.current ||
@@ -387,7 +365,7 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
           [nodeId]: rounded,
         };
 
-        onNodePositionChangeRef.current(updatedPositions);
+        onNodePositionsChangeRef.current(updatedPositions);
       }
     });
 
@@ -489,7 +467,6 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       setHoverCard(null);
     });
-
 
     // Interaction bindings
     bindGraphInteractions(cy, {
@@ -601,7 +578,7 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
       cy.add(newElements);
     });
 
-    // Restore or calculate positions for all nodes
+    // Restore or calculate positions for all nodes based on position authority hierarchy
     const knownPositionsMap: Record<string, Position> = {};
 
     cy.nodes().forEach((node) => {
@@ -636,19 +613,6 @@ const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
         animate: !prefersReducedMotion && nodes.length < 100
       });
       captureAndPersistPositions();
-    }
-
-    // Apply stored node positions if present in graphLayout or nodePositions
-    const storedPositions = nodePositionsRef.current || graphLayoutRef.current?.nodePositions || graphLayout?.nodePositions;
-    if (storedPositions && Object.keys(storedPositions).length > 0) {
-      cy.batch(() => {
-        cy.nodes().forEach((n) => {
-          const stored = storedPositions[n.id()];
-          if (stored) {
-            n.position(stored);
-          }
-        });
-      });
     }
 
     if (selectedNodeId) {

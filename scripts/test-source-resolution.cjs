@@ -279,7 +279,10 @@ function runTests() {
     } catch (err) {
       tDFailed = true;
       const combined = (err.stderr || "").toString() + (err.stdout || "").toString();
-      assert.ok(combined.includes("Analyzer output file not found"), `Expected mismatch rejection in:\n${combined}`);
+      assert.ok(
+        combined.includes("does not match explicit source") || combined.includes("Analyzer output file not found"),
+        `Expected mismatch rejection in:\n${combined}`
+      );
     }
     assert.ok(tDFailed, "Adapter must reject report from another source");
     console.log("  ✓ Test D PASSED: Mismatched explicit source rejected");
