@@ -94,6 +94,19 @@ export type ExplorerNodeType =
   | "CustomField"
   | "External";
 
+export const ALL_EXPLORER_NODE_TYPES: ExplorerNodeType[] = [
+  "ApexClass",
+  "ApexTrigger",
+  "LWC",
+  "Visualforce",
+  "Flow",
+  "Object",
+  "CustomObject",
+  "Field",
+  "CustomField",
+  "External",
+];
+
 export type ExplorerRiskLevel = "HIGH" | "MEDIUM" | "LOW";
 
 export interface ExplorerNodeMetrics {
