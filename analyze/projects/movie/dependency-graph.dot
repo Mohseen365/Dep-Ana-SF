@@ -1,8 +1,0 @@
-digraph SalesforceDependencies {
-  rankdir="LR";
-  graph [overlap=false];
-  N1 [label="ClassA\nApexClass", shape=box];
-  N2 [label="ClassB\nApexClass", shape=box];
-  N1 -> N2 [label="method-call:doWork->doHelp"];
-  N2 -> N1 [label="method-call:doHelp->doWork"];
-}

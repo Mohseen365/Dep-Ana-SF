@@ -116,6 +116,7 @@ function parseArgs(argv) {
 
   // Safely classify positional arguments
   for (const pos of positionals) {
+    const posSlug = slugify(pos);
     const resolvedPath = path.resolve(ROOT_DIR, pos);
     const exists = fs.existsSync(resolvedPath);
     const isDir = exists && fs.statSync(resolvedPath).isDirectory();
@@ -123,10 +124,21 @@ function parseArgs(argv) {
     const isJsonFile = pos.endsWith(".json");
     const containsPathSep = pos.includes("/") || pos.includes("\\");
 
-    if ((isDir || containsPathSep) && !isFile && !sourceExplicit && !pos.startsWith("analyze")) {
+    const isProjectNameMatch = projectExplicit && posSlug && posSlug === slugify(project);
+
+    // A positional arg is ONLY a source directory if:
+    // 1. It contains path separators OR is a directory (when project is already explicitly set to something else)
+    // 2. AND it is not a file, does not start with "analyze", and does not match the explicit project name
+    const looksLikeSourceDir =
+      (containsPathSep || (isDir && projectExplicit && !isProjectNameMatch)) &&
+      !isFile &&
+      !pos.startsWith("analyze") &&
+      !isProjectNameMatch;
+
+    if (looksLikeSourceDir && !sourceExplicit) {
       source = pos;
       sourceExplicit = true;
-    } else if (!inputExplicit && (isDir || isJsonFile || pos.startsWith("analyze") || exists)) {
+    } else if (!inputExplicit && !isProjectNameMatch && (isDir || isJsonFile || pos.startsWith("analyze") || exists)) {
       if (isJsonFile) {
         if (!outputExplicit && inputExplicit) {
           output = pos;

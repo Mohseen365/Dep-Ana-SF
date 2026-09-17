@@ -143,18 +143,30 @@ function parseArgs(argv) {
 
   // Process positional arguments if flags were stripped or passed positionally
   for (const pos of positionals) {
+    const posSlug = slugify(pos);
     const resolvedPos = path.resolve(ROOT_DIR, pos);
     const exists = fs.existsSync(resolvedPos);
     const isDir = exists && fs.statSync(resolvedPos).isDirectory();
     const isFile = exists && fs.statSync(resolvedPos).isFile();
     const hasPathSep = pos.includes("/") || pos.includes("\\");
 
-    // A positional arg is ONLY a source directory if it's an actual directory or contains path separators (and is not a file)
-    const looksLikeSourceDir = (hasPathSep || isDir) && !isFile;
+    const isProjectNameMatch = projectExplicit && posSlug && posSlug === slugify(project);
+
+    // A positional arg is a source directory if:
+    // 1. It contains path separators OR is an existing directory (when project is already explicitly set to something else)
+    // 2. AND it is not a file and does not match the explicit project name
+    const looksLikeSourceDir =
+      (hasPathSep || (isDir && projectExplicit && !isProjectNameMatch)) &&
+      !isFile &&
+      !isProjectNameMatch;
 
     if (looksLikeSourceDir && !explicitSource) {
-      source = resolvedPos;
-      explicitSource = true;
+      const slugId = slugify(project) || "default";
+      const recorded = getRecordedSourceForProject(slugId);
+      if (!projectExplicit || !recorded) {
+        source = resolvedPos;
+        explicitSource = true;
+      }
     } else if (!looksLikeSourceDir && !projectExplicit && project === "default") {
       project = slugify(pos) || "default";
       projectExplicit = true;
