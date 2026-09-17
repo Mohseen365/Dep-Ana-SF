@@ -1,5 +1,5 @@
 import type { StylesheetStyle } from 'cytoscape';
-import type { ExplorerNodeType } from '../types/explorer';
+import type { ExplorerNode, ExplorerNodeType } from '../types/explorer';
 
 export type NodeShape =
   | 'ellipse'
@@ -29,8 +29,21 @@ export const NODE_SHAPE_BY_TYPE: Record<ExplorerNodeType, NodeShape> = {
   External: 'star'
 };
 
-export function getNodeShape(type: ExplorerNodeType, isTest?: boolean): NodeShape {
-  if (type === 'ApexClass' && isTest) {
+export function getNodeShape(
+  nodeOrType: ExplorerNode | ExplorerNodeType,
+  isTestArg?: boolean
+): NodeShape {
+  if (typeof nodeOrType === 'object' && nodeOrType !== null) {
+    const type = nodeOrType.type;
+    const isTest = Boolean(nodeOrType.behavior?.isTest);
+    if (type === 'ApexClass' && isTest) {
+      return APEX_TEST_CLASS_SHAPE;
+    }
+    return NODE_SHAPE_BY_TYPE[type] || 'ellipse';
+  }
+
+  const type = nodeOrType;
+  if (type === 'ApexClass' && isTestArg) {
     return APEX_TEST_CLASS_SHAPE;
   }
   return NODE_SHAPE_BY_TYPE[type] || 'ellipse';
@@ -156,7 +169,7 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       }
     },
     {
-      selector: 'node[type = "ApexClass"][isTest = "true"]',
+      selector: 'node[type = "ApexClass"][?isTest]',
       style: {
         'shape': APEX_TEST_CLASS_SHAPE
       }

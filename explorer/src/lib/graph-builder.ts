@@ -65,7 +65,7 @@ function createNodeElement(node: ExplorerNode): NodeDefinition {
     coupling: node.metrics.coupling,
     fanIn: node.metrics.fanIn,
     fanOut: node.metrics.fanOut,
-    isTest: node.behavior.isTest,
+    isTest: Boolean(node.behavior?.isTest),
     hasCycles: node.refactoringReadiness.hasCycles,
     hasUnresolved: node.refactoringReadiness.hasUnresolved,
     file: node.file
