@@ -29,6 +29,7 @@ export interface FilterUIState {
 export interface GraphLayoutState {
   layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
   nodePositions?: Record<string, { x: number; y: number }>;
+  layoutMode?: 'static' | 'interactive';
 }
 
 export interface ZoomPanState {
@@ -111,6 +112,7 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
     graphLayout: {
       layoutName: 'cola',
       nodePositions: {},
+      layoutMode: 'interactive',
     },
     zoom: {
       zoom: 1.0,
