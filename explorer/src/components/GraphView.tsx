@@ -1,4 +1,4 @@
-import { useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
+import { useEffect, useRef, useImperativeHandle, forwardRef, useState, useCallback } from 'react';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import navigator from 'cytoscape-navigator';
@@ -11,6 +11,14 @@ import { getLayoutOptions, runLayout } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState } from '../lib/projectState';
+import {
+  shouldAutoLayout,
+  resolveAuthoritativePosition,
+  calculateDeterministicNewNodePosition,
+  LayoutMode,
+  LayoutTrigger,
+  Position,
+} from '../lib/position-policy';
 import {
   bindGraphInteractions,
   fitToScreen,
@@ -100,15 +108,25 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
   const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
-  const onNodeDragEndRef = useRef<((nodeId: string, position: { x: number; y: number }) => void) | undefined>(onNodeDragEnd);
-  const onNodePositionChangeRef = useRef<((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined>(onNodePositionChange);
 
-  // Keep internal refs synchronized with latest props
-  useEffect(() => {
-    graphLayoutRef.current = graphLayout;
-    onNodeDragEndRef.current = onNodeDragEnd;
-    onNodePositionChangeRef.current = onNodePositionChange;
-  }, [graphLayout, onNodeDragEnd, onNodePositionChange]);
+  const onNodeDragEndRef = useRef<
+    ((nodeId: string, position: { x: number; y: number }) => void) | undefined
+  >(onNodeDragEnd);
+
+  const onNodePositionChangeRef = useRef<
+    ((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined
+  >(onNodePositionChange);
+
+  // In-session explicit drag positions.
+  // This represents the highest position authority.
+  const sessionPositionsRef = useRef<Map<string, { x: number; y: number }>>(
+    new Map()
+  );
+
+  // Track previous mode for Interactive ↔ Static transitions.
+  const prevLayoutModeRef = useRef<
+    GraphLayoutState['mode']
+  >(graphLayout?.mode ?? 'interactive');
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -118,7 +136,43 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   useEffect(() => {
     nodesRef.current = nodes;
     edgesRef.current = edges;
-  }, [nodes, edges]);
+    nodePositionsRef.current = nodePositions;
+    onNodePositionsChangeRef.current = onNodePositionsChange;
+    layoutModeRef.current = layoutMode;
+  }, [nodes, edges, nodePositions, onNodePositionsChange, layoutMode]);
+
+  // Capture all current canvas node positions and notify parent listener
+  const captureAndPersistPositions = useCallback(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+    const currentPositions: Record<string, Position> = { ...(nodePositionsRef.current || {}) };
+
+    cy.nodes().forEach((n) => {
+      const pos = n.position();
+      const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
+      currentPositions[n.id()] = rounded;
+      sessionPositionsRef.current.set(n.id(), rounded);
+    });
+
+    if (onNodePositionsChangeRef.current) {
+      onNodePositionsChangeRef.current(currentPositions);
+    }
+  }, []);
+
+  // Handle Mode Switch (Interactive <-> Static)
+  useEffect(() => {
+    if (prevLayoutModeRef.current === layoutMode) return;
+
+    const oldMode = prevLayoutModeRef.current;
+    prevLayoutModeRef.current = layoutMode;
+
+    if (oldMode === 'interactive' && layoutMode === 'static') {
+      // Interactive -> Static: capture current coordinates, persist them, do not visually rearrange
+      captureAndPersistPositions();
+    } else if (oldMode === 'static' && layoutMode === 'interactive') {
+      // Static -> Interactive: change behavior only, do not immediately relayout
+    }
+  }, [layoutMode, captureAndPersistPositions]);
 
   // Re-attach cytoscape navigator when isNavigatorVisible becomes true or cy changes
   useEffect(() => {
@@ -176,9 +230,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
           nodeCount: nodes.length,
           animate: !prefersReducedMotion && nodes.length < 100
         });
+        captureAndPersistPositions();
       }
     }
-  }), [selectedNodeId, nodes.length]);
+  }), [selectedNodeId, nodes.length, captureAndPersistPositions]);
 
   // Main Cytoscape Initialization & Teardown
   useEffect(() => {
@@ -191,14 +246,30 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       fontSize: 12
     });
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const layoutOptions = getLayoutOptions({
-      nodeCount: nodesRef.current.length,
-      padding: 50,
-      animate: !prefersReducedMotion && nodesRef.current.length < 100
+    // Determine if any authoritative saved positions exist for current graph nodes
+    let hasAuth = false;
+    if (nodePositionsRef.current) {
+      for (const node of nodesRef.current) {
+        if (nodePositionsRef.current[node.id]) {
+          hasAuth = true;
+          break;
+        }
+      }
+    }
+
+    const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'initial', {
+      hasAuthoritativePositions: hasAuth,
     });
 
-    // A5. Cytoscape instance creation with wheelSensitivity & boxSelectionEnabled
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const layoutOptions = autoLayoutPolicy === true
+      ? getLayoutOptions({
+          nodeCount: nodesRef.current.length,
+          padding: 50,
+          animate: !prefersReducedMotion && nodesRef.current.length < 100
+        })
+      : { name: 'preset' };
+
     const cy = cytoscape({
       container: containerRef.current,
       elements: elements,
@@ -213,7 +284,57 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
 
     cyRef.current = cy;
 
-    // A6. Minimap Initialization
+    // Apply 5-level position authority for initial mount if preset or restoring positions
+    const knownPosMap: Record<string, Position> = {};
+    cy.nodes().forEach((cyNode) => {
+      const id = cyNode.id();
+      const resolved = resolveAuthoritativePosition(id, {
+        sessionPositions: sessionPositionsRef.current,
+        persistedPositions: nodePositionsRef.current,
+      });
+
+      if (resolved) {
+        cyNode.position({ x: resolved.position.x, y: resolved.position.y });
+        knownPosMap[id] = resolved.position;
+      }
+    });
+
+    // Handle genuinely new nodes if autoLayoutPolicy is false or 'place-new-only'
+    if (autoLayoutPolicy !== true) {
+      cy.nodes().forEach((cyNode) => {
+        const id = cyNode.id();
+        if (!knownPosMap[id]) {
+          const newPos = calculateDeterministicNewNodePosition(id, edgesRef.current, knownPosMap);
+          cyNode.position(newPos);
+          knownPosMap[id] = newPos;
+          sessionPositionsRef.current.set(id, newPos);
+        }
+      });
+    } else {
+      // If initial auto-layout ran, capture resulting positions
+      if (typeof cy.one === 'function') {
+        cy.one('layoutstop', () => {
+          captureAndPersistPositions();
+        });
+      } else if (typeof cy.on === 'function') {
+        cy.on('layoutstop', () => {
+          captureAndPersistPositions();
+        });
+      }
+    }
+
+    // Dragfree persistence handler (Level 1 Session Drag -> Persisted Storage)
+    cy.on('dragfree', 'node', (evt) => {
+      const node = evt.target;
+      const nodeId = node.id();
+      const pos = node.position();
+      const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
+
+      sessionPositionsRef.current.set(nodeId, rounded);
+      captureAndPersistPositions();
+    });
+
+    // Minimap Initialization
     if (minimapRef.current && isNavigatorVisible) {
       try {
         const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
@@ -226,7 +347,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       }
     }
 
-    // A7. Initial Zoom by Node Count
+    // Initial Zoom by Node Count
     const nodeCount = nodesRef.current.length;
     const initialZoom = nodeCount < 15 ? 1.4
                       : nodeCount < 50 ? 1.0
@@ -235,7 +356,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     cy.zoom(initialZoom);
     cy.center();
 
-    // A4. Throttled (60ms) Zoom Listener for Semantic Zoom
+    // Throttled Zoom Listener for Semantic Zoom
     let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
     const updateZoomClass = () => {
       const currentZoom = cy.zoom();
@@ -261,7 +382,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
 
     updateZoomClass();
 
-    // A9. Hover Cards with 250ms Delay
+    // Hover Cards with 250ms Delay
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
       const pos = evt.renderedPosition;
@@ -348,7 +469,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       }
     }, nodesRef.current);
 
-    // A3. ResizeObserver calling cy.resize()
+    // ResizeObserver calling cy.resize()
     const resizeObserver = new ResizeObserver(() => {
       if (cyRef.current) {
         cyRef.current.resize();
@@ -358,7 +479,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       resizeObserver.observe(containerRef.current);
     }
 
-    // Grid transition hardening: fire cy.resize() on transitionend of parent layout containers
     const handleTransitionEnd = (e: TransitionEvent) => {
       if (
         e.target instanceof HTMLElement &&
@@ -387,15 +507,46 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       cy.destroy();
       cyRef.current = null;
     };
-  }, [onSelectNode, onSelectEdge]);
+  }, [onSelectNode, onSelectEdge, captureAndPersistPositions]);
 
-  // Element Synchronization Effect: Syncs React nodes/edges props with Cytoscape cy.elements()
+  // Element Synchronization Effect: Syncs React nodes/edges props with Cytoscape cy.elements() while preserving positions
   useEffect(() => {
     nodesRef.current = nodes;
     edgesRef.current = edges;
 
     if (!cyRef.current) return;
     const cy = cyRef.current;
+
+    // Capture Cytoscape positions before re-building elements (Level 3 Authority)
+    const cyPositionsBefore: Record<string, Position> = {};
+    cy.nodes().forEach((n) => {
+      const pos = n.position();
+      cyPositionsBefore[n.id()] = { x: pos.x, y: pos.y };
+    });
+
+    // Check if any incoming node is genuinely new
+    let hasAuthForUpdate = false;
+    let hasGenuinelyNewNodes = false;
+
+    for (const node of nodes) {
+      const resolved = resolveAuthoritativePosition(node.id, {
+        sessionPositions: sessionPositionsRef.current,
+        persistedPositions: nodePositionsRef.current,
+        cyNodePosition: cyPositionsBefore[node.id],
+      });
+
+      if (resolved) {
+        hasAuthForUpdate = true;
+      } else {
+        hasGenuinelyNewNodes = true;
+      }
+    }
+
+    const trigger: LayoutTrigger = hasGenuinelyNewNodes ? 'new-nodes' : 'graph-update';
+    const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, trigger, {
+      hasAuthoritativePositions: hasAuthForUpdate,
+      hasNewNodes: hasGenuinelyNewNodes,
+    });
 
     const newElements = buildGraphElements(nodes, edges);
 
@@ -404,12 +555,41 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       cy.add(newElements);
     });
 
-    if (typeof cy.layout === 'function') {
+    // Restore or calculate positions for all nodes
+    const knownPositionsMap: Record<string, Position> = {};
+
+    cy.nodes().forEach((node) => {
+      const id = node.id();
+      const resolved = resolveAuthoritativePosition(id, {
+        sessionPositions: sessionPositionsRef.current,
+        persistedPositions: nodePositionsRef.current,
+        cyNodePosition: cyPositionsBefore[id],
+      });
+
+      if (resolved) {
+        node.position({ x: resolved.position.x, y: resolved.position.y });
+        knownPositionsMap[id] = resolved.position;
+      }
+    });
+
+    // Place genuinely new nodes if policy allows / requires
+    cy.nodes().forEach((node) => {
+      const id = node.id();
+      if (!knownPositionsMap[id]) {
+        const newPos = calculateDeterministicNewNodePosition(id, edges, knownPositionsMap);
+        node.position(newPos);
+        knownPositionsMap[id] = newPos;
+        sessionPositionsRef.current.set(id, newPos);
+      }
+    });
+
+    if (autoLayoutPolicy === true) {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       runLayout(cy, {
         nodeCount: nodes.length,
         animate: !prefersReducedMotion && nodes.length < 100
       });
+      captureAndPersistPositions();
     }
 
     // Apply stored node positions if present in graphLayout
@@ -467,7 +647,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges]);
+  }, [nodes, edges, captureAndPersistPositions]);
 
   // Handle selected node changes
   useEffect(() => {
@@ -567,7 +747,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     }
   }, [focusedNodeId]);
 
-  // A8. Keyboard Navigation Handler
+  // Keyboard Navigation Handler
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -622,6 +802,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
     }
   };
 
+  const handleToggleLayoutModeInternal = useCallback(() => {
+    const nextMode: LayoutMode = layoutMode === 'static' ? 'interactive' : 'static';
+    if (nextMode === 'static') {
+      captureAndPersistPositions();
+    }
+    if (onLayoutModeChange) {
+      onLayoutModeChange(nextMode);
+    }
+  }, [layoutMode, onLayoutModeChange, captureAndPersistPositions]);
+
   return (
     <div
       className="graph-container"
@@ -656,7 +846,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         </div>
       )}
 
-      {/* A8. Screen Reader Accessible Node List */}
+      {/* Screen Reader Accessible Node List */}
       <ul role="tree" className="sr-only" aria-label="Component Nodes">
         {nodes.map(n => (
           <li
@@ -678,7 +868,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         ))}
       </ul>
 
-      {/* A9. Hover Cards */}
+      {/* Hover Cards */}
       {hoverCard && hoverCard.type === 'node' && (
         <NodeHoverCard
           node={hoverCard.node}
@@ -695,7 +885,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         />
       )}
 
-      {/* A10. Floating Controls (Bottom Right) & Legend (Bottom Left) */}
+      {/* Floating Controls (Bottom Right) & Legend (Bottom Left) */}
       <GraphControls
         onZoomIn={() => {
           if (cyRef.current) {
@@ -729,6 +919,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
               nodeCount: nodes.length,
               animate: !prefersReducedMotion && nodes.length < 100
             });
+            captureAndPersistPositions();
           }
         }}
         hasSelectedNode={!!selectedNodeId}
@@ -739,6 +930,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         onToggleNavigator={() => setIsNavigatorVisible((prev) => !prev)}
         focusState={focusState}
         onFocusChange={onFocusChange}
+        layoutMode={layoutMode}
+        onToggleLayoutMode={onLayoutModeChange ? handleToggleLayoutModeInternal : undefined}
       />
       <GraphLegend nodes={nodes} />
     </div>
