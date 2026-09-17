@@ -1,4 +1,34 @@
 import type { StylesheetStyle } from 'cytoscape';
+import type { ExplorerNodeType } from '../types/explorer';
+
+export type NodeShape =
+  | 'ellipse'
+  | 'triangle'
+  | 'rectangle'
+  | 'round-rectangle'
+  | 'hexagon'
+  | 'diamond'
+  | 'octagon'
+  | 'rhomboid'
+  | 'cut-rectangle'
+  | 'star';
+
+export const NODE_SHAPE_BY_TYPE: Record<ExplorerNodeType, NodeShape> = {
+  ApexClass: 'ellipse',
+  ApexTrigger: 'triangle',
+  LWC: 'rectangle',
+  Visualforce: 'round-rectangle',
+  Flow: 'hexagon',
+  Object: 'diamond',
+  CustomObject: 'octagon',
+  Field: 'rhomboid',
+  CustomField: 'cut-rectangle',
+  External: 'star'
+};
+
+export function getNodeShape(type: ExplorerNodeType): NodeShape {
+  return NODE_SHAPE_BY_TYPE[type] || 'ellipse';
+}
 
 // Salesforce entity type colors - distinct visual identity
 const NODE_COLORS: Record<string, { background: string; border: string }> = {
@@ -110,75 +140,85 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'border-color': RISK_BORDER_COLORS.LOW
       }
     },
-    // Node type-specific base colors
+    // Node type-specific base colors and shapes
     {
       selector: 'node[type = "ApexClass"]',
       style: {
         'background-color': NODE_COLORS.ApexClass.background,
-        'border-color': NODE_COLORS.ApexClass.border
+        'border-color': NODE_COLORS.ApexClass.border,
+        'shape': NODE_SHAPE_BY_TYPE.ApexClass
       }
     },
     {
       selector: 'node[type = "ApexTrigger"]',
       style: {
         'background-color': NODE_COLORS.ApexTrigger.background,
-        'border-color': NODE_COLORS.ApexTrigger.border
+        'border-color': NODE_COLORS.ApexTrigger.border,
+        'shape': NODE_SHAPE_BY_TYPE.ApexTrigger
       }
     },
     {
       selector: 'node[type = "LWC"]',
       style: {
         'background-color': NODE_COLORS.LWC.background,
-        'border-color': NODE_COLORS.LWC.border
+        'border-color': NODE_COLORS.LWC.border,
+        'shape': NODE_SHAPE_BY_TYPE.LWC
       }
     },
     {
       selector: 'node[type = "Visualforce"]',
       style: {
         'background-color': NODE_COLORS.Visualforce.background,
-        'border-color': NODE_COLORS.Visualforce.border
+        'border-color': NODE_COLORS.Visualforce.border,
+        'shape': NODE_SHAPE_BY_TYPE.Visualforce
       }
     },
     {
       selector: 'node[type = "Flow"]',
       style: {
         'background-color': NODE_COLORS.Flow.background,
-        'border-color': NODE_COLORS.Flow.border
+        'border-color': NODE_COLORS.Flow.border,
+        'shape': NODE_SHAPE_BY_TYPE.Flow
       }
     },
     {
       selector: 'node[type = "Object"]',
       style: {
         'background-color': NODE_COLORS.Object.background,
-        'border-color': NODE_COLORS.Object.border
+        'border-color': NODE_COLORS.Object.border,
+        'shape': NODE_SHAPE_BY_TYPE.Object
       }
     },
     {
       selector: 'node[type = "CustomObject"]',
       style: {
         'background-color': NODE_COLORS.CustomObject.background,
-        'border-color': NODE_COLORS.CustomObject.border
+        'border-color': NODE_COLORS.CustomObject.border,
+        'shape': NODE_SHAPE_BY_TYPE.CustomObject
       }
     },
     {
       selector: 'node[type = "Field"]',
       style: {
         'background-color': NODE_COLORS.Field.background,
-        'border-color': NODE_COLORS.Field.border
+        'border-color': NODE_COLORS.Field.border,
+        'shape': NODE_SHAPE_BY_TYPE.Field
       }
     },
     {
       selector: 'node[type = "CustomField"]',
       style: {
         'background-color': NODE_COLORS.CustomField.background,
-        'border-color': NODE_COLORS.CustomField.border
+        'border-color': NODE_COLORS.CustomField.border,
+        'shape': NODE_SHAPE_BY_TYPE.CustomField
       }
     },
     {
       selector: 'node[type = "External"]',
       style: {
         'background-color': NODE_COLORS.External.background,
-        'border-color': NODE_COLORS.External.border
+        'border-color': NODE_COLORS.External.border,
+        'shape': NODE_SHAPE_BY_TYPE.External
       }
     },
     // Test classes

@@ -1,7 +1,40 @@
 import { describe, it, expect } from 'vitest';
-import { getGraphStyles, NODE_COLORS, RISK_BORDER_COLORS, EDGE_COLORS } from './graph-style';
+import { getGraphStyles, getNodeShape, NODE_COLORS, NODE_SHAPE_BY_TYPE, RISK_BORDER_COLORS, EDGE_COLORS } from './graph-style';
+import { ALL_EXPLORER_NODE_TYPES, ExplorerNodeType } from '../types/explorer';
 
 describe('graph-style', () => {
+  describe('NODE_SHAPE_BY_TYPE', () => {
+    it('defines a Cytoscape shape for every supported ExplorerNodeType', () => {
+      ALL_EXPLORER_NODE_TYPES.forEach((type) => {
+        expect(NODE_SHAPE_BY_TYPE[type]).toBeDefined();
+        expect(typeof NODE_SHAPE_BY_TYPE[type]).toBe('string');
+      });
+    });
+
+    it('ensures each entity type has a 100% unique node shape', () => {
+      const shapes = ALL_EXPLORER_NODE_TYPES.map((type) => NODE_SHAPE_BY_TYPE[type]);
+      const uniqueShapes = new Set(shapes);
+      expect(uniqueShapes.size).toBe(ALL_EXPLORER_NODE_TYPES.length);
+    });
+
+    it('maps expected Cytoscape shapes for primary entity types', () => {
+      expect(getNodeShape('ApexClass')).toBe('ellipse');
+      expect(getNodeShape('ApexTrigger')).toBe('triangle');
+      expect(getNodeShape('LWC')).toBe('rectangle');
+      expect(getNodeShape('Visualforce')).toBe('round-rectangle');
+      expect(getNodeShape('Flow')).toBe('hexagon');
+      expect(getNodeShape('Object')).toBe('diamond');
+      expect(getNodeShape('CustomObject')).toBe('octagon');
+      expect(getNodeShape('Field')).toBe('rhomboid');
+      expect(getNodeShape('CustomField')).toBe('cut-rectangle');
+      expect(getNodeShape('External')).toBe('star');
+    });
+
+    it('falls back to default ellipse for unknown node type', () => {
+      expect(getNodeShape('UnknownType' as ExplorerNodeType)).toBe('ellipse');
+    });
+  });
+
   describe('getGraphStyles', () => {
     it('returns an array of styles', () => {
       const styles = getGraphStyles();
@@ -36,14 +69,16 @@ describe('graph-style', () => {
       expect(lowRiskStyle).toBeDefined();
     });
 
-    it('includes node type styles', () => {
+    it('includes node type styles with shapes and colors', () => {
       const styles = getGraphStyles();
       
-      const apexClassStyle = styles.find(s => s.selector === 'node[type = "ApexClass"]');
-      expect(apexClassStyle).toBeDefined();
-      
-      const externalStyle = styles.find(s => s.selector === 'node[type = "External"]');
-      expect(externalStyle).toBeDefined();
+      ALL_EXPLORER_NODE_TYPES.forEach((type) => {
+        const typeStyle = styles.find(s => s.selector === `node[type = "${type}"]`);
+        expect(typeStyle).toBeDefined();
+        expect((typeStyle?.style as any)['shape']).toBe(NODE_SHAPE_BY_TYPE[type]);
+        expect((typeStyle?.style as any)['background-color']).toBeDefined();
+        expect((typeStyle?.style as any)['border-color']).toBeDefined();
+      });
     });
 
     it('includes edge styles', () => {
