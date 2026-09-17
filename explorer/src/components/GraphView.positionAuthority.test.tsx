@@ -23,7 +23,11 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
       const mockEles = {
         length: 1,
         id: () => id,
-        data: () => ({ id }),
+        data: vi.fn().mockReturnValue({
+          id,
+          displayName: id,
+          type: 'ApexClass',
+        }),
         isNode: () => true,
         isEdge: () => false,
         position: vi.fn((newPos?: { x: number; y: number }) => {
@@ -601,5 +605,233 @@ describe('GraphView Position Authority & Layout Policy', () => {
 
     expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
     expect(mockCy.getElementById('node-2').position()).toEqual({ x: 700, y: 700 });
+  });
+
+  describe('Static Mode Requirement Assertions', () => {
+    const staticPositions = {
+      'node-1': { x: 100, y: 200 },
+      'node-2': { x: 300, y: 400 },
+    };
+
+    it('1. selected node can still be investigated without changing node coordinates in Static mode', () => {
+      const onSelectNode = vi.fn();
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Select node-1
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={vi.fn()}
+          selectedNodeId="node-1"
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      // Node selection should NOT trigger relayout
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 200 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 300, y: 400 });
+
+      // Trigger investigation on node-1
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={vi.fn()}
+          selectedNodeId="node-1"
+          selectedEdgeId={null}
+          focusedNodeId="node-1"
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      // Investigation must NOT trigger relayout or mutate node coordinates
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 200 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 300, y: 400 });
+    });
+
+    it('2. double-click still works and fires callbacks without changing node coordinates', () => {
+      const onSelectNode = vi.fn();
+      const onNodeDoubleTap = vi.fn();
+
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={onSelectNode}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="static"
+          onNodeDoubleTap={onNodeDoubleTap}
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      const dblTapHandler = listeners['dbltap dblclick:node']?.[0];
+      expect(dblTapHandler).toBeDefined();
+
+      const n1 = mockCy.getElementById('node-1');
+      act(() => {
+        dblTapHandler({ target: n1 });
+      });
+
+      expect(onNodeDoubleTap).toHaveBeenCalledWith('node-1', expect.objectContaining({ id: 'node-1' }));
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 200 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 300, y: 400 });
+    });
+
+    it('3. focus (focusOnNode, Focus Depth, Focus Direction) still works without changing node coordinates in Static mode', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Change focus depth / direction
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId="node-1"
+          selectedEdgeId={null}
+          focusedNodeId="node-1"
+          focusState={{ enabled: true, focusNodeId: 'node-1', direction: 'dependents', depth: 2 }}
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 200 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 300, y: 400 });
+    });
+
+    it('4. viewport can move (zoom, fit, centerSelected) while node coordinates remain strictly unchanged', () => {
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId="node-1"
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Perform viewport operations via controls
+      const zoomInBtn = screen.getByRole('button', { name: /zoom in/i });
+      fireEvent.click(zoomInBtn);
+      expect(mockCy.zoom).toHaveBeenCalled();
+
+      const fitBtn = screen.getByRole('button', { name: /fit view/i });
+      fireEvent.click(fitBtn);
+      expect(mockCy.fit).toHaveBeenCalled();
+
+      const centerBtn = screen.getByRole('button', { name: /center selected/i });
+      fireEvent.click(centerBtn);
+      expect(mockCy.animate).toHaveBeenCalled();
+
+      // Confirm node coordinates remained strictly unchanged throughout viewport movements
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 200 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 300, y: 400 });
+    });
+
+    it('5. node coordinates remain unchanged in Static mode across multi-operation flow', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Flow: Select -> Focus -> Filter update
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId="node-1"
+          selectedEdgeId={null}
+          focusedNodeId="node-1"
+          nodePositions={staticPositions}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 200 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 300, y: 400 });
+    });
+
+    it('6. Interactive behavior remains unchanged (allows explicit reset and position updates)', () => {
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={staticPositions}
+          layoutMode="interactive"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+      fireEvent.click(resetBtn);
+
+      expect(mockLayoutRun).toHaveBeenCalled();
+    });
   });
 });

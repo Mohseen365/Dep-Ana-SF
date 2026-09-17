@@ -56,11 +56,18 @@ export interface GraphViewProps {
   graphLayout?: GraphLayoutState;
   nodePositions?: Record<string, { x: number; y: number }>;
   onNodePositionsChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
-  onNodePositionChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
-  layoutMode?: LayoutMode;
-  onLayoutModeChange?: (mode: LayoutMode) => void;
-  onNodeDragEnd?: (nodeId: string, position: { x: number; y: number }) => void;
-}
+  graphLayout?: GraphLayoutState;
+  onNodePositionChange?: (
+    nodePositions: Record<string, { x: number; y: number }>
+  ) => void;
+  onNodeDragEnd?: (
+    nodeId: string,
+    position: { x: number; y: number }
+  ) => void;
+  onNodeDoubleTap?: (
+    nodeId: string,
+    node: ExplorerNode | null
+  ) => void;
 
 export interface GraphViewRef {
   zoomIn: () => void;
@@ -103,13 +110,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onFocusChange,
     graphLayout,
     onNodeDragEnd,
+    onNodePositionChange,
+    onNodeDoubleTap: onNodeDoubleTapProp,
   } = props;
 
-  const nodePositions = props.nodePositions ?? props.graphLayout?.nodePositions;
-  const layoutMode: LayoutMode = props.layoutMode ?? props.graphLayout?.mode ?? 'interactive';
-  const onNodePositionsChange = props.onNodePositionsChange ?? props.onNodePositionChange;
-  const onLayoutModeChange = props.onLayoutModeChange;
+  const nodePositions = graphLayout?.nodePositions;
+  const layoutMode: GraphLayoutState['mode'] =
+    graphLayout?.mode ?? 'interactive';
 
+  const onNodePositionsChange = onNodePositionChange;
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -118,6 +127,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
   const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
+  const nodePositionsRef = useRef<Record<string, { x: number; y: number }> | undefined>(nodePositions);
+  const onNodePositionsChangeRef = useRef<((positions: Record<string, { x: number; y: number }>) => void) | undefined>(onNodePositionsChange);
+  const layoutModeRef = useRef<LayoutMode>(layoutMode);
+
+  const nodePositionsRef = useRef<Record<string, Position> | undefined>(nodePositions);
+  const onNodePositionsChangeRef = useRef<
+    ((nodePositions: Record<string, Position>) => void) | undefined
+  >(onNodePositionsChange);
+  const layoutModeRef = useRef<LayoutMode>(layoutMode);
 
   const nodePositionsRef = useRef<Record<string, { x: number; y: number }> | undefined>(nodePositions);
   const onNodePositionsChangeRef = useRef<
@@ -136,7 +154,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   );
 
   // Track previous mode for Interactive ↔ Static transitions.
-  const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
+const prevLayoutModeRef = useRef<GraphLayoutState['mode']>(layoutMode);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -150,7 +168,18 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onNodePositionsChangeRef.current = onNodePositionsChange;
     layoutModeRef.current = layoutMode;
     graphLayoutRef.current = graphLayout;
-  }, [nodes, edges, nodePositions, onNodePositionsChange, layoutMode, graphLayout]);
+    onNodeDragEndRef.current = onNodeDragEnd;
+    onNodePositionChangeRef.current = onNodePositionChange;
+  }, [
+    nodes,
+    edges,
+    nodePositions,
+    onNodePositionsChange,
+    layoutMode,
+    graphLayout,
+    onNodeDragEnd,
+    onNodePositionChange,
+  ]);
 
   // Capture all current canvas node positions and notify parent listener
   const captureAndPersistPositions = useCallback(() => {
@@ -342,17 +371,23 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
 
       sessionPositionsRef.current.set(nodeId, rounded);
+      captureAndPersistPositions();     
 
       if (onNodeDragEndRef.current) {
         onNodeDragEndRef.current(nodeId, rounded);
       }
-      if (onNodePositionsChangeRef.current) {
-        const currentStoredPositions = nodePositionsRef.current || graphLayoutRef.current?.nodePositions || {};
+      if (onNodePositionChangeRef.current) {
+        const currentStoredPositions =
+          graphLayoutRef.current?.nodePositions ||
+          nodePositionsRef.current ||
+          {};
+
         const updatedPositions = {
           ...currentStoredPositions,
           [nodeId]: rounded,
         };
-        onNodePositionsChangeRef.current(updatedPositions);
+
+        onNodePositionChangeRef.current(updatedPositions);
       }
     });
 
@@ -462,6 +497,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
         onSelectNode(fullNode);
       },
+      onNodeDoubleTap: (nodeId, selectedNode) => {
+        if (onNodeDoubleTapProp) {
+          const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
+          onNodeDoubleTapProp(nodeId, fullNode);
+        }
+      },
       onEdgeSelect: (edgeId) => {
         if (edgeId) {
           onSelectEdge(edgeId);
@@ -524,7 +565,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const cyPositionsBefore: Record<string, Position> = {};
     cy.nodes().forEach((n) => {
       const pos = n.position();
-      cyPositionsBefore[n.id()] = { x: pos.x, y: pos.y };
+      const posObj = { x: Math.round(pos.x), y: Math.round(pos.y) };
+      cyPositionsBefore[n.id()] = posObj;
+      sessionPositionsRef.current.set(n.id(), posObj);
     });
 
     // Check if any incoming node is genuinely new
