@@ -1,37 +1,35 @@
 import React from 'react';
-import { ExplorerNode } from '../types/explorer';
+import { ExplorerNode, ExplorerNodeType } from '../types/explorer';
+import { NODE_COLORS, NODE_SHAPE_BY_TYPE } from '../lib/graph-style';
 
 interface GraphLegendProps {
   nodes: ExplorerNode[];
 }
 
+const SHAPE_GLYPHS: Record<string, string> = {
+  ellipse: '●',
+  triangle: '▲',
+  rectangle: '■',
+  'round-rectangle': '▢',
+  hexagon: '⬡',
+  diamond: '◆',
+  octagon: '⬟',
+  rhomboid: '▰',
+  'cut-rectangle': '▅',
+  star: '★'
+};
+
 export const GraphLegend: React.FC<GraphLegendProps> = ({ nodes }) => {
   // Compute unique node types present in graph data
-  const typesPresent = Array.from(new Set<string>(nodes.map((n) => n.type)));
+  const typesPresent = Array.from(new Set<ExplorerNodeType>(nodes.map((n) => n.type)));
 
   const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'ApexClass':
-        return '#3b82f6';
-      case 'ApexTrigger':
-        return '#ef4444';
-      case 'LWC':
-      case 'LwcJs':
-      case 'LwcHtml':
-        return '#10b981';
-      case 'Flow':
-        return '#8b5cf6';
-      case 'CustomObject':
-      case 'Object':
-        return '#f59e0b';
-      case 'Visualforce':
-        return '#ec4899';
-      case 'Field':
-      case 'CustomField':
-        return '#06b6d4';
-      default:
-        return '#64748b';
-    }
+    return NODE_COLORS[type]?.background || '#64748b';
+  };
+
+  const getTypeShapeGlyph = (type: ExplorerNodeType) => {
+    const shape = NODE_SHAPE_BY_TYPE[type] || 'ellipse';
+    return SHAPE_GLYPHS[shape] || '●';
   };
 
   if (typesPresent.length === 0) return null;
@@ -45,9 +43,11 @@ export const GraphLegend: React.FC<GraphLegendProps> = ({ nodes }) => {
           {typesPresent.map((type) => (
             <div key={type} className="legend-item" data-testid={`legend-item-${type}`}>
               <span
-                className="legend-color-dot"
-                style={{ backgroundColor: getTypeColor(type) }}
-              />
+                className="legend-shape-icon"
+                style={{ color: getTypeColor(type), fontSize: '12px', width: '14px', textAlign: 'center', display: 'inline-block' }}
+              >
+                {getTypeShapeGlyph(type)}
+              </span>
               <span>{type}</span>
             </div>
           ))}
