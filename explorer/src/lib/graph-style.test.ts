@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getGraphStyles, getNodeShape, NODE_COLORS, NODE_SHAPE_BY_TYPE, RISK_BORDER_COLORS, EDGE_COLORS } from './graph-style';
+import { getGraphStyles, getNodeShape, APEX_TEST_CLASS_SHAPE, NODE_COLORS, NODE_SHAPE_BY_TYPE, RISK_BORDER_COLORS, EDGE_COLORS } from './graph-style';
 import { ALL_EXPLORER_NODE_TYPES, ExplorerNodeType } from '../types/explorer';
 
 describe('graph-style', () => {
@@ -32,6 +32,31 @@ describe('graph-style', () => {
 
     it('falls back to default ellipse for unknown node type', () => {
       expect(getNodeShape('UnknownType' as ExplorerNodeType)).toBe('ellipse');
+    });
+
+    it('returns standard shape for normal Apex Class and distinct shape for Apex Test Class', () => {
+      // Test 1: Normal Apex Class gets existing shape ('ellipse')
+      const normalApexShape = getNodeShape('ApexClass', false);
+      expect(normalApexShape).toBe('ellipse');
+
+      // Test 2: Apex Test Class gets new distinct shape ('bottom-round-rectangle')
+      const testApexShape = getNodeShape('ApexClass', true);
+      expect(testApexShape).toBe(APEX_TEST_CLASS_SHAPE);
+
+      // Test 3: The two shapes are different
+      expect(normalApexShape).not.toBe(testApexShape);
+
+      // Test 4: Apex Test Class does not accidentally use LWC/Object/Field/etc. shapes
+      const otherShapes = ALL_EXPLORER_NODE_TYPES
+        .filter(t => t !== 'ApexClass')
+        .map(t => NODE_SHAPE_BY_TYPE[t]);
+      expect(otherShapes).not.toContain(testApexShape);
+
+      // Test 5: Other entity types retain their existing shapes regardless of isTest flag
+      ALL_EXPLORER_NODE_TYPES.filter(t => t !== 'ApexClass').forEach(type => {
+        expect(getNodeShape(type, false)).toBe(NODE_SHAPE_BY_TYPE[type]);
+        expect(getNodeShape(type, true)).toBe(NODE_SHAPE_BY_TYPE[type]);
+      });
     });
   });
 
@@ -79,6 +104,11 @@ describe('graph-style', () => {
         expect((typeStyle?.style as any)['background-color']).toBeDefined();
         expect((typeStyle?.style as any)['border-color']).toBeDefined();
       });
+
+      // Verify Apex Test Class specific selector style
+      const apexTestStyle = styles.find(s => s.selector === 'node[type = "ApexClass"][isTest = "true"]');
+      expect(apexTestStyle).toBeDefined();
+      expect((apexTestStyle?.style as any)['shape']).toBe(APEX_TEST_CLASS_SHAPE);
     });
 
     it('includes edge styles', () => {

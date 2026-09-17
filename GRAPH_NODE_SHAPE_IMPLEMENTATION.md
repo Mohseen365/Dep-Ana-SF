@@ -20,7 +20,8 @@ All 10 supported node types defined in `ExplorerNodeType` (`explorer/src/types/e
 
 | Entity Type | Cytoscape Shape | Existing Color Preserved | Test |
 | --- | --- | --- | --- |
-| ApexClass | `ellipse` | Yes (`#3b82f6`) | Pass |
+| ApexClass (Normal) | `ellipse` | Yes (`#3b82f6`) | Pass |
+| ApexClass (Test) | `bottom-round-rectangle` | Yes (`#3b82f6`) | Pass |
 | ApexTrigger | `triangle` | Yes (`#8b5cf6`) | Pass |
 | LWC | `rectangle` | Yes (`#f59e0b`) | Pass |
 | Visualforce | `round-rectangle` | Yes (`#ec4899`) | Pass |
@@ -32,9 +33,10 @@ All 10 supported node types defined in `ExplorerNodeType` (`explorer/src/types/e
 | External | `star` | Yes (`#64748b`) | Pass |
 
 ## 4. Files Changed
-- `explorer/src/lib/graph-style.ts`: Centralized `NODE_SHAPE_BY_TYPE` dictionary, exported `getNodeShape()` helper function, and added `'shape'` property to Cytoscape stylesheet selectors.
-- `explorer/src/components/GraphLegend.tsx`: Extended legend items with shape glyphs (`●`, `▲`, `■`, `▢`, `⬡`, `◆`, `⬟`, `▰`, `▅`, `★`) alongside node type background colors.
-- `explorer/src/lib/graph-style.test.ts`: Added unit tests for `NODE_SHAPE_BY_TYPE` existence, 100% uniqueness across supported entity types, helper function return values, and Cytoscape stylesheet rule generation.
+- `explorer/src/lib/graph-style.ts`: Added `APEX_TEST_CLASS_SHAPE` (`bottom-round-rectangle`), updated `getNodeShape` helper to inspect `isTest`, and added Cytoscape selector `node[type = "ApexClass"][isTest = "true"]`.
+- `explorer/src/components/GraphLegend.tsx`: Extended legend logic to differentiate normal Apex Classes and Apex Test Classes with respective distinct shape glyphs (`●` vs `⬎`).
+- `explorer/src/lib/graph-style.test.ts`: Added unit tests verifying normal Apex Class gets `ellipse`, Apex Test Class gets `bottom-round-rectangle`, shapes are distinct, and Cytoscape stylesheet rules exist.
+- `GRAPH_NODE_SHAPE_IMPLEMENTATION.md`: Documented Apex Class vs Apex Test Class distinct visual shape enhancement.
 
 ## 5. Files Not Changed
 - `explorer/src/lib/focus-graph.ts` (Focus depth traversal semantics preserved)
@@ -67,7 +69,8 @@ Cytoscape's navigator overlay automatically renders miniature representations of
 - `NODE_SHAPE_BY_TYPE ensures each entity type has a 100% unique node shape`
 - `getNodeShape maps expected Cytoscape shapes for primary entity types`
 - `getNodeShape falls back to default ellipse for unknown node type`
-- `getGraphStyles includes node type styles with shapes and colors`
+- `getNodeShape returns standard shape for normal Apex Class and distinct shape for Apex Test Class`
+- `getGraphStyles includes node type styles with shapes and colors, including Apex Test Class specific selector`
 
 ## 13. Tests Executed
 - Executed `cd explorer && npm test` (Vitest test runner).
