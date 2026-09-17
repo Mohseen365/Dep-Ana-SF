@@ -30,8 +30,6 @@ export type GraphInteractionMode = 'interactive' | 'static';
 
 export interface GraphLayoutState {
   layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
-export interface GraphLayoutState {
-  layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
   mode: GraphInteractionMode;
   nodePositions: Record<string, { x: number; y: number }>;
   layoutVersion?: string | number;
@@ -118,7 +116,6 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
       layoutName: 'cola',
       mode: 'interactive',
       nodePositions: {},
-      layoutMode: 'interactive',
     },
     zoom: {
       zoom: 1.0,
@@ -207,7 +204,7 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
     },
     graphLayout: {
       layoutName: loaded.graphLayout?.layoutName || defaults.graphLayout.layoutName,
-      mode: (loaded.graphLayout as any)?.mode === 'static' ? 'static' : 'interactive',
+      mode: ((loaded.graphLayout as any)?.mode === 'static' || (loaded.graphLayout as any)?.layoutMode === 'static') ? 'static' : 'interactive',
       nodePositions: (loaded.graphLayout && typeof loaded.graphLayout.nodePositions === 'object' && loaded.graphLayout.nodePositions !== null)
         ? loaded.graphLayout.nodePositions
         : defaults.graphLayout.nodePositions,

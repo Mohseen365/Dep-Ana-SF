@@ -144,6 +144,49 @@ describe('GraphControls Component', () => {
     expect(onToggleNavigator).toHaveBeenCalledTimes(1);
   });
 
+  it('renders mode toggle control and triggers callback when clicked', () => {
+    const onToggleLayoutMode = vi.fn();
+
+    const { rerender } = render(
+      <GraphControls
+        onZoomIn={vi.fn()}
+        onZoomOut={vi.fn()}
+        onFitView={vi.fn()}
+        onCenterSelected={vi.fn()}
+        onResetLayout={vi.fn()}
+        hasSelectedNode={false}
+        layoutMode="interactive"
+        onToggleLayoutMode={onToggleLayoutMode}
+      />
+    );
+
+    const toggleBtn = screen.getByRole('button', { name: /switch to static layout/i });
+    expect(toggleBtn).toBeInTheDocument();
+    expect(toggleBtn).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(toggleBtn);
+    expect(onToggleLayoutMode).toHaveBeenCalledTimes(1);
+
+    // Rerender in static mode
+    rerender(
+      <GraphControls
+        onZoomIn={vi.fn()}
+        onZoomOut={vi.fn()}
+        onFitView={vi.fn()}
+        onCenterSelected={vi.fn()}
+        onResetLayout={vi.fn()}
+        hasSelectedNode={false}
+        layoutMode="static"
+        onToggleLayoutMode={onToggleLayoutMode}
+      />
+    );
+
+    const staticToggleBtn = screen.getByRole('button', { name: /switch to interactive layout/i });
+    expect(staticToggleBtn).toBeInTheDocument();
+    expect(staticToggleBtn).toHaveAttribute('aria-pressed', 'true');
+    expect(staticToggleBtn).toHaveClass('active');
+  });
+
   it('displays correct label for Fullscreen button when in fullscreen mode', () => {
     const onToggleFullscreen = vi.fn();
 

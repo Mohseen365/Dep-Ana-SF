@@ -237,7 +237,7 @@ export function App() {
 
   const activeProjectId = projectContext?.activeProjectId || 'default';
   const nodePositions = projectStateContext?.projectState.graphLayout.nodePositions;
-  const layoutMode = projectStateContext?.projectState.graphLayout.layoutMode || 'interactive';
+  const layoutMode = projectStateContext?.projectState.graphLayout.mode || 'interactive';
   const activeProject = projectContext?.activeProject;
   const dataUrl = projectContext?.getProjectDataUrl(activeProjectId) || '/explorer-data.json';
 
@@ -739,7 +739,7 @@ export function App() {
                     nodePositions={nodePositions}
                     onNodePositionsChange={(positions) => projectStateContext?.updateGraphLayout({ nodePositions: positions })}
                     layoutMode={layoutMode}
-                    onLayoutModeChange={(mode) => projectStateContext?.updateGraphLayout({ layoutMode: mode })}
+                    onLayoutModeChange={(mode) => projectStateContext?.updateGraphLayout({ mode })}
                   />
                 )
               )}
