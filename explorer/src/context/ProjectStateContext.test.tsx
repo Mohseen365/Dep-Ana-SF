@@ -23,6 +23,9 @@ const TestComponent: React.FC = () => {
       <div data-testid="search-query">{projectState.filters.searchQuery}</div>
       <div data-testid="view-mode">{projectState.analysisView.viewMode}</div>
 
+      <div data-testid="layout-mode">{projectState.graphLayout.mode}</div>
+      <div data-testid="node-pos-count">{Object.keys(projectState.graphLayout.nodePositions).length}</div>
+
       <button
         data-testid="set-proj-a-state"
         onClick={() => {
@@ -62,6 +65,45 @@ describe('ProjectStateContext & useProjectState', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
+  });
+
+  it('persists and provides graphLayout mode and nodePositions via updateGraphLayout', () => {
+    const LayoutTestComponent = () => {
+      const { projectState, updateGraphLayout } = useProjectState();
+      return (
+        <div>
+          <div data-testid="mode-val">{projectState.graphLayout.mode}</div>
+          <div data-testid="pos-x">{projectState.graphLayout.nodePositions['n1']?.x ?? 'none'}</div>
+          <button
+            data-testid="update-layout-btn"
+            onClick={() => {
+              updateGraphLayout({
+                mode: 'static',
+                nodePositions: { n1: { x: 123, y: 456 } },
+              });
+            }}
+          >
+            Update Layout
+          </button>
+        </div>
+      );
+    };
+
+    render(
+      <ProjectStateProvider projectId="proj-layout-test">
+        <LayoutTestComponent />
+      </ProjectStateProvider>
+    );
+
+    expect(screen.getByTestId('mode-val')).toHaveTextContent('interactive');
+    expect(screen.getByTestId('pos-x')).toHaveTextContent('none');
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('update-layout-btn'));
+    });
+
+    expect(screen.getByTestId('mode-val')).toHaveTextContent('static');
+    expect(screen.getByTestId('pos-x')).toHaveTextContent('123');
   });
 
   it('provides project state and allows updating slice values', () => {

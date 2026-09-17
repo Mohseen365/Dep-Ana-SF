@@ -10,6 +10,7 @@ import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
+import { GraphLayoutState } from '../lib/projectState';
 import {
   bindGraphInteractions,
   fitToScreen,
@@ -44,6 +45,9 @@ export interface GraphViewProps {
   focusedNodeId?: string | null;
   focusState?: FocusState;
   onFocusChange?: (focusState: FocusState) => void;
+  graphLayout?: GraphLayoutState;
+  onNodeDragEnd?: (nodeId: string, position: { x: number; y: number }) => void;
+  onNodePositionChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
 }
 
 export interface GraphViewRef {
@@ -84,6 +88,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   focusedNodeId,
   focusState,
   onFocusChange,
+  graphLayout,
+  onNodeDragEnd,
+  onNodePositionChange,
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
@@ -92,6 +99,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
 
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
+  const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
+  const onNodeDragEndRef = useRef<((nodeId: string, position: { x: number; y: number }) => void) | undefined>(onNodeDragEnd);
+  const onNodePositionChangeRef = useRef<((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined>(onNodePositionChange);
+
+  // Keep internal refs synchronized with latest props
+  useEffect(() => {
+    graphLayoutRef.current = graphLayout;
+    onNodeDragEndRef.current = onNodeDragEnd;
+    onNodePositionChangeRef.current = onNodePositionChange;
+  }, [graphLayout, onNodeDragEnd, onNodePositionChange]);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -295,6 +312,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       setHoverCard(null);
     });
 
+    // Drag finish listener to persist positions when drag ends (not on every mousemove)
+    cy.on('dragfree', 'node', (evt) => {
+      const node = evt.target;
+      const nodeId = node.id();
+      const pos = node.position();
+      const position = { x: pos.x, y: pos.y };
+
+      if (onNodeDragEndRef.current) {
+        onNodeDragEndRef.current(nodeId, position);
+      }
+      if (onNodePositionChangeRef.current) {
+        const currentStoredPositions = graphLayoutRef.current?.nodePositions || {};
+        const updatedPositions = {
+          ...currentStoredPositions,
+          [nodeId]: position,
+        };
+        onNodePositionChangeRef.current(updatedPositions);
+      }
+    });
+
     // Interaction bindings
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
@@ -372,6 +409,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       runLayout(cy, {
         nodeCount: nodes.length,
         animate: !prefersReducedMotion && nodes.length < 100
+      });
+    }
+
+    // Apply stored node positions if present in graphLayout
+    const storedPositions = graphLayoutRef.current?.nodePositions || graphLayout?.nodePositions;
+    if (storedPositions && Object.keys(storedPositions).length > 0) {
+      cy.batch(() => {
+        cy.nodes().forEach((n) => {
+          const stored = storedPositions[n.id()];
+          if (stored) {
+            n.position(stored);
+          }
+        });
       });
     }
 
