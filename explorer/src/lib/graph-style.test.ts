@@ -58,6 +58,46 @@ describe('graph-style', () => {
         expect(getNodeShape(type, true)).toBe(NODE_SHAPE_BY_TYPE[type]);
       });
     });
+
+    it('accepts an ExplorerNode object directly in getNodeShape', () => {
+      const normalNode = {
+        id: 'ApexClass:MovieController',
+        displayName: 'MovieController',
+        type: 'ApexClass' as const,
+        file: 'MovieController.cls',
+        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 1 },
+        risk: 'LOW' as const,
+        riskReasons: [],
+        behavior: {
+          isTest: false,
+          publicContractsCount: 1,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
+          dmlCount: 0,
+          calloutCount: 0
+        },
+        refactoringReadiness: {
+          isHighRisk: false,
+          hasCycles: false,
+          hasUnresolved: false,
+          testCoverageStatus: 'COVERED' as const
+        }
+      };
+
+      const testNode = {
+        ...normalNode,
+        id: 'ApexClass:MovieControllerTest',
+        displayName: 'MovieControllerTest',
+        behavior: {
+          ...normalNode.behavior,
+          isTest: true
+        }
+      };
+
+      expect(getNodeShape(normalNode)).toBe('ellipse');
+      expect(getNodeShape(testNode)).toBe(APEX_TEST_CLASS_SHAPE);
+    });
   });
 
   describe('getGraphStyles', () => {
@@ -106,7 +146,7 @@ describe('graph-style', () => {
       });
 
       // Verify Apex Test Class specific selector style
-      const apexTestStyle = styles.find(s => s.selector === 'node[type = "ApexClass"][isTest = "true"]');
+      const apexTestStyle = styles.find(s => s.selector === 'node[type = "ApexClass"][?isTest]');
       expect(apexTestStyle).toBeDefined();
       expect((apexTestStyle?.style as any)['shape']).toBe(APEX_TEST_CLASS_SHAPE);
     });

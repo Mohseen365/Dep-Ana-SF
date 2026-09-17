@@ -225,6 +225,12 @@ describe('graph-builder', () => {
       expect(node?.data.isTest).toBe(false);
       expect(node?.data.hasCycles).toBe(true);
       expect(node?.data.hasUnresolved).toBe(true);
+
+      const testNode = elements.find(
+        el => 'data' in el && el.data.id === 'ApexClass:AssetDashboardServiceTest'
+      );
+      expect(testNode?.data.type).toBe('ApexClass');
+      expect(testNode?.data.isTest).toBe(true);
     });
 
     it('handles empty nodes and edges', () => {
