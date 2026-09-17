@@ -14,14 +14,16 @@ const fs = require("fs");
 const path = require("path");
 const { execSync, spawn } = require("child_process");
 // Debug instrumentation: dump raw argv and npm env vars
-console.log('DEBUG RAW ARGV:', JSON.stringify(process.argv));
-console.log('DEBUG NPM_ENV:', JSON.stringify({
-  npm_lifecycle_script: process.env.npm_lifecycle_script,
-  npm_config_argv: process.env.npm_config_argv,
-  npm_config_project: process.env.npm_config_project,
-  npm_config_source: process.env.npm_config_source,
-}));
-
+console.log("DEBUG RAW ARGV:", JSON.stringify(process.argv));
+console.log(
+  "DEBUG NPM_ENV:",
+  JSON.stringify({
+    npm_lifecycle_script: process.env.npm_lifecycle_script,
+    npm_config_argv: process.env.npm_config_argv,
+    npm_config_project: process.env.npm_config_project,
+    npm_config_source: process.env.npm_config_source,
+  }),
+);
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const ANALYZER_SCRIPT = path.join(ROOT_DIR, "dependency-analyzer.cjs");
@@ -106,16 +108,38 @@ function parseArgs(argv) {
     }
   }
 
-  // Process positional arguments if flags were stripped (e.g. `npm run explorer Food-App C:\path\to\src`)
+  // Process positional arguments.
+  //
+  // Classification rules (project-name vs source-path):
+  //   * A bare word (no separators, no absolute prefix) is a PROJECT identifier.
+  //   * A token containing "/" or "\" is a SOURCE path.
+  //   * A token starting with "./", "../", ".\", "..\", "/", or a Windows
+  //     drive prefix ("C:\", "C:/") is a SOURCE path.
+  //
+  // We deliberately do NOT use fs.existsSync(path.resolve(ROOT_DIR, pos)) as
+  // evidence of a source path. Repository artifacts (e.g.
+  // analyze/projects/movie/, explorer/public/projects/movie/) make a bare
+  // project name like "Movie" accidentally look like a filesystem path,
+  // producing the original bug:
+  //   Source: C:\Users\User\Downloads\dependency-analyzer\Movie
+  //   ENOTDIR: not a directory, scandir '...\dependency-analyzer\Movie'
+  const looksLikeSourcePath = (pos) => {
+    if (!pos) return false;
+    if (pos.startsWith("./") || pos.startsWith(".\\")) return true;
+    if (pos.startsWith("../") || pos.startsWith("..\\")) return true;
+    if (pos.startsWith("/")) return true;
+    if (/^[A-Za-z]:[\\/]/.test(pos)) return true;
+    if (pos.includes("/") || pos.includes("\\")) return true;
+    return false;
+  };
+
   for (const pos of positionals) {
-    const looksLikePath =
-      pos.includes("/") ||
-      pos.includes("\\") ||
-      fs.existsSync(path.resolve(ROOT_DIR, pos));
-    if (looksLikePath && !explicitSource) {
-      source = path.resolve(ROOT_DIR, pos);
-      explicitSource = true;
-    } else if (!looksLikePath && project === "default") {
+    if (looksLikeSourcePath(pos)) {
+      if (!explicitSource) {
+        source = path.resolve(ROOT_DIR, pos);
+        explicitSource = true;
+      }
+    } else if (project === "default") {
       project = slugify(pos) || "default";
     }
   }
@@ -273,4 +297,8 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { parseArgs, slugify };

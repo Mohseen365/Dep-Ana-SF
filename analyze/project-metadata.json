@@ -2,12 +2,12 @@
   "id": "default",
   "name": "Default Salesforce Project",
   "description": "Salesforce DX Architecture Analysis",
-  "sourcePath": "C:\\Users\\User\\Downloads\\Movie-App\\force-app\\main\\default",
-  "createdAt": "2026-09-15T05:48:04.216Z",
-  "updatedAt": "2026-09-15T05:48:04.216Z",
-  "lastAnalyzedAt": "2026-09-15T05:48:04.216Z",
+  "sourcePath": "scripts/temp-snapshot-test-fixture",
+  "createdAt": "2026-09-16T03:26:30.945Z",
+  "updatedAt": "2026-09-16T03:26:30.945Z",
+  "lastAnalyzedAt": "2026-09-16T03:26:30.945Z",
   "analysisStatus": "COMPLETE",
-  "componentCount": 9,
-  "dependencyCount": 16,
+  "componentCount": 2,
+  "dependencyCount": 2,
   "analysisPath": "/explorer-data.json"
 }

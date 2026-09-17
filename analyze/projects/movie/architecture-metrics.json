@@ -1,0 +1,808 @@
+{
+  "generatedAt": "2026-09-17T04:27:33.234Z",
+  "highestImpact": [
+    {
+      "id": "ApexClass:MovieController",
+      "name": "MovieController",
+      "type": "ApexClass",
+      "file": "../Movie-App/force-app/main/default/classes/MovieController.cls",
+      "fanIn": 9,
+      "fanOut": 0,
+      "coupling": 9,
+      "unresolved": 0,
+      "score": 5,
+      "risk": "MEDIUM",
+      "reasons": [
+        "high fan-in",
+        "direct LWC consumer"
+      ]
+    },
+    {
+      "id": "ApexClass:MovieControllerHttpMock",
+      "name": "MovieControllerHttpMock",
+      "type": "ApexClass",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerHttpMock.cls",
+      "fanIn": 2,
+      "fanOut": 1,
+      "coupling": 3,
+      "unresolved": 1,
+      "score": 1,
+      "risk": "LOW",
+      "reasons": [
+        "unresolved references"
+      ]
+    },
+    {
+      "id": "ApexClass:MovieControllerTest",
+      "name": "MovieControllerTest",
+      "type": "ApexClass",
+      "file": "../Movie-App/force-app/main/default/classes/MovieControllerTest.cls",
+      "fanIn": 0,
+      "fanOut": 6,
+      "coupling": 6,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "LWC:movie-app-container",
+      "name": "movie-app-container",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/movieAppContainer/movieAppContainer.js",
+      "fanIn": 0,
+      "fanOut": 4,
+      "coupling": 4,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "LWC:movie-list",
+      "name": "movie-list",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/movieList/movieList.js",
+      "fanIn": 1,
+      "fanOut": 3,
+      "coupling": 4,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "LWC:banner",
+      "name": "banner",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/banner/banner.js",
+      "fanIn": 1,
+      "fanOut": 1,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "LWC:favourites",
+      "name": "favourites",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/favourites/favourites.js",
+      "fanIn": 1,
+      "fanOut": 1,
+      "coupling": 2,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "LWC:navbar",
+      "name": "navbar",
+      "type": "LWC",
+      "file": "../Movie-App/force-app/main/default/lwc/navbar/navbar.js",
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    },
+    {
+      "id": "External:HttpCalloutMock",
+      "name": "HttpCalloutMock",
+      "type": "External",
+      "file": null,
+      "fanIn": 1,
+      "fanOut": 0,
+      "coupling": 1,
+      "unresolved": 0,
+      "score": 0,
+      "risk": "LOW",
+      "reasons": []
+    }
+  ],
+  "highRiskCount": 0,
+  "mediumRiskCount": 1,
+  "lowRiskCount": 8,
+  "cycleCount": 0,
+  "roles": {
+    "entry-point": 5,
+    "controller": 1,
+    "service": 0,
+    "selector": 0,
+    "repository": 0,
+    "data-access": 0,
+    "domain": 0,
+    "utility": 0,
+    "configuration": 0,
+    "test": 2,
+    "unknown": 0
+  },
+  "layers": {
+    "presentation": 5,
+    "entry": 0,
+    "application": 0,
+    "service": 0,
+    "domain": 0,
+    "data": 0,
+    "integration": 1,
+    "configuration": 0,
+    "test": 2,
+    "unknown": 0
+  },
+  "domains": {
+    "Banner": 1,
+    "Favourites": 1,
+    "Movie": 1,
+    "MovieAppContainer": 1,
+    "MovieController": 1,
+    "MovieControllerHttpMock": 1,
+    "MovieList": 1,
+    "Navbar": 1
+  },
+  "entryPoints": {
+    "totalComponents": 8,
+    "totalEntryPoints": 6,
+    "nonEntryPoints": 2,
+    "byType": {
+      "Trigger": 0,
+      "LWC": 5,
+      "Visualforce": 0,
+      "REST": 0,
+      "Async": 0,
+      "Invocable": 0,
+      "AuraEnabled": 1,
+      "InboundEmail": 0
+    }
+  },
+  "externalBoundaries": {
+    "totalComponents": 8,
+    "componentsWithExternalBoundary": 2,
+    "componentsWithoutExternalBoundary": 6,
+    "byType": {
+      "HTTPCallout": 2,
+      "NamedCredential": 0,
+      "ExternalService": 0,
+      "PlatformEvent": 0,
+      "OutboundMessaging": 0,
+      "InboundEmail": 0,
+      "ExternalObject": 0,
+      "RESTService": 0
+    }
+  },
+  "bottlenecks": {
+    "totalComponents": 8,
+    "bottleneckCount": 1,
+    "normalCount": 7,
+    "disconnectedCount": 0,
+    "signalCounts": {
+      "high-fan-in": 1,
+      "high-fan-out": 0,
+      "cycle-participant": 0,
+      "bridge-position": 0,
+      "many-dependents": 0,
+      "many-dependency-paths": 0,
+      "high-dependency-impact": 0
+    }
+  },
+  "smells": {
+    "totalComponents": 8,
+    "componentsWithSmellsCount": 1,
+    "cleanComponentsCount": 7,
+    "totalSmellsCount": 1,
+    "smellCounts": {
+      "god-component": 0,
+      "hub-component": 1,
+      "high-coupling": 0,
+      "circular-dependency": 0,
+      "orphan-component": 0,
+      "uncovered-critical-path": 0,
+      "layer-violation": 0,
+      "mixed-responsibility": 0,
+      "external-boundary-concentration": 0
+    }
+  },
+  "architectureDebt": {
+    "totalComponents": 8,
+    "componentsWithDebtCount": 1,
+    "cleanComponentsCount": 7,
+    "totalDebtItemsCount": 2,
+    "categoryCounts": {
+      "excessive-coupling": 0,
+      "excessive-dependency-breadth": 1,
+      "architectural-bottleneck": 1,
+      "boundary-violation": 0,
+      "layering-violation": 0,
+      "insufficient-test-protection": 0,
+      "excessive-change-amplification": 0,
+      "duplicated-responsibility": 0,
+      "risky-external-coupling": 0,
+      "security-boundary-risk": 0,
+      "architectural-ambiguity": 0
+    },
+    "severityCounts": {
+      "critical": 0,
+      "high": 2,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "businessCriticality": {
+    "totalComponents": 8,
+    "explicitBusinessCriticalityCount": 0,
+    "unknownBusinessCriticalityCount": 8,
+    "byBusinessLevel": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "unknown": 8
+    },
+    "byStructuralLevel": {
+      "high": 1,
+      "medium": 6,
+      "low": 0,
+      "unknown": 1
+    }
+  },
+  "architectureProfileSummary": {
+    "totalComponents": 8,
+    "roles": {
+      "controller": 1,
+      "test": 2,
+      "entry-point": 5
+    },
+    "layers": {
+      "integration": 1,
+      "test": 2,
+      "presentation": 5
+    },
+    "entryPoints": {
+      "count": 6
+    },
+    "bottlenecks": {
+      "count": 1
+    },
+    "testStatus": {
+      "unknown": 8
+    },
+    "externalBoundaries": {
+      "count": 2
+    },
+    "securitySharingModels": {
+      "unspecified": 8
+    },
+    "impactedObjects": []
+  },
+  "safetyEnvelopes": {
+    "totalComponents": 8,
+    "byClassification": {
+      "SAFE": 1,
+      "SAFE_WITH_REVIEW": 0,
+      "HIGH_RISK": 6,
+      "BLOCKED": 1,
+      "UNKNOWN": 0
+    },
+    "blockerCounts": {
+      "critical-external-boundary-impact": 1
+    },
+    "riskFactorCounts": {
+      "high-coupling": 1,
+      "broad-transitive-impact": 1,
+      "architectural-bottleneck": 1,
+      "external-boundary-exposure": 2,
+      "architecture-smells-present": 6,
+      "entry-point-exposure": 6,
+      "test-gap-present": 5
+    }
+  },
+  "architectureHealth": {
+    "overallHealth": "DEGRADED",
+    "confidence": "medium",
+    "dimensions": {
+      "structuralCoupling": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "healthy-coupling-distribution",
+            "detail": "Low coupling pressure across all 8 repository components."
+          }
+        ],
+        "signals": {
+          "highCouplingCount": 0
+        }
+      },
+      "dependencyComplexity": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "zero-circular-dependencies",
+            "detail": "Repository contains 0 circular dependency loops."
+          }
+        ],
+        "signals": {
+          "cycleCount": 0
+        }
+      },
+      "changeRisk": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "moderate-change-blast-radius",
+            "detail": "1 architectural bottleneck component(s) present."
+          }
+        ],
+        "signals": {
+          "bottleneckCount": 1
+        }
+      },
+      "testProtection": {
+        "classification": "DEGRADED",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "high-test-gap-ratio",
+            "detail": "High test gap ratio: 5 of 8 component(s) (63%) lack test protection."
+          }
+        ],
+        "signals": {
+          "gapsCount": 5
+        }
+      },
+      "boundaryRisk": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "controlled-external-boundaries",
+            "detail": "Managed external boundary exposure across 0 component(s)."
+          }
+        ],
+        "signals": {
+          "extBoundaryCount": 0
+        }
+      },
+      "securityRisk": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "unspecified-sharing-concentration",
+            "detail": "3 Apex class(es) lack explicit sharing model declarations."
+          }
+        ],
+        "signals": {
+          "unspecifiedSharingCount": 3
+        }
+      },
+      "architecturalDebt": {
+        "classification": "DEGRADED",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "architectural-smells-detected",
+            "detail": "Architectural debt identified: 1 smell(s) present across repository."
+          }
+        ],
+        "signals": {
+          "totalSmells": 1,
+          "godCount": 0
+        }
+      },
+      "concentrationBottlenecks": {
+        "classification": "ATTENTION",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "single-bottleneck-present",
+            "detail": "1 central architectural bottleneck identified."
+          }
+        ],
+        "signals": {
+          "bottleneckCount": 1
+        }
+      },
+      "architecturalClarity": {
+        "classification": "HEALTHY",
+        "confidence": "high",
+        "evidence": [
+          {
+            "rule": "clear-architectural-structure",
+            "detail": "Clear role and layer separation established for repository components."
+          }
+        ],
+        "signals": {
+          "unknownRoles": 0
+        }
+      }
+    },
+    "strongestPositiveSignals": [
+      "Low coupling pressure across all 8 repository components.",
+      "Repository contains 0 circular dependency loops.",
+      "Managed external boundary exposure across 0 component(s).",
+      "Clear role and layer separation established for repository components."
+    ],
+    "strongestNegativeSignals": [
+      "1 architectural bottleneck component(s) present.",
+      "High test gap ratio: 5 of 8 component(s) (63%) lack test protection.",
+      "Architectural debt identified: 1 smell(s) present across repository."
+    ],
+    "unknownIncompleteAreas": [
+      "3 Apex class(es) have unspecified sharing mode."
+    ]
+  },
+  "qualityGates": {
+    "overallResult": "FAIL",
+    "confidence": "medium",
+    "ruleResults": [
+      {
+        "ruleId": "RULE-EXCESSIVE-COUPLING",
+        "name": "Excessive Component Coupling",
+        "description": "Detects components with severe total coupling or god-component characteristics that violate structural safety thresholds.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-EXCESSIVE-BREADTH",
+        "name": "Excessive Dependency Breadth",
+        "description": "Detects structural dependency hub components with fan-in or fan-out exceeding threshold.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController"
+        ],
+        "evidence": [
+          {
+            "rule": "excessive-breadth-violation",
+            "detail": "Component 'MovieController' fan-in is 9 (thresh: 12), fan-out is 0 (thresh: 12)."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-CIRCULAR-DEPENDENCIES",
+        "name": "Circular Dependency Loops",
+        "description": "Detects participation in circular dependency loops across architecture components.",
+        "severity": "HIGH",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-ARCHITECTURAL-BOTTLENECK",
+        "name": "Architectural Bottlenecks",
+        "description": "Detects central flow bottleneck components that concentrate graph dependencies and change risk.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController"
+        ],
+        "evidence": [
+          {
+            "rule": "architectural-bottleneck-warning",
+            "detail": "Component 'MovieController' is an identified architectural bottleneck (score: 30)."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-MISSING-TEST-PROTECTION",
+        "name": "Missing Test Protection on Critical Paths",
+        "description": "Detects structurally critical or business-critical components that lack adequate test protection.",
+        "severity": "CRITICAL",
+        "result": "UNKNOWN",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController",
+          "MovieControllerHttpMock",
+          "MovieControllerTest",
+          "banner",
+          "favourites",
+          "movie-app-container",
+          "movie-list",
+          "navbar"
+        ],
+        "evidence": [
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'MovieController'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'MovieControllerHttpMock'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'MovieControllerTest'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'banner'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'favourites'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'movie-app-container'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'movie-list'."
+          },
+          {
+            "rule": "missing-test-protection-unknown",
+            "detail": "Test gap evidence is missing for component 'navbar'."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UNSAFE-EXTERNAL-BOUNDARY",
+        "name": "Unsafe External Boundaries",
+        "description": "Detects unisolated or concentrated external boundary integration points.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController",
+          "MovieControllerHttpMock"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-external-boundary-warn",
+            "detail": "Component 'MovieController' exposes an external boundary (HTTPCallout)."
+          },
+          {
+            "rule": "unsafe-external-boundary-warn",
+            "detail": "Component 'MovieControllerHttpMock' exposes an external boundary (HTTPCallout)."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-SECURITY-BOUNDARY-VIOLATION",
+        "name": "Security Boundary Violations",
+        "description": "Detects security boundary risks such as 'without sharing' declarations on entry or persistence paths.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-SEVERE-ARCHITECTURE-DEBT",
+        "name": "Severe Architecture Debt Accumulation",
+        "description": "Detects critical or high-severity architecture debt items accumulating across components.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-UNSAFE-CHANGE-IMPACT",
+        "name": "Unsafe Change Impact & Blast Radius",
+        "description": "Detects components whose modification produces unsafe change propagation or BLOCKED safety envelopes.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController",
+          "MovieControllerHttpMock",
+          "banner",
+          "favourites",
+          "movie-app-container",
+          "movie-list",
+          "navbar"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'MovieController' is BLOCKED due to architectural safety blockers."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'MovieControllerHttpMock' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'banner' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'favourites' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'movie-app-container' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'movie-list' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'navbar' is classified as HIGH_RISK."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-INVALID-ROLE-LAYER-RELATIONSHIPS",
+        "name": "Invalid Role / Layer Relationships",
+        "description": "Detects illegal cross-layer dependencies or mixed control/persistence responsibilities.",
+        "severity": "CRITICAL",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      },
+      {
+        "ruleId": "RULE-DOMAIN-INCONSISTENCIES",
+        "name": "Domain Architectural Ambiguity & Inconsistencies",
+        "description": "Detects ambiguous static references or domain boundary conflicts in component flows.",
+        "severity": "MEDIUM",
+        "result": "PASS",
+        "confidence": "high",
+        "affectedComponents": [],
+        "evidence": []
+      }
+    ],
+    "failures": [
+      {
+        "ruleId": "RULE-EXCESSIVE-BREADTH",
+        "name": "Excessive Dependency Breadth",
+        "description": "Detects structural dependency hub components with fan-in or fan-out exceeding threshold.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController"
+        ],
+        "evidence": [
+          {
+            "rule": "excessive-breadth-violation",
+            "detail": "Component 'MovieController' fan-in is 9 (thresh: 12), fan-out is 0 (thresh: 12)."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UNSAFE-CHANGE-IMPACT",
+        "name": "Unsafe Change Impact & Blast Radius",
+        "description": "Detects components whose modification produces unsafe change propagation or BLOCKED safety envelopes.",
+        "severity": "HIGH",
+        "result": "FAIL",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController",
+          "MovieControllerHttpMock",
+          "banner",
+          "favourites",
+          "movie-app-container",
+          "movie-list",
+          "navbar"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-change-impact-blocked-fail",
+            "detail": "Safety envelope for component 'MovieController' is BLOCKED due to architectural safety blockers."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'MovieControllerHttpMock' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'banner' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'favourites' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'movie-app-container' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'movie-list' is classified as HIGH_RISK."
+          },
+          {
+            "rule": "unsafe-change-impact-high-risk-warn",
+            "detail": "Safety envelope for component 'navbar' is classified as HIGH_RISK."
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      {
+        "ruleId": "RULE-ARCHITECTURAL-BOTTLENECK",
+        "name": "Architectural Bottlenecks",
+        "description": "Detects central flow bottleneck components that concentrate graph dependencies and change risk.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController"
+        ],
+        "evidence": [
+          {
+            "rule": "architectural-bottleneck-warning",
+            "detail": "Component 'MovieController' is an identified architectural bottleneck (score: 30)."
+          }
+        ]
+      },
+      {
+        "ruleId": "RULE-UNSAFE-EXTERNAL-BOUNDARY",
+        "name": "Unsafe External Boundaries",
+        "description": "Detects unisolated or concentrated external boundary integration points.",
+        "severity": "HIGH",
+        "result": "WARN",
+        "confidence": "high",
+        "affectedComponents": [
+          "MovieController",
+          "MovieControllerHttpMock"
+        ],
+        "evidence": [
+          {
+            "rule": "unsafe-external-boundary-warn",
+            "detail": "Component 'MovieController' exposes an external boundary (HTTPCallout)."
+          },
+          {
+            "rule": "unsafe-external-boundary-warn",
+            "detail": "Component 'MovieControllerHttpMock' exposes an external boundary (HTTPCallout)."
+          }
+        ]
+      }
+    ],
+    "unknownChecks": [
+      "Missing Test Protection on Critical Paths"
+    ]
+  },
+  "duplicateResponsibilitySummary": {
+    "totalComponents": 8,
+    "componentsWithOverlapCount": 5,
+    "strongOverlapCount": 4,
+    "possibleOverlapCount": 1,
+    "noOverlapCount": 3,
+    "uniqueOverlappingPairsCount": 10
+  },
+  "testGapSummary": {
+    "totalComponents": 8,
+    "coveredCount": 1,
+    "likelyCoveredCount": 0,
+    "noTestEvidenceCount": 5,
+    "knownCoverageFailureCount": 0,
+    "ambiguousTestCount": 0,
+    "testComponentCount": 2,
+    "componentsWithTestGap": 5
+  }
+}

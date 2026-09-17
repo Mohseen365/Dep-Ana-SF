@@ -41,11 +41,11 @@
       "fileHash": "sha256:35bbe5a695057ca74e916ca4be3645d7189b433fb21e494593b6df9da8543392"
     },
     "explorerData": {
-      "path": "explorer-data.json",
-      "fileHash": "sha256:4b4641d677cec08373b36ccf70ada545314c1d4da904cc3850ca3db9fee36afb",
+      "path": "movie",
       "schemaVersion": "1.0.0",
-      "nodeCount": 31,
-      "edgeCount": 84
+      "fileHash": "sha256:6612d0efda9d29352575ca40f2f4643fb0a211ee2da09ab973871bca9f185083",
+      "nodeCount": 9,
+      "edgeCount": 16
     }
   }
 }

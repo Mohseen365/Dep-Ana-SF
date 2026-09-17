@@ -1,20 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-09-15T05:48:04.216Z",
-  "sourceDirectory": "C:\\Users\\User\\Downloads\\Movie-App\\force-app\\main\\default",
+  "generatedAt": "2026-09-17T04:27:33.214Z",
+  "sourceDirectory": "../Movie-App/force-app/main/default",
   "project": {
-    "id": "movie-app",
-    "name": "movie-app",
+    "id": "movie",
+    "name": "movie",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "C:\\Users\\User\\Downloads\\Movie-App\\force-app\\main\\default",
-    "createdAt": "2026-09-15T05:48:04.216Z",
-    "updatedAt": "2026-09-15T05:48:04.216Z",
-    "lastAnalyzedAt": "2026-09-15T05:48:04.216Z",
+    "sourcePath": "../Movie-App/force-app/main/default",
+    "createdAt": "2026-09-17T04:27:33.214Z",
+    "updatedAt": "2026-09-17T04:27:33.214Z",
+    "lastAnalyzedAt": "2026-09-17T04:27:33.214Z",
     "analysisStatus": "COMPLETE",
     "componentCount": 9,
     "dependencyCount": 16,
-    "analysisPath": "/projects/movie-app/explorer-data.json"
+    "analysisPath": "/projects/movie/explorer-data.json"
   },
   "summary": {
     "nodeCount": 9,
@@ -194,7 +194,7 @@
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "NO_TESTS"
       }
     },
     {
@@ -225,7 +225,7 @@
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "NO_TESTS"
       }
     },
     {
@@ -256,7 +256,7 @@
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "NO_TESTS"
       }
     },
     {
@@ -287,7 +287,7 @@
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "NO_TESTS"
       }
     },
     {
@@ -318,7 +318,7 @@
         "isHighRisk": false,
         "hasCycles": false,
         "hasUnresolved": false,
-        "testCoverageStatus": "UNTESTED"
+        "testCoverageStatus": "NO_TESTS"
       }
     }
   ],

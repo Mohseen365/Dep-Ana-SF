@@ -6,23 +6,23 @@
       "id": "default",
       "name": "Default Salesforce Project",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "C:\\Users\\User\\Downloads\\dependency-analyzer\\force-app\\main\\default",
-      "createdAt": "2026-09-15T16:57:24.929Z",
-      "updatedAt": "2026-09-15T16:57:24.929Z",
-      "lastAnalyzedAt": "2026-09-15T16:57:24.929Z",
+      "sourcePath": "../Movie-App/force-app/main/default",
+      "createdAt": "2026-09-16T16:14:15.739Z",
+      "updatedAt": "2026-09-16T16:14:15.739Z",
+      "lastAnalyzedAt": "2026-09-16T16:14:15.739Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 31,
-      "dependencyCount": 84,
+      "componentCount": 9,
+      "dependencyCount": 16,
       "analysisPath": "/explorer-data.json"
     }
   ],
   "artifacts": {
     "default": {
-      "path": "explorer-data.json",
+      "path": "movie",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:4b4641d677cec08373b36ccf70ada545314c1d4da904cc3850ca3db9fee36afb",
-      "nodeCount": 31,
-      "edgeCount": 84
+      "fileHash": "sha256:6612d0efda9d29352575ca40f2f4643fb0a211ee2da09ab973871bca9f185083",
+      "nodeCount": 9,
+      "edgeCount": 16
     }
   }
 }
