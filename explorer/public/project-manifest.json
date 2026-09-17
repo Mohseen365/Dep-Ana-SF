@@ -1,48 +1,28 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "food-app",
+  "activeProjectId": "default",
   "projects": [
     {
-      "id": "movie-app",
-      "name": "Movie App",
+      "id": "default",
+      "name": "Default Salesforce Project",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "force-app/main/default",
-      "createdAt": "2026-09-17T19:04:27.697Z",
-      "updatedAt": "2026-09-17T19:04:27.697Z",
-      "lastAnalyzedAt": "2026-09-17T19:04:27.697Z",
+      "sourcePath": "tmp-integration-test/fixture",
+      "createdAt": "2026-09-17T20:02:02.482Z",
+      "updatedAt": "2026-09-17T20:02:02.482Z",
+      "lastAnalyzedAt": "2026-09-17T20:02:02.482Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 1,
-      "dependencyCount": 0,
-      "analysisPath": "/projects/movie-app/explorer-data.json"
-    },
-    {
-      "id": "food-app",
-      "name": "Food App",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "force-app/main/default",
-      "createdAt": "2026-09-17T19:04:27.698Z",
-      "updatedAt": "2026-09-17T19:04:27.698Z",
-      "lastAnalyzedAt": "2026-09-17T19:04:27.698Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 1,
-      "dependencyCount": 0,
-      "analysisPath": "/projects/food-app/explorer-data.json"
+      "componentCount": 4,
+      "dependencyCount": 3,
+      "analysisPath": "/explorer-data.json"
     }
   ],
   "artifacts": {
-    "movie-app": {
+    "default": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:d1421b7348ab35f31e5ca1904e0ed55b9dac06a4603518492373f1d2dc995cbe",
-      "nodeCount": 1,
-      "edgeCount": 0
-    },
-    "food-app": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:5b154a1234ffc8099519b8b179010ec378253170f013780ac7fc7954768b322e",
-      "nodeCount": 1,
-      "edgeCount": 0
+      "fileHash": "sha256:044b57cb540f9eba08af5a4953eadec2db8fcf25ff46c6a5a2852f9d6e315b65",
+      "nodeCount": 4,
+      "edgeCount": 3
     }
   }
 }
