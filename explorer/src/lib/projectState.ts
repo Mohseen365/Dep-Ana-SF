@@ -30,8 +30,6 @@ export type GraphInteractionMode = 'interactive' | 'static';
 
 export interface GraphLayoutState {
   layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
-export interface GraphLayoutState {
-  layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
   mode: GraphInteractionMode;
   nodePositions: Record<string, { x: number; y: number }>;
   layoutVersion?: string | number;

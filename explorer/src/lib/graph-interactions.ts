@@ -9,6 +9,7 @@ import type { GraphNodeData } from './graph-builder';
 export interface InteractionCallbacks {
   onNodeSelect?: (node: ExplorerNode | null) => void;
   onNodeTap?: (nodeId: string, nodeData: GraphNodeData | undefined) => void;
+  onNodeDoubleTap?: (nodeId: string, node: ExplorerNode | null) => void;
   onBackgroundTap?: () => void;
   onEdgeSelect?: (edgeId: string) => void;
   onEdgeTap?: (edgeId: string) => void;
@@ -20,7 +21,7 @@ export function bindGraphInteractions(
   callbacks: InteractionCallbacks,
   originalNodes?: ExplorerNode[]
 ): void {
-  const { onNodeSelect, onNodeTap, onBackgroundTap, onEdgeSelect, onEdgeTap, onGraphReady } = callbacks;
+  const { onNodeSelect, onNodeTap, onNodeDoubleTap, onBackgroundTap, onEdgeSelect, onEdgeTap, onGraphReady } = callbacks;
 
   // Node tap event
   cy.on('tap', 'node', (event) => {
@@ -79,6 +80,24 @@ export function bindGraphInteractions(
     
     if (onNodeSelect) {
       onNodeSelect(explorerNode);
+    }
+  });
+
+  // Node double tap / double click event
+  cy.on('dbltap dblclick', 'node', (event) => {
+    const node = event.target;
+    const nodeId = node.id();
+
+    let explorerNode: ExplorerNode | null = null;
+    if (originalNodes) {
+      const found = originalNodes.find(n => n.id === nodeId);
+      if (found) {
+        explorerNode = found;
+      }
+    }
+
+    if (onNodeDoubleTap) {
+      onNodeDoubleTap(nodeId, explorerNode);
     }
   });
 
