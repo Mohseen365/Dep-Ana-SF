@@ -10,6 +10,7 @@ import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
+import { GraphLayoutState } from '../lib/projectState';
 import {
   shouldAutoLayout,
   resolveAuthoritativePosition,
@@ -52,10 +53,9 @@ export interface GraphViewProps {
   focusedNodeId?: string | null;
   focusState?: FocusState;
   onFocusChange?: (focusState: FocusState) => void;
-  nodePositions?: Record<string, Position>;
-  onNodePositionsChange?: (positions: Record<string, Position>) => void;
-  layoutMode?: LayoutMode;
-  onLayoutModeChange?: (mode: LayoutMode) => void;
+  graphLayout?: GraphLayoutState;
+  onNodeDragEnd?: (nodeId: string, position: { x: number; y: number }) => void;
+  onNodePositionChange?: (nodePositions: Record<string, { x: number; y: number }>) => void;
 }
 
 export interface GraphViewRef {
@@ -96,10 +96,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
   focusedNodeId,
   focusState,
   onFocusChange,
-  nodePositions,
-  onNodePositionsChange,
-  layoutMode = 'interactive',
-  onLayoutModeChange,
+  graphLayout,
+  onNodeDragEnd,
+  onNodePositionChange,
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
@@ -108,15 +107,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
 
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
-  const nodePositionsRef = useRef<Record<string, Position> | undefined>(nodePositions);
-  const onNodePositionsChangeRef = useRef(onNodePositionsChange);
-  const layoutModeRef = useRef<LayoutMode>(layoutMode);
+  const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
 
-  // In-session explicit drag positions map (Level 1 Authority)
-  const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
+  const onNodeDragEndRef = useRef<
+    ((nodeId: string, position: { x: number; y: number }) => void) | undefined
+  >(onNodeDragEnd);
 
-  // Mode tracking for mode switching
-  const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
+  const onNodePositionChangeRef = useRef<
+    ((nodePositions: Record<string, { x: number; y: number }>) => void) | undefined
+  >(onNodePositionChange);
+
+  // In-session explicit drag positions.
+  // This represents the highest position authority.
+  const sessionPositionsRef = useRef<Map<string, { x: number; y: number }>>(
+    new Map()
+  );
+
+  // Track previous mode for Interactive ↔ Static transitions.
+  const prevLayoutModeRef = useRef<
+    GraphLayoutState['mode']
+  >(graphLayout?.mode ?? 'interactive');
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -423,6 +433,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
       setHoverCard(null);
     });
 
+    // Drag finish listener to persist positions when drag ends (not on every mousemove)
+    cy.on('dragfree', 'node', (evt) => {
+      const node = evt.target;
+      const nodeId = node.id();
+      const pos = node.position();
+      const position = { x: pos.x, y: pos.y };
+
+      if (onNodeDragEndRef.current) {
+        onNodeDragEndRef.current(nodeId, position);
+      }
+      if (onNodePositionChangeRef.current) {
+        const currentStoredPositions = graphLayoutRef.current?.nodePositions || {};
+        const updatedPositions = {
+          ...currentStoredPositions,
+          [nodeId]: position,
+        };
+        onNodePositionChangeRef.current(updatedPositions);
+      }
+    });
+
     // Interaction bindings
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
@@ -560,6 +590,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>(({
         animate: !prefersReducedMotion && nodes.length < 100
       });
       captureAndPersistPositions();
+    }
+
+    // Apply stored node positions if present in graphLayout
+    const storedPositions = graphLayoutRef.current?.nodePositions || graphLayout?.nodePositions;
+    if (storedPositions && Object.keys(storedPositions).length > 0) {
+      cy.batch(() => {
+        cy.nodes().forEach((n) => {
+          const stored = storedPositions[n.id()];
+          if (stored) {
+            n.position(stored);
+          }
+        });
+      });
     }
 
     if (selectedNodeId) {
