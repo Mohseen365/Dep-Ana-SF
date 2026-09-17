@@ -178,45 +178,26 @@
     {
       "id": "cycle-1",
       "size": 2,
-      "nodes": [
-        "ApexClass:ClassA",
-        "ApexClass:ClassB"
-      ]
+      "nodes": ["ApexClass:ClassA", "ApexClass:ClassB"]
     }
   ],
   "unresolvedReferences": [],
   "impactSummaries": {
     "ApexClass:ClassA": {
       "id": "ApexClass:ClassA",
-      "directDependencies": [
-        "ApexClass:ClassB"
-      ],
-      "directDependents": [
-        "ApexClass:ClassB"
-      ],
-      "transitiveDependencies": [
-        "ApexClass:ClassB"
-      ],
-      "transitiveDependents": [
-        "ApexClass:ClassB"
-      ],
+      "directDependencies": ["ApexClass:ClassB"],
+      "directDependents": ["ApexClass:ClassB"],
+      "transitiveDependencies": ["ApexClass:ClassB"],
+      "transitiveDependents": ["ApexClass:ClassB"],
       "impactedTests": [],
       "totalImpactCount": 1
     },
     "ApexClass:ClassB": {
       "id": "ApexClass:ClassB",
-      "directDependencies": [
-        "ApexClass:ClassA"
-      ],
-      "directDependents": [
-        "ApexClass:ClassA"
-      ],
-      "transitiveDependencies": [
-        "ApexClass:ClassA"
-      ],
-      "transitiveDependents": [
-        "ApexClass:ClassA"
-      ],
+      "directDependencies": ["ApexClass:ClassA"],
+      "directDependents": ["ApexClass:ClassA"],
+      "transitiveDependencies": ["ApexClass:ClassA"],
+      "transitiveDependents": ["ApexClass:ClassA"],
       "impactedTests": [],
       "totalImpactCount": 1
     }

@@ -1,10 +1,11 @@
 {
   "manifestVersion": "1.0.0",
   "activeProjectId": "movie",
+  "activeProjectId": "movie",
   "projects": [
     {
-      "id": "default",
-      "name": "Default Salesforce Project",
+      "id": "movie",
+      "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
       "sourcePath": "scripts/temp-snapshot-test-fixture",
       "createdAt": "2026-09-16T03:26:30.945Z",
@@ -69,7 +70,7 @@
     }
   ],
   "artifacts": {
-    "default": {
+    "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
       "fileHash": "sha256:b22ac9c4dea67f934cffc59643f37d4a46d3ae3503e19f65ff0de56d68ac448a",

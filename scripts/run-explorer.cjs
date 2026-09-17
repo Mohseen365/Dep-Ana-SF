@@ -39,11 +39,59 @@ function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
+function isSameSource(sourceA, sourceB) {
+  if (!sourceA || !sourceB) return false;
+  const normA = path
+    .resolve(ROOT_DIR, sourceA)
+    .toLowerCase()
+    .replace(/\\/g, "/")
+    .replace(/\/+$/, "");
+  const normB = path
+    .resolve(ROOT_DIR, sourceB)
+    .toLowerCase()
+    .replace(/\\/g, "/")
+    .replace(/\/+$/, "");
+  return normA === normB;
+}
+
+function getRecordedSourceForProject(slugId) {
+  if (!slugId) return null;
+  const projDir =
+    slugId !== "default"
+      ? path.join(ROOT_DIR, "analyze", "projects", slugId)
+      : path.join(ROOT_DIR, "analyze");
+  const manifestFile = path.join(projDir, "analysis-manifest.json");
+  const reportFile = path.join(projDir, "dependency-report.json");
+
+  if (fs.existsSync(manifestFile)) {
+    try {
+      const content = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
+      const dir =
+        content.source?.directory ||
+        content.source?.sourceDir ||
+        content.sourceDirectory;
+      if (dir) return path.isAbsolute(dir) ? dir : path.resolve(ROOT_DIR, dir);
+    } catch (_) {}
+  }
+  if (fs.existsSync(reportFile)) {
+    try {
+      const content = JSON.parse(fs.readFileSync(reportFile, "utf8"));
+      const dir =
+        content.sourceDirectory ||
+        content.discovered?.sourceDir ||
+        content.source?.sourceDir;
+      if (dir) return path.isAbsolute(dir) ? dir : path.resolve(ROOT_DIR, dir);
+    } catch (_) {}
+  }
+  return null;
+}
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   let mode = "dev"; // 'dev' | 'preview' | 'build'
   let fresh = false;
   let project = "default";
+  let projectExplicit = false;
   let source = "";
   let explicitSource = false;
   const positionals = [];
@@ -73,7 +121,10 @@ function parseArgs(argv) {
       arg.startsWith("-project-id=")
     ) {
       const val = arg.split("=").slice(1).join("=");
-      if (val) project = slugify(val) || "default";
+      if (val) {
+        project = slugify(val) || "default";
+        projectExplicit = true;
+      }
       continue;
     }
     if (
@@ -84,6 +135,7 @@ function parseArgs(argv) {
       args[i + 1]
     ) {
       project = slugify(args[i + 1]) || "default";
+      projectExplicit = true;
       i++;
       continue;
     }
@@ -141,14 +193,25 @@ function parseArgs(argv) {
       }
     } else if (project === "default") {
       project = slugify(pos) || "default";
+      projectExplicit = true;
     }
   }
 
-  if (!explicitSource && fs.existsSync(defaultSourcePath)) {
-    source = defaultSourcePath;
+  // Resolve source from recorded project manifest if no explicit source provided
+  const slugId = slugify(project) || "default";
+  const recordedSource = getRecordedSourceForProject(slugId);
+
+  if (!explicitSource) {
+    if (recordedSource && fs.existsSync(recordedSource)) {
+      source = recordedSource;
+    } else if (recordedSource) {
+      source = recordedSource; // Keep recorded source path even if disk location moved
+    } else if (slugId === "default" && fs.existsSync(defaultSourcePath)) {
+      source = defaultSourcePath;
+    }
   }
 
-  return { mode, fresh, project, source, explicitSource };
+  return { mode, fresh, project: slugId, source, explicitSource };
 }
 
 function runAnalysisIfNeeded(
@@ -163,9 +226,10 @@ function runAnalysisIfNeeded(
       ? path.join(ROOT_DIR, "analyze", "projects", slugId)
       : path.join(ROOT_DIR, "analyze");
   const reportFile = path.join(analyzeDir, "dependency-report.json");
+  const manifestFile = path.join(analyzeDir, "analysis-manifest.json");
 
+  const hasReport = fs.existsSync(reportFile) || fs.existsSync(manifestFile);
   const hasSource = Boolean(sourceDir && fs.existsSync(sourceDir));
-  const hasReport = fs.existsSync(reportFile);
 
   if (explicitSource && !hasSource) {
     throw new Error(
@@ -173,9 +237,18 @@ function runAnalysisIfNeeded(
     );
   }
 
+  if (explicitSource && hasReport) {
+    const recordedSource = getRecordedSourceForProject(slugId);
+    if (recordedSource && !isSameSource(recordedSource, sourceDir)) {
+      throw new Error(
+        `Analyzer output file in directory '${analyzeDir}' does not match explicit source: ${sourceDir}`,
+      );
+    }
+  }
+
   if (!hasSource && !hasReport) {
     throw new Error(
-      `Source directory (${sourceDir || path.join(ROOT_DIR, "force-app", "main", "default")}) and existing analysis (${reportFile}) both not found.`,
+      `Source directory (${sourceDir || "none"}) and existing analysis (${reportFile}) both not found.`,
     );
   }
 
@@ -218,7 +291,7 @@ function runAnalysisIfNeeded(
   }
 }
 
-function runAdapter(projectId, sourceDir) {
+function runAdapter(projectId, sourceDir, explicitSource = false) {
   const slugId = slugify(projectId) || "default";
   console.log(`Running Explorer Data Adapter for project '${slugId}'...`);
 
@@ -235,7 +308,8 @@ function runAdapter(projectId, sourceDir) {
     );
   }
 
-  const sourceFlag = sourceDir ? ` --source "${sourceDir}"` : "";
+  const hasSourceOnDisk = Boolean(sourceDir && fs.existsSync(sourceDir));
+  const sourceFlag = hasSourceOnDisk ? ` --source "${sourceDir}"` : "";
   execSync(
     `node "${ADAPTER_SCRIPT}" --input "${inputDir}" --output "${targetOutput}" --project "${slugId}"${sourceFlag}`,
     {
@@ -288,7 +362,7 @@ function main() {
     }
 
     runAnalysisIfNeeded(source, fresh, project, explicitSource);
-    runAdapter(project, source);
+    runAdapter(project, source, explicitSource);
     startExplorer(mode);
   } catch (err) {
     console.error("\nExplorer One-Command Workflow failed:");

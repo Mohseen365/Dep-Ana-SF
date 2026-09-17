@@ -16,6 +16,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { analyzeTestGap } = require("../dependency-analyzer.cjs");
 
+const ROOT_DIR = path.resolve(__dirname, "..");
 const CURRENT_SCHEMA_VERSION = "1.0.0";
 const DEFAULT_ANALYZER_VERSION = "13.0.0";
 
@@ -39,25 +40,34 @@ function parseArgs(argv) {
   let source = "";
   const positionals = [];
 
+  let inputExplicit = false;
+  let outputExplicit = false;
+  let projectExplicit = false;
+  let sourceExplicit = false;
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
     if (arg.startsWith("--input=") || arg.startsWith("-input=")) {
       input = arg.split("=").slice(1).join("=");
+      inputExplicit = true;
       continue;
     }
     if ((arg === "--input" || arg === "-input") && args[i + 1]) {
       input = args[i + 1];
+      inputExplicit = true;
       i++;
       continue;
     }
 
     if (arg.startsWith("--output=") || arg.startsWith("-output=")) {
       output = arg.split("=").slice(1).join("=");
+      outputExplicit = true;
       continue;
     }
     if ((arg === "--output" || arg === "-output") && args[i + 1]) {
       output = args[i + 1];
+      outputExplicit = true;
       i++;
       continue;
     }
@@ -74,21 +84,27 @@ function parseArgs(argv) {
 
     if (arg.startsWith("--project=") || arg.startsWith("-project=") || arg.startsWith("--project-id=") || arg.startsWith("-project-id=")) {
       const val = arg.split("=").slice(1).join("=");
-      if (val) project = slugify(val) || "default";
+      if (val) {
+        project = slugify(val) || "default";
+        projectExplicit = true;
+      }
       continue;
     }
     if ((arg === "--project" || arg === "-project" || arg === "--project-id" || arg === "-project-id") && args[i + 1]) {
       project = slugify(args[i + 1]) || "default";
+      projectExplicit = true;
       i++;
       continue;
     }
 
     if (arg.startsWith("--source=") || arg.startsWith("-source=")) {
       source = arg.split("=").slice(1).join("=");
+      sourceExplicit = true;
       continue;
     }
     if ((arg === "--source" || arg === "-source") && args[i + 1]) {
       source = args[i + 1];
+      sourceExplicit = true;
       i++;
       continue;
     }
@@ -98,14 +114,57 @@ function parseArgs(argv) {
     }
   }
 
-  if (positionals.length > 0 && input === "analyze") {
-    input = positionals[0];
-  }
-  if (positionals.length > 1 && !output) {
-    output = positionals[1];
+  // Safely classify positional arguments
+  for (const pos of positionals) {
+    const posSlug = slugify(pos);
+    const resolvedPath = path.resolve(ROOT_DIR, pos);
+    const exists = fs.existsSync(resolvedPath);
+    const isDir = exists && fs.statSync(resolvedPath).isDirectory();
+    const isFile = exists && fs.statSync(resolvedPath).isFile();
+    const isJsonFile = pos.endsWith(".json");
+    const containsPathSep = pos.includes("/") || pos.includes("\\");
+
+    const isProjectNameMatch = projectExplicit && posSlug && posSlug === slugify(project);
+
+    // A positional arg is ONLY a source directory if:
+    // 1. It contains path separators OR is a directory (when project is already explicitly set to something else)
+    // 2. AND it is not a file, does not start with "analyze", and does not match the explicit project name
+    const looksLikeSourceDir =
+      (containsPathSep || (isDir && projectExplicit && !isProjectNameMatch)) &&
+      !isFile &&
+      !pos.startsWith("analyze") &&
+      !isProjectNameMatch;
+
+    if (looksLikeSourceDir && !sourceExplicit) {
+      source = pos;
+      sourceExplicit = true;
+    } else if (!inputExplicit && !isProjectNameMatch && (isDir || isJsonFile || pos.startsWith("analyze") || exists)) {
+      if (isJsonFile) {
+        if (!outputExplicit && inputExplicit) {
+          output = pos;
+          outputExplicit = true;
+        } else if (!inputExplicit) {
+          input = pos;
+          inputExplicit = true;
+        }
+      } else {
+        input = pos;
+        inputExplicit = true;
+      }
+    } else if (!projectExplicit && !isJsonFile && !isDir && !isFile && !containsPathSep) {
+      project = slugify(pos) || "default";
+      projectExplicit = true;
+    }
   }
 
-  if (!output) {
+  if (input && !projectExplicit) {
+    const m = input.match(/projects[/\\]([^/\\]+)/);
+    if (m && m[1]) {
+      project = slugify(m[1]) || "default";
+    }
+  }
+
+  if (!output || !output.endsWith(".json")) {
     if (outputDir) {
       output = path.join(outputDir, "explorer-data.json");
     } else if (project && project !== "default") {
@@ -120,8 +179,8 @@ function parseArgs(argv) {
 
 function isSameSource(sourceA, sourceB) {
   if (!sourceA || !sourceB) return false;
-  const normA = path.resolve(sourceA).toLowerCase().replace(/\\/g, "/");
-  const normB = path.resolve(sourceB).toLowerCase().replace(/\\/g, "/");
+  const normA = path.resolve(ROOT_DIR, sourceA).toLowerCase().replace(/\\/g, "/").replace(/\/+$/, "");
+  const normB = path.resolve(ROOT_DIR, sourceB).toLowerCase().replace(/\\/g, "/").replace(/\/+$/, "");
   return normA === normB;
 }
 
@@ -138,10 +197,10 @@ function getReportSourceDir(reportFilePath) {
 function resolveInputFile(inputPath, options = {}) {
   const rawProjectId = options.project || options.projectId || "default";
   const projectId = slugify(rawProjectId) || "default";
-  const explicitSource = options.source || null;
+  const explicitSource = options.source ? path.resolve(ROOT_DIR, options.source) : null;
 
   if (explicitSource && !fs.existsSync(explicitSource)) {
-    throw new Error(`Explicitly supplied source directory does not exist: ${explicitSource}`);
+    throw new Error(`Explicitly supplied source directory does not exist: ${options.source}`);
   }
 
   const matchesSource = (candidateFile) => {
@@ -151,44 +210,60 @@ function resolveInputFile(inputPath, options = {}) {
     return candidateSource ? isSameSource(candidateSource, explicitSource) : false;
   };
 
-  // 1. Check explicit inputPath if provided
+  // 1. Check explicit inputPath if provided and not generic default "analyze"
   if (inputPath && inputPath !== "analyze") {
-    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isFile()) {
-      if (matchesSource(inputPath)) {
-        return inputPath;
-      } else {
-        throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+    const resolvedInput = path.resolve(ROOT_DIR, inputPath);
+    if (fs.existsSync(resolvedInput)) {
+      const stat = fs.statSync(resolvedInput);
+      if (stat.isFile()) {
+        if (matchesSource(resolvedInput)) {
+          return resolvedInput;
+        } else if (explicitSource) {
+          throw new Error(`Analyzer output file '${inputPath}' does not match explicit source: ${options.source}`);
+        }
       }
-    }
-    if (fs.existsSync(inputPath) && fs.statSync(inputPath).isDirectory()) {
-      const reportFile = path.join(inputPath, "dependency-report.json");
-      const snapshotFile = path.join(inputPath, "analysis-snapshot.json");
-      const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
-      if (foundFile && matchesSource(foundFile)) {
-        return foundFile;
-      } else if (foundFile) {
-        throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+      if (stat.isDirectory()) {
+        const reportFile = path.join(resolvedInput, "dependency-report.json");
+        const snapshotFile = path.join(resolvedInput, "analysis-snapshot.json");
+        const foundFile = fs.existsSync(reportFile) ? reportFile : fs.existsSync(snapshotFile) ? snapshotFile : null;
+        if (foundFile && matchesSource(foundFile)) {
+          return foundFile;
+        } else if (foundFile && explicitSource) {
+          throw new Error(`Analyzer output file in directory '${inputPath}' does not match explicit source: ${options.source}`);
+        }
       }
     }
   }
 
   // 2. Check project-specific analyze directory
   if (projectId !== "default") {
-    const projReport = path.resolve(__dirname, "..", "analyze", "projects", projectId, "dependency-report.json");
-    const projSnapshot = path.resolve(__dirname, "..", "analyze", "projects", projectId, "analysis-snapshot.json");
+    const projReport = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "dependency-report.json");
+    const projSnapshot = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "analysis-snapshot.json");
     const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
     if (foundProj && matchesSource(foundProj)) return foundProj;
+    if (foundProj && explicitSource) {
+      throw new Error(`Analyzer output file in directory 'analyze/projects/${projectId}' does not match explicit source: ${options.source}`);
+    }
+    if (explicitSource) {
+      throw new Error(`Analyzer output file not found matching explicit source '${options.source}' in directory: analyze/projects/${projectId}`);
+    }
+    throw new Error(`Analyzer output file not found in project directory: analyze/projects/${projectId}`);
   }
 
-  // 3. Check root or default analyze directory for report
-  const rootReport = path.resolve(__dirname, "..", "dependency-report.json");
-  const rootSnapshot = path.resolve(__dirname, "..", "analysis-snapshot.json");
-  const analyzeReport = path.resolve(__dirname, "..", "analyze", "dependency-report.json");
-  const analyzeSnapshot = path.resolve(__dirname, "..", "analyze", "analysis-snapshot.json");
+  // 3. Check root or default analyze directory for report ONLY IF projectId === "default"
+  const analyzeReport = path.resolve(ROOT_DIR, "analyze", "dependency-report.json");
+  const analyzeSnapshot = path.resolve(ROOT_DIR, "analyze", "analysis-snapshot.json");
+  const rootReport = path.resolve(ROOT_DIR, "dependency-report.json");
+  const rootSnapshot = path.resolve(ROOT_DIR, "analysis-snapshot.json");
 
-  const foundDefault = [rootReport, rootSnapshot, analyzeReport, analyzeSnapshot].find((f) => fs.existsSync(f) && matchesSource(f));
+  // Prefer analyze/ directory over root test artifacts
+  const candidateDefaults = [analyzeReport, analyzeSnapshot, rootReport, rootSnapshot];
+  const foundDefault = candidateDefaults.find((f) => fs.existsSync(f) && matchesSource(f));
   if (foundDefault) return foundDefault;
 
+  if (explicitSource) {
+    throw new Error(`Analyzer output file not found matching explicit source '${options.source}' in directory: ${inputPath}`);
+  }
   throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
 }
 
@@ -739,12 +814,37 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
       fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
     }
 
+    // Check for alias mapping (e.g. movie <-> movie-app)
+    const aliases = [];
+    if (projectId === "movie") aliases.push("movie-app");
+    if (projectId === "movie-app") aliases.push("movie");
+
+    for (const alias of aliases) {
+      const aliasPublicDir = path.join(explorerPublicDir, "projects", alias);
+      if (fs.existsSync(aliasPublicDir)) {
+        fs.copyFileSync(resolvedOutputFile, path.join(aliasPublicDir, "explorer-data.json"));
+        if (fs.existsSync(metaPath)) {
+          fs.copyFileSync(metaPath, path.join(aliasPublicDir, "project-metadata.json"));
+        }
+      }
+    }
+
     if (fs.existsSync(explorerDistDir)) {
       const projDistDir = path.join(explorerDistDir, "projects", projectId);
       fs.mkdirSync(projDistDir, { recursive: true });
       fs.copyFileSync(resolvedOutputFile, path.join(projDistDir, "explorer-data.json"));
       if (fs.existsSync(metaPath)) {
         fs.copyFileSync(metaPath, path.join(projDistDir, "project-metadata.json"));
+      }
+
+      for (const alias of aliases) {
+        const aliasDistDir = path.join(explorerDistDir, "projects", alias);
+        if (fs.existsSync(aliasDistDir)) {
+          fs.copyFileSync(resolvedOutputFile, path.join(aliasDistDir, "explorer-data.json"));
+          if (fs.existsSync(metaPath)) {
+            fs.copyFileSync(metaPath, path.join(aliasDistDir, "project-metadata.json"));
+          }
+        }
       }
     }
   } else {
@@ -862,6 +962,14 @@ function updateManifestWithExplorerData(outputFile, explorerData, projectMetadat
 // CLI Execution
 if (require.main === module) {
   try {
+    // Cleanup any accidental root Movie file if present
+    const accidentalMovieFile = path.join(ROOT_DIR, "Movie");
+    if (fs.existsSync(accidentalMovieFile) && fs.statSync(accidentalMovieFile).isFile()) {
+      try {
+        fs.unlinkSync(accidentalMovieFile);
+      } catch (_) {}
+    }
+
     const parsed = parseArgs(process.argv);
     console.log(`Salesforce Architecture Explorer Data Adapter`);
     console.log(`============================================`);
