@@ -18,6 +18,7 @@ const { mockElementsRemove, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
 
   const mockCy = {
     zoom: vi.fn().mockReturnValue(1),
+    pan: vi.fn().mockReturnValue({ x: 0, y: 0 }),
     center: vi.fn(),
     width: vi.fn().mockReturnValue(800),
     height: vi.fn().mockReturnValue(600),
@@ -519,6 +520,243 @@ describe('GraphEngine Components & Integration', () => {
       const projectBElements = mockCy.add.mock.calls[mockCy.add.mock.calls.length - 1][0];
       expect(projectBElements.some((el: any) => el.data?.id === 'ApexClass:AccountService')).toBe(true);
       expect(projectBElements.some((el: any) => el.data?.id === 'ApexClass:AccountController')).toBe(false);
+    });
+
+    describe('Viewport Preservation on Node Selection Regression Suite', () => {
+      it('preserves graph viewport exactly when selecting a node in Interactive Mode', () => {
+        let currentZoom = 1.0;
+        let currentPan = { x: 0, y: 0 };
+
+        mockCy.zoom.mockImplementation((val?: number | { level: number }) => {
+          if (typeof val === 'number') currentZoom = val;
+          if (typeof val === 'object' && val !== null && 'level' in val) currentZoom = val.level;
+          return currentZoom;
+        });
+        mockCy.pan = vi.fn().mockImplementation((val?: { x: number; y: number }) => {
+          if (val) currentPan = { ...val };
+          return currentPan;
+        });
+
+        const onSelectNode = vi.fn();
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={onSelectNode}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Position camera to custom non-default position via cy camera calls
+        mockCy.zoom(2.5);
+        mockCy.pan({ x: 450, y: -280 });
+
+        const beforeZoom = mockCy.zoom();
+        const beforePan = { ...mockCy.pan() };
+
+        expect(beforeZoom).toBe(2.5);
+        expect(beforePan).toEqual({ x: 450, y: -280 });
+
+        mockCy.animate.mockClear();
+
+        // Select node
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={onSelectNode}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountController"
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        const afterZoom = mockCy.zoom();
+        const afterPan = mockCy.pan();
+
+        // Assert exact viewport camera coordinate preservation
+        expect(afterZoom).toBe(beforeZoom);
+        expect(afterPan.x).toBe(beforePan.x);
+        expect(afterPan.y).toBe(beforePan.y);
+
+        // Assert cy.animate was NOT called on node selection
+        expect(mockCy.animate).not.toHaveBeenCalled();
+      });
+
+      it('preserves graph viewport exactly across multi-node selection sequences (Node A -> Node B)', () => {
+        let currentZoom = 1.0;
+        let currentPan = { x: 0, y: 0 };
+
+        mockCy.zoom.mockImplementation((val?: number | { level: number }) => {
+          if (typeof val === 'number') currentZoom = val;
+          if (typeof val === 'object' && val !== null && 'level' in val) currentZoom = val.level;
+          return currentZoom;
+        });
+        mockCy.pan = vi.fn().mockImplementation((val?: { x: number; y: number }) => {
+          if (val) currentPan = { ...val };
+          return currentPan;
+        });
+
+        const onSelectNode = vi.fn();
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={onSelectNode}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Set non-default viewport after mount
+        mockCy.zoom(2.0);
+        mockCy.pan({ x: 500, y: -300 });
+
+        const initialZoom = mockCy.zoom();
+        const initialPan = { ...mockCy.pan() };
+
+        expect(initialZoom).toBe(2.0);
+        expect(initialPan).toEqual({ x: 500, y: -300 });
+
+        mockCy.animate.mockClear();
+
+        // Click Node A
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={onSelectNode}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountController"
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        expect(mockCy.zoom()).toBe(initialZoom);
+        expect(mockCy.pan()).toEqual(initialPan);
+        expect(mockCy.animate).not.toHaveBeenCalled();
+
+        // Click Node B
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={onSelectNode}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountService"
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        expect(mockCy.zoom()).toBe(initialZoom);
+        expect(mockCy.pan()).toEqual(initialPan);
+        expect(mockCy.animate).not.toHaveBeenCalled();
+      });
+
+      it('preserves viewport in Static Mode on node selection', () => {
+        let currentZoom = 1.0;
+        let currentPan = { x: 0, y: 0 };
+
+        mockCy.zoom.mockImplementation((val?: number | { level: number }) => {
+          if (typeof val === 'number') currentZoom = val;
+          if (typeof val === 'object' && val !== null && 'level' in val) currentZoom = val.level;
+          return currentZoom;
+        });
+        mockCy.pan = vi.fn().mockImplementation((val?: { x: number; y: number }) => {
+          if (val) currentPan = { ...val };
+          return currentPan;
+        });
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="static"
+          />
+        );
+
+        mockCy.zoom(1.75);
+        mockCy.pan({ x: -120, y: 80 });
+
+        const beforeZoom = mockCy.zoom();
+        const beforePan = { ...mockCy.pan() };
+
+        expect(beforeZoom).toBe(1.75);
+        expect(beforePan).toEqual({ x: -120, y: 80 });
+
+        mockCy.animate.mockClear();
+
+        // Select node in static mode
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountController"
+            selectedEdgeId={null}
+            layoutMode="static"
+          />
+        );
+
+        expect(mockCy.zoom()).toBe(beforeZoom);
+        expect(mockCy.pan()).toEqual(beforePan);
+        expect(mockCy.animate).not.toHaveBeenCalled();
+      });
+
+      it('allows explicit viewport controls (zoom, fit, centerSelected) to mutate viewport', () => {
+        const mockNodeElement = {
+          length: 1,
+          isNode: () => true,
+          isEdge: () => false,
+          select: vi.fn().mockReturnThis(),
+          neighborhood: () => [],
+        };
+        mockCy.getElementById.mockReturnValue(mockNodeElement);
+
+        render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountController"
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        mockCy.animate.mockClear();
+
+        // Click Zoom In
+        const zoomInBtn = screen.getByRole('button', { name: /zoom in/i });
+        fireEvent.click(zoomInBtn);
+        expect(mockCy.zoom).toHaveBeenCalled();
+
+        // Click Fit View
+        const fitBtn = screen.getByRole('button', { name: /fit view/i });
+        fireEvent.click(fitBtn);
+        expect(mockCy.fit).toHaveBeenCalled();
+
+        // Click Center Selected
+        const centerBtn = screen.getByRole('button', { name: /center selected/i });
+        fireEvent.click(centerBtn);
+        expect(mockCy.animate).toHaveBeenCalled();
+      });
     });
   });
 });
