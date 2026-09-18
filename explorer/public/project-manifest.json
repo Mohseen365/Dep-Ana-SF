@@ -33,9 +33,9 @@
       "name": "foodies",
       "description": "Salesforce DX Architecture Analysis",
       "sourcePath": "tmp-integration-test/fixture",
-      "createdAt": "2026-09-18T05:02:23.720Z",
-      "updatedAt": "2026-09-18T05:02:23.720Z",
-      "lastAnalyzedAt": "2026-09-18T05:02:23.720Z",
+      "createdAt": "2026-09-18T05:48:38.370Z",
+      "updatedAt": "2026-09-18T05:48:38.370Z",
+      "lastAnalyzedAt": "2026-09-18T05:48:38.370Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 31,
       "dependencyCount": 84,
@@ -60,7 +60,7 @@
     "foodies": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:732f677aef21524f46386b8d3859b09b9dfa71664ca7158973bfa7387a38f06b",
+      "fileHash": "sha256:6c97fc6a9344a9577461b614ebd50ff7108cf26160d9154ba6da372510126103",
       "nodeCount": 4,
       "edgeCount": 3
     }

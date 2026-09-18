@@ -728,10 +728,8 @@ export function App() {
                     onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
                     selectedCycleNodeIds={highlightedCycleNodeIds}
                     focusedNodeId={
-                      isDrawerOpen
-                        ? drillPath.length > 0
-                          ? drillPath[drillPath.length - 1]
-                          : selection.selectedNodeId
+                      isDrawerOpen && drillPath.length > 1
+                        ? drillPath[drillPath.length - 1]
                         : null
                     }
                     focusState={effectiveFocusState}
