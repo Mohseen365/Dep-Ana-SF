@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "salesforce-litellm-gateway",
+  "activeProjectId": "foodies",
   "projects": [
     {
       "id": "movie",
@@ -144,6 +144,19 @@
       "componentCount": 251,
       "dependencyCount": 900,
       "analysisPath": "/projects/salesforce-litellm-gateway/explorer-data.json"
+    },
+    {
+      "id": "foodies",
+      "name": "foodies",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Food-App\\force-app\\main\\default",
+      "createdAt": "2026-09-17T08:50:09.837Z",
+      "updatedAt": "2026-09-17T08:50:09.837Z",
+      "lastAnalyzedAt": "2026-09-17T08:50:09.837Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 31,
+      "dependencyCount": 84,
+      "analysisPath": "/projects/foodies/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -216,6 +229,13 @@
       "fileHash": "sha256:5b6ebe6554ee1ff1eeddb674c819233cd037599edf526faaedabd0a9385b6c03",
       "nodeCount": 251,
       "edgeCount": 900
+    },
+    "foodies": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:843b4633dd60756317c59157cc34ed270253c925d77efb885d787b8c47f8ce78",
+      "nodeCount": 31,
+      "edgeCount": 84
     }
   }
 }
