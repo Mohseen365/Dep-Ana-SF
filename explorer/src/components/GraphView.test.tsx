@@ -718,6 +718,175 @@ describe('GraphEngine Components & Integration', () => {
         expect(mockCy.animate).not.toHaveBeenCalled();
       });
 
+      it('verifies callback freshness without destroying Cytoscape instance when parent handlers update', () => {
+        let initialHandler = vi.fn();
+        let updatedHandler = vi.fn();
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={initialHandler}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        const initialCallCount = mockCytoscapeFn.mock.calls.length;
+
+        // Find tap node callback registered with bindGraphInteractions
+        const tapCall = mockCy.on.mock.calls.find((call: any[]) => call[0] === 'tap' && call[1] === 'node');
+        expect(tapCall).toBeDefined();
+        const tapCallback = tapCall![2];
+
+        // Trigger node tap with initial handler
+        tapCallback({ target: { id: () => 'ApexClass:AccountController', data: () => ({ id: 'ApexClass:AccountController', label: 'AccountController' }) } });
+        expect(initialHandler).toHaveBeenCalledWith(expect.objectContaining({ id: 'ApexClass:AccountController' }));
+
+        // Rerender with updated parent callback handler
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={updatedHandler}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountController"
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Verify Cytoscape was NOT recreated / destroyed
+        expect(mockCytoscapeFn.mock.calls.length).toBe(initialCallCount);
+        expect(mockCy.destroy).not.toHaveBeenCalled();
+
+        // Trigger tap callback again and verify updated handler is invoked with latest node
+        tapCallback({ target: { id: () => 'ApexClass:AccountService', data: () => ({ id: 'ApexClass:AccountService', label: 'AccountService' }) } });
+        expect(updatedHandler).toHaveBeenCalledWith(expect.objectContaining({ id: 'ApexClass:AccountService' }));
+      });
+
+      it('preserves node coordinates (node.position()) unchanged before and after ordinary selection in Interactive and Static modes', () => {
+        const mockPositions: Record<string, { x: number; y: number }> = {
+          'ApexClass:AccountController': { x: 120, y: 340 },
+          'ApexClass:AccountService': { x: 500, y: -200 },
+        };
+
+        const mockNodeObjects = [
+          {
+            id: () => 'ApexClass:AccountController',
+            position: vi.fn().mockReturnValue(mockPositions['ApexClass:AccountController']),
+          },
+          {
+            id: () => 'ApexClass:AccountService',
+            position: vi.fn().mockReturnValue(mockPositions['ApexClass:AccountService']),
+          },
+        ];
+
+        mockCy.nodes.mockReturnValue(mockNodeObjects as any);
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="static"
+            nodePositions={mockPositions}
+          />
+        );
+
+        const posBeforeController = { ...mockNodeObjects[0].position() };
+        const posBeforeService = { ...mockNodeObjects[1].position() };
+
+        // Perform ordinary selection
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="ApexClass:AccountController"
+            selectedEdgeId={null}
+            layoutMode="static"
+            nodePositions={mockPositions}
+          />
+        );
+
+        const posAfterController = mockNodeObjects[0].position();
+        const posAfterService = mockNodeObjects[1].position();
+
+        expect(posAfterController).toEqual(posBeforeController);
+        expect(posAfterService).toEqual(posBeforeService);
+      });
+
+      it('preserves viewport neutrality across various node types (ApexClass, ApexTrigger, LWC, Flow, Object, Field, TestClass)', () => {
+        const multiTypeNodes: ExplorerNode[] = [
+          { ...mockNodes[0], id: 'ApexClass:AC', type: 'ApexClass', displayName: 'AC' },
+          { ...mockNodes[0], id: 'ApexTrigger:AT', type: 'ApexTrigger', displayName: 'AT' },
+          { ...mockNodes[0], id: 'LWC:lwc1', type: 'LWC', displayName: 'LWC1' },
+          { ...mockNodes[0], id: 'Flow:flow1', type: 'Flow', displayName: 'Flow1' },
+          { ...mockNodes[0], id: 'Object:Account', type: 'Object', displayName: 'Account' },
+          { ...mockNodes[0], id: 'Field:Account.Name', type: 'Field', displayName: 'Name' },
+          { ...mockNodes[0], id: 'ApexClass:TestClass', type: 'ApexClass', displayName: 'TestClass', behavior: { ...mockNodes[0].behavior, isTest: true } },
+        ];
+
+        let currentZoom = 2.2;
+        let currentPan = { x: 310, y: -150 };
+
+        mockCy.zoom.mockImplementation((val?: number | { level: number }) => {
+          if (typeof val === 'number') currentZoom = val;
+          if (typeof val === 'object' && val !== null && 'level' in val) currentZoom = val.level;
+          return currentZoom;
+        });
+        mockCy.pan = vi.fn().mockImplementation((val?: { x: number; y: number }) => {
+          if (val) currentPan = { ...val };
+          return currentPan;
+        });
+
+        const { rerender } = render(
+          <GraphView
+            nodes={multiTypeNodes}
+            edges={[]}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Set custom non-default camera position after initial mount
+        mockCy.zoom(2.2);
+        mockCy.pan({ x: 310, y: -150 });
+
+        const beforeZoom = mockCy.zoom();
+        const beforePan = { ...mockCy.pan() };
+
+        mockCy.animate.mockClear();
+
+        for (const targetNode of multiTypeNodes) {
+          rerender(
+            <GraphView
+              nodes={multiTypeNodes}
+              edges={[]}
+              onSelectNode={vi.fn()}
+              onSelectEdge={vi.fn()}
+              selectedNodeId={targetNode.id}
+              selectedEdgeId={null}
+              layoutMode="interactive"
+            />
+          );
+
+          expect(mockCy.zoom()).toBe(beforeZoom);
+          expect(mockCy.pan()).toEqual(beforePan);
+          expect(mockCy.animate).not.toHaveBeenCalled();
+        }
+      });
+
       it('allows explicit viewport controls (zoom, fit, centerSelected) to mutate viewport', () => {
         const mockNodeElement = {
           length: 1,
