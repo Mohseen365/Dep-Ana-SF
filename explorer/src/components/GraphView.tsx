@@ -127,6 +127,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const onNodePositionsChangeRef = useRef<((positions: Record<string, Position>) => void) | undefined>(onNodePositionsChange);
   const layoutModeRef = useRef<LayoutMode>(layoutMode);
   const onNodeDragEndRef = useRef<((nodeId: string, position: Position) => void) | undefined>(onNodeDragEnd);
+  const onSelectNodeRef = useRef(onSelectNode);
+  const onSelectEdgeRef = useRef(onSelectEdge);
+
+  useEffect(() => {
+    onSelectNodeRef.current = onSelectNode;
+    onSelectEdgeRef.current = onSelectEdge;
+  }, [onSelectNode, onSelectEdge]);
 
   // In-session explicit drag positions.
   // This represents the highest position authority.
@@ -472,7 +479,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
         const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
-        onSelectNode(fullNode);
+        onSelectNodeRef.current(fullNode);
       },
       onNodeDoubleTap: (nodeId, selectedNode) => {
         if (onNodeDoubleTapProp) {
@@ -482,11 +489,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       },
       onEdgeSelect: (edgeId) => {
         if (edgeId) {
-          onSelectEdge(edgeId);
+          onSelectEdgeRef.current(edgeId);
         }
       },
       onBackgroundTap: () => {
-        onSelectNode(null);
+        onSelectNodeRef.current(null);
       }
     }, nodesRef.current);
 
@@ -528,7 +535,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cy.destroy();
       cyRef.current = null;
     };
-  }, [onSelectNode, onSelectEdge, captureAndPersistPositions]);
+  }, []);
 
   // Element Synchronization Effect: Syncs React nodes/edges props with Cytoscape cy.elements() while preserving positions
   useEffect(() => {
@@ -665,17 +672,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const cy = cyRef.current;
 
     if (selectedNodeId) {
-      const success = selectNode(cy, selectedNodeId);
-      if (success) {
-        const node = cy.getElementById(selectedNodeId);
-        cy.animate({
-          center: { eles: node },
-          zoom: cy.zoom()
-        }, {
-          duration: 200,
-          easing: 'ease-out'
-        });
-      }
+      selectNode(cy, selectedNodeId);
     } else if (!selectedEdgeId) {
       deselectAll(cy);
     }
@@ -690,13 +687,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const edge = cy.getElementById(selectedEdgeId);
       if (edge.length > 0 && edge.isEdge()) {
         edge.select();
-        cy.animate({
-          center: { eles: edge },
-          zoom: cy.zoom()
-        }, {
-          duration: 200,
-          easing: 'ease-out'
-        });
       }
     }
   }, [selectedEdgeId]);
