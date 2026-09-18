@@ -105,6 +105,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             title={layoutMode === 'static' ? 'Static Layout (Positions Locked)' : 'Interactive Layout'}
             aria-label={layoutMode === 'static' ? 'Switch to Interactive Layout' : 'Switch to Static Layout'}
             aria-pressed={layoutMode === 'static'}
+            data-testid="layout-mode-toggle"
             type="button"
           >
             {layoutMode === 'static' ? '📌' : '🔀'}
