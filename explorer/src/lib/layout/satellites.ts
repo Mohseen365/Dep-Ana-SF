@@ -258,7 +258,7 @@ export function placeSatellites(
       const row = Math.floor(idx / maxCols);
 
       const offsetX = (col - (maxCols - 1) / 2) * (nodeWidth * 1.15);
-      const offsetY = nodeHeight * 1.25 + row * (nodeHeight * 1.15);
+      const offsetY = nodeHeight * 1.75 + row * (nodeHeight * 1.25);
 
       const fx = parentPos.x + offsetX;
       const fy = parentPos.y + offsetY;

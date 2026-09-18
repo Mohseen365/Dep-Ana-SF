@@ -173,6 +173,23 @@ function decomposeConnectedComponents(
     }
   });
 
+  // Also link satellite nodes to parent nodes so components include satellites
+  nodes.forEach(n => {
+    if (isTestNode(n)) {
+      const parentProdId = findParentProductionNodeId(n, nodes, edges);
+      if (parentProdId && adj.has(parentProdId)) {
+        adj.get(n.id)!.add(parentProdId);
+        adj.get(parentProdId)!.add(n.id);
+      }
+    } else if (isFieldNode(n)) {
+      const parentObjId = findParentObjectId(n, nodes, edges);
+      if (parentObjId && adj.has(parentObjId)) {
+        adj.get(n.id)!.add(parentObjId);
+        adj.get(parentObjId)!.add(n.id);
+      }
+    }
+  });
+
   const visited = new Set<string>();
   const rawComponents: { nodeIds: string[]; edgeIds: string[] }[] = [];
 
