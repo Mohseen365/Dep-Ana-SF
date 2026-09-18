@@ -400,11 +400,11 @@ export function calculateBridgeCandidatePosition(
     }
   }
 
-  // Apply inter-layer corridor displacement if trap detected
-  if (hasIntermediateTrap) {
-    // Shift Y into the inter-layer corridor (above or below layer line)
-    // Offset by 45% of layerSpacing to sit cleanly between layer bands
-    const corridorOffset = layerSpacing * 0.45;
+  // Apply inter-layer corridor displacement if trap detected or connecting multiple domains on the same layer
+  if (hasIntermediateTrap || sortedConnectedDomains.length >= 2) {
+    // Shift Y into the inter-layer corridor (above layer line)
+    // Offset by 50% of layerSpacing to sit cleanly between layer bands with guaranteed clearance
+    const corridorOffset = layerSpacing * 0.5;
     candidateY = baseY - corridorOffset;
   }
 
