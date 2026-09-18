@@ -416,4 +416,219 @@ describe('Parallel Agent E Acceptance Suite', () => {
       expect(loadedProjAState.selectedComponent.selectedNodeId).toBe('ApexClass:AccountService');
     });
   });
+
+  describe('STATIC MODE + NODE-TYPE FILTER + FOCUS TOPOLOGY INTEGRATION TESTS', () => {
+    // Multi-type graph topology:
+    // LWC: accountCard -> ApexClass: AccountController -> Object: Account -> Field: Name
+    // Flow: AccountSync -> Object: Account
+    const multiTypeNodes: ExplorerNode[] = [
+      {
+        id: 'LWC_Card',
+        displayName: 'Account Card',
+        type: 'LWC' as ExplorerNodeType,
+        file: 'accountCard.js',
+        metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+      },
+      {
+        id: 'Apex_Controller',
+        displayName: 'Account Controller',
+        type: 'ApexClass' as ExplorerNodeType,
+        file: 'AccountController.cls',
+        metrics: { fanIn: 1, fanOut: 1, coupling: 2, unresolved: 0, score: 2 },
+        risk: 'MEDIUM',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+      },
+      {
+        id: 'Obj_Account',
+        displayName: 'Account Object',
+        type: 'Object' as ExplorerNodeType,
+        file: 'Account.object-meta.xml',
+        metrics: { fanIn: 2, fanOut: 1, coupling: 3, unresolved: 0, score: 3 },
+        risk: 'HIGH',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+      },
+      {
+        id: 'Field_Name',
+        displayName: 'Account Name Field',
+        type: 'Field' as ExplorerNodeType,
+        file: 'Account.Name.field-meta.xml',
+        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 1 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+      },
+      {
+        id: 'Flow_Sync',
+        displayName: 'Account Sync Flow',
+        type: 'Flow' as ExplorerNodeType,
+        file: 'AccountSync.flow-meta.xml',
+        metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+      },
+    ];
+
+    const multiTypeEdges: ExplorerEdge[] = [
+      {
+        id: 'e1',
+        source: 'LWC_Card',
+        target: 'Apex_Controller',
+        relationshipType: 'method-call',
+        method: 'getAccounts',
+        evidence: 'AccountController.getAccounts()',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'high',
+        line: 1, column: 1, methodOwner: 'LWC_Card', file: 'accountCard.js',
+        canonical: {
+          source: { type: 'LWC', name: 'LWC_Card' },
+          target: { type: 'ApexClass', name: 'Apex_Controller' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
+      },
+      {
+        id: 'e2',
+        source: 'Apex_Controller',
+        target: 'Obj_Account',
+        relationshipType: 'SOQL',
+        method: 'SELECT',
+        evidence: 'SELECT Id FROM Account',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'high',
+        line: 5, column: 1, methodOwner: 'Apex_Controller', file: 'AccountController.cls',
+        canonical: {
+          source: { type: 'ApexClass', name: 'Apex_Controller' },
+          target: { type: 'Object', name: 'Obj_Account' },
+          relationship: { type: 'SOQL', resolution: 'EXACT' },
+          location: {},
+        },
+      },
+      {
+        id: 'e3',
+        source: 'Obj_Account',
+        target: 'Field_Name',
+        relationshipType: 'field-reference',
+        method: 'Name',
+        evidence: 'Account.Name',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'high',
+        line: 1, column: 1, methodOwner: 'Obj_Account', file: 'Account.object-meta.xml',
+        canonical: {
+          source: { type: 'Object', name: 'Obj_Account' },
+          target: { type: 'Field', name: 'Field_Name' },
+          relationship: { type: 'field-reference', resolution: 'EXACT' },
+          location: {},
+        },
+      },
+      {
+        id: 'e4',
+        source: 'Flow_Sync',
+        target: 'Obj_Account',
+        relationshipType: 'DML',
+        method: 'UPDATE',
+        evidence: 'Update Account',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'high',
+        line: 1, column: 1, methodOwner: 'Flow_Sync', file: 'AccountSync.flow-meta.xml',
+        canonical: {
+          source: { type: 'Flow', name: 'Flow_Sync' },
+          target: { type: 'Object', name: 'Obj_Account' },
+          relationship: { type: 'DML', resolution: 'EXACT' },
+          location: {},
+        },
+      },
+    ];
+
+    it('Full-Project Scope + Node-Type Filter (LWC only, LWC + Apex, exclude Objects & Fields)', () => {
+      // 1. Full project scope (no focus) + LWC only
+      const lwcOnly = multiTypeNodes.filter((n) => ['LWC'].includes(n.type));
+      expect(lwcOnly.map((n) => n.id)).toEqual(['LWC_Card']);
+
+      // 2. Full project scope + LWC + Apex Classes
+      const lwcAndApex = multiTypeNodes.filter((n) => ['LWC', 'ApexClass'].includes(n.type));
+      expect(lwcAndApex.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'LWC_Card']);
+
+      // 3. Full project scope + exclude Objects and Fields
+      const noObjNoField = multiTypeNodes.filter((n) => !['Object', 'Field'].includes(n.type));
+      expect(noObjNoField.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'Flow_Sync', 'LWC_Card']);
+    });
+
+    it('Component Scope + Focus Topology + Visibility Filter (FOCUS TOPOLOGY -> VISIBILITY FILTER order)', () => {
+      // 1. Component scope: Focus on LWC_Card, Dependencies direction, Depth 1 -> returns LWC_Card & Apex_Controller
+      const focusedD1 = computeFocusedGraph(multiTypeNodes, multiTypeEdges, {
+        enabled: true,
+        focusNodeId: 'LWC_Card',
+        direction: 'dependencies',
+        depth: 1,
+      });
+      expect(focusedD1.nodes.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'LWC_Card']);
+
+      // Filter focused graph by ApexClass only
+      const apexFilteredD1 = focusedD1.nodes.filter((n) => n.type === 'ApexClass');
+      expect(apexFilteredD1.map((n) => n.id)).toEqual(['Apex_Controller']);
+
+      // 2. Component scope: Focus on LWC_Card, Dependencies direction, Depth 2 -> returns LWC_Card, Apex_Controller, Obj_Account
+      const focusedD2 = computeFocusedGraph(multiTypeNodes, multiTypeEdges, {
+        enabled: true,
+        focusNodeId: 'LWC_Card',
+        direction: 'dependencies',
+        depth: 2,
+      });
+      expect(focusedD2.nodes.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'LWC_Card', 'Obj_Account']);
+
+      // Exclude Objects and Fields from Depth 2 focused topology
+      const noObjD2 = focusedD2.nodes.filter((n) => !['Object', 'Field'].includes(n.type));
+      expect(noObjD2.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'LWC_Card']);
+
+      // 3. Component scope: Focus on Obj_Account, Dependents direction, Depth ALL -> returns Obj_Account, Apex_Controller, LWC_Card, Flow_Sync
+      const focusedDependentsALL = computeFocusedGraph(multiTypeNodes, multiTypeEdges, {
+        enabled: true,
+        focusNodeId: 'Obj_Account',
+        direction: 'dependents',
+        depth: 'ALL' as FocusDepth,
+      });
+      expect(focusedDependentsALL.nodes.map((n) => n.id).sort()).toEqual([
+        'Apex_Controller',
+        'Flow_Sync',
+        'LWC_Card',
+        'Obj_Account',
+      ]);
+
+      // Filter by LWC + ApexClass only
+      const lwcApexDependents = focusedDependentsALL.nodes.filter((n) => ['LWC', 'ApexClass'].includes(n.type));
+      expect(lwcApexDependents.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'LWC_Card']);
+
+      // 4. Component scope: Focus on Apex_Controller, Both direction, Depth 1 -> Dependents (LWC_Card) + Node (Apex_Controller) + Dependencies (Obj_Account)
+      const focusedBothD1 = computeFocusedGraph(multiTypeNodes, multiTypeEdges, {
+        enabled: true,
+        focusNodeId: 'Apex_Controller',
+        direction: 'both',
+        depth: 1,
+      });
+      expect(focusedBothD1.nodes.map((n) => n.id).sort()).toEqual(['Apex_Controller', 'LWC_Card', 'Obj_Account']);
+
+      // Filter LWC only
+      const lwcBothD1 = focusedBothD1.nodes.filter((n) => n.type === 'LWC');
+      expect(lwcBothD1.map((n) => n.id)).toEqual(['LWC_Card']);
+    });
+  });
 });

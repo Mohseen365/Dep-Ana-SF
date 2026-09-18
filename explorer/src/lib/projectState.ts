@@ -26,9 +26,13 @@ export interface FilterUIState {
   visibleNodeTypes?: ExplorerNodeType[];
 }
 
+export type GraphInteractionMode = 'interactive' | 'static';
+
 export interface GraphLayoutState {
   layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
-  nodePositions?: Record<string, { x: number; y: number }>;
+  mode: GraphInteractionMode;
+  nodePositions: Record<string, { x: number; y: number }>;
+  layoutVersion?: string | number;
 }
 
 export interface ZoomPanState {
@@ -110,6 +114,7 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
     },
     graphLayout: {
       layoutName: 'cola',
+      mode: 'interactive',
       nodePositions: {},
     },
     zoom: {
@@ -198,8 +203,12 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
         : defaults.filters.visibleNodeTypes,
     },
     graphLayout: {
-      ...defaults.graphLayout,
-      ...(loaded.graphLayout || {}),
+      layoutName: loaded.graphLayout?.layoutName || defaults.graphLayout.layoutName,
+      mode: ((loaded.graphLayout as any)?.mode === 'static' || (loaded.graphLayout as any)?.layoutMode === 'static') ? 'static' : 'interactive',
+      nodePositions: (loaded.graphLayout && typeof loaded.graphLayout.nodePositions === 'object' && loaded.graphLayout.nodePositions !== null)
+        ? loaded.graphLayout.nodePositions
+        : defaults.graphLayout.nodePositions,
+      ...(loaded.graphLayout?.layoutVersion !== undefined ? { layoutVersion: loaded.graphLayout.layoutVersion } : {}),
     },
     zoom: {
       ...defaults.zoom,

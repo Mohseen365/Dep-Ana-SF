@@ -133,6 +133,7 @@ describe('Project-Scoped UI State Storage Manager', () => {
       },
       graphLayout: {
         layoutName: 'concentric',
+        mode: 'static',
         nodePositions: { 'node-1': { x: 10, y: 20 } },
       },
       zoom: { zoom: 0.75, pan: { x: 5, y: 10 } },
@@ -172,6 +173,7 @@ describe('Project-Scoped UI State Storage Manager', () => {
       },
       graphLayout: {
         layoutName: 'dagre',
+        mode: 'interactive',
         nodePositions: { 'node-2': { x: 100, y: 200 } },
       },
       zoom: { zoom: 1.5, pan: { x: 30, y: 40 } },
@@ -245,6 +247,131 @@ describe('Project-Scoped UI State Storage Manager', () => {
     const idsAfter = getAllSavedProjectIds();
     expect(idsAfter).not.toContain('proj-x');
     expect(idsAfter).toContain('proj-y');
+  });
+
+  it('migrates old persisted state without mode to interactive and without nodePositions to {}', () => {
+    const oldStateRaw = JSON.stringify({
+      projectId: 'legacy-proj',
+      graphLayout: {
+        layoutName: 'cola',
+      },
+    });
+    localStorage.setItem(getStorageKey('legacy-proj'), oldStateRaw);
+
+    const loaded = loadProjectState('legacy-proj');
+    expect(loaded.graphLayout.mode).toBe('interactive');
+    expect(loaded.graphLayout.nodePositions).toEqual({});
+    expect(loaded.graphLayout.layoutName).toBe('cola');
+  });
+
+  it('persists mode and nodePositions per project with strict project isolation', () => {
+    const projA = 'proj-mode-a';
+    const projB = 'proj-mode-b';
+
+    updateProjectState(projA, {
+      graphLayout: {
+        layoutName: 'cose',
+        mode: 'static',
+        nodePositions: { 'node-a1': { x: 100, y: 200 } },
+      },
+    });
+
+    updateProjectState(projB, {
+      graphLayout: {
+        layoutName: 'grid',
+        mode: 'interactive',
+        nodePositions: { 'node-b1': { x: 500, y: 600 } },
+      },
+    });
+
+    const loadedA = loadProjectState(projA);
+    const loadedB = loadProjectState(projB);
+
+    expect(loadedA.graphLayout.mode).toBe('static');
+    expect(loadedA.graphLayout.nodePositions).toEqual({ 'node-a1': { x: 100, y: 200 } });
+
+    expect(loadedB.graphLayout.mode).toBe('interactive');
+    expect(loadedB.graphLayout.nodePositions).toEqual({ 'node-b1': { x: 500, y: 600 } });
+
+    // Modifying A does not touch B
+    updateProjectState(projA, {
+      graphLayout: {
+        layoutName: 'cose',
+        mode: 'interactive',
+        nodePositions: { 'node-a1': { x: 150, y: 250 } },
+      },
+    });
+
+    const reloadedB = loadProjectState(projB);
+    expect(reloadedB.graphLayout.mode).toBe('interactive');
+    expect(reloadedB.graphLayout.nodePositions).toEqual({ 'node-b1': { x: 500, y: 600 } });
+  });
+
+  it('supports hidden nodes retaining their positions when active nodes are updated', () => {
+    const proj = 'proj-hidden-retention';
+
+    // Initial state with hidden node-h and visible node-v
+    updateProjectState(proj, {
+      graphLayout: {
+        layoutName: 'cola',
+        mode: 'interactive',
+        nodePositions: {
+          'node-hidden': { x: 42, y: 84 },
+          'node-visible': { x: 10, y: 20 },
+        },
+      },
+    });
+
+    // Simulate dragging visible node
+    const currentState = loadProjectState(proj);
+    updateProjectState(proj, {
+      graphLayout: {
+        ...currentState.graphLayout,
+        nodePositions: {
+          ...currentState.graphLayout.nodePositions,
+          'node-visible': { x: 99, y: 199 },
+        },
+      },
+    });
+
+    const updated = loadProjectState(proj);
+    // Hidden node position must remain intact
+    expect(updated.graphLayout.nodePositions['node-hidden']).toEqual({ x: 42, y: 84 });
+    expect(updated.graphLayout.nodePositions['node-visible']).toEqual({ x: 99, y: 199 });
+  });
+
+  it('supports removed/reappearing nodes restoring prior positions from persisted state', () => {
+    const proj = 'proj-reappear';
+
+    // Set position for a node
+    updateProjectState(proj, {
+      graphLayout: {
+        layoutName: 'cola',
+        mode: 'static',
+        nodePositions: { 'node-temp': { x: 300, y: 400 } },
+      },
+    });
+
+    // Load state when node is active
+    let loaded = loadProjectState(proj);
+    expect(loaded.graphLayout.nodePositions['node-temp']).toEqual({ x: 300, y: 400 });
+
+    // Node is temporarily removed from UI view filters but state persists
+    updateProjectState(proj, {
+      filters: {
+        searchQuery: 'NonExistent',
+        typeFilter: '',
+        riskFilter: '',
+        hasCallouts: false,
+        withoutSharing: false,
+        hideTests: false,
+        hasAsyncPatterns: false,
+      },
+    });
+
+    // When node reappears in UI view, its prior position is restored from graphLayout.nodePositions
+    loaded = loadProjectState(proj);
+    expect(loaded.graphLayout.nodePositions['node-temp']).toEqual({ x: 300, y: 400 });
   });
 
   it('handles visibleNodeTypes state persistence and missing state fallback', () => {

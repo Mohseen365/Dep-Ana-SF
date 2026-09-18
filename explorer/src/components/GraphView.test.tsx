@@ -411,6 +411,80 @@ describe('GraphEngine Components & Integration', () => {
       expect(depth2ElementsAdded).toHaveLength(3); // 2 nodes + 1 edge
     });
 
+    it('binds dragfree event to report onNodeDragEnd and onNodePositionChange when drag finishes', () => {
+      const onNodeDragEnd = vi.fn();
+      const onNodePositionChange = vi.fn();
+
+      render(
+        <GraphView
+          nodes={mockNodes}
+          edges={mockEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          graphLayout={{
+            layoutName: 'cola',
+            mode: 'interactive',
+            nodePositions: { 'ApexClass:AccountController': { x: 10, y: 20 } },
+          }}
+          onNodeDragEnd={onNodeDragEnd}
+          onNodePositionChange={onNodePositionChange}
+        />
+      );
+
+      // Verify cy.on was registered with 'dragfree'
+      const dragFreeCall = mockCy.on.mock.calls.find((call: any[]) => call[0] === 'dragfree' && call[1] === 'node');
+      expect(dragFreeCall).toBeDefined();
+
+      const callback = dragFreeCall![2];
+      // Simulate Cytoscape firing dragfree on node
+      callback({
+        target: {
+          id: () => 'ApexClass:AccountController',
+          position: () => ({ x: 150, y: 250 }),
+        },
+      });
+
+      expect(onNodeDragEnd).toHaveBeenCalledWith('ApexClass:AccountController', { x: 150, y: 250 });
+      expect(onNodePositionChange).toHaveBeenCalledWith({
+        'ApexClass:AccountController': { x: 150, y: 250 },
+      });
+    });
+
+    it('displays mode badge indicator showing current mode and preservation message in Static mode', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={mockNodes}
+          edges={mockEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          layoutMode="interactive"
+        />
+      );
+
+      const modeBadge = screen.getByTestId('graph-mode-indicator');
+      expect(modeBadge).toBeInTheDocument();
+      expect(modeBadge).toHaveTextContent(/interactive mode/i);
+
+      rerender(
+        <GraphView
+          nodes={mockNodes}
+          edges={mockEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          layoutMode="static"
+        />
+      );
+
+      expect(modeBadge).toHaveTextContent(/static mode — node positions preserved/i);
+      expect(modeBadge).toHaveClass('static');
+    });
+
     it('clears previous elements and adds new elements on project switching', () => {
       const projectANodes = [mockNodes[0]];
       const projectBNodes = [mockNodes[1]];
