@@ -210,24 +210,27 @@ export function highlightNodeConnections(
   _highlightColor: string = '#3b82f6'
 ): void {
   const node = cy.getElementById(nodeId);
-  if (node.length === 0) return;
+  if (node.length === 0 || !node.isNode()) return;
   
-  // Get connected edges and neighbor nodes
-  const connectedEdges = node.connectedEdges();
-  const neighbors = node.neighborhood('node');
+  // Get connected edges and neighbor nodes safely
+  const connectedEdges = typeof node.connectedEdges === 'function' ? node.connectedEdges() : null;
+  const neighbors = typeof node.neighborhood === 'function' ? node.neighborhood('node') : null;
   
   // Dim everything first
-  cy.elements().addClass('dimmed');
+  if (typeof cy.elements === 'function') {
+    const eles = cy.elements();
+    if (typeof eles.addClass === 'function') eles.addClass('dimmed');
+  }
   
   // Remove dim from the selected node and its connections
-  node.removeClass('dimmed');
-  connectedEdges.removeClass('dimmed');
-  neighbors.removeClass('dimmed');
+  if (typeof node.removeClass === 'function') node.removeClass('dimmed');
+  if (connectedEdges && typeof connectedEdges.removeClass === 'function') connectedEdges.removeClass('dimmed');
+  if (neighbors && typeof neighbors.removeClass === 'function') neighbors.removeClass('dimmed');
   
   // Apply highlight
-  node.addClass('highlighted');
-  connectedEdges.addClass('highlighted');
-  neighbors.addClass('highlighted');
+  if (typeof node.addClass === 'function') node.addClass('highlighted');
+  if (connectedEdges && typeof connectedEdges.addClass === 'function') connectedEdges.addClass('highlighted');
+  if (neighbors && typeof neighbors.addClass === 'function') neighbors.addClass('highlighted');
 }
 
 /**

@@ -28,6 +28,7 @@ import {
   clearCycleHighlight,
   focusOnNode,
   clearHighlights,
+  highlightNodeConnections,
 } from '../lib/graph-interactions';
 
 import { GraphControls } from './GraphControls';
@@ -624,6 +625,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     if (selectedNodeId) {
       selectNode(cy, selectedNodeId);
+      highlightNodeConnections(cy, selectedNodeId);
     } else if (selectedEdgeId) {
       const edge = cy.getElementById(selectedEdgeId);
       if (edge.length > 0 && edge.isEdge()) {
@@ -671,11 +673,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
-    if (selectedNodeId) {
-      selectNode(cy, selectedNodeId);
-    } else if (!selectedEdgeId) {
-      deselectAll(cy);
-    }
+    cy.batch(() => {
+      if (selectedNodeId) {
+        selectNode(cy, selectedNodeId);
+        highlightNodeConnections(cy, selectedNodeId);
+      } else if (!selectedEdgeId) {
+        deselectAll(cy);
+        clearHighlights(cy);
+      }
+    });
   }, [selectedNodeId, selectedEdgeId]);
 
   // Handle selected edge changes
@@ -742,10 +748,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
+    } else if (selectedNodeId) {
+      highlightNodeConnections(cy, selectedNodeId);
     } else {
       clearHighlights(cy);
     }
-  }, [focusedNodeId]);
+  }, [focusedNodeId, selectedNodeId]);
 
   // Keyboard Navigation Handler
   const handleKeyDown = (e: React.KeyboardEvent) => {

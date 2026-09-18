@@ -887,7 +887,181 @@ describe('GraphEngine Components & Integration', () => {
         }
       });
 
-      it('allows explicit viewport controls (zoom, fit, centerSelected) to mutate viewport', () => {
+    describe('Interactive Mode Node Selection Visual Fading & Membership Invariance', () => {
+      it('preserves unrelated nodes and fades them instead of removing them after node selection in Interactive Mode', () => {
+        // Multi-node topology fixture: A->B, A->C, D->E
+        const multiNodeFixture: ExplorerNode[] = [
+          { ...mockNodes[0], id: 'NodeA', displayName: 'Node A' },
+          { ...mockNodes[0], id: 'NodeB', displayName: 'Node B' },
+          { ...mockNodes[0], id: 'NodeC', displayName: 'Node C' },
+          { ...mockNodes[0], id: 'NodeD', displayName: 'Node D' },
+          { ...mockNodes[0], id: 'NodeE', displayName: 'Node E' },
+        ];
+
+        const multiEdgeFixture: ExplorerEdge[] = [
+          { ...mockEdges[0], id: 'eAB', source: 'NodeA', target: 'NodeB' },
+          { ...mockEdges[0], id: 'eAC', source: 'NodeA', target: 'NodeC' },
+          { ...mockEdges[0], id: 'eDE', source: 'NodeD', target: 'NodeE' },
+        ];
+
+        // Create mock Cytoscape elements
+        const createMockNode = (id: string) => {
+          const nodeObj: any = {
+            id: () => id,
+            length: 1,
+            isNode: () => true,
+            isEdge: () => false,
+            select: vi.fn().mockReturnThis(),
+            addClass: vi.fn().mockReturnThis(),
+            removeClass: vi.fn().mockReturnThis(),
+            position: vi.fn().mockReturnValue({ x: 100, y: 100 }),
+          };
+          return nodeObj;
+        };
+
+        const mockNodeObjects = multiNodeFixture.map((n) => createMockNode(n.id));
+
+        mockCy.nodes.mockReturnValue(mockNodeObjects as any);
+
+        const nodeAElement = mockNodeObjects[0];
+        const neighborsA = [mockNodeObjects[1], mockNodeObjects[2]]; // Node B, Node C
+        const connectedEdgesA = {
+          length: 2,
+          addClass: vi.fn().mockReturnThis(),
+          removeClass: vi.fn().mockReturnThis(),
+        };
+
+        nodeAElement.connectedEdges = vi.fn().mockReturnValue(connectedEdgesA);
+        nodeAElement.neighborhood = vi.fn().mockReturnValue(neighborsA);
+
+        mockCy.getElementById.mockImplementation((id: string) => {
+          const found = mockNodeObjects.find((n) => n.id() === id);
+          if (found) return found;
+          return {
+            length: 0,
+            isNode: () => false,
+            isEdge: () => false,
+            neighborhood: () => [],
+            connectedEdges: () => ({ length: 0, addClass: vi.fn(), removeClass: vi.fn() }),
+          };
+        });
+
+        // Step 1: Render unselected graph
+        const beforeNodeIds = mockCy.nodes().map((node: any) => node.id());
+        expect(beforeNodeIds).toHaveLength(5);
+
+        const { rerender } = render(
+          <GraphView
+            nodes={multiNodeFixture}
+            edges={multiEdgeFixture}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Step 2: Select Node A
+        rerender(
+          <GraphView
+            nodes={multiNodeFixture}
+            edges={multiEdgeFixture}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId="NodeA"
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Assert 1: Graph membership invariant - ALL 5 nodes STILL EXIST in Cytoscape
+        const afterNodeIds = mockCy.nodes().map((node: any) => node.id());
+        expect(afterNodeIds).toEqual(beforeNodeIds);
+        expect(mockElementsRemove).not.toHaveBeenCalled();
+
+        // Assert 2: Visual fading state verification
+        // cy.elements().addClass('dimmed') should have been called to dim everything first
+        const elementsCollection = mockCy.elements();
+        expect(elementsCollection.addClass).toHaveBeenCalledWith('dimmed');
+
+        // Selected Node A, connected edges, and neighbours (B, C) should have dimmed class removed
+        expect(nodeAElement.removeClass).toHaveBeenCalledWith('dimmed');
+        expect(nodeAElement.addClass).toHaveBeenCalledWith('highlighted');
+        expect(neighborsA[0].removeClass).toHaveBeenCalledWith('dimmed');
+        expect(neighborsA[1].removeClass).toHaveBeenCalledWith('dimmed');
+
+        // Unrelated nodes (D, E) were NOT undimmed (retaining .dimmed opacity 0.15)
+        expect(mockNodeObjects[3].removeClass).not.toHaveBeenCalledWith('dimmed');
+        expect(mockNodeObjects[4].removeClass).not.toHaveBeenCalledWith('dimmed');
+      });
+
+      it('preserves membership and resets fading across selection sequences A -> B -> C -> Deselect', () => {
+        const multiNodeFixture: ExplorerNode[] = [
+          { ...mockNodes[0], id: 'NodeA', displayName: 'Node A' },
+          { ...mockNodes[0], id: 'NodeB', displayName: 'Node B' },
+          { ...mockNodes[0], id: 'NodeC', displayName: 'Node C' },
+        ];
+
+        const createMockNode = (id: string) => ({
+          id: () => id,
+          length: 1,
+          isNode: () => true,
+          isEdge: () => false,
+          select: vi.fn().mockReturnThis(),
+          addClass: vi.fn().mockReturnThis(),
+          removeClass: vi.fn().mockReturnThis(),
+          position: vi.fn().mockReturnValue({ x: 100, y: 100 }),
+          connectedEdges: vi.fn().mockReturnValue({ addClass: vi.fn(), removeClass: vi.fn() }),
+          neighborhood: vi.fn().mockReturnValue([]),
+        });
+
+        const mockNodeObjects = multiNodeFixture.map((n) => createMockNode(n.id));
+        mockCy.nodes.mockReturnValue(mockNodeObjects as any);
+        mockCy.getElementById.mockImplementation((id: string) => {
+          const found = mockNodeObjects.find((n) => n.id() === id);
+          return found || { length: 0, isNode: () => false, neighborhood: () => [], connectedEdges: () => ({}) };
+        });
+
+        const { rerender } = render(
+          <GraphView
+            nodes={multiNodeFixture}
+            edges={[]}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            layoutMode="interactive"
+          />
+        );
+
+        // Sequence: A -> B -> C -> null
+        const sequence = ['NodeA', 'NodeB', 'NodeC', null];
+
+        for (const selId of sequence) {
+          rerender(
+            <GraphView
+              nodes={multiNodeFixture}
+              edges={[]}
+              onSelectNode={vi.fn()}
+              onSelectEdge={vi.fn()}
+              selectedNodeId={selId}
+              selectedEdgeId={null}
+              layoutMode="interactive"
+            />
+          );
+
+          // All nodes must remain present in Cytoscape at every step
+          expect(mockCy.nodes().map((n: any) => n.id())).toEqual(['NodeA', 'NodeB', 'NodeC']);
+        }
+
+        // On deselect (null), clearHighlights must remove dimmed and highlighted classes
+        const elementsCollection = mockCy.elements();
+        expect(elementsCollection.removeClass).toHaveBeenCalledWith('dimmed highlighted');
+      });
+    });
+
+    it('allows explicit viewport controls (zoom, fit, centerSelected) to mutate viewport', () => {
         const mockNodeElement = {
           length: 1,
           isNode: () => true,
