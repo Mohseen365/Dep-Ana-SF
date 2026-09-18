@@ -272,8 +272,33 @@ export function highlightCycle(
   });
 
   // Remove dimmed and add highlighted to cycle elements
-  cycleNodes.removeClass('dimmed').addClass('highlighted');
-  cycleEdges.removeClass('dimmed').addClass('highlighted');
+  if (typeof cycleNodes.removeClass === 'function') {
+    cycleNodes.removeClass('dimmed').addClass('highlighted');
+  } else {
+    cy.batch(() => {
+      cy.nodes().forEach(node => {
+        if (cycleNodeSet.has(node.id())) {
+          node.removeClass('dimmed');
+          node.addClass('highlighted');
+        }
+      });
+    });
+  }
+
+  if (typeof cycleEdges.removeClass === 'function') {
+    cycleEdges.removeClass('dimmed').addClass('highlighted');
+  } else {
+    cy.batch(() => {
+      cy.edges().forEach(edge => {
+        const src = edge.data('source');
+        const tgt = edge.data('target');
+        if (cycleNodeSet.has(src) && cycleNodeSet.has(tgt)) {
+          edge.removeClass('dimmed');
+          edge.addClass('highlighted');
+        }
+      });
+    });
+  }
 
   // Center and fit viewport to cycle nodes if any exist
   if (cycleNodes.length > 0) {
