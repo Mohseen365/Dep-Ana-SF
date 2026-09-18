@@ -4,8 +4,8 @@
   "generatedAt": "2026-09-17T20:02:00.591Z",
   "sourceDirectory": "/app/temp-test-fixture-proj-a",
   "project": {
-    "id": "movie-app",
-    "name": "Movie App",
+    "id": "movie",
+    "name": "movie",
     "description": "Salesforce DX Architecture Analysis",
     "sourcePath": "/app/temp-test-fixture-proj-a",
     "createdAt": "2026-09-17T20:02:00.591Z",
@@ -14,7 +14,7 @@
     "analysisStatus": "COMPLETE",
     "componentCount": 1,
     "dependencyCount": 0,
-    "analysisPath": "/projects/movie-app/explorer-data.json"
+    "analysisPath": "/projects/movie/explorer-data.json"
   },
   "summary": {
     "nodeCount": 1,
