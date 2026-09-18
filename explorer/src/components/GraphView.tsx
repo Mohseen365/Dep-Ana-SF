@@ -289,6 +289,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const layoutOptions = autoLayoutPolicy === true
       ? getLayoutOptions({
+          nodes: nodesRef.current,
+          edges: edgesRef.current,
           nodeCount: nodesRef.current.length,
           padding: 50,
           animate: !prefersReducedMotion && nodesRef.current.length < 100

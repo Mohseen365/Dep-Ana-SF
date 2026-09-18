@@ -924,7 +924,11 @@ describe('GraphEngine Components & Integration', () => {
         mockCy.nodes.mockReturnValue(mockNodeObjects as any);
 
         const nodeAElement = mockNodeObjects[0];
-        const neighborsA = [mockNodeObjects[1], mockNodeObjects[2]]; // Node B, Node C
+        const neighborsACollection = {
+          length: 2,
+          addClass: vi.fn().mockReturnThis(),
+          removeClass: vi.fn().mockReturnThis(),
+        };
         const connectedEdgesA = {
           length: 2,
           addClass: vi.fn().mockReturnThis(),
@@ -932,7 +936,7 @@ describe('GraphEngine Components & Integration', () => {
         };
 
         nodeAElement.connectedEdges = vi.fn().mockReturnValue(connectedEdgesA);
-        nodeAElement.neighborhood = vi.fn().mockReturnValue(neighborsA);
+        nodeAElement.neighborhood = vi.fn().mockReturnValue(neighborsACollection);
 
         mockCy.getElementById.mockImplementation((id: string) => {
           const found = mockNodeObjects.find((n) => n.id() === id);
@@ -962,6 +966,8 @@ describe('GraphEngine Components & Integration', () => {
           />
         );
 
+        mockElementsRemove.mockClear();
+
         // Step 2: Select Node A
         rerender(
           <GraphView
@@ -988,8 +994,7 @@ describe('GraphEngine Components & Integration', () => {
         // Selected Node A, connected edges, and neighbours (B, C) should have dimmed class removed
         expect(nodeAElement.removeClass).toHaveBeenCalledWith('dimmed');
         expect(nodeAElement.addClass).toHaveBeenCalledWith('highlighted');
-        expect(neighborsA[0].removeClass).toHaveBeenCalledWith('dimmed');
-        expect(neighborsA[1].removeClass).toHaveBeenCalledWith('dimmed');
+        expect(neighborsACollection.removeClass).toHaveBeenCalledWith('dimmed');
 
         // Unrelated nodes (D, E) were NOT undimmed (retaining .dimmed opacity 0.15)
         expect(mockNodeObjects[3].removeClass).not.toHaveBeenCalledWith('dimmed');
