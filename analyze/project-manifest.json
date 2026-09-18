@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "foodies",
+  "activeProjectId": "bouquet",
   "projects": [
     {
       "id": "food-app",
@@ -40,6 +40,32 @@
       "componentCount": 31,
       "dependencyCount": 84,
       "analysisPath": "/projects/foodies/explorer-data.json"
+    },
+    {
+      "id": "custom-datatable",
+      "name": "custom-datatable",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../Interview Project/Custom-Datatable/force-app/main/default",
+      "createdAt": "2026-09-17T06:27:29.820Z",
+      "updatedAt": "2026-09-17T06:27:29.820Z",
+      "lastAnalyzedAt": "2026-09-17T06:27:29.820Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 10,
+      "dependencyCount": 20,
+      "analysisPath": "/projects/custom-datatable/explorer-data.json"
+    },
+    {
+      "id": "bouquet",
+      "name": "bouquet",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../Interview Project/Bouquet-Experience-Cloud/force-app/main/default",
+      "createdAt": "2026-09-17T06:07:04.752Z",
+      "updatedAt": "2026-09-17T06:07:04.752Z",
+      "lastAnalyzedAt": "2026-09-17T06:07:04.752Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bouquet/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -63,6 +89,20 @@
       "fileHash": "sha256:dc2932b9118a23f5058c2c4580bd453e445ea174520698b98d715c57fb320d3c",
       "nodeCount": 31,
       "edgeCount": 84
+    },
+    "custom-datatable": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:1b16f345cdea28a7199940dac67e67e69f3341924945c71c3cc150003ad0c800",
+      "nodeCount": 10,
+      "edgeCount": 20
+    },
+    "bouquet": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:3c60e982ac945261efc54af9568fe66a23dd5396505e266ce40ddff7f584454f",
+      "nodeCount": 274,
+      "edgeCount": 603
     }
   }
 }
