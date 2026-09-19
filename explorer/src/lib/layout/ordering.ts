@@ -2,7 +2,7 @@ import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { ArchitectureLayer } from './types';
 import { classifyNodeLayer } from './layers';
 import { discoverDomains } from './domains';
-import { edgeCrossingCount, type PositionMap } from './metrics';
+import type { PositionMap } from './metrics';
 
 export interface NodeOrderingInput {
   nodes: ExplorerNode[];
@@ -137,7 +137,7 @@ export function computeSimulatedPositions(
  * Fast exact edge crossing calculation using bounding-box pre-filtering.
  */
 function fastEdgeCrossingCount(
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: PositionMap
 ): number {
@@ -184,7 +184,6 @@ function fastEdgeCrossingCount(
     for (let j = i + 1; j < len; j++) {
       const s2 = segments[j];
 
-      // Exclude edges sharing endpoints
       if (
         s1.sourceId === s2.sourceId ||
         s1.sourceId === s2.targetId ||
@@ -194,7 +193,6 @@ function fastEdgeCrossingCount(
         continue;
       }
 
-      // Fast Bounding Box Pre-Filter
       if (
         s1.minX > s2.maxX + EPSILON ||
         s1.maxX < s2.minX - EPSILON ||
@@ -204,7 +202,6 @@ function fastEdgeCrossingCount(
         continue;
       }
 
-      // Direct fast path for edges connecting identical horizontal layers
       if (
         Math.abs(s1.p1.y - s2.p1.y) < EPSILON &&
         Math.abs(s1.p2.y - s2.p2.y) < EPSILON
@@ -278,27 +275,18 @@ export function estimateCrossingsForOrder(
 /**
  * Reduces edge crossings across architectural layers and domain regions
  * using deterministic relationship-aware barycenter sweeps.
- *
- * ALGORITHM & DESIGN GUARANTEES:
- * 1. Determinism: Uses strict deterministic initial sorting and tie-breaking (degree, nodeId).
- * 2. Layer & Domain Semantics: Nodes strictly remain inside assigned (layer, domain) buckets.
- * 3. Cycle & Same-Layer Safety: Filters neighbor layer relationships to DAG layer ranks. Cycles never loop infinitely.
- * 4. Bounded Optimization: Bounded by maxIterations (default 4).
- * 5. Hub & Bridge Handling: High-degree hubs are ordered according to neighbor barycenters first; degree is used as a secondary tie-breaker.
  */
 export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResult {
   const nodes = Array.isArray(input.nodes) ? [...input.nodes] : [];
   const edges = Array.isArray(input.edges) ? [...input.edges] : [];
   const maxIterations = input.maxIterations ?? 4;
 
-  // Defensive sort of nodes and edges for guaranteed baseline determinism
   nodes.sort((a, b) => a.id.localeCompare(b.id));
   edges.sort((a, b) => a.id.localeCompare(b.id));
 
   const layerMap = normalizeLayerMap(nodes, input.layerMap);
   const domainMap = normalizeDomainMap(nodes, edges, input.domainMap);
 
-  // Extract all distinct domains
   const discoveredDomains = new Set<string>();
   nodes.forEach(n => {
     const d = domainMap.get(n.id) || 'Shared';
@@ -309,7 +297,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
   if (input.domainOrder && input.domainOrder.length > 0) {
     const customSet = new Set(input.domainOrder);
     domainOrder = [...input.domainOrder];
-    // Append any extra domains not in domainOrder deterministically
     const missing = Array.from(discoveredDomains)
       .filter(d => !customSet.has(d))
       .sort((a, b) => (a === 'Shared' ? -1 : b === 'Shared' ? 1 : a.localeCompare(b)));
@@ -322,7 +309,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     });
   }
 
-  // Precompute degree / hub score for deterministic tie-breaking
   const degreeMap = new Map<string, number>();
   nodes.forEach(n => degreeMap.set(n.id, 0));
   edges.forEach(e => {
@@ -330,7 +316,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     if (degreeMap.has(e.target)) degreeMap.set(e.target, degreeMap.get(e.target)! + 1);
   });
 
-  // Build adjacency list for fast lookup
   const adjMap = new Map<string, string[]>();
   nodes.forEach(n => adjMap.set(n.id, []));
   edges.forEach(e => {
@@ -340,7 +325,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     }
   });
 
-  // Group nodes into initial buckets (layer:domain)
   const bucketOrder = new Map<string, string[]>();
   const nodeBucketMap = new Map<string, string>();
 
@@ -361,12 +345,11 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     nodeBucketMap.set(node.id, key);
   }
 
-  // Baseline Initial Sort: Degree descending, then nodeId ascending
   bucketOrder.forEach((nodeIds) => {
     nodeIds.sort((a, b) => {
       const degA = degreeMap.get(a) || 0;
       const degB = degreeMap.get(b) || 0;
-      if (degB !== degA) return degB - degA; // Hubs first initially
+      if (degB !== degA) return degB - degA;
       return a.localeCompare(b);
     });
   });
@@ -380,7 +363,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
 
   let iterationsExecuted = 0;
 
-  // Perform bounded alternating sweeps (Forward: L=1->3, Backward: L=2->0)
   for (let iter = 0; iter < maxIterations; iter++) {
     iterationsExecuted++;
     if (bestCrossings === 0) break;
@@ -396,7 +378,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     for (const currentLayer of layerSequence) {
       const currentLayerRank = LAYER_RANK[currentLayer];
 
-      // Rebuild continuous positions map for all nodes across layers
       const allLayerPositions = new Map<string, number>();
       for (let lIdx = 0; lIdx < LAYERS_IN_ORDER.length; lIdx++) {
         const l = LAYERS_IN_ORDER[lIdx];
@@ -419,7 +400,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
         const ids = bucketOrder.get(key);
         if (!ids || ids.length <= 1) continue;
 
-        // Calculate barycenter for each node in this bucket
         const barycenters = new Map<string, number>();
 
         for (let i = 0; i < ids.length; i++) {
@@ -433,7 +413,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
             const neighborLayer = layerMap.get(neighborId) || 'application';
             const neighborRank = LAYER_RANK[neighborLayer];
 
-            // Filter relevant neighbor layer based on sweep direction
             const isRelevant = isForward
               ? neighborRank < currentLayerRank
               : neighborRank > currentLayerRank;
@@ -447,7 +426,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
             }
           }
 
-          // Fallback: If no neighbors in primary direction, check all neighbors across layers
           if (count === 0) {
             for (let j = 0; j < neighbors.length; j++) {
               const neighborId = neighbors[j];
@@ -462,12 +440,10 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
           if (count > 0) {
             barycenters.set(id, sumPos / count);
           } else {
-            // Preserved position fallback
             barycenters.set(id, allLayerPositions.get(id) ?? 0);
           }
         }
 
-        // Re-sort bucket using barycenters (with deterministic tie-breakers)
         const prevOrder = [...ids];
         ids.sort((a, b) => {
           const bcA = barycenters.get(a) ?? 0;
@@ -477,12 +453,10 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
             return bcA - bcB;
           }
 
-          // Secondary tie-breaker 1: Degree descending
           const degA = degreeMap.get(a) || 0;
           const degB = degreeMap.get(b) || 0;
           if (degB !== degA) return degB - degA;
 
-          // Secondary tie-breaker 2: Node ID ascending
           return a.localeCompare(b);
         });
 
@@ -511,7 +485,6 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     }
   }
 
-  // Construct final nodeRankMap and regions list
   const nodeRankMap = new Map<string, number>();
   const regions: LayerRegionOrder[] = [];
 

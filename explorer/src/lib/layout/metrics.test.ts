@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../../types/explorer';
+import { createEdge } from './fixtures/builder';
 import {
   edgeCrossingCount,
   averageEdgeLength,
@@ -13,7 +14,7 @@ import {
   calculateLayoutMetrics,
 } from './metrics';
 
-function makeNode(id: string, type: string = 'ApexClass', displayName?: string): ExplorerNode {
+function makeNode(id: string, type: ExplorerNodeType = 'ApexClass', displayName?: string): ExplorerNode {
   return {
     id,
     displayName: displayName || id,
@@ -50,8 +51,8 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('D'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A', target: 'B' },
-        { id: 'e2', source: 'C', target: 'D' },
+        createEdge('A', 'B'),
+        createEdge('C', 'D'),
       ];
       const positions = {
         A: { x: 0, y: 0 },
@@ -71,8 +72,8 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('D'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A', target: 'B' },
-        { id: 'e2', source: 'C', target: 'D' },
+        createEdge('A', 'B'),
+        createEdge('C', 'D'),
       ];
       const positions = {
         A: { x: 0, y: 0 },
@@ -91,8 +92,8 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('C'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A', target: 'B' },
-        { id: 'e2', source: 'A', target: 'C' },
+        createEdge('A', 'B'),
+        createEdge('A', 'C'),
       ];
       const positions = {
         A: { x: 50, y: 0 },
@@ -109,9 +110,9 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('B1'), makeNode('B2'), makeNode('B3'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A1', target: 'B3' },
-        { id: 'e2', source: 'A2', target: 'B2' },
-        { id: 'e3', source: 'A3', target: 'B1' },
+        createEdge('A1', 'B3'),
+        createEdge('A2', 'B2'),
+        createEdge('A3', 'B1'),
       ];
       const positions = {
         A1: { x: 0, y: 0 },
@@ -122,9 +123,6 @@ describe('Quantitative Layout Metrics Library', () => {
         B3: { x: 200, y: 100 },
       };
 
-      // e1 (0,0)->(200,100) crosses e2 (100,0)->(100,100) and e3 (200,0)->(0,100)
-      // e2 crosses e3
-      // Total crossings = 3
       expect(edgeCrossingCount(nodes, edges, positions)).toBe(3);
     });
 
@@ -134,8 +132,8 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('C'), makeNode('D'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A', target: 'B' }, // (0,0) to (100,0)
-        { id: 'e2', source: 'C', target: 'D' }, // (50,0) to (150,0)
+        createEdge('A', 'B'),
+        createEdge('C', 'D'),
       ];
       const positions = {
         A: { x: 0, y: 0 },
@@ -156,8 +154,8 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('C'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A', target: 'B' }, // dist 100
-        { id: 'e2', source: 'A', target: 'C' }, // dist 200
+        createEdge('A', 'B'), // dist 100
+        createEdge('A', 'C'), // dist 200
       ];
       const positions = {
         A: { x: 0, y: 0 },
@@ -203,15 +201,15 @@ describe('Quantitative Layout Metrics Library', () => {
   describe('layerViolationCount', () => {
     it('returns 0 for valid top-down architectural layer arrangement', () => {
       const nodes = [
-        makeNode('LWC', 'LWC', 'MyView'), // presentation (0)
-        makeNode('Ctrl', 'ApexTrigger', 'MyController'), // application (1)
-        makeNode('Repo', 'ApexClass', 'OrderRepository'), // domain (2)
-        makeNode('Obj', 'CustomObject', 'Account'), // schema (3)
+        makeNode('LWC', 'LWC', 'MyView'),
+        makeNode('Ctrl', 'ApexTrigger', 'MyController'),
+        makeNode('Repo', 'ApexClass', 'OrderRepository'),
+        makeNode('Obj', 'CustomObject', 'Account'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'LWC', target: 'Ctrl' },
-        { id: 'e2', source: 'Ctrl', target: 'Repo' },
-        { id: 'e3', source: 'Repo', target: 'Obj' },
+        createEdge('LWC', 'Ctrl'),
+        createEdge('Ctrl', 'Repo'),
+        createEdge('Repo', 'Obj'),
       ];
       const positions = {
         LWC: { x: 0, y: 0 },
@@ -225,11 +223,11 @@ describe('Quantitative Layout Metrics Library', () => {
 
     it('detects backward layer violations (schema -> presentation)', () => {
       const nodes = [
-        makeNode('LWC', 'LWC', 'MyView'), // presentation (0)
-        makeNode('Obj', 'CustomObject', 'Account'), // schema (3)
+        makeNode('LWC', 'LWC', 'MyView'),
+        makeNode('Obj', 'CustomObject', 'Account'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'Obj', target: 'LWC' }, // schema depends on presentation -> violation!
+        createEdge('Obj', 'LWC'),
       ];
       const positions = {
         LWC: { x: 0, y: 0 },
@@ -249,7 +247,6 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('PaymentController', 'ApexClass', 'PaymentController'),
       ];
 
-      // Cohesive layout: Order nodes near (0,0), Payment nodes near (1000, 1000)
       const cohesivePositions = {
         OrderService: { x: 0, y: 0 },
         OrderController: { x: 20, y: 20 },
@@ -259,7 +256,6 @@ describe('Quantitative Layout Metrics Library', () => {
 
       const cohesiveRes = domainCohesion(nodes, [], cohesivePositions);
 
-      // Scattered layout: Order nodes far apart (0,0) and (1000,1000)
       const scatteredPositions = {
         OrderService: { x: 0, y: 0 },
         OrderController: { x: 1000, y: 1000 },
@@ -281,11 +277,10 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('B1'), makeNode('B2'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A1', target: 'A2' },
-        { id: 'e2', source: 'B1', target: 'B2' },
+        createEdge('A1', 'A2'),
+        createEdge('B1', 'B2'),
       ];
 
-      // Separated components
       const separatedPositions = {
         A1: { x: 0, y: 0 },
         A2: { x: 50, y: 0 },
@@ -297,7 +292,6 @@ describe('Quantitative Layout Metrics Library', () => {
       expect(sepRes.overlappingComponentPairs).toBe(0);
       expect(sepRes.gapViolationCount).toBe(0);
 
-      // Overlapping components
       const overlappingPositions = {
         A1: { x: 0, y: 0 },
         A2: { x: 100, y: 0 },
@@ -320,12 +314,12 @@ describe('Quantitative Layout Metrics Library', () => {
         makeNode('BridgeController', 'ApexClass', 'BridgeController'),
       ];
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'Hub', target: 'N1' },
-        { id: 'e2', source: 'Hub', target: 'N2' },
-        { id: 'e3', source: 'Hub', target: 'N3' },
-        { id: 'e4', source: 'Hub', target: 'N4' },
-        { id: 'e5', source: 'BridgeController', target: 'OrderService' },
-        { id: 'e6', source: 'BridgeController', target: 'PaymentService' },
+        createEdge('Hub', 'N1'),
+        createEdge('Hub', 'N2'),
+        createEdge('Hub', 'N3'),
+        createEdge('Hub', 'N4'),
+        createEdge('BridgeController', 'OrderService'),
+        createEdge('BridgeController', 'PaymentService'),
       ];
 
       const positions = {
@@ -336,7 +330,7 @@ describe('Quantitative Layout Metrics Library', () => {
         N4: { x: 0, y: -10 },
         OrderService: { x: 0, y: 200 },
         PaymentService: { x: 200, y: 200 },
-        BridgeController: { x: 100, y: 200 }, // Placed right at centroid (100, 200)
+        BridgeController: { x: 100, y: 200 },
       };
 
       const hubRes = hubLocality(nodes, edges, positions, { hubDegreeThreshold: 4 });
@@ -352,7 +346,7 @@ describe('Quantitative Layout Metrics Library', () => {
   describe('calculateLayoutMetrics comprehensive runner', () => {
     it('produces complete metric object without magic weighted scores', () => {
       const nodes = [makeNode('A'), makeNode('B')];
-      const edges: ExplorerEdge[] = [{ id: 'e1', source: 'A', target: 'B' }];
+      const edges: ExplorerEdge[] = [createEdge('A', 'B')];
       const positions = {
         A: { x: 0, y: 0 },
         B: { x: 200, y: 0 },
