@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, within, act } from '@testing-library/react';
 import { ProjectDashboard } from './ProjectDashboard';
 import type { ProjectMetadata, ExplorerDataSchema } from '../types/explorer';
 import type { ArchitectureFinding } from '../lib/intelligence';
@@ -134,16 +134,44 @@ const mockFindings: ArchitectureFinding[] = [
 ];
 
 describe('ProjectDashboard', () => {
-  it('renders project name, status badge, and source directory', () => {
-    render(<ProjectDashboard project={mockProject} data={mockData} findings={mockFindings} />);
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() =>
+        Promise.resolve({
+          ok: false,
+          status: 404,
+        })
+      )
+    );
+  });
+
+  const renderDashboard = async (props: Parameters<typeof ProjectDashboard>[0] = {}) => {
+    let result: ReturnType<typeof render>;
+    await act(async () => {
+      result = render(
+        <ProjectDashboard
+          project={mockProject}
+          data={mockData}
+          findings={mockFindings}
+          {...props}
+        />
+      );
+    });
+    return result!;
+  };
+
+  it('renders project name, status badge, and source directory', async () => {
+    await renderDashboard();
 
     expect(screen.getByRole('heading', { level: 1, name: 'Core CRM Salesforce Org' })).toBeInTheDocument();
     expect(screen.getByText('Complete')).toBeInTheDocument();
     expect(screen.getAllByText('force-app/main/default')[0]).toBeInTheDocument();
   });
 
-  it('renders summary metric cards correctly', () => {
-    render(<ProjectDashboard project={mockProject} data={mockData} findings={mockFindings} />);
+  it('renders summary metric cards correctly', async () => {
+    await renderDashboard();
 
     const compCard = screen.getByText('Component Count').parentElement!.parentElement!;
     expect(within(compCard).getByText('42')).toBeInTheDocument();
@@ -157,8 +185,8 @@ describe('ProjectDashboard', () => {
     expect(screen.getByText('Last Analysis')).toBeInTheDocument();
   });
 
-  it('renders architecture summary component breakdown', () => {
-    render(<ProjectDashboard project={mockProject} data={mockData} findings={mockFindings} />);
+  it('renders architecture summary component breakdown', async () => {
+    await renderDashboard();
 
     expect(screen.getByText('Architecture Summary')).toBeInTheDocument();
     expect(screen.getByText('Apex Classes')).toBeInTheDocument();
@@ -173,8 +201,8 @@ describe('ProjectDashboard', () => {
     expect(within(lwcRow).getByText('8')).toBeInTheDocument();
   });
 
-  it('renders risk and quality summary breakdown', () => {
-    render(<ProjectDashboard project={mockProject} data={mockData} findings={mockFindings} />);
+  it('renders risk and quality summary breakdown', async () => {
+    await renderDashboard();
 
     expect(screen.getByText('Risk & Quality Summary')).toBeInTheDocument();
 
@@ -192,8 +220,8 @@ describe('ProjectDashboard', () => {
     expect(screen.getByText('1 critical')).toBeInTheDocument();
   });
 
-  it('renders recent activity section', () => {
-    render(<ProjectDashboard project={mockProject} data={mockData} findings={mockFindings} />);
+  it('renders recent activity section', async () => {
+    await renderDashboard();
 
     expect(screen.getByText('Recent Activity & Timeline')).toBeInTheDocument();
     expect(screen.getByText('Static Dependency Analysis Executed')).toBeInTheDocument();
@@ -201,50 +229,42 @@ describe('ProjectDashboard', () => {
     expect(screen.getByText('Project Registered')).toBeInTheDocument();
   });
 
-  it('triggers onExploreGraph callback when primary action button is clicked', () => {
+  it('triggers onExploreGraph callback when primary action button is clicked', async () => {
     const onExploreGraph = vi.fn();
-    render(
-      <ProjectDashboard
-        project={mockProject}
-        data={mockData}
-        findings={mockFindings}
-        onExploreGraph={onExploreGraph}
-      />
-    );
+    await renderDashboard({ onExploreGraph });
 
     const exploreBtn = screen.getByTestId('explore-graph-btn');
-    fireEvent.click(exploreBtn);
+    await act(async () => {
+      fireEvent.click(exploreBtn);
+    });
     expect(onExploreGraph).toHaveBeenCalledTimes(1);
   });
 
-  it('triggers onRunAnalysis, onViewFindings, and onViewHistory callbacks when secondary buttons are clicked', () => {
+  it('triggers onRunAnalysis, onViewFindings, and onViewHistory callbacks when secondary buttons are clicked', async () => {
     const onRunAnalysis = vi.fn();
     const onViewFindings = vi.fn();
     const onViewHistory = vi.fn();
 
-    render(
-      <ProjectDashboard
-        project={mockProject}
-        data={mockData}
-        findings={mockFindings}
-        onRunAnalysis={onRunAnalysis}
-        onViewFindings={onViewFindings}
-        onViewHistory={onViewHistory}
-      />
-    );
+    await renderDashboard({ onRunAnalysis, onViewFindings, onViewHistory });
 
-    fireEvent.click(screen.getByTestId('run-analysis-btn'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('run-analysis-btn'));
+    });
     expect(onRunAnalysis).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByTestId('view-findings-btn'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('view-findings-btn'));
+    });
     expect(onViewFindings).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByTestId('view-history-btn'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('view-history-btn'));
+    });
     expect(onViewHistory).toHaveBeenCalledTimes(1);
   });
 
-  it('handles disabled run analysis button gracefully when no onRunAnalysis prop is provided', () => {
-    render(<ProjectDashboard project={mockProject} data={mockData} findings={mockFindings} />);
+  it('handles disabled run analysis button gracefully when no onRunAnalysis prop is provided', async () => {
+    await renderDashboard();
 
     const disabledBtn = screen.getByTestId('run-analysis-btn-disabled');
     expect(disabledBtn).toBeDisabled();
