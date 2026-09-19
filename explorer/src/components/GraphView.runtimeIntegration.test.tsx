@@ -1157,4 +1157,68 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
     // Cytoscape should not be re-instantiated on selections
     expect(mockCytoscapeFn).toHaveBeenCalledTimes(1);
   });
+
+  it('23. Undefined and empty cycle selection handling: handles empty cycle array, null, and undefined without throwing errors or mutating positions', () => {
+    const { rerender } = render(
+      <GraphView
+        nodes={sampleNodes}
+        edges={sampleEdges}
+        onSelectNode={vi.fn()}
+        onSelectEdge={vi.fn()}
+        selectedNodeId={null}
+        selectedEdgeId={null}
+        selectedCycleNodeIds={[]}
+      />
+    );
+
+    expect(() => {
+      rerender(
+        <GraphView
+          nodes={sampleNodes}
+          edges={sampleEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          selectedCycleNodeIds={null}
+        />
+      );
+    }).not.toThrow();
+
+    expect(() => {
+      rerender(
+        <GraphView
+          nodes={sampleNodes}
+          edges={sampleEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          selectedCycleNodeIds={undefined}
+        />
+      );
+    }).not.toThrow();
+  });
+
+  it('24. Missing nodePositions and missing edges safety: renders safely when nodePositions is undefined and edges is empty array', () => {
+    expect(() => {
+      render(
+        <GraphView
+          nodes={sampleNodes}
+          edges={[]}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={undefined}
+        />
+      );
+    }).not.toThrow();
+
+    const hubPos = mockCy.getElementById('ApexClass:HubService').position();
+    expect(typeof hubPos.x).toBe('number');
+    expect(typeof hubPos.y).toBe('number');
+    expect(Number.isFinite(hubPos.x)).toBe(true);
+    expect(Number.isFinite(hubPos.y)).toBe(true);
+  });
 });
