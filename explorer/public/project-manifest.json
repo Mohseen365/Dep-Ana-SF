@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "bouquet",
+  "activeProjectId": "movie",
   "projects": [
     {
       "id": "food-app",
@@ -19,13 +19,13 @@
       "id": "movie",
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "/app/temp-test-source-resolution/movie_src_a",
-      "createdAt": "2026-09-17T20:07:13.225Z",
-      "updatedAt": "2026-09-17T20:07:13.225Z",
-      "lastAnalyzedAt": "2026-09-17T20:07:13.225Z",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Movie-App\\force-app\\main\\default",
+      "createdAt": "2026-09-18T16:02:48.156Z",
+      "updatedAt": "2026-09-18T16:02:48.156Z",
+      "lastAnalyzedAt": "2026-09-18T16:02:48.156Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 1,
-      "dependencyCount": 0,
+      "componentCount": 9,
+      "dependencyCount": 16,
       "analysisPath": "/projects/movie/explorer-data.json"
     },
     {
@@ -79,9 +79,9 @@
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:08760b6549866d9ec920e141edd3bdb4fe3574df938d2165636c1af636d5b543",
-      "nodeCount": 1,
-      "edgeCount": 0
+      "fileHash": "sha256:5eefc4544cc5b9dd0c58a456fec56244057efddcef33feb545746ab5508b868f",
+      "nodeCount": 9,
+      "edgeCount": 16
     },
     "foodies": {
       "path": "explorer-data.json",
