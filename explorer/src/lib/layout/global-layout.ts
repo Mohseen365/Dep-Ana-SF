@@ -18,9 +18,11 @@ export interface DomainRelationship {
 export interface DomainNode {
   domain: string;
   nodeCount: number;
+  primaryNodeCount: number;
   layers: ArchitectureLayer[];
   primaryLayer: ArchitectureLayer;
   nodeIds: string[];
+  primaryNodeIds: string[];
   connectedDomains: string[];
   degree: number;
   isShared: boolean;
@@ -44,6 +46,7 @@ export interface DomainRegion {
   yMin: number;
   yMax: number;
   nodeCount: number;
+  primaryNodeCount?: number;
   primaryLayer: ArchitectureLayer;
   orderIndex: number;
 }
@@ -85,6 +88,23 @@ const LAYER_PRIORITY: Record<ArchitectureLayer, number> = {
   schema: 3,
 };
 
+const LAYERS_IN_ORDER: ArchitectureLayer[] = [
+  'presentation',
+  'application',
+  'domain',
+  'schema',
+];
+
+function isFieldNode(node: ExplorerNode): boolean {
+  return node.type === 'Field' || node.type === 'CustomField';
+}
+
+function isPrimaryNode(node: ExplorerNode): boolean {
+  const isTest = node.behavior?.isTest || (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) || /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
+  const isField = isFieldNode(node);
+  return !isTest && !isField;
+}
+
 /**
  * Builds a deterministic Domain Graph from Explorer nodes and edges.
  * Summarizes cross-domain dependency edges, directional strengths, layer profiles,
@@ -122,9 +142,11 @@ export function buildDomainGraph(
       domainNodeMap.set(domain, {
         domain,
         nodeCount: 0,
+        primaryNodeCount: 0,
         layers: [],
         primaryLayer: 'application',
         nodeIds: [],
+        primaryNodeIds: [],
         connectedDomains: [],
         degree: 0,
         isShared: domain === 'Shared',
@@ -134,14 +156,19 @@ export function buildDomainGraph(
     const dNode = domainNodeMap.get(domain)!;
     dNode.nodeCount++;
     dNode.nodeIds.push(node.id);
+    if (isPrimaryNode(node)) {
+      dNode.primaryNodeCount++;
+      dNode.primaryNodeIds.push(node.id);
+    }
     if (!dNode.layers.includes(layer)) {
       dNode.layers.push(layer);
     }
   });
 
-  // Calculate primary layer for each domain (most frequent layer, tie-breaker layer priority)
+  // Calculate primary layer for each domain (most frequent layer among primary nodes, tie-breaker layer priority)
   domainNodeMap.forEach(dNode => {
     dNode.nodeIds.sort((a, b) => a.localeCompare(b));
+    dNode.primaryNodeIds.sort((a, b) => a.localeCompare(b));
     dNode.layers.sort((a, b) => LAYER_PRIORITY[a] - LAYER_PRIORITY[b]);
 
     const layerCounts: Record<ArchitectureLayer, number> = {
@@ -151,7 +178,9 @@ export function buildDomainGraph(
       schema: 0,
     };
 
-    dNode.nodeIds.forEach(nodeId => {
+    const targetNodeIds = dNode.primaryNodeIds.length > 0 ? dNode.primaryNodeIds : dNode.nodeIds;
+
+    targetNodeIds.forEach(nodeId => {
       const node = safeNodes.find(n => n.id === nodeId);
       if (node) {
         const layer = classifyNodeLayer(node);
@@ -540,21 +569,65 @@ export function computeGlobalDomainLayout(
   orderedDomains.forEach((domain, orderIndex) => {
     const dNode = domainGraph.nodes.get(domain);
     const nodeCount = dNode ? dNode.nodeCount : 1;
+    const primaryNodeCount = dNode ? dNode.primaryNodeCount : 0;
     const primaryLayer = dNode ? dNode.primaryLayer : 'application';
 
-    // Width proportional to estimated grid columns for domain node count
-    const cols = Math.max(1, Math.min(4, Math.ceil(Math.sqrt(nodeCount))));
-    const rows = Math.max(1, Math.ceil(nodeCount / cols));
+    // Group primary nodes in this domain by layer to find max columns/rows required per layer bucket
+    const primaryNodesInDomain = dNode
+      ? dNode.primaryNodeIds
+          .map(id => safeNodes.find(n => n.id === id))
+          .filter((n): n is ExplorerNode => n !== undefined)
+      : [];
 
-    const regionWidth = Math.max(220, cols * (nodeWidth * 1.3) + 40);
-    const regionHeight = Math.max(150, rows * (nodeHeight * 1.4) + 40);
+    const layerCounts: Record<ArchitectureLayer, number> = {
+      presentation: 0,
+      application: 0,
+      domain: 0,
+      schema: 0,
+    };
+
+    primaryNodesInDomain.forEach(node => {
+      const layer = classifyNodeLayer(node);
+      layerCounts[layer] = (layerCounts[layer] || 0) + 1;
+    });
+
+    // Max primary columns required in any single layer bucket (capped at 4 per tier row)
+    const maxCols = Math.max(
+      1,
+      ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.min(4, layerCounts[l]) : 0))
+    );
+
+    // Max primary rows required in any single layer bucket
+    const maxRows = Math.max(
+      1,
+      ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.ceil(layerCounts[l] / 4) : 0))
+    );
+
+    const primaryWidth = maxCols * nodeWidth + Math.max(0, maxCols - 1) * 40;
+    const primaryHeight = maxRows * nodeHeight + Math.max(0, maxRows - 1) * 40;
+
+    const regionWidth = Math.max(160, primaryWidth + 40);
+    const regionHeight = Math.max(100, primaryHeight + 40);
+
+    if (orderIndex > 0) {
+      const prevDomain = orderedDomains[orderIndex - 1];
+      const prevRegion = domainRegions.get(prevDomain);
+      if (prevRegion) {
+        const rel = domainGraph.adjacency.get(prevDomain)?.get(domain);
+        const strength = rel ? rel.strength : 0;
+        const minGap = 80;
+        const maxGap = 140;
+        const domainGap = maxGap - strength * (maxGap - minGap);
+        currentX = prevRegion.xMax + domainGap;
+      }
+    }
 
     const xCenter = currentX + regionWidth / 2;
     const layerBaseY = baseY + (LAYER_Y_MAP[primaryLayer] || 350) - 100;
     const yCenter = layerBaseY + regionHeight / 2;
 
-    const xMin = xCenter - regionWidth / 2;
-    const xMax = xCenter + regionWidth / 2;
+    const xMin = currentX;
+    const xMax = currentX + regionWidth;
     const yMin = yCenter - regionHeight / 2;
     const yMax = yCenter + regionHeight / 2;
 
@@ -569,6 +642,7 @@ export function computeGlobalDomainLayout(
       yMin,
       yMax,
       nodeCount,
+      primaryNodeCount,
       primaryLayer,
       orderIndex,
     };
@@ -587,9 +661,6 @@ export function computeGlobalDomainLayout(
         });
       });
     }
-
-    // Advance X coordinate for next domain region
-    currentX += regionWidth + (domainSpacing - 220);
   });
 
   // Build candidate position map to evaluate layout metrics

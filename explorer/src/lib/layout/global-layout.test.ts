@@ -194,10 +194,110 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         expect(region.height).toBeGreaterThan(0);
       });
 
-      // Verify domain regions do not collapse
+      // Verify domain regions do not collapse and maintain bounded geometry
       result.domainRegions.forEach(region => {
-        expect(region.width).toBeGreaterThanOrEqual(200);
-        expect(region.height).toBeGreaterThanOrEqual(150);
+        expect(region.width).toBeGreaterThanOrEqual(160);
+        expect(region.height).toBeGreaterThanOrEqual(100);
+      });
+    });
+  });
+
+  describe('Wave 2A — Primary Architecture Global Geometry Compaction', () => {
+    it('calculates domain region geometry strictly from primary nodes', () => {
+      // Domain with 1 primary node
+      const nodes1 = [createNode('ApexClass:OrderService', 'ApexClass')];
+      const result1 = computeGlobalDomainLayout(nodes1, []);
+      const region1 = result1.domainRegions.get('Order')!;
+
+      expect(region1).toBeDefined();
+      expect(region1.primaryNodeCount).toBe(1);
+      // Width for 1 primary node (120px + 40px padding) = 160px
+      expect(region1.width).toBe(160);
+    });
+
+    it('compacts domain region width even when domain contains many secondary satellite nodes', () => {
+      // Domain with 1 primary node + 20 secondary field nodes + 10 test nodes connected via edges
+      const prodNode = createNode('ApexClass:AccountController', 'ApexClass');
+      const nodes = [prodNode];
+      const edges = [];
+
+      for (let i = 0; i < 20; i++) {
+        const fieldNode = createNode(`Account_CustomField${i}`, 'CustomField');
+        nodes.push(fieldNode);
+        edges.push(createEdge('ApexClass:AccountController', `Account_CustomField${i}`));
+      }
+      for (let i = 0; i < 10; i++) {
+        const testNode = createNode(`ApexClass:AccountControllerTest${i}`, 'ApexClass');
+        testNode.behavior = { ...testNode.behavior, isTest: true };
+        nodes.push(testNode);
+        edges.push(createEdge(`ApexClass:AccountControllerTest${i}`, 'ApexClass:AccountController'));
+      }
+
+      const result = computeGlobalDomainLayout(nodes, edges);
+      const region = result.domainRegions.get('Account')!;
+
+      expect(region).toBeDefined();
+
+      const dNode = result.domainGraph.nodes.get('Account')!;
+      expect(dNode.nodeCount).toBe(31);
+      expect(dNode.primaryNodeCount).toBe(1);
+
+      // Region width should reflect the 1 primary node (160px) rather than 31 nodes
+      expect(region.width).toBe(160);
+    });
+
+    it('sizes multiple domains proportionally to their primary node counts', () => {
+      const nodes = [
+        // Domain Alpha: 1 primary node
+        createNode('ApexClass:AlphaService', 'ApexClass'),
+        // Domain Beta: 4 primary nodes sharing stem 'Beta' in application layer
+        createNode('ApexClass:BetaService', 'ApexClass'),
+        createNode('ApexClass:BetaController', 'ApexClass'),
+        createNode('ApexClass:BetaManager', 'ApexClass'),
+        createNode('ApexClass:BetaProcessor', 'ApexClass'),
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, []);
+      const alphaRegion = result.domainRegions.get('Alpha')!;
+      const betaRegion = result.domainRegions.get('Beta')!;
+
+      expect(alphaRegion.width).toBe(160); // 1 col -> 120 + 40
+      expect(betaRegion.width).toBe(640);  // 4 cols -> 4*120 + 3*40 + 40
+      expect(betaRegion.width).toBeGreaterThan(alphaRegion.width);
+    });
+
+    it('ensures adjacent domain regions do not overlap', () => {
+      const fixture = createFoodDeliveryFixture();
+      const result = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      for (let i = 0; i < result.orderedDomains.length - 1; i++) {
+        const dCurrent = result.orderedDomains[i];
+        const dNext = result.orderedDomains[i + 1];
+
+        const regCurrent = result.domainRegions.get(dCurrent)!;
+        const regNext = result.domainRegions.get(dNext)!;
+
+        // Next domain left edge (xMin) must be strictly >= current domain right edge (xMax) + minGap (80px)
+        expect(regNext.xMin).toBeGreaterThanOrEqual(regCurrent.xMax + 80 - 1e-6);
+      }
+    });
+
+    it('maintains deterministic ordering and region bounds across repeated runs', () => {
+      const fixture = createFoodDeliveryFixture();
+      const run1 = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+      const run2 = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      expect(run1.orderedDomains).toEqual(run2.orderedDomains);
+
+      run1.orderedDomains.forEach(domain => {
+        const r1 = run1.domainRegions.get(domain)!;
+        const r2 = run2.domainRegions.get(domain)!;
+
+        expect(r1.xMin).toBe(r2.xMin);
+        expect(r1.xMax).toBe(r2.xMax);
+        expect(r1.xCenter).toBe(r2.xCenter);
+        expect(r1.width).toBe(r2.width);
+        expect(r1.height).toBe(r2.height);
       });
     });
   });
