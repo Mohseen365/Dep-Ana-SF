@@ -1,0 +1,296 @@
+[
+  {
+    "scale": 100,
+    "dataset": {
+      "scale": 100,
+      "nodeCount": 100,
+      "edgeCount": 191,
+      "domainCount": 77,
+      "componentCount": 1,
+      "primaryNodeCount": 76,
+      "fieldNodeCount": 8,
+      "testNodeCount": 16,
+      "triggerHandlerCount": 10,
+      "layerDistribution": {
+        "presentation": 17,
+        "domain": 50,
+        "application": 16,
+        "schema": 17
+      }
+    },
+    "run1ColdMs": 110.08,
+    "runs2to5Ms": [
+      56.58,
+      33.87,
+      34.31,
+      32.09
+    ],
+    "minMs": 32.09,
+    "maxMs": 110.08,
+    "medianMs": 34.31,
+    "peakRssMb": 155.04,
+    "heapUsedMb": 38.74,
+    "stageProfile": {
+      "0_clone_sort": 0.57,
+      "1_architecture_analysis": 1.67,
+      "2_layer_classification": 0.19,
+      "3_domain_discovery": 1.64,
+      "4_centrality_analysis": 2.16,
+      "5_global_domain_layout": 6.47,
+      "6_crossing_reduction": 7.07,
+      "7_local_node_layout": 2.63,
+      "8_hub_bridge_refinement": 2.67,
+      "9_satellite_placement": 2.13,
+      "10_component_packing": 0.01,
+      "11_spacing_collisions_cleanup": 6.62,
+      "12_position_authority_restoration": 0.01
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 250,
+    "dataset": {
+      "scale": 250,
+      "nodeCount": 250,
+      "edgeCount": 493,
+      "domainCount": 179,
+      "componentCount": 1,
+      "primaryNodeCount": 178,
+      "fieldNodeCount": 23,
+      "testNodeCount": 49,
+      "triggerHandlerCount": 19,
+      "layerDistribution": {
+        "presentation": 37,
+        "domain": 125,
+        "schema": 47,
+        "application": 41
+      }
+    },
+    "run1ColdMs": 151.19,
+    "runs2to5Ms": [
+      133.14,
+      127.57,
+      121.8,
+      122.55
+    ],
+    "minMs": 121.8,
+    "maxMs": 151.19,
+    "medianMs": 127.57,
+    "peakRssMb": 162.54,
+    "heapUsedMb": 39.38,
+    "stageProfile": {
+      "0_clone_sort": 1.1,
+      "1_architecture_analysis": 6.03,
+      "2_layer_classification": 0.22,
+      "3_domain_discovery": 3.91,
+      "4_centrality_analysis": 2.58,
+      "5_global_domain_layout": 22.4,
+      "6_crossing_reduction": 34.56,
+      "7_local_node_layout": 9.14,
+      "8_hub_bridge_refinement": 15.46,
+      "9_satellite_placement": 8.99,
+      "10_component_packing": 0.07,
+      "11_spacing_collisions_cleanup": 20.21,
+      "12_position_authority_restoration": 0.02
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 500,
+    "dataset": {
+      "scale": 500,
+      "nodeCount": 500,
+      "edgeCount": 989,
+      "domainCount": 384,
+      "componentCount": 1,
+      "primaryNodeCount": 383,
+      "fieldNodeCount": 35,
+      "testNodeCount": 82,
+      "triggerHandlerCount": 57,
+      "layerDistribution": {
+        "presentation": 78,
+        "schema": 79,
+        "domain": 224,
+        "application": 119
+      }
+    },
+    "run1ColdMs": 410.33,
+    "runs2to5Ms": [
+      401,
+      383.43,
+      386.52,
+      383.01
+    ],
+    "minMs": 383.01,
+    "maxMs": 410.33,
+    "medianMs": 386.52,
+    "peakRssMb": 181.28,
+    "heapUsedMb": 60.28,
+    "stageProfile": {
+      "0_clone_sort": 1.48,
+      "1_architecture_analysis": 9.42,
+      "2_layer_classification": 0.57,
+      "3_domain_discovery": 8.75,
+      "4_centrality_analysis": 7.66,
+      "5_global_domain_layout": 61.66,
+      "6_crossing_reduction": 121.67,
+      "7_local_node_layout": 36.95,
+      "8_hub_bridge_refinement": 68.66,
+      "9_satellite_placement": 26.43,
+      "10_component_packing": 0.11,
+      "11_spacing_collisions_cleanup": 37.71,
+      "12_position_authority_restoration": 0.03
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 750,
+    "dataset": {
+      "scale": 750,
+      "nodeCount": 750,
+      "edgeCount": 1485,
+      "domainCount": 564,
+      "componentCount": 1,
+      "primaryNodeCount": 563,
+      "fieldNodeCount": 35,
+      "testNodeCount": 152,
+      "triggerHandlerCount": 87,
+      "layerDistribution": {
+        "presentation": 110,
+        "domain": 359,
+        "application": 176,
+        "schema": 105
+      }
+    },
+    "run1ColdMs": 887.06,
+    "runs2to5Ms": [
+      809.8,
+      860.54,
+      955.86,
+      811.77
+    ],
+    "minMs": 809.8,
+    "maxMs": 955.86,
+    "medianMs": 860.54,
+    "peakRssMb": 210.28,
+    "heapUsedMb": 44.06,
+    "stageProfile": {
+      "0_clone_sort": 2.91,
+      "1_architecture_analysis": 15.76,
+      "2_layer_classification": 0.61,
+      "3_domain_discovery": 16.18,
+      "4_centrality_analysis": 16.03,
+      "5_global_domain_layout": 117.51,
+      "6_crossing_reduction": 261.78,
+      "7_local_node_layout": 79.07,
+      "8_hub_bridge_refinement": 181.83,
+      "9_satellite_placement": 54.38,
+      "10_component_packing": 0.69,
+      "11_spacing_collisions_cleanup": 58.85,
+      "12_position_authority_restoration": 0.03
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 1000,
+    "dataset": {
+      "scale": 1000,
+      "nodeCount": 1000,
+      "edgeCount": 2035,
+      "domainCount": 755,
+      "componentCount": 1,
+      "primaryNodeCount": 754,
+      "fieldNodeCount": 57,
+      "testNodeCount": 189,
+      "triggerHandlerCount": 90,
+      "layerDistribution": {
+        "presentation": 153,
+        "domain": 511,
+        "schema": 148,
+        "application": 188
+      }
+    },
+    "run1ColdMs": 1577.85,
+    "runs2to5Ms": [
+      1468.12,
+      1440.7,
+      1512.02,
+      1494.18
+    ],
+    "minMs": 1440.7,
+    "maxMs": 1577.85,
+    "medianMs": 1494.18,
+    "peakRssMb": 210.68,
+    "heapUsedMb": 50.59,
+    "stageProfile": {
+      "0_clone_sort": 4.05,
+      "1_architecture_analysis": 31.46,
+      "2_layer_classification": 0.79,
+      "3_domain_discovery": 23.78,
+      "4_centrality_analysis": 26.17,
+      "5_global_domain_layout": 219.34,
+      "6_crossing_reduction": 492.37,
+      "7_local_node_layout": 387.43,
+      "8_hub_bridge_refinement": 555.05,
+      "9_satellite_placement": 168.13,
+      "10_component_packing": 0.11,
+      "11_spacing_collisions_cleanup": 165.33,
+      "12_position_authority_restoration": 0.09
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 2500,
+    "dataset": {
+      "scale": 2500,
+      "nodeCount": 2500,
+      "edgeCount": 5007,
+      "domainCount": 1826,
+      "componentCount": 1,
+      "primaryNodeCount": 1825,
+      "fieldNodeCount": 162,
+      "testNodeCount": 513,
+      "triggerHandlerCount": 250,
+      "layerDistribution": {
+        "presentation": 395,
+        "application": 498,
+        "domain": 1242,
+        "schema": 365
+      }
+    },
+    "run1ColdMs": 10337.91,
+    "runs2to5Ms": [
+      9742.39,
+      8574.91,
+      8466.06,
+      8427.62
+    ],
+    "minMs": 8427.62,
+    "maxMs": 10337.91,
+    "medianMs": 8574.91,
+    "peakRssMb": 280.83,
+    "heapUsedMb": 155.09,
+    "stageProfile": {
+      "0_clone_sort": 7.72,
+      "1_architecture_analysis": 207.76,
+      "2_layer_classification": 2.43,
+      "3_domain_discovery": 101.28,
+      "4_centrality_analysis": 167.29,
+      "5_global_domain_layout": 1336.8,
+      "6_crossing_reduction": 3130.05,
+      "7_local_node_layout": 524.52,
+      "8_hub_bridge_refinement": 2385.02,
+      "9_satellite_placement": 566.14,
+      "10_component_packing": 1.39,
+      "11_spacing_collisions_cleanup": 208.98,
+      "12_position_authority_restoration": 1.64
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  }
+]
