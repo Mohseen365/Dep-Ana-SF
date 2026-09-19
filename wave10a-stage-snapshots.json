@@ -1,0 +1,1055 @@
+{
+  "stages": [
+    {
+      "stageName": "Stage 7: Primary Local Layout",
+      "nodeCount": 156,
+      "minX": 120,
+      "maxX": 28132.800000000007,
+      "minY": 70,
+      "maxY": 910,
+      "width": 28012.800000000007,
+      "height": 840,
+      "aspect": 33.34857142857144,
+      "area": 23530752.000000004,
+      "overlaps": 0,
+      "invalid": 0,
+      "medianEdge": 7676.799999999999,
+      "p90Edge": 18863.514429713254,
+      "p95Edge": 21900.027762539485,
+      "maxEdge": 25737.8270908793
+    },
+    {
+      "stageName": "Stage 8: Bridge Placement",
+      "nodeCount": 179,
+      "minX": 1320,
+      "maxX": 28132.800000000007,
+      "minY": -10,
+      "maxY": 910,
+      "width": 26812.800000000007,
+      "height": 920,
+      "aspect": 29.144347826086964,
+      "area": 24667776.000000007,
+      "overlaps": 5,
+      "invalid": 0,
+      "medianEdge": 4402.908129861443,
+      "p90Edge": 15432.590325671192,
+      "p95Edge": 19020.637633896506,
+      "maxEdge": 24298.03019505903
+    },
+    {
+      "stageName": "Stage 9: Satellite Placement",
+      "nodeCount": 240,
+      "minX": -700,
+      "maxX": 28132.800000000007,
+      "minY": -10,
+      "maxY": 1310,
+      "width": 28832.800000000007,
+      "height": 1320,
+      "aspect": 21.843030303030307,
+      "area": 38059296.00000001,
+      "overlaps": 5,
+      "invalid": 0,
+      "medianEdge": 7918.4166498107425,
+      "p90Edge": 17736.305797995257,
+      "p95Edge": 20458.711576245463,
+      "maxEdge": 26087.29068646264
+    },
+    {
+      "stageName": "Stage 10: Component Packing",
+      "nodeCount": 240,
+      "minX": 0,
+      "maxX": 29052.800000000007,
+      "minY": 0,
+      "maxY": 1480,
+      "width": 29052.800000000007,
+      "height": 1480,
+      "aspect": 19.630270270270273,
+      "area": 42998144.00000001,
+      "overlaps": 4,
+      "invalid": 0,
+      "medianEdge": 7918.4166498107425,
+      "p90Edge": 17736.305797995257,
+      "p95Edge": 20458.711576245463,
+      "maxEdge": 26087.29068646264
+    },
+    {
+      "stageName": "Stage 11: Final Spacing Cleanup",
+      "nodeCount": 240,
+      "minX": 0,
+      "maxX": 29052.800000000007,
+      "minY": 0,
+      "maxY": 1480,
+      "width": 29052.800000000007,
+      "height": 1480,
+      "aspect": 19.630270270270273,
+      "area": 42998144.00000001,
+      "overlaps": 2,
+      "invalid": 0,
+      "medianEdge": 7918.4166498107425,
+      "p90Edge": 17736.305797995257,
+      "p95Edge": 20458.711576245463,
+      "maxEdge": 26087.29068646264
+    }
+  ],
+  "globalDomainResult": {
+    "domainRegionsCount": 106,
+    "orderedDomains": [
+      "BatchableContext",
+      "SaveResult",
+      "CsvParser",
+      "Error_Message",
+      "VersionData",
+      "Spend_Import_Batch",
+      "SpendImportBatch",
+      "Classification",
+      "ClassificationResult",
+      "ContentVersion",
+      "BackfillResult",
+      "AccountMetrics",
+      "DmlException",
+      "Lead",
+      "SpendHistory",
+      "HealthCheck",
+      "StandardAccessPolicy",
+      "Cloud_Service",
+      "FilterPanel",
+      "DataImporter",
+      "OrganizationTrigger",
+      "Starting",
+      "Cloud_Spend",
+      "QueryResult",
+      "AppShell",
+      "ErrorPanel",
+      "Cloud_Account",
+      "Contact",
+      "Organization_Budget",
+      "Assert",
+      "SystemAdminApp",
+      "AdminUserAccess",
+      "OrganizationTree",
+      "AggregateSpend",
+      "Organization_Hierarchy",
+      "AdminOrganizations",
+      "HomeOverview",
+      "AdminDataHealth",
+      "AdminForecasts",
+      "AdministrationNav",
+      "FiscalPeriodMapping",
+      "Forecast",
+      "OrganizationHierarchy",
+      "User",
+      "Year",
+      "User_Organization_Role",
+      "Action_Audit",
+      "Cloud_Provider",
+      "CloudSpendTrigger",
+      "Region",
+      "Service",
+      "Spend_Month",
+      "CloudSpend",
+      "SystemAdminAccessPolicy",
+      "Date",
+      "PeriodMapping",
+      "Start_Date",
+      "SpendAnalytics",
+      "AdminSpend",
+      "OrganizationBudget",
+      "AdminSpendExplorer",
+      "Shared",
+      "Fiscal",
+      "AdminAudit",
+      "CloudService",
+      "PermissionSetAssignment",
+      "Fiscal_Period_Mapping",
+      "Spend",
+      "Budget",
+      "AdminBudgets",
+      "Audit",
+      "Profile",
+      "SpendTrackerNav",
+      "AdminCloudAccounts",
+      "AdminUser",
+      "UserOrganizationRole",
+      "TopServicesTable",
+      "SpendTrackerAccessContext",
+      "Organization",
+      "SpendTrackerAuthorization",
+      "PermissionSet",
+      "QueryException",
+      "UserOrganizationRoleTrigger",
+      "BudgetAlert",
+      "Account",
+      "AdminHealth",
+      "ForecastManager",
+      "AdminDataExplorer",
+      "Import",
+      "CloudAccount",
+      "UserContactMapping",
+      "UserManagement",
+      "AdminOverview",
+      "RoleMapping",
+      "UserRole",
+      "SpendImport",
+      "CloudSpendMonthBackfill",
+      "UUID",
+      "ErrorResponse",
+      "AdminFilterPanel",
+      "BusinessDataProvisioning",
+      "Currency",
+      "Email",
+      "PermissionSetGroup",
+      "ProvisioningException",
+      "QueueableContext"
+    ],
+    "domainRegions": [
+      {
+        "domain": "BatchableContext",
+        "xCenter": 180,
+        "xMin": 100,
+        "xMax": 260,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SaveResult",
+        "xCenter": 420,
+        "xMin": 340,
+        "xMax": 500,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "CsvParser",
+        "xCenter": 660,
+        "xMin": 580,
+        "xMax": 740,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Error_Message",
+        "xCenter": 900,
+        "xMin": 820,
+        "xMax": 980,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "VersionData",
+        "xCenter": 1140,
+        "xMin": 1060,
+        "xMax": 1220,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Spend_Import_Batch",
+        "xCenter": 1380,
+        "xMin": 1300,
+        "xMax": 1460,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SpendImportBatch",
+        "xCenter": 1620,
+        "xMin": 1540,
+        "xMax": 1700,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Classification",
+        "xCenter": 1860,
+        "xMin": 1780,
+        "xMax": 1940,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "ClassificationResult",
+        "xCenter": 2100,
+        "xMin": 2020,
+        "xMax": 2180,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "ContentVersion",
+        "xCenter": 2340,
+        "xMin": 2260,
+        "xMax": 2420,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "BackfillResult",
+        "xCenter": 2580,
+        "xMin": 2500,
+        "xMax": 2660,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AccountMetrics",
+        "xCenter": 2820,
+        "xMin": 2740,
+        "xMax": 2900,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "DmlException",
+        "xCenter": 3060,
+        "xMin": 2980,
+        "xMax": 3140,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Lead",
+        "xCenter": 3300,
+        "xMin": 3220,
+        "xMax": 3380,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SpendHistory",
+        "xCenter": 3540,
+        "xMin": 3460,
+        "xMax": 3620,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "HealthCheck",
+        "xCenter": 3780,
+        "xMin": 3700,
+        "xMax": 3860,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "StandardAccessPolicy",
+        "xCenter": 4020,
+        "xMin": 3940,
+        "xMax": 4100,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Cloud_Service",
+        "xCenter": 4260,
+        "xMin": 4180,
+        "xMax": 4340,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "FilterPanel",
+        "xCenter": 4500,
+        "xMin": 4420,
+        "xMax": 4580,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "DataImporter",
+        "xCenter": 4740,
+        "xMin": 4660,
+        "xMax": 4820,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "OrganizationTrigger",
+        "xCenter": 4980,
+        "xMin": 4900,
+        "xMax": 5060,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "Starting",
+        "xCenter": 5220,
+        "xMin": 5140,
+        "xMax": 5300,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Cloud_Spend",
+        "xCenter": 5460,
+        "xMin": 5380,
+        "xMax": 5540,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "QueryResult",
+        "xCenter": 5700,
+        "xMin": 5620,
+        "xMax": 5780,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AppShell",
+        "xCenter": 5940,
+        "xMin": 5860,
+        "xMax": 6020,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "ErrorPanel",
+        "xCenter": 6180,
+        "xMin": 6100,
+        "xMax": 6260,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Cloud_Account",
+        "xCenter": 6420,
+        "xMin": 6340,
+        "xMax": 6500,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Contact",
+        "xCenter": 6660,
+        "xMin": 6580,
+        "xMax": 6740,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Organization_Budget",
+        "xCenter": 6900,
+        "xMin": 6820,
+        "xMax": 6980,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Assert",
+        "xCenter": 7140,
+        "xMin": 7060,
+        "xMax": 7220,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SystemAdminApp",
+        "xCenter": 7380,
+        "xMin": 7300,
+        "xMax": 7460,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminUserAccess",
+        "xCenter": 7618.4,
+        "xMin": 7538.4,
+        "xMax": 7698.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "OrganizationTree",
+        "xCenter": 7858.4,
+        "xMin": 7778.4,
+        "xMax": 7938.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AggregateSpend",
+        "xCenter": 8098.4,
+        "xMin": 8018.4,
+        "xMax": 8178.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Organization_Hierarchy",
+        "xCenter": 8338.4,
+        "xMin": 8258.4,
+        "xMax": 8418.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminOrganizations",
+        "xCenter": 8578.4,
+        "xMin": 8498.4,
+        "xMax": 8658.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "HomeOverview",
+        "xCenter": 8818.4,
+        "xMin": 8738.4,
+        "xMax": 8898.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminDataHealth",
+        "xCenter": 9058.4,
+        "xMin": 8978.4,
+        "xMax": 9138.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminForecasts",
+        "xCenter": 9298.4,
+        "xMin": 9218.4,
+        "xMax": 9378.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdministrationNav",
+        "xCenter": 9538.4,
+        "xMin": 9458.4,
+        "xMax": 9618.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "FiscalPeriodMapping",
+        "xCenter": 9778.4,
+        "xMin": 9698.4,
+        "xMax": 9858.4,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Forecast",
+        "xCenter": 10098.4,
+        "xMin": 9938.4,
+        "xMax": 10258.4,
+        "width": 320,
+        "primaryNodeCount": 5
+      },
+      {
+        "domain": "OrganizationHierarchy",
+        "xCenter": 10418.4,
+        "xMin": 10338.4,
+        "xMax": 10498.4,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "User",
+        "xCenter": 10736.8,
+        "xMin": 10576.8,
+        "xMax": 10896.8,
+        "width": 320,
+        "primaryNodeCount": 4
+      },
+      {
+        "domain": "Year",
+        "xCenter": 11056.8,
+        "xMin": 10976.8,
+        "xMax": 11136.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "User_Organization_Role",
+        "xCenter": 11296.8,
+        "xMin": 11216.8,
+        "xMax": 11376.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Action_Audit",
+        "xCenter": 11536.8,
+        "xMin": 11456.8,
+        "xMax": 11616.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Cloud_Provider",
+        "xCenter": 11776.8,
+        "xMin": 11696.8,
+        "xMax": 11856.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "CloudSpendTrigger",
+        "xCenter": 12016.8,
+        "xMin": 11936.8,
+        "xMax": 12096.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Region",
+        "xCenter": 12256.8,
+        "xMin": 12176.8,
+        "xMax": 12336.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Service",
+        "xCenter": 12496.8,
+        "xMin": 12416.8,
+        "xMax": 12576.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Spend_Month",
+        "xCenter": 12736.8,
+        "xMin": 12656.8,
+        "xMax": 12816.8,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "CloudSpend",
+        "xCenter": 13055.199999999999,
+        "xMin": 12895.199999999999,
+        "xMax": 13215.199999999999,
+        "width": 320,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "SystemAdminAccessPolicy",
+        "xCenter": 13375.199999999999,
+        "xMin": 13295.199999999999,
+        "xMax": 13455.199999999999,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "Date",
+        "xCenter": 13615.199999999999,
+        "xMin": 13535.199999999999,
+        "xMax": 13695.199999999999,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "PeriodMapping",
+        "xCenter": 13855.199999999999,
+        "xMin": 13775.199999999999,
+        "xMax": 13935.199999999999,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Start_Date",
+        "xCenter": 14095.199999999999,
+        "xMin": 14015.199999999999,
+        "xMax": 14175.199999999999,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SpendAnalytics",
+        "xCenter": 14335.199999999999,
+        "xMin": 14255.199999999999,
+        "xMax": 14415.199999999999,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "AdminSpend",
+        "xCenter": 14575.199999999999,
+        "xMin": 14495.199999999999,
+        "xMax": 14655.199999999999,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "OrganizationBudget",
+        "xCenter": 14815.199999999999,
+        "xMin": 14735.199999999999,
+        "xMax": 14895.199999999999,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminSpendExplorer",
+        "xCenter": 15055.199999999999,
+        "xMin": 14975.199999999999,
+        "xMax": 15135.199999999999,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Shared",
+        "xCenter": 15535.199999999999,
+        "xMin": 15215.199999999999,
+        "xMax": 15855.199999999999,
+        "width": 640,
+        "primaryNodeCount": 10
+      },
+      {
+        "domain": "Fiscal",
+        "xCenter": 16095.199999999999,
+        "xMin": 15935.199999999999,
+        "xMax": 16255.199999999999,
+        "width": 320,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "AdminAudit",
+        "xCenter": 16415.199999999997,
+        "xMin": 16335.199999999999,
+        "xMax": 16495.199999999997,
+        "width": 160,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "CloudService",
+        "xCenter": 16655.199999999997,
+        "xMin": 16575.199999999997,
+        "xMax": 16735.199999999997,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "PermissionSetAssignment",
+        "xCenter": 16895.199999999997,
+        "xMin": 16815.199999999997,
+        "xMax": 16975.199999999997,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Fiscal_Period_Mapping",
+        "xCenter": 17135.199999999997,
+        "xMin": 17055.199999999997,
+        "xMax": 17215.199999999997,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Spend",
+        "xCenter": 17455.199999999997,
+        "xMin": 17295.199999999997,
+        "xMax": 17615.199999999997,
+        "width": 320,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "Budget",
+        "xCenter": 17855.199999999997,
+        "xMin": 17695.199999999997,
+        "xMax": 18015.199999999997,
+        "width": 320,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "AdminBudgets",
+        "xCenter": 18173.6,
+        "xMin": 18093.6,
+        "xMax": 18253.6,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Audit",
+        "xCenter": 18413.6,
+        "xMin": 18333.6,
+        "xMax": 18493.6,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Profile",
+        "xCenter": 18653.6,
+        "xMin": 18573.6,
+        "xMax": 18733.6,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SpendTrackerNav",
+        "xCenter": 18893.6,
+        "xMin": 18813.6,
+        "xMax": 18973.6,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminCloudAccounts",
+        "xCenter": 19133.6,
+        "xMin": 19053.6,
+        "xMax": 19213.6,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminUser",
+        "xCenter": 19373.6,
+        "xMin": 19293.6,
+        "xMax": 19453.6,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "UserOrganizationRole",
+        "xCenter": 19612,
+        "xMin": 19532,
+        "xMax": 19692,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "TopServicesTable",
+        "xCenter": 19852,
+        "xMin": 19772,
+        "xMax": 19932,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SpendTrackerAccessContext",
+        "xCenter": 20092,
+        "xMin": 20012,
+        "xMax": 20172,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "Organization",
+        "xCenter": 20490.4,
+        "xMin": 20250.4,
+        "xMax": 20730.4,
+        "width": 480,
+        "primaryNodeCount": 5
+      },
+      {
+        "domain": "SpendTrackerAuthorization",
+        "xCenter": 20888.800000000003,
+        "xMin": 20808.800000000003,
+        "xMax": 20968.800000000003,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "PermissionSet",
+        "xCenter": 21128.800000000003,
+        "xMin": 21048.800000000003,
+        "xMax": 21208.800000000003,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "QueryException",
+        "xCenter": 21368.800000000003,
+        "xMin": 21288.800000000003,
+        "xMax": 21448.800000000003,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "UserOrganizationRoleTrigger",
+        "xCenter": 21608.800000000003,
+        "xMin": 21528.800000000003,
+        "xMax": 21688.800000000003,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "BudgetAlert",
+        "xCenter": 21928.800000000003,
+        "xMin": 21768.800000000003,
+        "xMax": 22088.800000000003,
+        "width": 320,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "Account",
+        "xCenter": 22400.800000000003,
+        "xMin": 22160.800000000003,
+        "xMax": 22640.800000000003,
+        "width": 480,
+        "primaryNodeCount": 5
+      },
+      {
+        "domain": "AdminHealth",
+        "xCenter": 22796.000000000004,
+        "xMin": 22716.000000000004,
+        "xMax": 22876.000000000004,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "ForecastManager",
+        "xCenter": 23036.000000000004,
+        "xMin": 22956.000000000004,
+        "xMax": 23116.000000000004,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminDataExplorer",
+        "xCenter": 23276.000000000004,
+        "xMin": 23196.000000000004,
+        "xMax": 23356.000000000004,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "Import",
+        "xCenter": 23596.000000000004,
+        "xMin": 23436.000000000004,
+        "xMax": 23756.000000000004,
+        "width": 320,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "CloudAccount",
+        "xCenter": 23994.400000000005,
+        "xMin": 23834.400000000005,
+        "xMax": 24154.400000000005,
+        "width": 320,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "UserContactMapping",
+        "xCenter": 24314.400000000005,
+        "xMin": 24234.400000000005,
+        "xMax": 24394.400000000005,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "UserManagement",
+        "xCenter": 24634.400000000005,
+        "xMin": 24474.400000000005,
+        "xMax": 24794.400000000005,
+        "width": 320,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "AdminOverview",
+        "xCenter": 24954.400000000005,
+        "xMin": 24874.400000000005,
+        "xMax": 25034.400000000005,
+        "width": 160,
+        "primaryNodeCount": 3
+      },
+      {
+        "domain": "RoleMapping",
+        "xCenter": 25194.400000000005,
+        "xMin": 25114.400000000005,
+        "xMax": 25274.400000000005,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "UserRole",
+        "xCenter": 25434.400000000005,
+        "xMin": 25354.400000000005,
+        "xMax": 25514.400000000005,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "SpendImport",
+        "xCenter": 25674.400000000005,
+        "xMin": 25594.400000000005,
+        "xMax": 25754.400000000005,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "CloudSpendMonthBackfill",
+        "xCenter": 25914.400000000005,
+        "xMin": 25834.400000000005,
+        "xMax": 25994.400000000005,
+        "width": 160,
+        "primaryNodeCount": 2
+      },
+      {
+        "domain": "UUID",
+        "xCenter": 26154.400000000005,
+        "xMin": 26074.400000000005,
+        "xMax": 26234.400000000005,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "ErrorResponse",
+        "xCenter": 26392.800000000007,
+        "xMin": 26312.800000000007,
+        "xMax": 26472.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "AdminFilterPanel",
+        "xCenter": 26632.800000000007,
+        "xMin": 26552.800000000007,
+        "xMax": 26712.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "BusinessDataProvisioning",
+        "xCenter": 26872.800000000007,
+        "xMin": 26792.800000000007,
+        "xMax": 26952.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Currency",
+        "xCenter": 27112.800000000007,
+        "xMin": 27032.800000000007,
+        "xMax": 27192.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "Email",
+        "xCenter": 27352.800000000007,
+        "xMin": 27272.800000000007,
+        "xMax": 27432.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "PermissionSetGroup",
+        "xCenter": 27592.800000000007,
+        "xMin": 27512.800000000007,
+        "xMax": 27672.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "ProvisioningException",
+        "xCenter": 27832.800000000007,
+        "xMin": 27752.800000000007,
+        "xMax": 27912.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      },
+      {
+        "domain": "QueueableContext",
+        "xCenter": 28072.800000000007,
+        "xMin": 27992.800000000007,
+        "xMax": 28152.800000000007,
+        "width": 160,
+        "primaryNodeCount": 1
+      }
+    ]
+  }
+}
