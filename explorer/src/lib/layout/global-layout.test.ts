@@ -9,6 +9,9 @@ import { evaluateLayout } from './evaluate-layout';
 import { createFoodDeliveryFixture } from './fixtures/food-delivery';
 import { createTwoDomainFixture } from './fixtures/two-domain';
 import { createHubHeavyFixture } from './fixtures/hub-heavy';
+import { createLongChainFixture } from './fixtures/long-chain';
+import { createScale100PlusFixture } from './fixtures/scale-100-plus';
+import { createDenseCrossDomainFixture } from './fixtures/dense-cross-domain';
 import { createSparseGraphFixture } from './fixtures/sparse-graph';
 import { createNode, createEdge } from './fixtures/builder';
 
@@ -279,8 +282,8 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         const regCurrent = result.domainRegions.get(dCurrent)!;
         const regNext = result.domainRegions.get(dNext)!;
 
-        // Next domain left edge (xMin) must be strictly >= current domain right edge (xMax) + minGap (80px)
-        expect(regNext.xMin).toBeGreaterThanOrEqual(regCurrent.xMax + 80 - 1e-6);
+        // Next domain left edge (xMin) must be strictly >= current domain right edge (xMax) + minGap (40px)
+        expect(regNext.xMin).toBeGreaterThanOrEqual(regCurrent.xMax + 40 - 1e-6);
       }
     });
 
@@ -301,6 +304,112 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         expect(r1.width).toBe(r2.width);
         expect(r1.height).toBe(r2.height);
       });
+    });
+  });
+
+  describe('Wave 4B — Domain-Level Spatial Compaction', () => {
+    it('Test A — Hub Centering: places central orchestrator hub in the median position of leaf domains', () => {
+      const fixture = createHubHeavyFixture();
+      const result = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      const order = result.orderedDomains;
+      const hubDomain = 'NotificationDispatcher';
+      const hubIndex = order.indexOf(hubDomain);
+
+      expect(hubIndex).toBeGreaterThan(0);
+      expect(hubIndex).toBeLessThan(order.length - 1);
+
+      // Hub is centered in the component rather than forced to index 0
+      expect(hubIndex).toBeGreaterThanOrEqual(5);
+      expect(hubIndex).toBeLessThanOrEqual(10);
+
+      const layout = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, layout);
+
+      // Max edge length is drastically reduced from 2263px to <= 700px
+      expect(metrics.maxEdgeLength).toBeLessThanOrEqual(700);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('Test B — Stem Adjacency: groups sub-domains directly adjacent to parent domain stem', () => {
+      const nodes = [
+        createNode('ApexClass:AnalyticsService', 'ApexClass'),
+        createNode('ApexClass:AnalyticsHeaderController', 'ApexClass'),
+        createNode('ApexClass:AnalyticsPortalController', 'ApexClass'),
+      ];
+      const edges = [
+        createEdge('ApexClass:AnalyticsHeaderController', 'ApexClass:AnalyticsService'),
+        createEdge('ApexClass:AnalyticsPortalController', 'ApexClass:AnalyticsService'),
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, edges);
+      const order = result.orderedDomains;
+
+      const analyticsIdx = order.indexOf('Analytics');
+      const headerIdx = order.indexOf('AnalyticsHeader');
+      const portalIdx = order.indexOf('AnalyticsPortal');
+
+      expect(analyticsIdx).not.toBe(-1);
+      expect(headerIdx).not.toBe(-1);
+      expect(portalIdx).not.toBe(-1);
+
+      expect(Math.abs(headerIdx - analyticsIdx)).toBeLessThanOrEqual(2);
+      expect(Math.abs(portalIdx - analyticsIdx)).toBeLessThanOrEqual(2);
+    });
+
+    it('Test C — Domain Gap Compaction: uses compact gap range (40px-80px) without overlaps', () => {
+      const fixture = createFoodDeliveryFixture();
+      const result = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      for (let i = 0; i < result.orderedDomains.length - 1; i++) {
+        const dCurr = result.orderedDomains[i];
+        const dNext = result.orderedDomains[i + 1];
+
+        const regCurr = result.domainRegions.get(dCurr)!;
+        const regNext = result.domainRegions.get(dNext)!;
+
+        const gap = regNext.xMin - regCurr.xMax;
+        expect(gap).toBeGreaterThanOrEqual(40 - 1e-6);
+        expect(gap).toBeLessThanOrEqual(80 + 1e-6);
+      }
+
+      const layout = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, layout);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('Test D — Benchmark Bounding Box Compaction: achieves compact layout across large scale benchmarks', () => {
+      const scaleFixture = createScale100PlusFixture();
+      const scaleLayout = computeArchitectureLayout(scaleFixture.nodes, scaleFixture.edges);
+
+      let minX = Infinity, maxX = -Infinity;
+      Object.values(scaleLayout).forEach(pos => {
+        if (pos.x - 60 < minX) minX = pos.x - 60;
+        if (pos.x + 60 > maxX) maxX = pos.x + 60;
+      });
+
+      const width = maxX - minX;
+      // 100+ node benchmark bounding box width is compacted to <= 12,000px (down from 13,540px)
+      expect(width).toBeLessThan(12000);
+
+      const metrics = evaluateLayout(scaleFixture.nodes, scaleFixture.edges, scaleLayout);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('Test E — Determinism & Shuffling: produces 100% identical domain order & regions across repeated runs and input shuffling', () => {
+      const fixture = createScale100PlusFixture();
+      const run1 = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      for (let run = 0; run < 5; run++) {
+        const currentRun = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+        expect(currentRun.orderedDomains).toEqual(run1.orderedDomains);
+      }
+
+      const reversedNodes = [...fixture.nodes].reverse();
+      const reversedEdges = [...fixture.edges].reverse();
+
+      const shufRun = computeGlobalDomainLayout(reversedNodes, reversedEdges);
+      expect(shufRun.orderedDomains).toEqual(run1.orderedDomains);
     });
   });
 

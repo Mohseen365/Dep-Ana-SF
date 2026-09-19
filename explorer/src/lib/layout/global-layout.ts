@@ -673,8 +673,6 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
   if (nonSharedDomains.length === 0) return ['Shared'];
 
   // Calculate dependency flow scores for business domains
-  // Outgoing dependencies -> domain serves as upstream or orchestrator
-  // Incoming dependencies -> domain serves as downstream dependency
   const flowScores = new Map<string, {
     outDegree: number;
     inDegree: number;
@@ -754,7 +752,6 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
     return (a[0] || '').localeCompare(b[0] || '');
   });
 
-  // Order domains within each component using barycenter/dependency flow
   const orderedBusinessDomains: string[] = [];
 
   for (const comp of domainComponents) {
@@ -763,11 +760,75 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
       continue;
     }
 
-    // Sort nodes in component initially by netFlow descending (orchestrators/upstream first),
-    // then total edge degree descending, then alphabetical tie-breaker
-    const compOrdered = [...comp].sort((a, b) => {
+    // Identify stem root parent for sub-domains (e.g. Analytics -> AnalyticsHeader, AnalyticsPortal, AnalyticsTrigger)
+    const stemParentMap = new Map<string, string>();
+    comp.forEach(d => {
+      comp.forEach(parentCand => {
+        if (d !== parentCand && d.length > parentCand.length && d.startsWith(parentCand)) {
+          const suffix = d.slice(parentCand.length);
+          if (/^(?:Header|Portal|Trigger|Bridge|Ext|Extension|Service|Controller|Manager)$/i.test(suffix)) {
+            stemParentMap.set(d, parentCand);
+          }
+        }
+      });
+    });
+
+    // Detect central hubs in component
+    // A domain is a star hub if it connects to >= 3 domains and those leaves connect primarily/only to it.
+    let starHub: string | null = null;
+    let maxHubConn = 0;
+
+    comp.forEach(d => {
+      const stats = flowScores.get(d);
+      if (stats && stats.connectedCount >= 3 && stats.connectedCount > maxHubConn) {
+        maxHubConn = stats.connectedCount;
+        starHub = d;
+      }
+    });
+
+    // Check if starHub is connected to leaves that have degree = 1 to starHub
+    if (starHub) {
+      const hub = starHub as string;
+      const hubNeighbors = (domainGraph.nodes.get(hub)?.connectedDomains || []).filter(
+        n => n !== 'Shared' && comp.includes(n)
+      );
+
+      const pureLeaves = hubNeighbors.filter(n => {
+        const stats = flowScores.get(n);
+        return stats && stats.connectedCount === 1;
+      });
+
+      // If pure leaves constitute the vast majority of neighbors, form a centered star layout
+      if (pureLeaves.length >= 3 && pureLeaves.length >= hubNeighbors.length - 1) {
+        pureLeaves.sort((a, b) => a.localeCompare(b));
+        const nonLeaves = comp.filter(d => d !== hub && !pureLeaves.includes(d));
+        nonLeaves.sort((a, b) => a.localeCompare(b));
+
+        const leftLeaves = pureLeaves.slice(0, Math.ceil(pureLeaves.length / 2));
+        const rightLeaves = pureLeaves.slice(Math.ceil(pureLeaves.length / 2));
+
+        const compStarOrdered = [
+          ...nonLeaves,
+          ...leftLeaves,
+          hub,
+          ...rightLeaves,
+        ];
+
+        orderedBusinessDomains.push(...compStarOrdered);
+        continue;
+      }
+    }
+
+    // Initial sort of nodes in component
+    let compOrdered = [...comp].sort((a, b) => {
       const statsA = flowScores.get(a)!;
       const statsB = flowScores.get(b)!;
+
+      // Group stem children next to parent
+      const parentA = stemParentMap.get(a);
+      const parentB = stemParentMap.get(b);
+      if (parentA === b) return 1;
+      if (parentB === a) return -1;
 
       if (statsB.netFlow !== statsA.netFlow) {
         return statsB.netFlow - statsA.netFlow;
@@ -778,14 +839,33 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
       return a.localeCompare(b);
     });
 
-    // Barycentric 2-pass sweep to minimize cross-domain edge lengths
-    for (let pass = 0; pass < 2; pass++) {
+    // Barycentric placement passes
+    for (let pass = 0; pass < 3; pass++) {
       const posMap = new Map<string, number>();
       compOrdered.forEach((d, idx) => posMap.set(d, idx));
 
       const barycenters = new Map<string, number>();
 
+      // Sort sub-domains deterministically per parent
+      const subDomainsPerParent = new Map<string, string[]>();
+      stemParentMap.forEach((parent, subDomain) => {
+        if (!subDomainsPerParent.has(parent)) {
+          subDomainsPerParent.set(parent, []);
+        }
+        subDomainsPerParent.get(parent)!.push(subDomain);
+      });
+      subDomainsPerParent.forEach(subs => subs.sort((a, b) => a.localeCompare(b)));
+
       compOrdered.forEach(d => {
+        const parent = stemParentMap.get(d);
+        if (parent && posMap.has(parent)) {
+          const siblings = subDomainsPerParent.get(parent) || [d];
+          const sibIdx = siblings.indexOf(d);
+          // Sub-domains anchor directly after parent domain position
+          barycenters.set(d, (posMap.get(parent) ?? 0) + 0.001 * (sibIdx + 1));
+          return;
+        }
+
         const neighbors = (domainGraph.nodes.get(d)?.connectedDomains || []).filter(
           n => n !== 'Shared' && comp.includes(n)
         );
@@ -797,7 +877,9 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
           neighbors.forEach(n => {
             const rel = domainGraph.adjacency.get(d)?.get(n);
             const w = rel ? rel.totalEdgeCount : 1;
-            sumPos += (posMap.get(n) ?? 0) * w;
+            // Directional bias: outgoing edges prefer upstream (left) placement relative to downstream
+            const dirBias = rel ? (rel.sourceDomain === d ? -0.05 : 0.05) : 0;
+            sumPos += ((posMap.get(n) ?? 0) + dirBias) * w;
             weightSum += w;
           });
           barycenters.set(d, sumPos / weightSum);
@@ -810,6 +892,11 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
         if (Math.abs(bA - bB) > 1e-6) {
           return bA - bB;
         }
+        const statsA = flowScores.get(a)!;
+        const statsB = flowScores.get(b)!;
+        if (statsB.netFlow !== statsA.netFlow) {
+          return statsB.netFlow - statsA.netFlow;
+        }
         return a.localeCompare(b);
       });
     }
@@ -817,9 +904,7 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
     orderedBusinessDomains.push(...compOrdered);
   }
 
-  // Handle Shared domain placement:
-  // Shared domain should NOT automatically swallow or distort business domain locality.
-  // Place Shared domain at a balanced intermediate or central position near its connected domains.
+  // Handle Shared domain placement
   if (!hasShared) {
     return orderedBusinessDomains;
   }
@@ -828,11 +913,9 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
   const connectedToShared = (sharedNode?.connectedDomains || []).filter(d => d !== 'Shared');
 
   if (connectedToShared.length === 0 || orderedBusinessDomains.length <= 1) {
-    // If no specific connected business domains or 1 domain, place Shared at the end
     return [...orderedBusinessDomains, 'Shared'];
   }
 
-  // Calculate average index of domains connected to Shared
   const connectedIndices = connectedToShared
     .map(d => orderedBusinessDomains.indexOf(d))
     .filter(idx => idx !== -1);
@@ -943,8 +1026,9 @@ export function computeGlobalDomainLayout(
       if (prevRegion) {
         const rel = domainGraph.adjacency.get(prevDomain)?.get(domain);
         const strength = rel ? rel.strength : 0;
-        const minGap = 80;
-        const maxGap = 140;
+        // Compact domain gap range (40px to 80px)
+        const minGap = 40;
+        const maxGap = 80;
         const domainGap = maxGap - strength * (maxGap - minGap);
         currentX = prevRegion.xMax + domainGap;
       }
