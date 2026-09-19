@@ -8,6 +8,9 @@ import {
   calculateBridgeCandidatePosition,
   calculateHubCandidatePosition,
 } from './centrality';
+import { computeArchitectureLayout } from '../architecture-layout';
+import { evaluateLayout } from './evaluate-layout';
+import { createBridgeHeavyFixture } from './fixtures/bridge-heavy';
 
 function makeMockNode(
   id: string,
@@ -40,7 +43,7 @@ function makeMockNode(
   };
 }
 
-describe('Centrality Intelligence Engine (Wave 3B)', () => {
+describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
   describe('Hub Analysis & Classification', () => {
     it('1. High fan-in hub: correctly identifies fan-in hub type and score', () => {
       const { hubScore, isHub, hubType } = computeNodeHubMetrics(10, 1, 2.0, 3.5);
@@ -261,7 +264,6 @@ describe('Centrality Intelligence Engine (Wave 3B)', () => {
 
   describe('Intermediate-Domain Trap Avoidance & Placement Candidate', () => {
     it('9. Intermediate-domain trap: detects trap when midpoint falls inside unconnected Domain B and applies corridor offset', () => {
-      // Domain A at X=0, Domain B at X=380, Domain C at X=760
       const domainXCenters = {
         DomainA: 0,
         DomainB: 380,
@@ -274,7 +276,6 @@ describe('Centrality Intelligence Engine (Wave 3B)', () => {
         DomainC: { minX: 660, maxX: 860 },
       };
 
-      // Bridge connects Domain A and Domain C (arithmetic midpoint = (0 + 760)/2 = 380, inside Domain B!)
       const connectedDomains = ['DomainA', 'DomainC'];
       const neighborPositions = {};
 
@@ -290,7 +291,6 @@ describe('Centrality Intelligence Engine (Wave 3B)', () => {
 
       expect(placement.hasIntermediateTrap).toBe(true);
       expect(placement.trapDomainId).toBe('DomainB');
-      // Verify candidate Y is shifted into inter-layer corridor (baseY = 350, offset = 112.5 => Y = 237.5)
       expect(placement.candidatePosition.y).toBeLessThan(350);
       expect(placement.candidatePosition.x).toBe(380);
     });
@@ -321,7 +321,61 @@ describe('Centrality Intelligence Engine (Wave 3B)', () => {
     });
   });
 
-  describe('Determinism Guarantees', () => {
+  describe('WAVE 8B — Multi-Bridge Separation & Determinism', () => {
+    it('places multiple bridge nodes connecting the same domain pair at distinct non-overlapping coordinates', () => {
+      const domainXCenters = {
+        OrderDomain: 100,
+        PaymentDomain: 900,
+      };
+
+      const domainBounds = {
+        OrderDomain: { minX: 0, maxX: 200 },
+        PaymentDomain: { minX: 800, maxX: 1000 },
+      };
+
+      const connectedDomains = ['OrderDomain', 'PaymentDomain'];
+
+      const bridge1 = calculateBridgeCandidatePosition(
+        'BridgeA',
+        'application',
+        connectedDomains,
+        domainXCenters,
+        domainBounds,
+        {},
+        { nodeWidth: 120, nodeHeight: 60 }
+      );
+
+      const allocatedPositions = { BridgeA: bridge1.candidatePosition };
+
+      const bridge2 = calculateBridgeCandidatePosition(
+        'BridgeB',
+        'application',
+        connectedDomains,
+        domainXCenters,
+        domainBounds,
+        {},
+        { nodeWidth: 120, nodeHeight: 60, allocatedPositions }
+      );
+
+      // Verify BridgeA and BridgeB receive distinct coordinates with sufficient clearance
+      expect(bridge1.candidatePosition).not.toEqual(bridge2.candidatePosition);
+      const dx = Math.abs(bridge1.candidatePosition.x - bridge2.candidatePosition.x);
+      const dy = Math.abs(bridge1.candidatePosition.y - bridge2.candidatePosition.y);
+      expect(dx >= 120 || dy >= 60).toBe(true);
+    });
+
+    it('FIND-7C-03 Remediation: Bridge-Heavy fixture layout achieves nodeOverlapCount === 0', () => {
+      const fixture = createBridgeHeavyFixture();
+      const positions = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, positions);
+
+      expect(metrics.nodeOverlapCount).toBe(0);
+      Object.values(positions).forEach(p => {
+        expect(Number.isFinite(p.x)).toBe(true);
+        expect(Number.isFinite(p.y)).toBe(true);
+      });
+    });
+
     it('10. Determinism: produces identical results across repeated executions regardless of input order', () => {
       const nodes = [
         makeMockNode('A_Node'),
@@ -352,7 +406,6 @@ describe('Centrality Intelligence Engine (Wave 3B)', () => {
 
       const result1 = computeGraphCentralityAnalysis(nodes, edges, domainMap1, layerMap1);
 
-      // Shuffle nodes and edges order
       const shuffledNodes = [...nodes].reverse();
       const shuffledEdges = [...edges].reverse();
 
