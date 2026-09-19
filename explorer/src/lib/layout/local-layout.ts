@@ -21,6 +21,8 @@ export interface LocalLayoutOptions {
   baseY?: number;
   /** Domain region horizontal center-to-center spacing offset fallback (default: 380) */
   domainSpacing?: number;
+  /** Dynamic base Y offsets per architectural layer calculated by Wave 2B global layout */
+  layerYMap?: Record<ArchitectureLayer, number>;
 }
 
 export interface LocalBucketLayout {
@@ -308,7 +310,7 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       }
 
       const domainXCenter = domainXCenterMap.get(domain) ?? (baseX + domainSpacing / 2);
-      const layerBaseY = LAYER_Y_BASE[layer];
+      const layerBaseY = (options.layerYMap && options.layerYMap[layer]) ?? LAYER_Y_BASE[layer];
 
       // Relationship-Aware Local Tier Assignment
       // Group nodes into local tiers (rows):
