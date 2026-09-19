@@ -75,13 +75,35 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
         });
       }
     }),
-    layout: vi.fn().mockReturnValue({ run: mockLayoutRun }),
+    layout: vi.fn().mockImplementation((opts) => ({
+      run: vi.fn().mockImplementation(() => {
+        mockLayoutRun(opts);
+        if (opts?.positions) {
+          Object.values(mockNodeObjMap).forEach((node: any) => {
+            const newPos = typeof opts.positions === 'function' ? opts.positions(node) : opts.positions[node.id()];
+            if (newPos) {
+              node.position(newPos);
+            }
+          });
+        }
+        const stopHandlers = listeners['layoutstop'] || [];
+        listeners['layoutstop'] = [];
+        stopHandlers.forEach((handler) => handler({ type: 'layoutstop' }));
+      })
+    })),
     batch: vi.fn((fn: () => void) => fn()),
     on: vi.fn((event, targetOrHandler, maybeHandler) => {
       const handler = typeof targetOrHandler === 'function' ? targetOrHandler : maybeHandler;
       const key = typeof targetOrHandler === 'string' ? `${event}:${targetOrHandler}` : event;
       if (!listeners[key]) listeners[key] = [];
       listeners[key].push(handler);
+    }),
+    off: vi.fn((event, targetOrHandler, maybeHandler) => {
+      const handler = typeof targetOrHandler === 'function' ? targetOrHandler : maybeHandler;
+      const key = typeof targetOrHandler === 'string' ? `${event}:${targetOrHandler}` : event;
+      if (listeners[key]) {
+        listeners[key] = listeners[key].filter((h) => h !== handler);
+      }
     }),
     one: vi.fn((event, handler) => {
       if (!listeners[event]) listeners[event] = [];

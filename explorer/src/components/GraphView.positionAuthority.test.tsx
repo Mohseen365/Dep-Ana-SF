@@ -75,13 +75,35 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
         });
       }
     }),
-    layout: vi.fn().mockReturnValue({ run: mockLayoutRun }),
+    layout: vi.fn().mockImplementation((opts) => ({
+      run: vi.fn().mockImplementation(() => {
+        mockLayoutRun(opts);
+        if (opts?.positions) {
+          Object.values(mockNodeObjMap).forEach((node: any) => {
+            const newPos = typeof opts.positions === 'function' ? opts.positions(node) : opts.positions[node.id()];
+            if (newPos) {
+              node.position(newPos);
+            }
+          });
+        }
+        const stopHandlers = listeners['layoutstop'] || [];
+        listeners['layoutstop'] = [];
+        stopHandlers.forEach((handler) => handler({ type: 'layoutstop' }));
+      })
+    })),
     batch: vi.fn((fn: () => void) => fn()),
     on: vi.fn((event, targetOrHandler, maybeHandler) => {
       const handler = typeof targetOrHandler === 'function' ? targetOrHandler : maybeHandler;
       const key = typeof targetOrHandler === 'string' ? `${event}:${targetOrHandler}` : event;
       if (!listeners[key]) listeners[key] = [];
       listeners[key].push(handler);
+    }),
+    off: vi.fn((event, targetOrHandler, maybeHandler) => {
+      const handler = typeof targetOrHandler === 'function' ? targetOrHandler : maybeHandler;
+      const key = typeof targetOrHandler === 'string' ? `${event}:${targetOrHandler}` : event;
+      if (listeners[key]) {
+        listeners[key] = listeners[key].filter((h) => h !== handler);
+      }
     }),
     one: vi.fn((event, handler) => {
       if (!listeners[event]) listeners[event] = [];
@@ -832,6 +854,222 @@ describe('GraphView Position Authority & Layout Policy', () => {
       fireEvent.click(resetBtn);
 
       expect(mockLayoutRun).toHaveBeenCalled();
+    });
+  });
+
+  describe('Wave 8A — Position Authority Remediation Tests', () => {
+    it('1. Animated reset waits for layout completion before persisting final coordinates (does not persist pre-animation coordinates)', () => {
+      const onNodePositionsChange = vi.fn();
+
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Trigger reset layout
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+      fireEvent.click(resetBtn);
+
+      // Verify that onNodePositionsChange was invoked on layoutstop completion with final coordinates
+      expect(onNodePositionsChange).toHaveBeenCalled();
+      const persistedCall = onNodePositionsChange.mock.calls[0][0];
+      expect(persistedCall['node-1']).toBeDefined();
+      expect(typeof persistedCall['node-1'].x).toBe('number');
+      expect(typeof persistedCall['node-1'].y).toBe('number');
+    });
+
+    it('2. Repeated animated resets do not leak event listeners', () => {
+      const onNodePositionsChange = vi.fn();
+
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+
+      // Click reset layout 3 times rapidly
+      fireEvent.click(resetBtn);
+      fireEvent.click(resetBtn);
+      fireEvent.click(resetBtn);
+
+      // Verify that layoutstop listeners were cleaned up and did not multiply
+      const stopListeners = listeners['layoutstop'] || [];
+      expect(stopListeners.length).toBeLessThanOrEqual(1);
+    });
+
+    it('3. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag', () => {
+      const initialPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={initialPositions}
+          layoutMode="static"
+        />
+      );
+
+      // Verify initial position
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 100 });
+
+      // Parent updates nodePositions externally (e.g. project reset or external state update) WITHOUT user drag
+      const updatedPositions = {
+        'node-1': { x: 500, y: 500 },
+        'node-2': { x: 600, y: 600 },
+      };
+
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={updatedPositions}
+          layoutMode="static"
+        />
+      );
+
+      // Because node-1 was NOT dragged, Level 2 external update MUST take effect!
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 600, y: 600 });
+    });
+
+    it('4. Negative Test 2: Explicit user drag STILL beats conflicting external persisted position update', () => {
+      const onNodePositionsChange = vi.fn();
+      const initialPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={initialPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // User explicitly drags node-1 to (800, 800)
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 800, y: 800 });
+
+      const dragHandler = listeners['dragfree:node']?.[0];
+      act(() => {
+        dragHandler({ target: n1 });
+      });
+
+      // Verify dragged position
+      expect(n1.position()).toEqual({ x: 800, y: 800 });
+
+      // Parent re-renders with a conflicting external nodePositions prop { 'node-1': { x: 300, y: 300 } }
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 300, y: 300 }, 'node-2': { x: 200, y: 200 } }}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // Explicit drag session (Level 1) MUST continue to win over conflicting Level 2 prop update!
+      expect(n1.position()).toEqual({ x: 800, y: 800 });
+    });
+
+    it('5. New node placement is immediately persisted to parent via onNodePositionsChange', () => {
+      const onNodePositionsChange = vi.fn();
+      const initialPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={initialPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      const newNode: ExplorerNode = {
+        id: 'node-3',
+        displayName: 'Node 3',
+        type: 'ApexClass',
+        file: 'Node3.cls',
+        metrics: { fanIn: 1, fanOut: 0, coupling: 0.1, unresolved: 0, score: 90 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
+      };
+
+      // Add new node-3
+      rerender(
+        <GraphView
+          nodes={[...testNodes, newNode]}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={initialPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // onNodePositionsChange MUST have been called with new node position
+      expect(onNodePositionsChange).toHaveBeenCalled();
+      const updatedPositions = onNodePositionsChange.mock.calls[0][0];
+      expect(updatedPositions['node-3']).toBeDefined();
+      expect(typeof updatedPositions['node-3'].x).toBe('number');
+      expect(typeof updatedPositions['node-3'].y).toBe('number');
     });
   });
 });
