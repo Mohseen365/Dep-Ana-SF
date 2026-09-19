@@ -1,13 +1,13 @@
 {
-  "id": "movie",
-  "name": "movie",
+  "id": "movie-app",
+  "name": "Movie App",
   "description": "Salesforce DX Architecture Analysis",
-  "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Movie-App\\force-app\\main\\default",
-  "createdAt": "2026-09-18T16:02:48.156Z",
-  "updatedAt": "2026-09-18T16:02:48.156Z",
-  "lastAnalyzedAt": "2026-09-18T16:02:48.156Z",
+  "sourcePath": "force-app/main/default",
+  "createdAt": "2026-09-19T09:46:59.825Z",
+  "updatedAt": "2026-09-19T09:46:59.825Z",
+  "lastAnalyzedAt": "2026-09-19T09:46:59.825Z",
   "analysisStatus": "COMPLETE",
-  "componentCount": 9,
-  "dependencyCount": 16,
-  "analysisPath": "/projects/movie/explorer-data.json"
+  "componentCount": 1,
+  "dependencyCount": 0,
+  "analysisPath": "/projects/movie-app/explorer-data.json"
 }
