@@ -4,12 +4,12 @@
     "nodeCount": 240,
     "edgeCount": 1024,
     "domainCount": 106,
-    "timestamp": "2026-09-19T18:32:18.751Z"
+    "timestamp": "2026-09-19T19:04:07.333Z"
   },
   "performanceTimingsMs": {
-    "analysis": "26.87",
-    "layout": "496.29",
-    "total": "523.16"
+    "analysis": "34.58",
+    "layout": "614.50",
+    "total": "649.08"
   },
   "pipelineStagesSnapshots": [
     {
@@ -43,8 +43,8 @@
       "stage": "Stage 9: Satellite Placement",
       "nodeCount": 240,
       "width": 9996.27,
-      "height": 1480,
-      "aspectRatio": "6.75",
+      "height": 1280,
+      "aspectRatio": "7.81",
       "overlaps": 47,
       "maxEdgeLength": "5467.3"
     },
@@ -52,8 +52,8 @@
       "stage": "Stage 10: Component Packing",
       "nodeCount": 240,
       "width": 12136.27,
-      "height": 1640,
-      "aspectRatio": "7.40",
+      "height": 1440,
+      "aspectRatio": "8.43",
       "overlaps": 45,
       "maxEdgeLength": "5467.3"
     },
@@ -61,9 +61,9 @@
       "stage": "Stage 11: Final Spacing Cleanup",
       "nodeCount": 240,
       "width": 12136.27,
-      "height": 1640,
-      "aspectRatio": "7.40",
-      "overlaps": 22,
+      "height": 1440,
+      "aspectRatio": "8.43",
+      "overlaps": 29,
       "maxEdgeLength": "5467.3"
     }
   ],
@@ -121,40 +121,40 @@
     "totalDomains": 106,
     "top10FragmentedDomains": [
       {
+        "domain": "FiscalPeriodMapping",
+        "layer": "domain",
+        "orderIndex": 2,
+        "totalNodes": 5,
+        "primaryNodes": 1,
+        "bbox": "[4427, 660, 8607, 1180]",
+        "width": 4180,
+        "height": 520,
+        "centroid": "(6517, 920)",
+        "pCentroid": "(4487, 690)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 36000,
+        "bboxArea": 2173600,
+        "utilizationRatio": "0.017",
+        "primaryExpansionRatio": "34.83"
+      },
+      {
         "domain": "Audit",
         "layer": "application",
         "orderIndex": 13,
         "totalNodes": 3,
         "primaryNodes": 1,
-        "bbox": "[3567, 400, 8527, 1080]",
-        "width": 4960,
-        "height": 680,
-        "centroid": "(6047, 740)",
+        "bbox": "[5507, 400, 8527, 980]",
+        "width": 3020,
+        "height": 580,
+        "centroid": "(7017, 690)",
         "pCentroid": "(8307, 430)",
         "medianPairwiseDist": "0.0",
         "maxPairwiseDist": "0.0",
         "occupiedArea": 21600,
-        "bboxArea": 3372800,
-        "utilizationRatio": "0.006",
-        "primaryExpansionRatio": "41.33"
-      },
-      {
-        "domain": "AdminSpend",
-        "layer": "application",
-        "orderIndex": 9,
-        "totalNodes": 2,
-        "primaryNodes": 1,
-        "bbox": "[3567, 400, 6847, 1280]",
-        "width": 3280,
-        "height": 880,
-        "centroid": "(5207, 840)",
-        "pCentroid": "(6787, 430)",
-        "medianPairwiseDist": "0.0",
-        "maxPairwiseDist": "0.0",
-        "occupiedArea": 14400,
-        "bboxArea": 2886400,
-        "utilizationRatio": "0.005",
-        "primaryExpansionRatio": "27.33"
+        "bboxArea": 1751600,
+        "utilizationRatio": "0.012",
+        "primaryExpansionRatio": "25.17"
       },
       {
         "domain": "CloudService",
@@ -162,17 +162,35 @@
         "orderIndex": 5,
         "totalNodes": 2,
         "primaryNodes": 1,
-        "bbox": "[3727, 660, 5267, 1180]",
-        "width": 1540,
-        "height": 520,
-        "centroid": "(4497, 920)",
+        "bbox": "[5147, 660, 7407, 980]",
+        "width": 2260,
+        "height": 320,
+        "centroid": "(6277, 820)",
         "pCentroid": "(5207, 690)",
         "medianPairwiseDist": "0.0",
         "maxPairwiseDist": "0.0",
         "occupiedArea": 14400,
-        "bboxArea": 800800,
-        "utilizationRatio": "0.018",
-        "primaryExpansionRatio": "12.83"
+        "bboxArea": 723200,
+        "utilizationRatio": "0.020",
+        "primaryExpansionRatio": "18.83"
+      },
+      {
+        "domain": "AdminSpend",
+        "layer": "application",
+        "orderIndex": 9,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[6727, 400, 8087, 1180]",
+        "width": 1360,
+        "height": 780,
+        "centroid": "(7407, 790)",
+        "pCentroid": "(6787, 430)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 1060800,
+        "utilizationRatio": "0.014",
+        "primaryExpansionRatio": "11.33"
       },
       {
         "domain": "OrganizationBudget",
@@ -180,35 +198,17 @@
         "orderIndex": 4,
         "totalNodes": 2,
         "primaryNodes": 1,
-        "bbox": "[3567, 660, 5067, 1380]",
-        "width": 1500,
-        "height": 720,
-        "centroid": "(4317, 1020)",
+        "bbox": "[3947, 660, 5067, 980]",
+        "width": 1120,
+        "height": 320,
+        "centroid": "(4507, 820)",
         "pCentroid": "(5007, 690)",
         "medianPairwiseDist": "0.0",
         "maxPairwiseDist": "0.0",
         "occupiedArea": 14400,
-        "bboxArea": 1080000,
-        "utilizationRatio": "0.013",
-        "primaryExpansionRatio": "12.50"
-      },
-      {
-        "domain": "FiscalPeriodMapping",
-        "layer": "domain",
-        "orderIndex": 2,
-        "totalNodes": 5,
-        "primaryNodes": 1,
-        "bbox": "[3247, 660, 4547, 1380]",
-        "width": 1300,
-        "height": 720,
-        "centroid": "(3897, 1020)",
-        "pCentroid": "(4487, 690)",
-        "medianPairwiseDist": "0.0",
-        "maxPairwiseDist": "0.0",
-        "occupiedArea": 36000,
-        "bboxArea": 936000,
-        "utilizationRatio": "0.038",
-        "primaryExpansionRatio": "10.83"
+        "bboxArea": 358400,
+        "utilizationRatio": "0.040",
+        "primaryExpansionRatio": "9.33"
       },
       {
         "domain": "Account",
@@ -216,35 +216,17 @@
         "orderIndex": 37,
         "totalNodes": 12,
         "primaryNodes": 5,
-        "bbox": "[3567, 300, 5367, 1180]",
-        "width": 1800,
-        "height": 880,
-        "centroid": "(4467, 740)",
+        "bbox": "[4607, 300, 7407, 1280]",
+        "width": 2800,
+        "height": 980,
+        "centroid": "(6007, 790)",
         "pCentroid": "(4997, 590)",
         "medianPairwiseDist": "340.6",
         "maxPairwiseDist": "528.4",
         "occupiedArea": 86400,
-        "bboxArea": 1584000,
-        "utilizationRatio": "0.055",
-        "primaryExpansionRatio": "3.33"
-      },
-      {
-        "domain": "Forecast",
-        "layer": "application",
-        "orderIndex": 3,
-        "totalNodes": 7,
-        "primaryNodes": 5,
-        "bbox": "[4047, 0, 5047, 1280]",
-        "width": 1000,
-        "height": 1280,
-        "centroid": "(4547, 640)",
-        "pCentroid": "(4747, 640)",
-        "medianPairwiseDist": "300.7",
-        "maxPairwiseDist": "483.7",
-        "occupiedArea": 50400,
-        "bboxArea": 1280000,
-        "utilizationRatio": "0.039",
-        "primaryExpansionRatio": "2.78"
+        "bboxArea": 2744000,
+        "utilizationRatio": "0.031",
+        "primaryExpansionRatio": "5.19"
       },
       {
         "domain": "Shared",
@@ -252,16 +234,16 @@
         "orderIndex": 31,
         "totalNodes": 62,
         "primaryNodes": 10,
-        "bbox": "[0, 140, 9996, 1640]",
+        "bbox": "[0, 140, 9996, 1440]",
         "width": 9996.27,
-        "height": 1500,
-        "centroid": "(4998, 890)",
+        "height": 1300,
+        "centroid": "(4998, 790)",
         "pCentroid": "(5827, 610)",
         "medianPairwiseDist": "1286.5",
         "maxPairwiseDist": "4084.9",
         "occupiedArea": 446400,
-        "bboxArea": 14994405,
-        "utilizationRatio": "0.030",
+        "bboxArea": 12995151,
+        "utilizationRatio": "0.034",
         "primaryExpansionRatio": "2.38"
       },
       {
@@ -299,6 +281,24 @@
         "bboxArea": 16800,
         "utilizationRatio": "0.857",
         "primaryExpansionRatio": "2.33"
+      },
+      {
+        "domain": "SpendTrackerAuthorization",
+        "layer": "application",
+        "orderIndex": 18,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[5306, 0, 5586, 460]",
+        "width": 280,
+        "height": 460,
+        "centroid": "(5446, 230)",
+        "pCentroid": "(5366, 430)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 128800,
+        "utilizationRatio": "0.112",
+        "primaryExpansionRatio": "2.33"
       }
     ]
   },
@@ -306,7 +306,7 @@
     "connectivityQuartiles": {
       "Q1_lowest": {
         "count": 86,
-        "medianCentroidDist": "1220.4"
+        "medianCentroidDist": "1291.6"
       },
       "Q2_mediumLow": {
         "count": 84,
@@ -314,11 +314,11 @@
       },
       "Q3_mediumHigh": {
         "count": 84,
-        "medianCentroidDist": "1509.8"
+        "medianCentroidDist": "1361.8"
       },
       "Q4_highest": {
         "count": 84,
-        "medianCentroidDist": "1134.4"
+        "medianCentroidDist": "1173.9"
       }
     },
     "topDomainRelationships": [
@@ -327,49 +327,49 @@
         "targetDomain": "Shared",
         "edgeCount": 25,
         "strength": 1,
-        "centroidDist": 597.8503157145608
+        "centroidDist": 501.42297514174595
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Assert",
         "edgeCount": 19,
         "strength": 0.76,
-        "centroidDist": 228.25424421026653
+        "centroidDist": 1741.034175425629
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "User",
         "edgeCount": 19,
         "strength": 0.76,
-        "centroidDist": 1134.416149391395
+        "centroidDist": 436.5775990588615
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Shared",
         "edgeCount": 16,
         "strength": 0.64,
-        "centroidDist": 551.7798474029294
+        "centroidDist": 1009
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Organization_Hierarchy",
         "edgeCount": 15,
         "strength": 0.6,
-        "centroidDist": 338.3784863137726
+        "centroidDist": 1221.4745187681976
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Cloud_Account",
         "edgeCount": 13,
         "strength": 0.52,
-        "centroidDist": 3661.652632350589
+        "centroidDist": 2120.848886648929
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Cloud_Spend",
         "edgeCount": 12,
         "strength": 0.48,
-        "centroidDist": 3401.77894637497
+        "centroidDist": 1860.9674903124987
       },
       {
         "sourceDomain": "User",
@@ -383,37 +383,37 @@
         "targetDomain": "Budget",
         "edgeCount": 9,
         "strength": 0.36,
-        "centroidDist": 3581.3963757171587
+        "centroidDist": 2045.5072720476942
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Forecast",
         "edgeCount": 9,
         "strength": 0.36,
-        "centroidDist": 128.06248474865697
+        "centroidDist": 1236.9316876852981
       }
     ]
   },
   "edgeLengthStats": {
-    "median": "1189.6",
-    "P75": "2464.4",
-    "P90": "3315.5",
-    "P95": "3887.9",
-    "P99": "4592.9",
+    "median": "1122.3",
+    "P75": "2370.2",
+    "P90": "3246.2",
+    "P95": "3760.3",
+    "P99": "4492.9",
     "max": "5467.3",
-    "avgIntraDomain": "623.6",
-    "avgInterDomain": "1695.9",
-    "avgInterLayer": "1608.7",
-    "avgBridgeEdge": "1548.3",
-    "avgSatelliteEdge": "1722.9"
+    "avgIntraDomain": "659.1",
+    "avgInterDomain": "1649.3",
+    "avgInterLayer": "1567.9",
+    "avgBridgeEdge": "1512.9",
+    "avgSatelliteEdge": "1665.3"
   },
   "crossingsBreakdown": {
-    "total": 99702,
+    "total": 100573,
     "primaryPrimaryCrossings": 0,
     "primaryBridgeCrossings": 0,
     "bridgeBridgeCrossings": 12840,
-    "satellitePrimaryCrossings": 48727,
-    "satelliteSatelliteCrossings": 41924
+    "satellitePrimaryCrossings": 49248,
+    "satelliteSatelliteCrossings": 42150
   },
   "bridgePlacement": {
     "bridgeCount": 79,
@@ -423,16 +423,16 @@
         "layer": "application",
         "connectedDomains": "Account",
         "bridgePos": "(4787, 330)",
-        "midpoint": "(4467, 740)",
-        "distToMidpoint": "519.9"
+        "midpoint": "(6007, 790)",
+        "distToMidpoint": "1304.1"
       },
       {
         "nodeId": "ApexClass:CloudAccountService",
         "layer": "application",
         "connectedDomains": "Account",
         "bridgePos": "(4787, 430)",
-        "midpoint": "(4467, 740)",
-        "distToMidpoint": "445.3"
+        "midpoint": "(6007, 790)",
+        "distToMidpoint": "1272.3"
       },
       {
         "nodeId": "ApexClass:CloudSpendService",
@@ -503,22 +503,28 @@
   "satellitePlacement": {
     "totalSatellites": 84,
     "medianAnchorDist": "525.0",
-    "P90AnchorDist": "4283.2",
-    "P95AnchorDist": "4652.4",
+    "P90AnchorDist": "4075.9",
+    "P95AnchorDist": "4522.8",
     "P99AnchorDist": "4991.3",
     "maxAnchorDist": "4991.3",
     "top10Outliers": [
+      {
+        "nodeId": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Month__c",
+        "type": "Field",
+        "anchorId": "ApexClass:FiscalPeriodMappingSelector",
+        "anchorDist": "4068.3"
+      },
+      {
+        "nodeId": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
+        "type": "Field",
+        "anchorId": "ApexClass:FiscalPeriodMappingSelector",
+        "anchorDist": "4075.9"
+      },
       {
         "nodeId": "Field:Spend_Import_Batch__c.Records_Received__c",
         "type": "Field",
         "anchorId": "ApexClass:AdminDataExplorerController",
         "anchorDist": "4203.8"
-      },
-      {
-        "nodeId": "Field:User_Organization_Role__c.User__c",
-        "type": "Field",
-        "anchorId": "ApexClass:create_users",
-        "anchorDist": "4283.2"
       },
       {
         "nodeId": "Field:Spend_Import_Batch__c.Status__c",
@@ -543,12 +549,6 @@
         "type": "Field",
         "anchorId": "ApexClass:AdminDataExplorerController",
         "anchorDist": "4652.4"
-      },
-      {
-        "nodeId": "Field:Action_Audit__c.User__c",
-        "type": "Field",
-        "anchorId": "ApexClass:AuditService",
-        "anchorDist": "4720.9"
       },
       {
         "nodeId": "Field:User_Organization_Role__c.Role__c",
