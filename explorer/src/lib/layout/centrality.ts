@@ -431,10 +431,33 @@ export function calculateBridgeCandidatePosition(
     }
   }
 
-  // Apply inter-layer corridor displacement if trap detected or connecting multiple domains
+  // Apply geometry-driven minimum safe displacement for cross-domain bridges or intermediate domain traps
   if (hasIntermediateTrap || sortedConnectedDomains.length >= 2) {
-    const corridorOffset = layerSpacing * 0.5;
-    candidateY = baseY - corridorOffset;
+    const layerOrder: ArchitectureLayer[] = ['presentation', 'application', 'domain', 'schema'];
+    const layerIdx = layerOrder.indexOf(layer);
+    let corridorGap = layerSpacing;
+
+    if (layerIdx > 0) {
+      const prevLayer = layerOrder[layerIdx - 1];
+      const prevY = layerYOffsets[prevLayer];
+      if (prevY !== undefined && prevY < baseY) {
+        corridorGap = baseY - prevY;
+      }
+    } else if (layerIdx < layerOrder.length - 1) {
+      const nextLayer = layerOrder[layerIdx + 1];
+      const nextY = layerYOffsets[nextLayer];
+      if (nextY !== undefined && nextY > baseY) {
+        corridorGap = nextY - baseY;
+      }
+    }
+
+    // Geometry-driven minimum displacement:
+    // Requires clearing node height (nodeHeight/2) + vertical clearance gap (verticalGap/2),
+    // bounded by half of the active dynamic corridor gap.
+    const minClearance = nodeHeight * 0.5 + verticalGap * 0.5;
+    const geometryDisplacement = Math.max(minClearance, corridorGap * 0.5);
+
+    candidateY = baseY - geometryDisplacement;
   }
 
   // Combine neighborPositions, options.allocatedPositions, and activeBridgeAllocations
