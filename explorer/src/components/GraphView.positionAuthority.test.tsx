@@ -4,11 +4,31 @@ import { GraphView } from './GraphView';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 // Mock cytoscape
-const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi.hoisted(() => {
+const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap, setAutoDispatchLayoutStop, triggerLayoutStop } = vi.hoisted(() => {
   const listeners: Record<string, ((evt: any) => void)[]> = {};
   const mockLayoutRun = vi.fn();
-
   const mockNodeObjMap: Record<string, any> = {};
+  let autoDispatchLayoutStop = true;
+  let pendingOpts: any = null;
+
+  const setAutoDispatchLayoutStop = (auto: boolean) => {
+    autoDispatchLayoutStop = auto;
+  };
+
+  const triggerLayoutStop = () => {
+    if (pendingOpts?.positions) {
+      Object.values(mockNodeObjMap).forEach((node: any) => {
+        const newPos = typeof pendingOpts.positions === 'function' ? pendingOpts.positions(node) : pendingOpts.positions[node.id()];
+        if (newPos) {
+          node.position(newPos);
+        }
+      });
+    }
+    const stopHandlers = listeners['layoutstop'] || [];
+    listeners['layoutstop'] = [];
+    stopHandlers.forEach((handler) => handler({ type: 'layoutstop' }));
+    pendingOpts = null;
+  };
 
   const createMockNode = (id: string, x = 100, y = 100) => {
     if (!mockNodeObjMap[id]) {
@@ -78,17 +98,10 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
     layout: vi.fn().mockImplementation((opts) => ({
       run: vi.fn().mockImplementation(() => {
         mockLayoutRun(opts);
-        if (opts?.positions) {
-          Object.values(mockNodeObjMap).forEach((node: any) => {
-            const newPos = typeof opts.positions === 'function' ? opts.positions(node) : opts.positions[node.id()];
-            if (newPos) {
-              node.position(newPos);
-            }
-          });
+        pendingOpts = opts;
+        if (autoDispatchLayoutStop) {
+          triggerLayoutStop();
         }
-        const stopHandlers = listeners['layoutstop'] || [];
-        listeners['layoutstop'] = [];
-        stopHandlers.forEach((handler) => handler({ type: 'layoutstop' }));
       })
     })),
     batch: vi.fn((fn: () => void) => fn()),
@@ -129,7 +142,7 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
   });
   mockCytoscapeFn.use = vi.fn();
 
-  return { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap };
+  return { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap, setAutoDispatchLayoutStop, triggerLayoutStop };
 });
 
 vi.mock('cytoscape', () => ({ default: mockCytoscapeFn }));
@@ -861,6 +874,14 @@ describe('GraphView Position Authority & Layout Policy', () => {
     it('1. Animated reset waits for layout completion before persisting final coordinates (does not persist pre-animation coordinates)', () => {
       const onNodePositionsChange = vi.fn();
 
+      const initialPositions = {
+        'node-1': { x: 99, y: 99 },
+        'node-2': { x: 88, y: 88 },
+      };
+
+      // Disable auto dispatch of layoutstop to simulate mid-animation pre-completion state
+      setAutoDispatchLayoutStop(false);
+
       render(
         <GraphView
           nodes={testNodes}
@@ -869,27 +890,53 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
+          nodePositions={initialPositions}
           onNodePositionsChange={onNodePositionsChange}
           layoutMode="static"
         />
       );
 
+      // Verify node positions were loaded from initialPositions
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 99, y: 99 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 88, y: 88 });
+
       onNodePositionsChange.mockClear();
 
-      // Trigger reset layout
+      // Trigger reset layout (starts layout animation)
       const resetBtn = screen.getByRole('button', { name: /reset layout/i });
       fireEvent.click(resetBtn);
 
-      // Verify that onNodePositionsChange was invoked on layoutstop completion with final coordinates
+      // Prove that while layout animation is running (pre-layoutstop), persistence has NOT happened!
+      expect(onNodePositionsChange).not.toHaveBeenCalled();
+
+      // Now dispatch layoutstop event (simulating layout animation completion)
+      act(() => {
+        triggerLayoutStop();
+      });
+
+      // Re-enable auto-dispatch for subsequent tests
+      setAutoDispatchLayoutStop(true);
+
+      // Prove that AFTER layoutstop completes, final positions are persisted
       expect(onNodePositionsChange).toHaveBeenCalled();
       const persistedCall = onNodePositionsChange.mock.calls[0][0];
       expect(persistedCall['node-1']).toBeDefined();
       expect(typeof persistedCall['node-1'].x).toBe('number');
       expect(typeof persistedCall['node-1'].y).toBe('number');
+      // Assert final position matches architecture layout output, NOT pre-animation starting position (99, 99)
+      expect(persistedCall['node-1']).not.toEqual({ x: 99, y: 99 });
     });
 
     it('2. Repeated animated resets do not leak event listeners', () => {
       const onNodePositionsChange = vi.fn();
+
+      const initialPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      // Disable auto dispatch of layoutstop to hold pending listeners on cy
+      setAutoDispatchLayoutStop(false);
 
       render(
         <GraphView
@@ -899,6 +946,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
+          nodePositions={initialPositions}
           onNodePositionsChange={onNodePositionsChange}
           layoutMode="static"
         />
@@ -906,7 +954,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
 
       const resetBtn = screen.getByRole('button', { name: /reset layout/i });
 
-      // Click reset layout 3 times rapidly
+      // Click reset layout 3 times rapidly while animation is pending
       fireEvent.click(resetBtn);
       fireEvent.click(resetBtn);
       fireEvent.click(resetBtn);
@@ -914,6 +962,12 @@ describe('GraphView Position Authority & Layout Policy', () => {
       // Verify that layoutstop listeners were cleaned up and did not multiply
       const stopListeners = listeners['layoutstop'] || [];
       expect(stopListeners.length).toBeLessThanOrEqual(1);
+
+      // Clean up and restore auto dispatch
+      act(() => {
+        triggerLayoutStop();
+      });
+      setAutoDispatchLayoutStop(true);
     });
 
     it('3. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag', () => {

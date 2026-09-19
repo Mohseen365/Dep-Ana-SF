@@ -1,29 +1,45 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { ProjectCreationModal } from './ProjectCreationModal';
 import { ProjectProvider } from '../context/ProjectContext';
+
+// Mock fetch to resolve manifest instantly to avoid async act warnings from ProjectProvider
+globalThis.fetch = vi.fn().mockResolvedValue({
+  ok: false,
+  status: 404,
+  json: async () => ({}),
+});
 
 describe('ProjectCreationModal', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
+    (globalThis.fetch as any).mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({}),
+    });
   });
 
-  const renderModal = (isOpen = true, onClose = vi.fn(), onSuccess = vi.fn()) => {
-    return render(
-      <ProjectProvider>
-        <ProjectCreationModal isOpen={isOpen} onClose={onClose} onSuccess={onSuccess} />
-      </ProjectProvider>
-    );
+  const renderModal = async (isOpen = true, onClose = vi.fn(), onSuccess = vi.fn()) => {
+    let result: any;
+    await act(async () => {
+      result = render(
+        <ProjectProvider>
+          <ProjectCreationModal isOpen={isOpen} onClose={onClose} onSuccess={onSuccess} />
+        </ProjectProvider>
+      );
+    });
+    return result;
   };
 
-  it('does not render when isOpen is false', () => {
-    renderModal(false);
+  it('does not render when isOpen is false', async () => {
+    await renderModal(false);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('renders modal inputs and buttons when isOpen is true', () => {
-    renderModal(true);
+  it('renders modal inputs and buttons when isOpen is true', async () => {
+    await renderModal(true);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByLabelText(/Project Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Salesforce Project \/ Source Folder/i)).toBeInTheDocument();
@@ -33,7 +49,7 @@ describe('ProjectCreationModal', () => {
   });
 
   it('validates required fields on submit', async () => {
-    renderModal(true);
+    await renderModal(true);
 
     const nameInput = screen.getByLabelText(/Project Name/i);
     fireEvent.change(nameInput, { target: { value: '' } });
@@ -47,7 +63,7 @@ describe('ProjectCreationModal', () => {
   });
 
   it('clears field errors when input changes', async () => {
-    renderModal(true);
+    await renderModal(true);
 
     const submitBtn = screen.getByRole('button', { name: /Create & Open Project/i });
     fireEvent.click(submitBtn);
@@ -66,7 +82,7 @@ describe('ProjectCreationModal', () => {
     const onClose = vi.fn();
     const onSuccess = vi.fn();
 
-    renderModal(true, onClose, onSuccess);
+    await renderModal(true, onClose, onSuccess);
 
     fireEvent.change(screen.getByLabelText(/Project Name/i), {
       target: { value: 'Salesforce Billing Module' },
@@ -75,7 +91,9 @@ describe('ProjectCreationModal', () => {
       target: { value: 'packages/billing' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /Create & Open Project/i }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Create & Open Project/i }));
+    });
 
     await waitFor(() => {
       expect(onSuccess).toHaveBeenCalledWith('salesforce-billing-module');
