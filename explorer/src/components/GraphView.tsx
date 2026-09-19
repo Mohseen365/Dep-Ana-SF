@@ -140,6 +140,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // This represents the highest position authority.
   const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
 
+  // Pending layoutstop listener reference to prevent listener leaks.
+  const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
+
   // Track previous mode for Interactive <-> Static transitions.
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
 
@@ -217,6 +220,45 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [isNavigatorVisible]);
 
+  // Centralized Reset Layout handler supporting animated and non-animated completion
+  const executeResetLayout = useCallback(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    // Clear previous explicit drag sessions on explicit reset
+    sessionPositionsRef.current.clear();
+
+    // Cancel any pending layoutstop listener to prevent listener leaks
+    if (pendingLayoutStopRef.current) {
+      cy.off('layoutstop', pendingLayoutStopRef.current);
+      pendingLayoutStopRef.current = null;
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nodeCount = nodesRef.current.length;
+    const shouldAnimate = !prefersReducedMotion && nodeCount < 100;
+
+    if (shouldAnimate) {
+      const onStop = () => {
+        pendingLayoutStopRef.current = null;
+        captureAndPersistPositions();
+      };
+      pendingLayoutStopRef.current = onStop;
+      cy.one('layoutstop', onStop);
+
+      runLayout(cy, {
+        nodeCount,
+        animate: true,
+      });
+    } else {
+      runLayout(cy, {
+        nodeCount,
+        animate: false,
+      });
+      captureAndPersistPositions();
+    }
+  }, [captureAndPersistPositions]);
+
   // Expose imperative control methods via Ref
   useImperativeHandle(ref, () => ({
     zoomIn: () => {
@@ -248,17 +290,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         }
       }
     },
-    resetLayout: () => {
-      if (cyRef.current) {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        runLayout(cyRef.current, {
-          nodeCount: nodes.length,
-          animate: !prefersReducedMotion && nodes.length < 100
-        });
-        captureAndPersistPositions();
-      }
-    }
-  }), [selectedNodeId, nodes.length, captureAndPersistPositions]);
+    resetLayout: executeResetLayout,
+  }), [selectedNodeId, executeResetLayout]);
 
   // Main Cytoscape Initialization & Teardown
   useEffect(() => {
@@ -328,6 +361,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     // Handle genuinely new nodes if autoLayoutPolicy is false or 'place-new-only'
     if (autoLayoutPolicy !== true) {
+      let newlyPlaced = false;
       cy.nodes().forEach((cyNode) => {
         const id = cyNode.id();
         if (!knownPosMap[id]) {
@@ -335,8 +369,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           cyNode.position(newPos);
           knownPosMap[id] = newPos;
           sessionPositionsRef.current.set(id, newPos);
+          newlyPlaced = true;
         }
       });
+      if (newlyPlaced) {
+        captureAndPersistPositions();
+      }
     } else {
       // If initial auto-layout ran, capture resulting positions
       if (typeof cy.one === 'function') {
@@ -526,6 +564,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     window.addEventListener('transitionend', handleTransitionEnd);
 
     return () => {
+      if (pendingLayoutStopRef.current && cyRef.current) {
+        try { cyRef.current.off('layoutstop', pendingLayoutStopRef.current); } catch (e) {}
+        pendingLayoutStopRef.current = null;
+      }
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       if (zoomTimeout) clearTimeout(zoomTimeout);
       resizeObserver.disconnect();
@@ -554,7 +596,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const pos = n.position();
       const posObj = { x: Math.round(pos.x), y: Math.round(pos.y) };
       cyPositionsBefore[n.id()] = posObj;
-      sessionPositionsRef.current.set(n.id(), posObj);
     });
 
     // Check if any incoming node is genuinely new
@@ -606,6 +647,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     // Place genuinely new nodes if policy allows / requires
+    let newlyPlaced = false;
     cy.nodes().forEach((node) => {
       const id = node.id();
       if (!knownPositionsMap[id]) {
@@ -613,16 +655,33 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         node.position(newPos);
         knownPositionsMap[id] = newPos;
         sessionPositionsRef.current.set(id, newPos);
+        newlyPlaced = true;
       }
     });
 
+    if (newlyPlaced) {
+      captureAndPersistPositions();
+    }
+
     if (autoLayoutPolicy === true) {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      runLayout(cy, {
-        nodeCount: nodes.length,
-        animate: !prefersReducedMotion && nodes.length < 100
-      });
-      captureAndPersistPositions();
+      const shouldAnimate = !prefersReducedMotion && nodes.length < 100;
+
+      if (shouldAnimate) {
+        cy.one('layoutstop', () => {
+          captureAndPersistPositions();
+        });
+        runLayout(cy, {
+          nodeCount: nodes.length,
+          animate: true,
+        });
+      } else {
+        runLayout(cy, {
+          nodeCount: nodes.length,
+          animate: false,
+        });
+        captureAndPersistPositions();
+      }
     }
 
     if (selectedNodeId) {
@@ -668,7 +727,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges, captureAndPersistPositions]);
+  }, [nodes, edges, nodePositions, captureAndPersistPositions]);
 
   // Handle selected node changes
   useEffect(() => {
@@ -931,16 +990,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
             if (ele.length > 0) cyRef.current.animate({ center: { eles: ele } }, { duration: 200 });
           }
         }}
-        onResetLayout={() => {
-          if (cyRef.current) {
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            runLayout(cyRef.current, {
-              nodeCount: nodes.length,
-              animate: !prefersReducedMotion && nodes.length < 100
-            });
-            captureAndPersistPositions();
-          }
-        }}
+        onResetLayout={executeResetLayout}
         hasSelectedNode={!!selectedNodeId}
         selectedNodeId={selectedNodeId}
         isFullscreen={isFullscreen}
