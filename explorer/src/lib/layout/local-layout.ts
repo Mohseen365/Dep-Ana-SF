@@ -370,13 +370,194 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         tiers.push(orderedNodeIds);
       }
 
-      // Sub-divide long tiers into rows if tier size exceeds max columns (max 4 per row)
-      const MAX_COLS = 4;
+      // Map node -> initial rank index for deterministic tie-breaking & barycenters
+      const initialRankMap = new Map<string, number>();
+      orderedNodeIds.forEach((id, idx) => initialRankMap.set(id, idx));
+
+      // Relationship-Aware Intra-Bucket Barycenter Alignment Across Tiers
+      // Step A: Order Tier 0 by outgoing connection barycenters to Tier 1 / Tier 2 & cross-domain signals
+      tier0.sort((a, b) => {
+        let sumA = 0, countA = 0;
+        let sumB = 0, countB = 0;
+
+        safeEdges.forEach(e => {
+          if (e.source === a && (tier1.includes(e.target) || tier2.includes(e.target))) {
+            sumA += initialRankMap.get(e.target) ?? 0;
+            countA++;
+          }
+          if (e.source === b && (tier1.includes(e.target) || tier2.includes(e.target))) {
+            sumB += initialRankMap.get(e.target) ?? 0;
+            countB++;
+          }
+          if (e.source === a || e.target === a) {
+            const otherId = e.source === a ? e.target : e.source;
+            const otherDomain = domainMap.get(otherId);
+            if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
+              sumA += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
+              countA++;
+            }
+          }
+          if (e.source === b || e.target === b) {
+            const otherId = e.source === b ? e.target : e.source;
+            const otherDomain = domainMap.get(otherId);
+            if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
+              sumB += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
+              countB++;
+            }
+          }
+        });
+
+        const bcA = countA > 0 ? sumA / countA : (initialRankMap.get(a) ?? 0);
+        const bcB = countB > 0 ? sumB / countB : (initialRankMap.get(b) ?? 0);
+
+        if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
+        const rankA = initialRankMap.get(a) ?? 0;
+        const rankB = initialRankMap.get(b) ?? 0;
+        if (rankA !== rankB) return rankA - rankB;
+        return a.localeCompare(b);
+      });
+
+      // Step B: Order Tier 1 by barycenter of Tier 0 preliminary positions & Tier 2 initial ranks
+      tier1.sort((a, b) => {
+        let sumA = 0, countA = 0;
+        let sumB = 0, countB = 0;
+
+        safeEdges.forEach(e => {
+          const isA = e.source === a || e.target === a;
+          const isB = e.source === b || e.target === b;
+          if (isA) {
+            const other = e.source === a ? e.target : e.source;
+            if (tier0.includes(other)) {
+              sumA += tier0.indexOf(other);
+              countA++;
+            } else if (tier2.includes(other)) {
+              sumA += initialRankMap.get(other) ?? 0;
+              countA++;
+            } else {
+              const otherDomain = domainMap.get(other);
+              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
+                sumA += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
+                countA++;
+              }
+            }
+          }
+          if (isB) {
+            const other = e.source === b ? e.target : e.source;
+            if (tier0.includes(other)) {
+              sumB += tier0.indexOf(other);
+              countB++;
+            } else if (tier2.includes(other)) {
+              sumB += initialRankMap.get(other) ?? 0;
+              countB++;
+            } else {
+              const otherDomain = domainMap.get(other);
+              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
+                sumB += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
+                countB++;
+              }
+            }
+          }
+        });
+
+        const bcA = countA > 0 ? sumA / countA : (initialRankMap.get(a) ?? 0);
+        const bcB = countB > 0 ? sumB / countB : (initialRankMap.get(b) ?? 0);
+
+        if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
+        const rankA = initialRankMap.get(a) ?? 0;
+        const rankB = initialRankMap.get(b) ?? 0;
+        if (rankA !== rankB) return rankA - rankB;
+        return a.localeCompare(b);
+      });
+
+      // Step C: Order Tier 2 by barycenters of Tier 1 / Tier 0 positions
+      tier2.sort((a, b) => {
+        let sumA = 0, countA = 0;
+        let sumB = 0, countB = 0;
+
+        safeEdges.forEach(e => {
+          const isA = e.source === a || e.target === a;
+          const isB = e.source === b || e.target === b;
+          if (isA) {
+            const other = e.source === a ? e.target : e.source;
+            if (tier1.includes(other)) {
+              sumA += tier1.indexOf(other);
+              countA++;
+            } else if (tier0.includes(other)) {
+              sumA += tier0.indexOf(other);
+              countA++;
+            } else {
+              const otherDomain = domainMap.get(other);
+              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
+                sumA += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
+                countA++;
+              }
+            }
+          }
+          if (isB) {
+            const other = e.source === b ? e.target : e.source;
+            if (tier1.includes(other)) {
+              sumB += tier1.indexOf(other);
+              countB++;
+            } else if (tier0.includes(other)) {
+              sumB += tier0.indexOf(other);
+              countB++;
+            } else {
+              const otherDomain = domainMap.get(other);
+              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
+                sumB += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
+                countB++;
+              }
+            }
+          }
+        });
+
+        const bcA = countA > 0 ? sumA / countA : (initialRankMap.get(a) ?? 0);
+        const bcB = countB > 0 ? sumB / countB : (initialRankMap.get(b) ?? 0);
+
+        if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
+        const rankA = initialRankMap.get(a) ?? 0;
+        const rankB = initialRankMap.get(b) ?? 0;
+        if (rankA !== rankB) return rankA - rankB;
+        return a.localeCompare(b);
+      });
+
+      // Hub Centering: Center high-degree hub nodes in local tier rows
+      [tier0, tier1, tier2].forEach(tNodes => {
+        if (tNodes.length >= 3) {
+          let maxDeg = -1;
+          let hubIdx = -1;
+          tNodes.forEach((id, idx) => {
+            const inDeg = intraBucketInDegree.get(id) || 0;
+            const outDeg = intraBucketOutDegree.get(id) || 0;
+            const totalDeg = inDeg + outDeg;
+            if (totalDeg > maxDeg && totalDeg >= 2) {
+              maxDeg = totalDeg;
+              hubIdx = idx;
+            }
+          });
+          if (hubIdx !== -1) {
+            const midIdx = Math.floor(tNodes.length / 2);
+            if (hubIdx !== midIdx) {
+              const [hubId] = tNodes.splice(hubIdx, 1);
+              tNodes.splice(midIdx, 0, hubId);
+            }
+          }
+        }
+      });
+
+      // Dynamic Balanced Row Chunking: Sub-divide tiers into balanced rows
       const localRows: string[][] = [];
 
       tiers.forEach(tNodes => {
-        for (let i = 0; i < tNodes.length; i += MAX_COLS) {
-          localRows.push(tNodes.slice(i, i + MAX_COLS));
+        const count = tNodes.length;
+        if (count <= 4) {
+          localRows.push(tNodes);
+        } else {
+          const numRows = Math.ceil(count / 4);
+          const targetCols = Math.ceil(count / numRows);
+          for (let i = 0; i < count; i += targetCols) {
+            localRows.push(tNodes.slice(i, i + targetCols));
+          }
         }
       });
 
