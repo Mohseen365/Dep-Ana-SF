@@ -4,6 +4,7 @@ import { buildGraphElements } from './graph-builder';
 import { applyFilters } from './search-filter';
 import { computeFocusedGraph } from './focus-graph';
 import { calculateArchitectureHealth } from './health';
+import { computeArchitectureLayout } from './architecture-layout';
 
 function generateTestGraph(nodeCount: number, edgeDensityRatio: number = 1.5) {
   const nodes: ExplorerNode[] = [];
@@ -140,6 +141,51 @@ describe('Large Graph Performance Benchmarks', () => {
       const t7 = performance.now();
       expect(health.score).toBeGreaterThanOrEqual(0);
       expect(t7 - t6).toBeLessThan(200);
+    });
+  });
+});
+
+describe('Architecture Layout Scalability Benchmarks (Wave 8C)', () => {
+  const layoutScales = [
+    { count: 100, maxDurationMs: 500 },
+    { count: 250, maxDurationMs: 1000 },
+    { count: 500, maxDurationMs: 2000 },
+    { count: 750, maxDurationMs: 3000 },
+    { count: 1000, maxDurationMs: 5000 },
+  ];
+
+  layoutScales.forEach(({ count, maxDurationMs }) => {
+    it(`computes architecture layout for ${count} nodes under ${maxDurationMs}ms threshold`, () => {
+      const { nodes, edges } = generateTestGraph(count);
+
+      // Warm-up run
+      computeArchitectureLayout(nodes, edges);
+
+      // Multiple sample runs for environment stability
+      const samples: number[] = [];
+      let lastPositions = {};
+
+      for (let run = 0; run < 3; run++) {
+        const start = performance.now();
+        lastPositions = computeArchitectureLayout(nodes, edges);
+        const end = performance.now();
+        samples.push(end - start);
+      }
+
+      samples.sort((a, b) => a - b);
+      const medianDuration = samples[1];
+
+      // 1. All nodes receive finite positions
+      expect(Object.keys(lastPositions).length).toBe(count);
+      for (const pos of Object.values(lastPositions) as { x: number; y: number }[]) {
+        expect(typeof pos.x).toBe('number');
+        expect(typeof pos.y).toBe('number');
+        expect(Number.isFinite(pos.x)).toBe(true);
+        expect(Number.isFinite(pos.y)).toBe(true);
+      }
+
+      // 2. Performance expectation bound check (prevents CI flakiness via median sampling)
+      expect(medianDuration).toBeLessThan(maxDurationMs);
     });
   });
 });
