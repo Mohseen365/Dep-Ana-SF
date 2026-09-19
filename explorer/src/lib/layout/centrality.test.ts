@@ -11,6 +11,7 @@ import {
 import { computeArchitectureLayout } from '../architecture-layout';
 import { evaluateLayout } from './evaluate-layout';
 import { createBridgeHeavyFixture } from './fixtures/bridge-heavy';
+import { createDenseCrossDomainFixture } from './fixtures/dense-cross-domain';
 
 function makeMockNode(
   id: string,
@@ -43,7 +44,7 @@ function makeMockNode(
   };
 }
 
-describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
+describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
   describe('Hub Analysis & Classification', () => {
     it('1. High fan-in hub: correctly identifies fan-in hub type and score', () => {
       const { hubScore, isHub, hubType } = computeNodeHubMetrics(10, 1, 2.0, 3.5);
@@ -503,6 +504,182 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
 
       expect(Array.from(result1.keys())).toEqual(Array.from(result2.keys()));
       expect(result1.get('A_Node')).toEqual(result2.get('A_Node'));
+    });
+  });
+
+  describe('WAVE 3C — Bridge Geometry Optimization Requirements', () => {
+    it('1. Bridge candidate not inside unrelated domain: detects trap and places bridge outside trap domain interior', () => {
+      const domainXCenters = {
+        DomainA: 0,
+        DomainB: 400, // Unrelated intermediate domain
+        DomainC: 800,
+      };
+
+      const domainBounds = {
+        DomainA: { minX: -100, maxX: 100 },
+        DomainB: { minX: 300, maxX: 500 },
+        DomainC: { minX: 700, maxX: 900 },
+      };
+
+      const connectedDomains = ['DomainA', 'DomainC'];
+
+      const placement = calculateBridgeCandidatePosition(
+        'CrossDomainBridge',
+        'application',
+        connectedDomains,
+        domainXCenters,
+        domainBounds,
+        {},
+        {
+          layerSpacing: 250,
+          layerYOffsets: {
+            presentation: 100,
+            application: 350,
+            domain: 600,
+            schema: 850,
+          },
+        }
+      );
+
+      expect(placement.hasIntermediateTrap).toBe(true);
+      expect(placement.trapDomainId).toBe('DomainB');
+      // Must be displaced into corridor away from baseY = 350
+      expect(placement.candidatePosition.y).not.toBe(350);
+      expect(placement.candidatePosition.y).toBe(225); // 350 - (350-100)*0.5 = 225
+    });
+
+    it('2. Minimum valid displacement: dynamically calculates displacement based on layerYOffsets rather than fixed 125px', () => {
+      const domainXCenters = { DomainA: 100, DomainB: 500, DomainC: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 400, maxX: 600 },
+        DomainC: { minX: 800, maxX: 1000 },
+      };
+
+      // Scenario with 100px dynamic layer spacing
+      const customLayerYOffsets: Record<ArchitectureLayer, number> = {
+        presentation: 100,
+        application: 200, // Gap = 100px
+        domain: 300,
+        schema: 400,
+      };
+
+      const placement = calculateBridgeCandidatePosition(
+        'CompactBridge',
+        'application',
+        ['DomainA', 'DomainC'],
+        domainXCenters,
+        domainBounds,
+        {},
+        { layerYOffsets: customLayerYOffsets }
+      );
+
+      expect(placement.hasIntermediateTrap).toBe(true);
+      // Minimum displacement is half of 100px gap = 50px offset -> candidateY = 200 - 50 = 150
+      expect(placement.candidatePosition.y).toBe(150);
+    });
+
+    it('3. Dynamic layer-Y compatibility: correctly respects Wave 2B dynamic layer map', () => {
+      const dynamicYMap: Record<ArchitectureLayer, number> = {
+        presentation: 100,
+        application: 280, // Dynamic height offset
+        domain: 520,
+        schema: 800,
+      };
+
+      const domainXCenters = { DomainA: 100, DomainB: 500, DomainC: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 400, maxX: 600 },
+        DomainC: { minX: 800, maxX: 1000 },
+      };
+
+      const placement = calculateBridgeCandidatePosition(
+        'DynamicBridge',
+        'application',
+        ['DomainA', 'DomainC'],
+        domainXCenters,
+        domainBounds,
+        {},
+        { layerYOffsets: dynamicYMap }
+      );
+
+      // 280 - (280 - 100)*0.5 = 190
+      expect(placement.candidatePosition.y).toBe(190);
+    });
+
+    it('4. Multiple bridges: places multiple bridges connecting same/different domain pairs without overlap', () => {
+      const domainXCenters = { DomainA: 100, DomainB: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 800, maxX: 1000 },
+      };
+
+      const b1 = calculateBridgeCandidatePosition('Bridge1', 'application', ['DomainA', 'DomainB'], domainXCenters, domainBounds, {});
+      const b2 = calculateBridgeCandidatePosition('Bridge2', 'application', ['DomainA', 'DomainB'], domainXCenters, domainBounds, {}, { allocatedPositions: { Bridge1: b1.candidatePosition } });
+      const b3 = calculateBridgeCandidatePosition('Bridge3', 'application', ['DomainA', 'DomainB'], domainXCenters, domainBounds, {}, { allocatedPositions: { Bridge1: b1.candidatePosition, Bridge2: b2.candidatePosition } });
+
+      const positions = [b1.candidatePosition, b2.candidatePosition, b3.candidatePosition];
+      const posKeys = new Set(positions.map(p => `${p.x}:${p.y}`));
+
+      expect(posKeys.size).toBe(3);
+    });
+
+    it('5. Dense cross-domain graph acceptance: computes layout with zero overlaps and valid coordinates', () => {
+      const fixture = createDenseCrossDomainFixture();
+      const positions = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, positions);
+
+      expect(metrics.nodeOverlapCount).toBe(0);
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
+      Object.values(positions).forEach(p => {
+        expect(Number.isFinite(p.x)).toBe(true);
+        expect(Number.isFinite(p.y)).toBe(true);
+      });
+    });
+
+    it('6. Bridge-heavy graph acceptance: computes layout with zero overlaps and no crossing regression', () => {
+      const fixture = createBridgeHeavyFixture();
+      const positions = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, positions);
+
+      expect(metrics.nodeOverlapCount).toBe(0);
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(6);
+      Object.values(positions).forEach(p => {
+        expect(Number.isFinite(p.x)).toBe(true);
+        expect(Number.isFinite(p.y)).toBe(true);
+      });
+    });
+
+    it('7. Deterministic tie-breaking: yields invariant bridge positions under node/edge shuffling', () => {
+      const fixture = createBridgeHeavyFixture();
+
+      const pos1 = computeArchitectureLayout(fixture.nodes, fixture.edges);
+
+      const shuffledNodes = [...fixture.nodes].reverse();
+      const shuffledEdges = [...fixture.edges].reverse();
+      const pos2 = computeArchitectureLayout(shuffledNodes, shuffledEdges);
+
+      expect(pos1).toEqual(pos2);
+    });
+
+    it('8. Zero overlap requirement: guarantees zero node overlaps across all bridge-bearing layouts', () => {
+      const dense = createDenseCrossDomainFixture();
+      const bridge = createBridgeHeavyFixture();
+
+      const denseMetrics = evaluateLayout(dense.nodes, dense.edges, computeArchitectureLayout(dense.nodes, dense.edges));
+      const bridgeMetrics = evaluateLayout(bridge.nodes, bridge.edges, computeArchitectureLayout(bridge.nodes, bridge.edges));
+
+      expect(denseMetrics.nodeOverlapCount).toBe(0);
+      expect(bridgeMetrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('9. No crossing regression: maintains crossing efficiency without introducing invalid geometry', () => {
+      const dense = createDenseCrossDomainFixture();
+      const metrics = evaluateLayout(dense.nodes, dense.edges, computeArchitectureLayout(dense.nodes, dense.edges));
+
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
+      expect(metrics.maxEdgeLength).toBeLessThanOrEqual(1404);
     });
   });
 });
