@@ -48,8 +48,18 @@ export interface BridgePlacementResult {
   averageBridgeToDomainCentroidDistance: number;
 }
 
+export interface DetailedCrossingBreakdown {
+  primaryPrimaryCrossings: number;
+  primaryBridgeCrossings: number;
+  bridgeBridgeCrossings: number;
+  primarySatelliteCrossings: number;
+  satelliteSatelliteCrossings: number;
+  totalGeometricCrossings: number;
+}
+
 export interface ComprehensiveLayoutMetrics {
   edgeCrossingCount: number;
+  detailedCrossings?: DetailedCrossingBreakdown;
   averageEdgeLength: number;
   maxEdgeLength: number;
   nodeOverlapCount: number;
@@ -652,6 +662,165 @@ export function bridgePlacement(
 /**
  * Calculates all individual quantitative layout metrics.
  */
+/**
+ * Calculates a detailed category breakdown of edge crossings in 2D space.
+ */
+export function calculateDetailedEdgeCrossings(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  positions: PositionMap
+): DetailedCrossingBreakdown {
+  const nodeMap = new Map<string, ExplorerNode>();
+  nodes.forEach(n => nodeMap.set(n.id, n));
+
+  const domainMap = new Map<string, string>();
+  nodes.forEach(n => domainMap.set(n.id, extractDomain(n)));
+
+  function isSecondary(nodeId: string): boolean {
+    const node = nodeMap.get(nodeId);
+    if (!node) return false;
+    const isTest =
+      node.behavior?.isTest ||
+      (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
+      /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
+    const isField = node.type === 'Field' || node.type === 'CustomField';
+    return isTest || isField;
+  }
+
+  interface InternalSegment {
+    p1: Point;
+    p2: Point;
+    sourceId: string;
+    targetId: string;
+    isSatellite: boolean;
+    isBridge: boolean;
+  }
+
+  const segments: InternalSegment[] = [];
+
+  for (const edge of edges) {
+    const pos1 = positions[edge.source];
+    const pos2 = positions[edge.target];
+    if (pos1 && pos2) {
+      const srcSec = isSecondary(edge.source);
+      const tgtSec = isSecondary(edge.target);
+      const isSatellite = srcSec || tgtSec;
+
+      const srcDomain = domainMap.get(edge.source);
+      const tgtDomain = domainMap.get(edge.target);
+      const isBridge =
+        !isSatellite &&
+        srcDomain !== tgtDomain &&
+        srcDomain !== 'Shared' &&
+        tgtDomain !== 'Shared';
+
+      segments.push({
+        p1: pos1,
+        p2: pos2,
+        sourceId: edge.source,
+        targetId: edge.target,
+        isSatellite,
+        isBridge,
+      });
+    }
+  }
+
+  let primaryPrimaryCrossings = 0;
+  let primaryBridgeCrossings = 0;
+  let bridgeBridgeCrossings = 0;
+  let primarySatelliteCrossings = 0;
+  let satelliteSatelliteCrossings = 0;
+
+  for (let i = 0; i < segments.length; i++) {
+    const s1 = segments[i];
+    for (let j = i + 1; j < segments.length; j++) {
+      const s2 = segments[j];
+
+      if (
+        s1.sourceId === s2.sourceId ||
+        s1.sourceId === s2.targetId ||
+        s1.targetId === s2.sourceId ||
+        s1.targetId === s2.targetId
+      ) {
+        continue;
+      }
+
+      const cp1 = crossProduct(s1.p1, s1.p2, s2.p1);
+      const cp2 = crossProduct(s1.p1, s1.p2, s2.p2);
+      const cp3 = crossProduct(s2.p1, s2.p2, s1.p1);
+      const cp4 = crossProduct(s2.p1, s2.p2, s1.p2);
+
+      const s1Straddle =
+        (cp1 > EPSILON && cp2 < -EPSILON) || (cp1 < -EPSILON && cp2 > EPSILON);
+      const s2Straddle =
+        (cp3 > EPSILON && cp4 < -EPSILON) || (cp3 < -EPSILON && cp4 > EPSILON);
+
+      let intersected = false;
+      if (s1Straddle && s2Straddle) {
+        intersected = true;
+      } else {
+        const isCollinear =
+          Math.abs(cp1) <= EPSILON &&
+          Math.abs(cp2) <= EPSILON &&
+          Math.abs(cp3) <= EPSILON &&
+          Math.abs(cp4) <= EPSILON;
+
+        if (isCollinear) {
+          const useX = Math.abs(s1.p1.x - s1.p2.x) > EPSILON;
+          const getCoord = (p: Point) => (useX ? p.x : p.y);
+          const minA = Math.min(getCoord(s1.p1), getCoord(s1.p2));
+          const maxA = Math.max(getCoord(s1.p1), getCoord(s1.p2));
+          const minB = Math.min(getCoord(s2.p1), getCoord(s2.p2));
+          const maxB = Math.max(getCoord(s2.p1), getCoord(s2.p2));
+          const overlapMin = Math.max(minA, minB);
+          const overlapMax = Math.min(maxA, maxB);
+
+          if (overlapMax - overlapMin > EPSILON) {
+            intersected = true;
+          }
+        }
+      }
+
+      if (intersected) {
+        if (s1.isSatellite || s2.isSatellite) {
+          if (s1.isSatellite && s2.isSatellite) {
+            satelliteSatelliteCrossings++;
+          } else {
+            primarySatelliteCrossings++;
+          }
+        } else if (s1.isBridge || s2.isBridge) {
+          if (s1.isBridge && s2.isBridge) {
+            bridgeBridgeCrossings++;
+          } else {
+            primaryBridgeCrossings++;
+          }
+        } else {
+          primaryPrimaryCrossings++;
+        }
+      }
+    }
+  }
+
+  const totalGeometricCrossings =
+    primaryPrimaryCrossings +
+    primaryBridgeCrossings +
+    bridgeBridgeCrossings +
+    primarySatelliteCrossings +
+    satelliteSatelliteCrossings;
+
+  return {
+    primaryPrimaryCrossings,
+    primaryBridgeCrossings,
+    bridgeBridgeCrossings,
+    primarySatelliteCrossings,
+    satelliteSatelliteCrossings,
+    totalGeometricCrossings,
+  };
+}
+
+/**
+ * Calculates all individual quantitative layout metrics.
+ */
 export function calculateLayoutMetrics(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
@@ -660,6 +829,7 @@ export function calculateLayoutMetrics(
 ): ComprehensiveLayoutMetrics {
   return {
     edgeCrossingCount: edgeCrossingCount(nodes, edges, positions),
+    detailedCrossings: calculateDetailedEdgeCrossings(nodes, edges, positions),
     averageEdgeLength: averageEdgeLength(nodes, edges, positions),
     maxEdgeLength: maxEdgeLength(nodes, edges, positions),
     nodeOverlapCount: nodeOverlapCount(nodes, edges, positions, options),

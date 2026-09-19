@@ -86,7 +86,7 @@ export function findParentObjectId(
   // 1. Check ID structure
   const idParts = fieldNode.id.split('.');
   if (idParts.length >= 2) {
-    const parentObjName = idParts[0].replace(/^(?:Object|CustomObject):/, '');
+    const parentObjName = idParts[0].replace(/^(?:Object|CustomObject|Field|CustomField):/, '');
     const parentObj = allNodes.find(
       n =>
         (n.type === 'Object' || n.type === 'CustomObject') &&
