@@ -1009,15 +1009,15 @@ describe('GraphView Position Authority & Layout Policy', () => {
       fireEvent.click(resetBtn);
       n1.position({ x: 999, y: 999 });
 
-      // Only 1 listener active for B
+      // Verify Reset A's listener was removed from active listeners via cy.off
       expect((listeners['layoutstop'] || []).length).toBe(1);
 
-      // Emit layoutstop
+      // Emit Reset B layoutstop
       act(() => {
         layoutControl.emitLayoutStop();
       });
 
-      // Exactly 1 persistence call with B's final coordinates
+      // Exactly 1 persistence call with Reset B's final coordinates
       expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
       expect(onNodePositionsChange).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -1226,6 +1226,86 @@ describe('GraphView Position Authority & Layout Policy', () => {
   });
 
   describe('Position Authority Hierarchy Conflict Matrix & Negative Tests', () => {
+    it('Case 1: External update after mount — node initially rendered, GraphView remains mounted, parent updates nodePositions prop, node moves to new persisted coordinates', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 100, y: 100 });
+
+      // Parent updates nodePositions prop while GraphView remains mounted
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 666, y: 666 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 666, y: 666 });
+    });
+
+    it('Case 2: External update after filtering — node-2 hidden, parent updates position for node-2, node-2 becomes visible with new authoritative position', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      // Hide node-2
+      rerender(
+        <GraphView
+          nodes={[testNodes[0]]}
+          edges={[]}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      // While node-2 is hidden, parent updates nodePositions prop with a new coordinate for node-2 (888, 888)
+      // and restores node-2 into nodes array
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 888, y: 888 } }}
+          layoutMode="static"
+        />
+      );
+
+      // Node-2 MUST appear at the NEW authoritative position (888, 888)
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 888, y: 888 });
+    });
+
     it('Case A: canvas = 100,100; persisted = 500,500; no drag -> expected: 500,500', () => {
       render(
         <GraphView
