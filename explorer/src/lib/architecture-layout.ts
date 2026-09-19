@@ -11,7 +11,7 @@ import {
   calculateBridgeCandidatePosition,
 } from './layout/centrality';
 import { placeSatellites } from './layout/satellites';
-import { packComponentPositions, ComponentLocalLayout } from './layout/components';
+import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLayout } from './layout/components';
 import { resolveSpacingAndCollisions } from './layout/spacing';
 
 export interface ArchitectureLayoutOptions {
@@ -23,7 +23,7 @@ export interface ArchitectureLayoutOptions {
   layerSpacing?: number;
   /** Horizontal distance between domain/subsystem clusters (default: 380) */
   domainSpacing?: number;
-  /** Horizontal gap between disconnected graph components (default: 450) */
+  /** Clearance gap between disconnected graph components (default: 100) */
   componentGap?: number;
   /** Map of existing authoritative positions to preserve for incremental layout */
   existingPositions?: Record<string, { x: number; y: number }>;
@@ -60,7 +60,7 @@ export function computeArchitectureLayout(
     nodeHeight = 60,
     layerSpacing = 250,
     domainSpacing = 380,
-    componentGap = 450,
+    componentGap = 100,
     existingPositions = {},
   } = options;
 
@@ -247,76 +247,71 @@ export function computeArchitectureLayout(
   );
 
   // Step 10: Disconnected Component Packing (Wave 2C)
-  // If there are multiple disconnected components, separate them horizontally while preserving layer Y coordinates
+  // If there are multiple disconnected components, pack them using 2D shelf packing algorithm (FFDH)
   let componentShiftedPositions: Record<string, { x: number; y: number }> = {
     ...satelliteResult.positions,
   };
 
   if (analysis.components.length > 1) {
-    // Check if components actually occupy overlapping horizontal ranges
-    const compRanges = analysis.components.map(comp => {
-      let minX = Infinity;
-      let maxX = -Infinity;
-      comp.nodeIds.forEach(id => {
-        const pos = satelliteResult.positions[id];
-        if (pos) {
-          if (pos.x < minX) minX = pos.x;
-          if (pos.x > maxX) maxX = pos.x;
+    const componentLayouts: ComponentLocalLayout[] = analysis.components
+      .map(comp => {
+        const positions: Record<string, { x: number; y: number }> = {};
+        let minNodeId: string | undefined = undefined;
+        let importance = 0;
+
+        for (const nodeId of comp.nodeIds) {
+          const pos = satelliteResult.positions[nodeId];
+          if (pos) {
+            positions[nodeId] = pos;
+            if (!minNodeId || nodeId.localeCompare(minNodeId) < 0) {
+              minNodeId = nodeId;
+            }
+            const centrality = centralityMap.get(nodeId);
+            if (centrality) {
+              importance += centrality.hubScore + centrality.bridgeScore;
+            }
+          }
         }
+
+        return {
+          id: comp.componentId,
+          positions,
+          nodeWidth,
+          nodeHeight,
+          structuralImportance: importance,
+          minNodeId,
+        };
+      })
+      .filter(c => Object.keys(c.positions).length > 0);
+
+    if (componentLayouts.length > 1) {
+      // Ensure targetWidth accommodates at least the two largest components side-by-side
+      const compWidths = componentLayouts.map(c => {
+        const bounds = calculateLocalComponentBounds(c.positions, nodeWidth, nodeHeight);
+        return bounds.width;
+      }).sort((a, b) => b - a);
+
+      const maxW = compWidths[0] || nodeWidth;
+      const secondMaxW = compWidths[1] || nodeWidth;
+      const minRowWidth = maxW + secondMaxW + componentGap;
+
+      let totalCompArea = 0;
+      componentLayouts.forEach(c => {
+        const bounds = calculateLocalComponentBounds(c.positions, nodeWidth, nodeHeight);
+        totalCompArea += (bounds.width + componentGap) * (bounds.height + componentGap);
       });
-      return { comp, minX, maxX };
-    }).filter(c => c.minX !== Infinity);
 
-    let overlaps = false;
-    for (let i = 0; i < compRanges.length; i++) {
-      for (let j = i + 1; j < compRanges.length; j++) {
-        const r1 = compRanges[i];
-        const r2 = compRanges[j];
-        if (!(r1.maxX + nodeWidth < r2.minX || r2.maxX + nodeWidth < r1.minX)) {
-          overlaps = true;
-          break;
-        }
-      }
-      if (overlaps) break;
-    }
+      const idealWidth = Math.sqrt(totalCompArea * 1.6);
+      const targetWidth = Math.max(idealWidth, minRowWidth);
 
-    if (overlaps) {
-      componentShiftedPositions = {};
-      let currentComponentXOffset = 0;
-
-      for (const comp of analysis.components) {
-        const compNodeIds = comp.nodeIds;
-        if (compNodeIds.length === 0) continue;
-
-        let minCompX = Infinity;
-        let maxCompX = -Infinity;
-
-        compNodeIds.forEach(id => {
-          const pos = satelliteResult.positions[id];
-          if (pos) {
-            if (pos.x < minCompX) minCompX = pos.x;
-            if (pos.x > maxCompX) maxCompX = pos.x;
-          }
-        });
-
-        if (minCompX === Infinity) continue;
-
-        const deltaX = currentComponentXOffset - minCompX;
-
-        compNodeIds.forEach(id => {
-          const pos = satelliteResult.positions[id];
-          if (pos) {
-            // Preserve exact vertical layer Y, shift X horizontally to separate component
-            componentShiftedPositions[id] = {
-              x: pos.x + deltaX,
-              y: pos.y,
-            };
-          }
-        });
-
-        const compWidth = maxCompX - minCompX;
-        currentComponentXOffset += Math.max(compWidth, nodeWidth) + componentGap;
-      }
+      const packed = packComponentPositions(componentLayouts, {
+        gap: componentGap,
+        targetWidth,
+        targetAspectRatio: 1.6,
+        nodeWidth,
+        nodeHeight,
+      });
+      componentShiftedPositions = packed.positions;
     }
   }
 
