@@ -1,0 +1,775 @@
+{
+  "metadata": {
+    "fixture": "Cloud Spend Tracker",
+    "nodeCount": 240,
+    "edgeCount": 1024,
+    "domainCount": 106,
+    "timestamp": "2026-09-19T18:32:18.751Z"
+  },
+  "performanceTimingsMs": {
+    "analysis": "26.87",
+    "layout": "496.29",
+    "total": "523.16"
+  },
+  "pipelineStagesSnapshots": [
+    {
+      "stage": "Stage 5: Global Layout (Domains)",
+      "nodeCount": 106,
+      "width": 4580,
+      "height": 1660,
+      "aspectRatio": "2.76",
+      "overlaps": 0,
+      "maxEdgeLength": "N/A"
+    },
+    {
+      "stage": "Stage 7: Primary Local Node Layout",
+      "nodeCount": 156,
+      "width": 4540,
+      "height": 840,
+      "aspectRatio": "5.40",
+      "overlaps": 112,
+      "maxEdgeLength": "4420.0"
+    },
+    {
+      "stage": "Stage 8: Bridge Placement",
+      "nodeCount": 179,
+      "width": 9996.27,
+      "height": 920,
+      "aspectRatio": "10.87",
+      "overlaps": 47,
+      "maxEdgeLength": "5467.3"
+    },
+    {
+      "stage": "Stage 9: Satellite Placement",
+      "nodeCount": 240,
+      "width": 9996.27,
+      "height": 1480,
+      "aspectRatio": "6.75",
+      "overlaps": 47,
+      "maxEdgeLength": "5467.3"
+    },
+    {
+      "stage": "Stage 10: Component Packing",
+      "nodeCount": 240,
+      "width": 12136.27,
+      "height": 1640,
+      "aspectRatio": "7.40",
+      "overlaps": 45,
+      "maxEdgeLength": "5467.3"
+    },
+    {
+      "stage": "Stage 11: Final Spacing Cleanup",
+      "nodeCount": 240,
+      "width": 12136.27,
+      "height": 1640,
+      "aspectRatio": "7.40",
+      "overlaps": 22,
+      "maxEdgeLength": "5467.3"
+    }
+  ],
+  "targetWidthSensitivity": [
+    {
+      "domainCount": 10,
+      "totalWidthSum": 2600,
+      "rawSqrtValue": "1824.3",
+      "targetRowWidth": "2400.0",
+      "clampedByMin": true,
+      "clampedByMax": false
+    },
+    {
+      "domainCount": 25,
+      "totalWidthSum": 6500,
+      "rawSqrtValue": "2884.4",
+      "targetRowWidth": "2884.4",
+      "clampedByMin": false,
+      "clampedByMax": false
+    },
+    {
+      "domainCount": 50,
+      "totalWidthSum": 13000,
+      "rawSqrtValue": "4079.2",
+      "targetRowWidth": "4079.2",
+      "clampedByMin": false,
+      "clampedByMax": false
+    },
+    {
+      "domainCount": 100,
+      "totalWidthSum": 26000,
+      "rawSqrtValue": "5768.9",
+      "targetRowWidth": "4800.0",
+      "clampedByMin": false,
+      "clampedByMax": true
+    },
+    {
+      "domainCount": 150,
+      "totalWidthSum": 39000,
+      "rawSqrtValue": "7065.4",
+      "targetRowWidth": "4800.0",
+      "clampedByMin": false,
+      "clampedByMax": true
+    },
+    {
+      "domainCount": 200,
+      "totalWidthSum": 52000,
+      "rawSqrtValue": "8158.4",
+      "targetRowWidth": "4800.0",
+      "clampedByMin": false,
+      "clampedByMax": true
+    }
+  ],
+  "domainCohesionSummary": {
+    "totalDomains": 106,
+    "top10FragmentedDomains": [
+      {
+        "domain": "Audit",
+        "layer": "application",
+        "orderIndex": 13,
+        "totalNodes": 3,
+        "primaryNodes": 1,
+        "bbox": "[3567, 400, 8527, 1080]",
+        "width": 4960,
+        "height": 680,
+        "centroid": "(6047, 740)",
+        "pCentroid": "(8307, 430)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 21600,
+        "bboxArea": 3372800,
+        "utilizationRatio": "0.006",
+        "primaryExpansionRatio": "41.33"
+      },
+      {
+        "domain": "AdminSpend",
+        "layer": "application",
+        "orderIndex": 9,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[3567, 400, 6847, 1280]",
+        "width": 3280,
+        "height": 880,
+        "centroid": "(5207, 840)",
+        "pCentroid": "(6787, 430)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 2886400,
+        "utilizationRatio": "0.005",
+        "primaryExpansionRatio": "27.33"
+      },
+      {
+        "domain": "CloudService",
+        "layer": "domain",
+        "orderIndex": 5,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[3727, 660, 5267, 1180]",
+        "width": 1540,
+        "height": 520,
+        "centroid": "(4497, 920)",
+        "pCentroid": "(5207, 690)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 800800,
+        "utilizationRatio": "0.018",
+        "primaryExpansionRatio": "12.83"
+      },
+      {
+        "domain": "OrganizationBudget",
+        "layer": "domain",
+        "orderIndex": 4,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[3567, 660, 5067, 1380]",
+        "width": 1500,
+        "height": 720,
+        "centroid": "(4317, 1020)",
+        "pCentroid": "(5007, 690)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 1080000,
+        "utilizationRatio": "0.013",
+        "primaryExpansionRatio": "12.50"
+      },
+      {
+        "domain": "FiscalPeriodMapping",
+        "layer": "domain",
+        "orderIndex": 2,
+        "totalNodes": 5,
+        "primaryNodes": 1,
+        "bbox": "[3247, 660, 4547, 1380]",
+        "width": 1300,
+        "height": 720,
+        "centroid": "(3897, 1020)",
+        "pCentroid": "(4487, 690)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 36000,
+        "bboxArea": 936000,
+        "utilizationRatio": "0.038",
+        "primaryExpansionRatio": "10.83"
+      },
+      {
+        "domain": "Account",
+        "layer": "schema",
+        "orderIndex": 37,
+        "totalNodes": 12,
+        "primaryNodes": 5,
+        "bbox": "[3567, 300, 5367, 1180]",
+        "width": 1800,
+        "height": 880,
+        "centroid": "(4467, 740)",
+        "pCentroid": "(4997, 590)",
+        "medianPairwiseDist": "340.6",
+        "maxPairwiseDist": "528.4",
+        "occupiedArea": 86400,
+        "bboxArea": 1584000,
+        "utilizationRatio": "0.055",
+        "primaryExpansionRatio": "3.33"
+      },
+      {
+        "domain": "Forecast",
+        "layer": "application",
+        "orderIndex": 3,
+        "totalNodes": 7,
+        "primaryNodes": 5,
+        "bbox": "[4047, 0, 5047, 1280]",
+        "width": 1000,
+        "height": 1280,
+        "centroid": "(4547, 640)",
+        "pCentroid": "(4747, 640)",
+        "medianPairwiseDist": "300.7",
+        "maxPairwiseDist": "483.7",
+        "occupiedArea": 50400,
+        "bboxArea": 1280000,
+        "utilizationRatio": "0.039",
+        "primaryExpansionRatio": "2.78"
+      },
+      {
+        "domain": "Shared",
+        "layer": "schema",
+        "orderIndex": 31,
+        "totalNodes": 62,
+        "primaryNodes": 10,
+        "bbox": "[0, 140, 9996, 1640]",
+        "width": 9996.27,
+        "height": 1500,
+        "centroid": "(4998, 890)",
+        "pCentroid": "(5827, 610)",
+        "medianPairwiseDist": "1286.5",
+        "maxPairwiseDist": "4084.9",
+        "occupiedArea": 446400,
+        "bboxArea": 14994405,
+        "utilizationRatio": "0.030",
+        "primaryExpansionRatio": "2.38"
+      },
+      {
+        "domain": "Import",
+        "layer": "application",
+        "orderIndex": 21,
+        "totalNodes": 3,
+        "primaryNodes": 2,
+        "bbox": "[6326, 400, 6606, 560]",
+        "width": 280,
+        "height": 160,
+        "centroid": "(6466, 480)",
+        "pCentroid": "(6386, 480)",
+        "medianPairwiseDist": "100.0",
+        "maxPairwiseDist": "100.0",
+        "occupiedArea": 21600,
+        "bboxArea": 44800,
+        "utilizationRatio": "0.482",
+        "primaryExpansionRatio": "2.33"
+      },
+      {
+        "domain": "AdminHealth",
+        "layer": "application",
+        "orderIndex": 20,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[5986, 400, 6266, 460]",
+        "width": 280,
+        "height": 60,
+        "centroid": "(6126, 430)",
+        "pCentroid": "(6046, 430)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 16800,
+        "utilizationRatio": "0.857",
+        "primaryExpansionRatio": "2.33"
+      }
+    ]
+  },
+  "relationshipLocality": {
+    "connectivityQuartiles": {
+      "Q1_lowest": {
+        "count": 86,
+        "medianCentroidDist": "1220.4"
+      },
+      "Q2_mediumLow": {
+        "count": 84,
+        "medianCentroidDist": "1065.3"
+      },
+      "Q3_mediumHigh": {
+        "count": 84,
+        "medianCentroidDist": "1509.8"
+      },
+      "Q4_highest": {
+        "count": 84,
+        "medianCentroidDist": "1134.4"
+      }
+    },
+    "topDomainRelationships": [
+      {
+        "sourceDomain": "AdminDataExplorer",
+        "targetDomain": "Shared",
+        "edgeCount": 25,
+        "strength": 1,
+        "centroidDist": 597.8503157145608
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Assert",
+        "edgeCount": 19,
+        "strength": 0.76,
+        "centroidDist": 228.25424421026653
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "User",
+        "edgeCount": 19,
+        "strength": 0.76,
+        "centroidDist": 1134.416149391395
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Shared",
+        "edgeCount": 16,
+        "strength": 0.64,
+        "centroidDist": 551.7798474029294
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Organization_Hierarchy",
+        "edgeCount": 15,
+        "strength": 0.6,
+        "centroidDist": 338.3784863137726
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Cloud_Account",
+        "edgeCount": 13,
+        "strength": 0.52,
+        "centroidDist": 3661.652632350589
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Cloud_Spend",
+        "edgeCount": 12,
+        "strength": 0.48,
+        "centroidDist": 3401.77894637497
+      },
+      {
+        "sourceDomain": "User",
+        "targetDomain": "UserManagement",
+        "edgeCount": 11,
+        "strength": 0.44,
+        "centroidDist": 1046.881559680941
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Budget",
+        "edgeCount": 9,
+        "strength": 0.36,
+        "centroidDist": 3581.3963757171587
+      },
+      {
+        "sourceDomain": "Account",
+        "targetDomain": "Forecast",
+        "edgeCount": 9,
+        "strength": 0.36,
+        "centroidDist": 128.06248474865697
+      }
+    ]
+  },
+  "edgeLengthStats": {
+    "median": "1189.6",
+    "P75": "2464.4",
+    "P90": "3315.5",
+    "P95": "3887.9",
+    "P99": "4592.9",
+    "max": "5467.3",
+    "avgIntraDomain": "623.6",
+    "avgInterDomain": "1695.9",
+    "avgInterLayer": "1608.7",
+    "avgBridgeEdge": "1548.3",
+    "avgSatelliteEdge": "1722.9"
+  },
+  "crossingsBreakdown": {
+    "total": 99702,
+    "primaryPrimaryCrossings": 0,
+    "primaryBridgeCrossings": 0,
+    "bridgeBridgeCrossings": 12840,
+    "satellitePrimaryCrossings": 48727,
+    "satelliteSatelliteCrossings": 41924
+  },
+  "bridgePlacement": {
+    "bridgeCount": 79,
+    "sampleBridges": [
+      {
+        "nodeId": "ApexClass:CloudAccountController",
+        "layer": "application",
+        "connectedDomains": "Account",
+        "bridgePos": "(4787, 330)",
+        "midpoint": "(4467, 740)",
+        "distToMidpoint": "519.9"
+      },
+      {
+        "nodeId": "ApexClass:CloudAccountService",
+        "layer": "application",
+        "connectedDomains": "Account",
+        "bridgePos": "(4787, 430)",
+        "midpoint": "(4467, 740)",
+        "distToMidpoint": "445.3"
+      },
+      {
+        "nodeId": "ApexClass:CloudSpendService",
+        "layer": "application",
+        "connectedDomains": "Spend",
+        "bridgePos": "(7547, 330)",
+        "midpoint": "(7587, 530)",
+        "distToMidpoint": "204.0"
+      },
+      {
+        "nodeId": "ApexClass:CloudSpendTriggerHandler",
+        "layer": "application",
+        "connectedDomains": "Cloud_Spend,CloudSpend",
+        "bridgePos": "(6967, 330)",
+        "midpoint": "(7367, 680)",
+        "distToMidpoint": "531.8"
+      },
+      {
+        "nodeId": "ApexClass:CsvParser",
+        "layer": "application",
+        "connectedDomains": "SpendImport",
+        "bridgePos": "(8047, 230)",
+        "midpoint": "(7826, 430)",
+        "distToMidpoint": "297.8"
+      },
+      {
+        "nodeId": "ApexClass:DateUtils",
+        "layer": "application",
+        "connectedDomains": "Fiscal",
+        "bridgePos": "(7306, 370)",
+        "midpoint": "(6994, 480)",
+        "distToMidpoint": "330.7"
+      },
+      {
+        "nodeId": "ApexClass:ErrorResponse",
+        "layer": "application",
+        "connectedDomains": "UUID",
+        "bridgePos": "(12076, 30)",
+        "midpoint": "(10156, 450)",
+        "distToMidpoint": "1965.7"
+      },
+      {
+        "nodeId": "ApexClass:FiscalUtilsTest",
+        "layer": "application",
+        "connectedDomains": "Assert",
+        "bridgePos": "(6860, 430)",
+        "midpoint": "(4267, 850)",
+        "distToMidpoint": "2627.2"
+      },
+      {
+        "nodeId": "ApexClass:SpendAnalyticsService",
+        "layer": "application",
+        "connectedDomains": "Spend",
+        "bridgePos": "(7707, 330)",
+        "midpoint": "(7587, 530)",
+        "distToMidpoint": "233.1"
+      },
+      {
+        "nodeId": "ApexClass:StandardAccessPolicy",
+        "layer": "application",
+        "connectedDomains": "SpendTrackerAccessContext,SpendTrackerAuthorization",
+        "bridgePos": "(4306, 330)",
+        "midpoint": "(4918, 445)",
+        "distToMidpoint": "622.0"
+      }
+    ]
+  },
+  "satellitePlacement": {
+    "totalSatellites": 84,
+    "medianAnchorDist": "525.0",
+    "P90AnchorDist": "4283.2",
+    "P95AnchorDist": "4652.4",
+    "P99AnchorDist": "4991.3",
+    "maxAnchorDist": "4991.3",
+    "top10Outliers": [
+      {
+        "nodeId": "Field:Spend_Import_Batch__c.Records_Received__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4203.8"
+      },
+      {
+        "nodeId": "Field:User_Organization_Role__c.User__c",
+        "type": "Field",
+        "anchorId": "ApexClass:create_users",
+        "anchorDist": "4283.2"
+      },
+      {
+        "nodeId": "Field:Spend_Import_Batch__c.Status__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4363.3"
+      },
+      {
+        "nodeId": "Field:Action_Audit__c.Action__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4492.9"
+      },
+      {
+        "nodeId": "Field:Spend_Import_Batch__c.Upload_Date__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4522.8"
+      },
+      {
+        "nodeId": "Field:Action_Audit__c.Message__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4652.4"
+      },
+      {
+        "nodeId": "Field:Action_Audit__c.User__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AuditService",
+        "anchorDist": "4720.9"
+      },
+      {
+        "nodeId": "Field:User_Organization_Role__c.Role__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4738.9"
+      },
+      {
+        "nodeId": "Field:Action_Audit__c.Timestamp__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4812.0"
+      },
+      {
+        "nodeId": "Field:Cloud_Account__c.Cloud_Provider__c",
+        "type": "Field",
+        "anchorId": "ApexClass:AdminDataExplorerController",
+        "anchorDist": "4991.3"
+      }
+    ]
+  },
+  "smallGraphBoundaryTests": [
+    {
+      "domainsCount": 24,
+      "totalWidth": 4999,
+      "isMultiRowTriggered": false,
+      "matchesExpectedMode": true
+    },
+    {
+      "domainsCount": 24,
+      "totalWidth": 5001,
+      "isMultiRowTriggered": true,
+      "matchesExpectedMode": true
+    },
+    {
+      "domainsCount": 25,
+      "totalWidth": 4000,
+      "isMultiRowTriggered": true,
+      "matchesExpectedMode": true
+    },
+    {
+      "domainsCount": 26,
+      "totalWidth": 4000,
+      "isMultiRowTriggered": true,
+      "matchesExpectedMode": true
+    }
+  ],
+  "determinismAudit": {
+    "repeatRunMaxDeltaPx": "0.00000",
+    "shuffleInputMaxDeltaPx": "0.00000",
+    "is100PercentDeterministic": true
+  },
+  "benchmarkRegressionMatrix": [
+    {
+      "fixtureId": "layered-architecture",
+      "nodeCount": 10,
+      "edgeCount": 9,
+      "width": "480.0",
+      "height": "720.0",
+      "aspectRatio": "0.67",
+      "overlaps": 0,
+      "crossings": 1,
+      "maxEdge": "394.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "two-domain",
+      "nodeCount": 8,
+      "edgeCount": 7,
+      "width": "760.0",
+      "height": "400.0",
+      "aspectRatio": "1.90",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "360.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "food-delivery",
+      "nodeCount": 26,
+      "edgeCount": 25,
+      "width": "2480.0",
+      "height": "920.0",
+      "aspectRatio": "2.70",
+      "overlaps": 0,
+      "crossings": 6,
+      "maxEdge": "2200.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "hub-heavy",
+      "nodeCount": 15,
+      "edgeCount": 16,
+      "width": "1960.0",
+      "height": "185.0",
+      "aspectRatio": "10.59",
+      "overlaps": 0,
+      "crossings": 3,
+      "maxEdge": "640.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "bridge-heavy",
+      "nodeCount": 13,
+      "edgeCount": 15,
+      "width": "1080.0",
+      "height": "505.0",
+      "aspectRatio": "2.14",
+      "overlaps": 0,
+      "crossings": 6,
+      "maxEdge": "457.4",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "test-heavy",
+      "nodeCount": 14,
+      "edgeCount": 13,
+      "width": "600.0",
+      "height": "560.0",
+      "aspectRatio": "1.07",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "340.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "field-heavy",
+      "nodeCount": 26,
+      "edgeCount": 25,
+      "width": "1080.0",
+      "height": "560.0",
+      "aspectRatio": "1.93",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "520.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "trigger-handler",
+      "nodeCount": 7,
+      "edgeCount": 7,
+      "width": "640.0",
+      "height": "605.0",
+      "aspectRatio": "1.06",
+      "overlaps": 0,
+      "crossings": 1,
+      "maxEdge": "642.4",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "disconnected-components",
+      "nodeCount": 20,
+      "edgeCount": 15,
+      "width": "1320.0",
+      "height": "1580.0",
+      "aspectRatio": "0.84",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "520.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "long-chain",
+      "nodeCount": 15,
+      "edgeCount": 14,
+      "width": "2840.0",
+      "height": "185.0",
+      "aspectRatio": "15.35",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "219.1",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "dense-cross-domain",
+      "nodeCount": 9,
+      "edgeCount": 12,
+      "width": "970.0",
+      "height": "315.0",
+      "aspectRatio": "3.08",
+      "overlaps": 0,
+      "crossings": 7,
+      "maxEdge": "879.3",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 2
+    },
+    {
+      "fixtureId": "sparse-graph",
+      "nodeCount": 32,
+      "edgeCount": 4,
+      "width": "1260.0",
+      "height": "860.0",
+      "aspectRatio": "1.47",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "160.0",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    },
+    {
+      "fixtureId": "scale-100-plus",
+      "nodeCount": 111,
+      "edgeCount": 120,
+      "width": "7000.0",
+      "height": "1380.0",
+      "aspectRatio": "5.07",
+      "overlaps": 0,
+      "crossings": 320,
+      "maxEdge": "3610.2",
+      "determinismDeltaPx": "0.00000",
+      "layerViolations": 0
+    }
+  ]
+}
