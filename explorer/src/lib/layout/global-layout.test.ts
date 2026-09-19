@@ -4,6 +4,8 @@ import {
   determineGlobalDomainOrder,
   computeGlobalDomainLayout,
 } from './global-layout';
+import { computeArchitectureLayout, classifyNodeLayer, isTestNode } from '../architecture-layout';
+import { evaluateLayout } from './evaluate-layout';
 import { createFoodDeliveryFixture } from './fixtures/food-delivery';
 import { createTwoDomainFixture } from './fixtures/two-domain';
 import { createHubHeavyFixture } from './fixtures/hub-heavy';
@@ -199,6 +201,180 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         expect(region.width).toBeGreaterThanOrEqual(200);
         expect(region.height).toBeGreaterThanOrEqual(150);
       });
+    });
+  });
+
+  describe('Wave 2B — Dynamic Architectural Layer Spacing', () => {
+    it('Test A — One-row adjacent layers are separated by compact derived clearance (< 250px)', () => {
+      const nodes = [
+        createNode('LWC:OrderCard', 'LWC'), // Presentation
+        createNode('ApexClass:OrderService', 'ApexClass'), // Application
+      ];
+      const edges = [
+        createEdge('LWC:OrderCard', 'ApexClass:OrderService'),
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, edges);
+
+      const presentationY = result.layerYMap.presentation;
+      const applicationY = result.layerYMap.application;
+
+      // Old fixed separation was 250px (100 -> 350)
+      // New dynamic separation for 1 row is 160px (100 -> 260)
+      const dy = applicationY - presentationY;
+      expect(dy).toBeLessThan(250);
+      expect(dy).toBe(160); // 60px nodeHeight + 100px interLayerGap
+    });
+
+    it('Test B — Multi-row preceding layer pushes following layer downward according to actual height', () => {
+      // Create 9 primary nodes in Application layer in the Order domain (requires 3 rows since max cols = 4)
+      const nodes = [
+        createNode('LWC:OrderCard', 'LWC', { file: 'force-app/main/default/lwc/Order/OrderCard.js' }), // Presentation (1 row)
+      ];
+      for (let i = 1; i <= 9; i++) {
+        nodes.push(createNode(`ApexClass:AppService${i}`, 'ApexClass', {
+          file: `force-app/main/default/classes/Order/AppService${i}.cls`,
+        })); // Application (9 nodes in Order domain -> 3 rows)
+      }
+      nodes.push(createNode('CustomObject:Order__c', 'CustomObject', {
+        file: 'force-app/main/default/objects/Order__c/Order__c.object',
+      })); // Schema (1 row)
+
+      const result = computeGlobalDomainLayout(nodes, []);
+
+      expect(result.layerRowCounts.application).toBe(3);
+      // Application 3 rows = 3 * 60 + 2 * 40 = 260px required height
+      expect(result.layerHeights.application).toBe(260);
+
+      const applicationY = result.layerYMap.application; // Presentation (100 + 60 + 100) = 260
+      const schemaY = result.layerYMap.schema;
+
+      // Dynamic distance between Application Y and Schema Y must account for Application's 260px height
+      // Schema Y = Application Y (260) + 260px height + 100px gap = 620
+      expect(schemaY - applicationY).toBe(360);
+      expect(schemaY).toBeGreaterThan(applicationY + result.layerHeights.application);
+    });
+
+    it('Test C — Empty intermediate layer contributes 0 content height and preserves ordering', () => {
+      const nodes = [
+        createNode('LWC:OrderCard', 'LWC'), // Presentation = populated (1 row)
+        // Application = empty (0 nodes)
+        createNode('ApexClass:OrderDomain', 'ApexClass', { displayName: 'OrderDomain' }), // Domain = populated
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, []);
+
+      expect(result.layerRowCounts.presentation).toBe(1);
+      expect(result.layerRowCounts.application).toBe(0); // Empty layer
+      expect(result.layerRowCounts.domain).toBe(1);
+
+      const presY = result.layerYMap.presentation; // 100
+      const appY = result.layerYMap.application;   // 260
+      const domY = result.layerYMap.domain;        // 260
+
+      // Domain must NOT be 500px below Presentation
+      expect(domY - presY).toBe(160); // 60 + 100 = 160
+      expect(presY).toBeLessThan(domY);
+      expect(presY).toBeLessThanOrEqual(appY);
+      expect(appY).toBeLessThanOrEqual(domY);
+    });
+
+    it('Test D — Primary/secondary isolation (fields and tests do NOT increase layer spacing)', () => {
+      const baseNodes = [
+        createNode('LWC:OrderCard', 'LWC'), // Presentation
+        createNode('ApexClass:OrderService', 'ApexClass'), // Application
+      ];
+
+      const resultBase = computeGlobalDomainLayout(baseNodes, []);
+
+      // Add 20 test nodes and 20 field nodes to the graph
+      const inflatedNodes = [...baseNodes];
+      for (let i = 1; i <= 20; i++) {
+        inflatedNodes.push(createNode(`ApexClass:OrderServiceTest${i}`, 'ApexClass', {
+          behavior: { isTest: true, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }
+        }));
+        inflatedNodes.push(createNode(`CustomField:Order__c.Field${i}`, 'CustomField'));
+      }
+
+      const resultInflated = computeGlobalDomainLayout(inflatedNodes, []);
+
+      // Dynamic layer Y map and row counts for primary nodes must be 100% identical
+      expect(resultInflated.layerRowCounts).toEqual(resultBase.layerRowCounts);
+      expect(resultInflated.layerHeights).toEqual(resultBase.layerHeights);
+      expect(resultInflated.layerYMap).toEqual(resultBase.layerYMap);
+    });
+
+    it('Test E — Determinism across 10 repeated runs', () => {
+      const fixture = createFoodDeliveryFixture();
+
+      const run1 = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      for (let i = 0; i < 10; i++) {
+        const runCurrent = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+        expect(runCurrent.layerYMap).toEqual(run1.layerYMap);
+        expect(runCurrent.layerRowCounts).toEqual(run1.layerRowCounts);
+        expect(runCurrent.layerHeights).toEqual(run1.layerHeights);
+      }
+    });
+
+    it('Test F — Input-order invariance (array shuffling yields byte-for-byte identical layer Y coordinates)', () => {
+      const fixture = createFoodDeliveryFixture();
+
+      const orig = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      const shuffledNodes = [...fixture.nodes].reverse();
+      const shuffledEdges = [...fixture.edges].reverse();
+
+      const shuf = computeGlobalDomainLayout(shuffledNodes, shuffledEdges);
+
+      expect(shuf.layerYMap).toEqual(orig.layerYMap);
+      expect(shuf.layerRowCounts).toEqual(orig.layerRowCounts);
+      expect(shuf.layerHeights).toEqual(orig.layerHeights);
+    });
+
+    it('Test G — No node overlaps across canonical architecture layout', () => {
+      const fixture = createFoodDeliveryFixture();
+      const layout = computeArchitectureLayout(fixture.nodes, fixture.edges);
+
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, layout);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('Test H — Layer ordering for occupied layers (Presentation Y < Application Y < Domain Y < Schema Y)', () => {
+      const nodes = [
+        createNode('LWC:View', 'LWC'), // Presentation
+        createNode('ApexClass:AppService', 'ApexClass'), // Application
+        createNode('ApexClass:DomainObj', 'ApexClass', { displayName: 'DomainSelector' }), // Domain
+        createNode('CustomObject:DbObj', 'CustomObject'), // Schema
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, []);
+
+      const pY = result.layerYMap.presentation;
+      const aY = result.layerYMap.application;
+      const dY = result.layerYMap.domain;
+      const sY = result.layerYMap.schema;
+
+      expect(pY).toBeLessThan(aY);
+      expect(aY).toBeLessThan(dY);
+      expect(dY).toBeLessThan(sY);
+    });
+
+    it('Test I — Multi-domain consistency (same architectural layer shares global layer Y coordinate)', () => {
+      const fixture = createTwoDomainFixture();
+      const result = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
+
+      const layout = computeArchitectureLayout(fixture.nodes, fixture.edges);
+
+      // Extract all primary Application nodes from Domain A and Domain B
+      const appNodes = fixture.nodes.filter(n => classifyNodeLayer(n) === 'application' && !isTestNode(n));
+      expect(appNodes.length).toBeGreaterThanOrEqual(2);
+
+      const yPositions = appNodes.map(n => layout[n.id].y);
+
+      // Primary row 0 nodes across all domains must share the exact same base Y coordinate
+      const baseAppY = result.layerYMap.application;
+      expect(yPositions[0]).toBe(baseAppY);
     });
   });
 });

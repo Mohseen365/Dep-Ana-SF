@@ -191,6 +191,7 @@ export function computeArchitectureLayout(
       nodeWidth,
       nodeHeight,
       domainSpacing,
+      layerYMap: globalDomainResult.layerYMap,
     },
   });
 
@@ -226,7 +227,7 @@ export function computeArchitectureLayout(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight }
+        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap }
       );
 
       basePositions[node.id] = bridgeInfo.candidatePosition;
@@ -243,6 +244,7 @@ export function computeArchitectureLayout(
       nodeWidth,
       nodeHeight,
       layerSpacing,
+      layerYOffsets: globalDomainResult.layerYMap,
     }
   );
 
