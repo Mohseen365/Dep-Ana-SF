@@ -167,6 +167,10 @@ export function computeArchitectureLayout(
     layerSpacing,
     nodeWidth,
     nodeHeight,
+    analysis,
+    domainDiscovery,
+    layerMap,
+    domainMap,
   });
 
   // Step 6: Layer Ordering & Crossing Reduction (Wave 2B)

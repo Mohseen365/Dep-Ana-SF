@@ -1,10 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   computeArchitectureLayout,
   classifyNodeLayer,
   extractDomainStem,
   isTestNode,
 } from './architecture-layout';
+import * as analysisModule from './layout/analysis';
+import * as domainsModule from './layout/domains';
 import { evaluateLayout } from './layout/evaluate-layout';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
@@ -424,6 +426,42 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
 
       expect(run1).toEqual(run2);
       expect(run2).toEqual(run3);
+    });
+  });
+
+  describe('WAVE 7A PERFORMANCE OPTIMIZATION VERIFICATION', () => {
+    it('executes computeArchitectureAnalysis and discoverDomains exactly ONCE per layout run', () => {
+      const nodes: ExplorerNode[] = [
+        createMockNode({ id: 'LWC:OrderView', displayName: 'OrderView', type: 'LWC' }),
+        createMockNode({ id: 'ApexClass:OrderController', displayName: 'OrderController' }),
+        createMockNode({ id: 'ApexClass:OrderService', displayName: 'OrderService' }),
+        createMockNode({ id: 'ApexClass:PaymentService', displayName: 'PaymentService' }),
+        createMockNode({ id: 'CustomObject:Order__c', displayName: 'Order__c', type: 'CustomObject' }),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        createMockEdge('LWC:OrderView', 'ApexClass:OrderController'),
+        createMockEdge('ApexClass:OrderController', 'ApexClass:OrderService'),
+        createMockEdge('ApexClass:OrderService', 'ApexClass:PaymentService'),
+        createMockEdge('ApexClass:OrderService', 'CustomObject:Order__c'),
+      ];
+
+      const analysisSpy = vi.spyOn(analysisModule, 'computeArchitectureAnalysis');
+      const domainsSpy = vi.spyOn(domainsModule, 'discoverDomains');
+
+      analysisSpy.mockClear();
+      domainsSpy.mockClear();
+
+      const positions = computeArchitectureLayout(nodes, edges);
+
+      expect(positions).toBeDefined();
+      expect(Object.keys(positions).length).toBe(nodes.length);
+
+      expect(analysisSpy).toHaveBeenCalledTimes(1);
+      expect(domainsSpy).toHaveBeenCalledTimes(1);
+
+      analysisSpy.mockRestore();
+      domainsSpy.mockRestore();
     });
   });
 });

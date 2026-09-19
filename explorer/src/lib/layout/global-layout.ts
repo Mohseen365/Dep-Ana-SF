@@ -1,5 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
-import type { ArchitectureLayer } from './types';
+import type { ArchitectureLayer, ArchitectureGraphAnalysis } from './types';
 import { classifyNodeLayer } from './layers';
 import { discoverDomains, classifyNodeDomain, type DomainDiscoveryResult } from './domains';
 import { computeArchitectureAnalysis } from './analysis';
@@ -65,6 +65,14 @@ export interface GlobalLayoutOptions {
   nodeWidth?: number;
   /** Node height for region bounds calculation (default: 60) */
   nodeHeight?: number;
+  /** Optional pre-computed architecture analysis model to reuse */
+  analysis?: ArchitectureGraphAnalysis;
+  /** Optional pre-computed domain discovery result to reuse */
+  domainDiscovery?: DomainDiscoveryResult;
+  /** Optional pre-computed layer map to reuse */
+  layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
+  /** Optional pre-computed domain map to reuse */
+  domainMap?: Map<string, string> | Record<string, string>;
 }
 
 export interface GlobalLayoutResult {
@@ -127,6 +135,7 @@ export function calculatePrimaryLayerRowCounts(
   options?: {
     layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
     domainMap?: Map<string, string> | Record<string, string>;
+    analysis?: ArchitectureGraphAnalysis;
   }
 ): Record<
   ArchitectureLayer,
@@ -142,11 +151,9 @@ export function calculatePrimaryLayerRowCounts(
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
-  const analysis = computeArchitectureAnalysis(
-    safeNodes,
-    safeEdges,
-    options
-  );
+  const analysis =
+    options?.analysis ||
+    computeArchitectureAnalysis(safeNodes, safeEdges, options);
 
   const layerMap = new Map<string, ArchitectureLayer>();
 
@@ -366,7 +373,8 @@ export function computeDynamicLayerYMap(
 
   const rowCounts = calculatePrimaryLayerRowCounts(
     nodes,
-    edges
+    edges,
+    options
   );
 
   const layerYMap: Record<ArchitectureLayer, number> = {
@@ -913,7 +921,7 @@ export function computeGlobalDomainLayout(
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
 
-  const domainGraph = buildDomainGraph(safeNodes, safeEdges);
+  const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery);
   const orderedDomains = determineGlobalDomainOrder(domainGraph);
 
   const dynamicLayerResult = computeDynamicLayerYMap(safeNodes, safeEdges, options);
