@@ -155,37 +155,84 @@ describe('Architecture Layout Scalability Benchmarks (Wave 8C)', () => {
   ];
 
   layoutScales.forEach(({ count, maxDurationMs }) => {
-    it(`computes architecture layout for ${count} nodes under ${maxDurationMs}ms threshold`, () => {
+    it(`computes cold architecture layout for ${count} nodes under ${maxDurationMs}ms threshold`, () => {
       const { nodes, edges } = generateTestGraph(count);
 
-      // Warm-up run
-      computeArchitectureLayout(nodes, edges);
-
-      // Multiple sample runs for environment stability
-      const samples: number[] = [];
-      let lastPositions = {};
-
-      for (let run = 0; run < 3; run++) {
-        const start = performance.now();
-        lastPositions = computeArchitectureLayout(nodes, edges);
-        const end = performance.now();
-        samples.push(end - start);
-      }
-
-      samples.sort((a, b) => a - b);
-      const medianDuration = samples[1];
+      // Measure cold execution directly without warm-up runs
+      const start = performance.now();
+      const positions = computeArchitectureLayout(nodes, edges);
+      const duration = performance.now() - start;
 
       // 1. All nodes receive finite positions
-      expect(Object.keys(lastPositions).length).toBe(count);
-      for (const pos of Object.values(lastPositions) as { x: number; y: number }[]) {
+      expect(Object.keys(positions).length).toBe(count);
+      for (const pos of Object.values(positions) as { x: number; y: number }[]) {
         expect(typeof pos.x).toBe('number');
         expect(typeof pos.y).toBe('number');
         expect(Number.isFinite(pos.x)).toBe(true);
         expect(Number.isFinite(pos.y)).toBe(true);
       }
 
-      // 2. Performance expectation bound check (prevents CI flakiness via median sampling)
-      expect(medianDuration).toBeLessThan(maxDurationMs);
+      // 2. Performance expectation bound check
+      expect(duration).toBeLessThan(maxDurationMs);
     });
+  });
+});
+
+describe('Seeded Permutation Determinism Suite (Wave 8D)', () => {
+  function seededShuffle<T>(array: T[], seed: number): T[] {
+    const arr = [...array];
+    let m = arr.length;
+    let s = seed;
+    while (m) {
+      s = (s * 9301 + 49297) % 233280;
+      const rnd = s / 233280;
+      const i = Math.floor(rnd * m--);
+      const t = arr[m];
+      arr[m] = arr[i];
+      arr[i] = t;
+    }
+    return arr;
+  }
+
+  function rotateArray<T>(array: T[], count: number): T[] {
+    if (array.length === 0) return array;
+    const n = count % array.length;
+    return [...array.slice(n), ...array.slice(0, n)];
+  }
+
+  it('produces 100% identical layout coordinate maps across original, reverse, rotate, and 3 seeded shuffles', () => {
+    const { nodes, edges } = generateTestGraph(80, 2.0);
+
+    const basePositions = computeArchitectureLayout(nodes, edges);
+
+    // Permutation 1: Reverse
+    const revNodes = [...nodes].reverse();
+    const revEdges = [...edges].reverse();
+    const revPositions = computeArchitectureLayout(revNodes, revEdges);
+    expect(revPositions).toEqual(basePositions);
+
+    // Permutation 2: Rotate
+    const rotNodes = rotateArray(nodes, 17);
+    const rotEdges = rotateArray(edges, 23);
+    const rotPositions = computeArchitectureLayout(rotNodes, rotEdges);
+    expect(rotPositions).toEqual(basePositions);
+
+    // Permutation 3: Seeded Shuffle A
+    const shufANodes = seededShuffle(nodes, 12345);
+    const shufAEdges = seededShuffle(edges, 54321);
+    const shufAPositions = computeArchitectureLayout(shufANodes, shufAEdges);
+    expect(shufAPositions).toEqual(basePositions);
+
+    // Permutation 4: Seeded Shuffle B
+    const shufBNodes = seededShuffle(nodes, 67890);
+    const shufBEdges = seededShuffle(edges, 98765);
+    const shufBPositions = computeArchitectureLayout(shufBNodes, shufBEdges);
+    expect(shufBPositions).toEqual(basePositions);
+
+    // Permutation 5: Seeded Shuffle C
+    const shufCNodes = seededShuffle(nodes, 13579);
+    const shufCEdges = seededShuffle(edges, 97531);
+    const shufCPositions = computeArchitectureLayout(shufCNodes, shufCEdges);
+    expect(shufCPositions).toEqual(basePositions);
   });
 });

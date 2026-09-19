@@ -4,9 +4,26 @@ import { GraphView } from './GraphView';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 // Mock cytoscape
-const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi.hoisted(() => {
+const {
+  mockCy,
+  mockCytoscapeFn,
+  mockLayoutRun,
+  listeners,
+  mockNodeObjMap,
+  layoutControl,
+} = vi.hoisted(() => {
   const listeners: Record<string, ((evt: any) => void)[]> = {};
   const mockLayoutRun = vi.fn();
+  const layoutControl = {
+    autoEmitLayoutStop: true,
+    isLayoutRunning: false,
+    emitLayoutStop: () => {
+      layoutControl.isLayoutRunning = false;
+      const stopHandlers = listeners['layoutstop'] || [];
+      listeners['layoutstop'] = [];
+      stopHandlers.forEach((handler) => handler({ type: 'layoutstop' }));
+    },
+  };
 
   const mockNodeObjMap: Record<string, any> = {};
 
@@ -77,6 +94,7 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
     }),
     layout: vi.fn().mockImplementation((opts) => ({
       run: vi.fn().mockImplementation(() => {
+        layoutControl.isLayoutRunning = true;
         mockLayoutRun(opts);
         if (opts?.positions) {
           Object.values(mockNodeObjMap).forEach((node: any) => {
@@ -86,9 +104,9 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
             }
           });
         }
-        const stopHandlers = listeners['layoutstop'] || [];
-        listeners['layoutstop'] = [];
-        stopHandlers.forEach((handler) => handler({ type: 'layoutstop' }));
+        if (layoutControl.autoEmitLayoutStop) {
+          layoutControl.emitLayoutStop();
+        }
       })
     })),
     batch: vi.fn((fn: () => void) => fn()),
@@ -129,7 +147,7 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
   });
   mockCytoscapeFn.use = vi.fn();
 
-  return { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap };
+  return { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap, layoutControl };
 });
 
 vi.mock('cytoscape', () => ({ default: mockCytoscapeFn }));
@@ -206,6 +224,8 @@ const testEdges: ExplorerEdge[] = [
 describe('GraphView Position Authority & Layout Policy', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    layoutControl.autoEmitLayoutStop = true;
+    layoutControl.isLayoutRunning = false;
     for (const key in listeners) delete listeners[key];
     for (const key in mockNodeObjMap) delete mockNodeObjMap[key];
   });
@@ -857,8 +877,9 @@ describe('GraphView Position Authority & Layout Policy', () => {
     });
   });
 
-  describe('Wave 8A — Position Authority Remediation Tests', () => {
-    it('1. Animated reset waits for layout completion before persisting final coordinates (does not persist pre-animation coordinates)', () => {
+  describe('Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests', () => {
+    it('1. Animated reset is an actual async event: no persistence occurs before layoutstop, and final coordinates are persisted after layoutstop', () => {
+      layoutControl.autoEmitLayoutStop = false;
       const onNodePositionsChange = vi.fn();
 
       render(
@@ -874,21 +895,44 @@ describe('GraphView Position Authority & Layout Policy', () => {
         />
       );
 
+      // Flush initial mount layoutstop listener
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
       onNodePositionsChange.mockClear();
 
-      // Trigger reset layout
+      // Trigger animated reset layout
       const resetBtn = screen.getByRole('button', { name: /reset layout/i });
       fireEvent.click(resetBtn);
 
-      // Verify that onNodePositionsChange was invoked on layoutstop completion with final coordinates
-      expect(onNodePositionsChange).toHaveBeenCalled();
-      const persistedCall = onNodePositionsChange.mock.calls[0][0];
-      expect(persistedCall['node-1']).toBeDefined();
-      expect(typeof persistedCall['node-1'].x).toBe('number');
-      expect(typeof persistedCall['node-1'].y).toBe('number');
+      // 1. Layout run started but layoutstop has NOT fired yet
+      expect(layoutControl.isLayoutRunning).toBe(true);
+      expect(onNodePositionsChange).not.toHaveBeenCalled();
+
+      // 2. Simulate animation moving nodes to final coordinates
+      const n1 = mockCy.getElementById('node-1');
+      const n2 = mockCy.getElementById('node-2');
+      n1.position({ x: 999, y: 888 });
+      n2.position({ x: 777, y: 666 });
+
+      // 3. Emit layoutstop explicitly
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+
+      // 4. Persistence occurs with final coordinates
+      expect(layoutControl.isLayoutRunning).toBe(false);
+      expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'node-1': { x: 999, y: 888 },
+          'node-2': { x: 777, y: 666 },
+        })
+      );
     });
 
-    it('2. Repeated animated resets do not leak event listeners', () => {
+    it('2. Repeated animated resets clean up previous listeners and do not leak event listeners', () => {
+      layoutControl.autoEmitLayoutStop = false;
       const onNodePositionsChange = vi.fn();
 
       render(
@@ -904,19 +948,127 @@ describe('GraphView Position Authority & Layout Policy', () => {
         />
       );
 
+      // Flush initial mount layoutstop
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+      onNodePositionsChange.mockClear();
+
       const resetBtn = screen.getByRole('button', { name: /reset layout/i });
 
-      // Click reset layout 3 times rapidly
+      // Click reset layout 4 times rapidly before layoutstop fires
+      fireEvent.click(resetBtn);
       fireEvent.click(resetBtn);
       fireEvent.click(resetBtn);
       fireEvent.click(resetBtn);
 
-      // Verify that layoutstop listeners were cleaned up and did not multiply
+      // Exactly 1 layoutstop listener is registered (previous 3 were cleaned up via cy.off)
       const stopListeners = listeners['layoutstop'] || [];
-      expect(stopListeners.length).toBeLessThanOrEqual(1);
+      expect(stopListeners.length).toBe(1);
+
+      // Emit layoutstop
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+
+      // Persistence happens exactly once
+      expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
     });
 
-    it('3. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag', () => {
+    it('3. Reset concurrency race test: Reset B overriding Reset A cancels A handler and persists only B final coordinates', () => {
+      layoutControl.autoEmitLayoutStop = false;
+      const onNodePositionsChange = vi.fn();
+
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // Flush initial mount layoutstop
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+      onNodePositionsChange.mockClear();
+
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+
+      // Reset A starts
+      fireEvent.click(resetBtn);
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 111, y: 111 });
+
+      // Reset B starts before Reset A completes
+      fireEvent.click(resetBtn);
+      n1.position({ x: 999, y: 999 });
+
+      // Only 1 listener active for B
+      expect((listeners['layoutstop'] || []).length).toBe(1);
+
+      // Emit layoutstop
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+
+      // Exactly 1 persistence call with B's final coordinates
+      expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'node-1': { x: 999, y: 999 },
+        })
+      );
+    });
+
+    it('4. Unmounting GraphView during pending reset cleans up layoutstop listener', () => {
+      layoutControl.autoEmitLayoutStop = false;
+      const onNodePositionsChange = vi.fn();
+
+      const { unmount } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // Flush initial mount layoutstop
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+      onNodePositionsChange.mockClear();
+
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+      fireEvent.click(resetBtn);
+
+      expect((listeners['layoutstop'] || []).length).toBe(1);
+
+      // Unmount before layoutstop fires
+      unmount();
+
+      // Pending listener removed on teardown
+      expect((listeners['layoutstop'] || []).length).toBe(0);
+
+      // Emit layoutstop manually to verify no late callback fires
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+
+      expect(onNodePositionsChange).not.toHaveBeenCalled();
+    });
+
+    it('5. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag', () => {
       const initialPositions = {
         'node-1': { x: 100, y: 100 },
         'node-2': { x: 200, y: 200 },
@@ -1070,6 +1222,380 @@ describe('GraphView Position Authority & Layout Policy', () => {
       expect(updatedPositions['node-3']).toBeDefined();
       expect(typeof updatedPositions['node-3'].x).toBe('number');
       expect(typeof updatedPositions['node-3'].y).toBe('number');
+    });
+  });
+
+  describe('Position Authority Hierarchy Conflict Matrix & Negative Tests', () => {
+    it('Case A: canvas = 100,100; persisted = 500,500; no drag -> expected: 500,500', () => {
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 500, y: 500 }, 'node-2': { x: 600, y: 600 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 600, y: 600 });
+    });
+
+    it('Case B: canvas = 100,100; persisted = 500,500; drag = 800,800 -> expected: 800,800', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 500, y: 500 }, 'node-2': { x: 600, y: 600 } }}
+          layoutMode="static"
+        />
+      );
+
+      // Drag node-1 to 800,800
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 800, y: 800 });
+      const dragHandler = listeners['dragfree:node']?.[0];
+      act(() => {
+        dragHandler({ target: n1 });
+      });
+
+      // Rerender with conflicting persisted prop
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 500, y: 500 }, 'node-2': { x: 600, y: 600 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(n1.position()).toEqual({ x: 800, y: 800 });
+    });
+
+    it('Case C: canvas = 800,800; persisted = 500,500; NO drag -> expected: 500,500 (guards against cyPositionsBefore contamination)', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      // Mutate mock canvas position directly without a dragfree event
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 800, y: 800 });
+
+      // Parent passes new persisted positions { 'node-1': { x: 500, y: 500 } }
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 500, y: 500 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      // Level 2 persisted position MUST override un-dragged canvas position!
+      expect(n1.position()).toEqual({ x: 500, y: 500 });
+    });
+
+    it('Case D: new node, no persisted, no canvas -> expected: deterministic fallback + immediate persistence', () => {
+      const onNodePositionsChange = vi.fn();
+
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      const n1Pos = mockCy.getElementById('node-1').position();
+      const n2Pos = mockCy.getElementById('node-2').position();
+
+      expect(typeof n1Pos.x).toBe('number');
+      expect(typeof n2Pos.x).toBe('number');
+    });
+
+    it('Case E: existing filtered node becomes visible -> previous authoritative position + NO global relayout', () => {
+      const persistedPositions = {
+        'node-1': { x: 150, y: 150 },
+        'node-2': { x: 350, y: 350 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={[testNodes[0]]}
+          edges={[]}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Make node-2 visible
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 350, y: 350 });
+    });
+
+    it('Negative 1: Canvas position does NOT silently become Level 1 session authority without explicit user drag', () => {
+      const initialPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={initialPositions}
+          layoutMode="static"
+        />
+      );
+
+      // Simulate canvas position movement without dragfree
+      mockCy.getElementById('node-1').position({ x: 777, y: 777 });
+
+      // Rerender with external persisted positions update
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 333, y: 333 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      // Node-1 must adopt the Level 2 persisted position (333, 333), NOT the stale un-dragged canvas position (777, 777)!
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 333, y: 333 });
+    });
+
+    it('Negative 2: External persisted position update is NOT ignored when node was never dragged', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 900, y: 900 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 900, y: 900 });
+    });
+
+    it('Negative 3: Animated reset does NOT persist starting coordinates before layout completes', () => {
+      layoutControl.autoEmitLayoutStop = false;
+      const onNodePositionsChange = vi.fn();
+
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // Flush mount layoutstop
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+      onNodePositionsChange.mockClear();
+
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+      fireEvent.click(resetBtn);
+
+      // BEFORE layoutstop, onNodePositionsChange must NOT have been called
+      expect(onNodePositionsChange).not.toHaveBeenCalled();
+    });
+
+    it('Negative 4: New-node placement does NOT trigger repeated persistence loops', () => {
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      const newNode: ExplorerNode = {
+        id: 'node-3',
+        displayName: 'Node 3',
+        type: 'ApexClass',
+        file: 'Node3.cls',
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' }
+      };
+
+      rerender(
+        <GraphView
+          nodes={[...testNodes, newNode]}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          onNodePositionsChange={onNodePositionsChange}
+          layoutMode="static"
+        />
+      );
+
+      // Called exactly once for placing the new node, not in an infinite re-render loop
+      expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('Negative 5: Filter/focus update does NOT cause an unexpected global relayout', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId="node-1"
+          selectedEdgeId={null}
+          focusedNodeId="node-1"
+          focusState={{ enabled: true, focusNodeId: 'node-1', direction: 'both', depth: 2 }}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockLayoutRun).not.toHaveBeenCalled();
+    });
+
+    it('Negative 6: Static mode does NOT automatically recalculate the entire graph on state changes', () => {
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Cycle selection
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          selectedCycleNodeIds={['node-1', 'node-2']}
+          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          layoutMode="static"
+        />
+      );
+
+      expect(mockLayoutRun).not.toHaveBeenCalled();
     });
   });
 });

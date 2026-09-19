@@ -337,12 +337,12 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     expect(run2.positions).toEqual(run3.positions);
   });
 
-  describe('WAVE 8B — Field Satellite Scalability Tests (1, 2, 4, 8, 16, 24, 50 fields)', () => {
-    [1, 2, 4, 8, 16, 24, 50].forEach(count => {
+  describe('WAVE 8B — Field Satellite Scalability Tests (1, 2, 4, 8, 16, 24, 50, 100 fields)', () => {
+    [1, 2, 4, 8, 16, 24, 50, 100].forEach(count => {
       it(`places ${count} fields around a parent object with zero overlaps and unshifted parent`, () => {
         const parentObj = makeNode('Account', 'CustomObject', 'Account');
         const fields = Array.from({ length: count }, (_, i) =>
-          makeNode(`Account.Field_${String(i + 1).padStart(2, '0')}`, 'Field', `Field_${i + 1}`)
+          makeNode(`Account.Field_${String(i + 1).padStart(3, '0')}`, 'Field', `Field_${i + 1}`)
         );
 
         const nodes = [parentObj, ...fields];
@@ -369,16 +369,57 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
         // 3. Zero overlaps between all nodes
         const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
         expect(overlaps).toBe(0);
+
+        // 4. All coordinates finite
+        fieldPositions.forEach(p => {
+          expect(Number.isFinite(p.x)).toBe(true);
+          expect(Number.isFinite(p.y)).toBe(true);
+        });
       });
+    });
+
+    it('multi-parent object field cluster isolation: fields of Object A do not collide with Object B or Object B fields', () => {
+      const parentA = makeNode('Account', 'CustomObject', 'Account');
+      const fieldsA = Array.from({ length: 15 }, (_, i) =>
+        makeNode(`Account.Field_${i + 1}`, 'Field', `Field_${i + 1}`)
+      );
+
+      const parentB = makeNode('Contact', 'CustomObject', 'Contact');
+      const fieldsB = Array.from({ length: 15 }, (_, i) =>
+        makeNode(`Contact.Field_${i + 1}`, 'Field', `Field_${i + 1}`)
+      );
+
+      const nodes = [parentA, ...fieldsA, parentB, ...fieldsB];
+      const edges = [
+        ...fieldsA.map(f => makeEdge(f.id, parentA.id)),
+        ...fieldsB.map(f => makeEdge(f.id, parentB.id)),
+      ];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = {
+        Account: { x: 100, y: 850 },
+        Contact: { x: 900, y: 850 },
+      };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions, {
+        nodeWidth: 120,
+        nodeHeight: 60,
+      });
+
+      expect(result.positions['Account']).toEqual({ x: 100, y: 850 });
+      expect(result.positions['Contact']).toEqual({ x: 900, y: 850 });
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
     });
   });
 
-  describe('WAVE 8B — Test Satellite Scalability Tests (1, 2, 5, 10, 25 tests)', () => {
-    [1, 2, 5, 10, 25].forEach(count => {
+  describe('WAVE 8B — Test Satellite Scalability Tests (1, 2, 5, 10, 25, 50, 100 tests)', () => {
+    [1, 2, 5, 10, 25, 50, 100].forEach(count => {
       it(`places ${count} test satellites around a production target with zero overlaps and unshifted target`, () => {
         const targetProd = makeNode('PaymentProcessor', 'ApexClass', 'PaymentProcessor');
         const tests = Array.from({ length: count }, (_, i) =>
-          makeNode(`PaymentProcessor_${String(i + 1).padStart(2, '0')}Test`, 'ApexClass', `PaymentProcessor_${i + 1}Test`)
+          makeNode(`PaymentProcessor_${String(i + 1).padStart(3, '0')}Test`, 'ApexClass', `PaymentProcessor_${i + 1}Test`)
         );
 
         const nodes = [targetProd, ...tests];
@@ -405,7 +446,70 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
         // 3. Zero overlaps
         const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
         expect(overlaps).toBe(0);
+
+        // 4. Finite coordinates
+        testPositions.forEach(p => {
+          expect(Number.isFinite(p.x)).toBe(true);
+          expect(Number.isFinite(p.y)).toBe(true);
+        });
       });
+    });
+
+    it('multi-production target test satellite cluster isolation: tests for Target A do not collide with Target B or its tests', () => {
+      const prodA = makeNode('OrderService', 'ApexClass', 'OrderService');
+      const testsA = Array.from({ length: 20 }, (_, i) => makeNode(`OrderService_${i + 1}Test`, 'ApexClass', `OrderService_${i + 1}Test`));
+
+      const prodB = makeNode('BillingService', 'ApexClass', 'BillingService');
+      const testsB = Array.from({ length: 20 }, (_, i) => makeNode(`BillingService_${i + 1}Test`, 'ApexClass', `BillingService_${i + 1}Test`));
+
+      const nodes = [prodA, ...testsA, prodB, ...testsB];
+      const edges = [
+        ...testsA.map(t => makeEdge(t.id, prodA.id)),
+        ...testsB.map(t => makeEdge(t.id, prodB.id)),
+      ];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = {
+        OrderService: { x: 200, y: 350 },
+        BillingService: { x: 1000, y: 350 },
+      };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions, {
+        nodeWidth: 120,
+        nodeHeight: 60,
+      });
+
+      expect(result.positions['OrderService']).toEqual({ x: 200, y: 350 });
+      expect(result.positions['BillingService']).toEqual({ x: 1000, y: 350 });
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
+  });
+
+  describe('WAVE 8B — Dimension-Safety Configuration Tests', () => {
+    it('uses configured node dimensions and spacing parameters (160x80) for collision-free placement', () => {
+      const prod = makeNode('CustomService', 'ApexClass', 'CustomService');
+      const tests = Array.from({ length: 10 }, (_, i) => makeNode(`CustomService_${i + 1}Test`, 'ApexClass', `CustomService_${i + 1}Test`));
+
+      const nodes = [prod, ...tests];
+      const edges = tests.map(t => makeEdge(t.id, prod.id));
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { CustomService: { x: 400, y: 400 } };
+
+      const customGeom = {
+        nodeWidth: 160,
+        nodeHeight: 80,
+        horizontalGap: 50,
+        verticalGap: 50,
+      };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions, customGeom);
+
+      // Verify no overlaps under the larger node dimensions (160x80)
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, customGeom);
+      expect(overlaps).toBe(0);
     });
   });
 

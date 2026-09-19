@@ -322,6 +322,96 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
   });
 
   describe('WAVE 8B — Multi-Bridge Separation & Determinism', () => {
+    it('2-domain bridge: places bridge connecting Order and Payment at distinct valid coordinates with domain connectivity preserved', () => {
+      const nodes = [
+        makeMockNode('OrderService'),
+        makeMockNode('PaymentProcessor'),
+        makeMockNode('OrderPaymentAdapter'),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        { id: 'e1', source: 'OrderPaymentAdapter', target: 'OrderService' },
+        { id: 'e2', source: 'OrderPaymentAdapter', target: 'PaymentProcessor' },
+      ];
+
+      const positions = computeArchitectureLayout(nodes, edges);
+
+      const pAdapter = positions['OrderPaymentAdapter'];
+      const pOrder = positions['OrderService'];
+      const pPayment = positions['PaymentProcessor'];
+
+      expect(pAdapter).toBeDefined();
+      expect(Number.isFinite(pAdapter.x)).toBe(true);
+      expect(Number.isFinite(pAdapter.y)).toBe(true);
+
+      // Adapter must have distinct coordinates from connected endpoints
+      expect(pAdapter).not.toEqual(pOrder);
+      expect(pAdapter).not.toEqual(pPayment);
+
+      const metrics = evaluateLayout(nodes, edges, positions);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('3-domain bridge: places orchestrator connecting Order, Payment, and Inventory with valid distinct coordinates', () => {
+      const nodes = [
+        makeMockNode('OrderService'),
+        makeMockNode('PaymentProcessor'),
+        makeMockNode('InventoryManager'),
+        makeMockNode('MasterOrchestrator'),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        { id: 'e1', source: 'MasterOrchestrator', target: 'OrderService' },
+        { id: 'e2', source: 'MasterOrchestrator', target: 'PaymentProcessor' },
+        { id: 'e3', source: 'MasterOrchestrator', target: 'InventoryManager' },
+      ];
+
+      const positions = computeArchitectureLayout(nodes, edges);
+
+      const pOrch = positions['MasterOrchestrator'];
+      expect(Number.isFinite(pOrch.x)).toBe(true);
+      expect(Number.isFinite(pOrch.y)).toBe(true);
+
+      const metrics = evaluateLayout(nodes, edges, positions);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('multiple bridges across different domain pairs: places Order-Payment bridges and Billing-Inventory bridges without collisions', () => {
+      const nodes = [
+        makeMockNode('OrderService'),
+        makeMockNode('PaymentProcessor'),
+        makeMockNode('OrderPaymentBridge1'),
+        makeMockNode('OrderPaymentBridge2'),
+
+        makeMockNode('BillingService'),
+        makeMockNode('InventoryManager'),
+        makeMockNode('BillingInventoryBridge1'),
+        makeMockNode('BillingInventoryBridge2'),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        { id: 'e1', source: 'OrderPaymentBridge1', target: 'OrderService' },
+        { id: 'e2', source: 'OrderPaymentBridge1', target: 'PaymentProcessor' },
+        { id: 'e3', source: 'OrderPaymentBridge2', target: 'OrderService' },
+        { id: 'e4', source: 'OrderPaymentBridge2', target: 'PaymentProcessor' },
+
+        { id: 'e5', source: 'BillingInventoryBridge1', target: 'BillingService' },
+        { id: 'e6', source: 'BillingInventoryBridge1', target: 'InventoryManager' },
+        { id: 'e7', source: 'BillingInventoryBridge2', target: 'BillingService' },
+        { id: 'e8', source: 'BillingInventoryBridge2', target: 'InventoryManager' },
+      ];
+
+      const positions = computeArchitectureLayout(nodes, edges);
+
+      // Verify all 8 nodes receive distinct coordinates
+      const coords = Object.values(positions).map(p => `${p.x}:${p.y}`);
+      const uniqueCoords = new Set(coords);
+      expect(uniqueCoords.size).toBe(8);
+
+      const metrics = evaluateLayout(nodes, edges, positions);
+      expect(metrics.nodeOverlapCount).toBe(0);
+    });
+
     it('places multiple bridge nodes connecting the same domain pair at distinct non-overlapping coordinates', () => {
       const domainXCenters = {
         OrderDomain: 100,
