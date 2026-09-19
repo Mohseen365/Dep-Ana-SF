@@ -19,16 +19,29 @@ function makeNode(
     displayName: id,
     file: `force-app/main/default/classes/${id}.cls`,
     metrics: {
-      loc: 100,
-      cyclomaticComplexity: 5,
-      cognitiveComplexity: 3,
       fanIn: 1,
       fanOut: 1,
-      soqlCount: 0,
-      dmlCount: 0,
+      coupling: 2,
+      unresolved: 0,
+      score: 1.0,
     },
     risk: 'LOW',
     riskReasons: [],
+    behavior: {
+      isTest: false,
+      publicContractsCount: 0,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 0,
+      dmlCount: 0,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: false,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'UNTESTED',
+    },
     ...overrides,
   };
 }
@@ -42,10 +55,23 @@ function makeEdge(
     id: `${source}->${target}`,
     source,
     target,
-    relationshipType: 'calls',
+    relationshipType: 'method-call',
     method: 'execute',
     evidence: 'test evidence',
     unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    line: 1,
+    column: 1,
+    methodOwner: source,
+    file: '',
+    canonical: {
+      source: { type: 'ApexClass', name: source, method: null },
+      target: { type: 'ApexClass', name: target, method: null },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: { line: 1, column: 1 },
+    },
     ...overrides,
   };
 }
@@ -81,8 +107,8 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
       makeNode('N4'),
     ];
     const edges = [
-      makeEdge('N1', 'N4'), // (0,0) -> (100,100)
-      makeEdge('N2', 'N3'), // (0,100) -> (100,0)
+      makeEdge('N1', 'N4'),
+      makeEdge('N2', 'N3'),
     ];
     const positions: PositionMap = {
       N1: { x: 0, y: 0 },
@@ -122,11 +148,10 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
       makeNode('N3'),
     ];
     const edges: ExplorerEdge[] = [];
-    // Node default dimensions: 120 width x 60 height
     const positions: PositionMap = {
       N1: { x: 0, y: 0 },
-      N2: { x: 30, y: 20 }, // Overlaps with N1
-      N3: { x: 500, y: 500 }, // Far away, no overlap
+      N2: { x: 30, y: 20 },
+      N3: { x: 500, y: 500 },
     };
 
     const metrics = evaluateLayout(nodes, edges, positions, { nodeWidth: 120, nodeHeight: 60 });
@@ -140,9 +165,6 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
       makeNode('C'),
       makeNode('D'),
     ];
-    // Edge A->B: dist = 100
-    // Edge B->C: dist = 200
-    // Edge C->D: dist = 300
     const edges = [
       makeEdge('A', 'B'),
       makeEdge('B', 'C'),
@@ -163,14 +185,14 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
 
   it('F. Layer violation: measures backward cross-layer edges correctly', () => {
     const nodes = [
-      makeNode('View', 'LWC'), // Presentation (0)
-      makeNode('AppService', 'ApexClass', { displayName: 'AppService' }), // Application (1)
-      makeNode('DomainObj', 'ApexClass', { displayName: 'DomainSelector' }), // Domain (2)
-      makeNode('CustomDb', 'CustomObject'), // Schema (3)
+      makeNode('View', 'LWC'),
+      makeNode('AppService', 'ApexClass', { displayName: 'AppService' }),
+      makeNode('DomainObj', 'ApexClass', { displayName: 'DomainSelector' }),
+      makeNode('CustomDb', 'CustomObject'),
     ];
     const edges = [
-      makeEdge('View', 'AppService'), // Presentation -> Application (Valid, top-down)
-      makeEdge('CustomDb', 'View'), // Schema -> Presentation (VIOLATION, bottom-up)
+      makeEdge('View', 'AppService'),
+      makeEdge('CustomDb', 'View'),
     ];
     const positions: PositionMap = {
       View: { x: 0, y: 100 },
@@ -196,9 +218,9 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
     const edges: ExplorerEdge[] = [];
     const positions: PositionMap = {
       OrderService: { x: 100, y: 100 },
-      OrderController: { x: 150, y: 100 }, // Dist = 50
+      OrderController: { x: 150, y: 100 },
       PaymentService: { x: 800, y: 800 },
-      PaymentController: { x: 800, y: 900 }, // Dist = 100
+      PaymentController: { x: 800, y: 900 },
     };
 
     const metrics = evaluateLayout(nodes, edges, positions);
@@ -223,7 +245,7 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
     const positions: PositionMap = {
       C1_A: { x: 0, y: 0 },
       C1_B: { x: 50, y: 0 },
-      C2_A: { x: 100, y: 0 }, // Very close to Component 1
+      C2_A: { x: 100, y: 0 },
       C2_B: { x: 150, y: 0 },
     };
 
@@ -253,10 +275,10 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
     ];
     const positions: PositionMap = {
       HubNode: { x: 100, y: 100 },
-      N1: { x: 100, y: 0 },   // dist 100
-      N2: { x: 100, y: 200 }, // dist 100
-      N3: { x: 0, y: 100 },   // dist 100
-      N4: { x: 200, y: 100 }, // dist 100
+      N1: { x: 100, y: 0 },
+      N2: { x: 100, y: 200 },
+      N3: { x: 0, y: 100 },
+      N4: { x: 200, y: 100 },
     };
 
     const metrics = evaluateLayout(nodes, edges, positions, { hubDegreeThreshold: 4 });
@@ -277,7 +299,7 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
     const positions: PositionMap = {
       OrderService: { x: 0, y: 0 },
       PaymentService: { x: 200, y: 0 },
-      BridgeController: { x: 100, y: 0 }, // Positioned exactly at centroid (100, 0)
+      BridgeController: { x: 100, y: 0 },
     };
 
     const metrics = evaluateLayout(nodes, edges, positions);
@@ -292,8 +314,12 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
         displayName: 'AccountServiceTest',
         behavior: {
           isTest: true,
-          soqlCount: 0,
+          publicContractsCount: 0,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
           dmlCount: 0,
+          calloutCount: 0,
         },
       }),
       makeNode('Account', 'CustomObject'),
@@ -310,11 +336,11 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
 
     const positions: PositionMap = {
       AccountService: { x: 0, y: 0 },
-      AccountServiceTest: { x: 100, y: 0 }, // dist = 100
+      AccountServiceTest: { x: 100, y: 0 },
       Account: { x: 0, y: 500 },
-      'Account.Active__c': { x: 0, y: 550 }, // dist = 50
+      'Account.Active__c': { x: 0, y: 550 },
       AccountTrigger: { x: 200, y: 200 },
-      AccountTriggerHandler: { x: 200, y: 300 }, // dist = 100
+      AccountTriggerHandler: { x: 200, y: 300 },
     };
 
     const sat = evaluateSatelliteLocality(nodes, edges, positions);
@@ -356,7 +382,7 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
 
     const comparison = compareLayoutMetrics(beforeMetrics, afterMetrics);
 
-    expect(comparison.averageEdgeLengthDelta).toBe(100); // 300 - 200 = 100
+    expect(comparison.averageEdgeLengthDelta).toBe(100);
     expect(comparison.maxEdgeLengthDelta).toBe(100);
     expect(comparison.edgeCrossingCountDelta).toBe(0);
     expect(comparison.nodeOverlapCountDelta).toBe(0);
@@ -376,6 +402,6 @@ describe('Wave 4B Layout Evaluator & Objective Metrics', () => {
     const duration = performance.now() - startTime;
 
     expect(metrics.averageEdgeLength).toBeGreaterThan(0);
-    expect(duration).toBeLessThan(1000); // Must complete within 1 second
+    expect(duration).toBeLessThan(1000);
   });
 });

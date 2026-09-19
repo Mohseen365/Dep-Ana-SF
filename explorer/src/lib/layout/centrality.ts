@@ -93,14 +93,6 @@ export function clearBridgeAllocations(): void {
 
 /**
  * Calculates hub metrics and classification for a single node.
- *
- * Formula:
- * - Total degree D(v) = fanIn + fanOut
- * - Balance factor B(v) = 1 - (|fanIn - fanOut| / max(1, D(v)))  [Range: 0..1]
- * - Relative domain degree R(v) = D(v) / max(1, avgDomainDegree)
- * - hubScore(v) = D(v) * 0.7 + B(v) * 0.5 + R(v) * 1.0
- *
- * Deterministic and stable across runs.
  */
 export function computeNodeHubMetrics(
   fanIn: number,
@@ -116,7 +108,6 @@ export function computeNodeHubMetrics(
   const balanceFactor = 1 - Math.abs(fanIn - fanOut) / Math.max(1, totalDegree);
   const relativeDomainDegree = totalDegree / Math.max(1, avgDomainDegree);
 
-  // Deterministic hub score calculation
   const hubScore = Math.round((totalDegree * 0.7 + balanceFactor * 0.5 + relativeDomainDegree * 1.0) * 100) / 100;
 
   const isHub = hubScore >= threshold || totalDegree >= 4;
@@ -137,17 +128,11 @@ export function computeNodeHubMetrics(
 
 /**
  * Calculates cross-domain bridge metrics and relationship strengths for a node.
- *
- * A bridge connects 2 or more distinct architectural domains (excluding 'Shared' or own domain).
- *
- * Formula:
- * - If connected distinct domains N_domains < 2 => bridgeScore = 0, isBridge = false.
- * - If N_domains >= 2 => bridgeScore = N_domains * 10 + totalCrossDomainEdges, isBridge = true.
  */
 export function computeNodeBridgeAnalysis(
   nodeId: string,
   nodeDomain: string | null,
-  nodeLayer: ArchitectureLayer | null,
+  _nodeLayer: ArchitectureLayer | null,
   edges: ExplorerEdge[],
   domainMap: Map<string, string>,
   layerMap: Map<string, ArchitectureLayer>
@@ -163,7 +148,6 @@ export function computeNodeBridgeAnalysis(
 
   const ownDomain = nodeDomain || domainMap.get(nodeId);
 
-  // Filter edges connected to this node
   const nodeEdges = edges.filter(e => e.source === nodeId || e.target === nodeId);
 
   for (const edge of nodeEdges) {
@@ -183,7 +167,6 @@ export function computeNodeBridgeAnalysis(
     }
   }
 
-  // External connected domains
   const connectedDomains = Array.from(domainEdgeCounts.keys()).sort((a, b) =>
     a.localeCompare(b)
   );
@@ -197,13 +180,11 @@ export function computeNodeBridgeAnalysis(
     totalCrossDomainEdges += count;
   }
 
-  // Determine total involved distinct domains (including own domain if non-Shared)
   const allInvolvedDomains = new Set<string>(connectedDomains);
   if (ownDomain && ownDomain !== 'Shared') {
     allInvolvedDomains.add(ownDomain);
   }
 
-  // Deterministically sort connected layers
   const layerOrder: Record<ArchitectureLayer, number> = {
     presentation: 0,
     application: 1,
@@ -237,12 +218,10 @@ export function computeGraphCentralityAnalysis(
   layerMap: Map<string, ArchitectureLayer>,
   options: CentralityOptions = {}
 ): Map<string, NodeCentralityAnalysis> {
-  // Clear stale bridge allocations when initiating centrality analysis
   clearBridgeAllocations();
 
   const hubThreshold = options.hubScoreThreshold ?? 3.5;
 
-  // Group nodes by domain to compute average domain degree for relative hub scoring
   const domainDegreeSum = new Map<string, number>();
   const domainNodeCount = new Map<string, number>();
 
@@ -268,7 +247,6 @@ export function computeGraphCentralityAnalysis(
 
   const resultMap = new Map<string, NodeCentralityAnalysis>();
 
-  // Deterministically sort node IDs
   const sortedNodeIds = nodes.map(n => n.id).sort((a, b) => a.localeCompare(b));
 
   for (const nodeId of sortedNodeIds) {
@@ -325,15 +303,6 @@ export function computeGraphCentralityAnalysis(
 
 /**
  * Calculates a relationship-aware candidate placement position for a cross-domain bridge node.
- *
- * Prevents the "Intermediate-Domain Trap":
- * If connected domains (e.g., Domain A and Domain C) have an intermediate domain (Domain B)
- * lying geometrically between them, a simple arithmetic midpoint lands directly inside B.
- * This function detects if the candidate position lands inside an unconnected domain interior B
- * and applies inter-layer corridor displacement to guarantee clearance from B's nodes.
- *
- * Also implements deterministic multi-bridge separation so multiple bridge nodes on the same domain pair
- * or 3-domain bridges receive non-overlapping, well-spaced candidate coordinates.
  */
 export function calculateBridgeCandidatePosition(
   nodeId: string,
@@ -370,7 +339,6 @@ export function calculateBridgeCandidatePosition(
   let sumX = 0;
   let domainCount = 0;
 
-  // Process connected domains
   const sortedConnectedDomains = [...connectedDomains].sort((a, b) => a.localeCompare(b));
 
   for (const domain of sortedConnectedDomains) {
@@ -382,7 +350,6 @@ export function calculateBridgeCandidatePosition(
     }
   }
 
-  // Calculate position using neighbor positions if available, otherwise domain centers
   const neighborKeys = Object.keys(neighborPositions).sort((a, b) => a.localeCompare(b));
   let neighborSumX = 0;
   let neighborSumY = 0;
@@ -409,7 +376,6 @@ export function calculateBridgeCandidatePosition(
     candidateY = baseY;
   }
 
-  // Detect Intermediate-Domain Trap
   let hasIntermediateTrap = false;
   let trapDomainId: string | undefined = undefined;
 
@@ -422,7 +388,6 @@ export function calculateBridgeCandidatePosition(
     const bounds = domainBounds[domainId];
     if (!bounds) continue;
 
-    // Check if candidateX falls within the interior bounds of an unconnected domain B
     const margin = nodeWidth * 0.5;
     if (candidateX >= bounds.minX - margin && candidateX <= bounds.maxX + margin) {
       hasIntermediateTrap = true;
@@ -431,7 +396,6 @@ export function calculateBridgeCandidatePosition(
     }
   }
 
-  // Apply geometry-driven minimum safe displacement for cross-domain bridges or intermediate domain traps
   if (hasIntermediateTrap || sortedConnectedDomains.length >= 2) {
     const layerOrder: ArchitectureLayer[] = ['presentation', 'application', 'domain', 'schema'];
     const layerIdx = layerOrder.indexOf(layer);
@@ -451,23 +415,18 @@ export function calculateBridgeCandidatePosition(
       }
     }
 
-    // Geometry-driven minimum displacement:
-    // Requires clearing node height (nodeHeight/2) + vertical clearance gap (verticalGap/2),
-    // bounded by half of the active dynamic corridor gap.
     const minClearance = nodeHeight * 0.5 + verticalGap * 0.5;
     const geometryDisplacement = Math.max(minClearance, corridorGap * 0.5);
 
     candidateY = baseY - geometryDisplacement;
   }
 
-  // Combine neighborPositions, options.allocatedPositions, and activeBridgeAllocations
   const existingPositions: Record<string, { x: number; y: number }> = {
     ...neighborPositions,
     ...Object.fromEntries(activeBridgeAllocations.entries()),
     ...(options.allocatedPositions || {}),
   };
 
-  // Deterministically shift candidate position if it collides with existing positions
   let finalX = candidateX;
   let finalY = candidateY;
   let shiftIndex = 0;
@@ -526,15 +485,12 @@ export function calculateHubCandidatePosition(
   domainXCenter: number,
   baseYOffset: number
 ): HubPlacementInfo {
-  // High centrality hubs sit prominently at domain center top
   const x = domainXCenter;
   let y = baseYOffset;
 
   if (hubType === 'fan-in') {
-    // Fan-in hubs sit lower (receiving incoming calls)
     y += 20;
   } else if (hubType === 'fan-out') {
-    // Fan-out hubs sit higher (emitting outgoing calls)
     y -= 20;
   }
 

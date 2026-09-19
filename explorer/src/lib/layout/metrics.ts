@@ -84,40 +84,10 @@ function crossProduct(p1: Point, p2: Point, p3: Point): number {
 }
 
 /**
- * Checks if point p lies on segment s (assuming p is collinear with s).
- */
-function isPointOnSegment(p: Point, s: Segment): boolean {
-  const minX = Math.min(s.p1.x, s.p2.x) - EPSILON;
-  const maxX = Math.max(s.p1.x, s.p2.x) + EPSILON;
-  const minY = Math.min(s.p1.y, s.p2.y) - EPSILON;
-  const maxY = Math.max(s.p1.y, s.p2.y) + EPSILON;
-
-  return p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY;
-}
-
-/**
- * Checks if two points are identical within EPSILON tolerance.
- */
-function isSamePoint(p1: Point, p2: Point): boolean {
-  return Math.abs(p1.x - p2.x) < EPSILON && Math.abs(p1.y - p2.y) < EPSILON;
-}
-
-/**
  * Calculates the number of proper edge crossings in 2D space.
- *
- * EDGE CROSSING DEFINITION:
- * - Two straight-line edge segments cross if their interior line segments intersect.
- * - Edges that share a common endpoint node (e.g. source1 == source2 or target1 == source2)
- *   do NOT count as crossings.
- * - Touching at a node endpoint (an endpoint of one edge lying on the interior/endpoint of another)
- *   does NOT count as a crossing.
- * - Collinear edges: If two edges lie on the same infinite line and their interior segments overlap
- *   without sharing a node endpoint, it counts as 1 crossing. Collinear edges that touch only
- *   at an endpoint or share endpoint nodes are not crossings.
- * - Identical / parallel edges between the exact same pair of nodes share endpoints, so they are not crossings.
  */
 export function edgeCrossingCount(
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: PositionMap
 ): number {
@@ -177,7 +147,6 @@ export function edgeCrossingCount(
 
       if (isCollinear) {
         // Collinear overlap check: test if interior of s1 and s2 overlap
-        // Project onto X or Y axis depending on orientation
         const useX = Math.abs(s1.p1.x - s1.p2.x) > EPSILON;
         const getCoord = (p: Point) => (useX ? p.x : p.y);
 
@@ -194,7 +163,6 @@ export function edgeCrossingCount(
         const overlapMin = Math.max(minA, minB);
         const overlapMax = Math.min(maxA, maxB);
 
-        // Interior overlap exists if overlap length > EPSILON
         if (overlapMax - overlapMin > EPSILON) {
           crossings++;
         }
@@ -219,7 +187,7 @@ function euclideanDistance(p1: Point, p2: Point): number {
  * Returns 0 if there are no valid edges with positions.
  */
 export function averageEdgeLength(
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: PositionMap
 ): number {
@@ -243,7 +211,7 @@ export function averageEdgeLength(
  * Returns 0 if there are no valid edges with positions.
  */
 export function maxEdgeLength(
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: PositionMap
 ): number {
@@ -265,15 +233,10 @@ export function maxEdgeLength(
 
 /**
  * Calculates the total number of overlapping node pairs.
- *
- * NODE OVERLAP DEFINITION:
- * - Nodes are treated as axis-aligned bounding boxes centered at node positions.
- * - Width and height are taken from options (default: 120 x 60) or individual node dimensions if supplied.
- * - Two nodes A and B overlap if |x_A - x_B| < (w_A + w_B)/2 AND |y_A - y_B| < (h_A + h_B)/2.
  */
 export function nodeOverlapCount(
   nodes: ExplorerNode[],
-  edges: ExplorerEdge[],
+  _edges: ExplorerEdge[],
   positions: PositionMap,
   options: LayoutMetricOptions = {}
 ): number {
@@ -303,15 +266,7 @@ export function nodeOverlapCount(
   return overlaps;
 }
 
-const LAYER_ORDER: Record<string, number> = {
-  presentation: 0,
-  application: 1,
-  domain: 2,
-  schema: 3,
-};
-
 function getLayerRank(node: ExplorerNode): number {
-  // Check node.type or explicit classification
   const type = node.type;
   if (type === 'LWC' || type === 'Visualforce') return 0; // presentation
   if (type === 'ApexTrigger' || type === 'Flow') return 1; // application
@@ -336,18 +291,11 @@ function getLayerRank(node: ExplorerNode): number {
 
 /**
  * Measures whether edges violate intended architectural layer order.
- *
- * LAYER VIOLATION DEFINITION:
- * - Architectural layers follow order: presentation (0) -> application (1) -> domain (2) -> schema (3).
- * - Standard architectural dependency flow goes top-down (e.g. presentation depends on application/domain/schema).
- * - A layer violation occurs when an edge flows backwards from a lower layer to a higher layer
- *   (i.e. layerRank(source) > layerRank(target)).
- * - Same-layer edges (layerRank(source) == layerRank(target)) are legitimate and NOT violations.
  */
 export function layerViolationCount(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
-  positions: PositionMap
+  _positions?: PositionMap
 ): number {
   const nodeMap = new Map<string, ExplorerNode>(nodes.map(n => [n.id, n]));
   let violations = 0;
@@ -361,7 +309,6 @@ export function layerViolationCount(
     const sourceRank = getLayerRank(sourceNode);
     const targetRank = getLayerRank(targetNode);
 
-    // Violation: lower layer depending upward on a higher layer
     if (sourceRank > targetRank) {
       violations++;
     }
@@ -377,7 +324,6 @@ function extractDomain(node: ExplorerNode): string {
     if (parts.length >= 2) return parts[0];
   }
 
-  // Suffix matching
   const suffixes = [
     'Controller',
     'Service',
@@ -398,16 +344,10 @@ function extractDomain(node: ExplorerNode): string {
 
 /**
  * Calculates domain cohesion metrics.
- *
- * DOMAIN COHESION DEFINITION:
- * - Group nodes by domain.
- * - For each domain with >= 2 nodes, compute average pairwise Euclidean distance between its nodes.
- * - Compare intra-domain distance relative to overall spatial scale (bounding box diagonal).
- * - domainCohesionScore = 1.0 - min(1.0, averageIntraDomainDist / graphScale).
  */
 export function domainCohesion(
   nodes: ExplorerNode[],
-  edges: ExplorerEdge[],
+  _edges: ExplorerEdge[],
   positions: PositionMap
 ): DomainCohesionResult {
   const activeNodes = nodes.filter(n => positions[n.id] !== undefined);
@@ -419,7 +359,6 @@ export function domainCohesion(
     };
   }
 
-  // Calculate overall graph bounding box scale
   let minX = Infinity,
     maxX = -Infinity,
     minY = Infinity,
@@ -437,7 +376,6 @@ export function domainCohesion(
   );
   const graphScale = graphDiagonal > EPSILON ? graphDiagonal : 1;
 
-  // Group nodes by domain
   const domainNodesMap = new Map<string, ExplorerNode[]>();
   for (const node of activeNodes) {
     const domain = extractDomain(node);
@@ -492,11 +430,6 @@ interface ComponentBoundingBox {
 
 /**
  * Calculates component separation metrics.
- *
- * COMPONENT SEPARATION DEFINITION:
- * - Decomposes graph into connected components.
- * - Computes axis-aligned bounding box for each component (including node dimensions).
- * - Detects component bounding box overlaps and minimum clearance gap violations.
  */
 export function componentSeparation(
   nodes: ExplorerNode[],
@@ -509,11 +442,7 @@ export function componentSeparation(
   const minGap = options.minComponentGap ?? 100;
 
   const activeNodes = nodes.filter(n => positions[n.id] !== undefined);
-  const activeNodeMap = new Map<string, ExplorerNode>(
-    activeNodes.map(n => [n.id, n])
-  );
 
-  // Adjacency graph for BFS
   const adj = new Map<string, Set<string>>();
   activeNodes.forEach(n => adj.set(n.id, new Set()));
   edges.forEach(e => {
@@ -601,7 +530,6 @@ export function componentSeparation(
 
 /**
  * Calculates hub locality metric.
- * Measures average distance between high-degree hub nodes and their immediate neighbors.
  */
 export function hubLocality(
   nodes: ExplorerNode[],
@@ -611,7 +539,6 @@ export function hubLocality(
 ): HubLocalityResult {
   const threshold = options.hubDegreeThreshold ?? 4;
 
-  // Compute node degrees
   const degreeMap = new Map<string, number>();
   const neighborMap = new Map<string, Set<string>>();
 
@@ -662,21 +589,15 @@ export function hubLocality(
 
 /**
  * Calculates bridge placement metric.
- * Measures average distance between bridge nodes (nodes connected to >= 2 domains)
- * and the spatial centroid of their connected domains.
  */
 export function bridgePlacement(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: PositionMap
 ): BridgePlacementResult {
-  const nodeMap = new Map<string, ExplorerNode>(nodes.map(n => [n.id, n]));
-
-  // Extract domain map
   const domainMap = new Map<string, string>();
   nodes.forEach(n => domainMap.set(n.id, extractDomain(n)));
 
-  // Identify bridge nodes
   let bridgeCount = 0;
   let totalCentroidDistSum = 0;
 
@@ -702,7 +623,6 @@ export function bridgePlacement(
     if (connectedDomains.size >= 2) {
       bridgeCount++;
 
-      // Compute centroid of connected domain neighbor positions
       let sumX = 0,
         sumY = 0,
         count = 0;
@@ -730,8 +650,7 @@ export function bridgePlacement(
 }
 
 /**
- * Calculates all individual quantitative layout metrics without aggregating
- * into a single weighted magic quality score.
+ * Calculates all individual quantitative layout metrics.
  */
 export function calculateLayoutMetrics(
   nodes: ExplorerNode[],

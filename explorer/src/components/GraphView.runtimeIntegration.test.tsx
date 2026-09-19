@@ -136,7 +136,6 @@ vi.mock('cytoscape', () => ({ default: mockCytoscapeFn }));
 vi.mock('cytoscape-fcose', () => ({ default: vi.fn() }));
 vi.mock('cytoscape-navigator', () => ({ default: vi.fn() }));
 
-// Mock ResizeObserver & matchMedia
 (globalThis as any).ResizeObserver = class {
   observe() {}
   unobserve() {}
@@ -227,7 +226,7 @@ const sampleEdges: ExplorerEdge[] = [
     id: 'e2',
     source: 'ApexClass:HubServiceTest',
     target: 'ApexClass:HubService',
-    relationshipType: 'test-dependency',
+    relationshipType: 'test-reference',
     method: 'testExecution',
     evidence: 'HubService.execute()',
     unresolved: false,
@@ -241,7 +240,7 @@ const sampleEdges: ExplorerEdge[] = [
     canonical: {
       source: { type: 'ApexClass', name: 'HubServiceTest' },
       target: { type: 'ApexClass', name: 'HubService' },
-      relationship: { type: 'test-dependency', resolution: 'EXACT' },
+      relationship: { type: 'test-reference', resolution: 'EXACT' },
       location: {}
     }
   },
@@ -249,7 +248,7 @@ const sampleEdges: ExplorerEdge[] = [
     id: 'e3',
     source: 'LWC:hubComponent',
     target: 'ApexClass:HubService',
-    relationshipType: 'apex-call',
+    relationshipType: 'method-call',
     method: 'getHubData',
     evidence: '@AuraEnabled',
     unresolved: false,
@@ -263,7 +262,7 @@ const sampleEdges: ExplorerEdge[] = [
     canonical: {
       source: { type: 'LWC', name: 'hubComponent' },
       target: { type: 'ApexClass', name: 'HubService' },
-      relationship: { type: 'apex-call', resolution: 'EXACT' },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
       location: {}
     }
   }
@@ -293,7 +292,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
     const initOpts = mockCytoscapeFn.mock.calls[0][0];
     expect(initOpts.layout.name).toBe('preset');
 
-    // Verify each node received positions from computeArchitectureLayout
     for (const node of sampleNodes) {
       const posFn = initOpts.layout.positions;
       const computedPos = posFn({ id: () => node.id });
@@ -316,7 +314,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Simulate dragging HubService (hub), BridgeAdapter (bridge), and HubServiceTest (satellite)
     const hubNode = mockCy.getElementById('ApexClass:HubService');
     const bridgeNode = mockCy.getElementById('ApexClass:BridgeAdapter');
     const satNode = mockCy.getElementById('ApexClass:HubServiceTest');
@@ -399,7 +396,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Filter out LWCs (Apex-only)
     const apexOnlyNodes = sampleNodes.filter(n => n.type === 'ApexClass');
     rerender(
       <GraphView
@@ -416,7 +412,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     expect(mockLayoutRun).not.toHaveBeenCalled();
 
-    // Restore full graph
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -472,7 +467,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     expect(mockLayoutRun).not.toHaveBeenCalled();
 
-    // Change depth to 2
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -508,7 +502,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Drag HubService
     const hubNode = mockCy.getElementById('ApexClass:HubService');
     hubNode.position({ x: 800, y: 800 });
 
@@ -519,7 +512,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Trigger graph update
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -555,7 +547,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Switch Static -> Interactive
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -571,7 +562,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     expect(mockLayoutRun).not.toHaveBeenCalled();
 
-    // Switch Interactive -> Static
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -634,7 +624,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Add a new node connected to HubService
     const newNode: ExplorerNode = {
       id: 'ApexClass:NewService',
       displayName: 'NewService',
@@ -685,11 +674,9 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     expect(mockLayoutRun).not.toHaveBeenCalled();
 
-    // Existing nodes retain original coordinates
     expect(mockCy.getElementById('ApexClass:HubService').position()).toEqual({ x: 100, y: 100 });
     expect(mockCy.getElementById('ApexClass:BridgeAdapter').position()).toEqual({ x: 200, y: 200 });
 
-    // New node receives valid finite coordinates
     const newPos = mockCy.getElementById('ApexClass:NewService').position();
     expect(typeof newPos.x).toBe('number');
     expect(typeof newPos.y).toBe('number');
@@ -703,7 +690,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 400, y: 400 },
     };
 
-    // Render with HubService only
     const { rerender } = render(
       <GraphView
         nodes={[sampleNodes[0]]}
@@ -717,7 +703,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Make BridgeAdapter visible
     rerender(
       <GraphView
         nodes={[sampleNodes[0], sampleNodes[1]]}
@@ -749,7 +734,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Drag HubService to (999, 999)
     const hubNode = mockCy.getElementById('ApexClass:HubService');
     hubNode.position({ x: 999, y: 999 });
 
@@ -760,7 +744,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Filter to hide LWC
     const apexNodes = sampleNodes.filter(n => n.type === 'ApexClass');
     rerender(
       <GraphView
@@ -776,7 +759,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     expect(mockCy.getElementById('ApexClass:HubService').position()).toEqual({ x: 999, y: 999 });
 
-    // Restore full graph
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -805,7 +787,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Trigger explicit Reset Layout
     const resetBtn = screen.getByRole('button', { name: /reset layout/i });
     fireEvent.click(resetBtn);
 
@@ -813,7 +794,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Filter graph
     rerender(
       <GraphView
         nodes={sampleNodes.slice(0, 2)}
@@ -826,7 +806,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Restore filter
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -860,7 +839,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Filter out BridgeAdapter
     rerender(
       <GraphView
         nodes={[sampleNodes[0]]}
@@ -873,7 +851,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Restore BridgeAdapter
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -910,7 +887,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Rerender with slightly updated edge metadata
     const updatedEdges = [...sampleEdges];
     updatedEdges[0] = { ...updatedEdges[0], evidence: 'Updated evidence' };
 
@@ -951,7 +927,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
 
     mockLayoutRun.mockClear();
 
-    // Trigger cycle selection / path highlight
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -968,7 +943,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
     expect(mockLayoutRun).not.toHaveBeenCalled();
     expect(mockCy.getElementById('ApexClass:HubService').position()).toEqual({ x: 100, y: 200 });
 
-    // Clear cycle selection
     rerender(
       <GraphView
         nodes={sampleNodes}
@@ -997,9 +971,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Initial Cytoscape instantiation happened once
     expect(mockCytoscapeFn).toHaveBeenCalledTimes(1);
-    // Explicit runLayout was NOT called on top of preset layout initialization
     expect(mockLayoutRun).not.toHaveBeenCalled();
   });
 
@@ -1140,7 +1112,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       />
     );
 
-    // Re-render multiple times simulating UI selection / updates
     for (let i = 0; i < 5; i++) {
       rerender(
         <GraphView
@@ -1154,7 +1125,6 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       );
     }
 
-    // Cytoscape should not be re-instantiated on selections
     expect(mockCytoscapeFn).toHaveBeenCalledTimes(1);
   });
 

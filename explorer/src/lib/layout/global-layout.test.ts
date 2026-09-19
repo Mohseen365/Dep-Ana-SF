@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import {
-  buildDomainGraph,
-  determineGlobalDomainOrder,
   computeGlobalDomainLayout,
 } from './global-layout';
 import { computeArchitectureLayout, classifyNodeLayer, isTestNode } from '../architecture-layout';
@@ -9,9 +7,7 @@ import { evaluateLayout } from './evaluate-layout';
 import { createFoodDeliveryFixture } from './fixtures/food-delivery';
 import { createTwoDomainFixture } from './fixtures/two-domain';
 import { createHubHeavyFixture } from './fixtures/hub-heavy';
-import { createLongChainFixture } from './fixtures/long-chain';
 import { createScale100PlusFixture } from './fixtures/scale-100-plus';
-import { createDenseCrossDomainFixture } from './fixtures/dense-cross-domain';
 import { createSparseGraphFixture } from './fixtures/sparse-graph';
 import { createNode, createEdge } from './fixtures/builder';
 
@@ -33,10 +29,8 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       expect(regionA).toBeDefined();
       expect(regionB).toBeDefined();
 
-      // Regions should be spatially separated along X
       expect(Math.abs(regionA.xCenter - regionB.xCenter)).toBeGreaterThanOrEqual(200);
 
-      // Node region mappings should exist for all nodes
       fixture.nodes.forEach(node => {
         expect(result.nodeRegions.has(node.id)).toBe(true);
       });
@@ -46,16 +40,12 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
   describe('Three-Domain Chain (A -> B -> C)', () => {
     it('arranges domains reflecting dependency chain order', () => {
       const nodes = [
-        // Domain Alpha
         createNode('ApexClass:AlphaService', 'ApexClass'),
-        // Domain Beta
         createNode('ApexClass:BetaService', 'ApexClass'),
-        // Domain Gamma
         createNode('ApexClass:GammaService', 'ApexClass'),
       ];
 
       const edges = [
-        // Alpha -> Beta -> Gamma
         createEdge('ApexClass:AlphaService', 'ApexClass:BetaService'),
         createEdge('ApexClass:BetaService', 'ApexClass:GammaService'),
       ];
@@ -70,7 +60,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const betaRegion = result.domainRegions.get('Beta')!;
       const gammaRegion = result.domainRegions.get('Gamma')!;
 
-      // Verify ordering along X-axis reflects chain A -> B -> C
       expect(alphaRegion.xCenter).toBeLessThan(betaRegion.xCenter);
       expect(betaRegion.xCenter).toBeLessThan(gammaRegion.xCenter);
     });
@@ -87,7 +76,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const order = result.orderedDomains;
       expect(order.length).toBeGreaterThanOrEqual(3);
 
-      // Re-running produces identical order
       const secondRun = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
       expect(secondRun.orderedDomains).toEqual(order);
     });
@@ -101,7 +89,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const regions = Array.from(result.domainRegions.values());
       for (let i = 0; i < regions.length; i++) {
         for (let j = i + 1; j < regions.length; j++) {
-          // Distinct domain regions should not overlap on X-center
           expect(regions[i].xCenter).not.toEqual(regions[j].xCenter);
         }
       }
@@ -113,7 +100,7 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const nodes = [
         createNode('ApexClass:OrderService', 'ApexClass'),
         createNode('ApexClass:PaymentProcessor', 'ApexClass'),
-        createNode('ApexClass:MainUtil', 'ApexClass'), // Will resolve to Shared
+        createNode('ApexClass:MainUtil', 'ApexClass'),
       ];
 
       const edges = [
@@ -131,7 +118,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const orderRegion = result.domainRegions.get('Order')!;
       const paymentRegion = result.domainRegions.get('Payment')!;
 
-      // Business domains remain distinct and coherent
       expect(orderRegion.xCenter).not.toEqual(paymentRegion.xCenter);
     });
   });
@@ -164,7 +150,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
 
       const originalRun = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
 
-      // Reverse node and edge arrays
       const shuffledNodes = [...fixture.nodes].reverse();
       const shuffledEdges = [...fixture.edges].reverse();
 
@@ -187,11 +172,9 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const fixture = createFoodDeliveryFixture();
       const result = computeGlobalDomainLayout(fixture.nodes, fixture.edges);
 
-      // Verify domain graph construction
       expect(result.domainGraph.nodes.size).toBeGreaterThanOrEqual(4);
       expect(result.orderedDomains.length).toBeGreaterThanOrEqual(4);
 
-      // Verify all nodes are assigned to node regions
       fixture.nodes.forEach(node => {
         expect(result.nodeRegions.has(node.id)).toBe(true);
         const region = result.nodeRegions.get(node.id)!;
@@ -199,7 +182,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         expect(region.height).toBeGreaterThan(0);
       });
 
-      // Verify domain regions do not collapse and maintain bounded geometry
       result.domainRegions.forEach(region => {
         expect(region.width).toBeGreaterThanOrEqual(160);
         expect(region.height).toBeGreaterThanOrEqual(100);
@@ -209,19 +191,16 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
 
   describe('Wave 2A — Primary Architecture Global Geometry Compaction', () => {
     it('calculates domain region geometry strictly from primary nodes', () => {
-      // Domain with 1 primary node
       const nodes1 = [createNode('ApexClass:OrderService', 'ApexClass')];
       const result1 = computeGlobalDomainLayout(nodes1, []);
       const region1 = result1.domainRegions.get('Order')!;
 
       expect(region1).toBeDefined();
       expect(region1.primaryNodeCount).toBe(1);
-      // Width for 1 primary node (120px + 40px padding) = 160px
       expect(region1.width).toBe(160);
     });
 
     it('compacts domain region width even when domain contains many secondary satellite nodes', () => {
-      // Domain with 1 primary node + 20 secondary field nodes + 10 test nodes connected via edges
       const prodNode = createNode('ApexClass:AccountController', 'ApexClass');
       const nodes = [prodNode];
       const edges = [];
@@ -232,8 +211,7 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         edges.push(createEdge('ApexClass:AccountController', `Account_CustomField${i}`));
       }
       for (let i = 0; i < 10; i++) {
-        const testNode = createNode(`ApexClass:AccountControllerTest${i}`, 'ApexClass');
-        testNode.behavior = { ...testNode.behavior, isTest: true };
+        const testNode = createNode(`ApexClass:AccountControllerTest${i}`, 'ApexClass', { isTest: true });
         nodes.push(testNode);
         edges.push(createEdge(`ApexClass:AccountControllerTest${i}`, 'ApexClass:AccountController'));
       }
@@ -247,15 +225,12 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       expect(dNode.nodeCount).toBe(31);
       expect(dNode.primaryNodeCount).toBe(1);
 
-      // Region width should reflect the 1 primary node (160px) rather than 31 nodes
       expect(region.width).toBe(160);
     });
 
     it('sizes multiple domains proportionally to their primary node counts', () => {
       const nodes = [
-        // Domain Alpha: 1 primary node
         createNode('ApexClass:AlphaService', 'ApexClass'),
-        // Domain Beta: 4 primary nodes sharing stem 'Beta' in application layer
         createNode('ApexClass:BetaService', 'ApexClass'),
         createNode('ApexClass:BetaController', 'ApexClass'),
         createNode('ApexClass:BetaManager', 'ApexClass'),
@@ -266,8 +241,8 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const alphaRegion = result.domainRegions.get('Alpha')!;
       const betaRegion = result.domainRegions.get('Beta')!;
 
-      expect(alphaRegion.width).toBe(160); // 1 col -> 120 + 40
-      expect(betaRegion.width).toBe(640);  // 4 cols -> 4*120 + 3*40 + 40
+      expect(alphaRegion.width).toBe(160);
+      expect(betaRegion.width).toBe(640);
       expect(betaRegion.width).toBeGreaterThan(alphaRegion.width);
     });
 
@@ -282,7 +257,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
         const regCurrent = result.domainRegions.get(dCurrent)!;
         const regNext = result.domainRegions.get(dNext)!;
 
-        // Next domain left edge (xMin) must be strictly >= current domain right edge (xMax) + minGap (40px)
         expect(regNext.xMin).toBeGreaterThanOrEqual(regCurrent.xMax + 40 - 1e-6);
       }
     });
@@ -319,14 +293,12 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       expect(hubIndex).toBeGreaterThan(0);
       expect(hubIndex).toBeLessThan(order.length - 1);
 
-      // Hub is centered in the component rather than forced to index 0
       expect(hubIndex).toBeGreaterThanOrEqual(5);
       expect(hubIndex).toBeLessThanOrEqual(10);
 
       const layout = computeArchitectureLayout(fixture.nodes, fixture.edges);
       const metrics = evaluateLayout(fixture.nodes, fixture.edges, layout);
 
-      // Max edge length is drastically reduced from 2263px to <= 700px
       expect(metrics.maxEdgeLength).toBeLessThanOrEqual(700);
       expect(metrics.nodeOverlapCount).toBe(0);
     });
@@ -389,7 +361,6 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       });
 
       const width = maxX - minX;
-      // 100+ node benchmark bounding box width is compacted to <= 12,000px (down from 13,540px)
       expect(width).toBeLessThan(12000);
 
       const metrics = evaluateLayout(scaleFixture.nodes, scaleFixture.edges, scaleLayout);
@@ -416,8 +387,8 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
   describe('Wave 2B — Dynamic Architectural Layer Spacing', () => {
     it('Test A — One-row adjacent layers are separated by compact derived clearance (< 250px)', () => {
       const nodes = [
-        createNode('LWC:OrderCard', 'LWC'), // Presentation
-        createNode('ApexClass:OrderService', 'ApexClass'), // Application
+        createNode('LWC:OrderCard', 'LWC'),
+        createNode('ApexClass:OrderService', 'ApexClass'),
       ];
       const edges = [
         createEdge('LWC:OrderCard', 'ApexClass:OrderService'),
@@ -428,61 +399,53 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       const presentationY = result.layerYMap.presentation;
       const applicationY = result.layerYMap.application;
 
-      // Old fixed separation was 250px (100 -> 350)
-      // New dynamic separation for 1 row is 160px (100 -> 260)
       const dy = applicationY - presentationY;
       expect(dy).toBeLessThan(250);
-      expect(dy).toBe(160); // 60px nodeHeight + 100px interLayerGap
+      expect(dy).toBe(160);
     });
 
     it('Test B — Multi-row preceding layer pushes following layer downward according to actual height', () => {
-      // Create 9 primary nodes in Application layer in the Order domain (requires 3 rows since max cols = 4)
       const nodes = [
-        createNode('LWC:OrderCard', 'LWC', { file: 'force-app/main/default/lwc/Order/OrderCard.js' }), // Presentation (1 row)
+        createNode('LWC:OrderCard', 'LWC', { file: 'force-app/main/default/lwc/Order/OrderCard.js' }),
       ];
       for (let i = 1; i <= 9; i++) {
         nodes.push(createNode(`ApexClass:AppService${i}`, 'ApexClass', {
           file: `force-app/main/default/classes/Order/AppService${i}.cls`,
-        })); // Application (9 nodes in Order domain -> 3 rows)
+        }));
       }
       nodes.push(createNode('CustomObject:Order__c', 'CustomObject', {
         file: 'force-app/main/default/objects/Order__c/Order__c.object',
-      })); // Schema (1 row)
+      }));
 
       const result = computeGlobalDomainLayout(nodes, []);
 
       expect(result.layerRowCounts.application).toBe(3);
-      // Application 3 rows = 3 * 60 + 2 * 40 = 260px required height
       expect(result.layerHeights.application).toBe(260);
 
-      const applicationY = result.layerYMap.application; // Presentation (100 + 60 + 100) = 260
+      const applicationY = result.layerYMap.application;
       const schemaY = result.layerYMap.schema;
 
-      // Dynamic distance between Application Y and Schema Y must account for Application's 260px height
-      // Schema Y = Application Y (260) + 260px height + 100px gap = 620
       expect(schemaY - applicationY).toBe(360);
       expect(schemaY).toBeGreaterThan(applicationY + result.layerHeights.application);
     });
 
     it('Test C — Empty intermediate layer contributes 0 content height and preserves ordering', () => {
       const nodes = [
-        createNode('LWC:OrderCard', 'LWC'), // Presentation = populated (1 row)
-        // Application = empty (0 nodes)
-        createNode('ApexClass:OrderDomain', 'ApexClass', { displayName: 'OrderDomain' }), // Domain = populated
+        createNode('LWC:OrderCard', 'LWC'),
+        createNode('ApexClass:OrderDomain', 'ApexClass', { displayName: 'OrderDomain' }),
       ];
 
       const result = computeGlobalDomainLayout(nodes, []);
 
       expect(result.layerRowCounts.presentation).toBe(1);
-      expect(result.layerRowCounts.application).toBe(0); // Empty layer
+      expect(result.layerRowCounts.application).toBe(0);
       expect(result.layerRowCounts.domain).toBe(1);
 
-      const presY = result.layerYMap.presentation; // 100
-      const appY = result.layerYMap.application;   // 260
-      const domY = result.layerYMap.domain;        // 260
+      const presY = result.layerYMap.presentation;
+      const appY = result.layerYMap.application;
+      const domY = result.layerYMap.domain;
 
-      // Domain must NOT be 500px below Presentation
-      expect(domY - presY).toBe(160); // 60 + 100 = 160
+      expect(domY - presY).toBe(160);
       expect(presY).toBeLessThan(domY);
       expect(presY).toBeLessThanOrEqual(appY);
       expect(appY).toBeLessThanOrEqual(domY);
@@ -490,24 +453,20 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
 
     it('Test D — Primary/secondary isolation (fields and tests do NOT increase layer spacing)', () => {
       const baseNodes = [
-        createNode('LWC:OrderCard', 'LWC'), // Presentation
-        createNode('ApexClass:OrderService', 'ApexClass'), // Application
+        createNode('LWC:OrderCard', 'LWC'),
+        createNode('ApexClass:OrderService', 'ApexClass'),
       ];
 
       const resultBase = computeGlobalDomainLayout(baseNodes, []);
 
-      // Add 20 test nodes and 20 field nodes to the graph
       const inflatedNodes = [...baseNodes];
       for (let i = 1; i <= 20; i++) {
-        inflatedNodes.push(createNode(`ApexClass:OrderServiceTest${i}`, 'ApexClass', {
-          behavior: { isTest: true, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }
-        }));
+        inflatedNodes.push(createNode(`ApexClass:OrderServiceTest${i}`, 'ApexClass', { isTest: true }));
         inflatedNodes.push(createNode(`CustomField:Order__c.Field${i}`, 'CustomField'));
       }
 
       const resultInflated = computeGlobalDomainLayout(inflatedNodes, []);
 
-      // Dynamic layer Y map and row counts for primary nodes must be 100% identical
       expect(resultInflated.layerRowCounts).toEqual(resultBase.layerRowCounts);
       expect(resultInflated.layerHeights).toEqual(resultBase.layerHeights);
       expect(resultInflated.layerYMap).toEqual(resultBase.layerYMap);
@@ -551,10 +510,10 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
 
     it('Test H — Layer ordering for occupied layers (Presentation Y < Application Y < Domain Y < Schema Y)', () => {
       const nodes = [
-        createNode('LWC:View', 'LWC'), // Presentation
-        createNode('ApexClass:AppService', 'ApexClass'), // Application
-        createNode('ApexClass:DomainObj', 'ApexClass', { displayName: 'DomainSelector' }), // Domain
-        createNode('CustomObject:DbObj', 'CustomObject'), // Schema
+        createNode('LWC:View', 'LWC'),
+        createNode('ApexClass:AppService', 'ApexClass'),
+        createNode('ApexClass:DomainObj', 'ApexClass', { displayName: 'DomainSelector' }),
+        createNode('CustomObject:DbObj', 'CustomObject'),
       ];
 
       const result = computeGlobalDomainLayout(nodes, []);
@@ -575,13 +534,11 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
 
       const layout = computeArchitectureLayout(fixture.nodes, fixture.edges);
 
-      // Extract all primary Application nodes from Domain A and Domain B
       const appNodes = fixture.nodes.filter(n => classifyNodeLayer(n) === 'application' && !isTestNode(n));
       expect(appNodes.length).toBeGreaterThanOrEqual(2);
 
       const yPositions = appNodes.map(n => layout[n.id].y);
 
-      // Primary row 0 nodes across all domains must share the exact same base Y coordinate
       const baseAppY = result.layerYMap.application;
       expect(yPositions[0]).toBe(baseAppY);
     });
