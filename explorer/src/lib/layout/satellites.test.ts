@@ -9,16 +9,17 @@ import { createFieldHeavyFixture } from './fixtures/field-heavy';
 import { createTestHeavyFixture } from './fixtures/test-heavy';
 
 function makeNode(id: string, type: ExplorerNode['type'] = 'ApexClass', displayName?: string): ExplorerNode {
+  const name = displayName || id;
   return {
     id,
-    displayName: displayName || id,
+    displayName: name,
     type,
-    file: type === 'ApexClass' ? `classes/${displayName || id}.cls` : undefined,
+    file: type === 'ApexClass' ? `classes/${name}.cls` : undefined,
     metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
     risk: 'LOW',
     riskReasons: [],
     behavior: {
-      isTest: /(?:test|tests)$/i.test(displayName || id),
+      isTest: /(?:test|tests)/i.test(name),
       publicContractsCount: 0,
       asyncPatterns: [],
       securitySignalsCount: 0,
@@ -335,6 +336,110 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
 
     expect(run1.positions).toEqual(run2.positions);
     expect(run2.positions).toEqual(run3.positions);
+  });
+
+  describe('WAVE 3B — Satellite Geometry Optimization Tests', () => {
+    it('Trigger anchor locality: trigger Y position is anchored relative to parent object position', () => {
+      const account = makeNode('Account', 'CustomObject', 'Account');
+      const trigger = makeNode('AccountTrigger', 'ApexTrigger');
+      const nodes = [account, trigger];
+      const edges = [makeEdge('AccountTrigger', 'Account')];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { Account: { x: 400, y: 850 } };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      const trigPos = result.positions['AccountTrigger'];
+      expect(trigPos).toBeDefined();
+      expect(trigPos.x).toBe(400); // Aligned X
+      // Trigger should sit near parent object (850 - 100 = 750), NOT at hardcoded 350
+      expect(Math.abs(trigPos.y - 850)).toBeLessThan(150);
+      expect(trigPos.y).toBe(750);
+    });
+
+    it('Mixed field and test satellites in single component: 0 overlaps and clear separation', () => {
+      const service = makeNode('OrderService', 'ApexClass', 'OrderService');
+      const tests = Array.from({ length: 5 }, (_, i) => makeNode(`OrderService_${i + 1}Test`, 'ApexClass', `OrderService_${i + 1}Test`));
+      const obj = makeNode('Order__c', 'CustomObject', 'Order__c');
+      const fields = Array.from({ length: 10 }, (_, i) => makeNode(`Order__c.Field_${i + 1}`, 'Field', `Field_${i + 1}`));
+
+      const nodes = [service, ...tests, obj, ...fields];
+      const edges = [
+        ...tests.map(t => makeEdge(t.id, service.id)),
+        ...fields.map(f => makeEdge(f.id, obj.id)),
+      ];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = {
+        OrderService: { x: 300, y: 350 },
+        Order__c: { x: 300, y: 850 },
+      };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      expect(result.placedTestsCount).toBe(5);
+      expect(result.placedFieldsCount).toBe(10);
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
+
+    it('50 fields aspect-ratio compaction: field grid forms a compact, well-proportioned shape under object', () => {
+      const parentObj = makeNode('Account', 'CustomObject', 'Account');
+      const fields = Array.from({ length: 50 }, (_, i) => makeNode(`Account.Field_${i + 1}`, 'Field', `Field_${i + 1}`));
+
+      const nodes = [parentObj, ...fields];
+      const edges = fields.map(f => makeEdge(f.id, parentObj.id));
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { Account: { x: 400, y: 850 } };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      const fieldKeys = fields.map(f => f.id);
+      let minX = Infinity, maxX = -Infinity;
+      fieldKeys.forEach(k => {
+        const p = result.positions[k];
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+      });
+
+      const clusterWidth = maxX - minX + 120;
+      // Cluster width should be compact (<= 1400px for 50 fields)
+      expect(clusterWidth).toBeLessThanOrEqual(1400);
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
+
+    it('50 tests aspect-ratio compaction: test cluster forms a compact side-anchored grid beside target', () => {
+      const prod = makeNode('BillingService', 'ApexClass', 'BillingService');
+      const tests = Array.from({ length: 50 }, (_, i) => makeNode(`BillingService_${i + 1}Test`, 'ApexClass', `BillingService_${i + 1}Test`));
+
+      const nodes = [prod, ...tests];
+      const edges = tests.map(t => makeEdge(t.id, prod.id));
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { BillingService: { x: 300, y: 350 } };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      const testKeys = tests.map(t => t.id);
+      let minY = Infinity, maxY = -Infinity;
+      testKeys.forEach(k => {
+        const p = result.positions[k];
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      });
+
+      const clusterHeight = maxY - minY + 60;
+      // Cluster height should be compact (<= 1300px for 50 tests)
+      expect(clusterHeight).toBeLessThanOrEqual(1300);
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
   });
 
   describe('WAVE 8B — Field Satellite Scalability Tests (1, 2, 4, 8, 16, 24, 50, 100 fields)', () => {

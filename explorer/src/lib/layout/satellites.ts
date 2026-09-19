@@ -107,9 +107,21 @@ function generateSatelliteSlots(
 
   const dx = nodeWidth + horizontalGap;
   const dy = nodeHeight + verticalGap;
+  const effectiveMaxDist = Math.max(
+    maxDistance,
+    Math.ceil(Math.sqrt(count)) * Math.max(dx, dy) * 1.2
+  );
 
-  const candidateSlots: Array<{ x: number; y: number; dist: number; effectiveScore: number; row: number; col: number }> = [];
+  const candidateSlots: Array<{
+    x: number;
+    y: number;
+    dist: number;
+    effectiveScore: number;
+    row: number;
+    col: number;
+  }> = [];
   const maxSearchRadius = Math.max(8, Math.ceil(Math.sqrt(count) * 2));
+  const gridRadiusCap = Math.max(2, Math.ceil(Math.sqrt(count)));
 
   for (let r = -maxSearchRadius; r <= maxSearchRadius; r++) {
     for (let c = -maxSearchRadius; c <= maxSearchRadius; c++) {
@@ -141,8 +153,15 @@ function generateSatelliteSlots(
         if (c < 0) directionalScore = 1.5; // Strong preference for right side (c > 0) over left (c < 0)
       }
 
-      const tetherPenalty = dist > maxDistance ? 10.0 * (dist - maxDistance) : 0;
-      const effectiveScore = dist * directionalScore + tetherPenalty;
+      let aspectPenalty = 0;
+      if (bias === 'field' && Math.abs(c) > gridRadiusCap) {
+        aspectPenalty = (Math.abs(c) - gridRadiusCap) * dx * 1.5;
+      } else if (bias === 'test' && Math.abs(r) > gridRadiusCap) {
+        aspectPenalty = (Math.abs(r) - gridRadiusCap) * dy * 1.5;
+      }
+
+      const tetherPenalty = dist > effectiveMaxDist ? 10.0 * (dist - effectiveMaxDist) : 0;
+      const effectiveScore = dist * directionalScore + aspectPenalty + tetherPenalty;
 
       candidateSlots.push({ x, y, dist, effectiveScore, row: r, col: c });
     }
@@ -258,7 +277,9 @@ export function placeSatellites(
     }
 
     let trigX = parentObjectPos ? parentObjectPos.x : defaultDomainX;
-    let trigY = layerYOffsets.application;
+    let trigY = parentObjectPos
+      ? parentObjectPos.y - (nodeHeight + verticalGap)
+      : layerYOffsets.application;
 
     // Check collision for trigger candidate
     const minDx = nodeWidth + horizontalGap;
@@ -277,7 +298,7 @@ export function placeSatellites(
       );
       if (slots.length > 0) {
         trigX = slots[0].x;
-        trigY = Math.max(layerYOffsets.application, slots[0].y);
+        trigY = slots[0].y;
       }
     }
 
@@ -303,7 +324,7 @@ export function placeSatellites(
           }
         }
 
-        let handlerX = trigX + nodeWidth * 1.25;
+        let handlerX = trigX + nodeWidth + horizontalGap;
         let handlerY = trigY;
 
         if (servicePos) {
@@ -325,7 +346,7 @@ export function placeSatellites(
           );
           if (handlerSlots.length > 0) {
             handlerX = handlerSlots[0].x;
-            handlerY = Math.max(layerYOffsets.application, handlerSlots[0].y);
+            handlerY = handlerSlots[0].y;
           }
         }
 
@@ -354,7 +375,7 @@ export function placeSatellites(
       }
     }
 
-    let hX = anchorPos ? anchorPos.x + nodeWidth * 1.25 : defaultDomainX;
+    let hX = anchorPos ? anchorPos.x + nodeWidth + horizontalGap : defaultDomainX;
     let hY = anchorPos ? anchorPos.y : layerYOffsets.application;
 
     const minDx = nodeWidth + horizontalGap;
@@ -373,7 +394,7 @@ export function placeSatellites(
       );
       if (slots.length > 0) {
         hX = slots[0].x;
-        hY = Math.max(layerYOffsets.application, slots[0].y);
+        hY = slots[0].y;
       }
     }
 
