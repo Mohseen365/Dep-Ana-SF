@@ -52,4 +52,46 @@ describe('graph-interactions cycle highlighting', () => {
 
     expect(mockElements.removeClass).toHaveBeenCalledWith('dimmed highlighted');
   });
+
+  it('handles empty cycleNodeIds array gracefully by clearing highlights without throwing', () => {
+    const mockElements = {
+      removeClass: vi.fn().mockReturnThis(),
+      addClass: vi.fn().mockReturnThis()
+    };
+    const mockCy: any = {
+      elements: vi.fn().mockReturnValue(mockElements),
+      nodes: vi.fn().mockReturnValue({ filter: vi.fn() }),
+      edges: vi.fn().mockReturnValue({ filter: vi.fn() }),
+      animate: vi.fn()
+    };
+
+    expect(() => {
+      highlightCycle(mockCy, []);
+    }).not.toThrow();
+
+    expect(mockCy.elements).toHaveBeenCalled();
+    expect(mockElements.removeClass).toHaveBeenCalledWith('dimmed highlighted');
+    expect(mockElements.addClass).not.toHaveBeenCalled();
+    expect(mockCy.animate).not.toHaveBeenCalled();
+  });
+
+  it('handles undefined or null cycleNodeIds gracefully without throwing or mutating graph', () => {
+    const mockElements = {
+      removeClass: vi.fn().mockReturnThis(),
+      addClass: vi.fn().mockReturnThis()
+    };
+    const mockCy: any = {
+      elements: vi.fn().mockReturnValue(mockElements),
+      animate: vi.fn()
+    };
+
+    expect(() => {
+      highlightCycle(mockCy, undefined as any);
+      highlightCycle(mockCy, null as any);
+    }).not.toThrow();
+
+    expect(mockElements.removeClass).toHaveBeenCalledWith('dimmed highlighted');
+    expect(mockElements.addClass).not.toHaveBeenCalled();
+    expect(mockCy.animate).not.toHaveBeenCalled();
+  });
 });
