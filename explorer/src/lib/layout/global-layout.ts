@@ -930,12 +930,12 @@ export function computeGlobalDomainLayout(
   const domainRegions = new Map<string, DomainRegion>();
   const nodeRegions = new Map<string, { domain: string; xCenter: number; yCenter: number; width: number; height: number }>();
 
-  let currentX = baseX;
+  // Calculate dimensions and aggregate width for each domain
+  let totalWidthSum = 0;
+  const domainDimensions = new Map<string, { width: number; height: number; primaryLayer: ArchitectureLayer }>();
 
-  orderedDomains.forEach((domain, orderIndex) => {
+  orderedDomains.forEach(domain => {
     const dNode = domainGraph.nodes.get(domain);
-    const nodeCount = dNode ? dNode.nodeCount : 1;
-    const primaryNodeCount = dNode ? dNode.primaryNodeCount : 0;
     const primaryLayer = dNode ? dNode.primaryLayer : 'application';
 
     const primaryNodesInDomain = dNode
@@ -972,58 +972,175 @@ export function computeGlobalDomainLayout(
     const regionWidth = Math.max(160, primaryWidth + 40);
     const regionHeight = Math.max(100, primaryHeight + 40);
 
-    if (orderIndex > 0) {
-      const prevDomain = orderedDomains[orderIndex - 1];
-      const prevRegion = domainRegions.get(prevDomain);
-      if (prevRegion) {
-        const rel = domainGraph.adjacency.get(prevDomain)?.get(domain);
-        const strength = rel ? rel.strength : 0;
-        const minGap = 40;
-        const maxGap = 80;
-        const domainGap = maxGap - strength * (maxGap - minGap);
-        currentX = prevRegion.xMax + domainGap;
+    domainDimensions.set(domain, { width: regionWidth, height: regionHeight, primaryLayer });
+    totalWidthSum += regionWidth + 60;
+  });
+
+  const isMultiRowNeeded = orderedDomains.length >= 25 || totalWidthSum > 5000;
+
+  if (!isMultiRowNeeded) {
+    // 1D Linear Placement for small domain graphs (preserves existing 1D invariants & tests)
+    let currentX = baseX;
+
+    orderedDomains.forEach((domain, orderIndex) => {
+      const dNode = domainGraph.nodes.get(domain);
+      const nodeCount = dNode ? dNode.nodeCount : 1;
+      const primaryNodeCount = dNode ? dNode.primaryNodeCount : 0;
+      const primaryLayer = dNode ? dNode.primaryLayer : 'application';
+      const dim = domainDimensions.get(domain)!;
+
+      if (orderIndex > 0) {
+        for (let k = 0; k < orderIndex; k++) {
+          const prevDomain = orderedDomains[k];
+          const prevRegion = domainRegions.get(prevDomain);
+          if (prevRegion) {
+            const rel = domainGraph.adjacency.get(prevDomain)?.get(domain);
+            const strength = rel ? rel.strength : 0;
+            const minGap = 40;
+            const maxGap = 80;
+            const domainGap = maxGap - strength * (maxGap - minGap);
+            currentX = Math.max(currentX, prevRegion.xMax + domainGap);
+          }
+        }
       }
-    }
 
-    const xCenter = currentX + regionWidth / 2;
-    const layerBaseY = layerYMap[primaryLayer] ?? baseY;
-    const yCenter = layerBaseY + regionHeight / 2;
+      const xCenter = currentX + dim.width / 2;
+      const layerBaseY = layerYMap[primaryLayer] ?? baseY;
+      const yCenter = layerBaseY + dim.height / 2;
 
-    const xMin = currentX;
-    const xMax = currentX + regionWidth;
-    const yMin = yCenter - regionHeight / 2;
-    const yMax = yCenter + regionHeight / 2;
+      const xMin = currentX;
+      const xMax = currentX + dim.width;
+      const yMin = yCenter - dim.height / 2;
+      const yMax = yCenter + dim.height / 2;
 
-    const region: DomainRegion = {
-      domain,
-      xCenter,
-      yCenter,
-      width: regionWidth,
-      height: regionHeight,
-      xMin,
-      xMax,
-      yMin,
-      yMax,
-      nodeCount,
-      primaryNodeCount,
-      primaryLayer,
-      orderIndex,
+      const region: DomainRegion = {
+        domain,
+        xCenter,
+        yCenter,
+        width: dim.width,
+        height: dim.height,
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+        nodeCount,
+        primaryNodeCount,
+        primaryLayer,
+        orderIndex,
+      };
+
+      domainRegions.set(domain, region);
+
+      if (dNode) {
+        dNode.nodeIds.forEach(nodeId => {
+          nodeRegions.set(nodeId, {
+            domain,
+            xCenter,
+            yCenter,
+            width: dim.width,
+            height: dim.height,
+          });
+        });
+      }
+    });
+  } else {
+    // 2D Multi-Row Domain Band Packing for large domain graphs
+    const domainsByLayer: Record<ArchitectureLayer, string[]> = {
+      presentation: [],
+      application: [],
+      domain: [],
+      schema: [],
     };
 
-    domainRegions.set(domain, region);
+    orderedDomains.forEach(domain => {
+      const dNode = domainGraph.nodes.get(domain);
+      const primaryLayer = dNode ? dNode.primaryLayer : 'application';
+      domainsByLayer[primaryLayer].push(domain);
+    });
 
-    if (dNode) {
-      dNode.nodeIds.forEach(nodeId => {
-        nodeRegions.set(nodeId, {
+    const targetRowWidth = Math.max(2400, Math.min(4800, Math.sqrt(totalWidthSum * 800 * 1.6)));
+    let currentY = baseY;
+
+    LAYERS_IN_ORDER.forEach(layer => {
+      const layerDomains = domainsByLayer[layer];
+      if (layerDomains.length === 0) return;
+
+      let currentX = baseX;
+      let maxRowHeightInLayer = 0;
+      let rowIdx = 0;
+
+      layerDomains.forEach((domain, idx) => {
+        const dim = domainDimensions.get(domain)!;
+        const dNode = domainGraph.nodes.get(domain);
+
+        let domainGap = 80;
+        if (idx > 0) {
+          const prevDomain = layerDomains[idx - 1];
+          const rel = domainGraph.adjacency.get(prevDomain)?.get(domain);
+          const strength = rel ? rel.strength : 0;
+          domainGap = 100 - strength * 20;
+        }
+
+        if (currentX > baseX && currentX + dim.width > targetRowWidth) {
+          rowIdx++;
+          currentX = baseX + (rowIdx % 5) * 40;
+          currentY += maxRowHeightInLayer + 60;
+          maxRowHeightInLayer = 0;
+        }
+
+        if (idx > 0) {
+          const prevRegion = domainRegions.get(layerDomains[idx - 1]);
+          if (prevRegion && prevRegion.yMin === currentY) {
+            currentX = Math.max(currentX, prevRegion.xMax + domainGap);
+          }
+        }
+
+        const xMin = currentX;
+        const xMax = currentX + dim.width;
+        const xCenter = currentX + dim.width / 2;
+        const yMin = currentY;
+        const yMax = currentY + dim.height;
+        const yCenter = currentY + dim.height / 2;
+
+        const region: DomainRegion = {
           domain,
           xCenter,
           yCenter,
-          width: regionWidth,
-          height: regionHeight,
-        });
+          width: dim.width,
+          height: dim.height,
+          xMin,
+          xMax,
+          yMin,
+          yMax,
+          nodeCount: dNode ? dNode.nodeCount : 1,
+          primaryNodeCount: dNode ? dNode.primaryNodeCount : 0,
+          primaryLayer: layer,
+          orderIndex: idx,
+        };
+
+        domainRegions.set(domain, region);
+
+        if (dNode) {
+          dNode.nodeIds.forEach(nodeId => {
+            nodeRegions.set(nodeId, {
+              domain,
+              xCenter,
+              yCenter,
+              width: dim.width,
+              height: dim.height,
+            });
+          });
+        }
+
+        currentX = xMax + domainGap;
+        if (dim.height > maxRowHeightInLayer) {
+          maxRowHeightInLayer = dim.height;
+        }
       });
-    }
-  });
+
+      currentY += maxRowHeightInLayer + 120;
+    });
+  }
 
   const candidatePositions: PositionMap = {};
   nodeRegions.forEach((region, nodeId) => {
