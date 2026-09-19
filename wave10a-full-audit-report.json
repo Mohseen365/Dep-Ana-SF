@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "18.62",
-    "layoutTimeMs": "484.31",
-    "evaluationTimeMs": "89.39",
-    "totalTimeMs": "592.32"
+    "analysisTimeMs": "15.18",
+    "layoutTimeMs": "517.39",
+    "evaluationTimeMs": "65.70",
+    "totalTimeMs": "598.27"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -359,11 +359,11 @@
         "primaryNodes": 1,
         "secondaryNodes": 0,
         "layers": "presentation",
-        "components": "8",
-        "bbox": "[1320, 1380, 1440, 1440]",
+        "components": "3",
+        "bbox": "[220, 1480, 340, 1540]",
         "width": 120,
         "height": 60,
-        "center": "(1380, 1410)",
+        "center": "(280, 1510)",
         "internalEdges": 0,
         "incomingEdges": 0,
         "outgoingEdges": 0
@@ -420,10 +420,10 @@
         "secondaryNodes": 6,
         "layers": "application,domain,schema",
         "components": "unknown",
-        "bbox": "[4567, 0, 5047, 980]",
+        "bbox": "[4567, 0, 5047, 1080]",
         "width": 480,
-        "height": 980,
-        "center": "(4807, 490)",
+        "height": 1080,
+        "center": "(4807, 540)",
         "internalEdges": 15,
         "incomingEdges": 22,
         "outgoingEdges": 12
@@ -795,10 +795,10 @@
         "secondaryNodes": 0,
         "layers": "application",
         "components": "2",
-        "bbox": "[0, 1380, 120, 1440]",
+        "bbox": "[0, 1480, 120, 1540]",
         "width": 120,
         "height": 60,
-        "center": "(60, 1410)",
+        "center": "(60, 1510)",
         "internalEdges": 0,
         "incomingEdges": 0,
         "outgoingEdges": 0
@@ -840,10 +840,10 @@
         "secondaryNodes": 5,
         "layers": "domain,schema",
         "components": "unknown",
-        "bbox": "[4427, 660, 8607, 1180]",
-        "width": 4180,
-        "height": 520,
-        "center": "(6517, 920)",
+        "bbox": "[4427, 660, 8767, 1280]",
+        "width": 4340,
+        "height": 620,
+        "center": "(6597, 970)",
         "internalEdges": 4,
         "incomingEdges": 3,
         "outgoingEdges": 2
@@ -1379,11 +1379,11 @@
         "primaryNodes": 2,
         "secondaryNodes": 60,
         "layers": "application,presentation,schema",
-        "components": "3,4,5,6,7,unknown",
-        "bbox": "[0, 140, 9996, 1440]",
+        "components": "unknown",
+        "bbox": "[0, 140, 9996, 1380]",
         "width": 9996.27,
-        "height": 1300,
-        "center": "(4998, 790)",
+        "height": 1240,
+        "center": "(4998, 760)",
         "internalEdges": 14,
         "incomingEdges": 128,
         "outgoingEdges": 49
@@ -1470,10 +1470,10 @@
         "secondaryNodes": 10,
         "layers": "application,domain,schema",
         "components": "unknown",
-        "bbox": "[4607, 300, 7407, 1280]",
+        "bbox": "[4607, 300, 7407, 1380]",
         "width": 2800,
-        "height": 980,
-        "center": "(6007, 790)",
+        "height": 1080,
+        "center": "(6007, 840)",
         "internalEdges": 21,
         "incomingEdges": 26,
         "outgoingEdges": 158
@@ -2565,16 +2565,16 @@
     }
   },
   "edgeCrossings": {
-    "totalCrossings": 104238,
-    "intraDomainCrossings": 17,
-    "interDomainCrossings": 104221,
-    "interLayerCrossings": 103471,
-    "bridgeCrossings": 104238,
-    "satelliteCrossings": 91398,
+    "totalCrossings": 103894,
+    "intraDomainCrossings": 11,
+    "interDomainCrossings": 103883,
+    "interLayerCrossings": 103127,
+    "bridgeCrossings": 103894,
+    "satelliteCrossings": 91054,
     "topDomainPairs": [
       [
         "Account <-> Cloud_Account <-> Shared <-> Shared",
-        148
+        146
       ],
       [
         "AdminDataExplorer <-> AdminOverview <-> Shared <-> Shared",
@@ -2582,11 +2582,7 @@
       ],
       [
         "Account <-> Cloud_Spend <-> Shared <-> Shared",
-        136
-      ],
-      [
-        "Account <-> Shared <-> SpendTrackerAuthorization <-> User",
-        136
+        134
       ],
       [
         "Account <-> Cloud_Account <-> User <-> User",
@@ -2605,17 +2601,21 @@
         114
       ],
       [
-        "Account <-> Account <-> Cloud_Account <-> Shared",
-        110
-      ],
-      [
         "Account <-> SpendTrackerAuthorization <-> User <-> User_Organization_Role",
         108
+      ],
+      [
+        "Account <-> Account <-> Cloud_Account <-> Shared",
+        106
+      ],
+      [
+        "Account <-> Shared <-> SpendTrackerAuthorization <-> User",
+        100
       ]
     ]
   },
   "longEdges": {
-    "median": "1120.6",
+    "median": "1125.6",
     "p90": "287.0",
     "p95": "200.0",
     "p99": "107.7",
@@ -2766,6 +2766,15 @@
         "length": "4283.5"
       },
       {
+        "source": "ApexClass:FiscalPeriodMappingSelector",
+        "target": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
+        "sourceDomain": "FiscalPeriodMapping",
+        "targetDomain": "FiscalPeriodMapping",
+        "sourceLayer": "domain",
+        "targetLayer": "schema",
+        "length": "4228.0"
+      },
+      {
         "source": "ApexClass:AuditServiceTest",
         "target": "External:Assert",
         "sourceDomain": "Audit",
@@ -2791,29 +2800,20 @@
         "sourceLayer": "application",
         "targetLayer": "schema",
         "length": "4213.7"
-      },
-      {
-        "source": "ApexClass:UserOrganizationRoleSelector",
-        "target": "Field:User_Organization_Role__c.Role__c",
-        "sourceDomain": "UserOrganizationRole",
-        "targetDomain": "Shared",
-        "sourceLayer": "domain",
-        "targetLayer": "schema",
-        "length": "4207.4"
       }
     ]
   },
   "componentPacking": {
-    "componentCount": 9,
+    "componentCount": 4,
     "componentInventory": [
       {
         "componentId": 0,
-        "nodeCount": 231,
+        "nodeCount": 236,
         "edgeCount": 1023,
-        "bbox": "[0, 0, 9996, 1280]",
+        "bbox": "[0, 0, 9996, 1380]",
         "width": 9996.27,
-        "height": 1280,
-        "center": "(4998, 640)"
+        "height": 1380,
+        "center": "(4998, 690)"
       },
       {
         "componentId": 1,
@@ -2828,85 +2828,34 @@
         "componentId": 2,
         "nodeCount": 1,
         "edgeCount": 0,
-        "bbox": "[0, 1380, 120, 1440]",
+        "bbox": "[0, 1480, 120, 1540]",
         "width": 120,
         "height": 60,
-        "center": "(60, 1410)"
+        "center": "(60, 1510)"
       },
       {
         "componentId": 3,
         "nodeCount": 1,
         "edgeCount": 0,
-        "bbox": "[220, 1380, 340, 1440]",
+        "bbox": "[220, 1480, 340, 1540]",
         "width": 120,
         "height": 60,
-        "center": "(280, 1410)"
-      },
-      {
-        "componentId": 4,
-        "nodeCount": 1,
-        "edgeCount": 0,
-        "bbox": "[440, 1380, 560, 1440]",
-        "width": 120,
-        "height": 60,
-        "center": "(500, 1410)"
-      },
-      {
-        "componentId": 5,
-        "nodeCount": 1,
-        "edgeCount": 0,
-        "bbox": "[660, 1380, 780, 1440]",
-        "width": 120,
-        "height": 60,
-        "center": "(720, 1410)"
-      },
-      {
-        "componentId": 6,
-        "nodeCount": 1,
-        "edgeCount": 0,
-        "bbox": "[880, 1380, 1000, 1440]",
-        "width": 120,
-        "height": 60,
-        "center": "(940, 1410)"
-      },
-      {
-        "componentId": 7,
-        "nodeCount": 1,
-        "edgeCount": 0,
-        "bbox": "[1100, 1380, 1220, 1440]",
-        "width": 120,
-        "height": 60,
-        "center": "(1160, 1410)"
-      },
-      {
-        "componentId": 8,
-        "nodeCount": 1,
-        "edgeCount": 0,
-        "bbox": "[1320, 1380, 1440, 1440]",
-        "width": 120,
-        "height": 60,
-        "center": "(1380, 1410)"
+        "center": "(280, 1510)"
       }
     ],
     "minGap": 100,
-    "medianGap": 320,
-    "p95Gap": 9797.693826248094
+    "medianGap": 100,
+    "p95Gap": 10026.263666635743
   },
   "satellites": {
     "count": 63,
-    "medianDistance": 2310.4112188093272,
+    "medianDistance": 2384.3657437566076,
     "p90Distance": 4363.267124529508,
     "p95Distance": 4652.440219927603,
     "maxDistance": 4991.323559227551,
     "outliers": [
       {
         "id": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Month__c",
-        "type": "CustomField",
-        "anchorId": "ApexClass:FiscalPeriodMappingSelector",
-        "distance": 4068.31660518205
-      },
-      {
-        "id": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
         "type": "CustomField",
         "anchorId": "ApexClass:FiscalPeriodMappingSelector",
         "distance": 4075.929341880205
@@ -2916,6 +2865,12 @@
         "type": "CustomField",
         "anchorId": "ApexClass:AdminDataExplorerController",
         "distance": 4203.772115612358
+      },
+      {
+        "id": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
+        "type": "CustomField",
+        "anchorId": "ApexClass:FiscalPeriodMappingSelector",
+        "distance": 4228.001892147164
       },
       {
         "id": "Field:Spend_Import_Batch__c.Status__c",
