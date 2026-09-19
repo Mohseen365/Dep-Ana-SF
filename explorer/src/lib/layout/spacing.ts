@@ -2,7 +2,7 @@ import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { ArchitectureLayer, ArchitectureGraphAnalysis, ArchitectureNodeAnalysis } from './types';
 import { computeArchitectureAnalysis } from './analysis';
 import { classifyNodeLayer } from './layers';
-import { classifyNodeDomain } from './domains';
+import { discoverDomains } from './domains';
 import type { PositionMap } from './metrics';
 
 export interface LayerRange {
@@ -132,7 +132,7 @@ function clamp(val: number, min: number, max: number): number {
  */
 class SpatialGrid {
   private cellSize: number;
-  private grid: Map<string, string[]>;
+  private grid: Map<string, number[]>;
 
   constructor(cellSize: number) {
     this.cellSize = Math.max(10, cellSize);
@@ -147,20 +147,20 @@ class SpatialGrid {
     this.grid.clear();
   }
 
-  public insert(id: string, x: number, y: number): void {
+  public insert(index: number, x: number, y: number): void {
     const col = Math.floor(x / this.cellSize);
     const row = Math.floor(y / this.cellSize);
     const key = this.getKey(col, row);
     if (!this.grid.has(key)) {
       this.grid.set(key, []);
     }
-    this.grid.get(key)!.push(id);
+    this.grid.get(key)!.push(index);
   }
 
-  public getCandidates(x: number, y: number): string[] {
+  public getCandidates(x: number, y: number): number[] {
     const col = Math.floor(x / this.cellSize);
     const row = Math.floor(y / this.cellSize);
-    const candidates: string[] = [];
+    const candidates: number[] = [];
 
     for (let dc = -1; dc <= 1; dc++) {
       for (let dr = -1; dr <= 1; dr++) {
@@ -188,6 +188,9 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
 
   // Sort nodes deterministically by ID
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
+
+  const nodeIndexMap = new Map<string, number>();
+  safeNodes.forEach((node, idx) => nodeIndexMap.set(node.id, idx));
 
   const options = input.options || {};
   const nodeWidth = options.nodeWidth ?? 120;
@@ -227,12 +230,15 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
   } else if (options.domainMap) {
     Object.entries(options.domainMap).forEach(([k, v]) => domainMap.set(k, v));
   }
-  safeNodes.forEach(node => {
-    if (!domainMap.has(node.id)) {
+  const unassignedDomainNodes = safeNodes.filter(n => !domainMap.has(n.id));
+  if (unassignedDomainNodes.length > 0) {
+    const discovery = discoverDomains(safeNodes, safeEdges);
+    unassignedDomainNodes.forEach(node => {
       const nodeAnalysis = analysis.nodes.get(node.id);
-      domainMap.set(node.id, nodeAnalysis?.domain || classifyNodeDomain(node, safeNodes, safeEdges));
-    }
-  });
+      const dom = nodeAnalysis?.domain || discovery.assignments.get(node.id)?.primaryDomain || 'Shared';
+      domainMap.set(node.id, dom);
+    });
+  }
 
   // Normalize layer bounds
   const layerBoundsMap = new Map<ArchitectureLayer, LayerRange>();
@@ -289,21 +295,46 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
 
   // Helper to count active overlaps
   const getOverlapCount = (posMap: PositionMap): number => {
-    const activeIds = safeNodes.map(n => n.id).filter(id => posMap[id] !== undefined);
+    const activeIndices: number[] = [];
+    for (let i = 0; i < safeNodes.length; i++) {
+      if (posMap[safeNodes[i].id] !== undefined) {
+        activeIndices.push(i);
+      }
+    }
+    if (activeIndices.length <= 1) return 0;
+
+    const grid = new SpatialGrid(Math.max(requiredDx, requiredDy));
+    for (let i = 0; i < activeIndices.length; i++) {
+      const idx = activeIndices[i];
+      const pos = posMap[safeNodes[idx].id];
+      grid.insert(idx, pos.x, pos.y);
+    }
+
     let count = 0;
-    for (let i = 0; i < activeIds.length; i++) {
-      const idA = activeIds[i];
-      const posA = posMap[idA];
-      for (let j = i + 1; j < activeIds.length; j++) {
-        const idB = activeIds[j];
-        const posB = posMap[idB];
-        const dx = Math.abs(posA.x - posB.x);
-        const dy = Math.abs(posA.y - posB.y);
-        if (dx < requiredDx - EPSILON && dy < requiredDy - EPSILON) {
-          count++;
+    const visitedMarker = new Int32Array(safeNodes.length);
+    visitedMarker.fill(-1);
+
+    for (let i = 0; i < activeIndices.length; i++) {
+      const indexA = activeIndices[i];
+      const posA = posMap[safeNodes[indexA].id];
+      const candidates = grid.getCandidates(posA.x, posA.y);
+
+      for (let j = 0; j < candidates.length; j++) {
+        const indexB = candidates[j];
+        if (indexB <= indexA || visitedMarker[indexB] === indexA) continue;
+        visitedMarker[indexB] = indexA;
+
+        const posB = posMap[safeNodes[indexB].id];
+        if (posB) {
+          const dx = Math.abs(posA.x - posB.x);
+          const dy = Math.abs(posA.y - posB.y);
+          if (dx < requiredDx - EPSILON && dy < requiredDy - EPSILON) {
+            count++;
+          }
         }
       }
     }
+
     return count;
   };
 
@@ -361,48 +392,50 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
   const spatialGrid = new SpatialGrid(Math.max(requiredDx, requiredDy));
 
   let iteration = 0;
+  const visitedMarker = new Int32Array(safeNodes.length);
+
   while (iteration < maxIterations) {
     iteration++;
 
     spatialGrid.clear();
-    safeNodes.forEach(node => {
-      const pos = currentPositions[node.id];
+    for (let i = 0; i < safeNodes.length; i++) {
+      const pos = currentPositions[safeNodes[i].id];
       if (pos) {
-        spatialGrid.insert(node.id, pos.x, pos.y);
+        spatialGrid.insert(i, pos.x, pos.y);
       }
-    });
+    }
 
-    const collidingPairKeys = new Set<string>();
-    const collidingPairs: Array<{ idA: string; idB: string }> = [];
+    const collidingPairs: Array<{ idA: string; idB: string; indexA: number; indexB: number }> = [];
+    visitedMarker.fill(-1);
 
-    safeNodes.forEach(nodeA => {
-      const posA = currentPositions[nodeA.id];
-      if (!posA) return;
+    for (let i = 0; i < safeNodes.length; i++) {
+      const posA = currentPositions[safeNodes[i].id];
+      if (!posA) continue;
 
       const candidates = spatialGrid.getCandidates(posA.x, posA.y);
-      candidates.forEach(idB => {
-        if (nodeA.id >= idB) return;
-        const posB = currentPositions[idB];
-        if (!posB) return;
+
+      for (let j = 0; j < candidates.length; j++) {
+        const indexB = candidates[j];
+        if (indexB <= i || visitedMarker[indexB] === i) continue;
+        visitedMarker[indexB] = i;
+
+        const posB = currentPositions[safeNodes[indexB].id];
+        if (!posB) continue;
 
         const dx = Math.abs(posA.x - posB.x);
         const dy = Math.abs(posA.y - posB.y);
 
         if (dx < requiredDx - EPSILON && dy < requiredDy - EPSILON) {
-          const pairKey = `${nodeA.id}:${idB}`;
-          if (!collidingPairKeys.has(pairKey)) {
-            collidingPairKeys.add(pairKey);
-            collidingPairs.push({ idA: nodeA.id, idB });
-          }
+          collidingPairs.push({ idA: safeNodes[i].id, idB: safeNodes[indexB].id, indexA: i, indexB });
         }
-      });
-    });
+      }
+    }
 
     if (collidingPairs.length === 0) {
       break;
     }
 
-    collidingPairs.sort((p1, p2) => `${p1.idA}:${p1.idB}`.localeCompare(`${p2.idA}:${p2.idB}`));
+    collidingPairs.sort((p1, p2) => (p1.indexA - p2.indexA) || (p1.indexB - p2.indexB));
 
     let resolvesInThisPass = 0;
 

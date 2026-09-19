@@ -1,7 +1,7 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { ArchitectureLayer } from './types';
 import { classifyNodeLayer } from './layers';
-import { classifyNodeDomain } from './domains';
+import { discoverDomains } from './domains';
 import { edgeCrossingCount, type PositionMap } from './metrics';
 
 export interface NodeOrderingInput {
@@ -86,9 +86,13 @@ function normalizeDomainMap(
     Object.entries(domainMapInput).forEach(([k, v]) => map.set(k, v));
   }
 
-  for (const node of nodes) {
-    if (!map.has(node.id)) {
-      map.set(node.id, classifyNodeDomain(node, nodes, edges));
+  const unassigned = nodes.filter(n => !map.has(n.id));
+  if (unassigned.length > 0) {
+    const discovery = discoverDomains(nodes, edges);
+    for (let i = 0; i < unassigned.length; i++) {
+      const node = unassigned[i];
+      const assignment = discovery.assignments.get(node.id);
+      map.set(node.id, assignment ? assignment.primaryDomain : 'Shared');
     }
   }
 
@@ -130,6 +134,132 @@ export function computeSimulatedPositions(
 }
 
 /**
+ * Fast exact edge crossing calculation using bounding-box pre-filtering.
+ */
+function fastEdgeCrossingCount(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  positions: PositionMap
+): number {
+  const EPSILON = 1e-9;
+  interface Segment {
+    p1: { x: number; y: number };
+    p2: { x: number; y: number };
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+    sourceId: string;
+    targetId: string;
+  }
+
+  const segments: Segment[] = [];
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
+    const pos1 = positions[edge.source];
+    const pos2 = positions[edge.target];
+    if (pos1 && pos2) {
+      const minX = pos1.x < pos2.x ? pos1.x : pos2.x;
+      const maxX = pos1.x > pos2.x ? pos1.x : pos2.x;
+      const minY = pos1.y < pos2.y ? pos1.y : pos2.y;
+      const maxY = pos1.y > pos2.y ? pos1.y : pos2.y;
+      segments.push({
+        p1: pos1,
+        p2: pos2,
+        minX,
+        maxX,
+        minY,
+        maxY,
+        sourceId: edge.source,
+        targetId: edge.target,
+      });
+    }
+  }
+
+  let crossings = 0;
+  const len = segments.length;
+
+  for (let i = 0; i < len; i++) {
+    const s1 = segments[i];
+    for (let j = i + 1; j < len; j++) {
+      const s2 = segments[j];
+
+      // Exclude edges sharing endpoints
+      if (
+        s1.sourceId === s2.sourceId ||
+        s1.sourceId === s2.targetId ||
+        s1.targetId === s2.sourceId ||
+        s1.targetId === s2.targetId
+      ) {
+        continue;
+      }
+
+      // Fast Bounding Box Pre-Filter
+      if (
+        s1.minX > s2.maxX + EPSILON ||
+        s1.maxX < s2.minX - EPSILON ||
+        s1.minY > s2.maxY + EPSILON ||
+        s1.maxY < s2.minY - EPSILON
+      ) {
+        continue;
+      }
+
+      // Direct fast path for edges connecting identical horizontal layers
+      if (
+        Math.abs(s1.p1.y - s2.p1.y) < EPSILON &&
+        Math.abs(s1.p2.y - s2.p2.y) < EPSILON
+      ) {
+        if ((s1.p1.x - s2.p1.x) * (s1.p2.x - s2.p2.x) < -EPSILON) {
+          crossings++;
+        }
+        continue;
+      }
+
+      const cp1 = (s1.p2.x - s1.p1.x) * (s2.p1.y - s1.p1.y) - (s1.p2.y - s1.p1.y) * (s2.p1.x - s1.p1.x);
+      const cp2 = (s1.p2.x - s1.p1.x) * (s2.p2.y - s1.p1.y) - (s1.p2.y - s1.p1.y) * (s2.p2.x - s1.p1.x);
+      const cp3 = (s2.p2.x - s2.p1.x) * (s1.p1.y - s2.p1.y) - (s2.p2.y - s2.p1.y) * (s1.p1.x - s2.p1.x);
+      const cp4 = (s2.p2.x - s2.p1.x) * (s1.p2.y - s2.p1.y) - (s2.p2.y - s2.p1.y) * (s1.p2.x - s2.p1.x);
+
+      const s1Straddle = (cp1 > EPSILON && cp2 < -EPSILON) || (cp1 < -EPSILON && cp2 > EPSILON);
+      const s2Straddle = (cp3 > EPSILON && cp4 < -EPSILON) || (cp3 < -EPSILON && cp4 > EPSILON);
+
+      if (s1Straddle && s2Straddle) {
+        crossings++;
+        continue;
+      }
+
+      const isCollinear =
+        Math.abs(cp1) <= EPSILON &&
+        Math.abs(cp2) <= EPSILON &&
+        Math.abs(cp3) <= EPSILON &&
+        Math.abs(cp4) <= EPSILON;
+
+      if (isCollinear) {
+        const useX = Math.abs(s1.p1.x - s1.p2.x) > EPSILON;
+        const a1 = useX ? s1.p1.x : s1.p1.y;
+        const a2 = useX ? s1.p2.x : s1.p2.y;
+        const minA = a1 < a2 ? a1 : a2;
+        const maxA = a1 > a2 ? a1 : a2;
+
+        const b1 = useX ? s2.p1.x : s2.p1.y;
+        const b2 = useX ? s2.p2.x : s2.p2.y;
+        const minB = b1 < b2 ? b1 : b2;
+        const maxB = b1 > b2 ? b1 : b2;
+
+        const overlapMin = minA > minB ? minA : minB;
+        const overlapMax = maxA < maxB ? maxA : maxB;
+
+        if (overlapMax - overlapMin > EPSILON) {
+          crossings++;
+        }
+      }
+    }
+  }
+
+  return crossings;
+}
+
+/**
  * Estimates the total edge crossings for a given bucket ordering.
  */
 export function estimateCrossingsForOrder(
@@ -142,7 +272,7 @@ export function estimateCrossingsForOrder(
     bucketOrder,
     domainOrder
   );
-  return edgeCrossingCount(nodes, edges, positions);
+  return fastEdgeCrossingCount(nodes, edges, positions);
 }
 
 /**
@@ -201,12 +331,12 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
   });
 
   // Build adjacency list for fast lookup
-  const adjMap = new Map<string, Set<string>>();
-  nodes.forEach(n => adjMap.set(n.id, new Set()));
+  const adjMap = new Map<string, string[]>();
+  nodes.forEach(n => adjMap.set(n.id, []));
   edges.forEach(e => {
-    if (adjMap.has(e.source) && adjMap.has(e.target) && e.source !== e.target) {
-      adjMap.get(e.source)!.add(e.target);
-      adjMap.get(e.target)!.add(e.source);
+    if (e.source !== e.target && adjMap.has(e.source) && adjMap.has(e.target)) {
+      adjMap.get(e.source)!.push(e.target);
+      adjMap.get(e.target)!.push(e.source);
     }
   });
 
@@ -257,48 +387,49 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
 
     const isForward = iter % 2 === 0;
 
-    // Helper to calculate 1D continuous position of nodes in a layer
-    const getLayerNodePositions = (targetLayer: ArchitectureLayer): Map<string, number> => {
-      const posMap = new Map<string, number>();
-      let globalLayerIdx = 0;
-      domainOrder.forEach(d => {
-        const key = `${targetLayer}:${d}`;
-        const ids = bucketOrder.get(key) || [];
-        ids.forEach(id => {
-          posMap.set(id, globalLayerIdx++);
-        });
-      });
-      return posMap;
-    };
-
     const layerSequence = isForward
       ? (['application', 'domain', 'schema'] as ArchitectureLayer[])
       : (['domain', 'application', 'presentation'] as ArchitectureLayer[]);
 
+    let sweepOrderChanged = false;
+
     for (const currentLayer of layerSequence) {
       const currentLayerRank = LAYER_RANK[currentLayer];
 
-      // Build positions of all nodes in adjacent layers
+      // Rebuild continuous positions map for all nodes across layers
       const allLayerPositions = new Map<string, number>();
-      LAYERS_IN_ORDER.forEach(l => {
-        const lPositions = getLayerNodePositions(l);
-        lPositions.forEach((pos, id) => allLayerPositions.set(id, pos));
-      });
+      for (let lIdx = 0; lIdx < LAYERS_IN_ORDER.length; lIdx++) {
+        const l = LAYERS_IN_ORDER[lIdx];
+        let globalLayerIdx = 0;
+        for (let dIdx = 0; dIdx < domainOrder.length; dIdx++) {
+          const d = domainOrder[dIdx];
+          const key = `${l}:${d}`;
+          const ids = bucketOrder.get(key);
+          if (ids) {
+            for (let i = 0; i < ids.length; i++) {
+              allLayerPositions.set(ids[i], globalLayerIdx++);
+            }
+          }
+        }
+      }
 
-      domainOrder.forEach(domain => {
+      for (let dIdx = 0; dIdx < domainOrder.length; dIdx++) {
+        const domain = domainOrder[dIdx];
         const key = `${currentLayer}:${domain}`;
         const ids = bucketOrder.get(key);
-        if (!ids || ids.length <= 1) return;
+        if (!ids || ids.length <= 1) continue;
 
         // Calculate barycenter for each node in this bucket
         const barycenters = new Map<string, number>();
 
-        ids.forEach(id => {
-          const neighbors = Array.from(adjMap.get(id) || []);
+        for (let i = 0; i < ids.length; i++) {
+          const id = ids[i];
+          const neighbors = adjMap.get(id) || [];
           let sumPos = 0;
           let count = 0;
 
-          neighbors.forEach(neighborId => {
+          for (let j = 0; j < neighbors.length; j++) {
+            const neighborId = neighbors[j];
             const neighborLayer = layerMap.get(neighborId) || 'application';
             const neighborRank = LAYER_RANK[neighborLayer];
 
@@ -314,17 +445,18 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
                 count++;
               }
             }
-          });
+          }
 
           // Fallback: If no neighbors in primary direction, check all neighbors across layers
           if (count === 0) {
-            neighbors.forEach(neighborId => {
+            for (let j = 0; j < neighbors.length; j++) {
+              const neighborId = neighbors[j];
               const pos = allLayerPositions.get(neighborId);
               if (pos !== undefined) {
                 sumPos += pos;
                 count++;
               }
-            });
+            }
           }
 
           if (count > 0) {
@@ -333,9 +465,10 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
             // Preserved position fallback
             barycenters.set(id, allLayerPositions.get(id) ?? 0);
           }
-        });
+        }
 
         // Re-sort bucket using barycenters (with deterministic tie-breakers)
+        const prevOrder = [...ids];
         ids.sort((a, b) => {
           const bcA = barycenters.get(a) ?? 0;
           const bcB = barycenters.get(b) ?? 0;
@@ -352,7 +485,18 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
           // Secondary tie-breaker 2: Node ID ascending
           return a.localeCompare(b);
         });
-      });
+
+        for (let i = 0; i < ids.length; i++) {
+          if (ids[i] !== prevOrder[i]) {
+            sweepOrderChanged = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!sweepOrderChanged) {
+      break;
     }
 
     const currentCrossings = estimateCrossingsForOrder(
