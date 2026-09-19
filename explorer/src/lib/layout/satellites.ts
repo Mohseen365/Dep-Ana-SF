@@ -17,6 +17,12 @@ export interface SatelliteLayoutOptions {
   layerYOffsets?: Record<ArchitectureLayer, number>;
   /** Default X center if domain X is unknown */
   defaultDomainX?: number;
+  /** Minimum horizontal gap between nodes (default: 40) */
+  horizontalGap?: number;
+  /** Minimum vertical gap between nodes (default: 40) */
+  verticalGap?: number;
+  /** Maximum distance a satellite can be displaced from its parent target (default: 280) */
+  maxSatelliteDistance?: number;
 }
 
 export interface SatellitePlacementResult {
@@ -56,8 +62,109 @@ export function isHandlerNode(nodeAnalysis: ArchitectureNodeAnalysis): boolean {
   return /(?:handler|handlers|controllerextension|controllerext)$/i.test(name) && !nodeAnalysis.isTest;
 }
 
+interface Point {
+  x: number;
+  y: number;
+}
+
 /**
- * Main entry point for Agent 3C Satellite Layout.
+ * Helper to check if a candidate point collides with any already occupied positions.
+ */
+function isSlotOccupied(
+  candidateX: number,
+  candidateY: number,
+  occupied: Point[],
+  minDx: number,
+  minDy: number
+): boolean {
+  for (let i = 0; i < occupied.length; i++) {
+    const pos = occupied[i];
+    if (
+      Math.abs(pos.x - candidateX) < minDx - 1e-3 &&
+      Math.abs(pos.y - candidateY) < minDy - 1e-3
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Generates non-overlapping, gap-aware candidate placement slots around an anchor position.
+ */
+function generateSatelliteSlots(
+  anchor: Point,
+  count: number,
+  occupied: Point[],
+  nodeWidth: number,
+  nodeHeight: number,
+  horizontalGap: number,
+  verticalGap: number,
+  maxDistance: number,
+  bias: 'field' | 'test' | 'neutral'
+): Point[] {
+  if (count <= 0) return [];
+
+  const dx = nodeWidth + horizontalGap;
+  const dy = nodeHeight + verticalGap;
+
+  const candidateSlots: Array<{ x: number; y: number; dist: number; effectiveScore: number; row: number; col: number }> = [];
+  const maxSearchRadius = Math.max(8, Math.ceil(Math.sqrt(count) * 2));
+
+  for (let r = -maxSearchRadius; r <= maxSearchRadius; r++) {
+    for (let c = -maxSearchRadius; c <= maxSearchRadius; c++) {
+      if (c === 0 && r === 0) continue; // Skip anchor slot itself
+
+      // Directional constraints
+      if (bias === 'field' && r <= 0) {
+        // Fields must sit strictly below parent object (r > 0)
+        continue;
+      }
+
+      if (bias === 'test' && c === 0) {
+        // Tests must sit to the side of target (c != 0)
+        continue;
+      }
+
+      const x = anchor.x + c * dx;
+      const y = anchor.y + r * dy;
+
+      if (isSlotOccupied(x, y, occupied, dx, dy)) {
+        continue;
+      }
+
+      const dist = Math.sqrt(Math.pow(x - anchor.x, 2) + Math.pow(y - anchor.y, 2));
+
+      // Directional preference scoring
+      let directionalScore = 1.0;
+      if (bias === 'test') {
+        if (c < 0) directionalScore = 1.5; // Strong preference for right side (c > 0) over left (c < 0)
+      }
+
+      const tetherPenalty = dist > maxDistance ? 10.0 * (dist - maxDistance) : 0;
+      const effectiveScore = dist * directionalScore + tetherPenalty;
+
+      candidateSlots.push({ x, y, dist, effectiveScore, row: r, col: c });
+    }
+  }
+
+  // Sort candidate slots deterministically
+  candidateSlots.sort((a, b) => {
+    if (Math.abs(a.effectiveScore - b.effectiveScore) > 1e-4) {
+      return a.effectiveScore - b.effectiveScore;
+    }
+    if (Math.abs(a.dist - b.dist) > 1e-4) {
+      return a.dist - b.dist;
+    }
+    if (a.row !== b.row) return a.row - b.row;
+    return a.col - b.col;
+  });
+
+  return candidateSlots.slice(0, count).map(s => ({ x: s.x, y: s.y }));
+}
+
+/**
+ * Main entry point for Satellite Layout Engine.
  *
  * Takes primary node positions as fixed anchors and deterministically places:
  * 1. Trigger / Handler microclusters
@@ -77,6 +184,9 @@ export function placeSatellites(
 ): SatellitePlacementResult {
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
+  const horizontalGap = options.horizontalGap ?? 40;
+  const verticalGap = options.verticalGap ?? 40;
+  const maxSatelliteDistance = options.maxSatelliteDistance ?? 280;
   const layerYOffsets = options.layerYOffsets ?? DEFAULT_LAYER_Y_OFFSETS;
   const defaultDomainX = options.defaultDomainX ?? 0;
 
@@ -86,6 +196,9 @@ export function placeSatellites(
 
   // Track primary / locked node IDs to guarantee they are never moved
   const primaryNodeIds = new Set(Object.keys(primaryPositions));
+
+  // Occupied positions list for collision-free slot generation
+  const occupiedList: Point[] = Object.values(primaryPositions).map(p => ({ x: p.x, y: p.y }));
 
   // Identify node subsets from analysis
   const allAnalyses = analysis.nodeList;
@@ -119,16 +232,14 @@ export function placeSatellites(
   // --------------------------------------------------------------------------
   let placedMicroclusterCount = 0;
 
-  // Process triggers first
   for (const triggerItem of triggerAnalyses) {
     if (primaryNodeIds.has(triggerItem.nodeId)) continue; // Already placed as primary
 
-    // Find connected CustomObject / Object
     const connectedEdges = edges.filter(
       e => e.source === triggerItem.nodeId || e.target === triggerItem.nodeId
     );
 
-    let parentObjectPos: { x: number; y: number } | null = null;
+    let parentObjectPos: Point | null = null;
     let connectedHandlerId: string | null = null;
 
     for (const edge of connectedEdges) {
@@ -146,28 +257,43 @@ export function placeSatellites(
       }
     }
 
-    let trigX = defaultDomainX;
+    let trigX = parentObjectPos ? parentObjectPos.x : defaultDomainX;
     let trigY = layerYOffsets.application;
 
-    if (parentObjectPos) {
-      // Position trigger in Application layer directly above/aligned with parent object
-      trigX = parentObjectPos.x;
-      trigY = layerYOffsets.application;
+    // Check collision for trigger candidate
+    const minDx = nodeWidth + horizontalGap;
+    const minDy = nodeHeight + verticalGap;
+    if (isSlotOccupied(trigX, trigY, occupiedList, minDx, minDy)) {
+      const slots = generateSatelliteSlots(
+        { x: trigX, y: trigY },
+        1,
+        occupiedList,
+        nodeWidth,
+        nodeHeight,
+        horizontalGap,
+        verticalGap,
+        maxSatelliteDistance,
+        'neutral'
+      );
+      if (slots.length > 0) {
+        trigX = slots[0].x;
+        trigY = Math.max(layerYOffsets.application, slots[0].y);
+      }
     }
 
     positions[triggerItem.nodeId] = { x: trigX, y: trigY };
     satellitePositions[triggerItem.nodeId] = { x: trigX, y: trigY };
+    occupiedList.push({ x: trigX, y: trigY });
     placedMicroclusterCount++;
 
     // Place connected Handler relative to Trigger if handler is not primary
     if (connectedHandlerId && !primaryNodeIds.has(connectedHandlerId)) {
       const handlerItem = nodeAnalysisMap.get(connectedHandlerId);
-      if (handlerItem) {
-        // Find if handler connects to a Service
+      if (handlerItem && !positions[connectedHandlerId]) {
         const handlerEdges = edges.filter(
           e => e.source === connectedHandlerId || e.target === connectedHandlerId
         );
-        let servicePos: { x: number; y: number } | null = null;
+        let servicePos: Point | null = null;
 
         for (const hEdge of handlerEdges) {
           const hOtherId = hEdge.source === connectedHandlerId ? hEdge.target : hEdge.source;
@@ -181,13 +307,31 @@ export function placeSatellites(
         let handlerY = trigY;
 
         if (servicePos) {
-          // Place handler midway between trigger and service
           handlerX = (trigX + servicePos.x) / 2;
           handlerY = (trigY + servicePos.y) / 2;
         }
 
+        if (isSlotOccupied(handlerX, handlerY, occupiedList, minDx, minDy)) {
+          const handlerSlots = generateSatelliteSlots(
+            { x: handlerX, y: handlerY },
+            1,
+            occupiedList,
+            nodeWidth,
+            nodeHeight,
+            horizontalGap,
+            verticalGap,
+            maxSatelliteDistance,
+            'neutral'
+          );
+          if (handlerSlots.length > 0) {
+            handlerX = handlerSlots[0].x;
+            handlerY = Math.max(layerYOffsets.application, handlerSlots[0].y);
+          }
+        }
+
         positions[connectedHandlerId] = { x: handlerX, y: handlerY };
         satellitePositions[connectedHandlerId] = { x: handlerX, y: handlerY };
+        occupiedList.push({ x: handlerX, y: handlerY });
         placedMicroclusterCount++;
       }
     }
@@ -195,13 +339,13 @@ export function placeSatellites(
 
   // Handle remaining unplaced handlers
   for (const handlerItem of handlerAnalyses) {
-    if (positions[handlerItem.nodeId]) continue; // Already placed
+    if (positions[handlerItem.nodeId]) continue;
 
     const connectedEdges = edges.filter(
       e => e.source === handlerItem.nodeId || e.target === handlerItem.nodeId
     );
 
-    let anchorPos: { x: number; y: number } | null = null;
+    let anchorPos: Point | null = null;
     for (const edge of connectedEdges) {
       const otherId = edge.source === handlerItem.nodeId ? edge.target : edge.source;
       if (positions[otherId]) {
@@ -210,11 +354,32 @@ export function placeSatellites(
       }
     }
 
-    const hX = anchorPos ? anchorPos.x + nodeWidth * 1.25 : defaultDomainX;
-    const hY = anchorPos ? anchorPos.y : layerYOffsets.application;
+    let hX = anchorPos ? anchorPos.x + nodeWidth * 1.25 : defaultDomainX;
+    let hY = anchorPos ? anchorPos.y : layerYOffsets.application;
+
+    const minDx = nodeWidth + horizontalGap;
+    const minDy = nodeHeight + verticalGap;
+    if (isSlotOccupied(hX, hY, occupiedList, minDx, minDy)) {
+      const slots = generateSatelliteSlots(
+        { x: hX, y: hY },
+        1,
+        occupiedList,
+        nodeWidth,
+        nodeHeight,
+        horizontalGap,
+        verticalGap,
+        maxSatelliteDistance,
+        'neutral'
+      );
+      if (slots.length > 0) {
+        hX = slots[0].x;
+        hY = Math.max(layerYOffsets.application, slots[0].y);
+      }
+    }
 
     positions[handlerItem.nodeId] = { x: hX, y: hY };
     satellitePositions[handlerItem.nodeId] = { x: hX, y: hY };
+    occupiedList.push({ x: hX, y: hY });
     placedMicroclusterCount++;
   }
 
@@ -223,12 +388,11 @@ export function placeSatellites(
   // --------------------------------------------------------------------------
   let placedFieldsCount = 0;
 
-  // Group fields by parent object ID
   const fieldsByParent = new Map<string, ArchitectureNodeAnalysis[]>();
   const unanchoredFields: ArchitectureNodeAnalysis[] = [];
 
   for (const fieldItem of fieldAnalyses) {
-    if (primaryNodeIds.has(fieldItem.nodeId)) continue; // Keep primary if already placed
+    if (primaryNodeIds.has(fieldItem.nodeId)) continue;
 
     let parentId = fieldItem.parentObjectId;
     if (!parentId) {
@@ -245,56 +409,75 @@ export function placeSatellites(
     }
   }
 
-  // Place anchored fields in compact local grid centered below parent object
+  // Place anchored fields using gap-aware candidate slot generation
   fieldsByParent.forEach((fields, parentId) => {
     fields.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
     const parentPos = positions[parentId];
 
-    const totalFields = fields.length;
-    const maxCols = totalFields > 6 ? 4 : totalFields > 2 ? 3 : totalFields;
+    const slots = generateSatelliteSlots(
+      parentPos,
+      fields.length,
+      occupiedList,
+      nodeWidth,
+      nodeHeight,
+      horizontalGap,
+      verticalGap,
+      maxSatelliteDistance,
+      'field'
+    );
 
     fields.forEach((fieldItem, idx) => {
-      const col = idx % maxCols;
-      const row = Math.floor(idx / maxCols);
+      const slot = slots[idx] || {
+        x: parentPos.x + (idx + 1) * (nodeWidth + horizontalGap),
+        y: parentPos.y + (nodeHeight + verticalGap),
+      };
 
-      const offsetX = (col - (maxCols - 1) / 2) * (nodeWidth * 1.15);
-      const offsetY = nodeHeight * 1.75 + row * (nodeHeight * 1.25);
-
-      const fx = parentPos.x + offsetX;
-      const fy = parentPos.y + offsetY;
-
-      positions[fieldItem.nodeId] = { x: fx, y: fy };
-      satellitePositions[fieldItem.nodeId] = { x: fx, y: fy };
+      positions[fieldItem.nodeId] = { x: slot.x, y: slot.y };
+      satellitePositions[fieldItem.nodeId] = { x: slot.x, y: slot.y };
+      occupiedList.push({ x: slot.x, y: slot.y });
       placedFieldsCount++;
     });
   });
 
   // Place unanchored fields in schema layer fallback grid
   unanchoredFields.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-  unanchoredFields.forEach((fieldItem, idx) => {
-    const cols = 3;
-    const col = idx % cols;
-    const row = Math.floor(idx / cols);
+  if (unanchoredFields.length > 0) {
+    const fallbackAnchor: Point = { x: defaultDomainX, y: layerYOffsets.schema };
+    const fallbackSlots = generateSatelliteSlots(
+      fallbackAnchor,
+      unanchoredFields.length,
+      occupiedList,
+      nodeWidth,
+      nodeHeight,
+      horizontalGap,
+      verticalGap,
+      maxSatelliteDistance,
+      'field'
+    );
 
-    const fx = defaultDomainX + (col - (cols - 1) / 2) * (nodeWidth * 1.15);
-    const fy = layerYOffsets.schema + (row + 1) * (nodeHeight * 1.15);
+    unanchoredFields.forEach((fieldItem, idx) => {
+      const slot = fallbackSlots[idx] || {
+        x: fallbackAnchor.x + (idx + 1) * (nodeWidth + horizontalGap),
+        y: fallbackAnchor.y + (nodeHeight + verticalGap),
+      };
 
-    positions[fieldItem.nodeId] = { x: fx, y: fy };
-    satellitePositions[fieldItem.nodeId] = { x: fx, y: fy };
-    placedFieldsCount++;
-  });
+      positions[fieldItem.nodeId] = { x: slot.x, y: slot.y };
+      satellitePositions[fieldItem.nodeId] = { x: slot.x, y: slot.y };
+      occupiedList.push({ x: slot.x, y: slot.y });
+      placedFieldsCount++;
+    });
+  }
 
   // --------------------------------------------------------------------------
   // STAGE 3: TEST SATELLITE PLACEMENT
   // --------------------------------------------------------------------------
   let placedTestsCount = 0;
 
-  // Group tests by parent production node ID
   const testsByTarget = new Map<string, ArchitectureNodeAnalysis[]>();
   const unanchoredTests: ArchitectureNodeAnalysis[] = [];
 
   for (const testItem of testAnalyses) {
-    if (primaryNodeIds.has(testItem.nodeId)) continue; // Keep primary if already placed
+    if (primaryNodeIds.has(testItem.nodeId)) continue;
 
     let targetId = testItem.parentProductionNodeId;
     if (!targetId) {
@@ -311,59 +494,64 @@ export function placeSatellites(
     }
   }
 
-  // Place anchored tests in a compact deterministic arc / side cluster around target
+  // Place anchored tests using gap-aware candidate slot generation
   testsByTarget.forEach((tests, targetId) => {
     tests.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
     const targetPos = positions[targetId];
 
-    const count = tests.length;
+    const slots = generateSatelliteSlots(
+      targetPos,
+      tests.length,
+      occupiedList,
+      nodeWidth,
+      nodeHeight,
+      horizontalGap,
+      verticalGap,
+      maxSatelliteDistance,
+      'test'
+    );
 
-    if (count === 1) {
-      // Single test: place cleanly to the right of the target
-      const tx = targetPos.x + nodeWidth * 1.25;
-      const ty = targetPos.y;
+    tests.forEach((testItem, idx) => {
+      const slot = slots[idx] || {
+        x: targetPos.x + (nodeWidth + horizontalGap),
+        y: targetPos.y + idx * (nodeHeight + verticalGap),
+      };
 
-      positions[tests[0].nodeId] = { x: tx, y: ty };
-      satellitePositions[tests[0].nodeId] = { x: tx, y: ty };
+      positions[testItem.nodeId] = { x: slot.x, y: slot.y };
+      satellitePositions[testItem.nodeId] = { x: slot.x, y: slot.y };
+      occupiedList.push({ x: slot.x, y: slot.y });
       placedTestsCount++;
-    } else {
-      // Multiple tests: 2-column compact side cluster to the right of target
-      const maxCols = 2;
-      tests.forEach((testItem, idx) => {
-        const col = idx % maxCols;
-        const row = Math.floor(idx / maxCols);
-
-        const totalRows = Math.ceil(count / maxCols);
-        const rowOffset = (row - (totalRows - 1) / 2) * (nodeHeight * 1.15);
-        const colOffset = nodeWidth * 1.25 + col * (nodeWidth * 1.15);
-
-        const tx = targetPos.x + colOffset;
-        const ty = targetPos.y + rowOffset;
-
-        positions[testItem.nodeId] = { x: tx, y: ty };
-        satellitePositions[testItem.nodeId] = { x: tx, y: ty };
-        placedTestsCount++;
-      });
-    }
+    });
   });
 
   // Place unanchored tests in fallback domain/layer cluster
   unanchoredTests.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-  unanchoredTests.forEach((testItem, idx) => {
-    const layer = testItem.layer || 'application';
-    const baseY = layerYOffsets[layer];
+  if (unanchoredTests.length > 0) {
+    const fallbackAnchor: Point = { x: defaultDomainX, y: layerYOffsets.application };
+    const fallbackSlots = generateSatelliteSlots(
+      fallbackAnchor,
+      unanchoredTests.length,
+      occupiedList,
+      nodeWidth,
+      nodeHeight,
+      horizontalGap,
+      verticalGap,
+      maxSatelliteDistance,
+      'test'
+    );
 
-    const maxCols = 2;
-    const col = idx % maxCols;
-    const row = Math.floor(idx / maxCols);
+    unanchoredTests.forEach((testItem, idx) => {
+      const slot = fallbackSlots[idx] || {
+        x: fallbackAnchor.x + (nodeWidth + horizontalGap),
+        y: fallbackAnchor.y + idx * (nodeHeight + verticalGap),
+      };
 
-    const tx = defaultDomainX + nodeWidth * 1.25 + col * (nodeWidth * 1.15);
-    const ty = baseY + (row + 1) * (nodeHeight * 1.15);
-
-    positions[testItem.nodeId] = { x: tx, y: ty };
-    satellitePositions[testItem.nodeId] = { x: tx, y: ty };
-    placedTestsCount++;
-  });
+      positions[testItem.nodeId] = { x: slot.x, y: slot.y };
+      satellitePositions[testItem.nodeId] = { x: slot.x, y: slot.y };
+      occupiedList.push({ x: slot.x, y: slot.y });
+      placedTestsCount++;
+    });
+  }
 
   return {
     positions,

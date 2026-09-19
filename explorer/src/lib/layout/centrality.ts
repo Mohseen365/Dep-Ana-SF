@@ -31,7 +31,7 @@ export interface NodeCentralityAnalysis {
 }
 
 /**
- * Candidate bridge placement details exposed as a contract for Agent 5A layout integration.
+ * Candidate bridge placement details exposed as a contract for layout integration.
  */
 export interface BridgePlacementInfo {
   nodeId: string;
@@ -46,7 +46,7 @@ export interface BridgePlacementInfo {
 }
 
 /**
- * Candidate hub placement details exposed as a contract for Agent 5A layout integration.
+ * Candidate hub placement details exposed as a contract for layout integration.
  */
 export interface HubPlacementInfo {
   nodeId: string;
@@ -71,6 +71,24 @@ export interface CentralityOptions {
   nodeHeight?: number;
   /** Node width for clearance calculations (default: 120) */
   nodeWidth?: number;
+  /** Minimum horizontal clearance gap between nodes (default: 40) */
+  horizontalGap?: number;
+  /** Minimum vertical clearance gap between nodes (default: 40) */
+  verticalGap?: number;
+  /** Previously allocated bridge positions or existing positions map */
+  allocatedPositions?: Record<string, { x: number; y: number }>;
+}
+
+/**
+ * Internal module-level registry of allocated bridge positions within a layout run.
+ */
+const activeBridgeAllocations = new Map<string, { x: number; y: number }>();
+
+/**
+ * Resets the active bridge allocations registry (called at the start of centrality analysis).
+ */
+export function clearBridgeAllocations(): void {
+  activeBridgeAllocations.clear();
 }
 
 /**
@@ -219,6 +237,9 @@ export function computeGraphCentralityAnalysis(
   layerMap: Map<string, ArchitectureLayer>,
   options: CentralityOptions = {}
 ): Map<string, NodeCentralityAnalysis> {
+  // Clear stale bridge allocations when initiating centrality analysis
+  clearBridgeAllocations();
+
   const hubThreshold = options.hubScoreThreshold ?? 3.5;
 
   // Group nodes by domain to compute average domain degree for relative hub scoring
@@ -310,6 +331,9 @@ export function computeGraphCentralityAnalysis(
  * lying geometrically between them, a simple arithmetic midpoint lands directly inside B.
  * This function detects if the candidate position lands inside an unconnected domain interior B
  * and applies inter-layer corridor displacement to guarantee clearance from B's nodes.
+ *
+ * Also implements deterministic multi-bridge separation so multiple bridge nodes on the same domain pair
+ * or 3-domain bridges receive non-overlapping, well-spaced candidate coordinates.
  */
 export function calculateBridgeCandidatePosition(
   nodeId: string,
@@ -321,7 +345,14 @@ export function calculateBridgeCandidatePosition(
   options: CentralityOptions = {}
 ): BridgePlacementInfo {
   const layerSpacing = options.layerSpacing ?? 250;
+  const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
+  const horizontalGap = options.horizontalGap ?? 40;
+  const verticalGap = options.verticalGap ?? 40;
+
+  const minDx = nodeWidth + horizontalGap;
+  const minDy = nodeHeight + verticalGap;
+
   const layerYOffsets = options.layerYOffsets ?? {
     presentation: 100,
     application: 100 + layerSpacing,
@@ -392,7 +423,7 @@ export function calculateBridgeCandidatePosition(
     if (!bounds) continue;
 
     // Check if candidateX falls within the interior bounds of an unconnected domain B
-    const margin = (options.nodeWidth ?? 120) * 0.5;
+    const margin = nodeWidth * 0.5;
     if (candidateX >= bounds.minX - margin && candidateX <= bounds.maxX + margin) {
       hasIntermediateTrap = true;
       trapDomainId = domainId;
@@ -400,13 +431,51 @@ export function calculateBridgeCandidatePosition(
     }
   }
 
-  // Apply inter-layer corridor displacement if trap detected or connecting multiple domains on the same layer
+  // Apply inter-layer corridor displacement if trap detected or connecting multiple domains
   if (hasIntermediateTrap || sortedConnectedDomains.length >= 2) {
-    // Shift Y into the inter-layer corridor (above layer line)
-    // Offset by 50% of layerSpacing to sit cleanly between layer bands with guaranteed clearance
     const corridorOffset = layerSpacing * 0.5;
     candidateY = baseY - corridorOffset;
   }
+
+  // Combine neighborPositions, options.allocatedPositions, and activeBridgeAllocations
+  const existingPositions: Record<string, { x: number; y: number }> = {
+    ...neighborPositions,
+    ...Object.fromEntries(activeBridgeAllocations.entries()),
+    ...(options.allocatedPositions || {}),
+  };
+
+  // Deterministically shift candidate position if it collides with existing positions
+  let finalX = candidateX;
+  let finalY = candidateY;
+  let shiftIndex = 0;
+
+  while (true) {
+    let collides = false;
+    for (const [otherId, otherPos] of Object.entries(existingPositions)) {
+      if (otherId === nodeId) continue;
+      if (
+        Math.abs(otherPos.x - finalX) < minDx - 1e-3 &&
+        Math.abs(otherPos.y - finalY) < minDy - 1e-3
+      ) {
+        collides = true;
+        break;
+      }
+    }
+
+    if (!collides) break;
+
+    shiftIndex++;
+    const dir = shiftIndex % 2 === 1 ? -1 : 1;
+    const step = Math.ceil(shiftIndex / 2);
+    finalX = candidateX + dir * step * minDx;
+  }
+
+  const finalPos = {
+    x: Math.round(finalX * 100) / 100,
+    y: Math.round(finalY * 100) / 100,
+  };
+
+  activeBridgeAllocations.set(nodeId, finalPos);
 
   return {
     nodeId,
@@ -415,10 +484,7 @@ export function calculateBridgeCandidatePosition(
     connectedDomainCenters,
     connectedNodePositions,
     connectedLayers: Array.from(connectedLayersSet),
-    candidatePosition: {
-      x: Math.round(candidateX * 100) / 100,
-      y: Math.round(candidateY * 100) / 100,
-    },
+    candidatePosition: finalPos,
     hasIntermediateTrap,
     trapDomainId,
   };
