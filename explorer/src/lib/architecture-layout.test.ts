@@ -1,10 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   computeArchitectureLayout,
   classifyNodeLayer,
   extractDomainStem,
   isTestNode,
 } from './architecture-layout';
+import * as analysisModule from './layout/analysis';
+import * as domainsModule from './layout/domains';
 import { evaluateLayout } from './layout/evaluate-layout';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
@@ -79,7 +81,7 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
       expect(extractDomainStem('PaymentProcessor')).toBe('Payment');
       expect(extractDomainStem('BillingRepository')).toBe('Billing');
       expect(extractDomainStem('AccountSelector')).toBe('Account');
-      expect(extractDomainStem('Util')).toBe(null); // Generic stem
+      expect(extractDomainStem('Util')).toBe(null);
     });
 
     it('identifies test nodes correctly', () => {
@@ -127,14 +129,12 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
 
       const positions = computeArchitectureLayout(nodes, edges);
 
-      // Verify finite deterministic positions
       nodes.forEach(n => {
         expect(positions[n.id]).toBeDefined();
         expect(Number.isFinite(positions[n.id].x)).toBe(true);
         expect(Number.isFinite(positions[n.id].y)).toBe(true);
       });
 
-      // Verify layer vertical ordering
       const yPres = positions['LWC:OrderView'].y;
       const yApp = positions['ApexClass:OrderController'].y;
       const yDom = positions['ApexClass:OrderSelector'].y;
@@ -144,13 +144,11 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
       expect(yApp).toBeLessThan(yDom);
       expect(yDom).toBeLessThan(ySchema);
 
-      // Verify field near parent object
       const objPos = positions['CustomObject:Order__c'];
       const fieldPos = positions['Order__c.Status__c'];
       expect(Math.abs(objPos.x - fieldPos.x)).toBeLessThan(200);
       expect(Math.abs(objPos.y - fieldPos.y)).toBeLessThan(200);
 
-      // Verify zero node overlaps
       const evalMetrics = evaluateLayout(nodes, edges, positions);
       expect(evalMetrics.nodeOverlapCount).toBe(0);
     });
@@ -178,7 +176,6 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
 
       expect(orderDist).toBeLessThan(crossDomainDist);
 
-      // Bridge is placed between connected domains
       const xOrder = positions['ApexClass:OrderService'].x;
       const xPayment = positions['ApexClass:PaymentService'].x;
       const xBridge = positions['ApexClass:CheckoutBridge'].x;
@@ -211,7 +208,6 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
 
       const positions = computeArchitectureLayout(nodes, edges);
 
-      // Hub node sits spatially near average of neighbors
       const hubPos = positions['ApexClass:CentralHub'];
       const avgNeighborX =
         (positions['ApexClass:CallerA'].x +
@@ -240,10 +236,6 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
       ];
 
       const positions = computeArchitectureLayout(nodes, edges);
-
-      const xOrder = positions['ApexClass:OrderService'].x;
-      const xPayment = positions['ApexClass:PaymentService'].x;
-      const xBilling = positions['ApexClass:BillingService'].x;
 
       expect(positions['ApexClass:TriBridge']).toBeDefined();
       expect(positions['ApexClass:OrderService']).toBeDefined();
@@ -382,10 +374,10 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
       const run1 = computeArchitectureLayout(nodes, edges);
       const duration = performance.now() - startTime;
 
-      expect(duration).toBeLessThan(3000); // Bounded execution expectation
+      expect(duration).toBeLessThan(3000);
 
       const run2 = computeArchitectureLayout(nodes, edges);
-      expect(run1).toEqual(run2); // 100% Deterministic
+      expect(run1).toEqual(run2);
 
       nodes.forEach(n => {
         expect(run1[n.id]).toBeDefined();
@@ -434,6 +426,42 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
 
       expect(run1).toEqual(run2);
       expect(run2).toEqual(run3);
+    });
+  });
+
+  describe('WAVE 7A PERFORMANCE OPTIMIZATION VERIFICATION', () => {
+    it('executes computeArchitectureAnalysis and discoverDomains exactly ONCE per layout run', () => {
+      const nodes: ExplorerNode[] = [
+        createMockNode({ id: 'LWC:OrderView', displayName: 'OrderView', type: 'LWC' }),
+        createMockNode({ id: 'ApexClass:OrderController', displayName: 'OrderController' }),
+        createMockNode({ id: 'ApexClass:OrderService', displayName: 'OrderService' }),
+        createMockNode({ id: 'ApexClass:PaymentService', displayName: 'PaymentService' }),
+        createMockNode({ id: 'CustomObject:Order__c', displayName: 'Order__c', type: 'CustomObject' }),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        createMockEdge('LWC:OrderView', 'ApexClass:OrderController'),
+        createMockEdge('ApexClass:OrderController', 'ApexClass:OrderService'),
+        createMockEdge('ApexClass:OrderService', 'ApexClass:PaymentService'),
+        createMockEdge('ApexClass:OrderService', 'CustomObject:Order__c'),
+      ];
+
+      const analysisSpy = vi.spyOn(analysisModule, 'computeArchitectureAnalysis');
+      const domainsSpy = vi.spyOn(domainsModule, 'discoverDomains');
+
+      analysisSpy.mockClear();
+      domainsSpy.mockClear();
+
+      const positions = computeArchitectureLayout(nodes, edges);
+
+      expect(positions).toBeDefined();
+      expect(Object.keys(positions).length).toBe(nodes.length);
+
+      expect(analysisSpy).toHaveBeenCalledTimes(1);
+      expect(domainsSpy).toHaveBeenCalledTimes(1);
+
+      analysisSpy.mockRestore();
+      domainsSpy.mockRestore();
     });
   });
 });

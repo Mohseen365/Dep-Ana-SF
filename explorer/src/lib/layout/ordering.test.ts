@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { createFoodDeliveryFixture } from './fixtures/food-delivery';
+import { createEdge } from './fixtures/builder';
 import {
   reduceEdgeCrossings,
   type NodeOrderingInput,
 } from './ordering';
-import type { ExplorerNode, ExplorerEdge, ExplorerNodeType, ExplorerRelationshipType } from '../../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../../types/explorer';
 import type { ArchitectureLayer } from './types';
 
 function createDummyNode(
@@ -39,21 +40,12 @@ function createDummyNode(
 }
 
 function createDummyEdge(source: string, target: string): ExplorerEdge {
-  return {
-    id: `${source}->${target}`,
-    source,
-    target,
-    type: 'calls',
-    relationshipType: 'calls' as ExplorerRelationshipType,
-  };
+  return createEdge(source, target);
 }
 
 describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
   describe('Simple Crossing Reduction', () => {
     it('eliminates a simple edge crossing between two layers (A->Y and B->X)', () => {
-      // Layer 0 (presentation): Node A, Node B
-      // Layer 1 (application): Node X, Node Y
-      // Edges: A -> Y, B -> X
       const nodes: ExplorerNode[] = [
         createDummyNode('A', 'LWC'),
         createDummyNode('B', 'LWC'),
@@ -87,31 +79,24 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
         domainMap,
       });
 
-      // Bucket key for application layer
       const appBucket = result.bucketOrder.get('application:DomainA') || [];
       const presBucket = result.bucketOrder.get('presentation:DomainA') || [];
 
-      // Either presentation is [A, B] and app is [Y, X], or pres is [B, A] and app is [X, Y]
       const presIndexA = presBucket.indexOf('A');
       const presIndexB = presBucket.indexOf('B');
       const appIndexX = appBucket.indexOf('X');
       const appIndexY = appBucket.indexOf('Y');
 
-      // Check relative order: A comes before B iff Y comes before X
       const presOrderAFirst = presIndexA < presIndexB;
       const appOrderYFirst = appIndexY < appIndexX;
       expect(presOrderAFirst).toBe(appOrderYFirst);
 
-      // Verify estimated crossings is 0
       expect(result.estimatedCrossings).toBe(0);
     });
   });
 
   describe('Multi-edge Crossing Reduction', () => {
     it('reduces crossings in a multi-edge dense layer setup', () => {
-      // Presentation layer: P1, P2, P3
-      // Application layer: A1, A2, A3
-      // Edges intentionally crossed: P1->A3, P2->A2, P3->A1
       const nodes = [
         createDummyNode('P1', 'LWC'),
         createDummyNode('P2', 'LWC'),
@@ -147,7 +132,6 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
 
       const result = reduceEdgeCrossings({ nodes, edges, layerMap, domainMap });
 
-      // After ordering, P1,P2,P3 aligned with A3,A2,A1 eliminates all crossings
       expect(result.estimatedCrossings).toBe(0);
     });
   });
@@ -160,7 +144,6 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
         createDummyNode('A3', 'ApexClass'),
       ];
 
-      // Edges within same application layer: A1 -> A2, A2 -> A3, A3 -> A1 (cycle)
       const edges = [
         createDummyEdge('A1', 'A2'),
         createDummyEdge('A2', 'A3'),
@@ -191,7 +174,7 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
       const edges = [
         createDummyEdge('ServiceA', 'ServiceB'),
         createDummyEdge('ServiceB', 'SelectorA'),
-        createDummyEdge('SelectorA', 'ServiceA'), // Cycle
+        createDummyEdge('SelectorA', 'ServiceA'),
       ];
 
       const layerMap = new Map<string, ArchitectureLayer>([
@@ -209,8 +192,6 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
 
   describe('Hub Handling', () => {
     it('orders hubs according to neighbor barycenters rather than degree alone', () => {
-      // Hub Node H has degree 3 (connected to P1, P2, P3 on left)
-      // Node N has degree 1 (connected to P4 on right)
       const nodes = [
         createDummyNode('P1', 'LWC'),
         createDummyNode('P2', 'LWC'),
@@ -248,9 +229,6 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
       const result = reduceEdgeCrossings({ nodes, edges, layerMap, domainMap });
 
       const appBucket = result.bucketOrder.get('application:D1') || [];
-      // HubH is connected to P1,P2,P3 (indices 0,1,2 in presentation), so its barycenter is ~1.0
-      // NodeN is connected to P4 (index 3 in presentation), so its barycenter is 3.0
-      // HubH should come before NodeN because of barycenter (1.0 < 3.0), not purely because degree was higher
       expect(appBucket.indexOf('HubH')).toBeLessThan(appBucket.indexOf('NodeN'));
     });
   });
@@ -297,7 +275,6 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
         edges: [...fixture.edges],
       };
 
-      // Shuffle nodes and edges
       const shuffledNodes = [...fixture.nodes].reverse();
       const shuffledEdges = [...fixture.edges].reverse();
 

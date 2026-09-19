@@ -1,0 +1,48 @@
+[
+  {
+    "scale": 7500,
+    "dataset": {
+      "scale": 7500,
+      "nodeCount": 7500,
+      "edgeCount": 14947,
+      "domainCount": 5521,
+      "componentCount": 1,
+      "primaryNodeCount": 5520,
+      "fieldNodeCount": 464,
+      "testNodeCount": 1516,
+      "triggerHandlerCount": 741,
+      "layerDistribution": {
+        "presentation": 1134,
+        "schema": 1128,
+        "domain": 3735,
+        "application": 1503
+      }
+    },
+    "run1ColdMs": 112741.19,
+    "runs2to5Ms": [
+      97889.7
+    ],
+    "minMs": 97889.7,
+    "maxMs": 112741.19,
+    "medianMs": 112741.19,
+    "peakRssMb": 428.61,
+    "heapUsedMb": 169.32,
+    "stageProfile": {
+      "0_clone_sort": 24.77,
+      "1_architecture_analysis": 2306.33,
+      "2_layer_classification": 12.99,
+      "3_domain_discovery": 1359.95,
+      "4_centrality_analysis": 2271.24,
+      "5_global_domain_layout": 15429.66,
+      "6_crossing_reduction": 30160.23,
+      "7_local_node_layout": 5683.3,
+      "8_hub_bridge_refinement": 30697.19,
+      "9_satellite_placement": 5176.02,
+      "10_component_packing": 5.93,
+      "11_spacing_collisions_cleanup": 1223.13,
+      "12_position_authority_restoration": 4.8
+    },
+    "correctnessPassed": true,
+    "determinismPassed": true
+  }
+]

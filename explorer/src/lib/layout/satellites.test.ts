@@ -9,16 +9,17 @@ import { createFieldHeavyFixture } from './fixtures/field-heavy';
 import { createTestHeavyFixture } from './fixtures/test-heavy';
 
 function makeNode(id: string, type: ExplorerNode['type'] = 'ApexClass', displayName?: string): ExplorerNode {
+  const name = displayName || id;
   return {
     id,
-    displayName: displayName || id,
+    displayName: name,
     type,
-    file: type === 'ApexClass' ? `classes/${displayName || id}.cls` : undefined,
+    file: type === 'ApexClass' ? `classes/${name}.cls` : '',
     metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
     risk: 'LOW',
     riskReasons: [],
     behavior: {
-      isTest: /(?:test|tests)$/i.test(displayName || id),
+      isTest: /(?:test|tests)/i.test(name),
       publicContractsCount: 0,
       asyncPatterns: [],
       securitySignalsCount: 0,
@@ -40,7 +41,23 @@ function makeEdge(source: string, target: string): ExplorerEdge {
     id: `${source}->${target}`,
     source,
     target,
-    label: 'depends_on',
+    relationshipType: 'type-reference',
+    method: null,
+    evidence: '',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    line: 1,
+    column: 1,
+    methodOwner: source,
+    file: '',
+    canonical: {
+      source: { type: 'ApexClass', name: source, method: null },
+      target: { type: 'ApexClass', name: target, method: null },
+      relationship: { type: 'type-reference', resolution: 'EXACT' },
+      location: { line: 1, column: 1 },
+    },
   };
 }
 
@@ -57,11 +74,10 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     const result = placeSatellites(nodes, edges, analysis, primaryPositions);
 
     expect(result.placedTestsCount).toBe(1);
-    expect(result.positions['OrderService']).toEqual({ x: 300, y: 350 }); // Primary unmoved
+    expect(result.positions['OrderService']).toEqual({ x: 300, y: 350 });
 
     const testPos = result.positions['OrderServiceTest'];
     expect(testPos).toBeDefined();
-    // Test should be placed to the right of target (x > 300, close y)
     expect(testPos.x).toBeGreaterThan(300);
     expect(Math.abs(testPos.y - 350)).toBeLessThan(150);
   });
@@ -84,20 +100,17 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     const result = placeSatellites(nodes, edges, analysis, primaryPositions);
 
     expect(result.placedTestsCount).toBe(3);
-    // Primary remains anchor
     expect(result.positions['PaymentService']).toEqual({ x: 500, y: 350 });
 
     const p1 = result.positions['PaymentServiceTest'];
     const p2 = result.positions['PaymentServiceMockTest'];
     const p3 = result.positions['PaymentServiceUnitTest'];
 
-    // Verify all tests are placed near anchor
     [p1, p2, p3].forEach(p => {
       expect(p.x).toBeGreaterThan(500);
       expect(Math.abs(p.y - 350)).toBeLessThan(250);
     });
 
-    // Check no overlap among tests
     const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
     expect(overlaps).toBe(0);
   });
@@ -125,14 +138,12 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     const posTestA = result.positions['AccountServiceTest'];
     const posTestB = result.positions['ContactServiceTest'];
 
-    // TestA should be anchored around AccountService (x ~ 260)
     expect(Math.abs(posTestA.x - 100)).toBeLessThan(280);
-    // TestB should be anchored around ContactService (x ~ 960)
     expect(Math.abs(posTestB.x - 800)).toBeLessThan(280);
   });
 
   it('4. One object + many fields: verifies field cluster locality', () => {
-    const account = makeNode('Account', 'Object', 'Account');
+    const account = makeNode('Account', 'CustomObject', 'Account');
     const field1 = makeNode('Account.Name', 'Field', 'Name');
     const field2 = makeNode('Account.Phone', 'Field', 'Phone');
     const field3 = makeNode('Account.Industry', 'Field', 'Industry');
@@ -159,7 +170,6 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     const f3 = result.positions['Account.Industry'];
     const f4 = result.positions['Account.Rating'];
 
-    // Fields should be placed directly below account (y > 850)
     [f1, f2, f3, f4].forEach(f => {
       expect(f.y).toBeGreaterThan(850);
       expect(Math.abs(f.x - 400)).toBeLessThan(300);
@@ -170,10 +180,10 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
   });
 
   it('5. Multiple objects + fields: verifies fields do not cross into unrelated objects', () => {
-    const objA = makeNode('Account', 'Object', 'Account');
+    const objA = makeNode('Account', 'CustomObject', 'Account');
     const fA1 = makeNode('Account.Name', 'Field', 'Name');
 
-    const objB = makeNode('Opportunity', 'Object', 'Opportunity');
+    const objB = makeNode('Opportunity', 'CustomObject', 'Opportunity');
     const fB1 = makeNode('Opportunity.Amount', 'Field', 'Amount');
 
     const nodes = [objA, fA1, objB, fB1];
@@ -195,7 +205,7 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
   });
 
   it('6. Trigger + handler: verifies local relationship', () => {
-    const account = makeNode('Account', 'Object', 'Account');
+    const account = makeNode('Account', 'CustomObject', 'Account');
     const trigger = makeNode('AccountTrigger', 'ApexTrigger');
     const handler = makeNode('AccountTriggerHandler', 'ApexClass');
 
@@ -222,7 +232,7 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
   });
 
   it('7. Trigger + handler + service: verifies microcluster coherence', () => {
-    const account = makeNode('Account', 'Object', 'Account');
+    const account = makeNode('Account', 'CustomObject', 'Account');
     const trigger = makeNode('AccountTrigger', 'ApexTrigger');
     const handler = makeNode('AccountTriggerHandler', 'ApexClass');
     const service = makeNode('AccountService', 'ApexClass');
@@ -278,14 +288,14 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     expect(result.placedFieldsCount).toBe(1);
     const pos = result.positions['CustomObj.OrphanField'];
     expect(pos).toBeDefined();
-    expect(pos.y).toBeGreaterThanOrEqual(850); // Schema fallback layer
+    expect(pos.y).toBeGreaterThanOrEqual(850);
   });
 
   it('10. Dense satellite case: verifies no uncontrolled overlap', () => {
     const prod = makeNode('OrderService');
     const tests = Array.from({ length: 8 }, (_, i) => makeNode(`OrderService${i}Test`));
 
-    const obj = makeNode('Order__c', 'Object', 'Order__c');
+    const obj = makeNode('Order__c', 'CustomObject', 'Order__c');
     const fields = Array.from({ length: 10 }, (_, i) => makeNode(`Order__c.Field_${i}`, 'Field', `Field_${i}`));
 
     const nodes = [prod, ...tests, obj, ...fields];
@@ -313,7 +323,7 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     const prod = makeNode('OrderService');
     const testA = makeNode('OrderServiceTestA');
     const testB = makeNode('OrderServiceTestB');
-    const obj = makeNode('Order__c', 'Object', 'Order__c');
+    const obj = makeNode('Order__c', 'CustomObject', 'Order__c');
     const fieldA = makeNode('Order__c.Status', 'Field', 'Status');
 
     const nodes = [prod, testA, testB, obj, fieldA];
@@ -337,6 +347,107 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
     expect(run2.positions).toEqual(run3.positions);
   });
 
+  describe('WAVE 3B — Satellite Geometry Optimization Tests', () => {
+    it('Trigger anchor locality: trigger Y position is anchored relative to parent object position', () => {
+      const account = makeNode('Account', 'CustomObject', 'Account');
+      const trigger = makeNode('AccountTrigger', 'ApexTrigger');
+      const nodes = [account, trigger];
+      const edges = [makeEdge('AccountTrigger', 'Account')];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { Account: { x: 400, y: 850 } };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      const trigPos = result.positions['AccountTrigger'];
+      expect(trigPos).toBeDefined();
+      expect(trigPos.x).toBe(400);
+      expect(Math.abs(trigPos.y - 850)).toBeLessThan(150);
+      expect(trigPos.y).toBe(750);
+    });
+
+    it('Mixed field and test satellites in single component: 0 overlaps and clear separation', () => {
+      const service = makeNode('OrderService', 'ApexClass', 'OrderService');
+      const tests = Array.from({ length: 5 }, (_, i) => makeNode(`OrderService_${i + 1}Test`, 'ApexClass', `OrderService_${i + 1}Test`));
+      const obj = makeNode('Order__c', 'CustomObject', 'Order__c');
+      const fields = Array.from({ length: 10 }, (_, i) => makeNode(`Order__c.Field_${i + 1}`, 'Field', `Field_${i + 1}`));
+
+      const nodes = [service, ...tests, obj, ...fields];
+      const edges = [
+        ...tests.map(t => makeEdge(t.id, service.id)),
+        ...fields.map(f => makeEdge(f.id, obj.id)),
+      ];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = {
+        OrderService: { x: 300, y: 350 },
+        Order__c: { x: 300, y: 850 },
+      };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      expect(result.placedTestsCount).toBe(5);
+      expect(result.placedFieldsCount).toBe(10);
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
+
+    it('50 fields aspect-ratio compaction: field grid forms a compact, well-proportioned shape under object', () => {
+      const parentObj = makeNode('Account', 'CustomObject', 'Account');
+      const fields = Array.from({ length: 50 }, (_, i) => makeNode(`Account.Field_${i + 1}`, 'Field', `Field_${i + 1}`));
+
+      const nodes = [parentObj, ...fields];
+      const edges = fields.map(f => makeEdge(f.id, parentObj.id));
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { Account: { x: 400, y: 850 } };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      const fieldKeys = fields.map(f => f.id);
+      let minX = Infinity, maxX = -Infinity;
+      fieldKeys.forEach(k => {
+        const p = result.positions[k];
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+      });
+
+      const clusterWidth = maxX - minX + 120;
+      expect(clusterWidth).toBeLessThanOrEqual(1400);
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
+
+    it('50 tests aspect-ratio compaction: test cluster forms a compact side-anchored grid beside target', () => {
+      const prod = makeNode('BillingService', 'ApexClass', 'BillingService');
+      const tests = Array.from({ length: 50 }, (_, i) => makeNode(`BillingService_${i + 1}Test`, 'ApexClass', `BillingService_${i + 1}Test`));
+
+      const nodes = [prod, ...tests];
+      const edges = tests.map(t => makeEdge(t.id, prod.id));
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = { BillingService: { x: 300, y: 350 } };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      const testKeys = tests.map(t => t.id);
+      let minY = Infinity, maxY = -Infinity;
+      testKeys.forEach(k => {
+        const p = result.positions[k];
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      });
+
+      const clusterHeight = maxY - minY + 60;
+      expect(clusterHeight).toBeLessThanOrEqual(1300);
+
+      const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
+      expect(overlaps).toBe(0);
+    });
+  });
+
   describe('WAVE 8B — Field Satellite Scalability Tests (1, 2, 4, 8, 16, 24, 50, 100 fields)', () => {
     [1, 2, 4, 8, 16, 24, 50, 100].forEach(count => {
       it(`places ${count} fields around a parent object with zero overlaps and unshifted parent`, () => {
@@ -356,21 +467,17 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
           nodeHeight: 60,
         });
 
-        // 1. Parent object position remains unchanged
         expect(result.positions['Account']).toEqual({ x: 400, y: 850 });
 
-        // 2. All fields have distinct coordinates
         const fieldPositions = fields.map(f => result.positions[f.id]);
         expect(fieldPositions.length).toBe(count);
 
         const uniqueCoords = new Set(fieldPositions.map(p => `${p.x}:${p.y}`));
         expect(uniqueCoords.size).toBe(count);
 
-        // 3. Zero overlaps between all nodes
         const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
         expect(overlaps).toBe(0);
 
-        // 4. All coordinates finite
         fieldPositions.forEach(p => {
           expect(Number.isFinite(p.x)).toBe(true);
           expect(Number.isFinite(p.y)).toBe(true);
@@ -433,21 +540,17 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
           nodeHeight: 60,
         });
 
-        // 1. Target production position remains unchanged
         expect(result.positions['PaymentProcessor']).toEqual({ x: 300, y: 350 });
 
-        // 2. All tests have distinct coordinates
         const testPositions = tests.map(t => result.positions[t.id]);
         expect(testPositions.length).toBe(count);
 
         const uniqueCoords = new Set(testPositions.map(p => `${p.x}:${p.y}`));
         expect(uniqueCoords.size).toBe(count);
 
-        // 3. Zero overlaps
         const overlaps = nodeOverlapCount(nodes, edges, result.positions, { nodeWidth: 120, nodeHeight: 60 });
         expect(overlaps).toBe(0);
 
-        // 4. Finite coordinates
         testPositions.forEach(p => {
           expect(Number.isFinite(p.x)).toBe(true);
           expect(Number.isFinite(p.y)).toBe(true);
@@ -507,7 +610,6 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
 
       const result = placeSatellites(nodes, edges, analysis, primaryPositions, customGeom);
 
-      // Verify no overlaps under the larger node dimensions (160x80)
       const overlaps = nodeOverlapCount(nodes, edges, result.positions, customGeom);
       expect(overlaps).toBe(0);
     });
@@ -540,7 +642,6 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
 
       const result1 = placeSatellites(nodes, edges, analysis1, primaryPositions);
 
-      // Reversed arrays
       const reversedNodes = [...nodes].reverse();
       const reversedEdges = [...edges].reverse();
       const analysis2 = computeArchitectureAnalysis(reversedNodes, reversedEdges);

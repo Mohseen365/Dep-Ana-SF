@@ -11,39 +11,17 @@ import {
 import { computeArchitectureLayout } from '../architecture-layout';
 import { evaluateLayout } from './evaluate-layout';
 import { createBridgeHeavyFixture } from './fixtures/bridge-heavy';
+import { createDenseCrossDomainFixture } from './fixtures/dense-cross-domain';
+import { createNode, createEdge } from './fixtures/builder';
 
 function makeMockNode(
   id: string,
-  type: ExplorerNode['type'] = 'ApexClass',
-  file = ''
+  type: ExplorerNode['type'] = 'ApexClass'
 ): ExplorerNode {
-  return {
-    id,
-    displayName: id.split(':').pop() || id,
-    type,
-    file,
-    metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-    risk: 'LOW',
-    riskReasons: [],
-    behavior: {
-      isTest: false,
-      publicContractsCount: 0,
-      asyncPatterns: [],
-      securitySignalsCount: 0,
-      queryCount: 0,
-      dmlCount: 0,
-      calloutCount: 0,
-    },
-    refactoringReadiness: {
-      isHighRisk: false,
-      hasCycles: false,
-      hasUnresolved: false,
-      testCoverageStatus: 'UNTESTED',
-    },
-  };
+  return createNode(id, type);
 }
 
-describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
+describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
   describe('Hub Analysis & Classification', () => {
     it('1. High fan-in hub: correctly identifies fan-in hub type and score', () => {
       const { hubScore, isHub, hubType } = computeNodeHubMetrics(10, 1, 2.0, 3.5);
@@ -76,10 +54,10 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'OrderService', target: 'OrderHelper1' },
-        { id: 'e2', source: 'OrderService', target: 'OrderHelper2' },
-        { id: 'e3', source: 'OrderService', target: 'OrderHelper3' },
-        { id: 'e4', source: 'OrderService', target: 'OrderHelper4' },
+        createEdge('OrderService', 'OrderHelper1'),
+        createEdge('OrderService', 'OrderHelper2'),
+        createEdge('OrderService', 'OrderHelper3'),
+        createEdge('OrderService', 'OrderHelper4'),
       ];
 
       const domainMap = new Map<string, string>([
@@ -109,15 +87,9 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
 
   describe('Bridge Analysis & Neighborhood Mapping', () => {
     it('5. Two-domain bridge: connects two distinct non-Shared domains', () => {
-      const nodes = [
-        makeMockNode('BridgeController'),
-        makeMockNode('OrderService'),
-        makeMockNode('PaymentProcessor'),
-      ];
-
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'BridgeController', target: 'OrderService' },
-        { id: 'e2', source: 'BridgeController', target: 'PaymentProcessor' },
+        createEdge('BridgeController', 'OrderService'),
+        createEdge('BridgeController', 'PaymentProcessor'),
       ];
 
       const domainMap = new Map<string, string>([
@@ -155,9 +127,9 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'Orchestrator', target: 'OrderService' },
-        { id: 'e2', source: 'Orchestrator', target: 'PaymentProcessor' },
-        { id: 'e3', source: 'Orchestrator', target: 'InventoryManager' },
+        createEdge('Orchestrator', 'OrderService'),
+        createEdge('Orchestrator', 'PaymentProcessor'),
+        createEdge('Orchestrator', 'InventoryManager'),
       ];
 
       const domainMap = new Map<string, string>([
@@ -179,7 +151,7 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
 
       expect(orchestratorCentrality.isBridge).toBe(true);
       expect(orchestratorCentrality.connectedDomains).toEqual(['Inventory', 'Order', 'Payment']);
-      expect(orchestratorCentrality.bridgeScore).toBe(33); // 3 * 10 + 3
+      expect(orchestratorCentrality.bridgeScore).toBe(33);
     });
 
     it('7. Hub + bridge: single node satisfies both roles without collapsing category', () => {
@@ -193,11 +165,11 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'MasterGateway', target: 'OrderA' },
-        { id: 'e2', source: 'MasterGateway', target: 'OrderB' },
-        { id: 'e3', source: 'MasterGateway', target: 'PaymentA' },
-        { id: 'e4', source: 'MasterGateway', target: 'PaymentB' },
-        { id: 'e5', source: 'MasterGateway', target: 'BillingA' },
+        createEdge('MasterGateway', 'OrderA'),
+        createEdge('MasterGateway', 'OrderB'),
+        createEdge('MasterGateway', 'PaymentA'),
+        createEdge('MasterGateway', 'PaymentB'),
+        createEdge('MasterGateway', 'BillingA'),
       ];
 
       const domainMap = new Map<string, string>([
@@ -235,9 +207,9 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'OrderManager', target: 'OrderA' },
-        { id: 'e2', source: 'OrderManager', target: 'OrderB' },
-        { id: 'e3', source: 'OrderManager', target: 'OrderC' },
+        createEdge('OrderManager', 'OrderA'),
+        createEdge('OrderManager', 'OrderB'),
+        createEdge('OrderManager', 'OrderC'),
       ];
 
       const domainMap = new Map<string, string>([
@@ -272,7 +244,7 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
 
       const domainBounds = {
         DomainA: { minX: -100, maxX: 100 },
-        DomainB: { minX: 280, maxX: 480 }, // Geometric middle
+        DomainB: { minX: 280, maxX: 480 },
         DomainC: { minX: 660, maxX: 860 },
       };
 
@@ -330,8 +302,8 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'OrderPaymentAdapter', target: 'OrderService' },
-        { id: 'e2', source: 'OrderPaymentAdapter', target: 'PaymentProcessor' },
+        createEdge('OrderPaymentAdapter', 'OrderService'),
+        createEdge('OrderPaymentAdapter', 'PaymentProcessor'),
       ];
 
       const positions = computeArchitectureLayout(nodes, edges);
@@ -344,7 +316,6 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       expect(Number.isFinite(pAdapter.x)).toBe(true);
       expect(Number.isFinite(pAdapter.y)).toBe(true);
 
-      // Adapter must have distinct coordinates from connected endpoints
       expect(pAdapter).not.toEqual(pOrder);
       expect(pAdapter).not.toEqual(pPayment);
 
@@ -361,9 +332,9 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'MasterOrchestrator', target: 'OrderService' },
-        { id: 'e2', source: 'MasterOrchestrator', target: 'PaymentProcessor' },
-        { id: 'e3', source: 'MasterOrchestrator', target: 'InventoryManager' },
+        createEdge('MasterOrchestrator', 'OrderService'),
+        createEdge('MasterOrchestrator', 'PaymentProcessor'),
+        createEdge('MasterOrchestrator', 'InventoryManager'),
       ];
 
       const positions = computeArchitectureLayout(nodes, edges);
@@ -390,20 +361,19 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'OrderPaymentBridge1', target: 'OrderService' },
-        { id: 'e2', source: 'OrderPaymentBridge1', target: 'PaymentProcessor' },
-        { id: 'e3', source: 'OrderPaymentBridge2', target: 'OrderService' },
-        { id: 'e4', source: 'OrderPaymentBridge2', target: 'PaymentProcessor' },
+        createEdge('OrderPaymentBridge1', 'OrderService'),
+        createEdge('OrderPaymentBridge1', 'PaymentProcessor'),
+        createEdge('OrderPaymentBridge2', 'OrderService'),
+        createEdge('OrderPaymentBridge2', 'PaymentProcessor'),
 
-        { id: 'e5', source: 'BillingInventoryBridge1', target: 'BillingService' },
-        { id: 'e6', source: 'BillingInventoryBridge1', target: 'InventoryManager' },
-        { id: 'e7', source: 'BillingInventoryBridge2', target: 'BillingService' },
-        { id: 'e8', source: 'BillingInventoryBridge2', target: 'InventoryManager' },
+        createEdge('BillingInventoryBridge1', 'BillingService'),
+        createEdge('BillingInventoryBridge1', 'InventoryManager'),
+        createEdge('BillingInventoryBridge2', 'BillingService'),
+        createEdge('BillingInventoryBridge2', 'InventoryManager'),
       ];
 
       const positions = computeArchitectureLayout(nodes, edges);
 
-      // Verify all 8 nodes receive distinct coordinates
       const coords = Object.values(positions).map(p => `${p.x}:${p.y}`);
       const uniqueCoords = new Set(coords);
       expect(uniqueCoords.size).toBe(8);
@@ -447,7 +417,6 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
         { nodeWidth: 120, nodeHeight: 60, allocatedPositions }
       );
 
-      // Verify BridgeA and BridgeB receive distinct coordinates with sufficient clearance
       expect(bridge1.candidatePosition).not.toEqual(bridge2.candidatePosition);
       const dx = Math.abs(bridge1.candidatePosition.x - bridge2.candidatePosition.x);
       const dy = Math.abs(bridge1.candidatePosition.y - bridge2.candidatePosition.y);
@@ -475,9 +444,9 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
       ];
 
       const edges: ExplorerEdge[] = [
-        { id: 'e1', source: 'A_Node', target: 'B_Node' },
-        { id: 'e2', source: 'A_Node', target: 'C_Node' },
-        { id: 'e3', source: 'A_Node', target: 'D_Node' },
+        createEdge('A_Node', 'B_Node'),
+        createEdge('A_Node', 'C_Node'),
+        createEdge('A_Node', 'D_Node'),
       ];
 
       const domainMap1 = new Map<string, string>([
@@ -503,6 +472,178 @@ describe('Centrality Intelligence Engine (Wave 3B & Wave 8B)', () => {
 
       expect(Array.from(result1.keys())).toEqual(Array.from(result2.keys()));
       expect(result1.get('A_Node')).toEqual(result2.get('A_Node'));
+    });
+  });
+
+  describe('WAVE 3C — Bridge Geometry Optimization Requirements', () => {
+    it('1. Bridge candidate not inside unrelated domain: detects trap and places bridge outside trap domain interior', () => {
+      const domainXCenters = {
+        DomainA: 0,
+        DomainB: 400,
+        DomainC: 800,
+      };
+
+      const domainBounds = {
+        DomainA: { minX: -100, maxX: 100 },
+        DomainB: { minX: 300, maxX: 500 },
+        DomainC: { minX: 700, maxX: 900 },
+      };
+
+      const connectedDomains = ['DomainA', 'DomainC'];
+
+      const placement = calculateBridgeCandidatePosition(
+        'CrossDomainBridge',
+        'application',
+        connectedDomains,
+        domainXCenters,
+        domainBounds,
+        {},
+        {
+          layerSpacing: 250,
+          layerYOffsets: {
+            presentation: 100,
+            application: 350,
+            domain: 600,
+            schema: 850,
+          },
+        }
+      );
+
+      expect(placement.hasIntermediateTrap).toBe(true);
+      expect(placement.trapDomainId).toBe('DomainB');
+      expect(placement.candidatePosition.y).not.toBe(350);
+      expect(placement.candidatePosition.y).toBe(225);
+    });
+
+    it('2. Minimum valid displacement: dynamically calculates displacement based on layerYOffsets rather than fixed 125px', () => {
+      const domainXCenters = { DomainA: 100, DomainB: 500, DomainC: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 400, maxX: 600 },
+        DomainC: { minX: 800, maxX: 1000 },
+      };
+
+      const customLayerYOffsets: Record<ArchitectureLayer, number> = {
+        presentation: 100,
+        application: 200,
+        domain: 300,
+        schema: 400,
+      };
+
+      const placement = calculateBridgeCandidatePosition(
+        'CompactBridge',
+        'application',
+        ['DomainA', 'DomainC'],
+        domainXCenters,
+        domainBounds,
+        {},
+        { layerYOffsets: customLayerYOffsets }
+      );
+
+      expect(placement.hasIntermediateTrap).toBe(true);
+      expect(placement.candidatePosition.y).toBe(150);
+    });
+
+    it('3. Dynamic layer-Y compatibility: correctly respects Wave 2B dynamic layer map', () => {
+      const dynamicYMap: Record<ArchitectureLayer, number> = {
+        presentation: 100,
+        application: 280,
+        domain: 520,
+        schema: 800,
+      };
+
+      const domainXCenters = { DomainA: 100, DomainB: 500, DomainC: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 400, maxX: 600 },
+        DomainC: { minX: 800, maxX: 1000 },
+      };
+
+      const placement = calculateBridgeCandidatePosition(
+        'DynamicBridge',
+        'application',
+        ['DomainA', 'DomainC'],
+        domainXCenters,
+        domainBounds,
+        {},
+        { layerYOffsets: dynamicYMap }
+      );
+
+      expect(placement.candidatePosition.y).toBe(190);
+    });
+
+    it('4. Multiple bridges: places multiple bridges connecting same/different domain pairs without overlap', () => {
+      const domainXCenters = { DomainA: 100, DomainB: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 800, maxX: 1000 },
+      };
+
+      const b1 = calculateBridgeCandidatePosition('Bridge1', 'application', ['DomainA', 'DomainB'], domainXCenters, domainBounds, {});
+      const b2 = calculateBridgeCandidatePosition('Bridge2', 'application', ['DomainA', 'DomainB'], domainXCenters, domainBounds, {}, { allocatedPositions: { Bridge1: b1.candidatePosition } });
+      const b3 = calculateBridgeCandidatePosition('Bridge3', 'application', ['DomainA', 'DomainB'], domainXCenters, domainBounds, {}, { allocatedPositions: { Bridge1: b1.candidatePosition, Bridge2: b2.candidatePosition } });
+
+      const positions = [b1.candidatePosition, b2.candidatePosition, b3.candidatePosition];
+      const posKeys = new Set(positions.map(p => `${p.x}:${p.y}`));
+
+      expect(posKeys.size).toBe(3);
+    });
+
+    it('5. Dense cross-domain graph acceptance: computes layout with zero overlaps and valid coordinates', () => {
+      const fixture = createDenseCrossDomainFixture();
+      const positions = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, positions);
+
+      expect(metrics.nodeOverlapCount).toBe(0);
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
+      Object.values(positions).forEach(p => {
+        expect(Number.isFinite(p.x)).toBe(true);
+        expect(Number.isFinite(p.y)).toBe(true);
+      });
+    });
+
+    it('6. Bridge-heavy graph acceptance: computes layout with zero overlaps and no crossing regression', () => {
+      const fixture = createBridgeHeavyFixture();
+      const positions = computeArchitectureLayout(fixture.nodes, fixture.edges);
+      const metrics = evaluateLayout(fixture.nodes, fixture.edges, positions);
+
+      expect(metrics.nodeOverlapCount).toBe(0);
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(6);
+      Object.values(positions).forEach(p => {
+        expect(Number.isFinite(p.x)).toBe(true);
+        expect(Number.isFinite(p.y)).toBe(true);
+      });
+    });
+
+    it('7. Deterministic tie-breaking: yields invariant bridge positions under node/edge shuffling', () => {
+      const fixture = createBridgeHeavyFixture();
+
+      const pos1 = computeArchitectureLayout(fixture.nodes, fixture.edges);
+
+      const shuffledNodes = [...fixture.nodes].reverse();
+      const shuffledEdges = [...fixture.edges].reverse();
+      const pos2 = computeArchitectureLayout(shuffledNodes, shuffledEdges);
+
+      expect(pos1).toEqual(pos2);
+    });
+
+    it('8. Zero overlap requirement: guarantees zero node overlaps across all bridge-bearing layouts', () => {
+      const dense = createDenseCrossDomainFixture();
+      const bridge = createBridgeHeavyFixture();
+
+      const denseMetrics = evaluateLayout(dense.nodes, dense.edges, computeArchitectureLayout(dense.nodes, dense.edges));
+      const bridgeMetrics = evaluateLayout(bridge.nodes, bridge.edges, computeArchitectureLayout(bridge.nodes, bridge.edges));
+
+      expect(denseMetrics.nodeOverlapCount).toBe(0);
+      expect(bridgeMetrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('9. No crossing regression: maintains crossing efficiency without introducing invalid geometry', () => {
+      const dense = createDenseCrossDomainFixture();
+      const metrics = evaluateLayout(dense.nodes, dense.edges, computeArchitectureLayout(dense.nodes, dense.edges));
+
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
+      expect(metrics.maxEdgeLength).toBeLessThanOrEqual(1404);
     });
   });
 });

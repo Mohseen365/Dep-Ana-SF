@@ -110,8 +110,6 @@ export interface LayoutMetricsComparison {
   averageTriggerToHandlerDistanceDelta: number | null;
 }
 
-const EPSILON = 1e-9;
-
 interface Point {
   x: number;
   y: number;
@@ -188,7 +186,6 @@ function collectLayerViolationEdges(
     }
   }
 
-  // Sort deterministically by source, then target
   violations.sort((a, b) => {
     const srcCmp = a.source.localeCompare(b.source);
     if (srcCmp !== 0) return srcCmp;
@@ -208,7 +205,6 @@ export function evaluateSatelliteLocality(
 ): SatelliteLocalityResult {
   const nodeMap = new Map<string, ExplorerNode>(nodes.map(n => [n.id, n]));
 
-  // 1. Test locality
   const testDistancesMap = new Map<string, number>();
   let testDistSum = 0;
 
@@ -223,7 +219,6 @@ export function evaluateSatelliteLocality(
     }
   }
 
-  // Sort test distances deterministically
   const sortedTestKeys = Array.from(testDistancesMap.keys()).sort((a, b) => a.localeCompare(b));
   const testDistances: Record<string, number> = {};
   sortedTestKeys.forEach(k => {
@@ -234,7 +229,6 @@ export function evaluateSatelliteLocality(
   const averageTestToTargetDistance =
     testCountWithTarget > 0 ? testDistSum / testCountWithTarget : null;
 
-  // 2. Field locality
   const fieldDistancesMap = new Map<string, number>();
   let fieldDistSum = 0;
 
@@ -249,7 +243,6 @@ export function evaluateSatelliteLocality(
     }
   }
 
-  // Sort field distances deterministically
   const sortedFieldKeys = Array.from(fieldDistancesMap.keys()).sort((a, b) => a.localeCompare(b));
   const fieldDistances: Record<string, number> = {};
   sortedFieldKeys.forEach(k => {
@@ -260,11 +253,9 @@ export function evaluateSatelliteLocality(
   const averageFieldToObjectDistance =
     fieldCountWithObject > 0 ? fieldDistSum / fieldCountWithObject : null;
 
-  // 3. Trigger-Handler locality
   const triggerHandlerMap = new Map<string, number>();
   let thDistSum = 0;
 
-  // Find edges connecting a trigger node and a handler node
   for (const edge of edges) {
     const srcNode = nodeMap.get(edge.source);
     const tgtNode = nodeMap.get(edge.target);
@@ -303,7 +294,6 @@ export function evaluateSatelliteLocality(
     }
   }
 
-  // Sort trigger-handler distances deterministically
   const sortedTHKeys = Array.from(triggerHandlerMap.keys()).sort((a, b) => a.localeCompare(b));
   const triggerHandlerDistances: Record<string, number> = {};
   sortedTHKeys.forEach(k => {
@@ -329,12 +319,6 @@ export function evaluateSatelliteLocality(
 
 /**
  * Main Deterministic Layout Evaluator.
- * Accepts graph nodes, edges, and node positions, and measures spatial and architectural layout quality.
- *
- * GUARANTEES:
- * - Pure diagnostic measurements. NO overall score, NO quality rating.
- * - 100% deterministic results.
- * - Independent measurable dimensions.
  */
 export function evaluateLayout(
   nodes: ExplorerNode[],
@@ -373,8 +357,7 @@ export function evaluateLayout(
 }
 
 /**
- * Compares two evaluated layout metric objects (e.g. before and after layout changes).
- * Returns raw numeric deltas (`after - before`) without interpreting them as good or bad.
+ * Compares two evaluated layout metric objects.
  */
 export function compareLayoutMetrics(
   before: EvaluatedLayoutMetrics,
