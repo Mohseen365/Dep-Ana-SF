@@ -19,9 +19,11 @@ export interface DomainRelationship {
 export interface DomainNode {
   domain: string;
   nodeCount: number;
+  primaryNodeCount: number;
   layers: ArchitectureLayer[];
   primaryLayer: ArchitectureLayer;
   nodeIds: string[];
+  primaryNodeIds: string[];
   connectedDomains: string[];
   degree: number;
   isShared: boolean;
@@ -45,6 +47,7 @@ export interface DomainRegion {
   yMin: number;
   yMax: number;
   nodeCount: number;
+  primaryNodeCount?: number;
   primaryLayer: ArchitectureLayer;
   orderIndex: number;
 }
@@ -96,9 +99,32 @@ const LAYERS_IN_ORDER: ArchitectureLayer[] = [
   'schema',
 ];
 
+function isFieldNode(node: ExplorerNode): boolean {
+  return node.type === 'Field' || node.type === 'CustomField';
+}
+
+function isPrimaryNode(node: ExplorerNode): boolean {
+  const isTest =
+    node.behavior?.isTest ||
+    (typeof node.file === 'string' &&
+      /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
+    /(?:test|tests|testdatafactory)$/i.test(
+      node.displayName || node.id || ''
+    );
+
+  const isField = isFieldNode(node);
+
+  return !isTest && !isField;
+}
+
 /**
- * Calculates primary production node row requirements per architectural layer across all domains.
- * Strictly excludes unit tests (`isTest`) and object fields (`isField`).
+ * Calculates primary production node row requirements per architectural layer
+ * across all domains.
+ *
+ * Primary nodes are determined using the canonical Wave 2A predicate:
+ * isPrimaryNode(node)
+ *
+ * Tests and fields are therefore excluded from architectural layer geometry.
  */
 export function calculatePrimaryLayerRowCounts(
   nodes: ExplorerNode[],
@@ -107,53 +133,77 @@ export function calculatePrimaryLayerRowCounts(
     layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
     domainMap?: Map<string, string> | Record<string, string>;
   }
-): Record<ArchitectureLayer, { maxRows: number; domainRows: Record<string, number>; primaryCount: number }> {
+): Record<
+  ArchitectureLayer,
+  {
+    maxRows: number;
+    domainRows: Record<string, number>;
+    primaryCount: number;
+  }
+> {
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
 
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
-  const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, options);
+  const analysis = computeArchitectureAnalysis(
+    safeNodes,
+    safeEdges,
+    options
+  );
 
   // Normalize layerMap
   const layerMap = new Map<string, ArchitectureLayer>();
+
   if (options?.layerMap instanceof Map) {
     options.layerMap.forEach((v, k) => layerMap.set(k, v));
   } else if (options?.layerMap) {
-    Object.entries(options.layerMap).forEach(([k, v]) => layerMap.set(k, v));
+    Object.entries(options.layerMap).forEach(([k, v]) =>
+      layerMap.set(k, v)
+    );
   }
 
   // Normalize domainMap
   const domainMap = new Map<string, string>();
+
   if (options?.domainMap instanceof Map) {
     options.domainMap.forEach((v, k) => domainMap.set(k, v));
   } else if (options?.domainMap) {
-    Object.entries(options.domainMap).forEach(([k, v]) => domainMap.set(k, v));
+    Object.entries(options.domainMap).forEach(([k, v]) =>
+      domainMap.set(k, v)
+    );
   }
 
-  // Primary production nodes ONLY
-  const primaryNodes = safeNodes.filter(node => {
-    const nodeAnalysis = analysis.nodes.get(node.id);
-    const isTest = nodeAnalysis ? nodeAnalysis.isTest : isTestNode(node);
-    const isField = nodeAnalysis ? nodeAnalysis.isField : (node.type === 'Field' || node.type === 'CustomField');
-    return !isTest && !isField;
-  });
+  // IMPORTANT:
+  // Use Wave 2A's canonical primary-node classification.
+  const primaryNodes = safeNodes.filter(isPrimaryNode);
 
   const bucketNodesMap = new Map<string, string[]>();
 
   primaryNodes.forEach(node => {
-    const layer = layerMap.get(node.id) || analysis.nodes.get(node.id)?.layer || classifyNodeLayer(node);
-    const domain = domainMap.get(node.id) || analysis.nodes.get(node.id)?.domain || classifyNodeDomain(node, safeNodes, safeEdges);
+    const layer =
+      layerMap.get(node.id) ||
+      analysis.nodes.get(node.id)?.layer ||
+      classifyNodeLayer(node);
+
+    const domain =
+      domainMap.get(node.id) ||
+      analysis.nodes.get(node.id)?.domain ||
+      classifyNodeDomain(node, safeNodes, safeEdges);
+
     const key = `${layer}:${domain}`;
+
     if (!bucketNodesMap.has(key)) {
       bucketNodesMap.set(key, []);
     }
+
     bucketNodesMap.get(key)!.push(node.id);
   });
 
-  // Calculate intra-bucket flow relationships for local row chunking
+  // Calculate intra-bucket flow relationships for local row chunking.
   const primaryNodeSet = new Set(primaryNodes.map(n => n.id));
+
   const intraBucketAdj = new Map<string, Set<string>>();
   const intraBucketInDegree = new Map<string, number>();
   const intraBucketOutDegree = new Map<string, number>();
@@ -165,28 +215,66 @@ export function calculatePrimaryLayerRowCounts(
   });
 
   safeEdges.forEach(e => {
-    if (primaryNodeSet.has(e.source) && primaryNodeSet.has(e.target) && e.source !== e.target) {
+    if (
+      primaryNodeSet.has(e.source) &&
+      primaryNodeSet.has(e.target) &&
+      e.source !== e.target
+    ) {
       intraBucketAdj.get(e.source)?.add(e.target);
-      intraBucketOutDegree.set(e.source, (intraBucketOutDegree.get(e.source) || 0) + 1);
-      intraBucketInDegree.set(e.target, (intraBucketInDegree.get(e.target) || 0) + 1);
+
+      intraBucketOutDegree.set(
+        e.source,
+        (intraBucketOutDegree.get(e.source) || 0) + 1
+      );
+
+      intraBucketInDegree.set(
+        e.target,
+        (intraBucketInDegree.get(e.target) || 0) + 1
+      );
     }
   });
 
-  const result: Record<ArchitectureLayer, { maxRows: number; domainRows: Record<string, number>; primaryCount: number }> = {
-    presentation: { maxRows: 0, domainRows: {}, primaryCount: 0 },
-    application: { maxRows: 0, domainRows: {}, primaryCount: 0 },
-    domain: { maxRows: 0, domainRows: {}, primaryCount: 0 },
-    schema: { maxRows: 0, domainRows: {}, primaryCount: 0 },
+  const result: Record<
+    ArchitectureLayer,
+    {
+      maxRows: number;
+      domainRows: Record<string, number>;
+      primaryCount: number;
+    }
+  > = {
+    presentation: {
+      maxRows: 0,
+      domainRows: {},
+      primaryCount: 0,
+    },
+    application: {
+      maxRows: 0,
+      domainRows: {},
+      primaryCount: 0,
+    },
+    domain: {
+      maxRows: 0,
+      domainRows: {},
+      primaryCount: 0,
+    },
+    schema: {
+      maxRows: 0,
+      domainRows: {},
+      primaryCount: 0,
+    },
   };
 
   LAYERS_IN_ORDER.forEach(layer => {
     bucketNodesMap.forEach((nodeIds, bucketKey) => {
       const [bLayer, bDomain] = bucketKey.split(':');
-      if (bLayer !== layer || nodeIds.length === 0) return;
+
+      if (bLayer !== layer || nodeIds.length === 0) {
+        return;
+      }
 
       result[layer].primaryCount += nodeIds.length;
 
-      // Group into tiers
+      // Group into tiers.
       const tier0: string[] = [];
       const tier1: string[] = [];
       const tier2: string[] = [];
@@ -194,12 +282,16 @@ export function calculatePrimaryLayerRowCounts(
       if (nodeIds.length <= 2) {
         if (nodeIds.length === 2) {
           const [n1, n2] = nodeIds;
+
           const n1ToN2 = intraBucketAdj.get(n1)?.has(n2);
           const n2ToN1 = intraBucketAdj.get(n2)?.has(n1);
+
           if (n1ToN2 && !n2ToN1) {
-            tier0.push(n1); tier2.push(n2);
+            tier0.push(n1);
+            tier2.push(n2);
           } else if (n2ToN1 && !n1ToN2) {
-            tier0.push(n2); tier1.push(n1);
+            tier0.push(n2);
+            tier1.push(n1);
           } else {
             tier1.push(n1, n2);
           }
@@ -210,25 +302,45 @@ export function calculatePrimaryLayerRowCounts(
         nodeIds.forEach(id => {
           const inDeg = intraBucketInDegree.get(id) || 0;
           const outDeg = intraBucketOutDegree.get(id) || 0;
-          if (outDeg > 0 && inDeg === 0) tier0.push(id);
-          else if (inDeg > 0 && outDeg === 0) tier2.push(id);
-          else if (outDeg > inDeg) tier0.push(id);
-          else if (inDeg > outDeg) tier2.push(id);
-          else tier1.push(id);
+
+          if (outDeg > 0 && inDeg === 0) {
+            tier0.push(id);
+          } else if (inDeg > 0 && outDeg === 0) {
+            tier2.push(id);
+          } else if (outDeg > inDeg) {
+            tier0.push(id);
+          } else if (inDeg > outDeg) {
+            tier2.push(id);
+          } else {
+            tier1.push(id);
+          }
         });
       }
 
-      const tiers = [tier0, tier1, tier2].filter(t => t.length > 0);
-      if (tiers.length === 0) tiers.push(nodeIds);
+      const tiers = [tier0, tier1, tier2].filter(
+        t => t.length > 0
+      );
+
+      if (tiers.length === 0) {
+        tiers.push(nodeIds);
+      }
 
       const MAX_COLS = 4;
+
       let domainRowCount = 0;
+
       tiers.forEach(tNodes => {
-        domainRowCount += Math.ceil(tNodes.length / MAX_COLS);
+        domainRowCount += Math.ceil(
+          tNodes.length / MAX_COLS
+        );
       });
 
       result[layer].domainRows[bDomain] = domainRowCount;
-      if (domainRowCount > result[layer].maxRows) {
+
+      if (
+        domainRowCount >
+        result[layer].maxRows
+      ) {
         result[layer].maxRows = domainRowCount;
       }
     });
@@ -244,7 +356,8 @@ export interface DynamicLayerYResult {
 }
 
 /**
- * Computes deterministic dynamic architectural layer Y coordinates based on primary-node geometry.
+ * Computes deterministic dynamic architectural layer Y coordinates
+ * based on primary-node geometry.
  */
 export function computeDynamicLayerYMap(
   nodes: ExplorerNode[],
@@ -252,13 +365,20 @@ export function computeDynamicLayerYMap(
   options: GlobalLayoutOptions = {}
 ): DynamicLayerYResult {
   const nodeHeight = options.nodeHeight ?? 60;
-  const verticalGap = 40; // project standard vertical gap between rows
-  const interLayerGap = (options.layerSpacing !== undefined && options.layerSpacing !== 250)
-    ? options.layerSpacing
-    : nodeHeight + verticalGap; // default 100px clearance
+  const verticalGap = 40;
+
+  const interLayerGap =
+    options.layerSpacing !== undefined &&
+    options.layerSpacing !== 250
+      ? options.layerSpacing
+      : nodeHeight + verticalGap;
+
   const baseY = options.baseY ?? 100;
 
-  const rowCounts = calculatePrimaryLayerRowCounts(nodes, edges);
+  const rowCounts = calculatePrimaryLayerRowCounts(
+    nodes,
+    edges
+  );
 
   const layerYMap: Record<ArchitectureLayer, number> = {
     presentation: baseY,
@@ -266,12 +386,14 @@ export function computeDynamicLayerYMap(
     domain: baseY,
     schema: baseY,
   };
+
   const layerRowCounts: Record<ArchitectureLayer, number> = {
     presentation: 0,
     application: 0,
     domain: 0,
     schema: 0,
   };
+
   const layerHeights: Record<ArchitectureLayer, number> = {
     presentation: 0,
     application: 0,
@@ -283,11 +405,16 @@ export function computeDynamicLayerYMap(
 
   LAYERS_IN_ORDER.forEach(layer => {
     const maxRows = rowCounts[layer].maxRows;
+
     layerRowCounts[layer] = maxRows;
 
-    const height = maxRows > 0 ? maxRows * nodeHeight + (maxRows - 1) * verticalGap : 0;
-    layerHeights[layer] = height;
+    const height =
+      maxRows > 0
+        ? maxRows * nodeHeight +
+          (maxRows - 1) * verticalGap
+        : 0;
 
+    layerHeights[layer] = height;
     layerYMap[layer] = currentY;
 
     if (maxRows > 0) {
@@ -339,9 +466,11 @@ export function buildDomainGraph(
       domainNodeMap.set(domain, {
         domain,
         nodeCount: 0,
+        primaryNodeCount: 0,
         layers: [],
         primaryLayer: 'application',
         nodeIds: [],
+        primaryNodeIds: [],
         connectedDomains: [],
         degree: 0,
         isShared: domain === 'Shared',
@@ -351,14 +480,19 @@ export function buildDomainGraph(
     const dNode = domainNodeMap.get(domain)!;
     dNode.nodeCount++;
     dNode.nodeIds.push(node.id);
+    if (isPrimaryNode(node)) {
+      dNode.primaryNodeCount++;
+      dNode.primaryNodeIds.push(node.id);
+    }
     if (!dNode.layers.includes(layer)) {
       dNode.layers.push(layer);
     }
   });
 
-  // Calculate primary layer for each domain (most frequent layer, tie-breaker layer priority)
+  // Calculate primary layer for each domain (most frequent layer among primary nodes, tie-breaker layer priority)
   domainNodeMap.forEach(dNode => {
     dNode.nodeIds.sort((a, b) => a.localeCompare(b));
+    dNode.primaryNodeIds.sort((a, b) => a.localeCompare(b));
     dNode.layers.sort((a, b) => LAYER_PRIORITY[a] - LAYER_PRIORITY[b]);
 
     const layerCounts: Record<ArchitectureLayer, number> = {
@@ -368,7 +502,9 @@ export function buildDomainGraph(
       schema: 0,
     };
 
-    dNode.nodeIds.forEach(nodeId => {
+    const targetNodeIds = dNode.primaryNodeIds.length > 0 ? dNode.primaryNodeIds : dNode.nodeIds;
+
+    targetNodeIds.forEach(nodeId => {
       const node = safeNodes.find(n => n.id === nodeId);
       if (node) {
         const layer = classifyNodeLayer(node);
@@ -761,21 +897,65 @@ export function computeGlobalDomainLayout(
   orderedDomains.forEach((domain, orderIndex) => {
     const dNode = domainGraph.nodes.get(domain);
     const nodeCount = dNode ? dNode.nodeCount : 1;
+    const primaryNodeCount = dNode ? dNode.primaryNodeCount : 0;
     const primaryLayer = dNode ? dNode.primaryLayer : 'application';
 
-    // Width proportional to estimated grid columns for domain node count
-    const cols = Math.max(1, Math.min(4, Math.ceil(Math.sqrt(nodeCount))));
-    const rows = Math.max(1, Math.ceil(nodeCount / cols));
+    // Group primary nodes in this domain by layer to find max columns/rows required per layer bucket
+    const primaryNodesInDomain = dNode
+      ? dNode.primaryNodeIds
+          .map(id => safeNodes.find(n => n.id === id))
+          .filter((n): n is ExplorerNode => n !== undefined)
+      : [];
 
-    const regionWidth = Math.max(220, cols * (nodeWidth * 1.3) + 40);
-    const regionHeight = Math.max(150, rows * (nodeHeight * 1.4) + 40);
+    const layerCounts: Record<ArchitectureLayer, number> = {
+      presentation: 0,
+      application: 0,
+      domain: 0,
+      schema: 0,
+    };
+
+    primaryNodesInDomain.forEach(node => {
+      const layer = classifyNodeLayer(node);
+      layerCounts[layer] = (layerCounts[layer] || 0) + 1;
+    });
+
+    // Max primary columns required in any single layer bucket (capped at 4 per tier row)
+    const maxCols = Math.max(
+      1,
+      ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.min(4, layerCounts[l]) : 0))
+    );
+
+    // Max primary rows required in any single layer bucket
+    const maxRows = Math.max(
+      1,
+      ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.ceil(layerCounts[l] / 4) : 0))
+    );
+
+    const primaryWidth = maxCols * nodeWidth + Math.max(0, maxCols - 1) * 40;
+    const primaryHeight = maxRows * nodeHeight + Math.max(0, maxRows - 1) * 40;
+
+    const regionWidth = Math.max(160, primaryWidth + 40);
+    const regionHeight = Math.max(100, primaryHeight + 40);
+
+    if (orderIndex > 0) {
+      const prevDomain = orderedDomains[orderIndex - 1];
+      const prevRegion = domainRegions.get(prevDomain);
+      if (prevRegion) {
+        const rel = domainGraph.adjacency.get(prevDomain)?.get(domain);
+        const strength = rel ? rel.strength : 0;
+        const minGap = 80;
+        const maxGap = 140;
+        const domainGap = maxGap - strength * (maxGap - minGap);
+        currentX = prevRegion.xMax + domainGap;
+      }
+    }
 
     const xCenter = currentX + regionWidth / 2;
     const layerBaseY = layerYMap[primaryLayer] ?? baseY;
     const yCenter = layerBaseY + regionHeight / 2;
 
-    const xMin = xCenter - regionWidth / 2;
-    const xMax = xCenter + regionWidth / 2;
+    const xMin = currentX;
+    const xMax = currentX + regionWidth;
     const yMin = yCenter - regionHeight / 2;
     const yMax = yCenter + regionHeight / 2;
 
@@ -790,6 +970,7 @@ export function computeGlobalDomainLayout(
       yMin,
       yMax,
       nodeCount,
+      primaryNodeCount,
       primaryLayer,
       orderIndex,
     };
@@ -808,9 +989,6 @@ export function computeGlobalDomainLayout(
         });
       });
     }
-
-    // Advance X coordinate for next domain region
-    currentX += regionWidth + (domainSpacing - 220);
   });
 
   // Build candidate position map to evaluate layout metrics
