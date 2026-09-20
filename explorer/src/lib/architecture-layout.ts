@@ -1,5 +1,6 @@
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureLayer } from './layout/types';
+import { createLayoutGraphIndex } from './layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from './layout/analysis';
 import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './layout/layers';
 import { discoverDomains, extractDomainStem } from './layout/domains';
@@ -135,8 +136,11 @@ export function computeArchitectureLayout(
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
+  // Construct LayoutGraphIndex immediately after Stage 0 normalization
+  const index = createLayoutGraphIndex(safeNodes, safeEdges);
+
   // Step 1: Base Architecture Analysis (Wave 1A)
-  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges);
+  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
 
   // Step 2: Layer Classification (Wave 1B)
   const layerMap = new Map<string, ArchitectureLayer>();
@@ -158,7 +162,8 @@ export function computeArchitectureLayout(
     safeNodes,
     safeEdges,
     domainMap,
-    layerMap
+    layerMap,
+    { index }
   );
 
   // Step 5: Global Domain Architecture Layout (Wave 2A)
@@ -171,6 +176,7 @@ export function computeArchitectureLayout(
     domainDiscovery,
     layerMap,
     domainMap,
+    index,
   });
 
   // Step 6: Layer Ordering & Crossing Reduction (Wave 2B)
@@ -234,7 +240,7 @@ export function computeArchitectureLayout(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap }
+        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index }
       );
 
       basePositions[node.id] = bridgeInfo.candidatePosition;
@@ -252,6 +258,7 @@ export function computeArchitectureLayout(
       nodeHeight,
       layerSpacing,
       layerYOffsets: globalDomainResult.layerYMap,
+      index,
     }
   );
 

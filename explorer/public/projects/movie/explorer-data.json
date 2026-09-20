@@ -1,20 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-09-19T09:46:59.825Z",
-  "sourceDirectory": "force-app/main/default",
+  "generatedAt": "2026-09-20T11:46:31.269Z",
+  "sourceDirectory": "/app/temp-test-source-resolution/movie_src_a",
   "project": {
-    "id": "movie-app",
-    "name": "Movie App",
+    "id": "movie",
+    "name": "movie",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "force-app/main/default",
-    "createdAt": "2026-09-19T09:46:59.825Z",
-    "updatedAt": "2026-09-19T09:46:59.825Z",
-    "lastAnalyzedAt": "2026-09-19T09:46:59.825Z",
+    "sourcePath": "/app/temp-test-source-resolution/movie_src_a",
+    "createdAt": "2026-09-20T11:46:31.269Z",
+    "updatedAt": "2026-09-20T11:46:31.269Z",
+    "lastAnalyzedAt": "2026-09-20T11:46:31.269Z",
     "analysisStatus": "COMPLETE",
     "componentCount": 1,
     "dependencyCount": 0,
-    "analysisPath": "/projects/movie-app/explorer-data.json"
+    "analysisPath": "/projects/movie/explorer-data.json"
   },
   "summary": {
     "nodeCount": 1,
@@ -38,10 +38,10 @@
   },
   "nodes": [
     {
-      "id": "ApexClass:Foo",
-      "displayName": "Foo",
+      "id": "ApexClass:MovieControllerA",
+      "displayName": "MovieControllerA",
       "type": "ApexClass",
-      "file": "",
+      "file": "temp-test-source-resolution/movie_src_a/classes/MovieControllerA.cls",
       "metrics": {
         "fanIn": 0,
         "fanOut": 0,
@@ -73,8 +73,8 @@
   "cycles": [],
   "unresolvedReferences": [],
   "impactSummaries": {
-    "ApexClass:Foo": {
-      "id": "ApexClass:Foo",
+    "ApexClass:MovieControllerA": {
+      "id": "ApexClass:MovieControllerA",
       "directDependencies": [],
       "directDependents": [],
       "transitiveDependencies": [],

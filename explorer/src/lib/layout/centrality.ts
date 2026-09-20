@@ -1,4 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { LayoutGraphIndex } from './graph-index';
 import type { ArchitectureLayer } from './types';
 
 /**
@@ -77,6 +78,8 @@ export interface CentralityOptions {
   verticalGap?: number;
   /** Previously allocated bridge positions or existing positions map */
   allocatedPositions?: Record<string, { x: number; y: number }>;
+  /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
+  index?: LayoutGraphIndex;
 }
 
 /**
@@ -135,7 +138,8 @@ export function computeNodeBridgeAnalysis(
   _nodeLayer: ArchitectureLayer | null,
   edges: ExplorerEdge[],
   domainMap: Map<string, string>,
-  layerMap: Map<string, ArchitectureLayer>
+  layerMap: Map<string, ArchitectureLayer>,
+  index?: LayoutGraphIndex
 ): {
   isBridge: boolean;
   bridgeScore: number;
@@ -148,7 +152,9 @@ export function computeNodeBridgeAnalysis(
 
   const ownDomain = nodeDomain || domainMap.get(nodeId);
 
-  const nodeEdges = edges.filter(e => e.source === nodeId || e.target === nodeId);
+  const nodeEdges = index
+    ? index.incidentEdgesByNode.get(nodeId) || []
+    : edges.filter(e => e.source === nodeId || e.target === nodeId);
 
   for (const edge of nodeEdges) {
     const otherId = edge.source === nodeId ? edge.target : edge.source;
@@ -221,6 +227,7 @@ export function computeGraphCentralityAnalysis(
   clearBridgeAllocations();
 
   const hubThreshold = options.hubScoreThreshold ?? 3.5;
+  const index = options.index;
 
   const domainDegreeSum = new Map<string, number>();
   const domainNodeCount = new Map<string, number>();
@@ -273,7 +280,7 @@ export function computeGraphCentralityAnalysis(
       connectedDomains,
       connectedLayers,
       domainRelationshipStrength,
-    } = computeNodeBridgeAnalysis(nodeId, domain, layer, edges, domainMap, layerMap);
+    } = computeNodeBridgeAnalysis(nodeId, domain, layer, edges, domainMap, layerMap, index);
 
     let spatialRole: NodeSpatialRole = 'standard';
     if (isHub && isBridge) {
