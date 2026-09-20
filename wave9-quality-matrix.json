@@ -1,0 +1,456 @@
+[
+  {
+    "featureId": "feature_admin-filter-panel",
+    "primarySize": 1,
+    "layers": [
+      "presentation"
+    ],
+    "domains": [
+      "AdminFilterPanel"
+    ],
+    "anchorCount": 1,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 0,
+    "sharedReferences": 0,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "SUPPORTED",
+    "observedConcern": "Isolated single-node feature with zero secondary dependencies"
+  },
+  {
+    "featureId": "feature_AdminUserController",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "AdminUser"
+    ],
+    "anchorCount": 1,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 5,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_CloudAccountController",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "CloudAccount"
+    ],
+    "anchorCount": 1,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_CloudAccountService",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "CloudAccount"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_CloudSpendMonthBackfillBatch",
+    "primarySize": 3,
+    "layers": [
+      "application",
+      "schema"
+    ],
+    "domains": [
+      "BatchableContext",
+      "CloudSpendMonthBackfill"
+    ],
+    "anchorCount": 0,
+    "coreCount": 3,
+    "dataCount": 0,
+    "bridgeCount": 2,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_CloudSpendService",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "CloudSpend"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_CloudSpendTriggerHandler",
+    "primarySize": 2,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "CloudSpend",
+      "CloudSpendTrigger"
+    ],
+    "anchorCount": 2,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 2,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_create_users",
+    "primarySize": 12,
+    "layers": [
+      "application",
+      "domain",
+      "schema"
+    ],
+    "domains": [
+      "Account",
+      "BusinessDataProvisioning",
+      "Email",
+      "Lead",
+      "PermissionSetGroup",
+      "ProvisioningException",
+      "QueueableContext",
+      "Shared",
+      "SystemAdminAccessPolicy"
+    ],
+    "anchorCount": 0,
+    "coreCount": 12,
+    "dataCount": 0,
+    "bridgeCount": 3,
+    "sharedReferences": 17,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_CurrencyUtils",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "Currency"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 0,
+    "sharedReferences": 0,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "SUPPORTED",
+    "observedConcern": "Isolated single-node feature with zero secondary dependencies"
+  },
+  {
+    "featureId": "feature_DateUtils",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "Date"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_ErrorResponse",
+    "primarySize": 2,
+    "layers": [
+      "application",
+      "schema"
+    ],
+    "domains": [
+      "ErrorResponse",
+      "UUID"
+    ],
+    "anchorCount": 0,
+    "coreCount": 2,
+    "dataCount": 0,
+    "bridgeCount": 2,
+    "sharedReferences": 0,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_forecast-manager",
+    "primarySize": 32,
+    "layers": [
+      "application",
+      "presentation",
+      "schema"
+    ],
+    "domains": [
+      "AccountMetrics",
+      "AdminAudit",
+      "AdminBudgets",
+      "AdminCloudAccounts",
+      "AdminDataExplorer",
+      "AdminDataHealth",
+      "AdminForecasts",
+      "AdminOrganizations",
+      "AdminOverview",
+      "AdminSpendExplorer",
+      "AdminUserAccess",
+      "AdministrationNav",
+      "AppShell",
+      "BudgetAlert",
+      "DataImporter",
+      "FilterPanel",
+      "Fiscal",
+      "ForecastManager",
+      "HomeOverview",
+      "Import",
+      "OrganizationTree",
+      "Shared",
+      "SpendAnalytics",
+      "SpendImportBatch",
+      "SpendTrackerNav",
+      "SystemAdminApp",
+      "TopServicesTable",
+      "UserManagement"
+    ],
+    "anchorCount": 30,
+    "coreCount": 0,
+    "dataCount": 2,
+    "bridgeCount": 32,
+    "sharedReferences": 26,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "PARTIALLY CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "Large cluster (32 primary nodes, 24 LWCs) contains multiple sub-dashboards in one region"
+  },
+  {
+    "featureId": "feature_OrganizationHierarchyService",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "OrganizationHierarchy"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 4,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_OrganizationTrigger",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "Organization"
+    ],
+    "anchorCount": 1,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 2,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_SpendAnalyticsService",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "SpendAnalytics"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_SpendImportService",
+    "primarySize": 6,
+    "layers": [
+      "application",
+      "domain",
+      "schema"
+    ],
+    "domains": [
+      "ContentVersion",
+      "CsvParser",
+      "Error_Message",
+      "Shared",
+      "SpendImport",
+      "VersionData"
+    ],
+    "anchorCount": 0,
+    "coreCount": 5,
+    "dataCount": 1,
+    "bridgeCount": 6,
+    "sharedReferences": 7,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_StandardAccessPolicy",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "StandardAccessPolicy"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 2,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_UserContactMappingService",
+    "primarySize": 4,
+    "layers": [
+      "application",
+      "schema"
+    ],
+    "domains": [
+      "BackfillResult",
+      "Classification",
+      "ClassificationResult",
+      "UserContactMapping"
+    ],
+    "anchorCount": 0,
+    "coreCount": 4,
+    "dataCount": 0,
+    "bridgeCount": 4,
+    "sharedReferences": 8,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_UserManagementController",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "UserManagement"
+    ],
+    "anchorCount": 1,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 2,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_UserManagementService",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "UserManagement"
+    ],
+    "anchorCount": 0,
+    "coreCount": 1,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 1,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  },
+  {
+    "featureId": "feature_UserOrganizationRoleTrigger",
+    "primarySize": 1,
+    "layers": [
+      "application"
+    ],
+    "domains": [
+      "UserOrganizationRole"
+    ],
+    "anchorCount": 1,
+    "coreCount": 0,
+    "dataCount": 0,
+    "bridgeCount": 1,
+    "sharedReferences": 2,
+    "semanticClarity": "CLEAR",
+    "visualClarity": "CLEAR",
+    "evidenceQuality": "CLEAR",
+    "observedConcern": "None"
+  }
+]

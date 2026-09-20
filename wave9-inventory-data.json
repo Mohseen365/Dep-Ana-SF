@@ -1,0 +1,1926 @@
+[
+  {
+    "featureId": "feature_admin-filter-panel",
+    "name": "admin-filter-panel",
+    "anchorNodeId": "LWC:admin-filter-panel",
+    "primaryCount": 1,
+    "secondaryCount": 0,
+    "primaryDomains": [
+      "AdminFilterPanel"
+    ],
+    "layersRepresented": [
+      "presentation"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 1,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "LWC:admin-filter-panel",
+        "displayName": "admin-filter-panel",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminFilterPanel",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_AdminUserController",
+    "name": "AdminUserController",
+    "anchorNodeId": "ApexClass:AdminUserController",
+    "primaryCount": 1,
+    "secondaryCount": 5,
+    "primaryDomains": [
+      "AdminUser"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 1,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:AdminUserController",
+        "displayName": "AdminUserController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "AdminUser",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:SpendTrackerAuthorizationService",
+        "displayName": "SpendTrackerAuthorizationService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendTrackerAuthorization",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:UserOrganizationRoleSelector",
+        "displayName": "UserOrganizationRoleSelector",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "UserOrganizationRole",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:UserSelector",
+        "displayName": "UserSelector",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:User",
+        "displayName": "User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:User_Organization_Role__c",
+        "displayName": "User_Organization_Role__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "User_Organization_Role",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [
+      "feature_forecast-manager"
+    ],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": [
+      "feature_forecast-manager"
+    ]
+  },
+  {
+    "featureId": "feature_CloudAccountController",
+    "name": "CloudAccountController",
+    "anchorNodeId": "ApexClass:CloudAccountController",
+    "primaryCount": 1,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "CloudAccount"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 1,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:CloudAccountController",
+        "displayName": "CloudAccountController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "CloudAccount",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:AccountService",
+        "displayName": "AccountService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Account",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_CloudAccountService",
+    "name": "CloudAccountService",
+    "anchorNodeId": "ApexClass:CloudAccountService",
+    "primaryCount": 1,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "CloudAccount"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:CloudAccountService",
+        "displayName": "CloudAccountService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "CloudAccount",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:AccountService",
+        "displayName": "AccountService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Account",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_CloudSpendMonthBackfillBatch",
+    "name": "CloudSpendMonthBackfillBatch",
+    "anchorNodeId": "ApexClass:CloudSpendMonthBackfillBatch",
+    "primaryCount": 3,
+    "secondaryCount": 2,
+    "primaryDomains": [
+      "BatchableContext",
+      "CloudSpendMonthBackfill"
+    ],
+    "layersRepresented": [
+      "application",
+      "schema"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 3,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:CloudSpendMonthBackfillBatch",
+        "displayName": "CloudSpendMonthBackfillBatch",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "CloudSpendMonthBackfill",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:BatchableContext",
+        "displayName": "BatchableContext",
+        "type": "External",
+        "layer": "schema",
+        "domain": "BatchableContext",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Database.Batchable<SObject>",
+        "displayName": "Database.Batchable<SObject>",
+        "type": "External",
+        "layer": "schema",
+        "domain": "CloudSpendMonthBackfill",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:CloudSpendTriggerHandlerTest",
+        "displayName": "CloudSpendTriggerHandlerTest",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "CloudSpendMonthBackfill",
+        "role": "FeatureTest"
+      },
+      {
+        "id": "Object:Cloud_Spend__c",
+        "displayName": "Cloud_Spend__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Spend",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_CloudSpendService",
+    "name": "CloudSpendService",
+    "anchorNodeId": "ApexClass:CloudSpendService",
+    "primaryCount": 1,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "CloudSpend"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:CloudSpendService",
+        "displayName": "CloudSpendService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "CloudSpend",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:SpendService",
+        "displayName": "SpendService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Spend",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_CloudSpendTriggerHandler",
+    "name": "CloudSpendTriggerHandler",
+    "anchorNodeId": "ApexClass:CloudSpendTriggerHandler",
+    "primaryCount": 2,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "CloudSpend",
+      "CloudSpendTrigger"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 2,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:CloudSpendTriggerHandler",
+        "displayName": "CloudSpendTriggerHandler",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "CloudSpendTrigger",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "Trigger:CloudSpendTrigger",
+        "displayName": "CloudSpendTrigger",
+        "type": "ApexTrigger",
+        "layer": "application",
+        "domain": "CloudSpend",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "Object:Cloud_Spend__c",
+        "displayName": "Cloud_Spend__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Spend",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_create_users",
+    "name": "create_users",
+    "anchorNodeId": "ApexClass:create_users",
+    "primaryCount": 12,
+    "secondaryCount": 17,
+    "primaryDomains": [
+      "Account",
+      "BusinessDataProvisioning",
+      "Email",
+      "Lead",
+      "PermissionSetGroup",
+      "ProvisioningException",
+      "QueueableContext",
+      "Shared",
+      "SystemAdminAccessPolicy"
+    ],
+    "layersRepresented": [
+      "application",
+      "domain",
+      "schema"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 12,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:create_users",
+        "displayName": "create_users",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Shared",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "ApexClass:SystemAdminAccessPolicy",
+        "displayName": "SystemAdminAccessPolicy",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "SystemAdminAccessPolicy",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:BusinessDataProvisioningQueueable",
+        "displayName": "BusinessDataProvisioningQueueable",
+        "type": "External",
+        "layer": "schema",
+        "domain": "BusinessDataProvisioning",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Email",
+        "displayName": "Email",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Email",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Lead",
+        "displayName": "Lead",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Lead",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Object:Lead",
+        "displayName": "Object:Lead",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Account",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Object:PermissionSetAssignment",
+        "displayName": "Object:PermissionSetAssignment",
+        "type": "External",
+        "layer": "schema",
+        "domain": "SystemAdminAccessPolicy",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Object:PermissionSetGroup",
+        "displayName": "Object:PermissionSetGroup",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Object:UserRole",
+        "displayName": "Object:UserRole",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:PermissionSetGroup",
+        "displayName": "PermissionSetGroup",
+        "type": "External",
+        "layer": "schema",
+        "domain": "PermissionSetGroup",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:ProvisioningException",
+        "displayName": "ProvisioningException",
+        "type": "External",
+        "layer": "schema",
+        "domain": "ProvisioningException",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:QueueableContext",
+        "displayName": "QueueableContext",
+        "type": "External",
+        "layer": "schema",
+        "domain": "QueueableContext",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:SpendTrackerAuthorizationService",
+        "displayName": "SpendTrackerAuthorizationService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendTrackerAuthorization",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Account",
+        "displayName": "Account",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Account",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Contact",
+        "displayName": "Contact",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Contact",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:Account",
+        "displayName": "Object:Account",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:Contact",
+        "displayName": "Object:Contact",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:Profile",
+        "displayName": "Object:Profile",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:User",
+        "displayName": "Object:User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:PermissionSetAssignment",
+        "displayName": "PermissionSetAssignment",
+        "type": "External",
+        "layer": "schema",
+        "domain": "PermissionSetAssignment",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:User",
+        "displayName": "User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Action_Audit__c",
+        "displayName": "Action_Audit__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Action_Audit",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Account__c",
+        "displayName": "Cloud_Account__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Account",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Service__c",
+        "displayName": "Cloud_Service__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Service",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Spend__c",
+        "displayName": "Cloud_Spend__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Spend",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Forecast__c",
+        "displayName": "Forecast__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Forecast",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Budget__c",
+        "displayName": "Organization_Budget__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Budget",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Hierarchy__c",
+        "displayName": "Organization_Hierarchy__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Hierarchy",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:User_Organization_Role__c",
+        "displayName": "User_Organization_Role__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "User_Organization_Role",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_CurrencyUtils",
+    "name": "CurrencyUtils",
+    "anchorNodeId": "ApexClass:CurrencyUtils",
+    "primaryCount": 1,
+    "secondaryCount": 0,
+    "primaryDomains": [
+      "Currency"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:CurrencyUtils",
+        "displayName": "CurrencyUtils",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Currency",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_DateUtils",
+    "name": "DateUtils",
+    "anchorNodeId": "ApexClass:DateUtils",
+    "primaryCount": 1,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "Date"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:DateUtils",
+        "displayName": "DateUtils",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Date",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:FiscalUtils",
+        "displayName": "FiscalUtils",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Fiscal",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_ErrorResponse",
+    "name": "ErrorResponse",
+    "anchorNodeId": "ApexClass:ErrorResponse",
+    "primaryCount": 2,
+    "secondaryCount": 0,
+    "primaryDomains": [
+      "ErrorResponse",
+      "UUID"
+    ],
+    "layersRepresented": [
+      "application",
+      "schema"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 2,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:ErrorResponse",
+        "displayName": "ErrorResponse",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "ErrorResponse",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:UUID",
+        "displayName": "UUID",
+        "type": "External",
+        "layer": "schema",
+        "domain": "UUID",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_forecast-manager",
+    "name": "forecast-manager",
+    "anchorNodeId": "LWC:forecast-manager",
+    "primaryCount": 32,
+    "secondaryCount": 27,
+    "primaryDomains": [
+      "AccountMetrics",
+      "AdminAudit",
+      "AdminBudgets",
+      "AdminCloudAccounts",
+      "AdminDataExplorer",
+      "AdminDataHealth",
+      "AdminForecasts",
+      "AdminOrganizations",
+      "AdminOverview",
+      "AdminSpendExplorer",
+      "AdminUserAccess",
+      "AdministrationNav",
+      "AppShell",
+      "BudgetAlert",
+      "DataImporter",
+      "FilterPanel",
+      "Fiscal",
+      "ForecastManager",
+      "HomeOverview",
+      "Import",
+      "OrganizationTree",
+      "Shared",
+      "SpendAnalytics",
+      "SpendImportBatch",
+      "SpendTrackerNav",
+      "SystemAdminApp",
+      "TopServicesTable",
+      "UserManagement"
+    ],
+    "layersRepresented": [
+      "application",
+      "presentation",
+      "schema"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 30,
+      "FeatureCore": 0,
+      "FeatureData": 2,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:AdminAuditController",
+        "displayName": "AdminAuditController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "AdminAudit",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "ApexClass:AdminDataExplorerController",
+        "displayName": "AdminDataExplorerController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "AdminDataExplorer",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "ApexClass:AdminOverviewController",
+        "displayName": "AdminOverviewController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "AdminOverview",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "ApexClass:BudgetAlertController",
+        "displayName": "BudgetAlertController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "BudgetAlert",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "ApexClass:FiscalController",
+        "displayName": "FiscalController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Fiscal",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "ApexClass:ImportController",
+        "displayName": "ImportController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Import",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "External:AdminOverviewWrapper",
+        "displayName": "AdminOverviewWrapper",
+        "type": "External",
+        "layer": "schema",
+        "domain": "AdminOverview",
+        "role": "FeatureData"
+      },
+      {
+        "id": "External:SpendImportBatchDTO",
+        "displayName": "SpendImportBatchDTO",
+        "type": "External",
+        "layer": "schema",
+        "domain": "SpendImportBatch",
+        "role": "FeatureData"
+      },
+      {
+        "id": "LWC:account-metrics",
+        "displayName": "account-metrics",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AccountMetrics",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-audit",
+        "displayName": "admin-audit",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminAudit",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-budgets",
+        "displayName": "admin-budgets",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminBudgets",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-cloud-accounts",
+        "displayName": "admin-cloud-accounts",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminCloudAccounts",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-data-explorer",
+        "displayName": "admin-data-explorer",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminDataExplorer",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-data-health",
+        "displayName": "admin-data-health",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminDataHealth",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-forecasts",
+        "displayName": "admin-forecasts",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminForecasts",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-organizations",
+        "displayName": "admin-organizations",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminOrganizations",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-overview",
+        "displayName": "admin-overview",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminOverview",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-spend-explorer",
+        "displayName": "admin-spend-explorer",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminSpendExplorer",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:admin-user-access",
+        "displayName": "admin-user-access",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdminUserAccess",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:administration-nav",
+        "displayName": "administration-nav",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AdministrationNav",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:app-shell",
+        "displayName": "app-shell",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "AppShell",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:data-importer",
+        "displayName": "data-importer",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "DataImporter",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:filter-panel",
+        "displayName": "filter-panel",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "FilterPanel",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:forecast-manager",
+        "displayName": "forecast-manager",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "ForecastManager",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:home-overview",
+        "displayName": "home-overview",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "HomeOverview",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:organization-tree",
+        "displayName": "organization-tree",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "OrganizationTree",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:spend-analytics",
+        "displayName": "spend-analytics",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "SpendAnalytics",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:spend-tracker-nav",
+        "displayName": "spend-tracker-nav",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "SpendTrackerNav",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:system-admin-app",
+        "displayName": "system-admin-app",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "SystemAdminApp",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:top-services-table",
+        "displayName": "top-services-table",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "TopServicesTable",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:user-management",
+        "displayName": "user-management",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "UserManagement",
+        "role": "FeatureAnchor"
+      },
+      {
+        "id": "LWC:utils",
+        "displayName": "utils",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "Shared",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:AccountController",
+        "displayName": "AccountController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Account",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:AdminAccessServiceTest",
+        "displayName": "AdminAccessServiceTest",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "AdminAudit",
+        "role": "FeatureTest"
+      },
+      {
+        "id": "ApexClass:AdminHealthController",
+        "displayName": "AdminHealthController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "AdminHealth",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:AdminSpendController",
+        "displayName": "AdminSpendController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "AdminSpend",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:AuditService",
+        "displayName": "AuditService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Audit",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:BudgetAlertService",
+        "displayName": "BudgetAlertService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "BudgetAlert",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:BudgetController",
+        "displayName": "BudgetController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Budget",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:FiscalUtils",
+        "displayName": "FiscalUtils",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Fiscal",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:ForecastController",
+        "displayName": "ForecastController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Forecast",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:ImportService",
+        "displayName": "ImportService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Import",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:OrganizationController",
+        "displayName": "OrganizationController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Organization",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:OrganizationService",
+        "displayName": "OrganizationService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Organization",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:QueryResult",
+        "displayName": "QueryResult",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "QueryResult",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:SpendController",
+        "displayName": "SpendController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Spend",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:SpendTrackerAuthorizationService",
+        "displayName": "SpendTrackerAuthorizationService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendTrackerAuthorization",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:UserController",
+        "displayName": "UserController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:User",
+        "displayName": "Object:User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "LWC:error-panel",
+        "displayName": "error-panel",
+        "type": "LWC",
+        "layer": "presentation",
+        "domain": "ErrorPanel",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Action_Audit__c",
+        "displayName": "Action_Audit__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Action_Audit",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Account__c",
+        "displayName": "Cloud_Account__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Account",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Service__c",
+        "displayName": "Cloud_Service__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Service",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Spend__c",
+        "displayName": "Cloud_Spend__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Spend",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Forecast__c",
+        "displayName": "Forecast__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Forecast",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Budget__c",
+        "displayName": "Organization_Budget__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Budget",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Hierarchy__c",
+        "displayName": "Organization_Hierarchy__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Hierarchy",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Spend_Import_Batch__c",
+        "displayName": "Spend_Import_Batch__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Spend_Import_Batch",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:User_Organization_Role__c",
+        "displayName": "User_Organization_Role__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "User_Organization_Role",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_OrganizationHierarchyService",
+    "name": "OrganizationHierarchyService",
+    "anchorNodeId": "ApexClass:OrganizationHierarchyService",
+    "primaryCount": 1,
+    "secondaryCount": 4,
+    "primaryDomains": [
+      "OrganizationHierarchy"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:OrganizationHierarchyService",
+        "displayName": "OrganizationHierarchyService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "OrganizationHierarchy",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:OrganizationHierarchySelector",
+        "displayName": "OrganizationHierarchySelector",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "OrganizationHierarchy",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:OrganizationService",
+        "displayName": "OrganizationService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Organization",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:SpendTrackerAccessContext",
+        "displayName": "SpendTrackerAccessContext",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendTrackerAccessContext",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Hierarchy__c",
+        "displayName": "Organization_Hierarchy__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Hierarchy",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_OrganizationTrigger",
+    "name": "OrganizationTrigger",
+    "anchorNodeId": "Trigger:OrganizationTrigger",
+    "primaryCount": 1,
+    "secondaryCount": 2,
+    "primaryDomains": [
+      "Organization"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 1,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "Trigger:OrganizationTrigger",
+        "displayName": "OrganizationTrigger",
+        "type": "ApexTrigger",
+        "layer": "application",
+        "domain": "Organization",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:OrganizationTriggerHandler",
+        "displayName": "OrganizationTriggerHandler",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "OrganizationTrigger",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Hierarchy__c",
+        "displayName": "Organization_Hierarchy__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Hierarchy",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_SpendAnalyticsService",
+    "name": "SpendAnalyticsService",
+    "anchorNodeId": "ApexClass:SpendAnalyticsService",
+    "primaryCount": 1,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "SpendAnalytics"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:SpendAnalyticsService",
+        "displayName": "SpendAnalyticsService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendAnalytics",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:SpendService",
+        "displayName": "SpendService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Spend",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_SpendImportService",
+    "name": "SpendImportService",
+    "anchorNodeId": "ApexClass:SpendImportService",
+    "primaryCount": 6,
+    "secondaryCount": 7,
+    "primaryDomains": [
+      "ContentVersion",
+      "CsvParser",
+      "Error_Message",
+      "Shared",
+      "SpendImport",
+      "VersionData"
+    ],
+    "layersRepresented": [
+      "application",
+      "domain",
+      "schema"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 5,
+      "FeatureData": 1,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:ContentVersionSelector",
+        "displayName": "ContentVersionSelector",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "ContentVersion",
+        "role": "FeatureData"
+      },
+      {
+        "id": "ApexClass:CsvParser",
+        "displayName": "CsvParser",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "CsvParser",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "ApexClass:SpendImportService",
+        "displayName": "SpendImportService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendImport",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Error_Message__c",
+        "displayName": "Error_Message__c",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Error_Message",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Object:ContentVersion",
+        "displayName": "Object:ContentVersion",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:VersionData",
+        "displayName": "VersionData",
+        "type": "External",
+        "layer": "schema",
+        "domain": "VersionData",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:AuditService",
+        "displayName": "AuditService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Audit",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:CloudAccountSelector",
+        "displayName": "CloudAccountSelector",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "CloudAccount",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:ImportService",
+        "displayName": "ImportService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Import",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:ContentVersion",
+        "displayName": "ContentVersion",
+        "type": "External",
+        "layer": "schema",
+        "domain": "ContentVersion",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Account__c",
+        "displayName": "Cloud_Account__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Account",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Cloud_Spend__c",
+        "displayName": "Cloud_Spend__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Cloud_Spend",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Spend_Import_Batch__c",
+        "displayName": "Spend_Import_Batch__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Spend_Import_Batch",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_StandardAccessPolicy",
+    "name": "StandardAccessPolicy",
+    "anchorNodeId": "ApexClass:StandardAccessPolicy",
+    "primaryCount": 1,
+    "secondaryCount": 2,
+    "primaryDomains": [
+      "StandardAccessPolicy"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:StandardAccessPolicy",
+        "displayName": "StandardAccessPolicy",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "StandardAccessPolicy",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:SpendTrackerAccessContext",
+        "displayName": "SpendTrackerAccessContext",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendTrackerAccessContext",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:SpendTrackerAuthorizationService",
+        "displayName": "SpendTrackerAuthorizationService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "SpendTrackerAuthorization",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_UserContactMappingService",
+    "name": "UserContactMappingService",
+    "anchorNodeId": "ApexClass:UserContactMappingService",
+    "primaryCount": 4,
+    "secondaryCount": 8,
+    "primaryDomains": [
+      "BackfillResult",
+      "Classification",
+      "ClassificationResult",
+      "UserContactMapping"
+    ],
+    "layersRepresented": [
+      "application",
+      "schema"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 4,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:UserContactMappingService",
+        "displayName": "UserContactMappingService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "UserContactMapping",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:BackfillResult",
+        "displayName": "BackfillResult",
+        "type": "External",
+        "layer": "schema",
+        "domain": "BackfillResult",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:Classification",
+        "displayName": "Classification",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Classification",
+        "role": "FeatureCore"
+      },
+      {
+        "id": "External:ClassificationResult",
+        "displayName": "ClassificationResult",
+        "type": "External",
+        "layer": "schema",
+        "domain": "ClassificationResult",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:AuditService",
+        "displayName": "AuditService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "Audit",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "ApexClass:UserOrganizationRoleTriggerHandler",
+        "displayName": "UserOrganizationRoleTriggerHandler",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "UserOrganizationRoleTrigger",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Contact",
+        "displayName": "Contact",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Contact",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:Contact",
+        "displayName": "Object:Contact",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:Object:User",
+        "displayName": "Object:User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "Shared",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:User",
+        "displayName": "User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:Organization_Hierarchy__c",
+        "displayName": "Organization_Hierarchy__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "Organization_Hierarchy",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:User_Organization_Role__c",
+        "displayName": "User_Organization_Role__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "User_Organization_Role",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_UserManagementController",
+    "name": "UserManagementController",
+    "anchorNodeId": "ApexClass:UserManagementController",
+    "primaryCount": 1,
+    "secondaryCount": 2,
+    "primaryDomains": [
+      "UserManagement"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 1,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:UserManagementController",
+        "displayName": "UserManagementController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "UserManagement",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:UserController",
+        "displayName": "UserController",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "External:User",
+        "displayName": "User",
+        "type": "External",
+        "layer": "schema",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_UserManagementService",
+    "name": "UserManagementService",
+    "anchorNodeId": "ApexClass:UserManagementService",
+    "primaryCount": 1,
+    "secondaryCount": 1,
+    "primaryDomains": [
+      "UserManagement"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 0,
+      "FeatureCore": 1,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "ApexClass:UserManagementService",
+        "displayName": "UserManagementService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "UserManagement",
+        "role": "FeatureCore"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:UserService",
+        "displayName": "UserService",
+        "type": "ApexClass",
+        "layer": "application",
+        "domain": "User",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  },
+  {
+    "featureId": "feature_UserOrganizationRoleTrigger",
+    "name": "UserOrganizationRoleTrigger",
+    "anchorNodeId": "Trigger:UserOrganizationRoleTrigger",
+    "primaryCount": 1,
+    "secondaryCount": 2,
+    "primaryDomains": [
+      "UserOrganizationRole"
+    ],
+    "layersRepresented": [
+      "application"
+    ],
+    "roleDistribution": {
+      "FeatureAnchor": 1,
+      "FeatureCore": 0,
+      "FeatureData": 0,
+      "FeatureBridge": 0,
+      "FeatureTest": 0,
+      "SharedInfrastructure": 0
+    },
+    "primaryNodeDetails": [
+      {
+        "id": "Trigger:UserOrganizationRoleTrigger",
+        "displayName": "UserOrganizationRoleTrigger",
+        "type": "ApexTrigger",
+        "layer": "application",
+        "domain": "UserOrganizationRole",
+        "role": "FeatureAnchor"
+      }
+    ],
+    "secondaryNodeDetails": [
+      {
+        "id": "ApexClass:UserOrganizationRoleTriggerHandler",
+        "displayName": "UserOrganizationRoleTriggerHandler",
+        "type": "ApexClass",
+        "layer": "domain",
+        "domain": "UserOrganizationRoleTrigger",
+        "role": "SharedInfrastructure"
+      },
+      {
+        "id": "Object:User_Organization_Role__c",
+        "displayName": "User_Organization_Role__c",
+        "type": "CustomObject",
+        "layer": "schema",
+        "domain": "User_Organization_Role",
+        "role": "SharedInfrastructure"
+      }
+    ],
+    "incomingFromFeatures": [],
+    "outgoingToFeatures": [],
+    "connectedFeatureIds": []
+  }
+]
