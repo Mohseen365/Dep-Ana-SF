@@ -1,4 +1,5 @@
 import type { ExplorerNode, ExplorerNodeType } from '../../types/explorer';
+import type { LayoutGraphIndex } from './graph-index';
 
 export type ArchitectureLayer = 'presentation' | 'application' | 'domain' | 'schema';
 
@@ -94,4 +95,6 @@ export interface ArchitectureAnalysisOptions {
   domainMap?: Map<string, string> | Record<string, string>;
   /** Optional pre-computed role map (nodeId -> role string) */
   roleMap?: Map<string, string> | Record<string, string>;
+  /** Optional pre-computed transient LayoutGraphIndex for fast infrastructure lookups */
+  index?: LayoutGraphIndex;
 }

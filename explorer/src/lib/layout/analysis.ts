@@ -1,4 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { LayoutGraphIndex } from './graph-index';
 import type {
   ArchitectureLayer,
   ArchitectureNodeAnalysis,
@@ -155,7 +156,8 @@ export function computeNodeBridgeMetrics(
  */
 function decomposeConnectedComponents(
   nodes: ExplorerNode[],
-  edges: ExplorerEdge[]
+  edges: ExplorerEdge[],
+  index?: LayoutGraphIndex
 ): {
   components: ConnectedComponentAnalysis[];
   nodeComponentMap: Map<string, number>;
@@ -176,13 +178,17 @@ function decomposeConnectedComponents(
   // Also link satellite nodes to parent nodes so components include satellites
   nodes.forEach(n => {
     if (isTestNode(n)) {
-      const parentProdId = findParentProductionNodeId(n, nodes, edges);
+      const parentProdId = index
+        ? index.parentProductionNodeId.get(n.id) ?? null
+        : findParentProductionNodeId(n, nodes, edges);
       if (parentProdId && adj.has(parentProdId)) {
         adj.get(n.id)!.add(parentProdId);
         adj.get(parentProdId)!.add(n.id);
       }
     } else if (isFieldNode(n)) {
-      const parentObjId = findParentObjectId(n, nodes, edges);
+      const parentObjId = index
+        ? index.parentObjectId.get(n.id) ?? null
+        : findParentObjectId(n, nodes, edges);
       if (parentObjId && adj.has(parentObjId)) {
         adj.get(n.id)!.add(parentObjId);
         adj.get(parentObjId)!.add(n.id);
@@ -270,6 +276,8 @@ export function computeArchitectureAnalysis(
 ): ArchitectureGraphAnalysis {
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
+
+  const index = options.index;
 
   // Normalize options maps
   const layerMap = options.layerMap instanceof Map
@@ -378,7 +386,7 @@ export function computeArchitectureAnalysis(
   });
 
   // Compute connected components
-  const { components, nodeComponentMap } = decomposeConnectedComponents(safeNodes, safeEdges);
+  const { components, nodeComponentMap } = decomposeConnectedComponents(safeNodes, safeEdges, index);
 
   // Construct individual node analysis models
   const analysisNodeMap = new Map<string, ArchitectureNodeAnalysis>();
@@ -390,16 +398,23 @@ export function computeArchitectureAnalysis(
     const fanOut = fanOutMap.get(id) || 0;
     const hubScore = fanIn + fanOut;
 
-    const neighborIds = Array.from(neighborSets.get(id) || []).sort((a, b) => a.localeCompare(b));
+    const neighborIds = index
+      ? Array.from(index.incidentNeighborsByNode.get(id) || [])
+      : Array.from(neighborSets.get(id) || []).sort((a, b) => a.localeCompare(b));
+
     const isTest = isTestNode(node);
     const isField = isFieldNode(node);
 
     const parentProductionNodeId = isTest
-      ? findParentProductionNodeId(node, safeNodes, safeEdges)
+      ? index
+        ? index.parentProductionNodeId.get(id) ?? null
+        : findParentProductionNodeId(node, safeNodes, safeEdges)
       : null;
 
     const parentObjectId = isField
-      ? findParentObjectId(node, safeNodes, safeEdges)
+      ? index
+        ? index.parentObjectId.get(id) ?? null
+        : findParentObjectId(node, safeNodes, safeEdges)
       : null;
 
     const layer = layerMap.get(id) || null;

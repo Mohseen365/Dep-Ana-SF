@@ -1,4 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { LayoutGraphIndex } from './graph-index';
 import type { ArchitectureLayer, ArchitectureGraphAnalysis } from './types';
 import { classifyNodeLayer } from './layers';
 import { discoverDomains, classifyNodeDomain, type DomainDiscoveryResult } from './domains';
@@ -73,6 +74,8 @@ export interface GlobalLayoutOptions {
   layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
   /** Optional pre-computed domain map to reuse */
   domainMap?: Map<string, string> | Record<string, string>;
+  /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
+  index?: LayoutGraphIndex;
 }
 
 export interface GlobalLayoutResult {
@@ -136,6 +139,7 @@ export function calculatePrimaryLayerRowCounts(
     layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
     domainMap?: Map<string, string> | Record<string, string>;
     analysis?: ArchitectureGraphAnalysis;
+    index?: LayoutGraphIndex;
   }
 ): Record<
   ArchitectureLayer,
@@ -432,7 +436,8 @@ export function computeDynamicLayerYMap(
 export function buildDomainGraph(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
-  domainResult?: DomainDiscoveryResult
+  domainResult?: DomainDiscoveryResult,
+  index?: LayoutGraphIndex
 ): DomainGraph {
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
@@ -495,7 +500,7 @@ export function buildDomainGraph(
     const targetNodeIds = dNode.primaryNodeIds.length > 0 ? dNode.primaryNodeIds : dNode.nodeIds;
 
     targetNodeIds.forEach(nodeId => {
-      const node = safeNodes.find(n => n.id === nodeId);
+      const node = index ? index.nodeById.get(nodeId) : safeNodes.find(n => n.id === nodeId);
       if (node) {
         const layer = classifyNodeLayer(node);
         layerCounts[layer] = (layerCounts[layer] || 0) + 1;
@@ -553,8 +558,8 @@ export function buildDomainGraph(
       rel.backward++;
     }
 
-    const srcNode = safeNodes.find(n => n.id === edge.source);
-    const tgtNode = safeNodes.find(n => n.id === edge.target);
+    const srcNode = index ? index.nodeById.get(edge.source) : safeNodes.find(n => n.id === edge.source);
+    const tgtNode = index ? index.nodeById.get(edge.target) : safeNodes.find(n => n.id === edge.target);
     if (srcNode) rel.layers.add(classifyNodeLayer(srcNode));
     if (tgtNode) rel.layers.add(classifyNodeLayer(tgtNode));
   });
@@ -915,13 +920,14 @@ export function computeGlobalDomainLayout(
 ): GlobalLayoutResult {
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
+  const index = options.index;
 
   const baseX = options.baseX ?? 100;
   const baseY = options.baseY ?? 100;
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
 
-  const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery);
+  const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index);
   const orderedDomains = determineGlobalDomainOrder(domainGraph);
 
   const dynamicLayerResult = computeDynamicLayerYMap(safeNodes, safeEdges, options);
@@ -940,7 +946,7 @@ export function computeGlobalDomainLayout(
 
     const primaryNodesInDomain = dNode
       ? dNode.primaryNodeIds
-          .map(id => safeNodes.find(n => n.id === id))
+          .map(id => (index ? index.nodeById.get(id) : safeNodes.find(n => n.id === id)))
           .filter((n): n is ExplorerNode => n !== undefined)
       : [];
 
