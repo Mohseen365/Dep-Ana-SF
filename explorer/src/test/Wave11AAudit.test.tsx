@@ -2,11 +2,9 @@ import { describe, test, expect } from 'vitest';
 import cloudSpendData from '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json';
 import {
   filterGraphByNodeTypes,
-  createEmptyFilterState,
 } from '../lib/search-filter';
 import {
   computeFocusedGraph,
-  createEmptyFocusState,
   FocusState,
 } from '../lib/focus-graph';
 import { ALL_EXPLORER_NODE_TYPES, ExplorerNodeType, ExplorerNode, ExplorerEdge } from '../types/explorer';

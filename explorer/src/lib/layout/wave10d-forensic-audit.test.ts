@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
-import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, findParentObjectId, findParentProductionNodeId, isTestNode, isFieldNode } from './analysis';
+import { findParentObjectId, findParentProductionNodeId, isTestNode, isFieldNode } from './analysis';
 import { classifyNodeLayerWithReason } from './layers';
 import { discoverDomains } from './domains';
 import { computeArchitectureLayout } from '../architecture-layout';
@@ -28,7 +28,6 @@ describe('Wave 10D Acceptance Metrics Capture', () => {
     safeNodes.sort((a, b) => a.id.localeCompare(b.id));
     safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
-    const analysis = computeArchitectureAnalysis(safeNodes, safeEdges);
     const layerMap = new Map<string, any>();
     safeNodes.forEach(node => layerMap.set(node.id, classifyNodeLayerWithReason(node).layer));
     const domainDiscovery = discoverDomains(safeNodes, safeEdges);
@@ -83,9 +82,9 @@ describe('Wave 10D Acceptance Metrics Capture', () => {
       if (!isPrimary(node)) {
         let anchorId: string | null = null;
         if (isFieldNode(node)) {
-          anchorId = node.parentObjectId || findParentObjectId(node, safeNodes, safeEdges);
+          anchorId = (node as any).parentObjectId || findParentObjectId(node, safeNodes, safeEdges);
         } else {
-          anchorId = node.parentProductionNodeId || findParentProductionNodeId(node, safeNodes, safeEdges);
+          anchorId = (node as any).parentProductionNodeId || findParentProductionNodeId(node, safeNodes, safeEdges);
         }
         const satPos = positions[node.id];
         const anchorPos = anchorId ? positions[anchorId] : null;

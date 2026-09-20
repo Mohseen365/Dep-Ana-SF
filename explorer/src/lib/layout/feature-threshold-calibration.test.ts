@@ -3,9 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { discoverFeatures } from './features';
-import { createLayoutGraphIndex } from './graph-index';
-import { computeArchitectureAnalysis } from './analysis';
-import { discoverDomains } from './domains';
 import { computeArchitectureLayout } from '../architecture-layout';
 import { computeGlobalFeatureLayout } from './global-layout';
 
@@ -21,9 +18,6 @@ function loadCloudSpendData(): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } 
 
 describe('Wave 8 — Feature Discovery Threshold Forensic Calibration & Semantic Quality Review', () => {
   const { nodes, edges } = loadCloudSpendData();
-  const index = createLayoutGraphIndex(nodes, edges);
-  const analysis = computeArchitectureAnalysis(nodes, edges, { index });
-  const domainDiscovery = discoverDomains(nodes, edges);
 
   const discovery3 = discoverFeatures(nodes, edges, { minCandidateScore: 3.0 });
   const discovery2 = discoverFeatures(nodes, edges, { minCandidateScore: 2.0 });
@@ -81,9 +75,8 @@ describe('Wave 8 — Feature Discovery Threshold Forensic Calibration & Semantic
   });
 
   it('Phase 10: Geometry Regression Check (0 Overlaps)', () => {
-    const layout3 = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+    const layout3 = computeArchitectureLayout(nodes, edges);
     const featLayoutRes2 = computeGlobalFeatureLayout(nodes, edges, {
-      enableFeatureLayout: true,
       featureDiscovery: discovery2,
     });
 

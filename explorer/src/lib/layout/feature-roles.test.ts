@@ -5,7 +5,6 @@ import {
   isFeatureSeedCandidate,
   isSharedInfrastructure,
   classifyAllFeatureRoles,
-  type FeatureRole,
 } from './feature-roles';
 
 function createMockNode(overrides: Partial<ExplorerNode> = {}): ExplorerNode {
