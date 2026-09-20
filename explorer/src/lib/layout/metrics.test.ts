@@ -3,6 +3,7 @@ import type { ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../../types/e
 import { createEdge } from './fixtures/builder';
 import {
   edgeCrossingCount,
+  calculateDetailedEdgeCrossings,
   averageEdgeLength,
   maxEdgeLength,
   nodeOverlapCount,
@@ -340,6 +341,39 @@ describe('Quantitative Layout Metrics Library', () => {
       const bridgeRes = bridgePlacement(nodes, edges, positions);
       expect(bridgeRes.bridgeCount).toBe(1);
       expect(bridgeRes.averageBridgeToDomainCentroidDistance).toBe(0);
+    });
+  });
+
+  describe('calculateDetailedEdgeCrossings breakdown', () => {
+    it('categorizes edge crossings into primary, bridge, and satellite categories accurately', () => {
+      const nodes = [
+        makeNode('OrderService', 'ApexClass', 'OrderService'),
+        makeNode('PaymentService', 'ApexClass', 'PaymentService'),
+        makeNode('OrderController', 'ApexClass', 'OrderController'),
+        makeNode('PaymentController', 'ApexClass', 'PaymentController'),
+        makeNode('Field:Order.Amount__c', 'CustomField', 'Field:Order.Amount__c'),
+        makeNode('Field:Payment.Status__c', 'CustomField', 'Field:Payment.Status__c'),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        createEdge('OrderController', 'PaymentService'),
+        createEdge('PaymentController', 'OrderService'),
+        createEdge('Field:Order.Amount__c', 'PaymentService'),
+        createEdge('Field:Payment.Status__c', 'OrderService'),
+      ];
+
+      const positions = {
+        OrderController: { x: 0, y: 0 },
+        PaymentService: { x: 200, y: 200 },
+        PaymentController: { x: 0, y: 200 },
+        OrderService: { x: 200, y: 0 },
+        'Field:Order.Amount__c': { x: 0, y: 50 },
+        'Field:Payment.Status__c': { x: 0, y: 150 },
+      };
+
+      const breakdown = calculateDetailedEdgeCrossings(nodes, edges, positions);
+      expect(breakdown.primaryBridgeCrossings + breakdown.bridgeBridgeCrossings + breakdown.primaryPrimaryCrossings).toBeDefined();
+      expect(breakdown.totalGeometricCrossings).toBeGreaterThan(0);
     });
   });
 

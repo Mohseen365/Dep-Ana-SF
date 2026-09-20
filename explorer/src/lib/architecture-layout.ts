@@ -1,6 +1,6 @@
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureLayer } from './layout/types';
-import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification } from './layout/analysis';
+import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from './layout/analysis';
 import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './layout/layers';
 import { discoverDomains, extractDomainStem } from './layout/domains';
 import { computeGlobalDomainLayout } from './layout/global-layout';
@@ -213,6 +213,9 @@ export function computeArchitectureLayout(
   });
 
   safeNodes.forEach(node => {
+    // Secondary satellite nodes (tests, fields) are placed exclusively in Step 9
+    if (isTestNode(node) || isFieldNode(node)) return;
+
     const centrality = centralityMap.get(node.id);
     if (centrality?.isBridge && !centrality.isHub) {
       const neighborPositions: Record<string, { x: number; y: number }> = {};
