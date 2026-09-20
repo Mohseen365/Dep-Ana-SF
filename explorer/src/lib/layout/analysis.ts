@@ -89,7 +89,7 @@ export function findParentObjectId(
     const parentObjName = idParts[0].replace(/^(?:Object|CustomObject|Field|CustomField):/, '');
     const parentObj = allNodes.find(
       n =>
-        (n.type === 'Object' || n.type === 'CustomObject') &&
+        (n.type === 'Object' || n.type === 'CustomObject' || n.type === 'External') &&
         (n.displayName === parentObjName || n.id.endsWith(`:${parentObjName}`))
     );
     if (parentObj) return parentObj.id;
@@ -104,7 +104,7 @@ export function findParentObjectId(
   for (const edge of fieldEdges) {
     const otherId = edge.source === fieldNode.id ? edge.target : edge.source;
     const parentObj = allNodes.find(
-      n => (n.type === 'Object' || n.type === 'CustomObject') && n.id === otherId
+      n => (n.type === 'Object' || n.type === 'CustomObject' || n.type === 'External') && n.id === otherId
     );
     if (parentObj) {
       parentObjCandidates.push(parentObj.id);
