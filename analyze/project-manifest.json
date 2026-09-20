@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "movie",
+  "activeProjectId": "bouquet-salesforce",
   "projects": [
     {
       "id": "foodies",
@@ -53,6 +53,19 @@
       "componentCount": 1,
       "dependencyCount": 0,
       "analysisPath": "/projects/movie/explorer-data.json"
+    },
+    {
+      "id": "bouquet-salesforce",
+      "name": "bouquet-salesforce",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../Interview Project/Bouquet-Experience-Cloud/force-app/main/default",
+      "createdAt": "2026-09-17T06:07:04.752Z",
+      "updatedAt": "2026-09-17T06:07:04.752Z",
+      "lastAnalyzedAt": "2026-09-17T06:07:04.752Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bouquet-salesforce/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -83,6 +96,13 @@
       "fileHash": "sha256:c26616e52d37efded927f78cc7d63fe7f3b8d10b909362ed1225e474344e2235",
       "nodeCount": 1,
       "edgeCount": 0
+    },
+    "bouquet-salesforce": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:542ac545dd2e75a9ed067e9239f75bba488a0850bc8ec4814cceb12b2cb75473",
+      "nodeCount": 274,
+      "edgeCount": 603
     }
   }
 }
