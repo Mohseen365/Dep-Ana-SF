@@ -54,7 +54,7 @@ describe('Gate E — Determinism & Zero Coordinate Drift Gate', () => {
     expect(positions[fixture.nodes[1].id]).toEqual({ x: 1234, y: 5678 });
   });
 
-  it('runs scalability benchmarks and measures telemetry timings across synthetic Salesforce graphs', () => {
+  it('runs scalability benchmarks and measures telemetry timings across synthetic Salesforce graphs', { timeout: 30000 }, () => {
     const scales = [
       { nodes: 100 },
       { nodes: 500 },

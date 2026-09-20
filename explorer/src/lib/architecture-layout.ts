@@ -6,7 +6,7 @@ import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './la
 import { discoverDomains, extractDomainStem } from './layout/domains';
 import { classifyAllFeatureRoles, type FeatureRole, type FeatureRoleContext } from './layout/feature-roles';
 import { discoverFeatures, type FeatureDiscoveryResult } from './layout/features';
-import { computeGlobalDomainLayout } from './layout/global-layout';
+import { computeGlobalDomainLayout, computeGlobalFeatureLayout } from './layout/global-layout';
 import { reduceEdgeCrossings } from './layout/ordering';
 import { computeLocalNodeLayout } from './layout/local-layout';
 import {
@@ -30,6 +30,8 @@ export interface ArchitectureLayoutOptions {
   componentGap?: number;
   /** Map of existing authoritative positions to preserve for incremental layout */
   existingPositions?: Record<string, { x: number; y: number }>;
+  /** Enables Feature-aware spatial layout (default: false) */
+  enableFeatureLayout?: boolean;
 }
 
 export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
@@ -66,6 +68,7 @@ export function computeArchitectureLayout(
     domainSpacing = 380,
     componentGap = 100,
     existingPositions = {},
+    enableFeatureLayout = false,
   } = options;
 
   // Defensive deep clone of inputs to guarantee immutability
@@ -181,7 +184,7 @@ export function computeArchitectureLayout(
   });
   const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
 
-  const _featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
+  const featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
     index,
     analysis,
     layerMap,
@@ -189,25 +192,51 @@ export function computeArchitectureLayout(
     featureRoles,
   });
 
-  // Step 5: Global Domain Architecture Layout (Wave 2A)
-  const globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
-    domainSpacing,
-    layerSpacing,
-    nodeWidth,
-    nodeHeight,
-    analysis,
-    domainDiscovery,
-    layerMap,
-    domainMap,
-    index,
+  const featureMap = new Map<string, string>();
+  featureDiscovery.assignments.forEach((assignment, nodeId) => {
+    featureMap.set(nodeId, assignment.primaryFeatureId);
   });
+
+  // Step 5: Global Domain or Feature Architecture Layout
+  let globalDomainResult;
+  let activeSpatialMap: Map<string, string>;
+
+  if (enableFeatureLayout) {
+    const featureLayoutResult = computeGlobalFeatureLayout(safeNodes, safeEdges, {
+      domainSpacing,
+      layerSpacing,
+      nodeWidth,
+      nodeHeight,
+      analysis,
+      layerMap,
+      domainMap,
+      featureDiscovery,
+      featureMap,
+      index,
+    });
+    globalDomainResult = featureLayoutResult;
+    activeSpatialMap = featureMap;
+  } else {
+    globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
+      domainSpacing,
+      layerSpacing,
+      nodeWidth,
+      nodeHeight,
+      analysis,
+      domainDiscovery,
+      layerMap,
+      domainMap,
+      index,
+    });
+    activeSpatialMap = domainMap;
+  }
 
   // Step 6: Layer Ordering & Crossing Reduction (Wave 2B)
   const orderingResult = reduceEdgeCrossings({
     nodes: safeNodes,
     edges: safeEdges,
     layerMap,
-    domainMap,
+    domainMap: activeSpatialMap,
     domainOrder: globalDomainResult.orderedDomains,
   });
 
@@ -218,7 +247,7 @@ export function computeArchitectureLayout(
     analysis,
     domainRegions: globalDomainResult.domainRegions,
     layerMap,
-    domainMap,
+    domainMap: activeSpatialMap,
     bucketOrder: orderingResult.bucketOrder,
     options: {
       nodeWidth,
