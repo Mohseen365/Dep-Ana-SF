@@ -1,0 +1,4732 @@
+{
+  "stages": [
+    {
+      "stageName": "Stage 5 — Global Domain Layout",
+      "nodeCount": 106,
+      "xMin": 100,
+      "xMax": 4680,
+      "yMin": 100,
+      "yMax": 1760,
+      "width": 4580,
+      "height": 1660,
+      "aspectRatio": 2.7590361445783134,
+      "overlapCount": 0,
+      "primaryPrimaryOverlap": 0,
+      "domainOverlapCount": 0,
+      "componentOverlapCount": 0
+    },
+    {
+      "stageName": "Stage 7 — Primary Local Layout",
+      "nodeCount": 156,
+      "xMin": 120,
+      "xMax": 4660,
+      "yMin": 70,
+      "yMax": 910,
+      "width": 4540,
+      "height": 840,
+      "aspectRatio": 5.404761904761905,
+      "overlapCount": 112,
+      "primaryPrimaryOverlap": 112,
+      "domainOverlapCount": 0,
+      "componentOverlapCount": 0
+    },
+    {
+      "stageName": "Stage 8 — Bridge Placement",
+      "nodeCount": 156,
+      "xMin": -580,
+      "xMax": 5300,
+      "yMin": -10,
+      "yMax": 910,
+      "width": 5880,
+      "height": 920,
+      "aspectRatio": 6.391304347826087,
+      "overlapCount": 47,
+      "primaryPrimaryOverlap": 47,
+      "domainOverlapCount": 0,
+      "componentOverlapCount": 0
+    },
+    {
+      "stageName": "Stage 9 — Satellite Placement",
+      "nodeCount": 240,
+      "xMin": -580,
+      "xMax": 5300,
+      "yMin": -170,
+      "yMax": 1310,
+      "width": 5880,
+      "height": 1480,
+      "aspectRatio": 3.972972972972973,
+      "overlapCount": 47,
+      "primaryPrimaryOverlap": 47,
+      "domainOverlapCount": 0,
+      "componentOverlapCount": 0
+    },
+    {
+      "stageName": "Stage 10 — Component Packing",
+      "nodeCount": 240,
+      "xMin": 0,
+      "xMax": 8020,
+      "yMin": 0,
+      "yMax": 1640,
+      "width": 8020,
+      "height": 1640,
+      "aspectRatio": 4.890243902439025,
+      "overlapCount": 45,
+      "primaryPrimaryOverlap": 45,
+      "domainOverlapCount": 0,
+      "componentOverlapCount": 0
+    },
+    {
+      "stageName": "Stage 11 — Final Spacing",
+      "nodeCount": 240,
+      "xMin": 0,
+      "xMax": 8020,
+      "yMin": 0,
+      "yMax": 1640,
+      "width": 8020,
+      "height": 1640,
+      "aspectRatio": 4.890243902439025,
+      "overlapCount": 25,
+      "primaryPrimaryOverlap": 21,
+      "domainOverlapCount": 0,
+      "componentOverlapCount": 0
+    }
+  ],
+  "primaryBbox": {
+    "count": 156,
+    "xMin": 0,
+    "xMax": 8020,
+    "yMin": 0,
+    "yMax": 1640,
+    "width": 8020,
+    "height": 1640
+  },
+  "primaryNonBridgeBbox": {
+    "count": 20,
+    "xMin": 0,
+    "xMax": 5040,
+    "yMin": 720,
+    "yMax": 1640,
+    "width": 5040,
+    "height": 920
+  },
+  "bridgeBbox": {
+    "count": 136,
+    "xMin": 0,
+    "xMax": 8020,
+    "yMin": 0,
+    "yMax": 1080,
+    "width": 8020,
+    "height": 1080
+  },
+  "satelliteBbox": {
+    "count": 84,
+    "xMin": 580,
+    "xMax": 5560,
+    "yMin": 0,
+    "yMax": 1480,
+    "width": 4980,
+    "height": 1480
+  },
+  "finalBbox": {
+    "count": 240,
+    "xMin": 0,
+    "xMax": 8020,
+    "yMin": 0,
+    "yMax": 1640,
+    "width": 8020,
+    "height": 1640
+  },
+  "extremeBridges": {
+    "leftmost": {
+      "id": "External:UserRoleWrapper",
+      "type": "External",
+      "domain": "UserRole",
+      "layer": "schema",
+      "connectedDomains": [
+        "User"
+      ],
+      "connectedPrimaryIds": [
+        "ApexClass:UserService",
+        "ApexClass:UserService"
+      ],
+      "x": 60,
+      "y": 770,
+      "minDistToPrimary": 840
+    },
+    "rightmost": {
+      "id": "ApexClass:ErrorResponse",
+      "type": "ApexClass",
+      "domain": "ErrorResponse",
+      "layer": "application",
+      "connectedDomains": [
+        "UUID"
+      ],
+      "connectedPrimaryIds": [
+        "External:UUID"
+      ],
+      "x": 7960,
+      "y": 30,
+      "minDistToPrimary": 3090.7604242321986
+    }
+  },
+  "domainCohesionList": [
+    {
+      "domain": "AccountMetrics",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[700, 820, 240, 300]",
+      "fullDomainBbox": "[700, 820, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "FilterPanel",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4400, 4520, 160, 220]",
+      "fullDomainBbox": "[4400, 4520, 160, 220]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "DataImporter",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4152.8, 4272.8, 140, 200]",
+      "fullDomainBbox": "[4152.8, 4272.8, 140, 200]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AppShell",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3873.2, 3993.2, 160, 220]",
+      "fullDomainBbox": "[3873.2, 3993.2, 160, 220]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "ErrorPanel",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1740, 1860, 240, 300]",
+      "fullDomainBbox": "[1740, 1860, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "SystemAdminApp",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2000, 2120, 240, 300]",
+      "fullDomainBbox": "[2000, 2120, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminUserAccess",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3589.6, 3709.6, 160, 220]",
+      "fullDomainBbox": "[3589.6, 3709.6, 160, 220]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "OrganizationTree",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2520, 2640, 240, 300]",
+      "fullDomainBbox": "[2520, 2640, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminOrganizations",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3220, 3340, 160, 220]",
+      "fullDomainBbox": "[3220, 3340, 160, 220]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "HomeOverview",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3040, 3160, 240, 300]",
+      "fullDomainBbox": "[3040, 3160, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminDataHealth",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2493.0699999999997, 2613.0699999999997, 140, 200]",
+      "fullDomainBbox": "[2493.0699999999997, 2613.0699999999997, 140, 200]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminForecasts",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1630, 1750, 140, 200]",
+      "fullDomainBbox": "[1630, 1750, 140, 200]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdministrationNav",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1986.4, 2106.4, 140, 200]",
+      "fullDomainBbox": "[1986.4, 2106.4, 140, 200]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "SpendAnalytics",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 0,
+      "primaryBbox": "[4080, 4560, 240, 360]",
+      "fullDomainBbox": "[4080, 4560, 240, 360]",
+      "width": 480,
+      "height": 120
+    },
+    {
+      "domain": "AdminSpendExplorer",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3380, 3500, 160, 220]",
+      "fullDomainBbox": "[3380, 3500, 160, 220]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminAudit",
+      "primaryCount": 3,
+      "bridgeCount": 2,
+      "satelliteCount": 1,
+      "primaryBbox": "[2780, 4839.2, 160, 880]",
+      "fullDomainBbox": "[2780, 4880, 160, 880]",
+      "width": 2100,
+      "height": 720
+    },
+    {
+      "domain": "AdminBudgets",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2973.33, 3093.33, 140, 200]",
+      "fullDomainBbox": "[2973.33, 3093.33, 140, 200]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "SpendTrackerNav",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5120, 5240, 240, 300]",
+      "fullDomainBbox": "[5120, 5240, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminCloudAccounts",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1350, 1470, 140, 200]",
+      "fullDomainBbox": "[1350, 1470, 140, 200]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "TopServicesTable",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4620, 4740, 160, 220]",
+      "fullDomainBbox": "[4620, 4740, 160, 220]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "ForecastManager",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1260, 1380, 240, 300]",
+      "fullDomainBbox": "[1260, 1380, 240, 300]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminDataExplorer",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 0,
+      "primaryBbox": "[1520, 2353.33, 160, 460]",
+      "fullDomainBbox": "[1520, 2353.33, 160, 460]",
+      "width": 833.3299999999999,
+      "height": 300
+    },
+    {
+      "domain": "AdminOverview",
+      "primaryCount": 3,
+      "bridgeCount": 3,
+      "satelliteCount": 0,
+      "primaryBbox": "[1040, 2040, 160, 820]",
+      "fullDomainBbox": "[1040, 2040, 160, 820]",
+      "width": 1000,
+      "height": 660
+    },
+    {
+      "domain": "AdminFilterPanel",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[220, 340, 1580, 1640]",
+      "fullDomainBbox": "[220, 340, 1580, 1640]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "CsvParser",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4780, 4900, 200, 260]",
+      "fullDomainBbox": "[4780, 4900, 200, 260]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "StandardAccessPolicy",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1039.6, 1159.6, 300, 360]",
+      "fullDomainBbox": "[1039.6, 1159.6, 300, 360]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "QueryResult",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1100, 1220, 400, 460]",
+      "fullDomainBbox": "[1100, 1220, 400, 460]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Forecast",
+      "primaryCount": 5,
+      "bridgeCount": 4,
+      "satelliteCount": 2,
+      "primaryBbox": "[1360, 1720, 400, 880]",
+      "fullDomainBbox": "[1360, 1840, 0, 1180]",
+      "width": 480,
+      "height": 1180
+    },
+    {
+      "domain": "OrganizationHierarchy",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 0,
+      "primaryBbox": "[1900, 2059.2, 400, 720]",
+      "fullDomainBbox": "[1900, 2059.2, 400, 720]",
+      "width": 159.19999999999982,
+      "height": 320
+    },
+    {
+      "domain": "User",
+      "primaryCount": 4,
+      "bridgeCount": 4,
+      "satelliteCount": 1,
+      "primaryBbox": "[2100, 2379.2, 400, 880]",
+      "fullDomainBbox": "[2100, 2680, 400, 880]",
+      "width": 580,
+      "height": 480
+    },
+    {
+      "domain": "CloudSpendTrigger",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3700, 3820, 300, 360]",
+      "fullDomainBbox": "[3700, 3820, 300, 360]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "CloudSpend",
+      "primaryCount": 3,
+      "bridgeCount": 3,
+      "satelliteCount": 0,
+      "primaryBbox": "[2920, 4400, 300, 720]",
+      "fullDomainBbox": "[2920, 4400, 300, 720]",
+      "width": 1480,
+      "height": 420
+    },
+    {
+      "domain": "Date",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4039.2, 4159.2, 340, 400]",
+      "fullDomainBbox": "[4039.2, 4159.2, 340, 400]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AdminSpend",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[3520, 3640, 400, 460]",
+      "fullDomainBbox": "[3520, 4880, 400, 1280]",
+      "width": 1360,
+      "height": 880
+    },
+    {
+      "domain": "Fiscal",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 1,
+      "primaryBbox": "[3719.2, 3980, 400, 560]",
+      "fullDomainBbox": "[3719.2, 4140, 400, 560]",
+      "width": 420.8000000000002,
+      "height": 160
+    },
+    {
+      "domain": "Spend",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 1,
+      "primaryBbox": "[4200, 4400, 400, 560]",
+      "fullDomainBbox": "[4200, 4560, 400, 660]",
+      "width": 360,
+      "height": 260
+    },
+    {
+      "domain": "Budget",
+      "primaryCount": 3,
+      "bridgeCount": 2,
+      "satelliteCount": 1,
+      "primaryBbox": "[4700, 4839.2, 400, 880]",
+      "fullDomainBbox": "[4700, 4980, 400, 880]",
+      "width": 280,
+      "height": 480
+    },
+    {
+      "domain": "Audit",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 2,
+      "primaryBbox": "[5040, 5160, 400, 460]",
+      "fullDomainBbox": "[2300, 5320, 400, 1080]",
+      "width": 3020,
+      "height": 680
+    },
+    {
+      "domain": "AdminUser",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[740, 860, 400, 460]",
+      "fullDomainBbox": "[740, 860, 400, 460]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "UserOrganizationRole",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 0,
+      "primaryBbox": "[940, 1120, 420, 720]",
+      "fullDomainBbox": "[940, 1120, 420, 720]",
+      "width": 180,
+      "height": 300
+    },
+    {
+      "domain": "SpendTrackerAccessContext",
+      "primaryCount": 2,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[1200, 1380, 400, 920]",
+      "fullDomainBbox": "[985.045361718503, 1380, 400, 920]",
+      "width": 394.95463828149695,
+      "height": 520
+    },
+    {
+      "domain": "Organization",
+      "primaryCount": 5,
+      "bridgeCount": 4,
+      "satelliteCount": 1,
+      "primaryBbox": "[1560, 2740, 400, 860]",
+      "fullDomainBbox": "[1560, 2740, 0, 860]",
+      "width": 1180,
+      "height": 860
+    },
+    {
+      "domain": "SpendTrackerAuthorization",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[2099.2, 2219.2, 400, 460]",
+      "fullDomainBbox": "[2099.2, 2379.2, 0, 460]",
+      "width": 280,
+      "height": 460
+    },
+    {
+      "domain": "BudgetAlert",
+      "primaryCount": 3,
+      "bridgeCount": 2,
+      "satelliteCount": 1,
+      "primaryBbox": "[2439.2, 2680, 400, 880]",
+      "fullDomainBbox": "[2439.2, 2719.2, 400, 880]",
+      "width": 280,
+      "height": 480
+    },
+    {
+      "domain": "AdminHealth",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[2779.2, 2899.2, 400, 460]",
+      "fullDomainBbox": "[2779.2, 3059.2, 400, 460]",
+      "width": 280,
+      "height": 60
+    },
+    {
+      "domain": "Import",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 1,
+      "primaryBbox": "[3119.2, 3239.2, 400, 560]",
+      "fullDomainBbox": "[3119.2, 3399.2, 400, 560]",
+      "width": 280,
+      "height": 160
+    },
+    {
+      "domain": "CloudAccount",
+      "primaryCount": 3,
+      "bridgeCount": 3,
+      "satelliteCount": 1,
+      "primaryBbox": "[1520, 3659.2, 300, 720]",
+      "fullDomainBbox": "[1520, 3819.2, 300, 720]",
+      "width": 2299.2,
+      "height": 420
+    },
+    {
+      "domain": "UserContactMapping",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3879.2, 3999.2, 400, 460]",
+      "fullDomainBbox": "[3879.2, 3999.2, 400, 460]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "UserManagement",
+      "primaryCount": 3,
+      "bridgeCount": 3,
+      "satelliteCount": 0,
+      "primaryBbox": "[2259.2, 4560, 240, 560]",
+      "fullDomainBbox": "[2259.2, 4560, 240, 560]",
+      "width": 2300.8,
+      "height": 320
+    },
+    {
+      "domain": "SpendImport",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4559.2, 4679.2, 400, 460]",
+      "fullDomainBbox": "[4559.2, 4679.2, 400, 460]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "CloudSpendMonthBackfill",
+      "primaryCount": 2,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[4879.2, 5040, 400, 880]",
+      "fullDomainBbox": "[4879.2, 5099.2, 400, 880]",
+      "width": 220,
+      "height": 480
+    },
+    {
+      "domain": "ErrorResponse",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[7900, 8020, 0, 60]",
+      "fullDomainBbox": "[7900, 8020, 0, 60]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Currency",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[0, 120, 1580, 1640]",
+      "fullDomainBbox": "[0, 120, 1580, 1640]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "ContentVersion",
+      "primaryCount": 2,
+      "bridgeCount": 2,
+      "satelliteCount": 0,
+      "primaryBbox": "[580, 800, 660, 880]",
+      "fullDomainBbox": "[580, 800, 660, 880]",
+      "width": 220,
+      "height": 220
+    },
+    {
+      "domain": "OrganizationTrigger",
+      "primaryCount": 2,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[840, 1200, 660, 780]",
+      "fullDomainBbox": "[840, 1243.09027683528, 560.7029952046664, 780]",
+      "width": 403.09027683528006,
+      "height": 219.29700479533358
+    },
+    {
+      "domain": "FiscalPeriodMapping",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 4,
+      "primaryBbox": "[1220, 1340, 660, 720]",
+      "fullDomainBbox": "[1220, 5560, 660, 1180]",
+      "width": 4340,
+      "height": 520
+    },
+    {
+      "domain": "SystemAdminAccessPolicy",
+      "primaryCount": 2,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1480, 1600, 700, 980]",
+      "fullDomainBbox": "[1480, 1600, 700, 980]",
+      "width": 120,
+      "height": 280
+    },
+    {
+      "domain": "OrganizationBudget",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[1740, 1860, 660, 720]",
+      "fullDomainBbox": "[580, 1860, 660, 980]",
+      "width": 1280,
+      "height": 320
+    },
+    {
+      "domain": "CloudService",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 1,
+      "primaryBbox": "[1940, 2060, 660, 720]",
+      "fullDomainBbox": "[1940, 4200, 660, 980]",
+      "width": 2260,
+      "height": 320
+    },
+    {
+      "domain": "UserOrganizationRoleTrigger",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2260, 2380, 660, 720]",
+      "fullDomainBbox": "[2260, 2380, 660, 720]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "BatchableContext",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4700, 4820, 720, 780]",
+      "fullDomainBbox": "[4700, 4820, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "SaveResult",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5299.2, 5419.2, 740, 800]",
+      "fullDomainBbox": "[5299.2, 5419.2, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Error_Message",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4559.2, 4679.2, 720, 780]",
+      "fullDomainBbox": "[4559.2, 4679.2, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "VersionData",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5599.2, 5719.2, 740, 800]",
+      "fullDomainBbox": "[5599.2, 5719.2, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Spend_Import_Batch",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1880, 2000, 820, 880]",
+      "fullDomainBbox": "[1880, 2000, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "SpendImportBatch",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[340, 460, 740, 800]",
+      "fullDomainBbox": "[340, 460, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Classification",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3719.2, 3839.2, 720, 780]",
+      "fullDomainBbox": "[3719.2, 3839.2, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "ClassificationResult",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4039.2, 4159.2, 720, 780]",
+      "fullDomainBbox": "[4039.2, 4159.2, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "BackfillResult",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3879.2, 3999.2, 720, 780]",
+      "fullDomainBbox": "[3879.2, 3999.2, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "DmlException",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1640, 1760, 700, 760]",
+      "fullDomainBbox": "[1640, 1760, 700, 760]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Lead",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5020, 5140, 720, 780]",
+      "fullDomainBbox": "[5020, 5140, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "SpendHistory",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[920, 1040, 760, 820]",
+      "fullDomainBbox": "[920, 1040, 760, 820]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "HealthCheck",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3820, 3940, 820, 880]",
+      "fullDomainBbox": "[3820, 3940, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Cloud_Service",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4080, 4200, 820, 880]",
+      "fullDomainBbox": "[4080, 4200, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Starting",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[160, 280, 740, 800]",
+      "fullDomainBbox": "[160, 280, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Cloud_Spend",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4600, 4720, 820, 880]",
+      "fullDomainBbox": "[4600, 4720, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Cloud_Account",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4860, 4980, 820, 880]",
+      "fullDomainBbox": "[4860, 4980, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Contact",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5120, 5240, 820, 880]",
+      "fullDomainBbox": "[5120, 5240, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Organization_Budget",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[740, 860, 820, 880]",
+      "fullDomainBbox": "[740, 860, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Assert",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1000, 1120, 820, 880]",
+      "fullDomainBbox": "[1000, 1120, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "AggregateSpend",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4280, 4400, 740, 800]",
+      "fullDomainBbox": "[4280, 4400, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Organization_Hierarchy",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1520, 1640, 820, 880]",
+      "fullDomainBbox": "[1520, 1640, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Year",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5760, 5880, 740, 800]",
+      "fullDomainBbox": "[5760, 5880, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "User_Organization_Role",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2040, 2160, 820, 880]",
+      "fullDomainBbox": "[2040, 2160, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Action_Audit",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2400, 2520, 820, 880]",
+      "fullDomainBbox": "[2400, 2520, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Cloud_Provider",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2760, 2880, 740, 800]",
+      "fullDomainBbox": "[2760, 2880, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Region",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2440, 2560, 720, 780]",
+      "fullDomainBbox": "[2440, 2560, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Service",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1320, 1440, 720, 780]",
+      "fullDomainBbox": "[1320, 1440, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Spend_Month",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[1200, 1320, 760, 820]",
+      "fullDomainBbox": "[1200, 1320, 760, 820]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "PeriodMapping",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3559.2, 3679.2, 760, 820]",
+      "fullDomainBbox": "[3559.2, 3679.2, 760, 820]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Start_Date",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3379.2, 3499.2, 740, 800]",
+      "fullDomainBbox": "[3379.2, 3499.2, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Shared",
+      "primaryCount": 10,
+      "bridgeCount": 8,
+      "satelliteCount": 52,
+      "primaryBbox": "[520, 4720, 140, 1080]",
+      "fullDomainBbox": "[520, 5400, 140, 1480]",
+      "width": 4880,
+      "height": 1340
+    },
+    {
+      "domain": "PermissionSetAssignment",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[4860, 4980, 720, 780]",
+      "fullDomainBbox": "[4860, 4980, 720, 780]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Fiscal_Period_Mapping",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5120, 5240, 920, 980]",
+      "fullDomainBbox": "[5120, 5240, 920, 980]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Profile",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[840, 960, 820, 880]",
+      "fullDomainBbox": "[840, 960, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "PermissionSet",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[3100, 3220, 740, 800]",
+      "fullDomainBbox": "[3100, 3220, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "QueryException",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2100, 2220, 760, 820]",
+      "fullDomainBbox": "[2100, 2220, 760, 820]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Account",
+      "primaryCount": 5,
+      "bridgeCount": 3,
+      "satelliteCount": 7,
+      "primaryBbox": "[1520, 2060, 300, 880]",
+      "fullDomainBbox": "[1080, 4200, 300, 1180]",
+      "width": 3120,
+      "height": 880
+    },
+    {
+      "domain": "RoleMapping",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[2260, 2380, 760, 820]",
+      "fullDomainBbox": "[2260, 2380, 760, 820]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "UserRole",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[0, 120, 740, 800]",
+      "fullDomainBbox": "[0, 120, 740, 800]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "UUID",
+      "primaryCount": 1,
+      "bridgeCount": 1,
+      "satelliteCount": 0,
+      "primaryBbox": "[5980, 6100, 420, 480]",
+      "fullDomainBbox": "[5980, 6100, 420, 480]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "BusinessDataProvisioning",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[2920, 3040, 860, 920]",
+      "fullDomainBbox": "[2920, 3040, 860, 920]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "Email",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[3180, 3300, 840, 900]",
+      "fullDomainBbox": "[3180, 3300, 840, 900]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "PermissionSetGroup",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[3440, 3560, 860, 920]",
+      "fullDomainBbox": "[3440, 3560, 860, 920]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "ProvisioningException",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[3719.2, 3839.2, 820, 880]",
+      "fullDomainBbox": "[3719.2, 3839.2, 820, 880]",
+      "width": 120,
+      "height": 60
+    },
+    {
+      "domain": "QueueableContext",
+      "primaryCount": 1,
+      "bridgeCount": 0,
+      "satelliteCount": 0,
+      "primaryBbox": "[3980, 4100, 840, 900]",
+      "fullDomainBbox": "[3980, 4100, 840, 900]",
+      "width": 120,
+      "height": 60
+    }
+  ],
+  "primaryLayerBands": [
+    {
+      "nodeId": "ApexClass:AccountController",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:AccountService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:AdminAuditController",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:AdminDataExplorerController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:AdminHealthController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:AdminOverviewController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:AdminSpendController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:AdminUserController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:AuditService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:BudgetAlertController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:BudgetAlertService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:BudgetController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:BudgetService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:CloudAccountController",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:CloudAccountSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:CloudAccountService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:CloudServiceSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:CloudSpendMonthBackfillBatch",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:CloudSpendSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:CloudSpendService",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:CloudSpendTriggerHandler",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:ContentVersionSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:create_users",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:CsvParser",
+      "layer": "application",
+      "y": 230
+    },
+    {
+      "nodeId": "ApexClass:CurrencyUtils",
+      "layer": "application",
+      "y": 1610
+    },
+    {
+      "nodeId": "ApexClass:DateUtils",
+      "layer": "application",
+      "y": 370
+    },
+    {
+      "nodeId": "ApexClass:ErrorResponse",
+      "layer": "application",
+      "y": 30
+    },
+    {
+      "nodeId": "ApexClass:FiscalController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:FiscalPeriodMappingSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:FiscalUtils",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:ForecastController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:ForecastSelector",
+      "layer": "domain",
+      "y": 730
+    },
+    {
+      "nodeId": "ApexClass:ForecastService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:ImportController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:ImportService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:OrganizationBudgetSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:OrganizationController",
+      "layer": "application",
+      "y": 630
+    },
+    {
+      "nodeId": "ApexClass:OrganizationHierarchySelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:OrganizationHierarchyService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:OrganizationService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:OrganizationTriggerHandler",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:QueryResult",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:SpendAnalyticsService",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:SpendController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:SpendImportService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:SpendService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:SpendTrackerAccessContext",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:SpendTrackerAuthorizationService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:StandardAccessPolicy",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:SystemAdminAccessPolicy",
+      "layer": "domain",
+      "y": 730
+    },
+    {
+      "nodeId": "ApexClass:UserContactMappingService",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:UserController",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "ApexClass:UserManagementController",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "ApexClass:UserManagementService",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "ApexClass:UserOrganizationRoleSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:UserOrganizationRoleTriggerHandler",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:UserSelector",
+      "layer": "domain",
+      "y": 690
+    },
+    {
+      "nodeId": "ApexClass:UserService",
+      "layer": "application",
+      "y": 530
+    },
+    {
+      "nodeId": "External:Account",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:AccountWrapper",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:AdminOverviewWrapper",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:AggregateSpendWrapper",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:Assert",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:BackfillResult",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:BatchableContext",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:BudgetAlertWrapper",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:BudgetWrapper",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:BusinessDataProvisioningQueueable",
+      "layer": "schema",
+      "y": 890
+    },
+    {
+      "nodeId": "External:Classification",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:ClassificationResult",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:Cloud_Provider__c",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:Contact",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:ContentVersion",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:Database.Batchable<SObject>",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:DmlException",
+      "layer": "schema",
+      "y": 730
+    },
+    {
+      "nodeId": "External:Email",
+      "layer": "schema",
+      "y": 870
+    },
+    {
+      "nodeId": "External:Error_Message__c",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:ForecastWrapper",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:HealthCheckWrapper",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:Lead",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:Object:Account",
+      "layer": "schema",
+      "y": 950
+    },
+    {
+      "nodeId": "External:Object:admin",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:Object:Contact",
+      "layer": "schema",
+      "y": 950
+    },
+    {
+      "nodeId": "External:Object:ContentVersion",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:Object:email",
+      "layer": "schema",
+      "y": 890
+    },
+    {
+      "nodeId": "External:Object:Lead",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:Object:PermissionSet",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:Object:PermissionSetAssignment",
+      "layer": "schema",
+      "y": 950
+    },
+    {
+      "nodeId": "External:Object:PermissionSetGroup",
+      "layer": "schema",
+      "y": 1050
+    },
+    {
+      "nodeId": "External:Object:Profile",
+      "layer": "schema",
+      "y": 1050
+    },
+    {
+      "nodeId": "External:Object:Tenant",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:Object:User",
+      "layer": "schema",
+      "y": 950
+    },
+    {
+      "nodeId": "External:Object:UserRole",
+      "layer": "schema",
+      "y": 1050
+    },
+    {
+      "nodeId": "External:Organization__c",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:OrganizationWrapper",
+      "layer": "schema",
+      "y": 830
+    },
+    {
+      "nodeId": "External:PeriodMapping",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:PermissionSet",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:PermissionSetAssignment",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:PermissionSetGroup",
+      "layer": "schema",
+      "y": 890
+    },
+    {
+      "nodeId": "External:Profile",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:ProvisioningException",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:QueryException",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:QueueableContext",
+      "layer": "schema",
+      "y": 870
+    },
+    {
+      "nodeId": "External:Region__c",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:RoleMapping",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:SaveResult",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:Service__c",
+      "layer": "schema",
+      "y": 750
+    },
+    {
+      "nodeId": "External:Spend_Month__c",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:SpendHistoryWrapper",
+      "layer": "schema",
+      "y": 790
+    },
+    {
+      "nodeId": "External:SpendImportBatchDTO",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:Start_Date__c",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:Starting",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:User",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "External:UserRoleWrapper",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:UUID",
+      "layer": "schema",
+      "y": 450
+    },
+    {
+      "nodeId": "External:VersionData",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "External:Year__c",
+      "layer": "schema",
+      "y": 770
+    },
+    {
+      "nodeId": "LWC:account-metrics",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:admin-audit",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:admin-budgets",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "LWC:admin-cloud-accounts",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "LWC:admin-data-explorer",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:admin-data-health",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "LWC:admin-filter-panel",
+      "layer": "presentation",
+      "y": 1610
+    },
+    {
+      "nodeId": "LWC:admin-forecasts",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "LWC:admin-organizations",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:admin-overview",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:admin-spend-explorer",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:admin-user-access",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:administration-nav",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "LWC:app-shell",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:data-importer",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "LWC:error-panel",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:filter-panel",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:forecast-manager",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:home-overview",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:organization-tree",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:spend-analytics",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:spend-tracker-nav",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:system-admin-app",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:top-services-table",
+      "layer": "presentation",
+      "y": 190
+    },
+    {
+      "nodeId": "LWC:user-management",
+      "layer": "presentation",
+      "y": 270
+    },
+    {
+      "nodeId": "LWC:utils",
+      "layer": "presentation",
+      "y": 170
+    },
+    {
+      "nodeId": "Object:Action_Audit__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Cloud_Account__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Cloud_Service__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Cloud_Spend__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Fiscal_Period_Mapping__mdt",
+      "layer": "schema",
+      "y": 950
+    },
+    {
+      "nodeId": "Object:Forecast__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Organization_Budget__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Organization_Hierarchy__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:Spend_Import_Batch__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Object:User_Organization_Role__c",
+      "layer": "schema",
+      "y": 850
+    },
+    {
+      "nodeId": "Trigger:CloudSpendTrigger",
+      "layer": "application",
+      "y": 330
+    },
+    {
+      "nodeId": "Trigger:OrganizationTrigger",
+      "layer": "application",
+      "y": 430
+    },
+    {
+      "nodeId": "Trigger:UserOrganizationRoleTrigger",
+      "layer": "application",
+      "y": 450
+    }
+  ],
+  "domainRowAnalysis": [
+    {
+      "domain": "AccountMetrics",
+      "row": 0,
+      "column": 0,
+      "orderIndex": 0,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 4,
+      "connectedDomains": [
+        "Account",
+        "AdminCloudAccounts",
+        "SpendTrackerNav"
+      ],
+      "domainCentroid": "(180, 150)"
+    },
+    {
+      "domain": "FilterPanel",
+      "row": 0,
+      "column": 1,
+      "orderIndex": 1,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "Organization",
+        "SpendTrackerNav"
+      ],
+      "domainCentroid": "(440, 150)"
+    },
+    {
+      "domain": "DataImporter",
+      "row": 0,
+      "column": 2,
+      "orderIndex": 2,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "AdministrationNav",
+        "Import"
+      ],
+      "domainCentroid": "(700, 150)"
+    },
+    {
+      "domain": "AppShell",
+      "row": 0,
+      "column": 3,
+      "orderIndex": 3,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "AdministrationNav",
+        "SpendTrackerNav"
+      ],
+      "domainCentroid": "(960, 150)"
+    },
+    {
+      "domain": "ErrorPanel",
+      "row": 0,
+      "column": 4,
+      "orderIndex": 4,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 7,
+      "connectedDomains": [
+        "AdminAudit",
+        "AdminBudgets",
+        "AdminDataExplorer",
+        "AdminDataHealth",
+        "AdminOverview",
+        "AdminSpendExplorer",
+        "OrganizationTree"
+      ],
+      "domainCentroid": "(1220, 150)"
+    },
+    {
+      "domain": "SystemAdminApp",
+      "row": 0,
+      "column": 5,
+      "orderIndex": 5,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 10,
+      "connectedDomains": [
+        "AdminAudit",
+        "AdminBudgets",
+        "AdminCloudAccounts",
+        "AdminDataExplorer",
+        "AdminDataHealth",
+        "AdminForecasts",
+        "AdminOrganizations",
+        "AdminOverview",
+        "AdminSpendExplorer",
+        "AdminUserAccess"
+      ],
+      "domainCentroid": "(1480, 150)"
+    },
+    {
+      "domain": "AdminUserAccess",
+      "row": 0,
+      "column": 6,
+      "orderIndex": 6,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "SystemAdminApp",
+        "UserManagement"
+      ],
+      "domainCentroid": "(1740, 150)"
+    },
+    {
+      "domain": "OrganizationTree",
+      "row": 0,
+      "column": 7,
+      "orderIndex": 7,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 6,
+      "connectedDomains": [
+        "AdminOrganizations",
+        "ErrorPanel",
+        "Organization",
+        "Shared",
+        "Spend",
+        "SpendTrackerNav"
+      ],
+      "domainCentroid": "(2000, 150)"
+    },
+    {
+      "domain": "AdminOrganizations",
+      "row": 0,
+      "column": 8,
+      "orderIndex": 8,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "OrganizationTree",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(2260, 150)"
+    },
+    {
+      "domain": "HomeOverview",
+      "row": 0,
+      "column": 9,
+      "orderIndex": 9,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 8,
+      "connectedDomains": [
+        "Budget",
+        "BudgetAlert",
+        "Organization",
+        "Shared",
+        "Spend",
+        "SpendAnalytics",
+        "SpendTrackerNav",
+        "TopServicesTable"
+      ],
+      "domainCentroid": "(2520, 150)"
+    },
+    {
+      "domain": "AdminDataHealth",
+      "row": 0,
+      "column": 10,
+      "orderIndex": 10,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "AdminHealth",
+        "ErrorPanel",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(2780, 150)"
+    },
+    {
+      "domain": "AdminForecasts",
+      "row": 0,
+      "column": 11,
+      "orderIndex": 11,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "ForecastManager",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(3040, 150)"
+    },
+    {
+      "domain": "AdministrationNav",
+      "row": 0,
+      "column": 12,
+      "orderIndex": 12,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "AppShell",
+        "DataImporter",
+        "UserManagement"
+      ],
+      "domainCentroid": "(3300, 150)"
+    },
+    {
+      "domain": "SpendAnalytics",
+      "row": 0,
+      "column": 13,
+      "orderIndex": 13,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 7,
+      "connectedDomains": [
+        "Budget",
+        "Forecast",
+        "HomeOverview",
+        "Organization",
+        "Spend",
+        "SpendTrackerNav"
+      ],
+      "domainCentroid": "(3560, 150)"
+    },
+    {
+      "domain": "AdminSpendExplorer",
+      "row": 0,
+      "column": 14,
+      "orderIndex": 14,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "AdminSpend",
+        "ErrorPanel",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(3820, 150)"
+    },
+    {
+      "domain": "AdminAudit",
+      "row": 0,
+      "column": 15,
+      "orderIndex": 15,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 28,
+      "connectedDomains": [
+        "Action_Audit",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "AdminSpend",
+        "AdminUser",
+        "Audit",
+        "ErrorPanel",
+        "HealthCheck",
+        "PermissionSet",
+        "PermissionSetAssignment",
+        "Profile",
+        "QueryResult",
+        "Shared",
+        "SpendTrackerAuthorization",
+        "SystemAdminApp",
+        "User"
+      ],
+      "domainCentroid": "(4080, 150)"
+    },
+    {
+      "domain": "AdminBudgets",
+      "row": 0,
+      "column": 16,
+      "orderIndex": 16,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "Budget",
+        "ErrorPanel",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(4340, 150)"
+    },
+    {
+      "domain": "SpendTrackerNav",
+      "row": 0,
+      "column": 17,
+      "orderIndex": 17,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 7,
+      "connectedDomains": [
+        "AccountMetrics",
+        "AppShell",
+        "FilterPanel",
+        "ForecastManager",
+        "HomeOverview",
+        "OrganizationTree",
+        "SpendAnalytics"
+      ],
+      "domainCentroid": "(4600, 150)"
+    },
+    {
+      "domain": "AdminCloudAccounts",
+      "row": 0,
+      "column": 18,
+      "orderIndex": 18,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "AccountMetrics",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(220, 310)"
+    },
+    {
+      "domain": "TopServicesTable",
+      "row": 0,
+      "column": 19,
+      "orderIndex": 19,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "HomeOverview",
+        "Spend"
+      ],
+      "domainCentroid": "(480, 310)"
+    },
+    {
+      "domain": "ForecastManager",
+      "row": 0,
+      "column": 20,
+      "orderIndex": 20,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 10,
+      "connectedDomains": [
+        "AdminForecasts",
+        "Budget",
+        "Fiscal",
+        "Forecast",
+        "Organization",
+        "Spend",
+        "SpendTrackerNav"
+      ],
+      "domainCentroid": "(740, 310)"
+    },
+    {
+      "domain": "AdminDataExplorer",
+      "row": 0,
+      "column": 21,
+      "orderIndex": 21,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 40,
+      "connectedDomains": [
+        "Action_Audit",
+        "AdminAudit",
+        "Cloud_Account",
+        "Cloud_Service",
+        "Cloud_Spend",
+        "ErrorPanel",
+        "Forecast",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "QueryResult",
+        "Shared",
+        "Spend_Import_Batch",
+        "SpendTrackerAuthorization",
+        "SystemAdminApp",
+        "User_Organization_Role"
+      ],
+      "domainCentroid": "(1000, 310)"
+    },
+    {
+      "domain": "AdminOverview",
+      "row": 0,
+      "column": 22,
+      "orderIndex": 22,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 24,
+      "connectedDomains": [
+        "AdminAudit",
+        "Cloud_Account",
+        "Cloud_Service",
+        "Cloud_Spend",
+        "ErrorPanel",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "Shared",
+        "Spend_Import_Batch",
+        "SpendImportBatch",
+        "SpendTrackerAuthorization",
+        "SystemAdminApp"
+      ],
+      "domainCentroid": "(1260, 310)"
+    },
+    {
+      "domain": "AdminFilterPanel",
+      "row": 0,
+      "column": 23,
+      "orderIndex": 23,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 0,
+      "connectedDomains": [],
+      "domainCentroid": "(1520, 310)"
+    },
+    {
+      "domain": "CsvParser",
+      "row": 0,
+      "column": 0,
+      "orderIndex": 0,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "SpendImport"
+      ],
+      "domainCentroid": "(180, 530)"
+    },
+    {
+      "domain": "StandardAccessPolicy",
+      "row": 0,
+      "column": 1,
+      "orderIndex": 1,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization"
+      ],
+      "domainCentroid": "(440, 530)"
+    },
+    {
+      "domain": "QueryResult",
+      "row": 0,
+      "column": 2,
+      "orderIndex": 2,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 6,
+      "connectedDomains": [
+        "AdminAudit",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminSpend"
+      ],
+      "domainCentroid": "(700, 530)"
+    },
+    {
+      "domain": "Forecast",
+      "row": 0,
+      "column": 3,
+      "orderIndex": 3,
+      "primaryCount": 5,
+      "crossDomainEdgeCount": 34,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "Assert",
+        "Cloud_Account",
+        "CloudAccount",
+        "ForecastManager",
+        "Organization_Hierarchy",
+        "Shared",
+        "SpendAnalytics"
+      ],
+      "domainCentroid": "(1040, 530)"
+    },
+    {
+      "domain": "OrganizationHierarchy",
+      "row": 0,
+      "column": 4,
+      "orderIndex": 4,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 14,
+      "connectedDomains": [
+        "CloudAccount",
+        "Organization_Hierarchy",
+        "Organization",
+        "Shared",
+        "SpendTrackerAccessContext",
+        "User"
+      ],
+      "domainCentroid": "(1380, 530)"
+    },
+    {
+      "domain": "User",
+      "row": 0,
+      "column": 5,
+      "orderIndex": 5,
+      "primaryCount": 4,
+      "crossDomainEdgeCount": 84,
+      "connectedDomains": [
+        "Account",
+        "AdminAudit",
+        "AdminHealth",
+        "AdminUser",
+        "Assert",
+        "Audit",
+        "CloudAccount",
+        "Organization_Hierarchy",
+        "OrganizationHierarchy",
+        "OrganizationTrigger",
+        "Profile",
+        "RoleMapping",
+        "Shared",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "SystemAdminAccessPolicy",
+        "User_Organization_Role",
+        "UserContactMapping",
+        "UserManagement",
+        "UserOrganizationRole",
+        "UserRole"
+      ],
+      "domainCentroid": "(1720, 530)"
+    },
+    {
+      "domain": "CloudSpendTrigger",
+      "row": 0,
+      "column": 6,
+      "orderIndex": 6,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "Cloud_Spend",
+        "CloudSpend"
+      ],
+      "domainCentroid": "(2060, 530)"
+    },
+    {
+      "domain": "CloudSpend",
+      "row": 0,
+      "column": 7,
+      "orderIndex": 7,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 22,
+      "connectedDomains": [
+        "Account",
+        "AdminHealth",
+        "Cloud_Provider",
+        "Cloud_Spend",
+        "CloudAccount",
+        "CloudSpendTrigger",
+        "Organization",
+        "QueryException",
+        "Region",
+        "Service",
+        "Shared",
+        "Spend",
+        "Spend_Month"
+      ],
+      "domainCentroid": "(2400, 530)"
+    },
+    {
+      "domain": "Date",
+      "row": 0,
+      "column": 8,
+      "orderIndex": 8,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "Fiscal"
+      ],
+      "domainCentroid": "(2740, 530)"
+    },
+    {
+      "domain": "AdminSpend",
+      "row": 0,
+      "column": 9,
+      "orderIndex": 9,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 16,
+      "connectedDomains": [
+        "AdminAudit",
+        "AdminHealth",
+        "AdminSpendExplorer",
+        "Cloud_Spend",
+        "QueryResult",
+        "Shared",
+        "SpendTrackerAuthorization",
+        "Year"
+      ],
+      "domainCentroid": "(3000, 530)"
+    },
+    {
+      "domain": "Fiscal",
+      "row": 0,
+      "column": 10,
+      "orderIndex": 10,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 12,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "Date",
+        "Fiscal_Period_Mapping",
+        "FiscalPeriodMapping",
+        "ForecastManager",
+        "PeriodMapping",
+        "Start_Date"
+      ],
+      "domainCentroid": "(3340, 530)"
+    },
+    {
+      "domain": "Spend",
+      "row": 0,
+      "column": 11,
+      "orderIndex": 11,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 30,
+      "connectedDomains": [
+        "Account",
+        "AdminHealth",
+        "AggregateSpend",
+        "Assert",
+        "BudgetAlert",
+        "Cloud_Account",
+        "Cloud_Spend",
+        "CloudSpend",
+        "ForecastManager",
+        "HomeOverview",
+        "Organization_Hierarchy",
+        "OrganizationTree",
+        "SpendAnalytics",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "TopServicesTable"
+      ],
+      "domainCentroid": "(3760, 530)"
+    },
+    {
+      "domain": "Budget",
+      "row": 0,
+      "column": 12,
+      "orderIndex": 12,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 26,
+      "connectedDomains": [
+        "Account",
+        "AdminBudgets",
+        "Assert",
+        "Audit",
+        "ForecastManager",
+        "HomeOverview",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "OrganizationBudget",
+        "SpendAnalytics"
+      ],
+      "domainCentroid": "(4180, 530)"
+    },
+    {
+      "domain": "Audit",
+      "row": 0,
+      "column": 13,
+      "orderIndex": 13,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 23,
+      "connectedDomains": [
+        "Account",
+        "Action_Audit",
+        "AdminAudit",
+        "Assert",
+        "Budget",
+        "Import",
+        "Organization",
+        "Shared",
+        "SpendImport",
+        "SpendTrackerAuthorization",
+        "User",
+        "UserContactMapping",
+        "UserOrganizationRoleTrigger"
+      ],
+      "domainCentroid": "(4520, 530)"
+    },
+    {
+      "domain": "AdminUser",
+      "row": 0,
+      "column": 14,
+      "orderIndex": 14,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 7,
+      "connectedDomains": [
+        "AdminAudit",
+        "SpendTrackerAuthorization",
+        "User",
+        "User_Organization_Role",
+        "UserOrganizationRole"
+      ],
+      "domainCentroid": "(220, 690)"
+    },
+    {
+      "domain": "UserOrganizationRole",
+      "row": 0,
+      "column": 15,
+      "orderIndex": 15,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 21,
+      "connectedDomains": [
+        "AdminUser",
+        "CloudAccount",
+        "QueryException",
+        "Shared",
+        "User_Organization_Role",
+        "User",
+        "UserOrganizationRoleTrigger"
+      ],
+      "domainCentroid": "(480, 690)"
+    },
+    {
+      "domain": "SpendTrackerAccessContext",
+      "row": 0,
+      "column": 16,
+      "orderIndex": 16,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 40,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "BackfillResult",
+        "Contact",
+        "Organization_Hierarchy",
+        "Organization",
+        "OrganizationHierarchy",
+        "OrganizationTrigger",
+        "Shared",
+        "Spend",
+        "SpendTrackerAuthorization",
+        "StandardAccessPolicy",
+        "User",
+        "User_Organization_Role",
+        "UserContactMapping"
+      ],
+      "domainCentroid": "(740, 690)"
+    },
+    {
+      "domain": "Organization",
+      "row": 0,
+      "column": 17,
+      "orderIndex": 17,
+      "primaryCount": 5,
+      "crossDomainEdgeCount": 50,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "Audit",
+        "Cloud_Account",
+        "CloudAccount",
+        "CloudSpend",
+        "FilterPanel",
+        "ForecastManager",
+        "HomeOverview",
+        "Organization_Hierarchy",
+        "OrganizationHierarchy",
+        "OrganizationTree",
+        "OrganizationTrigger",
+        "Shared",
+        "SpendAnalytics",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "Starting",
+        "User_Organization_Role",
+        "UserManagement"
+      ],
+      "domainCentroid": "(1160, 690)"
+    },
+    {
+      "domain": "SpendTrackerAuthorization",
+      "row": 0,
+      "column": 18,
+      "orderIndex": 18,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 56,
+      "connectedDomains": [
+        "Account",
+        "AdminAudit",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "AdminSpend",
+        "AdminUser",
+        "Assert",
+        "Audit",
+        "Contact",
+        "Organization_Hierarchy",
+        "Organization",
+        "OrganizationTrigger",
+        "Shared",
+        "Spend",
+        "SpendTrackerAccessContext",
+        "StandardAccessPolicy",
+        "SystemAdminAccessPolicy",
+        "User",
+        "User_Organization_Role",
+        "UserOrganizationRoleTrigger"
+      ],
+      "domainCentroid": "(1579.2, 690)"
+    },
+    {
+      "domain": "BudgetAlert",
+      "row": 0,
+      "column": 19,
+      "orderIndex": 19,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 22,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "Cloud_Account",
+        "Cloud_Spend",
+        "HomeOverview",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "OrganizationBudget",
+        "Shared",
+        "Spend"
+      ],
+      "domainCentroid": "(1919.2, 690)"
+    },
+    {
+      "domain": "AdminHealth",
+      "row": 0,
+      "column": 20,
+      "orderIndex": 20,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 49,
+      "connectedDomains": [
+        "Account",
+        "AdminAudit",
+        "AdminDataHealth",
+        "AdminSpend",
+        "Assert",
+        "Cloud_Account",
+        "Cloud_Spend",
+        "CloudSpend",
+        "Contact",
+        "HealthCheck",
+        "Organization_Hierarchy",
+        "Profile",
+        "QueryResult",
+        "Shared",
+        "Spend",
+        "Spend_Import_Batch",
+        "SpendTrackerAuthorization",
+        "User",
+        "User_Organization_Role"
+      ],
+      "domainCentroid": "(2259.2, 690)"
+    },
+    {
+      "domain": "Import",
+      "row": 0,
+      "column": 21,
+      "orderIndex": 21,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 24,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "Audit",
+        "Cloud_Account",
+        "Cloud_Spend",
+        "CloudAccount",
+        "ContentVersion",
+        "DataImporter",
+        "Organization_Hierarchy",
+        "Shared",
+        "VersionData"
+      ],
+      "domainCentroid": "(2599.2, 690)"
+    },
+    {
+      "domain": "CloudAccount",
+      "row": 0,
+      "column": 22,
+      "orderIndex": 22,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 72,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "Cloud_Account",
+        "Cloud_Service",
+        "Cloud_Spend",
+        "CloudService",
+        "CloudSpend",
+        "ContentVersion",
+        "Fiscal_Period_Mapping",
+        "FiscalPeriodMapping",
+        "Forecast",
+        "Import",
+        "Organization",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "OrganizationBudget",
+        "OrganizationHierarchy",
+        "Profile",
+        "Shared",
+        "SpendImport",
+        "User",
+        "User_Organization_Role",
+        "UserOrganizationRole"
+      ],
+      "domainCentroid": "(3019.2, 690)"
+    },
+    {
+      "domain": "UserContactMapping",
+      "row": 0,
+      "column": 23,
+      "orderIndex": 23,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 25,
+      "connectedDomains": [
+        "Audit",
+        "BackfillResult",
+        "Classification",
+        "ClassificationResult",
+        "Contact",
+        "Organization_Hierarchy",
+        "Shared",
+        "SpendTrackerAccessContext",
+        "User_Organization_Role",
+        "User",
+        "UserOrganizationRoleTrigger"
+      ],
+      "domainCentroid": "(3359.2, 690)"
+    },
+    {
+      "domain": "UserManagement",
+      "row": 0,
+      "column": 24,
+      "orderIndex": 24,
+      "primaryCount": 3,
+      "crossDomainEdgeCount": 14,
+      "connectedDomains": [
+        "AdministrationNav",
+        "AdminUserAccess",
+        "Organization",
+        "User"
+      ],
+      "domainCentroid": "(3699.2, 690)"
+    },
+    {
+      "domain": "SpendImport",
+      "row": 0,
+      "column": 25,
+      "orderIndex": 25,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 14,
+      "connectedDomains": [
+        "Audit",
+        "Cloud_Account",
+        "Cloud_Spend",
+        "CloudAccount",
+        "ContentVersion",
+        "CsvParser",
+        "Error_Message",
+        "Spend_Import_Batch",
+        "VersionData"
+      ],
+      "domainCentroid": "(4039.2, 690)"
+    },
+    {
+      "domain": "CloudSpendMonthBackfill",
+      "row": 0,
+      "column": 26,
+      "orderIndex": 26,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 12,
+      "connectedDomains": [
+        "BatchableContext",
+        "Cloud_Spend",
+        "SaveResult",
+        "Shared"
+      ],
+      "domainCentroid": "(4299.2, 690)"
+    },
+    {
+      "domain": "ErrorResponse",
+      "row": 0,
+      "column": 27,
+      "orderIndex": 27,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "UUID"
+      ],
+      "domainCentroid": "(4559.2, 690)"
+    },
+    {
+      "domain": "Currency",
+      "row": 0,
+      "column": 28,
+      "orderIndex": 28,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 0,
+      "connectedDomains": [],
+      "domainCentroid": "(260, 850)"
+    },
+    {
+      "domain": "ContentVersion",
+      "row": 0,
+      "column": 0,
+      "orderIndex": 0,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 15,
+      "connectedDomains": [
+        "Account",
+        "CloudAccount",
+        "Import",
+        "Shared",
+        "SpendImport"
+      ],
+      "domainCentroid": "(180, 1070)"
+    },
+    {
+      "domain": "OrganizationTrigger",
+      "row": 0,
+      "column": 1,
+      "orderIndex": 1,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 51,
+      "connectedDomains": [
+        "Account",
+        "Assert",
+        "Cloud_Account",
+        "Cloud_Spend",
+        "Contact",
+        "Organization_Hierarchy",
+        "Organization",
+        "PermissionSet",
+        "PermissionSetAssignment",
+        "Profile",
+        "Shared",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "User",
+        "User_Organization_Role"
+      ],
+      "domainCentroid": "(440, 1070)"
+    },
+    {
+      "domain": "FiscalPeriodMapping",
+      "row": 0,
+      "column": 2,
+      "orderIndex": 2,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 5,
+      "connectedDomains": [
+        "CloudAccount",
+        "Fiscal_Period_Mapping",
+        "Fiscal"
+      ],
+      "domainCentroid": "(700, 1070)"
+    },
+    {
+      "domain": "SystemAdminAccessPolicy",
+      "row": 0,
+      "column": 3,
+      "orderIndex": 3,
+      "primaryCount": 2,
+      "crossDomainEdgeCount": 5,
+      "connectedDomains": [
+        "PermissionSetAssignment",
+        "Shared",
+        "SpendTrackerAuthorization",
+        "User"
+      ],
+      "domainCentroid": "(960, 1070)"
+    },
+    {
+      "domain": "OrganizationBudget",
+      "row": 0,
+      "column": 4,
+      "orderIndex": 4,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 13,
+      "connectedDomains": [
+        "Budget",
+        "BudgetAlert",
+        "CloudAccount",
+        "Organization_Budget",
+        "QueryException",
+        "Shared"
+      ],
+      "domainCentroid": "(1220, 1070)"
+    },
+    {
+      "domain": "CloudService",
+      "row": 0,
+      "column": 5,
+      "orderIndex": 5,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 6,
+      "connectedDomains": [
+        "Account",
+        "Cloud_Service",
+        "CloudAccount",
+        "Shared"
+      ],
+      "domainCentroid": "(1480, 1070)"
+    },
+    {
+      "domain": "UserOrganizationRoleTrigger",
+      "row": 0,
+      "column": 6,
+      "orderIndex": 6,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 21,
+      "connectedDomains": [
+        "Audit",
+        "Contact",
+        "Organization_Hierarchy",
+        "Shared",
+        "SpendTrackerAuthorization",
+        "User_Organization_Role",
+        "UserContactMapping",
+        "UserOrganizationRole"
+      ],
+      "domainCentroid": "(1740, 1070)"
+    },
+    {
+      "domain": "BatchableContext",
+      "row": 0,
+      "column": 0,
+      "orderIndex": 0,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "CloudSpendMonthBackfill"
+      ],
+      "domainCentroid": "(180, 1290)"
+    },
+    {
+      "domain": "SaveResult",
+      "row": 0,
+      "column": 1,
+      "orderIndex": 1,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "CloudSpendMonthBackfill"
+      ],
+      "domainCentroid": "(440, 1290)"
+    },
+    {
+      "domain": "Error_Message",
+      "row": 0,
+      "column": 2,
+      "orderIndex": 2,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "SpendImport"
+      ],
+      "domainCentroid": "(700, 1290)"
+    },
+    {
+      "domain": "VersionData",
+      "row": 0,
+      "column": 3,
+      "orderIndex": 3,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "Import",
+        "SpendImport"
+      ],
+      "domainCentroid": "(960, 1290)"
+    },
+    {
+      "domain": "Spend_Import_Batch",
+      "row": 0,
+      "column": 4,
+      "orderIndex": 4,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 6,
+      "connectedDomains": [
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "SpendImport"
+      ],
+      "domainCentroid": "(1220, 1290)"
+    },
+    {
+      "domain": "SpendImportBatch",
+      "row": 0,
+      "column": 5,
+      "orderIndex": 5,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "AdminOverview"
+      ],
+      "domainCentroid": "(1480, 1290)"
+    },
+    {
+      "domain": "Classification",
+      "row": 0,
+      "column": 6,
+      "orderIndex": 6,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "UserContactMapping"
+      ],
+      "domainCentroid": "(1740, 1290)"
+    },
+    {
+      "domain": "ClassificationResult",
+      "row": 0,
+      "column": 7,
+      "orderIndex": 7,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "UserContactMapping"
+      ],
+      "domainCentroid": "(2000, 1290)"
+    },
+    {
+      "domain": "BackfillResult",
+      "row": 0,
+      "column": 8,
+      "orderIndex": 8,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "SpendTrackerAccessContext",
+        "UserContactMapping"
+      ],
+      "domainCentroid": "(2260, 1290)"
+    },
+    {
+      "domain": "DmlException",
+      "row": 0,
+      "column": 9,
+      "orderIndex": 9,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Account"
+      ],
+      "domainCentroid": "(2520, 1290)"
+    },
+    {
+      "domain": "Lead",
+      "row": 0,
+      "column": 10,
+      "orderIndex": 10,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "Account",
+        "Shared"
+      ],
+      "domainCentroid": "(2780, 1290)"
+    },
+    {
+      "domain": "SpendHistory",
+      "row": 0,
+      "column": 11,
+      "orderIndex": 11,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "Account"
+      ],
+      "domainCentroid": "(3040, 1290)"
+    },
+    {
+      "domain": "HealthCheck",
+      "row": 0,
+      "column": 12,
+      "orderIndex": 12,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 4,
+      "connectedDomains": [
+        "AdminAudit",
+        "AdminHealth"
+      ],
+      "domainCentroid": "(3300, 1290)"
+    },
+    {
+      "domain": "Cloud_Service",
+      "row": 0,
+      "column": 13,
+      "orderIndex": 13,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 16,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "AdminOverview",
+        "CloudAccount",
+        "CloudService",
+        "Shared"
+      ],
+      "domainCentroid": "(3560, 1290)"
+    },
+    {
+      "domain": "Starting",
+      "row": 0,
+      "column": 14,
+      "orderIndex": 14,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Organization"
+      ],
+      "domainCentroid": "(3820, 1290)"
+    },
+    {
+      "domain": "Cloud_Spend",
+      "row": 0,
+      "column": 15,
+      "orderIndex": 15,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 52,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "AdminSpend",
+        "BudgetAlert",
+        "CloudAccount",
+        "CloudSpend",
+        "CloudSpendMonthBackfill",
+        "CloudSpendTrigger",
+        "Import",
+        "OrganizationTrigger",
+        "Shared",
+        "Spend",
+        "SpendImport"
+      ],
+      "domainCentroid": "(4080, 1290)"
+    },
+    {
+      "domain": "Cloud_Account",
+      "row": 0,
+      "column": 16,
+      "orderIndex": 16,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 48,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "BudgetAlert",
+        "CloudAccount",
+        "Forecast",
+        "Import",
+        "Organization",
+        "OrganizationTrigger",
+        "Shared",
+        "Spend",
+        "SpendImport"
+      ],
+      "domainCentroid": "(4340, 1290)"
+    },
+    {
+      "domain": "Contact",
+      "row": 0,
+      "column": 17,
+      "orderIndex": 17,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 16,
+      "connectedDomains": [
+        "Account",
+        "AdminHealth",
+        "OrganizationTrigger",
+        "Shared",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "UserContactMapping",
+        "UserOrganizationRoleTrigger"
+      ],
+      "domainCentroid": "(4600, 1290)"
+    },
+    {
+      "domain": "Organization_Budget",
+      "row": 0,
+      "column": 18,
+      "orderIndex": 18,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 21,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "AdminOverview",
+        "Budget",
+        "BudgetAlert",
+        "CloudAccount",
+        "OrganizationBudget",
+        "Shared"
+      ],
+      "domainCentroid": "(220, 1450)"
+    },
+    {
+      "domain": "Assert",
+      "row": 0,
+      "column": 19,
+      "orderIndex": 19,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 63,
+      "connectedDomains": [
+        "Account",
+        "AdminHealth",
+        "Audit",
+        "Budget",
+        "BudgetAlert",
+        "CloudAccount",
+        "Fiscal",
+        "Forecast",
+        "Import",
+        "Organization",
+        "OrganizationTrigger",
+        "Spend",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "User"
+      ],
+      "domainCentroid": "(480, 1450)"
+    },
+    {
+      "domain": "AggregateSpend",
+      "row": 0,
+      "column": 20,
+      "orderIndex": 20,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "Spend"
+      ],
+      "domainCentroid": "(740, 1450)"
+    },
+    {
+      "domain": "Organization_Hierarchy",
+      "row": 0,
+      "column": 21,
+      "orderIndex": 21,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 80,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "Budget",
+        "BudgetAlert",
+        "CloudAccount",
+        "Forecast",
+        "Import",
+        "OrganizationHierarchy",
+        "OrganizationTrigger",
+        "Shared",
+        "Spend",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "User",
+        "UserContactMapping",
+        "UserOrganizationRoleTrigger",
+        "Organization"
+      ],
+      "domainCentroid": "(1000, 1450)"
+    },
+    {
+      "domain": "Year",
+      "row": 0,
+      "column": 22,
+      "orderIndex": 22,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "AdminSpend"
+      ],
+      "domainCentroid": "(1260, 1450)"
+    },
+    {
+      "domain": "User_Organization_Role",
+      "row": 0,
+      "column": 23,
+      "orderIndex": 23,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 46,
+      "connectedDomains": [
+        "Account",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminUser",
+        "CloudAccount",
+        "Organization",
+        "OrganizationTrigger",
+        "Shared",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "UserContactMapping",
+        "UserOrganizationRole",
+        "UserOrganizationRoleTrigger",
+        "User"
+      ],
+      "domainCentroid": "(1520, 1450)"
+    },
+    {
+      "domain": "Action_Audit",
+      "row": 0,
+      "column": 24,
+      "orderIndex": 24,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 13,
+      "connectedDomains": [
+        "Account",
+        "AdminAudit",
+        "AdminDataExplorer",
+        "Audit",
+        "Shared"
+      ],
+      "domainCentroid": "(1780, 1450)"
+    },
+    {
+      "domain": "Cloud_Provider",
+      "row": 0,
+      "column": 25,
+      "orderIndex": 25,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "CloudSpend"
+      ],
+      "domainCentroid": "(2040, 1450)"
+    },
+    {
+      "domain": "Region",
+      "row": 0,
+      "column": 26,
+      "orderIndex": 26,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "CloudSpend"
+      ],
+      "domainCentroid": "(2300, 1450)"
+    },
+    {
+      "domain": "Service",
+      "row": 0,
+      "column": 27,
+      "orderIndex": 27,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "CloudSpend"
+      ],
+      "domainCentroid": "(2560, 1450)"
+    },
+    {
+      "domain": "Spend_Month",
+      "row": 0,
+      "column": 28,
+      "orderIndex": 28,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "CloudSpend"
+      ],
+      "domainCentroid": "(2820, 1450)"
+    },
+    {
+      "domain": "PeriodMapping",
+      "row": 0,
+      "column": 29,
+      "orderIndex": 29,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Fiscal"
+      ],
+      "domainCentroid": "(3080, 1450)"
+    },
+    {
+      "domain": "Start_Date",
+      "row": 0,
+      "column": 30,
+      "orderIndex": 30,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Fiscal"
+      ],
+      "domainCentroid": "(3340, 1450)"
+    },
+    {
+      "domain": "Shared",
+      "row": 0,
+      "column": 31,
+      "orderIndex": 31,
+      "primaryCount": 10,
+      "crossDomainEdgeCount": 177,
+      "connectedDomains": [
+        "Account",
+        "Action_Audit",
+        "AdminAudit",
+        "AdminDataExplorer",
+        "AdminHealth",
+        "AdminOverview",
+        "AdminSpend",
+        "Audit",
+        "BudgetAlert",
+        "BusinessDataProvisioning",
+        "Cloud_Account",
+        "Cloud_Service",
+        "Cloud_Spend",
+        "CloudAccount",
+        "CloudService",
+        "CloudSpend",
+        "CloudSpendMonthBackfill",
+        "Contact",
+        "ContentVersion",
+        "Email",
+        "Forecast",
+        "HomeOverview",
+        "Import",
+        "Lead",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "Organization",
+        "OrganizationBudget",
+        "OrganizationHierarchy",
+        "OrganizationTree",
+        "OrganizationTrigger",
+        "PermissionSetAssignment",
+        "PermissionSetGroup",
+        "ProvisioningException",
+        "QueueableContext",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "SystemAdminAccessPolicy",
+        "User",
+        "User_Organization_Role",
+        "UserContactMapping",
+        "UserOrganizationRole",
+        "UserOrganizationRoleTrigger"
+      ],
+      "domainCentroid": "(3840, 1500)"
+    },
+    {
+      "domain": "PermissionSetAssignment",
+      "row": 0,
+      "column": 32,
+      "orderIndex": 32,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 5,
+      "connectedDomains": [
+        "AdminAudit",
+        "OrganizationTrigger",
+        "Shared",
+        "SystemAdminAccessPolicy"
+      ],
+      "domainCentroid": "(4340, 1450)"
+    },
+    {
+      "domain": "Fiscal_Period_Mapping",
+      "row": 0,
+      "column": 33,
+      "orderIndex": 33,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 4,
+      "connectedDomains": [
+        "CloudAccount",
+        "FiscalPeriodMapping",
+        "Fiscal"
+      ],
+      "domainCentroid": "(4600, 1450)"
+    },
+    {
+      "domain": "Profile",
+      "row": 0,
+      "column": 34,
+      "orderIndex": 34,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 6,
+      "connectedDomains": [
+        "AdminAudit",
+        "AdminHealth",
+        "CloudAccount",
+        "OrganizationTrigger",
+        "User"
+      ],
+      "domainCentroid": "(260, 1710)"
+    },
+    {
+      "domain": "PermissionSet",
+      "row": 0,
+      "column": 35,
+      "orderIndex": 35,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "AdminAudit",
+        "OrganizationTrigger"
+      ],
+      "domainCentroid": "(520, 1710)"
+    },
+    {
+      "domain": "QueryException",
+      "row": 0,
+      "column": 36,
+      "orderIndex": 36,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 3,
+      "connectedDomains": [
+        "CloudSpend",
+        "OrganizationBudget",
+        "UserOrganizationRole"
+      ],
+      "domainCentroid": "(780, 1710)"
+    },
+    {
+      "domain": "Account",
+      "row": 0,
+      "column": 37,
+      "orderIndex": 37,
+      "primaryCount": 5,
+      "crossDomainEdgeCount": 184,
+      "connectedDomains": [
+        "AccountMetrics",
+        "Action_Audit",
+        "AdminHealth",
+        "Assert",
+        "Audit",
+        "Budget",
+        "BudgetAlert",
+        "Cloud_Account",
+        "Cloud_Service",
+        "Cloud_Spend",
+        "CloudAccount",
+        "CloudService",
+        "CloudSpend",
+        "Contact",
+        "ContentVersion",
+        "DmlException",
+        "Fiscal",
+        "Forecast",
+        "Import",
+        "Lead",
+        "Organization",
+        "Organization_Budget",
+        "Organization_Hierarchy",
+        "OrganizationTrigger",
+        "Shared",
+        "Spend",
+        "SpendHistory",
+        "SpendTrackerAccessContext",
+        "SpendTrackerAuthorization",
+        "User",
+        "User_Organization_Role"
+      ],
+      "domainCentroid": "(1200, 1710)"
+    },
+    {
+      "domain": "RoleMapping",
+      "row": 0,
+      "column": 38,
+      "orderIndex": 38,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "User"
+      ],
+      "domainCentroid": "(1620, 1710)"
+    },
+    {
+      "domain": "UserRole",
+      "row": 0,
+      "column": 39,
+      "orderIndex": 39,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 2,
+      "connectedDomains": [
+        "User"
+      ],
+      "domainCentroid": "(1880, 1710)"
+    },
+    {
+      "domain": "UUID",
+      "row": 0,
+      "column": 40,
+      "orderIndex": 40,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "ErrorResponse"
+      ],
+      "domainCentroid": "(2140, 1710)"
+    },
+    {
+      "domain": "BusinessDataProvisioning",
+      "row": 0,
+      "column": 41,
+      "orderIndex": 41,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Shared"
+      ],
+      "domainCentroid": "(2400, 1710)"
+    },
+    {
+      "domain": "Email",
+      "row": 0,
+      "column": 42,
+      "orderIndex": 42,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Shared"
+      ],
+      "domainCentroid": "(2660, 1710)"
+    },
+    {
+      "domain": "PermissionSetGroup",
+      "row": 0,
+      "column": 43,
+      "orderIndex": 43,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Shared"
+      ],
+      "domainCentroid": "(2920, 1710)"
+    },
+    {
+      "domain": "ProvisioningException",
+      "row": 0,
+      "column": 44,
+      "orderIndex": 44,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Shared"
+      ],
+      "domainCentroid": "(3180, 1710)"
+    },
+    {
+      "domain": "QueueableContext",
+      "row": 0,
+      "column": 45,
+      "orderIndex": 45,
+      "primaryCount": 1,
+      "crossDomainEdgeCount": 1,
+      "connectedDomains": [
+        "Shared"
+      ],
+      "domainCentroid": "(3440, 1710)"
+    }
+  ],
+  "edgePercentiles": {
+    "primary->primary": {
+      "median": "981.8",
+      "P75": "2130.6",
+      "P90": "2870.9",
+      "P95": "3280.0",
+      "P99": "3972.9",
+      "max": "4420.0"
+    },
+    "primary->bridge": {
+      "median": 0,
+      "P75": 0,
+      "P90": 0,
+      "P95": 0,
+      "P99": 0,
+      "max": 0
+    },
+    "bridge->primary": {
+      "median": "447.2",
+      "P75": "766.2",
+      "P90": "1511.7",
+      "P95": "2446.6",
+      "P99": "2926.6",
+      "max": "2926.6"
+    },
+    "primary->satellite": {
+      "median": "1104.0",
+      "P75": "2283.3",
+      "P90": "3165.2",
+      "P95": "3486.6",
+      "P99": "4086.0",
+      "max": "4228.0"
+    },
+    "satellite->satellite": {
+      "median": "1459.1",
+      "P75": "2323.7",
+      "P90": "2946.3",
+      "P95": "2965.5",
+      "P99": "3103.9",
+      "max": "3103.9"
+    }
+  },
+  "top20LongEdges": [
+    {
+      "source": "LWC:spend-tracker-nav",
+      "target": "LWC:account-metrics",
+      "sourceDomain": "SpendTrackerNav",
+      "targetDomain": "AccountMetrics",
+      "sourceLayer": "presentation",
+      "targetLayer": "presentation",
+      "edgeType": "primary->primary",
+      "length": 4420,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": false,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:FiscalPeriodMappingSelector",
+      "target": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Year__c",
+      "sourceDomain": "FiscalPeriodMapping",
+      "targetDomain": "FiscalPeriodMapping",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4228.001892147164,
+      "sameRow": true,
+      "sameDomain": true,
+      "crossDomain": false,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuditServiceTest",
+      "target": "External:Assert",
+      "sourceDomain": "Audit",
+      "targetDomain": "Assert",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4220.947760870774,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuditServiceTest",
+      "target": "External:Assert",
+      "sourceDomain": "Audit",
+      "targetDomain": "Assert",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4220.947760870774,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:UserContactMappingServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "SpendTrackerAccessContext",
+      "targetDomain": "Contact",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4145.823198524885,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:UserContactMappingServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "SpendTrackerAccessContext",
+      "targetDomain": "Contact",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4145.823198524885,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:UserContactMappingServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "SpendTrackerAccessContext",
+      "targetDomain": "Contact",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4145.823198524885,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:FiscalPeriodMappingSelector",
+      "target": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
+      "sourceDomain": "FiscalPeriodMapping",
+      "targetDomain": "FiscalPeriodMapping",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4085.9760155928475,
+      "sameRow": true,
+      "sameDomain": true,
+      "crossDomain": false,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:FiscalPeriodMappingSelector",
+      "target": "Field:Fiscal_Period_Mapping__mdt.End_Date__c",
+      "sourceDomain": "FiscalPeriodMapping",
+      "targetDomain": "FiscalPeriodMapping",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4075.929341880205,
+      "sameRow": true,
+      "sameDomain": true,
+      "crossDomain": false,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AdminAccessServiceTest",
+      "target": "ApexClass:AdminUserController",
+      "sourceDomain": "AdminAudit",
+      "targetDomain": "AdminUser",
+      "sourceLayer": "domain",
+      "targetLayer": "application",
+      "edgeType": "primary->satellite",
+      "length": 4024.9720495923943,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AdminAccessServiceTest",
+      "target": "ApexClass:AdminUserController",
+      "sourceDomain": "AdminAudit",
+      "targetDomain": "AdminUser",
+      "sourceLayer": "domain",
+      "targetLayer": "application",
+      "edgeType": "primary->satellite",
+      "length": 4024.9720495923943,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Contact",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4005.3117571325843,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Contact",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4005.3117571325843,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:SpendImportService",
+      "target": "External:ContentVersion",
+      "sourceDomain": "SpendImport",
+      "targetDomain": "ContentVersion",
+      "sourceLayer": "application",
+      "targetLayer": "schema",
+      "edgeType": "primary->primary",
+      "length": 4001.3038674911954,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:BudgetService",
+      "target": "Object:Organization_Budget__c",
+      "sourceDomain": "Budget",
+      "targetDomain": "Organization_Budget",
+      "sourceLayer": "application",
+      "targetLayer": "schema",
+      "edgeType": "primary->primary",
+      "length": 3972.9082546668506,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:BudgetService",
+      "target": "Object:Organization_Budget__c",
+      "sourceDomain": "Budget",
+      "targetDomain": "Organization_Budget",
+      "sourceLayer": "application",
+      "targetLayer": "schema",
+      "edgeType": "primary->primary",
+      "length": 3972.9082546668506,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:BudgetService",
+      "target": "Object:Organization_Budget__c",
+      "sourceDomain": "Budget",
+      "targetDomain": "Organization_Budget",
+      "sourceLayer": "application",
+      "targetLayer": "schema",
+      "edgeType": "primary->primary",
+      "length": 3972.9082546668506,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:FiscalPeriodMappingSelector",
+      "target": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Month__c",
+      "sourceDomain": "FiscalPeriodMapping",
+      "targetDomain": "FiscalPeriodMapping",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 3927.034504559388,
+      "sameRow": true,
+      "sameDomain": true,
+      "crossDomain": false,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AdminAccessServiceTest",
+      "target": "External:Profile",
+      "sourceDomain": "AdminAudit",
+      "targetDomain": "Profile",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 3926.1686158391108,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:FiscalPeriodMappingSelector",
+      "target": "Object:Fiscal_Period_Mapping__mdt",
+      "sourceDomain": "FiscalPeriodMapping",
+      "targetDomain": "Fiscal_Period_Mapping",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->primary",
+      "length": 3908.6570583769562,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    }
+  ],
+  "bridgeDistStats": {
+    "median": "963.3",
+    "P75": "2080.0",
+    "P90": "2864.5",
+    "P95": "3156.3",
+    "P99": "3972.9",
+    "max": "4420.0"
+  },
+  "satelliteStats": {
+    "unanchoredCount": 0,
+    "satDistStats": {
+      "median": "302.8",
+      "P75": "430.8",
+      "P90": "583.1",
+      "P95": "621.0",
+      "P99": "688.8",
+      "max": "688.8"
+    },
+    "satelliteBbox": {
+      "count": 84,
+      "xMin": 580,
+      "xMax": 5560,
+      "yMin": 0,
+      "yMax": 1480,
+      "width": 4980,
+      "height": 1480
+    }
+  },
+  "collisionPairs": [
+    {
+      "node1": "ApexClass:AdminDataExplorerController",
+      "node2": "ApexClass:CloudAccountService",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1580,
+        "y": 430
+      },
+      "p2": {
+        "x": 1580,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:AdminDataExplorerController",
+      "node2": "ApexClass:ForecastController",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1580,
+        "y": 430
+      },
+      "p2": {
+        "x": 1660,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:AdminDataExplorerController",
+      "node2": "Trigger:OrganizationTrigger",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1580,
+        "y": 430
+      },
+      "p2": {
+        "x": 1620,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:AdminOverviewController",
+      "node2": "ApexClass:OrganizationHierarchyService",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1980,
+        "y": 430
+      },
+      "p2": {
+        "x": 1999.1999999999998,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:CloudAccountService",
+      "node2": "ApexClass:ForecastController",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1580,
+        "y": 430
+      },
+      "p2": {
+        "x": 1660,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:CloudAccountService",
+      "node2": "Trigger:OrganizationTrigger",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1580,
+        "y": 430
+      },
+      "p2": {
+        "x": 1620,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:CloudServiceSelector",
+      "node2": "ApexClass:OrganizationHierarchySelector",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 2000,
+        "y": 690
+      },
+      "p2": {
+        "x": 1960,
+        "y": 690
+      }
+    },
+    {
+      "node1": "ApexClass:create_usersTest",
+      "node2": "External:Object:PermissionSetAssignment",
+      "category": "primary-satellite",
+      "p1": {
+        "x": 1496.2745766417147,
+        "y": 947.4673490978479
+      },
+      "p2": {
+        "x": 1540,
+        "y": 950
+      }
+    },
+    {
+      "node1": "ApexClass:ForecastController",
+      "node2": "Trigger:OrganizationTrigger",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1660,
+        "y": 430
+      },
+      "p2": {
+        "x": 1620,
+        "y": 430
+      }
+    },
+    {
+      "node1": "ApexClass:ForecastSelector",
+      "node2": "ApexClass:SystemAdminAccessPolicy",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1640,
+        "y": 730
+      },
+      "p2": {
+        "x": 1540,
+        "y": 730
+      }
+    },
+    {
+      "node1": "ApexClass:ForecastSelector",
+      "node2": "External:AccountWrapper",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 1640,
+        "y": 730
+      },
+      "p2": {
+        "x": 1580,
+        "y": 750
+      }
+    },
+    {
+      "node1": "ApexClass:ForecastSelector",
+      "node2": "External:DmlException",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1640,
+        "y": 730
+      },
+      "p2": {
+        "x": 1700,
+        "y": 730
+      }
+    },
+    {
+      "node1": "ApexClass:OrganizationBudgetSelector",
+      "node2": "External:DmlException",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1800,
+        "y": 690
+      },
+      "p2": {
+        "x": 1700,
+        "y": 730
+      }
+    },
+    {
+      "node1": "ApexClass:SystemAdminAccessPolicy",
+      "node2": "External:AccountWrapper",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 1540,
+        "y": 730
+      },
+      "p2": {
+        "x": 1580,
+        "y": 750
+      }
+    },
+    {
+      "node1": "External:BudgetWrapper",
+      "node2": "Object:Cloud_Spend__c",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 4760,
+        "y": 850
+      },
+      "p2": {
+        "x": 4660,
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:Database.Batchable<SObject>",
+      "node2": "Object:Cloud_Account__c",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 4980,
+        "y": 850
+      },
+      "p2": {
+        "x": 4920,
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:HealthCheckWrapper",
+      "node2": "External:ProvisioningException",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 3880,
+        "y": 850
+      },
+      "p2": {
+        "x": 3779.2,
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:Object:PermissionSetAssignment",
+      "node2": "Field:Forecast__c.Fiscal_Month__c",
+      "category": "primary-satellite",
+      "p1": {
+        "x": 1540,
+        "y": 950
+      },
+      "p2": {
+        "x": 1648.9020826108112,
+        "y": 950
+      }
+    },
+    {
+      "node1": "External:OrganizationWrapper",
+      "node2": "Object:Forecast__c",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 1620,
+        "y": 830
+      },
+      "p2": {
+        "x": 1620,
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:OrganizationWrapper",
+      "node2": "Object:Organization_Hierarchy__c",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 1620,
+        "y": 830
+      },
+      "p2": {
+        "x": 1580,
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:Profile",
+      "node2": "Object:Organization_Budget__c",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 900,
+        "y": 850
+      },
+      "p2": {
+        "x": 800,
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:QueueableContext",
+      "node2": "Object:Cloud_Service__c",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 4040,
+        "y": 870
+      },
+      "p2": {
+        "x": 4140,
+        "y": 850
+      }
+    },
+    {
+      "node1": "Field:Account.Domain__c",
+      "node2": "Field:Forecast__c.Fiscal_Month__c",
+      "category": "satellite-satellite",
+      "p1": {
+        "x": 1700,
+        "y": 950
+      },
+      "p2": {
+        "x": 1648.9020826108112,
+        "y": 950
+      }
+    },
+    {
+      "node1": "Field:Cloud_Account__c.Account_ID__c",
+      "node2": "Field:Cloud_Account__c.Cloud_Provider__c",
+      "category": "satellite-satellite",
+      "p1": {
+        "x": 4920,
+        "y": 950
+      },
+      "p2": {
+        "x": 5020,
+        "y": 950
+      }
+    },
+    {
+      "node1": "Object:Forecast__c",
+      "node2": "Object:Organization_Hierarchy__c",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1620,
+        "y": 850
+      },
+      "p2": {
+        "x": 1580,
+        "y": 850
+      }
+    }
+  ],
+  "crossingsDetailed": {
+    "primaryPrimaryCrossings": 8937,
+    "primaryBridgeCrossings": 2615,
+    "bridgeBridgeCrossings": 212,
+    "primarySatelliteCrossings": 48858,
+    "satelliteSatelliteCrossings": 46772,
+    "totalGeometricCrossings": 107394
+  },
+  "determinism": {
+    "repeatDelta": "0.00000",
+    "maxShuffleDelta": "0.00000"
+  },
+  "performance": {
+    "totalMs": "559.65",
+    "analysisMs": "16.72",
+    "layoutMs": "542.93"
+  },
+  "regressionMatrix": [
+    {
+      "fixtureId": "layered-architecture",
+      "nodesCount": 10,
+      "edgesCount": 9,
+      "width": 480,
+      "height": 720,
+      "aspectRatio": "0.67",
+      "overlaps": 0,
+      "crossings": 1,
+      "maxEdge": "394.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "two-domain",
+      "nodesCount": 8,
+      "edgesCount": 7,
+      "width": 760,
+      "height": 400,
+      "aspectRatio": "1.90",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "360.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "food-delivery",
+      "nodesCount": 26,
+      "edgesCount": 25,
+      "width": 2480,
+      "height": 920,
+      "aspectRatio": "2.70",
+      "overlaps": 0,
+      "crossings": 6,
+      "maxEdge": "2200.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "hub-heavy",
+      "nodesCount": 15,
+      "edgesCount": 16,
+      "width": 1960,
+      "height": 185,
+      "aspectRatio": "10.59",
+      "overlaps": 0,
+      "crossings": 3,
+      "maxEdge": "640.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "bridge-heavy",
+      "nodesCount": 13,
+      "edgesCount": 15,
+      "width": 1080,
+      "height": 505,
+      "aspectRatio": "2.14",
+      "overlaps": 0,
+      "crossings": 6,
+      "maxEdge": "457.4",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "test-heavy",
+      "nodesCount": 14,
+      "edgesCount": 13,
+      "width": 600,
+      "height": 560,
+      "aspectRatio": "1.07",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "340.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "field-heavy",
+      "nodesCount": 26,
+      "edgesCount": 25,
+      "width": 1080,
+      "height": 560,
+      "aspectRatio": "1.93",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "520.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "trigger-handler",
+      "nodesCount": 7,
+      "edgesCount": 7,
+      "width": 640,
+      "height": 605,
+      "aspectRatio": "1.06",
+      "overlaps": 0,
+      "crossings": 1,
+      "maxEdge": "642.4",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "disconnected-components",
+      "nodesCount": 20,
+      "edgesCount": 15,
+      "width": 1320,
+      "height": 1580,
+      "aspectRatio": "0.84",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "520.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "long-chain",
+      "nodesCount": 15,
+      "edgesCount": 14,
+      "width": 2840.01,
+      "height": 185,
+      "aspectRatio": "15.35",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "219.1",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "dense-cross-domain",
+      "nodesCount": 9,
+      "edgesCount": 12,
+      "width": 970,
+      "height": 315,
+      "aspectRatio": "3.08",
+      "overlaps": 0,
+      "crossings": 7,
+      "maxEdge": "879.3",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "sparse-graph",
+      "nodesCount": 32,
+      "edgesCount": 4,
+      "width": 1260,
+      "height": 860,
+      "aspectRatio": "1.47",
+      "overlaps": 0,
+      "crossings": 0,
+      "maxEdge": "160.0",
+      "determinismDelta": 0
+    },
+    {
+      "fixtureId": "scale-100-plus",
+      "nodesCount": 111,
+      "edgesCount": 120,
+      "width": 7000,
+      "height": 1380,
+      "aspectRatio": "5.07",
+      "overlaps": 0,
+      "crossings": 320,
+      "maxEdge": "3610.2",
+      "determinismDelta": 0
+    }
+  ]
+}
