@@ -31,7 +31,6 @@ import { computeArchitectureLayout } from '../architecture-layout';
 import { evaluateLayout } from './evaluate-layout';
 import { calculateDetailedEdgeCrossings } from './metrics';
 import { ALL_BENCHMARK_FIXTURES } from './fixtures';
-import { shouldAutoLayout, resolveAuthoritativePosition } from '../position-policy';
 
 const FIXTURE_PATH = path.resolve(
   __dirname,
@@ -436,7 +435,7 @@ describe('Wave 10F Final Forensic Acceptance Audit', () => {
     const domainCohesionList: any[] = [];
     const domainRegionsMap = globalDomainResult.domainRegions;
 
-    domainRegionsMap.forEach((region, domain) => {
+    domainRegionsMap.forEach((_region, domain) => {
       const dNodes = safeNodes.filter(n => domainMap.get(n.id) === domain);
       const dPrimaries = dNodes.filter(n => !isTestNode(n) && !isFieldNode(n));
       const dBridges = dNodes.filter(n => centralityMap.get(n.id)?.isBridge && !isTestNode(n) && !isFieldNode(n));
@@ -479,8 +478,8 @@ describe('Wave 10F Final Forensic Acceptance Audit', () => {
 
       domainRowAnalysis.push({
         domain,
-        row: region.row ?? 0,
-        column: region.colInRow ?? region.orderIndex,
+        row: (region as any).row ?? 0,
+        column: (region as any).colInRow ?? region.orderIndex,
         orderIndex: region.orderIndex,
         primaryCount: dPrimaries.length,
         crossDomainEdgeCount: connectedEdges.reduce((sum, e) => sum + e.totalEdgeCount, 0),
@@ -531,7 +530,7 @@ describe('Wave 10F Final Forensic Acceptance Audit', () => {
       const srcRegion = srcDomain ? domainRegionsMap.get(srcDomain) : undefined;
       const tgtRegion = tgtDomain ? domainRegionsMap.get(tgtDomain) : undefined;
 
-      const sameRow = srcRegion && tgtRegion ? srcRegion.row === tgtRegion.row : false;
+      const sameRow = srcRegion && tgtRegion ? (srcRegion as any).row === (tgtRegion as any).row : false;
       const sameDomain = srcDomain === tgtDomain;
       const crossDomain = !sameDomain;
       const crossLayer = srcLayer !== tgtLayer;
@@ -609,9 +608,9 @@ describe('Wave 10F Final Forensic Acceptance Audit', () => {
     satelliteNodes.forEach(node => {
       let anchorId: string | null = null;
       if (isFieldNode(node)) {
-        anchorId = node.parentObjectId || findParentObjectId(node, safeNodes, safeEdges);
+        anchorId = (node as any).parentObjectId || findParentObjectId(node, safeNodes, safeEdges);
       } else {
-        anchorId = node.parentProductionNodeId || findParentProductionNodeId(node, safeNodes, safeEdges);
+        anchorId = (node as any).parentProductionNodeId || findParentProductionNodeId(node, safeNodes, safeEdges);
       }
       const satPos = finalPos[node.id];
       const anchorPos = anchorId ? finalPos[anchorId] : null;

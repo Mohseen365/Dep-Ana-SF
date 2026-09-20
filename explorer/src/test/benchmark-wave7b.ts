@@ -390,7 +390,7 @@ function runStageProfiling(nodes: any[], edges: any[], options: any = {}) {
   };
   for (const [id, pos] of Object.entries(existingPositions)) {
     if (pos) {
-      resultPositions[id] = { x: pos.x, y: (pos as any).y };
+      resultPositions[id] = { x: (pos as any).x, y: (pos as any).y };
     }
   }
   stageTimes['12_position_authority_restoration'] = performance.now() - t0;

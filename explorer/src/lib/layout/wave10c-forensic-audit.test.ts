@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification } from './analysis';
-import { classifyNodeLayerWithReason, classifyNodeLayer } from './layers';
-import { discoverDomains, classifyNodeDomain } from './domains';
-import { computeGlobalDomainLayout, buildDomainGraph, determineGlobalDomainOrder, LAYER_Y_MAP } from './global-layout';
+import { classifyNodeLayerWithReason } from './layers';
+import { discoverDomains } from './domains';
+import { computeGlobalDomainLayout, buildDomainGraph } from './global-layout';
 import { reduceEdgeCrossings } from './ordering';
 import { computeLocalNodeLayout } from './local-layout';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from './centrality';
@@ -14,7 +14,6 @@ import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLa
 import { resolveSpacingAndCollisions } from './spacing';
 import { computeArchitectureLayout } from '../architecture-layout';
 import { evaluateLayout } from './evaluate-layout';
-import { calculateLayoutMetrics, edgeCrossingCount } from './metrics';
 import { ALL_BENCHMARK_FIXTURES } from './fixtures';
 
 const FIXTURE_PATH = path.resolve(__dirname, '../../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
@@ -348,7 +347,6 @@ describe('Wave 10C Forensic Validation Audit', () => {
         }
       });
       const pWidth = pMinX !== Infinity ? pMaxX - pMinX : 0;
-      const pHeight = pMinY !== Infinity ? pMaxY - pMinY : 0;
       const pCentroidX = pMinX !== Infinity ? (pMinX + pMaxX) / 2 : 0;
       const pCentroidY = pMinY !== Infinity ? (pMinY + pMaxY) / 2 : 0;
 

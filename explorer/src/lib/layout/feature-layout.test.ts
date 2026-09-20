@@ -10,7 +10,7 @@ function createDummyNode(
   return {
     id,
     displayName: id,
-    type,
+    type: type as any,
     file,
     metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
     risk: 'LOW',
@@ -67,9 +67,9 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('Order__c', 'CustomObject'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'OrderLWC', target: 'OrderController' },
-      { id: 'e2', source: 'OrderController', target: 'OrderService' },
-      { id: 'e3', source: 'OrderService', target: 'Order__c' },
+      { id: 'e1', source: 'OrderLWC', target: 'OrderController' } as ExplorerEdge,
+      { id: 'e2', source: 'OrderController', target: 'OrderService' } as ExplorerEdge,
+      { id: 'e3', source: 'OrderService', target: 'Order__c' } as ExplorerEdge,
     ];
 
     const defaultPos = computeArchitectureLayout(nodes, edges);
@@ -88,10 +88,10 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('Checkout__c', 'CustomObject'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' },
-      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' },
-      { id: 'e3', source: 'CheckoutService', target: 'CheckoutSelector' },
-      { id: 'e4', source: 'CheckoutSelector', target: 'Checkout__c' },
+      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' } as ExplorerEdge,
+      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' } as ExplorerEdge,
+      { id: 'e3', source: 'CheckoutService', target: 'CheckoutSelector' } as ExplorerEdge,
+      { id: 'e4', source: 'CheckoutSelector', target: 'Checkout__c' } as ExplorerEdge,
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -118,10 +118,10 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('PaymentService', 'ApexClass', 'src/billing/PaymentService.cls'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'BillingLWC', target: 'BillingController' },
-      { id: 'e2', source: 'BillingController', target: 'BillingService' },
-      { id: 'e3', source: 'PaymentLWC', target: 'PaymentController' },
-      { id: 'e4', source: 'PaymentController', target: 'PaymentService' },
+      { id: 'e1', source: 'BillingLWC', target: 'BillingController' } as ExplorerEdge,
+      { id: 'e2', source: 'BillingController', target: 'BillingService' } as ExplorerEdge,
+      { id: 'e3', source: 'PaymentLWC', target: 'PaymentController' } as ExplorerEdge,
+      { id: 'e4', source: 'PaymentController', target: 'PaymentService' } as ExplorerEdge,
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -148,8 +148,8 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       const ctrl = createDummyNode(`Feature${f}Controller`, 'ApexClass');
       nodes.push(lwc, ctrl);
       edges.push(
-        { id: `e_${f}_1`, source: lwc.id, target: ctrl.id },
-        { id: `e_${f}_2`, source: ctrl.id, target: 'SharedLogger' }
+        { id: `e_${f}_1`, source: lwc.id, target: ctrl.id } as ExplorerEdge,
+        { id: `e_${f}_2`, source: ctrl.id, target: 'SharedLogger' } as ExplorerEdge
       );
     }
 
@@ -175,10 +175,10 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('Inventory__c', 'CustomObject', 'src/inventory/Inventory__c.object'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'SalesLWC', target: 'SalesController' },
-      { id: 'e2', source: 'SalesController', target: 'CrossSyncService' },
-      { id: 'e3', source: 'CrossSyncService', target: 'InventoryService' },
-      { id: 'e4', source: 'InventoryService', target: 'Inventory__c' },
+      { id: 'e1', source: 'SalesLWC', target: 'SalesController' } as ExplorerEdge,
+      { id: 'e2', source: 'SalesController', target: 'CrossSyncService' } as ExplorerEdge,
+      { id: 'e3', source: 'CrossSyncService', target: 'InventoryService' } as ExplorerEdge,
+      { id: 'e4', source: 'InventoryService', target: 'Inventory__c' } as ExplorerEdge,
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -198,11 +198,11 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('Order__c.Status__c', 'Field'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'OrderController', target: 'OrderService' },
-      { id: 'e2', source: 'OrderControllerTest', target: 'OrderController' },
-      { id: 'e3', source: 'OrderServiceTest', target: 'OrderService' },
-      { id: 'e4', source: 'OrderService', target: 'Order__c' },
-      { id: 'e5', source: 'Order__c.Status__c', target: 'Order__c' },
+      { id: 'e1', source: 'OrderController', target: 'OrderService' } as ExplorerEdge,
+      { id: 'e2', source: 'OrderControllerTest', target: 'OrderController' } as ExplorerEdge,
+      { id: 'e3', source: 'OrderServiceTest', target: 'OrderService' } as ExplorerEdge,
+      { id: 'e4', source: 'OrderService', target: 'Order__c' } as ExplorerEdge,
+      { id: 'e5', source: 'Order__c.Status__c', target: 'Order__c' } as ExplorerEdge,
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -231,10 +231,10 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
 
       nodes.push(lwc, ctrl, svc, sel, obj);
       edges.push(
-        { id: `e_${f}_1`, source: lwc.id, target: ctrl.id },
-        { id: `e_${f}_2`, source: ctrl.id, target: svc.id },
-        { id: `e_${f}_3`, source: svc.id, target: sel.id },
-        { id: `e_${f}_4`, source: sel.id, target: obj.id }
+        { id: `e_${f}_1`, source: lwc.id, target: ctrl.id } as ExplorerEdge,
+        { id: `e_${f}_2`, source: ctrl.id, target: svc.id } as ExplorerEdge,
+        { id: `e_${f}_3`, source: svc.id, target: sel.id } as ExplorerEdge,
+        { id: `e_${f}_4`, source: sel.id, target: obj.id } as ExplorerEdge
       );
     }
 
@@ -258,9 +258,9 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('ShippingController', 'ApexClass'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'BillingLWC', target: 'BillingController' },
-      { id: 'e2', source: 'InventoryLWC', target: 'InventoryController' },
-      { id: 'e3', source: 'ShippingLWC', target: 'ShippingController' },
+      { id: 'e1', source: 'BillingLWC', target: 'BillingController' } as ExplorerEdge,
+      { id: 'e2', source: 'InventoryLWC', target: 'InventoryController' } as ExplorerEdge,
+      { id: 'e3', source: 'ShippingLWC', target: 'ShippingController' } as ExplorerEdge,
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -286,8 +286,8 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       const svc = createDummyNode(`Feat${f}Svc`, 'ApexClass');
       nodes.push(lwc, ctrl, svc);
       edges.push(
-        { id: `e_f${f}_1`, source: lwc.id, target: ctrl.id },
-        { id: `e_f${f}_2`, source: ctrl.id, target: svc.id }
+        { id: `e_f${f}_1`, source: lwc.id, target: ctrl.id } as ExplorerEdge,
+        { id: `e_f${f}_2`, source: ctrl.id, target: svc.id } as ExplorerEdge
       );
     }
 
@@ -298,8 +298,8 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       const srcFeat = (b % 4) + 1;
       const tgtFeat = ((b + 1) % 4) + 1;
       edges.push(
-        { id: `e_b${b}_1`, source: `Feat${srcFeat}Ctrl`, target: bridge.id },
-        { id: `e_b${b}_2`, source: bridge.id, target: `Feat${tgtFeat}Svc` }
+        { id: `e_b${b}_1`, source: `Feat${srcFeat}Ctrl`, target: bridge.id } as ExplorerEdge,
+        { id: `e_b${b}_2`, source: bridge.id, target: `Feat${tgtFeat}Svc` } as ExplorerEdge
       );
     }
 
@@ -321,12 +321,12 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('SharedLogger', 'ApexClass'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' },
-      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' },
-      { id: 'e3', source: 'PaymentLWC', target: 'PaymentController' },
-      { id: 'e4', source: 'PaymentController', target: 'PaymentService' },
-      { id: 'e5', source: 'CheckoutController', target: 'SharedLogger' },
-      { id: 'e6', source: 'PaymentController', target: 'SharedLogger' },
+      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' } as ExplorerEdge,
+      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' } as ExplorerEdge,
+      { id: 'e3', source: 'PaymentLWC', target: 'PaymentController' } as ExplorerEdge,
+      { id: 'e4', source: 'PaymentController', target: 'PaymentService' } as ExplorerEdge,
+      { id: 'e5', source: 'CheckoutController', target: 'SharedLogger' } as ExplorerEdge,
+      { id: 'e6', source: 'PaymentController', target: 'SharedLogger' } as ExplorerEdge,
     ];
 
     const pos1 = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -355,8 +355,8 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('CheckoutService', 'ApexClass'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' },
-      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' },
+      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' } as ExplorerEdge,
+      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' } as ExplorerEdge,
     ];
 
     // Add unrelated disconnected component
@@ -365,9 +365,9 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('UnrelatedLWC', 'LWC'),
       createDummyNode('UnrelatedController', 'ApexClass'),
     ];
-    const extendedEdges = [
+    const extendedEdges: ExplorerEdge[] = [
       ...edges,
-      { id: 'e3', source: 'UnrelatedLWC', target: 'UnrelatedController' },
+      { id: 'e3', source: 'UnrelatedLWC', target: 'UnrelatedController' } as ExplorerEdge,
     ];
 
     const posOriginal = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -386,7 +386,7 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('OrderController', 'ApexClass'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'OrderLWC', target: 'OrderController' },
+      { id: 'e1', source: 'OrderLWC', target: 'OrderController' } as ExplorerEdge,
     ];
 
     const existingPositions = {
@@ -409,7 +409,7 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
       createDummyNode('SparseBackend', 'ApexClass'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'SparseUI', target: 'SparseBackend' },
+      { id: 'e1', source: 'SparseUI', target: 'SparseBackend' } as ExplorerEdge,
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -454,10 +454,10 @@ describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', 
 
         nodes.push(lwc, ctrl, svc, sel, obj);
         edges.push(
-          { id: `e_${f}_1`, source: lwc.id, target: ctrl.id },
-          { id: `e_${f}_2`, source: ctrl.id, target: svc.id },
-          { id: `e_${f}_3`, source: svc.id, target: sel.id },
-          { id: `e_${f}_4`, source: sel.id, target: obj.id }
+          { id: `e_${f}_1`, source: lwc.id, target: ctrl.id } as ExplorerEdge,
+          { id: `e_${f}_2`, source: ctrl.id, target: svc.id } as ExplorerEdge,
+          { id: `e_${f}_3`, source: svc.id, target: sel.id } as ExplorerEdge,
+          { id: `e_${f}_4`, source: sel.id, target: obj.id } as ExplorerEdge
         );
       }
 

@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import {
-  computeArchitectureAnalysis,
   findParentObjectId,
   findParentProductionNodeId,
   isTestNode,
@@ -14,9 +13,6 @@ import { discoverDomains } from './domains';
 import { computeArchitectureLayout } from '../architecture-layout';
 import {
   calculateDetailedEdgeCrossings,
-  nodeOverlapCount,
-  averageEdgeLength,
-  maxEdgeLength,
 } from './metrics';
 
 const FIXTURE_PATH = path.resolve(
@@ -42,7 +38,6 @@ describe('Wave 10E Forensic Acceptance Metrics Capture', () => {
     safeNodes.sort((a, b) => a.id.localeCompare(b.id));
     safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
-    const analysis = computeArchitectureAnalysis(safeNodes, safeEdges);
     const layerMap = new Map<string, any>();
     safeNodes.forEach(node => layerMap.set(node.id, classifyNodeLayerWithReason(node).layer));
     const domainDiscovery = discoverDomains(safeNodes, safeEdges);
@@ -101,10 +96,10 @@ describe('Wave 10E Forensic Acceptance Metrics Capture', () => {
       if (!isPrimary(node)) {
         let anchorId: string | null = null;
         if (isFieldNode(node)) {
-          anchorId = node.parentObjectId || findParentObjectId(node, safeNodes, safeEdges);
+          anchorId = (node as any).parentObjectId || findParentObjectId(node, safeNodes, safeEdges);
         } else {
           anchorId =
-            node.parentProductionNodeId ||
+            (node as any).parentProductionNodeId ||
             findParentProductionNodeId(node, safeNodes, safeEdges);
         }
         const satPos = positions[node.id];

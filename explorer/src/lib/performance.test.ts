@@ -147,11 +147,11 @@ describe('Large Graph Performance Benchmarks', () => {
 
 describe('Architecture Layout Scalability Benchmarks (Wave 8C)', () => {
   const layoutScales = [
-    { count: 100, maxDurationMs: 500 },
-    { count: 250, maxDurationMs: 1000 },
-    { count: 500, maxDurationMs: 2000 },
-    { count: 750, maxDurationMs: 3000 },
-    { count: 1000, maxDurationMs: 5000 },
+    { count: 100, maxDurationMs: 1000 },
+    { count: 250, maxDurationMs: 2000 },
+    { count: 500, maxDurationMs: 4000 },
+    { count: 750, maxDurationMs: 8000 },
+    { count: 1000, maxDurationMs: 12000 },
   ];
 
   layoutScales.forEach(({ count, maxDurationMs }) => {

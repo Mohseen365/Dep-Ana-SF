@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
@@ -233,11 +233,11 @@ describe('Wave 10E Forensic Investigation', () => {
 
         if (isFieldNode(node)) {
           expectedParent = findParentObjectId(node, safeNodes, safeEdges);
-          anchorId = node.parentObjectId || expectedParent;
+          anchorId = (node as any).parentObjectId || expectedParent;
           if (!anchorId) reason = 'Field without parent object ID in file/name';
         } else {
           expectedParent = findParentProductionNodeId(node, safeNodes, safeEdges);
-          anchorId = node.parentProductionNodeId || expectedParent;
+          anchorId = (node as any).parentProductionNodeId || expectedParent;
           if (!anchorId) reason = 'Test without parent production node ID';
         }
 
@@ -321,7 +321,7 @@ describe('Wave 10E Forensic Investigation', () => {
     const parentSatMap = new Map<string, ExplorerNode[]>();
     safeNodes.forEach(n => {
       if (isFieldNode(n)) {
-        const parentId = n.parentObjectId || findParentObjectId(n, safeNodes, safeEdges);
+        const parentId = (n as any).parentObjectId || findParentObjectId(n, safeNodes, safeEdges);
         if (parentId) {
           if (!parentSatMap.has(parentId)) parentSatMap.set(parentId, []);
           parentSatMap.get(parentId)!.push(n);
