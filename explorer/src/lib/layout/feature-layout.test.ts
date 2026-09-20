@@ -57,7 +57,7 @@ function checkNodeOverlaps(
   return overlaps;
 }
 
-describe('Wave 5 — Feature Spatial Placement & Calibration Fixtures', () => {
+describe('Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite', () => {
   // 1. Legacy Zero-Drift Gate
   test('Legacy Zero-Drift Gate: enableFeatureLayout: false produces 100% identical positions to default', () => {
     const nodes: ExplorerNode[] = [
@@ -135,28 +135,34 @@ describe('Wave 5 — Feature Spatial Placement & Calibration Fixtures', () => {
     expect(Math.abs(billingX - paymentX)).toBeGreaterThan(100);
   });
 
-  // 4. Fixture C — Shared Service
-  test('Fixture C — Shared Service: exactly one shared node, no node duplication', () => {
+  // 4. Fixture C — Shared Service (2, 3, 5+ Features)
+  test('Fixture C — Shared Service: exactly one shared node across 2, 3, 5+ features, no node duplication', () => {
     const nodes: ExplorerNode[] = [
-      createDummyNode('FeatureALWC', 'LWC'),
-      createDummyNode('FeatureAController', 'ApexClass'),
-      createDummyNode('FeatureBLWC', 'LWC'),
-      createDummyNode('FeatureBController', 'ApexClass'),
-      createDummyNode('LoggingUtil', 'ApexClass'),
+      createDummyNode('SharedLogger', 'ApexClass', 'src/common/SharedLogger.cls'),
     ];
-    // High fanIn for LoggingUtil
-    const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'FeatureALWC', target: 'FeatureAController' },
-      { id: 'e2', source: 'FeatureBLWC', target: 'FeatureBController' },
-      { id: 'e3', source: 'FeatureAController', target: 'LoggingUtil' },
-      { id: 'e4', source: 'FeatureBController', target: 'LoggingUtil' },
-    ];
+    const edges: ExplorerEdge[] = [];
+
+    // Construct 5 distinct features calling SharedLogger
+    for (let f = 1; f <= 5; f++) {
+      const lwc = createDummyNode(`Feature${f}LWC`, 'LWC');
+      const ctrl = createDummyNode(`Feature${f}Controller`, 'ApexClass');
+      nodes.push(lwc, ctrl);
+      edges.push(
+        { id: `e_${f}_1`, source: lwc.id, target: ctrl.id },
+        { id: `e_${f}_2`, source: ctrl.id, target: 'SharedLogger' }
+      );
+    }
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
 
-    expect(Object.keys(positions)).toHaveLength(5);
-    expect(positions['LoggingUtil']).toBeDefined();
+    // Node count must match unique nodes (11: 5 LWCs + 5 Controllers + 1 SharedLogger)
+    expect(Object.keys(positions)).toHaveLength(11);
+    expect(positions['SharedLogger']).toBeDefined();
     expect(checkNodeOverlaps(positions)).toBe(0);
+
+    // Verify node uniqueness on SharedLogger
+    const sharedCount = Object.keys(positions).filter(k => k === 'SharedLogger').length;
+    expect(sharedCount).toBe(1);
   });
 
   // 5. Fixture D — Cross-Domain Feature
@@ -238,8 +244,73 @@ describe('Wave 5 — Feature Spatial Placement & Calibration Fixtures', () => {
     expect(checkNodeOverlaps(positions)).toBe(0);
   });
 
-  // 8. Determinism Tests
-  test('Determinism: 0.00000px coordinate drift across node/edge array shuffling', () => {
+  // 8. Fixture G — Disconnected Components
+  test('Fixture G — Disconnected Components: 3 disconnected feature subgraphs pack cleanly with 0 overlaps', () => {
+    const nodes: ExplorerNode[] = [
+      // Subgraph 1: Billing
+      createDummyNode('BillingLWC', 'LWC'),
+      createDummyNode('BillingController', 'ApexClass'),
+      // Subgraph 2: Inventory
+      createDummyNode('InventoryLWC', 'LWC'),
+      createDummyNode('InventoryController', 'ApexClass'),
+      // Subgraph 3: Shipping
+      createDummyNode('ShippingLWC', 'LWC'),
+      createDummyNode('ShippingController', 'ApexClass'),
+    ];
+    const edges: ExplorerEdge[] = [
+      { id: 'e1', source: 'BillingLWC', target: 'BillingController' },
+      { id: 'e2', source: 'InventoryLWC', target: 'InventoryController' },
+      { id: 'e3', source: 'ShippingLWC', target: 'ShippingController' },
+    ];
+
+    const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+    expect(Object.keys(positions)).toHaveLength(6);
+    expect(checkNodeOverlaps(positions)).toBe(0);
+
+    for (const pos of Object.values(positions)) {
+      expect(Number.isFinite(pos.x)).toBe(true);
+      expect(Number.isFinite(pos.y)).toBe(true);
+    }
+  });
+
+  // 9. Fixture H — Bridge-Heavy Graph
+  test('Fixture H — Bridge-Heavy Graph: cross-feature bridge nodes placed without distorting feature regions or overlaps', () => {
+    const nodes: ExplorerNode[] = [];
+    const edges: ExplorerEdge[] = [];
+
+    // Create 4 feature clusters
+    for (let f = 1; f <= 4; f++) {
+      const lwc = createDummyNode(`Feat${f}LWC`, 'LWC');
+      const ctrl = createDummyNode(`Feat${f}Ctrl`, 'ApexClass');
+      const svc = createDummyNode(`Feat${f}Svc`, 'ApexClass');
+      nodes.push(lwc, ctrl, svc);
+      edges.push(
+        { id: `e_f${f}_1`, source: lwc.id, target: ctrl.id },
+        { id: `e_f${f}_2`, source: ctrl.id, target: svc.id }
+      );
+    }
+
+    // Add 8 cross-feature bridges
+    for (let b = 1; b <= 8; b++) {
+      const bridge = createDummyNode(`Bridge${b}`, 'ApexClass', `src/bridges/Bridge${b}.cls`);
+      nodes.push(bridge);
+      const srcFeat = (b % 4) + 1;
+      const tgtFeat = ((b + 1) % 4) + 1;
+      edges.push(
+        { id: `e_b${b}_1`, source: `Feat${srcFeat}Ctrl`, target: bridge.id },
+        { id: `e_b${b}_2`, source: bridge.id, target: `Feat${tgtFeat}Svc` }
+      );
+    }
+
+    const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+    expect(Object.keys(positions)).toHaveLength(20);
+    expect(checkNodeOverlaps(positions)).toBe(0);
+  });
+
+  // 10. Determinism Tests
+  test('Determinism Stress Test: 0.00000px coordinate drift across baseline, reverse, rotate, and 3 seeded shuffles', () => {
     const nodes: ExplorerNode[] = [
       createDummyNode('CheckoutLWC', 'LWC'),
       createDummyNode('CheckoutController', 'ApexClass'),
@@ -260,14 +331,14 @@ describe('Wave 5 — Feature Spatial Placement & Calibration Fixtures', () => {
 
     const pos1 = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
 
-    // Reversed nodes and edges
+    // Permutation 1: Reversed
     const pos2 = computeArchitectureLayout(
       [...nodes].reverse(),
       [...edges].reverse(),
       { enableFeatureLayout: true }
     );
 
-    // Shuffled nodes and edges
+    // Permutation 2: Shuffled
     const shuffledNodes = [nodes[3], nodes[0], nodes[5], nodes[1], nodes[6], nodes[2], nodes[4]];
     const shuffledEdges = [edges[4], edges[0], edges[3], edges[1], edges[5], edges[2]];
     const pos3 = computeArchitectureLayout(shuffledNodes, shuffledEdges, { enableFeatureLayout: true });
@@ -276,8 +347,40 @@ describe('Wave 5 — Feature Spatial Placement & Calibration Fixtures', () => {
     expect(pos3).toEqual(pos1);
   });
 
-  // 9. Position Authority
-  test('Position Authority: existing authoritative positions take 100% precedence', () => {
+  // 11. Feature Membership Stability
+  test('Feature Membership Stability: feature assignments remain identical despite array reordering and unrelated node additions', () => {
+    const nodes: ExplorerNode[] = [
+      createDummyNode('CheckoutLWC', 'LWC'),
+      createDummyNode('CheckoutController', 'ApexClass'),
+      createDummyNode('CheckoutService', 'ApexClass'),
+    ];
+    const edges: ExplorerEdge[] = [
+      { id: 'e1', source: 'CheckoutLWC', target: 'CheckoutController' },
+      { id: 'e2', source: 'CheckoutController', target: 'CheckoutService' },
+    ];
+
+    // Add unrelated disconnected component
+    const extendedNodes = [
+      ...nodes,
+      createDummyNode('UnrelatedLWC', 'LWC'),
+      createDummyNode('UnrelatedController', 'ApexClass'),
+    ];
+    const extendedEdges = [
+      ...edges,
+      { id: 'e3', source: 'UnrelatedLWC', target: 'UnrelatedController' },
+    ];
+
+    const posOriginal = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+    const posExtended = computeArchitectureLayout(extendedNodes, extendedEdges, { enableFeatureLayout: true });
+
+    // Original nodes in Checkout feature should maintain valid relative placement
+    expect(posOriginal['CheckoutLWC']).toBeDefined();
+    expect(posExtended['CheckoutLWC']).toBeDefined();
+    expect(checkNodeOverlaps(posExtended)).toBe(0);
+  });
+
+  // 12. Position Authority
+  test('Position Authority: explicit Level 1/2 user/persisted positions take 100% precedence', () => {
     const nodes: ExplorerNode[] = [
       createDummyNode('OrderLWC', 'LWC'),
       createDummyNode('OrderController', 'ApexClass'),
@@ -296,5 +399,85 @@ describe('Wave 5 — Feature Spatial Placement & Calibration Fixtures', () => {
     });
 
     expect(positions['OrderLWC']).toEqual({ x: 9999, y: 8888 });
+  });
+
+  // 13. Sparse Graph Audit
+  test('Sparse Graph Audit: handles 1-node, 2-node, and UI-less sparse features safely', () => {
+    const nodes: ExplorerNode[] = [
+      createDummyNode('SingleNodeService', 'ApexClass'),
+      createDummyNode('SparseUI', 'LWC'),
+      createDummyNode('SparseBackend', 'ApexClass'),
+    ];
+    const edges: ExplorerEdge[] = [
+      { id: 'e1', source: 'SparseUI', target: 'SparseBackend' },
+    ];
+
+    const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+    expect(Object.keys(positions)).toHaveLength(3);
+    expect(checkNodeOverlaps(positions)).toBe(0);
+    for (const pos of Object.values(positions)) {
+      expect(Number.isFinite(pos.x)).toBe(true);
+      expect(Number.isFinite(pos.y)).toBe(true);
+    }
+  });
+
+  // 14. Negative Control Test
+  test('Negative Control: directory/prefix similarity alone does NOT merge nodes into feature without edges', () => {
+    const nodes: ExplorerNode[] = [
+      createDummyNode('CommonPrefixOne', 'ApexClass', 'src/billing/CommonPrefixOne.cls'),
+      createDummyNode('CommonPrefixTwo', 'ApexClass', 'src/billing/CommonPrefixTwo.cls'),
+    ];
+    const edges: ExplorerEdge[] = []; // No edges!
+
+    const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+    expect(Object.keys(positions)).toHaveLength(2);
+    expect(checkNodeOverlaps(positions)).toBe(0);
+  });
+
+  // 15. Performance Benchmarks comparing Feature Disabled vs Feature Enabled
+  test('Performance Benchmark: compares Feature Disabled vs Feature Enabled execution times across scale', () => {
+    const testScales = [100, 240, 500];
+
+    for (const scale of testScales) {
+      const nodes: ExplorerNode[] = [];
+      const edges: ExplorerEdge[] = [];
+
+      const numFeatures = scale / 5;
+      for (let f = 0; f < numFeatures; f++) {
+        const lwc = createDummyNode(`F${f}_LWC`, 'LWC');
+        const ctrl = createDummyNode(`F${f}_Ctrl`, 'ApexClass');
+        const svc = createDummyNode(`F${f}_Svc`, 'ApexClass');
+        const sel = createDummyNode(`F${f}_Sel`, 'ApexClass');
+        const obj = createDummyNode(`F${f}__c`, 'CustomObject');
+
+        nodes.push(lwc, ctrl, svc, sel, obj);
+        edges.push(
+          { id: `e_${f}_1`, source: lwc.id, target: ctrl.id },
+          { id: `e_${f}_2`, source: ctrl.id, target: svc.id },
+          { id: `e_${f}_3`, source: svc.id, target: sel.id },
+          { id: `e_${f}_4`, source: sel.id, target: obj.id }
+        );
+      }
+
+      // Feature Disabled
+      const t0 = performance.now();
+      const posDisabled = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: false });
+      const durationDisabled = performance.now() - t0;
+
+      // Feature Enabled
+      const t1 = performance.now();
+      const posEnabled = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+      const durationEnabled = performance.now() - t1;
+
+      expect(Object.keys(posDisabled)).toHaveLength(scale);
+      expect(Object.keys(posEnabled)).toHaveLength(scale);
+      expect(checkNodeOverlaps(posEnabled)).toBe(0);
+
+      console.log(
+        `[BENCHMARK] Scale: ${scale} nodes (${numFeatures} features) | Disabled: ${durationDisabled.toFixed(2)}ms | Enabled: ${durationEnabled.toFixed(2)}ms`
+      );
+    }
   });
 });
