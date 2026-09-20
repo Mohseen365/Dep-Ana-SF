@@ -4,6 +4,8 @@ import { createLayoutGraphIndex } from './layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from './layout/analysis';
 import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './layout/layers';
 import { discoverDomains, extractDomainStem } from './layout/domains';
+import { classifyAllFeatureRoles, type FeatureRole, type FeatureRoleContext } from './layout/feature-roles';
+import { discoverFeatures, type FeatureDiscoveryResult } from './layout/features';
 import { computeGlobalDomainLayout } from './layout/global-layout';
 import { reduceEdgeCrossings } from './layout/ordering';
 import { computeLocalNodeLayout } from './layout/local-layout';
@@ -30,8 +32,8 @@ export interface ArchitectureLayoutOptions {
   existingPositions?: Record<string, { x: number; y: number }>;
 }
 
-export { classifyNodeLayer, extractDomainStem, isTestNode };
-export type { ArchitectureLayer };
+export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
+export type { ArchitectureLayer, FeatureRole, FeatureDiscoveryResult };
 
 /**
  * Intelligent Architecture-Aware Layout Orchestrator
@@ -40,6 +42,7 @@ export type { ArchitectureLayer };
  * 1. Graph facts normalization & defensive cloning
  * 2. Intermediate architecture analysis
  * 3. Layer classification & Domain discovery
+ * 3.5 Feature Role classification & Feature Discovery (semantic)
  * 4. Centrality (hubs/bridges) analysis
  * 5. Connected component decomposition
  * 6. Global domain architecture layout & ordering
@@ -165,6 +168,26 @@ export function computeArchitectureLayout(
     layerMap,
     { index }
   );
+
+  // Step 3.5 & 4: Feature Role Mapping & Semantic Feature Discovery
+  const featureRoleContextMap = new Map<string, FeatureRoleContext>();
+  safeNodes.forEach(node => {
+    featureRoleContextMap.set(node.id, {
+      layer: layerMap.get(node.id) || null,
+      analysisNode: analysis.nodes.get(node.id) || null,
+      centrality: centralityMap.get(node.id) || null,
+      roleOverride: analysis.nodes.get(node.id)?.role || null,
+    });
+  });
+  const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
+
+  const _featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
+    index,
+    analysis,
+    layerMap,
+    domainMap,
+    featureRoles,
+  });
 
   // Step 5: Global Domain Architecture Layout (Wave 2A)
   const globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
