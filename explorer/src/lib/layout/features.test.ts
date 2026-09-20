@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { discoverFeatures } from './features';
-import { createLayoutGraphIndex } from './graph-index';
-import { computeArchitectureAnalysis } from './analysis';
 
 function createNode(id: string, displayName: string, type: string, extra: Partial<ExplorerNode> = {}): ExplorerNode {
   return {
@@ -33,7 +31,7 @@ function createNode(id: string, displayName: string, type: string, extra: Partia
 }
 
 function createEdge(id: string, source: string, target: string): ExplorerEdge {
-  return { id, source, target };
+  return { id, source, target } as ExplorerEdge;
 }
 
 describe('features module (Feature Discovery)', () => {

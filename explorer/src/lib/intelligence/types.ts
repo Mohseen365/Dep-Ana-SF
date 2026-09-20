@@ -64,19 +64,19 @@ export class ImmutableMap<K, V> implements ReadonlyMap<K, V> {
     });
   }
 
-  keys(): IterableIterator<K> {
+  keys(): MapIterator<K> {
     return this._map.keys();
   }
 
-  values(): IterableIterator<V> {
+  values(): MapIterator<V> {
     return this._map.values();
   }
 
-  entries(): IterableIterator<[K, V]> {
+  entries(): MapIterator<[K, V]> {
     return this._map.entries();
   }
 
-  [Symbol.iterator](): IterableIterator<[K, V]> {
+  [Symbol.iterator](): MapIterator<[K, V]> {
     return this._map[Symbol.iterator]();
   }
 }

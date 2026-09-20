@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import App from '../App';
@@ -7,7 +6,7 @@ import { ProjectStateProvider } from '../context/ProjectStateContext';
 import cloudSpendData from '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json';
 
 // Mock cytoscape and plugins
-const { mockElementsRemove, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
+const { mockCytoscapeFn } = vi.hoisted(() => {
   const mockElementsRemove = vi.fn();
   const mockElementsCollection = {
     removeClass: vi.fn().mockReturnThis(),

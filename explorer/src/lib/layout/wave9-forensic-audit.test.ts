@@ -4,13 +4,6 @@ import path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { computeArchitectureLayout } from '../architecture-layout';
 import { discoverFeatures } from './features';
-import { classifyAllFeatureRoles, isSharedInfrastructure } from './feature-roles';
-import { discoverDomains } from './domains';
-import { classifyNodeLayer } from './layers';
-import { computeGlobalFeatureLayout } from './global-layout';
-import { computeArchitectureAnalysis } from './analysis';
-import { createLayoutGraphIndex } from './graph-index';
-import { computeGraphCentralityAnalysis } from './centrality';
 
 function loadCloudSpendData(): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
   const filePath = path.resolve(__dirname, '../../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');

@@ -1,5 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
-import type { FeatureDiscoveryResult, FeatureCluster, FeatureAssignment } from './features';
+import type { FeatureDiscoveryResult } from './features';
 import type { LayoutGraphIndex } from './graph-index';
 import { createLayoutGraphIndex } from './graph-index';
 

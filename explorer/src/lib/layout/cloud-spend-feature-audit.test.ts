@@ -4,10 +4,9 @@ import path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { computeArchitectureLayout } from '../architecture-layout';
 import { discoverFeatures } from './features';
-import { classifyAllFeatureRoles, isSharedInfrastructure } from './feature-roles';
 import { discoverDomains } from './domains';
 import { classifyNodeLayer } from './layers';
-import { computeGlobalFeatureLayout, computeGlobalDomainLayout } from './global-layout';
+import { computeGlobalFeatureLayout } from './global-layout';
 import { computeArchitectureAnalysis } from './analysis';
 import { createLayoutGraphIndex } from './graph-index';
 
@@ -163,7 +162,7 @@ describe('Wave 7 — Real Cloud Spend Tracker Feature Layout Acceptance & Forens
     expect(primaryOverlaps.length).toBe(0);
 
     // Feature Region Geometry Measurement
-    const featureLayoutResult = computeGlobalFeatureLayout(nodes, edges, { enableFeatureLayout: true });
+    const featureLayoutResult = computeGlobalFeatureLayout(nodes, edges);
     console.log('\n================ FEATURE REGION GEOMETRY ================');
     featureLayoutResult.featureRegions.forEach((region, featureId) => {
       console.log(`Region ${featureId}: xCenter=${region.xCenter}, yCenter=${region.yCenter}, width=${region.width}, height=${region.height}, xMin=${region.xMin}, xMax=${region.xMax}, primaryLayer=${region.primaryLayer}`);
@@ -260,6 +259,7 @@ describe('Wave 7 — Real Cloud Spend Tracker Feature Layout Acceptance & Forens
     const t1 = performance.now();
     const featureLayout = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
     const featureTime = performance.now() - t1;
+    expect(Object.keys(featureLayout).length).toBe(nodes.length);
 
     console.log(`\nPerformance Comparison on Cloud Spend Dataset (240 nodes, 1024 edges):`);
     console.log(`  Legacy Domain Layout Time: ${legacyTime.toFixed(2)} ms`);

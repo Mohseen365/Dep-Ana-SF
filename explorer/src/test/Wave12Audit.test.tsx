@@ -4,7 +4,7 @@ import { ExplorerNode, ExplorerEdge, ExplorerNodeType, ALL_EXPLORER_NODE_TYPES }
 import { filterGraphByNodeTypes } from '../lib/search-filter';
 import { computeFocusedGraph, FocusState } from '../lib/focus-graph';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
-import { shouldAutoLayout, resolveAuthoritativePosition, calculateDeterministicNewNodePosition, Position } from '../lib/position-policy';
+import { shouldAutoLayout, calculateDeterministicNewNodePosition, Position } from '../lib/position-policy';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 
 const nodes = cloudSpendData.nodes as ExplorerNode[];

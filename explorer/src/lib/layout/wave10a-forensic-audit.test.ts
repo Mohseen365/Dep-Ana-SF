@@ -181,6 +181,7 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
 
     // Evaluate final metrics
     const evaluatedMetrics = evaluateLayout(safeNodes, safeEdges, basePositionsStage11);
+    expect(evaluatedMetrics.nodeOverlapCount).toBeGreaterThanOrEqual(0);
     const t3 = performance.now();
 
     console.log(`Performance Timings:`);
@@ -197,7 +198,7 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
     // Map component for each nodeId
     const nodeToComponentMap = new Map<string, string>();
     analysis.components.forEach(comp => {
-      comp.nodeIds.forEach(nId => nodeToComponentMap.set(nId, comp.componentId));
+      comp.nodeIds.forEach(nId => nodeToComponentMap.set(nId, String(comp.componentId)));
     });
 
     globalDomainResult.domainRegions.forEach((region, domain) => {
@@ -273,7 +274,7 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
       const globalEstimatedWidth = region.width;
 
       domainComparison.push({
-        domain,
+        domainId: domain,
         globalEstimatedWidth,
         actualPrimaryWidth,
         diffWidth: globalEstimatedWidth - actualPrimaryWidth,
@@ -284,7 +285,7 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
     });
 
     // --- 1D DOMAIN CHAINING INVESTIGATION ---
-    const domainRegionsArray = Array.from(globalDomainResult.domainRegions.entries()).map(([d, r]) => ({ domain: d, ...r }));
+    const domainRegionsArray = Array.from(globalDomainResult.domainRegions.entries()).map(([_d, r]) => r);
     domainRegionsArray.sort((a, b) => a.xMin - b.xMin);
 
     const totalHorizontalSpan = domainRegionsArray.length > 0 ? domainRegionsArray[domainRegionsArray.length - 1].xMax - domainRegionsArray[0].xMin : 0;
@@ -397,7 +398,7 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
       targetDomain: e.tgtDomain,
       sourceLayer: e.srcLayer,
       targetLayer: e.tgtLayer,
-      edgeType: e.type,
+      edgeType: (e as any).relationshipType || 'dependency',
       length: e.len.toFixed(1)
     }));
 
@@ -436,7 +437,7 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
         center: `(${cx.toFixed(0)}, ${cy.toFixed(0)})`
       });
 
-      compBoundsList.push({ compId: comp.componentId, width: w, height: h, minX, maxX, minY, maxY });
+      compBoundsList.push({ compId: String(comp.componentId), width: w, height: h, minX, maxX, minY, maxY });
     });
 
     const componentGaps: number[] = [];
@@ -569,9 +570,9 @@ describe('Wave 10A Cloud Spend Tracker Read-Only Forensic Audit', () => {
       componentPacking: {
         componentCount: componentInventory.length,
         componentInventory,
-        minGap: componentGaps[0],
-        medianGap: componentGaps[Math.floor(componentGaps.length * 0.5)],
-        p95Gap: componentGaps[Math.floor(componentGaps.length * 0.95)]
+        minGap: componentGaps[0] !== undefined ? String(componentGaps[0].toFixed(1)) : '0',
+        medianGap: componentGaps[Math.floor(componentGaps.length * 0.5)] !== undefined ? String(componentGaps[Math.floor(componentGaps.length * 0.5)].toFixed(1)) : '0',
+        p95Gap: componentGaps[Math.floor(componentGaps.length * 0.95)] !== undefined ? String(componentGaps[Math.floor(componentGaps.length * 0.95)].toFixed(1)) : '0'
       },
       satellites: {
         count: satelliteDistances.length,

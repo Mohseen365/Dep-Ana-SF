@@ -36,18 +36,21 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     if (!cy) return;
 
     const updateTransform = () => {
-      setTransform({
-        pan: cy.pan(),
-        zoom: cy.zoom(),
-      });
+      const pan = typeof cy.pan === 'function' ? cy.pan() : { x: 0, y: 0 };
+      const zoom = typeof cy.zoom === 'function' ? cy.zoom() : 1;
+      setTransform({ pan, zoom });
     };
 
     updateTransform();
 
-    cy.on('pan zoom position render bounds', updateTransform);
+    if (typeof cy.on === 'function') {
+      cy.on('pan zoom position render bounds', updateTransform);
+    }
 
     return () => {
-      cy.off('pan zoom position render bounds', updateTransform);
+      if (typeof cy.off === 'function') {
+        cy.off('pan zoom position render bounds', updateTransform);
+      }
     };
   }, [cy]);
 
