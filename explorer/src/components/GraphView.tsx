@@ -1,4 +1,4 @@
-import { useEffect, useRef, useImperativeHandle, forwardRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useImperativeHandle, forwardRef, useState, useCallback, useMemo } from 'react';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import navigator from 'cytoscape-navigator';
@@ -31,10 +31,12 @@ import {
   highlightNodeConnections,
 } from '../lib/graph-interactions';
 
+import { discoverFeatures, type FeatureDiscoveryResult } from '../lib/layout/features';
 import { GraphControls } from './GraphControls';
 import { GraphLegend } from './GraphLegend';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
 import { EdgeHoverCard } from './graph-internals/EdgeHoverCard';
+import { FeatureOverlayCanvas } from './graph-internals/FeatureOverlayCanvas';
 import './graph-internals/graph.css';
 
 cytoscape.use(fcose);
@@ -147,8 +149,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Derive Feature Discovery Result deterministically for overlay and shared highlighting
+  const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
+    return discoverFeatures(nodes, edges);
+  }, [nodes, edges]);
 
   // Keep internal refs synchronized with latest props
   useEffect(() => {
@@ -465,12 +473,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     updateZoomClass();
 
-    // Hover Cards with 250ms Delay
+    // Hover Cards with 250ms Delay & Hovered Node ID Tracking
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
       const pos = evt.renderedPosition;
       const nodeId = node.id();
       const nodeObj = nodesRef.current.find(n => n.id === nodeId);
+
+      setHoveredNodeId(nodeId);
 
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
 
@@ -487,6 +497,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cy.on('mouseout', 'node', () => {
+      setHoveredNodeId(null);
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       setHoverCard(null);
     });
@@ -890,6 +901,18 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       aria-label="Salesforce Architecture Dependency Graph"
     >
       <div ref={containerRef} className="cytoscape-view" />
+
+      {/* Feature Composition & Shared Infrastructure SVG Overlay Canvas */}
+      <FeatureOverlayCanvas
+        cy={cyRef.current}
+        nodes={nodes}
+        edges={edges}
+        discoveryResult={discoveryResult}
+        selectedNodeId={selectedNodeId}
+        hoveredNodeId={hoveredNodeId}
+        nodePositions={nodePositions}
+        enableOverlay={true}
+      />
 
       {/* Mode Indicator Overlay Badge */}
       <div
