@@ -1,4 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { LayoutGraphIndex } from './graph-index';
 import type {
   ArchitectureGraphAnalysis,
   ArchitectureNodeAnalysis,
@@ -23,6 +24,8 @@ export interface SatelliteLayoutOptions {
   verticalGap?: number;
   /** Maximum distance a satellite can be displaced from its parent target (default: 280) */
   maxSatelliteDistance?: number;
+  /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
+  index?: LayoutGraphIndex;
 }
 
 export interface SatellitePlacementResult {
@@ -208,6 +211,7 @@ export function placeSatellites(
   const maxSatelliteDistance = options.maxSatelliteDistance ?? 280;
   const layerYOffsets = options.layerYOffsets ?? DEFAULT_LAYER_Y_OFFSETS;
   const defaultDomainX = options.defaultDomainX ?? 0;
+  const index = options.index;
 
   // Immutably clone primary positions into result positions
   const positions: Record<string, { x: number; y: number }> = { ...primaryPositions };
@@ -254,9 +258,9 @@ export function placeSatellites(
   for (const triggerItem of triggerAnalyses) {
     if (primaryNodeIds.has(triggerItem.nodeId)) continue; // Already placed as primary
 
-    const connectedEdges = edges.filter(
-      e => e.source === triggerItem.nodeId || e.target === triggerItem.nodeId
-    );
+    const connectedEdges = index
+      ? index.incidentEdgesByNode.get(triggerItem.nodeId) || []
+      : edges.filter(e => e.source === triggerItem.nodeId || e.target === triggerItem.nodeId);
 
     let parentObjectPos: Point | null = null;
     let connectedHandlerId: string | null = null;
@@ -311,9 +315,9 @@ export function placeSatellites(
     if (connectedHandlerId && !primaryNodeIds.has(connectedHandlerId)) {
       const handlerItem = nodeAnalysisMap.get(connectedHandlerId);
       if (handlerItem && !positions[connectedHandlerId]) {
-        const handlerEdges = edges.filter(
-          e => e.source === connectedHandlerId || e.target === connectedHandlerId
-        );
+        const handlerEdges = index
+          ? index.incidentEdgesByNode.get(connectedHandlerId) || []
+          : edges.filter(e => e.source === connectedHandlerId || e.target === connectedHandlerId);
         let servicePos: Point | null = null;
 
         for (const hEdge of handlerEdges) {
@@ -362,9 +366,9 @@ export function placeSatellites(
   for (const handlerItem of handlerAnalyses) {
     if (positions[handlerItem.nodeId]) continue;
 
-    const connectedEdges = edges.filter(
-      e => e.source === handlerItem.nodeId || e.target === handlerItem.nodeId
-    );
+    const connectedEdges = index
+      ? index.incidentEdgesByNode.get(handlerItem.nodeId) || []
+      : edges.filter(e => e.source === handlerItem.nodeId || e.target === handlerItem.nodeId);
 
     let anchorPos: Point | null = null;
     for (const edge of connectedEdges) {
@@ -417,7 +421,9 @@ export function placeSatellites(
 
     let parentId = fieldItem.parentObjectId;
     if (!parentId) {
-      parentId = findParentObjectId(fieldItem.node, nodes, edges);
+      parentId = index
+        ? index.parentObjectId.get(fieldItem.nodeId) ?? null
+        : findParentObjectId(fieldItem.node, nodes, edges);
     }
 
     if (parentId && positions[parentId]) {
@@ -502,7 +508,9 @@ export function placeSatellites(
 
     let targetId = testItem.parentProductionNodeId;
     if (!targetId) {
-      targetId = findParentProductionNodeId(testItem.node, nodes, edges);
+      targetId = index
+        ? index.parentProductionNodeId.get(testItem.nodeId) ?? null
+        : findParentProductionNodeId(testItem.node, nodes, edges);
     }
 
     if (targetId && positions[targetId]) {

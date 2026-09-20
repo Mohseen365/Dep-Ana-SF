@@ -1,7 +1,9 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { LayoutGraphIndex } from './graph-index';
 import type { ArchitectureLayer, ArchitectureGraphAnalysis } from './types';
 import { classifyNodeLayer } from './layers';
 import { discoverDomains, classifyNodeDomain, type DomainDiscoveryResult } from './domains';
+import { discoverFeatures, type FeatureDiscoveryResult } from './features';
 import { computeArchitectureAnalysis } from './analysis';
 import { calculateLayoutMetrics, type ComprehensiveLayoutMetrics, type PositionMap } from './metrics';
 
@@ -27,6 +29,23 @@ export interface DomainNode {
   connectedDomains: string[];
   degree: number;
   isShared: boolean;
+  primaryDomain?: string;
+}
+
+export interface FeatureRegion extends DomainRegion {
+  featureId: string;
+  domainId?: string;
+}
+
+export interface GlobalFeatureLayoutOptions extends GlobalLayoutOptions {
+  featureDiscovery?: FeatureDiscoveryResult;
+  featureMap?: Map<string, string> | Record<string, string>;
+}
+
+export interface GlobalFeatureLayoutResult extends GlobalLayoutResult {
+  featureRegions: Map<string, FeatureRegion>;
+  featureGraph: DomainGraph;
+  orderedFeatures: string[];
 }
 
 export interface DomainGraph {
@@ -73,6 +92,8 @@ export interface GlobalLayoutOptions {
   layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
   /** Optional pre-computed domain map to reuse */
   domainMap?: Map<string, string> | Record<string, string>;
+  /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
+  index?: LayoutGraphIndex;
 }
 
 export interface GlobalLayoutResult {
@@ -136,6 +157,7 @@ export function calculatePrimaryLayerRowCounts(
     layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
     domainMap?: Map<string, string> | Record<string, string>;
     analysis?: ArchitectureGraphAnalysis;
+    index?: LayoutGraphIndex;
   }
 ): Record<
   ArchitectureLayer,
@@ -432,7 +454,9 @@ export function computeDynamicLayerYMap(
 export function buildDomainGraph(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
-  domainResult?: DomainDiscoveryResult
+  domainResult?: DomainDiscoveryResult,
+  index?: LayoutGraphIndex,
+  domainMapInput?: Map<string, string> | Record<string, string>
 ): DomainGraph {
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
@@ -445,8 +469,16 @@ export function buildDomainGraph(
   const domainNodeMap = new Map<string, DomainNode>();
   const nodeToDomainMap = new Map<string, string>();
 
+  if (domainMapInput instanceof Map) {
+    domainMapInput.forEach((v, k) => nodeToDomainMap.set(k, v));
+  } else if (domainMapInput) {
+    Object.entries(domainMapInput).forEach(([k, v]) => nodeToDomainMap.set(k, v));
+  }
+
   discovery.assignments.forEach((assignment, nodeId) => {
-    nodeToDomainMap.set(nodeId, assignment.primaryDomain);
+    if (!nodeToDomainMap.has(nodeId)) {
+      nodeToDomainMap.set(nodeId, assignment.primaryDomain);
+    }
   });
 
   safeNodes.forEach(node => {
@@ -478,6 +510,12 @@ export function buildDomainGraph(
     if (!dNode.layers.includes(layer)) {
       dNode.layers.push(layer);
     }
+    if (!dNode.primaryDomain) {
+      const assignment = discovery.assignments.get(node.id);
+      if (assignment) {
+        dNode.primaryDomain = assignment.primaryDomain;
+      }
+    }
   });
 
   domainNodeMap.forEach(dNode => {
@@ -495,7 +533,7 @@ export function buildDomainGraph(
     const targetNodeIds = dNode.primaryNodeIds.length > 0 ? dNode.primaryNodeIds : dNode.nodeIds;
 
     targetNodeIds.forEach(nodeId => {
-      const node = safeNodes.find(n => n.id === nodeId);
+      const node = index ? index.nodeById.get(nodeId) : safeNodes.find(n => n.id === nodeId);
       if (node) {
         const layer = classifyNodeLayer(node);
         layerCounts[layer] = (layerCounts[layer] || 0) + 1;
@@ -553,8 +591,8 @@ export function buildDomainGraph(
       rel.backward++;
     }
 
-    const srcNode = safeNodes.find(n => n.id === edge.source);
-    const tgtNode = safeNodes.find(n => n.id === edge.target);
+    const srcNode = index ? index.nodeById.get(edge.source) : safeNodes.find(n => n.id === edge.source);
+    const tgtNode = index ? index.nodeById.get(edge.target) : safeNodes.find(n => n.id === edge.target);
     if (srcNode) rel.layers.add(classifyNodeLayer(srcNode));
     if (tgtNode) rel.layers.add(classifyNodeLayer(tgtNode));
   });
@@ -804,6 +842,9 @@ export function determineGlobalDomainOrder(domainGraph: DomainGraph): string[] {
       if (statsB.totalEdges !== statsA.totalEdges) {
         return statsB.totalEdges - statsA.totalEdges;
       }
+      const domA = domainGraph.nodes.get(a)?.primaryDomain || a;
+      const domB = domainGraph.nodes.get(b)?.primaryDomain || b;
+      if (domA !== domB) return domA.localeCompare(domB);
       return a.localeCompare(b);
     });
 
@@ -915,13 +956,14 @@ export function computeGlobalDomainLayout(
 ): GlobalLayoutResult {
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
+  const index = options.index;
 
   const baseX = options.baseX ?? 100;
   const baseY = options.baseY ?? 100;
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
 
-  const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery);
+  const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index, options.domainMap);
   const orderedDomains = determineGlobalDomainOrder(domainGraph);
 
   const dynamicLayerResult = computeDynamicLayerYMap(safeNodes, safeEdges, options);
@@ -940,7 +982,7 @@ export function computeGlobalDomainLayout(
 
     const primaryNodesInDomain = dNode
       ? dNode.primaryNodeIds
-          .map(id => safeNodes.find(n => n.id === id))
+          .map(id => (index ? index.nodeById.get(id) : safeNodes.find(n => n.id === id)))
           .filter((n): n is ExplorerNode => n !== undefined)
       : [];
 
@@ -1164,5 +1206,78 @@ export function computeGlobalDomainLayout(
     layerYMap,
     layerRowCounts: dynamicLayerResult.layerRowCounts,
     layerHeights: dynamicLayerResult.layerHeights,
+  };
+}
+
+/**
+ * Computes deterministic global feature spatial layout by parameterizing
+ * domain region packing math around feature cluster assignments.
+ */
+export function computeGlobalFeatureLayout(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  options: GlobalFeatureLayoutOptions = {}
+): GlobalFeatureLayoutResult {
+  const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
+  const safeEdges = Array.isArray(edges) ? [...edges] : [];
+
+  safeNodes.sort((a, b) => a.id.localeCompare(b.id));
+  safeEdges.sort((a, b) => a.id.localeCompare(b.id));
+
+  const index = options.index;
+  const analysis = options.analysis || computeArchitectureAnalysis(safeNodes, safeEdges, { index });
+  const layerMap = options.layerMap;
+  const domainMap = options.domainMap;
+
+  // Resolve feature map from options or feature discovery
+  const featureMap = new Map<string, string>();
+  if (options.featureMap instanceof Map) {
+    options.featureMap.forEach((v, k) => featureMap.set(k, v));
+  } else if (options.featureMap) {
+    Object.entries(options.featureMap).forEach(([k, v]) => featureMap.set(k, v));
+  } else {
+    const discovery = options.featureDiscovery || discoverFeatures(safeNodes, safeEdges, {
+      index,
+      analysis,
+      layerMap,
+      domainMap,
+    });
+    discovery.assignments.forEach((assignment, nodeId) => {
+      featureMap.set(nodeId, assignment.primaryFeatureId);
+    });
+  }
+
+  // Fallback for unmapped nodes
+  safeNodes.forEach(node => {
+    if (!featureMap.has(node.id)) {
+      featureMap.set(node.id, 'Unassigned');
+    }
+  });
+
+  // Re-use computeGlobalDomainLayout with featureMap passed as domainMap
+  const globalResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
+    ...options,
+    domainMap: featureMap,
+  });
+
+  const featureRegions = new Map<string, FeatureRegion>();
+  globalResult.domainRegions.forEach((region, featureId) => {
+    let domainId: string | undefined = undefined;
+    if (options.featureDiscovery) {
+      domainId = options.featureDiscovery.features.get(featureId)?.domains[0];
+    }
+
+    featureRegions.set(featureId, {
+      ...region,
+      featureId,
+      domainId,
+    });
+  });
+
+  return {
+    ...globalResult,
+    featureRegions,
+    featureGraph: globalResult.domainGraph,
+    orderedFeatures: globalResult.orderedDomains,
   };
 }

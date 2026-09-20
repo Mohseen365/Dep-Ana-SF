@@ -1,9 +1,12 @@
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureLayer } from './layout/types';
+import { createLayoutGraphIndex } from './layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from './layout/analysis';
 import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './layout/layers';
 import { discoverDomains, extractDomainStem } from './layout/domains';
-import { computeGlobalDomainLayout } from './layout/global-layout';
+import { classifyAllFeatureRoles, type FeatureRole, type FeatureRoleContext } from './layout/feature-roles';
+import { discoverFeatures, type FeatureDiscoveryResult } from './layout/features';
+import { computeGlobalDomainLayout, computeGlobalFeatureLayout } from './layout/global-layout';
 import { reduceEdgeCrossings } from './layout/ordering';
 import { computeLocalNodeLayout } from './layout/local-layout';
 import {
@@ -27,10 +30,12 @@ export interface ArchitectureLayoutOptions {
   componentGap?: number;
   /** Map of existing authoritative positions to preserve for incremental layout */
   existingPositions?: Record<string, { x: number; y: number }>;
+  /** Enables Feature-aware spatial layout (default: false) */
+  enableFeatureLayout?: boolean;
 }
 
-export { classifyNodeLayer, extractDomainStem, isTestNode };
-export type { ArchitectureLayer };
+export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
+export type { ArchitectureLayer, FeatureRole, FeatureDiscoveryResult };
 
 /**
  * Intelligent Architecture-Aware Layout Orchestrator
@@ -39,6 +44,7 @@ export type { ArchitectureLayer };
  * 1. Graph facts normalization & defensive cloning
  * 2. Intermediate architecture analysis
  * 3. Layer classification & Domain discovery
+ * 3.5 Feature Role classification & Feature Discovery (semantic)
  * 4. Centrality (hubs/bridges) analysis
  * 5. Connected component decomposition
  * 6. Global domain architecture layout & ordering
@@ -62,6 +68,7 @@ export function computeArchitectureLayout(
     domainSpacing = 380,
     componentGap = 100,
     existingPositions = {},
+    enableFeatureLayout = false,
   } = options;
 
   // Defensive deep clone of inputs to guarantee immutability
@@ -135,8 +142,11 @@ export function computeArchitectureLayout(
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
+  // Construct LayoutGraphIndex immediately after Stage 0 normalization
+  const index = createLayoutGraphIndex(safeNodes, safeEdges);
+
   // Step 1: Base Architecture Analysis (Wave 1A)
-  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges);
+  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
 
   // Step 2: Layer Classification (Wave 1B)
   const layerMap = new Map<string, ArchitectureLayer>();
@@ -158,27 +168,75 @@ export function computeArchitectureLayout(
     safeNodes,
     safeEdges,
     domainMap,
-    layerMap
+    layerMap,
+    { index }
   );
 
-  // Step 5: Global Domain Architecture Layout (Wave 2A)
-  const globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
-    domainSpacing,
-    layerSpacing,
-    nodeWidth,
-    nodeHeight,
+  // Step 3.5 & 4: Feature Role Mapping & Semantic Feature Discovery
+  const featureRoleContextMap = new Map<string, FeatureRoleContext>();
+  safeNodes.forEach(node => {
+    featureRoleContextMap.set(node.id, {
+      layer: layerMap.get(node.id) || null,
+      analysisNode: analysis.nodes.get(node.id) || null,
+      centrality: centralityMap.get(node.id) || null,
+      roleOverride: analysis.nodes.get(node.id)?.role || null,
+    });
+  });
+  const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
+
+  const featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
+    index,
     analysis,
-    domainDiscovery,
     layerMap,
     domainMap,
+    featureRoles,
   });
+
+  const featureMap = new Map<string, string>();
+  featureDiscovery.assignments.forEach((assignment, nodeId) => {
+    featureMap.set(nodeId, assignment.primaryFeatureId);
+  });
+
+  // Step 5: Global Domain or Feature Architecture Layout
+  let globalDomainResult;
+  let activeSpatialMap: Map<string, string>;
+
+  if (enableFeatureLayout) {
+    const featureLayoutResult = computeGlobalFeatureLayout(safeNodes, safeEdges, {
+      domainSpacing,
+      layerSpacing,
+      nodeWidth,
+      nodeHeight,
+      analysis,
+      layerMap,
+      domainMap,
+      featureDiscovery,
+      featureMap,
+      index,
+    });
+    globalDomainResult = featureLayoutResult;
+    activeSpatialMap = featureMap;
+  } else {
+    globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
+      domainSpacing,
+      layerSpacing,
+      nodeWidth,
+      nodeHeight,
+      analysis,
+      domainDiscovery,
+      layerMap,
+      domainMap,
+      index,
+    });
+    activeSpatialMap = domainMap;
+  }
 
   // Step 6: Layer Ordering & Crossing Reduction (Wave 2B)
   const orderingResult = reduceEdgeCrossings({
     nodes: safeNodes,
     edges: safeEdges,
     layerMap,
-    domainMap,
+    domainMap: activeSpatialMap,
     domainOrder: globalDomainResult.orderedDomains,
   });
 
@@ -189,7 +247,7 @@ export function computeArchitectureLayout(
     analysis,
     domainRegions: globalDomainResult.domainRegions,
     layerMap,
-    domainMap,
+    domainMap: activeSpatialMap,
     bucketOrder: orderingResult.bucketOrder,
     options: {
       nodeWidth,
@@ -234,7 +292,7 @@ export function computeArchitectureLayout(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap }
+        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index }
       );
 
       basePositions[node.id] = bridgeInfo.candidatePosition;
@@ -252,6 +310,7 @@ export function computeArchitectureLayout(
       nodeHeight,
       layerSpacing,
       layerYOffsets: globalDomainResult.layerYMap,
+      index,
     }
   );
 
