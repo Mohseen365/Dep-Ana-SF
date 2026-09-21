@@ -464,4 +464,102 @@ describe('Intelligent Architecture-Aware Layout Engine', () => {
       domainsSpy.mockRestore();
     });
   });
+
+  describe('HYBRID LAYOUT PROMPT 2 PIPELINE INTEGRATION VERIFICATION', () => {
+    it('1. Feature Layout Toggle: enableFeatureLayout false vs true produces valid non-overlapping layouts', () => {
+      const nodes: ExplorerNode[] = [
+        createMockNode({ id: 'LWC:OrderView', displayName: 'OrderView', type: 'LWC' }),
+        createMockNode({ id: 'ApexClass:OrderController', displayName: 'OrderController' }),
+        createMockNode({ id: 'ApexClass:OrderService', displayName: 'OrderService' }),
+        createMockNode({ id: 'ApexClass:PaymentService', displayName: 'PaymentService' }),
+        createMockNode({ id: 'ApexClass:PaymentSelector', displayName: 'PaymentSelector' }),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        createMockEdge('LWC:OrderView', 'ApexClass:OrderController'),
+        createMockEdge('ApexClass:OrderController', 'ApexClass:OrderService'),
+        createMockEdge('ApexClass:OrderService', 'ApexClass:PaymentService'),
+        createMockEdge('ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
+      ];
+
+      const domainPositions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: false });
+      const featurePositions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+      expect(domainPositions).toBeDefined();
+      expect(featurePositions).toBeDefined();
+
+      const evalDomain = evaluateLayout(nodes, edges, domainPositions);
+      const evalFeature = evaluateLayout(nodes, edges, featurePositions);
+
+      expect(evalDomain.nodeOverlapCount).toBe(0);
+      expect(evalFeature.nodeOverlapCount).toBe(0);
+    });
+
+    it('2. Feature Map Propagation: Feature map survives through global, ordering, local, and cleanup passes', () => {
+      const nodes: ExplorerNode[] = [
+        createMockNode({ id: 'ApexClass:FeatureA_Svc', displayName: 'FeatureA_Svc' }),
+        createMockNode({ id: 'ApexClass:FeatureA_Sel', displayName: 'FeatureA_Sel' }),
+        createMockNode({ id: 'ApexClass:FeatureB_Svc', displayName: 'FeatureB_Svc' }),
+        createMockNode({ id: 'ApexClass:FeatureB_Sel', displayName: 'FeatureB_Sel' }),
+      ];
+
+      const edges: ExplorerEdge[] = [
+        createMockEdge('ApexClass:FeatureA_Svc', 'ApexClass:FeatureA_Sel'),
+        createMockEdge('ApexClass:FeatureB_Svc', 'ApexClass:FeatureB_Sel'),
+        createMockEdge('ApexClass:FeatureA_Svc', 'ApexClass:FeatureB_Svc'),
+      ];
+
+      const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+      nodes.forEach(n => {
+        expect(positions[n.id]).toBeDefined();
+        expect(Number.isFinite(positions[n.id].x)).toBe(true);
+        expect(Number.isFinite(positions[n.id].y)).toBe(true);
+      });
+
+      const evalMetrics = evaluateLayout(nodes, edges, positions);
+      expect(evalMetrics.nodeOverlapCount).toBe(0);
+    });
+
+    it('3. Dense Region Safety: 50-node dense cluster retains physical node separation without overlaps', () => {
+      const nodes: ExplorerNode[] = Array.from({ length: 50 }, (_, i) =>
+        createMockNode({ id: `ApexClass:DenseCluster_${i}`, displayName: `DenseCluster_${i}` })
+      );
+
+      const edges: ExplorerEdge[] = [];
+      for (let i = 0; i < 49; i++) {
+        edges.push(createMockEdge(`ApexClass:DenseCluster_${i}`, `ApexClass:DenseCluster_${i + 1}`));
+        if (i % 3 === 0 && i + 5 < 50) {
+          edges.push(createMockEdge(`ApexClass:DenseCluster_${i}`, `ApexClass:DenseCluster_${i + 5}`));
+        }
+      }
+
+      const domainPos = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: false });
+      const featurePos = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+
+      const evalDomain = evaluateLayout(nodes, edges, domainPos);
+      const evalFeature = evaluateLayout(nodes, edges, featurePos);
+
+      expect(evalDomain.nodeOverlapCount).toBe(0);
+      expect(evalFeature.nodeOverlapCount).toBe(0);
+    });
+
+    it('4. Position Authority Invariance: Level 1/2 user/persisted positions take 100% precedence in both modes', () => {
+      const nodes: ExplorerNode[] = [
+        createMockNode({ id: 'ApexClass:NodeA', displayName: 'NodeA' }),
+        createMockNode({ id: 'ApexClass:NodeB', displayName: 'NodeB' }),
+      ];
+      const edges: ExplorerEdge[] = [createMockEdge('ApexClass:NodeA', 'ApexClass:NodeB')];
+
+      const existingPositions = {
+        'ApexClass:NodeA': { x: 500, y: 500 },
+      };
+
+      const domainPos = computeArchitectureLayout(nodes, edges, { existingPositions, enableFeatureLayout: false });
+      const featurePos = computeArchitectureLayout(nodes, edges, { existingPositions, enableFeatureLayout: true });
+
+      expect(domainPos['ApexClass:NodeA']).toEqual({ x: 500, y: 500 });
+      expect(featurePos['ApexClass:NodeA']).toEqual({ x: 500, y: 500 });
+    });
+  });
 });

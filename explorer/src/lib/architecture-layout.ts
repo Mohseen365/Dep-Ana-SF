@@ -393,7 +393,7 @@ export function computeArchitectureLayout(
       nodeWidth,
       nodeHeight,
       layerMap,
-      domainMap,
+      domainMap: activeSpatialMap,
     },
   });
 
