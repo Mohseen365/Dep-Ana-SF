@@ -4,6 +4,7 @@ import type { ArchitectureLayer, ArchitectureGraphAnalysis } from './types';
 import { classifyNodeLayer } from './layers';
 import { discoverDomains, classifyNodeDomain, type DomainDiscoveryResult } from './domains';
 import { discoverFeatures, type FeatureDiscoveryResult } from './features';
+import { determineGlobalFeatureOrder, type FeatureOrderingStrategy } from './feature-ordering';
 import { computeArchitectureAnalysis } from './analysis';
 import { calculateLayoutMetrics, type ComprehensiveLayoutMetrics, type PositionMap } from './metrics';
 
@@ -40,6 +41,7 @@ export interface FeatureRegion extends DomainRegion {
 export interface GlobalFeatureLayoutOptions extends GlobalLayoutOptions {
   featureDiscovery?: FeatureDiscoveryResult;
   featureMap?: Map<string, string> | Record<string, string>;
+  featureOrderingStrategy?: FeatureOrderingStrategy;
 }
 
 export interface GlobalFeatureLayoutResult extends GlobalLayoutResult {
@@ -94,6 +96,8 @@ export interface GlobalLayoutOptions {
   layerMap?: Map<string, ArchitectureLayer> | Record<string, ArchitectureLayer>;
   /** Optional pre-computed domain map to reuse */
   domainMap?: Map<string, string> | Record<string, string>;
+  /** Optional pre-computed ordered domains/features */
+  orderedDomains?: string[];
   /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
   index?: LayoutGraphIndex;
 }
@@ -966,7 +970,7 @@ export function computeGlobalDomainLayout(
   const nodeHeight = options.nodeHeight ?? 60;
 
   const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index, options.domainMap);
-  const orderedDomains = determineGlobalDomainOrder(domainGraph);
+  const orderedDomains = options.orderedDomains || determineGlobalDomainOrder(domainGraph);
 
   const dynamicLayerResult = computeDynamicLayerYMap(safeNodes, safeEdges, options);
   const layerYMap = dynamicLayerResult.layerYMap;
@@ -1306,9 +1310,19 @@ export function computeGlobalFeatureLayout(
     }
   });
 
-  // Re-use computeGlobalDomainLayout with featureMap passed as domainMap and minRegionWidth=280 for multi-node features
+  const featureGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index, featureMap);
+  const orderedFeatures = options.orderedDomains || determineGlobalFeatureOrder(
+    safeNodes,
+    safeEdges,
+    featureGraph,
+    featureMap,
+    options.featureOrderingStrategy ?? 'F_SHARED_HIERARCHY_AWARE'
+  );
+
+  // Re-use computeGlobalDomainLayout with featureMap passed as domainMap, minRegionWidth=280, and pre-calculated feature order
   const globalResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
     ...options,
+    orderedDomains: orderedFeatures,
     minRegionWidth: options.minRegionWidth ?? 280,
     domainMap: featureMap,
   });
