@@ -89,6 +89,40 @@ export interface ProjectUIState {
 }
 
 const STORAGE_PREFIX = 'explorer.projectState.';
+const inMemoryStateMap = new Map<string, string>();
+
+function getStoredItem(key: string): string | null {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return window.localStorage.getItem(key);
+    }
+  } catch (_) {
+    // Fallback to memory map if window.localStorage throws
+  }
+  return inMemoryStateMap.get(key) || null;
+}
+
+function setStoredItem(key: string, value: string): void {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem(key, value);
+    }
+  } catch (_) {
+    // Fallback to memory map
+  }
+  inMemoryStateMap.set(key, value);
+}
+
+function removeStoredItem(key: string): void {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem(key);
+    }
+  } catch (_) {
+    // Fallback to memory map
+  }
+  inMemoryStateMap.delete(key);
+}
 
 /**
  * Creates default UI state for a given project ID.
@@ -164,12 +198,12 @@ export function getProjectStorageKey(projectId: string): string {
  * Falls back to default project UI state if no stored state exists or on parse error.
  */
 export function loadProjectState(projectId: string): ProjectUIState {
-  if (typeof window === 'undefined' || !projectId) {
-    return createDefaultProjectUIState(projectId || 'default');
+  if (!projectId) {
+    return createDefaultProjectUIState('default');
   }
 
   try {
-    const raw = localStorage.getItem(getProjectStorageKey(projectId));
+    const raw = getStoredItem(getProjectStorageKey(projectId));
     if (!raw) {
       return createDefaultProjectUIState(projectId);
     }
@@ -242,7 +276,7 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
  * Saves project-scoped UI state to localStorage.
  */
 export function saveProjectState(projectId: string, state: ProjectUIState): void {
-  if (typeof window === 'undefined' || !projectId) return;
+  if (!projectId) return;
 
   try {
     const key = getProjectStorageKey(projectId);
@@ -251,7 +285,7 @@ export function saveProjectState(projectId: string, state: ProjectUIState): void
       projectId,
       updatedAt: new Date().toISOString(),
     };
-    localStorage.setItem(key, JSON.stringify(toSave));
+    setStoredItem(key, JSON.stringify(toSave));
   } catch (_) {
     // Ignore storage quota errors
   }
@@ -277,31 +311,38 @@ export function updateProjectState(
  * Clears saved UI state for a given project ID.
  */
 export function clearProjectState(projectId: string): void {
-  if (typeof window === 'undefined' || !projectId) return;
+  if (!projectId) return;
 
   try {
-    localStorage.removeItem(getProjectStorageKey(projectId));
+    removeStoredItem(getProjectStorageKey(projectId));
   } catch (_) {
     // Ignore
   }
 }
 
 /**
- * Lists all project IDs that currently have saved state in localStorage.
+ * Lists all project IDs that currently have saved state in localStorage or in-memory fallback.
  */
 export function getAllSavedProjectIds(): string[] {
-  if (typeof window === 'undefined') return [];
-
-  const result: string[] = [];
+  const result = new Set<string>();
   try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith(STORAGE_PREFIX)) {
-        result.push(key.substring(STORAGE_PREFIX.length));
+    if (typeof window !== 'undefined' && window.localStorage) {
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (key && key.startsWith(STORAGE_PREFIX)) {
+          result.add(key.substring(STORAGE_PREFIX.length));
+        }
       }
     }
   } catch (_) {
     // Ignore
   }
-  return result;
+
+  for (const key of inMemoryStateMap.keys()) {
+    if (key.startsWith(STORAGE_PREFIX)) {
+      result.add(key.substring(STORAGE_PREFIX.length));
+    }
+  }
+
+  return Array.from(result);
 }
