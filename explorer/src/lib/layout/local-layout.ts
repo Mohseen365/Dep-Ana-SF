@@ -375,8 +375,11 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       orderedNodeIds.forEach((id, idx) => initialRankMap.set(id, idx));
 
       // Relationship-Aware Intra-Bucket Barycenter Alignment Across Tiers
-      // Step A: Order Tier 0 by outgoing connection barycenters to Tier 1 / Tier 2 & cross-domain signals
+      // Step A: Order Tier 0 preserving bucketOrder rank as primary signal with barycentric fine-tuning
       tier0.sort((a, b) => {
+        const rankA = initialRankMap.get(a) ?? 0;
+        const rankB = initialRankMap.get(b) ?? 0;
+
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
 
@@ -389,36 +392,21 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             sumB += initialRankMap.get(e.target) ?? 0;
             countB++;
           }
-          if (e.source === a || e.target === a) {
-            const otherId = e.source === a ? e.target : e.source;
-            const otherDomain = domainMap.get(otherId);
-            if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
-              sumA += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
-              countA++;
-            }
-          }
-          if (e.source === b || e.target === b) {
-            const otherId = e.source === b ? e.target : e.source;
-            const otherDomain = domainMap.get(otherId);
-            if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
-              sumB += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
-              countB++;
-            }
-          }
         });
 
-        const bcA = countA > 0 ? sumA / countA : (initialRankMap.get(a) ?? 0);
-        const bcB = countB > 0 ? sumB / countB : (initialRankMap.get(b) ?? 0);
+        const bcA = countA > 0 ? sumA / countA : rankA;
+        const bcB = countB > 0 ? sumB / countB : rankB;
 
         if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
-        const rankA = initialRankMap.get(a) ?? 0;
-        const rankB = initialRankMap.get(b) ?? 0;
         if (rankA !== rankB) return rankA - rankB;
         return a.localeCompare(b);
       });
 
-      // Step B: Order Tier 1 by barycenter of Tier 0 preliminary positions & Tier 2 initial ranks
+      // Step B: Order Tier 1 preserving bucketOrder rank as primary signal with barycentric fine-tuning
       tier1.sort((a, b) => {
+        const rankA = initialRankMap.get(a) ?? 0;
+        const rankB = initialRankMap.get(b) ?? 0;
+
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
 
@@ -433,12 +421,6 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             } else if (tier2.includes(other)) {
               sumA += initialRankMap.get(other) ?? 0;
               countA++;
-            } else {
-              const otherDomain = domainMap.get(other);
-              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
-                sumA += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
-                countA++;
-              }
             }
           }
           if (isB) {
@@ -449,28 +431,23 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             } else if (tier2.includes(other)) {
               sumB += initialRankMap.get(other) ?? 0;
               countB++;
-            } else {
-              const otherDomain = domainMap.get(other);
-              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
-                sumB += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
-                countB++;
-              }
             }
           }
         });
 
-        const bcA = countA > 0 ? sumA / countA : (initialRankMap.get(a) ?? 0);
-        const bcB = countB > 0 ? sumB / countB : (initialRankMap.get(b) ?? 0);
+        const bcA = countA > 0 ? sumA / countA : rankA;
+        const bcB = countB > 0 ? sumB / countB : rankB;
 
         if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
-        const rankA = initialRankMap.get(a) ?? 0;
-        const rankB = initialRankMap.get(b) ?? 0;
         if (rankA !== rankB) return rankA - rankB;
         return a.localeCompare(b);
       });
 
-      // Step C: Order Tier 2 by barycenters of Tier 1 / Tier 0 positions
+      // Step C: Order Tier 2 preserving bucketOrder rank as primary signal with barycentric fine-tuning
       tier2.sort((a, b) => {
+        const rankA = initialRankMap.get(a) ?? 0;
+        const rankB = initialRankMap.get(b) ?? 0;
+
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
 
@@ -485,12 +462,6 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             } else if (tier0.includes(other)) {
               sumA += tier0.indexOf(other);
               countA++;
-            } else {
-              const otherDomain = domainMap.get(other);
-              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
-                sumA += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
-                countA++;
-              }
             }
           }
           if (isB) {
@@ -501,22 +472,14 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             } else if (tier0.includes(other)) {
               sumB += tier0.indexOf(other);
               countB++;
-            } else {
-              const otherDomain = domainMap.get(other);
-              if (otherDomain && otherDomain !== domain && domainXCenterMap.has(otherDomain)) {
-                sumB += (domainXCenterMap.get(otherDomain)! - domainXCenter) / domainSpacing;
-                countB++;
-              }
             }
           }
         });
 
-        const bcA = countA > 0 ? sumA / countA : (initialRankMap.get(a) ?? 0);
-        const bcB = countB > 0 ? sumB / countB : (initialRankMap.get(b) ?? 0);
+        const bcA = countA > 0 ? sumA / countA : rankA;
+        const bcB = countB > 0 ? sumB / countB : rankB;
 
         if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
-        const rankA = initialRankMap.get(a) ?? 0;
-        const rankB = initialRankMap.get(b) ?? 0;
         if (rankA !== rankB) return rankA - rankB;
         return a.localeCompare(b);
       });

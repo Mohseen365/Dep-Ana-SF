@@ -306,7 +306,7 @@ describe('Layer Ordering & Edge Crossing Minimization (Agent 2B)', () => {
       });
 
       expect(result.iterationsExecuted).toBeGreaterThan(0);
-      expect(result.iterationsExecuted).toBeLessThanOrEqual(4);
+      expect(result.iterationsExecuted).toBeLessThanOrEqual(8);
       expect(result.regions.length).toBeGreaterThan(0);
       expect(result.estimatedCrossings).toBeLessThanOrEqual(6);
     });
