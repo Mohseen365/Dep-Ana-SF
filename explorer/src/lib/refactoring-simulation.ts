@@ -281,7 +281,7 @@ export function computeStepImpact(
         case 'add-node': return `Add node ${op.node.displayName || op.node.id}`;
         case 'remove-node': return `Remove node ${op.nodeId}`;
         case 'add-edge': return `Add dependency from ${op.edge.source} to ${op.edge.target}`;
-        case 'remove-edge': return `Remove dependency ${op.edge.id}`;
+        case 'remove-edge': return `Remove dependency ${op.edgeId}`;
         case 'modify-node': return `Modify node ${op.nodeId}`;
       }
     })

@@ -17,11 +17,13 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock ResizeObserver
-(window as unknown as { ResizeObserver: typeof ResizeObserver }).ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+class MockResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+(window as any).ResizeObserver = MockResizeObserver;
+(globalThis as any).ResizeObserver = MockResizeObserver;
 
 // Ensure a working in-memory localStorage implementation for test environment
 if (typeof window !== 'undefined') {
