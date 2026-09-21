@@ -71,6 +71,8 @@ export function GraphSlot(props: {
   onSelectEdge: (edgeId: string) => void;
   impactResult?: any;
   selectedCycleNodeIds?: string[] | null;
+  findings?: ArchitectureFinding[];
+  selectedFinding?: ArchitectureFinding | null;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
@@ -94,6 +96,8 @@ export function GraphSlot(props: {
         onSelectEdge={props.onSelectEdge}
         impactResult={props.impactResult}
         selectedCycleNodeIds={props.selectedCycleNodeIds}
+        findings={props.findings}
+        selectedFinding={props.selectedFinding}
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
         focusedNodeId={props.focusedNodeId}
@@ -727,6 +731,8 @@ export function App() {
                     }}
                     onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
                     selectedCycleNodeIds={highlightedCycleNodeIds}
+                    findings={findings}
+                    selectedFinding={selectedFinding}
                     focusedNodeId={
                       isDrawerOpen && drillPath.length > 1
                         ? drillPath[drillPath.length - 1]
@@ -870,6 +876,7 @@ export function App() {
                 }}
                 onDrill={handleDrill}
                 data={data}
+                findings={findings}
                 drillPath={drillPath}
                 onNavigateBreadcrumb={handleNavigateBreadcrumb}
                 recentNodeIds={recentNodeIds}
