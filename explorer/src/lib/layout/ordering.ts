@@ -334,6 +334,18 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     });
   });
 
+  const primaryNodeSet = new Set<string>();
+  nodes.forEach(node => {
+    const isTest =
+      node.behavior?.isTest ||
+      (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
+      /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
+    const isField = node.type === 'Field' || node.type === 'CustomField';
+    if (!isTest && !isField) {
+      primaryNodeSet.add(node.id);
+    }
+  });
+
   for (const node of nodes) {
     const layer = layerMap.get(node.id) || 'application';
     const domain = domainMap.get(node.id) || 'Shared';
@@ -347,6 +359,9 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
 
   bucketOrder.forEach((nodeIds) => {
     nodeIds.sort((a, b) => {
+      const isPriA = primaryNodeSet.has(a);
+      const isPriB = primaryNodeSet.has(b);
+      if (isPriA !== isPriB) return isPriA ? -1 : 1;
       const degA = degreeMap.get(a) || 0;
       const degB = degreeMap.get(b) || 0;
       if (degB !== degA) return degB - degA;
@@ -387,9 +402,10 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
           const key = `${l}:${d}`;
           const ids = bucketOrder.get(key);
           if (ids) {
-            for (let i = 0; i < ids.length; i++) {
-              allLayerPositions.set(ids[i], globalLayerIdx++);
-            }
+            const primaryIdsInBucket = ids.filter(id => primaryNodeSet.has(id));
+            primaryIdsInBucket.forEach(id => {
+              allLayerPositions.set(id, globalLayerIdx++);
+            });
           }
         }
       }
@@ -446,6 +462,10 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
 
         const prevOrder = [...ids];
         ids.sort((a, b) => {
+          const isPriA = primaryNodeSet.has(a);
+          const isPriB = primaryNodeSet.has(b);
+          if (isPriA !== isPriB) return isPriA ? -1 : 1;
+
           const bcA = barycenters.get(a) ?? 0;
           const bcB = barycenters.get(b) ?? 0;
 
