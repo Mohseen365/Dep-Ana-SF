@@ -156,7 +156,7 @@ export function deriveFeatureCompositionGroups(
 
   rawSubgroups.sort((a, b) => b.length - a.length || a[0].localeCompare(b[0]));
 
-  const groups: FeatureCompositionGroup[] = [];
+  const candidateGroups: FeatureCompositionGroup[] = [];
 
   for (let idx = 0; idx < rawSubgroups.length; idx++) {
     const groupNodeIds = rawSubgroups[idx];
@@ -186,7 +186,7 @@ export function deriveFeatureCompositionGroups(
       .replace(/[-_]/g, ' ')
       .trim();
 
-    const groupLabel = `${formattedName} Group`;
+    const groupLabel = formattedName.toLowerCase().endsWith('group') ? formattedName : `${formattedName} Group`;
     const groupId = `${feature.id}_composition_${idx + 1}`;
 
     // Compute bounding box if positions available
@@ -231,7 +231,7 @@ export function deriveFeatureCompositionGroups(
       }
     }
 
-    groups.push({
+    candidateGroups.push({
       id: groupId,
       featureId: feature.id,
       nodeIds: groupNodeIds,
@@ -241,5 +241,67 @@ export function deriveFeatureCompositionGroups(
     });
   }
 
+  // Deduplicate and suppress overlapping / redundant composition groups
+  const groups: FeatureCompositionGroup[] = [];
+
+  for (const candidate of candidateGroups) {
+    if (!candidate.bounds) {
+      groups.push(candidate);
+      continue;
+    }
+
+    let isRedundant = false;
+
+    for (const existing of groups) {
+      if (!existing.bounds) continue;
+
+      // Check IoU overlap
+      const iou = computeIoU(candidate.bounds, existing.bounds);
+      const containment = computeContainment(candidate.bounds, existing.bounds);
+
+      // Check if duplicate label or near-identical bounds
+      const isDuplicateLabel = candidate.label === existing.label;
+
+      if (iou > 0.55 || containment > 0.8 || (isDuplicateLabel && iou > 0.2)) {
+        isRedundant = true;
+        break;
+      }
+    }
+
+    if (!isRedundant) {
+      groups.push(candidate);
+    }
+  }
+
   return groups;
+}
+
+function computeIoU(b1: RectBounds, b2: RectBounds): number {
+  const xMin = Math.max(b1.xMin, b2.xMin);
+  const xMax = Math.min(b1.xMax, b2.xMax);
+  const yMin = Math.max(b1.yMin, b2.yMin);
+  const yMax = Math.min(b1.yMax, b2.yMax);
+
+  if (xMax <= xMin || yMax <= yMin) return 0;
+
+  const intersection = (xMax - xMin) * (yMax - yMin);
+  const area1 = b1.width * b1.height;
+  const area2 = b2.width * b2.height;
+  const union = area1 + area2 - intersection;
+
+  return union > 0 ? intersection / union : 0;
+}
+
+function computeContainment(smaller: RectBounds, larger: RectBounds): number {
+  const xMin = Math.max(smaller.xMin, larger.xMin);
+  const xMax = Math.min(smaller.xMax, larger.xMax);
+  const yMin = Math.max(smaller.yMin, larger.yMin);
+  const yMax = Math.min(smaller.yMax, larger.yMax);
+
+  if (xMax <= xMin || yMax <= yMin) return 0;
+
+  const intersection = (xMax - xMin) * (yMax - yMin);
+  const smallerArea = smaller.width * smaller.height;
+
+  return smallerArea > 0 ? intersection / smallerArea : 0;
 }

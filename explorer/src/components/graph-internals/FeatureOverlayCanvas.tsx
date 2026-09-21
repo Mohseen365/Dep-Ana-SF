@@ -108,6 +108,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   }
 
   const { pan, zoom } = transform;
+  const isFarZoom = zoom < 0.6;
+  const isCloseZoom = zoom >= 1.2;
 
   return (
     <svg
@@ -125,48 +127,49 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       data-testid="feature-overlay-canvas"
     >
       <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-        {/* Render LWC Composition Group Outline Boxes */}
-        {compositionGroups.map((group) => {
-          if (!group.bounds) return null;
-          const { xMin, yMin, width, height } = group.bounds;
-          const labelWidth = (group.label?.length || 10) * 6.5 + 16;
+        {/* Render LWC Composition Group Outline Boxes (Suppressed at Far Zoom) */}
+        {!isFarZoom &&
+          compositionGroups.map((group) => {
+            if (!group.bounds) return null;
+            const { xMin, yMin, width, height } = group.bounds;
+            const labelWidth = (group.label?.length || 10) * 6.5 + 16;
 
-          return (
-            <g key={group.id} className="composition-group-overlay">
-              <rect
-                x={xMin}
-                y={yMin}
-                width={width}
-                height={height}
-                rx={10}
-                fill="rgba(99, 102, 241, 0.03)"
-                stroke="rgba(99, 102, 241, 0.45)"
-                strokeWidth={1.5}
-                strokeDasharray="5 5"
-              />
-              <rect
-                x={xMin + 8}
-                y={yMin - 11}
-                width={labelWidth}
-                height={20}
-                rx={4}
-                fill="rgba(30, 41, 59, 0.9)"
-                stroke="rgba(99, 102, 241, 0.5)"
-                strokeWidth={1}
-              />
-              <text
-                x={xMin + 16}
-                y={yMin + 3}
-                fill="#cbd5e1"
-                fontSize={10}
-                fontWeight={600}
-                fontFamily="system-ui, -apple-system, sans-serif"
-              >
-                {group.label}
-              </text>
-            </g>
-          );
-        })}
+            return (
+              <g key={group.id} className="composition-group-overlay">
+                <rect
+                  x={xMin}
+                  y={yMin}
+                  width={width}
+                  height={height}
+                  rx={10}
+                  fill="rgba(99, 102, 241, 0.03)"
+                  stroke="rgba(99, 102, 241, 0.45)"
+                  strokeWidth={isCloseZoom ? 2.0 : 1.5}
+                  strokeDasharray="5 5"
+                />
+                <rect
+                  x={xMin + 8}
+                  y={yMin - 11}
+                  width={labelWidth}
+                  height={20}
+                  rx={4}
+                  fill="rgba(30, 41, 59, 0.9)"
+                  stroke="rgba(99, 102, 241, 0.5)"
+                  strokeWidth={1}
+                />
+                <text
+                  x={xMin + 16}
+                  y={yMin + 3}
+                  fill="#cbd5e1"
+                  fontSize={10}
+                  fontWeight={600}
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >
+                  {group.label}
+                </text>
+              </g>
+            );
+          })}
 
         {/* Render Shared Infrastructure Highlighting Connections */}
         {sharedHighlight.type !== 'none' && (

@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "20.67",
-    "layoutTimeMs": "543.49",
-    "evaluationTimeMs": "100.62",
-    "totalTimeMs": "664.78"
+    "analysisTimeMs": "39.61",
+    "layoutTimeMs": "826.13",
+    "evaluationTimeMs": "82.33",
+    "totalTimeMs": "948.08"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -14,7 +14,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3907, 240, 4027, 300]",
         "width": 120,
         "height": 60,
@@ -29,7 +29,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7607, 160, 7727, 220]",
         "width": 120,
         "height": 60,
@@ -44,7 +44,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7359, 140, 7479, 200]",
         "width": 120,
         "height": 60,
@@ -59,7 +59,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7080, 160, 7200, 220]",
         "width": 120,
         "height": 60,
@@ -74,7 +74,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4947, 240, 5067, 300]",
         "width": 120,
         "height": 60,
@@ -89,7 +89,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5207, 240, 5327, 300]",
         "width": 120,
         "height": 60,
@@ -104,7 +104,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6796, 160, 6916, 220]",
         "width": 120,
         "height": 60,
@@ -119,7 +119,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5727, 240, 5847, 300]",
         "width": 120,
         "height": 60,
@@ -134,7 +134,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6427, 160, 6547, 220]",
         "width": 120,
         "height": 60,
@@ -149,7 +149,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6247, 240, 6367, 300]",
         "width": 120,
         "height": 60,
@@ -164,7 +164,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5700, 140, 5820, 200]",
         "width": 120,
         "height": 60,
@@ -179,7 +179,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4837, 140, 4957, 200]",
         "width": 120,
         "height": 60,
@@ -194,7 +194,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5193, 140, 5313, 200]",
         "width": 120,
         "height": 60,
@@ -209,7 +209,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7287, 240, 7767, 360]",
         "width": 480,
         "height": 120,
@@ -224,7 +224,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6587, 160, 6707, 220]",
         "width": 120,
         "height": 60,
@@ -239,7 +239,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 3,
         "layers": "application,domain,presentation,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5987, 160, 8087, 880]",
         "width": 2100,
         "height": 720,
@@ -254,7 +254,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6180, 140, 6300, 200]",
         "width": 120,
         "height": 60,
@@ -269,7 +269,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8327, 240, 8447, 300]",
         "width": 120,
         "height": 60,
@@ -284,7 +284,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4557, 140, 4677, 200]",
         "width": 120,
         "height": 60,
@@ -299,7 +299,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7827, 160, 7947, 220]",
         "width": 120,
         "height": 60,
@@ -314,7 +314,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4467, 240, 4587, 300]",
         "width": 120,
         "height": 60,
@@ -329,7 +329,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4727, 160, 5560, 460]",
         "width": 833.3299999999999,
         "height": 300,
@@ -344,7 +344,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application,presentation,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4247, 160, 5247, 820]",
         "width": 1000,
         "height": 660,
@@ -374,7 +374,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7987, 200, 8107, 260]",
         "width": 120,
         "height": 60,
@@ -389,7 +389,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4246, 300, 4366, 360]",
         "width": 120,
         "height": 60,
@@ -404,7 +404,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4307, 400, 4427, 460]",
         "width": 120,
         "height": 60,
@@ -419,7 +419,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 6,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4567, 0, 5047, 1080]",
         "width": 480,
         "height": 1080,
@@ -434,7 +434,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5107, 400, 5266, 720]",
         "width": 159.19999999999982,
         "height": 320,
@@ -449,7 +449,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 5,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5307, 400, 5887, 880]",
         "width": 580,
         "height": 480,
@@ -464,7 +464,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6907, 300, 7027, 360]",
         "width": 120,
         "height": 60,
@@ -479,7 +479,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6127, 300, 7607, 720]",
         "width": 1480,
         "height": 420,
@@ -494,7 +494,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7246, 340, 7366, 400]",
         "width": 120,
         "height": 60,
@@ -509,7 +509,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6727, 400, 8087, 1180]",
         "width": 1360,
         "height": 780,
@@ -524,7 +524,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6800, 400, 7187, 560]",
         "width": 386.25070530903395,
         "height": 160,
@@ -539,7 +539,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7407, 400, 7767, 660]",
         "width": 360,
         "height": 260,
@@ -554,7 +554,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 3,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7907, 400, 8187, 880]",
         "width": 280,
         "height": 480,
@@ -569,7 +569,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5507, 400, 8527, 980]",
         "width": 3020,
         "height": 580,
@@ -584,7 +584,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3947, 400, 4067, 460]",
         "width": 120,
         "height": 60,
@@ -599,7 +599,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4147, 420, 4327, 720]",
         "width": 180,
         "height": 300,
@@ -614,7 +614,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 2,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4192, 400, 4587, 920]",
         "width": 394.95463828149695,
         "height": 520,
@@ -629,7 +629,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 5,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4767, 0, 5947, 860]",
         "width": 1180,
         "height": 860,
@@ -644,7 +644,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5306, 0, 5586, 460]",
         "width": 280,
         "height": 460,
@@ -659,7 +659,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 3,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5646, 400, 5926, 880]",
         "width": 280,
         "height": 480,
@@ -674,7 +674,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5986, 400, 6266, 460]",
         "width": 280,
         "height": 60,
@@ -689,7 +689,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6326, 400, 6606, 560]",
         "width": 280,
         "height": 160,
@@ -704,7 +704,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 4,
         "layers": "application,domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4727, 300, 7026, 720]",
         "width": 2299.2,
         "height": 420,
@@ -719,7 +719,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7086, 400, 7206, 460]",
         "width": 120,
         "height": 60,
@@ -734,7 +734,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 3,
         "layers": "application,presentation",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5466, 240, 7767, 560]",
         "width": 2300.8,
         "height": 320,
@@ -749,7 +749,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "application",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7766, 400, 7886, 460]",
         "width": 120,
         "height": 60,
@@ -764,7 +764,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 2,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8086, 400, 8306, 880]",
         "width": 219.9999999999991,
         "height": 480,
@@ -809,7 +809,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3787, 660, 4007, 880]",
         "width": 220,
         "height": 220,
@@ -824,7 +824,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 2,
         "layers": "domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4047, 561, 4450, 780]",
         "width": 403.09027683527984,
         "height": 219.2970047953337,
@@ -839,7 +839,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 5,
         "layers": "domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4427, 660, 8767, 1280]",
         "width": 4340,
         "height": 620,
@@ -854,7 +854,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 1,
         "layers": "domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4687, 700, 4807, 980]",
         "width": 120,
         "height": 280,
@@ -869,7 +869,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3947, 660, 5067, 980]",
         "width": 1120,
         "height": 320,
@@ -884,7 +884,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 2,
         "layers": "domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5147, 660, 7407, 980]",
         "width": 2260,
         "height": 320,
@@ -899,7 +899,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "domain",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5467, 660, 5587, 720]",
         "width": 120,
         "height": 60,
@@ -914,7 +914,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7907, 720, 8027, 780]",
         "width": 120,
         "height": 60,
@@ -929,7 +929,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8506, 740, 8626, 800]",
         "width": 120,
         "height": 60,
@@ -944,7 +944,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7766, 720, 7886, 780]",
         "width": 120,
         "height": 60,
@@ -959,7 +959,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8806, 740, 8926, 800]",
         "width": 120,
         "height": 60,
@@ -974,7 +974,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5087, 820, 5207, 880]",
         "width": 120,
         "height": 60,
@@ -989,7 +989,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3547, 740, 3667, 800]",
         "width": 120,
         "height": 60,
@@ -1004,7 +1004,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6926, 720, 7046, 780]",
         "width": 120,
         "height": 60,
@@ -1019,7 +1019,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7246, 720, 7366, 780]",
         "width": 120,
         "height": 60,
@@ -1034,7 +1034,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7086, 720, 7206, 780]",
         "width": 120,
         "height": 60,
@@ -1049,7 +1049,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4847, 700, 4967, 760]",
         "width": 120,
         "height": 60,
@@ -1064,7 +1064,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8227, 720, 8347, 780]",
         "width": 120,
         "height": 60,
@@ -1079,7 +1079,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4127, 760, 4247, 820]",
         "width": 120,
         "height": 60,
@@ -1094,7 +1094,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7027, 820, 7147, 880]",
         "width": 120,
         "height": 60,
@@ -1109,7 +1109,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7287, 820, 7407, 880]",
         "width": 120,
         "height": 60,
@@ -1124,7 +1124,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3367, 740, 3487, 800]",
         "width": 120,
         "height": 60,
@@ -1139,7 +1139,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7807, 820, 7927, 880]",
         "width": 120,
         "height": 60,
@@ -1154,7 +1154,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8067, 820, 8187, 880]",
         "width": 120,
         "height": 60,
@@ -1169,7 +1169,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8327, 820, 8447, 880]",
         "width": 120,
         "height": 60,
@@ -1184,7 +1184,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3947, 820, 4067, 880]",
         "width": 120,
         "height": 60,
@@ -1199,7 +1199,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4207, 820, 4327, 880]",
         "width": 120,
         "height": 60,
@@ -1214,7 +1214,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7487, 740, 7607, 800]",
         "width": 120,
         "height": 60,
@@ -1229,7 +1229,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4727, 820, 4847, 880]",
         "width": 120,
         "height": 60,
@@ -1244,7 +1244,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8967, 740, 9087, 800]",
         "width": 120,
         "height": 60,
@@ -1259,7 +1259,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5247, 820, 5367, 880]",
         "width": 120,
         "height": 60,
@@ -1274,7 +1274,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5607, 820, 5727, 880]",
         "width": 120,
         "height": 60,
@@ -1289,7 +1289,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5967, 740, 6087, 800]",
         "width": 120,
         "height": 60,
@@ -1304,7 +1304,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5647, 720, 5767, 780]",
         "width": 120,
         "height": 60,
@@ -1319,7 +1319,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4527, 720, 4647, 780]",
         "width": 120,
         "height": 60,
@@ -1334,7 +1334,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4407, 760, 4527, 820]",
         "width": 120,
         "height": 60,
@@ -1349,7 +1349,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6766, 760, 6886, 820]",
         "width": 120,
         "height": 60,
@@ -1364,7 +1364,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6586, 740, 6706, 800]",
         "width": 120,
         "height": 60,
@@ -1379,7 +1379,7 @@
         "primaryNodes": 2,
         "secondaryNodes": 60,
         "layers": "application,presentation,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[0, 140, 9996, 1380]",
         "width": 9996.27,
         "height": 1240,
@@ -1394,7 +1394,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8067, 720, 8187, 780]",
         "width": 120,
         "height": 60,
@@ -1409,7 +1409,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[8327, 920, 8447, 980]",
         "width": 120,
         "height": 60,
@@ -1424,7 +1424,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4047, 820, 4167, 880]",
         "width": 120,
         "height": 60,
@@ -1439,7 +1439,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6307, 740, 6427, 800]",
         "width": 120,
         "height": 60,
@@ -1454,7 +1454,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5307, 760, 5427, 820]",
         "width": 120,
         "height": 60,
@@ -1469,7 +1469,7 @@
         "primaryNodes": 2,
         "secondaryNodes": 10,
         "layers": "application,domain,schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[4607, 300, 7407, 1380]",
         "width": 2800,
         "height": 1080,
@@ -1484,7 +1484,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[5467, 760, 5587, 820]",
         "width": 120,
         "height": 60,
@@ -1499,7 +1499,7 @@
         "primaryNodes": 0,
         "secondaryNodes": 1,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[3207, 740, 3327, 800]",
         "width": 120,
         "height": 60,
@@ -1529,7 +1529,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 0,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6127, 860, 6247, 920]",
         "width": 120,
         "height": 60,
@@ -1544,7 +1544,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 0,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6387, 840, 6507, 900]",
         "width": 120,
         "height": 60,
@@ -1559,7 +1559,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 0,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6647, 860, 6767, 920]",
         "width": 120,
         "height": 60,
@@ -1574,7 +1574,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 0,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[6926, 820, 7046, 880]",
         "width": 120,
         "height": 60,
@@ -1589,7 +1589,7 @@
         "primaryNodes": 1,
         "secondaryNodes": 0,
         "layers": "schema",
-        "components": "unknown",
+        "components": "0",
         "bbox": "[7187, 840, 7307, 900]",
         "width": 120,
         "height": 60,
@@ -1601,7 +1601,7 @@
     ],
     "domainComparison": [
       {
-        "domain": "AccountMetrics",
+        "domainId": "AccountMetrics",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1610,7 +1610,7 @@
         "regionXMax": 260
       },
       {
-        "domain": "FilterPanel",
+        "domainId": "FilterPanel",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1619,7 +1619,7 @@
         "regionXMax": 520
       },
       {
-        "domain": "DataImporter",
+        "domainId": "DataImporter",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1628,7 +1628,7 @@
         "regionXMax": 780
       },
       {
-        "domain": "AppShell",
+        "domainId": "AppShell",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1637,7 +1637,7 @@
         "regionXMax": 1040
       },
       {
-        "domain": "ErrorPanel",
+        "domainId": "ErrorPanel",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1646,7 +1646,7 @@
         "regionXMax": 1300
       },
       {
-        "domain": "SystemAdminApp",
+        "domainId": "SystemAdminApp",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1655,7 +1655,7 @@
         "regionXMax": 1560
       },
       {
-        "domain": "AdminUserAccess",
+        "domainId": "AdminUserAccess",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1664,7 +1664,7 @@
         "regionXMax": 1820
       },
       {
-        "domain": "OrganizationTree",
+        "domainId": "OrganizationTree",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1673,7 +1673,7 @@
         "regionXMax": 2080
       },
       {
-        "domain": "AdminOrganizations",
+        "domainId": "AdminOrganizations",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1682,7 +1682,7 @@
         "regionXMax": 2340
       },
       {
-        "domain": "HomeOverview",
+        "domainId": "HomeOverview",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1691,7 +1691,7 @@
         "regionXMax": 2600
       },
       {
-        "domain": "AdminDataHealth",
+        "domainId": "AdminDataHealth",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1700,7 +1700,7 @@
         "regionXMax": 2860
       },
       {
-        "domain": "AdminForecasts",
+        "domainId": "AdminForecasts",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1709,7 +1709,7 @@
         "regionXMax": 3120
       },
       {
-        "domain": "AdministrationNav",
+        "domainId": "AdministrationNav",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1718,7 +1718,7 @@
         "regionXMax": 3380
       },
       {
-        "domain": "SpendAnalytics",
+        "domainId": "SpendAnalytics",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1727,7 +1727,7 @@
         "regionXMax": 3640
       },
       {
-        "domain": "AdminSpendExplorer",
+        "domainId": "AdminSpendExplorer",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1736,7 +1736,7 @@
         "regionXMax": 3900
       },
       {
-        "domain": "AdminAudit",
+        "domainId": "AdminAudit",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -1745,7 +1745,7 @@
         "regionXMax": 4160
       },
       {
-        "domain": "AdminBudgets",
+        "domainId": "AdminBudgets",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1754,7 +1754,7 @@
         "regionXMax": 4420
       },
       {
-        "domain": "SpendTrackerNav",
+        "domainId": "SpendTrackerNav",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1763,7 +1763,7 @@
         "regionXMax": 4680
       },
       {
-        "domain": "AdminCloudAccounts",
+        "domainId": "AdminCloudAccounts",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1772,7 +1772,7 @@
         "regionXMax": 300
       },
       {
-        "domain": "TopServicesTable",
+        "domainId": "TopServicesTable",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1781,7 +1781,7 @@
         "regionXMax": 560
       },
       {
-        "domain": "ForecastManager",
+        "domainId": "ForecastManager",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1790,7 +1790,7 @@
         "regionXMax": 820
       },
       {
-        "domain": "AdminDataExplorer",
+        "domainId": "AdminDataExplorer",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1799,7 +1799,7 @@
         "regionXMax": 1080
       },
       {
-        "domain": "AdminOverview",
+        "domainId": "AdminOverview",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1808,7 +1808,7 @@
         "regionXMax": 1340
       },
       {
-        "domain": "AdminFilterPanel",
+        "domainId": "AdminFilterPanel",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -1817,7 +1817,7 @@
         "regionXMax": 1600
       },
       {
-        "domain": "CsvParser",
+        "domainId": "CsvParser",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1826,7 +1826,7 @@
         "regionXMax": 260
       },
       {
-        "domain": "StandardAccessPolicy",
+        "domainId": "StandardAccessPolicy",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1835,7 +1835,7 @@
         "regionXMax": 520
       },
       {
-        "domain": "QueryResult",
+        "domainId": "QueryResult",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1844,7 +1844,7 @@
         "regionXMax": 780
       },
       {
-        "domain": "Forecast",
+        "domainId": "Forecast",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 120,
         "diffWidth": 200,
@@ -1853,7 +1853,7 @@
         "regionXMax": 1200
       },
       {
-        "domain": "OrganizationHierarchy",
+        "domainId": "OrganizationHierarchy",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1862,7 +1862,7 @@
         "regionXMax": 1460
       },
       {
-        "domain": "User",
+        "domainId": "User",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -1871,7 +1871,7 @@
         "regionXMax": 1880
       },
       {
-        "domain": "CloudSpendTrigger",
+        "domainId": "CloudSpendTrigger",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1880,7 +1880,7 @@
         "regionXMax": 2140
       },
       {
-        "domain": "CloudSpend",
+        "domainId": "CloudSpend",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -1889,7 +1889,7 @@
         "regionXMax": 2560
       },
       {
-        "domain": "Date",
+        "domainId": "Date",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1898,7 +1898,7 @@
         "regionXMax": 2820
       },
       {
-        "domain": "AdminSpend",
+        "domainId": "AdminSpend",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1907,7 +1907,7 @@
         "regionXMax": 3080
       },
       {
-        "domain": "Fiscal",
+        "domainId": "Fiscal",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -1916,7 +1916,7 @@
         "regionXMax": 3500
       },
       {
-        "domain": "Spend",
+        "domainId": "Spend",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -1925,7 +1925,7 @@
         "regionXMax": 3920
       },
       {
-        "domain": "Budget",
+        "domainId": "Budget",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 120,
         "diffWidth": 200,
@@ -1934,7 +1934,7 @@
         "regionXMax": 4340
       },
       {
-        "domain": "Audit",
+        "domainId": "Audit",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1943,7 +1943,7 @@
         "regionXMax": 4600
       },
       {
-        "domain": "AdminUser",
+        "domainId": "AdminUser",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1952,7 +1952,7 @@
         "regionXMax": 300
       },
       {
-        "domain": "UserOrganizationRole",
+        "domainId": "UserOrganizationRole",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1961,7 +1961,7 @@
         "regionXMax": 560
       },
       {
-        "domain": "SpendTrackerAccessContext",
+        "domainId": "SpendTrackerAccessContext",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -1970,7 +1970,7 @@
         "regionXMax": 820
       },
       {
-        "domain": "Organization",
+        "domainId": "Organization",
         "globalEstimatedWidth": 480,
         "actualPrimaryWidth": 120,
         "diffWidth": 360,
@@ -1979,7 +1979,7 @@
         "regionXMax": 1400
       },
       {
-        "domain": "SpendTrackerAuthorization",
+        "domainId": "SpendTrackerAuthorization",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -1988,7 +1988,7 @@
         "regionXMax": 1659.2
       },
       {
-        "domain": "BudgetAlert",
+        "domainId": "BudgetAlert",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 120,
         "diffWidth": 200,
@@ -1997,7 +1997,7 @@
         "regionXMax": 2079.2
       },
       {
-        "domain": "AdminHealth",
+        "domainId": "AdminHealth",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2006,7 +2006,7 @@
         "regionXMax": 2339.2
       },
       {
-        "domain": "Import",
+        "domainId": "Import",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -2015,7 +2015,7 @@
         "regionXMax": 2759.2
       },
       {
-        "domain": "CloudAccount",
+        "domainId": "CloudAccount",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -2024,7 +2024,7 @@
         "regionXMax": 3179.2
       },
       {
-        "domain": "UserContactMapping",
+        "domainId": "UserContactMapping",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2033,7 +2033,7 @@
         "regionXMax": 3439.2
       },
       {
-        "domain": "UserManagement",
+        "domainId": "UserManagement",
         "globalEstimatedWidth": 320,
         "actualPrimaryWidth": 0,
         "diffWidth": 320,
@@ -2042,7 +2042,7 @@
         "regionXMax": 3859.2
       },
       {
-        "domain": "SpendImport",
+        "domainId": "SpendImport",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2051,7 +2051,7 @@
         "regionXMax": 4119.2
       },
       {
-        "domain": "CloudSpendMonthBackfill",
+        "domainId": "CloudSpendMonthBackfill",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2060,7 +2060,7 @@
         "regionXMax": 4379.2
       },
       {
-        "domain": "ErrorResponse",
+        "domainId": "ErrorResponse",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2069,7 +2069,7 @@
         "regionXMax": 4639.2
       },
       {
-        "domain": "Currency",
+        "domainId": "Currency",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2078,7 +2078,7 @@
         "regionXMax": 340
       },
       {
-        "domain": "ContentVersion",
+        "domainId": "ContentVersion",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2087,7 +2087,7 @@
         "regionXMax": 260
       },
       {
-        "domain": "OrganizationTrigger",
+        "domainId": "OrganizationTrigger",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2096,7 +2096,7 @@
         "regionXMax": 520
       },
       {
-        "domain": "FiscalPeriodMapping",
+        "domainId": "FiscalPeriodMapping",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2105,7 +2105,7 @@
         "regionXMax": 780
       },
       {
-        "domain": "SystemAdminAccessPolicy",
+        "domainId": "SystemAdminAccessPolicy",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2114,7 +2114,7 @@
         "regionXMax": 1040
       },
       {
-        "domain": "OrganizationBudget",
+        "domainId": "OrganizationBudget",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2123,7 +2123,7 @@
         "regionXMax": 1300
       },
       {
-        "domain": "CloudService",
+        "domainId": "CloudService",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2132,7 +2132,7 @@
         "regionXMax": 1560
       },
       {
-        "domain": "UserOrganizationRoleTrigger",
+        "domainId": "UserOrganizationRoleTrigger",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2141,7 +2141,7 @@
         "regionXMax": 1820
       },
       {
-        "domain": "BatchableContext",
+        "domainId": "BatchableContext",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2150,7 +2150,7 @@
         "regionXMax": 260
       },
       {
-        "domain": "SaveResult",
+        "domainId": "SaveResult",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2159,7 +2159,7 @@
         "regionXMax": 520
       },
       {
-        "domain": "Error_Message",
+        "domainId": "Error_Message",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2168,7 +2168,7 @@
         "regionXMax": 780
       },
       {
-        "domain": "VersionData",
+        "domainId": "VersionData",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2177,7 +2177,7 @@
         "regionXMax": 1040
       },
       {
-        "domain": "Spend_Import_Batch",
+        "domainId": "Spend_Import_Batch",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2186,7 +2186,7 @@
         "regionXMax": 1300
       },
       {
-        "domain": "SpendImportBatch",
+        "domainId": "SpendImportBatch",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2195,7 +2195,7 @@
         "regionXMax": 1560
       },
       {
-        "domain": "Classification",
+        "domainId": "Classification",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2204,7 +2204,7 @@
         "regionXMax": 1820
       },
       {
-        "domain": "ClassificationResult",
+        "domainId": "ClassificationResult",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2213,7 +2213,7 @@
         "regionXMax": 2080
       },
       {
-        "domain": "BackfillResult",
+        "domainId": "BackfillResult",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2222,7 +2222,7 @@
         "regionXMax": 2340
       },
       {
-        "domain": "DmlException",
+        "domainId": "DmlException",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2231,7 +2231,7 @@
         "regionXMax": 2600
       },
       {
-        "domain": "Lead",
+        "domainId": "Lead",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2240,7 +2240,7 @@
         "regionXMax": 2860
       },
       {
-        "domain": "SpendHistory",
+        "domainId": "SpendHistory",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2249,7 +2249,7 @@
         "regionXMax": 3120
       },
       {
-        "domain": "HealthCheck",
+        "domainId": "HealthCheck",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2258,7 +2258,7 @@
         "regionXMax": 3380
       },
       {
-        "domain": "Cloud_Service",
+        "domainId": "Cloud_Service",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2267,7 +2267,7 @@
         "regionXMax": 3640
       },
       {
-        "domain": "Starting",
+        "domainId": "Starting",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2276,7 +2276,7 @@
         "regionXMax": 3900
       },
       {
-        "domain": "Cloud_Spend",
+        "domainId": "Cloud_Spend",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2285,7 +2285,7 @@
         "regionXMax": 4160
       },
       {
-        "domain": "Cloud_Account",
+        "domainId": "Cloud_Account",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2294,7 +2294,7 @@
         "regionXMax": 4420
       },
       {
-        "domain": "Contact",
+        "domainId": "Contact",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2303,7 +2303,7 @@
         "regionXMax": 4680
       },
       {
-        "domain": "Organization_Budget",
+        "domainId": "Organization_Budget",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2312,7 +2312,7 @@
         "regionXMax": 300
       },
       {
-        "domain": "Assert",
+        "domainId": "Assert",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2321,7 +2321,7 @@
         "regionXMax": 560
       },
       {
-        "domain": "AggregateSpend",
+        "domainId": "AggregateSpend",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2330,7 +2330,7 @@
         "regionXMax": 820
       },
       {
-        "domain": "Organization_Hierarchy",
+        "domainId": "Organization_Hierarchy",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2339,7 +2339,7 @@
         "regionXMax": 1080
       },
       {
-        "domain": "Year",
+        "domainId": "Year",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2348,7 +2348,7 @@
         "regionXMax": 1340
       },
       {
-        "domain": "User_Organization_Role",
+        "domainId": "User_Organization_Role",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2357,7 +2357,7 @@
         "regionXMax": 1600
       },
       {
-        "domain": "Action_Audit",
+        "domainId": "Action_Audit",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2366,7 +2366,7 @@
         "regionXMax": 1860
       },
       {
-        "domain": "Cloud_Provider",
+        "domainId": "Cloud_Provider",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2375,7 +2375,7 @@
         "regionXMax": 2120
       },
       {
-        "domain": "Region",
+        "domainId": "Region",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2384,7 +2384,7 @@
         "regionXMax": 2380
       },
       {
-        "domain": "Service",
+        "domainId": "Service",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2393,7 +2393,7 @@
         "regionXMax": 2640
       },
       {
-        "domain": "Spend_Month",
+        "domainId": "Spend_Month",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2402,7 +2402,7 @@
         "regionXMax": 2900
       },
       {
-        "domain": "PeriodMapping",
+        "domainId": "PeriodMapping",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2411,7 +2411,7 @@
         "regionXMax": 3160
       },
       {
-        "domain": "Start_Date",
+        "domainId": "Start_Date",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2420,7 +2420,7 @@
         "regionXMax": 3420
       },
       {
-        "domain": "Shared",
+        "domainId": "Shared",
         "globalEstimatedWidth": 640,
         "actualPrimaryWidth": 280,
         "diffWidth": 360,
@@ -2429,7 +2429,7 @@
         "regionXMax": 4160
       },
       {
-        "domain": "PermissionSetAssignment",
+        "domainId": "PermissionSetAssignment",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2438,7 +2438,7 @@
         "regionXMax": 4420
       },
       {
-        "domain": "Fiscal_Period_Mapping",
+        "domainId": "Fiscal_Period_Mapping",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2447,7 +2447,7 @@
         "regionXMax": 4680
       },
       {
-        "domain": "Profile",
+        "domainId": "Profile",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2456,7 +2456,7 @@
         "regionXMax": 340
       },
       {
-        "domain": "PermissionSet",
+        "domainId": "PermissionSet",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2465,7 +2465,7 @@
         "regionXMax": 600
       },
       {
-        "domain": "QueryException",
+        "domainId": "QueryException",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2474,7 +2474,7 @@
         "regionXMax": 860
       },
       {
-        "domain": "Account",
+        "domainId": "Account",
         "globalEstimatedWidth": 480,
         "actualPrimaryWidth": 440,
         "diffWidth": 40,
@@ -2483,7 +2483,7 @@
         "regionXMax": 1440
       },
       {
-        "domain": "RoleMapping",
+        "domainId": "RoleMapping",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2492,7 +2492,7 @@
         "regionXMax": 1700
       },
       {
-        "domain": "UserRole",
+        "domainId": "UserRole",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2501,7 +2501,7 @@
         "regionXMax": 1960
       },
       {
-        "domain": "UUID",
+        "domainId": "UUID",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 0,
         "diffWidth": 160,
@@ -2510,7 +2510,7 @@
         "regionXMax": 2220
       },
       {
-        "domain": "BusinessDataProvisioning",
+        "domainId": "BusinessDataProvisioning",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2519,7 +2519,7 @@
         "regionXMax": 2480
       },
       {
-        "domain": "Email",
+        "domainId": "Email",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2528,7 +2528,7 @@
         "regionXMax": 2740
       },
       {
-        "domain": "PermissionSetGroup",
+        "domainId": "PermissionSetGroup",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2537,7 +2537,7 @@
         "regionXMax": 3000
       },
       {
-        "domain": "ProvisioningException",
+        "domainId": "ProvisioningException",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2546,7 +2546,7 @@
         "regionXMax": 3260
       },
       {
-        "domain": "QueueableContext",
+        "domainId": "QueueableContext",
         "globalEstimatedWidth": 160,
         "actualPrimaryWidth": 120,
         "diffWidth": 40,
@@ -2628,6 +2628,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "domain",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "5467.3"
       },
       {
@@ -2637,6 +2638,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4991.3"
       },
       {
@@ -2646,6 +2648,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4921.8"
       },
       {
@@ -2655,6 +2658,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4812.0"
       },
       {
@@ -2664,6 +2668,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4762.2"
       },
       {
@@ -2673,6 +2678,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4738.9"
       },
       {
@@ -2682,6 +2688,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4652.4"
       },
       {
@@ -2691,6 +2698,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4602.6"
       },
       {
@@ -2700,6 +2708,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4592.9"
       },
       {
@@ -2709,6 +2718,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4522.8"
       },
       {
@@ -2718,6 +2728,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4492.9"
       },
       {
@@ -2727,6 +2738,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4443.0"
       },
       {
@@ -2736,6 +2748,7 @@
         "targetDomain": "AccountMetrics",
         "sourceLayer": "presentation",
         "targetLayer": "presentation",
+        "edgeType": "lwc-template-child",
         "length": "4420.0"
       },
       {
@@ -2745,6 +2758,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4373.2"
       },
       {
@@ -2754,6 +2768,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4363.3"
       },
       {
@@ -2763,6 +2778,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4283.5"
       },
       {
@@ -2772,6 +2788,7 @@
         "targetDomain": "FiscalPeriodMapping",
         "sourceLayer": "domain",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4228.0"
       },
       {
@@ -2781,6 +2798,7 @@
         "targetDomain": "Assert",
         "sourceLayer": "domain",
         "targetLayer": "schema",
+        "edgeType": "method-call",
         "length": "4220.9"
       },
       {
@@ -2790,6 +2808,7 @@
         "targetDomain": "Assert",
         "sourceLayer": "domain",
         "targetLayer": "schema",
+        "edgeType": "method-call",
         "length": "4220.9"
       },
       {
@@ -2799,6 +2818,7 @@
         "targetDomain": "Shared",
         "sourceLayer": "application",
         "targetLayer": "schema",
+        "edgeType": "soql-field",
         "length": "4213.7"
       }
     ]
@@ -2843,9 +2863,9 @@
         "center": "(280, 1510)"
       }
     ],
-    "minGap": 100,
-    "medianGap": 100,
-    "p95Gap": 10026.263666635743
+    "minGap": "100.0",
+    "medianGap": "100.0",
+    "p95Gap": "10026.3"
   },
   "satellites": {
     "count": 63,
