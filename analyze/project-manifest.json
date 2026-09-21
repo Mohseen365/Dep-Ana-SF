@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "bouquet-salesforce",
+  "activeProjectId": "bqs",
   "projects": [
     {
       "id": "foodies",
@@ -66,6 +66,32 @@
       "componentCount": 274,
       "dependencyCount": 603,
       "analysisPath": "/projects/bouquet-salesforce/explorer-data.json"
+    },
+    {
+      "id": "bq",
+      "name": "bq",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../Interview Project/Bouquet-Experience-Cloud/force-app/main/default",
+      "createdAt": "2026-09-17T06:07:04.752Z",
+      "updatedAt": "2026-09-17T06:07:04.752Z",
+      "lastAnalyzedAt": "2026-09-17T06:07:04.752Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bq/explorer-data.json"
+    },
+    {
+      "id": "bqs",
+      "name": "bqs",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../Interview Project/Bouquet-Experience-Cloud/force-app/main/default",
+      "createdAt": "2026-09-17T06:07:04.752Z",
+      "updatedAt": "2026-09-17T06:07:04.752Z",
+      "lastAnalyzedAt": "2026-09-17T06:07:04.752Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bqs/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -101,6 +127,20 @@
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
       "fileHash": "sha256:542ac545dd2e75a9ed067e9239f75bba488a0850bc8ec4814cceb12b2cb75473",
+      "nodeCount": 274,
+      "edgeCount": 603
+    },
+    "bq": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:ae5624322907433d36e0d301b56957f9836e1f40d8f03ebf1324fdaacdfddded",
+      "nodeCount": 274,
+      "edgeCount": 603
+    },
+    "bqs": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:b6b893a95f6f093a5617aae181d851832147211cc2a20ae04e854336f4821ebf",
       "nodeCount": 274,
       "edgeCount": 603
     }
