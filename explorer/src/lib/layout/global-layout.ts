@@ -84,6 +84,8 @@ export interface GlobalLayoutOptions {
   nodeWidth?: number;
   /** Node height for region bounds calculation (default: 60) */
   nodeHeight?: number;
+  /** Minimum region width for spatial containers (default: 160) */
+  minRegionWidth?: number;
   /** Optional pre-computed architecture analysis model to reuse */
   analysis?: ArchitectureGraphAnalysis;
   /** Optional pre-computed domain discovery result to reuse */
@@ -998,6 +1000,8 @@ export function computeGlobalDomainLayout(
       layerCounts[layer] = (layerCounts[layer] || 0) + 1;
     });
 
+    const representedLayers = LAYERS_IN_ORDER.filter(l => layerCounts[l] > 0);
+
     const maxCols = Math.max(
       1,
       ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.min(4, layerCounts[l]) : 0))
@@ -1011,8 +1015,24 @@ export function computeGlobalDomainLayout(
     const primaryWidth = maxCols * nodeWidth + Math.max(0, maxCols - 1) * 40;
     const primaryHeight = maxRows * nodeHeight + Math.max(0, maxRows - 1) * 40;
 
-    const regionWidth = Math.max(160, primaryWidth + 40);
-    const regionHeight = Math.max(100, primaryHeight + 40);
+    // Minimum region width for spatial container
+    const defaultMin = options.minRegionWidth ?? 160;
+    const minWidth = options.minRegionWidth !== undefined
+      ? options.minRegionWidth
+      : (primaryNodesInDomain.length > 1 ? defaultMin : 160);
+    const regionWidth = Math.max(minWidth, primaryWidth + 40);
+
+    // Multi-layer vertical height calculation spanning represented layers
+    let regionHeight: number;
+    if (representedLayers.length > 1) {
+      const firstLayer = representedLayers[0];
+      const lastLayer = representedLayers[representedLayers.length - 1];
+      const minY = layerYMap[firstLayer];
+      const maxY = layerYMap[lastLayer] + (dynamicLayerResult.layerHeights[lastLayer] || nodeHeight);
+      regionHeight = Math.max(100, maxY - minY + 40);
+    } else {
+      regionHeight = Math.max(100, primaryHeight + 40);
+    }
 
     domainDimensions.set(domain, { width: regionWidth, height: regionHeight, primaryLayer });
     totalWidthSum += regionWidth + 60;
@@ -1047,13 +1067,45 @@ export function computeGlobalDomainLayout(
       }
 
       const xCenter = currentX + dim.width / 2;
-      const layerBaseY = layerYMap[primaryLayer] ?? baseY;
-      const yCenter = layerBaseY + dim.height / 2;
+
+      // Determine represented layers in domain/feature
+      const primaryNodesInDomain = dNode
+        ? dNode.primaryNodeIds
+            .map(id => (index ? index.nodeById.get(id) : safeNodes.find(n => n.id === id)))
+            .filter((n): n is ExplorerNode => n !== undefined)
+        : [];
+
+      const layerCounts: Record<ArchitectureLayer, number> = {
+        presentation: 0,
+        application: 0,
+        domain: 0,
+        schema: 0,
+      };
+      primaryNodesInDomain.forEach(node => {
+        const layer = classifyNodeLayer(node);
+        layerCounts[layer] = (layerCounts[layer] || 0) + 1;
+      });
+      const representedLayers = LAYERS_IN_ORDER.filter(l => layerCounts[l] > 0);
+
+      let yMin: number;
+      let yMax: number;
+      let yCenter: number;
+
+      if (representedLayers.length > 1) {
+        const firstLayer = representedLayers[0];
+        const lastLayer = representedLayers[representedLayers.length - 1];
+        yMin = layerYMap[firstLayer] - 20;
+        yMax = layerYMap[lastLayer] + (dynamicLayerResult.layerHeights[lastLayer] || nodeHeight) + 20;
+        yCenter = (yMin + yMax) / 2;
+      } else {
+        const layerBaseY = layerYMap[primaryLayer] ?? baseY;
+        yCenter = layerBaseY + dim.height / 2;
+        yMin = yCenter - dim.height / 2;
+        yMax = yCenter + dim.height / 2;
+      }
 
       const xMin = currentX;
       const xMax = currentX + dim.width;
-      const yMin = yCenter - dim.height / 2;
-      const yMax = yCenter + dim.height / 2;
 
       const region: DomainRegion = {
         domain,
@@ -1254,9 +1306,10 @@ export function computeGlobalFeatureLayout(
     }
   });
 
-  // Re-use computeGlobalDomainLayout with featureMap passed as domainMap
+  // Re-use computeGlobalDomainLayout with featureMap passed as domainMap and minRegionWidth=280 for multi-node features
   const globalResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
     ...options,
+    minRegionWidth: options.minRegionWidth ?? 280,
     domainMap: featureMap,
   });
 
