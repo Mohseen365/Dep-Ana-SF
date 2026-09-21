@@ -4,15 +4,15 @@
   "projects": [
     {
       "id": "default",
-      "name": "Default Salesforce Project",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "tmp-integration-test/fixture",
+      "name": "Cloud Spend Tracker",
+      "description": "Cloud Spend Tracker Architecture Analysis",
+      "sourcePath": "audit-fixtures/cloud-spend-tracker",
       "createdAt": "2026-09-21T03:10:08.266Z",
       "updatedAt": "2026-09-21T03:10:08.266Z",
       "lastAnalyzedAt": "2026-09-21T03:10:08.266Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 4,
-      "dependencyCount": 3,
+      "componentCount": 240,
+      "dependencyCount": 1024,
       "analysisPath": "/explorer-data.json"
     }
   ],
@@ -21,8 +21,8 @@
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
       "fileHash": "sha256:f61e12cc193c3fc728d3cc1d8e717566e71c42b8e40eaeb11a4fd86ecff42ff3",
-      "nodeCount": 4,
-      "edgeCount": 3
+      "nodeCount": 240,
+      "edgeCount": 1024
     }
   }
 }
