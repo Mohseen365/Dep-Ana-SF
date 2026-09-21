@@ -35,14 +35,12 @@ import {
   computeStepImpact,
   computeTemporarySimulatedPositions,
   createProposalFromTargetNodes,
-  createProposalFromFinding,
   validateProposalCommit,
   type RefactoringProposal,
 } from './lib/refactoring-simulation';
 import {
   openDetachedWindow,
   createChannel,
-  broadcastNodeChange,
   onDetachedDrill,
 } from './lib/detached-drawer';
 
@@ -450,13 +448,6 @@ export function App() {
     setWorkspaceViewMode('graph');
   }, [activeData, activeProjectId]);
 
-  const handleStartSimulationForFinding = useCallback((finding: ArchitectureFinding) => {
-    if (!activeData) return;
-    const proposal = createProposalFromFinding(finding, activeData, activeProjectId);
-    setActiveSimulationProposal(proposal);
-    setSimulationStepIndex(0);
-    setWorkspaceViewMode('graph');
-  }, [activeData, activeProjectId]);
 
   // Sync compare focused entity selection
   useEffect(() => {

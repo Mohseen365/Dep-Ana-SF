@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge, Position } from '../types/explorer';
+import type { ExplorerDataSchema } from '../types/explorer';
+import type { Position } from '../lib/position-policy';
 import {
   applySimulationOperations,
   computeFindingDelta,
@@ -10,21 +11,17 @@ import {
   computeTemporarySimulatedPositions,
   createProposalFromTargetNodes,
   createProposalFromFinding,
-  isProposalStale,
   validateProposalCommit,
   computeGraphHash,
-  type RefactoringProposal,
   type RefactoringOperation,
 } from '../lib/refactoring-simulation';
-import { runAllRules, createArchitectureContext, type ArchitectureFinding } from '../lib/intelligence';
+import { runAllRules, createArchitectureContext } from '../lib/intelligence';
 import {
   loadProjectState,
   saveProjectState,
   createDefaultProjectUIState,
   clearProjectState,
 } from '../lib/projectState';
-import { deriveArchitectureLayers } from '../lib/layout/analysis';
-import { discoverDomainsAndSubsystems } from '../lib/layout/domains';
 
 const FIXTURE_RELATIVE_PATH = '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json';
 const EXPECTED_FIXTURE_HASH = 'feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295';
@@ -63,7 +60,7 @@ describe('Prompt 9 — End-to-End Architecture Decision Workflow & Post-Commit V
     const findings = runAllRules(ctx);
 
     expect(findings.length).toBeGreaterThan(0);
-    const primaryFinding = findings.find(f => f.affectedNodeIds && f.affectedNodeIds.includes('ApexClass:AccountController')) || findings[0];
+    const primaryFinding = findings.find(f => (f as any).affectedNodeIds && (f as any).affectedNodeIds.includes('ApexClass:AccountController')) || findings[0];
 
     expect(primaryFinding.id).toBeDefined();
     expect(primaryFinding.title).toBeDefined();
@@ -211,6 +208,7 @@ describe('Prompt 9 — End-to-End Architecture Decision Workflow & Post-Commit V
 
     // Explicit commit
     const committedGraph = applySimulationOperations(cstBase, ops);
+    expect(committedGraph.nodes.length).toBeGreaterThan(0);
     const postCommitCtx = createArchitectureContext(committedGraph as any);
     const postCommitFindings = runAllRules(postCommitCtx);
 
