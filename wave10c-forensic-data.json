@@ -4,20 +4,20 @@
     "nodeCount": 240,
     "edgeCount": 1024,
     "domainCount": 106,
-    "timestamp": "2026-09-21T18:26:05.214Z"
+    "timestamp": "2026-09-21T19:18:50.100Z"
   },
   "performanceTimingsMs": {
-    "analysis": "18.40",
-    "layout": "601.16",
-    "total": "619.56"
+    "analysis": "17.68",
+    "layout": "607.72",
+    "total": "625.40"
   },
   "pipelineStagesSnapshots": [
     {
       "stage": "Stage 5: Global Layout (Domains)",
       "nodeCount": 106,
       "width": 4580,
-      "height": 1660,
-      "aspectRatio": "2.76",
+      "height": 6120,
+      "aspectRatio": "0.75",
       "overlaps": 0,
       "maxEdgeLength": "N/A"
     },
@@ -36,7 +36,7 @@
       "width": 9996.27,
       "height": 920,
       "aspectRatio": "10.87",
-      "overlaps": 47,
+      "overlaps": 46,
       "maxEdgeLength": "5467.3"
     },
     {
@@ -45,7 +45,7 @@
       "width": 9996.27,
       "height": 1380,
       "aspectRatio": "7.24",
-      "overlaps": 47,
+      "overlaps": 46,
       "maxEdgeLength": "5467.3"
     },
     {
@@ -54,7 +54,7 @@
       "width": 12136.27,
       "height": 1540,
       "aspectRatio": "7.88",
-      "overlaps": 45,
+      "overlaps": 44,
       "maxEdgeLength": "5467.3"
     },
     {
@@ -63,7 +63,7 @@
       "width": 12136.27,
       "height": 1540,
       "aspectRatio": "7.88",
-      "overlaps": 22,
+      "overlaps": 25,
       "maxEdgeLength": "5467.3"
     }
   ],
@@ -220,13 +220,13 @@
         "width": 2800,
         "height": 1080,
         "centroid": "(6007, 840)",
-        "pCentroid": "(4997, 590)",
-        "medianPairwiseDist": "340.6",
-        "maxPairwiseDist": "528.4",
+        "pCentroid": "(5057, 640)",
+        "medianPairwiseDist": "449.4",
+        "maxPairwiseDist": "727.2",
         "occupiedArea": 86400,
         "bboxArea": 3024000,
         "utilizationRatio": "0.029",
-        "primaryExpansionRatio": "5.19"
+        "primaryExpansionRatio": "4.24"
       },
       {
         "domain": "Shared",
@@ -318,7 +318,7 @@
       },
       "Q4_highest": {
         "count": 84,
-        "medianCentroidDist": "1173.9"
+        "medianCentroidDist": "1175.5"
       }
     },
     "topDomainRelationships": [
@@ -401,19 +401,19 @@
     "P95": "3745.9",
     "P99": "4492.9",
     "max": "5467.3",
-    "avgIntraDomain": "650.0",
-    "avgInterDomain": "1651.3",
-    "avgInterLayer": "1568.4",
-    "avgBridgeEdge": "1513.4",
-    "avgSatelliteEdge": "1666.0"
+    "avgIntraDomain": "653.0",
+    "avgInterDomain": "1652.1",
+    "avgInterLayer": "1569.7",
+    "avgBridgeEdge": "1514.5",
+    "avgSatelliteEdge": "1666.2"
   },
   "crossingsBreakdown": {
-    "total": 100244,
+    "total": 100491,
     "primaryPrimaryCrossings": 0,
     "primaryBridgeCrossings": 0,
-    "bridgeBridgeCrossings": 12840,
-    "satellitePrimaryCrossings": 49174,
-    "satelliteSatelliteCrossings": 41880
+    "bridgeBridgeCrossings": 12944,
+    "satellitePrimaryCrossings": 49386,
+    "satelliteSatelliteCrossings": 41803
   },
   "bridgePlacement": {
     "bridgeCount": 79,
@@ -766,8 +766,8 @@
       "height": "1380.0",
       "aspectRatio": "5.07",
       "overlaps": 0,
-      "crossings": 320,
-      "maxEdge": "3610.2",
+      "crossings": 343,
+      "maxEdge": "3689.1",
       "determinismDeltaPx": "0.00000",
       "layerViolations": 0
     }

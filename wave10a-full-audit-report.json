@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "15.34",
-    "layoutTimeMs": "473.51",
-    "evaluationTimeMs": "80.01",
-    "totalTimeMs": "568.86"
+    "analysisTimeMs": "15.45",
+    "layoutTimeMs": "473.50",
+    "evaluationTimeMs": "72.84",
+    "totalTimeMs": "561.79"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -240,10 +240,10 @@
         "secondaryNodes": 3,
         "layers": "application,domain,presentation,schema",
         "components": "0",
-        "bbox": "[5987, 160, 8087, 880]",
+        "bbox": "[5987, 160, 8087, 900]",
         "width": 2100,
-        "height": 720,
-        "center": "(7037, 520)",
+        "height": 740,
+        "center": "(7037, 530)",
         "internalEdges": 4,
         "incomingEdges": 1,
         "outgoingEdges": 27
@@ -345,10 +345,10 @@
         "secondaryNodes": 3,
         "layers": "application,presentation,schema",
         "components": "0",
-        "bbox": "[4247, 160, 5247, 820]",
-        "width": 1000,
+        "bbox": "[4247, 160, 5387, 820]",
+        "width": 1140,
         "height": 660,
-        "center": "(4747, 490)",
+        "center": "(4817, 490)",
         "internalEdges": 3,
         "incomingEdges": 4,
         "outgoingEdges": 20
@@ -630,10 +630,10 @@
         "secondaryNodes": 5,
         "layers": "application,domain,schema",
         "components": "0",
-        "bbox": "[4767, 0, 5947, 860]",
+        "bbox": "[4767, 0, 5947, 820]",
         "width": 1180,
-        "height": 860,
-        "center": "(5357, 430)",
+        "height": 820,
+        "center": "(5357, 410)",
         "internalEdges": 8,
         "incomingEdges": 13,
         "outgoingEdges": 37
@@ -1050,10 +1050,10 @@
         "secondaryNodes": 1,
         "layers": "schema",
         "components": "0",
-        "bbox": "[4847, 700, 4967, 760]",
+        "bbox": "[4687, 800, 4807, 860]",
         "width": 120,
         "height": 60,
-        "center": "(4907, 730)",
+        "center": "(4747, 830)",
         "internalEdges": 0,
         "incomingEdges": 1,
         "outgoingEdges": 0
@@ -2422,8 +2422,8 @@
       {
         "domainId": "Shared",
         "globalEstimatedWidth": 640,
-        "actualPrimaryWidth": 280,
-        "diffWidth": 360,
+        "actualPrimaryWidth": 360,
+        "diffWidth": 280,
         "primaryNodeCount": 10,
         "regionXMin": 3520,
         "regionXMax": 4160
@@ -2565,12 +2565,12 @@
     }
   },
   "edgeCrossings": {
-    "totalCrossings": 103894,
-    "intraDomainCrossings": 11,
-    "interDomainCrossings": 103883,
-    "interLayerCrossings": 103127,
-    "bridgeCrossings": 103894,
-    "satelliteCrossings": 91054,
+    "totalCrossings": 104133,
+    "intraDomainCrossings": 12,
+    "interDomainCrossings": 104121,
+    "interLayerCrossings": 103366,
+    "bridgeCrossings": 104133,
+    "satelliteCrossings": 91189,
     "topDomainPairs": [
       [
         "Account <-> Cloud_Account <-> Shared <-> Shared",
@@ -2610,7 +2610,7 @@
       ],
       [
         "Account <-> Shared <-> SpendTrackerAuthorization <-> User",
-        100
+        104
       ]
     ]
   },
