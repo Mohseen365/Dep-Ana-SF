@@ -1,5 +1,6 @@
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ElementDefinition, NodeDefinition, EdgeDefinition } from 'cytoscape';
+import type { ArchitectureFinding, FindingSeverity } from './intelligence';
 
 export interface GraphNodeData {
   id: string;
@@ -13,6 +14,8 @@ export interface GraphNodeData {
   hasCycles: boolean;
   hasUnresolved: boolean;
   file: string;
+  findingCount?: number;
+  maxFindingSeverity?: FindingSeverity | null;
 }
 
 export interface GraphEdgeData {
@@ -25,9 +28,41 @@ export interface GraphEdgeData {
   evidence: string;
 }
 
+export function getFindingStatsForNode(
+  nodeId: string,
+  findings?: ArchitectureFinding[]
+): { findingCount: number; maxFindingSeverity: FindingSeverity | null } {
+  if (!findings || findings.length === 0) {
+    return { findingCount: 0, maxFindingSeverity: null };
+  }
+
+  let count = 0;
+  let maxSev: FindingSeverity | null = null;
+  const severityRank: Record<FindingSeverity, number> = {
+    CRITICAL: 5,
+    HIGH: 4,
+    MEDIUM: 3,
+    LOW: 2,
+    INFO: 1,
+  };
+
+  for (let i = 0; i < findings.length; i++) {
+    const f = findings[i];
+    if (f.nodeIds && f.nodeIds.includes(nodeId)) {
+      count++;
+      if (!maxSev || severityRank[f.severity] > severityRank[maxSev]) {
+        maxSev = f.severity;
+      }
+    }
+  }
+
+  return { findingCount: count, maxFindingSeverity: maxSev };
+}
+
 export function buildGraphElements(
   nodes: ExplorerNode[],
-  edges: ExplorerEdge[]
+  edges: ExplorerEdge[],
+  findings?: ArchitectureFinding[]
 ): ElementDefinition[] {
   const elements: ElementDefinition[] = [];
   
@@ -36,7 +71,7 @@ export function buildGraphElements(
   
   // Add all explicit nodes
   for (let i = 0; i < nodes.length; i++) {
-    elements.push(createNodeElement(nodes[i]));
+    elements.push(createNodeElement(nodes[i], findings));
   }
   
   // Check for implicit external edge endpoints
@@ -56,7 +91,12 @@ export function buildGraphElements(
   return elements;
 }
 
-function createNodeElement(node: ExplorerNode): NodeDefinition {
+function createNodeElement(
+  node: ExplorerNode,
+  findings?: ArchitectureFinding[]
+): NodeDefinition {
+  const { findingCount, maxFindingSeverity } = getFindingStatsForNode(node.id, findings);
+
   const nodeData: GraphNodeData = {
     id: node.id,
     label: node.displayName,
@@ -68,7 +108,9 @@ function createNodeElement(node: ExplorerNode): NodeDefinition {
     isTest: Boolean(node.behavior?.isTest),
     hasCycles: node.refactoringReadiness.hasCycles,
     hasUnresolved: node.refactoringReadiness.hasUnresolved,
-    file: node.file
+    file: node.file,
+    findingCount,
+    maxFindingSeverity,
   };
   
   return {

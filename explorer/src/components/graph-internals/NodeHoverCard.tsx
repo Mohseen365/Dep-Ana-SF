@@ -1,15 +1,21 @@
 import React from 'react';
 import { ExplorerNode } from '../../types/explorer';
+import type { ArchitectureFinding } from '../../lib/intelligence';
 
 export interface NodeHoverCardProps {
   node: ExplorerNode;
   x: number;
   y: number;
+  findings?: ArchitectureFinding[];
 }
 
-export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y }) => {
+export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y, findings }) => {
   const fanIn = node.metrics?.fanIn ?? 0;
   const fanOut = node.metrics?.fanOut ?? 0;
+
+  const nodeFindings = (findings || []).filter(
+    (f) => f.nodeIds && f.nodeIds.includes(node.id)
+  );
 
   // Clamp positioning to keep within screen viewport
   const left = Math.min(x + 12, window.innerWidth - 260);
@@ -38,6 +44,11 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y }) => {
       {node.file && (
         <div className="hover-card-detail file-path" title={node.file}>
           {node.file}
+        </div>
+      )}
+      {nodeFindings.length > 0 && (
+        <div className="hover-card-detail findings-summary" style={{ marginTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', color: '#f87171' }}>
+          <span className="label">Findings:</span> <span className="value" style={{ fontWeight: 700 }}>⚠️ {nodeFindings.length} issue{nodeFindings.length > 1 ? 's' : ''} ({nodeFindings[0].severity})</span>
         </div>
       )}
     </div>

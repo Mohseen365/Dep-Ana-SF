@@ -32,6 +32,7 @@ import {
 } from '../lib/graph-interactions';
 
 import { discoverFeatures, type FeatureDiscoveryResult } from '../lib/layout/features';
+import type { ArchitectureFinding } from '../lib/intelligence';
 import { GraphControls } from './GraphControls';
 import { GraphLegend } from './GraphLegend';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
@@ -51,6 +52,8 @@ export interface GraphViewProps {
   selectedEdgeId: string | null;
   impactResult?: ImpactAnalysisResult | null;
   selectedCycleNodeIds?: string[] | null;
+  findings?: ArchitectureFinding[];
+  selectedFinding?: ArchitectureFinding | null;
   onToggleFullscreen?: () => void;
   isFullscreen?: boolean;
   focusedNodeId?: string | null;
@@ -100,6 +103,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     selectedEdgeId,
     impactResult,
     selectedCycleNodeIds,
+    findings,
+    selectedFinding,
     onToggleFullscreen,
     isFullscreen = false,
     focusedNodeId,
@@ -309,7 +314,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const elements = buildGraphElements(nodesRef.current, edgesRef.current);
+    const elements = buildGraphElements(nodesRef.current, edgesRef.current, findings);
     const styles = getGraphStyles({
       nodeWidth: 50,
       nodeHeight: 50,
@@ -646,7 +651,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       hasNewNodes: hasGenuinelyNewNodes,
     });
 
-    const newElements = buildGraphElements(nodes, edges);
+    const newElements = buildGraphElements(nodes, edges, findings);
 
     cy.batch(() => {
       cy.elements().remove();
@@ -830,6 +835,30 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [selectedCycleNodeIds]);
 
+  // Handle selectedFinding element highlighting
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    cy.batch(() => {
+      cy.elements().removeClass('finding-highlighted');
+      if (selectedFinding) {
+        if (selectedFinding.nodeIds && selectedFinding.nodeIds.length > 0) {
+          selectedFinding.nodeIds.forEach((nodeId) => {
+            const ele = cy.getElementById(nodeId);
+            if (ele.length > 0) ele.addClass('finding-highlighted');
+          });
+        }
+        if (selectedFinding.edgeIds && selectedFinding.edgeIds.length > 0) {
+          selectedFinding.edgeIds.forEach((edgeId) => {
+            const ele = cy.getElementById(edgeId);
+            if (ele.length > 0) ele.addClass('finding-highlighted');
+          });
+        }
+      }
+    });
+  }, [selectedFinding]);
+
   // Handle focusedNodeId for progressive drilling centering and dimming
   useEffect(() => {
     if (!cyRef.current) return;
@@ -928,6 +957,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         selectedNodeId={selectedNodeId}
         hoveredNodeId={hoveredNodeId}
         nodePositions={nodePositions}
+        findings={findings}
         enableOverlay={true}
       />
 
@@ -992,6 +1022,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           node={hoverCard.node}
           x={hoverCard.x}
           y={hoverCard.y}
+          findings={findings}
         />
       )}
 

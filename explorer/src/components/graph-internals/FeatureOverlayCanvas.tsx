@@ -4,6 +4,7 @@ import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { FeatureDiscoveryResult } from '../../lib/layout/features';
 import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '../../lib/layout/feature-composition';
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
+import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
 
 export interface FeatureOverlayCanvasProps {
   cy: cytoscape.Core | null;
@@ -13,6 +14,7 @@ export interface FeatureOverlayCanvasProps {
   selectedNodeId?: string | null;
   hoveredNodeId?: string | null;
   nodePositions?: Record<string, { x: number; y: number }>;
+  findings?: ArchitectureFinding[];
   enableOverlay?: boolean;
 }
 
@@ -24,6 +26,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   selectedNodeId,
   hoveredNodeId,
   nodePositions,
+  findings = [],
   enableOverlay = true,
 }) => {
   const [transform, setTransform] = useState<{ pan: { x: number; y: number }; zoom: number }>({
@@ -123,6 +126,36 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
 
     return getSharedHighlightData(activeHighlightNodeId, discoveryResult, nodes, edges);
   }, [enableOverlay, discoveryResult, activeHighlightNodeId, nodes, edges]);
+
+  // Group findings by node ID for fast SVG badge rendering
+  const nodeFindingsMap = useMemo(() => {
+    const map = new Map<string, { count: number; maxSeverity: FindingSeverity }>();
+    if (!findings || findings.length === 0) return map;
+
+    const severityRank: Record<FindingSeverity, number> = {
+      CRITICAL: 5,
+      HIGH: 4,
+      MEDIUM: 3,
+      LOW: 2,
+      INFO: 1,
+    };
+
+    for (const f of findings) {
+      if (!f.nodeIds) continue;
+      for (const nId of f.nodeIds) {
+        const existing = map.get(nId);
+        if (!existing) {
+          map.set(nId, { count: 1, maxSeverity: f.severity });
+        } else {
+          existing.count++;
+          if (severityRank[f.severity] > severityRank[existing.maxSeverity]) {
+            existing.maxSeverity = f.severity;
+          }
+        }
+      }
+    }
+    return map;
+  }, [findings]);
 
   if (!enableOverlay || !cy) {
     return null;
@@ -241,6 +274,60 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
             })}
           </g>
         )}
+
+        {/* Render Compact Finding Summary Badges over Finding-Bearing Nodes (Suppressed at Far Zoom) */}
+        {!isFarZoom &&
+          nodes.map((node) => {
+            const findingData = nodeFindingsMap.get(node.id);
+            if (!findingData || findingData.count === 0) return null;
+
+            const pos = currentPositions[node.id];
+            if (!pos) return null;
+
+            const { count, maxSeverity } = findingData;
+            const countText = count > 9 ? '10+' : `${count}`;
+            const badgeWidth = countText === '10+' ? 32 : 26;
+
+            const strokeColor =
+              maxSeverity === 'CRITICAL'
+                ? '#ef4444'
+                : maxSeverity === 'HIGH'
+                ? '#f97316'
+                : maxSeverity === 'MEDIUM'
+                ? '#f59e0b'
+                : '#3b82f6';
+
+            return (
+              <g
+                key={`finding_badge_${node.id}`}
+                className="finding-badge-overlay"
+                data-testid={`finding-badge-${node.id}`}
+                transform={`translate(${pos.x + 14}, ${pos.y - 28})`}
+              >
+                <rect
+                  x={0}
+                  y={0}
+                  width={badgeWidth}
+                  height={16}
+                  rx={8}
+                  fill="rgba(15, 23, 42, 0.95)"
+                  stroke={strokeColor}
+                  strokeWidth={1.5}
+                />
+                <text
+                  x={badgeWidth / 2}
+                  y={11}
+                  fill="#f8fafc"
+                  fontSize={9}
+                  fontWeight={700}
+                  textAnchor="middle"
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >
+                  ⚠️ {countText}
+                </text>
+              </g>
+            );
+          })}
       </g>
     </svg>
   );
