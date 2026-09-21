@@ -1,0 +1,521 @@
+import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema } from '../types/explorer';
+import type { Position } from './position-policy';
+import type { ArchitectureFinding } from './intelligence';
+import { runAllRules, createArchitectureContext } from './intelligence';
+
+export function runArchitectureRules(graphData: ExplorerDataSchema): ArchitectureFinding[] {
+  const ctx = createArchitectureContext(graphData as any);
+  return runAllRules(ctx);
+}
+
+export type RefactoringOperationType =
+  | 'add-node'
+  | 'remove-node'
+  | 'add-edge'
+  | 'remove-edge'
+  | 'modify-node';
+
+export interface AddNodeOperation {
+  type: 'add-node';
+  node: ExplorerNode;
+}
+
+export interface RemoveNodeOperation {
+  type: 'remove-node';
+  nodeId: string;
+}
+
+export interface AddEdgeOperation {
+  type: 'add-edge';
+  edge: ExplorerEdge;
+}
+
+export interface RemoveEdgeOperation {
+  type: 'remove-edge';
+  edgeId: string;
+}
+
+export interface ModifyNodeOperation {
+  type: 'modify-node';
+  nodeId: string;
+  changes: Partial<ExplorerNode>;
+}
+
+export type RefactoringOperation =
+  | AddNodeOperation
+  | RemoveNodeOperation
+  | AddEdgeOperation
+  | RemoveEdgeOperation
+  | ModifyNodeOperation;
+
+export interface RefactoringStep {
+  id: string;
+  title: string;
+  description: string;
+  operations: RefactoringOperation[];
+}
+
+export interface RefactoringProposal {
+  id: string;
+  title: string;
+  description: string;
+  originNodeId?: string;
+  originFindingId?: string;
+  projectId?: string;
+  baseGraphHash?: string;
+  baseGraphVersion?: string;
+  steps: RefactoringStep[];
+}
+
+export function computeGraphHash(graphData: ExplorerDataSchema): string {
+  if (!graphData) return 'empty';
+  const nodeIds = graphData.nodes.map(n => n.id).sort().join(',');
+  const edgeIds = graphData.edges.map(e => e.id).sort().join(',');
+  const nodeCount = graphData.nodes.length;
+  const edgeCount = graphData.edges.length;
+  const raw = `${graphData.schemaVersion || '1.0'}|${nodeCount}|${edgeCount}|${nodeIds.slice(0, 500)}|${edgeIds.slice(0, 500)}`;
+
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    const char = raw.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return `gh-${Math.abs(hash).toString(16)}`;
+}
+
+export function isProposalStale(
+  proposal: RefactoringProposal,
+  currentProjectId: string,
+  currentGraph: ExplorerDataSchema
+): { isStale: boolean; reason?: string } {
+  if (!proposal) return { isStale: false };
+
+  if (proposal.projectId && proposal.projectId !== currentProjectId) {
+    return {
+      isStale: true,
+      reason: `Proposal belongs to project '${proposal.projectId}' but current project is '${currentProjectId}'.`,
+    };
+  }
+
+  if (proposal.baseGraphHash && currentGraph) {
+    const currentHash = computeGraphHash(currentGraph);
+    if (proposal.baseGraphHash !== currentHash) {
+      return {
+        isStale: true,
+        reason: `Underlying graph state changed since proposal creation (expected ${proposal.baseGraphHash}, got ${currentHash}).`,
+      };
+    }
+  }
+
+  return { isStale: false };
+}
+
+export function validateProposalCommit(
+  proposal: RefactoringProposal,
+  currentProjectId: string,
+  currentGraph: ExplorerDataSchema
+): { valid: boolean; reason?: string } {
+  const staleCheck = isProposalStale(proposal, currentProjectId, currentGraph);
+  if (staleCheck.isStale) {
+    return { valid: false, reason: staleCheck.reason };
+  }
+  return { valid: true };
+}
+
+export interface FindingDelta {
+  resolved: ArchitectureFinding[];
+  introduced: ArchitectureFinding[];
+  unchanged: ArchitectureFinding[];
+  changed: ArchitectureFinding[];
+}
+
+export interface StepImpact {
+  affectedNodeIds: string[];
+  affectedEdgeIds: string[];
+  affectedComponentNames: string[];
+  findingDelta: FindingDelta;
+  stepDescription: string;
+}
+
+export function applySimulationOperations(
+  graphData: ExplorerDataSchema,
+  operations: RefactoringOperation[]
+): ExplorerDataSchema {
+  let nodes = [...graphData.nodes];
+  let edges = [...graphData.edges];
+
+  for (const op of operations) {
+    switch (op.type) {
+      case 'add-node': {
+        if (!nodes.some(n => n.id === op.node.id)) {
+          nodes.push({ ...op.node });
+        }
+        break;
+      }
+      case 'remove-node': {
+        nodes = nodes.filter(n => n.id !== op.nodeId);
+        edges = edges.filter(e => e.source !== op.nodeId && e.target !== op.nodeId);
+        break;
+      }
+      case 'add-edge': {
+        if (!edges.some(e => e.id === op.edge.id)) {
+          edges.push({ ...op.edge });
+        }
+        break;
+      }
+      case 'remove-edge': {
+        edges = edges.filter(e => e.id !== op.edgeId);
+        break;
+      }
+      case 'modify-node': {
+        nodes = nodes.map(n => {
+          if (n.id === op.nodeId) {
+            return { ...n, ...op.changes };
+          }
+          return n;
+        });
+        break;
+      }
+    }
+  }
+
+  return {
+    ...graphData,
+    nodes,
+    edges,
+  };
+}
+
+export function computeFindingDelta(
+  beforeFindings: ArchitectureFinding[],
+  afterFindings: ArchitectureFinding[]
+): FindingDelta {
+  const beforeMap = new Map<string, ArchitectureFinding>();
+  beforeFindings.forEach(f => beforeMap.set(f.id, f));
+
+  const afterMap = new Map<string, ArchitectureFinding>();
+  afterFindings.forEach(f => afterMap.set(f.id, f));
+
+  const resolved: ArchitectureFinding[] = [];
+  const introduced: ArchitectureFinding[] = [];
+  const unchanged: ArchitectureFinding[] = [];
+  const changed: ArchitectureFinding[] = [];
+
+  for (const [id, before] of beforeMap.entries()) {
+    if (!afterMap.has(id)) {
+      resolved.push(before);
+    } else {
+      const after = afterMap.get(id)!;
+      const afterNodes = after.nodeIds || (after as any).affectedNodeIds || [];
+      const beforeNodes = before.nodeIds || (before as any).affectedNodeIds || [];
+      if (
+        after.severity !== before.severity ||
+        after.description !== before.description ||
+        JSON.stringify(afterNodes) !== JSON.stringify(beforeNodes)
+      ) {
+        changed.push(after);
+      } else {
+        unchanged.push(after);
+      }
+    }
+  }
+
+  for (const [id, after] of afterMap.entries()) {
+    if (!beforeMap.has(id)) {
+      introduced.push(after);
+    }
+  }
+
+  return { resolved, introduced, unchanged, changed };
+}
+
+export function computeStepImpact(
+  baseGraph: ExplorerDataSchema,
+  currentGraph: ExplorerDataSchema,
+  beforeFindings: ArchitectureFinding[],
+  operations: RefactoringOperation[]
+): StepImpact {
+  const affectedNodeIdsSet = new Set<string>();
+  const affectedEdgeIdsSet = new Set<string>();
+
+  for (const op of operations) {
+    switch (op.type) {
+      case 'add-node':
+        affectedNodeIdsSet.add(op.node.id);
+        break;
+      case 'remove-node':
+        affectedNodeIdsSet.add(op.nodeId);
+        break;
+      case 'add-edge':
+        affectedEdgeIdsSet.add(op.edge.id);
+        affectedNodeIdsSet.add(op.edge.source);
+        affectedNodeIdsSet.add(op.edge.target);
+        break;
+      case 'remove-edge':
+        affectedEdgeIdsSet.add(op.edgeId);
+        const removedEdge = baseGraph.edges.find(e => e.id === op.edgeId);
+        if (removedEdge) {
+          affectedNodeIdsSet.add(removedEdge.source);
+          affectedNodeIdsSet.add(removedEdge.target);
+        }
+        break;
+      case 'modify-node':
+        affectedNodeIdsSet.add(op.nodeId);
+        break;
+    }
+  }
+
+  const affectedComponentNames = Array.from(affectedNodeIdsSet)
+    .map(id => {
+      const node = currentGraph.nodes.find(n => n.id === id) || baseGraph.nodes.find(n => n.id === id);
+      return node ? node.displayName || node.id : id;
+    })
+    .sort();
+
+  const afterFindings = runArchitectureRules(currentGraph);
+  const findingDelta = computeFindingDelta(beforeFindings, afterFindings);
+
+  const stepDescription = operations
+    .map(op => {
+      switch (op.type) {
+        case 'add-node': return `Add node ${op.node.displayName || op.node.id}`;
+        case 'remove-node': return `Remove node ${op.nodeId}`;
+        case 'add-edge': return `Add dependency from ${op.edge.source} to ${op.edge.target}`;
+        case 'remove-edge': return `Remove dependency ${op.edgeId}`;
+        case 'modify-node': return `Modify node ${op.nodeId}`;
+      }
+    })
+    .join('; ');
+
+  return {
+    affectedNodeIds: Array.from(affectedNodeIdsSet),
+    affectedEdgeIds: Array.from(affectedEdgeIdsSet),
+    affectedComponentNames,
+    findingDelta,
+    stepDescription,
+  };
+}
+
+export function computeTemporarySimulatedPositions(
+  simulatedNodes: ExplorerNode[],
+  simulatedEdges: ExplorerEdge[],
+  basePositions: Record<string, Position>
+): Record<string, Position> {
+  const resultPositions: Record<string, Position> = { ...basePositions };
+
+  const unpositionedNodes = simulatedNodes.filter(n => !resultPositions[n.id]);
+
+  if (unpositionedNodes.length === 0) {
+    return resultPositions;
+  }
+
+  unpositionedNodes.forEach((node, index) => {
+    const connectedEdges = simulatedEdges.filter(
+      e => e.source === node.id || e.target === node.id
+    );
+
+    const neighborIds = connectedEdges
+      .map(e => (e.source === node.id ? e.target : e.source))
+      .filter(neighborId => resultPositions[neighborId]);
+
+    if (neighborIds.length > 0) {
+      let sumX = 0;
+      let sumY = 0;
+      neighborIds.forEach(id => {
+        sumX += resultPositions[id].x;
+        sumY += resultPositions[id].y;
+      });
+
+      const offsetAngle = (index * 0.5) % (2 * Math.PI);
+      const offsetRadius = 120;
+
+      resultPositions[node.id] = {
+        x: sumX / neighborIds.length + Math.cos(offsetAngle) * offsetRadius,
+        y: sumY / neighborIds.length + Math.sin(offsetAngle) * offsetRadius,
+      };
+    } else {
+      resultPositions[node.id] = {
+        x: 400 + (index % 5) * 150,
+        y: 400 + Math.floor(index / 5) * 150,
+      };
+    }
+  });
+
+  return resultPositions;
+}
+
+export function createProposalFromTargetNodes(
+  targetNodeIds: string[],
+  graphData: ExplorerDataSchema,
+  projectId?: string
+): RefactoringProposal {
+  const primaryNode = graphData.nodes.find(n => n.id === targetNodeIds[0]);
+  const title = primaryNode
+    ? `Refactor & Decouple ${primaryNode.displayName || primaryNode.id}`
+    : `Refactor Component Cluster`;
+
+  const helperNodeId = `${primaryNode?.id || 'component'}-extracted-helper`;
+  const helperNode: ExplorerNode = {
+    id: helperNodeId,
+    displayName: `${primaryNode?.displayName || 'Component'}Helper`,
+    type: 'ApexClass',
+    file: `classes/${helperNodeId}.cls`,
+    risk: 'LOW',
+    riskReasons: [],
+    metrics: { fanIn: 1, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
+    behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
+  };
+
+  const newEdge: ExplorerEdge = {
+    id: `edge-${primaryNode?.id || 'orig'}-to-${helperNodeId}`,
+    source: primaryNode?.id || targetNodeIds[0],
+    target: helperNodeId,
+    relationshipType: 'method-call',
+    method: 'delegate',
+    evidence: 'delegates to helper',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: 'HIGH',
+    line: 1,
+    column: 1,
+    methodOwner: primaryNode?.id || targetNodeIds[0],
+    file: primaryNode?.file || '',
+    canonical: {
+      source: { type: primaryNode?.type || 'ApexClass', name: primaryNode?.displayName || targetNodeIds[0] },
+      target: { type: 'ApexClass', name: helperNode.displayName },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: { line: 1, column: 1 }
+    }
+  };
+
+  return {
+    id: `proposal-${Date.now()}`,
+    title,
+    description: `Extract helper responsibility and decouple high fan-out dependencies for ${primaryNode?.displayName || 'target components'}.`,
+    originNodeId: targetNodeIds[0],
+    projectId,
+    baseGraphHash: computeGraphHash(graphData),
+    baseGraphVersion: graphData.schemaVersion,
+    steps: [
+      {
+        id: 'step-1',
+        title: `Extract Sub-Component from ${primaryNode?.displayName || 'Target'}`,
+        description: `Isolate high-coupling responsibility from ${primaryNode?.displayName || 'Target'} into a dedicated Apex Service component.`,
+        operations: [
+          { type: 'add-node', node: helperNode },
+          { type: 'add-edge', edge: newEdge },
+        ],
+      },
+      {
+        id: 'step-2',
+        title: `Reroute Direct Calls`,
+        description: `Direct downstream callers to use the extracted service helper directly.`,
+        operations: targetNodeIds.slice(1).map(targetId => {
+          const tgtNode = graphData.nodes.find(n => n.id === targetId);
+          return {
+            type: 'add-edge' as const,
+            edge: {
+              id: `edge-${targetId}-to-${helperNodeId}`,
+              source: targetId,
+              target: helperNodeId,
+              relationshipType: 'method-call' as const,
+              method: 'delegate',
+              evidence: 'calls helper',
+              unresolved: false,
+              resolutionClassification: 'RESOLVED_LOCAL' as const,
+              resolutionStrategy: 'EXACT' as const,
+              confidence: 'HIGH',
+              line: 1,
+              column: 1,
+              methodOwner: targetId,
+              file: tgtNode?.file || '',
+              canonical: {
+                source: { type: tgtNode?.type || 'ApexClass', name: tgtNode?.displayName || targetId },
+                target: { type: 'ApexClass', name: helperNode.displayName },
+                relationship: { type: 'method-call', resolution: 'EXACT' },
+                location: { line: 1, column: 1 }
+              }
+            },
+          };
+        }),
+      },
+    ],
+  };
+}
+
+export function createProposalFromFinding(
+  finding: ArchitectureFinding,
+  graphData: ExplorerDataSchema,
+  projectId?: string
+): RefactoringProposal {
+  const nodeIds = finding.nodeIds || (finding as any).affectedNodeIds || [];
+  const affectedNodes = nodeIds
+    .map((id: string) => graphData.nodes.find((n: ExplorerNode) => n.id === id))
+    .filter((n): n is ExplorerNode => n !== undefined);
+
+  const primaryNode = affectedNodes[0];
+
+  return {
+    id: `proposal-finding-${finding.id}`,
+    title: `Remediate ${finding.title}`,
+    description: `Targeted architectural sequence to resolve ${finding.title} (${finding.severity} severity).`,
+    originFindingId: finding.id,
+    originNodeId: primaryNode?.id,
+    projectId,
+    baseGraphHash: computeGraphHash(graphData),
+    baseGraphVersion: graphData.schemaVersion,
+    steps: [
+      {
+        id: 'step-remediate-1',
+        title: `Extract Responsibility from ${primaryNode?.displayName || 'Component'}`,
+        description: `Decouple cyclic / high-coupling dependencies reported in finding ${finding.id}.`,
+        operations: primaryNode
+          ? [
+              {
+                type: 'add-node' as const,
+                node: {
+                  id: `${primaryNode.id}-service`,
+                  displayName: `${primaryNode.displayName || primaryNode.id}Service`,
+                  type: 'ApexClass',
+                  file: `classes/${primaryNode.id}Service.cls`,
+                  risk: 'LOW',
+                  riskReasons: [],
+                  metrics: { fanIn: 1, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+                  behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+                  refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
+                },
+              },
+              {
+                type: 'add-edge' as const,
+                edge: {
+                  id: `edge-${primaryNode.id}-to-${primaryNode.id}-service`,
+                  source: primaryNode.id,
+                  target: `${primaryNode.id}-service`,
+                  relationshipType: 'method-call' as const,
+                  method: 'useService',
+                  evidence: 'uses service',
+                  unresolved: false,
+                  resolutionClassification: 'RESOLVED_LOCAL' as const,
+                  resolutionStrategy: 'EXACT' as const,
+                  confidence: 'HIGH',
+                  line: 1,
+                  column: 1,
+                  methodOwner: primaryNode.id,
+                  file: primaryNode.file,
+                  canonical: {
+                    source: { type: primaryNode.type, name: primaryNode.displayName },
+                    target: { type: 'ApexClass', name: `${primaryNode.displayName || primaryNode.id}Service` },
+                    relationship: { type: 'method-call', resolution: 'EXACT' },
+                    location: { line: 1, column: 1 }
+                  }
+                },
+              },
+            ]
+          : [],
+      },
+    ],
+  };
+}

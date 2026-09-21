@@ -29,10 +29,18 @@ import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
 import { RefactorHandoffModal } from './components/RefactorHandoffModal';
 import { buildHandoffPayload, openHandoff, HandoffTarget } from './lib/refactor-handoff';
+import { RefactoringSimulationPanel } from './components/RefactoringSimulationPanel';
+import {
+  applySimulationOperations,
+  computeStepImpact,
+  computeTemporarySimulatedPositions,
+  createProposalFromTargetNodes,
+  validateProposalCommit,
+  type RefactoringProposal,
+} from './lib/refactoring-simulation';
 import {
   openDetachedWindow,
   createChannel,
-  broadcastNodeChange,
   onDetachedDrill,
 } from './lib/detached-drawer';
 
@@ -40,6 +48,7 @@ import {
   ALL_EXPLORER_NODE_TYPES,
   type ExplorerNode,
   type ExplorerEdge,
+  type ExplorerDataSchema,
 } from './types/explorer';
 import './index.css';
 
@@ -71,6 +80,8 @@ export function GraphSlot(props: {
   onSelectEdge: (edgeId: string) => void;
   impactResult?: any;
   selectedCycleNodeIds?: string[] | null;
+  findings?: ArchitectureFinding[];
+  selectedFinding?: ArchitectureFinding | null;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   graphRef?: React.RefObject<GraphViewRef>;
@@ -81,6 +92,9 @@ export function GraphSlot(props: {
   onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>) => void;
   layoutMode?: 'static' | 'interactive';
   onLayoutModeChange?: (mode: 'static' | 'interactive') => void;
+  simulatedNodeIds?: string[];
+  simulatedRemovedNodeIds?: string[];
+  simulatedEdgeIds?: string[];
 }) {
   return (
     <div className="graph-container" data-slot="graph" style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -94,6 +108,8 @@ export function GraphSlot(props: {
         onSelectEdge={props.onSelectEdge}
         impactResult={props.impactResult}
         selectedCycleNodeIds={props.selectedCycleNodeIds}
+        findings={props.findings}
+        selectedFinding={props.selectedFinding}
         isFullscreen={props.isFullscreen}
         onToggleFullscreen={props.onToggleFullscreen}
         focusedNodeId={props.focusedNodeId}
@@ -103,6 +119,9 @@ export function GraphSlot(props: {
         onNodePositionsChange={props.onNodePositionsChange}
         layoutMode={props.layoutMode}
         onLayoutModeChange={props.onLayoutModeChange}
+        simulatedNodeIds={props.simulatedNodeIds}
+        simulatedRemovedNodeIds={props.simulatedRemovedNodeIds}
+        simulatedEdgeIds={props.simulatedEdgeIds}
       />
     </div>
   );
@@ -243,10 +262,14 @@ export function App() {
 
   const { data, loading, error, retry } = useExplorerData(dataUrl);
 
+  // Dynamic override for graph mutations committed from simulation
+  const [committedMutatedGraph, setCommittedMutatedGraph] = useState<ExplorerDataSchema | null>(null);
+  const activeData = committedMutatedGraph || data;
+
   const isNotAnalyzed =
     activeProject?.analysisStatus === 'NOT_ANALYZED' ||
     (error && error.message.startsWith('NOT_ANALYZED:')) ||
-    (!data && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:')));
+    (!activeData && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:')));
 
   const selection = useGraphSelection();
   const view = useViewState();
@@ -258,13 +281,17 @@ export function App() {
   const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
   const [diagnosticsTab, setDiagnosticsTab] = useState<'cycles' | 'unresolved' | 'none'>('cycles');
 
-  // Active workspace view mode: 'graph' | 'dashboard' | 'findings' | 'hotspots' | 'diagnostics' | 'compare' | 'history'
+  // Active workspace view mode
   const [workspaceViewMode, setWorkspaceViewMode] = useState<WorkspaceViewMode>('graph');
 
   // Sidebar collapse state
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
-  // Drawer pin & detach states with localStorage persistence
+  // Refactoring simulation state
+  const [activeSimulationProposal, setActiveSimulationProposal] = useState<RefactoringProposal | null>(null);
+  const [simulationStepIndex, setSimulationStepIndex] = useState<number>(0);
+
+  // Drawer pin & detach states
   const [isPinned, setIsPinned] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('explorer.drawer.pinned') === 'true';
@@ -290,10 +317,13 @@ export function App() {
 
   const graphRef = useRef<GraphViewRef>(null);
 
-  // Listen for project change events to flush single-project selection & history and load project-isolated filter state
+  // Clear simulation and selection state on project switch
   useEffect(() => {
     const handleProjectChanged = () => {
       const projState = loadProjectState(activeProjectId);
+      setCommittedMutatedGraph(null);
+      setActiveSimulationProposal(null);
+      setSimulationStepIndex(0);
       selection.clear();
       setSelectedFinding(null);
       setDrillPath([]);
@@ -336,11 +366,11 @@ export function App() {
     }
   }, [activeProjectId, view.filterState.visibleNodeTypes]);
 
-  // Defensive validation: clear stale node selection if selectedNodeId does not belong to data.nodes or is hidden by visibility filter
+  // Defensive validation: clear stale node selection
   useEffect(() => {
-    if (!data) return;
+    if (!activeData) return;
     if (selection.selectedNodeId) {
-      const selectedNode = data.nodes.find((n) => n.id === selection.selectedNodeId);
+      const selectedNode = activeData.nodes.find((n) => n.id === selection.selectedNodeId);
       if (!selectedNode) {
         selection.clear();
         setDrillPath([]);
@@ -354,7 +384,7 @@ export function App() {
         view.setIsInvestigating(false);
       }
     }
-  }, [data, selection, view, view.filterState.visibleNodeTypes]);
+  }, [activeData, selection, view, view.filterState.visibleNodeTypes]);
 
   const handleTogglePin = useCallback(() => {
     setIsPinned((prev) => {
@@ -386,7 +416,7 @@ export function App() {
     }
   }, [isDetached]);
 
-  // Setup BroadcastChannel for detached drawer sync
+  // BroadcastChannel setup for detached drawer
   useEffect(() => {
     if (typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
 
@@ -403,48 +433,34 @@ export function App() {
     };
   }, [selection, view]);
 
-  // Broadcast node changes when selection or drill path updates
-  useEffect(() => {
-    if (!isDetached || typeof window === 'undefined' || !('BroadcastChannel' in window)) return;
-
-    if (detachedWindowRef.current && detachedWindowRef.current.closed) {
-      detachedWindowRef.current = null;
-      setIsDetached(false);
-      localStorage.setItem('explorer.drawer.detached', 'false');
-      return;
-    }
-
-    const currentNodeId =
-      drillPath.length > 0
-        ? drillPath[drillPath.length - 1]
-        : selection.selectedNodeId;
-
-    if (currentNodeId) {
-      const channel = createChannel();
-      broadcastNodeChange(channel, currentNodeId);
-      channel.close();
-    }
-  }, [selection.selectedNodeId, drillPath, isDetached]);
-
   const handleRequestHandoff = useCallback((nodeId: string) => {
-    if (!data) return;
-    const node = data.nodes.find(n => n.id === nodeId);
+    if (!activeData) return;
+    const node = activeData.nodes.find(n => n.id === nodeId);
     if (!node) return;
-    setHandoffTarget(buildHandoffPayload(node, data));
-  }, [data]);
+    setHandoffTarget(buildHandoffPayload(node, activeData));
+  }, [activeData]);
 
-  // Sync compare focused entity selection to SelectionContext
+  const handleStartSimulationForNode = useCallback((nodeId: string) => {
+    if (!activeData) return;
+    const proposal = createProposalFromTargetNodes([nodeId], activeData, activeProjectId);
+    setActiveSimulationProposal(proposal);
+    setSimulationStepIndex(0);
+    setWorkspaceViewMode('graph');
+  }, [activeData, activeProjectId]);
+
+
+  // Sync compare focused entity selection
   useEffect(() => {
     if (compareState.focusedEntityId) {
-      if (data?.nodes.some((n) => n.id === compareState.focusedEntityId)) {
+      if (activeData?.nodes.some((n) => n.id === compareState.focusedEntityId)) {
         selection.selectNode(compareState.focusedEntityId);
-      } else if (data?.edges.some((e) => e.id === compareState.focusedEntityId)) {
+      } else if (activeData?.edges.some((e) => e.id === compareState.focusedEntityId)) {
         selection.selectEdge(compareState.focusedEntityId);
       }
     }
-  }, [compareState.focusedEntityId, data]);
+  }, [compareState.focusedEntityId, activeData]);
 
-  // Sync drill path and recent items when selection.selectedNodeId changes
+  // Sync drill path and recent items
   useEffect(() => {
     const id = selection.selectedNodeId;
     if (!id) return;
@@ -467,23 +483,23 @@ export function App() {
   }, [selection.selectedNodeId]);
 
   // Compute architecture context and findings
-  const ctx = useMemo(() => (data ? createArchitectureContext(data as any) : null), [data]);
+  const ctx = useMemo(() => (activeData ? createArchitectureContext(activeData as any) : null), [activeData]);
   const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
 
   // Filtered nodes for sidebar display
   const displayNodes = useMemo(() => {
-    if (!data) return [];
-    if (!view.filterState.searchQuery) return data.nodes;
-    const results = searchNodes(data.nodes, view.filterState.searchQuery);
+    if (!activeData) return [];
+    if (!view.filterState.searchQuery) return activeData.nodes;
+    const results = searchNodes(activeData.nodes, view.filterState.searchQuery);
     return results.map((r) => r.node);
-  }, [data, view.filterState.searchQuery]);
+  }, [activeData, view.filterState.searchQuery]);
 
-  // Sync node selection from view state (URL) to SelectionContext
+  // Sync node selection from view state
   useEffect(() => {
-    if (!data) return;
+    if (!activeData) return;
     const urlNode = (view as any).selectedNodeId || view.urlNodeId;
     if (urlNode) {
-      const matchedNode = data.nodes.find(
+      const matchedNode = activeData.nodes.find(
         (n: any) => n.id === urlNode || n.name === urlNode || n.displayName === urlNode
       );
       const targetId = matchedNode ? matchedNode.id : urlNode;
@@ -493,79 +509,100 @@ export function App() {
     } else if (selection.selectedNodeId) {
       selection.selectNode(null);
     }
-  }, [data, (view as any).selectedNodeId, view.urlNodeId]);
+  }, [activeData, (view as any).selectedNodeId, view.urlNodeId]);
 
-  // Sync selection changes back to view state
-  useEffect(() => {
-    if (selection.selectedNodeId !== (view as any).selectedNodeId) {
-      (view as any).setSelectedNodeId?.(selection.selectedNodeId);
-    }
-  }, [selection.selectedNodeId]);
-
-  // Sync edge selection from URL
-  useEffect(() => {
-    if (view.urlEdgeId && selection.selectedEdgeId !== view.urlEdgeId) {
-      if (view.urlNodeId) {
-        selection.selectNode(view.urlNodeId);
-      }
-    }
-    if (view.urlEdgeId && !selection.selectedEdgeId) {
-      selection.selectEdge(view.urlEdgeId);
-    }
-  }, [view.urlEdgeId]);
-
-  // Sync finding selection from view state (URL)
-  useEffect(() => {
-    if (!findings || findings.length === 0) return;
-    const findingId = view.selectedFindingId;
-    if (findingId) {
-      const targetFinding = findings.find(
-        (f) =>
-          f.id === findingId ||
-          f.id.endsWith(`:${findingId}`) ||
-          f.id.includes(findingId)
-      );
-      if (targetFinding && selectedFinding?.id !== targetFinding.id) {
-        setSelectedFinding(targetFinding);
-      }
-    } else if (selectedFinding) {
-      setSelectedFinding(null);
-    }
-  }, [findings, view.selectedFindingId, view.urlNodeId, view.urlEdgeId]);
-
-  // Derive effective focus state with current selection
+  // Derive effective focus state
   const effectiveFocusState = useMemo(() => ({
     ...view.focusState,
     focusNodeId: selection.selectedNodeId || view.focusState.focusNodeId,
   }), [view.focusState, selection.selectedNodeId]);
 
-  // Keep view.focusState.focusNodeId in sync with selection.selectedNodeId when focus is active
-  useEffect(() => {
-    if (view.focusState.enabled && selection.selectedNodeId && selection.selectedNodeId !== view.focusState.focusNodeId) {
-      view.setFocusState({
-        ...view.focusState,
-        focusNodeId: selection.selectedNodeId,
-      });
-    }
-  }, [selection.selectedNodeId, view.focusState, view.setFocusState]);
-
-  // Compute focused sub-graph when focus mode is active
+  // Compute focused sub-graph
   const focusedGraphData = useMemo(() => {
-    if (!data) return { nodes: [], edges: [] };
+    if (!activeData) return { nodes: [], edges: [] };
     if (!effectiveFocusState.enabled || !effectiveFocusState.focusNodeId) {
-      return { nodes: data.nodes, edges: data.edges };
+      return { nodes: activeData.nodes, edges: activeData.edges };
     }
-    const res = computeFocusedGraph(data.nodes, data.edges, effectiveFocusState);
+    const res = computeFocusedGraph(activeData.nodes, activeData.edges, effectiveFocusState);
     return { nodes: res.nodes, edges: res.edges };
-  }, [data, effectiveFocusState]);
+  }, [activeData, effectiveFocusState]);
 
-  // Apply node-type visibility filter AFTER focus depth calculation
+  // Apply node-type visibility filter
   const visibleGraphData = useMemo(() => {
     const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
     return filterGraphByNodeTypes(focusedGraphData.nodes, focusedGraphData.edges, visibleTypes);
   }, [focusedGraphData, view.filterState.visibleNodeTypes]);
 
-  // Determine node IDs to highlight on the graph (finding selection or simulator impact)
+  // Compute simulated graph & temporary positions
+  const { simulatedGraph, currentStepOps, stepImpact, effectivePositions } = useMemo(() => {
+    if (!activeData || !activeSimulationProposal) {
+      return {
+        simulatedGraph: visibleGraphData,
+        currentStepOps: [],
+        stepImpact: null,
+        effectivePositions: nodePositions || {},
+      };
+    }
+
+    const currentStep = activeSimulationProposal.steps[simulationStepIndex];
+    const opsToApply = activeSimulationProposal.steps
+      .slice(0, simulationStepIndex + 1)
+      .flatMap(s => s.operations);
+
+    const fullSimulatedData = applySimulationOperations(activeData, opsToApply);
+
+    // Filter by focus & node type
+    const focusedSim = (!effectiveFocusState.enabled || !effectiveFocusState.focusNodeId)
+      ? { nodes: fullSimulatedData.nodes, edges: fullSimulatedData.edges }
+      : computeFocusedGraph(fullSimulatedData.nodes, fullSimulatedData.edges, effectiveFocusState);
+
+    const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+    const finalSimulatedGraph = filterGraphByNodeTypes(focusedSim.nodes, focusedSim.edges, visibleTypes);
+
+    const impact = computeStepImpact(
+      activeData,
+      fullSimulatedData,
+      findings,
+      currentStep ? currentStep.operations : []
+    );
+
+    const tempPositions = computeTemporarySimulatedPositions(
+      finalSimulatedGraph.nodes,
+      finalSimulatedGraph.edges,
+      nodePositions || {}
+    );
+
+    return {
+      simulatedGraph: finalSimulatedGraph,
+      currentStepOps: currentStep ? currentStep.operations : [],
+      stepImpact: impact,
+      effectivePositions: tempPositions,
+    };
+  }, [activeData, activeSimulationProposal, simulationStepIndex, visibleGraphData, effectiveFocusState, view.filterState.visibleNodeTypes, findings, nodePositions]);
+
+  // Simulated element highlight IDs
+  const simulatedAddedNodeIds = useMemo(() => {
+    if (!activeSimulationProposal) return [];
+    return currentStepOps
+      .filter(op => op.type === 'add-node')
+      .map(op => (op as any).node.id);
+  }, [activeSimulationProposal, currentStepOps]);
+
+  const simulatedRemovedNodeIds = useMemo(() => {
+    if (!activeSimulationProposal) return [];
+    return currentStepOps
+      .filter(op => op.type === 'remove-node')
+      .map(op => (op as any).nodeId);
+  }, [activeSimulationProposal, currentStepOps]);
+
+  const simulatedEdgeIds = useMemo(() => {
+    if (!activeSimulationProposal) return [];
+    return currentStepOps
+      .filter(op => op.type === 'add-edge')
+      .map(op => (op as any).edge.id);
+  }, [activeSimulationProposal, currentStepOps]);
+
+  // Determine node IDs to highlight
   const highlightedCycleNodeIds = useMemo(() => {
     if (selectedFinding?.nodeIds && selectedFinding.nodeIds.length > 0) {
       return selectedFinding.nodeIds;
@@ -577,9 +614,9 @@ export function App() {
   }, [selectedFinding, highlightedImpactNodeIds]);
 
   const selectedNode = useMemo(() => {
-    if (!data || !selection.selectedNodeId) return null;
-    return data.nodes.find((n) => n.id === selection.selectedNodeId) ?? null;
-  }, [data, selection.selectedNodeId]);
+    if (!activeData || !selection.selectedNodeId) return null;
+    return activeData.nodes.find((n) => n.id === selection.selectedNodeId) ?? null;
+  }, [activeData, selection.selectedNodeId]);
 
   const handleResetView = () => {
     selection.clear();
@@ -591,6 +628,7 @@ export function App() {
     setSelectedFinding(null);
     setHighlightedImpactNodeIds(null);
     setDrillPath([]);
+    setActiveSimulationProposal(null);
     if (graphRef.current) {
       graphRef.current.fitView();
     }
@@ -632,6 +670,21 @@ export function App() {
     view.setIsInvestigating(true);
   };
 
+  const handleCommitSimulation = () => {
+    if (!activeData || !activeSimulationProposal) return;
+
+    const validation = validateProposalCommit(activeSimulationProposal, activeProjectId, activeData);
+    if (!validation.valid) {
+      throw new Error(validation.reason || 'Cannot commit stale simulation proposal.');
+    }
+
+    const allOps = activeSimulationProposal.steps.flatMap(s => s.operations);
+    const mutated = applySimulationOperations(activeData, allOps);
+    setCommittedMutatedGraph(mutated);
+    setActiveSimulationProposal(null);
+    setSimulationStepIndex(0);
+  };
+
   const hasDrawerContent = selectedNode !== null;
   const isDrawerOpen = hasDrawerContent && (view.isInvestigating || isPinned);
 
@@ -657,7 +710,7 @@ export function App() {
           onOpenPanel={(panelId) => setWorkspaceViewMode(panelId as WorkspaceViewMode)}
         />
 
-        {/* Main Body Container: [Sidebar 280px] | [Workspace 1fr] | [Drawer 380px] */}
+        {/* Main Body Container */}
         <div
           className="app-body-container"
           data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
@@ -671,7 +724,7 @@ export function App() {
               style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
             >
               <Sidebar
-                nodes={data?.nodes ?? []}
+                nodes={activeData?.nodes ?? []}
                 displayNodes={displayNodes}
                 filterState={view.filterState}
                 selectedNodeId={selection.selectedNodeId}
@@ -686,9 +739,9 @@ export function App() {
             </div>
           )}
 
-          {/* Center Workspace (Takes ALL remaining width: flex: 1) */}
+          {/* Center Workspace */}
           <div className="workspace-center-pane" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minWidth: 0, overflow: 'hidden', position: 'relative' }}>
-            {/* View Mode Switcher Action Bar at top of Workspace */}
+            {/* View Mode Switcher Action Bar */}
             <div className="app-workspace-bar" style={{ background: 'var(--surface-panel, #111827)', borderBottom: '1px solid var(--border-default, #334155)', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
               <ViewModeSwitcher
                 viewMode={workspaceViewMode}
@@ -710,13 +763,13 @@ export function App() {
             {/* Active View Container */}
             <main className="graph-pane" style={{ flex: 1, position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
               {workspaceViewMode === 'graph' && (
-                isNotAnalyzed || !data ? (
+                isNotAnalyzed || !activeData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <GraphSlot
                     graphRef={graphRef}
-                    nodes={visibleGraphData.nodes}
-                    edges={visibleGraphData.edges}
+                    nodes={simulatedGraph.nodes}
+                    edges={simulatedGraph.edges}
                     selectedNodeId={selection.selectedNodeId}
                     selectedEdgeId={selection.selectedEdgeId}
                     onSelectNode={(node) => {
@@ -727,6 +780,8 @@ export function App() {
                     }}
                     onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
                     selectedCycleNodeIds={highlightedCycleNodeIds}
+                    findings={findings}
+                    selectedFinding={selectedFinding}
                     focusedNodeId={
                       isDrawerOpen && drillPath.length > 1
                         ? drillPath[drillPath.length - 1]
@@ -734,19 +789,33 @@ export function App() {
                     }
                     focusState={effectiveFocusState}
                     onFocusChange={view.setFocusState}
-                    nodePositions={nodePositions}
+                    nodePositions={effectivePositions}
                     onNodePositionsChange={(positions) => projectStateContext?.updateGraphLayout({ nodePositions: positions })}
                     layoutMode={layoutMode}
                     onLayoutModeChange={(mode) => projectStateContext?.updateGraphLayout({ mode })}
+                    simulatedNodeIds={simulatedAddedNodeIds}
+                    simulatedRemovedNodeIds={simulatedRemovedNodeIds}
+                    simulatedEdgeIds={simulatedEdgeIds}
                   />
                 )
+              )}
+
+              {activeSimulationProposal && stepImpact && (
+                <RefactoringSimulationPanel
+                  proposal={activeSimulationProposal}
+                  currentStepIndex={simulationStepIndex}
+                  stepImpact={stepImpact}
+                  onStepChange={setSimulationStepIndex}
+                  onCancel={() => setActiveSimulationProposal(null)}
+                  onCommit={handleCommitSimulation}
+                />
               )}
 
               {workspaceViewMode === 'dashboard' && (
                 <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                   <ProjectDashboard
-                    project={data?.project ?? activeProject}
-                    data={data}
+                    project={activeData?.project ?? activeProject}
+                    data={activeData}
                     findings={findings}
                     onExploreGraph={() => setWorkspaceViewMode('graph')}
                     onViewFindings={() => setWorkspaceViewMode('findings')}
@@ -756,7 +825,7 @@ export function App() {
               )}
 
               {workspaceViewMode === 'findings' && (
-                isNotAnalyzed || !data ? (
+                isNotAnalyzed || !activeData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
@@ -776,14 +845,14 @@ export function App() {
               )}
 
               {workspaceViewMode === 'hotspots' && (
-                isNotAnalyzed || !data ? (
+                isNotAnalyzed || !activeData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <HotspotPanel
-                      nodes={data?.nodes ?? []}
-                      cycles={data?.cycles ?? []}
-                      impactSummaries={data?.impactSummaries ?? {}}
+                      nodes={activeData?.nodes ?? []}
+                      cycles={activeData?.cycles ?? []}
+                      impactSummaries={activeData?.impactSummaries ?? {}}
                       onSelectHotspot={(node) => {
                         selection.selectNode(node.id);
                         view.setIsInvestigating(true);
@@ -796,14 +865,14 @@ export function App() {
               )}
 
               {workspaceViewMode === 'diagnostics' && (
-                isNotAnalyzed || !data ? (
+                isNotAnalyzed || !activeData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <DiagnosticsPanel
-                      cycles={data?.cycles ?? []}
-                      unresolvedReferences={data?.unresolvedReferences ?? []}
-                      nodes={data?.nodes ?? []}
+                      cycles={activeData?.cycles ?? []}
+                      unresolvedReferences={activeData?.unresolvedReferences ?? []}
+                      nodes={activeData?.nodes ?? []}
                       activeTab={diagnosticsTab}
                       selectedCycleId={selectedCycleId}
                       selectedUnresolvedEdgeId={selection.selectedEdgeId}
@@ -840,8 +909,8 @@ export function App() {
                 <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                   <AnalysisHistoryPanel
                     projectId={activeProjectId}
-                    projectMeta={data?.project ?? activeProject}
-                    currentData={data}
+                    projectMeta={activeData?.project ?? activeProject}
+                    currentData={activeData}
                     compareState={compareState}
                     onCompareSnapshots={(snapA, snapB) => {
                       if (snapA.rawSchemaJson) compareState.setBeforeRaw(snapA.rawSchemaJson);
@@ -869,12 +938,14 @@ export function App() {
                   if (isPinned) setIsPinned(false);
                 }}
                 onDrill={handleDrill}
-                data={data}
+                data={activeData}
+                findings={findings}
                 drillPath={drillPath}
                 onNavigateBreadcrumb={handleNavigateBreadcrumb}
                 recentNodeIds={recentNodeIds}
                 onSelectRecentNode={handleSelectRecentNode}
                 onRequestHandoff={handleRequestHandoff}
+                onSimulateRefactoring={handleStartSimulationForNode}
                 isPinned={isPinned}
                 onTogglePin={handleTogglePin}
                 isDetached={isDetached}
@@ -886,23 +957,23 @@ export function App() {
 
         {/* Bottom Status Indicator Bar */}
         <StatusBar
-          totalNodes={data?.summary?.nodeCount ?? data?.nodes?.length ?? 0}
-          totalEdges={data?.summary?.edgeCount ?? data?.edges?.length ?? 0}
-          visibleNodes={visibleGraphData.nodes.length}
+          totalNodes={activeData?.summary?.nodeCount ?? activeData?.nodes?.length ?? 0}
+          totalEdges={activeData?.summary?.edgeCount ?? activeData?.edges?.length ?? 0}
+          visibleNodes={simulatedGraph.nodes.length}
           selectedNodeName={selectedNode?.displayName ?? null}
           activeFilterCount={view.filterState.searchQuery ? 1 : 0}
-          cycleCount={data?.summary?.cycleCount ?? data?.cycles?.length ?? 0}
-          unresolvedCount={data?.summary?.unresolvedCount ?? data?.unresolvedReferences?.length ?? 0}
+          cycleCount={activeData?.summary?.cycleCount ?? activeData?.cycles?.length ?? 0}
+          unresolvedCount={activeData?.summary?.unresolvedCount ?? activeData?.unresolvedReferences?.length ?? 0}
         />
 
         {/* Command Palette Modal */}
         <CommandPalette
           isOpen={palette.isOpen}
           onClose={palette.close}
-          nodes={data?.nodes ?? []}
+          nodes={activeData?.nodes ?? []}
           query={palette.query}
           onQueryChange={palette.setQuery}
-          data={data}
+          data={activeData}
           selectedNodeId={selection.selectedNodeId}
           isInvestigating={view.isInvestigating}
           findings={findings}
@@ -949,6 +1020,9 @@ export function App() {
           onConfirm={() => {
             if (handoffTarget) openHandoff(handoffTarget);
             setHandoffTarget(null);
+          }}
+          onSimulate={(target) => {
+            handleStartSimulationForNode(target.nodeId);
           }}
           onCancel={() => setHandoffTarget(null)}
         />

@@ -32,6 +32,7 @@ import {
 } from '../lib/graph-interactions';
 
 import { discoverFeatures, type FeatureDiscoveryResult } from '../lib/layout/features';
+import type { ArchitectureFinding } from '../lib/intelligence';
 import { GraphControls } from './GraphControls';
 import { GraphLegend } from './GraphLegend';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
@@ -42,6 +43,8 @@ import './graph-internals/graph.css';
 cytoscape.use(fcose);
 cytoscape.use(navigator);
 
+const DEFAULT_EMPTY_ARRAY: string[] = [];
+
 export interface GraphViewProps {
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
@@ -51,6 +54,8 @@ export interface GraphViewProps {
   selectedEdgeId: string | null;
   impactResult?: ImpactAnalysisResult | null;
   selectedCycleNodeIds?: string[] | null;
+  findings?: ArchitectureFinding[];
+  selectedFinding?: ArchitectureFinding | null;
   onToggleFullscreen?: () => void;
   isFullscreen?: boolean;
   focusedNodeId?: string | null;
@@ -64,6 +69,9 @@ export interface GraphViewProps {
   onNodeDoubleTap?: (nodeId: string, node: ExplorerNode | null) => void;
   layoutMode?: LayoutMode;
   onLayoutModeChange?: (mode: LayoutMode) => void;
+  simulatedNodeIds?: string[];
+  simulatedRemovedNodeIds?: string[];
+  simulatedEdgeIds?: string[];
 }
 
 export interface GraphViewRef {
@@ -100,6 +108,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     selectedEdgeId,
     impactResult,
     selectedCycleNodeIds,
+    findings,
+    selectedFinding,
     onToggleFullscreen,
     isFullscreen = false,
     focusedNodeId,
@@ -112,6 +122,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onNodeDoubleTap: onNodeDoubleTapProp,
     layoutMode: layoutModeProp,
     onLayoutModeChange,
+    simulatedNodeIds = DEFAULT_EMPTY_ARRAY,
+    simulatedRemovedNodeIds = DEFAULT_EMPTY_ARRAY,
+    simulatedEdgeIds = DEFAULT_EMPTY_ARRAY,
   } = props;
 
   const nodePositions = props.nodePositions || graphLayout?.nodePositions;
@@ -138,14 +151,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onSelectEdgeRef.current = onSelectEdge;
   }, [onSelectNode, onSelectEdge]);
 
-  // In-session explicit drag positions.
-  // This represents the highest position authority.
+  // In-session explicit drag positions
   const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
 
-  // Pending layoutstop listener reference to prevent listener leaks.
+  // Pending layoutstop listener reference
   const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
 
-  // Track previous mode for Interactive <-> Static transitions.
+  // Track previous mode
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
@@ -153,12 +165,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Derive Feature Discovery Result deterministically for overlay and shared highlighting
+  // Derive Feature Discovery Result deterministically
   const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
     return discoverFeatures(nodes, edges);
   }, [nodes, edges]);
 
-  // Keep internal refs synchronized with latest props
+  // Keep internal refs synchronized
   useEffect(() => {
     nodesRef.current = nodes;
     edgesRef.current = edges;
@@ -177,7 +189,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onNodeDragEnd,
   ]);
 
-  // Capture all current canvas node positions and notify parent listener
+  // Capture all current canvas node positions
   const captureAndPersistPositions = useCallback(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -195,7 +207,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, []);
 
-  // Handle Mode Switch (Interactive <-> Static)
+  // Handle Mode Switch
   useEffect(() => {
     if (prevLayoutModeRef.current === layoutMode) return;
 
@@ -203,14 +215,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     prevLayoutModeRef.current = layoutMode;
 
     if (oldMode === 'interactive' && layoutMode === 'static') {
-      // Interactive -> Static: capture current coordinates, persist them, do not visually rearrange
       captureAndPersistPositions();
-    } else if (oldMode === 'static' && layoutMode === 'interactive') {
-      // Static -> Interactive: change behavior only, do not immediately relayout
     }
   }, [layoutMode, captureAndPersistPositions]);
 
-  // Re-attach cytoscape navigator when isNavigatorVisible becomes true or cy changes
+  // Re-attach cytoscape navigator
   useEffect(() => {
     if (isNavigatorVisible && cyRef.current && minimapRef.current) {
       if (navRef.current && typeof navRef.current.destroy === 'function') {
@@ -228,15 +237,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [isNavigatorVisible]);
 
-  // Centralized Reset Layout handler supporting animated and non-animated completion
+  // Reset Layout handler
   const executeResetLayout = useCallback(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
-    // Clear previous explicit drag sessions on explicit reset
     sessionPositionsRef.current.clear();
 
-    // Cancel any pending layoutstop listener to prevent listener leaks
     if (pendingLayoutStopRef.current) {
       cy.off('layoutstop', pendingLayoutStopRef.current);
       pendingLayoutStopRef.current = null;
@@ -255,11 +262,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cy.one('layoutstop', onStop);
 
       runLayout(cy, {
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
         nodeCount,
         animate: true,
       });
     } else {
       runLayout(cy, {
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
         nodeCount,
         animate: false,
       });
@@ -267,7 +278,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [captureAndPersistPositions]);
 
-  // Expose imperative control methods via Ref
+  // Expose imperative control methods
   useImperativeHandle(ref, () => ({
     zoomIn: () => {
       if (cyRef.current) {
@@ -301,18 +312,17 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     resetLayout: executeResetLayout,
   }), [selectedNodeId, executeResetLayout]);
 
-  // Main Cytoscape Initialization & Teardown
+  // Cytoscape Initialization & Teardown
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const elements = buildGraphElements(nodesRef.current, edgesRef.current);
+    const elements = buildGraphElements(nodesRef.current, edgesRef.current, findings);
     const styles = getGraphStyles({
       nodeWidth: 50,
       nodeHeight: 50,
       fontSize: 12
     });
 
-    // Determine if any authoritative saved positions exist for current graph nodes
     let hasAuth = false;
     if (nodePositionsRef.current) {
       for (const node of nodesRef.current) {
@@ -352,7 +362,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     cyRef.current = cy;
 
-    // Apply 5-level position authority for initial mount if preset or restoring positions
     const knownPosMap: Record<string, Position> = {};
     cy.nodes().forEach((cyNode) => {
       const id = cyNode.id();
@@ -367,7 +376,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    // Handle genuinely new nodes if autoLayoutPolicy is false or 'place-new-only'
     if (autoLayoutPolicy !== true) {
       let newlyPlaced = false;
       cy.nodes().forEach((cyNode) => {
@@ -384,7 +392,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         captureAndPersistPositions();
       }
     } else {
-      // If initial auto-layout ran, capture resulting positions
       if (typeof cy.one === 'function') {
         cy.one('layoutstop', () => {
           captureAndPersistPositions();
@@ -396,7 +403,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }
 
-    // Dragfree persistence handler (Level 1 Session Drag -> Persisted Storage)
     cy.on('dragfree', 'node', (evt) => {
       const node = evt.target;
       const nodeId = node.id();
@@ -425,7 +431,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    // Minimap Initialization
     if (minimapRef.current && isNavigatorVisible) {
       try {
         const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
@@ -438,7 +443,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }
 
-    // Initial Zoom by Node Count
     const nodeCount = nodesRef.current.length;
     const initialZoom = nodeCount < 15 ? 1.4
                       : nodeCount < 50 ? 1.0
@@ -447,7 +451,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     cy.zoom(initialZoom);
     cy.center();
 
-    // Throttled Zoom Listener for Semantic Zoom
     let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
     const updateZoomClass = () => {
       const currentZoom = cy.zoom();
@@ -473,7 +476,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     updateZoomClass();
 
-    // Hover Cards with 250ms Delay & Hovered Node ID Tracking
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
       const pos = evt.renderedPosition;
@@ -527,7 +529,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       setHoverCard(null);
     });
 
-    // Interaction bindings
+    cy.on('mouseleave', () => {
+      setHoveredNodeId(null);
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      setHoverCard(null);
+      document.body.style.cursor = 'default';
+    });
+
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
         const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
@@ -549,7 +557,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }, nodesRef.current);
 
-    // ResizeObserver calling cy.resize()
     const resizeObserver = new ResizeObserver(() => {
       if (cyRef.current) {
         cyRef.current.resize();
@@ -588,12 +595,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         try { navRef.current.destroy(); } catch (e) {}
       }
 
+      document.body.style.cursor = 'default';
       cy.destroy();
       cyRef.current = null;
     };
   }, []);
 
-  // Element Synchronization Effect: Syncs React nodes/edges props with Cytoscape cy.elements() while preserving positions
+  // Element Synchronization Effect
   useEffect(() => {
     nodesRef.current = nodes;
     edgesRef.current = edges;
@@ -601,7 +609,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
-    // Capture Cytoscape positions before re-building elements (Level 3 Authority)
     const cyPositionsBefore: Record<string, Position> = {};
     cy.nodes().forEach((n) => {
       const pos = n.position();
@@ -609,7 +616,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cyPositionsBefore[n.id()] = posObj;
     });
 
-    // Check if any incoming node is genuinely new
     let hasAuthForUpdate = false;
     let hasGenuinelyNewNodes = false;
 
@@ -633,14 +639,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       hasNewNodes: hasGenuinelyNewNodes,
     });
 
-    const newElements = buildGraphElements(nodes, edges);
+    const newElements = buildGraphElements(nodes, edges, findings);
 
     cy.batch(() => {
       cy.elements().remove();
       cy.add(newElements);
     });
 
-    // Restore or calculate positions for all nodes based on position authority hierarchy
     const knownPositionsMap: Record<string, Position> = {};
 
     cy.nodes().forEach((node) => {
@@ -657,7 +662,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    // Place genuinely new nodes if policy allows / requires
     let newlyPlaced = false;
     cy.nodes().forEach((node) => {
       const id = node.id();
@@ -683,17 +687,45 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           captureAndPersistPositions();
         });
         runLayout(cy, {
+          nodes,
+          edges,
           nodeCount: nodes.length,
           animate: true,
         });
       } else {
         runLayout(cy, {
+          nodes,
+          edges,
           nodeCount: nodes.length,
           animate: false,
         });
         captureAndPersistPositions();
       }
     }
+
+    // Apply simulation visual classes
+    cy.batch(() => {
+      cy.elements().removeClass('simulated-added simulated-removed simulated-affected');
+
+      if (simulatedNodeIds && simulatedNodeIds.length > 0) {
+        simulatedNodeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-added');
+        });
+      }
+      if (simulatedRemovedNodeIds && simulatedRemovedNodeIds.length > 0) {
+        simulatedRemovedNodeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-removed');
+        });
+      }
+      if (simulatedEdgeIds && simulatedEdgeIds.length > 0) {
+        simulatedEdgeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-added');
+        });
+      }
+    });
 
     if (selectedNodeId) {
       selectNode(cy, selectedNodeId);
@@ -738,7 +770,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges, nodePositions, captureAndPersistPositions]);
+  }, [nodes, edges, nodePositions, captureAndPersistPositions, simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
 
   // Handle selected node changes
   useEffect(() => {
@@ -813,7 +845,31 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [selectedCycleNodeIds]);
 
-  // Handle focusedNodeId for progressive drilling centering and dimming
+  // Handle selectedFinding element highlighting
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    cy.batch(() => {
+      cy.elements().removeClass('finding-highlighted');
+      if (selectedFinding) {
+        if (selectedFinding.nodeIds && selectedFinding.nodeIds.length > 0) {
+          selectedFinding.nodeIds.forEach((nodeId) => {
+            const ele = cy.getElementById(nodeId);
+            if (ele.length > 0) ele.addClass('finding-highlighted');
+          });
+        }
+        if (selectedFinding.edgeIds && selectedFinding.edgeIds.length > 0) {
+          selectedFinding.edgeIds.forEach((edgeId) => {
+            const ele = cy.getElementById(edgeId);
+            if (ele.length > 0) ele.addClass('finding-highlighted');
+          });
+        }
+      }
+    });
+  }, [selectedFinding]);
+
+  // Handle focusedNodeId for progressive drilling
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -902,7 +958,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     >
       <div ref={containerRef} className="cytoscape-view" />
 
-      {/* Feature Composition & Shared Infrastructure SVG Overlay Canvas */}
+      {/* Feature Composition Overlay Canvas */}
       <FeatureOverlayCanvas
         cy={cyRef.current}
         nodes={nodes}
@@ -911,6 +967,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         selectedNodeId={selectedNodeId}
         hoveredNodeId={hoveredNodeId}
         nodePositions={nodePositions}
+        findings={findings}
         enableOverlay={true}
       />
 
@@ -923,7 +980,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : '🔀 Interactive Mode'}
       </div>
 
-      {/* Product-Grade Navigator Container Floating Bottom Right */}
+      {/* Navigator Container */}
       {isNavigatorVisible && (
         <div
           id="minimap"
@@ -947,7 +1004,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         </div>
       )}
 
-      {/* Screen Reader Accessible Node List */}
+      {/* Accessible Node List */}
       <ul role="tree" className="sr-only" aria-label="Component Nodes">
         {nodes.map(n => (
           <li
@@ -975,6 +1032,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           node={hoverCard.node}
           x={hoverCard.x}
           y={hoverCard.y}
+          findings={findings}
         />
       )}
 
@@ -986,7 +1044,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         />
       )}
 
-      {/* Floating Controls (Bottom Right) & Legend (Bottom Left) */}
+      {/* Floating Controls & Legend */}
       <GraphControls
         onZoomIn={() => {
           if (cyRef.current) {

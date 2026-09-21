@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ArchitectureFinding } from '../lib/intelligence';
 import { Breadcrumbs, BreadcrumbItem } from './Breadcrumbs';
 import { rankDependents, rankDependencies } from '../lib/drill';
 
@@ -9,11 +10,13 @@ export interface InvestigationDrawerProps {
   onClose: () => void;
   onDrill?: (id: string) => void;
   data?: ExplorerDataSchema | null;
+  findings?: ArchitectureFinding[];
   drillPath?: string[];
   onNavigateBreadcrumb?: (id: string) => void;
   recentNodeIds?: string[];
   onSelectRecentNode?: (id: string) => void;
   onRequestHandoff?: (nodeId: string) => void;
+  onSimulateRefactoring?: (nodeId: string) => void;
   onApplyFocus?: (nodeId: string) => void;
   onShowImpact?: (nodeId: string) => void;
   onAnalyzeConnections?: (nodeId: string) => void;
@@ -66,12 +69,14 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   recentNodeIds = [],
   onSelectRecentNode,
   onRequestHandoff,
+  onSimulateRefactoring,
   onApplyFocus,
   onShowImpact,
   onAnalyzeConnections,
   isPinned = false,
   onTogglePin,
   isDetached = false,
+  findings = [],
   onDetach,
 }) => {
   const [activeTab, setActiveTab] = useState<DrawerTab>('overview');
@@ -82,6 +87,10 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   }
 
   const currentNodeId = node?.id ?? (drillPath.length > 0 ? drillPath[drillPath.length - 1] : null);
+
+  const nodeFindings = node && findings && findings.length > 0
+    ? findings.filter((f) => f.nodeIds && f.nodeIds.includes(node.id))
+    : [];
 
   const breadcrumbItems: BreadcrumbItem[] = drillPath.map((id) => {
     const foundNode = data?.nodes.find((n) => n.id === id);
@@ -210,6 +219,73 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
       <div className="tab-content-overview" data-testid="tab-content-overview">
         {renderRiskSummary()}
         {renderKeyMetrics()}
+
+        {/* Associated Architecture Findings */}
+        {nodeFindings.length > 0 && (
+          <div
+            className="drawer-associated-findings"
+            data-testid="drawer-associated-findings"
+            style={{
+              padding: '10px 12px',
+              backgroundColor: 'rgba(239, 68, 68, 0.08)',
+              borderRadius: '6px',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
+              marginBottom: '12px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                color: '#f87171',
+                letterSpacing: '0.05em',
+                display: 'block',
+                marginBottom: '8px',
+              }}
+            >
+              ⚠️ Associated Architecture Findings ({nodeFindings.length})
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {nodeFindings.map((f) => (
+                <div
+                  key={f.id}
+                  style={{
+                    padding: '6px 8px',
+                    backgroundColor: 'var(--surface-subtle, #0f172a)',
+                    borderRadius: '4px',
+                    fontSize: '11px',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                    <span style={{ fontWeight: 600, color: '#f8fafc' }}>{f.title}</span>
+                    <span
+                      style={{
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        padding: '1px 4px',
+                        borderRadius: '3px',
+                        backgroundColor:
+                          f.severity === 'CRITICAL' || f.severity === 'HIGH'
+                            ? 'rgba(239, 68, 68, 0.2)'
+                            : 'rgba(245, 158, 11, 0.2)',
+                        color:
+                          f.severity === 'CRITICAL' || f.severity === 'HIGH'
+                            ? '#f87171'
+                            : '#f59e0b',
+                      }}
+                    >
+                      {f.severity}
+                    </span>
+                  </div>
+                  <p style={{ margin: 0, color: 'var(--text-muted, #94a3b8)', fontSize: '10px', lineHeight: '1.3' }}>
+                    {f.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Quick Depth Analysis Actions */}
         {(onApplyFocus || onShowImpact || onAnalyzeConnections) && currentNodeId && (
@@ -572,19 +648,34 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           Component Investigation Actions
         </h3>
 
-        {onRequestHandoff && currentNodeId && (
+        {(onRequestHandoff || onSimulateRefactoring) && currentNodeId && (
           <div style={{ padding: '10px', backgroundColor: 'var(--surface-subtle, #0f172a)', borderRadius: '6px', border: '1px solid var(--border-subtle, #1e293b)' }}>
             <div style={{ fontWeight: 600, fontSize: '12px', marginBottom: '4px', color: '#f8fafc' }}>Refactoring Handoff</div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted, #94a3b8)', marginBottom: '8px', margin: '0 0 8px 0' }}>
-              Export component context and dependencies for refactoring sequencing.
+              Export component context or simulate interactive refactoring sequence.
             </p>
-            <button
-              type="button"
-              className="ui-btn ui-btn-primary ui-btn-sm"
-              onClick={() => onRequestHandoff(currentNodeId)}
-            >
-              Hand off to Refactor
-            </button>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {onRequestHandoff && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-primary ui-btn-sm"
+                  onClick={() => onRequestHandoff(currentNodeId)}
+                >
+                  Hand off to Refactor
+                </button>
+              )}
+              {onSimulateRefactoring && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-secondary ui-btn-sm"
+                  data-testid="simulate-refactoring-btn"
+                  onClick={() => onSimulateRefactoring(currentNodeId)}
+                  style={{ color: '#38bdf8', borderColor: '#38bdf8' }}
+                >
+                  Simulate Proposed Refactoring
+                </button>
+              )}
+            </div>
           </div>
         )}
 

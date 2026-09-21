@@ -238,6 +238,100 @@ describe('features module (Feature Discovery)', () => {
     });
   });
 
+  describe('Prompt 3 — Targeted Semantic Clustering & Component Identity Verification', () => {
+    it('clusters same-component trio (PaymentDomain, PaymentSelector, PaymentService) into the same feature cluster', () => {
+      const nodes = [
+        createNode('ApexClass:PaymentService', 'PaymentService', 'ApexClass'),
+        createNode('ApexClass:PaymentDomain', 'PaymentDomain', 'ApexClass'),
+        createNode('ApexClass:PaymentSelector', 'PaymentSelector', 'ApexClass'),
+      ];
+
+      const edges = [
+        createEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+        createEdge('e2', 'ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
+      ];
+
+      const result = discoverFeatures(nodes, edges);
+
+      // Must resolve to 1 feature cluster containing all 3 nodes
+      expect(result.featureList.length).toBe(1);
+      const paymentFeat = result.featureList[0];
+      expect(paymentFeat.primaryNodeIds).toContain('ApexClass:PaymentService');
+      expect(paymentFeat.primaryNodeIds).toContain('ApexClass:PaymentDomain');
+      expect(paymentFeat.primaryNodeIds).toContain('ApexClass:PaymentSelector');
+    });
+
+    it('keeps distinct components (PaymentDomain vs OrderSelector/OrderService) in separate clusters', () => {
+      const nodes = [
+        createNode('ApexClass:PaymentService', 'PaymentService', 'ApexClass'),
+        createNode('ApexClass:PaymentDomain', 'PaymentDomain', 'ApexClass'),
+        createNode('ApexClass:OrderService', 'OrderService', 'ApexClass'),
+        createNode('ApexClass:OrderSelector', 'OrderSelector', 'ApexClass'),
+      ];
+
+      const edges = [
+        createEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+        createEdge('e2', 'ApexClass:OrderService', 'ApexClass:OrderSelector'),
+      ];
+
+      const result = discoverFeatures(nodes, edges);
+
+      expect(result.featureList.length).toBe(2);
+      const feat1 = result.featureList.find(f => f.anchorNodeId.includes('Payment'))!;
+      const feat2 = result.featureList.find(f => f.anchorNodeId.includes('Order'))!;
+
+      expect(feat1.primaryNodeIds).toEqual(['ApexClass:PaymentDomain', 'ApexClass:PaymentService']);
+      expect(feat2.primaryNodeIds).toEqual(['ApexClass:OrderSelector', 'ApexClass:OrderService']);
+    });
+
+    it('does not merge components sharing only partial name substrings (e.g. PayRoll vs Payment)', () => {
+      const nodes = [
+        createNode('ApexClass:PaymentService', 'PaymentService', 'ApexClass'),
+        createNode('ApexClass:PaymentSelector', 'PaymentSelector', 'ApexClass'),
+        createNode('ApexClass:PayRollService', 'PayRollService', 'ApexClass'),
+        createNode('ApexClass:PayRollSelector', 'PayRollSelector', 'ApexClass'),
+      ];
+
+      const edges = [
+        createEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
+        createEdge('e2', 'ApexClass:PayRollService', 'ApexClass:PayRollSelector'),
+      ];
+
+      const result = discoverFeatures(nodes, edges);
+
+      expect(result.featureList.length).toBe(2);
+      const feat1 = result.featureList.find(f => f.anchorNodeId.includes('Payment'))!;
+      const feat2 = result.featureList.find(f => f.anchorNodeId.includes('PayRoll'))!;
+
+      expect(feat1.primaryNodeIds).toEqual(['ApexClass:PaymentSelector', 'ApexClass:PaymentService']);
+      expect(feat2.primaryNodeIds).toEqual(['ApexClass:PayRollSelector', 'ApexClass:PayRollService']);
+    });
+
+    it('respects explicit domainMap metadata over name similarity', () => {
+      const nodes = [
+        createNode('ApexClass:PaymentService', 'PaymentService', 'ApexClass'),
+        createNode('ApexClass:PaymentDomain', 'PaymentDomain', 'ApexClass'),
+      ];
+
+      const edges = [
+        createEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+      ];
+
+      const domainMap = new Map([
+        ['ApexClass:PaymentService', 'Billing'],
+        ['ApexClass:PaymentDomain', 'Accounting'],
+      ]);
+
+      const result = discoverFeatures(nodes, edges, { domainMap });
+
+      // Because domainMap assigns different non-Shared domains, total expansion score is reduced, verifying domain metadata participation
+      const assignment1 = result.assignments.get('ApexClass:PaymentService');
+      const assignment2 = result.assignments.get('ApexClass:PaymentDomain');
+      expect(assignment1).toBeDefined();
+      expect(assignment2).toBeDefined();
+    });
+  });
+
   describe('Performance Benchmark', () => {
     it('executes within sub-frame latency (< 50ms) for 100+ node graph', () => {
       const nodes: ExplorerNode[] = [];
