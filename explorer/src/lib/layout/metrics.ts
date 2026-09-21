@@ -63,6 +63,9 @@ export interface ComprehensiveLayoutMetrics {
   averageEdgeLength: number;
   maxEdgeLength: number;
   nodeOverlapCount: number;
+  primaryOverlapCount?: number;
+  satelliteOverlapCount?: number;
+  minClearance?: number;
   layerViolationCount: number;
   domainCohesion: DomainCohesionResult;
   componentSeparation: ComponentSeparationResult;
@@ -274,6 +277,123 @@ export function nodeOverlapCount(
   }
 
   return overlaps;
+}
+
+function isSecondaryNode(node: ExplorerNode): boolean {
+  const isTest =
+    node.behavior?.isTest ||
+    (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
+    /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
+  const isField = node.type === 'Field' || node.type === 'CustomField';
+  return isTest || isField;
+}
+
+/**
+ * Calculates the number of overlapping primary production node pairs.
+ */
+export function primaryNodeOverlapCount(
+  nodes: ExplorerNode[],
+  _edges: ExplorerEdge[],
+  positions: PositionMap,
+  options: LayoutMetricOptions = {}
+): number {
+  const nodeWidth = options.nodeWidth ?? 120;
+  const nodeHeight = options.nodeHeight ?? 60;
+
+  const primaryNodes = nodes.filter(n => positions[n.id] !== undefined && !isSecondaryNode(n));
+  let overlaps = 0;
+
+  for (let i = 0; i < primaryNodes.length; i++) {
+    const nodeA = primaryNodes[i];
+    const posA = positions[nodeA.id];
+
+    for (let j = i + 1; j < primaryNodes.length; j++) {
+      const nodeB = primaryNodes[j];
+      const posB = positions[nodeB.id];
+
+      const dx = Math.abs(posA.x - posB.x);
+      const dy = Math.abs(posA.y - posB.y);
+
+      if (dx < nodeWidth - EPSILON && dy < nodeHeight - EPSILON) {
+        overlaps++;
+      }
+    }
+  }
+
+  return overlaps;
+}
+
+/**
+ * Calculates the number of overlapping node pairs involving at least one satellite (test/field) node.
+ */
+export function satelliteNodeOverlapCount(
+  nodes: ExplorerNode[],
+  _edges: ExplorerEdge[],
+  positions: PositionMap,
+  options: LayoutMetricOptions = {}
+): number {
+  const nodeWidth = options.nodeWidth ?? 120;
+  const nodeHeight = options.nodeHeight ?? 60;
+
+  const activeNodes = nodes.filter(n => positions[n.id] !== undefined);
+  let overlaps = 0;
+
+  for (let i = 0; i < activeNodes.length; i++) {
+    const nodeA = activeNodes[i];
+    const posA = positions[nodeA.id];
+
+    for (let j = i + 1; j < activeNodes.length; j++) {
+      const nodeB = activeNodes[j];
+      const posB = positions[nodeB.id];
+
+      if (!isSecondaryNode(nodeA) && !isSecondaryNode(nodeB)) continue;
+
+      const dx = Math.abs(posA.x - posB.x);
+      const dy = Math.abs(posA.y - posB.y);
+
+      if (dx < nodeWidth - EPSILON && dy < nodeHeight - EPSILON) {
+        overlaps++;
+      }
+    }
+  }
+
+  return overlaps;
+}
+
+/**
+ * Calculates the minimum clearance gap between any pair of primary production nodes.
+ */
+export function minimumNodeClearance(
+  nodes: ExplorerNode[],
+  _edges: ExplorerEdge[],
+  positions: PositionMap,
+  options: LayoutMetricOptions = {}
+): number {
+  const nodeWidth = options.nodeWidth ?? 120;
+  const nodeHeight = options.nodeHeight ?? 60;
+
+  const primaryNodes = nodes.filter(n => positions[n.id] !== undefined && !isSecondaryNode(n));
+  if (primaryNodes.length < 2) return Infinity;
+
+  let minClearance = Infinity;
+
+  for (let i = 0; i < primaryNodes.length; i++) {
+    const posA = positions[primaryNodes[i].id];
+
+    for (let j = i + 1; j < primaryNodes.length; j++) {
+      const posB = positions[primaryNodes[j].id];
+
+      const gapX = Math.max(0, Math.abs(posA.x - posB.x) - nodeWidth);
+      const gapY = Math.max(0, Math.abs(posA.y - posB.y) - nodeHeight);
+      const clearance = Math.sqrt(gapX * gapX + gapY * gapY);
+
+      if (clearance < minClearance) {
+        minClearance = clearance;
+      }
+    }
+  }
+
+  return minClearance === Infinity ? 0 : minClearance;
 }
 
 function getLayerRank(node: ExplorerNode): number {
@@ -833,6 +953,9 @@ export function calculateLayoutMetrics(
     averageEdgeLength: averageEdgeLength(nodes, edges, positions),
     maxEdgeLength: maxEdgeLength(nodes, edges, positions),
     nodeOverlapCount: nodeOverlapCount(nodes, edges, positions, options),
+    primaryOverlapCount: primaryNodeOverlapCount(nodes, edges, positions, options),
+    satelliteOverlapCount: satelliteNodeOverlapCount(nodes, edges, positions, options),
+    minClearance: minimumNodeClearance(nodes, edges, positions, options),
     layerViolationCount: layerViolationCount(nodes, edges, positions),
     domainCohesion: domainCohesion(nodes, edges, positions),
     componentSeparation: componentSeparation(nodes, edges, positions, options),

@@ -1,23 +1,25 @@
 {
-  "timestamp": "2026-09-21T19:20:37.913Z",
+  "timestamp": "2026-09-21T19:53:20.914Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
-    "primaryCrossings": 8937,
+    "primaryCrossings": 9037,
     "totalCrossings": 107561,
     "averageEdgeLength": 1408.4970285289733,
     "maxEdgeLength": 4420,
     "nodeOverlapCount": 25,
+    "primaryOverlapCount": 20,
     "layerViolationCount": 0,
     "domainCohesionScore": 0.9426349223536714
   },
   "pathB_featureEnabled": {
-    "primaryCrossings": 12466,
+    "primaryCrossings": 12978,
     "totalCrossings": 121052,
     "averageEdgeLength": 1406.3917935407976,
     "maxEdgeLength": 3335.386034629275,
     "nodeOverlapCount": 5,
+    "primaryOverlapCount": 5,
     "layerViolationCount": 0,
     "domainCohesionScore": 0.9167718742678597
   },
