@@ -36,6 +36,7 @@ import {
   computeTemporarySimulatedPositions,
   createProposalFromTargetNodes,
   createProposalFromFinding,
+  validateProposalCommit,
   type RefactoringProposal,
 } from './lib/refactoring-simulation';
 import {
@@ -443,19 +444,19 @@ export function App() {
 
   const handleStartSimulationForNode = useCallback((nodeId: string) => {
     if (!activeData) return;
-    const proposal = createProposalFromTargetNodes([nodeId], activeData);
+    const proposal = createProposalFromTargetNodes([nodeId], activeData, activeProjectId);
     setActiveSimulationProposal(proposal);
     setSimulationStepIndex(0);
     setWorkspaceViewMode('graph');
-  }, [activeData]);
+  }, [activeData, activeProjectId]);
 
   const handleStartSimulationForFinding = useCallback((finding: ArchitectureFinding) => {
     if (!activeData) return;
-    const proposal = createProposalFromFinding(finding, activeData);
+    const proposal = createProposalFromFinding(finding, activeData, activeProjectId);
     setActiveSimulationProposal(proposal);
     setSimulationStepIndex(0);
     setWorkspaceViewMode('graph');
-  }, [activeData]);
+  }, [activeData, activeProjectId]);
 
   // Sync compare focused entity selection
   useEffect(() => {
@@ -680,6 +681,12 @@ export function App() {
 
   const handleCommitSimulation = () => {
     if (!activeData || !activeSimulationProposal) return;
+
+    const validation = validateProposalCommit(activeSimulationProposal, activeProjectId, activeData);
+    if (!validation.valid) {
+      throw new Error(validation.reason || 'Cannot commit stale simulation proposal.');
+    }
+
     const allOps = activeSimulationProposal.steps.flatMap(s => s.operations);
     const mutated = applySimulationOperations(activeData, allOps);
     setCommittedMutatedGraph(mutated);

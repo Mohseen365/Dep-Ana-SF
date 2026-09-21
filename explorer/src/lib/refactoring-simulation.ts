@@ -55,7 +55,66 @@ export interface RefactoringProposal {
   description: string;
   originNodeId?: string;
   originFindingId?: string;
+  projectId?: string;
+  baseGraphHash?: string;
+  baseGraphVersion?: string;
   steps: RefactoringStep[];
+}
+
+export function computeGraphHash(graphData: ExplorerDataSchema): string {
+  if (!graphData) return 'empty';
+  const nodeIds = graphData.nodes.map(n => n.id).sort().join(',');
+  const edgeIds = graphData.edges.map(e => e.id).sort().join(',');
+  const nodeCount = graphData.nodes.length;
+  const edgeCount = graphData.edges.length;
+  const raw = `${graphData.schemaVersion || '1.0'}|${nodeCount}|${edgeCount}|${nodeIds.slice(0, 500)}|${edgeIds.slice(0, 500)}`;
+
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    const char = raw.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return `gh-${Math.abs(hash).toString(16)}`;
+}
+
+export function isProposalStale(
+  proposal: RefactoringProposal,
+  currentProjectId: string,
+  currentGraph: ExplorerDataSchema
+): { isStale: boolean; reason?: string } {
+  if (!proposal) return { isStale: false };
+
+  if (proposal.projectId && proposal.projectId !== currentProjectId) {
+    return {
+      isStale: true,
+      reason: `Proposal belongs to project '${proposal.projectId}' but current project is '${currentProjectId}'.`,
+    };
+  }
+
+  if (proposal.baseGraphHash && currentGraph) {
+    const currentHash = computeGraphHash(currentGraph);
+    if (proposal.baseGraphHash !== currentHash) {
+      return {
+        isStale: true,
+        reason: `Underlying graph state changed since proposal creation (expected ${proposal.baseGraphHash}, got ${currentHash}).`,
+      };
+    }
+  }
+
+  return { isStale: false };
+}
+
+export function validateProposalCommit(
+  proposal: RefactoringProposal,
+  currentProjectId: string,
+  currentGraph: ExplorerDataSchema
+): { valid: boolean; reason?: string } {
+  const staleCheck = isProposalStale(proposal, currentProjectId, currentGraph);
+  if (staleCheck.isStale) {
+    return { valid: false, reason: staleCheck.reason };
+  }
+  return { valid: true };
 }
 
 export interface FindingDelta {
@@ -280,7 +339,8 @@ export function computeTemporarySimulatedPositions(
 
 export function createProposalFromTargetNodes(
   targetNodeIds: string[],
-  graphData: ExplorerDataSchema
+  graphData: ExplorerDataSchema,
+  projectId?: string
 ): RefactoringProposal {
   const primaryNode = graphData.nodes.find(n => n.id === targetNodeIds[0]);
   const title = primaryNode
@@ -310,6 +370,9 @@ export function createProposalFromTargetNodes(
     title,
     description: `Extract helper responsibility and decouple high fan-out dependencies for ${primaryNode?.displayName || 'target components'}.`,
     originNodeId: targetNodeIds[0],
+    projectId,
+    baseGraphHash: computeGraphHash(graphData),
+    baseGraphVersion: graphData.schemaVersion,
     steps: [
       {
         id: 'step-1',
@@ -341,9 +404,11 @@ export function createProposalFromTargetNodes(
 
 export function createProposalFromFinding(
   finding: ArchitectureFinding,
-  graphData: ExplorerDataSchema
+  graphData: ExplorerDataSchema,
+  projectId?: string
 ): RefactoringProposal {
-  const affectedNodes = finding.affectedNodeIds
+  const nodeIds = finding.affectedNodeIds || finding.nodeIds || [];
+  const affectedNodes = nodeIds
     .map(id => graphData.nodes.find(n => n.id === id))
     .filter((n): n is ExplorerNode => n !== undefined);
 
@@ -355,6 +420,9 @@ export function createProposalFromFinding(
     description: `Targeted architectural sequence to resolve ${finding.title} (${finding.severity} severity).`,
     originFindingId: finding.id,
     originNodeId: primaryNode?.id,
+    projectId,
+    baseGraphHash: computeGraphHash(graphData),
+    baseGraphVersion: graphData.schemaVersion,
     steps: [
       {
         id: 'step-remediate-1',

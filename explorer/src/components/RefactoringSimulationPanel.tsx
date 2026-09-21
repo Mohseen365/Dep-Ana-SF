@@ -19,6 +19,7 @@ export const RefactoringSimulationPanel: React.FC<RefactoringSimulationPanelProp
   onCommit,
 }) => {
   const [activeTab, setActiveTab] = useState<'impact' | 'operations' | 'findings'>('impact');
+  const [commitError, setCommitError] = useState<string | null>(null);
 
   const totalSteps = proposal.steps.length;
   const currentStep = proposal.steps[currentStepIndex];
@@ -386,6 +387,23 @@ export const RefactoringSimulationPanel: React.FC<RefactoringSimulationPanelProp
         )}
       </div>
 
+        {commitError && (
+          <div
+            className="commit-error-banner"
+            data-testid="commit-error-banner"
+            style={{
+              padding: '8px 12px',
+              backgroundColor: '#7f1d1d',
+              borderTop: '1px solid #ef4444',
+              color: '#fca5a5',
+              fontSize: '11px',
+              lineHeight: '1.4',
+            }}
+          >
+            ⚠️ {commitError}
+          </div>
+        )}
+
       {/* Action Footer */}
       <div
         style={{
@@ -414,7 +432,14 @@ export const RefactoringSimulationPanel: React.FC<RefactoringSimulationPanelProp
         </button>
 
         <button
-          onClick={onCommit}
+            onClick={() => {
+              setCommitError(null);
+              try {
+                onCommit();
+              } catch (err: any) {
+                setCommitError(err.message || 'Failed to commit simulation.');
+              }
+            }}
           style={{
             padding: '8px 14px',
             backgroundColor: '#2563eb',
