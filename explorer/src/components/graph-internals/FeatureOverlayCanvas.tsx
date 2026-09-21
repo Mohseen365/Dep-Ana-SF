@@ -31,7 +31,9 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     zoom: 1,
   });
 
-  // Track Cytoscape pan and zoom transform
+  const [modelPositions, setModelPositions] = useState<Record<string, { x: number; y: number }>>({});
+
+  // Track Cytoscape pan and zoom transform (viewport only)
   useEffect(() => {
     if (!cy) return;
 
@@ -44,29 +46,48 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     updateTransform();
 
     if (typeof cy.on === 'function') {
-      cy.on('pan zoom position render bounds', updateTransform);
+      cy.on('pan zoom', updateTransform);
     }
 
     return () => {
       if (typeof cy.off === 'function') {
-        cy.off('pan zoom position render bounds', updateTransform);
+        cy.off('pan zoom', updateTransform);
       }
     };
   }, [cy]);
 
-  // Capture live node positions from Cytoscape or props
+  // Track Cytoscape model node positions (updated only when node coordinates change)
+  useEffect(() => {
+    if (!cy) return;
+
+    const capturePositions = () => {
+      const posMap: Record<string, { x: number; y: number }> = {};
+      cy.nodes().forEach((n) => {
+        posMap[n.id()] = n.position();
+      });
+      setModelPositions(posMap);
+    };
+
+    capturePositions();
+
+    if (typeof cy.on === 'function') {
+      cy.on('position dragfree layoutstop', capturePositions);
+    }
+
+    return () => {
+      if (typeof cy.off === 'function') {
+        cy.off('position dragfree layoutstop', capturePositions);
+      }
+    };
+  }, [cy]);
+
+  // Capture live node positions from props or captured model positions
   const currentPositions = useMemo(() => {
     if (nodePositions && Object.keys(nodePositions).length > 0) {
       return nodePositions;
     }
-    const posMap: Record<string, { x: number; y: number }> = {};
-    if (cy) {
-      cy.nodes().forEach((n) => {
-        posMap[n.id()] = n.position();
-      });
-    }
-    return posMap;
-  }, [cy, nodePositions, transform]);
+    return modelPositions;
+  }, [nodePositions, modelPositions]);
 
   // Derive LWC composition groups for all features
   const compositionGroups = useMemo(() => {
