@@ -123,8 +123,10 @@ function generateSatelliteSlots(
     row: number;
     col: number;
   }> = [];
-  const maxSearchRadius = Math.max(8, Math.ceil(Math.sqrt(count) * 2));
-  const gridRadiusCap = Math.max(2, Math.ceil(Math.sqrt(count)));
+
+  // Expand max search radius adaptively based on satellite count to guarantee enough candidate slots
+  const maxSearchRadius = Math.max(12, Math.ceil(Math.sqrt(count) * 3));
+  const gridRadiusCap = Math.max(3, Math.ceil(Math.sqrt(count)));
 
   for (let r = -maxSearchRadius; r <= maxSearchRadius; r++) {
     for (let c = -maxSearchRadius; c <= maxSearchRadius; c++) {
@@ -182,7 +184,28 @@ function generateSatelliteSlots(
     return a.col - b.col;
   });
 
-  return candidateSlots.slice(0, count).map(s => ({ x: s.x, y: s.y }));
+  const selectedSlots = candidateSlots.slice(0, count).map(s => ({ x: s.x, y: s.y }));
+
+  // If search space didn't yield enough slots, generate fallback non-overlapping slots dynamically
+  if (selectedSlots.length < count) {
+    let r = 1;
+    while (selectedSlots.length < count && r <= maxSearchRadius + 20) {
+      for (let c = -maxSearchRadius - 10; c <= maxSearchRadius + 10; c++) {
+        if (selectedSlots.length >= count) break;
+        if (bias === 'field' && r <= 0) continue;
+        if (bias === 'test' && c === 0) continue;
+        const x = anchor.x + c * dx;
+        const y = anchor.y + r * dy;
+        const combinedOccupied = [...occupied, ...selectedSlots];
+        if (!isSlotOccupied(x, y, combinedOccupied, dx, dy)) {
+          selectedSlots.push({ x, y });
+        }
+      }
+      r++;
+    }
+  }
+
+  return selectedSlots;
 }
 
 /**
