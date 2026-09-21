@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "bqs",
+  "activeProjectId": "bqstudio",
   "projects": [
     {
       "id": "foodies",
@@ -45,13 +45,13 @@
       "id": "movie",
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "/app/temp-test-source-resolution/movie_src_a",
-      "createdAt": "2026-09-20T11:46:31.269Z",
-      "updatedAt": "2026-09-20T11:46:31.269Z",
-      "lastAnalyzedAt": "2026-09-20T11:46:31.269Z",
+      "sourcePath": "../Interview Project/Movie-App/force-app/main/default",
+      "createdAt": "2026-09-18T16:02:48.156Z",
+      "updatedAt": "2026-09-18T16:02:48.156Z",
+      "lastAnalyzedAt": "2026-09-18T16:02:48.156Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 1,
-      "dependencyCount": 0,
+      "componentCount": 9,
+      "dependencyCount": 16,
       "analysisPath": "/projects/movie/explorer-data.json"
     },
     {
@@ -92,6 +92,19 @@
       "componentCount": 274,
       "dependencyCount": 603,
       "analysisPath": "/projects/bqs/explorer-data.json"
+    },
+    {
+      "id": "bqstudio",
+      "name": "bqstudio",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "../Interview Project/Bouquet-Experience-Cloud/force-app/main/default",
+      "createdAt": "2026-09-17T06:07:04.752Z",
+      "updatedAt": "2026-09-17T06:07:04.752Z",
+      "lastAnalyzedAt": "2026-09-17T06:07:04.752Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bqstudio/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -119,9 +132,9 @@
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:c26616e52d37efded927f78cc7d63fe7f3b8d10b909362ed1225e474344e2235",
-      "nodeCount": 1,
-      "edgeCount": 0
+      "fileHash": "sha256:f6792c0d4329c26c047aa722324c847c670ed0d4c290b2ec8d32cfef3e490fdb",
+      "nodeCount": 9,
+      "edgeCount": 16
     },
     "bouquet-salesforce": {
       "path": "explorer-data.json",
@@ -141,6 +154,13 @@
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
       "fileHash": "sha256:b6b893a95f6f093a5617aae181d851832147211cc2a20ae04e854336f4821ebf",
+      "nodeCount": 274,
+      "edgeCount": 603
+    },
+    "bqstudio": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:cbd3aa9531eca662715f54920bba45e5eb6a42050e41a03d61e7d935ddc73c17",
       "nodeCount": 274,
       "edgeCount": 603
     }
