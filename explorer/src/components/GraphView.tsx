@@ -265,7 +265,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       pendingLayoutStopRef.current = null;
     }
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
     const nodeCount = nodesRef.current.length;
     const shouldAnimate = !prefersReducedMotion && nodeCount < 100;
 
@@ -355,7 +355,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       hasAuthoritativePositions: hasAuth,
     });
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
     const layoutOptions = autoLayoutPolicy === true
       ? getLayoutOptions({
           ...effectiveLayoutOptionsRef.current,
@@ -698,7 +698,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
 
     if (autoLayoutPolicy === true) {
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
       const shouldAnimate = !prefersReducedMotion && nodes.length < 100;
 
       if (shouldAnimate) {

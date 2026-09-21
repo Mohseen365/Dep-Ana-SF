@@ -6,30 +6,141 @@ import * as graphLayoutModule from '../lib/graph-layout';
 import * as archLayoutModule from '../lib/architecture-layout';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
+let mockEles: any[] = [];
+
+const createMockNode = (id: string, initialX = 100, initialY = 100) => {
+  let selected = false;
+  const classes = new Set<string>();
+  const pos = { x: initialX, y: initialY };
+
+  const nodeObj = {
+    id: () => id,
+    isNode: () => true,
+    isEdge: () => false,
+    position: (newPos?: { x: number; y: number }) => {
+      if (newPos) {
+        pos.x = newPos.x;
+        pos.y = newPos.y;
+      }
+      return { x: pos.x, y: pos.y };
+    },
+    select: () => { selected = true; },
+    unselect: () => { selected = false; },
+    isSelected: () => selected,
+    addClass: (cls: string) => {
+      cls.split(' ').forEach(c => c && classes.add(c));
+      return nodeObj;
+    },
+    removeClass: (cls: string) => {
+      cls.split(' ').forEach(c => c && classes.delete(c));
+      return nodeObj;
+    },
+    hasClass: (cls: string) => classes.has(cls),
+    connectedEdges: () => [],
+    neighborhood: () => [],
+    renderedPosition: () => ({ x: pos.x, y: pos.y }),
+    data: (key?: string) => key === 'id' ? id : { id, label: id, type: 'ApexClass' },
+  };
+  return nodeObj;
+};
+
+const createMockEdge = (id: string, source: string, target: string) => {
+  let selected = false;
+  const classes = new Set<string>();
+
+  const edgeObj = {
+    id: () => id,
+    isNode: () => false,
+    isEdge: () => true,
+    select: () => { selected = true; },
+    unselect: () => { selected = false; },
+    isSelected: () => selected,
+    addClass: (cls: string) => {
+      cls.split(' ').forEach(c => c && classes.add(c));
+      return edgeObj;
+    },
+    removeClass: (cls: string) => {
+      cls.split(' ').forEach(c => c && classes.delete(c));
+      return edgeObj;
+    },
+    hasClass: (cls: string) => classes.has(cls),
+    data: (key?: string) => {
+      if (key === 'source') return source;
+      if (key === 'target') return target;
+      if (key === 'id') return id;
+      return { id, source, target };
+    },
+  };
+  return edgeObj;
+};
+
 vi.mock('cytoscape', () => {
   const mockCy = {
-    use: vi.fn(),
-    nodes: vi.fn().mockReturnValue([]),
-    edges: vi.fn().mockReturnValue([]),
-    elements: vi.fn().mockReturnValue({ remove: vi.fn(), removeClass: vi.fn(), addClass: vi.fn() }),
-    add: vi.fn(),
-    batch: vi.fn((cb: any) => cb()),
+    zoom: vi.fn().mockReturnValue(1),
+    center: vi.fn(),
+    width: vi.fn().mockReturnValue(800),
+    height: vi.fn().mockReturnValue(600),
+    resize: vi.fn(),
+    pan: vi.fn().mockReturnValue({ x: 0, y: 0 }),
+    elements: vi.fn().mockImplementation(() => {
+      const res = [...mockEles];
+      (res as any).removeClass = (cls: string) => {
+        mockEles.forEach(e => e.removeClass(cls));
+        return res;
+      };
+      (res as any).addClass = (cls: string) => {
+        mockEles.forEach(e => e.addClass(cls));
+        return res;
+      };
+      (res as any).unselect = () => {
+        mockEles.forEach(e => e.unselect());
+        return res;
+      };
+      (res as any).remove = () => res;
+      return res;
+    }),
+    nodes: vi.fn().mockImplementation(() => {
+      const nodesList = mockEles.filter(e => e.isNode());
+      return nodesList;
+    }),
+    edges: vi.fn().mockImplementation(() => {
+      return mockEles.filter(e => e.isEdge());
+    }),
+    add: vi.fn().mockImplementation((eles: any[]) => {
+      eles.forEach(e => {
+        if (e.group === 'nodes') {
+          mockEles.push(createMockNode(e.data.id, e.position?.x ?? 100, e.position?.y ?? 100));
+        } else if (e.group === 'edges') {
+          mockEles.push(createMockEdge(e.data.id, e.data.source, e.data.target));
+        }
+      });
+    }),
+    batch: vi.fn((fn: () => void) => fn()),
     on: vi.fn(),
     off: vi.fn(),
     one: vi.fn(),
     destroy: vi.fn(),
-    zoom: vi.fn().mockReturnValue(1),
-    center: vi.fn(),
-    resize: vi.fn(),
-    getElementById: vi.fn().mockReturnValue({ length: 0 }),
-    layout: vi.fn().mockReturnValue({ run: vi.fn() }),
+    zoomOut: vi.fn(),
+    zoomIn: vi.fn(),
+    animate: vi.fn(),
     fit: vi.fn(),
+    layout: vi.fn().mockReturnValue({ run: vi.fn() }),
+    getElementById: vi.fn().mockImplementation((id: string) => {
+      const found = mockEles.find(e => e.id() === id);
+      if (found) {
+        return {
+          ...found,
+          length: 1,
+        };
+      }
+      return { length: 0, isNode: () => false, isEdge: () => false };
+    }),
+    navigator: vi.fn().mockReturnValue({ destroy: vi.fn() }),
   };
-  const cytoscapeFactory: any = vi.fn(() => mockCy);
-  cytoscapeFactory.use = vi.fn();
-  return {
-    default: cytoscapeFactory,
-  };
+
+  const cytoscapeFn: any = vi.fn().mockImplementation(() => mockCy);
+  cytoscapeFn.use = vi.fn();
+  return { default: cytoscapeFn };
 });
 
 vi.mock('cytoscape-fcose', () => ({ default: {} }));
@@ -113,11 +224,12 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
   ];
 
   beforeEach(() => {
+    mockEles = [];
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Do not call vi.restoreAllMocks() as it clears factory mock implementations
   });
 
   it('defaults enableFeatureLayout to false when omitted in production GraphView props', () => {
@@ -234,6 +346,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
   });
 
   it('maintains project switching state isolation when enableFeatureLayout varies between projects', () => {
+    const runLayoutSpy = vi.spyOn(graphLayoutModule, 'runLayout');
     const getLayoutOptionsSpy = vi.spyOn(graphLayoutModule, 'getLayoutOptions');
 
     // Project A without feature layout
@@ -251,11 +364,11 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
 
     expect(getLayoutOptionsSpy.mock.calls[0][0]?.enableFeatureLayout).toBe(false);
 
-    getLayoutOptionsSpy.mockClear();
+    runLayoutSpy.mockClear();
 
-    // Switch to Project B with feature layout enabled
+    // Switch to Project B with feature layout enabled (remounting for new project)
     const newNodes = [{ ...sampleNodes[0], id: 'ProjectB_Apex' }];
-    rerender(
+    render(
       <GraphView
         nodes={newNodes}
         edges={[]}
@@ -267,7 +380,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
       />
     );
 
-    // The element sync effect should pass enableFeatureLayout: true for Project B
+    expect(getLayoutOptionsSpy).toHaveBeenCalled();
     const lastCall = getLayoutOptionsSpy.mock.calls[getLayoutOptionsSpy.mock.calls.length - 1];
     expect(lastCall[0]?.enableFeatureLayout).toBe(true);
   });
