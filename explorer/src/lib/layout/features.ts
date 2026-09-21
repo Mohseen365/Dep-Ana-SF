@@ -42,6 +42,17 @@ export interface FeatureDiscoveryResult {
   featureList: FeatureCluster[];
 }
 
+export interface SemanticCohesionDiagnostics {
+  totalNodes: number;
+  discoveredFeaturesCount: number;
+  primaryAssignedNodesCount: number;
+  sharedNodesCount: number;
+  unassignedNodesCount: number;
+  featureCohesionScore: number;
+  averageIntraFeatureDistance: number;
+  featureDistances: Record<string, number>;
+}
+
 export interface FeatureDiscoveryOptions {
   index?: LayoutGraphIndex;
   analysis?: ArchitectureGraphAnalysis;
@@ -487,5 +498,120 @@ export function discoverFeatures(
     features,
     assignments,
     featureList: featureList.sort((a, b) => a.id.localeCompare(b.id)),
+  };
+}
+
+/**
+ * Calculates semantic feature cohesion metrics grouped strictly by discovered Feature ID
+ * rather than relying on legacy name-prefix domain heuristics.
+ */
+export function calculateSemanticFeatureCohesion(
+  nodes: ExplorerNode[],
+  positions: Record<string, { x: number; y: number }>,
+  discovery: FeatureDiscoveryResult
+): SemanticCohesionDiagnostics {
+  const safeNodes = Array.isArray(nodes) ? nodes : [];
+  if (safeNodes.length === 0 || !positions) {
+    return {
+      totalNodes: 0,
+      discoveredFeaturesCount: discovery.features.size,
+      primaryAssignedNodesCount: 0,
+      sharedNodesCount: 0,
+      unassignedNodesCount: 0,
+      featureCohesionScore: 1.0,
+      averageIntraFeatureDistance: 0,
+      featureDistances: {},
+    };
+  }
+
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
+
+  for (const node of safeNodes) {
+    const pos = positions[node.id];
+    if (pos) {
+      if (pos.x < minX) minX = pos.x;
+      if (pos.x > maxX) maxX = pos.x;
+      if (pos.y < minY) minY = pos.y;
+      if (pos.y > maxY) maxY = pos.y;
+    }
+  }
+
+  const graphDiagonal = Math.sqrt(
+    Math.pow(maxX - minX, 2) + Math.pow(maxY - minY, 2)
+  );
+  const graphScale = graphDiagonal > 1e-9 ? graphDiagonal : 1;
+
+  const featureNodesMap = new Map<string, ExplorerNode[]>();
+  let primaryAssignedNodesCount = 0;
+  let sharedNodesCount = 0;
+  let unassignedNodesCount = 0;
+
+  for (const node of safeNodes) {
+    const assignment = discovery.assignments.get(node.id);
+    const featureId = assignment ? assignment.primaryFeatureId : 'Unassigned';
+
+    if (featureId === 'Shared') {
+      sharedNodesCount++;
+    } else if (featureId === 'Unassigned') {
+      unassignedNodesCount++;
+    } else {
+      primaryAssignedNodesCount++;
+    }
+
+    if (!featureNodesMap.has(featureId)) {
+      featureNodesMap.set(featureId, []);
+    }
+    featureNodesMap.get(featureId)!.push(node);
+  }
+
+  const featureDistances: Record<string, number> = {};
+  let totalIntraDistSum = 0;
+  let evaluatedFeatureCount = 0;
+
+  featureNodesMap.forEach((fNodes, featureId) => {
+    // Skip Shared and Unassigned buckets for intra-feature cohesion metric
+    if (featureId === 'Shared' || featureId === 'Unassigned' || fNodes.length < 2) {
+      return;
+    }
+
+    let distSum = 0;
+    let pairCount = 0;
+
+    for (let i = 0; i < fNodes.length; i++) {
+      const posA = positions[fNodes[i].id];
+      for (let j = i + 1; j < fNodes.length; j++) {
+        const posB = positions[fNodes[j].id];
+        if (posA && posB) {
+          const dx = posA.x - posB.x;
+          const dy = posA.y - posB.y;
+          distSum += Math.sqrt(dx * dx + dy * dy);
+          pairCount++;
+        }
+      }
+    }
+
+    const avgDist = pairCount > 0 ? distSum / pairCount : 0;
+    featureDistances[featureId] = avgDist;
+    totalIntraDistSum += avgDist;
+    evaluatedFeatureCount++;
+  });
+
+  const averageIntraFeatureDistance =
+    evaluatedFeatureCount > 0 ? totalIntraDistSum / evaluatedFeatureCount : 0;
+  const dispersion = averageIntraFeatureDistance / graphScale;
+  const featureCohesionScore = Math.max(0, Math.min(1, 1 - dispersion));
+
+  return {
+    totalNodes: safeNodes.length,
+    discoveredFeaturesCount: discovery.features.size,
+    primaryAssignedNodesCount,
+    sharedNodesCount,
+    unassignedNodesCount,
+    featureCohesionScore,
+    averageIntraFeatureDistance,
+    featureDistances,
   };
 }
