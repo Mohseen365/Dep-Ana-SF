@@ -279,7 +279,7 @@ export function estimateCrossingsForOrder(
 export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResult {
   const nodes = Array.isArray(input.nodes) ? [...input.nodes] : [];
   const edges = Array.isArray(input.edges) ? [...input.edges] : [];
-  const maxIterations = input.maxIterations ?? 4;
+  const maxIterations = input.maxIterations ?? 8;
 
   nodes.sort((a, b) => a.id.localeCompare(b.id));
   edges.sort((a, b) => a.id.localeCompare(b.id));
