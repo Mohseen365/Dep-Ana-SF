@@ -7,7 +7,7 @@ import 'cytoscape-navigator/cytoscape.js-navigator.css';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
-import { getLayoutOptions, runLayout } from '../lib/graph-layout';
+import { getLayoutOptions, runLayout, GraphLayoutOptions } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState } from '../lib/projectState';
@@ -72,6 +72,8 @@ export interface GraphViewProps {
   simulatedNodeIds?: string[];
   simulatedRemovedNodeIds?: string[];
   simulatedEdgeIds?: string[];
+  enableFeatureLayout?: boolean;
+  layoutOptions?: GraphLayoutOptions;
 }
 
 export interface GraphViewRef {
@@ -125,7 +127,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     simulatedNodeIds = DEFAULT_EMPTY_ARRAY,
     simulatedRemovedNodeIds = DEFAULT_EMPTY_ARRAY,
     simulatedEdgeIds = DEFAULT_EMPTY_ARRAY,
+    enableFeatureLayout: enableFeatureLayoutProp,
+    layoutOptions,
   } = props;
+
+  const enableFeatureLayout = enableFeatureLayoutProp ?? layoutOptions?.enableFeatureLayout ?? false;
 
   const nodePositions = props.nodePositions || graphLayout?.nodePositions;
   const layoutMode: LayoutMode = layoutModeProp || graphLayout?.mode || 'interactive';
@@ -136,6 +142,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const cyRef = useRef<cytoscape.Core | null>(null);
   const navRef = useRef<any>(null);
 
+  const effectiveLayoutOptions = useMemo((): GraphLayoutOptions => {
+    return {
+      enableFeatureLayout,
+      ...layoutOptions,
+    };
+  }, [enableFeatureLayout, layoutOptions]);
+
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
   const graphLayoutRef = useRef<GraphLayoutState | undefined>(graphLayout);
@@ -145,6 +158,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const onNodeDragEndRef = useRef<((nodeId: string, position: Position) => void) | undefined>(onNodeDragEnd);
   const onSelectNodeRef = useRef(onSelectNode);
   const onSelectEdgeRef = useRef(onSelectEdge);
+  const effectiveLayoutOptionsRef = useRef<GraphLayoutOptions>(effectiveLayoutOptions);
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
@@ -179,6 +193,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     layoutModeRef.current = layoutMode;
     graphLayoutRef.current = graphLayout;
     onNodeDragEndRef.current = onNodeDragEnd;
+    effectiveLayoutOptionsRef.current = effectiveLayoutOptions;
   }, [
     nodes,
     edges,
@@ -187,6 +202,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     layoutMode,
     graphLayout,
     onNodeDragEnd,
+    effectiveLayoutOptions,
   ]);
 
   // Capture all current canvas node positions
@@ -262,6 +278,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cy.one('layoutstop', onStop);
 
       runLayout(cy, {
+        ...effectiveLayoutOptionsRef.current,
         nodes: nodesRef.current,
         edges: edgesRef.current,
         nodeCount,
@@ -269,6 +286,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       });
     } else {
       runLayout(cy, {
+        ...effectiveLayoutOptionsRef.current,
         nodes: nodesRef.current,
         edges: edgesRef.current,
         nodeCount,
@@ -340,6 +358,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const layoutOptions = autoLayoutPolicy === true
       ? getLayoutOptions({
+          ...effectiveLayoutOptionsRef.current,
           nodes: nodesRef.current,
           edges: edgesRef.current,
           nodeCount: nodesRef.current.length,
@@ -687,6 +706,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           captureAndPersistPositions();
         });
         runLayout(cy, {
+          ...effectiveLayoutOptionsRef.current,
           nodes,
           edges,
           nodeCount: nodes.length,
@@ -694,6 +714,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         });
       } else {
         runLayout(cy, {
+          ...effectiveLayoutOptionsRef.current,
           nodes,
           edges,
           nodeCount: nodes.length,
