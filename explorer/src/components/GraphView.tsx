@@ -255,11 +255,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cy.one('layoutstop', onStop);
 
       runLayout(cy, {
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
         nodeCount,
         animate: true,
       });
     } else {
       runLayout(cy, {
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
         nodeCount,
         animate: false,
       });
@@ -683,11 +687,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           captureAndPersistPositions();
         });
         runLayout(cy, {
+          nodes,
+          edges,
           nodeCount: nodes.length,
           animate: true,
         });
       } else {
         runLayout(cy, {
+          nodes,
+          edges,
           nodeCount: nodes.length,
           animate: false,
         });
