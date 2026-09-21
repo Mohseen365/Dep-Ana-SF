@@ -159,6 +159,52 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'border-color': RISK_BORDER_COLORS.LOW
       }
     },
+    // Refactoring Simulation Styles
+    {
+      selector: 'node.simulated-added',
+      style: {
+        'border-width': 4,
+        'border-color': '#38bdf8',
+        'border-style': 'dashed',
+        'background-color': '#0284c7',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'node.simulated-removed',
+      style: {
+        'border-width': 4,
+        'border-color': '#ef4444',
+        'border-style': 'dashed',
+        'opacity': 0.45,
+      }
+    },
+    {
+      selector: 'node.simulated-affected',
+      style: {
+        'border-width': 5,
+        'border-color': '#f59e0b',
+      }
+    },
+    {
+      selector: 'edge.simulated-added',
+      style: {
+        'width': 4,
+        'line-color': '#38bdf8',
+        'target-arrow-color': '#38bdf8',
+        'line-style': 'dashed',
+      }
+    },
+    {
+      selector: 'edge.simulated-removed',
+      style: {
+        'width': 3,
+        'line-color': '#ef4444',
+        'target-arrow-color': '#ef4444',
+        'line-style': 'dashed',
+        'opacity': 0.4,
+      }
+    },
     // Node type-specific base colors and shapes
     {
       selector: 'node[type = "ApexClass"]',
@@ -365,7 +411,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       }
     },
     // Semantic zoom rules:
-    // .zoom-far (zoom < 0.5): hide edge labels, hide node labels
     {
       selector: '.zoom-far',
       style: {
@@ -384,7 +429,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': ''
       }
     },
-    // .zoom-mid (zoom >= 0.8): show node labels, hide edge labels
     {
       selector: 'node.zoom-mid',
       style: {
@@ -397,7 +441,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': ''
       }
     },
-    // .zoom-near (zoom >= 1.5): show node labels & relationship labels on edges
     {
       selector: 'node.zoom-near',
       style: {
@@ -412,7 +455,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
     }
   ];
 
-  // Add relationship type-specific edge colors
   for (const [relType, color] of Object.entries(EDGE_COLORS)) {
     if (relType !== 'unknown') {
       styles.push({

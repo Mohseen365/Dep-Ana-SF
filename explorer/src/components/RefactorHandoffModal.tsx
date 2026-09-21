@@ -5,12 +5,14 @@ import type { ExplorerNode } from '../types/explorer';
 export interface RefactorHandoffModalProps {
   target: HandoffTarget | null;
   onConfirm: () => void;
+  onSimulate?: (target: HandoffTarget) => void;
   onCancel: () => void;
 }
 
 export const RefactorHandoffModal: React.FC<RefactorHandoffModalProps> = ({
   target,
   onConfirm,
+  onSimulate,
   onCancel,
 }) => {
   if (!target) return null;
@@ -100,7 +102,7 @@ export const RefactorHandoffModal: React.FC<RefactorHandoffModalProps> = ({
           </pre>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
           <button
             className="cancel-btn"
             style={{
@@ -115,6 +117,27 @@ export const RefactorHandoffModal: React.FC<RefactorHandoffModalProps> = ({
           >
             Cancel
           </button>
+          {onSimulate && (
+            <button
+              className="simulate-sequence-btn"
+              data-testid="simulate-sequence-btn"
+              style={{
+                padding: '8px 14px',
+                borderRadius: '4px',
+                border: '1px solid #38bdf8',
+                background: 'rgba(56, 189, 248, 0.15)',
+                color: '#38bdf8',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                onSimulate(target);
+                onCancel();
+              }}
+            >
+              Simulate Sequence
+            </button>
+          )}
           <button
             className="confirm-handoff-btn"
             style={{
@@ -141,9 +164,10 @@ export interface RefactorHandoffHarnessProps {
   edge?: any;
   impactSummary?: any;
   onClose?: () => void;
+  onSimulate?: (target: HandoffTarget) => void;
 }
 
-export const RefactorHandoffHarness: React.FC<RefactorHandoffHarnessProps> = ({ node }) => {
+export const RefactorHandoffHarness: React.FC<RefactorHandoffHarnessProps> = ({ node, onSimulate }) => {
   const [target, setTarget] = useState<HandoffTarget | null>(null);
   const [handoffError, setHandoffError] = useState<string | null>(null);
   const [handoffSuccess, setHandoffSuccess] = useState<string | null>(null);
@@ -177,6 +201,7 @@ export const RefactorHandoffHarness: React.FC<RefactorHandoffHarnessProps> = ({ 
       <RefactorHandoffModal
         target={target}
         onConfirm={handleConfirm}
+        onSimulate={onSimulate}
         onCancel={() => setTarget(null)}
       />
     </div>
