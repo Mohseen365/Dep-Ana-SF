@@ -16,6 +16,7 @@ export interface InvestigationDrawerProps {
   recentNodeIds?: string[];
   onSelectRecentNode?: (id: string) => void;
   onRequestHandoff?: (nodeId: string) => void;
+  onSimulateRefactoring?: (nodeId: string) => void;
   onApplyFocus?: (nodeId: string) => void;
   onShowImpact?: (nodeId: string) => void;
   onAnalyzeConnections?: (nodeId: string) => void;
@@ -68,6 +69,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   recentNodeIds = [],
   onSelectRecentNode,
   onRequestHandoff,
+  onSimulateRefactoring,
   onApplyFocus,
   onShowImpact,
   onAnalyzeConnections,
@@ -646,19 +648,34 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           Component Investigation Actions
         </h3>
 
-        {onRequestHandoff && currentNodeId && (
+        {(onRequestHandoff || onSimulateRefactoring) && currentNodeId && (
           <div style={{ padding: '10px', backgroundColor: 'var(--surface-subtle, #0f172a)', borderRadius: '6px', border: '1px solid var(--border-subtle, #1e293b)' }}>
             <div style={{ fontWeight: 600, fontSize: '12px', marginBottom: '4px', color: '#f8fafc' }}>Refactoring Handoff</div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted, #94a3b8)', marginBottom: '8px', margin: '0 0 8px 0' }}>
-              Export component context and dependencies for refactoring sequencing.
+              Export component context or simulate interactive refactoring sequence.
             </p>
-            <button
-              type="button"
-              className="ui-btn ui-btn-primary ui-btn-sm"
-              onClick={() => onRequestHandoff(currentNodeId)}
-            >
-              Hand off to Refactor
-            </button>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {onRequestHandoff && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-primary ui-btn-sm"
+                  onClick={() => onRequestHandoff(currentNodeId)}
+                >
+                  Hand off to Refactor
+                </button>
+              )}
+              {onSimulateRefactoring && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-secondary ui-btn-sm"
+                  data-testid="simulate-refactoring-btn"
+                  onClick={() => onSimulateRefactoring(currentNodeId)}
+                  style={{ color: '#38bdf8', borderColor: '#38bdf8' }}
+                >
+                  Simulate Proposed Refactoring
+                </button>
+              )}
+            </div>
           </div>
         )}
 
