@@ -23,6 +23,26 @@ Object.defineProperty(window, 'matchMedia', {
   disconnect: vi.fn(),
 }));
 
+// Ensure a working in-memory localStorage implementation for test environment
+if (typeof window !== 'undefined') {
+  let store: Record<string, string> = {};
+  const localStorageMock = {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => { store[key] = value.toString(); },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; },
+    key: (i: number) => Object.keys(store)[i] || null,
+    get length() { return Object.keys(store).length; },
+  };
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+    writable: true,
+    configurable: true,
+  });
+  (globalThis as any).localStorage = localStorageMock;
+  (global as any).localStorage = localStorageMock;
+}
+
 // Mock HTMLCanvasElement 2D context for Cytoscape in jsdom
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
   fillRect: vi.fn(),

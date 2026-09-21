@@ -1,6 +1,11 @@
 import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema, Position } from '../types/explorer';
 import type { ArchitectureFinding } from './intelligence';
-import { runArchitectureRules } from './intelligence';
+import { runAllRules, createArchitectureContext } from './intelligence';
+
+export function runArchitectureRules(graphData: ExplorerDataSchema): ArchitectureFinding[] {
+  const ctx = createArchitectureContext(graphData as any);
+  return runAllRules(ctx);
+}
 
 export type RefactoringOperationType =
   | 'add-node'
@@ -201,10 +206,12 @@ export function computeFindingDelta(
       resolved.push(before);
     } else {
       const after = afterMap.get(id)!;
+      const afterNodes = after.nodeIds || (after as any).affectedNodeIds || [];
+      const beforeNodes = before.nodeIds || (before as any).affectedNodeIds || [];
       if (
         after.severity !== before.severity ||
         after.description !== before.description ||
-        JSON.stringify(after.affectedNodeIds) !== JSON.stringify(before.affectedNodeIds)
+        JSON.stringify(afterNodes) !== JSON.stringify(beforeNodes)
       ) {
         changed.push(after);
       } else {
