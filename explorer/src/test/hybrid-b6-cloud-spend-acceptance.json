@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-09-21T18:25:07.972Z",
+  "dataset": "cloud-spend-tracker",
+  "nodeCount": 240,
+  "edgeCount": 1024,
+  "pathA_legacy": {
+    "primaryCrossings": 8937,
+    "totalCrossings": 107394,
+    "averageEdgeLength": 1407.884429931285,
+    "maxEdgeLength": 4420,
+    "nodeOverlapCount": 25,
+    "layerViolationCount": 0,
+    "domainCohesionScore": 0.9426540051060034
+  },
+  "pathB_featureEnabled": {
+    "primaryCrossings": 12466,
+    "totalCrossings": 124942,
+    "averageEdgeLength": 1405.81186455971,
+    "maxEdgeLength": 3354.5193396372006,
+    "nodeOverlapCount": 5,
+    "layerViolationCount": 0,
+    "domainCohesionScore": 0.9179138759947824
+  },
+  "targetThresholds": {
+    "primaryCrossings": 8500,
+    "totalCrossings": 95000,
+    "layerViolationCount": 0,
+    "nodeOverlapCount": 0,
+    "determinismDriftPx": 0
+  },
+  "evaluation": {
+    "productionPathActive": false,
+    "featureRegionGeometryValid": true,
+    "hierarchyPreserved": true,
+    "determinismPassed": true,
+    "positionAuthorityPassed": true,
+    "viewportSafetyPassed": true,
+    "persistencePassed": true
+  }
+}
