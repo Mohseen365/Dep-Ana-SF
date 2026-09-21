@@ -1,4 +1,5 @@
-import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema, Position } from '../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema } from '../types/explorer';
+import type { Position } from './position-policy';
 import type { ArchitectureFinding } from './intelligence';
 import { runAllRules, createArchitectureContext } from './intelligence';
 
@@ -359,17 +360,35 @@ export function createProposalFromTargetNodes(
     id: helperNodeId,
     displayName: `${primaryNode?.displayName || 'Component'}Helper`,
     type: 'ApexClass',
-    layer: 'application',
+    file: `classes/${helperNodeId}.cls`,
     risk: 'LOW',
-    metrics: { linesOfCode: 80, fanIn: 1, fanOut: 1, cyclomaticComplexity: 3, weightedMethodCount: 3 },
+    riskReasons: [],
+    metrics: { fanIn: 1, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
+    behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
   };
 
   const newEdge: ExplorerEdge = {
     id: `edge-${primaryNode?.id || 'orig'}-to-${helperNodeId}`,
     source: primaryNode?.id || targetNodeIds[0],
     target: helperNodeId,
-    relationshipType: 'calls',
-    label: 'delegates to',
+    relationshipType: 'method-call',
+    method: 'delegate',
+    evidence: 'delegates to helper',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: 'HIGH',
+    line: 1,
+    column: 1,
+    methodOwner: primaryNode?.id || targetNodeIds[0],
+    file: primaryNode?.file || '',
+    canonical: {
+      source: { type: primaryNode?.type || 'ApexClass', name: primaryNode?.displayName || targetNodeIds[0] },
+      target: { type: 'ApexClass', name: helperNode.displayName },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: { line: 1, column: 1 }
+    }
   };
 
   return {
@@ -394,16 +413,34 @@ export function createProposalFromTargetNodes(
         id: 'step-2',
         title: `Reroute Direct Calls`,
         description: `Direct downstream callers to use the extracted service helper directly.`,
-        operations: targetNodeIds.slice(1).map(targetId => ({
-          type: 'add-edge',
-          edge: {
-            id: `edge-${targetId}-to-${helperNodeId}`,
-            source: targetId,
-            target: helperNodeId,
-            relationshipType: 'calls',
-            label: 'calls helper',
-          },
-        })),
+        operations: targetNodeIds.slice(1).map(targetId => {
+          const tgtNode = graphData.nodes.find(n => n.id === targetId);
+          return {
+            type: 'add-edge' as const,
+            edge: {
+              id: `edge-${targetId}-to-${helperNodeId}`,
+              source: targetId,
+              target: helperNodeId,
+              relationshipType: 'method-call' as const,
+              method: 'delegate',
+              evidence: 'calls helper',
+              unresolved: false,
+              resolutionClassification: 'RESOLVED_LOCAL' as const,
+              resolutionStrategy: 'EXACT' as const,
+              confidence: 'HIGH',
+              line: 1,
+              column: 1,
+              methodOwner: targetId,
+              file: tgtNode?.file || '',
+              canonical: {
+                source: { type: tgtNode?.type || 'ApexClass', name: tgtNode?.displayName || targetId },
+                target: { type: 'ApexClass', name: helperNode.displayName },
+                relationship: { type: 'method-call', resolution: 'EXACT' },
+                location: { line: 1, column: 1 }
+              }
+            },
+          };
+        }),
       },
     ],
   };
@@ -414,9 +451,9 @@ export function createProposalFromFinding(
   graphData: ExplorerDataSchema,
   projectId?: string
 ): RefactoringProposal {
-  const nodeIds = finding.affectedNodeIds || finding.nodeIds || [];
+  const nodeIds = finding.nodeIds || (finding as any).affectedNodeIds || [];
   const affectedNodes = nodeIds
-    .map(id => graphData.nodes.find(n => n.id === id))
+    .map((id: string) => graphData.nodes.find((n: ExplorerNode) => n.id === id))
     .filter((n): n is ExplorerNode => n !== undefined);
 
   const primaryNode = affectedNodes[0];
@@ -438,24 +475,42 @@ export function createProposalFromFinding(
         operations: primaryNode
           ? [
               {
-                type: 'add-node',
+                type: 'add-node' as const,
                 node: {
                   id: `${primaryNode.id}-service`,
                   displayName: `${primaryNode.displayName || primaryNode.id}Service`,
                   type: 'ApexClass',
-                  layer: 'domain',
+                  file: `classes/${primaryNode.id}Service.cls`,
                   risk: 'LOW',
-                  metrics: { linesOfCode: 100, fanIn: 1, fanOut: 0, cyclomaticComplexity: 4, weightedMethodCount: 4 },
+                  riskReasons: [],
+                  metrics: { fanIn: 1, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+                  behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+                  refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
                 },
               },
               {
-                type: 'add-edge',
+                type: 'add-edge' as const,
                 edge: {
                   id: `edge-${primaryNode.id}-to-${primaryNode.id}-service`,
                   source: primaryNode.id,
                   target: `${primaryNode.id}-service`,
-                  relationshipType: 'calls',
-                  label: 'uses service',
+                  relationshipType: 'method-call' as const,
+                  method: 'useService',
+                  evidence: 'uses service',
+                  unresolved: false,
+                  resolutionClassification: 'RESOLVED_LOCAL' as const,
+                  resolutionStrategy: 'EXACT' as const,
+                  confidence: 'HIGH',
+                  line: 1,
+                  column: 1,
+                  methodOwner: primaryNode.id,
+                  file: primaryNode.file,
+                  canonical: {
+                    source: { type: primaryNode.type, name: primaryNode.displayName },
+                    target: { type: 'ApexClass', name: `${primaryNode.displayName || primaryNode.id}Service` },
+                    relationship: { type: 'method-call', resolution: 'EXACT' },
+                    location: { line: 1, column: 1 }
+                  }
                 },
               },
             ]
