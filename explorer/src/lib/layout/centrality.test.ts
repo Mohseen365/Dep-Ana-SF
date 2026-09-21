@@ -7,6 +7,7 @@ import {
   computeGraphCentralityAnalysis,
   calculateBridgeCandidatePosition,
   calculateHubCandidatePosition,
+  classifyNodeConceptualCategory,
 } from './centrality';
 import { computeArchitectureLayout } from '../architecture-layout';
 import { evaluateLayout } from './evaluate-layout';
@@ -644,6 +645,70 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
 
       expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
       expect(metrics.maxEdgeLength).toBeLessThanOrEqual(1404);
+    });
+  });
+
+  describe('Workstream B3 Conceptual Category Classification & Trap Handling', () => {
+    it('classifies nodes into 5 B3 conceptual categories cleanly', () => {
+      const testNode = makeMockNode('OrderServiceTest', 'ApexClass');
+      testNode.behavior = { isTest: true, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 };
+
+      const dummyCent = {
+        nodeId: 'node1',
+        isHub: false,
+        hubScore: 1,
+        hubType: 'none' as const,
+        isBridge: false,
+        bridgeScore: 0,
+        connectedDomains: [],
+        connectedLayers: [],
+        domainRelationshipStrength: {},
+        spatialRole: 'standard' as const,
+      };
+
+      expect(classifyNodeConceptualCategory('OrderServiceTest', testNode, dummyCent, 'Order', [])).toBe('satellite');
+
+      const sharedNode = makeMockNode('CurrencyUtils', 'ApexClass');
+      expect(classifyNodeConceptualCategory('CurrencyUtils', sharedNode, dummyCent, 'Shared', [])).toBe('shared-infrastructure');
+
+      const bridgeNode = makeMockNode('OrderPaymentBridge', 'ApexClass');
+      const bridgeCent = { ...dummyCent, isBridge: true };
+      expect(classifyNodeConceptualCategory('OrderPaymentBridge', bridgeNode, bridgeCent, 'Order', ['Order', 'Payment'])).toBe('bridge');
+
+      const multiFeatNode = makeMockNode('MultiFeatNode', 'ApexClass');
+      expect(classifyNodeConceptualCategory('MultiFeatNode', multiFeatNode, dummyCent, 'Order', ['Payment'])).toBe('multi-feature');
+
+      const localNode = makeMockNode('LocalHelper', 'ApexClass');
+      expect(classifyNodeConceptualCategory('LocalHelper', localNode, dummyCent, 'Order', [])).toBe('feature-local');
+    });
+
+    it('detects intermediate trap domain when candidate X falls inside domain bounds', () => {
+      const domainXCenters = {
+        FeatureA: 0,
+        DomainB: 380,
+        FeatureB: 760,
+      };
+
+      const domainBounds = {
+        FeatureA: { minX: -100, maxX: 100 },
+        DomainB: { minX: 280, maxX: 480 },
+        FeatureB: { minX: 660, maxX: 860 },
+      };
+
+      const connectedDomains = ['FeatureA', 'FeatureB'];
+
+      const placement = calculateBridgeCandidatePosition(
+        'BridgeCrossDomainB',
+        'application',
+        connectedDomains,
+        domainXCenters,
+        domainBounds,
+        {},
+        { layerSpacing: 250, nodeWidth: 120 }
+      );
+
+      expect(placement.hasIntermediateTrap).toBe(true);
+      expect(placement.trapDomainId).toBe('DomainB');
     });
   });
 });

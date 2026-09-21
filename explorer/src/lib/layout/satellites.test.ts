@@ -677,4 +677,30 @@ describe('satellites.ts - Test / Field / Trigger Satellite Layout Engine', () =>
       });
     });
   });
+
+  describe('Workstream B3 Satellite Locality & Primary Immutability Requirements', () => {
+    it('strictly guarantees primary node coordinates remain unchanged during satellite placement', () => {
+      const prodA = makeNode('PrimaryServiceA', 'ApexClass', 'PrimaryServiceA');
+      const prodB = makeNode('PrimaryServiceB', 'ApexClass', 'PrimaryServiceB');
+      const testA1 = makeNode('PrimaryServiceATest1', 'ApexClass', 'PrimaryServiceATest1');
+      const testA2 = makeNode('PrimaryServiceATest2', 'ApexClass', 'PrimaryServiceATest2');
+
+      const nodes = [prodA, prodB, testA1, testA2];
+      const edges = [
+        makeEdge('PrimaryServiceATest1', 'PrimaryServiceA'),
+        makeEdge('PrimaryServiceATest2', 'PrimaryServiceA'),
+      ];
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions = {
+        PrimaryServiceA: { x: 123.45, y: 678.9 },
+        PrimaryServiceB: { x: 987.65, y: 432.1 },
+      };
+
+      const result = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      expect(result.positions['PrimaryServiceA']).toEqual({ x: 123.45, y: 678.9 });
+      expect(result.positions['PrimaryServiceB']).toEqual({ x: 987.65, y: 432.1 });
+    });
+  });
 });

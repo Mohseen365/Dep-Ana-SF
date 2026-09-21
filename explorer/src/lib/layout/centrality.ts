@@ -513,3 +513,61 @@ export function calculateHubCandidatePosition(
     },
   };
 }
+
+/**
+ * Conceptual 5-category spatial classification for Hybrid Layout Workstream B3.
+ */
+export type ConceptualNodeCategory =
+  | 'feature-local'
+  | 'multi-feature'
+  | 'shared-infrastructure'
+  | 'bridge'
+  | 'satellite';
+
+/**
+ * Classifies a node into one of the 5 Workstream B3 conceptual categories:
+ * 1. satellite: secondary node (test, field, trigger/handler)
+ * 2. shared-infrastructure: high fan-in node or node in 'Shared' domain/feature
+ * 3. bridge: node connecting multiple distinct features/domains
+ * 4. multi-feature: node connected to 2+ features without full bridge status
+ * 5. feature-local: node strongly tied to a single feature region
+ */
+export function classifyNodeConceptualCategory(
+  nodeId: string,
+  node: ExplorerNode,
+  centrality: NodeCentralityAnalysis,
+  domainOrFeature: string | null,
+  connectedRegions: string[],
+  isSharedOrUnassigned?: boolean
+): ConceptualNodeCategory {
+  const name = node.displayName || node.id;
+  const isTest =
+    node.behavior?.isTest ||
+    /(?:test|tests|testdatafactory)$/i.test(name) ||
+    (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file));
+  const isField = node.type === 'Field' || node.type === 'CustomField';
+  const isTrigger = node.type === 'ApexTrigger' || /(?:trigger|triggers)$/i.test(name);
+  const isHandler = /(?:handler|handlers)$/i.test(name) && !isTest;
+
+  if (isTest || isField || isTrigger || isHandler) {
+    return 'satellite';
+  }
+
+  if (
+    isSharedOrUnassigned ||
+    domainOrFeature === 'Shared' ||
+    domainOrFeature === 'Unassigned'
+  ) {
+    return 'shared-infrastructure';
+  }
+
+  if (centrality.isBridge || connectedRegions.length >= 2) {
+    return 'bridge';
+  }
+
+  if (connectedRegions.length === 1) {
+    return 'multi-feature';
+  }
+
+  return 'feature-local';
+}
