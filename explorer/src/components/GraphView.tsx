@@ -531,6 +531,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       setHoverCard(null);
     });
 
+    // Canvas Mouseleave Defensive Cleanup
+    cy.on('mouseleave', () => {
+      setHoveredNodeId(null);
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      setHoverCard(null);
+      document.body.style.cursor = 'default';
+    });
+
     // Interaction bindings
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
@@ -592,6 +600,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         try { navRef.current.destroy(); } catch (e) {}
       }
 
+      document.body.style.cursor = 'default';
       cy.destroy();
       cyRef.current = null;
     };
