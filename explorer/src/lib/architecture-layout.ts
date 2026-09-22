@@ -210,6 +210,7 @@ export function computeArchitectureLayout(
       analysis,
       layerMap,
       domainMap,
+      domainDiscovery,
       featureDiscovery,
       featureMap,
       index,

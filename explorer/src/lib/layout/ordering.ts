@@ -176,6 +176,14 @@ function fastEdgeCrossingCount(
     }
   }
 
+  // Sort segments deterministically by minX to enable sweep-line pruning
+  segments.sort((a, b) => {
+    if (Math.abs(a.minX - b.minX) > EPSILON) return a.minX - b.minX;
+    if (Math.abs(a.maxX - b.maxX) > EPSILON) return a.maxX - b.maxX;
+    if (a.sourceId !== b.sourceId) return a.sourceId.localeCompare(b.sourceId);
+    return a.targetId.localeCompare(b.targetId);
+  });
+
   let crossings = 0;
   const len = segments.length;
 
@@ -183,6 +191,11 @@ function fastEdgeCrossingCount(
     const s1 = segments[i];
     for (let j = i + 1; j < len; j++) {
       const s2 = segments[j];
+
+      // Sweep-line early exit: if s2's left bound is beyond s1's right bound, no subsequent segment can intersect s1
+      if (s2.minX > s1.maxX + EPSILON) {
+        break;
+      }
 
       if (
         s1.sourceId === s2.sourceId ||
@@ -194,7 +207,6 @@ function fastEdgeCrossingCount(
       }
 
       if (
-        s1.minX > s2.maxX + EPSILON ||
         s1.maxX < s2.minX - EPSILON ||
         s1.minY > s2.maxY + EPSILON ||
         s1.maxY < s2.minY - EPSILON
