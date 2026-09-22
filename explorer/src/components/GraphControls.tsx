@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArchitectureLayoutMode } from '../types/explorer';
 import { FocusState } from '../lib/focus-graph';
 import { FocusControls } from './FocusControls';
 
@@ -18,6 +19,8 @@ export interface GraphControlsProps {
   onFocusChange?: (focusState: FocusState) => void;
   layoutMode?: 'static' | 'interactive';
   onToggleLayoutMode?: () => void;
+  architectureMode?: ArchitectureLayoutMode;
+  onToggleArchitectureMode?: () => void;
 }
 
 export const GraphControls: React.FC<GraphControlsProps> = ({
@@ -36,6 +39,8 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
   onFocusChange,
   layoutMode = 'interactive',
   onToggleLayoutMode,
+  architectureMode = 'hierarchical',
+  onToggleArchitectureMode,
 }) => {
   return (
     <div className="graph-controls-floating" role="toolbar" aria-label="Graph controls">
@@ -98,6 +103,19 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
 
       {/* Layout Section */}
       <div className="graph-control-group layout-group" role="group" aria-label="Layout controls">
+        {onToggleArchitectureMode && (
+          <button
+            className={`graph-control-btn ${architectureMode === 'hybrid' ? 'active' : ''}`}
+            onClick={onToggleArchitectureMode}
+            title={architectureMode === 'hybrid' ? 'Hybrid Layout (Clustered Feature Regions)' : 'Hierarchical Layout (Layered Flow)'}
+            aria-label={architectureMode === 'hybrid' ? 'Switch to Hierarchical Layout' : 'Switch to Hybrid Layout'}
+            aria-pressed={architectureMode === 'hybrid'}
+            data-testid="architecture-mode-toggle"
+            type="button"
+          >
+            {architectureMode === 'hybrid' ? '🧩' : '🏢'}
+          </button>
+        )}
         {onToggleLayoutMode && (
           <button
             className={`graph-control-btn ${layoutMode === 'static' ? 'active' : ''}`}

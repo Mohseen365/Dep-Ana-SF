@@ -4,13 +4,13 @@ import fcose from 'cytoscape-fcose';
 import navigator from 'cytoscape-navigator';
 import 'cytoscape-navigator/cytoscape.js-navigator.css';
 
-import { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayout, GraphLayoutOptions } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
-import { GraphLayoutState } from '../lib/projectState';
+import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
 import {
   shouldAutoLayout,
   resolveAuthoritativePosition,
@@ -69,6 +69,8 @@ export interface GraphViewProps {
   onNodeDoubleTap?: (nodeId: string, node: ExplorerNode | null) => void;
   layoutMode?: LayoutMode;
   onLayoutModeChange?: (mode: LayoutMode) => void;
+  architectureMode?: ArchitectureLayoutMode;
+  onArchitectureModeChange?: (mode: ArchitectureLayoutMode) => void;
   simulatedNodeIds?: string[];
   simulatedRemovedNodeIds?: string[];
   simulatedEdgeIds?: string[];
@@ -124,6 +126,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onNodeDoubleTap: onNodeDoubleTapProp,
     layoutMode: layoutModeProp,
     onLayoutModeChange,
+    architectureMode: architectureModeProp,
+    onArchitectureModeChange,
     simulatedNodeIds = DEFAULT_EMPTY_ARRAY,
     simulatedRemovedNodeIds = DEFAULT_EMPTY_ARRAY,
     simulatedEdgeIds = DEFAULT_EMPTY_ARRAY,
@@ -131,7 +135,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     layoutOptions,
   } = props;
 
-  const enableFeatureLayout = enableFeatureLayoutProp ?? layoutOptions?.enableFeatureLayout ?? false;
+  const architectureMode: ArchitectureLayoutMode =
+    architectureModeProp || graphLayout?.architectureMode || 'hierarchical';
+
+  const enableFeatureLayout =
+    enableFeatureLayoutProp ??
+    layoutOptions?.enableFeatureLayout ??
+    (architectureMode === 'hybrid');
 
   const nodePositions = props.nodePositions || graphLayout?.nodePositions;
   const layoutMode: LayoutMode = layoutModeProp || graphLayout?.mode || 'interactive';
@@ -171,8 +181,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Pending layoutstop listener reference
   const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
 
-  // Track previous mode
+  // Track previous modes
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
+  const prevArchitectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
@@ -205,8 +216,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     effectiveLayoutOptions,
   ]);
 
-  // Capture all current canvas node positions
-  const captureAndPersistPositions = useCallback(() => {
+  // Capture all current canvas node positions with explicit provenance tracking
+  const captureAndPersistPositions = useCallback((overrideProvenance?: LayoutProvenance) => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
     const currentPositions: Record<string, Position> = { ...(nodePositionsRef.current || {}) };
@@ -218,10 +229,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       sessionPositionsRef.current.set(n.id(), rounded);
     });
 
+    const provenance: LayoutProvenance = overrideProvenance ||
+      (architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical');
+
     if (onNodePositionsChangeRef.current) {
-      onNodePositionsChangeRef.current(currentPositions);
+      (onNodePositionsChangeRef.current as any)(currentPositions, provenance);
     }
-  }, []);
+  }, [architectureMode]);
 
   // Handle Mode Switch
   useEffect(() => {
@@ -234,6 +248,30 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       captureAndPersistPositions();
     }
   }, [layoutMode, captureAndPersistPositions]);
+
+  // Handle Architecture Mode Switch (Hierarchical <-> Hybrid transitions)
+  useEffect(() => {
+    if (prevArchitectureModeRef.current === architectureMode) return;
+
+    prevArchitectureModeRef.current = architectureMode;
+
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    const targetProvenance: LayoutProvenance =
+      architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical';
+
+    runLayout(cy, {
+      ...effectiveLayoutOptionsRef.current,
+      nodes: nodesRef.current,
+      edges: edgesRef.current,
+      nodeCount: nodesRef.current.length,
+      animate: false,
+      enableFeatureLayout: architectureMode === 'hybrid',
+    });
+
+    captureAndPersistPositions(targetProvenance);
+  }, [architectureMode, captureAndPersistPositions]);
 
   // Re-attach cytoscape navigator
   useEffect(() => {
@@ -342,11 +380,18 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     let hasAuth = false;
-    if (nodePositionsRef.current) {
-      for (const node of nodesRef.current) {
-        if (nodePositionsRef.current[node.id]) {
+    if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
+      const currentProvenance = graphLayoutRef.current?.layoutProvenance;
+      if (currentProvenance === 'user-authored') {
+        hasAuth = true;
+      } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
+        hasAuth = true;
+      } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
+        hasAuth = true;
+      } else if (!currentProvenance) {
+        const storedArchMode = (graphLayoutRef.current as any)?.architectureMode;
+        if (storedArchMode && storedArchMode === architectureMode) {
           hasAuth = true;
-          break;
         }
       }
     }
@@ -429,7 +474,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
 
       sessionPositionsRef.current.set(nodeId, rounded);
-      captureAndPersistPositions();
+      captureAndPersistPositions('user-authored');
 
       if (onNodeDragEndRef.current) {
         onNodeDragEndRef.current(nodeId, rounded);
@@ -446,7 +491,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           [nodeId]: rounded,
         };
 
-        onNodePositionsChangeRef.current(updatedPositions);
+        (onNodePositionsChangeRef.current as any)(updatedPositions, 'user-authored');
       }
     });
 
@@ -638,6 +683,17 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     let hasAuthForUpdate = false;
     let hasGenuinelyNewNodes = false;
 
+    if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
+      const currentProvenance = graphLayoutRef.current?.layoutProvenance;
+      if (currentProvenance === 'user-authored') {
+        hasAuthForUpdate = true;
+      } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
+        hasAuthForUpdate = true;
+      } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
+        hasAuthForUpdate = true;
+      }
+    }
+
     for (const node of nodes) {
       const resolved = resolveAuthoritativePosition(node.id, {
         sessionPositions: sessionPositionsRef.current,
@@ -645,9 +701,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         cyNodePosition: cyPositionsBefore[node.id],
       });
 
-      if (resolved) {
-        hasAuthForUpdate = true;
-      } else {
+      if (!resolved) {
         hasGenuinelyNewNodes = true;
       }
     }
@@ -969,6 +1023,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [layoutMode, onLayoutModeChange, captureAndPersistPositions]);
 
+  const handleToggleArchitectureModeInternal = useCallback(() => {
+    const nextMode: ArchitectureLayoutMode = architectureMode === 'hierarchical' ? 'hybrid' : 'hierarchical';
+    if (onArchitectureModeChange) {
+      onArchitectureModeChange(nextMode);
+    }
+  }, [architectureMode, onArchitectureModeChange]);
+
   return (
     <div
       className="graph-container"
@@ -998,7 +1059,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         data-testid="graph-mode-indicator"
         title={layoutMode === 'static' ? 'Node positions are preserved' : 'Graph automatically arranges nodes'}
       >
-        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : '🔀 Interactive Mode'}
+        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : `🔀 Interactive Mode (${architectureMode === 'hybrid' ? 'Hybrid' : 'Hierarchical'})`}
       </div>
 
       {/* Navigator Container */}
@@ -1103,6 +1164,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         onFocusChange={onFocusChange}
         layoutMode={layoutMode}
         onToggleLayoutMode={onLayoutModeChange ? handleToggleLayoutModeInternal : undefined}
+        architectureMode={architectureMode}
+        onToggleArchitectureMode={onArchitectureModeChange ? handleToggleArchitectureModeInternal : undefined}
       />
       <GraphLegend nodes={nodes} />
     </div>

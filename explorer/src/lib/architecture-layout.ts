@@ -201,6 +201,9 @@ export function computeArchitectureLayout(
   let activeSpatialMap: Map<string, string>;
 
   if (enableFeatureLayout) {
+    if (typeof console !== 'undefined' && console.debug) {
+      console.debug('[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called');
+    }
     const featureLayoutResult = computeGlobalFeatureLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,
@@ -217,6 +220,9 @@ export function computeArchitectureLayout(
     globalDomainResult = featureLayoutResult;
     activeSpatialMap = featureMap;
   } else {
+    if (typeof console !== 'undefined' && console.debug) {
+      console.debug('[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called');
+    }
     globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,

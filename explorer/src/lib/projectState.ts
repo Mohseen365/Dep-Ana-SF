@@ -6,7 +6,7 @@
  * never pollutes or overwrites state for Project B (e.g., sidebar expanded, zoom 120%).
  */
 
-import { ExplorerNodeType, ALL_EXPLORER_NODE_TYPES } from '../types/explorer';
+import { ExplorerNodeType, ALL_EXPLORER_NODE_TYPES, ArchitectureLayoutMode } from '../types/explorer';
 
 export interface SelectedComponentState {
   selectedNodeId: string | null;
@@ -28,9 +28,13 @@ export interface FilterUIState {
 
 export type GraphInteractionMode = 'interactive' | 'static';
 
+export type LayoutProvenance = 'automatic-hierarchical' | 'automatic-hybrid' | 'user-authored';
+
 export interface GraphLayoutState {
   layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
   mode: GraphInteractionMode;
+  architectureMode?: ArchitectureLayoutMode;
+  layoutProvenance?: LayoutProvenance;
   nodePositions: Record<string, { x: number; y: number }>;
   layoutVersion?: string | number;
 }
@@ -149,6 +153,8 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
     graphLayout: {
       layoutName: 'cola',
       mode: 'interactive',
+      architectureMode: 'hierarchical',
+      layoutProvenance: 'automatic-hierarchical',
       nodePositions: {},
     },
     zoom: {
@@ -239,6 +245,9 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
     graphLayout: {
       layoutName: loaded.graphLayout?.layoutName || defaults.graphLayout.layoutName,
       mode: ((loaded.graphLayout as any)?.mode === 'static' || (loaded.graphLayout as any)?.layoutMode === 'static') ? 'static' : 'interactive',
+      architectureMode: (loaded.graphLayout as any)?.architectureMode === 'hybrid' ? 'hybrid' : 'hierarchical',
+      layoutProvenance: (loaded.graphLayout as any)?.layoutProvenance ||
+        ((loaded.graphLayout as any)?.architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical'),
       nodePositions: (loaded.graphLayout && typeof loaded.graphLayout.nodePositions === 'object' && loaded.graphLayout.nodePositions !== null)
         ? loaded.graphLayout.nodePositions
         : defaults.graphLayout.nodePositions,
