@@ -6,10 +6,15 @@ import {
   type ComponentSeparationResult,
   type HubLocalityResult,
   type BridgePlacementResult,
+  type DetailedCrossingBreakdown,
   edgeCrossingCount,
+  calculateDetailedEdgeCrossings,
   averageEdgeLength,
   maxEdgeLength,
   nodeOverlapCount,
+  primaryNodeOverlapCount,
+  satelliteNodeOverlapCount,
+  minimumNodeClearance,
   layerViolationCount,
   domainCohesion,
   componentSeparation,
@@ -57,6 +62,8 @@ export interface SatelliteLocalityResult {
 export interface EvaluatedLayoutMetrics {
   /** Total geometric edge crossings count */
   edgeCrossingCount: number;
+  /** Detailed breakdown of crossings by node role pairs */
+  detailedCrossings?: DetailedCrossingBreakdown;
   /** Optional deterministic list of crossing edge segment pairs */
   crossingEdgePairs?: CrossingEdgePair[];
 
@@ -69,6 +76,12 @@ export interface EvaluatedLayoutMetrics {
 
   /** Total overlapping node pairs count */
   nodeOverlapCount: number;
+  /** Primary production node overlap count */
+  primaryOverlapCount: number;
+  /** Satellite node overlap count */
+  satelliteOverlapCount: number;
+  /** Minimum clearance between primary nodes */
+  minClearance: number;
 
   /** Count of edges violating layer flow order */
   layerViolationCount: number;
@@ -327,10 +340,14 @@ export function evaluateLayout(
   options: LayoutMetricOptions = {}
 ): EvaluatedLayoutMetrics {
   const crossingsCount = edgeCrossingCount(nodes, edges, positions);
+  const detailedCrossings = calculateDetailedEdgeCrossings(nodes, edges, positions);
   const avgLen = averageEdgeLength(nodes, edges, positions);
   const medLen = calculateMedianEdgeLength(edges, positions);
   const maxLen = maxEdgeLength(nodes, edges, positions);
   const overlaps = nodeOverlapCount(nodes, edges, positions, options);
+  const primaryOverlaps = primaryNodeOverlapCount(nodes, edges, positions, options);
+  const satelliteOverlaps = satelliteNodeOverlapCount(nodes, edges, positions, options);
+  const minClearance = minimumNodeClearance(nodes, edges, positions, options);
   const violationsCount = layerViolationCount(nodes, edges, positions);
   const violationEdges = collectLayerViolationEdges(nodes, edges);
 
@@ -342,10 +359,14 @@ export function evaluateLayout(
 
   return {
     edgeCrossingCount: crossingsCount,
+    detailedCrossings,
     averageEdgeLength: avgLen,
     medianEdgeLength: medLen,
     maxEdgeLength: maxLen,
     nodeOverlapCount: overlaps,
+    primaryOverlapCount: primaryOverlaps,
+    satelliteOverlapCount: satelliteOverlaps,
+    minClearance,
     layerViolationCount: violationsCount,
     layerViolationEdges: violationEdges,
     domainCohesion: cohesion,
