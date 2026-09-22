@@ -133,7 +133,8 @@ function generateSatelliteSlots(
   bias: 'field' | 'test' | 'neutral',
   targetVector?: Point,
   primarySegments?: Array<{ p1: Point; p2: Point }>,
-  placedSatelliteSegments?: Array<{ p1: Point; p2: Point }>
+  placedSatelliteSegments?: Array<{ p1: Point; p2: Point }>,
+  incidentEndpoints?: Point[]
 ): Point[] {
   if (count <= 0) return [];
 
@@ -209,23 +210,28 @@ function generateSatelliteSlots(
         }
       }
 
-      // Crossing penalties
+      // Crossing penalties across all incident endpoints
       let primaryCrossings = 0;
-      if (primarySegments && primarySegments.length > 0) {
-        const candPoint = { x, y };
-        for (let i = 0; i < primarySegments.length; i++) {
-          if (segmentsIntersect(anchor, candPoint, primarySegments[i].p1, primarySegments[i].p2)) {
-            primaryCrossings++;
+      let satelliteCrossings = 0;
+      const candPoint = { x, y };
+      const endpointsToTest = (incidentEndpoints && incidentEndpoints.length > 0) ? incidentEndpoints : [anchor];
+
+      for (let epIdx = 0; epIdx < endpointsToTest.length; epIdx++) {
+        const ep = endpointsToTest[epIdx];
+
+        if (primarySegments && primarySegments.length > 0) {
+          for (let i = 0; i < primarySegments.length; i++) {
+            if (segmentsIntersect(ep, candPoint, primarySegments[i].p1, primarySegments[i].p2)) {
+              primaryCrossings++;
+            }
           }
         }
-      }
 
-      let satelliteCrossings = 0;
-      if (placedSatelliteSegments && placedSatelliteSegments.length > 0) {
-        const candPoint = { x, y };
-        for (let i = 0; i < placedSatelliteSegments.length; i++) {
-          if (segmentsIntersect(anchor, candPoint, placedSatelliteSegments[i].p1, placedSatelliteSegments[i].p2)) {
-            satelliteCrossings++;
+        if (placedSatelliteSegments && placedSatelliteSegments.length > 0) {
+          for (let i = 0; i < placedSatelliteSegments.length; i++) {
+            if (segmentsIntersect(ep, candPoint, placedSatelliteSegments[i].p1, placedSatelliteSegments[i].p2)) {
+              satelliteCrossings++;
+            }
           }
         }
       }

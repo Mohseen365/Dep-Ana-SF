@@ -75,13 +75,13 @@ interface RankedSeed {
  * LWC/VF -> Controller -> Service -> Selector/Repository/Data
  */
 function checkExecutionChainAlignment(roleA: FeatureRole, roleB: FeatureRole): boolean {
-  if (roleA === 'FeatureAnchor' && (roleB === 'FeatureAnchor' || roleB === 'FeatureCore')) {
+  if (roleA === 'FeatureAnchor' && (roleB === 'FeatureAnchor' || roleB === 'FeatureCore' || roleB === 'FeatureData')) {
     return true;
   }
   if (roleA === 'FeatureCore' && (roleB === 'FeatureCore' || roleB === 'FeatureData')) {
     return true;
   }
-  if (roleA === 'FeatureData' && roleB === 'FeatureData') {
+  if (roleA === 'FeatureData' && (roleB === 'FeatureData' || roleB === 'FeatureCore')) {
     return true;
   }
   return false;
@@ -258,8 +258,6 @@ export function discoverFeatures(
     if (
       !isTestNode(node) &&
       !isFieldNode(node) &&
-      node.type !== 'Object' &&
-      node.type !== 'CustomObject' &&
       role !== 'SharedInfrastructure' &&
       !isSharedInfrastructure(node, { analysisNode })
     ) {
