@@ -104,7 +104,8 @@ function generateSatelliteSlots(
   horizontalGap: number,
   verticalGap: number,
   maxDistance: number,
-  bias: 'field' | 'test' | 'neutral'
+  bias: 'field' | 'test' | 'neutral',
+  targetVector?: Point
 ): Point[] {
   if (count <= 0) return [];
 
@@ -124,9 +125,7 @@ function generateSatelliteSlots(
     col: number;
   }> = [];
 
-  // Expand max search radius adaptively based on satellite count to guarantee enough candidate slots
   const maxSearchRadius = Math.max(12, Math.ceil(Math.sqrt(count) * 3));
-  const gridRadiusCap = Math.max(3, Math.ceil(Math.sqrt(count)));
 
   for (let r = -maxSearchRadius; r <= maxSearchRadius; r++) {
     for (let c = -maxSearchRadius; c <= maxSearchRadius; c++) {
@@ -155,18 +154,36 @@ function generateSatelliteSlots(
       // Directional preference scoring
       let directionalScore = 1.0;
       if (bias === 'test') {
-        if (c < 0) directionalScore = 1.5; // Strong preference for right side (c > 0) over left (c < 0)
+        if (c < 0) directionalScore = 1.4; // Preference for right side (c > 0) over left (c < 0)
       }
 
       let aspectPenalty = 0;
-      if (bias === 'field' && Math.abs(c) > gridRadiusCap) {
-        aspectPenalty = (Math.abs(c) - gridRadiusCap) * dx * 1.5;
-      } else if (bias === 'test' && Math.abs(r) > gridRadiusCap) {
-        aspectPenalty = (Math.abs(r) - gridRadiusCap) * dy * 1.5;
+      if (bias === 'field') {
+        // Fields stack in narrow vertical columns (max 2 columns wide) to prevent horizontal collisions
+        if (Math.abs(c) > 1) {
+          aspectPenalty = Math.abs(c) * dx * 4.0;
+        } else {
+          aspectPenalty = (r - 1) * dy * 0.2;
+        }
+      } else if (bias === 'test') {
+        if (Math.abs(r) > 3) {
+          aspectPenalty = (Math.abs(r) - 3) * dy * 1.5;
+        }
+      }
+
+      // Vector alignment penalty if primary edge direction vector is provided
+      let vectorPenalty = 0;
+      if (targetVector && (targetVector.x !== 0 || targetVector.y !== 0)) {
+        const slotVecX = c * dx;
+        const slotVecY = r * dy;
+        const dot = slotVecX * targetVector.x + slotVecY * targetVector.y;
+        if (dot > 0) {
+          vectorPenalty = dot * 0.5; // Penalize placing satellites in same direction as primary edges
+        }
       }
 
       const tetherPenalty = dist > effectiveMaxDist ? 10.0 * (dist - effectiveMaxDist) : 0;
-      const effectiveScore = dist * directionalScore + aspectPenalty + tetherPenalty;
+      const effectiveScore = dist * directionalScore + aspectPenalty + vectorPenalty + tetherPenalty;
 
       candidateSlots.push({ x, y, dist, effectiveScore, row: r, col: c });
     }
@@ -466,6 +483,26 @@ export function placeSatellites(
     fields.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
     const parentPos = positions[parentId];
 
+    // Compute primary edge vector for parent object to avoid placing fields over primary dependency paths
+    const pEdges = index
+      ? index.incidentEdgesByNode.get(parentId) || []
+      : edges.filter(e => e.source === parentId || e.target === parentId);
+
+    let sumDx = 0;
+    let sumDy = 0;
+    let pCount = 0;
+
+    for (const e of pEdges) {
+      const otherId = e.source === parentId ? e.target : e.source;
+      if (positions[otherId] && primaryNodeIds.has(otherId)) {
+        sumDx += positions[otherId].x - parentPos.x;
+        sumDy += positions[otherId].y - parentPos.y;
+        pCount++;
+      }
+    }
+
+    const targetVector = pCount > 0 ? { x: sumDx / pCount, y: sumDy / pCount } : undefined;
+
     const slots = generateSatelliteSlots(
       parentPos,
       fields.length,
@@ -475,7 +512,8 @@ export function placeSatellites(
       horizontalGap,
       verticalGap,
       maxSatelliteDistance,
-      'field'
+      'field',
+      targetVector
     );
 
     fields.forEach((fieldItem, idx) => {
@@ -553,6 +591,25 @@ export function placeSatellites(
     tests.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
     const targetPos = positions[targetId];
 
+    const tEdges = index
+      ? index.incidentEdgesByNode.get(targetId) || []
+      : edges.filter(e => e.source === targetId || e.target === targetId);
+
+    let sumDx = 0;
+    let sumDy = 0;
+    let pCount = 0;
+
+    for (const e of tEdges) {
+      const otherId = e.source === targetId ? e.target : e.source;
+      if (positions[otherId] && primaryNodeIds.has(otherId)) {
+        sumDx += positions[otherId].x - targetPos.x;
+        sumDy += positions[otherId].y - targetPos.y;
+        pCount++;
+      }
+    }
+
+    const targetVector = pCount > 0 ? { x: sumDx / pCount, y: sumDy / pCount } : undefined;
+
     const slots = generateSatelliteSlots(
       targetPos,
       tests.length,
@@ -562,7 +619,8 @@ export function placeSatellites(
       horizontalGap,
       verticalGap,
       maxSatelliteDistance,
-      'test'
+      'test',
+      targetVector
     );
 
     tests.forEach((testItem, idx) => {
