@@ -389,7 +389,7 @@ export function computeFeatureLayerYMap(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   featureGraph: DomainGraph,
-  options: GlobalFeatureLayoutOptions = {}
+  options: GlobalFeatureLayoutOptions & { featureRegions?: Map<string, FeatureRegion | DomainRegion> } = {}
 ): Record<string, Record<ArchitectureLayer, number>> {
   const nodeHeight = options.nodeHeight ?? 60;
   const verticalGap = 40;
@@ -408,14 +408,16 @@ export function computeFeatureLayerYMap(
   const featureYMap: Record<string, Record<ArchitectureLayer, number>> = {};
 
   featureGraph.nodes.forEach((_, featureId) => {
+    const featureBaseY = options.featureRegions?.get(featureId)?.yMin ?? baseY;
+
     featureYMap[featureId] = {
-      presentation: baseY,
-      application: baseY,
-      domain: baseY,
-      schema: baseY,
+      presentation: featureBaseY,
+      application: featureBaseY,
+      domain: featureBaseY,
+      schema: featureBaseY,
     };
 
-    let currentY = baseY;
+    let currentY = featureBaseY;
 
     LAYERS_IN_ORDER.forEach(layer => {
       const rows = rowCounts[layer].domainRows[featureId] || 0;
@@ -1399,6 +1401,7 @@ export function computeGlobalFeatureLayout(
     analysis,
     index,
     featureMap,
+    featureRegions,
   });
 
   const layerYMap = {

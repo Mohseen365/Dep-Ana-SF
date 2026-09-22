@@ -4528,9 +4528,9 @@
     "maxShuffleDelta": "0.00000"
   },
   "performance": {
-    "totalMs": "1199.19",
-    "analysisMs": "16.34",
-    "layoutMs": "1182.85"
+    "totalMs": "894.83",
+    "analysisMs": "15.22",
+    "layoutMs": "879.61"
   },
   "regressionMatrix": [
     {
