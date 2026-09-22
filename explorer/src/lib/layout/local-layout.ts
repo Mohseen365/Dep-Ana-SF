@@ -96,6 +96,38 @@ const LAYERS_IN_ORDER: ArchitectureLayer[] = [
 ];
 
 /**
+ * Deterministic relationship type weighting mapping.
+ * Prefers meaningful architectural relationships (method call, instantiation, SOQL/DML)
+ * over generic metadata or reference edges.
+ */
+function getRelationshipWeight(relType?: string): number {
+  switch (relType) {
+    case 'method-call':
+    case 'instantiation':
+    case 'soql-object':
+    case 'trigger-handler':
+    case 'lwc-apex':
+    case 'visualforce-controller':
+    case 'extends':
+    case 'implements':
+    case 'SOQL':
+    case 'DML':
+    case 'event-publisher':
+      return 3.0;
+    case 'type-reference':
+    case 'soql-field':
+    case 'lwc-import':
+    case 'lwc-template-child':
+      return 1.5;
+    case 'field-reference':
+    case 'test-reference':
+    case 'unknown':
+    default:
+      return 0.5;
+  }
+}
+
+/**
  * WAVE 3A — PRIMARY PRODUCTION NODE LOCAL LAYOUT
  *
  * Arranges primary production nodes inside architectural layer and domain regions
@@ -377,11 +409,10 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       // Relationship-Aware Intra-Bucket Barycenter Alignment Across Tiers
       const hasBucketOrder = Boolean(wave2bBucket && wave2bBucket.length > 0);
 
-      // Step A: Order Tier 0 preserving bucketOrder rank as primary signal with barycentric fine-tuning
+      // Step A: Order Tier 0 using barycentric cross-tier alignment with bucketOrder fallback
       tier0.sort((a, b) => {
         const rankA = initialRankMap.get(a) ?? 0;
         const rankB = initialRankMap.get(b) ?? 0;
-        if (hasBucketOrder && rankA !== rankB) return rankA - rankB;
 
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
@@ -405,11 +436,10 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         return a.localeCompare(b);
       });
 
-      // Step B: Order Tier 1 preserving bucketOrder rank as primary signal with barycentric fine-tuning
+      // Step B: Order Tier 1 using barycentric cross-tier alignment with bucketOrder fallback
       tier1.sort((a, b) => {
         const rankA = initialRankMap.get(a) ?? 0;
         const rankB = initialRankMap.get(b) ?? 0;
-        if (hasBucketOrder && rankA !== rankB) return rankA - rankB;
 
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
@@ -447,11 +477,10 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         return a.localeCompare(b);
       });
 
-      // Step C: Order Tier 2 preserving bucketOrder rank as primary signal with barycentric fine-tuning
+      // Step C: Order Tier 2 using barycentric cross-tier alignment with bucketOrder fallback
       tier2.sort((a, b) => {
         const rankA = initialRankMap.get(a) ?? 0;
         const rankB = initialRankMap.get(b) ?? 0;
-        if (hasBucketOrder && rankA !== rankB) return rankA - rankB;
 
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
@@ -538,6 +567,68 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       let currentMaxX = -Infinity;
       let currentMinY = Infinity;
       let currentMaxY = -Infinity;
+
+      // Map node -> spatial X estimate for intra-bucket cross-tier alignment
+      const currentTierXMap = new Map<string, number>();
+      tiers.forEach(tNodes => {
+        tNodes.forEach((id, idx) => {
+          const relOffset = (idx - (tNodes.length - 1) / 2) * (nodeWidth + horizontalGap);
+          currentTierXMap.set(id, domainXCenter + relOffset);
+        });
+      });
+
+      for (let sweep = 0; sweep < 2; sweep++) {
+        localRows.forEach((rowNodeIds) => {
+          if (rowNodeIds.length <= 1) return;
+
+          const rowBarycenters = new Map<string, number>();
+
+          rowNodeIds.forEach(id => {
+            let sumX = 0, sumW = 0;
+            safeEdges.forEach(e => {
+              if (e.source === id || e.target === id) {
+                const neighborId = e.source === id ? e.target : e.source;
+                if (primaryNodeSet.has(neighborId) && neighborId !== id) {
+                  const neighborDomain = domainMap.get(neighborId) || 'Shared';
+                  let neighborX: number;
+                  if (neighborDomain === domain) {
+                    neighborX = currentTierXMap.get(neighborId) ?? domainXCenter;
+                  } else {
+                    neighborX = domainXCenterMap.get(neighborDomain) ?? domainXCenter;
+                  }
+                  const w = getRelationshipWeight(e.relationshipType);
+                  sumX += neighborX * w;
+                  sumW += w;
+                }
+              }
+            });
+
+            if (sumW > 0) {
+              rowBarycenters.set(id, sumX / sumW);
+            } else {
+              rowBarycenters.set(id, currentTierXMap.get(id) ?? domainXCenter);
+            }
+          });
+
+          rowNodeIds.sort((a, b) => {
+            const bcA = rowBarycenters.get(a) ?? domainXCenter;
+            const bcB = rowBarycenters.get(b) ?? domainXCenter;
+            if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
+            const rankA = initialRankMap.get(a) ?? 0;
+            const rankB = initialRankMap.get(b) ?? 0;
+            if (rankA !== rankB) return rankA - rankB;
+            return a.localeCompare(b);
+          });
+
+          const colCount = rowNodeIds.length;
+          const rowWidth = colCount * nodeWidth + (colCount - 1) * horizontalGap;
+          const rowStartX = domainXCenter - rowWidth / 2 + nodeWidth / 2;
+          rowNodeIds.forEach((id, colIdx) => {
+            const x = rowStartX + colIdx * (nodeWidth + horizontalGap);
+            currentTierXMap.set(id, x);
+          });
+        });
+      }
 
       localRows.forEach((rowNodeIds, rowIdx) => {
         if (rowNodeIds.length > maxColsInBucket) {
