@@ -293,7 +293,7 @@ export function computeArchitectureLayout(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index }
+        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index, allocatedPositions: basePositions }
       );
 
       basePositions[node.id] = bridgeInfo.candidatePosition;
