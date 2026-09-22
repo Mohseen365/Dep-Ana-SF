@@ -42,6 +42,7 @@ export interface GlobalFeatureLayoutOptions extends GlobalLayoutOptions {
   featureDiscovery?: FeatureDiscoveryResult;
   featureMap?: Map<string, string> | Record<string, string>;
   featureOrderingStrategy?: FeatureOrderingStrategy;
+  featureLayerSpacing?: number;
 }
 
 export interface GlobalFeatureLayoutResult extends GlobalLayoutResult {
@@ -111,6 +112,8 @@ export interface GlobalLayoutResult {
   layerYMap: Record<ArchitectureLayer, number>;
   layerRowCounts: Record<ArchitectureLayer, number>;
   layerHeights: Record<ArchitectureLayer, number>;
+  featureLayerYMap?: Record<string, Record<ArchitectureLayer, number>>;
+  domainBounds?: Record<string, { xMin: number; xMax: number }>;
 }
 
 export const LAYER_Y_MAP: Record<ArchitectureLayer, number> = {
@@ -377,6 +380,54 @@ export interface DynamicLayerYResult {
   layerYMap: Record<ArchitectureLayer, number>;
   layerRowCounts: Record<ArchitectureLayer, number>;
   layerHeights: Record<ArchitectureLayer, number>;
+}
+
+/**
+ * Computes feature-specific layer Y coordinates for compact feature geometry.
+ */
+export function computeFeatureLayerYMap(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  featureGraph: DomainGraph,
+  options: GlobalFeatureLayoutOptions = {}
+): Record<string, Record<ArchitectureLayer, number>> {
+  const nodeHeight = options.nodeHeight ?? 60;
+  const verticalGap = 40;
+  const interLayerGap =
+    options.featureLayerSpacing ??
+    (options.layerSpacing !== undefined && options.layerSpacing !== 250
+      ? options.layerSpacing
+      : 60);
+  const baseY = options.baseY ?? 100;
+
+  const rowCounts = calculatePrimaryLayerRowCounts(nodes, edges, {
+    ...options,
+    domainMap: options.featureMap,
+  });
+
+  const featureYMap: Record<string, Record<ArchitectureLayer, number>> = {};
+
+  featureGraph.nodes.forEach((_, featureId) => {
+    featureYMap[featureId] = {
+      presentation: baseY,
+      application: baseY,
+      domain: baseY,
+      schema: baseY,
+    };
+
+    let currentY = baseY;
+
+    LAYERS_IN_ORDER.forEach(layer => {
+      const rows = rowCounts[layer].domainRows[featureId] || 0;
+      featureYMap[featureId][layer] = currentY;
+
+      const height = rows > 0 ? rows * nodeHeight + (rows - 1) * verticalGap : 0;
+      const step = Math.max(height + interLayerGap, 120);
+      currentY += step;
+    });
+  });
+
+  return featureYMap;
 }
 
 /**
@@ -1343,10 +1394,33 @@ export function computeGlobalFeatureLayout(
     });
   });
 
+  const featureLayerYMap = computeFeatureLayerYMap(safeNodes, safeEdges, featureGraph, {
+    ...options,
+    analysis,
+    index,
+    featureMap,
+  });
+
+  const layerYMap = {
+    ...globalResult.layerYMap,
+    featureLayerYMap,
+  };
+
+  const domainBounds: Record<string, { xMin: number; xMax: number }> = {};
+  featureRegions.forEach((region, featureId) => {
+    domainBounds[featureId] = {
+      xMin: region.xMin - 40,
+      xMax: region.xMax + 40,
+    };
+  });
+
   return {
     ...globalResult,
+    layerYMap,
     featureRegions,
     featureGraph: globalResult.domainGraph,
     orderedFeatures: globalResult.orderedDomains,
+    featureLayerYMap,
+    domainBounds,
   };
 }
