@@ -381,12 +381,19 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     });
   });
 
+  const cloneBucketOrder = (map: Map<string, string[]>): Map<string, string[]> => {
+    const copy = new Map<string, string[]>();
+    map.forEach((v, k) => copy.set(k, [...v]));
+    return copy;
+  };
+
   let bestCrossings = estimateCrossingsForOrder(
     nodes,
     edges,
     bucketOrder,
     domainOrder
   );
+  let bestBucketOrder = cloneBucketOrder(bucketOrder);
 
   let iterationsExecuted = 0;
 
@@ -514,18 +521,21 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
 
     if (currentCrossings < bestCrossings) {
       bestCrossings = currentCrossings;
+      bestBucketOrder = cloneBucketOrder(bucketOrder);
     }
   }
 
+  const finalBucketOrder = bestBucketOrder;
   const nodeRankMap = new Map<string, number>();
   const regions: LayerRegionOrder[] = [];
 
   LAYERS_IN_ORDER.forEach(layer => {
     domainOrder.forEach(domain => {
       const key = `${layer}:${domain}`;
-      const ids = bucketOrder.get(key) || [];
+      const ids = finalBucketOrder.get(key) || [];
       ids.forEach((id, rank) => {
         nodeRankMap.set(id, rank);
+        nodeBucketMap.set(id, key);
       });
 
       if (ids.length > 0) {
@@ -539,7 +549,7 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
   });
 
   return {
-    bucketOrder,
+    bucketOrder: finalBucketOrder,
     nodeRankMap,
     nodeBucketMap,
     regions,

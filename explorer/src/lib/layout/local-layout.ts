@@ -489,29 +489,31 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         return a.localeCompare(b);
       });
 
-      // Hub Centering: Center high-degree hub nodes in local tier rows
-      [tier0, tier1, tier2].forEach(tNodes => {
-        if (tNodes.length >= 3) {
-          let maxDeg = -1;
-          let hubIdx = -1;
-          tNodes.forEach((id, idx) => {
-            const inDeg = intraBucketInDegree.get(id) || 0;
-            const outDeg = intraBucketOutDegree.get(id) || 0;
-            const totalDeg = inDeg + outDeg;
-            if (totalDeg > maxDeg && totalDeg >= 2) {
-              maxDeg = totalDeg;
-              hubIdx = idx;
-            }
-          });
-          if (hubIdx !== -1) {
-            const midIdx = Math.floor(tNodes.length / 2);
-            if (hubIdx !== midIdx) {
-              const [hubId] = tNodes.splice(hubIdx, 1);
-              tNodes.splice(midIdx, 0, hubId);
+      // Hub Centering: Center high-degree hub nodes in local tier rows when Stage 6 bucket order is not supplied
+      if (!hasBucketOrder) {
+        [tier0, tier1, tier2].forEach(tNodes => {
+          if (tNodes.length >= 3) {
+            let maxDeg = -1;
+            let hubIdx = -1;
+            tNodes.forEach((id, idx) => {
+              const inDeg = intraBucketInDegree.get(id) || 0;
+              const outDeg = intraBucketOutDegree.get(id) || 0;
+              const totalDeg = inDeg + outDeg;
+              if (totalDeg > maxDeg && totalDeg >= 2) {
+                maxDeg = totalDeg;
+                hubIdx = idx;
+              }
+            });
+            if (hubIdx !== -1) {
+              const midIdx = Math.floor(tNodes.length / 2);
+              if (hubIdx !== midIdx) {
+                const [hubId] = tNodes.splice(hubIdx, 1);
+                tNodes.splice(midIdx, 0, hubId);
+              }
             }
           }
-        }
-      });
+        });
+      }
 
       // Dynamic Balanced Row Chunking: Sub-divide tiers into balanced rows
       const localRows: string[][] = [];
