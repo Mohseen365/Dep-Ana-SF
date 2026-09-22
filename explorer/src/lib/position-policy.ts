@@ -109,9 +109,10 @@ export function resolveAuthoritativePosition(
     sessionPositions?: Map<string, Position> | Record<string, Position>;
     persistedPositions?: Record<string, Position>;
     cyNodePosition?: Position | null;
+    hasAuthoritativePositions?: boolean;
   }
 ): ResolvedPosition | null {
-  const { sessionPositions, persistedPositions, cyNodePosition } = options;
+  const { sessionPositions, persistedPositions, cyNodePosition, hasAuthoritativePositions = true } = options;
 
   // Level 1: Explicit current user position
   if (sessionPositions) {
@@ -126,16 +127,16 @@ export function resolveAuthoritativePosition(
     }
   }
 
-  // Level 2: Persisted project position
-  if (persistedPositions && persistedPositions[nodeId]) {
+  // Level 2: Persisted project position (only if authoritative for active layout mode)
+  if (hasAuthoritativePositions && persistedPositions && persistedPositions[nodeId]) {
     const pPos = persistedPositions[nodeId];
     if (pPos && typeof pPos.x === 'number' && typeof pPos.y === 'number' && !isNaN(pPos.x) && !isNaN(pPos.y)) {
       return { position: { x: pPos.x, y: pPos.y }, level: 2 };
     }
   }
 
-  // Level 3: Existing Cytoscape position during incremental update
-  if (cyNodePosition && typeof cyNodePosition.x === 'number' && typeof cyNodePosition.y === 'number' && !isNaN(cyNodePosition.x) && !isNaN(cyNodePosition.y)) {
+  // Level 3: Existing Cytoscape position during incremental update (only if authoritative for active layout mode)
+  if (hasAuthoritativePositions && cyNodePosition && typeof cyNodePosition.x === 'number' && typeof cyNodePosition.y === 'number' && !isNaN(cyNodePosition.x) && !isNaN(cyNodePosition.y)) {
     return { position: { x: cyNodePosition.x, y: cyNodePosition.y }, level: 3 };
   }
 

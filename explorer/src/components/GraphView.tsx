@@ -432,6 +432,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const resolved = resolveAuthoritativePosition(id, {
         sessionPositions: sessionPositionsRef.current,
         persistedPositions: nodePositionsRef.current,
+        hasAuthoritativePositions: hasAuth,
       });
 
       if (resolved) {
@@ -727,6 +728,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         sessionPositions: sessionPositionsRef.current,
         persistedPositions: nodePositionsRef.current,
         cyNodePosition: cyPositionsBefore[id],
+        hasAuthoritativePositions: hasAuthForUpdate,
       });
 
       if (resolved) {
