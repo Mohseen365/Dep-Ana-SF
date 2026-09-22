@@ -49,6 +49,38 @@ export const LAYERS_IN_ORDER: ArchitectureLayer[] = [
 ];
 
 /**
+ * Deterministic relationship type weighting mapping.
+ * Prefers meaningful architectural relationships (method call, instantiation, SOQL/DML)
+ * over generic metadata or reference edges.
+ */
+function getRelationshipWeight(relType?: string): number {
+  switch (relType) {
+    case 'method-call':
+    case 'instantiation':
+    case 'soql-object':
+    case 'trigger-handler':
+    case 'lwc-apex':
+    case 'visualforce-controller':
+    case 'extends':
+    case 'implements':
+    case 'SOQL':
+    case 'DML':
+    case 'event-publisher':
+      return 3.0;
+    case 'type-reference':
+    case 'soql-field':
+    case 'lwc-import':
+    case 'lwc-template-child':
+      return 1.5;
+    case 'field-reference':
+    case 'test-reference':
+    case 'unknown':
+    default:
+      return 0.5;
+  }
+}
+
+/**
  * Normalizes layer Map or Record to Map<string, ArchitectureLayer>
  */
 function normalizeLayerMap(
@@ -443,37 +475,47 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
           let sumPos = 0;
           let count = 0;
 
-          for (let j = 0; j < neighbors.length; j++) {
-            const neighborId = neighbors[j];
-            const neighborLayer = layerMap.get(neighborId) || 'application';
-            const neighborRank = LAYER_RANK[neighborLayer];
+          let sumWeight = 0;
 
-            const isRelevant = isForward
-              ? neighborRank < currentLayerRank
-              : neighborRank > currentLayerRank;
+          edges.forEach(e => {
+            if (e.source === id || e.target === id) {
+              const neighborId = e.source === id ? e.target : e.source;
+              if (neighborId !== id) {
+                const neighborLayer = layerMap.get(neighborId) || 'application';
+                const neighborRank = LAYER_RANK[neighborLayer];
 
-            if (isRelevant) {
-              const pos = allLayerPositions.get(neighborId);
-              if (pos !== undefined) {
-                sumPos += pos;
-                count++;
+                const isRelevant = isForward
+                  ? neighborRank <= currentLayerRank
+                  : neighborRank >= currentLayerRank;
+
+                if (isRelevant) {
+                  const pos = allLayerPositions.get(neighborId);
+                  if (pos !== undefined) {
+                    const w = getRelationshipWeight(e.relationshipType) * (neighborRank === currentLayerRank ? 0.75 : 1.0);
+                    sumPos += pos * w;
+                    sumWeight += w;
+                  }
+                }
               }
             }
-          }
+          });
 
-          if (count === 0) {
-            for (let j = 0; j < neighbors.length; j++) {
-              const neighborId = neighbors[j];
-              const pos = allLayerPositions.get(neighborId);
-              if (pos !== undefined) {
-                sumPos += pos;
-                count++;
+          if (sumWeight === 0) {
+            edges.forEach(e => {
+              if (e.source === id || e.target === id) {
+                const neighborId = e.source === id ? e.target : e.source;
+                const pos = allLayerPositions.get(neighborId);
+                if (pos !== undefined) {
+                  const w = getRelationshipWeight(e.relationshipType);
+                  sumPos += pos * w;
+                  sumWeight += w;
+                }
               }
-            }
+            });
           }
 
-          if (count > 0) {
-            barycenters.set(id, sumPos / count);
+          if (sumWeight > 0) {
+            barycenters.set(id, sumPos / sumWeight);
           } else {
             barycenters.set(id, allLayerPositions.get(id) ?? 0);
           }
