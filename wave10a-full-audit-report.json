@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "16.65",
-    "layoutTimeMs": "487.06",
-    "evaluationTimeMs": "71.80",
-    "totalTimeMs": "575.51"
+    "analysisTimeMs": "16.34",
+    "layoutTimeMs": "502.57",
+    "evaluationTimeMs": "91.68",
+    "totalTimeMs": "610.60"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -240,10 +240,10 @@
         "secondaryNodes": 3,
         "layers": "application,domain,presentation,schema",
         "components": "0",
-        "bbox": "[5987, 160, 8087, 900]",
+        "bbox": "[5987, 160, 8087, 880]",
         "width": 2100,
-        "height": 740,
-        "center": "(7037, 530)",
+        "height": 720,
+        "center": "(7037, 520)",
         "internalEdges": 4,
         "incomingEdges": 1,
         "outgoingEdges": 27
@@ -2422,8 +2422,8 @@
       {
         "domainId": "Shared",
         "globalEstimatedWidth": 640,
-        "actualPrimaryWidth": 360,
-        "diffWidth": 280,
+        "actualPrimaryWidth": 280,
+        "diffWidth": 360,
         "primaryNodeCount": 10,
         "regionXMin": 3520,
         "regionXMax": 4160
@@ -2565,12 +2565,12 @@
     }
   },
   "edgeCrossings": {
-    "totalCrossings": 104133,
+    "totalCrossings": 104162,
     "intraDomainCrossings": 12,
-    "interDomainCrossings": 104121,
-    "interLayerCrossings": 103366,
-    "bridgeCrossings": 104133,
-    "satelliteCrossings": 91189,
+    "interDomainCrossings": 104150,
+    "interLayerCrossings": 103395,
+    "bridgeCrossings": 104162,
+    "satelliteCrossings": 91218,
     "topDomainPairs": [
       [
         "Account <-> Cloud_Account <-> Shared <-> Shared",
