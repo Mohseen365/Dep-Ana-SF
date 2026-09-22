@@ -3,6 +3,15 @@ import type { ArchitectureLayer, ArchitectureNodeAnalysis } from './types';
 import type { NodeCentralityAnalysis } from './centrality';
 import { isTestNode, isFieldNode } from './analysis';
 
+/**
+ * Canonical Feature Roles for Phase 4-B Semantic Feature Model:
+ * - FeatureAnchor: Entry points, LWCs, Visualforce, Controllers, Triggers, Flows, APIs.
+ * - FeatureCore: Services, Managers, Business Logic.
+ * - FeatureData: Selectors, Repositories, Custom Objects, Schema.
+ * - FeatureBridge: Cross-domain or cross-subsystem boundary connectors.
+ * - FeatureTest: Unit and integration test satellites.
+ * - SharedInfrastructure: Cross-cutting utility/config classes with high fan-in or multi-domain connectivity.
+ */
 export type FeatureRole =
   | 'FeatureAnchor'
   | 'FeatureCore'
