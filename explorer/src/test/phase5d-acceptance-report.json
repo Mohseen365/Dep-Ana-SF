@@ -1,0 +1,163 @@
+{
+  "timestamp": "2026-09-22T09:07:53.204Z",
+  "fixtureSha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
+  "dataset": "cloud-spend-tracker",
+  "nodeCount": 240,
+  "edgeCount": 1024,
+  "candidateComparison": {
+    "candidateA_legacy": {
+      "primaryCrossings": 9239,
+      "totalCrossings": 111094,
+      "averageEdgeLength": 1549.576299823606,
+      "maxEdgeLength": 5795.925520570464,
+      "primaryOverlaps": 14,
+      "satelliteOverlaps": 2,
+      "layerViolations": 0,
+      "domainCohesion": 0.9456736202330942
+    },
+    "candidateB_currentHybrid": {
+      "primaryCrossings": 11132,
+      "primarySatelliteCrossings": 51217,
+      "satelliteSatelliteCrossings": 46581,
+      "totalCrossings": 112418,
+      "averageEdgeLength": 1483.3744760234467,
+      "maxEdgeLength": 3470.3890271841283,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0,
+      "layerViolations": 0,
+      "domainCohesion": 0.9085484186645492,
+      "medianIntraDistance": 1180.4912467321778,
+      "medianInterDistance": 256.12496949731394,
+      "intraToInterRatio": 4.609043971968371
+    }
+  },
+  "stageInstrumentation": [
+    {
+      "stage": "Stage 5",
+      "positionedNodeCount": 240,
+      "primaryCrossings": 0,
+      "totalCrossings": 0,
+      "primarySatelliteCrossings": 0,
+      "satelliteSatelliteCrossings": 0,
+      "cohesion": 0.9988594773747685,
+      "layerViolations": 0,
+      "primaryOverlaps": 11781,
+      "satelliteOverlaps": 16422
+    },
+    {
+      "stage": "Stage 6",
+      "positionedNodeCount": 240,
+      "primaryCrossings": 0,
+      "totalCrossings": 0,
+      "primarySatelliteCrossings": 0,
+      "satelliteSatelliteCrossings": 0,
+      "cohesion": 0.9988594773747685,
+      "layerViolations": 0,
+      "primaryOverlaps": 11781,
+      "satelliteOverlaps": 16422
+    },
+    {
+      "stage": "Stage 7",
+      "positionedNodeCount": 156,
+      "primaryCrossings": 12035,
+      "totalCrossings": 15552,
+      "primarySatelliteCrossings": 0,
+      "satelliteSatelliteCrossings": 0,
+      "cohesion": 0.8296752291235029,
+      "layerViolations": 0,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0
+    },
+    {
+      "stage": "Stage 8",
+      "positionedNodeCount": 156,
+      "primaryCrossings": 11132,
+      "totalCrossings": 14620,
+      "primarySatelliteCrossings": 0,
+      "satelliteSatelliteCrossings": 0,
+      "cohesion": 0.8540483104843296,
+      "layerViolations": 0,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0
+    },
+    {
+      "stage": "Stage 9",
+      "positionedNodeCount": 240,
+      "primaryCrossings": 11132,
+      "totalCrossings": 112418,
+      "primarySatelliteCrossings": 51217,
+      "satelliteSatelliteCrossings": 46581,
+      "cohesion": 0.9009240469299388,
+      "layerViolations": 0,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0
+    },
+    {
+      "stage": "Stage 10",
+      "positionedNodeCount": 240,
+      "primaryCrossings": 11132,
+      "totalCrossings": 112418,
+      "primarySatelliteCrossings": 51217,
+      "satelliteSatelliteCrossings": 46581,
+      "cohesion": 0.9085484186645492,
+      "layerViolations": 0,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0
+    },
+    {
+      "stage": "Stage 11",
+      "positionedNodeCount": 240,
+      "primaryCrossings": 11132,
+      "totalCrossings": 112418,
+      "primarySatelliteCrossings": 51217,
+      "satelliteSatelliteCrossings": 46581,
+      "cohesion": 0.9085484186645492,
+      "layerViolations": 0,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0
+    },
+    {
+      "stage": "Stage 12",
+      "positionedNodeCount": 240,
+      "primaryCrossings": 11132,
+      "totalCrossings": 112418,
+      "primarySatelliteCrossings": 51217,
+      "satelliteSatelliteCrossings": 46581,
+      "cohesion": 0.9085484186645492,
+      "layerViolations": 0,
+      "primaryOverlaps": 0,
+      "satelliteOverlaps": 0
+    }
+  ],
+  "gateResults": {
+    "hardGates": {
+      "layerViolationsZero": true,
+      "primaryOverlapsZero": true,
+      "satelliteOverlapsZero": true,
+      "deterministicDriftZero": true,
+      "shuffledDriftZero": true,
+      "unauthorizedRelayoutsZero": true
+    },
+    "primaryGate": {
+      "c_pp": 11132,
+      "target": 9335,
+      "passed": false
+    },
+    "localityGate": {
+      "medianIntraDistance": 1180.4912467321778,
+      "medianInterDistance": 256.12496949731394,
+      "passed": false
+    },
+    "preferredTargets": {
+      "c_pp_target_8500": false,
+      "c_total_target_95000": false,
+      "cohesion_target_0_920": false
+    }
+  },
+  "productionDefaultAudit": {
+    "defaultMatchesLegacy": true,
+    "enableFeatureLayoutDefault": false
+  },
+  "overallDecision": "BLOCKED",
+  "decisionReasoning": "Hard mandatory invariants pass 100%, but Primary Gate (C_pp = 11,132 >= 9,335) and Locality Gate (D_intra = 1,180.49 px > D_inter = 256.12 px) are BLOCKED. Hybrid mode must remain opt-in."
+}
