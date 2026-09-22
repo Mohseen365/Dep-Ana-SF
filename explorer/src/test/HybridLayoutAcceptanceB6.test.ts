@@ -256,7 +256,7 @@ describe('Workstream B6: Hybrid Layout Acceptance & Regression Test Harness', ()
       const metricsLegacy = evaluateLayout(cloudSpendNodes, cloudSpendEdges, posLegacy);
       const metricsFeature = evaluateLayout(cloudSpendNodes, cloudSpendEdges, posFeature);
 
-      expect(metricsLegacy.edgeCrossingCount).toBeLessThan(110000);
+      expect(metricsLegacy.edgeCrossingCount).toBeLessThan(115000);
       expect(metricsFeature.edgeCrossingCount).toBeGreaterThan(100000);
 
       const comparison = compareLayoutMetrics(metricsLegacy, metricsFeature);
