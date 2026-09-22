@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
-import { discoverFeatures } from './features';
+import { discoverFeatures, calculateSemanticFeatureCohesion } from './features';
+import { computeArchitectureLayout } from '../architecture-layout';
 
 function createNode(id: string, displayName: string, type: string, extra: Partial<ExplorerNode> = {}): ExplorerNode {
   return {
@@ -369,6 +372,68 @@ describe('features module (Feature Discovery)', () => {
 
       expect(result.featureList.length).toBe(20);
       expect(elapsed).toBeLessThan(50); // < 50ms
+    });
+  });
+
+  describe('Cloud Spend Tracker Real Dataset Semantic Audit & Cohesion', () => {
+    const cloudSpendPath = path.resolve(__dirname, '../../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
+    const cloudSpendData = JSON.parse(fs.readFileSync(cloudSpendPath, 'utf8'));
+    const cloudNodes: ExplorerNode[] = cloudSpendData.nodes;
+    const cloudEdges: ExplorerEdge[] = cloudSpendData.edges;
+
+    it('discovers 21 semantic feature clusters with 0 node duplication and correct unassigned/shared counts', () => {
+      const discovery = discoverFeatures(cloudNodes, cloudEdges);
+
+      expect(discovery.features.size).toBe(21);
+      expect(discovery.assignments.size).toBe(cloudNodes.length);
+
+      let unassignedCount = 0;
+      let sharedCount = 0;
+      let primaryAssignedCount = 0;
+
+      for (const assignment of discovery.assignments.values()) {
+        if (assignment.primaryFeatureId === 'Unassigned') unassignedCount++;
+        else if (assignment.primaryFeatureId === 'Shared') sharedCount++;
+        else primaryAssignedCount++;
+      }
+
+      expect(primaryAssignedCount).toBe(77);
+      expect(sharedCount).toBe(44);
+      expect(unassignedCount).toBe(119);
+    });
+
+    it('calculates semantic feature cohesion diagnostics on Cloud Spend layout positions', () => {
+      const discovery = discoverFeatures(cloudNodes, cloudEdges);
+      const positions = computeArchitectureLayout(cloudNodes, cloudEdges, { enableFeatureLayout: true });
+
+      const diagnostics = calculateSemanticFeatureCohesion(cloudNodes, positions, discovery);
+
+      expect(diagnostics.totalNodes).toBe(240);
+      expect(diagnostics.discoveredFeaturesCount).toBe(21);
+      expect(diagnostics.primaryAssignedNodesCount).toBe(77);
+      expect(diagnostics.sharedNodesCount).toBe(44);
+      expect(diagnostics.unassignedNodesCount).toBe(119);
+      expect(diagnostics.featureCohesionScore).toBeGreaterThan(0.8);
+      expect(diagnostics.featureCohesionScore).toBeLessThanOrEqual(1.0);
+      expect(Object.keys(diagnostics.featureDistances).length).toBe(7); // Multi-node features evaluated
+    });
+
+    it('remains 100% deterministic across shuffled node and edge inputs on Cloud Spend dataset', () => {
+      const shuffledNodes = [...cloudNodes].sort(() => 0.5 - Math.random());
+      const shuffledEdges = [...cloudEdges].sort(() => 0.5 - Math.random());
+
+      const run1 = discoverFeatures(cloudNodes, cloudEdges);
+      const run2 = discoverFeatures(shuffledNodes, shuffledEdges);
+
+      expect(run1.features.size).toBe(run2.features.size);
+      expect(run1.featureList.map(f => f.id)).toEqual(run2.featureList.map(f => f.id));
+
+      for (const node of cloudNodes) {
+        const assign1 = run1.assignments.get(node.id);
+        const assign2 = run2.assignments.get(node.id);
+        expect(assign1?.primaryFeatureId).toBe(assign2?.primaryFeatureId);
+        expect(assign1?.isShared).toBe(assign2?.isShared);
+      }
     });
   });
 });
