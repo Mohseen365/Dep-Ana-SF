@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "16.26",
-    "layoutTimeMs": "637.08",
-    "evaluationTimeMs": "171.33",
-    "totalTimeMs": "824.67"
+    "analysisTimeMs": "15.37",
+    "layoutTimeMs": "646.46",
+    "evaluationTimeMs": "154.74",
+    "totalTimeMs": "816.57"
   },
   "domainAnalysis": {
     "totalDomains": 106,
