@@ -5,184 +5,261 @@ import {
   determineGlobalFeatureOrder,
   buildFeatureDependencyMatrix,
   orderStrategyF_SharedHierarchyAware,
+  compute2DFeatureBandOrdering,
+  assignFeature2DBands,
 } from './feature-ordering';
 import { buildDomainGraph, computeGlobalFeatureLayout } from './global-layout';
 import { discoverFeatures } from './features';
-import { calculateLayoutMetrics } from './metrics';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 
 const FIXTURE_PATH = path.resolve(__dirname, '../../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
 
-describe('Phase 2.1 Global Feature Ordering Focused Test Suite', () => {
+describe('Phase 3.3 2D Multi-Row Feature Ordering Test Suite', () => {
   const rawData = fs.readFileSync(FIXTURE_PATH, 'utf-8');
   const fixture = JSON.parse(rawData);
   const cloudSpendNodes = fixture.nodes as ExplorerNode[];
   const cloudSpendEdges = fixture.edges as ExplorerEdge[];
 
-  // 1. Deterministic feature ordering
-  it('1. verifies deterministic feature ordering produces identical order across runs', () => {
-    const featureDiscovery = discoverFeatures(cloudSpendNodes, cloudSpendEdges);
-    const featureMap = new Map<string, string>();
-    featureDiscovery.assignments.forEach((a, id) => featureMap.set(id, a.primaryFeatureId));
-    cloudSpendNodes.forEach(n => { if (!featureMap.has(n.id)) featureMap.set(n.id, 'Unassigned'); });
-    const featureGraph = buildDomainGraph(cloudSpendNodes, cloudSpendEdges, undefined, undefined, featureMap);
+  // Helper factory for mock nodes
+  function createMockNode(id: string, type: string, layer: string): ExplorerNode {
+    return {
+      id,
+      displayName: id.split(':').pop() || id,
+      type: type as any,
+      file: `${id}.cls`,
+      metrics: { score: 10, fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0 },
+      risk: 'LOW',
+      riskReasons: [],
+      behavior: {
+        isTest: false,
+        publicContractsCount: 1,
+        asyncPatterns: [],
+        securitySignalsCount: 0,
+        queryCount: 0,
+        dmlCount: 0,
+        calloutCount: 0,
+      },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
+    };
+  }
 
-    const order1 = determineGlobalFeatureOrder(cloudSpendNodes, cloudSpendEdges, featureGraph, featureMap, 'F_SHARED_HIERARCHY_AWARE');
-    const order2 = determineGlobalFeatureOrder(cloudSpendNodes, cloudSpendEdges, featureGraph, featureMap, 'F_SHARED_HIERARCHY_AWARE');
+  // 1. Strongly coupled pair across bands
+  it('1. verifies strongly coupled feature pair across layer bands is horizontally aligned', () => {
+    const nodes: ExplorerNode[] = [
+      createMockNode('LWC:P1', 'LWC', 'presentation'),
+      createMockNode('ApexClass:A1', 'ApexClass', 'application'),
+      createMockNode('ApexClass:A2', 'ApexClass', 'application'),
+    ];
+    const edges: ExplorerEdge[] = [
+      // Strongly coupled P1 -> A1 (10 calls)
+      ...Array.from({ length: 10 }, (_, i) => ({
+        id: `e1_${i}`,
+        source: 'LWC:P1',
+        target: 'ApexClass:A1',
+        relationship: 'Calls' as const,
+      })),
+      // Weakly coupled P1 -> A2 (1 call)
+      { id: 'e2', source: 'LWC:P1', target: 'ApexClass:A2', relationship: 'Calls' as const },
+    ];
+    const featureMap = new Map<string, string>([
+      ['LWC:P1', 'feature_P1'],
+      ['ApexClass:A1', 'feature_A1'],
+      ['ApexClass:A2', 'feature_A2'],
+    ]);
 
-    expect(order1).toEqual(order2);
+    const fg = buildDomainGraph(nodes, edges, undefined, undefined, featureMap);
+    const matrix = buildFeatureDependencyMatrix(nodes, edges, fg, featureMap);
+    const res = compute2DFeatureBandOrdering(matrix);
+
+    const placementP1 = res.placements.get('feature_P1')!;
+    const placementA1 = res.placements.get('feature_A1')!;
+    const placementA2 = res.placements.get('feature_A2')!;
+
+    expect(placementP1).toBeDefined();
+    expect(placementA1).toBeDefined();
+    expect(placementA2).toBeDefined();
+
+    // Feature A1 (strongly coupled) should be closer in X to P1 than A2 is
+    const distA1 = Math.abs(placementP1.estimatedX - placementA1.estimatedX);
+    const distA2 = Math.abs(placementP1.estimatedX - placementA2.estimatedX);
+
+    expect(distA1).toBeLessThanOrEqual(distA2);
   });
 
-  // 2. Input-order permutation invariance
-  it('2. verifies input-order permutation invariance across shuffled node/edge arrays', () => {
+  // 2. Chain topology (Feature A ↕ Feature B ↕ Feature C)
+  it('2. verifies vertical chain (Feature A ↕ Feature B ↕ Feature C) produces coherent spatial locality', () => {
+    const nodes: ExplorerNode[] = [
+      createMockNode('LWC:Top', 'LWC', 'presentation'),
+      createMockNode('ApexClass:Mid', 'ApexClass', 'application'),
+      createMockNode('CustomObject:Bot', 'CustomObject', 'schema'),
+    ];
+    const edges: ExplorerEdge[] = [
+      { id: 'e1', source: 'LWC:Top', target: 'ApexClass:Mid', relationship: 'Calls' as const },
+      { id: 'e2', source: 'ApexClass:Mid', target: 'CustomObject:Bot', relationship: 'Calls' as const },
+    ];
+    const featureMap = new Map<string, string>([
+      ['LWC:Top', 'feature_A'],
+      ['ApexClass:Mid', 'feature_B'],
+      ['CustomObject:Bot', 'feature_C'],
+    ]);
+
+    const fg = buildDomainGraph(nodes, edges, undefined, undefined, featureMap);
+    const matrix = buildFeatureDependencyMatrix(nodes, edges, fg, featureMap);
+    const res = compute2DFeatureBandOrdering(matrix);
+
+    expect(res.placements.get('feature_A')?.primaryLayer).toBe('presentation');
+    expect(res.placements.get('feature_B')?.primaryLayer).toBe('application');
+    expect(res.placements.get('feature_C')?.primaryLayer).toBe('schema');
+
+    // All three chain features should align closely along estimated X
+    const xA = res.placements.get('feature_A')!.estimatedX;
+    const xB = res.placements.get('feature_B')!.estimatedX;
+    const xC = res.placements.get('feature_C')!.estimatedX;
+
+    expect(Math.abs(xA - xB)).toBeLessThan(100);
+    expect(Math.abs(xB - xC)).toBeLessThan(100);
+  });
+
+  // 3. Hub feature centering
+  it('3. verifies hub feature is positioned centrally relative to its connected multi-band neighbors', () => {
+    const nodes: ExplorerNode[] = [
+      createMockNode('ApexClass:Hub', 'ApexClass', 'application'),
+      createMockNode('LWC:N1', 'LWC', 'presentation'),
+      createMockNode('LWC:N2', 'LWC', 'presentation'),
+      createMockNode('CustomObject:N3', 'CustomObject', 'schema'),
+    ];
+    const edges: ExplorerEdge[] = [
+      { id: 'e1', source: 'LWC:N1', target: 'ApexClass:Hub', relationship: 'Calls' as const },
+      { id: 'e2', source: 'LWC:N2', target: 'ApexClass:Hub', relationship: 'Calls' as const },
+      { id: 'e3', source: 'ApexClass:Hub', target: 'CustomObject:N3', relationship: 'Calls' as const },
+    ];
+    const featureMap = new Map<string, string>([
+      ['ApexClass:Hub', 'feature_Hub'],
+      ['LWC:N1', 'feature_N1'],
+      ['LWC:N2', 'feature_N2'],
+      ['CustomObject:N3', 'feature_N3'],
+    ]);
+
+    const fg = buildDomainGraph(nodes, edges, undefined, undefined, featureMap);
+    const matrix = buildFeatureDependencyMatrix(nodes, edges, fg, featureMap);
+    const res = assignFeature2DBands(matrix);
+
+    const xHub = res.placements.get('feature_Hub')!.estimatedX;
+    const xN1 = res.placements.get('feature_N1')!.estimatedX;
+    const xN2 = res.placements.get('feature_N2')!.estimatedX;
+
+    // Hub X should lie between N1 and N2 or align near their centroid
+    const minX = Math.min(xN1, xN2);
+    const maxX = Math.max(xN1, xN2);
+
+    expect(xHub).toBeGreaterThanOrEqual(minX - 50);
+    expect(xHub).toBeLessThanOrEqual(maxX + 50);
+  });
+
+  // 4. Disconnected features
+  it('4. verifies disconnected features are assigned clean deterministic 2D band placements', () => {
+    const nodes: ExplorerNode[] = [
+      createMockNode('ApexClass:Disc1', 'ApexClass', 'application'),
+      createMockNode('ApexClass:Disc2', 'ApexClass', 'domain'),
+    ];
+    const edges: ExplorerEdge[] = [];
+    const featureMap = new Map<string, string>([
+      ['ApexClass:Disc1', 'feature_D1'],
+      ['ApexClass:Disc2', 'feature_D2'],
+    ]);
+
+    const fg = buildDomainGraph(nodes, edges, undefined, undefined, featureMap);
+    const matrix = buildFeatureDependencyMatrix(nodes, edges, fg, featureMap);
+    const res = compute2DFeatureBandOrdering(matrix);
+
+    expect(res.orderedFeatures).toHaveLength(2);
+    expect(res.placements.has('feature_D1')).toBe(true);
+    expect(res.placements.has('feature_D2')).toBe(true);
+    expect(res.metrics.isDeterministic).toBe(true);
+  });
+
+  // 5. Equal-weight tie breaking
+  it('5. verifies equal-weight feature pairs break ties deterministically by feature ID', () => {
+    const nodes: ExplorerNode[] = [
+      createMockNode('ApexClass:T1', 'ApexClass', 'application'),
+      createMockNode('ApexClass:T2', 'ApexClass', 'application'),
+    ];
+    const edges: ExplorerEdge[] = [];
+    const featureMap = new Map<string, string>([
+      ['ApexClass:T1', 'feature_Zeta'],
+      ['ApexClass:T2', 'feature_Alpha'],
+    ]);
+
+    const fg = buildDomainGraph(nodes, edges, undefined, undefined, featureMap);
+    const matrix = buildFeatureDependencyMatrix(nodes, edges, fg, featureMap);
+    const res = compute2DFeatureBandOrdering(matrix);
+
+    const appFeatures = res.bandFeatures.get('application')!;
+    expect(appFeatures).toEqual(['feature_Alpha', 'feature_Zeta']);
+  });
+
+  // 6. Shuffled input invariance
+  it('6. verifies 2D band ordering produces exact 0.00000 px drift across 5 shuffled permutations', () => {
     const featureDiscovery = discoverFeatures(cloudSpendNodes, cloudSpendEdges);
     const featureMap = new Map<string, string>();
     featureDiscovery.assignments.forEach((a, id) => featureMap.set(id, a.primaryFeatureId));
     cloudSpendNodes.forEach(n => { if (!featureMap.has(n.id)) featureMap.set(n.id, 'Unassigned'); });
     const featureGraph = buildDomainGraph(cloudSpendNodes, cloudSpendEdges, undefined, undefined, featureMap);
 
-    const baseOrder = determineGlobalFeatureOrder(cloudSpendNodes, cloudSpendEdges, featureGraph, featureMap, 'F_SHARED_HIERARCHY_AWARE');
+    const baseMatrix = buildFeatureDependencyMatrix(cloudSpendNodes, cloudSpendEdges, featureGraph, featureMap);
+    const baseRes = compute2DFeatureBandOrdering(baseMatrix);
 
     for (let shuffle = 0; shuffle < 5; shuffle++) {
       const shuffledNodes = [...cloudSpendNodes].sort(() => Math.sin(shuffle + 1));
       const shuffledEdges = [...cloudSpendEdges].sort(() => Math.cos(shuffle + 1));
 
       const shuffledGraph = buildDomainGraph(shuffledNodes, shuffledEdges, undefined, undefined, featureMap);
-      const shuffledOrder = determineGlobalFeatureOrder(shuffledNodes, shuffledEdges, shuffledGraph, featureMap, 'F_SHARED_HIERARCHY_AWARE');
+      const shuffledMatrix = buildFeatureDependencyMatrix(shuffledNodes, shuffledEdges, shuffledGraph, featureMap);
+      const shuffledRes = compute2DFeatureBandOrdering(shuffledMatrix);
 
-      expect(shuffledOrder).toEqual(baseOrder);
+      expect(shuffledRes.orderedFeatures).toEqual(baseRes.orderedFeatures);
+
+      baseRes.placements.forEach((baseP, fid) => {
+        const shufP = shuffledRes.placements.get(fid)!;
+        expect(shufP.estimatedX).toBeCloseTo(baseP.estimatedX, 5);
+        expect(shufP.estimatedY).toBeCloseTo(baseP.estimatedY, 5);
+      });
     }
   });
 
-  // 3. Weighted dependency ordering
-  it('3. verifies features with strong cross-feature coupling are placed adjacently', () => {
-    const testNodes: ExplorerNode[] = [
-      { id: 'ApexClass:A1', displayName: 'A1', type: 'ApexClass', file: 'A1.cls', metrics: { score: 10, fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-      { id: 'ApexClass:A2', displayName: 'A2', type: 'ApexClass', file: 'A2.cls', metrics: { score: 10, fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-      { id: 'ApexClass:B1', displayName: 'B1', type: 'ApexClass', file: 'B1.cls', metrics: { score: 10, fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-      { id: 'ApexClass:C1', displayName: 'C1', type: 'ApexClass', file: 'C1.cls', metrics: { score: 10, fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-    ];
-
-    const testEdges: ExplorerEdge[] = [
-      // High coupling between feature_F1 and feature_F2 (10 edges)
-      ...Array.from({ length: 10 }, (_, i) => ({
-        id: `e1_${i}`,
-        source: 'ApexClass:A1',
-        target: 'ApexClass:A2',
-        relationship: 'Calls' as const,
-      })),
-      // Weak coupling between feature_F1 and feature_F3 (1 edge)
-      { id: 'e2', source: 'ApexClass:A1', target: 'ApexClass:B1', relationship: 'Calls' as const },
-    ];
-
-    const fMap = new Map<string, string>([
-      ['ApexClass:A1', 'feature_F1'],
-      ['ApexClass:A2', 'feature_F2'],
-      ['ApexClass:B1', 'feature_F3'],
-      ['ApexClass:C1', 'feature_F4'],
-    ]);
-
-    const fg = buildDomainGraph(testNodes, testEdges, undefined, undefined, fMap);
-    const matrix = buildFeatureDependencyMatrix(testNodes, testEdges, fg, fMap);
-
-    const f1ToF2Weight = matrix.combinedWeights.get('feature_F1')?.get('feature_F2') || 0;
-    const f1ToF3Weight = matrix.combinedWeights.get('feature_F1')?.get('feature_F3') || 0;
-
-    expect(f1ToF2Weight).toBeGreaterThan(f1ToF3Weight);
-  });
-
-  // 4. Disconnected features
-  it('4. verifies handling of completely disconnected feature regions without errors', () => {
-    const testNodes: ExplorerNode[] = [
-      { id: 'ApexClass:D1', displayName: 'D1', type: 'ApexClass', file: 'D1.cls', metrics: { score: 10, fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-      { id: 'ApexClass:D2', displayName: 'D2', type: 'ApexClass', file: 'D2.cls', metrics: { score: 10, fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-    ];
-    const testEdges: ExplorerEdge[] = [];
-    const fMap = new Map<string, string>([
-      ['ApexClass:D1', 'feature_D1'],
-      ['ApexClass:D2', 'feature_D2'],
-    ]);
-
-    const fg = buildDomainGraph(testNodes, testEdges, undefined, undefined, fMap);
-    const order = determineGlobalFeatureOrder(testNodes, testEdges, fg, fMap);
-
-    expect(order).toHaveLength(2);
-    expect(order).toContain('feature_D1');
-    expect(order).toContain('feature_D2');
-  });
-
-  // 5. Single-feature graph
-  it('5. verifies single-feature graph returns single feature without error', () => {
-    const testNodes: ExplorerNode[] = [
-      { id: 'ApexClass:S1', displayName: 'S1', type: 'ApexClass', file: 'S1.cls', metrics: { score: 10, fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-    ];
-    const testEdges: ExplorerEdge[] = [];
-    const fMap = new Map<string, string>([['ApexClass:S1', 'feature_Single']]);
-
-    const fg = buildDomainGraph(testNodes, testEdges, undefined, undefined, fMap);
-    const order = determineGlobalFeatureOrder(testNodes, testEdges, fg, fMap);
-
-    expect(order).toEqual(['feature_Single']);
-  });
-
-  // 6. Multi-layer feature
-  it('6. verifies multi-layer feature is placed cleanly across member layers', () => {
-    const featureLayout = computeGlobalFeatureLayout(cloudSpendNodes, cloudSpendEdges);
-    const forecastRegion = featureLayout.featureRegions.get('feature_forecast-manager');
-
-    expect(forecastRegion).toBeDefined();
-    expect(forecastRegion!.height).toBeGreaterThan(1000);
-  });
-
-  // 7. Shared-infrastructure-heavy graph
-  it('7. verifies shared-infrastructure-heavy graph integrates Shared region deterministically', () => {
+  // 7. Cloud Spend dataset validation
+  it('7. verifies execution on Salesforce Cloud Spend dataset with comprehensive 2D metrics', () => {
     const featureDiscovery = discoverFeatures(cloudSpendNodes, cloudSpendEdges);
     const featureMap = new Map<string, string>();
     featureDiscovery.assignments.forEach((a, id) => featureMap.set(id, a.primaryFeatureId));
     cloudSpendNodes.forEach(n => { if (!featureMap.has(n.id)) featureMap.set(n.id, 'Unassigned'); });
     const featureGraph = buildDomainGraph(cloudSpendNodes, cloudSpendEdges, undefined, undefined, featureMap);
 
-    const order = determineGlobalFeatureOrder(cloudSpendNodes, cloudSpendEdges, featureGraph, featureMap, 'F_SHARED_HIERARCHY_AWARE');
+    const matrix = buildFeatureDependencyMatrix(cloudSpendNodes, cloudSpendEdges, featureGraph, featureMap);
+    const res = compute2DFeatureBandOrdering(matrix);
 
-    expect(order).toContain('Shared');
-    expect(order.indexOf('Shared')).toBeGreaterThan(-1);
-  });
+    expect(res.orderedFeatures.length).toBeGreaterThan(15);
+    expect(res.placements.size).toBe(res.orderedFeatures.length);
 
-  // 8. Equal-weight deterministic tie breaking
-  it('8. verifies equal-weight feature pairs break ties deterministically by feature ID', () => {
-    const testNodes: ExplorerNode[] = [
-      { id: 'ApexClass:T1', displayName: 'T1', type: 'ApexClass', file: 'T1.cls', metrics: { score: 10, fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-      { id: 'ApexClass:T2', displayName: 'T2', type: 'ApexClass', file: 'T2.cls', metrics: { score: 10, fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0 }, risk: 'LOW', riskReasons: [], behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 }, refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' } },
-    ];
-    const testEdges: ExplorerEdge[] = [];
-    const fMap = new Map<string, string>([
-      ['ApexClass:T1', 'feature_Zeta'],
-      ['ApexClass:T2', 'feature_Alpha'],
-    ]);
+    // Verify metrics exist and are non-negative
+    expect(res.metrics.totalFeaturesCount).toBeGreaterThan(0);
+    expect(res.metrics.avgCrossBandEdgeLength).toBeGreaterThan(0);
+    expect(res.metrics.intraBandLocalityScore).toBeGreaterThan(0);
+    expect(res.metrics.isDeterministic).toBe(true);
 
-    const fg = buildDomainGraph(testNodes, testEdges, undefined, undefined, fMap);
-    const order = determineGlobalFeatureOrder(testNodes, testEdges, fg, fMap, 'F_SHARED_HIERARCHY_AWARE');
-
-    expect(order).toEqual(['feature_Alpha', 'feature_Zeta']);
-  });
-
-  // 9. Region width differences
-  it('9. verifies feature region widths scale according to primary node counts without overlaps', () => {
-    const featureLayout = computeGlobalFeatureLayout(cloudSpendNodes, cloudSpendEdges);
-
-    const smallRegion = featureLayout.featureRegions.get('feature_AdminUserController');
-    const largeRegion = featureLayout.featureRegions.get('feature_forecast-manager');
-
-    expect(smallRegion).toBeDefined();
-    expect(largeRegion).toBeDefined();
-    expect(largeRegion!.width).toBeGreaterThanOrEqual(smallRegion!.width);
-  });
-
-  // 10. Cloud Spend fixture
-  it('10. verifies full execution on Cloud Spend fixture satisfies layer preservation & zero drift', () => {
-    const featureLayout = computeGlobalFeatureLayout(cloudSpendNodes, cloudSpendEdges);
-
-    expect(featureLayout.orderedFeatures.length).toBeGreaterThan(10);
-    expect(featureLayout.metrics?.layerViolationCount).toBe(0);
+    // Strategy strategy dispatch verification
+    const orderViaStrategy = determineGlobalFeatureOrder(
+      cloudSpendNodes,
+      cloudSpendEdges,
+      featureGraph,
+      featureMap,
+      'F_2D_BAND_AWARE'
+    );
+    expect(orderViaStrategy).toEqual(res.orderedFeatures);
   });
 });
