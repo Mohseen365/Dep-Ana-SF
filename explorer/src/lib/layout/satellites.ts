@@ -280,6 +280,43 @@ function generateSatelliteSlots(
 }
 
 /**
+ * Evaluates total edge crossings for a set of edges given current positions.
+ */
+function evaluateTotalCrossings(
+  edges: ExplorerEdge[],
+  positions: Record<string, { x: number; y: number }>
+): number {
+  interface EdgeSeg {
+    p1: Point;
+    p2: Point;
+    s: string;
+    t: string;
+  }
+  const segs: EdgeSeg[] = [];
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    const p1 = positions[e.source];
+    const p2 = positions[e.target];
+    if (p1 && p2) {
+      segs.push({ p1, p2, s: e.source, t: e.target });
+    }
+  }
+
+  let count = 0;
+  for (let i = 0; i < segs.length; i++) {
+    const s1 = segs[i];
+    for (let j = i + 1; j < segs.length; j++) {
+      const s2 = segs[j];
+      if (s1.s === s2.s || s1.s === s2.t || s1.t === s2.s || s1.t === s2.t) continue;
+      if (segmentsIntersect(s1.p1, s1.p2, s2.p1, s2.p2)) {
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+/**
  * Main entry point for Satellite Layout Engine.
  *
  * Takes primary node positions as fixed anchors and deterministically places:
@@ -736,10 +773,40 @@ export function placeSatellites(
 
       positions[testItem.nodeId] = { x: slot.x, y: slot.y };
       satellitePositions[testItem.nodeId] = { x: slot.x, y: slot.y };
-      occupiedList.push({ x: slot.x, y: slot.y });
+      occupiedList.push({ x: fallbackAnchor.x, y: fallbackAnchor.y });
       placedTestsCount++;
     });
   }
+
+  // --------------------------------------------------------------------------
+  // STAGE 4: POST-PLACEMENT SATELLITE SLOT PERMUTATION REFINEMENT
+  // --------------------------------------------------------------------------
+  // Optimizes satellite-to-slot assignments for field clusters around parent anchors
+  fieldsByParent.forEach((fields) => {
+    if (fields.length < 2) return;
+    const fieldIds = fields.map(f => f.nodeId);
+    const slots = fieldIds.map(id => positions[id]).filter(Boolean);
+    if (slots.length !== fieldIds.length) return;
+
+    let currentBestCrossings = evaluateTotalCrossings(safeEdges, positions);
+
+    // Test cyclic permutations of slot assignments
+    for (let shift = 1; shift < Math.min(fieldIds.length, 5); shift++) {
+      const candidatePositions = { ...positions };
+      fieldIds.forEach((id, idx) => {
+        candidatePositions[id] = slots[(idx + shift) % fieldIds.length];
+      });
+
+      const candidateCrossings = evaluateTotalCrossings(safeEdges, candidatePositions);
+      if (candidateCrossings < currentBestCrossings) {
+        currentBestCrossings = candidateCrossings;
+        fieldIds.forEach((id, idx) => {
+          positions[id] = candidatePositions[id];
+          satellitePositions[id] = candidatePositions[id];
+        });
+      }
+    }
+  });
 
   return {
     positions,
