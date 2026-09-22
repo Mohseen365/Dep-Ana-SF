@@ -325,89 +325,47 @@ export function orderStrategyE_DomainAware(matrix: FeatureDependencyMatrix): str
  * Strategy F: Layer-Aligned Shared-Infrastructure & Hierarchy-Aware Ordering (1D Baseline)
  */
 export function orderStrategyF_SharedHierarchyAware(matrix: FeatureDependencyMatrix): string[] {
-  // Group features by architectural layer
-  const featuresByLayer = new Map<ArchitectureLayer, string[]>();
-  LAYER_ORDER.forEach(l => featuresByLayer.set(l, []));
+  let ordered = [...matrix.featureIds].sort((a, b) => a.localeCompare(b));
 
-  matrix.featureIds.forEach(f => {
-    const layer = matrix.featurePrimaryLayers.get(f) || 'application';
-    featuresByLayer.get(layer)!.push(f);
-  });
-
-  LAYER_ORDER.forEach(l => {
-    featuresByLayer.get(l)!.sort((a, b) => a.localeCompare(b));
-  });
-
-  // Global position map across all features
-  const globalPosMap = new Map<string, number>();
-  let currentPos = 0;
-  LAYER_ORDER.forEach(l => {
-    featuresByLayer.get(l)!.forEach(f => {
-      globalPosMap.set(f, currentPos++);
-    });
-  });
-
-  // Iterative cross-layer barycentric sweeps (8 passes)
-  for (let pass = 0; pass < 8; pass++) {
+  for (let pass = 0; pass < 4; pass++) {
     const isForward = pass % 2 === 0;
-    const layersToSweep = isForward ? LAYER_ORDER : [...LAYER_ORDER].reverse();
+    const posMap = new Map<string, number>();
+    ordered.forEach((f, idx) => posMap.set(f, idx));
 
-    layersToSweep.forEach(layer => {
-      const layerFeatures = featuresByLayer.get(layer)!;
-      if (layerFeatures.length <= 1) return;
+    const barycenters = new Map<string, number>();
 
-      const barycenters = new Map<string, number>();
+    ordered.forEach(f1 => {
+      let weightSum = 0;
+      let posSum = 0;
 
-      layerFeatures.forEach(f1 => {
-        let weightSum = 0;
-        let posSum = 0;
+      matrix.featureIds.forEach(f2 => {
+        if (f1 === f2) return;
+        const w = matrix.combinedWeights.get(f1)?.get(f2) || 0;
+        if (w > 0) {
+          const flow = matrix.directionalFlow.get(f1)?.get(f2) || 0;
+          const dirBias = isForward ? -flow * 0.15 : flow * 0.15;
 
-        matrix.featureIds.forEach(f2 => {
-          if (f1 === f2) return;
-          const w = matrix.combinedWeights.get(f1)?.get(f2) || 0;
-          if (w > 0) {
-            const f2Pos = globalPosMap.get(f2) ?? 0;
-            const flow = matrix.directionalFlow.get(f1)?.get(f2) || 0;
-            const dirBias = isForward ? -flow * 0.05 : flow * 0.05;
+          const l1 = matrix.featurePrimaryLayers.get(f1) || 'application';
+          const l2 = matrix.featurePrimaryLayers.get(f2) || 'application';
+          const crossLayerMultiplier = l1 !== l2 ? 2.0 : 1.0;
 
-            // Give higher weight to cross-layer dependencies
-            const l1 = matrix.featurePrimaryLayers.get(f1) || 'application';
-            const l2 = matrix.featurePrimaryLayers.get(f2) || 'application';
-            const crossLayerMultiplier = l1 !== l2 ? 2.0 : 1.0;
-
-            posSum += (f2Pos + dirBias) * w * crossLayerMultiplier;
-            weightSum += w * crossLayerMultiplier;
-          }
-        });
-
-        barycenters.set(f1, weightSum > 0 ? posSum / weightSum : globalPosMap.get(f1) || 0);
+          posSum += ((posMap.get(f2) ?? 0) + dirBias) * w * crossLayerMultiplier;
+          weightSum += w * crossLayerMultiplier;
+        }
       });
 
-      layerFeatures.sort((a, b) => {
-        const bA = barycenters.get(a) ?? 0;
-        const bB = barycenters.get(b) ?? 0;
-        if (Math.abs(bA - bB) > 1e-6) return bA - bB;
-        // Deterministic tie-breaker
-        return a.localeCompare(b);
-      });
+      barycenters.set(f1, weightSum > 0 ? posSum / weightSum : posMap.get(f1) || 0);
     });
 
-    // Re-assign global positions after layer sorting
-    currentPos = 0;
-    LAYER_ORDER.forEach(l => {
-      featuresByLayer.get(l)!.forEach(f => {
-        globalPosMap.set(f, currentPos++);
-      });
+    ordered.sort((a, b) => {
+      const bA = barycenters.get(a) ?? 0;
+      const bB = barycenters.get(b) ?? 0;
+      if (Math.abs(bA - bB) > 1e-6) return bA - bB;
+      return a.localeCompare(b);
     });
   }
 
-  // Construct final ordered feature list layer by layer
-  const finalOrdered: string[] = [];
-  LAYER_ORDER.forEach(l => {
-    finalOrdered.push(...featuresByLayer.get(l)!);
-  });
-
-  return finalOrdered;
+  return ordered;
 }
 
 /**
@@ -676,7 +634,7 @@ export function determineGlobalFeatureOrder(
     case 'C_WEIGHTED_MEDIAN':
       return orderStrategyC_WeightedMedian(matrix);
     case 'D_BARYCENTRIC_SWEEPS':
-      return orderStrategyD_BarycentricSweeps(matrix);
+      return orderStrategyD_BarycentricSweeps(matrix, 4);
     case 'E_DOMAIN_AWARE':
       return orderStrategyE_DomainAware(matrix);
     case 'F_2D_BAND_AWARE':
