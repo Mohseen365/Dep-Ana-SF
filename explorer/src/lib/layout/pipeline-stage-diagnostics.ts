@@ -286,7 +286,7 @@ export function measurePipelineStageMetrics(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index }
+        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index, allocatedPositions: stage8Positions }
       );
 
       stage8Positions[node.id] = bridgeInfo.candidatePosition;
