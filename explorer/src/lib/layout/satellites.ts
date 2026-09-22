@@ -71,6 +71,32 @@ interface Point {
 }
 
 /**
+ * Helper to check if two 2D line segments strictly intersect in interior points.
+ */
+function segmentsIntersect(p1: Point, p2: Point, q1: Point, q2: Point): boolean {
+  // Ignore segments sharing endpoints
+  if (
+    (p1.x === q1.x && p1.y === q1.y) ||
+    (p1.x === q2.x && p1.y === q2.y) ||
+    (p2.x === q1.x && p2.y === q1.y) ||
+    (p2.x === q2.x && p2.y === q2.y)
+  ) {
+    return false;
+  }
+
+  const cp1 = (p2.x - p1.x) * (q1.y - p1.y) - (p2.y - p1.y) * (q1.x - p1.x);
+  const cp2 = (p2.x - p1.x) * (q2.y - p1.y) - (p2.y - p1.y) * (q2.x - p1.x);
+  const cp3 = (q2.x - q1.x) * (p1.y - q1.y) - (q2.y - q1.y) * (p1.x - q1.x);
+  const cp4 = (q2.x - q1.x) * (p2.y - q1.y) - (q2.y - q1.y) * (p2.x - q1.x);
+
+  const EPS = 1e-9;
+  const straddle1 = (cp1 > EPS && cp2 < -EPS) || (cp1 < -EPS && cp2 > EPS);
+  const straddle2 = (cp3 > EPS && cp4 < -EPS) || (cp3 < -EPS && cp4 > EPS);
+
+  return straddle1 && straddle2;
+}
+
+/**
  * Helper to check if a candidate point collides with any already occupied positions.
  */
 function isSlotOccupied(
@@ -105,7 +131,9 @@ function generateSatelliteSlots(
   verticalGap: number,
   maxDistance: number,
   bias: 'field' | 'test' | 'neutral',
-  targetVector?: Point
+  targetVector?: Point,
+  primarySegments?: Array<{ p1: Point; p2: Point }>,
+  placedSatelliteSegments?: Array<{ p1: Point; p2: Point }>
 ): Point[] {
   if (count <= 0) return [];
 
@@ -132,11 +160,6 @@ function generateSatelliteSlots(
       if (c === 0 && r === 0) continue; // Skip anchor slot itself
 
       // Directional constraints
-      if (bias === 'field' && r <= 0) {
-        // Fields must sit strictly below parent object (r > 0)
-        continue;
-      }
-
       if (bias === 'test' && c === 0) {
         // Tests must sit to the side of target (c != 0)
         continue;
@@ -154,20 +177,24 @@ function generateSatelliteSlots(
       // Directional preference scoring
       let directionalScore = 1.0;
       if (bias === 'test') {
-        if (c < 0) directionalScore = 1.4; // Preference for right side (c > 0) over left (c < 0)
+        if (c < 0) directionalScore = 1.2; // Mild preference for right side (c > 0) over left (c < 0)
       }
 
       let aspectPenalty = 0;
       if (bias === 'field') {
-        // Fields stack in narrow vertical columns (max 2 columns wide) to prevent horizontal collisions
-        if (Math.abs(c) > 1) {
-          aspectPenalty = Math.abs(c) * dx * 4.0;
+        if (r <= 0) {
+          // Soft penalty for sitting above parent object
+          aspectPenalty += 400.0;
+        }
+        // Fields stack in narrow vertical columns (max 2-3 columns wide)
+        if (Math.abs(c) > 2) {
+          aspectPenalty += Math.abs(c) * dx * 2.0;
         } else {
-          aspectPenalty = (r - 1) * dy * 0.2;
+          aspectPenalty += (Math.abs(r) - 1) * dy * 0.2;
         }
       } else if (bias === 'test') {
         if (Math.abs(r) > 3) {
-          aspectPenalty = (Math.abs(r) - 3) * dy * 1.5;
+          aspectPenalty += (Math.abs(r) - 3) * dy * 1.5;
         }
       }
 
@@ -182,8 +209,30 @@ function generateSatelliteSlots(
         }
       }
 
+      // Crossing penalties
+      let primaryCrossings = 0;
+      if (primarySegments && primarySegments.length > 0) {
+        const candPoint = { x, y };
+        for (let i = 0; i < primarySegments.length; i++) {
+          if (segmentsIntersect(anchor, candPoint, primarySegments[i].p1, primarySegments[i].p2)) {
+            primaryCrossings++;
+          }
+        }
+      }
+
+      let satelliteCrossings = 0;
+      if (placedSatelliteSegments && placedSatelliteSegments.length > 0) {
+        const candPoint = { x, y };
+        for (let i = 0; i < placedSatelliteSegments.length; i++) {
+          if (segmentsIntersect(anchor, candPoint, placedSatelliteSegments[i].p1, placedSatelliteSegments[i].p2)) {
+            satelliteCrossings++;
+          }
+        }
+      }
+
+      const crossingPenalty = primaryCrossings * 2000.0 + satelliteCrossings * 800.0;
       const tetherPenalty = dist > effectiveMaxDist ? 10.0 * (dist - effectiveMaxDist) : 0;
-      const effectiveScore = dist * directionalScore + aspectPenalty + vectorPenalty + tetherPenalty;
+      const effectiveScore = dist * directionalScore + aspectPenalty + vectorPenalty + crossingPenalty + tetherPenalty;
 
       candidateSlots.push({ x, y, dist, effectiveScore, row: r, col: c });
     }
@@ -209,7 +258,6 @@ function generateSatelliteSlots(
     while (selectedSlots.length < count && r <= maxSearchRadius + 20) {
       for (let c = -maxSearchRadius - 10; c <= maxSearchRadius + 10; c++) {
         if (selectedSlots.length >= count) break;
-        if (bias === 'field' && r <= 0) continue;
         if (bias === 'test' && c === 0) continue;
         const x = anchor.x + c * dx;
         const y = anchor.y + r * dy;
@@ -264,6 +312,22 @@ export function placeSatellites(
 
   // Occupied positions list for collision-free slot generation
   const occupiedList: Point[] = Object.values(primaryPositions).map(p => ({ x: p.x, y: p.y }));
+
+  // Pre-build primary edge segments for fast crossing evaluation
+  const primarySegments: Array<{ p1: Point; p2: Point }> = [];
+  for (let i = 0; i < safeEdges.length; i++) {
+    const e = safeEdges[i];
+    if (primaryNodeIds.has(e.source) && primaryNodeIds.has(e.target)) {
+      const p1 = primaryPositions[e.source];
+      const p2 = primaryPositions[e.target];
+      if (p1 && p2) {
+        primarySegments.push({ p1, p2 });
+      }
+    }
+  }
+
+  // Track satellite segments as they get placed
+  const placedSatelliteSegments: Array<{ p1: Point; p2: Point }> = [];
 
   // Identify node subsets from analysis
   const allAnalyses = analysis.nodeList;
@@ -513,7 +577,9 @@ export function placeSatellites(
       verticalGap,
       maxSatelliteDistance,
       'field',
-      targetVector
+      targetVector,
+      primarySegments,
+      placedSatelliteSegments
     );
 
     fields.forEach((fieldItem, idx) => {
@@ -525,6 +591,7 @@ export function placeSatellites(
       positions[fieldItem.nodeId] = { x: slot.x, y: slot.y };
       satellitePositions[fieldItem.nodeId] = { x: slot.x, y: slot.y };
       occupiedList.push({ x: slot.x, y: slot.y });
+      placedSatelliteSegments.push({ p1: parentPos, p2: { x: slot.x, y: slot.y } });
       placedFieldsCount++;
     });
   });
@@ -620,7 +687,9 @@ export function placeSatellites(
       verticalGap,
       maxSatelliteDistance,
       'test',
-      targetVector
+      targetVector,
+      primarySegments,
+      placedSatelliteSegments
     );
 
     tests.forEach((testItem, idx) => {
@@ -632,6 +701,7 @@ export function placeSatellites(
       positions[testItem.nodeId] = { x: slot.x, y: slot.y };
       satellitePositions[testItem.nodeId] = { x: slot.x, y: slot.y };
       occupiedList.push({ x: slot.x, y: slot.y });
+      placedSatelliteSegments.push({ p1: targetPos, p2: { x: slot.x, y: slot.y } });
       placedTestsCount++;
     });
   });

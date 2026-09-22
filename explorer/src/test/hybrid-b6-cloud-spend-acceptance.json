@@ -1,27 +1,27 @@
 {
-  "timestamp": "2026-09-22T08:30:31.279Z",
+  "timestamp": "2026-09-22T09:25:16.616Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
     "primaryCrossings": 9239,
-    "totalCrossings": 111094,
-    "averageEdgeLength": 1549.576299823606,
-    "maxEdgeLength": 5795.925520570464,
-    "nodeOverlapCount": 16,
+    "totalCrossings": 99089,
+    "averageEdgeLength": 1560.2703402023037,
+    "maxEdgeLength": 6149.406475425088,
+    "nodeOverlapCount": 15,
     "primaryOverlapCount": 14,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9456736202330942
+    "domainCohesionScore": 0.9437376749362902
   },
   "pathB_featureEnabled": {
     "primaryCrossings": 11132,
-    "totalCrossings": 112418,
-    "averageEdgeLength": 1483.3744760234467,
-    "maxEdgeLength": 3470.3890271841283,
+    "totalCrossings": 109909,
+    "averageEdgeLength": 1610.6625989241222,
+    "maxEdgeLength": 4000.799920015996,
     "nodeOverlapCount": 0,
     "primaryOverlapCount": 0,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9085484186645492
+    "domainCohesionScore": 0.9113814865553269
   },
   "targetThresholds": {
     "primaryCrossings": 8500,
