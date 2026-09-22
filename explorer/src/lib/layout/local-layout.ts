@@ -23,6 +23,8 @@ export interface LocalLayoutOptions {
   domainSpacing?: number;
   /** Dynamic base Y offsets per architectural layer calculated by Wave 2B global layout */
   layerYMap?: Record<ArchitectureLayer, number>;
+  /** Dynamic feature-specific layer Y map for compact feature-aware layout */
+  featureLayerYMap?: Record<string, Record<ArchitectureLayer, number>> | Map<string, Record<ArchitectureLayer, number>>;
 }
 
 export interface LocalBucketLayout {
@@ -342,7 +344,16 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       }
 
       const domainXCenter = domainXCenterMap.get(domain) ?? (baseX + domainSpacing / 2);
-      const layerBaseY = (options.layerYMap && options.layerYMap[layer]) ?? LAYER_Y_BASE[layer];
+
+      const featureYMap = options.featureLayerYMap
+        ? (options.featureLayerYMap instanceof Map
+            ? options.featureLayerYMap.get(domain)
+            : options.featureLayerYMap[domain])
+        : (options.layerYMap as any)?.featureLayerYMap?.[domain];
+
+      const layerBaseY = (featureYMap && featureYMap[layer] !== undefined)
+        ? featureYMap[layer]
+        : ((options.layerYMap && options.layerYMap[layer]) ?? LAYER_Y_BASE[layer]);
 
       // Relationship-Aware Local Tier Assignment
       // Group nodes into local tiers (rows):
@@ -591,12 +602,16 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
                 if (primaryNodeSet.has(neighborId) && neighborId !== id) {
                   const neighborDomain = domainMap.get(neighborId) || 'Shared';
                   let neighborX: number;
+                  let w = getRelationshipWeight(e.relationshipType);
+
                   if (neighborDomain === domain) {
                     neighborX = currentTierXMap.get(neighborId) ?? domainXCenter;
+                    w *= 10.0;
                   } else {
                     neighborX = domainXCenterMap.get(neighborDomain) ?? domainXCenter;
+                    w *= 0.1;
                   }
-                  const w = getRelationshipWeight(e.relationshipType);
+
                   sumX += neighborX * w;
                   sumW += w;
                 }
@@ -637,7 +652,22 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
 
         const colCount = rowNodeIds.length;
         const rowWidth = colCount * nodeWidth + (colCount - 1) * horizontalGap;
-        const rowStartX = domainXCenter - rowWidth / 2 + nodeWidth / 2;
+        let rowStartX = domainXCenter - rowWidth / 2 + nodeWidth / 2;
+
+        const featureRegion = domainRegionsMap.get(domain);
+        if (featureRegion) {
+          const minXAllowed = featureRegion.xMin + nodeWidth / 2;
+          const maxXAllowed = featureRegion.xMax - nodeWidth / 2;
+          const rowEndX = rowStartX + (colCount - 1) * (nodeWidth + horizontalGap);
+
+          if (rowEndX > maxXAllowed) {
+            rowStartX -= (rowEndX - maxXAllowed);
+          }
+          if (rowStartX < minXAllowed) {
+            rowStartX = minXAllowed;
+          }
+        }
+
         const rowY = layerBaseY + rowIdx * (nodeHeight + verticalGap);
 
         rowNodeIds.forEach((nodeId, colIdx) => {
