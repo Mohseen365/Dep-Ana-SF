@@ -1,32 +1,32 @@
 {
-  "timestamp": "2026-09-22T09:25:30.803Z",
+  "timestamp": "2026-09-22T09:07:57.865Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
     "primaryCrossings": 9239,
-    "totalCrossings": 99089,
-    "averageEdgeLength": 1560.2703402023037,
-    "maxEdgeLength": 6149.406475425088,
+    "totalCrossings": 111094,
+    "averageEdgeLength": 1549.576299823606,
+    "maxEdgeLength": 5795.925520570464,
     "primaryOverlapCount": 14,
-    "satelliteOverlapCount": 1,
+    "satelliteOverlapCount": 2,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9437376749362902
+    "domainCohesionScore": 0.9456736202330942
   },
   "pathB_currentHybrid": {
     "primaryCrossings": 11132,
-    "primarySatelliteCrossings": 48103,
-    "satelliteSatelliteCrossings": 47186,
-    "totalCrossings": 109909,
-    "averageEdgeLength": 1610.6625989241222,
-    "maxEdgeLength": 4000.799920015996,
+    "primarySatelliteCrossings": 51217,
+    "satelliteSatelliteCrossings": 46581,
+    "totalCrossings": 112418,
+    "averageEdgeLength": 1483.3744760234467,
+    "maxEdgeLength": 3470.3890271841283,
     "primaryOverlapCount": 0,
     "satelliteOverlapCount": 0,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9113814865553269,
-    "medianIntraFeatureDistance": 1180.9952349639948,
-    "medianInterFeatureDistance": 188.67962264113208,
-    "intraToInterRatio": 6.259262226797237
+    "domainCohesionScore": 0.9085484186645492,
+    "medianIntraFeatureDistance": 1180.4912467321778,
+    "medianInterFeatureDistance": 256.12496949731394,
+    "intraToInterRatio": 4.609043971968371
   },
   "mandatoryHardGates": {
     "layerViolationsZero": true,
