@@ -375,10 +375,13 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       orderedNodeIds.forEach((id, idx) => initialRankMap.set(id, idx));
 
       // Relationship-Aware Intra-Bucket Barycenter Alignment Across Tiers
+      const hasBucketOrder = Boolean(wave2bBucket && wave2bBucket.length > 0);
+
       // Step A: Order Tier 0 preserving bucketOrder rank as primary signal with barycentric fine-tuning
       tier0.sort((a, b) => {
         const rankA = initialRankMap.get(a) ?? 0;
         const rankB = initialRankMap.get(b) ?? 0;
+        if (hasBucketOrder && rankA !== rankB) return rankA - rankB;
 
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
@@ -406,6 +409,7 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       tier1.sort((a, b) => {
         const rankA = initialRankMap.get(a) ?? 0;
         const rankB = initialRankMap.get(b) ?? 0;
+        if (hasBucketOrder && rankA !== rankB) return rankA - rankB;
 
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
@@ -447,6 +451,7 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       tier2.sort((a, b) => {
         const rankA = initialRankMap.get(a) ?? 0;
         const rankB = initialRankMap.get(b) ?? 0;
+        if (hasBucketOrder && rankA !== rankB) return rankA - rankB;
 
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
