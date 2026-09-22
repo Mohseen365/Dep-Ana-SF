@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-22T09:56:20.687Z",
+  "timestamp": "2026-09-22T10:55:28.721Z",
   "fixtureSha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
@@ -16,19 +16,19 @@
       "domainCohesion": 0.9437376749362902
     },
     "candidateB_currentHybrid": {
-      "primaryCrossings": 11181,
-      "primarySatelliteCrossings": 47941,
-      "satelliteSatelliteCrossings": 46105,
-      "totalCrossings": 108716,
-      "averageEdgeLength": 1573.8439543694024,
+      "primaryCrossings": 11232,
+      "primarySatelliteCrossings": 48105,
+      "satelliteSatelliteCrossings": 45405,
+      "totalCrossings": 108253,
+      "averageEdgeLength": 1573.8104655900827,
       "maxEdgeLength": 3922.448215082004,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0,
       "layerViolations": 0,
-      "domainCohesion": 0.9131834743128157,
-      "medianIntraDistance": 1183.568246568177,
-      "medianInterDistance": 188.67962264113208,
-      "intraToInterRatio": 6.2728991610255616
+      "domainCohesion": 0.9128206792808933,
+      "medianIntraDistance": 1178.5661150651094,
+      "medianInterDistance": 256.12496949731394,
+      "intraToInterRatio": 4.601527595603947
     }
   },
   "stageInstrumentation": [
@@ -63,7 +63,7 @@
       "totalCrossings": 15555,
       "primarySatelliteCrossings": 0,
       "satelliteSatelliteCrossings": 0,
-      "cohesion": 0.8285770292722043,
+      "cohesion": 0.8287487196349368,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -71,11 +71,11 @@
     {
       "stage": "Stage 8",
       "positionedNodeCount": 156,
-      "primaryCrossings": 11181,
-      "totalCrossings": 14670,
+      "primaryCrossings": 11232,
+      "totalCrossings": 14743,
       "primarySatelliteCrossings": 0,
       "satelliteSatelliteCrossings": 0,
-      "cohesion": 0.8553828117432073,
+      "cohesion": 0.8557712644935465,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -83,11 +83,11 @@
     {
       "stage": "Stage 9",
       "positionedNodeCount": 240,
-      "primaryCrossings": 11181,
-      "totalCrossings": 108716,
-      "primarySatelliteCrossings": 47941,
-      "satelliteSatelliteCrossings": 46105,
-      "cohesion": 0.9063214827759203,
+      "primaryCrossings": 11232,
+      "totalCrossings": 108253,
+      "primarySatelliteCrossings": 48105,
+      "satelliteSatelliteCrossings": 45405,
+      "cohesion": 0.9059347837811635,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -95,11 +95,11 @@
     {
       "stage": "Stage 10",
       "positionedNodeCount": 240,
-      "primaryCrossings": 11181,
-      "totalCrossings": 108716,
-      "primarySatelliteCrossings": 47941,
-      "satelliteSatelliteCrossings": 46105,
-      "cohesion": 0.9131834743128157,
+      "primaryCrossings": 11232,
+      "totalCrossings": 108253,
+      "primarySatelliteCrossings": 48105,
+      "satelliteSatelliteCrossings": 45405,
+      "cohesion": 0.9128206792808933,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -107,11 +107,11 @@
     {
       "stage": "Stage 11",
       "positionedNodeCount": 240,
-      "primaryCrossings": 11181,
-      "totalCrossings": 108716,
-      "primarySatelliteCrossings": 47941,
-      "satelliteSatelliteCrossings": 46105,
-      "cohesion": 0.9131834743128157,
+      "primaryCrossings": 11232,
+      "totalCrossings": 108253,
+      "primarySatelliteCrossings": 48105,
+      "satelliteSatelliteCrossings": 45405,
+      "cohesion": 0.9128206792808933,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -119,11 +119,11 @@
     {
       "stage": "Stage 12",
       "positionedNodeCount": 240,
-      "primaryCrossings": 11181,
-      "totalCrossings": 108716,
-      "primarySatelliteCrossings": 47941,
-      "satelliteSatelliteCrossings": 46105,
-      "cohesion": 0.9131834743128157,
+      "primaryCrossings": 11232,
+      "totalCrossings": 108253,
+      "primarySatelliteCrossings": 48105,
+      "satelliteSatelliteCrossings": 45405,
+      "cohesion": 0.9128206792808933,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -139,13 +139,13 @@
       "unauthorizedRelayoutsZero": true
     },
     "primaryGate": {
-      "c_pp": 11181,
+      "c_pp": 11232,
       "target": 9335,
       "passed": false
     },
     "localityGate": {
-      "medianIntraDistance": 1183.568246568177,
-      "medianInterDistance": 188.67962264113208,
+      "medianIntraDistance": 1178.5661150651094,
+      "medianInterDistance": 256.12496949731394,
       "passed": false
     },
     "preferredTargets": {
