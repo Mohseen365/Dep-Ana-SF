@@ -85,7 +85,7 @@
       "width": 8120.8,
       "height": 1700,
       "aspectRatio": 4.776941176470588,
-      "overlapCount": 20,
+      "overlapCount": 23,
       "primaryPrimaryOverlap": 10,
       "domainOverlapCount": 0,
       "componentOverlapCount": 0
@@ -645,9 +645,9 @@
       "bridgeCount": 3,
       "satelliteCount": 1,
       "primaryBbox": "[3601.6, 3881.6, 140, 560]",
-      "fullDomainBbox": "[3601.6, 3999.2, 140, 1260]",
-      "width": 397.5999999999999,
-      "height": 1120
+      "fullDomainBbox": "[3601.6, 3881.6, 140, 856.9893811536306]",
+      "width": 280,
+      "height": 716.9893811536306
     },
     {
       "domain": "UserContactMapping",
@@ -875,9 +875,9 @@
       "bridgeCount": 3,
       "satelliteCount": 7,
       "primaryBbox": "[3601.6, 4041.6, 240, 760]",
-      "fullDomainBbox": "[3601.6, 5401.6, 240, 973.7719907441033]",
+      "fullDomainBbox": "[3601.6, 5401.6, 240, 955.659650617758]",
       "width": 1800.0000000000005,
-      "height": 733.7719907441033
+      "height": 715.659650617758
     },
     {
       "domain": "Spend_Import_Batch",
@@ -3880,7 +3880,7 @@
       "max": "1360.1"
     },
     "primary->satellite": {
-      "median": "1472.0",
+      "median": "1461.6",
       "P75": "2379.8",
       "P90": "3243.7",
       "P95": "3769.0",
@@ -4211,7 +4211,7 @@
     "satDistStats": {
       "median": "300.0",
       "P75": "438.6",
-      "P90": "653.0",
+      "P90": "600.0",
       "P95": "960.0",
       "P99": "1977.6",
       "max": "1977.6"
@@ -4294,15 +4294,15 @@
     },
     {
       "node1": "ApexClass:create_usersTest",
-      "node2": "Field:Account.Domain__c",
+      "node2": "ApexClass:SelectorsTest",
       "category": "satellite-satellite",
       "p1": {
-        "x": 3926.9302144571434,
-        "y": 829.9995617711936
+        "x": 3929.1581027004077,
+        "y": 825.6932632055033
       },
       "p2": {
-        "x": 3821.6,
-        "y": 830
+        "x": 3821.5946633667904,
+        "y": 826.9893811536306
       }
     },
     {
@@ -4349,12 +4349,12 @@
       "node2": "Field:Account.Tax_ID__c",
       "category": "satellite-satellite",
       "p1": {
-        "x": 3821.5993022290245,
-        "y": 943.7719907441033
+        "x": 3847.246247122629,
+        "y": 925.659650617758
       },
       "p2": {
-        "x": 3799.4589700643305,
-        "y": 956.448689943865
+        "x": 3821.4344111207647,
+        "y": 943.8758771952907
       }
     },
     {
@@ -4462,6 +4462,45 @@
       }
     },
     {
+      "node1": "Field:Account.Account_Status__c",
+      "node2": "Field:Account.Domain__c",
+      "category": "satellite-satellite",
+      "p1": {
+        "x": 3661.6,
+        "y": 990
+      },
+      "p2": {
+        "x": 3661.59333637456,
+        "y": 989.9999999259935
+      }
+    },
+    {
+      "node1": "Field:Account.Account_Status__c",
+      "node2": "Field:Account.Organization_Hierarchy_Root__c",
+      "category": "satellite-satellite",
+      "p1": {
+        "x": 3661.6,
+        "y": 990
+      },
+      "p2": {
+        "x": 3661.6,
+        "y": 990
+      }
+    },
+    {
+      "node1": "Field:Account.Domain__c",
+      "node2": "Field:Account.Organization_Hierarchy_Root__c",
+      "category": "satellite-satellite",
+      "p1": {
+        "x": 3661.59333637456,
+        "y": 989.9999999259935
+      },
+      "p2": {
+        "x": 3661.6,
+        "y": 990
+      }
+    },
+    {
       "node1": "Field:Cloud_Spend__c.Amount__c",
       "node2": "Field:Cloud_Spend__c.External_Dedupe_Key__c",
       "category": "satellite-satellite",
@@ -4492,18 +4531,18 @@
     "primaryPrimaryCrossings": 9804,
     "primaryBridgeCrossings": 2533,
     "bridgeBridgeCrossings": 218,
-    "primarySatelliteCrossings": 44831,
-    "satelliteSatelliteCrossings": 38504,
-    "totalGeometricCrossings": 95890
+    "primarySatelliteCrossings": 45945,
+    "satelliteSatelliteCrossings": 40243,
+    "totalGeometricCrossings": 98743
   },
   "determinism": {
     "repeatDelta": "0.00000",
     "maxShuffleDelta": "0.00000"
   },
   "performance": {
-    "totalMs": "2003.39",
-    "analysisMs": "53.34",
-    "layoutMs": "1950.06"
+    "totalMs": "958.82",
+    "analysisMs": "16.55",
+    "layoutMs": "942.27"
   },
   "regressionMatrix": [
     {
@@ -4570,12 +4609,12 @@
       "fixtureId": "test-heavy",
       "nodesCount": 14,
       "edgesCount": 13,
-      "width": 760,
-      "height": 460,
-      "aspectRatio": "1.65",
+      "width": 1400,
+      "height": 260,
+      "aspectRatio": "5.38",
       "overlaps": 0,
       "crossings": 0,
-      "maxEdge": "377.4",
+      "maxEdge": "640.0",
       "determinismDelta": 0
     },
     {
@@ -4658,7 +4697,7 @@
       "height": 1320,
       "aspectRatio": "9.06",
       "overlaps": 0,
-      "crossings": 307,
+      "crossings": 306,
       "maxEdge": "4891.9",
       "determinismDelta": 0
     }

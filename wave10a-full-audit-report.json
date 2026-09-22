@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "40.42",
-    "layoutTimeMs": "2158.91",
-    "evaluationTimeMs": "327.49",
-    "totalTimeMs": "2526.83"
+    "analysisTimeMs": "16.57",
+    "layoutTimeMs": "773.29",
+    "evaluationTimeMs": "157.61",
+    "totalTimeMs": "947.47"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -720,10 +720,10 @@
         "secondaryNodes": 4,
         "layers": "application,domain",
         "components": "0",
-        "bbox": "[7090, 140, 7488, 1260]",
-        "width": 397.60000000000036,
-        "height": 1120,
-        "center": "(7289, 700)",
+        "bbox": "[7090, 140, 7370, 857]",
+        "width": 280,
+        "height": 716.9893811536308,
+        "center": "(7230, 498)",
         "internalEdges": 4,
         "incomingEdges": 5,
         "outgoingEdges": 67
@@ -1065,10 +1065,10 @@
         "secondaryNodes": 10,
         "layers": "application,domain,schema",
         "components": "0",
-        "bbox": "[7090, 240, 8890, 974]",
+        "bbox": "[7090, 240, 8890, 956]",
         "width": 1800,
-        "height": 733.7719907441033,
-        "center": "(7990, 607)",
+        "height": 715.6596506177576,
+        "center": "(7990, 598)",
         "internalEdges": 21,
         "incomingEdges": 26,
         "outgoingEdges": 158
@@ -2565,12 +2565,12 @@
     }
   },
   "edgeCrossings": {
-    "totalCrossings": 99815,
+    "totalCrossings": 102561,
     "intraDomainCrossings": 3,
-    "interDomainCrossings": 99812,
-    "interLayerCrossings": 99234,
-    "bridgeCrossings": 99815,
-    "satelliteCrossings": 85814,
+    "interDomainCrossings": 102558,
+    "interLayerCrossings": 101980,
+    "bridgeCrossings": 102561,
+    "satelliteCrossings": 88560,
     "topDomainPairs": [
       [
         "Account <-> Shared <-> Shared <-> User",
@@ -2615,8 +2615,8 @@
     ]
   },
   "longEdges": {
-    "median": "1298.8",
-    "p90": "320.7",
+    "median": "1283.9",
+    "p90": "320.6",
     "p95": "188.7",
     "p99": "141.4",
     "max": "5562.9",
