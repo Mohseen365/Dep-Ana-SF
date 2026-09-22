@@ -1,32 +1,32 @@
 {
-  "timestamp": "2026-09-22T10:55:38.714Z",
+  "timestamp": "2026-09-22T11:08:56.041Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
-    "primaryCrossings": 9239,
-    "totalCrossings": 99089,
-    "averageEdgeLength": 1560.2703402023037,
-    "maxEdgeLength": 6149.406475425088,
-    "primaryOverlapCount": 14,
-    "satelliteOverlapCount": 1,
+    "primaryCrossings": 9562,
+    "totalCrossings": 104286,
+    "averageEdgeLength": 1474.5112914864455,
+    "maxEdgeLength": 6727.39722626812,
+    "primaryOverlapCount": 11,
+    "satelliteOverlapCount": 2,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9437376749362902
+    "domainCohesionScore": 0.9558487189082453
   },
   "pathB_currentHybrid": {
-    "primaryCrossings": 11232,
-    "primarySatelliteCrossings": 48105,
-    "satelliteSatelliteCrossings": 45405,
-    "totalCrossings": 108253,
-    "averageEdgeLength": 1573.8104655900827,
-    "maxEdgeLength": 3922.448215082004,
+    "primaryCrossings": 8704,
+    "primarySatelliteCrossings": 41777,
+    "satelliteSatelliteCrossings": 42182,
+    "totalCrossings": 95487,
+    "averageEdgeLength": 2234.037441989073,
+    "maxEdgeLength": 5780.607268153858,
     "primaryOverlapCount": 0,
     "satelliteOverlapCount": 0,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9128206792808933,
-    "medianIntraFeatureDistance": 1178.5661150651094,
-    "medianInterFeatureDistance": 256.12496949731394,
-    "intraToInterRatio": 4.601527595603947
+    "domainCohesionScore": 0.8830388782524944,
+    "medianIntraFeatureDistance": 1101.6812171838105,
+    "medianInterFeatureDistance": 1020,
+    "intraToInterRatio": 1.0800796246900104
   },
   "mandatoryHardGates": {
     "layerViolationsZero": true,
@@ -37,7 +37,7 @@
   },
   "qualityGates": {
     "localityGatePassed": false,
-    "primaryQualityGatePassed": false,
+    "primaryQualityGatePassed": true,
     "prefPrimaryCrossingsPassed": false,
     "prefTotalCrossingsPassed": false,
     "prefCohesionPassed": false
