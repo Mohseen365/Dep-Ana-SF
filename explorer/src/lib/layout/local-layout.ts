@@ -588,7 +588,7 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         });
       });
 
-      for (let sweep = 0; sweep < 2; sweep++) {
+      for (let sweep = 0; sweep < 6; sweep++) {
         localRows.forEach((rowNodeIds) => {
           if (rowNodeIds.length <= 1) return;
 
@@ -606,10 +606,10 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
 
                   if (neighborDomain === domain) {
                     neighborX = currentTierXMap.get(neighborId) ?? domainXCenter;
-                    w *= 10.0;
+                    w *= 2.0;
                   } else {
-                    neighborX = domainXCenterMap.get(neighborDomain) ?? domainXCenter;
-                    w *= 0.1;
+                    neighborX = primaryNodePositions[neighborId]?.x ?? domainXCenterMap.get(neighborDomain) ?? domainXCenter;
+                    w *= 1.8;
                   }
 
                   sumX += neighborX * w;

@@ -153,7 +153,6 @@ export function measurePipelineStageMetrics(
     analysis,
     layerMap,
     domainMap,
-    featureRoles,
   });
 
   const featureMap = new Map<string, string>();

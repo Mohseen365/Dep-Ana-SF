@@ -447,15 +447,14 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
       const allLayerPositions = new Map<string, number>();
       for (let lIdx = 0; lIdx < LAYERS_IN_ORDER.length; lIdx++) {
         const l = LAYERS_IN_ORDER[lIdx];
-        let globalLayerIdx = 0;
         for (let dIdx = 0; dIdx < domainOrder.length; dIdx++) {
           const d = domainOrder[dIdx];
           const key = `${l}:${d}`;
           const ids = bucketOrder.get(key);
           if (ids) {
             const primaryIdsInBucket = ids.filter(id => primaryNodeSet.has(id));
-            primaryIdsInBucket.forEach(id => {
-              allLayerPositions.set(id, globalLayerIdx++);
+            primaryIdsInBucket.forEach((id, intraIdx) => {
+              allLayerPositions.set(id, dIdx * 500 + intraIdx * 120);
             });
           }
         }
