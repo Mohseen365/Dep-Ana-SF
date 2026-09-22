@@ -325,10 +325,10 @@
       "primaryCount": 3,
       "bridgeCount": 2,
       "satelliteCount": 1,
-      "primaryBbox": "[2780, 4839.2, 160, 900]",
-      "fullDomainBbox": "[2780, 4880, 160, 900]",
+      "primaryBbox": "[2780, 4839.2, 160, 880]",
+      "fullDomainBbox": "[2780, 4880, 160, 880]",
       "width": 2100,
-      "height": 740
+      "height": 720
     },
     {
       "domain": "AdminBudgets",
@@ -1635,12 +1635,12 @@
     {
       "nodeId": "External:Object:Account",
       "layer": "schema",
-      "y": 1050
+      "y": 950
     },
     {
       "nodeId": "External:Object:admin",
       "layer": "schema",
-      "y": 870
+      "y": 850
     },
     {
       "nodeId": "External:Object:Contact",
@@ -1675,7 +1675,7 @@
     {
       "nodeId": "External:Object:PermissionSetGroup",
       "layer": "schema",
-      "y": 970
+      "y": 1050
     },
     {
       "nodeId": "External:Object:Profile",
@@ -4558,18 +4558,18 @@
     "primaryPrimaryCrossings": 9037,
     "primaryBridgeCrossings": 2626,
     "bridgeBridgeCrossings": 212,
-    "primarySatelliteCrossings": 49094,
-    "satelliteSatelliteCrossings": 46592,
-    "totalGeometricCrossings": 107561
+    "primarySatelliteCrossings": 49129,
+    "satelliteSatelliteCrossings": 46632,
+    "totalGeometricCrossings": 107636
   },
   "determinism": {
     "repeatDelta": "0.00000",
     "maxShuffleDelta": "0.00000"
   },
   "performance": {
-    "totalMs": "748.50",
-    "analysisMs": "19.33",
-    "layoutMs": "729.17"
+    "totalMs": "584.04",
+    "analysisMs": "19.67",
+    "layoutMs": "564.37"
   },
   "regressionMatrix": [
     {

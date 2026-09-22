@@ -4,12 +4,12 @@
     "nodeCount": 240,
     "edgeCount": 1024,
     "domainCount": 106,
-    "timestamp": "2026-09-21T19:39:49.722Z"
+    "timestamp": "2026-09-21T19:52:37.321Z"
   },
   "performanceTimingsMs": {
-    "analysis": "18.71",
-    "layout": "703.95",
-    "total": "722.66"
+    "analysis": "15.46",
+    "layout": "670.90",
+    "total": "686.35"
   },
   "pipelineStagesSnapshots": [
     {
@@ -401,18 +401,18 @@
     "P95": "3745.9",
     "P99": "4492.9",
     "max": "5467.3",
-    "avgIntraDomain": "653.0",
-    "avgInterDomain": "1652.1",
-    "avgInterLayer": "1569.7",
-    "avgBridgeEdge": "1514.5",
-    "avgSatelliteEdge": "1666.2"
+    "avgIntraDomain": "652.8",
+    "avgInterDomain": "1652.5",
+    "avgInterLayer": "1570.0",
+    "avgBridgeEdge": "1514.8",
+    "avgSatelliteEdge": "1666.7"
   },
   "crossingsBreakdown": {
-    "total": 100491,
+    "total": 100520,
     "primaryPrimaryCrossings": 0,
     "primaryBridgeCrossings": 0,
     "bridgeBridgeCrossings": 12944,
-    "satellitePrimaryCrossings": 49386,
+    "satellitePrimaryCrossings": 49415,
     "satelliteSatelliteCrossings": 41803
   },
   "bridgePlacement": {
