@@ -1,32 +1,32 @@
 {
-  "timestamp": "2026-09-22T09:07:57.865Z",
+  "timestamp": "2026-09-22T11:08:56.041Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
-    "primaryCrossings": 9239,
-    "totalCrossings": 111094,
-    "averageEdgeLength": 1549.576299823606,
-    "maxEdgeLength": 5795.925520570464,
-    "primaryOverlapCount": 14,
+    "primaryCrossings": 9562,
+    "totalCrossings": 104286,
+    "averageEdgeLength": 1474.5112914864455,
+    "maxEdgeLength": 6727.39722626812,
+    "primaryOverlapCount": 11,
     "satelliteOverlapCount": 2,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9456736202330942
+    "domainCohesionScore": 0.9558487189082453
   },
   "pathB_currentHybrid": {
-    "primaryCrossings": 11132,
-    "primarySatelliteCrossings": 51217,
-    "satelliteSatelliteCrossings": 46581,
-    "totalCrossings": 112418,
-    "averageEdgeLength": 1483.3744760234467,
-    "maxEdgeLength": 3470.3890271841283,
+    "primaryCrossings": 8704,
+    "primarySatelliteCrossings": 41777,
+    "satelliteSatelliteCrossings": 42182,
+    "totalCrossings": 95487,
+    "averageEdgeLength": 2234.037441989073,
+    "maxEdgeLength": 5780.607268153858,
     "primaryOverlapCount": 0,
     "satelliteOverlapCount": 0,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9085484186645492,
-    "medianIntraFeatureDistance": 1180.4912467321778,
-    "medianInterFeatureDistance": 256.12496949731394,
-    "intraToInterRatio": 4.609043971968371
+    "domainCohesionScore": 0.8830388782524944,
+    "medianIntraFeatureDistance": 1101.6812171838105,
+    "medianInterFeatureDistance": 1020,
+    "intraToInterRatio": 1.0800796246900104
   },
   "mandatoryHardGates": {
     "layerViolationsZero": true,
@@ -37,7 +37,7 @@
   },
   "qualityGates": {
     "localityGatePassed": false,
-    "primaryQualityGatePassed": false,
+    "primaryQualityGatePassed": true,
     "prefPrimaryCrossingsPassed": false,
     "prefTotalCrossingsPassed": false,
     "prefCohesionPassed": false

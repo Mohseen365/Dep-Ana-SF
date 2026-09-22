@@ -101,6 +101,8 @@ export interface GlobalLayoutOptions {
   orderedDomains?: string[];
   /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
   index?: LayoutGraphIndex;
+  /** Internal flag indicating feature-level spatial layout */
+  isFeatureLayout?: boolean;
 }
 
 export interface GlobalLayoutResult {
@@ -1093,7 +1095,10 @@ export function computeGlobalDomainLayout(
     totalWidthSum += regionWidth + 60;
   });
 
-  const isMultiRowNeeded = orderedDomains.length >= 25 || totalWidthSum > 5000;
+  const isFeatureLayout = options.isFeatureLayout ?? false;
+  const isMultiRowNeeded = isFeatureLayout
+    ? false
+    : (orderedDomains.length >= 25 || totalWidthSum > 5000);
 
   if (!isMultiRowNeeded) {
     // 1D Linear Placement for small domain graphs (preserves existing 1D invariants & tests)
@@ -1213,6 +1218,37 @@ export function computeGlobalDomainLayout(
     LAYERS_IN_ORDER.forEach(layer => {
       const layerDomains = domainsByLayer[layer];
       if (layerDomains.length === 0) return;
+
+      // Cross-layer barycentric alignment for domains relative to already-placed domain regions
+      if (domainRegions.size > 0 && layerDomains.length > 1) {
+        const barycenters = new Map<string, number>();
+        layerDomains.forEach((d, origIdx) => {
+          let sumX = 0;
+          let weightSum = 0;
+          const neighbors = domainGraph.adjacency.get(d);
+          if (neighbors) {
+            neighbors.forEach((rel, otherD) => {
+              const placed = domainRegions.get(otherD);
+              if (placed) {
+                sumX += placed.xCenter * rel.totalEdgeCount;
+                weightSum += rel.totalEdgeCount;
+              }
+            });
+          }
+          if (weightSum > 0) {
+            barycenters.set(d, sumX / weightSum);
+          } else {
+            barycenters.set(d, baseX + origIdx * 300);
+          }
+        });
+
+        layerDomains.sort((a, b) => {
+          const bcA = barycenters.get(a) ?? 0;
+          const bcB = barycenters.get(b) ?? 0;
+          if (Math.abs(bcA - bcB) > 1e-6) return bcA - bcB;
+          return a.localeCompare(b);
+        });
+      }
 
       let currentX = baseX;
       let maxRowHeightInLayer = 0;
@@ -1361,13 +1397,13 @@ export function computeGlobalFeatureLayout(
     }
   });
 
-  const featureGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index, featureMap);
+  const featureGraph = buildDomainGraph(safeNodes, safeEdges, undefined, index, featureMap);
   const orderedFeatures = options.orderedDomains || determineGlobalFeatureOrder(
     safeNodes,
     safeEdges,
     featureGraph,
     featureMap,
-    options.featureOrderingStrategy ?? 'F_SHARED_HIERARCHY_AWARE'
+    options.featureOrderingStrategy ?? 'F_2D_BAND_AWARE'
   );
 
   // Re-use computeGlobalDomainLayout with featureMap passed as domainMap, minRegionWidth=280, and pre-calculated feature order
@@ -1378,6 +1414,7 @@ export function computeGlobalFeatureLayout(
     orderedDomains: orderedFeatures,
     minRegionWidth: options.minRegionWidth ?? 280,
     domainMap: featureMap,
+    isFeatureLayout: true,
   });
 
   const featureRegions = new Map<string, FeatureRegion>();
@@ -1403,7 +1440,6 @@ export function computeGlobalFeatureLayout(
 
   const layerYMap = {
     ...globalResult.layerYMap,
-    featureLayerYMap,
   };
 
   const domainBounds: Record<string, { xMin: number; xMax: number }> = {};

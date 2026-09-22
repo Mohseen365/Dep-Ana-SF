@@ -146,7 +146,10 @@ export function buildFeatureDependencyMatrix(
       const direct = (directWeights.get(f1)!.get(f2) || 0) + (directWeights.get(f2)!.get(f1) || 0);
       const shared = sharedNodeWeights.get(f1)!.get(f2) || 0;
 
-      const combined = direct * 3.0 + shared * 1.0;
+      const isUtility = f1 === 'Shared' || f1 === 'Unassigned' || f2 === 'Shared' || f2 === 'Unassigned';
+      const utilityMult = isUtility ? 0.01 : 1.0;
+
+      const combined = (direct * 25.0 + shared * 0.05) * utilityMult;
       combinedWeights.get(f1)!.set(f2, combined);
     });
   });
@@ -431,7 +434,7 @@ export function compute2DFeatureBandOrdering(
 
             // Cross-band weighting multiplier: strongly pull connected features in other bands horizontally
             const isCrossBand = l1 !== l2;
-            const crossBandMultiplier = isCrossBand ? 2.5 : 1.0;
+            const crossBandMultiplier = isCrossBand ? 5.0 : 1.0;
 
             const flow = matrix.directionalFlow.get(f1)?.get(f2) || 0;
             const dirBias = isForward ? -flow * 10.0 : flow * 10.0;
@@ -622,7 +625,7 @@ export function determineGlobalFeatureOrder(
   edges: ExplorerEdge[],
   featureGraph: DomainGraph,
   featureMap: Map<string, string>,
-  strategy: FeatureOrderingStrategy = 'F_SHARED_HIERARCHY_AWARE'
+  strategy: FeatureOrderingStrategy = 'F_2D_BAND_AWARE'
 ): string[] {
   const matrix = buildFeatureDependencyMatrix(nodes, edges, featureGraph, featureMap);
 

@@ -189,7 +189,6 @@ export function computeArchitectureLayout(
     analysis,
     layerMap,
     domainMap,
-    featureRoles,
   });
 
   const featureMap = new Map<string, string>();

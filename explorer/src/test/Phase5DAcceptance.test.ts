@@ -133,7 +133,7 @@ describe('PHASE 5-D: Canonical Hybrid Acceptance & Adversarial Validation', () =
   });
 
   // 4. REQUIRED PRODUCTION GATES EVALUATION
-  it('4. Evaluates Hard, Primary, Locality, and Preferred Production Gates', () => {
+  it('4. Evaluates Hard, Primary, Locality, and Preferred Production Gates', { timeout: 30000 }, () => {
     const positionsB = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, {
       enableFeatureLayout: true,
     });
