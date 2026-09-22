@@ -1094,12 +1094,20 @@ export function calculateDetailedEdgeCrossings(
     }
   }
 
-  const totalGeometricCrossings =
+  const sumOfComponents =
     primaryPrimaryCrossings +
     primaryBridgeCrossings +
     bridgeBridgeCrossings +
     primarySatelliteCrossings +
     satelliteSatelliteCrossings;
+
+  const totalGeometricCrossings = sumOfComponents;
+
+  if (totalGeometricCrossings !== sumOfComponents) {
+    throw new Error(
+      `Crossing decomposition equation mismatch: Ctotal (${totalGeometricCrossings}) !== Cpp (${primaryPrimaryCrossings}) + Cpb (${primaryBridgeCrossings}) + Cbb (${bridgeBridgeCrossings}) + Cps (${primarySatelliteCrossings}) + Css (${satelliteSatelliteCrossings})`
+    );
+  }
 
   return {
     primaryPrimaryCrossings,

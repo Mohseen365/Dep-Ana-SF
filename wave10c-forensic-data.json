@@ -4,12 +4,12 @@
     "nodeCount": 240,
     "edgeCount": 1024,
     "domainCount": 106,
-    "timestamp": "2026-09-22T14:59:52.433Z"
+    "timestamp": "2026-09-22T16:11:42.180Z"
   },
   "performanceTimingsMs": {
-    "analysis": "21.19",
-    "layout": "1139.81",
-    "total": "1161.00"
+    "analysis": "19.50",
+    "layout": "1562.09",
+    "total": "1581.60"
   },
   "pipelineStagesSnapshots": [
     {
@@ -63,7 +63,7 @@
       "width": 12482.529999999999,
       "height": 1700,
       "aspectRatio": "7.34",
-      "overlaps": 20,
+      "overlaps": 17,
       "maxEdgeLength": "5562.9"
     }
   ],
@@ -126,17 +126,17 @@
         "orderIndex": 6,
         "totalNodes": 2,
         "primaryNodes": 1,
-        "bbox": "[5630, 500, 8570, 820]",
-        "width": 2940,
+        "bbox": "[5630, 500, 8730, 820]",
+        "width": 3100,
         "height": 320,
-        "centroid": "(7100, 660)",
+        "centroid": "(7180, 660)",
         "pCentroid": "(5690, 530)",
         "medianPairwiseDist": "0.0",
         "maxPairwiseDist": "0.0",
         "occupiedArea": 14400,
-        "bboxArea": 940800,
+        "bboxArea": 992000,
         "utilizationRatio": "0.015",
-        "primaryExpansionRatio": "24.50"
+        "primaryExpansionRatio": "25.83"
       },
       {
         "domain": "SpendTrackerAuthorization",
@@ -247,6 +247,24 @@
         "primaryExpansionRatio": "6.17"
       },
       {
+        "domain": "AdminSpend",
+        "layer": "application",
+        "orderIndex": 17,
+        "totalNodes": 2,
+        "primaryNodes": 1,
+        "bbox": "[5408, 240, 6050, 840]",
+        "width": 641.6000000000004,
+        "height": 600,
+        "centroid": "(5729, 540)",
+        "pCentroid": "(5468, 270)",
+        "medianPairwiseDist": "0.0",
+        "maxPairwiseDist": "0.0",
+        "occupiedArea": 14400,
+        "bboxArea": 384960.00000000023,
+        "utilizationRatio": "0.037",
+        "primaryExpansionRatio": "5.35"
+      },
+      {
         "domain": "OrganizationTrigger",
         "layer": "domain",
         "orderIndex": 3,
@@ -281,24 +299,6 @@
         "bboxArea": 406911.99999999977,
         "utilizationRatio": "0.053",
         "primaryExpansionRatio": "4.99"
-      },
-      {
-        "domain": "AdminSpend",
-        "layer": "application",
-        "orderIndex": 17,
-        "totalNodes": 2,
-        "primaryNodes": 1,
-        "bbox": "[5408, 240, 5975, 840]",
-        "width": 566.6453314437722,
-        "height": 599.9997093293754,
-        "centroid": "(5692, 540)",
-        "pCentroid": "(5468, 270)",
-        "medianPairwiseDist": "0.0",
-        "maxPairwiseDist": "0.0",
-        "occupiedArea": 14400,
-        "bboxArea": 339987.03415911086,
-        "utilizationRatio": "0.042",
-        "primaryExpansionRatio": "4.72"
       }
     ]
   },
@@ -334,42 +334,42 @@
         "targetDomain": "Assert",
         "edgeCount": 19,
         "strength": 0.76,
-        "centroidDist": 275.7970268150112
+        "centroidDist": 272.92673009436066
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "User",
         "edgeCount": 19,
         "strength": 0.76,
-        "centroidDist": 1663.3905133792246
+        "centroidDist": 1663.7827382203484
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Shared",
         "edgeCount": 16,
         "strength": 0.64,
-        "centroidDist": 2743.786617067734
+        "centroidDist": 2743.269946614806
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Organization_Hierarchy",
         "edgeCount": 15,
         "strength": 0.6,
-        "centroidDist": 92
+        "centroidDist": 83
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Cloud_Account",
         "edgeCount": 13,
         "strength": 0.52,
-        "centroidDist": 2361.7925395766665
+        "centroidDist": 2361.4590828553437
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Cloud_Spend",
         "edgeCount": 12,
         "strength": 0.48,
-        "centroidDist": 1802.3495776347052
+        "centroidDist": 1801.912594994552
       },
       {
         "sourceDomain": "User",
@@ -383,37 +383,37 @@
         "targetDomain": "Budget",
         "edgeCount": 9,
         "strength": 0.36,
-        "centroidDist": 513.7353404234519
+        "centroidDist": 515.8769233063251
       },
       {
         "sourceDomain": "Account",
         "targetDomain": "Forecast",
         "edgeCount": 9,
         "strength": 0.36,
-        "centroidDist": 2210.014479590575
+        "centroidDist": 2210.065383648185
       }
     ]
   },
   "edgeLengthStats": {
-    "median": "1286.5",
+    "median": "1298.8",
     "P75": "2250.8",
-    "P90": "3257.8",
+    "P90": "3281.5",
     "P95": "3888.7",
     "P99": "4765.7",
     "max": "5562.9",
-    "avgIntraDomain": "617.5",
-    "avgInterDomain": "1719.0",
-    "avgInterLayer": "1636.4",
-    "avgBridgeEdge": "1567.3",
-    "avgSatelliteEdge": "1865.4"
+    "avgIntraDomain": "629.4",
+    "avgInterDomain": "1734.8",
+    "avgInterLayer": "1644.7",
+    "avgBridgeEdge": "1582.6",
+    "avgSatelliteEdge": "1890.3"
   },
   "crossingsBreakdown": {
-    "total": 93792,
+    "total": 90792,
     "primaryPrimaryCrossings": 0,
     "primaryBridgeCrossings": 0,
     "bridgeBridgeCrossings": 14001,
-    "satellitePrimaryCrossings": 49021,
-    "satelliteSatelliteCrossings": 39539
+    "satellitePrimaryCrossings": 47732,
+    "satelliteSatelliteCrossings": 37830
   },
   "bridgePlacement": {
     "bridgeCount": 79,
@@ -423,16 +423,16 @@
         "layer": "application",
         "connectedDomains": "Account",
         "bridgePos": "(7310, 170)",
-        "midpoint": "(7990, 598)",
-        "distToMidpoint": "803.5"
+        "midpoint": "(7990, 607)",
+        "distToMidpoint": "808.3"
       },
       {
         "nodeId": "ApexClass:CloudAccountService",
         "layer": "application",
         "connectedDomains": "Account",
         "bridgePos": "(7150, 170)",
-        "midpoint": "(7990, 598)",
-        "distToMidpoint": "942.8"
+        "midpoint": "(7990, 607)",
+        "distToMidpoint": "946.9"
       },
       {
         "nodeId": "ApexClass:CloudSpendService",
@@ -502,7 +502,7 @@
   },
   "satellitePlacement": {
     "totalSatellites": 84,
-    "medianAnchorDist": "700.8",
+    "medianAnchorDist": "737.6",
     "P90AnchorDist": "3884.9",
     "P95AnchorDist": "4522.8",
     "P99AnchorDist": "5562.9",
@@ -671,12 +671,12 @@
       "fixtureId": "test-heavy",
       "nodeCount": 14,
       "edgeCount": 13,
-      "width": "1400.0",
-      "height": "260.0",
-      "aspectRatio": "5.38",
+      "width": "760.0",
+      "height": "460.0",
+      "aspectRatio": "1.65",
       "overlaps": 0,
       "crossings": 0,
-      "maxEdge": "640.0",
+      "maxEdge": "377.4",
       "determinismDeltaPx": "0.00000",
       "layerViolations": 0
     },
@@ -766,7 +766,7 @@
       "height": "1320.0",
       "aspectRatio": "9.06",
       "overlaps": 0,
-      "crossings": 306,
+      "crossings": 307,
       "maxEdge": "4891.9",
       "determinismDeltaPx": "0.00000",
       "layerViolations": 0

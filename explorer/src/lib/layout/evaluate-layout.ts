@@ -344,8 +344,22 @@ export function evaluateLayout(
   positions: PositionMap,
   options: LayoutMetricOptions = {}
 ): EvaluatedLayoutMetrics {
-  const crossingsCount = edgeCrossingCount(nodes, edges, positions);
   const detailedCrossings = calculateDetailedEdgeCrossings(nodes, edges, positions);
+  const crossingsCount = detailedCrossings.totalGeometricCrossings;
+
+  // Self-auditing assertion: total crossings MUST equal sum of all 5 components
+  const componentSum =
+    detailedCrossings.primaryPrimaryCrossings +
+    detailedCrossings.primaryBridgeCrossings +
+    detailedCrossings.bridgeBridgeCrossings +
+    detailedCrossings.primarySatelliteCrossings +
+    detailedCrossings.satelliteSatelliteCrossings;
+
+  if (crossingsCount !== componentSum || detailedCrossings.totalGeometricCrossings !== componentSum) {
+    throw new Error(
+      `Permanent self-auditing metric error: Ctotal (${crossingsCount}) !== Cpp (${detailedCrossings.primaryPrimaryCrossings}) + Cpb (${detailedCrossings.primaryBridgeCrossings}) + Cbb (${detailedCrossings.bridgeBridgeCrossings}) + Cps (${detailedCrossings.primarySatelliteCrossings}) + Css (${detailedCrossings.satelliteSatelliteCrossings})`
+    );
+  }
   const avgLen = averageEdgeLength(nodes, edges, positions);
   const medLen = calculateMedianEdgeLength(edges, positions);
   const maxLen = maxEdgeLength(nodes, edges, positions);
