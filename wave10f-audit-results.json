@@ -40,8 +40,8 @@
       "width": 5880,
       "height": 920,
       "aspectRatio": 6.391304347826087,
-      "overlapCount": 46,
-      "primaryPrimaryOverlap": 46,
+      "overlapCount": 47,
+      "primaryPrimaryOverlap": 47,
       "domainOverlapCount": 0,
       "componentOverlapCount": 0
     },
@@ -51,12 +51,12 @@
       "xMin": -580,
       "xMax": 5300,
       "yMin": -170,
-      "yMax": 1310,
+      "yMax": 1510,
       "width": 5880,
-      "height": 1480,
-      "aspectRatio": 3.972972972972973,
-      "overlapCount": 46,
-      "primaryPrimaryOverlap": 46,
+      "height": 1680,
+      "aspectRatio": 3.5,
+      "overlapCount": 47,
+      "primaryPrimaryOverlap": 47,
       "domainOverlapCount": 0,
       "componentOverlapCount": 0
     },
@@ -66,12 +66,12 @@
       "xMin": 0,
       "xMax": 8020,
       "yMin": 0,
-      "yMax": 1640,
+      "yMax": 1840,
       "width": 8020,
-      "height": 1640,
-      "aspectRatio": 4.890243902439025,
-      "overlapCount": 44,
-      "primaryPrimaryOverlap": 44,
+      "height": 1840,
+      "aspectRatio": 4.358695652173913,
+      "overlapCount": 45,
+      "primaryPrimaryOverlap": 45,
       "domainOverlapCount": 0,
       "componentOverlapCount": 0
     },
@@ -81,12 +81,12 @@
       "xMin": 0,
       "xMax": 8020,
       "yMin": 0,
-      "yMax": 1640,
+      "yMax": 1840,
       "width": 8020,
-      "height": 1640,
-      "aspectRatio": 4.890243902439025,
-      "overlapCount": 28,
-      "primaryPrimaryOverlap": 19,
+      "height": 1840,
+      "aspectRatio": 4.358695652173913,
+      "overlapCount": 23,
+      "primaryPrimaryOverlap": 21,
       "domainOverlapCount": 0,
       "componentOverlapCount": 0
     }
@@ -96,18 +96,18 @@
     "xMin": 0,
     "xMax": 8020,
     "yMin": 0,
-    "yMax": 1640,
+    "yMax": 1840,
     "width": 8020,
-    "height": 1640
+    "height": 1840
   },
   "primaryNonBridgeBbox": {
     "count": 20,
     "xMin": 0,
     "xMax": 5040,
     "yMin": 720,
-    "yMax": 1640,
+    "yMax": 1840,
     "width": 5040,
-    "height": 920
+    "height": 1120
   },
   "bridgeBbox": {
     "count": 136,
@@ -121,20 +121,20 @@
   "satelliteBbox": {
     "count": 84,
     "xMin": 580,
-    "xMax": 5560,
+    "xMax": 5400,
     "yMin": 0,
-    "yMax": 1480,
-    "width": 4980,
-    "height": 1480
+    "yMax": 1680,
+    "width": 4820,
+    "height": 1680
   },
   "finalBbox": {
     "count": 240,
     "xMin": 0,
     "xMax": 8020,
     "yMin": 0,
-    "yMax": 1640,
+    "yMax": 1840,
     "width": 8020,
-    "height": 1640
+    "height": 1840
   },
   "extremeBridges": {
     "leftmost": {
@@ -151,7 +151,7 @@
       ],
       "x": 60,
       "y": 770,
-      "minDistToPrimary": 840
+      "minDistToPrimary": 1040
     },
     "rightmost": {
       "id": "ApexClass:ErrorResponse",
@@ -405,8 +405,8 @@
       "primaryCount": 1,
       "bridgeCount": 0,
       "satelliteCount": 0,
-      "primaryBbox": "[220, 340, 1580, 1640]",
-      "fullDomainBbox": "[220, 340, 1580, 1640]",
+      "primaryBbox": "[220, 340, 1780, 1840]",
+      "fullDomainBbox": "[220, 340, 1780, 1840]",
       "width": 120,
       "height": 60
     },
@@ -445,10 +445,10 @@
       "primaryCount": 5,
       "bridgeCount": 4,
       "satelliteCount": 2,
-      "primaryBbox": "[1360, 1960, 400, 880]",
-      "fullDomainBbox": "[1360, 2051.3907855332327, 0, 1165.7406591992442]",
-      "width": 691.3907855332327,
-      "height": 1165.7406591992442
+      "primaryBbox": "[1360, 1720, 400, 880]",
+      "fullDomainBbox": "[1260.2600780722944, 1720, 400, 1180]",
+      "width": 459.7399219277056,
+      "height": 780
     },
     {
       "domain": "OrganizationHierarchy",
@@ -466,9 +466,9 @@
       "bridgeCount": 4,
       "satelliteCount": 1,
       "primaryBbox": "[2100, 2379.2, 400, 880]",
-      "fullDomainBbox": "[2100, 2680, 400, 880]",
-      "width": 580,
-      "height": 480
+      "fullDomainBbox": "[2080, 2379.2, 0, 880]",
+      "width": 299.1999999999998,
+      "height": 880
     },
     {
       "domain": "CloudSpendTrigger",
@@ -506,9 +506,9 @@
       "bridgeCount": 1,
       "satelliteCount": 1,
       "primaryBbox": "[3520, 3640, 400, 460]",
-      "fullDomainBbox": "[3520, 4880, 400, 1280]",
-      "width": 1360,
-      "height": 880
+      "fullDomainBbox": "[3520, 4560, 400, 1380]",
+      "width": 1040,
+      "height": 980
     },
     {
       "domain": "Fiscal",
@@ -546,8 +546,8 @@
       "bridgeCount": 1,
       "satelliteCount": 2,
       "primaryBbox": "[5040, 5160, 400, 460]",
-      "fullDomainBbox": "[2383.607593427637, 5320, 400, 1080]",
-      "width": 2936.392406572363,
+      "fullDomainBbox": "[2140, 5320, 400, 1080]",
+      "width": 3180,
       "height": 680
     },
     {
@@ -576,19 +576,19 @@
       "bridgeCount": 1,
       "satelliteCount": 1,
       "primaryBbox": "[1200, 1380, 400, 920]",
-      "fullDomainBbox": "[985.045361718503, 1380, 400, 920]",
-      "width": 394.95463828149695,
-      "height": 520
+      "fullDomainBbox": "[1100, 1380, 0, 920]",
+      "width": 280,
+      "height": 920
     },
     {
       "domain": "Organization",
       "primaryCount": 5,
       "bridgeCount": 4,
       "satelliteCount": 1,
-      "primaryBbox": "[1560, 2740, 400, 980]",
-      "fullDomainBbox": "[1560, 2740, 0, 980]",
+      "primaryBbox": "[1560, 2740, 400, 860]",
+      "fullDomainBbox": "[1560, 2740, 0, 860]",
       "width": 1180,
-      "height": 980
+      "height": 860
     },
     {
       "domain": "SpendTrackerAuthorization",
@@ -616,9 +616,9 @@
       "bridgeCount": 1,
       "satelliteCount": 1,
       "primaryBbox": "[2779.2, 2899.2, 400, 460]",
-      "fullDomainBbox": "[2779.2, 3059.2, 400, 460]",
+      "fullDomainBbox": "[2619.2, 2899.2, 400, 660]",
       "width": 280,
-      "height": 60
+      "height": 260
     },
     {
       "domain": "Import",
@@ -626,7 +626,7 @@
       "bridgeCount": 2,
       "satelliteCount": 1,
       "primaryBbox": "[3119.2, 3239.2, 400, 560]",
-      "fullDomainBbox": "[3119.2, 3399.2, 400, 560]",
+      "fullDomainBbox": "[2959.2, 3239.2, 400, 560]",
       "width": 280,
       "height": 160
     },
@@ -676,9 +676,9 @@
       "bridgeCount": 1,
       "satelliteCount": 1,
       "primaryBbox": "[4879.2, 5040, 400, 880]",
-      "fullDomainBbox": "[4879.2, 5099.2, 400, 880]",
+      "fullDomainBbox": "[4879.2, 5099.2, 100, 880]",
       "width": 220,
-      "height": 480
+      "height": 780
     },
     {
       "domain": "ErrorResponse",
@@ -695,8 +695,8 @@
       "primaryCount": 1,
       "bridgeCount": 0,
       "satelliteCount": 0,
-      "primaryBbox": "[0, 120, 1580, 1640]",
-      "fullDomainBbox": "[0, 120, 1580, 1640]",
+      "primaryBbox": "[0, 120, 1780, 1840]",
+      "fullDomainBbox": "[0, 120, 1780, 1840]",
       "width": 120,
       "height": 60
     },
@@ -716,9 +716,9 @@
       "bridgeCount": 1,
       "satelliteCount": 1,
       "primaryBbox": "[840, 1200, 660, 780]",
-      "fullDomainBbox": "[840, 1243.09027683528, 560.7029952046664, 780]",
-      "width": 403.09027683528006,
-      "height": 219.29700479533358
+      "fullDomainBbox": "[800, 1200, 560, 780]",
+      "width": 400,
+      "height": 220
     },
     {
       "domain": "FiscalPeriodMapping",
@@ -726,18 +726,18 @@
       "bridgeCount": 1,
       "satelliteCount": 4,
       "primaryBbox": "[1220, 1340, 660, 720]",
-      "fullDomainBbox": "[1220, 5560, 660, 1180]",
-      "width": 4340,
-      "height": 520
+      "fullDomainBbox": "[1220, 5400, 660, 1280]",
+      "width": 4180,
+      "height": 620
     },
     {
       "domain": "SystemAdminAccessPolicy",
       "primaryCount": 2,
       "bridgeCount": 1,
       "satelliteCount": 0,
-      "primaryBbox": "[1400, 1600, 700, 980]",
-      "fullDomainBbox": "[1400, 1600, 700, 980]",
-      "width": 200,
+      "primaryBbox": "[1480, 1600, 700, 980]",
+      "fullDomainBbox": "[1480, 1600, 700, 980]",
+      "width": 120,
       "height": 280
     },
     {
@@ -865,8 +865,8 @@
       "primaryCount": 1,
       "bridgeCount": 1,
       "satelliteCount": 0,
-      "primaryBbox": "[1520, 1640, 720, 780]",
-      "fullDomainBbox": "[1520, 1640, 720, 780]",
+      "primaryBbox": "[1640, 1760, 700, 760]",
+      "fullDomainBbox": "[1640, 1760, 700, 760]",
       "width": 120,
       "height": 60
     },
@@ -1086,9 +1086,9 @@
       "bridgeCount": 8,
       "satelliteCount": 52,
       "primaryBbox": "[520, 4720, 140, 1080]",
-      "fullDomainBbox": "[520, 5400, 140, 1480]",
+      "fullDomainBbox": "[520, 5400, 140, 1680]",
       "width": 4880,
-      "height": 1340
+      "height": 1540
     },
     {
       "domain": "PermissionSetAssignment",
@@ -1145,10 +1145,10 @@
       "primaryCount": 5,
       "bridgeCount": 3,
       "satelliteCount": 7,
-      "primaryBbox": "[1600, 2120, 300, 980]",
-      "fullDomainBbox": "[1080, 4200, 300, 1180]",
+      "primaryBbox": "[1520, 2060, 300, 880]",
+      "fullDomainBbox": "[1240, 4360, 300, 1280]",
       "width": 3120,
-      "height": 880
+      "height": 980
     },
     {
       "domain": "RoleMapping",
@@ -1355,7 +1355,7 @@
     {
       "nodeId": "ApexClass:CurrencyUtils",
       "layer": "application",
-      "y": 1610
+      "y": 1810
     },
     {
       "nodeId": "ApexClass:DateUtils",
@@ -1605,7 +1605,7 @@
     {
       "nodeId": "External:DmlException",
       "layer": "schema",
-      "y": 750
+      "y": 730
     },
     {
       "nodeId": "External:Email",
@@ -1660,7 +1660,7 @@
     {
       "nodeId": "External:Object:Lead",
       "layer": "schema",
-      "y": 950
+      "y": 790
     },
     {
       "nodeId": "External:Object:PermissionSet",
@@ -1705,7 +1705,7 @@
     {
       "nodeId": "External:OrganizationWrapper",
       "layer": "schema",
-      "y": 950
+      "y": 830
     },
     {
       "nodeId": "External:PeriodMapping",
@@ -1850,7 +1850,7 @@
     {
       "nodeId": "LWC:admin-filter-panel",
       "layer": "presentation",
-      "y": 1610
+      "y": 1810
     },
     {
       "nodeId": "LWC:admin-forecasts",
@@ -3859,7 +3859,7 @@
     "primary->primary": {
       "median": "981.8",
       "P75": "2130.6",
-      "P90": "2870.9",
+      "P90": "2831.3",
       "P95": "3280.0",
       "P99": "3972.9",
       "max": "4420.0"
@@ -3873,28 +3873,28 @@
       "max": 0
     },
     "bridge->primary": {
-      "median": "520.0",
+      "median": "447.2",
       "P75": "766.2",
       "P90": "1511.7",
-      "P95": "2808.6",
-      "P99": "3005.3",
-      "max": "3005.3"
+      "P95": "2446.6",
+      "P99": "2926.6",
+      "max": "2926.6"
     },
     "primary->satellite": {
-      "median": "1120.6",
-      "P75": "2283.3",
-      "P90": "3245.3",
-      "P95": "3525.7",
-      "P99": "4086.0",
-      "max": "4228.0"
+      "median": "1189.6",
+      "P75": "2352.6",
+      "P90": "3263.5",
+      "P95": "3632.4",
+      "P99": "4102.8",
+      "max": "4327.8"
     },
     "satellite->satellite": {
-      "median": "1395.8",
-      "P75": "2634.0",
-      "P90": "2941.5",
-      "P95": "3001.7",
-      "P99": "3103.9",
-      "max": "3103.9"
+      "median": "1642.7",
+      "P75": "2841.8",
+      "P90": "3103.9",
+      "P95": "3122.2",
+      "P99": "3210.5",
+      "max": "3210.5"
     }
   },
   "top20LongEdges": [
@@ -3914,17 +3914,32 @@
       "bridgeMediated": true
     },
     {
-      "source": "ApexClass:FiscalPeriodMappingSelector",
-      "target": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Year__c",
-      "sourceDomain": "FiscalPeriodMapping",
-      "targetDomain": "FiscalPeriodMapping",
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Contact",
       "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4228.001892147164,
+      "length": 4327.817001676481,
       "sameRow": true,
-      "sameDomain": true,
-      "crossDomain": false,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "External:Contact",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Contact",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4327.817001676481,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
       "crossLayer": true,
       "bridgeMediated": true
     },
@@ -3966,7 +3981,7 @@
       "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4145.823198524885,
+      "length": 4102.779545625136,
       "sameRow": true,
       "sameDomain": false,
       "crossDomain": true,
@@ -3981,7 +3996,7 @@
       "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4145.823198524885,
+      "length": 4102.779545625136,
       "sameRow": true,
       "sameDomain": false,
       "crossDomain": true,
@@ -3996,7 +4011,7 @@
       "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4145.823198524885,
+      "length": 4102.779545625136,
       "sameRow": true,
       "sameDomain": false,
       "crossDomain": true,
@@ -4011,7 +4026,7 @@
       "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4085.9760155928475,
+      "length": 4098.438727125245,
       "sameRow": true,
       "sameDomain": true,
       "crossDomain": false,
@@ -4020,13 +4035,13 @@
     },
     {
       "source": "ApexClass:FiscalPeriodMappingSelector",
-      "target": "Field:Fiscal_Period_Mapping__mdt.End_Date__c",
+      "target": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Month__c",
       "sourceDomain": "FiscalPeriodMapping",
       "targetDomain": "FiscalPeriodMapping",
       "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4075.929341880205,
+      "length": 4085.9760155928475,
       "sameRow": true,
       "sameDomain": true,
       "crossDomain": false,
@@ -4034,14 +4049,74 @@
       "bridgeMediated": true
     },
     {
-      "source": "ApexClass:create_usersTest",
-      "target": "External:Contact",
-      "sourceDomain": "Account",
-      "targetDomain": "Contact",
-      "sourceLayer": "application",
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "Object:Cloud_Account__c",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Cloud_Account",
+      "sourceLayer": "domain",
       "targetLayer": "schema",
       "edgeType": "primary->satellite",
-      "length": 4044.9474656662724,
+      "length": 4068.31660518205,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "Object:Cloud_Account__c",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Cloud_Account",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4068.31660518205,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "Object:Cloud_Account__c",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Cloud_Account",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4068.31660518205,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "Object:Cloud_Account__c",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "Cloud_Account",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4068.31660518205,
+      "sameRow": true,
+      "sameDomain": false,
+      "crossDomain": true,
+      "crossLayer": true,
+      "bridgeMediated": true
+    },
+    {
+      "source": "ApexClass:AuthorizationServiceTest",
+      "target": "External:PermissionSetAssignment",
+      "sourceDomain": "OrganizationTrigger",
+      "targetDomain": "PermissionSetAssignment",
+      "sourceLayer": "domain",
+      "targetLayer": "schema",
+      "edgeType": "primary->satellite",
+      "length": 4063.151486223471,
       "sameRow": true,
       "sameDomain": false,
       "crossDomain": true,
@@ -4072,36 +4147,6 @@
       "targetLayer": "application",
       "edgeType": "primary->satellite",
       "length": 4024.9720495923943,
-      "sameRow": true,
-      "sameDomain": false,
-      "crossDomain": true,
-      "crossLayer": true,
-      "bridgeMediated": true
-    },
-    {
-      "source": "ApexClass:AuthorizationServiceTest",
-      "target": "External:Contact",
-      "sourceDomain": "OrganizationTrigger",
-      "targetDomain": "Contact",
-      "sourceLayer": "domain",
-      "targetLayer": "schema",
-      "edgeType": "primary->satellite",
-      "length": 4005.3117571325843,
-      "sameRow": true,
-      "sameDomain": false,
-      "crossDomain": true,
-      "crossLayer": true,
-      "bridgeMediated": true
-    },
-    {
-      "source": "ApexClass:AuthorizationServiceTest",
-      "target": "External:Contact",
-      "sourceDomain": "OrganizationTrigger",
-      "targetDomain": "Contact",
-      "sourceLayer": "domain",
-      "targetLayer": "schema",
-      "edgeType": "primary->satellite",
-      "length": 4005.3117571325843,
       "sameRow": true,
       "sameDomain": false,
       "crossDomain": true,
@@ -4152,57 +4197,12 @@
       "crossDomain": true,
       "crossLayer": true,
       "bridgeMediated": true
-    },
-    {
-      "source": "ApexClass:BudgetService",
-      "target": "Object:Organization_Budget__c",
-      "sourceDomain": "Budget",
-      "targetDomain": "Organization_Budget",
-      "sourceLayer": "application",
-      "targetLayer": "schema",
-      "edgeType": "primary->primary",
-      "length": 3972.9082546668506,
-      "sameRow": true,
-      "sameDomain": false,
-      "crossDomain": true,
-      "crossLayer": true,
-      "bridgeMediated": true
-    },
-    {
-      "source": "ApexClass:create_usersTest",
-      "target": "External:Lead",
-      "sourceDomain": "Account",
-      "targetDomain": "Lead",
-      "sourceLayer": "application",
-      "targetLayer": "schema",
-      "edgeType": "primary->satellite",
-      "length": 3951.404813480897,
-      "sameRow": true,
-      "sameDomain": false,
-      "crossDomain": true,
-      "crossLayer": true,
-      "bridgeMediated": true
-    },
-    {
-      "source": "ApexClass:FiscalPeriodMappingSelector",
-      "target": "Field:Fiscal_Period_Mapping__mdt.Fiscal_Month__c",
-      "sourceDomain": "FiscalPeriodMapping",
-      "targetDomain": "FiscalPeriodMapping",
-      "sourceLayer": "domain",
-      "targetLayer": "schema",
-      "edgeType": "primary->satellite",
-      "length": 3927.034504559388,
-      "sameRow": true,
-      "sameDomain": true,
-      "crossDomain": false,
-      "crossLayer": true,
-      "bridgeMediated": true
     }
   ],
   "bridgeDistStats": {
     "median": "963.3",
     "P75": "2080.0",
-    "P90": "2864.5",
+    "P90": "2831.3",
     "P95": "3156.3",
     "P99": "3972.9",
     "max": "4420.0"
@@ -4210,21 +4210,21 @@
   "satelliteStats": {
     "unanchoredCount": 0,
     "satDistStats": {
-      "median": "300.0",
-      "P75": "430.8",
-      "P90": "593.6",
-      "P95": "624.8",
-      "P99": "688.8",
-      "max": "688.8"
+      "median": "310.5",
+      "P75": "500.0",
+      "P90": "670.8",
+      "P95": "761.6",
+      "P99": "854.4",
+      "max": "854.4"
     },
     "satelliteBbox": {
       "count": 84,
       "xMin": 580,
-      "xMax": 5560,
+      "xMax": 5400,
       "yMin": 0,
-      "yMax": 1480,
-      "width": 4980,
-      "height": 1480
+      "yMax": 1680,
+      "width": 4820,
+      "height": 1680
     }
   },
   "collisionPairs": [
@@ -4347,8 +4347,8 @@
     },
     {
       "node1": "ApexClass:ForecastSelector",
-      "node2": "External:DmlException",
-      "category": "bridge-bridge",
+      "node2": "External:AccountWrapper",
+      "category": "bridge-primary",
       "p1": {
         "x": 1640,
         "y": 730
@@ -4359,9 +4359,35 @@
       }
     },
     {
-      "node1": "ApexClass:SystemAdminAccessPolicy",
+      "node1": "ApexClass:ForecastSelector",
       "node2": "External:DmlException",
       "category": "bridge-bridge",
+      "p1": {
+        "x": 1640,
+        "y": 730
+      },
+      "p2": {
+        "x": 1700,
+        "y": 730
+      }
+    },
+    {
+      "node1": "ApexClass:OrganizationBudgetSelector",
+      "node2": "External:DmlException",
+      "category": "bridge-bridge",
+      "p1": {
+        "x": 1800,
+        "y": 690
+      },
+      "p2": {
+        "x": 1700,
+        "y": 730
+      }
+    },
+    {
+      "node1": "ApexClass:SystemAdminAccessPolicy",
+      "node2": "External:AccountWrapper",
+      "category": "bridge-primary",
       "p1": {
         "x": 1540,
         "y": 730
@@ -4369,32 +4395,6 @@
       "p2": {
         "x": 1580,
         "y": 750
-      }
-    },
-    {
-      "node1": "External:AccountWrapper",
-      "node2": "External:AdminOverviewWrapper",
-      "category": "bridge-primary",
-      "p1": {
-        "x": 2060,
-        "y": 750
-      },
-      "p2": {
-        "x": 1960,
-        "y": 790
-      }
-    },
-    {
-      "node1": "External:AccountWrapper",
-      "node2": "External:QueryException",
-      "category": "bridge-primary",
-      "p1": {
-        "x": 2060,
-        "y": 750
-      },
-      "p2": {
-        "x": 2160,
-        "y": 790
       }
     },
     {
@@ -4437,16 +4437,29 @@
       }
     },
     {
-      "node1": "External:Object:Lead",
-      "node2": "Field:Account.Account_Status__c",
-      "category": "primary-satellite",
+      "node1": "External:OrganizationWrapper",
+      "node2": "Object:Forecast__c",
+      "category": "bridge-primary",
       "p1": {
-        "x": 1660,
-        "y": 950
+        "x": 1620,
+        "y": 830
       },
       "p2": {
         "x": 1620,
-        "y": 950
+        "y": 850
+      }
+    },
+    {
+      "node1": "External:OrganizationWrapper",
+      "node2": "Object:Organization_Hierarchy__c",
+      "category": "bridge-primary",
+      "p1": {
+        "x": 1620,
+        "y": 830
+      },
+      "p2": {
+        "x": 1580,
+        "y": 850
       }
     },
     {
@@ -4476,32 +4489,6 @@
       }
     },
     {
-      "node1": "Field:Account.Domain__c",
-      "node2": "Field:Account.Organization_Hierarchy_Root__c",
-      "category": "satellite-satellite",
-      "p1": {
-        "x": 1836.3926298263902,
-        "y": 1050
-      },
-      "p2": {
-        "x": 1836.3926298263902,
-        "y": 1050
-      }
-    },
-    {
-      "node1": "Field:Action_Audit__c.Action__c",
-      "node2": "Field:User_Organization_Role__c.Contact__c",
-      "category": "satellite-satellite",
-      "p1": {
-        "x": 2364.8086735780566,
-        "y": 950
-      },
-      "p2": {
-        "x": 2379.7726713895668,
-        "y": 958.2924389952756
-      }
-    },
-    {
       "node1": "Field:Cloud_Account__c.Account_ID__c",
       "node2": "Field:Cloud_Account__c.Cloud_Provider__c",
       "category": "satellite-satellite",
@@ -4515,100 +4502,48 @@
       }
     },
     {
-      "node1": "Field:Forecast__c.Amount__c",
-      "node2": "Field:Forecast__c.Organization__c",
+      "node1": "Field:Organization_Hierarchy__c.Account__c",
+      "node2": "Field:Organization_Hierarchy__c.Parent_Organization__c",
       "category": "satellite-satellite",
       "p1": {
-        "x": 2123.6552409343394,
-        "y": 1049.945825669361
+        "x": 1380,
+        "y": 950
       },
       "p2": {
-        "x": 2115.4779534313743,
-        "y": 1058.7324880918793
-      }
-    },
-    {
-      "node1": "Field:Forecast__c.Amount__c",
-      "node2": "Field:Spend_Import_Batch__c.File_Name__c",
-      "category": "satellite-satellite",
-      "p1": {
-        "x": 2123.6552409343394,
-        "y": 1049.945825669361
-      },
-      "p2": {
-        "x": 2239.0292673322206,
-        "y": 1090.7249913043686
-      }
-    },
-    {
-      "node1": "Field:Spend_Import_Batch__c.Billing_Month__c",
-      "node2": "Field:Spend_Import_Batch__c.File_Name__c",
-      "category": "satellite-satellite",
-      "p1": {
-        "x": 2279.5257129607467,
-        "y": 1054.4711748610935
-      },
-      "p2": {
-        "x": 2239.0292673322206,
-        "y": 1090.7249913043686
-      }
-    },
-    {
-      "node1": "Field:Spend_Import_Batch__c.Billing_Month__c",
-      "node2": "Field:Spend_Import_Batch__c.Status__c",
-      "category": "satellite-satellite",
-      "p1": {
-        "x": 2279.5257129607467,
-        "y": 1054.4711748610935
-      },
-      "p2": {
-        "x": 2288.5213033864984,
-        "y": 1044.3656705761998
-      }
-    },
-    {
-      "node1": "Field:Spend_Import_Batch__c.File_Name__c",
-      "node2": "Field:Spend_Import_Batch__c.Status__c",
-      "category": "satellite-satellite",
-      "p1": {
-        "x": 2239.0292673322206,
-        "y": 1090.7249913043686
-      },
-      "p2": {
-        "x": 2288.5213033864984,
-        "y": 1044.3656705761998
+        "x": 1314.6698070150978,
+        "y": 989.9996024658449
       }
     },
     {
       "node1": "Object:Forecast__c",
-      "node2": "Object:Spend_Import_Batch__c",
+      "node2": "Object:Organization_Hierarchy__c",
       "category": "bridge-bridge",
       "p1": {
-        "x": 1900,
+        "x": 1620,
         "y": 850
       },
       "p2": {
-        "x": 1940,
+        "x": 1580,
         "y": 850
       }
     }
   ],
   "crossingsDetailed": {
-    "primaryPrimaryCrossings": 8971,
-    "primaryBridgeCrossings": 2635,
+    "primaryPrimaryCrossings": 8885,
+    "primaryBridgeCrossings": 2615,
     "bridgeBridgeCrossings": 212,
-    "primarySatelliteCrossings": 48990,
-    "satelliteSatelliteCrossings": 46494,
-    "totalGeometricCrossings": 107302
+    "primarySatelliteCrossings": 49748,
+    "satelliteSatelliteCrossings": 47145,
+    "totalGeometricCrossings": 108605
   },
   "determinism": {
     "repeatDelta": "0.00000",
     "maxShuffleDelta": "0.00000"
   },
   "performance": {
-    "totalMs": "678.62",
-    "analysisMs": "17.45",
-    "layoutMs": "661.17"
+    "totalMs": "686.44",
+    "analysisMs": "16.08",
+    "layoutMs": "670.36"
   },
   "regressionMatrix": [
     {
@@ -4675,24 +4610,24 @@
       "fixtureId": "test-heavy",
       "nodesCount": 14,
       "edgesCount": 13,
-      "width": 600,
-      "height": 560,
-      "aspectRatio": "1.07",
+      "width": 760,
+      "height": 460,
+      "aspectRatio": "1.65",
       "overlaps": 0,
       "crossings": 0,
-      "maxEdge": "340.0",
+      "maxEdge": "438.6",
       "determinismDelta": 0
     },
     {
       "fixtureId": "field-heavy",
       "nodesCount": 26,
       "edgesCount": 25,
-      "width": 1080,
-      "height": 560,
-      "aspectRatio": "1.93",
+      "width": 440,
+      "height": 960,
+      "aspectRatio": "0.46",
       "overlaps": 0,
       "crossings": 0,
-      "maxEdge": "520.0",
+      "maxEdge": "900.0",
       "determinismDelta": 0
     },
     {
@@ -4759,12 +4694,12 @@
       "fixtureId": "scale-100-plus",
       "nodesCount": 111,
       "edgesCount": 120,
-      "width": 10920,
+      "width": 10600,
       "height": 1380,
-      "aspectRatio": "7.91",
+      "aspectRatio": "7.68",
       "overlaps": 0,
-      "crossings": 343,
-      "maxEdge": "5194.8",
+      "crossings": 359,
+      "maxEdge": "5353.7",
       "determinismDelta": 0
     }
   ]
