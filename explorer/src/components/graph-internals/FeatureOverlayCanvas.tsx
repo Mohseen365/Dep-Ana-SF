@@ -5,6 +5,7 @@ import type { FeatureDiscoveryResult } from '../../lib/layout/features';
 import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '../../lib/layout/feature-composition';
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
 import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
+import { createLayoutGraphIndex } from '../../lib/layout/graph-index';
 
 export interface FeatureOverlayCanvasProps {
   cy: cytoscape.Core | null;
@@ -92,6 +93,11 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     return modelPositions;
   }, [nodePositions, modelPositions]);
 
+  // Pre-construct single graph index instance for node/edge topology
+  const graphIndex = useMemo(() => {
+    return createLayoutGraphIndex(nodes, edges);
+  }, [nodes, edges]);
+
   // Derive LWC composition groups for all features
   const compositionGroups = useMemo(() => {
     if (!enableOverlay || !discoveryResult) return [];
@@ -102,13 +108,14 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
         feature,
         nodes,
         edges,
-        currentPositions
+        currentPositions,
+        { index: graphIndex, nodeWidth: 60, nodeHeight: 60, padding: 20 }
       );
       allGroups.push(...groups);
     });
 
     return allGroups;
-  }, [enableOverlay, discoveryResult, nodes, edges, currentPositions]);
+  }, [enableOverlay, discoveryResult, nodes, edges, currentPositions, graphIndex]);
 
   // Derive Shared Infrastructure highlight connections
   const activeHighlightNodeId = hoveredNodeId || selectedNodeId || null;
