@@ -49,6 +49,7 @@ import {
   type ExplorerNode,
   type ExplorerEdge,
   type ExplorerDataSchema,
+  type ArchitectureLayoutMode,
 } from './types/explorer';
 import './index.css';
 
@@ -92,6 +93,8 @@ export function GraphSlot(props: {
   onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>) => void;
   layoutMode?: 'static' | 'interactive';
   onLayoutModeChange?: (mode: 'static' | 'interactive') => void;
+  architectureMode?: ArchitectureLayoutMode;
+  onArchitectureModeChange?: (mode: ArchitectureLayoutMode) => void;
   simulatedNodeIds?: string[];
   simulatedRemovedNodeIds?: string[];
   simulatedEdgeIds?: string[];
@@ -119,6 +122,8 @@ export function GraphSlot(props: {
         onNodePositionsChange={props.onNodePositionsChange}
         layoutMode={props.layoutMode}
         onLayoutModeChange={props.onLayoutModeChange}
+        architectureMode={props.architectureMode}
+        onArchitectureModeChange={props.onArchitectureModeChange}
         simulatedNodeIds={props.simulatedNodeIds}
         simulatedRemovedNodeIds={props.simulatedRemovedNodeIds}
         simulatedEdgeIds={props.simulatedEdgeIds}
@@ -257,6 +262,7 @@ export function App() {
   const activeProjectId = projectContext?.activeProjectId || 'default';
   const nodePositions = projectStateContext?.projectState.graphLayout.nodePositions;
   const layoutMode = projectStateContext?.projectState.graphLayout.mode || 'interactive';
+  const architectureMode = projectStateContext?.projectState.graphLayout.architectureMode || 'hierarchical';
   const activeProject = projectContext?.activeProject;
   const dataUrl = projectContext?.getProjectDataUrl(activeProjectId) || '/explorer-data.json';
 
@@ -790,9 +796,11 @@ export function App() {
                     focusState={effectiveFocusState}
                     onFocusChange={view.setFocusState}
                     nodePositions={effectivePositions}
-                    onNodePositionsChange={(positions) => projectStateContext?.updateGraphLayout({ nodePositions: positions })}
+                    onNodePositionsChange={(positions, provenance) => projectStateContext?.updateGraphLayout({ nodePositions: positions, ...(provenance ? { layoutProvenance: provenance as any } : {}) })}
                     layoutMode={layoutMode}
                     onLayoutModeChange={(mode) => projectStateContext?.updateGraphLayout({ mode })}
+                    architectureMode={architectureMode}
+                    onArchitectureModeChange={(mode) => projectStateContext?.updateGraphLayout({ architectureMode: mode })}
                     simulatedNodeIds={simulatedAddedNodeIds}
                     simulatedRemovedNodeIds={simulatedRemovedNodeIds}
                     simulatedEdgeIds={simulatedEdgeIds}

@@ -225,6 +225,8 @@ export interface ExplorerUnresolvedReference {
   reason: string;
 }
 
+export type ArchitectureLayoutMode = 'hierarchical' | 'hybrid';
+
 export interface ExplorerComponentImpactSummary {
   id: string;
   directDependencies: string[];
