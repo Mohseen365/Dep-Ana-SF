@@ -1,4 +1,5 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import { discoverFeatures, type FeatureDiscoveryResult } from './features';
 
 /**
  * Node position map mapping node ID to (x, y) coordinates.
@@ -14,6 +15,37 @@ export interface LayoutMetricOptions {
   minComponentGap?: number;
   /** Minimum degree threshold to classify a node as a hub (default: 4) */
   hubDegreeThreshold?: number;
+  /** Pre-computed feature discovery result to avoid redundant calculations */
+  featureDiscovery?: FeatureDiscoveryResult;
+}
+
+export interface FeatureBandLocality {
+  averageFeatureWidth: number;
+  averageFeatureHeight: number;
+  medianFeatureWidth: number;
+  medianFeatureHeight: number;
+}
+
+export interface CrossBandDependencyDistance {
+  medianCrossBandDistance: number;
+  averageCrossBandDistance: number;
+}
+
+export interface FeatureLocalityDiagnostics {
+  /** Median 2D Euclidean length of intra-feature dependency edges */
+  medianIntraFeatureEdgeLength: number;
+  /** Median 2D Euclidean length of inter-feature dependency edges */
+  medianInterFeatureEdgeLength: number;
+  /** Ratio of median intra-feature edge length to median inter-feature edge length (ideal < 1.0) */
+  intraToInterEdgeLengthRatio: number;
+  /** Average distance from high-coupling utility/shared nodes to connected primary caller nodes */
+  highCouplingUtilityDistance: number;
+  /** Average and median horizontal and vertical spans of feature bands/regions */
+  featureBandLocality: FeatureBandLocality;
+  /** Median and average Euclidean distance of edges spanning across different feature bands */
+  crossBandDependencyDistance: CrossBandDependencyDistance;
+  /** Flag indicating whether intra-feature edge distance is strictly smaller than inter-feature edge distance */
+  isIntraShorterThanInter: boolean;
 }
 
 export interface DomainCohesionResult {
@@ -71,6 +103,7 @@ export interface ComprehensiveLayoutMetrics {
   componentSeparation: ComponentSeparationResult;
   hubLocality: HubLocalityResult;
   bridgePlacement: BridgePlacementResult;
+  featureLocality?: FeatureLocalityDiagnostics;
 }
 
 // EPSILON tolerance for floating-point geometric computations
@@ -779,6 +812,146 @@ export function bridgePlacement(
   };
 }
 
+function computeMedian(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 1) {
+    return sorted[mid];
+  }
+  return (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+function computeAverage(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sum = values.reduce((a, b) => a + b, 0);
+  return sum / values.length;
+}
+
+/**
+ * Calculates diagnostic measurements of feature spatial locality and relationship distances.
+ */
+export function calculateFeatureLocalityDiagnostics(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  positions: PositionMap,
+  options: LayoutMetricOptions = {}
+): FeatureLocalityDiagnostics {
+  const discovery = options.featureDiscovery || discoverFeatures(nodes, edges);
+
+  const featureMap = new Map<string, string>();
+  discovery.assignments.forEach((assignment, nodeId) => {
+    featureMap.set(nodeId, assignment.primaryFeatureId);
+  });
+
+  const nodeMap = new Map<string, ExplorerNode>(nodes.map(n => [n.id, n]));
+
+  const intraEdgeLengths: number[] = [];
+  const interEdgeLengths: number[] = [];
+  const crossBandEdgeLengths: number[] = [];
+  const utilityEdgeLengths: number[] = [];
+
+  for (const edge of edges) {
+    const pos1 = positions[edge.source];
+    const pos2 = positions[edge.target];
+    if (!pos1 || !pos2) continue;
+
+    const dist = euclideanDistance(pos1, pos2);
+
+    const f1 = featureMap.get(edge.source) || 'Unassigned';
+    const f2 = featureMap.get(edge.target) || 'Unassigned';
+
+    const node1 = nodeMap.get(edge.source);
+    const node2 = nodeMap.get(edge.target);
+
+    // High coupling / utility check
+    const isShared1 =
+      f1 === 'Shared' ||
+      (node1?.metrics?.fanIn !== undefined && node1.metrics.fanIn >= 4) ||
+      (node1?.metrics?.coupling !== undefined && node1.metrics.coupling >= 6);
+    const isShared2 =
+      f2 === 'Shared' ||
+      (node2?.metrics?.fanIn !== undefined && node2.metrics.fanIn >= 4) ||
+      (node2?.metrics?.coupling !== undefined && node2.metrics.coupling >= 6);
+
+    if ((isShared1 && !isShared2) || (!isShared1 && isShared2)) {
+      utilityEdgeLengths.push(dist);
+    }
+
+    // Evaluate intra vs inter for non-Shared, non-Unassigned feature pairs
+    if (
+      f1 !== 'Shared' &&
+      f1 !== 'Unassigned' &&
+      f2 !== 'Shared' &&
+      f2 !== 'Unassigned'
+    ) {
+      if (f1 === f2) {
+        intraEdgeLengths.push(dist);
+      } else {
+        interEdgeLengths.push(dist);
+        crossBandEdgeLengths.push(dist);
+      }
+    } else if (f1 !== f2) {
+      crossBandEdgeLengths.push(dist);
+    }
+  }
+
+  // Feature Band Locality
+  const featureWidths: number[] = [];
+  const featureHeights: number[] = [];
+
+  discovery.featureList.forEach(cluster => {
+    const members = [...cluster.primaryNodeIds, ...cluster.secondaryNodeIds];
+    let minX = Infinity,
+      maxX = -Infinity,
+      minY = Infinity,
+      maxY = -Infinity;
+    let count = 0;
+
+    members.forEach(id => {
+      const pos = positions[id];
+      if (pos) {
+        minX = Math.min(minX, pos.x);
+        maxX = Math.max(maxX, pos.x);
+        minY = Math.min(minY, pos.y);
+        maxY = Math.max(maxY, pos.y);
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      featureWidths.push(maxX - minX);
+      featureHeights.push(maxY - minY);
+    }
+  });
+
+  const medianIntraFeatureEdgeLength = computeMedian(intraEdgeLengths);
+  const medianInterFeatureEdgeLength = computeMedian(interEdgeLengths);
+  const intraToInterEdgeLengthRatio =
+    medianInterFeatureEdgeLength > EPSILON
+      ? medianIntraFeatureEdgeLength / medianInterFeatureEdgeLength
+      : 0;
+
+  return {
+    medianIntraFeatureEdgeLength,
+    medianInterFeatureEdgeLength,
+    intraToInterEdgeLengthRatio,
+    highCouplingUtilityDistance: computeAverage(utilityEdgeLengths),
+    featureBandLocality: {
+      averageFeatureWidth: computeAverage(featureWidths),
+      averageFeatureHeight: computeAverage(featureHeights),
+      medianFeatureWidth: computeMedian(featureWidths),
+      medianFeatureHeight: computeMedian(featureHeights),
+    },
+    crossBandDependencyDistance: {
+      medianCrossBandDistance: computeMedian(crossBandEdgeLengths),
+      averageCrossBandDistance: computeAverage(crossBandEdgeLengths),
+    },
+    isIntraShorterThanInter:
+      medianIntraFeatureEdgeLength < medianInterFeatureEdgeLength,
+  };
+}
+
 /**
  * Calculates all individual quantitative layout metrics.
  */
@@ -961,5 +1134,6 @@ export function calculateLayoutMetrics(
     componentSeparation: componentSeparation(nodes, edges, positions, options),
     hubLocality: hubLocality(nodes, edges, positions, options),
     bridgePlacement: bridgePlacement(nodes, edges, positions),
+    featureLocality: calculateFeatureLocalityDiagnostics(nodes, edges, positions, options),
   };
 }

@@ -7,6 +7,7 @@ import {
   type HubLocalityResult,
   type BridgePlacementResult,
   type DetailedCrossingBreakdown,
+  type FeatureLocalityDiagnostics,
   edgeCrossingCount,
   calculateDetailedEdgeCrossings,
   averageEdgeLength,
@@ -20,6 +21,7 @@ import {
   componentSeparation,
   hubLocality,
   bridgePlacement,
+  calculateFeatureLocalityDiagnostics,
 } from './metrics';
 import { classifyNodeLayer } from './layers';
 import { isTestNode, isFieldNode, findParentProductionNodeId, findParentObjectId } from './analysis';
@@ -102,6 +104,9 @@ export interface EvaluatedLayoutMetrics {
 
   /** Satellite locality metrics (tests, fields, trigger-handlers) */
   satelliteLocality: SatelliteLocalityResult;
+
+  /** Feature locality diagnostic metrics */
+  featureLocality?: FeatureLocalityDiagnostics;
 }
 
 export interface LayoutMetricsComparison {
@@ -356,6 +361,7 @@ export function evaluateLayout(
   const hubs = hubLocality(nodes, edges, positions, options);
   const bridges = bridgePlacement(nodes, edges, positions);
   const satellites = evaluateSatelliteLocality(nodes, edges, positions);
+  const locality = calculateFeatureLocalityDiagnostics(nodes, edges, positions, options);
 
   return {
     edgeCrossingCount: crossingsCount,
@@ -374,6 +380,7 @@ export function evaluateLayout(
     hubLocality: hubs,
     bridgeLocality: bridges,
     satelliteLocality: satellites,
+    featureLocality: locality,
   };
 }
 

@@ -1146,9 +1146,9 @@
       "bridgeCount": 3,
       "satelliteCount": 7,
       "primaryBbox": "[1520, 2180, 300, 980]",
-      "fullDomainBbox": "[1080, 4200, 300, 1180]",
-      "width": 3120,
-      "height": 880
+      "fullDomainBbox": "[1400, 4200, 300, 1480]",
+      "width": 2800,
+      "height": 1180
     },
     {
       "domain": "RoleMapping",
@@ -3883,7 +3883,7 @@
     "primary->satellite": {
       "median": "1104.0",
       "P75": "2283.3",
-      "P90": "3177.3",
+      "P90": "3165.2",
       "P95": "3486.6",
       "P99": "4086.0",
       "max": "4228.0"
@@ -4558,18 +4558,18 @@
     "primaryPrimaryCrossings": 9037,
     "primaryBridgeCrossings": 2626,
     "bridgeBridgeCrossings": 212,
-    "primarySatelliteCrossings": 49129,
-    "satelliteSatelliteCrossings": 46632,
-    "totalGeometricCrossings": 107636
+    "primarySatelliteCrossings": 49130,
+    "satelliteSatelliteCrossings": 46669,
+    "totalGeometricCrossings": 107674
   },
   "determinism": {
     "repeatDelta": "0.00000",
     "maxShuffleDelta": "0.00000"
   },
   "performance": {
-    "totalMs": "584.04",
-    "analysisMs": "19.67",
-    "layoutMs": "564.37"
+    "totalMs": "767.28",
+    "analysisMs": "17.71",
+    "layoutMs": "749.58"
   },
   "regressionMatrix": [
     {
