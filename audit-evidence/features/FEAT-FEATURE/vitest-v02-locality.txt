@@ -1,0 +1,28 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/app[39m
+
+[90mstdout[2m | explorer/src/test/Phase6B_LocalityCompaction.test.ts[2m > [22m[2mPhase 6-B — Feature Locality & Adaptive Vertical Compaction[2m > [22m[2m1. Verifies strict architectural layer hierarchy preservation (Y_presentation < Y_application < Y_domain < Y_schema)
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/test/Phase6B_LocalityCompaction.test.ts[2m > [22m[2mPhase 6-B — Feature Locality & Adaptive Vertical Compaction[2m > [22m[2m2. Evaluates feature-local compact spacing and verifies final coordinate locality metrics
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/test/Phase6B_LocalityCompaction.test.ts[2m > [22m[2mPhase 6-B — Feature Locality & Adaptive Vertical Compaction[2m > [22m[2m3. Guarantees zero primary and satellite overlaps with minimum clearance >= 40px
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/test/Phase6B_LocalityCompaction.test.ts[2m > [22m[2mPhase 6-B — Feature Locality & Adaptive Vertical Compaction[2m > [22m[2m5. Verifies legacy path immutability when enableFeatureLayout = false
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ [32m✓[39m explorer/src/test/Phase6B_LocalityCompaction.test.ts [2m([22m[2m5 tests[22m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 8790[2mms[22m[39m
+   [32m✓[39m Phase 6-B — Feature Locality & Adaptive Vertical Compaction [2m(5)[22m
+     [33m[2m✓[22m[39m 1. Verifies strict architectural layer hierarchy preservation (Y_presentation < Y_application < Y_domain < Y_schema)[33m 1872[2mms[22m[39m
+     [33m[2m✓[22m[39m 2. Evaluates feature-local compact spacing and verifies final coordinate locality metrics[33m 2862[2mms[22m[39m
+     [33m[2m✓[22m[39m 3. Guarantees zero primary and satellite overlaps with minimum clearance >= 40px[33m 1343[2mms[22m[39m
+     [33m[2m✓[22m[39m 5. Verifies legacy path immutability when enableFeatureLayout = false[33m 2710[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (5)[39m
+[2m   Start at [22m 19:30:13
+[2m   Duration [22m 9.49s[2m (tests 94%, transform 5%, import 1%)[22m
