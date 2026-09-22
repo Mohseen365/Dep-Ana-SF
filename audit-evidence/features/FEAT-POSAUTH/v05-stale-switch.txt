@@ -1,0 +1,13 @@
+382:    let hasAuth = false;
+386:        hasAuth = true;
+388:        hasAuth = true;
+390:        hasAuth = true;
+394:          hasAuth = true;
+400:      hasAuthoritativePositions: hasAuth,
+435:        hasAuthoritativePositions: hasAuth,
+684:    let hasAuthForUpdate = false;
+690:        hasAuthForUpdate = true;
+692:        hasAuthForUpdate = true;
+694:        hasAuthForUpdate = true;
+712:      hasAuthoritativePositions: hasAuthForUpdate,
+731:        hasAuthoritativePositions: hasAuthForUpdate,

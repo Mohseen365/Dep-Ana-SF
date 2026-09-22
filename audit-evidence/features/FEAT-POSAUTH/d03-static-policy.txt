@@ -1,0 +1,71 @@
+ * - reset-layout → allowed (true)
+ *
+ * Interactive Mode:
+ * - retains existing layout semantics:
+ * - initial → only if no authoritative positions exist
+ * - reset-layout → allowed (true)
+ * - graph-update / filter-change / focus-change / investigation / mode-switch → no automatic relayout if positions exist
+ * - new-nodes → 'place-new-only'
+ */
+export function shouldAutoLayout(
+  mode: LayoutMode,
+  trigger: LayoutTrigger,
+  context?: {
+    hasAuthoritativePositions?: boolean;
+    hasNewNodes?: boolean;
+  }
+): boolean | 'place-new-only' {
+  if (trigger === 'reset-layout') {
+    return true;
+  }
+
+  const hasAuth = Boolean(context?.hasAuthoritativePositions);
+
+  if (mode === 'static') {
+    switch (trigger) {
+      case 'initial':
+        return !hasAuth;
+      case 'graph-update':
+      case 'filter-change':
+      case 'focus-change':
+      case 'investigation':
+      case 'mode-switch':
+        return false;
+      case 'new-nodes':
+        return 'place-new-only';
+      default:
+        return false;
+    }
+  } else {
+    // Interactive mode
+    switch (trigger) {
+      case 'initial':
+        return !hasAuth;
+      case 'graph-update':
+        return !hasAuth;
+      case 'filter-change':
+      case 'focus-change':
+      case 'investigation':
+      case 'mode-switch':
+        return false;
+      case 'new-nodes':
+        return 'place-new-only';
+      default:
+        return false;
+    }
+  }
+}
+
+/**
+ * Resolves the position for a single node based on the 5-level Position Authority hierarchy:
+ * 1. Explicit current user position (in-session user drag)
+ * 2. Persisted project position (localStorage project state)
+ * 3. Existing Cytoscape position during incremental update
+ * 4. Intelligent initial layout (handled at graph level when no positions exist)
+ * 5. Deterministic fallback placement (handled via calculateDeterministicNewNodePosition)
+ */
+export function resolveAuthoritativePosition(
+  nodeId: string,
+  options: {
+    sessionPositions?: Map<string, Position> | Record<string, Position>;
+    persistedPositions?: Record<string, Position>;

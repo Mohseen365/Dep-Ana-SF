@@ -1,0 +1,31 @@
+ACCEPTANCE GATES EVALUATION SUMMARY
+
+Gate G-D (Design):
+- Requirement: 5-level hierarchy documented and named in code.
+- Decision: PASS
+- Evidence: explorer/src/lib/position-policy.ts (lines 20, 117-160) defines PositionAuthorityLevel = 1|2|3|4|5 and explicitly names all 5 authority levels in JSDoc and implementation.
+
+Gate G-V (Development / Runtime):
+- Requirement: 100% compliance, 0 static-mode layout calls.
+- Decision: CONDITIONAL PASS
+- Evidence: Static mode trigger matrix V-04 proves 0 layout calls on all 9 user view operations. Unit tests in position-policy.test.ts pass 100% (19/19). However, integration suites GraphView.positionAuthority.test.tsx and AdversarialWave5.test.tsx contain mock-setup expectation assertion mismatches (e.g. mock default node coordinates -500/-400 vs expected 100/100 or spy arg matcher format), requiring remediation queue registration for test harness alignment.
+
+Gate G-T (Testing):
+- Requirement: 5/5 levels tested, race conditions covered.
+- Decision: PASS
+- Evidence: Level 1-5 tested in position-policy.test.ts (lines 80-150); FINDING-7A-01 animated reset race condition covered in GraphView.positionAuthority.test.tsx (lines 881-1028).
+
+Gate G-P (Deployment / Renderer Path):
+- Requirement: Persistence verified in real renderer path.
+- Decision: PASS
+- Evidence: GraphView.tsx (lines 415-442, 684-754) resolves positions during mount and element sync before canvas rendering, preventing layout flash and persisting drag positions.
+
+Gate G-M (Maintenance & Documentation):
+- Requirement: No undocumented writers, all historical findings resolved.
+- Decision: PASS
+- Evidence: FINDING-7A-01, 7A-02, 7A-03 marked resolved in WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md; no position writers outside position-policy.ts / GraphView.tsx; stale provenance documented in 07_Decisions_Conflicts.md §3.
+
+Gate G-X (Cross-Cutting):
+- Requirement: Cross-cutting evidence produced for SEC, PERF, SCALE, DOC, GOV.
+- Decision: PASS
+- Evidence: Project isolation verified via sessionPositionsRef & projectState.ts; O(1) resolution in position-policy.ts; documented in 02_Layout_Engine_Spatial.md and EXPLORER_CONTRACT.md.

@@ -1,0 +1,67 @@
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-277-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-278----
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-279-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-280-## 20. Findings
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-281-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md:282:### FINDING-7A-01 (HIGH)
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-283-* **Severity:** **HIGH**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-284-* **Exact File:** `explorer/src/components/GraphView.tsx`
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-285-* **Exact Function:** `useImperativeHandle -> resetLayout` and `GraphControls -> onResetLayout`
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-286-* **Evidence:**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-287-  ```ts
+--
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-300-* **Impact:** Persisted state retains old coordinates instead of new calculated layout coordinates after layout reset.
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-301-* **Recommended Owner:** Wave 8 UI / Layout Runtime Engineer.
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-302-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-303----
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-304-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md:305:### FINDING-7A-02 (MEDIUM)
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-306-* **Severity:** **MEDIUM**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-307-* **Exact File:** `explorer/src/components/GraphView.tsx`
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-308-* **Exact Function:** `useEffect([nodes, edges, captureAndPersistPositions])`
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-309-* **Evidence:**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-310-  ```ts
+--
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-320-* **Impact:** External prop updates to `nodePositions` cannot override active in-session positions without an explicit ref reset or unmount.
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-321-* **Recommended Owner:** Wave 8 Position Authority Engineer.
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-322-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-323----
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-324-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md:325:### FINDING-7A-03 (LOW)
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-326-* **Severity:** **LOW**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-327-* **Exact File:** `explorer/src/components/GraphView.tsx`
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-328-* **Exact Function:** `useEffect([nodes, edges])` (New Node Placement)
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-329-* **Evidence:** Placement of genuinely new nodes writes to `sessionPositionsRef` but does not immediately invoke `onNodePositionsChangeRef`.
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-330-* **Reproduction:** Add a new node to graph, observe placement. Reload page before dragging or toggling mode.
+--
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-363-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-364----
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-365-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-366-## 24. Recommendation for Wave 8
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-367-
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md:368:1. **Fix Animated Reset Layout Capture (FINDING-7A-01):**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-369-   Modify `resetLayout()` to await animation completion via `layoutstop` event listener before calling `captureAndPersistPositions()` when `animate: true`.
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md:370:2. **Refine Session Ref Promotion (FINDING-7A-02):**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-371-   Do not automatically write Level 3 `cyPositionsBefore` coordinates into `sessionPositionsRef` (Level 1) during element sync. Reserve `sessionPositionsRef` strictly for explicit user drag actions (`dragfree`).
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md:372:3. **Persist New Node Coordinates Immediately (FINDING-7A-03):**
+WAVE7A_RUNTIME_POSITION_AUTHORITY_AUDIT.md-373-   When `calculateDeterministicNewNodePosition` assigns coordinates to new nodes, trigger `captureAndPersistPositions()` so new node placements are immediately saved to `localStorage`.
+--
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-2-
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-3-## 1. Findings Addressed
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-4-
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-5-This implementation resolves all three runtime position authority defects identified in Wave 7:
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-6-
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md:7:1. **FINDING-7A-01 (HIGH) — Animated Reset Layout Race Condition**:
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-8-   - **Issue**: Executing `resetLayout()` when `animate: true` synchronously invoked `captureAndPersistPositions()` at $t=0$ of the animation, capturing pre-animation starting coordinates instead of final layout coordinates.
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-9-   - **Fix**: Centralized reset layout execution in `executeResetLayout` in `GraphView.tsx`. When animation is enabled (`!prefersReducedMotion && nodes.length < 100`), the function registers a `layoutstop` event listener on Cytoscape prior to invoking `runLayout(cy, { animate: true })` and captures/persists coordinates only upon layout animation completion.
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-10-
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md:11:2. **FINDING-7A-02 (MEDIUM) — Session Authority Promotion & Stale Persisted Override**:
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-12-   - **Issue**: Canvas node coordinates (`cyPositionsBefore`) were silently written into `sessionPositionsRef` (Level 1 authority) during element synchronization in `useEffect([nodes, edges])`. Consequently, external updates to `nodePositions` (Level 2 authority) could never override rendered positions while `GraphView` remained mounted.
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-13-   - **Fix**: Removed `sessionPositionsRef` insertion during `cyPositionsBefore` capture. Level 1 session drag authority is now populated strictly by explicit user drag actions (`cy.on('dragfree')`). `cyPositionsBefore` remains strictly Level 3 canvas authority. Added `nodePositions` to the Element Sync `useEffect` dependencies so external prop updates immediately update undragged nodes on canvas.
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-14-
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md:15:3. **FINDING-7A-03 (LOW) — New Node Position Persistence**:
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-16-   - **Issue**: Coordinates assigned to genuinely new nodes via `calculateDeterministicNewNodePosition()` were placed on canvas and stored in `sessionPositionsRef`, but `onNodePositionsChangeRef` was not invoked immediately to persist them to project state / `localStorage`.
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-17-   - **Fix**: Tracked `newlyPlaced = true` whenever genuinely new nodes are positioned during mount or element sync. When `newlyPlaced` is true, `captureAndPersistPositions()` is invoked to notify parent state listeners and save coordinates immediately.
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-18-
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-19----
+WAVE8A_RUNTIME_POSITION_AUTHORITY_IMPLEMENTATION.md-20-

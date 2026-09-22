@@ -1,0 +1,5 @@
+explorer/src/lib/position-policy.ts:106:export function resolveAuthoritativePosition(
+explorer/src/components/GraphView.tsx:16:  resolveAuthoritativePosition,
+explorer/src/components/GraphView.tsx:432:      const resolved = resolveAuthoritativePosition(id, {
+explorer/src/components/GraphView.tsx:699:      const resolved = resolveAuthoritativePosition(node.id, {
+explorer/src/components/GraphView.tsx:727:      const resolved = resolveAuthoritativePosition(id, {

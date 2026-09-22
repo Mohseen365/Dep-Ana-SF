@@ -1,0 +1,15 @@
+explorer/src/lib/position-policy.test.ts:4:  resolveAuthoritativePosition,
+explorer/src/lib/position-policy.test.ts:80:  describe('resolveAuthoritativePosition hierarchy', () => {
+explorer/src/lib/position-policy.test.ts:85:    it('Level 1: prefers explicit current user session drag position', () => {
+explorer/src/lib/position-policy.test.ts:86:      const res = resolveAuthoritativePosition('n1', {
+explorer/src/lib/position-policy.test.ts:96:    it('Level 2: falls back to persisted project position when session position missing', () => {
+explorer/src/lib/position-policy.test.ts:97:      const res = resolveAuthoritativePosition('n2', {
+explorer/src/lib/position-policy.test.ts:107:    it('Level 3: falls back to existing Cytoscape rendered position when session & persisted missing', () => {
+explorer/src/lib/position-policy.test.ts:108:      const res = resolveAuthoritativePosition('n3', {
+explorer/src/lib/position-policy.test.ts:119:      const res = resolveAuthoritativePosition('n4', {
+explorer/src/lib/position-policy.test.ts:128:  describe('calculateDeterministicNewNodePosition (Level 5 Fallback)', () => {
+explorer/src/components/GraphView.positionAuthority.test.tsx:1112:      // Because node-1 was NOT dragged, Level 2 external update MUST take effect!
+explorer/src/components/GraphView.positionAuthority.test.tsx:1165:      // Explicit drag session (Level 1) MUST continue to win over conflicting Level 2 prop update!
+explorer/src/components/GraphView.positionAuthority.test.tsx:1398:      // Level 2 persisted position MUST override un-dragged canvas position!
+explorer/src/components/GraphView.positionAuthority.test.tsx:1464:    it('Negative 1: Canvas position does NOT silently become Level 1 session authority without explicit user drag', () => {
+explorer/src/components/GraphView.positionAuthority.test.tsx:1500:      // Node-1 must adopt the Level 2 persisted position (333, 333), NOT the stale un-dragged canvas position (777, 777)!

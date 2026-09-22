@@ -1,0 +1,5 @@
+20:export type PositionAuthorityLevel = 1 | 2 | 3 | 4 | 5;
+117:  // Level 1: Explicit current user position
+130:  // Level 2: Persisted project position (only if authoritative for active layout mode)
+138:  // Level 3: Existing Cytoscape position during incremental update (only if authoritative for active layout mode)
+159: * Level 5: Deterministic Fallback Placement for genuinely new nodes inserted into a graph

@@ -1,0 +1,275 @@
+179:  const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
+180-
+181-  // Pending layoutstop listener reference
+182-  const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
+183-
+184-  // Track previous modes
+185-  const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
+186-  const prevArchitectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
+187-
+188-  const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
+189-  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+190-  const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
+191-  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+192-
+193-  // Derive Feature Discovery Result deterministically
+194-  const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
+195-    return discoverFeatures(nodes, edges);
+196-  }, [nodes, edges]);
+197-
+198-  // Keep internal refs synchronized
+199-  useEffect(() => {
+200-    nodesRef.current = nodes;
+201-    edgesRef.current = edges;
+202-    nodePositionsRef.current = nodePositions;
+203-    onNodePositionsChangeRef.current = onNodePositionsChange;
+204-    layoutModeRef.current = layoutMode;
+205-    graphLayoutRef.current = graphLayout;
+206-    onNodeDragEndRef.current = onNodeDragEnd;
+207-    effectiveLayoutOptionsRef.current = effectiveLayoutOptions;
+208-  }, [
+209-    nodes,
+210-    edges,
+211-    nodePositions,
+212-    onNodePositionsChange,
+213-    layoutMode,
+214-    graphLayout,
+--
+229:      sessionPositionsRef.current.set(n.id(), rounded);
+230-    });
+231-
+232-    const provenance: LayoutProvenance = overrideProvenance ||
+233-      (architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical');
+234-
+235-    if (onNodePositionsChangeRef.current) {
+236-      (onNodePositionsChangeRef.current as any)(currentPositions, provenance);
+237-    }
+238-  }, [architectureMode]);
+239-
+240-  // Handle Mode Switch
+241-  useEffect(() => {
+242-    if (prevLayoutModeRef.current === layoutMode) return;
+243-
+244-    const oldMode = prevLayoutModeRef.current;
+245-    prevLayoutModeRef.current = layoutMode;
+246-
+247-    if (oldMode === 'interactive' && layoutMode === 'static') {
+248-      captureAndPersistPositions();
+249-    }
+250-  }, [layoutMode, captureAndPersistPositions]);
+251-
+252-  // Handle Architecture Mode Switch (Hierarchical <-> Hybrid transitions)
+253-  useEffect(() => {
+254-    if (prevArchitectureModeRef.current === architectureMode) return;
+255-
+256-    prevArchitectureModeRef.current = architectureMode;
+257-
+258-    if (!cyRef.current) return;
+259-    const cy = cyRef.current;
+260-
+261-    const targetProvenance: LayoutProvenance =
+262-      architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical';
+263-
+264-    runLayout(cy, {
+--
+299:    sessionPositionsRef.current.clear();
+300-
+301-    if (pendingLayoutStopRef.current) {
+302-      cy.off('layoutstop', pendingLayoutStopRef.current);
+303-      pendingLayoutStopRef.current = null;
+304-    }
+305-
+306-    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+307-    const nodeCount = nodesRef.current.length;
+308-    const shouldAnimate = !prefersReducedMotion && nodeCount < 100;
+309-
+310-    if (shouldAnimate) {
+311-      const onStop = () => {
+312-        pendingLayoutStopRef.current = null;
+313-        captureAndPersistPositions();
+314-      };
+315-      pendingLayoutStopRef.current = onStop;
+316-      cy.one('layoutstop', onStop);
+317-
+318-      runLayout(cy, {
+319-        ...effectiveLayoutOptionsRef.current,
+320-        nodes: nodesRef.current,
+321-        edges: edgesRef.current,
+322-        nodeCount,
+323-        animate: true,
+324-      });
+325-    } else {
+326-      runLayout(cy, {
+327-        ...effectiveLayoutOptionsRef.current,
+328-        nodes: nodesRef.current,
+329-        edges: edgesRef.current,
+330-        nodeCount,
+331-        animate: false,
+332-      });
+333-      captureAndPersistPositions();
+334-    }
+--
+433:        sessionPositions: sessionPositionsRef.current,
+434-        persistedPositions: nodePositionsRef.current,
+435-        hasAuthoritativePositions: hasAuth,
+436-      });
+437-
+438-      if (resolved) {
+439-        cyNode.position({ x: resolved.position.x, y: resolved.position.y });
+440-        knownPosMap[id] = resolved.position;
+441-      }
+442-    });
+443-
+444-    if (autoLayoutPolicy !== true) {
+445-      let newlyPlaced = false;
+446-      cy.nodes().forEach((cyNode) => {
+447-        const id = cyNode.id();
+448-        if (!knownPosMap[id]) {
+449-          const newPos = calculateDeterministicNewNodePosition(id, edgesRef.current, knownPosMap);
+450-          cyNode.position(newPos);
+451-          knownPosMap[id] = newPos;
+452:          sessionPositionsRef.current.set(id, newPos);
+453-          newlyPlaced = true;
+454-        }
+455-      });
+456-      if (newlyPlaced) {
+457-        captureAndPersistPositions();
+458-      }
+459-    } else {
+460-      if (typeof cy.one === 'function') {
+461-        cy.one('layoutstop', () => {
+462-          captureAndPersistPositions();
+463-        });
+464-      } else if (typeof cy.on === 'function') {
+465-        cy.on('layoutstop', () => {
+466-          captureAndPersistPositions();
+467-        });
+468-      }
+469-    }
+470-
+471-    cy.on('dragfree', 'node', (evt) => {
+472-      const node = evt.target;
+473-      const nodeId = node.id();
+474-      const pos = node.position();
+475-      const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
+476-
+477:      sessionPositionsRef.current.set(nodeId, rounded);
+478-      captureAndPersistPositions('user-authored');
+479-
+480-      if (onNodeDragEndRef.current) {
+481-        onNodeDragEndRef.current(nodeId, rounded);
+482-      }
+483-
+484-      if (onNodePositionsChangeRef.current) {
+485-        const currentStoredPositions =
+486-          graphLayoutRef.current?.nodePositions ||
+487-          nodePositionsRef.current ||
+488-          {};
+489-
+490-        const updatedPositions = {
+491-          ...currentStoredPositions,
+492-          [nodeId]: rounded,
+493-        };
+494-
+495-        (onNodePositionsChangeRef.current as any)(updatedPositions, 'user-authored');
+496-      }
+497-    });
+498-
+499-    if (minimapRef.current && isNavigatorVisible) {
+500-      try {
+501-        const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
+502-        navRef.current = (cy as any).navigator({
+503-          container: bodyEl,
+504-          scale: 0.15
+505-        });
+506-      } catch (err) {
+507-        console.warn('Cytoscape navigator init notice:', err);
+508-      }
+509-    }
+510-
+511-    const nodeCount = nodesRef.current.length;
+512-    const initialZoom = nodeCount < 15 ? 1.4
+--
+700:        sessionPositions: sessionPositionsRef.current,
+701-        persistedPositions: nodePositionsRef.current,
+702-        cyNodePosition: cyPositionsBefore[node.id],
+703-      });
+704-
+705-      if (!resolved) {
+706-        hasGenuinelyNewNodes = true;
+707-      }
+708-    }
+709-
+710-    const trigger: LayoutTrigger = hasGenuinelyNewNodes ? 'new-nodes' : 'graph-update';
+711-    const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, trigger, {
+712-      hasAuthoritativePositions: hasAuthForUpdate,
+713-      hasNewNodes: hasGenuinelyNewNodes,
+714-    });
+715-
+716-    const newElements = buildGraphElements(nodes, edges, findings);
+717-
+718-    cy.batch(() => {
+719-      cy.elements().remove();
+720-      cy.add(newElements);
+721-    });
+722-
+723-    const knownPositionsMap: Record<string, Position> = {};
+724-
+725-    cy.nodes().forEach((node) => {
+726-      const id = node.id();
+727-      const resolved = resolveAuthoritativePosition(id, {
+728:        sessionPositions: sessionPositionsRef.current,
+729-        persistedPositions: nodePositionsRef.current,
+730-        cyNodePosition: cyPositionsBefore[id],
+731-        hasAuthoritativePositions: hasAuthForUpdate,
+732-      });
+733-
+734-      if (resolved) {
+735-        node.position({ x: resolved.position.x, y: resolved.position.y });
+736-        knownPositionsMap[id] = resolved.position;
+737-      }
+738-    });
+739-
+740-    let newlyPlaced = false;
+741-    cy.nodes().forEach((node) => {
+742-      const id = node.id();
+743-      if (!knownPositionsMap[id]) {
+744-        const newPos = calculateDeterministicNewNodePosition(id, edges, knownPositionsMap);
+745-        node.position(newPos);
+746-        knownPositionsMap[id] = newPos;
+747:        sessionPositionsRef.current.set(id, newPos);
+748-        newlyPlaced = true;
+749-      }
+750-    });
+751-
+752-    if (newlyPlaced) {
+753-      captureAndPersistPositions();
+754-    }
+755-
+756-    if (autoLayoutPolicy === true) {
+757-      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+758-      const shouldAnimate = !prefersReducedMotion && nodes.length < 100;
+759-
+760-      if (shouldAnimate) {
+761-        cy.one('layoutstop', () => {
+762-          captureAndPersistPositions();
+763-        });
+764-        runLayout(cy, {
+765-          ...effectiveLayoutOptionsRef.current,
+766-          nodes,
+767-          edges,
+768-          nodeCount: nodes.length,
+769-          animate: true,
+770-        });
+771-      } else {
+772-        runLayout(cy, {
+773-          ...effectiveLayoutOptionsRef.current,
+774-          nodes,
+775-          edges,
+776-          nodeCount: nodes.length,
+777-          animate: false,
+778-        });
+779-        captureAndPersistPositions();
+780-      }
+781-    }
+782-
