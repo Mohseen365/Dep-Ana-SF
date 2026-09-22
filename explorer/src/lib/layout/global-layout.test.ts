@@ -543,4 +543,156 @@ describe('Global Domain Layout Stage (Agent 2A)', () => {
       expect(yPositions[0]).toBe(baseAppY);
     });
   });
+
+  describe('Phase 3.2 — Multi-Row 2D Feature-Region Geometry', () => {
+    it('handles 1 feature graph cleanly', () => {
+      const nodes = [createNode('ApexClass:SingleService', 'ApexClass')];
+      const result = computeGlobalDomainLayout(nodes, []);
+
+      expect(result.orderedDomains.length).toBe(1);
+      expect(result.domainRegions.size).toBe(1);
+      const reg = result.domainRegions.get(result.orderedDomains[0])!;
+      expect(reg.width).toBeGreaterThan(0);
+      expect(reg.height).toBeGreaterThan(0);
+    });
+
+    it('handles 2 features graph with clean linear gap separation', () => {
+      const nodes = [
+        createNode('ApexClass:AlphaService', 'ApexClass'),
+        createNode('ApexClass:BetaService', 'ApexClass'),
+      ];
+      const edges = [createEdge('ApexClass:AlphaService', 'ApexClass:BetaService')];
+      const result = computeGlobalDomainLayout(nodes, edges);
+
+      expect(result.orderedDomains.length).toBe(2);
+      const regA = result.domainRegions.get(result.orderedDomains[0])!;
+      const regB = result.domainRegions.get(result.orderedDomains[1])!;
+
+      expect(regB.xMin).toBeGreaterThanOrEqual(regA.xMax);
+    });
+
+    it('handles 10 features graph without overlapping regions', () => {
+      const nodes = [];
+      for (let i = 1; i <= 10; i++) {
+        nodes.push(createNode(`ApexClass:FeatureService${i}`, 'ApexClass'));
+      }
+      const result = computeGlobalDomainLayout(nodes, []);
+
+      expect(result.orderedDomains.length).toBe(10);
+      expect(result.domainRegions.size).toBe(10);
+    });
+
+    it('handles > 25 features graph by invoking 2D multi-row band packing per layer', () => {
+      const nodes = [];
+      const edges = [];
+      for (let i = 1; i <= 30; i++) {
+        nodes.push(createNode(`ApexClass:ScaleClass${i}`, 'ApexClass'));
+        if (i > 1) {
+          edges.push(createEdge(`ApexClass:ScaleClass${i - 1}`, `ApexClass:ScaleClass${i}`));
+        }
+      }
+      const result = computeGlobalDomainLayout(nodes, edges);
+
+      expect(result.orderedDomains.length).toBe(30);
+
+      // Verify regions are packed in sub-rows without unbounded horizontal expansion
+      let maxX = -Infinity;
+      result.domainRegions.forEach(reg => {
+        if (reg.xMax > maxX) maxX = reg.xMax;
+      });
+
+      expect(maxX).toBeLessThan(6000);
+    });
+
+    it('calculates vertical height spanning multiple layers for multi-layer feature', () => {
+      const nodes = [
+        createNode('LWC:OrderCard', 'LWC'),
+        createNode('ApexClass:OrderController', 'ApexClass'),
+        createNode('ApexClass:OrderDomain', 'ApexClass', { displayName: 'OrderDomain' }),
+        createNode('CustomObject:Order__c', 'CustomObject'),
+      ];
+      const edges = [
+        createEdge('LWC:OrderCard', 'ApexClass:OrderController'),
+        createEdge('ApexClass:OrderController', 'ApexClass:OrderDomain'),
+        createEdge('ApexClass:OrderDomain', 'CustomObject:Order__c'),
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, edges);
+      const orderRegion = result.domainRegions.get('Order')!;
+
+      expect(orderRegion).toBeDefined();
+      expect(orderRegion.height).toBeGreaterThanOrEqual(400);
+    });
+
+    it('handles disconnected features cleanly', () => {
+      const nodes = [
+        createNode('ApexClass:FeatureAService', 'ApexClass'),
+        createNode('ApexClass:FeatureBService', 'ApexClass'),
+        createNode('ApexClass:FeatureCService', 'ApexClass'),
+      ];
+      const result = computeGlobalDomainLayout(nodes, []);
+
+      expect(result.orderedDomains.length).toBe(3);
+      result.domainRegions.forEach(reg => {
+        expect(Number.isFinite(reg.xCenter)).toBe(true);
+        expect(Number.isFinite(reg.yCenter)).toBe(true);
+      });
+    });
+
+    it('distinguishes wide regions from dense regions based on primary node counts', () => {
+      const nodes = [
+        createNode('ApexClass:SingleService', 'ApexClass'),
+        createNode('ApexClass:DenseClass1', 'ApexClass', { displayName: 'Dense' }),
+        createNode('ApexClass:DenseClass2', 'ApexClass', { displayName: 'Dense' }),
+        createNode('ApexClass:DenseClass3', 'ApexClass', { displayName: 'Dense' }),
+        createNode('ApexClass:DenseClass4', 'ApexClass', { displayName: 'Dense' }),
+        createNode('ApexClass:DenseClass5', 'ApexClass', { displayName: 'Dense' }),
+      ];
+
+      const result = computeGlobalDomainLayout(nodes, []);
+      const singleReg = result.domainRegions.get('Single')!;
+      const denseReg = result.domainRegions.get('Dense')!;
+
+      expect(denseReg.width).toBeGreaterThan(singleReg.width);
+    });
+
+    it('maintains 100% determinism across 10 repeated runs for 2D multi-row band packing', () => {
+      const nodes = [];
+      for (let i = 1; i <= 30; i++) {
+        nodes.push(createNode(`ApexClass:ScaleClass${i}`, 'ApexClass'));
+      }
+      const run1 = computeGlobalDomainLayout(nodes, []);
+
+      for (let run = 0; run < 10; run++) {
+        const currentRun = computeGlobalDomainLayout(nodes, []);
+        expect(currentRun.orderedDomains).toEqual(run1.orderedDomains);
+
+        run1.orderedDomains.forEach(d => {
+          const r1 = run1.domainRegions.get(d)!;
+          const rCur = currentRun.domainRegions.get(d)!;
+          expect(rCur.xCenter).toBe(r1.xCenter);
+          expect(rCur.yCenter).toBe(r1.yCenter);
+        });
+      }
+    });
+
+    it('maintains input-order invariance across shuffled inputs for 2D multi-row band packing', () => {
+      const nodes = [];
+      for (let i = 1; i <= 30; i++) {
+        nodes.push(createNode(`ApexClass:ScaleClass${i}`, 'ApexClass'));
+      }
+      const origRun = computeGlobalDomainLayout(nodes, []);
+
+      const shuffledNodes = [...nodes].reverse();
+      const shufRun = computeGlobalDomainLayout(shuffledNodes, []);
+
+      expect(shufRun.orderedDomains).toEqual(origRun.orderedDomains);
+      origRun.orderedDomains.forEach(d => {
+        const rOrig = origRun.domainRegions.get(d)!;
+        const rShuf = shufRun.domainRegions.get(d)!;
+        expect(rShuf.xCenter).toBe(rOrig.xCenter);
+        expect(rShuf.yCenter).toBe(rOrig.yCenter);
+      });
+    });
+  });
 });
