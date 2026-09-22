@@ -1322,6 +1322,8 @@ export function computeGlobalFeatureLayout(
   // Re-use computeGlobalDomainLayout with featureMap passed as domainMap, minRegionWidth=280, and pre-calculated feature order
   const globalResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
     ...options,
+    analysis,
+    index,
     orderedDomains: orderedFeatures,
     minRegionWidth: options.minRegionWidth ?? 280,
     domainMap: featureMap,
