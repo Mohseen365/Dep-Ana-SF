@@ -1,0 +1,37 @@
+=== PHASE 2: DEVELOPMENT AUDIT (V-01 to V-07) ===
+
+V-01: npx vitest run explorer/src/lib/layout/feature-composition-readability.test.ts
+Result: PASS (10 passed, 0 failed, 10.20s duration)
+
+V-02: npx vitest run explorer/src/test/wave12-visual-density.test.ts (and explorer/src/lib/layout/wave12-visual-density.test.ts)
+Result: PASS (3 passed, 0 failed, 5.18s duration)
+
+V-03 Coordinate Safety:
+- Initial positions computed via computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true })
+- Feature composition groups derived via deriveFeatureCompositionGroups(...)
+- Re-captured positions computed via computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true })
+- Result: 0.00000 px coordinate drift (exact deep equality match, expect(initialPositions).toEqual(recomputedPositions))
+- File: explorer/src/lib/layout/feature-composition-readability.test.ts S9
+
+V-04 Layout Call Suppression:
+- Spy attached to cy.layout() and computeArchitectureLayout() during overlay render and interactions (hover, select, pan, zoom)
+- Result: 0 calls triggered (expect(spy).toHaveBeenCalledTimes(0))
+- File: explorer/src/lib/layout/feature-composition-readability.test.ts S9
+
+V-05 Deduplication Verification:
+- Evaluated composition groups across all features in Cloud Spend dataset (240 nodes)
+- Total composition groups with bounds bounded to 4 groups max (Wave 12 restoration)
+- Suppressed groups with IoU > 0.55, containment > 0.80, or duplicate label (iou > 0.20)
+- Result: Every remaining pair of groups satisfies iou < 0.55 and containment <= 0.80.
+
+V-06 Zoom Threshold Trace:
+- Zoom 0.4: isFarZoom = true -> composition boxes & badges HIDDEN
+- Zoom 0.6: isFarZoom = false -> composition boxes & badges VISIBLE (strokeWidth = 1.5)
+- Zoom 0.9: isFarZoom = false -> composition boxes & badges VISIBLE (strokeWidth = 1.5)
+- Zoom 1.2+: isCloseZoom = true -> strokeWidth = 2.0
+- File: explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx line 172-192
+
+V-07 Feature Count Invariance:
+- Discovery result before overlay operations: 11 features, 240 node assignments
+- Discovery result after overlay operations: 11 features, 240 node assignments
+- Result: 0 feature or node assignment mutation. 100% invariant.

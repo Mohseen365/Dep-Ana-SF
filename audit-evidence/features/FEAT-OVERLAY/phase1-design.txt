@@ -1,0 +1,22 @@
+=== PHASE 1: DESIGN AUDIT (D-01, D-02, D-03) ===
+
+D-01 Deduplication Design:
+File: explorer/src/lib/layout/feature-composition.ts
+Line 259: const iou = computeIoU(candidate.bounds, existing.bounds);
+Line 260: const containment = computeContainment(candidate.bounds, existing.bounds);
+Line 265: if (iou > 0.55 || containment > 0.8 || (isDuplicateLabel && iou > 0.2)) { isRedundant = true; break; }
+Verification: Candidate composition groups are checked for spatial overlap against existing groups. If IoU > 0.55 OR containment > 0.80 OR (duplicate label and IoU > 0.20), the group is suppressed. PASS.
+
+D-02 Zoom-Aware Visibility Design:
+File: explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx
+Line 172: const isFarZoom = zoom < 0.6;
+Line 192: {!isFarZoom && compositionGroups.map((group) => ...
+Line 286: {!isFarZoom && nodes.map((node) => ...
+Verification: When zoom < 0.6 (isFarZoom is true), composition outline boxes and finding badges are strictly hidden from SVG rendering. PASS.
+
+D-03 Shared-Link Default-Hidden Design:
+File: explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx
+Line 121: const activeHighlightNodeId = hoveredNodeId || selectedNodeId || null;
+Line 123: if (!enableOverlay || !discoveryResult || !activeHighlightNodeId) { return { type: 'none', activeId: '', sharedNodeIds: [], featureIds: [], connectedNodeIds: [], connectedEdgeIds: [] }; }
+Line 236: {sharedHighlight.type !== 'none' && ( ...
+Verification: Shared infrastructure highlight links are rendered ONLY when activeHighlightNodeId (hover or selection) is present. When no node is selected or hovered, activeHighlightNodeId is null, returning type 'none', rendering zero links. PASS.
