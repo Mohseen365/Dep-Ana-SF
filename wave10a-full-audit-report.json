@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "14.82",
-    "layoutTimeMs": "530.58",
-    "evaluationTimeMs": "148.83",
-    "totalTimeMs": "694.23"
+    "analysisTimeMs": "16.03",
+    "layoutTimeMs": "542.76",
+    "evaluationTimeMs": "129.05",
+    "totalTimeMs": "687.84"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -345,10 +345,10 @@
         "secondaryNodes": 3,
         "layers": "application,presentation,schema",
         "components": "0",
-        "bbox": "[4247, 160, 5247, 820]",
-        "width": 1000,
+        "bbox": "[4247, 160, 5387, 820]",
+        "width": 1140,
         "height": 660,
-        "center": "(4747, 490)",
+        "center": "(4817, 490)",
         "internalEdges": 3,
         "incomingEdges": 4,
         "outgoingEdges": 20
@@ -420,10 +420,10 @@
         "secondaryNodes": 6,
         "layers": "application,domain,schema",
         "components": "0",
-        "bbox": "[4567, 0, 5378, 1093]",
-        "width": 810.947207307383,
-        "height": 1093.3102804114608,
-        "center": "(4972, 547)",
+        "bbox": "[4567, 0, 5047, 1080]",
+        "width": 480,
+        "height": 1080,
+        "center": "(4807, 540)",
         "internalEdges": 15,
         "incomingEdges": 22,
         "outgoingEdges": 12
@@ -570,10 +570,10 @@
         "secondaryNodes": 3,
         "layers": "application,domain,schema",
         "components": "0",
-        "bbox": "[5577, 400, 8527, 980]",
-        "width": 2949.4598228710374,
+        "bbox": "[5507, 400, 8527, 980]",
+        "width": 3020,
         "height": 580,
-        "center": "(7052, 690)",
+        "center": "(7017, 690)",
         "internalEdges": 4,
         "incomingEdges": 11,
         "outgoingEdges": 12
@@ -630,10 +630,10 @@
         "secondaryNodes": 5,
         "layers": "application,domain,schema",
         "components": "0",
-        "bbox": "[4767, 0, 5947, 980]",
+        "bbox": "[4767, 0, 5947, 820]",
         "width": 1180,
-        "height": 980,
-        "center": "(5357, 490)",
+        "height": 820,
+        "center": "(5357, 410)",
         "internalEdges": 8,
         "incomingEdges": 13,
         "outgoingEdges": 37
@@ -855,10 +855,10 @@
         "secondaryNodes": 1,
         "layers": "domain,schema",
         "components": "0",
-        "bbox": "[4607, 700, 4807, 980]",
-        "width": 200,
+        "bbox": "[4687, 700, 4807, 980]",
+        "width": 120,
         "height": 280,
-        "center": "(4707, 840)",
+        "center": "(4747, 840)",
         "internalEdges": 1,
         "incomingEdges": 2,
         "outgoingEdges": 3
@@ -1050,10 +1050,10 @@
         "secondaryNodes": 1,
         "layers": "schema",
         "components": "0",
-        "bbox": "[4727, 720, 4847, 780]",
+        "bbox": "[4687, 800, 4807, 860]",
         "width": 120,
         "height": 60,
-        "center": "(4787, 750)",
+        "center": "(4747, 830)",
         "internalEdges": 0,
         "incomingEdges": 1,
         "outgoingEdges": 0
@@ -1470,10 +1470,10 @@
         "secondaryNodes": 10,
         "layers": "application,domain,schema",
         "components": "0",
-        "bbox": "[4287, 300, 7407, 1280]",
-        "width": 3120,
-        "height": 980,
-        "center": "(5847, 790)",
+        "bbox": "[4607, 300, 7407, 1380]",
+        "width": 2800,
+        "height": 1080,
+        "center": "(6007, 840)",
         "internalEdges": 21,
         "incomingEdges": 26,
         "outgoingEdges": 158
@@ -2422,8 +2422,8 @@
       {
         "domainId": "Shared",
         "globalEstimatedWidth": 640,
-        "actualPrimaryWidth": 520,
-        "diffWidth": 120,
+        "actualPrimaryWidth": 280,
+        "diffWidth": 360,
         "primaryNodeCount": 10,
         "regionXMin": 3520,
         "regionXMax": 4160
@@ -2476,8 +2476,8 @@
       {
         "domainId": "Account",
         "globalEstimatedWidth": 480,
-        "actualPrimaryWidth": 280,
-        "diffWidth": 200,
+        "actualPrimaryWidth": 440,
+        "diffWidth": 40,
         "primaryNodeCount": 5,
         "regionXMin": 960,
         "regionXMax": 1440
@@ -2565,24 +2565,24 @@
     }
   },
   "edgeCrossings": {
-    "totalCrossings": 103606,
-    "intraDomainCrossings": 6,
-    "interDomainCrossings": 103600,
-    "interLayerCrossings": 102839,
-    "bridgeCrossings": 103606,
-    "satelliteCrossings": 90748,
+    "totalCrossings": 104162,
+    "intraDomainCrossings": 12,
+    "interDomainCrossings": 104150,
+    "interLayerCrossings": 103395,
+    "bridgeCrossings": 104162,
+    "satelliteCrossings": 91218,
     "topDomainPairs": [
       [
         "Account <-> Cloud_Account <-> Shared <-> Shared",
-        148
-      ],
-      [
-        "AdminDataExplorer <-> AdminOverview <-> Shared <-> Shared",
         146
       ],
       [
+        "AdminDataExplorer <-> AdminOverview <-> Shared <-> Shared",
+        144
+      ],
+      [
         "Account <-> Cloud_Spend <-> Shared <-> Shared",
-        136
+        134
       ],
       [
         "Account <-> Cloud_Account <-> User <-> User",
@@ -2609,14 +2609,14 @@
         106
       ],
       [
-        "Account <-> Assert <-> OrganizationTrigger <-> Organization_Hierarchy",
-        96
+        "Account <-> Shared <-> SpendTrackerAuthorization <-> User",
+        104
       ]
     ]
   },
   "longEdges": {
     "median": "1125.6",
-    "p90": "286.4",
+    "p90": "287.0",
     "p95": "200.0",
     "p99": "107.7",
     "max": "5467.3",
