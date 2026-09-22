@@ -102,6 +102,65 @@ export function discoverFeatures(
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
 
+  // Ensure all edge endpoints are present in safeNodes
+  const knownNodeIds = new Set(safeNodes.map(n => n.id));
+  safeEdges.forEach(e => {
+    if (!knownNodeIds.has(e.source)) {
+      knownNodeIds.add(e.source);
+      safeNodes.push({
+        id: e.source,
+        displayName: e.source.split(':').pop() || e.source,
+        type: 'External',
+        file: '',
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: {
+          isTest: false,
+          publicContractsCount: 0,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
+          dmlCount: 0,
+          calloutCount: 0,
+        },
+        refactoringReadiness: {
+          isHighRisk: false,
+          hasCycles: false,
+          hasUnresolved: false,
+          testCoverageStatus: 'UNTESTED',
+        },
+      });
+    }
+    if (!knownNodeIds.has(e.target)) {
+      knownNodeIds.add(e.target);
+      safeNodes.push({
+        id: e.target,
+        displayName: e.target.split(':').pop() || e.target,
+        type: 'External',
+        file: '',
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        risk: 'LOW',
+        riskReasons: [],
+        behavior: {
+          isTest: false,
+          publicContractsCount: 0,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
+          dmlCount: 0,
+          calloutCount: 0,
+        },
+        refactoringReadiness: {
+          isHighRisk: false,
+          hasCycles: false,
+          hasUnresolved: false,
+          testCoverageStatus: 'UNTESTED',
+        },
+      });
+    }
+  });
+
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
