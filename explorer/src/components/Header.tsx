@@ -591,7 +591,7 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <span className="search-icon" aria-hidden="true">🔍</span>
           <span className="search-placeholder">Search architecture...</span>
-          <kbd className="search-shortcut-hint">
+          <kbd className="search-shortcut-hint" data-testid="cmd-k-hint">
             {isMac ? '⌘K' : 'Ctrl+K'}
           </kbd>
         </button>
