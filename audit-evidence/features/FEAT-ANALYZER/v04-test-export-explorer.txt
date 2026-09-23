@@ -1,0 +1,41 @@
+Running Hardened Explorer Data Adapter Validation Suite...
+==========================================================
+Validation 1: Unique stable node IDs
+  ✓ Checked 10 nodes for unique stable IDs
+Validation 2: Every edge source exists
+  ✓ Checked 13 edge sources
+Validation 3: Every edge target exists
+  ✓ Checked 13 edge targets
+Validation 4: Node types and testCoverageStatus are valid
+  ✓ Validated all node types and testCoverageStatus enum values
+Validation 5: Edge types and canonical component types are valid
+  ✓ Validated all edge relationship types and canonical component types
+Validation 6: Risk values are valid
+  ✓ Validated all risk values
+Validation 7: Metrics are not corrupted
+  ✓ Metrics uncorrupted across all nodes
+Validation 8: Cycles reference valid nodes
+  ✓ Verified 1 cycles reference valid nodes
+Validation 9: Unresolved references remain distinguishable
+  ✓ Verified 1 unresolved references distinguishable
+Validation 10: Evidence is preserved
+  ✓ Verified evidence preserved in 13 edges
+Validation 11: Analyzer version and schema version present
+  ✓ Versions present: schemaVersion=1.0.0, analyzerVersion=13.0.0
+Validation 12: Adapter output is deterministic for identical input
+  ✓ Determinism verified
+
+Graph Equivalence Comparison: Analyzer Output vs Explorer Output
+---------------------------------------------------------------
+  ✓ Component 'AssetService' relationship preservation successfully verified!
+
+ALL 12 VALIDATION INVARIANTS AND GRAPH COMPARISON CHECKS PASSED!
+
+Running Specific Regression Tests (Test A - D)...
+-------------------------------------------------
+Test A: testCoverageStatus mapping
+  ✓ Test A PASSED: All testCoverageStatus mappings match schema requirement
+Test B: Canonical Edge Types Normalization
+  ✓ Test B PASSED: Raw edge types in canonical.source and canonical.target normalized
+Test C & D: Public Project Artifact Synchronization & Multi-Project Isolation
+  ✓ Test C & D PASSED: Public artifacts automatically synchronized for multiple distinct projects

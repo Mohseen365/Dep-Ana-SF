@@ -1,0 +1,85 @@
+Running Hardened CLI Integration Boundary Test Suite (DA-2.1)...
+=============================================================
+Test 1: Module require safety
+  ✓ Requiring module does not trigger CLI execution or error
+Test 2: Normal CLI analysis execution
+  ✓ CLI executed successfully and generated output directory
+Test 3: Explicit --output-dir flag handling
+  ✓ Custom output directory correctly populated
+Test 4: Explicit --source flag handling
+  ✓ --source option correctly resolved
+Test 5: Windows-style Backslash Path Handling
+  ✓ Backslash path inputs handled smoothly and normalized to POSIX slashes in output
+Test 6: Core Integration Artifact Generation
+  ✓ Verified presence of all 7 core integration artifacts
+Test 7: Manifest Schema & Provenance Verification
+  ✓ Manifest schema version, status, and source properties verified
+Test 8: Artifact SHA-256 File Hash Integrity
+  ✓ All artifact SHA-256 file hashes match actual file bytes
+Test 9: Content-based Source Hash Fingerprint
+  ✓ Initial source content hash: sha256:392eee9e487634f15b3ee6a017bbd287ad2f82da1e73384f9d2dc41e7dab7e28
+Test 10: Same Contents + Changed mtime -> SAME Source Hash
+  ✓ Source hash remains identical when file mtime changes without content modification
+Test 11: Changed File Contents -> DIFFERENT Source Hash
+  ✓ Source hash changes when file content is modified
+Test 12: Renamed File -> DIFFERENT Source Hash
+  ✓ Source hash changes when a file is renamed
+Test 13: Stale Source Detection Logic
+
+Salesforce Dependency Analyzer v13
+=================================
+
+Scanning: /app/tmp-integration-test/fixture
+Files: 4
+Apex Classes: 2
+Apex Triggers: 1
+LWC JS: 1
+LWC HTML: 0
+Visualforce: 0
+Flows: 0
+Objects: 0
+Fields: 0
+
+Building symbol registry...
+Enriching deterministic component intelligence...
+Local symbols: 4
+Building dependency graph...
+Graph nodes: 4
+Graph edges: 3
+Calculating coupling metrics...
+Detecting circular dependencies...
+Classifying deterministic component domains...
+Classifying deterministic component roles...
+Analyzing deterministic security boundaries...
+Classifying deterministic component layers...
+Detecting deterministic architectural bottlenecks...
+Detecting deterministic architectural entry points...
+Detecting deterministic external system boundaries...
+Detecting deterministic architecture smells...
+Detecting deterministic architecture debt...
+Classifying deterministic business criticality...
+Building deterministic repository architecture profile...
+Classifying deterministic safety envelopes...
+Evaluating deterministic architecture health...
+Evaluating deterministic architecture quality gates...
+Detecting deterministic duplicate architectural responsibilities...
+Circular dependency groups: 0
+  ✓ Stale source data successfully detected and invalidated
+Test 14: Failure Semantics - Missing Source Directory
+  ✓ Non-zero exit code and error logged on stderr
+Test 15: Failure Semantics - Unknown Command
+  ✓ Non-zero exit code and error logged on stderr
+Test 16: No Misleading COMPLETE Manifest on Failure
+  ✓ Stale COMPLETE manifest removed when analysis fails
+Test 17: Deterministic Output Verification
+  ✓ Structural determinism verified across independent runs
+Test 18: Explorer Adapter Behavior & Manifest Registration
+  ✓ Explorer adapter registered explorerData into manifest cleanly
+Test 19: Single Manifest Lifecycle Verification
+  ✓ Manifest represents complete integration output at finalization point
+Test 20: External Consumer Validation Flow Simulation
+  ✓ External consumer validation flow successfully simulated
+Test 21: Upstream Project-Scoped Artifact Pipeline (Food-App Style)
+  ✓ Upstream project-scoped artifact pipeline verified for food-app-style analysis
+
+ALL 21 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!
