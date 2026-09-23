@@ -1,0 +1,44 @@
+Loaded fixture: 240 nodes, 1024 edges.
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+--- V-02 METRICS (enableFeatureLayout: true) ---
+Runtime: 2473.51 ms
+Ctotal: 94662
+Cpp: 8704
+Cps: 41590
+Css: 41544
+Cpb: 2594
+Cbb: 230
+Equation sum: 94662 (Matches Ctotal: true)
+primaryOverlaps: 0
+satelliteOverlaps: 0
+layerViolations: 0
+minClearancePx: 39.99905982905989
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+--- V-04 DETERMINISM (10x) ---
+Max coordinate drift (10x): 0.00000 px
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+--- V-05 SHUFFLE DETERMINISM (5x) ---
+Max coordinate drift (5x shuffle): 0.00000 px
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+--- V-06 LEGACY PATH ---
+Max legacy coordinate drift: 0.00000 px
+
+--- V-08 COORDINATE VALIDITY ---
+Non-finite coordinate count: 0 / 240

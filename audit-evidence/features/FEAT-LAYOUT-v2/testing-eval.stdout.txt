@@ -1,0 +1,20 @@
+--- T-04 ADVERSARIAL CHECKS ---
+Empty graph result: {} Keys count: 0
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+Single node result: { NodeA: { x: 240, y: 100 } }
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+Fully connected graph (4 nodes) result: {
+  A: { x: 340, y: 100 },
+  B: { x: 500, y: 100 },
+  C: { x: 340, y: 200 },
+  D: { x: 500, y: 200 }
+}
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+0 Edges graph result: { A: { x: 60, y: 30 }, B: { x: 280, y: 30 }, C: { x: 60, y: 190 } }
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+Self-loop graph result: { A: { x: 240, y: 100 } }
+
+--- T-05 REGRESSION PROTECTION SIMULATION ---
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+Regression caught on node ApexClass:AccountController: expected (6281.6, 270), actual (6291.6, 270)
+Regression detection verification result: PASS (Caught)
