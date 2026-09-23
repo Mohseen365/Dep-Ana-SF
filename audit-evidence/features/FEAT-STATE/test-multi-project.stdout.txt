@@ -1,0 +1,22 @@
+Running Multi-Project Foundation & Isolation Test Suite...
+==========================================================
+Regression Test 1: Project name slugification
+  ✓ Project name slugification functions deterministically
+Regression Test 2: Project-scoped output contract generation
+  ✓ Created project-scoped output contract at analyze/projects/movie-app/explorer-data.json
+Regression Test 3: Browser-scoped output publishing
+  ✓ Published browser-served contract at explorer/public/projects/movie-app/explorer-data.json
+Regression Test 4: Multiple projects independence
+  ✓ Verified project-alpha, project-beta, and movie-app remain completely independent
+Regression Test 5: Source-specific export
+  ✓ Exported contracts correctly reflect requested source directories
+Regression Test 6: Default project backward compatibility
+  ✓ Backward compatibility for default single-project export verified
+Regression Test 7: Project switching contract consistency
+  ✓ Project switching metadata and analysisPath contract consistency verified
+Regression Test 8: Stale report prevention
+  ✓ Stale report prevention verified: explicit unmatched --source rejected
+Regression Test 9: Food-App Project Pipeline & Public Asset Auto-Creation
+  ✓ Verified Food-App contract generation and automatic explorer/public/projects/food-app/ publication
+
+ALL 9 REGRESSION TESTS PASSED SUCCESSFULLY!
