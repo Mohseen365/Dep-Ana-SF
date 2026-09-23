@@ -1,0 +1,101 @@
+3d50c78 Wed Sep 23 04:34:49 2026 +0000 docs: create Phase 0 Intake Analysis report
+9fe4586 Wed Sep 23 09:48:20 2026 +0530 Merge pull request #248 from Mohseen365/audit-feat-contract-5690097397262867023
+d199463 Wed Sep 23 04:16:01 2026 +0000 audit(contract): FEAT-CONTRACT vertical slice feature audit report and evidence
+c4b2e1f Wed Sep 23 03:30:51 2026 +0000 docs: complete vertical-slice feature audit for FEAT-STATE
+aadfc0a Tue Sep 22 19:45:48 2026 +0000 audit(FEAT-POSAUTH): complete vertical-slice feature audit for Position Authority & Static Mode Invariants
+82f263d Tue Sep 22 19:36:01 2026 +0000 docs(audit): feature audit report for FEAT-LAYOUT layout engine
+9720219 Tue Sep 22 19:34:46 2026 +0000 audit(FEAT-FEATURE): vertical-slice feature discovery & 2D geometry audit report
+2ff975e Tue Sep 22 19:34:27 2026 +0000 audit(feat-overlay): complete vertical-slice feature audit for FEAT-OVERLAY
+c640206 Tue Sep 22 19:31:01 2026 +0000 audit: FEAT-REFACTOR vertical-slice feature audit and evidence report
+e73848a Tue Sep 22 19:07:24 2026 +0000 docs: add Mode B audit prompt packs and execution instructions
+3aa8e5b Tue Sep 22 18:12:09 2026 +0000 fix(layout): resolve stale position overwrite bug and verify Hybrid layout rendering
+2f66a7d Tue Sep 22 17:28:53 2026 +0000 feat: Phase 12 Hybrid Layout Production Activation & Position Reconciliation
+dc4c878 Tue Sep 22 16:39:10 2026 +0000 feat(layout): Phase 11 release hardening, visual validation & self-auditing crossing metrics
+781c53f Tue Sep 22 15:23:57 2026 +0000 feat(layout): implement crossing-aware satellite slot permutation optimization in Stage 9
+af83b74 Tue Sep 22 13:54:05 2026 +0000 docs: add deep architectural audit report for hybrid layout
+cc2f6d9 Tue Sep 22 13:20:56 2026 +0000 docs(phase-7b): complete Phase 7B crossing forensics, locality proof and release gate decision
+652a0b0 Tue Sep 22 12:56:34 2026 +0000 docs: complete Phase 7 Final Hybrid Layout Hardening report
+fc317f1 Tue Sep 22 12:02:36 2026 +0000 docs: Phase 6 Final Hybrid Layout integration audit report and outcome declaration
+a16b714 Tue Sep 22 11:19:15 2026 +0000 feat(hybrid-layout): Phase 6-A 2D feature geometry and primary crossing reduction
+fc12813 Tue Sep 22 11:01:57 2026 +0000 feat(layout): Workstream 6-B feature locality and adaptive vertical compaction
+7682487 Tue Sep 22 09:58:56 2026 +0000 doc(layout): complete Phase 5 final integration and production gate report
+85e22ab Tue Sep 22 15:09:44 2026 +0530 Add files via upload
+917d8f0 Tue Sep 22 15:08:07 2026 +0530 Add files via upload
+0540418 Tue Sep 22 14:53:41 2026 +0530 Add files via upload
+85a1f9a Tue Sep 22 09:11:05 2026 +0000 Phase 5-D: Canonical Hybrid Acceptance & Adversarial Validation Report
+1280f50 Tue Sep 22 08:36:45 2026 +0000 feat(hybrid-layout): Phase 4 Final Forensic Integration & Production Gate
+9550069 Tue Sep 22 07:58:53 2026 +0000 feat: add Phase 4-D acceptance, performance and determinism harness and report
+dd798c4 Tue Sep 22 13:09:28 2026 +0530 Add files via upload
+78ef2bb Tue Sep 22 07:28:21 2026 +0000 feat(layout): implement Phase 4-A primary relationship & local node realization
+a31b217 Tue Sep 22 07:28:02 2026 +0000 feat(layout): implement Phase 4-C shared infrastructure and satellite placement geometry
+b79bfb2 Tue Sep 22 06:51:28 2026 +0000 feat(layout): Phase 4.0 canonical baseline & stage instrumentation
+a8f2c36 Tue Sep 22 06:31:16 2026 +0000 feat(layout): Phase 3 final integration and pipeline orchestration
+87339d4 Tue Sep 22 10:29:52 2026 +0530 Add files via upload
+5013039 Tue Sep 22 10:29:28 2026 +0530 Add files via upload
+92a9298 Tue Sep 22 10:21:29 2026 +0530 Add files via upload
+e915ace Tue Sep 22 03:56:40 2026 +0000 feat(layout): implement Phase 3.2 deterministic multi-row 2D feature-region band packing
+a9c46c8 Tue Sep 22 03:55:54 2026 +0000 feat(hybrid-layout): implement Phase 3.3 2D multi-row feature region ordering
+0a97f1e Tue Sep 22 03:51:26 2026 +0000 perf(hybrid-layout): optimize Phase 3.7 multi-row hybrid performance and verify 0.00000 px determinism
+a819fdc Tue Sep 22 03:45:47 2026 +0000 feat(layout): Phase 3.1 pipeline stage instrumentation & crossing conservation forensic audit
+9a8670f Tue Sep 22 03:13:11 2026 +0000 feat(layout): integrate Hybrid Layout Phase 2 and conclude Outcome B
+77f2747 Tue Sep 22 08:30:14 2026 +0530 Add files via upload
+4a21693 Tue Sep 22 08:19:18 2026 +0530 Add files via upload
+f112c88 Tue Sep 22 08:12:58 2026 +0530 Add files via upload
+f20241f Tue Sep 22 08:12:10 2026 +0530 Add files via upload
+5750fb9 Tue Sep 22 08:09:40 2026 +0530 Add files via upload
+e085c0c Mon Sep 21 20:12:35 2026 +0000 feat(layout): optimize node ordering inside and across feature regions
+35cd5c7 Mon Sep 21 20:03:24 2026 +0000 feat(layout): audit, implement diagnostics, and test feature semantic cohesion (Phase 2.3)
+2982ce5 Mon Sep 21 19:24:20 2026 +0000 feat(layout): complete Hybrid Layout Phase 1 integration audit & report
+8b7fef8 Mon Sep 21 18:31:37 2026 +0000 feat(layout): implement Workstream B3 shared infrastructure and bridge placement
+0a924b1 Mon Sep 21 18:29:57 2026 +0000 feat: verify viewport performance protection invariants (B5)
+d59776e Mon Sep 21 18:27:26 2026 +0000 feat(layout): prepare GraphView production path for Hybrid layout options
+0acd2f0 Mon Sep 21 18:27:13 2026 +0000 test(hybrid-layout): implement Workstream B6 acceptance test harness and report
+f0caa9c Mon Sep 21 18:24:01 2026 +0000 feat(layout): restore 2D multi-layer feature region geometry
+c934ed8 Mon Sep 21 18:22:10 2026 +0000 feat(layout): optimize hybrid ordering and crossing reduction
+34ecf81 Mon Sep 21 18:07:31 2026 +0000 docs: add Phase 0 Hybrid Layout forensic baseline report
+954ddc0 Mon Sep 21 17:23:10 2026 +0000 docs(audit): complete Prompt 12 final production readiness and release gate audit
+f66816f Mon Sep 21 16:51:54 2026 +0000 Prompt 11: Final Architecture Integration Audit & Invariants
+d611abe Mon Sep 21 15:44:51 2026 +0000 feat: harden architecture decision workflow & e2e matrix
+4ee7a9b Mon Sep 21 14:24:58 2026 +0000 feat: implement Prompt 9 end-to-end architecture decision workflow verification and safety validation
+e9c63c4 Mon Sep 21 12:53:06 2026 +0000 feat: Prompt 8 real-data validation and stale-proposal safety
+9633397 Mon Sep 21 11:58:23 2026 +0000 Implement Refactoring Sequence Integration & Change Simulation
+7b50cdf Mon Sep 21 10:11:27 2026 +0000 feat(findings): integrate architecture findings and investigation workflows into graph
+e855742 Mon Sep 21 09:21:41 2026 +0000 feat: optimize large-graph rendering and viewport performance
+832cedc Mon Sep 21 14:39:54 2026 +0530 Merge branch 'main' into prompt-6c-graph-interaction-integrity-6255604212519592476
+8f5beab Mon Sep 21 08:57:31 2026 +0000 test(explorer): Prompt 6F graph data integrity & mutation forensics
+3aa5cdc Mon Sep 21 08:49:12 2026 +0000 feat: verify hybrid hierarchy + cluster spatial coherence (Prompt 5)
+2b245e1 Mon Sep 21 08:47:01 2026 +0000 feat: add project state persistence and isolation test suite and audit report (Prompt 6D)
+6d009f3 Mon Sep 21 07:12:31 2026 +0000 audit(layout): Prompt 4 visual composition & shared infrastructure readability audit
+2418ba0 Mon Sep 21 05:59:41 2026 +0000 test(layout): verify semantic clustering and add regression coverage
+8c3b168 Mon Sep 21 05:15:18 2026 +0000 feat(layout): integrate feature layout and crossing order in architecture pipeline
+72eb541 Mon Sep 21 04:23:19 2026 +0000 docs: establish master hybrid layout baseline and readability contract
+3c2388c Mon Sep 21 04:09:13 2026 +0000 docs: complete Wave 13 visual acceptance report for Cloud Spend Tracker
+c73b898 Mon Sep 21 04:01:23 2026 +0000 docs: create forensic spatial quality audit report
+93dbecc Mon Sep 21 03:58:51 2026 +0000 docs: add hybrid layout forensic audit report
+9ba142d Mon Sep 21 03:21:01 2026 +0000 Fix graph node density regression by forwarding non-lossy graph props to runLayout
+b1daf70 Sun Sep 20 20:11:29 2026 +0000 fix(explorer): restore feature visualization density UX and zoom-aware overlays
+da8f08d Sun Sep 20 19:44:31 2026 +0000 Wave 11 Feature Visualization Hardening & UX Acceptance Pass
+1f016cd Sun Sep 20 18:09:24 2026 +0000 feat(explorer): Wave 10 feature visualization, explainability, and diagnostics
+705b5fe Sun Sep 20 17:23:18 2026 +0000 audit(wave9): complete feature semantic coverage and UX audit
+f8f737b Sun Sep 20 16:31:54 2026 +0000 feat(wave8): complete Feature Discovery threshold forensic calibration study
+e0da23e Sun Sep 20 16:17:38 2026 +0000 docs: validate Feature Layout on Cloud Spend dataset
+63579ff Sun Sep 20 15:45:23 2026 +0000 feat(layout): complete Wave 6 final feature layout validation and report
+5f8809a Sun Sep 20 15:18:55 2026 +0000 feat(layout): implement feature spatial placement using existing geometry
+e420b5e Sun Sep 20 14:53:32 2026 +0000 docs: Wave 4 Feature Spatial Placement Forensics Audit
+013db89 Sun Sep 20 14:43:04 2026 +0000 feat: implement feature roles and feature discovery engine
+392ef6f Sun Sep 20 14:04:52 2026 +0000 docs: complete Wave 2 Prompt 5 existing clustering audit and feature role design
+5221d3d Sun Sep 20 12:24:31 2026 +0000 docs: add Wave 2 Feature Cluster Reuse Gap Audit report
+af6c266 Sun Sep 20 11:57:48 2026 +0000 feat(layout): implement LayoutGraphIndex with zero-geometry-drift
+59eccdd Sun Sep 20 11:15:29 2026 +0000 docs: add LayoutGraphIndex frozen design contract
+da6429e Sun Sep 20 10:58:06 2026 +0000 docs: create LAYOUT_PERFORMANCE_AUDIT.md for Wave 1 Prompt 2
+8920737 Sun Sep 20 10:38:00 2026 +0000 docs: add Feature Cluster baseline forensic audit (WAVE 0 - PROMPT 1)
+6c101d3 Sun Sep 20 04:56:32 2026 +0000 docs: add Wave 13 final integration freeze audit report
+fd7855f Sun Sep 20 04:23:42 2026 +0000 docs: complete Wave 12 initial layout forensic audit report and verification suite
+c8e4f02 Sun Sep 20 04:00:28 2026 +0000 docs(audit): WAVE 11A Graph Canvas Visibility Audit and Acceptance
+9c89149 Sun Sep 20 03:24:48 2026 +0000 docs: add Wave 11 graph type filtering forensic audit report
+775296e Sun Sep 20 02:44:02 2026 +0000 docs(layout): Wave 10F final visual and structural acceptance audit report
+2dd219e Sat Sep 19 19:31:54 2026 +0000 fix(layout): Wave 10E primary crossing forensics & satellite anchor repair
+465f426 Sat Sep 19 19:10:25 2026 +0000 fix(layout): repair downstream geometry expansion, satellite anchoring, and crossing metrics (Wave 10D)
+68407b2 Sat Sep 19 18:34:11 2026 +0000 feat(layout): complete Wave 10C forensic validation audit
+573a038 Sat Sep 19 18:13:39 2026 +0000 feat(layout): implement topology-aware 2D domain placement algorithm
+88fdcfb Sat Sep 19 16:45:10 2026 +0000 docs(layout): Wave 10A Cloud Spend Tracker forensic spatial audit
