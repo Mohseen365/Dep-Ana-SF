@@ -7,22 +7,20 @@ import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
 import { useViewState } from './hooks/useViewState';
 import { GraphView, GraphViewRef } from './components/GraphView';
-import { Sidebar } from './components/Sidebar';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
-import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
+import { WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { ProjectDashboard } from './components/ProjectDashboard';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { HotspotPanel } from './components/HotspotPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
 import { ComparePanel } from './components/ComparePanel';
 import { AnalysisHistoryPanel } from './components/AnalysisHistoryPanel';
-import { StatusBar } from './components/StatusBar';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
 import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { createEmptyImpactState } from './lib/impact-analysis';
-import { createEmptyFilterState, searchNodes, filterGraphByNodeTypes } from './lib/search-filter';
+import { createEmptyFilterState, filterGraphByNodeTypes } from './lib/search-filter';
 import { loadProjectState, saveProjectState } from './lib/projectState';
 import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
@@ -290,9 +288,6 @@ export function App() {
   // Active workspace view mode
   const [workspaceViewMode, setWorkspaceViewMode] = useState<WorkspaceViewMode>('graph');
 
-  // Sidebar collapse state
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
-
   // Refactoring simulation state
   const [activeSimulationProposal, setActiveSimulationProposal] = useState<RefactoringProposal | null>(null);
   const [simulationStepIndex, setSimulationStepIndex] = useState<number>(0);
@@ -491,14 +486,6 @@ export function App() {
   // Compute architecture context and findings
   const ctx = useMemo(() => (activeData ? createArchitectureContext(activeData as any) : null), [activeData]);
   const findings = useMemo(() => (ctx ? runAllRules(ctx) : []), [ctx]);
-
-  // Filtered nodes for sidebar display
-  const displayNodes = useMemo(() => {
-    if (!activeData) return [];
-    if (!view.filterState.searchQuery) return activeData.nodes;
-    const results = searchNodes(activeData.nodes, view.filterState.searchQuery);
-    return results.map((r) => r.node);
-  }, [activeData, view.filterState.searchQuery]);
 
   // Sync node selection from view state
   useEffect(() => {
@@ -701,7 +688,6 @@ export function App() {
     <SelectionProvider value={selection}>
       <div
         className="app-layout"
-        data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
         data-drawer={isDrawerOpen ? 'open' : 'closed'}
         style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}
       >
@@ -719,53 +705,11 @@ export function App() {
         {/* Main Body Container */}
         <div
           className="app-body-container"
-          data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
           data-drawer={isDrawerOpen ? 'open' : 'closed'}
           style={{ display: 'flex', flex: 1, width: '100%', minHeight: 0, overflow: 'hidden', position: 'relative' }}
         >
-          {/* Collapsible Left Sidebar Slot */}
-          {!isSidebarCollapsed && (
-            <div
-              className="sidebar-slot"
-              style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
-            >
-              <Sidebar
-                nodes={activeData?.nodes ?? []}
-                displayNodes={displayNodes}
-                filterState={view.filterState}
-                selectedNodeId={selection.selectedNodeId}
-                collapsed={isSidebarCollapsed}
-                onToggleCollapse={() => setIsSidebarCollapsed(true)}
-                onFilterChange={view.setFilterState}
-                onSelectNode={(node) => {
-                  selection.selectNode(node.id);
-                  view.setIsInvestigating(true);
-                }}
-              />
-            </div>
-          )}
-
           {/* Center Workspace */}
           <div className="workspace-center-pane" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minWidth: 0, overflow: 'hidden', position: 'relative' }}>
-            {/* View Mode Switcher Action Bar */}
-            <div className="app-workspace-bar" style={{ background: 'var(--surface-panel, #111827)', borderBottom: '1px solid var(--border-default, #334155)', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-              <ViewModeSwitcher
-                viewMode={workspaceViewMode}
-                onChangeViewMode={setWorkspaceViewMode}
-                findingsCount={findings.length}
-              />
-              {isSidebarCollapsed && (
-                <button
-                  className="ui-btn ui-btn-secondary ui-btn-sm"
-                  onClick={() => setIsSidebarCollapsed(false)}
-                  title="Expand Component Inventory Sidebar"
-                  data-testid="expand-sidebar-btn"
-                >
-                  ▶ Component Sidebar
-                </button>
-              )}
-            </div>
-
             {/* Active View Container */}
             <main className="graph-pane" style={{ flex: 1, position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
               {workspaceViewMode === 'graph' && (
@@ -962,17 +906,6 @@ export function App() {
             </div>
           )}
         </div>
-
-        {/* Bottom Status Indicator Bar */}
-        <StatusBar
-          totalNodes={activeData?.summary?.nodeCount ?? activeData?.nodes?.length ?? 0}
-          totalEdges={activeData?.summary?.edgeCount ?? activeData?.edges?.length ?? 0}
-          visibleNodes={simulatedGraph.nodes.length}
-          selectedNodeName={selectedNode?.displayName ?? null}
-          activeFilterCount={view.filterState.searchQuery ? 1 : 0}
-          cycleCount={activeData?.summary?.cycleCount ?? activeData?.cycles?.length ?? 0}
-          unresolvedCount={activeData?.summary?.unresolvedCount ?? activeData?.unresolvedReferences?.length ?? 0}
-        />
 
         {/* Command Palette Modal */}
         <CommandPalette
