@@ -1,0 +1,20 @@
+
+> salesforce-architecture-explorer@1.0.0 test
+> vitest run src/lib/refactoring-simulation.test.ts src/test/RefactoringSimulationIntegration.test.tsx src/test/FindingsIntegration6B.test.tsx src/lib/intelligence/foundation.test.ts
+
+
+ RUN  v2.1.9 /app/explorer
+
+ ✓ src/lib/intelligence/foundation.test.ts (12 tests) 17ms
+ ✓ src/test/FindingsIntegration6B.test.tsx (10 tests) 319ms
+ ✓ src/lib/refactoring-simulation.test.ts (5 tests) 7ms
+stdout | src/test/RefactoringSimulationIntegration.test.tsx > Refactoring Simulation Position Authority & Non-Destructive Invariants > Invariant F: Explicit Commit forwards operations to mutation pipeline without auto-relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ✓ src/test/RefactoringSimulationIntegration.test.tsx (5 tests) 372ms
+   ✓ Refactoring Simulation Position Authority & Non-Destructive Invariants > Invariant F: Explicit Commit forwards operations to mutation pipeline without auto-relayout 366ms
+
+ Test Files  4 passed (4)
+      Tests  32 passed (32)
+   Start at  07:28:22
+   Duration  3.81s (transform 2.06s, setup 646ms, collect 2.83s, tests 716ms, environment 4.28s, prepare 366ms)

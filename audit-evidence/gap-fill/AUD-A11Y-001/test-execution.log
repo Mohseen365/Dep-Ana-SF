@@ -1,0 +1,27 @@
+
+> salesforce-architecture-explorer@1.0.0 test
+> vitest run src/test/RegressionAcceptance.test.tsx src/components/Header.test.tsx src/components/Sidebar.test.tsx src/components/CommandPalette.test.tsx src/components/InvestigationDrawer.test.tsx
+
+
+ RUN  v2.1.9 /app/explorer
+
+ ✓ src/components/InvestigationDrawer.test.tsx (11 tests) 858ms
+ ✓ src/components/CommandPalette.test.tsx (12 tests) 547ms
+stdout | src/test/RegressionAcceptance.test.tsx > Parallel Agent E Acceptance Suite > LAYOUT TESTS > verifies sidebar open vs closed space reservation requirement
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/RegressionAcceptance.test.tsx > Parallel Agent E Acceptance Suite > LAYOUT TESTS > verifies drawer layout participation: no selected node -> no drawer-slot even if pinned
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ✓ src/test/RegressionAcceptance.test.tsx (9 tests) 655ms
+   ✓ Parallel Agent E Acceptance Suite > LAYOUT TESTS > verifies sidebar open vs closed space reservation requirement 457ms
+stdout | src/test/RegressionAcceptance.test.tsx > Parallel Agent E Acceptance Suite > LAYOUT TESTS > verifies navigator visible vs hidden requirement
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ✓ src/components/Sidebar.test.tsx (4 tests) 420ms
+ ✓ src/components/Header.test.tsx (8 tests) 434ms
+
+ Test Files  5 passed (5)
+      Tests  44 passed (44)
+   Start at  07:32:37
+   Duration  5.35s (transform 2.32s, setup 1.02s, collect 3.76s, tests 2.91s, environment 5.85s, prepare 579ms)
