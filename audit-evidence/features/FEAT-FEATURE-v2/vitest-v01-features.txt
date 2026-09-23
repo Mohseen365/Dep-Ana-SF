@@ -1,0 +1,13 @@
+
+ RUN  v2.1.9 /app/explorer
+
+stdout | src/lib/layout/features.test.ts > features module (Feature Discovery) > Cloud Spend Tracker Real Dataset Semantic Audit & Cohesion > calculates semantic feature cohesion diagnostics on Cloud Spend layout positions
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+ ✓ src/lib/layout/features.test.ts (16 tests) 1791ms
+   ✓ features module (Feature Discovery) > Cloud Spend Tracker Real Dataset Semantic Audit & Cohesion > calculates semantic feature cohesion diagnostics on Cloud Spend layout positions 1674ms
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  05:30:41
+   Duration  4.68s (transform 833ms, setup 224ms, collect 892ms, tests 1.79s, environment 1.43s, prepare 86ms)

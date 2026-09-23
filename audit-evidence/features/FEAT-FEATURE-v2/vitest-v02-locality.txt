@@ -1,0 +1,46 @@
+
+ RUN  v2.1.9 /app/explorer
+
+stdout | src/test/Phase6B_LocalityCompaction.test.ts > Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 1. Verifies strict architectural layer hierarchy preservation (Y_presentation < Y_application < Y_domain < Y_schema)
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/test/Phase6B_LocalityCompaction.test.ts > Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 2. Evaluates feature-local compact spacing and verifies final coordinate locality metrics
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/test/Phase6B_LocalityCompaction.test.ts > Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 3. Guarantees zero primary and satellite overlaps with minimum clearance >= 40px
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/test/Phase6B_LocalityCompaction.test.ts > Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 4. Enforces 0.00000 px determinism drift across 10 repeat executions and 5 input order shuffles
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/test/Phase6B_LocalityCompaction.test.ts > Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 5. Verifies legacy path immutability when enableFeatureLayout = false
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ✓ src/test/Phase6B_LocalityCompaction.test.ts (5 tests) 22858ms
+   ✓ Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 1. Verifies strict architectural layer hierarchy preservation (Y_presentation < Y_application < Y_domain < Y_schema) 1537ms
+   ✓ Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 2. Evaluates feature-local compact spacing and verifies final coordinate locality metrics 2162ms
+   ✓ Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 3. Guarantees zero primary and satellite overlaps with minimum clearance >= 40px 1070ms
+   ✓ Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 4. Enforces 0.00000 px determinism drift across 10 repeat executions and 5 input order shuffles 16068ms
+   ✓ Phase 6-B — Feature Locality & Adaptive Vertical Compaction > 5. Verifies legacy path immutability when enableFeatureLayout = false 2019ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  05:31:00
+   Duration  24.68s (transform 414ms, setup 148ms, collect 474ms, tests 22.86s, environment 891ms, prepare 75ms)
