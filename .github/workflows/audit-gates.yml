@@ -21,7 +21,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install explorer dependencies
+        working-directory: explorer
         run: npm ci
 
       - name: Verify local vitest is installed
@@ -33,7 +37,7 @@ jobs:
           EXPECTED="feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295"
           ACTUAL=$(sha256sum audit-fixtures/cloud-spend-tracker/explorer-data.json | awk '{print $1}')
           if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::Canonical fixture hash mismatch."
+            echo "::error::Canonical fixture hash mismatch. Expected $EXPECTED, got $ACTUAL"
             exit 1
           fi
           echo "Fixture hash verified."
