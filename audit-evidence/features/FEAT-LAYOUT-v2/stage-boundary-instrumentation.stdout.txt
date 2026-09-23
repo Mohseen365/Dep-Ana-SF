@@ -1,0 +1,13 @@
+Running 13-stage pipeline boundary instrumentation...
+
+Stage Boundary Table:
+Stage | Stage Name | Node Count | C_pp | C_total | Avg Edge Len | Layer Violations | Overlaps
+------|------------|------------|------|---------|--------------|------------------|---------
+Stage 5  | Global Feature Layout                  |        240 | 2227 |   23405 |       1025.6 |                0 | 22039
+Stage 6  | Layer Ordering & Crossing Reduction (Ranks) |        240 | 2227 |   23405 |       1025.6 |                0 | 22039
+Stage 7  | Primary Production Local Layout        |        156 | 10790 |   13840 |       2001.4 |                0 | 0
+Stage 8  | Hub & Bridge Spatial Refinement        |        156 | 8763 |   11607 |       1923.3 |                0 | 0
+Stage 9  | Secondary Satellite Placement          |        240 | 8763 |   94903 |       2233.0 |                0 | 0
+Stage 10 | Disconnected Component Packing         |        240 | 8704 |   94662 |       2233.0 |                0 | 0
+Stage 11 | Final Global Spatial Cleanup Pass      |        240 | 8704 |   94662 |       2233.0 |                0 | 0
+Stage 12 | Position Authority Restoration         |        240 | 8704 |   94662 |       2233.0 |                0 | 0
