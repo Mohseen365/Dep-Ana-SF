@@ -1,0 +1,19 @@
+=== PHASE 5: MAINTENANCE & WAVE RECONCILIATION AUDIT (M-01, M-02) ===
+
+M-01 Wave Reconciliation (Wave 10 vs Wave 12 vs Wave 13):
+- Wave 10 Baseline (FEATURE_VISUALIZATION_EXPLAINABILITY_WAVE10_REPORT.md):
+  - Initial composition overlay derivation produced 12 raw composition groups for forecast-manager in Cloud Spend Tracker.
+  - High overlap density (11 spatial overlaps among groups) resulting in severe visual clutter.
+- Wave 12 Restoration (FEATURE_VISUAL_DENSITY_REGRESSION_WAVE12_REPORT.md & wave12-visual-density.test.ts):
+  - Implemented IoU deduplication threshold (> 0.55) and containment threshold (> 0.80) in deriveFeatureCompositionGroups().
+  - Suppressed 8 redundant/overlapping groups in forecast-manager, reducing group count from 12 to 4 with 0 overlaps remaining.
+- Wave 13 Acceptance (WAVE13_VISUAL_ACCEPTANCE_REPORT.md):
+  - Verified 4 groups, 0 overlaps, far-zoom suppression (< 0.6), default-hidden shared infrastructure links, and 0.00000 px coordinate drift.
+- Audit Reconciliation Result: RECONCILED & PASS.
+
+M-02 Permanent Clutter Regression Prevention:
+- Hardened IoU and containment thresholds prevent future graph expansion from regressing into visual clutter.
+- Shared-infrastructure links remain strictly interaction-driven (hover/selection) to prevent background edge spiderwebs.
+- Zoom-aware thresholding (< 0.6) guarantees clean overview presentation at broad zoom levels.
+- Comprehensive test suites (feature-composition-readability.test.ts and wave12-visual-density.test.ts) permanently guard against clutter regressions.
+- Audit Maintainability Result: PASS.
