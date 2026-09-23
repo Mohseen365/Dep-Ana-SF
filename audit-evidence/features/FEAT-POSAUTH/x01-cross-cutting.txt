@@ -1,0 +1,21 @@
+CROSS-CUTTING ANALYSIS FORENSIC EVIDENCE
+
+SEC (Security):
+- Project Isolation: Verify sessionPositionsRef and nodePositions are project-isolated.
+- Code Evidence: projectState.ts maintains prefix `explorer.projectState.${projectId}`.
+- GraphView.tsx initializes `sessionPositionsRef = useRef(new Map())` per mounted component instance. When switching projects, GraphView unmounts/remounts or re-initializes, completely clearing in-memory sessionPositionsRef and reloading project-scoped Level 2 state.
+
+PERF (Performance):
+- Authority Resolution Complexity: O(1) per node lookup.
+- Code Evidence: position-policy.ts `resolveAuthoritativePosition` performs direct map lookup `sessionPositions.get(nodeId)` or object lookup `persistedPositions[nodeId]`.
+
+SCALE (Scalability):
+- Scalability to 10,000 nodes without performance degradation.
+- Evidence: WAVE7B_LARGE_SCALE_PERFORMANCE_REPORT.md and scalability-layout.test.ts confirm O(N) node position resolution during element synchronization.
+
+DOC (Documentation Alignment):
+- 02_Layout_Engine_Spatial.md § Position Authority alignment.
+- Code Evidence: 5-level hierarchy and shouldAutoLayout static mode policy strictly match 02_Layout_Engine_Spatial.md description.
+
+GOV (Governance):
+- Position authority is listed as a critical invariant in EXPLORER_CONTRACT.md and DIFF_CONTRACT.md.

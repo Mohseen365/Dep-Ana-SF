@@ -1,0 +1,36 @@
+1029:    it('4. Unmounting GraphView during pending reset cleans up layoutstop listener', () => {
+1030-      layoutControl.autoEmitLayoutStop = false;
+1031-      const onNodePositionsChange = vi.fn();
+1032-
+1033-      const { unmount } = render(
+1034-        <GraphView
+1035-          nodes={testNodes}
+1036-          edges={testEdges}
+1037-          onSelectNode={vi.fn()}
+1038-          onSelectEdge={vi.fn()}
+1039-          selectedNodeId={null}
+1040-          selectedEdgeId={null}
+1041-          onNodePositionsChange={onNodePositionsChange}
+1042-          layoutMode="static"
+1043-        />
+1044-      );
+1045-
+1046-      // Flush initial mount layoutstop
+1047-      act(() => {
+1048-        layoutControl.emitLayoutStop();
+1049-      });
+1050-      onNodePositionsChange.mockClear();
+1051-
+1052-      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+1053-      fireEvent.click(resetBtn);
+1054-
+1055-      expect((listeners['layoutstop'] || []).length).toBe(1);
+1056-
+1057-      // Unmount before layoutstop fires
+1058-      unmount();
+1059-
+1060-      // Pending listener removed on teardown
+1061-      expect((listeners['layoutstop'] || []).length).toBe(0);
+1062-
+1063-      // Emit layoutstop manually to verify no late callback fires
+1064-      act(() => {

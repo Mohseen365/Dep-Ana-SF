@@ -1,0 +1,36 @@
+478:  it('Hidden and reappearing nodes restore their saved positions when made visible again', () => {
+479-    const persistedPositions = {
+480-      'node-1': { x: 120, y: 140 },
+481-      'node-2': { x: 220, y: 240 },
+482-    };
+483-
+484-    // Render initial with node-1 and node-2
+485-    const { rerender } = render(
+486-      <GraphView
+487-        nodes={testNodes}
+488-        edges={testEdges}
+489-        onSelectNode={vi.fn()}
+490-        onSelectEdge={vi.fn()}
+491-        selectedNodeId={null}
+492-        selectedEdgeId={null}
+493-        nodePositions={persistedPositions}
+494-        layoutMode="static"
+495-      />
+496-    );
+497-
+498-    // Hide node-2
+499-    rerender(
+500-      <GraphView
+501-        nodes={[testNodes[0]]}
+502-        edges={[]}
+503-        onSelectNode={vi.fn()}
+504-        onSelectEdge={vi.fn()}
+505-        selectedNodeId={null}
+506-        selectedEdgeId={null}
+507-        nodePositions={persistedPositions}
+508-        layoutMode="static"
+509-      />
+510-    );
+511-
+512-    // Make node-2 visible again
+513-    rerender(

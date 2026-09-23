@@ -1,0 +1,51 @@
+        try { navRef.current.destroy(); } catch (e) {}
+      }
+      try {
+        const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
+        navRef.current = (cyRef.current as any).navigator({
+          container: bodyEl,
+          scale: 0.15
+        });
+      } catch (err) {
+        console.warn('Cytoscape navigator re-init notice:', err);
+      }
+    }
+  }, [isNavigatorVisible]);
+
+  // Reset Layout handler
+  const executeResetLayout = useCallback(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    sessionPositionsRef.current.clear();
+
+    if (pendingLayoutStopRef.current) {
+      cy.off('layoutstop', pendingLayoutStopRef.current);
+      pendingLayoutStopRef.current = null;
+    }
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+    const nodeCount = nodesRef.current.length;
+    const shouldAnimate = !prefersReducedMotion && nodeCount < 100;
+
+    if (shouldAnimate) {
+      const onStop = () => {
+        pendingLayoutStopRef.current = null;
+        captureAndPersistPositions();
+      };
+      pendingLayoutStopRef.current = onStop;
+      cy.one('layoutstop', onStop);
+
+      runLayout(cy, {
+        ...effectiveLayoutOptionsRef.current,
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
+        nodeCount,
+        animate: true,
+      });
+    } else {
+      runLayout(cy, {
+        ...effectiveLayoutOptionsRef.current,
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
+        nodeCount,

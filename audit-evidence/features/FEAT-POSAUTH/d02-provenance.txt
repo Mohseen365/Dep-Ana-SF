@@ -1,0 +1,6 @@
+explorer/src/lib/projectState.ts:31:export type LayoutProvenance = 'automatic-hierarchical' | 'automatic-hybrid' | 'user-authored';
+explorer/src/lib/projectState.ts:37:  layoutProvenance?: LayoutProvenance;
+explorer/src/components/GraphView.tsx:13:import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
+explorer/src/components/GraphView.tsx:220:  const captureAndPersistPositions = useCallback((overrideProvenance?: LayoutProvenance) => {
+explorer/src/components/GraphView.tsx:232:    const provenance: LayoutProvenance = overrideProvenance ||
+explorer/src/components/GraphView.tsx:261:    const targetProvenance: LayoutProvenance =
