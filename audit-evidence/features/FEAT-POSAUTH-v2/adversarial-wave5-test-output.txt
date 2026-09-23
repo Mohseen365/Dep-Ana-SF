@@ -1,0 +1,203 @@
+
+> salesforce-architecture-explorer@1.0.0 test
+> vitest run src/test/AdversarialWave5.test.tsx
+
+
+ RUN  v2.1.9 /app/explorer
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 1: node-type filter preserves coordinates of existing/surviving nodes
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 2: Focus Depth changes preserve node coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 3: Focus Direction changes preserve node coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 4 & 5: Component scope and full project scope changes preserve node coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 6 & 7: Investigation drawer open, drill, and double-click preserve node coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 8 & 9: Viewport operations (zoom, pan, fit, center, resize) do NOT modify node coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 10: Mode Switch Interactive ↔ Static preserves exact coordinates without relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 11: Reset Layout explicitly re-computes and updates positions
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 12: User dragging moves ONLY the dragged node
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 13: Genuinely new node insertion leaves existing nodes 100% unmoved
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ❯ src/test/AdversarialWave5.test.tsx (10 tests | 1 failed) 555ms
+   × Wave 5 Adversarial Verification Matrix > Matrix Row 12: User dragging moves ONLY the dragged node 29ms
+     → expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+-       "x": 180,
+-       "y": 280,
++       "x": -500,
++       "y": -400,
++     },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
++     },
++     "node-3": Object {
++       "x": -403,
++       "y": -316,
+      },
+    },
++   "automatic-hierarchical",
+  ]
+
+  2nd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 280,
+      },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
+      },
++     "node-3": Object {
++       "x": -403,
++       "y": -316,
++     },
++   },
++   "user-authored",
+  ]
+
+  3rd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 280,
+      },
++     "node-2": Object {
++       "x": 300,
++       "y": 350,
+      },
++     "node-3": Object {
++       "x": 500,
++       "y": 550,
++     },
++   },
++   "user-authored",
+  ]
+
+
+Number of calls: 3
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test/AdversarialWave5.test.tsx > Wave 5 Adversarial Verification Matrix > Matrix Row 12: User dragging moves ONLY the dragged node
+AssertionError: expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+-       "x": 180,
+-       "y": 280,
++       "x": -500,
++       "y": -400,
++     },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
++     },
++     "node-3": Object {
++       "x": -403,
++       "y": -316,
+      },
+    },
++   "automatic-hierarchical",
+  ]
+
+  2nd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 280,
+      },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
+      },
++     "node-3": Object {
++       "x": -403,
++       "y": -316,
++     },
++   },
++   "user-authored",
+  ]
+
+  3rd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 280,
+      },
++     "node-2": Object {
++       "x": 300,
++       "y": 350,
+      },
++     "node-3": Object {
++       "x": 500,
++       "y": 550,
++     },
++   },
++   "user-authored",
+  ]
+
+
+Number of calls: 3
+
+ ❯ src/test/AdversarialWave5.test.tsx:585:35
+    583|     expect(mockLayoutRun).not.toHaveBeenCalled();
+    584|     expectOnlyNodesMoved(before, after, ['node-1']);
+    585|     expect(onNodePositionsChange).toHaveBeenCalledWith(
+       |                                   ^
+    586|       expect.objectContaining({
+    587|         'node-1': { x: 180, y: 280 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  04:56:06
+   Duration  2.81s (transform 656ms, setup 157ms, collect 817ms, tests 555ms, environment 935ms, prepare 84ms)
