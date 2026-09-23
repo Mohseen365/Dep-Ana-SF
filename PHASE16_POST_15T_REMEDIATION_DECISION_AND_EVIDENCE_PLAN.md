@@ -6,10 +6,10 @@ This report establishes the authoritative remediation decision and evidence plan
 
 The baseline evidence from `PHASE15T_RUNTIME_IDENTITY_AND_COORDINATE_RECONCILIATION_REPORT.md` proves that the core runtime engines (**Hybrid Layout Engine** and **Position Authority / Renderer**) exhibit **NO DEFECT OBSERVED** within their tested operational scopes. However, four surrounding structural areas require clear classification regarding remediation readiness:
 
-1. **Production Data Routing**: A **PROVEN observed defect** exists where clean production deep-links (`?project=cloud-spend-tracker`) fail with HTTP 404 because `explorer/public/projects/*` is gitignored and not provisioned in a fresh repository clone. Remediation is **NOT READY FOR IMPLEMENTATION** pending an architectural decision on fixture packaging/deployment.
-2. **40px Acceptance Requirement**: An **ACCEPTANCE REQUIREMENT GAP** exists where the raw minimum clearance of `39.99905982905989 px` fails the formal `40.0 px` mathematical requirement by `0.00094 px`, while passing the automated test threshold of `>= 39.99 px`. Remediation is **NOT READY FOR IMPLEMENTATION** pending formal governance reconciliation.
-3. **Locality Governance**: A **GOVERNANCE QUESTION** exists because the historical locality condition (`medianIntra < medianInter`) evaluates to `FALSE` (`1101.68 px > 1020.00 px`) on Candidate E due to multi-row vertical layer geometry vs. horizontal band spacing. Remediation is **NOT READY FOR IMPLEMENTATION**.
-4. **Historical Documentation**: A **HISTORICAL DOCUMENTATION ISSUE** exists in Phase 15C (`SharedUtility` non-existence). Correcting historical reports is **NOT JUSTIFIED BY CURRENT EVIDENCE** under strict living documentation protocols prohibiting retroactive report rewriting. Remediation is **NOT READY FOR IMPLEMENTATION**.
+1. **Production Data Routing**: A **PROVEN observed mechanism** exists where clean production deep-links (`?project=cloud-spend-tracker`) fail with HTTP 404 because `explorer/public/projects/*` is gitignored and not provisioned in a clean repository clone. Remediation is **NOT READY FOR IMPLEMENTATION** pending an architectural decision on fixture provisioning.
+2. **40px Acceptance Requirement**: A **PROVEN requirement discrepancy** exists where the raw minimum clearance of `39.99905982905989 px` differs from the formal `40.0 px` requirement while passing the automated test threshold of `>= 39.99 px`. Remediation is **NOT READY FOR IMPLEMENTATION** pending formal governance reconciliation.
+3. **Locality Governance**: A **GOVERNANCE QUESTION** exists because the historical locality condition (`medianIntra < medianInter`) evaluates to `FALSE` (`1101.68 px > 1020.00 px`) on Candidate E due to 2D multi-row vertical layer geometry vs. horizontal band spacing. Remediation is **NOT READY FOR IMPLEMENTATION**.
+4. **Historical Documentation**: A **HISTORICAL DOCUMENTATION DISCREPANCY** exists in Phase 15C (`SharedUtility` non-existence). Correcting historical reports is **NOT READY FOR IMPLEMENTATION** under repository recency and conflict rules (`08_Audit_Source_Register.md`).
 
 ---
 
@@ -115,7 +115,7 @@ Threshold rationale:
 SUPPORTED BUT NOT CONCLUSIVE
 ```
 
-The `39.99 px` automated test threshold was introduced in Phase 6-B to accommodate sub-pixel floating-point rounding inherent in spatial hash grid collision cleanup (`Stage 11`). The historical rationale for introducing this tolerance is supported by code comments in `spacing.ts` and test assertions, but remains supported rather than conclusively proven as a formal contractual specification change.
+The `39.99 px` automated test threshold was introduced in Phase 6-B to accommodate sub-pixel floating-point rounding inherent in spatial hash grid collision cleanup. The historical rationale for introducing this tolerance is supported by code comments and test assertions, but remains supported rather than conclusively proven as a formal contractual specification change.
 
 ---
 
@@ -152,7 +152,7 @@ Governance status:
 UNRESOLVED
 ```
 
-In Candidate E's 2D multi-row feature band layout (`global-layout.ts`), adjacent feature bands sit horizontally close together (`1020.00 px` inter-band spacing). Conversely, individual features span presentation, application, domain, and schema layers vertically, causing multi-layer intra-feature edges to extend across vertical Y distances (`~1101.68 px`). This geometric explanation is supported by spatial analysis, while the overall governance status remains unresolved.
+In Candidate E's 2D multi-row feature band layout, adjacent feature bands sit horizontally close together (`1020.00 px` inter-band spacing). Conversely, individual features span presentation, application, domain, and schema layers vertically, causing multi-layer intra-feature edges to extend across vertical Y distances (`~1101.68 px`). This geometric explanation is supported by spatial analysis, while the overall governance status remains unresolved.
 
 ---
 
@@ -164,7 +164,7 @@ Phase 15C report text included several text figure inconsistencies:
 2. `(5279.15, 750.00)`: **SUPPORTED BUT NOT CONCLUSIVE** (matches historical Phase 4 1D column layout documentation coordinates before Phase 6 2D feature reordering).
 3. Hash `c09aba8f...`: **UNKNOWN** (origin cannot be reproduced from live Candidate E Stage 12 output).
 
-Standard repository governance rules prohibit retroactively modifying or rewriting historical audit reports (`PHASE15C_...`). Living documentation rules dictate that historical errors are documented and clarified in current reconciliation reports (such as Phase 15T and Phase 16) rather than modifying past historical artifacts.
+Under the repository recency and conflict rules defined in `08_Audit_Source_Register.md`, later-created audits are authoritative and historical findings are retained when they explain why a decision exists rather than retroactively modifying historical reports. Current evidence establishes the discrepancy, but no historical artifact should be modified in Phase 16.
 
 ### Classification
 
@@ -178,20 +178,41 @@ SUPPORTED BUT NOT CONCLUSIVE
 c09aba8f...:
 UNKNOWN
 
-Documentation correction action:
-NOT JUSTIFIED BY CURRENT EVIDENCE
+Documentation action:
+NOT READY FOR IMPLEMENTATION
+
+Reason:
+Current evidence establishes the discrepancy, but no new historical
+artifact should be modified in Phase 16.
 ```
 
 ---
 
 ## 7. Decision-Readiness Matrix
 
-| Issue | Evidence State | Root Cause / Interpretation | Governance Needed? | Ready for Implementation? |
-| :--- | :--- | :--- | :--- | :--- |
-| **Production routing** | PROVEN | SUPPORTED | YES | NO |
-| **40px requirement** | PROVEN | SUPPORTED / GOVERNANCE GAP | YES | NO |
-| **Locality metric** | PROVEN | SUPPORTED | YES | NO |
-| **Phase 15C documentation** | PROVEN / SUPPORTED / UNKNOWN by item | Historical documentation issue | NO | NO |
+```text
+Production routing:
+PROVEN observed mechanism
+SUPPORTED root cause
+UNRESOLVED expected architecture
+NOT READY
+
+40px:
+PROVEN requirement discrepancy
+SUPPORTED threshold rationale
+UNRESOLVED governance decision
+NOT READY
+
+Locality:
+PROVEN geometry
+SUPPORTED geometric explanation
+UNRESOLVED governance
+NOT READY
+
+Historical documentation:
+PROVEN/SUPPORTED/UNKNOWN by individual claim
+NOT READY
+```
 
 ---
 
@@ -200,13 +221,16 @@ NOT JUSTIFIED BY CURRENT EVIDENCE
 ### Production Routing
 Missing:
 * Authoritative decision on how project fixtures are supposed to be provisioned in production
-* Whether benchmark fixtures are expected to ship with production
-* Whether they are generated dynamically
-* Whether they are externally served
+* Whether benchmark/project fixtures are expected to be:
+  - statically bundled,
+  - generated during a build/export step,
+  - provisioned separately,
+  - dynamically served,
+  - or intentionally unavailable in a clean checkout.
 
 ### 40px Requirement
 Missing:
-* Formal governance decision reconciling `>=40.0px` specification with `>=39.99px` automated enforcement
+* Formal governance decision reconciling the `>= 40.0px` specification with `>= 39.99px` automated enforcement
 * Explicit decision whether the contract or implementation should change
 
 ### Locality
@@ -214,7 +238,8 @@ Missing:
 * Authoritative governance decision confirming whether `medianIntra < medianInter` remains an active acceptance criterion for Candidate E / 2D multi-row layouts
 
 ### Historical Documentation
-No additional factual evidence is required to establish the already-classified `SharedUtility` error.
+Missing:
+* Governance policy on historical report immutability versus active report reconciliation
 
 ---
 
@@ -222,11 +247,19 @@ No additional factual evidence is required to establish the already-classified `
 
 ### Production Data Routing
 ```text
-Potential implementation area:
-Asset build/export scripts or public asset routing in explorer/src/context/ProjectContext.tsx or Vite configuration to bundle or copy audit-fixtures/cloud-spend-tracker/explorer-data.json into the public build distribution path.
+Potential change domain:
+Production project-fixture provisioning / public asset delivery
 
-Evidence required before implementation:
-Authoritative decision specifying whether sample benchmark projects should be statically bundled in production builds, dynamically generated via CLI setup, or served via backend endpoints.
+Decision required:
+Determine the authoritative production provisioning model for project fixtures.
+
+Evidence required:
+Whether benchmark/project fixtures are expected to be:
+- statically bundled,
+- generated during a build/export step,
+- provisioned separately,
+- dynamically served,
+- or intentionally unavailable in a clean checkout.
 
 Implementation authorized:
 NO
@@ -234,11 +267,16 @@ NO
 
 ### 40px Acceptance Requirement
 ```text
-Potential implementation area:
-Adjustment of spatial hash grid clearance parameters in Stage 11 (explorer/src/lib/layout/spacing.ts) by 0.00094 px to achieve 40.00000 px, OR formal update of the release contract specification in FEAT-LAYOUT-report-v2.md to specify >= 39.99 px.
+Potential change domain:
+Clearance acceptance contract and/or layout precision behavior
 
-Evidence required before implementation:
-Formal governance sign-off on whether sub-pixel tolerance (39.99 px) is contractually acceptable or whether 40.00000 px strict mathematical clearance must be enforced at the engine level.
+Decision required:
+Determine whether the formal 40.0px requirement remains strictly contractual
+or whether the existing 39.99px automated tolerance is formally acceptable.
+
+Evidence required:
+Authoritative governance decision reconciling the formal requirement
+with automated enforcement.
 
 Implementation authorized:
 NO
@@ -246,11 +284,15 @@ NO
 
 ### Locality Governance
 ```text
-Potential implementation area:
-Modification of layout Y-spacing algorithms in global-layout.ts OR formal retirement/amendment of the historical medianIntra < medianInter condition in the release governance contract.
+Potential change domain:
+Locality acceptance criterion and/or 2D layout geometry
 
-Evidence required before implementation:
-Authoritative governance decision confirming whether medianIntra < medianInter remains an active acceptance criterion for Candidate E / 2D multi-row layouts.
+Decision required:
+Determine whether `medianIntra < medianInter` remains an active acceptance
+criterion for Candidate E / 2D multi-row layouts.
+
+Evidence required:
+Authoritative governance decision.
 
 Implementation authorized:
 NO
@@ -258,11 +300,14 @@ NO
 
 ### Historical Documentation
 ```text
-Potential implementation area:
-Retroactive edit of PHASE15C_REAL_BROWSER_POSITION_AUTHORITY_ACCEPTANCE_REPORT.md text.
+Potential change domain:
+Historical audit documentation
 
-Evidence required before implementation:
-None. Historical report editing is explicitly prohibited by repository governance protocols.
+Decision required before implementation:
+Determine whether historical audit reports should be retroactively modified or whether discrepancy reconciliation in active/subsequent audit documents is the authoritative approach.
+
+Evidence required:
+Governance policy on historical report immutability versus active report reconciliation.
 
 Implementation authorized:
 NO
@@ -278,12 +323,11 @@ NOT READY FOR IMPLEMENTATION
 ```
 
 ### Rationale
-The observed defects/gaps are sufficiently characterized, but the architectural and governance decisions required to define an evidence-backed remediation remain unresolved.
 
-Summary of track characterizations:
-* **Production routing**: PROVEN observed defect
-* **40px**: ACCEPTANCE REQUIREMENT GAP
-* **Locality**: GOVERNANCE QUESTION
-* **Historical documentation**: HISTORICAL DOCUMENTATION ISSUE
+```text
+The evidence is sufficient to characterize the observed behavior,
+but the decisions required to define an evidence-backed remediation
+remain unresolved.
 
-No production code, tests, fixtures, routing, layout algorithms, Position Authority, renderer code, thresholds, or historical reports have been modified during Phase 16.
+Phase 16 therefore authorizes no implementation.
+```
