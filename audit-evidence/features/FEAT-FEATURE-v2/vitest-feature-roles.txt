@@ -1,0 +1,9 @@
+
+ RUN  v2.1.9 /app/explorer
+
+ ✓ src/lib/layout/feature-roles.test.ts (16 tests) 24ms
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  05:32:18
+   Duration  1.44s (transform 113ms, setup 147ms, collect 72ms, tests 24ms, environment 891ms, prepare 79ms)
