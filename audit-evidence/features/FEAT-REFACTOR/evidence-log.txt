@@ -1,0 +1,46 @@
+=== FEAT-REFACTOR AUDIT RUNNER ===
+
+BASELINE SHA256: feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295
+Node Count: 240
+Edge Count: 1024
+
+--- V-04 Base Graph Immutability ---
+Base Hash Before: gh-28664666
+Base Hash After:  gh-28664666
+V-04 Base Graph Immutable: PASS
+
+--- V-05 Operation Determinism ---
+5 Runs Byte-Identical: PASS
+
+--- V-06 Cancellation Restoration ---
+Active Hash Before Sim: gh-28664666
+Active Hash After Cancel: gh-28664666
+V-06 Cancellation Restoration: PASS
+
+--- V-07 Stale Proposal Rejection ---
+Validation Valid: false
+Validation Reason: Underlying graph state changed since proposal creation (expected gh-28664666, got gh-16fb5379).
+V-07 Stale Proposal Rejection: PASS
+
+--- V-08 Finding Delta Uniqueness ---
+Resolved: 0, Introduced: 0, Unchanged: 290, Changed: 0
+Category Disjointness Overlaps: 0
+V-08 Finding Delta Uniqueness: PASS
+
+--- V-09 Post-Commit Equivalence ---
+Simulated Final Graph === Committed Graph: true
+V-09 Post-Commit Equivalence: PASS
+
+--- SEC Cross-Project Rejection ---
+Cross Project Validation Valid: false
+Cross Project Reason: Proposal belongs to project 'cloud-spend-proj' but current project is 'other-proj'.
+SEC Cross-Project Protection: PASS
+
+--- PERF Simulation Step Timing ---
+Avg Simulation Step Time across 100 runs: 0.049 ms
+PERF (< 50ms): PASS
+
+--- SCALE 1,000-Node Simulation ---
+1000-Node Graph Ops Time: 2.088 ms
+1000-Node Base Graph Immutable: true
+SCALE 1000-Node Simulation: PASS
