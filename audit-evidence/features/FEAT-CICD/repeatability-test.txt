@@ -1,0 +1,3 @@
+✓ 5x Repeatability PASS for scripts/test-architecture-change-gate.cjs
+✓ 5x Repeatability PASS for scripts/test-architecture-quality-gates.cjs
+✓ 5x Repeatability PASS for scripts/test-safety-envelope.cjs
