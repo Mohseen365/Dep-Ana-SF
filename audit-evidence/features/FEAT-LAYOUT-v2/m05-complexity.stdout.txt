@@ -1,0 +1,3 @@
+--- M-05 CYCLOMATIC COMPLEXITY AUDIT ---
+File: explorer/src/lib/architecture-layout.ts
+- Function: computeArchitectureLayout      | Complexity:  37 [HIGH COMPLEXITY > 15]

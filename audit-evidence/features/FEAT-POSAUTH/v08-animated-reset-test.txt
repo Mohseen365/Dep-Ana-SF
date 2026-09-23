@@ -1,0 +1,36 @@
+881:    it('1. Animated reset is an actual async event: no persistence occurs before layoutstop, and final coordinates are persisted after layoutstop', () => {
+882-      layoutControl.autoEmitLayoutStop = false;
+883-      const onNodePositionsChange = vi.fn();
+884-
+885-      render(
+886-        <GraphView
+887-          nodes={testNodes}
+888-          edges={testEdges}
+889-          onSelectNode={vi.fn()}
+890-          onSelectEdge={vi.fn()}
+891-          selectedNodeId={null}
+892-          selectedEdgeId={null}
+893-          onNodePositionsChange={onNodePositionsChange}
+894-          layoutMode="static"
+895-        />
+896-      );
+897-
+898-      // Flush initial mount layoutstop listener
+899-      act(() => {
+900-        layoutControl.emitLayoutStop();
+901-      });
+902-      onNodePositionsChange.mockClear();
+903-
+904-      // Trigger animated reset layout
+905-      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+906-      fireEvent.click(resetBtn);
+907-
+908-      // 1. Layout run started but layoutstop has NOT fired yet
+909-      expect(layoutControl.isLayoutRunning).toBe(true);
+910-      expect(onNodePositionsChange).not.toHaveBeenCalled();
+911-
+912-      // 2. Simulate animation moving nodes to final coordinates
+913-      const n1 = mockCy.getElementById('node-1');
+914-      const n2 = mockCy.getElementById('node-2');
+915-      n1.position({ x: 999, y: 888 });
+916-      n2.position({ x: 777, y: 666 });

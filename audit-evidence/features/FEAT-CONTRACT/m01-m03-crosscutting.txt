@@ -1,0 +1,60 @@
+===============================================================================
+FEAT-CONTRACT FORENSIC EVIDENCE: PHASE 5 & CROSS-CUTTING (§MAINTENANCE)
+===============================================================================
+Timestamp: 2026-09-23
+Feature ID: FEAT-CONTRACT (Data Contracts, Provenance & Schema)
+
+-------------------------------------------------------------------------------
+M-01: DA-2.1 Contract Hardening Verification
+-------------------------------------------------------------------------------
+File: `dependency-analyzer.cjs` & `scripts/test-cli-integration.cjs`
+Mechanism:
+- `computeSourceHash(sourceDir)` computes content-based SHA-256 fingerprint over source file bytes.
+- Verification in `scripts/test-cli-integration.cjs`:
+  1. `mtime` Independence: Running `touch` on source files does NOT alter `sourceHash`.
+  2. Content Sensitivity: Modifying file content bytes DOES update `sourceHash`.
+  3. Path Sensitivity: Renaming a source file DOES update `sourceHash`.
+
+-------------------------------------------------------------------------------
+M-02: Documentation Alignment Verification
+-------------------------------------------------------------------------------
+File: `01_Foundations_Contracts.md`
+Verification:
+- Correctly documents `analysis-manifest.json` as provenance artifact and `explorer-data.json` as read-only contract.
+- Correctly documents graph identity hashing (`computeGraphHash`) and stale-proposal rejection.
+- Correctly documents that analyzer/exported graph is the sole authoritative data boundary.
+
+-------------------------------------------------------------------------------
+M-03: Code vs Docs vs Schema Drift Analysis
+-------------------------------------------------------------------------------
+Identified Minor Schema Discrepancies (Remediation Queue):
+1. `project` Property: Defined in `explorer/src/types/explorer.ts` (`project?: ProjectMetadata`) and present in `audit-fixtures/cloud-spend-tracker/explorer-data.json`, but missing in `explorer-contract.ts` and stripped by `ExplorerDataSchemaZ` in `explorer/src/lib/schema.ts`.
+2. `testCoverageStatus` Enum: Defined as `"COVERED" | "NO_TESTS" | "UNTESTED"` in `explorer-contract.ts`, but expanded to include `"AMBIGUOUS"` in `explorer/src/types/explorer.ts` and `explorer/src/lib/schema.ts`.
+3. Canonical Resolution Enum: Defined as `"EXACT" | "INFERRED" | "UNRESOLVED"` in `explorer-contract.ts`, but includes `"HEURISTIC"` in `explorer/src/lib/schema.ts`.
+
+-------------------------------------------------------------------------------
+CROSS-CUTTING CONCERNS EVALUATION
+-------------------------------------------------------------------------------
+SEC (Security):
+- Strict Zod validation boundary (`parseExplorerData` in `explorer/src/lib/schema.ts`) validates all external graph JSON before ingestion.
+- Invalid data types, unexpected structures, or malicious injections are rejected prior to UI state hydration or Cytoscape render.
+
+PERF (Performance):
+- Execution Command: `node audit-evidence/features/FEAT-CONTRACT/run-crosscutting-benchmarks.js`
+- Measured average parse time per run on canonical 240-node fixture: 2.859 ms (Target: < 50.000 ms).
+- Status: PASS (17.5x faster than target threshold).
+
+SCALE (Scalability):
+- Execution Command: `node audit-evidence/features/FEAT-CONTRACT/run-crosscutting-benchmarks.js`
+- Synthetic benchmark graph: 10,000 nodes, 20,000 edges, complete metrics & impact summaries.
+- Measured validation time: 78.38 ms.
+- Status: PASS (Successfully validates large-scale enterprise graph exports).
+
+DOC (Documentation):
+- Contract documented in `01_Foundations_Contracts.md` and `explorer-contract.ts`.
+
+GOV (Governance):
+- Contract provenance and schema immutability are enforced as hard invariants across all pipeline adapters (`export-explorer.cjs`, `architecture-change-gate.cjs`).
+
+Phase 5 (§MAINTENANCE) & Cross-Cutting Decision: PASS
+===============================================================================

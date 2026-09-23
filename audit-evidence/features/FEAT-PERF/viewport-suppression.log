@@ -1,0 +1,12 @@
+[VIEWPORT & SPATIAL HASH GRID VERIFICATION]
+1. Viewport Operation Layout Call Suppression:
+   - File: explorer/src/test/ViewportPerformanceB5.test.tsx
+   - Tests: 11 passing tests in Workstream B5 protection suite
+   - Verification: Panning, zooming, hovering, and selection events trigger transform & highlight updates with exactly 0 layout recomputations (cy.layout call count = 0).
+   - Far-Zoom Suppression: Zoom levels < 0.6 suppress overlay rendering without layout side effects.
+
+2. Spatial Hash Grid Design (spacing.ts):
+   - Spatial Grid Class: SpatialGrid implemented with O(1) cell insertion and candidate retrieval.
+   - Algorithmic Complexity: Converts O(N²) pairwise bounding box overlap detection into O(N) localized cell candidate checks.
+   - Cell Size: Dynamic cell size Math.max(requiredDx, requiredDy).
+   - Bounds Clamping & Priority Weighting: Higher priority nodes absorb less displacement during collision resolution passes.

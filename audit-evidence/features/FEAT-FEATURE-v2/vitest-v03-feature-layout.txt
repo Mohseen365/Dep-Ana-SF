@@ -1,0 +1,67 @@
+
+ RUN  v2.1.9 /app/explorer
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Legacy Zero-Drift Gate: enableFeatureLayout: false produces 100% identical positions to default
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture A — One Feature: single feature cluster, correct layer placement, 0 overlaps
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture B — Two Features, Same Domain: distinct non-overlapping feature regions
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture C — Shared Service: exactly one shared node across 2, 3, 5+ features, no node duplication
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture D — Cross-Domain Feature: feature spanning domains without node duplication
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture E — Tests / Fields: satellites remain attached, no overlap
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture F — Scale 100+ Nodes: deterministic layout and no node overlaps
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture G — Disconnected Components: 3 disconnected feature subgraphs pack cleanly with 0 overlaps
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Fixture H — Bridge-Heavy Graph: cross-feature bridge nodes placed without distorting feature regions or overlaps
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Determinism Stress Test: 0.00000px coordinate drift across baseline, reverse, rotate, and 3 seeded shuffles
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Feature Membership Stability: feature assignments remain identical despite array reordering and unrelated node additions
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Position Authority: explicit Level 1/2 user/persisted positions take 100% precedence
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Sparse Graph Audit: handles 1-node, 2-node, and UI-less sparse features safely
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Negative Control: directory/prefix similarity alone does NOT merge nodes into feature without edges
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+stdout | src/lib/layout/feature-layout.test.ts > Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Performance Benchmark: compares Feature Disabled vs Feature Enabled execution times across scale
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[BENCHMARK] Scale: 100 nodes (20 features) | Disabled: 110.45ms | Enabled: 41.76ms
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[BENCHMARK] Scale: 240 nodes (48 features) | Disabled: 993.88ms | Enabled: 300.01ms
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[BENCHMARK] Scale: 500 nodes (100 features) | Disabled: 11243.59ms | Enabled: 1005.26ms
+
+ ✓ src/lib/layout/feature-layout.test.ts (15 tests) 13896ms
+   ✓ Wave 6 — Feature Spatial Placement & Acceptance Calibration Suite > Performance Benchmark: compares Feature Disabled vs Feature Enabled execution times across scale 13719ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  05:31:45
+   Duration  15.69s (transform 374ms, setup 153ms, collect 402ms, tests 13.90s, environment 900ms, prepare 78ms)

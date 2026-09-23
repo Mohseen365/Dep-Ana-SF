@@ -1,0 +1,13 @@
+
+> salesforce-architecture-explorer@1.0.0 test
+> vitest run src/lib/position-policy.test.ts
+
+
+ RUN  v2.1.9 /app/explorer
+
+ ✓ src/lib/position-policy.test.ts (19 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  19:34:56
+   Duration  2.22s (transform 163ms, setup 205ms, collect 85ms, tests 11ms, environment 1.44s, prepare 136ms)

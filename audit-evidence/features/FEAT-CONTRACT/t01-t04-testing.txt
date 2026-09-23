@@ -1,0 +1,58 @@
+===============================================================================
+FEAT-CONTRACT FORENSIC EVIDENCE: PHASE 3 — TESTING (§TESTING)
+===============================================================================
+Timestamp: 2026-09-23
+Feature ID: FEAT-CONTRACT (Data Contracts, Provenance & Schema)
+
+-------------------------------------------------------------------------------
+T-01: Schema Validation Tests Verification
+-------------------------------------------------------------------------------
+File: `explorer/src/lib/schema.test.ts`
+Execution Command: `cd explorer && npx vitest run src/lib/schema.test.ts`
+Result: 4/4 passing unit tests (Duration: 55ms)
+Test Cases Verified:
+1. "parses valid payload successfully" - Verifies complete valid ExplorerDataSchema parse.
+2. "throws descriptive error on missing required field" - Confirms Zod exception throw on undefined schemaVersion.
+3. "strips unknown extra fields" - Confirms `.strip()` behavior on undeclared root/nested properties.
+4. "validates the sample explorer-data.json from public directory" - Validates actual public asset schema.
+
+-------------------------------------------------------------------------------
+T-02: Stale-Proposal Rejection Tests Verification
+-------------------------------------------------------------------------------
+Files: `explorer/src/test/Prompt8RealDataValidation.test.ts`, `explorer/src/test/Prompt10WorkflowHardening.test.ts`, `explorer/src/test/Prompt11FinalIntegrationAudit.test.ts`
+Execution Command: `cd explorer && npx vitest run src/test/Prompt10WorkflowHardening.test.ts`
+Result: 25/25 passing unit tests (Duration: 2.48s)
+Test Cases Verified:
+- Compares `proposal.baseGraphHash` against current graph `computeGraphHash(currentGraph)`.
+- Rejects stale proposals when graph mutated between creation and commit (`valid: false`).
+- Rejects proposals targeting a different `projectId`.
+
+-------------------------------------------------------------------------------
+T-03: Adversarial Test — Missing Provenance / Mandatory Fields
+-------------------------------------------------------------------------------
+Execution Command: `node audit-evidence/features/FEAT-CONTRACT/run-adversarial-tests.js`
+Results:
+1. Case A (Missing schemaVersion in explorer-data.json):
+   - Success: FALSE
+   - Zod Error: `schemaVersion : Invalid input: expected string, received undefined`
+2. Case B (Missing sourceDirectory in explorer-data.json):
+   - Success: FALSE
+   - Zod Error: `sourceDirectory : Invalid input: expected string, received undefined`
+3. Case C (Missing source.sourceHash in analysis-manifest.json):
+   - Success: FALSE
+   - Zod Error: `source.sourceHash : Invalid input: expected string, received undefined`
+
+-------------------------------------------------------------------------------
+T-04: Adversarial Test — Invalid Enum Values
+-------------------------------------------------------------------------------
+Execution Command: `node audit-evidence/features/FEAT-CONTRACT/run-adversarial-tests.js`
+Results:
+1. Case D (Node with invalid type "InvalidApexType"):
+   - Success: FALSE
+   - Zod Error: `nodes.0.type : Invalid option: expected one of "ApexClass"|"ApexTrigger"|"LWC"|"Visualforce"|"Flow"|"Object"|"CustomObject"|"Field"|"CustomField"|"External"`
+2. Case E (Node with invalid testCoverageStatus "INVALID_COVERAGE"):
+   - Success: FALSE
+   - Zod Error: `nodes.0.refactoringReadiness.testCoverageStatus : Invalid option: expected one of "COVERED"|"NO_TESTS"|"UNTESTED"|"AMBIGUOUS"`
+
+Phase 3 (§TESTING) Decision: PASS
+===============================================================================

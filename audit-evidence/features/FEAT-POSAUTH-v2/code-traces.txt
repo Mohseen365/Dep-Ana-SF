@@ -1,0 +1,87 @@
+=== POSITION POLICY & GRAPHVIEW AUTHORITY CODE TRACES ===
+
+1. 5-LEVEL POSITION AUTHORITY HIERARCHY DEFINITION
+File: explorer/src/lib/position-policy.ts (lines 14-16, 78-120)
+
+Level 1: Explicit current user position (in-session user drag via sessionPositionsRef / Map)
+Level 2: Persisted project position (localStorage / project state via persistedPositions)
+Level 3: Existing Cytoscape position during incremental update (cyNodePosition)
+Level 4: Intelligent initial layout (handled at graph level when no positions exist)
+Level 5: Deterministic fallback placement (calculateDeterministicNewNodePosition)
+
+2. RESOLVE AUTHORITATIVE POSITION IMPLEMENTATION
+File: explorer/src/lib/position-policy.ts (lines 92-120)
+
+```typescript
+export function resolveAuthoritativePosition(
+  nodeId: string,
+  options: {
+    sessionPositions?: Map<string, Position> | Record<string, Position>;
+    persistedPositions?: Record<string, Position>;
+    cyNodePosition?: Position | null;
+    hasAuthoritativePositions?: boolean;
+  }
+): ResolvedPosition | null {
+  const { sessionPositions, persistedPositions, cyNodePosition, hasAuthoritativePositions = true } = options;
+
+  // Level 1: Explicit current user position
+  if (sessionPositions) {
+    let sessionPos: Position | undefined;
+    if (sessionPositions instanceof Map) {
+      sessionPos = sessionPositions.get(nodeId);
+    } else {
+      sessionPos = sessionPositions[nodeId];
+    }
+    if (sessionPos && typeof sessionPos.x === 'number' && typeof sessionPos.y === 'number' && !isNaN(sessionPos.x) && !isNaN(sessionPos.y)) {
+      return { position: { x: sessionPos.x, y: sessionPos.y }, level: 1 };
+    }
+  }
+
+  // Level 2: Persisted project position
+  if (hasAuthoritativePositions && persistedPositions && persistedPositions[nodeId]) {
+    const pPos = persistedPositions[nodeId];
+    if (pPos && typeof pPos.x === 'number' && typeof pPos.y === 'number' && !isNaN(pPos.x) && !isNaN(pPos.y)) {
+      return { position: { x: pPos.x, y: pPos.y }, level: 2 };
+    }
+  }
+
+  // Level 3: Existing Cytoscape position
+  if (hasAuthoritativePositions && cyNodePosition && typeof cyNodePosition.x === 'number' && typeof cyNodePosition.y === 'number' && !isNaN(cyNodePosition.x) && !isNaN(cyNodePosition.y)) {
+    return { position: { x: cyNodePosition.x, y: cyNodePosition.y }, level: 3 };
+  }
+
+  return null;
+}
+```
+
+3. STATIC MODE TRIGGER MATRIX (shouldAutoLayout)
+File: explorer/src/lib/position-policy.ts (lines 48-70)
+
+Mode: static
+- initial: !hasAuth (layout runs ONLY if no authoritative positions exist)
+- graph-update: false (0 layout calls)
+- filter-change: false (0 layout calls)
+- focus-change: false (0 layout calls)
+- investigation: false (0 layout calls)
+- mode-switch: false (0 layout calls)
+- new-nodes: 'place-new-only' (deterministic placement without global layout)
+- reset-layout: true (explicit user reset)
+
+Mode: interactive
+- initial: !hasAuth
+- graph-update: !hasAuth
+- filter-change / focus-change / investigation / mode-switch: false
+- new-nodes: 'place-new-only'
+- reset-layout: true
+
+4. ANIMATED RESET LIFECYCLE (captureAndPersistPositions & layoutstop)
+File: explorer/src/components/GraphView.tsx (lines 142-156, 222-263)
+
+Reset layout registers a one-time 'layoutstop' event handler that triggers `captureAndPersistPositions()` AFTER cytoscape layout completes execution.
+Repeated clicks on 'reset-layout' remove previous pending 'layoutstop' listeners (`cy.off('layoutstop', pendingLayoutStopRef.current)`) avoiding listener leaks or concurrent persistence races.
+Unmounting GraphView cleans up pending `layoutstop` listeners in the useEffect cleanup handler.
+
+5. PROJECT SWITCH & ISOLATION
+File: explorer/src/components/GraphView.tsx (lines 125, 290-330)
+
+On project switch, `sessionPositionsRef` is cleared (`sessionPositionsRef.current.clear()`), ensuring session authority does not leak between projects, and Level 2 persisted positions are reloaded from project state.

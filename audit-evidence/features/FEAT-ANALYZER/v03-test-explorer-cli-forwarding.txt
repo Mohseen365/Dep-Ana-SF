@@ -1,0 +1,13 @@
+DEBUG RAW ARGV: ["/home/jules/.nvm/versions/node/v22.22.1/bin/node","/app/scripts/test-explorer-cli-forwarding.cjs"]
+DEBUG NPM_ENV: {}
+PASS: Test 1: parseArgs(['--project','Movie']) => project=movie, no source guessing
+PASS: Test 2: parseArgs(['--project','Movie','--source',<path>]) keeps source
+PASS: Test 3: parseArgs(['--','Movie']) => project=movie, not ...\Movie source
+PASS: Test 3b: parseArgs(['Movie']) => project=movie
+PASS: Test 3c: parseArgs(['./force-app/main/default']) => source path preserved
+PASS: Test 3d: parseArgs([<windows-absolute-source>]) => source path preserved
+PASS: Test 4: npm run explorer -- Movie
+  DEBUG RAW ARGV: DEBUG RAW ARGV: ["/home/jules/.nvm/versions/node/v22.22.1/bin/node","/app/scripts/run-explorer.cjs","--","--project","Movie"]
+PASS: Test 5: npm run explorer -- -- --project Movie
+
+All explorer CLI forwarding tests passed.

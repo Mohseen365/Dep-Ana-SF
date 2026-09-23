@@ -97,10 +97,10 @@
       "id": "bqstudio",
       "name": "bqstudio",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "../Interview Project/Bouquet-Experience-Cloud/force-app/main/default",
-      "createdAt": "2026-09-17T06:07:04.752Z",
-      "updatedAt": "2026-09-17T06:07:04.752Z",
-      "lastAnalyzedAt": "2026-09-17T06:07:04.752Z",
+      "sourcePath": "tmp-integration-test/fixture",
+      "createdAt": "2026-09-23T06:12:54.610Z",
+      "updatedAt": "2026-09-23T06:12:54.610Z",
+      "lastAnalyzedAt": "2026-09-23T06:12:54.610Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 274,
       "dependencyCount": 603,
@@ -160,9 +160,9 @@
     "bqstudio": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:cbd3aa9531eca662715f54920bba45e5eb6a42050e41a03d61e7d935ddc73c17",
-      "nodeCount": 274,
-      "edgeCount": 603
+      "fileHash": "sha256:bfd048c9bb3eef06ca0653d4d84d2293a92eeb6ac29af8cb2dc4b94f4dc97681",
+      "nodeCount": 4,
+      "edgeCount": 3
     }
   }
 }

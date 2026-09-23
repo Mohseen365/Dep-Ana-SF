@@ -1,0 +1,37 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/app[39m
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS1 — Single Component: PaymentDomain + PaymentSelector + PaymentService resolves into 1 coherent composition region
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS2 — Multiple Components: Payment trio vs Order trio form 2 distinct semantic regions without accidental merging
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS3 — Feature-Heavy Graph: Composition remains readable with IoU deduplication and non-overlapping group bounds
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS5 — Bridge-Heavy Graph: Bridge relationships do not collapse composition into unreadable corridors
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS6 — Dense Feature: Retains minimum overlay padding (20px) and visual clearance around nodes
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS7 — Large Graph: Composition overlays do not recreate extreme visual density in 240-node Cloud Spend dataset
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+[90mstdout[2m | explorer/src/lib/layout/feature-composition-readability.test.ts[2m > [22m[2mPrompt 4 — Visual Composition & Shared Infrastructure Readability Suite[2m > [22m[2mS9 — Interaction Safety: Overlay calculations cause 0 layout invocations and 0 coordinate drift
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+ [32m✓[39m explorer/src/lib/layout/feature-composition-readability.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 8898[2mms[22m[39m
+   [32m✓[39m Prompt 4 — Visual Composition & Shared Infrastructure Readability Suite [2m(10)[22m
+     [33m[2m✓[22m[39m S3 — Feature-Heavy Graph: Composition remains readable with IoU deduplication and non-overlapping group bounds[33m 1873[2mms[22m[39m
+     [33m[2m✓[22m[39m S5 — Bridge-Heavy Graph: Bridge relationships do not collapse composition into unreadable corridors[33m 1476[2mms[22m[39m
+     [33m[2m✓[22m[39m S6 — Dense Feature: Retains minimum overlay padding (20px) and visual clearance around nodes[33m 1343[2mms[22m[39m
+     [33m[2m✓[22m[39m S7 — Large Graph: Composition overlays do not recreate extreme visual density in 240-node Cloud Spend dataset[33m 1389[2mms[22m[39m
+     [33m[2m✓[22m[39m S9 — Interaction Safety: Overlay calculations cause 0 layout invocations and 0 coordinate drift[33m 2735[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 19:24:25
+[2m   Duration [22m 10.20s[2m (tests 90%, transform 9%, import 1%)[22m

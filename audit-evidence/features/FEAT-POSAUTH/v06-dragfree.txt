@@ -1,0 +1,26 @@
+471:    cy.on('dragfree', 'node', (evt) => {
+472-      const node = evt.target;
+473-      const nodeId = node.id();
+474-      const pos = node.position();
+475-      const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
+476-
+477-      sessionPositionsRef.current.set(nodeId, rounded);
+478-      captureAndPersistPositions('user-authored');
+479-
+480-      if (onNodeDragEndRef.current) {
+481-        onNodeDragEndRef.current(nodeId, rounded);
+482-      }
+483-
+484-      if (onNodePositionsChangeRef.current) {
+485-        const currentStoredPositions =
+486-          graphLayoutRef.current?.nodePositions ||
+487-          nodePositionsRef.current ||
+488-          {};
+489-
+490-        const updatedPositions = {
+491-          ...currentStoredPositions,
+492-          [nodeId]: rounded,
+493-        };
+494-
+495-        (onNodePositionsChangeRef.current as any)(updatedPositions, 'user-authored');
+496-      }

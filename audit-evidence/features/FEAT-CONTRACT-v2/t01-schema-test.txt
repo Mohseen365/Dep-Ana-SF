@@ -1,0 +1,9 @@
+
+ RUN  v2.1.9 /app/explorer
+
+ ✓ src/lib/schema.test.ts (4 tests) 26ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  04:53:05
+   Duration  1.70s (transform 122ms, setup 161ms, collect 150ms, tests 26ms, environment 971ms, prepare 87ms)

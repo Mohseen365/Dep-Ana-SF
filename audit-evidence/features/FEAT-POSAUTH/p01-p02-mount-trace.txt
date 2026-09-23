@@ -1,0 +1,31 @@
+415:    const cy = cytoscape({
+416-      container: containerRef.current,
+417-      elements: elements,
+418-      style: styles,
+419-      layout: layoutOptions,
+420-      minZoom: 0.1,
+421-      maxZoom: 5,
+422-      wheelSensitivity: 0.2,
+423-      boxSelectionEnabled: true,
+424-      autounselectify: false
+425-    });
+426-
+427-    cyRef.current = cy;
+428-
+429-    const knownPosMap: Record<string, Position> = {};
+430-    cy.nodes().forEach((cyNode) => {
+431-      const id = cyNode.id();
+432-      const resolved = resolveAuthoritativePosition(id, {
+433-        sessionPositions: sessionPositionsRef.current,
+434-        persistedPositions: nodePositionsRef.current,
+435-        hasAuthoritativePositions: hasAuth,
+436-      });
+437-
+438-      if (resolved) {
+439-        cyNode.position({ x: resolved.position.x, y: resolved.position.y });
+440-        knownPosMap[id] = resolved.position;
+441-      }
+442-    });
+443-
+444-    if (autoLayoutPolicy !== true) {
+445-      let newlyPlaced = false;

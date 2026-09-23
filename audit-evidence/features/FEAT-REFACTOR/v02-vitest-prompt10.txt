@@ -1,0 +1,25 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/app[39m
+
+[90mstdout[2m | explorer/src/test/Prompt10WorkflowHardening.test.ts[2m > [22m[2mPrompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix[2m > [22m[2m13. Performance Benchmark Profile on Cloud Spend Tracker Fixture[2m > [22m[2mmeasures execution timings across all lifecycle phases against performance bounds
+[22m[39m[PROMPT 10 PERFORMANCE PROFILE]
+  Proposal Creation: 0.59ms
+  Simulation Ops: 0.10ms
+  Step Impact & Finding Delta: 99.06ms
+  Commit Validation: 0.47ms
+  Graph Commit: 0.12ms
+  Post-Commit Re-analysis: 47.02ms
+  Persistence Save: 0.12ms
+  Project Reload: 0.07ms
+
+ [32m✓[39m explorer/src/test/Prompt10WorkflowHardening.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 2597[2mms[22m[39m
+   [32m✓[39m Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix [2m(25)[22m
+     [32m✓[39m 5. Multi-Step Mixed Operation Scenario & Batch Equivalence [2m(1)[22m
+       [33m[2m✓[22m[39m executes a 4-step proposal combining all primitive operations, proving sequential and batch equivalence[33m 385[2mms[22m[39m
+     [32m✓[39m 11. Determinism & Replay (10/10 Repeated Execution Invariance) [2m(1)[22m
+       [33m[2m✓[22m[39m executes 10 repeated simulations of the multi-step proposal and confirms 100% identical hashes, deltas, and positions[33m 633[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+[2m   Start at [22m 19:21:40
+[2m   Duration [22m 3.05s[2m (tests 90%, transform 8%, import 2%)[22m

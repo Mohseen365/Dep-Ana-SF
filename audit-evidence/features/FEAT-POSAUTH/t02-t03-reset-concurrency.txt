@@ -1,0 +1,36 @@
+978:    it('3. Reset concurrency race test: Reset B overriding Reset A cancels A handler and persists only B final coordinates', () => {
+979-      layoutControl.autoEmitLayoutStop = false;
+980-      const onNodePositionsChange = vi.fn();
+981-
+982-      render(
+983-        <GraphView
+984-          nodes={testNodes}
+985-          edges={testEdges}
+986-          onSelectNode={vi.fn()}
+987-          onSelectEdge={vi.fn()}
+988-          selectedNodeId={null}
+989-          selectedEdgeId={null}
+990-          onNodePositionsChange={onNodePositionsChange}
+991-          layoutMode="static"
+992-        />
+993-      );
+994-
+995-      // Flush initial mount layoutstop
+996-      act(() => {
+997-        layoutControl.emitLayoutStop();
+998-      });
+999-      onNodePositionsChange.mockClear();
+1000-
+1001-      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+1002-
+1003-      // Reset A starts
+1004-      fireEvent.click(resetBtn);
+1005-      const n1 = mockCy.getElementById('node-1');
+1006-      n1.position({ x: 111, y: 111 });
+1007-
+1008-      // Reset B starts before Reset A completes
+1009-      fireEvent.click(resetBtn);
+1010-      n1.position({ x: 999, y: 999 });
+1011-
+1012-      // Verify Reset A's listener was removed from active listeners via cy.off
+1013-      expect((listeners['layoutstop'] || []).length).toBe(1);

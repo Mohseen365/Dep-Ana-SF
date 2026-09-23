@@ -1,0 +1,5 @@
+Adversarial Gate Decision: BLOCKED
+Blockers: [
+  'Safety envelope is BLOCKED: Hard structural safety threshold violated.'
+]
+ADVERSARIAL BLOCKED PRECEDENCE VERIFIED PASS

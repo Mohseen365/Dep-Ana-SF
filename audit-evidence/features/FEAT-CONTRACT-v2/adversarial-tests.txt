@@ -1,0 +1,17 @@
+===============================================================================
+T-03: ADVERSARIAL TEST — MISSING PROVENANCE FIELDS
+===============================================================================
+Case A: Missing schemaVersion -> success? false
+Zod Error message: schemaVersion : Invalid input: expected string, received undefined
+Case B: Missing sourceDirectory -> success? false
+Zod Error message: sourceDirectory : Invalid input: expected string, received undefined
+Case C: Manifest missing sourceHash -> success? false
+Zod Error message: source.sourceHash : Invalid input: expected string, received undefined
+
+===============================================================================
+T-04: ADVERSARIAL TEST — INVALID ENUM VALUES
+===============================================================================
+Case D: Node with invalid type "InvalidApexType" -> success? false
+Zod Error message: nodes.0.type : Invalid option: expected one of "ApexClass"|"ApexTrigger"|"LWC"|"Visualforce"|"Flow"|"Object"|"CustomObject"|"Field"|"CustomField"|"External"
+Case E: Node with invalid testCoverageStatus "INVALID_COVERAGE" -> success? false
+Zod Error message: nodes.0.refactoringReadiness.testCoverageStatus : Invalid option: expected one of "COVERED"|"NO_TESTS"|"UNTESTED"|"AMBIGUOUS"

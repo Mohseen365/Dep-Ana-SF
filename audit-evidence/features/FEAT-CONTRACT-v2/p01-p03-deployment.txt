@@ -1,0 +1,25 @@
+===============================================================================
+FEAT-CONTRACT-v2 AUDIT EVIDENCE: §DEPLOYMENT PHASE (P-01 THROUGH P-03)
+===============================================================================
+
+P-01: BUILD-TIME VALIDATION AGAINST SCHEMA
+------------------------------------------
+Script: scripts/export-explorer.cjs & scripts/test-export-explorer.cjs
+Execution Command: node scripts/test-export-explorer.cjs
+Verification:
+  Export adapter normalizes raw analyzer outputs and validates them against 12 build-time invariants before writing artifacts to public directories.
+  If any node ID, edge endpoint, enum value, or metric is invalid, export-explorer.cjs throws an exception and halts build/deployment.
+
+P-02: CANONICAL FIXTURE HASH IMMUTABILITY
+------------------------------------------
+Canonical Fixture File: audit-fixtures/cloud-spend-tracker/explorer-data.json
+Verification Command: sha256sum audit-fixtures/cloud-spend-tracker/explorer-data.json
+Output: feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295
+Byte Drift: Exactly 0 bytes drift.
+Status: IMMUTABLE & VERIFIED
+
+P-03: ATOMIC MANIFEST GENERATION
+--------------------------------
+Script: dependency-analyzer.cjs (lines 450-485)
+Verification:
+  The analyzer computes content SHA-256 (`sourceHash`) across source files, writes all individual analysis artifact files (dependency-report.json, analysis-snapshot.json, architecture-snapshot.json, etc.), calculates their file hashes, and finally writes analysis-manifest.json in a single atomic filesystem operation once all artifacts exist on disk.

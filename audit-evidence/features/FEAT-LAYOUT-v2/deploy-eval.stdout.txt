@@ -1,0 +1,8 @@
+--- P-04 RUNTIME FOOTPRINT ON CANONICAL FIXTURE ---
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+Node count: 240
+Runtime: 2241.43 ms
+Bounding Box: minX=60.0, maxX=9339.1, minY=30.0, maxY=4550.0
+Dimensions: 9279.1 px x 4520.0 px
+Aspect Ratio: 2.05
+Memory Usage: heapUsed=21.34 MB, rss=130.41 MB

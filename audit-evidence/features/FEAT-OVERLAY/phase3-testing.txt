@@ -1,0 +1,26 @@
+=== PHASE 3: TESTING & ADVERSARIAL AUDIT (T-01 to T-04) ===
+
+T-01 Unit Test Coverage - Deduplication:
+- File: explorer/src/lib/layout/feature-composition-readability.test.ts (S3)
+- File: explorer/src/lib/layout/wave12-visual-density.test.ts (Test 1)
+- Verified IoU calculation logic and assertion: expect(iou).toBeLessThan(0.55).
+- Result: PASS
+
+T-02 Unit Test Coverage - Zoom Thresholds:
+- File: explorer/src/lib/layout/feature-composition-readability.test.ts (S8)
+- Verified zoom levels [0.4, 0.6, 0.8, 1.0, 1.5, 2.0] and far zoom suppression (< 0.6).
+- Result: PASS
+
+T-03 Adversarial Test - 12 Near-Identical Groups:
+- Setup: 12 distinct LWC component pairs placed in near-identical bounding box locations (high spatial overlap).
+- Command: npx tsx -e "..."
+- Input: 12 candidate groups with IoU > 0.55 / containment > 0.80.
+- Output: Exactly 1 group retained (1 <= 4 requirement satisfied, 11 suppressed due to IoU deduplication).
+- Result: PASS
+
+T-04 Adversarial Test - 100 Overlapping Groups:
+- Setup: 100 LWC component pairs with dense edge connections and overlapping spatial coordinates.
+- Command: npx tsx -e "..."
+- Input: 100 candidate overlapping groups.
+- Output: Exactly 1 group retained, execution completed in 13.32 ms (bounded output, O(N) performance).
+- Result: PASS

@@ -1,0 +1,98 @@
+[
+  {
+    "scale": 100,
+    "nodeCount": 100,
+    "edgeCount": 191,
+    "run1ColdMs": 110.08,
+    "medianMs": 34.31,
+    "peakRssMb": 155.04,
+    "heapUsedMb": 38.74,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 250,
+    "nodeCount": 250,
+    "edgeCount": 493,
+    "run1ColdMs": 151.19,
+    "medianMs": 127.57,
+    "peakRssMb": 162.54,
+    "heapUsedMb": 39.38,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 500,
+    "nodeCount": 500,
+    "edgeCount": 989,
+    "run1ColdMs": 410.33,
+    "medianMs": 386.52,
+    "peakRssMb": 181.28,
+    "heapUsedMb": 60.28,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 750,
+    "nodeCount": 750,
+    "edgeCount": 1485,
+    "run1ColdMs": 887.06,
+    "medianMs": 860.54,
+    "peakRssMb": 210.28,
+    "heapUsedMb": 44.06,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 1000,
+    "nodeCount": 1000,
+    "edgeCount": 2035,
+    "run1ColdMs": 1577.85,
+    "medianMs": 1494.18,
+    "peakRssMb": 210.68,
+    "heapUsedMb": 50.59,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 2500,
+    "nodeCount": 2500,
+    "edgeCount": 5007,
+    "run1ColdMs": 10337.91,
+    "medianMs": 8574.91,
+    "peakRssMb": 280.83,
+    "heapUsedMb": 155.09,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 5000,
+    "nodeCount": 5000,
+    "edgeCount": 10130,
+    "run1ColdMs": 49880.54,
+    "medianMs": 49880.54,
+    "peakRssMb": 236.93,
+    "heapUsedMb": 114.17,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  },
+  {
+    "scale": 10000,
+    "nodeCount": 10000,
+    "edgeCount": 19917,
+    "run1ColdMs": 318381.17,
+    "medianMs": 318381.17,
+    "peakRssMb": 525.14,
+    "heapUsedMb": 305.46,
+    "finiteCoordinateRatio": 1.0,
+    "correctnessPassed": true,
+    "determinismPassed": true
+  }
+]

@@ -1,0 +1,16 @@
+STATIC-MODE TRIGGER MATRIX FORENSIC AUDIT (V-04)
+Evaluated against explorer/src/lib/position-policy.ts and explorer/src/components/GraphView.tsx
+
+Trigger Operation               Mode     shouldAutoLayout Call    Expected Layout Calls   Actual Layout Calls   Authority Preserved
+----------------------------------------------------------------------------------------------------------------------------------
+1. Filter Toggle                static   shouldAutoLayout('static', 'filter-change', {hasAuth: true}) -> false    0                     0                     YES
+2. Focus Depth 1->2->3->ALL     static   shouldAutoLayout('static', 'focus-change', {hasAuth: true}) -> false     0                     0                     YES
+3. Direction Change             static   shouldAutoLayout('static', 'focus-change', {hasAuth: true}) -> false     0                     0                     YES
+4. Node Select                  static   (No trigger fired, purely selection state update in Cy)                 0                     0                     YES
+5. Drawer Open/Close            static   (Resizes canvas via cy.resize(), no layout run)                          0                     0                     YES
+6. Pan                          static   (Cytoscape viewport pan, no layout run)                                  0                     0                     YES
+7. Zoom                         static   (Cytoscape viewport zoom, no layout run)                                 0                     0                     YES
+8. Minimap Toggle               static   (Renders/destroys navigator overlay, no layout run)                      0                     0                     YES
+9. Mode Toggle (Inter -> Stat)  static   shouldAutoLayout('static', 'mode-switch', {hasAuth: true}) -> false      0                     0                     YES
+
+RESULT: Exactly 0 layout calls per row in Static Mode.

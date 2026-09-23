@@ -1,0 +1,425 @@
+
+> salesforce-architecture-explorer@1.0.0 test
+> vitest run run src/lib/schema.test.ts src/test/Prompt10WorkflowHardening.test.ts
+
+
+ RUN  v2.1.9 /app/explorer
+
+ ✓ src/lib/schema.test.ts (4 tests) 43ms
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 1. Initial architecture-aware layout: verifies GraphView receives positions calculated by computeArchitectureLayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 2. Authoritative dragged positions: user drag remains authoritative across re-renders (single, hub, bridge, satellite)
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 3. Persisted position precedence: persisted positions override calculated layout on mount/reload
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 4. Static initial layout: calculates architecture layout once on initial mount if no positions exist
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 5. Static filter regression: hiding/restoring node types does not trigger automatic relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 6. Static focus-depth regression: changing focus node, depth, and direction does not trigger relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 7. Interactive drag regression: dragged positions survive graph updates without forced layout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 8. Mode-switch regression: switching Static <-> Interactive does not trigger visual rearrangement
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 9. Explicit reset layout: recalculates architecture layout and persists new positions
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 10. New node placement: adding a new node places it deterministically without moving existing nodes
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 11. Hidden -> Visible node restoration: restored nodes recover authoritative coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 12. Filter + Drag combination: dragging node A then filtering and restoring preserves A at dragged position
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 13. Reset + Filter combination: explicit reset followed by filter retains reset positions
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 14. Persistence + Filter combination: persisted positions remain authoritative across filter cycles
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 15. Graph update with existing positions: existing nodes retain positions, architecture layout does not override
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 16. Investigation mode regression: highlighting / path selection does not trigger unintended relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 17. Double-layout prevention: initial mount executes layout configuration once without duplicate runs
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 18. No automatic force-layout override: preset architecture layout is not replaced by fcose
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 20. Single node graph handling safety: renders single node graph without crashing or NaN coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 21. Disconnected graph handling safety: places disconnected components deterministically without crashing
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 22. Large graph / render stability: handles 50+ nodes without layout loops or memory leaks
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 23. Undefined and empty cycle selection handling: handles empty cycle array, null, and undefined without throwing errors or mutating positions
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 24. Missing nodePositions and missing edges safety: renders safely when nodePositions is undefined and edges is empty array
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx (24 tests | 10 failed) 1045ms
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 3. Persisted position precedence: persisted positions override calculated layout on mount/reload 44ms
+     → expected { x: 180, y: 260 } to deeply equal { x: 123, y: 456 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 5. Static filter regression: hiding/restoring node types does not trigger automatic relayout 39ms
+     → expected { x: -500, y: -300 } to deeply equal { x: 100, y: 100 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 6. Static focus-depth regression: changing focus node, depth, and direction does not trigger relayout 45ms
+     → expected { x: -500, y: -300 } to deeply equal { x: 100, y: 100 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 10. New node placement: adding a new node places it deterministically without moving existing nodes 17ms
+     → expected { x: -500, y: -300 } to deeply equal { x: 100, y: 100 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 11. Hidden -> Visible node restoration: restored nodes recover authoritative coordinates 21ms
+     → expected { x: -434, y: -209 } to deeply equal { x: 400, y: 400 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 12. Filter + Drag combination: dragging node A then filtering and restoring preserves A at dragged position 27ms
+     → expected { x: -140, y: 100 } to deeply equal { x: 999, y: 999 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 14. Persistence + Filter combination: persisted positions remain authoritative across filter cycles 26ms
+     → expected { x: 180, y: 260 } to deeply equal { x: 500, y: 500 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 15. Graph update with existing positions: existing nodes retain positions, architecture layout does not override 26ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st spy call:
+
+    Array [
+      Object {
+        "animate": true,
+        "animationDuration": 500,
+        "fit": true,
+        "name": "preset",
+        "padding": 50,
+        "positions": [Function positions],
+      },
+    ]
+
+
+Number of calls: 1
+
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 16. Investigation mode regression: highlighting / path selection does not trigger unintended relayout 18ms
+     → expected { x: 180, y: 260 } to deeply equal { x: 100, y: 200 }
+   × Wave 6 — Runtime Integration & Position Authority Test Matrix > 17. Double-layout prevention: initial mount executes layout configuration once without duplicate runs 14ms
+     → expected "spy" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st spy call:
+
+    Array [
+      Object {
+        "animate": true,
+        "animationDuration": 500,
+        "fit": true,
+        "name": "preset",
+        "padding": 50,
+        "positions": [Function positions],
+      },
+    ]
+
+
+Number of calls: 1
+
+stdout | src/test/Prompt10WorkflowHardening.test.ts > Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix > 13. Performance Benchmark Profile on Cloud Spend Tracker Fixture > measures execution timings across all lifecycle phases against performance bounds
+[PROMPT 10 PERFORMANCE PROFILE]
+  Proposal Creation: 0.64ms
+  Simulation Ops: 0.13ms
+  Step Impact & Finding Delta: 88.98ms
+  Commit Validation: 0.44ms
+  Graph Commit: 0.15ms
+  Post-Commit Re-analysis: 45.83ms
+  Persistence Save: 0.09ms
+  Project Reload: 0.06ms
+
+ ✓ src/test/Prompt10WorkflowHardening.test.ts (25 tests) 2674ms
+   ✓ Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix > 5. Multi-Step Mixed Operation Scenario & Batch Equivalence > executes a 4-step proposal combining all primitive operations, proving sequential and batch equivalence 420ms
+   ✓ Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix > 11. Determinism & Replay (10/10 Repeated Execution Invariance) > executes 10 repeated simulations of the multi-step proposal and confirms 100% identical hashes, deltas, and positions 687ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 3. Persisted position precedence: persisted positions override calculated layout on mount/reload
+AssertionError: expected { x: 180, y: 260 } to deeply equal { x: 123, y: 456 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 123,
+-   "y": 456,
++   "x": 180,
++   "y": 260,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:357:70
+    355|     );
+    356|
+    357|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    358|     expect(mockCy.getElementById('ApexClass:BridgeAdapter').position()…
+    359|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 5. Static filter regression: hiding/restoring node types does not trigger automatic relayout
+AssertionError: expected { x: -500, y: -300 } to deeply equal { x: 100, y: 100 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 100,
++   "x": -500,
++   "y": -300,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:429:70
+    427|
+    428|     expect(mockLayoutRun).not.toHaveBeenCalled();
+    429|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    430|   });
+    431|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 6. Static focus-depth regression: changing focus node, depth, and direction does not trigger relayout
+AssertionError: expected { x: -500, y: -300 } to deeply equal { x: 100, y: 100 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 100,
++   "x": -500,
++   "y": -300,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:486:70
+    484|
+    485|     expect(mockLayoutRun).not.toHaveBeenCalled();
+    486|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    487|   });
+    488|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 10. New node placement: adding a new node places it deterministically without moving existing nodes
+AssertionError: expected { x: -500, y: -300 } to deeply equal { x: 100, y: 100 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 100,
++   "x": -500,
++   "y": -300,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:677:70
+    675|     expect(mockLayoutRun).not.toHaveBeenCalled();
+    676|
+    677|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    678|     expect(mockCy.getElementById('ApexClass:BridgeAdapter').position()…
+    679|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 11. Hidden -> Visible node restoration: restored nodes recover authoritative coordinates
+AssertionError: expected { x: -434, y: -209 } to deeply equal { x: 400, y: 400 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 400,
+-   "y": 400,
++   "x": -434,
++   "y": -209,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:719:73
+    717|     );
+    718|
+    719|     expect(mockCy.getElementById('ApexClass:BridgeAdapter').position()…
+       |                                                                         ^
+    720|   });
+    721|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 12. Filter + Drag combination: dragging node A then filtering and restoring preserves A at dragged position
+AssertionError: expected { x: -140, y: 100 } to deeply equal { x: 999, y: 999 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 999,
+-   "y": 999,
++   "x": -140,
++   "y": 100,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:760:70
+    758|     );
+    759|
+    760|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    761|
+    762|     rerender(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 14. Persistence + Filter combination: persisted positions remain authoritative across filter cycles
+AssertionError: expected { x: 180, y: 260 } to deeply equal { x: 500, y: 500 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 500,
+-   "y": 500,
++   "x": 180,
++   "y": 260,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:866:70
+    864|     );
+    865|
+    866|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    867|     expect(mockCy.getElementById('ApexClass:BridgeAdapter').position()…
+    868|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 15. Graph update with existing positions: existing nodes retain positions, architecture layout does not override
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st spy call:
+
+    Array [
+      Object {
+        "animate": true,
+        "animationDuration": 500,
+        "fit": true,
+        "name": "preset",
+        "padding": 50,
+        "positions": [Function positions],
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:905:31
+    903|     );
+    904|
+    905|     expect(mockLayoutRun).not.toHaveBeenCalled();
+       |                               ^
+    906|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+    907|     expect(mockCy.getElementById('ApexClass:BridgeAdapter').position()…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 16. Investigation mode regression: highlighting / path selection does not trigger unintended relayout
+AssertionError: expected { x: 180, y: 260 } to deeply equal { x: 100, y: 200 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 200,
++   "x": 180,
++   "y": 260,
+  }
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:944:70
+    942|
+    943|     expect(mockLayoutRun).not.toHaveBeenCalled();
+    944|     expect(mockCy.getElementById('ApexClass:HubService').position()).t…
+       |                                                                      ^
+    945|
+    946|     rerender(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  src/components/GraphView.runtimeIntegration.test.tsx > Wave 6 — Runtime Integration & Position Authority Test Matrix > 17. Double-layout prevention: initial mount executes layout configuration once without duplicate runs
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st spy call:
+
+    Array [
+      Object {
+        "animate": true,
+        "animationDuration": 500,
+        "fit": true,
+        "name": "preset",
+        "padding": 50,
+        "positions": [Function positions],
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/components/GraphView.runtimeIntegration.test.tsx:975:31
+    973|
+    974|     expect(mockCytoscapeFn).toHaveBeenCalledTimes(1);
+    975|     expect(mockLayoutRun).not.toHaveBeenCalled();
+       |                               ^
+    976|   });
+    977|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  10 failed | 43 passed (53)
+   Start at  04:52:53
+   Duration  6.05s (transform 1.96s, setup 734ms, collect 2.78s, tests 3.76s, environment 5.63s, prepare 387ms)

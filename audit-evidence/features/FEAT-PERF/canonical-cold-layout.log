@@ -1,0 +1,18 @@
+{
+  "fixture": "cloud-spend-tracker",
+  "sha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
+  "nodeCount": 240,
+  "edgeCount": 1024,
+  "domainCount": 106,
+  "componentCount": 25,
+  "stagesMs": {
+    "schemaParse": 3.323,
+    "architectureAnalysis": 12.481,
+    "filtering": 0.812,
+    "architectureLayout": 154.602,
+    "cytoscapeSyncElements": 18.150,
+    "totalColdPipeline": 189.368
+  },
+  "slaThresholdMs": 1000.0,
+  "slaPassed": true
+}
