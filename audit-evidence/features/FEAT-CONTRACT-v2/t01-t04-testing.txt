@@ -1,0 +1,46 @@
+===============================================================================
+FEAT-CONTRACT-v2 AUDIT EVIDENCE: §TESTING PHASE (T-01 THROUGH T-04)
+===============================================================================
+
+T-01: SCHEMA VALIDATION TESTS
+-----------------------------
+Test File: explorer/src/lib/schema.test.ts
+Execution Command: (cd explorer && npx vitest run src/lib/schema.test.ts)
+Result: 4 passed out of 4 tests (100% pass rate)
+Tests verified:
+  - parses valid explorer data schema correctly
+  - throws on missing required top-level fields
+  - validates node and edge enum values
+  - validates refactoring readiness and risk structures
+
+T-02: STALE-PROPOSAL REJECTION TESTS
+------------------------------------
+Test File: explorer/src/test/Prompt10WorkflowHardening.test.ts
+Execution Command: (cd explorer && npx vitest run src/test/Prompt10WorkflowHardening.test.ts)
+Result: 25 passed out of 25 tests (100% pass rate)
+Tests verified:
+  - detects stale proposals when baseGraphHash mismatches
+  - rejects stale proposal commit with explicit error
+  - enforces project isolation during proposal validation
+
+T-03: ADVERSARIAL TEST — MISSING PROVENANCE FIELDS
+--------------------------------------------------
+Script: audit-evidence/features/FEAT-CONTRACT-v2/run-adversarial-tests.js
+Execution Log: audit-evidence/features/FEAT-CONTRACT-v2/adversarial-tests.txt
+Cases Tested:
+  - Case A (Missing schemaVersion): Zod safeParse returns success=false
+    Error: schemaVersion : Invalid input: expected string, received undefined
+  - Case B (Missing sourceDirectory): Zod safeParse returns success=false
+    Error: sourceDirectory : Invalid input: expected string, received undefined
+  - Case C (Missing source.sourceHash in analysis-manifest.json): Zod safeParse returns success=false
+    Error: source.sourceHash : Invalid input: expected string, received undefined
+
+T-04: ADVERSARIAL TEST — INVALID ENUM VALUES
+--------------------------------------------
+Script: audit-evidence/features/FEAT-CONTRACT-v2/run-adversarial-tests.js
+Execution Log: audit-evidence/features/FEAT-CONTRACT-v2/adversarial-tests.txt
+Cases Tested:
+  - Case D (Node with invalid type "InvalidApexType"): Zod safeParse returns success=false
+    Error: nodes.0.type : Invalid option: expected one of "ApexClass"|"ApexTrigger"|"LWC"|"Visualforce"|"Flow"|"Object"|"CustomObject"|"Field"|"CustomField"|"External"
+  - Case E (Node with invalid testCoverageStatus "INVALID_COVERAGE"): Zod safeParse returns success=false
+    Error: nodes.0.refactoringReadiness.testCoverageStatus : Invalid option: expected one of "COVERED"|"NO_TESTS"|"UNTESTED"|"AMBIGUOUS"
