@@ -1,0 +1,816 @@
+
+> salesforce-architecture-explorer@1.0.0 test
+> vitest run src/components/GraphView.positionAuthority.test.tsx
+
+
+ RUN  v2.1.9 /app/explorer
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Restoration of persisted positions: sets node positions directly when nodePositions prop is provided
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Dragfree persistence: captures updated position on dragfree and notifies onNodePositionsChange
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static stability: blocks automatic relayout on graph updates, filter changes, and focus changes
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static mode allows explicit Reset Layout button execution
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Interactive compatibility: preserves existing behavior and allows layout on explicit reset
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Mode switching Interactive -> Static captures current positions and persists without rearranging
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Mode switching Static -> Interactive changes mode without immediate relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Hidden and reappearing nodes restore their saved positions when made visible again
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Genuinely new node insertion places new nodes deterministically without moving existing nodes
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Remount behavior: restores persisted positions directly without running layout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 1. selected node can still be investigated without changing node coordinates in Static mode
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 2. double-click still works and fires callbacks without changing node coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 3. focus (focusOnNode, Focus Depth, Focus Direction) still works without changing node coordinates in Static mode
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 4. viewport can move (zoom, fit, centerSelected) while node coordinates remain strictly unchanged
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 5. node coordinates remain unchanged in Static mode across multi-operation flow
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 6. Interactive behavior remains unchanged (allows explicit reset and position updates)
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 1. Animated reset is an actual async event: no persistence occurs before layoutstop, and final coordinates are persisted after layoutstop
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 2. Repeated animated resets clean up previous listeners and do not leak event listeners
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 3. Reset concurrency race test: Reset B overriding Reset A cancels A handler and persists only B final coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 4. Unmounting GraphView during pending reset cleans up layoutstop listener
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 5. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 4. Negative Test 2: Explicit user drag STILL beats conflicting external persisted position update
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 5. New node placement is immediately persisted to parent via onNodePositionsChange
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case 1: External update after mount — node initially rendered, GraphView remains mounted, parent updates nodePositions prop, node moves to new persisted coordinates
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case 2: External update after filtering — node-2 hidden, parent updates position for node-2, node-2 becomes visible with new authoritative position
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case A: canvas = 100,100; persisted = 500,500; no drag -> expected: 500,500
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case B: canvas = 100,100; persisted = 500,500; drag = 800,800 -> expected: 800,800
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case C: canvas = 800,800; persisted = 500,500; NO drag -> expected: 500,500 (guards against cyPositionsBefore contamination)
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case D: new node, no persisted, no canvas -> expected: deterministic fallback + immediate persistence
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case E: existing filtered node becomes visible -> previous authoritative position + NO global relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 1: Canvas position does NOT silently become Level 1 session authority without explicit user drag
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 2: External persisted position update is NOT ignored when node was never dragged
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 3: Animated reset does NOT persist starting coordinates before layout completes
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 4: New-node placement does NOT trigger repeated persistence loops
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 5: Filter/focus update does NOT cause an unexpected global relayout
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+stdout | src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 6: Static mode does NOT automatically recalculate the entire graph on state changes
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx (36 tests | 20 failed) 1074ms
+   × GraphView Position Authority & Layout Policy > Restoration of persisted positions: sets node positions directly when nodePositions prop is provided 160ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 150, y: 250 }
+   × GraphView Position Authority & Layout Policy > Dragfree persistence: captures updated position on dragfree and notifies onNodePositionsChange 34ms
+     → expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+-       "x": 180,
+-       "y": 220,
++       "x": -500,
++       "y": -400,
++     },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
+      },
+    },
++   "automatic-hierarchical",
+  ]
+
+  2nd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 220,
+      },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
+      },
++   },
++   "user-authored",
+  ]
+
+  3rd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 220,
+      },
++     "node-2": Object {
++       "x": 200,
++       "y": 200,
+      },
++   },
++   "user-authored",
+  ]
+
+
+Number of calls: 3
+
+   × GraphView Position Authority & Layout Policy > Hidden and reappearing nodes restore their saved positions when made visible again 17ms
+     → expected { x: -451, y: -358 } to deeply equal { x: 220, y: 240 }
+   × GraphView Position Authority & Layout Policy > Genuinely new node insertion places new nodes deterministically without moving existing nodes 18ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 100 }
+   × GraphView Position Authority & Layout Policy > Remount behavior: restores persisted positions directly without running layout 18ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 500, y: 500 }
+   × GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 1. selected node can still be investigated without changing node coordinates in Static mode 15ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+   × GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 2. double-click still works and fires callbacks without changing node coordinates 16ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+   × GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 3. focus (focusOnNode, Focus Depth, Focus Direction) still works without changing node coordinates in Static mode 25ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+   × GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 4. viewport can move (zoom, fit, centerSelected) while node coordinates remain strictly unchanged 39ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+   × GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 5. node coordinates remain unchanged in Static mode across multi-operation flow 14ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+   × GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 1. Animated reset is an actual async event: no persistence occurs before layoutstop, and final coordinates are persisted after layoutstop 25ms
+     → expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 999,
+        "y": 888,
+      },
+      "node-2": Object {
+        "x": 777,
+        "y": 666,
+      },
+    },
++   "automatic-hierarchical",
+  ]
+
+
+Number of calls: 1
+
+   × GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 3. Reset concurrency race test: Reset B overriding Reset A cancels A handler and persists only B final coordinates 27ms
+     → expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 999,
+        "y": 999,
+      },
++     "node-2": Object {
++       "x": 260,
++       "y": 200,
+      },
++   },
++   "automatic-hierarchical",
+  ]
+
+
+Number of calls: 1
+
+   × GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 5. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag 10ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 100 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case 1: External update after mount — node initially rendered, GraphView remains mounted, parent updates nodePositions prop, node moves to new persisted coordinates 10ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 100, y: 100 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case 2: External update after filtering — node-2 hidden, parent updates position for node-2, node-2 becomes visible with new authoritative position 17ms
+     → expected { x: -451, y: -358 } to deeply equal { x: 888, y: 888 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case A: canvas = 100,100; persisted = 500,500; no drag -> expected: 500,500 9ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 500, y: 500 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case C: canvas = 800,800; persisted = 500,500; NO drag -> expected: 500,500 (guards against cyPositionsBefore contamination) 13ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 500, y: 500 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case E: existing filtered node becomes visible -> previous authoritative position + NO global relayout 13ms
+     → expected { x: -451, y: -358 } to deeply equal { x: 350, y: 350 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 1: Canvas position does NOT silently become Level 1 session authority without explicit user drag 18ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 333, y: 333 }
+   × GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 2: External persisted position update is NOT ignored when node was never dragged 17ms
+     → expected { x: -500, y: -400 } to deeply equal { x: 900, y: 900 }
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 20 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Restoration of persisted positions: sets node positions directly when nodePositions prop is provided
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 150, y: 250 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 150,
+-   "y": 250,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:258:27
+    256|     // Verify positions on nodes were set
+    257|     const n1 = mockCy.getElementById('node-1');
+    258|     expect(n1.position()).toEqual({ x: 150, y: 250 });
+       |                           ^
+    259|
+    260|     const n2 = mockCy.getElementById('node-2');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Dragfree persistence: captures updated position on dragfree and notifies onNodePositionsChange
+AssertionError: expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+-       "x": 180,
+-       "y": 220,
++       "x": -500,
++       "y": -400,
++     },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
+      },
+    },
++   "automatic-hierarchical",
+  ]
+
+  2nd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 220,
+      },
++     "node-2": Object {
++       "x": -451,
++       "y": -358,
+      },
++   },
++   "user-authored",
+  ]
+
+  3rd spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 180,
+        "y": 220,
+      },
++     "node-2": Object {
++       "x": 200,
++       "y": 200,
+      },
++   },
++   "user-authored",
+  ]
+
+
+Number of calls: 3
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:292:35
+    290|     });
+    291|
+    292|     expect(onNodePositionsChange).toHaveBeenCalledWith(
+       |                                   ^
+    293|       expect.objectContaining({
+    294|         'node-1': { x: 180, y: 220 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Hidden and reappearing nodes restore their saved positions when made visible again
+AssertionError: expected { x: -451, y: -358 } to deeply equal { x: 220, y: 240 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 220,
+-   "y": 240,
++   "x": -451,
++   "y": -358,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:528:27
+    526|     // Verify node-2 was restored at its exact position (220, 240)
+    527|     const n2 = mockCy.getElementById('node-2');
+    528|     expect(n2.position()).toEqual({ x: 220, y: 240 });
+       |                           ^
+    529|   });
+    530|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Genuinely new node insertion places new nodes deterministically without moving existing nodes
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 100 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 100,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:605:56
+    603|
+    604|     // Existing nodes remain at their positions
+    605|     expect(mockCy.getElementById('node-1').position()).toEqual({ x: 10…
+       |                                                        ^
+    606|     expect(mockCy.getElementById('node-2').position()).toEqual({ x: 30…
+    607|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Remount behavior: restores persisted positions directly without running layout
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 500, y: 500 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 500,
+-   "y": 500,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:648:56
+    646|     );
+    647|
+    648|     expect(mockCy.getElementById('node-1').position()).toEqual({ x: 50…
+       |                                                        ^
+    649|     expect(mockCy.getElementById('node-2').position()).toEqual({ x: 70…
+    650|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 1. selected node can still be investigated without changing node coordinates in Static mode
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 200,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:691:58
+    689|       // Node selection should NOT trigger relayout
+    690|       expect(mockLayoutRun).not.toHaveBeenCalled();
+    691|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    692|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+    693|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 2. double-click still works and fires callbacks without changing node coordinates
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 200,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:745:58
+    743|       expect(onNodeDoubleTap).toHaveBeenCalledWith('node-1', expect.ob…
+    744|       expect(mockLayoutRun).not.toHaveBeenCalled();
+    745|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    746|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+    747|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 3. focus (focusOnNode, Focus Depth, Focus Direction) still works without changing node coordinates in Static mode
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 200,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:782:58
+    780|
+    781|       expect(mockLayoutRun).not.toHaveBeenCalled();
+    782|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    783|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+    784|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 4. viewport can move (zoom, fit, centerSelected) while node coordinates remain strictly unchanged
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 200,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:817:58
+    815|       // Confirm node coordinates remained strictly unchanged througho…
+    816|       expect(mockLayoutRun).not.toHaveBeenCalled();
+    817|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    818|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+    819|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Static Mode Requirement Assertions > 5. node coordinates remain unchanged in Static mode across multi-operation flow
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 200 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 200,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:853:58
+    851|
+    852|       expect(mockLayoutRun).not.toHaveBeenCalled();
+    853|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    854|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+    855|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 1. Animated reset is an actual async event: no persistence occurs before layoutstop, and final coordinates are persisted after layoutstop
+AssertionError: expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 999,
+        "y": 888,
+      },
+      "node-2": Object {
+        "x": 777,
+        "y": 666,
+      },
+    },
++   "automatic-hierarchical",
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:926:37
+    924|       expect(layoutControl.isLayoutRunning).toBe(false);
+    925|       expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
+    926|       expect(onNodePositionsChange).toHaveBeenCalledWith(
+       |                                     ^
+    927|         expect.objectContaining({
+    928|           'node-1': { x: 999, y: 888 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 3. Reset concurrency race test: Reset B overriding Reset A cancels A handler and persists only B final coordinates
+AssertionError: expected "spy" to be called with arguments: [ ObjectContaining{…} ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+-   ObjectContaining {
++   Object {
+      "node-1": Object {
+        "x": 999,
+        "y": 999,
+      },
++     "node-2": Object {
++       "x": 260,
++       "y": 200,
+      },
++   },
++   "automatic-hierarchical",
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1022:37
+    1020|       // Exactly 1 persistence call with Reset B's final coordinates
+    1021|       expect(onNodePositionsChange).toHaveBeenCalledTimes(1);
+    1022|       expect(onNodePositionsChange).toHaveBeenCalledWith(
+       |                                     ^
+    1023|         expect.objectContaining({
+    1024|           'node-1': { x: 999, y: 999 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Wave 8A — Position Authority Remediation & Controllable Async Lifecycle Tests > 5. Negative Test 1: External nodePositions update overrides stale current canvas position when there was NO explicit drag
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 100 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 100,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1091:58
+    1089|
+    1090|       // Verify initial position
+    1091|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    1092|
+    1093|       // Parent updates nodePositions externally (e.g. project reset o…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case 1: External update after mount — node initially rendered, GraphView remains mounted, parent updates nodePositions prop, node moves to new persisted coordinates
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 100, y: 100 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 100,
+-   "y": 100,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1243:58
+    1241|       );
+    1242|
+    1243|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    1244|
+    1245|       // Parent updates nodePositions prop while GraphView remains mou…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case 2: External update after filtering — node-2 hidden, parent updates position for node-2, node-2 becomes visible with new authoritative position
+AssertionError: expected { x: -451, y: -358 } to deeply equal { x: 888, y: 888 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 888,
+-   "y": 888,
++   "x": -451,
++   "y": -358,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1306:58
+    1304|
+    1305|       // Node-2 MUST appear at the NEW authoritative position (888, 88…
+    1306|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+       |                                                          ^
+    1307|     });
+    1308|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case A: canvas = 100,100; persisted = 500,500; no drag -> expected: 500,500
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 500, y: 500 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 500,
+-   "y": 500,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1323:58
+    1321|       );
+    1322|
+    1323|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    1324|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+    1325|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case C: canvas = 800,800; persisted = 500,500; NO drag -> expected: 500,500 (guards against cyPositionsBefore contamination)
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 500, y: 500 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 500,
+-   "y": 500,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1399:29
+    1397|
+    1398|       // Level 2 persisted position MUST override un-dragged canvas po…
+    1399|       expect(n1.position()).toEqual({ x: 500, y: 500 });
+       |                             ^
+    1400|     });
+    1401|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Case E: existing filtered node becomes visible -> previous authoritative position + NO global relayout
+AssertionError: expected { x: -451, y: -358 } to deeply equal { x: 350, y: 350 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 350,
+-   "y": 350,
++   "x": -451,
++   "y": -358,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1461:58
+    1459|
+    1460|       expect(mockLayoutRun).not.toHaveBeenCalled();
+    1461|       expect(mockCy.getElementById('node-2').position()).toEqual({ x: …
+       |                                                          ^
+    1462|     });
+    1463|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 1: Canvas position does NOT silently become Level 1 session authority without explicit user drag
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 333, y: 333 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 333,
+-   "y": 333,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1501:58
+    1499|
+    1500|       // Node-1 must adopt the Level 2 persisted position (333, 333), …
+    1501|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    1502|     });
+    1503|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/20]⎯
+
+ FAIL  src/components/GraphView.positionAuthority.test.tsx > GraphView Position Authority & Layout Policy > Position Authority Hierarchy Conflict Matrix & Negative Tests > Negative 2: External persisted position update is NOT ignored when node was never dragged
+AssertionError: expected { x: -500, y: -400 } to deeply equal { x: 900, y: 900 }
+
+- Expected
++ Received
+
+  Object {
+-   "x": 900,
+-   "y": 900,
++   "x": -500,
++   "y": -400,
+  }
+
+ ❯ src/components/GraphView.positionAuthority.test.tsx:1531:58
+    1529|       );
+    1530|
+    1531|       expect(mockCy.getElementById('node-1').position()).toEqual({ x: …
+       |                                                          ^
+    1532|     });
+    1533|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/20]⎯
+
+ Test Files  1 failed (1)
+      Tests  20 failed | 16 passed (36)
+   Start at  04:56:02
+   Duration  3.87s (transform 1.08s, setup 175ms, collect 1.31s, tests 1.07s, environment 948ms, prepare 89ms)
