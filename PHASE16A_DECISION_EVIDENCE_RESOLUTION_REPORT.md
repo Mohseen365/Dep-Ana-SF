@@ -149,10 +149,10 @@ Determine whether an authoritative repository rule explicitly establishes how hi
 `PROVEN`
 
 ### 5. What Remains Unresolved
-Nothing remains unresolved regarding the existence of the repository rule. The rule explicitly establishes that later/active audit documentation is authoritative and historical reports are retained as historical record rather than retroactively modified.
+Nothing remains unresolved regarding the repository's historical-documentation reconciliation rule.
 
 ### 6. Decision Required Before Implementation
-Determine whether historical audit reports should be retroactively modified or whether discrepancy reconciliation in active/subsequent audit documents is the authoritative approach.
+No governance decision remains unresolved for this question. The established repository rule directs reconciliation through later/active authoritative audit documentation rather than retroactive modification of historical reports.
 
 ---
 
@@ -163,7 +163,7 @@ Determine whether historical audit reports should be retroactively modified or w
 | **Production routing** | UNRESOLVED — NO AUTHORITATIVE EVIDENCE FOUND | Determine the authoritative production provisioning model for project fixtures. | NO |
 | **40px acceptance** | UNRESOLVED — NO AUTHORITATIVE EVIDENCE FOUND | Authoritative governance decision reconciling the formal requirement with automated enforcement. | NO |
 | **Locality** | UNRESOLVED — NO AUTHORITATIVE EVIDENCE FOUND | Authoritative governance decision confirming whether `medianIntra < medianInter` remains an active acceptance criterion for Candidate E / 2D multi-row layouts. | NO |
-| **Historical documentation** | PROVEN | Determine whether historical audit reports should be retroactively modified or whether discrepancy reconciliation in active/subsequent audit documents is the authoritative approach. | NO |
+| **Historical documentation** | PROVEN | Apply the established recency/conflict rule: later/active authoritative audit documentation reconciles historical discrepancies; historical reports are retained as historical record. | NO |
 
 ---
 
