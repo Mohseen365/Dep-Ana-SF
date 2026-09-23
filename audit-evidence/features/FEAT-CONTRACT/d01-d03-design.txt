@@ -1,0 +1,59 @@
+===============================================================================
+FEAT-CONTRACT FORENSIC EVIDENCE: PHASE 1 — DESIGN (§DESIGN)
+===============================================================================
+Timestamp: 2026-09-23
+Feature ID: FEAT-CONTRACT (Data Contracts, Provenance & Schema)
+
+-------------------------------------------------------------------------------
+D-01: Provenance Field Enumeration
+-------------------------------------------------------------------------------
+The data contract defines provenance fields across three primary artifacts:
+1. `explorer-contract.ts` (Explorer View-Model Contract):
+   - `schemaVersion`: string (Line 7) - Version of the Explorer data contract (e.g. "1.0.0").
+   - `analyzerVersion`: string (Line 9) - Version of the underlying Salesforce Dependency Analyzer (e.g. "13.0.0").
+   - `generatedAt`: string (Line 11) - ISO 8601 timestamp of analysis generation.
+   - `sourceDirectory`: string (Line 13) - Target source directory path analyzed.
+
+2. `analysis-manifest.json` (Analysis Provenance Manifest):
+   - `contractVersion`: string (Line 4) - Version of the contract specification.
+   - `generatedAt`: string (Line 5) - ISO 8601 generation timestamp.
+   - `source.sourceHash`: string (Line 10) - True content-based SHA-256 fingerprint ("sha256:...").
+   - `artifacts.explorerData.schemaVersion`: string (Line 41) - Schema version for exported graph data.
+
+3. `explorer/src/lib/refactoring-simulation.ts` (Refactoring & Graph Identity):
+   - `baseGraphHash`: string (Line 56) - Computed graph identity fingerprint for stale-proposal detection.
+
+-------------------------------------------------------------------------------
+D-02: Mandatory Provenance Field Verification
+-------------------------------------------------------------------------------
+Verification confirms all provenance fields are required (mandatory) in contract interfaces and Zod schemas:
+- `explorer-contract.ts`:
+  `schemaVersion: string;`
+  `analyzerVersion: string;`
+  `generatedAt: string;`
+  `sourceDirectory: string;`
+  (None of these fields have `?` optional modifiers).
+
+- `explorer/src/lib/schema.ts` (`ExplorerDataSchemaZ`):
+  `schemaVersion: z.string(),`
+  `analyzerVersion: z.string(),`
+  `generatedAt: z.string(),`
+  `sourceDirectory: z.string(),`
+  (Defined as strict `z.string()`; missing fields cause `parseExplorerData` to throw `ZodError`).
+
+- `analysis-manifest.json`:
+  `manifestVersion`, `analyzerVersion`, `contractVersion`, `generatedAt`, `source.sourceHash` are present and required in all complete manifest outputs.
+
+-------------------------------------------------------------------------------
+D-03: Graph Identity Hash & Stale-Proposal Rejection Design
+-------------------------------------------------------------------------------
+In `explorer/src/lib/refactoring-simulation.ts`:
+- `computeGraphHash(graphData)` (Lines 62–77):
+  Computes a deterministic string representation from `schemaVersion`, `nodes.length`, `edges.length`, sorted `node.id`s, and sorted `edge.id`s, producing a 32-bit hex hash `gh-...`.
+- `isProposalStale(proposal, currentProjectId, currentGraph)` (Lines 79–100):
+  Validates `proposal.projectId === currentProjectId` AND `proposal.baseGraphHash === computeGraphHash(currentGraph)`.
+- `validateProposalCommit(proposal, currentProjectId, currentGraph)` (Lines 102–111):
+  Rejects stale proposals (`valid: false`) if the underlying graph hash has changed or project context mismatches, preventing stale or cross-project commits against modified graphs.
+
+Phase 1 (§DESIGN) Decision: PASS
+===============================================================================
