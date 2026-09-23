@@ -1,0 +1,10 @@
+=== T-03 ADVERSARIAL TESTS ===
+Single node discovery features count: 1
+Single node cluster ID: feature_SingleService
+Sparse graph features count: 2
+Disconnected graph features count: 2
+
+=== T-04 SHARED INFRASTRUCTURE ADVERSARIAL TEST ===
+Features count with shared util: 2
+  Cluster feature_InvoicePanel: Primary=[LWC:InvoicePanel], Secondary=[ApexClass:Logger]
+  Cluster feature_OrderPanel: Primary=[LWC:OrderPanel], Secondary=[ApexClass:Logger]

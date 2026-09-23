@@ -1,0 +1,9 @@
+=== PERF: PERFORMANCE BENCHMARK ===
+20 runs average execution time: 16.16 ms (Threshold < 50 ms)
+
+=== SCALE: 5000 NODE SCALABILITY TEST ===
+5000-node graph discovery time: 472.66 ms
+Discovered features count in 5000 nodes: 500
+
+=== SEC: PROJECT ISOLATION ===
+Feature discovery functions take pure in-memory arrays (nodes, edges) with no global leak or shared mutable global state across project instances.

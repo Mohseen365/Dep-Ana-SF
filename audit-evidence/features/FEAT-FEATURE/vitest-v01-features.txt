@@ -1,0 +1,15 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/app[39m
+
+[90mstdout[2m | explorer/src/lib/layout/features.test.ts[2m > [22m[2mfeatures module (Feature Discovery)[2m > [22m[2mCloud Spend Tracker Real Dataset Semantic Audit & Cohesion[2m > [22m[2mcalculates semantic feature cohesion diagnostics on Cloud Spend layout positions
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+
+ [32m✓[39m explorer/src/lib/layout/features.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 2113[2mms[22m[39m
+   [32m✓[39m features module (Feature Discovery) [2m(16)[22m
+     [32m✓[39m Cloud Spend Tracker Real Dataset Semantic Audit & Cohesion [2m(3)[22m
+       [33m[2m✓[22m[39m calculates semantic feature cohesion diagnostics on Cloud Spend layout positions[33m 1981[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m   Start at [22m 19:29:54
+[2m   Duration [22m 3.34s[2m (tests 67%, transform 29%, import 4%)[22m

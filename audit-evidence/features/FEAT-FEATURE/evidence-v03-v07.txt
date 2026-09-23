@@ -1,0 +1,48 @@
+=== V-03 & FEAT-DISCOVERY EVIDENCE ===
+Execution Time: 41.83 ms
+Total Nodes: 240
+Feature Clusters Count: 21
+Primary Assigned Nodes: 77
+Shared Infrastructure Nodes: 44
+Unassigned Nodes: 119
+Singletons (1 primary node): 14
+Largest Cluster ID: feature_forecast-manager, primary nodes count: 32
+
+=== V-04 & V-05 LOCALITY & OVERLAPS EVIDENCE ===
+[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called
+D_intra (medianIntraFeatureEdgeLength): 1101.6812171838105
+D_inter (medianInterFeatureEdgeLength): 1020
+Is D_intra < D_inter: false
+Region Overlaps Count (regionOverlaps): undefined
+Primary Node Overlaps: 0
+Satellite Node Overlaps: 0
+
+=== V-06 DETERMINISM EVIDENCE ===
+5 Shuffled Runs Membership Drift Count: 0
+
+=== V-07 SEMANTIC SAMPLING (5 CLUSTERS) ===
+
+Cluster: feature_admin-filter-panel (Anchor: LWC:admin-filter-panel)
+  Primary Nodes (1): LWC:admin-filter-panel
+  Secondary Nodes (0):
+  Role Distribution: {"FeatureAnchor":1,"FeatureCore":0,"FeatureData":0,"FeatureBridge":0,"FeatureTest":0,"SharedInfrastructure":0}
+
+Cluster: feature_AdminUserController (Anchor: ApexClass:AdminUserController)
+  Primary Nodes (1): ApexClass:AdminUserController
+  Secondary Nodes (5): ApexClass:SpendTrackerAuthorizationService, ApexClass:UserOrganizationRoleSelector, ApexClass:UserSelector, External:User, Object:User_Organization_Role__c
+  Role Distribution: {"FeatureAnchor":1,"FeatureCore":0,"FeatureData":0,"FeatureBridge":0,"FeatureTest":0,"SharedInfrastructure":0}
+
+Cluster: feature_CloudAccountController (Anchor: ApexClass:CloudAccountController)
+  Primary Nodes (1): ApexClass:CloudAccountController
+  Secondary Nodes (1): ApexClass:AccountService
+  Role Distribution: {"FeatureAnchor":1,"FeatureCore":0,"FeatureData":0,"FeatureBridge":0,"FeatureTest":0,"SharedInfrastructure":0}
+
+Cluster: feature_CloudAccountService (Anchor: ApexClass:CloudAccountService)
+  Primary Nodes (1): ApexClass:CloudAccountService
+  Secondary Nodes (1): ApexClass:AccountService
+  Role Distribution: {"FeatureAnchor":0,"FeatureCore":1,"FeatureData":0,"FeatureBridge":0,"FeatureTest":0,"SharedInfrastructure":0}
+
+Cluster: feature_CloudSpendMonthBackfillBatch (Anchor: ApexClass:CloudSpendMonthBackfillBatch)
+  Primary Nodes (3): ApexClass:CloudSpendMonthBackfillBatch, External:BatchableContext, External:Database.Batchable<SObject>
+  Secondary Nodes (2): ApexClass:CloudSpendTriggerHandlerTest, Object:Cloud_Spend__c
+  Role Distribution: {"FeatureAnchor":0,"FeatureCore":3,"FeatureData":0,"FeatureBridge":0,"FeatureTest":0,"SharedInfrastructure":0}
