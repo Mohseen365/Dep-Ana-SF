@@ -234,14 +234,14 @@
   - Prompt: UX-8.5-R
   - Deps: 5.1
   - Session ID: jules-ux-8.5-r
-- [ ] **Task 5.2 — Remove permanent chrome + add ⌘K hint**
+- [x] **Task 5.2 — Remove permanent chrome + add ⌘K hint**
   - Remove `<Sidebar />`, `<SummaryBar />`, `<StatusBar />`, `<ViewModeSwitcher />`, `<FocusControls />`, `<ImpactControls />` from `App.tsx`
   - Add non-interactive ⌘K hint to `Header.tsx`
   - Files: `explorer/src/App.tsx`, `explorer/src/components/Header.tsx`, `explorer/src/index.css`
   - Scope: S
   - Prompt: UX-9
   - Deps: 4.3
-  - Session ID: _pending_
+  - Session ID: jules-ux-9
 
 - [ ] **Task 5.3 — Drawer pin / close / detach**
   - Pin persists in `localStorage: explorer.drawer.pinned`
@@ -269,3 +269,4 @@ Append entries as `<session-id> | <prompt> | <task(s)> | <timestamp> | <notes>`.
 
 jules-18290189911400019495-d9b457ce | UX-8-R | Task 5.1 | 2026-09-14T14:43:00Z | Corrective pass; audit failures A3/A5/A6/B2/C1/C3/C4/E1/E2 resolved
 jules-ux-8.5-r | UX-8.5-R | Task 5.1a | 2026-09-14T15:48:00Z | Integration completed
+jules-ux-9 | UX-9 | Task 5.2 | 2026-09-14T16:10:00Z | Permanent chrome (<Sidebar />, <ViewModeSwitcher />, <StatusBar />) removed from App.tsx; Header ⌘K hint verified.
