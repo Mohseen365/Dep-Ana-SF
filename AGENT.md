@@ -6,7 +6,42 @@
 
 ---
 
-### `audit-reports/FINAL-PROGRAM-REPORT.md`
+### Retrieval Flows & Source Relationships
+
+```text
+Audit ID → 08_Audit_Source_Register.md → Canonical audit report → Relevant evidence
+Overall project/audit status → audit-reports/FINAL-PROGRAM-REPORT.md
+Specific domain question → audit-reports/features/ or audit-reports/gap-fill/ → Relevant evidence
+Raw measurement / forensic question → audit-evidence/
+```
+
+---
+
+### Task-Oriented Context Lookup
+
+| If you need to know... | Start here | Then inspect... |
+| :--- | :--- | :--- |
+| Overall audit status & program decision | `audit-reports/FINAL-PROGRAM-REPORT.md` | Relevant feature or gap-fill report |
+| Specific audit ID location or hash | `08_Audit_Source_Register.md` | Canonical report → relevant evidence |
+| Performance context & SLA | `audit-reports/features/FEAT-PERF-report.md` | `audit-evidence/features/FEAT-PERF/` |
+| CI/CD & Change Gate safety | `audit-reports/features/FEAT-CICD-report.md` | `audit-evidence/features/FEAT-CICD/` |
+| UI/UX, A11y & Gap-Fill context | `audit-reports/gap-fill/` | `audit-evidence/gap-fill/` |
+| Contracts & Schema validation | `audit-reports/features/FEAT-CONTRACT-report-v2.md` | `audit-evidence/features/FEAT-CONTRACT-v2/` |
+| Position Authority & Static Mode | `audit-reports/features/FEAT-POSAUTH-report-v2.md` | `audit-evidence/features/FEAT-POSAUTH-v2/` |
+| Multi-Project State Persistence | `audit-reports/features/FEAT-STATE-report-v2.md` | `audit-evidence/features/FEAT-STATE-v2/` |
+| Refactoring Simulation Workflow | `audit-reports/features/FEAT-REFACTOR-report-v2.md` | `audit-evidence/features/FEAT-REFACTOR-v2/` |
+| Feature Discovery & 2D Geometry | `audit-reports/features/FEAT-FEATURE-report-v2.md` | `audit-evidence/features/FEAT-FEATURE-v2/` |
+| Visual Overlays & Explainability | `audit-reports/features/FEAT-OVERLAY-report.md` | `audit-evidence/features/FEAT-OVERLAY/` |
+| Backend CLI Analyzer Subsystem | `audit-reports/features/FEAT-ANALYZER-report.md` | `audit-evidence/features/FEAT-ANALYZER/` |
+| Raw benchmark / telemetry data | `audit-evidence/` | Relevant benchmark file in `features/` or `gap-fill/` |
+| Fixture SHA-256 verification | `08_Audit_Source_Register.md` or `P0-FIX-01` report | `audit-evidence/P0-FIX-01/` |
+| Environment & Governance Intake | `audit-reports/INTAKE-PHASE-0-REPORT.md` | Relevant evidence |
+
+---
+
+### Context Map
+
+#### `audit-reports/FINAL-PROGRAM-REPORT.md`
 
 Contains the overall audit-program baseline:
 
@@ -20,7 +55,7 @@ Contains the overall audit-program baseline:
 
 Use this when overall program-level context is needed.
 
-### `08_Audit_Source_Register.md`
+#### `08_Audit_Source_Register.md`
 
 Contains the authoritative index of audit IDs and their locations:
 
@@ -34,20 +69,21 @@ Contains the authoritative index of audit IDs and their locations:
 
 Use this to locate the canonical report and evidence for a specific audit ID such as `AUD-PERF-001`, `AUD-CICD-001`, or `AUD-UIUX-001`.
 
-### `audit-reports/`
+#### `audit-reports/`
 
 Contains formal audit reports.
 
 Important locations:
 
 * `audit-reports/INTAKE-PHASE-0-REPORT.md` — environment/governance intake
-* `audit-reports/features/` — feature/domain reports such as performance, CI/CD, and contracts
-* `audit-reports/gap-fill/` — specialized reports such as UI/UX, data, and accessibility
+* `audit-reports/P0-FIX-01-fixture-governance.md` — fixture governance and cryptographic integrity
+* `audit-reports/features/` — feature/domain reports such as performance, CI/CD, contracts, position authority, layout, state, refactoring, feature discovery, overlays, and analyzer
+* `audit-reports/gap-fill/` — specialized reports such as UI/UX (`AUD-UIUX-001-report.md`), accessibility (`AUD-A11Y-001-report.md`), data (`AUD-DATA-001-report.md`), and dependencies (`AUD-DEPS-001-report.md`)
 * `audit-reports/FINAL-PROGRAM-REPORT.md` — overall program report
 
 Use the specific domain report when investigating a particular subsystem.
 
-### `audit-evidence/`
+#### `audit-evidence/`
 
 Contains raw supporting evidence:
 
@@ -61,22 +97,20 @@ Contains raw supporting evidence:
 
 Important locations:
 
-* `audit-evidence/features/` — feature-specific evidence
-* `audit-evidence/gap-fill/` — gap-fill evidence
-* `audit-evidence/P0-FIX-01/` — fixture governance evidence
+* `audit-evidence/features/` — feature-specific raw evidence
+* `audit-evidence/gap-fill/` — gap-fill raw evidence (`AUD-UIUX-001/`, `AUD-A11Y-001/`, `AUD-DATA-001/`, `AUD-DEPS-001/`)
+* `audit-evidence/P0-FIX-01/` — fixture governance evidence (`C-01.txt` through `C-06.txt`)
 
 Use these files when the underlying measurement or forensic evidence needs to be inspected.
 
-### Context lookup rule
+---
 
-Use the **smallest relevant context source**:
+### Practical Retrieval Rules
 
-`Specific audit ID → 08_Audit_Source_Register.md → canonical report → relevant evidence`
-
-`Overall program question → FINAL-PROGRAM-REPORT.md`
-
-`Specific feature/domain question → relevant file under audit-reports/features/ or audit-reports/gap-fill/`
-
-`Raw measurement/forensic question → relevant file under audit-evidence/`
-
-Do not read all context files by default. Only inspect the files relevant to the current task.
+* **Smallest relevant context:** Use the smallest relevant context source rather than reading all files by default.
+* **Audit ID lookup:** Use `08_Audit_Source_Register.md` to resolve audit IDs to canonical reports and evidence.
+* **Hierarchical navigation:** Follow the `Report → Evidence` reference chain only when deeper forensic verification is required.
+* **Specific vs. General:** Prefer specific domain reports under `audit-reports/features/` or `audit-reports/gap-fill/` over broad program-level reports when investigating a particular subsystem.
+* **Raw Evidence Scope:** Inspect raw evidence in `audit-evidence/` strictly when underlying telemetry, benchmarks, or measurement logs are needed.
+* **Content Verification:** Verify actual file structure and content rather than assuming filenames alone describe their contents.
+* **Domain Isolation:** Avoid loading unrelated audit domains or reading files outside the scope of your active task.
