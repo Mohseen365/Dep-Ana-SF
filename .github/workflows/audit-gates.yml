@@ -22,7 +22,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm --prefix explorer ci
 
       - name: Verify local vitest is installed
         working-directory: explorer
