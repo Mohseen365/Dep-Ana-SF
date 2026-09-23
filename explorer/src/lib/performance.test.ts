@@ -80,6 +80,10 @@ function generateTestGraph(nodeCount: number, edgeDensityRatio: number = 1.5) {
   return { nodes, edges };
 }
 
+// TODO: Consider worker-thread offloading for graphs > 2,500 nodes.
+// Deferred per FINAL-PROGRAM-REPORT REM-PERF-01. Requires dedicated perf
+// design review.
+
 describe('Large Graph Performance Benchmarks', () => {
   const nodeCounts = [100, 500, 1000, 5000];
 

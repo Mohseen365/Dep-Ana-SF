@@ -110,7 +110,7 @@ export interface ExplorerNode {
     isHighRisk: boolean;
     hasCycles: boolean;
     hasUnresolved: boolean;
-    testCoverageStatus: "COVERED" | "NO_TESTS" | "UNTESTED";
+    testCoverageStatus: "COVERED" | "NO_TESTS" | "UNTESTED" | "AMBIGUOUS";
   };
 }
 

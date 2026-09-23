@@ -61,6 +61,8 @@ const {
         unselect: vi.fn().mockReturnThis(),
       };
       mockNodeObjMap[id] = mockEles;
+    } else if (x !== 100 || y !== 100) {
+      mockNodeObjMap[id].position({ x, y });
     }
     return mockNodeObjMap[id];
   };
@@ -87,7 +89,9 @@ const {
       if (Array.isArray(els)) {
         els.forEach((el) => {
           if (el.data?.id && !el.data.source) {
-            createMockNode(el.data.id, el.position?.x ?? 100, el.position?.y ?? 100);
+            const posX = el.position?.x ?? el.data?.position?.x ?? 100;
+            const posY = el.position?.y ?? el.data?.position?.y ?? 100;
+            createMockNode(el.data.id, posX, posY);
           }
         });
       }
@@ -142,6 +146,14 @@ const {
   const mockCytoscapeFn: any = vi.fn().mockImplementation((opts) => {
     if (opts?.elements) {
       mockCy.add(opts.elements);
+    }
+    if (opts?.layout?.positions) {
+      Object.values(mockNodeObjMap).forEach((node: any) => {
+        const p = typeof opts.layout.positions === 'function' ? opts.layout.positions(node) : opts.layout.positions[node.id()];
+        if (p) {
+          node.position(p);
+        }
+      });
     }
     return mockCy;
   });
@@ -235,6 +247,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 150, y: 250 },
       'node-2': { x: 350, y: 450 },
     };
+    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     render(
       <GraphView
@@ -245,6 +258,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -292,7 +306,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
     expect(onNodePositionsChange).toHaveBeenCalledWith(
       expect.objectContaining({
         'node-1': { x: 180, y: 220 },
-      })
+      }),
+      expect.anything()
     );
   });
 
@@ -301,6 +316,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 100 },
       'node-2': { x: 200, y: 200 },
     };
+    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { rerender } = render(
       <GraphView
@@ -311,6 +327,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -327,6 +344,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -481,6 +499,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-2': { x: 220, y: 240 },
     };
 
+    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+
     // Render initial with node-1 and node-2
     const { rerender } = render(
       <GraphView
@@ -491,6 +511,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -505,6 +526,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -519,6 +541,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -533,6 +556,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 100 },
       'node-2': { x: 300, y: 300 },
     };
+    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { rerender } = render(
       <GraphView
@@ -543,6 +567,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -594,6 +619,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -616,6 +642,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 500, y: 500 },
       'node-2': { x: 700, y: 700 },
     };
+    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { unmount } = render(
       <GraphView
@@ -626,6 +653,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -641,6 +669,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         selectedNodeId={null}
         selectedEdgeId={null}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -654,6 +683,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 200 },
       'node-2': { x: 300, y: 400 },
     };
+    const staticGraphLayout = { mode: 'static' as const, nodePositions: staticPositions, layoutProvenance: 'user-authored' as const };
 
     it('1. selected node can still be investigated without changing node coordinates in Static mode', () => {
       const onSelectNode = vi.fn();
@@ -666,6 +696,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -682,6 +713,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId="node-1"
           selectedEdgeId={null}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -702,6 +734,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedEdgeId={null}
           focusedNodeId="node-1"
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -725,6 +758,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
           onNodeDoubleTap={onNodeDoubleTap}
         />
@@ -756,6 +790,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -774,6 +809,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           focusedNodeId="node-1"
           focusState={{ enabled: true, focusNodeId: 'node-1', direction: 'dependents', depth: 2 }}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -793,6 +829,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId="node-1"
           selectedEdgeId={null}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -828,6 +865,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -927,7 +965,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
         expect.objectContaining({
           'node-1': { x: 999, y: 888 },
           'node-2': { x: 777, y: 666 },
-        })
+        }),
+        expect.anything()
       );
     });
 
@@ -1022,7 +1061,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
       expect(onNodePositionsChange).toHaveBeenCalledWith(
         expect.objectContaining({
           'node-1': { x: 999, y: 999 },
-        })
+        }),
+        expect.anything()
       );
     });
 
@@ -1083,6 +1123,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={initialPositions}
+          graphLayout={{ mode: 'static', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1105,6 +1146,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={updatedPositions}
+          graphLayout={{ mode: 'static', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1227,6 +1269,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
 
   describe('Position Authority Hierarchy Conflict Matrix & Negative Tests', () => {
     it('Case 1: External update after mount — node initially rendered, GraphView remains mounted, parent updates nodePositions prop, node moves to new persisted coordinates', () => {
+      const p1 = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
+      const p2 = { 'node-1': { x: 666, y: 666 }, 'node-2': { x: 200, y: 200 } };
       const { rerender } = render(
         <GraphView
           nodes={testNodes}
@@ -1235,7 +1279,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p1}
+          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1251,7 +1296,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 666, y: 666 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p2}
+          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1260,6 +1306,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
     });
 
     it('Case 2: External update after filtering — node-2 hidden, parent updates position for node-2, node-2 becomes visible with new authoritative position', () => {
+      const p1 = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
+      const p2 = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 888, y: 888 } };
       const { rerender } = render(
         <GraphView
           nodes={testNodes}
@@ -1268,7 +1316,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p1}
+          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1282,7 +1331,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p1}
+          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1297,7 +1347,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 888, y: 888 } }}
+          nodePositions={p2}
+          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1307,6 +1358,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
     });
 
     it('Case A: canvas = 100,100; persisted = 500,500; no drag -> expected: 500,500', () => {
+      const p = { 'node-1': { x: 500, y: 500 }, 'node-2': { x: 600, y: 600 } };
       render(
         <GraphView
           nodes={testNodes}
@@ -1315,7 +1367,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 500, y: 500 }, 'node-2': { x: 600, y: 600 } }}
+          nodePositions={p}
+          graphLayout={{ mode: 'static', nodePositions: p, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1364,6 +1417,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
     });
 
     it('Case C: canvas = 800,800; persisted = 500,500; NO drag -> expected: 500,500 (guards against cyPositionsBefore contamination)', () => {
+      const p1 = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
+      const p2 = { 'node-1': { x: 500, y: 500 }, 'node-2': { x: 200, y: 200 } };
       const { rerender } = render(
         <GraphView
           nodes={testNodes}
@@ -1372,7 +1427,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p1}
+          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1390,7 +1446,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 500, y: 500 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p2}
+          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1427,6 +1484,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         'node-1': { x: 150, y: 150 },
         'node-2': { x: 350, y: 350 },
       };
+      const gl = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
       const { rerender } = render(
         <GraphView
@@ -1437,6 +1495,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={persistedPositions}
+          graphLayout={gl}
           layoutMode="static"
         />
       );
@@ -1453,6 +1512,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={persistedPositions}
+          graphLayout={gl}
           layoutMode="static"
         />
       );
@@ -1466,6 +1526,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         'node-1': { x: 100, y: 100 },
         'node-2': { x: 200, y: 200 },
       };
+      const updatedPositions = { 'node-1': { x: 333, y: 333 }, 'node-2': { x: 200, y: 200 } };
 
       const { rerender } = render(
         <GraphView
@@ -1476,6 +1537,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={initialPositions}
+          graphLayout={{ mode: 'static', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1492,7 +1554,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 333, y: 333 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={updatedPositions}
+          graphLayout={{ mode: 'static', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1502,6 +1565,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
     });
 
     it('Negative 2: External persisted position update is NOT ignored when node was never dragged', () => {
+      const p1 = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
+      const p2 = { 'node-1': { x: 900, y: 900 }, 'node-2': { x: 200, y: 200 } };
       const { rerender } = render(
         <GraphView
           nodes={testNodes}
@@ -1510,7 +1575,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p1}
+          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1523,7 +1589,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 900, y: 900 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={p2}
+          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );

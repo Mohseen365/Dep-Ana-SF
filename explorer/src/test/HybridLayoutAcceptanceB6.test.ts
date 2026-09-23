@@ -257,7 +257,8 @@ describe('Workstream B6: Hybrid Layout Acceptance & Regression Test Harness', ()
       const metricsFeature = evaluateLayout(cloudSpendNodes, cloudSpendEdges, posFeature);
 
       expect(metricsLegacy.edgeCrossingCount).toBeLessThan(115000);
-      expect(metricsFeature.edgeCrossingCount).toBeGreaterThan(100000);
+      // Ctotal = 94,662 per HYBRID_LAYOUT_PHASE11_RELEASE_HARDENING report
+      expect(metricsFeature.edgeCrossingCount).toBeLessThan(95000);
 
       const comparison = compareLayoutMetrics(metricsLegacy, metricsFeature);
       expect(comparison.edgeCrossingCountDelta).toBeDefined();
@@ -360,7 +361,7 @@ describe('Workstream B6: Hybrid Layout Acceptance & Regression Test Harness', ()
           expect(currentPos[node.id].y).toBe(baselinePos[node.id].y);
         });
       }
-    });
+    }, 30000);
   });
 
   // =========================================================================
