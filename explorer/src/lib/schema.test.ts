@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parseExplorerData } from './schema';
 import publicExplorerData from '../../public/explorer-data.json';
+import cloudSpendData from '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json';
 
 describe('parseExplorerData', () => {
   const validPayload = {
@@ -92,5 +93,21 @@ describe('parseExplorerData', () => {
     expect(parsed).toBeDefined();
     expect(parsed.nodes.length).toBeGreaterThan(0);
     expect(parsed.summary.nodeCount).toBeGreaterThan(0);
+  });
+
+  it('parses canonical fixture and asserts project is defined and matches source', () => {
+    const parsed = parseExplorerData(cloudSpendData);
+    expect(parsed.project).toBeDefined();
+    expect(parsed.project?.id).toBe(cloudSpendData.project.id);
+    expect(parsed.project?.name).toBe(cloudSpendData.project.name);
+    expect(parsed.project?.analysisStatus).toBe(cloudSpendData.project.analysisStatus);
+  });
+
+  it('parses payload without project field proving optionality', () => {
+    const payloadWithoutProject = { ...validPayload };
+    expect('project' in payloadWithoutProject).toBe(false);
+    const parsed = parseExplorerData(payloadWithoutProject);
+    expect(parsed).toBeDefined();
+    expect(parsed.project).toBeUndefined();
   });
 });

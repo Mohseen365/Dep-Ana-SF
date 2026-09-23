@@ -166,11 +166,29 @@ export const ExplorerComponentImpactSummaryZ = z.object({
   totalImpactCount: z.number(),
 }).strip();
 
+export const ProjectAnalysisStatusZ = z.enum(['NOT_ANALYZED', 'ANALYZING', 'COMPLETE', 'FAILED']);
+
+export const ProjectMetadataZ = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  sourcePath: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  lastAnalyzedAt: z.string().nullable().optional(),
+  analysisStatus: ProjectAnalysisStatusZ,
+  componentCount: z.number(),
+  dependencyCount: z.number(),
+  analysisPath: z.string().optional(),
+  isArchived: z.boolean().optional(),
+}).strip();
+
 export const ExplorerDataSchemaZ = z.object({
   schemaVersion: z.string(),
   analyzerVersion: z.string(),
   generatedAt: z.string(),
   sourceDirectory: z.string(),
+  project: ProjectMetadataZ.optional(),
   summary: ExplorerSummaryZ,
   nodes: z.array(ExplorerNodeZ),
   edges: z.array(ExplorerEdgeZ),

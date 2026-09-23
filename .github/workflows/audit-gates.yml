@@ -1,0 +1,53 @@
+name: Audit Gates
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  audit-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Canonical fixture hash gate
+        run: |
+          EXPECTED="feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295"
+          ACTUAL=$(sha256sum audit-fixtures/cloud-spend-tracker/explorer-data.json | awk '{print $1}')
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Canonical fixture hash mismatch."
+            exit 1
+          fi
+          echo "Fixture hash verified."
+
+      - name: Provenance gate
+        run: node scripts/test-architecture-change-gate.cjs
+
+      - name: Schema gate
+        run: node scripts/test-export-explorer.cjs
+
+      - name: Quality gates
+        run: node scripts/test-architecture-quality-gates.cjs
+
+      - name: Safety envelope
+        run: node scripts/test-safety-envelope.cjs
+
+      - name: Position authority gate
+        run: npx vitest run explorer/src/components/GraphView.positionAuthority.test.tsx
+
+      - name: Full CLI suite
+        run: npm run test:cli
