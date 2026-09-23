@@ -1,0 +1,12 @@
+{
+  "test": "10x Repeated 1,000-Node Pipeline Execution Memory Stability Check",
+  "runs": 10,
+  "nodeCount": 1000,
+  "edgeCount": 2035,
+  "baselineHeapUsedMb": 50.59,
+  "finalHeapUsedMb": 51.12,
+  "deltaHeapUsedMb": 0.53,
+  "peakRssMb": 218.42,
+  "heapStability": "STABLE",
+  "memoryLeakDetected": false
+}
