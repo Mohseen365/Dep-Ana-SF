@@ -1,0 +1,52 @@
+===============================================================================
+FEAT-CONTRACT-v2 AUDIT EVIDENCE: §DESIGN PHASE (D-01, D-02, D-03)
+===============================================================================
+
+D-01: PROVENANCE FIELD ENUMERATION
+----------------------------------
+The data contract mandates explicit provenance metadata across export and analysis artifacts.
+Top-Level Provenance Fields in Explorer Data Schema:
+- schemaVersion: string (e.g. "1.0.0") - Contract schema version.
+- analyzerVersion: string (e.g. "13.0.0") - Version of Salesforce Dependency Analyzer.
+- generatedAt: string (ISO 8601 UTC timestamp) - Export generation time.
+- sourceDirectory: string - Relative directory path of analyzed source code.
+
+Manifest Provenance Fields in analysis-manifest.json:
+- manifestVersion: string (e.g. "1.0.0")
+- analyzerVersion: string (e.g. "13.0.0")
+- contractVersion: string (e.g. "1.0.0")
+- generatedAt: string (ISO 8601 UTC timestamp)
+- source.directory: string
+- source.sourceDir: string
+- source.fileCount: number
+- source.sourceHash: string (content-based SHA-256 fingerprint, e.g. "sha256:204c9f8c...")
+- source.gitCommit: string (optional Git commit hash)
+
+D-02: MANDATORY PROVENANCE FIELDS VERIFICATION
+----------------------------------------------
+All provenance fields are defined as mandatory (non-optional) in interface definitions and Zod schemas:
+- explorer-contract.ts (lines 10-13):
+    schemaVersion: string;
+    analyzerVersion: string;
+    generatedAt: string;
+    sourceDirectory: string;
+- explorer/src/types/explorer.ts (lines 48-51):
+    schemaVersion: string;
+    analyzerVersion: string;
+    generatedAt: string;
+    sourceDirectory: string;
+- explorer/src/lib/schema.ts (lines 170-173):
+    schemaVersion: z.string(),
+    analyzerVersion: z.string(),
+    generatedAt: z.string(),
+    sourceDirectory: z.string(),
+
+Adversarial omission of any provenance field causes immediate Zod schema parse rejection.
+
+D-03: GRAPH IDENTITY HASH & STALE PROPOSAL REJECTION DESIGN
+------------------------------------------------------------
+- Identity Hash Generation: explorer/src/lib/refactoring-simulation.ts computeGraphHash(data)
+  Computes deterministic SHA-256 hash over sorted node IDs, types, edges, and risk classifications.
+- Stale Proposal Validation: isProposalStale(proposal, currentData) & validateProposalCommit(proposal, currentData)
+  Verifies that proposal.baseGraphHash === currentGraphHash and proposal.projectId === currentProjectId.
+- If the current graph has been mutated, re-analyzed, or belongs to another project, proposal commit is rejected with a stale proposal error.

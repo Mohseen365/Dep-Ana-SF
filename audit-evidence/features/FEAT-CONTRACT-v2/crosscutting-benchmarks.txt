@@ -1,0 +1,15 @@
+===============================================================================
+PERF: SCHEMA VALIDATION TIME ON CANONICAL FIXTURE (240 nodes, 1024 edges)
+===============================================================================
+Ran 50 iterations. Total time: 166.13 ms.
+Average parse time per run: 3.323 ms (Target: < 50.000 ms)
+PERF Threshold Check: PASS
+
+===============================================================================
+SCALE: SCHEMA VALIDATION ON 10,000-NODE SYNTHETIC GRAPH
+===============================================================================
+Constructing 10,000-node synthetic benchmark graph...
+Running Zod validation on 10,000-node graph...
+10,000-node validation success: true
+Scale validation execution time: 104.20 ms
+SCALE Check: PASS

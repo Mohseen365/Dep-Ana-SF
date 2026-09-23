@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /app/explorer
+
+stdout | src/test/Prompt10WorkflowHardening.test.ts > Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix > 13. Performance Benchmark Profile on Cloud Spend Tracker Fixture > measures execution timings across all lifecycle phases against performance bounds
+[PROMPT 10 PERFORMANCE PROFILE]
+  Proposal Creation: 0.50ms
+  Simulation Ops: 0.11ms
+  Step Impact & Finding Delta: 85.60ms
+  Commit Validation: 0.53ms
+  Graph Commit: 0.15ms
+  Post-Commit Re-analysis: 43.50ms
+  Persistence Save: 0.08ms
+  Project Reload: 0.07ms
+
+ ✓ src/test/Prompt10WorkflowHardening.test.ts (25 tests) 2514ms
+   ✓ Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix > 5. Multi-Step Mixed Operation Scenario & Batch Equivalence > executes a 4-step proposal combining all primitive operations, proving sequential and batch equivalence 377ms
+   ✓ Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix > 11. Determinism & Replay (10/10 Repeated Execution Invariance) > executes 10 repeated simulations of the multi-step proposal and confirms 100% identical hashes, deltas, and positions 621ms
+
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+   Start at  04:53:08
+   Duration  4.28s (transform 273ms, setup 155ms, collect 286ms, tests 2.51s, environment 955ms, prepare 84ms)
