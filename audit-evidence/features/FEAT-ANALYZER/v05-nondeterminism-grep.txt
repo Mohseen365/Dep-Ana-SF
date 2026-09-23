@@ -1,0 +1,11 @@
+=== NON-DETERMINISTIC PATTERN AUDIT IN DEPENDENCY ANALYZER ===
+--- Math.random ---
+None
+--- Date.now / performance.now ---
+None
+None
+--- Object.keys ---
+scripts/export-explorer.cjs:397:  Object.keys(impactMap)
+--- Set / Map iteration ---
+None
+dependency-analyzer.cjs:2150:  for (const edge of edgeMap.values()) {
