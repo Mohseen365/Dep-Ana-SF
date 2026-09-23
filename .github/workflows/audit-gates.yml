@@ -24,6 +24,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify local vitest is installed
+        working-directory: explorer
+        run: npx --no-install vitest --version
+
       - name: Canonical fixture hash gate
         run: |
           EXPECTED="feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295"
@@ -47,7 +51,8 @@ jobs:
         run: node scripts/test-safety-envelope.cjs
 
       - name: Position authority gate
-        run: npx vitest run explorer/src/components/GraphView.positionAuthority.test.tsx
+        working-directory: explorer
+        run: npx --no-install vitest run src/components/GraphView.positionAuthority.test.tsx
 
       - name: Full CLI suite
         run: npm run test:cli
