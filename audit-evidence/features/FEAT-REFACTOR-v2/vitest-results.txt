@@ -1,0 +1,71 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.1 [39m[90m/app[39m
+
+ [32m✓[39m explorer/src/lib/refactoring-simulation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m3. Graph → Layout Consistency[2m > [22m[2mconfirms every positioned node maps to a valid graph node with finite coordinates
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+[90mstdout[2m | explorer/src/test/Prompt10WorkflowHardening.test.ts[2m > [22m[2mPrompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix[2m > [22m[2m13. Performance Benchmark Profile on Cloud Spend Tracker Fixture[2m > [22m[2mmeasures execution timings across all lifecycle phases against performance bounds
+[22m[39m[PROMPT 10 PERFORMANCE PROFILE]
+  Proposal Creation: 0.62ms
+  Simulation Ops: 0.09ms
+  Step Impact & Finding Delta: 97.24ms
+  Commit Validation: 0.50ms
+  Graph Commit: 0.12ms
+  Post-Commit Re-analysis: 46.98ms
+  Persistence Save: 0.06ms
+  Project Reload: 0.07ms
+
+ [32m✓[39m explorer/src/test/Prompt10WorkflowHardening.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 2897[2mms[22m[39m
+   [32m✓[39m Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E2E Matrix [2m(25)[22m
+     [32m✓[39m 5. Multi-Step Mixed Operation Scenario & Batch Equivalence [2m(1)[22m
+       [33m[2m✓[22m[39m executes a 4-step proposal combining all primitive operations, proving sequential and batch equivalence[33m 396[2mms[22m[39m
+     [32m✓[39m 11. Determinism & Replay (10/10 Repeated Execution Invariance) [2m(1)[22m
+       [33m[2m✓[22m[39m executes 10 repeated simulations of the multi-step proposal and confirms 100% identical hashes, deltas, and positions[33m 715[2mms[22m[39m
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m4. Position Authority System-Wide Audit & 0.00000 px Drift[2m > [22m[2mproves existing node coordinates drift 0.00000 px across all non-layout operations
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m5. Visualization & Feature Composition Integrity[2m > [22m[2mverifies feature composition groups derive deterministically from graph data
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m5. Visualization & Feature Composition Integrity[2m > [22m[2mverifies composition overlays are suppressed below the 0.6 zoom threshold
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m7. Simulation ↔ Commit ↔ Persistence ↔ Project Isolation[2m > [22m[2mverifies full Preview == Commit == Post-Commit Analysis == Reload equivalence
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m10. Large-Graph Performance Regression & Viewport Guarantees[2m > [22m[2mmeasures performance metrics across synthetic Salesforce graphs (500 to 2000 nodes)
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+[90mstdout[2m | explorer/src/test/Prompt11FinalIntegrationAudit.test.ts[2m > [22m[2mPrompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification[2m > [22m[2m11. 10/10 Repeated Execution Invariance (Determinism)[2m > [22m[2mproves 10/10 repeated execution produces 100% identical graph hashes, layout coordinates, and findings
+[22m[39m[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called
+
+ [32m✓[39m explorer/src/test/Prompt11FinalIntegrationAudit.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 21089[2mms[22m[39m
+   [32m✓[39m Prompt 11 — Final Architecture Integration Audit & System-Wide Invariant Verification [2m(22)[22m
+     [32m✓[39m 3. Graph → Layout Consistency [2m(2)[22m
+       [33m[2m✓[22m[39m confirms every positioned node maps to a valid graph node with finite coordinates[33m 1381[2mms[22m[39m
+     [32m✓[39m 4. Position Authority System-Wide Audit & 0.00000 px Drift [2m(3)[22m
+       [33m[2m✓[22m[39m proves existing node coordinates drift 0.00000 px across all non-layout operations[33m 1135[2mms[22m[39m
+     [32m✓[39m 5. Visualization & Feature Composition Integrity [2m(3)[22m
+       [33m[2m✓[22m[39m verifies feature composition groups derive deterministically from graph data[33m 1010[2mms[22m[39m
+       [33m[2m✓[22m[39m verifies composition overlays are suppressed below the 0.6 zoom threshold[33m 1004[2mms[22m[39m
+     [32m✓[39m 7. Simulation ↔ Commit ↔ Persistence ↔ Project Isolation [2m(2)[22m
+       [33m[2m✓[22m[39m verifies full Preview == Commit == Post-Commit Analysis == Reload equivalence[33m 1144[2mms[22m[39m
+     [32m✓[39m 10. Large-Graph Performance Regression & Viewport Guarantees [2m(1)[22m
+       [33m[2m✓[22m[39m measures performance metrics across synthetic Salesforce graphs (500 to 2000 nodes)[33m 1817[2mms[22m[39m
+     [32m✓[39m 11. 10/10 Repeated Execution Invariance (Determinism) [2m(1)[22m
+       [33m[2m✓[22m[39m proves 10/10 repeated execution produces 100% identical graph hashes, layout coordinates, and findings[33m 13017[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m52 passed[39m[22m[90m (52)[39m
+[2m   Start at [22m 05:27:49
+[2m   Duration [22m 21.96s[2m (tests 95%, transform 4%, import 1%)[22m
