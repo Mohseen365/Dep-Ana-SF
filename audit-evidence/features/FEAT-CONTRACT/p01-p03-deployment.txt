@@ -1,0 +1,36 @@
+===============================================================================
+FEAT-CONTRACT FORENSIC EVIDENCE: PHASE 4 — DEPLOYMENT (§DEPLOYMENT)
+===============================================================================
+Timestamp: 2026-09-23
+Feature ID: FEAT-CONTRACT (Data Contracts, Provenance & Schema)
+
+-------------------------------------------------------------------------------
+P-01: Build-Time JSON Schema Validation Verification
+-------------------------------------------------------------------------------
+File: `scripts/export-explorer.cjs`, `scripts/test-export-explorer.cjs`
+Mechanism:
+- `exportExplorerData` formats exported graph JSON strictly per `CURRENT_SCHEMA_VERSION = "1.0.0"`.
+- Normalization functions (`normalizeNodeType`, `normalizeNodeId`, `normalizeTestCoverageStatus`, `buildImpactSummaries`) force all outgoing nodes and edges into schema compliance.
+- Build-time validation suite (`scripts/test-export-explorer.cjs`) enforces 12 hard invariants across all exported fields prior to public asset publishing.
+
+-------------------------------------------------------------------------------
+P-02: Canonical Fixture Hash Immutability Verification
+-------------------------------------------------------------------------------
+Command: `sha256sum audit-fixtures/cloud-spend-tracker/explorer-data.json`
+Expected Baseline Hash: `feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295`
+Actual Measured Hash:   `feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295`
+Status: 100% MATCH (0 byte drift, baseline hash strictly preserved after adapter runs).
+
+-------------------------------------------------------------------------------
+P-03: Atomic Single-Write Manifest Generation Verification
+-------------------------------------------------------------------------------
+File: `dependency-analyzer.cjs` (Lines 3670–3740) & `DA-2.1-CONTRACT-HARDENING.md`
+Lifecycle Sequence:
+1. `computeSourceHash(sourceDir)` calculates content-based source SHA-256 fingerprint.
+2. Dependency analysis executes and writes `dependency-report.json`, `analysis-snapshot.json`, `architecture-snapshot.json`, `architecture-metrics.json`.
+3. File SHA-256 hashes for all generated artifacts are calculated from the written files.
+4. `analysis-manifest.json` is constructed with artifact file hashes, schema versions, and `status: "COMPLETE"`, and written synchronously as the final atomic operation.
+5. Failure Guard: If analysis fails prior to step 4, no `"COMPLETE"` manifest is written.
+
+Phase 4 (§DEPLOYMENT) Decision: PASS
+===============================================================================
