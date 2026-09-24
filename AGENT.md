@@ -6,6 +6,27 @@
 
 ---
 
+### Context Retrieval Protocol
+
+For all non-trivial engineering tasks, follow:
+
+`CONTEXT-RETRIEVAL-PROTOCOL.md`
+
+This document defines the repository's authoritative rules for:
+- task-driven context routing,
+- minimum-sufficient-context retrieval,
+- authority and supersession resolution,
+- current-state orientation,
+- domain context selection,
+- implementation verification,
+- broad-search escalation,
+- retrieval stopping conditions,
+- and context synchronization.
+
+Do not create a parallel retrieval protocol. `AGENT.md` remains the primary task router; `CONTEXT-RETRIEVAL-PROTOCOL.md` defines how routed context must be retrieved.
+
+---
+
 ### Retrieval Flows & Source Relationships
 
 ```text
@@ -21,6 +42,8 @@ Raw measurement / forensic question → audit-evidence/
 
 | If you need to know... | Start here | Then inspect... |
 | :--- | :--- | :--- |
+| Current-State Orientation & Project Handoff | `CURRENT-STATE-BASELINE.md` | `08_Audit_Source_Register.md` |
+| Salesforce Metadata & Contract Schema Alignment | `audit-reports/features/FEAT-CONTRACT-report-v2.md` | `01_Foundations_Contracts.md` → `explorer-contract.ts` |
 | Overall audit status & program decision | `audit-reports/FINAL-PROGRAM-REPORT.md` | Relevant feature or gap-fill report |
 | Specific audit ID location or hash | `08_Audit_Source_Register.md` | Canonical report → relevant evidence |
 | Performance context & SLA | `audit-reports/features/FEAT-PERF-report.md` | `audit-evidence/features/FEAT-PERF/` |
