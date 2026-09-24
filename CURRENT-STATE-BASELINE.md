@@ -33,6 +33,7 @@ This baseline artifact serves as a navigation and status entry point for future 
 | **Integrated Validation** | FINAL INTEGRATION — PASSED | `PHASE18G_FINAL_INTEGRATION_AND_REGRESSION_REPORT.md` |
 | **Audit Closure** | FINAL AUDIT CLOSURE — COMPLETE | `PHASE18H_FINAL_AUDIT_CLOSURE_REPORT.md` |
 | **Context Retrieval** | CONTEXT RETRIEVAL — VERIFIED / ROBUST | `PHASE19A` / `PHASE19B` |
+| **G-OVL — Feature Region Overlay Transport** | CLOSED — IMPLEMENTED AND VERIFIED | `HYBRID_LAYOUT_PROMPT4_IMPLEMENTATION_REPORT.md` |
 
 ---
 
@@ -46,6 +47,14 @@ Build/export provisioning (scripts/run-explorer.cjs -> export-explorer.cjs)
 Explorer runtime (ProjectContext.tsx -> /projects/cloud-spend-tracker/explorer-data.json)
         ↓
 Existing Candidate E layout pipeline (architecture-layout.ts, 13-stage Stage 0–12 generator)
+        ↓
+Stage 5 featureRegions metadata exposure (computeArchitectureLayoutWithMetadata)
+        ↓
+Transport via graph-layout (runLayoutWithMetadata)
+        ↓
+GraphView (setFeatureRegions state update on layout execution)
+        ↓
+FeatureOverlayCanvas (featureRegions prop -> SVG semantic feature region enclosure boxes)
         ↓
 Position Authority (position-policy.ts, 5-Level priority hierarchy)
         ↓
