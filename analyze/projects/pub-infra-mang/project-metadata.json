@@ -1,0 +1,13 @@
+{
+  "id": "pub-infra-mang",
+  "name": "pub-infra-mang",
+  "description": "Salesforce DX Architecture Analysis",
+  "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Pub-Infra-Mang\\force-app\\main\\default",
+  "createdAt": "2026-09-24T06:44:57.270Z",
+  "updatedAt": "2026-09-24T06:44:57.270Z",
+  "lastAnalyzedAt": "2026-09-24T06:44:57.270Z",
+  "analysisStatus": "COMPLETE",
+  "componentCount": 528,
+  "dependencyCount": 2063,
+  "analysisPath": "/projects/pub-infra-mang/explorer-data.json"
+}

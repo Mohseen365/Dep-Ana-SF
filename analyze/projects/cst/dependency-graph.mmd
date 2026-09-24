@@ -1,0 +1,1265 @@
+graph TD
+  N1["AccountController\n[ApexClass]"]
+  N2["AccountService\n[ApexClass]"]
+  N3["AccountServiceTest\n[ApexClass]"]
+  N4["AdminAccessServiceTest\n[ApexClass]"]
+  N5["AdminAuditController\n[ApexClass]"]
+  N6["AdminDataExplorerController\n[ApexClass]"]
+  N7["AdminHealthController\n[ApexClass]"]
+  N8["AdminOverviewController\n[ApexClass]"]
+  N9["AdminSpendController\n[ApexClass]"]
+  N10["AdminUserController\n[ApexClass]"]
+  N11["AuditService\n[ApexClass]"]
+  N12["AuditServiceTest\n[ApexClass]"]
+  N13["AuthorizationServiceTest\n[ApexClass]"]
+  N14["BudgetAlertController\n[ApexClass]"]
+  N15["BudgetAlertService\n[ApexClass]"]
+  N16["BudgetAlertServiceTest\n[ApexClass]"]
+  N17["BudgetController\n[ApexClass]"]
+  N18["BudgetService\n[ApexClass]"]
+  N19["BudgetServiceTest\n[ApexClass]"]
+  N20["CloudAccountController\n[ApexClass]"]
+  N21["CloudAccountSelector\n[ApexClass]"]
+  N22["CloudAccountService\n[ApexClass]"]
+  N23["CloudServiceSelector\n[ApexClass]"]
+  N24["CloudSpendMonthBackfillBatch\n[ApexClass]"]
+  N25["CloudSpendOrganizationRefactorTest\n[ApexClass]"]
+  N26["CloudSpendSelector\n[ApexClass]"]
+  N27["CloudSpendService\n[ApexClass]"]
+  N28["CloudSpendTriggerHandler\n[ApexClass]"]
+  N29["CloudSpendTriggerHandlerTest\n[ApexClass]"]
+  N30["ContentVersionSelector\n[ApexClass]"]
+  N31["ControllersTest\n[ApexClass]"]
+  N32["create_users\n[ApexClass]"]
+  N33["create_usersTest\n[ApexClass]"]
+  N34["CsvParser\n[ApexClass]"]
+  N35["CurrencyUtils\n[ApexClass]"]
+  N36["DateUtils\n[ApexClass]"]
+  N37["ErrorResponse\n[ApexClass]"]
+  N38["FiscalController\n[ApexClass]"]
+  N39["FiscalPeriodMappingSelector\n[ApexClass]"]
+  N40["FiscalUtils\n[ApexClass]"]
+  N41["FiscalUtilsTest\n[ApexClass]"]
+  N42["ForecastController\n[ApexClass]"]
+  N43["ForecastSelector\n[ApexClass]"]
+  N44["ForecastService\n[ApexClass]"]
+  N45["ForecastServiceTest\n[ApexClass]"]
+  N46["ImportController\n[ApexClass]"]
+  N47["ImportService\n[ApexClass]"]
+  N48["ImportServiceTest\n[ApexClass]"]
+  N49["OrganizationBudgetSelector\n[ApexClass]"]
+  N50["OrganizationController\n[ApexClass]"]
+  N51["OrganizationHierarchySelector\n[ApexClass]"]
+  N52["OrganizationHierarchyService\n[ApexClass]"]
+  N53["OrganizationService\n[ApexClass]"]
+  N54["OrganizationServiceTest\n[ApexClass]"]
+  N55["OrganizationTriggerHandler\n[ApexClass]"]
+  N56["OrganizationTriggerHandlerTest\n[ApexClass]"]
+  N57["QueryResult\n[ApexClass]"]
+  N58["SelectorsTest\n[ApexClass]"]
+  N59["SpendAnalyticsService\n[ApexClass]"]
+  N60["SpendController\n[ApexClass]"]
+  N61["SpendImportService\n[ApexClass]"]
+  N62["SpendService\n[ApexClass]"]
+  N63["SpendServiceTest\n[ApexClass]"]
+  N64["SpendTrackerAccessContext\n[ApexClass]"]
+  N65["SpendTrackerAuthorizationService\n[ApexClass]"]
+  N66["SpendTrackerTest\n[ApexClass]"]
+  N67["StandardAccessPolicy\n[ApexClass]"]
+  N68["SystemAdminAccessPolicy\n[ApexClass]"]
+  N69["UserContactMappingService\n[ApexClass]"]
+  N70["UserContactMappingServiceTest\n[ApexClass]"]
+  N71["UserController\n[ApexClass]"]
+  N72["UserManagementController\n[ApexClass]"]
+  N73["UserManagementService\n[ApexClass]"]
+  N74["UserOrganizationRoleSelector\n[ApexClass]"]
+  N75["UserOrganizationRoleTriggerHandler\n[ApexClass]"]
+  N76["UserOrganizationRoleTriggerTest\n[ApexClass]"]
+  N77["UserSelector\n[ApexClass]"]
+  N78["UserService\n[ApexClass]"]
+  N79["UserServiceTest\n[ApexClass]"]
+  N80["CloudSpendTrigger\n[Trigger]"]
+  N81["OrganizationTrigger\n[Trigger]"]
+  N82["UserOrganizationRoleTrigger\n[Trigger]"]
+  N83["account-metrics\n[LWC]"]
+  N84["admin-audit\n[LWC]"]
+  N85["admin-budgets\n[LWC]"]
+  N86["admin-cloud-accounts\n[LWC]"]
+  N87["admin-data-explorer\n[LWC]"]
+  N88["admin-data-health\n[LWC]"]
+  N89["admin-filter-panel\n[LWC]"]
+  N90["admin-forecasts\n[LWC]"]
+  N91["administration-nav\n[LWC]"]
+  N92["admin-organizations\n[LWC]"]
+  N93["admin-overview\n[LWC]"]
+  N94["admin-spend-explorer\n[LWC]"]
+  N95["admin-user-access\n[LWC]"]
+  N96["app-shell\n[LWC]"]
+  N97["data-importer\n[LWC]"]
+  N98["error-panel\n[LWC]"]
+  N99["filter-panel\n[LWC]"]
+  N100["forecast-manager\n[LWC]"]
+  N101["home-overview\n[LWC]"]
+  N102["organization-tree\n[LWC]"]
+  N103["spend-analytics\n[LWC]"]
+  N104["spend-tracker-nav\n[LWC]"]
+  N105["system-admin-app\n[LWC]"]
+  N106["top-services-table\n[LWC]"]
+  N107["user-management\n[LWC]"]
+  N108["utils\n[LWC]"]
+  N109["Action_Audit__c\n[Object]"]
+  N110["Cloud_Account__c\n[Object]"]
+  N111["Cloud_Service__c\n[Object]"]
+  N112["Cloud_Spend__c\n[Object]"]
+  N113["Fiscal_Period_Mapping__mdt\n[Object]"]
+  N114["Forecast__c\n[Object]"]
+  N115["Organization_Budget__c\n[Object]"]
+  N116["Organization_Hierarchy__c\n[Object]"]
+  N117["Spend_Import_Batch__c\n[Object]"]
+  N118["User_Organization_Role__c\n[Object]"]
+  N119["Account.Account_Status__c\n[Field]"]
+  N120["Account.Domain__c\n[Field]"]
+  N121["Account.Organization_Hierarchy_Root__c\n[Field]"]
+  N122["Account.Tax_ID__c\n[Field]"]
+  N123["Action_Audit__c.Action__c\n[Field]"]
+  N124["Action_Audit__c.Message__c\n[Field]"]
+  N125["Action_Audit__c.Timestamp__c\n[Field]"]
+  N126["Action_Audit__c.User__c\n[Field]"]
+  N127["Cloud_Account__c.Account_ID__c\n[Field]"]
+  N128["Cloud_Account__c.Cloud_Provider__c\n[Field]"]
+  N129["Cloud_Account__c.Organization__c\n[Field]"]
+  N130["Cloud_Account__c.Owner_Email__c\n[Field]"]
+  N131["Cloud_Service__c.Cloud_Account__c\n[Field]"]
+  N132["Cloud_Service__c.Description__c\n[Field]"]
+  N133["Cloud_Service__c.Monthly_Cost_Estimate__c\n[Field]"]
+  N134["Cloud_Service__c.Service_Type__c\n[Field]"]
+  N135["Cloud_Service__c.Status__c\n[Field]"]
+  N136["Cloud_Spend__c.Amount__c\n[Field]"]
+  N137["Cloud_Spend__c.Cloud_Account__c\n[Field]"]
+  N138["Cloud_Spend__c.Cloud_Provider__c\n[Field]"]
+  N139["Cloud_Spend__c.External_Dedupe_Key__c\n[Field]"]
+  N140["Cloud_Spend__c.Month__c\n[Field]"]
+  N141["Cloud_Spend__c.Region__c\n[Field]"]
+  N142["Cloud_Spend__c.Service__c\n[Field]"]
+  N143["Cloud_Spend__c.Year__c\n[Field]"]
+  N144["Contact.Is_Primary_Cloud_Contact__c\n[Field]"]
+  N145["Contact.User__c\n[Field]"]
+  N146["Fiscal_Period_Mapping__mdt.End_Date__c\n[Field]"]
+  N147["Fiscal_Period_Mapping__mdt.Fiscal_Month__c\n[Field]"]
+  N148["Fiscal_Period_Mapping__mdt.Fiscal_Year__c\n[Field]"]
+  N149["Fiscal_Period_Mapping__mdt.Start_Date__c\n[Field]"]
+  N150["Forecast__c.Amount__c\n[Field]"]
+  N151["Forecast__c.Cloud_Account__c\n[Field]"]
+  N152["Forecast__c.Fiscal_Month__c\n[Field]"]
+  N153["Forecast__c.Fiscal_Year__c\n[Field]"]
+  N154["Forecast__c.Organization__c\n[Field]"]
+  N155["Forecast__c.Type__c\n[Field]"]
+  N156["Organization_Budget__c.Amount__c\n[Field]"]
+  N157["Organization_Budget__c.Organization__c\n[Field]"]
+  N158["Organization_Budget__c.Year__c\n[Field]"]
+  N159["Organization_Hierarchy__c.Account__c\n[Field]"]
+  N160["Organization_Hierarchy__c.Hierarchy_Type__c\n[Field]"]
+  N161["Organization_Hierarchy__c.Parent_Organization__c\n[Field]"]
+  N162["Spend_Import_Batch__c.Billing_Month__c\n[Field]"]
+  N163["Spend_Import_Batch__c.Billing_Year__c\n[Field]"]
+  N164["Spend_Import_Batch__c.Error_Message__c\n[Field]"]
+  N165["Spend_Import_Batch__c.File_Name__c\n[Field]"]
+  N166["Spend_Import_Batch__c.Provider__c\n[Field]"]
+  N167["Spend_Import_Batch__c.Records_Created__c\n[Field]"]
+  N168["Spend_Import_Batch__c.Records_Failed__c\n[Field]"]
+  N169["Spend_Import_Batch__c.Records_Received__c\n[Field]"]
+  N170["Spend_Import_Batch__c.Records_Updated__c\n[Field]"]
+  N171["Spend_Import_Batch__c.Status__c\n[Field]"]
+  N172["Spend_Import_Batch__c.Uploaded_By__c\n[Field]"]
+  N173["Spend_Import_Batch__c.Upload_Date__c\n[Field]"]
+  N174["User_Organization_Role__c.Access_Level__c\n[Field]"]
+  N175["User_Organization_Role__c.Contact__c\n[Field]"]
+  N176["User_Organization_Role__c.Effective_End_Date__c\n[Field]"]
+  N177["User_Organization_Role__c.Effective_Start_Date__c\n[Field]"]
+  N178["User_Organization_Role__c.Is_Active__c\n[Field]"]
+  N179["User_Organization_Role__c.Organization__c\n[Field]"]
+  N180["User_Organization_Role__c.Role__c\n[Field]"]
+  N181["User_Organization_Role__c.User__c\n[Field]"]
+  N182["AccountWrapper\n[External]"]
+  N183["SpendHistoryWrapper\n[External]"]
+  N184["Assert\n[External]"]
+  N185["User\n[External]"]
+  N186["PermissionSetAssignment\n[External]"]
+  N187["Profile\n[External]"]
+  N188["PermissionSet\n[External]"]
+  N189["AdminOverviewWrapper\n[External]"]
+  N190["HealthCheckWrapper\n[External]"]
+  N191["Object:Profile\n[External]"]
+  N192["Object:PermissionSet\n[External]"]
+  N193["Object:admin\n[External]"]
+  N194["Object:User\n[External]"]
+  N195["SpendImportBatchDTO\n[External]"]
+  N196["Year__c\n[External]"]
+  N197["Account\n[External]"]
+  N198["Contact\n[External]"]
+  N199["Object:Account\n[External]"]
+  N200["Object:Tenant\n[External]"]
+  N201["BudgetAlertWrapper\n[External]"]
+  N202["BudgetWrapper\n[External]"]
+  N203["BatchableContext\n[External]"]
+  N204["Database.BatchableSObject\n[External]"]
+  N205["QueryException\n[External]"]
+  N206["Organization__c\n[External]"]
+  N207["Cloud_Provider__c\n[External]"]
+  N208["Spend_Month__c\n[External]"]
+  N209["Service__c\n[External]"]
+  N210["Region__c\n[External]"]
+  N211["SaveResult\n[External]"]
+  N212["Object:ContentVersion\n[External]"]
+  N213["ContentVersion\n[External]"]
+  N214["ProvisioningException\n[External]"]
+  N215["BusinessDataProvisioningQueueable\n[External]"]
+  N216["Lead\n[External]"]
+  N217["Email\n[External]"]
+  N218["QueueableContext\n[External]"]
+  N219["PermissionSetGroup\n[External]"]
+  N220["Object:UserRole\n[External]"]
+  N221["Object:PermissionSetGroup\n[External]"]
+  N222["Object:PermissionSetAssignment\n[External]"]
+  N223["Object:Lead\n[External]"]
+  N224["Object:Contact\n[External]"]
+  N225["UUID\n[External]"]
+  N226["PeriodMapping\n[External]"]
+  N227["Start_Date__c\n[External]"]
+  N228["ForecastWrapper\n[External]"]
+  N229["VersionData\n[External]"]
+  N230["OrganizationWrapper\n[External]"]
+  N231["Starting\n[External]"]
+  N232["DmlException\n[External]"]
+  N233["Error_Message__c\n[External]"]
+  N234["AggregateSpendWrapper\n[External]"]
+  N235["ClassificationResult\n[External]"]
+  N236["BackfillResult\n[External]"]
+  N237["Classification\n[External]"]
+  N238["Object:email\n[External]"]
+  N239["UserRoleWrapper\n[External]"]
+  N240["RoleMapping\n[External]"]
+  N1 -->|"method-call: getAccountsWithServices->getAccountsWithServices"| N2
+  N1 -->|"method-call: getAccountSpendHistory->getAccountSpendHistory"| N2
+  N2 -->|"instantiation"| N182
+  N2 -->|"instantiation"| N183
+  N2 -->|"method-call: getAccountsWithServices->selectAllWithOrgInfo"| N21
+  N2 -->|"method-call: getAccountsWithServices->selectByCloudAccountIds"| N23
+  N2 -->|"method-call: getAccountSpendHistory->selectByAccountIds"| N26
+  N2 -->|"type-reference: getAccountSpendHistory"| N112
+  N2 -->|"type-reference: getAccountsWithServices"| N110
+  N2 -->|"generic-type"| N182
+  N2 -->|"generic-type: getAccountsWithServices"| N110
+  N2 -->|"generic-type"| N183
+  N2 -->|"generic-type: getAccountSpendHistory"| N112
+  N3 -->|"instantiation: setup"| N116
+  N3 -->|"instantiation: setup"| N110
+  N3 -->|"instantiation: setup"| N111
+  N3 -->|"instantiation: setup"| N112
+  N3 -->|"method-call: testGetAccountsWithServices->getAccountsWithServices"| N2
+  N3 -->|"method-call: testGetAccountsWithServices->isNotNull"| N184
+  N3 -->|"method-call: testGetAccountsWithServices->isFalse"| N184
+  N3 -->|"method-call: testGetAccountsWithServices->areEqual"| N184
+  N3 -->|"method-call: testGetAccountSpendHistory->getAccountSpendHistory"| N2
+  N3 -->|"method-call: testGetAccountSpendHistory->isTrue"| N184
+  N3 -->|"type-reference: setup"| N116
+  N3 -->|"type-reference: setup"| N110
+  N3 -->|"type-reference: setup"| N111
+  N3 -->|"type-reference: setup"| N112
+  N3 -->|"soql-object"| N110
+  N3 -->|"test-reference"| N2
+  N4 -->|"instantiation: testAdminControllersWithAdminUser"| N185
+  N4 -->|"instantiation: testAdminControllersWithAdminUser"| N186
+  N4 -->|"method-call: testAdminControllersWithAdminUser->getOverviewMetrics"| N8
+  N4 -->|"method-call: testAdminControllersWithAdminUser->getGlobalSpendExplorer"| N9
+  N4 -->|"method-call: testAdminControllersWithAdminUser->getObjectRecords"| N6
+  N4 -->|"method-call: testAdminControllersWithAdminUser->getAllUsers"| N10
+  N4 -->|"method-call: testAdminControllersWithAdminUser->getAuditLogs"| N5
+  N4 -->|"method-call: testAdminControllersWithAdminUser->getHealthStatus"| N7
+  N4 -->|"type-reference: testAdminControllersWithAdminUser"| N187
+  N4 -->|"type-reference: testAdminControllersWithAdminUser"| N185
+  N4 -->|"type-reference: testAdminControllersWithAdminUser"| N188
+  N4 -->|"type-reference: testAdminControllersWithAdminUser"| N189
+  N4 -->|"type-reference: testAdminControllersWithAdminUser"| N57
+  N4 -->|"type-reference: testAdminControllersWithAdminUser"| N190
+  N4 -->|"generic-type: testAdminControllersWithAdminUser"| N185
+  N4 -->|"generic-type: testAdminControllersWithAdminUser"| N109
+  N4 -->|"soql-object"| N191
+  N4 -->|"soql-object"| N192
+  N4 -->|"soql-object"| N193
+  N4 -->|"test-reference"| N8
+  N4 -->|"test-reference"| N57
+  N4 -->|"test-reference"| N9
+  N4 -->|"test-reference"| N6
+  N4 -->|"test-reference"| N10
+  N4 -->|"test-reference"| N5
+  N4 -->|"test-reference"| N7
+  N5 -->|"method-call: getAuditLogs->isSystemAdmin"| N65
+  N5 -->|"method-call: getAuditLogs->getAuditLogs"| N11
+  N5 -->|"generic-type"| N109
+  N6 -->|"instantiation"| N57
+  N6 -->|"method-call: getObjectRecords->isSystemAdmin"| N65
+  N6 -->|"soql-object"| N112
+  N6 -->|"soql-field"| N138
+  N6 -->|"soql-field"| N142
+  N6 -->|"soql-field"| N136
+  N6 -->|"soql-field"| N140
+  N6 -->|"soql-field"| N143
+  N6 -->|"soql-object"| N110
+  N6 -->|"soql-field"| N127
+  N6 -->|"soql-field"| N128
+  N6 -->|"soql-object"| N111
+  N6 -->|"soql-object"| N116
+  N6 -->|"soql-field"| N159
+  N6 -->|"soql-object"| N115
+  N6 -->|"soql-field"| N156
+  N6 -->|"soql-field"| N158
+  N6 -->|"soql-object"| N114
+  N6 -->|"soql-field"| N150
+  N6 -->|"soql-field"| N152
+  N6 -->|"soql-field"| N153
+  N6 -->|"soql-object"| N194
+  N6 -->|"soql-object"| N118
+  N6 -->|"soql-field"| N180
+  N6 -->|"soql-object"| N117
+  N6 -->|"soql-field"| N165
+  N6 -->|"soql-field"| N171
+  N6 -->|"soql-field"| N173
+  N6 -->|"soql-field"| N166
+  N6 -->|"soql-field"| N169
+  N6 -->|"soql-field"| N167
+  N6 -->|"soql-field"| N168
+  N6 -->|"soql-object"| N109
+  N6 -->|"soql-field"| N123
+  N6 -->|"soql-field"| N124
+  N6 -->|"soql-field"| N125
+  N7 -->|"instantiation: getHealthStatus"| N190
+  N7 -->|"method-call: getHealthStatus->isSystemAdmin"| N65
+  N7 -->|"type-reference"| N190
+  N7 -->|"soql-object"| N110
+  N7 -->|"soql-object"| N112
+  N7 -->|"soql-object"| N117
+  N8 -->|"instantiation: getOverviewMetrics"| N189
+  N8 -->|"instantiation: getOverviewMetrics"| N195
+  N8 -->|"method-call: getOverviewMetrics->isSystemAdmin"| N65
+  N8 -->|"type-reference"| N189
+  N8 -->|"type-reference: getOverviewMetrics"| N195
+  N8 -->|"generic-type: getOverviewMetrics"| N117
+  N8 -->|"generic-type: getOverviewMetrics"| N195
+  N8 -->|"soql-object"| N112
+  N8 -->|"soql-object"| N115
+  N8 -->|"soql-object"| N110
+  N8 -->|"soql-object"| N116
+  N8 -->|"soql-object"| N194
+  N8 -->|"soql-object"| N111
+  N8 -->|"soql-object"| N117
+  N8 -->|"soql-field"| N165
+  N8 -->|"soql-field"| N171
+  N8 -->|"soql-field"| N173
+  N8 -->|"soql-field"| N169
+  N8 -->|"soql-field"| N167
+  N8 -->|"soql-field"| N168
+  N8 -->|"soql-field"| N166
+  N9 -->|"instantiation"| N57
+  N9 -->|"method-call: getGlobalSpendExplorer->isSystemAdmin"| N65
+  N9 -->|"type-reference: getGlobalSpendExplorer"| N196
+  N9 -->|"generic-type: getGlobalSpendExplorer"| N112
+  N9 -->|"soql-object"| N112
+  N9 -->|"soql-field"| N137
+  N9 -->|"soql-field"| N138
+  N9 -->|"soql-field"| N142
+  N9 -->|"soql-field"| N141
+  N9 -->|"soql-field"| N136
+  N9 -->|"soql-field"| N140
+  N9 -->|"soql-field"| N143
+  N10 -->|"method-call: getAllUsers->isSystemAdmin"| N65
+  N10 -->|"method-call: getAllUsers->selectAllUsers"| N77
+  N10 -->|"method-call: getAllUserRoles->selectAllWithUserInfo"| N74
+  N10 -->|"generic-type"| N185
+  N10 -->|"generic-type"| N118
+  N11 -->|"instantiation: logAction"| N109
+  N11 -->|"generic-type"| N109
+  N11 -->|"soql-object"| N109
+  N11 -->|"soql-field"| N123
+  N11 -->|"soql-field"| N124
+  N11 -->|"soql-field"| N126
+  N11 -->|"soql-field"| N125
+  N12 -->|"method-call: testLogActionSuccess->logAction"| N11
+  N12 -->|"method-call: testLogActionSuccess->areEqual"| N184
+  N12 -->|"method-call: testLogActionExceptionSafety->isNotNull"| N184
+  N12 -->|"generic-type: testLogActionSuccess"| N109
+  N12 -->|"soql-object"| N109
+  N12 -->|"soql-field"| N123
+  N12 -->|"soql-field"| N124
+  N12 -->|"soql-field"| N126
+  N12 -->|"test-reference"| N11
+  N13 -->|"instantiation: setupTestData"| N197
+  N13 -->|"instantiation: setupTestData"| N116
+  N13 -->|"instantiation: setupTestData"| N185
+  N13 -->|"instantiation: setupTestData"| N118
+  N13 -->|"instantiation: setupTestData"| N110
+  N13 -->|"instantiation: setupTestData"| N112
+  N13 -->|"instantiation: createExternalUserWithContact"| N198
+  N13 -->|"instantiation: testAdminUserAccessScoping"| N186
+  N13 -->|"method-call: testStandardUserAccessScoping->getAccessContext"| N65
+  N13 -->|"method-call: testStandardUserAccessScoping->canViewOrganization"| N65
+  N13 -->|"method-call: testDefenseInDepthMalformedCrossTenantTraversalsCannotLeak->setExecuting"| N55
+  N13 -->|"method-call: testSpendIsolationForNormalUser->canViewCloudAccount"| N65
+  N13 -->|"method-call: testAdminUserAccessScoping->isSystemAdmin"| N65
+  N13 -->|"method-call: testP14_1_UserOnlyAuthorization->isTrue"| N184
+  N13 -->|"method-call: testP14_4_ContactHasNoContactId->isNull"| N184
+  N13 -->|"method-call: testP14_5_ContactWithNoRole->isFalse"| N184
+  N13 -->|"method-call: testP14_14_DuplicateRolesDeduplication->areEqual"| N184
+  N13 -->|"method-call: testP14_15_BulkRolePopulationPerformance->isNotNull"| N184
+  N13 -->|"method-call: testP14_16_AuthorizationParityGate->getLegacyUserOnlyAccessContext"| N65
+  N13 -->|"type-reference: setupTestData"| N197
+  N13 -->|"type-reference: setupTestData"| N116
+  N13 -->|"type-reference: setupTestData"| N187
+  N13 -->|"type-reference: setupTestData"| N185
+  N13 -->|"type-reference: setupTestData"| N118
+  N13 -->|"type-reference: setupTestData"| N110
+  N13 -->|"type-reference: setupTestData"| N112
+  N13 -->|"type-reference: createExternalUserWithContact"| N198
+  N13 -->|"type-reference: testStandardUserAccessScoping"| N64
+  N13 -->|"type-reference: testAdminUserAccessScoping"| N188
+  N13 -->|"generic-type: setupTestData"| N197
+  N13 -->|"generic-type: setupTestData"| N116
+  N13 -->|"generic-type: setupTestData"| N185
+  N13 -->|"generic-type: setupTestData"| N110
+  N13 -->|"generic-type: setupTestData"| N112
+  N13 -->|"generic-type: testP14_3_UserPlusContactAuthorizationUnion"| N118
+  N13 -->|"soql-object"| N191
+  N13 -->|"soql-object"| N194
+  N13 -->|"soql-object"| N116
+  N13 -->|"soql-object"| N110
+  N13 -->|"soql-object"| N192
+  N13 -->|"soql-object"| N199
+  N13 -->|"soql-object"| N200
+  N13 -->|"test-reference"| N64
+  N13 -->|"test-reference"| N65
+  N13 -->|"test-reference"| N55
+  N14 -->|"method-call: getBudgetAlerts->getBudgetAlerts"| N15
+  N15 -->|"instantiation"| N201
+  N15 -->|"method-call: getBudgetAlerts->selectByOrgIds"| N49
+  N15 -->|"method-call: getBudgetAlerts->getAggregatedSpend"| N62
+  N15 -->|"generic-type"| N201
+  N15 -->|"generic-type: getBudgetAlerts"| N115
+  N16 -->|"instantiation: setup"| N116
+  N16 -->|"instantiation: setup"| N110
+  N16 -->|"instantiation: setup"| N112
+  N16 -->|"instantiation: setup"| N115
+  N16 -->|"method-call: testGetBudgetAlertsWithOrgIds->getBudgetAlerts"| N15
+  N16 -->|"method-call: testGetBudgetAlertsWithOrgIds->isFalse"| N184
+  N16 -->|"method-call: testGetBudgetAlertsWithOrgIds->areEqual"| N184
+  N16 -->|"type-reference: setup"| N116
+  N16 -->|"type-reference: setup"| N110
+  N16 -->|"type-reference: setup"| N112
+  N16 -->|"type-reference: setup"| N115
+  N16 -->|"soql-object"| N116
+  N16 -->|"soql-object"| N115
+  N16 -->|"soql-field"| N156
+  N16 -->|"test-reference"| N15
+  N17 -->|"method-call: getOrganizationBudgets->getOrganizationBudgets"| N18
+  N17 -->|"method-call: manageBudget->manageBudget"| N18
+  N17 -->|"method-call: clearBudget->clearBudget"| N18
+  N18 -->|"instantiation"| N202
+  N18 -->|"instantiation: manageBudget"| N115
+  N18 -->|"method-call: getOrganizationBudgets->selectAllWithOrgInfo"| N49
+  N18 -->|"method-call: manageBudget->selectByOrgIdAndYear"| N49
+  N18 -->|"method-call: manageBudget->logAction"| N11
+  N18 -->|"type-reference: getOrganizationBudgets"| N115
+  N18 -->|"generic-type"| N202
+  N18 -->|"generic-type: getOrganizationBudgets"| N115
+  N19 -->|"instantiation: setup"| N116
+  N19 -->|"method-call: testManageAndGetBudgets->manageBudget"| N18
+  N19 -->|"method-call: testManageAndGetBudgets->getOrganizationBudgets"| N18
+  N19 -->|"method-call: testManageAndGetBudgets->areEqual"| N184
+  N19 -->|"method-call: testManageAndGetBudgets->clearBudget"| N18
+  N19 -->|"method-call: testManageAndGetBudgets->isTrue"| N184
+  N19 -->|"type-reference: setup"| N116
+  N19 -->|"soql-object"| N116
+  N19 -->|"test-reference"| N18
+  N20 -->|"method-call: getAccountsWithServices->getAccountsWithServices"| N2
+  N21 -->|"generic-type"| N110
+  N21 -->|"soql-object"| N110
+  N21 -->|"soql-field"| N127
+  N21 -->|"soql-field"| N128
+  N21 -->|"soql-field"| N129
+  N22 -->|"method-call: getAccountsWithServices->getAccountsWithServices"| N2
+  N23 -->|"generic-type"| N111
+  N23 -->|"soql-object"| N111
+  N23 -->|"soql-field"| N131
+  N24 -->|"type-reference: start"| N203
+  N24 -->|"generic-type: execute"| N112
+  N24 -->|"implements"| N204
+  N24 -->|"soql-object"| N112
+  N24 -->|"soql-field"| N140
+  N24 -->|"soql-field"| N143
+  N25 -->|"instantiation: setupData"| N197
+  N25 -->|"instantiation: setupData"| N198
+  N25 -->|"instantiation: setupData"| N185
+  N25 -->|"instantiation: setupData"| N116
+  N25 -->|"instantiation: setupData"| N118
+  N25 -->|"instantiation: setupData"| N110
+  N25 -->|"instantiation: setupData"| N112
+  N25 -->|"method-call: testDirectOrganizationResolution->getAggregatedSpend"| N62
+  N25 -->|"method-call: testDirectOrganizationResolution->isFalse"| N184
+  N25 -->|"method-call: testDirectOrganizationResolution->areEqual"| N184
+  N25 -->|"method-call: testDuplicateOrganizationNamesAcrossTenants->selectAggregatedSpend"| N26
+  N25 -->|"method-call: testMultipleOrganizationsSameProvider->isTrue"| N184
+  N25 -->|"method-call: testUnlinkedCloudAccount->areNotEqual"| N184
+  N25 -->|"method-call: testUnlinkedCloudAccount->getHealthStatus"| N7
+  N25 -->|"method-call: testSystemAdminSpendVisibility->getGlobalSpendExplorer"| N9
+  N25 -->|"method-call: testSystemAdminSpendVisibility->isNotNull"| N184
+  N25 -->|"type-reference: setupData"| N197
+  N25 -->|"type-reference: setupData"| N198
+  N25 -->|"type-reference: setupData"| N187
+  N25 -->|"type-reference: setupData"| N185
+  N25 -->|"type-reference: setupData"| N116
+  N25 -->|"type-reference: setupData"| N118
+  N25 -->|"type-reference: setupData"| N110
+  N25 -->|"type-reference: testUnlinkedCloudAccount"| N190
+  N25 -->|"type-reference: setupData"| N112
+  N25 -->|"type-reference: testSystemAdminSpendVisibility"| N57
+  N25 -->|"generic-type: setupData"| N197
+  N25 -->|"generic-type: setupData"| N198
+  N25 -->|"generic-type: setupData"| N116
+  N25 -->|"generic-type: setupData"| N110
+  N25 -->|"generic-type: setupData"| N112
+  N25 -->|"soql-object"| N191
+  N25 -->|"soql-object"| N116
+  N25 -->|"soql-object"| N194
+  N25 -->|"soql-object"| N199
+  N25 -->|"soql-object"| N110
+  N25 -->|"soql-field"| N129
+  N25 -->|"test-reference"| N62
+  N25 -->|"test-reference"| N26
+  N25 -->|"test-reference"| N7
+  N25 -->|"test-reference"| N57
+  N25 -->|"test-reference"| N9
+  N26 -->|"type-reference: selectByAccountIds"| N205
+  N26 -->|"type-reference: selectAggregatedSpend"| N206
+  N26 -->|"type-reference: selectAggregatedSpend"| N207
+  N26 -->|"type-reference: selectAggregatedSpend"| N208
+  N26 -->|"type-reference: selectAggregatedSpend"| N209
+  N26 -->|"type-reference: selectAggregatedSpend"| N210
+  N26 -->|"generic-type"| N112
+  N26 -->|"soql-object"| N112
+  N26 -->|"soql-field"| N137
+  N26 -->|"soql-field"| N136
+  N26 -->|"soql-field"| N140
+  N26 -->|"soql-field"| N143
+  N27 -->|"method-call: getAggregatedSpend->getAggregatedSpend"| N62
+  N28 -->|"type-reference: populateSpendMonth"| N112
+  N28 -->|"generic-type: populateSpendMonth"| N112
+  N29 -->|"instantiation: setupData"| N112
+  N29 -->|"instantiation: testBatchBackfill"| N24
+  N29 -->|"type-reference: setupData"| N112
+  N29 -->|"type-reference: testInvalidMonthZero"| N211
+  N29 -->|"generic-type: testBulkInsert"| N112
+  N29 -->|"soql-object"| N112
+  N29 -->|"soql-field"| N140
+  N29 -->|"soql-field"| N143
+  N29 -->|"test-reference"| N24
+  N30 -->|"soql-object"| N212
+  N31 -->|"instantiation: setup"| N116
+  N31 -->|"instantiation: setup"| N110
+  N31 -->|"instantiation: setup"| N111
+  N31 -->|"instantiation: setup"| N112
+  N31 -->|"instantiation: setup"| N118
+  N31 -->|"instantiation: testImportAndSpendControllers"| N213
+  N31 -->|"method-call: testAccountController->getAccountsWithServices"| N1
+  N31 -->|"method-call: testAccountController->getAccountSpendHistory"| N1
+  N31 -->|"method-call: testAccountController->isFalse"| N184
+  N31 -->|"method-call: testAccountController->isTrue"| N184
+  N31 -->|"method-call: testBudgetAlertAndBudgetControllers->manageBudget"| N17
+  N31 -->|"method-call: testBudgetAlertAndBudgetControllers->getOrganizationBudgets"| N17
+  N31 -->|"method-call: testBudgetAlertAndBudgetControllers->getBudgetAlerts"| N14
+  N31 -->|"method-call: testBudgetAlertAndBudgetControllers->clearBudget"| N17
+  N31 -->|"method-call: testBudgetAlertAndBudgetControllers->isNotNull"| N184
+  N31 -->|"method-call: testFiscalAndForecastControllers->manageForecasts"| N42
+  N31 -->|"method-call: testFiscalAndForecastControllers->getForecasts"| N42
+  N31 -->|"method-call: testFiscalAndForecastControllers->getPeriodMapping"| N38
+  N31 -->|"method-call: testImportAndSpendControllers->processInvoiceCSV"| N46
+  N31 -->|"method-call: testImportAndSpendControllers->getAggregatedSpend"| N60
+  N31 -->|"method-call: testOrganizationAndUserControllers->getUserOrganizations"| N50
+  N31 -->|"method-call: testOrganizationAndUserControllers->assignUserRole"| N71
+  N31 -->|"method-call: testOrganizationAndUserControllers->getUserHierarchyAccess"| N71
+  N31 -->|"method-call: testOrganizationAndUserControllers->getUsersList"| N71
+  N31 -->|"method-call: testOrganizationAndUserControllers->removeUserRole"| N71
+  N31 -->|"method-call: testOrganizationAndUserControllers->registerUser"| N71
+  N31 -->|"method-call: testOrganizationAndUserControllers->fail"| N184
+  N31 -->|"type-reference: setup"| N116
+  N31 -->|"type-reference: setup"| N110
+  N31 -->|"type-reference: setup"| N111
+  N31 -->|"type-reference: setup"| N112
+  N31 -->|"type-reference: setup"| N118
+  N31 -->|"type-reference: testImportAndSpendControllers"| N213
+  N31 -->|"generic-type: testOrganizationAndUserControllers"| N185
+  N31 -->|"soql-object"| N110
+  N31 -->|"soql-object"| N116
+  N31 -->|"test-reference"| N2
+  N31 -->|"test-reference"| N1
+  N31 -->|"test-reference"| N17
+  N31 -->|"test-reference"| N18
+  N31 -->|"test-reference"| N15
+  N31 -->|"test-reference"| N14
+  N31 -->|"test-reference"| N42
+  N31 -->|"test-reference"| N44
+  N31 -->|"test-reference"| N38
+  N31 -->|"test-reference"| N46
+  N31 -->|"test-reference"| N62
+  N31 -->|"test-reference"| N60
+  N31 -->|"test-reference"| N53
+  N31 -->|"test-reference"| N50
+  N31 -->|"test-reference"| N71
+  N31 -->|"test-reference"| N78
+  N32 -->|"instantiation: createUsers"| N214
+  N32 -->|"instantiation: createUsers"| N215
+  N32 -->|"instantiation"| N185
+  N32 -->|"instantiation"| N186
+  N32 -->|"instantiation"| N216
+  N32 -->|"instantiation: createLeads"| N197
+  N32 -->|"instantiation: createLeads"| N198
+  N32 -->|"instantiation: createLeads"| N116
+  N32 -->|"instantiation"| N118
+  N32 -->|"instantiation: createLeads"| N110
+  N32 -->|"instantiation"| N111
+  N32 -->|"instantiation"| N112
+  N32 -->|"instantiation"| N115
+  N32 -->|"instantiation"| N114
+  N32 -->|"instantiation"| N109
+  N32 -->|"method-call: createLeads->toLowerCase"| N217
+  N32 -->|"type-reference"| N185
+  N32 -->|"type-reference: execute"| N218
+  N32 -->|"type-reference: createLeads"| N197
+  N32 -->|"type-reference: createLeads"| N116
+  N32 -->|"type-reference: createLeads"| N110
+  N32 -->|"generic-type: createUsers"| N185
+  N32 -->|"generic-type"| N219
+  N32 -->|"generic-type"| N186
+  N32 -->|"generic-type: createLeads"| N197
+  N32 -->|"generic-type: createLeads"| N116
+  N32 -->|"generic-type: createLeads"| N110
+  N32 -->|"generic-type: createLeads"| N216
+  N32 -->|"generic-type"| N198
+  N32 -->|"generic-type"| N118
+  N32 -->|"generic-type"| N111
+  N32 -->|"generic-type"| N112
+  N32 -->|"generic-type"| N115
+  N32 -->|"generic-type"| N114
+  N32 -->|"generic-type"| N109
+  N32 -->|"soql-object"| N220
+  N32 -->|"soql-object"| N191
+  N32 -->|"soql-object"| N194
+  N32 -->|"soql-object"| N221
+  N32 -->|"soql-object"| N222
+  N32 -->|"soql-object"| N223
+  N32 -->|"soql-object"| N199
+  N32 -->|"soql-field"| N121
+  N32 -->|"soql-object"| N224
+  N32 -->|"soql-object"| N116
+  N32 -->|"soql-field"| N161
+  N32 -->|"soql-field"| N159
+  N32 -->|"soql-object"| N118
+  N32 -->|"soql-field"| N181
+  N32 -->|"soql-field"| N179
+  N32 -->|"soql-object"| N110
+  N32 -->|"soql-field"| N127
+  N32 -->|"soql-field"| N128
+  N32 -->|"soql-field"| N129
+  N32 -->|"soql-object"| N111
+  N32 -->|"soql-field"| N131
+  N32 -->|"soql-field"| N134
+  N32 -->|"soql-field"| N135
+  N32 -->|"soql-object"| N112
+  N32 -->|"soql-object"| N115
+  N32 -->|"soql-field"| N157
+  N32 -->|"soql-object"| N114
+  N32 -->|"soql-object"| N109
+  N33 -->|"method-call: testCreateUsersAndProvisioning->isTrue"| N184
+  N33 -->|"method-call: testCreateUsersAndProvisioning->isNotNull"| N184
+  N33 -->|"method-call: testProvisioningIdempotency->areEqual"| N184
+  N33 -->|"method-call: testQueueableExecution->isFalse"| N184
+  N33 -->|"type-reference"| N185
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N216
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N197
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N198
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N116
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N118
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N110
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N111
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N112
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N115
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N114
+  N33 -->|"generic-type: testCreateUsersAndProvisioning"| N109
+  N33 -->|"soql-object"| N223
+  N33 -->|"soql-object"| N199
+  N33 -->|"soql-object"| N224
+  N33 -->|"soql-object"| N116
+  N33 -->|"soql-object"| N118
+  N33 -->|"soql-object"| N110
+  N33 -->|"soql-object"| N111
+  N33 -->|"soql-field"| N134
+  N33 -->|"soql-field"| N135
+  N33 -->|"soql-object"| N112
+  N33 -->|"soql-object"| N115
+  N33 -->|"soql-object"| N114
+  N33 -->|"soql-object"| N109
+  N33 -->|"soql-object"| N194
+  N37 -->|"method-call: randomUUID"| N225
+  N38 -->|"method-call: getPeriodMapping->getPeriodMapping"| N40
+  N39 -->|"generic-type"| N113
+  N39 -->|"soql-object"| N113
+  N39 -->|"soql-field"| N147
+  N39 -->|"soql-field"| N148
+  N39 -->|"soql-field"| N149
+  N39 -->|"soql-field"| N146
+  N40 -->|"instantiation"| N226
+  N40 -->|"method-call: getPeriodMapping->selectByFiscalYear"| N39
+  N40 -->|"method-call: getPeriodMapping->month"| N227
+  N40 -->|"method-call: getPeriodMapping->getFirstDayOfMonth"| N36
+  N40 -->|"method-call: getPeriodMapping->getLastDayOfMonth"| N36
+  N40 -->|"generic-type: getPeriodMapping"| N113
+  N41 -->|"method-call: testGetPeriodMapping->getPeriodMapping"| N40
+  N41 -->|"method-call: testGetPeriodMapping->isNotNull"| N184
+  N41 -->|"test-reference"| N40
+  N42 -->|"method-call: getForecasts->getForecasts"| N44
+  N42 -->|"method-call: manageForecasts->manageForecasts"| N44
+  N43 -->|"generic-type"| N114
+  N43 -->|"soql-object"| N114
+  N43 -->|"soql-field"| N150
+  N43 -->|"soql-field"| N151
+  N43 -->|"soql-field"| N152
+  N43 -->|"soql-field"| N153
+  N44 -->|"instantiation"| N228
+  N44 -->|"instantiation: manageForecasts"| N114
+  N44 -->|"method-call: getForecasts->selectForecasts"| N43
+  N44 -->|"method-call: manageForecasts->selectByOrganizationIds"| N21
+  N44 -->|"method-call: manageForecasts->selectByAccountOrgMonthYear"| N43
+  N44 -->|"type-reference: getForecasts"| N114
+  N44 -->|"generic-type"| N228
+  N44 -->|"generic-type: getForecasts"| N114
+  N44 -->|"generic-type: manageForecasts"| N110
+  N45 -->|"instantiation: setup"| N116
+  N45 -->|"instantiation: setup"| N110
+  N45 -->|"method-call: testManageAndGetForecasts->manageForecasts"| N44
+  N45 -->|"method-call: testManageAndGetForecasts->getForecasts"| N44
+  N45 -->|"method-call: testManageAndGetForecasts->areEqual"| N184
+  N45 -->|"type-reference: setup"| N116
+  N45 -->|"type-reference: setup"| N110
+  N45 -->|"soql-object"| N116
+  N45 -->|"soql-object"| N110
+  N45 -->|"test-reference"| N44
+  N46 -->|"method-call: processInvoiceCSV->processInvoiceCSV"| N47
+  N47 -->|"instantiation: processInvoiceCSV"| N112
+  N47 -->|"method-call: processInvoiceCSV->selectById"| N30
+  N47 -->|"method-call: processInvoiceCSV->toString"| N229
+  N47 -->|"method-call: processInvoiceCSV->selectAllAccountIdMap"| N21
+  N47 -->|"method-call: processInvoiceCSV->logAction"| N11
+  N47 -->|"type-reference: processInvoiceCSV"| N213
+  N47 -->|"generic-type: processInvoiceCSV"| N112
+  N48 -->|"instantiation: setup"| N116
+  N48 -->|"instantiation: setup"| N110
+  N48 -->|"instantiation: testProcessInvoiceCSVValid"| N213
+  N48 -->|"method-call: testProcessInvoiceCSVValid->processInvoiceCSV"| N47
+  N48 -->|"method-call: testProcessInvoiceCSVValid->areEqual"| N184
+  N48 -->|"method-call: testProcessInvoiceCSVSkipShortLines->isTrue"| N184
+  N48 -->|"type-reference: setup"| N116
+  N48 -->|"type-reference: setup"| N110
+  N48 -->|"type-reference: testProcessInvoiceCSVValid"| N213
+  N48 -->|"generic-type: testProcessInvoiceCSVValid"| N112
+  N48 -->|"soql-object"| N112
+  N48 -->|"soql-field"| N136
+  N48 -->|"soql-field"| N142
+  N48 -->|"test-reference"| N47
+  N49 -->|"type-reference: selectAllWithOrgInfo"| N205
+  N49 -->|"generic-type"| N115
+  N49 -->|"soql-object"| N115
+  N49 -->|"soql-field"| N156
+  N49 -->|"soql-field"| N157
+  N49 -->|"soql-field"| N158
+  N50 -->|"method-call: getUserOrganizations->getUserOrganizations"| N53
+  N50 -->|"method-call: createHierarchyNode->createHierarchyNode"| N53
+  N51 -->|"generic-type"| N116
+  N51 -->|"soql-object"| N116
+  N51 -->|"soql-field"| N161
+  N51 -->|"soql-field"| N159
+  N52 -->|"method-call: getOrganizationsForUser->selectAll"| N51
+  N52 -->|"method-call: getOrganizationsForUser->selectByIds"| N51
+  N52 -->|"type-reference: getOrganizationsForUser"| N64
+  N52 -->|"generic-type"| N116
+  N53 -->|"instantiation"| N230
+  N53 -->|"instantiation: getUserOrganizations"| N116
+  N53 -->|"method-call: getUserOrganizations->getAccessContext"| N65
+  N53 -->|"method-call: getUserOrganizations->getOrganizationsForUser"| N52
+  N53 -->|"method-call: getUserOrganizations->selectByIds"| N51
+  N53 -->|"method-call: getUserOrganizations->selectChildrenByParentIds"| N51
+  N53 -->|"method-call: getUserOrganizations->selectByOrganizationIds"| N21
+  N53 -->|"method-call: createHierarchyNodeWithAccount->logAction"| N11
+  N53 -->|"type-reference: getUserOrganizations"| N231
+  N53 -->|"type-reference: getUserOrganizations"| N64
+  N53 -->|"type-reference: getUserOrganizations"| N116
+  N53 -->|"generic-type"| N230
+  N53 -->|"generic-type: getUserOrganizations"| N116
+  N53 -->|"generic-type: getUserOrganizations"| N110
+  N53 -->|"soql-object"| N116
+  N53 -->|"soql-field"| N161
+  N53 -->|"soql-field"| N159
+  N54 -->|"instantiation: setup"| N197
+  N54 -->|"instantiation: setup"| N116
+  N54 -->|"instantiation: setup"| N110
+  N54 -->|"instantiation: setup"| N118
+  N54 -->|"method-call: testGetUserOrganizationsAdmin->getUserOrganizations"| N53
+  N54 -->|"method-call: testGetUserOrganizationsAdmin->isFalse"| N184
+  N54 -->|"method-call: testGetUserOrganizationsAdmin->areEqual"| N184
+  N54 -->|"method-call: testDynamicRootAndChildRelationship->isNotNull"| N184
+  N54 -->|"method-call: testDynamicRootAndChildRelationship->isTrue"| N184
+  N54 -->|"method-call: testCreateHierarchyNodeMultiLevel->createHierarchyNodeWithAccount"| N53
+  N54 -->|"method-call: testCreateHierarchyNodeDuplicate->fail"| N184
+  N54 -->|"type-reference: setup"| N197
+  N54 -->|"type-reference: setup"| N116
+  N54 -->|"type-reference: setup"| N110
+  N54 -->|"type-reference: setup"| N118
+  N54 -->|"type-reference: testGetUserOrganizationsAdmin"| N230
+  N54 -->|"generic-type: testDeepHierarchyBeyondFiveAndThirtyLevels"| N116
+  N54 -->|"soql-object"| N199
+  N54 -->|"soql-object"| N116
+  N54 -->|"soql-field"| N161
+  N54 -->|"soql-field"| N159
+  N54 -->|"test-reference"| N53
+  N55 -->|"instantiation: handleBeforeInsert"| N116
+  N55 -->|"type-reference: handleBeforeInsert"| N116
+  N55 -->|"generic-type: handleBeforeInsert"| N116
+  N55 -->|"soql-object"| N116
+  N55 -->|"soql-field"| N159
+  N55 -->|"soql-field"| N161
+  N56 -->|"instantiation: setupAccounts"| N197
+  N56 -->|"instantiation: testSameTenantParentAllowed"| N116
+  N56 -->|"method-call: testSameTenantParentAllowed->areEqual"| N184
+  N56 -->|"method-call: testCrossTenantParentRejected->fail"| N184
+  N56 -->|"method-call: testCrossTenantParentRejected->isTrue"| N184
+  N56 -->|"type-reference: setupAccounts"| N197
+  N56 -->|"type-reference: testSameTenantParentAllowed"| N116
+  N56 -->|"type-reference: testCrossTenantParentRejected"| N232
+  N56 -->|"generic-type: setupAccounts"| N197
+  N56 -->|"generic-type: testParentChangePreservesTenantInvariant"| N116
+  N56 -->|"soql-object"| N199
+  N56 -->|"soql-object"| N116
+  N56 -->|"soql-field"| N159
+  N56 -->|"soql-field"| N161
+  N58 -->|"instantiation: setup"| N116
+  N58 -->|"instantiation: setup"| N110
+  N58 -->|"instantiation: setup"| N111
+  N58 -->|"instantiation: setup"| N112
+  N58 -->|"instantiation: setup"| N115
+  N58 -->|"instantiation: setup"| N114
+  N58 -->|"instantiation: setup"| N118
+  N58 -->|"instantiation: testContentVersionSelector"| N213
+  N58 -->|"method-call: testCloudAccountSelector->selectAllWithOrgInfo"| N21
+  N58 -->|"method-call: testCloudAccountSelector->selectByOrganizationIds"| N21
+  N58 -->|"method-call: testCloudAccountSelector->selectAllAccountIdMap"| N21
+  N58 -->|"method-call: testCloudAccountSelector->isFalse"| N184
+  N58 -->|"method-call: testCloudServiceSelector->selectByCloudAccountIds"| N23
+  N58 -->|"method-call: testCloudSpendSelector->selectByAccountIds"| N26
+  N58 -->|"method-call: testCloudSpendSelector->selectAggregatedSpend"| N26
+  N58 -->|"method-call: testOrganizationBudgetSelector->selectAllWithOrgInfo"| N49
+  N58 -->|"method-call: testOrganizationBudgetSelector->selectByOrgIds"| N49
+  N58 -->|"method-call: testOrganizationBudgetSelector->selectByOrgIdAndYear"| N49
+  N58 -->|"method-call: testOrganizationHierarchySelector->selectAll"| N51
+  N58 -->|"method-call: testOrganizationHierarchySelector->selectByIdsOrL1Unlinked"| N51
+  N58 -->|"method-call: testOrganizationHierarchySelector->selectByLevels"| N51
+  N58 -->|"method-call: testUserOrganizationRoleSelector->selectByUserId"| N74
+  N58 -->|"method-call: testUserOrganizationRoleSelector->selectAllWithUserInfo"| N74
+  N58 -->|"method-call: testUserOrganizationRoleSelector->selectByUserIdAndOrgId"| N74
+  N58 -->|"method-call: testUserOrganizationRoleSelector->selectById"| N74
+  N58 -->|"method-call: testForecastSelector->selectForecasts"| N43
+  N58 -->|"method-call: testForecastSelector->selectByAccountOrgMonthYear"| N43
+  N58 -->|"method-call: testUserSelector->selectActiveUsers"| N77
+  N58 -->|"method-call: testUserSelector->selectProfileByName"| N77
+  N58 -->|"method-call: testUserSelector->selectAnyProfile"| N77
+  N58 -->|"method-call: testContentVersionSelector->selectById"| N30
+  N58 -->|"method-call: testContentVersionSelector->isNotNull"| N184
+  N58 -->|"method-call: testFiscalPeriodMappingSelector->selectByFiscalYear"| N39
+  N58 -->|"type-reference: setup"| N116
+  N58 -->|"type-reference: setup"| N110
+  N58 -->|"type-reference: setup"| N111
+  N58 -->|"type-reference: setup"| N112
+  N58 -->|"type-reference: setup"| N115
+  N58 -->|"type-reference: setup"| N114
+  N58 -->|"type-reference: setup"| N118
+  N58 -->|"type-reference: testContentVersionSelector"| N213
+  N58 -->|"generic-type: testCloudAccountSelector"| N110
+  N58 -->|"generic-type: testCloudServiceSelector"| N111
+  N58 -->|"generic-type: testCloudSpendSelector"| N112
+  N58 -->|"generic-type: testOrganizationBudgetSelector"| N115
+  N58 -->|"generic-type: testOrganizationHierarchySelector"| N116
+  N58 -->|"generic-type: testUserOrganizationRoleSelector"| N118
+  N58 -->|"generic-type: testForecastSelector"| N114
+  N58 -->|"generic-type: testUserSelector"| N185
+  N58 -->|"generic-type: testUserSelector"| N187
+  N58 -->|"generic-type: testFiscalPeriodMappingSelector"| N113
+  N58 -->|"soql-object"| N116
+  N58 -->|"soql-object"| N110
+  N58 -->|"soql-object"| N118
+  N58 -->|"test-reference"| N21
+  N58 -->|"test-reference"| N23
+  N58 -->|"test-reference"| N26
+  N58 -->|"test-reference"| N49
+  N58 -->|"test-reference"| N51
+  N58 -->|"test-reference"| N74
+  N58 -->|"test-reference"| N43
+  N58 -->|"test-reference"| N77
+  N58 -->|"test-reference"| N30
+  N58 -->|"test-reference"| N39
+  N59 -->|"method-call: getAggregatedSpend->getAggregatedSpend"| N62
+  N60 -->|"method-call: getAggregatedSpend->getAggregatedSpend"| N62
+  N61 -->|"instantiation"| N117
+  N61 -->|"instantiation: processInvoiceCSV"| N112
+  N61 -->|"method-call: processInvoiceCSV->selectById"| N30
+  N61 -->|"method-call: processInvoiceCSV->toString"| N229
+  N61 -->|"method-call: processInvoiceCSV->parseCsv"| N34
+  N61 -->|"method-call: processInvoiceCSV->selectAllAccountIdMap"| N21
+  N61 -->|"method-call: processInvoiceCSV->length"| N233
+  N61 -->|"method-call: processInvoiceCSV->substring"| N233
+  N61 -->|"method-call: processInvoiceCSV->logAction"| N11
+  N61 -->|"type-reference: processInvoiceCSV"| N213
+  N61 -->|"type-reference"| N117
+  N61 -->|"type-reference: processInvoiceCSV"| N110
+  N61 -->|"type-reference: processInvoiceCSV"| N112
+  N61 -->|"generic-type: processInvoiceCSV"| N112
+  N62 -->|"instantiation"| N234
+  N62 -->|"method-call: getAggregatedSpend->getAccessContext"| N65
+  N62 -->|"method-call: getAggregatedSpend->selectAggregatedSpend"| N26
+  N62 -->|"type-reference: getAggregatedSpend"| N64
+  N62 -->|"generic-type"| N234
+  N63 -->|"instantiation: setup"| N116
+  N63 -->|"instantiation: setup"| N110
+  N63 -->|"instantiation: setup"| N112
+  N63 -->|"method-call: testGetAggregatedSpendWithOrgIds->getAggregatedSpend"| N62
+  N63 -->|"method-call: testGetAggregatedSpendWithOrgIds->areEqual"| N184
+  N63 -->|"method-call: testGetAggregatedSpendEmptyOrgIds->isFalse"| N184
+  N63 -->|"type-reference: setup"| N116
+  N63 -->|"type-reference: setup"| N110
+  N63 -->|"type-reference: setup"| N112
+  N63 -->|"generic-type: setup"| N112
+  N63 -->|"soql-object"| N116
+  N63 -->|"test-reference"| N62
+  N65 -->|"instantiation"| N64
+  N65 -->|"method-call: isSystemAdmin"| N68
+  N65 -->|"method-call: isSystemAdmin->logAction"| N11
+  N65 -->|"method-call: canViewOrganization->canViewOrganization"| N67
+  N65 -->|"method-call: canViewCloudAccount->canViewCloudAccount"| N67
+  N65 -->|"type-reference"| N64
+  N65 -->|"generic-type: isSystemAdmin"| N185
+  N65 -->|"generic-type: isSystemAdmin"| N118
+  N65 -->|"generic-type"| N116
+  N65 -->|"soql-object"| N194
+  N65 -->|"soql-object"| N118
+  N65 -->|"soql-field"| N179
+  N65 -->|"soql-field"| N181
+  N65 -->|"soql-field"| N175
+  N65 -->|"soql-object"| N116
+  N65 -->|"soql-field"| N159
+  N65 -->|"soql-field"| N161
+  N66 -->|"instantiation: setup"| N116
+  N66 -->|"instantiation: setup"| N110
+  N66 -->|"instantiation: setup"| N112
+  N66 -->|"instantiation: testCSVImportSuccessAndValidation"| N213
+  N66 -->|"instantiation: testBudgetAlertsAndForecasts"| N115
+  N66 -->|"method-call: testOrganizationRetrieval->getUserOrganizations"| N53
+  N66 -->|"method-call: testOrganizationRetrieval->isNotNull"| N184
+  N66 -->|"method-call: testOrganizationRetrieval->isFalse"| N184
+  N66 -->|"method-call: testSpendAggregation->getAggregatedSpend"| N62
+  N66 -->|"method-call: testSpendAggregation->areEqual"| N184
+  N66 -->|"method-call: testHierarchyCreationAndTriggerHandler->createHierarchyNode"| N53
+  N66 -->|"method-call: testCSVImportSuccessAndValidation->processInvoiceCSV"| N47
+  N66 -->|"method-call: testBudgetManagement->manageBudget"| N18
+  N66 -->|"method-call: testBudgetManagement->getOrganizationBudgets"| N18
+  N66 -->|"method-call: testBudgetManagement->clearBudget"| N18
+  N66 -->|"method-call: testBudgetManagement->isTrue"| N184
+  N66 -->|"method-call: testUserRoleManagementAndRegistration->assignUserRole"| N78
+  N66 -->|"method-call: testUserRoleManagementAndRegistration->getUserHierarchyAccess"| N78
+  N66 -->|"method-call: testUserRoleManagementAndRegistration->removeUserRole"| N78
+  N66 -->|"method-call: testUserRoleManagementAndRegistration->getUsersList"| N78
+  N66 -->|"method-call: testUserRoleManagementAndRegistration->registerUser"| N78
+  N66 -->|"method-call: testBudgetAlertsAndForecasts->getBudgetAlerts"| N15
+  N66 -->|"method-call: testBudgetAlertsAndForecasts->manageForecasts"| N44
+  N66 -->|"method-call: testBudgetAlertsAndForecasts->getForecasts"| N44
+  N66 -->|"method-call: testAuditServiceAndAccountServiceSafeguards->logAction"| N11
+  N66 -->|"method-call: testAuditServiceAndAccountServiceSafeguards->getAccountsWithServices"| N2
+  N66 -->|"method-call: testAuditServiceAndAccountServiceSafeguards->getAccountSpendHistory"| N2
+  N66 -->|"method-call: testFiscalUtils->getPeriodMapping"| N40
+  N66 -->|"type-reference: setup"| N116
+  N66 -->|"type-reference: setup"| N110
+  N66 -->|"type-reference: setup"| N112
+  N66 -->|"type-reference: testCSVImportSuccessAndValidation"| N213
+  N66 -->|"type-reference: testOrganizationRetrieval"| N185
+  N66 -->|"type-reference: testBudgetAlertsAndForecasts"| N115
+  N66 -->|"generic-type: testSpendAggregation"| N116
+  N66 -->|"generic-type: testCSVImportSuccessAndValidation"| N112
+  N66 -->|"generic-type: testUserRoleManagementAndRegistration"| N185
+  N66 -->|"soql-object"| N116
+  N66 -->|"soql-field"| N161
+  N66 -->|"soql-object"| N212
+  N66 -->|"soql-object"| N112
+  N66 -->|"soql-field"| N136
+  N66 -->|"soql-object"| N194
+  N66 -->|"soql-object"| N110
+  N66 -->|"test-reference"| N53
+  N66 -->|"test-reference"| N62
+  N66 -->|"test-reference"| N47
+  N66 -->|"test-reference"| N18
+  N66 -->|"test-reference"| N78
+  N66 -->|"test-reference"| N15
+  N66 -->|"test-reference"| N44
+  N66 -->|"test-reference"| N11
+  N66 -->|"test-reference"| N2
+  N66 -->|"test-reference"| N40
+  N67 -->|"type-reference: canViewOrganization"| N64
+  N68 -->|"generic-type: isSystemAdmin"| N186
+  N68 -->|"generic-type: isSystemAdmin"| N185
+  N68 -->|"soql-object"| N222
+  N68 -->|"soql-object"| N194
+  N69 -->|"instantiation"| N235
+  N69 -->|"instantiation: backfillRoles"| N236
+  N69 -->|"method-call: values"| N237
+  N69 -->|"method-call: classifyRoles->ContactId"| N185
+  N69 -->|"method-call: backfillRoles->logAction"| N11
+  N69 -->|"type-reference"| N118
+  N69 -->|"type-reference"| N237
+  N69 -->|"type-reference"| N185
+  N69 -->|"type-reference"| N198
+  N69 -->|"type-reference: classifyRoles"| N116
+  N69 -->|"type-reference"| N236
+  N69 -->|"generic-type"| N235
+  N69 -->|"generic-type: populateContactIds"| N118
+  N69 -->|"soql-object"| N194
+  N69 -->|"soql-object"| N224
+  N69 -->|"soql-object"| N116
+  N69 -->|"soql-field"| N159
+  N69 -->|"soql-object"| N118
+  N69 -->|"soql-field"| N181
+  N69 -->|"soql-field"| N175
+  N69 -->|"soql-field"| N179
+  N70 -->|"instantiation: setupTestData"| N197
+  N70 -->|"instantiation: setupTestData"| N116
+  N70 -->|"instantiation"| N198
+  N70 -->|"instantiation"| N185
+  N70 -->|"instantiation: testUserWithContactIdMapping"| N118
+  N70 -->|"method-call: testUserWithContactIdMapping->isNotNull"| N184
+  N70 -->|"method-call: testUserWithoutContactIdNoContactCreation->isNull"| N184
+  N70 -->|"method-call: testUserWithoutContactIdNoContactCreation->areEqual"| N184
+  N70 -->|"method-call: testBackfillNullContactMapping->executeBackfill"| N69
+  N70 -->|"method-call: testBackfillNullContactMapping->isTrue"| N184
+  N70 -->|"method-call: testInconsistentMappingDetection->classifyRoles"| N69
+  N70 -->|"method-call: testMandatoryNoEmailMatchingRule->areNotEqual"| N184
+  N70 -->|"method-call: testExistingAuthorizationParity->getAccessContext"| N65
+  N70 -->|"type-reference: setupTestData"| N197
+  N70 -->|"type-reference: setupTestData"| N116
+  N70 -->|"type-reference"| N198
+  N70 -->|"type-reference"| N185
+  N70 -->|"type-reference: testUserWithContactIdMapping"| N118
+  N70 -->|"type-reference: testBackfillNullContactMapping"| N236
+  N70 -->|"type-reference: testExistingAuthorizationParity"| N64
+  N70 -->|"generic-type: setupTestData"| N197
+  N70 -->|"generic-type: setupTestData"| N116
+  N70 -->|"generic-type: setupTestData"| N198
+  N70 -->|"generic-type: testInconsistentMappingDetection"| N118
+  N70 -->|"soql-object"| N116
+  N70 -->|"soql-field"| N159
+  N70 -->|"soql-object"| N224
+  N70 -->|"soql-object"| N118
+  N70 -->|"soql-field"| N181
+  N70 -->|"soql-field"| N175
+  N70 -->|"soql-object"| N194
+  N70 -->|"soql-object"| N238
+  N70 -->|"test-reference"| N69
+  N70 -->|"test-reference"| N64
+  N70 -->|"test-reference"| N65
+  N71 -->|"method-call: getUserHierarchyAccess->getUserHierarchyAccess"| N78
+  N71 -->|"method-call: getUsersList->getUsersList"| N78
+  N71 -->|"method-call: assignUserRole->assignUserRole"| N78
+  N71 -->|"method-call: removeUserRole->removeUserRole"| N78
+  N71 -->|"method-call: registerUser->registerUser"| N78
+  N71 -->|"generic-type"| N185
+  N72 -->|"method-call: getUserHierarchyAccess->getUserHierarchyAccess"| N71
+  N72 -->|"method-call: getUsersList->getUsersList"| N71
+  N72 -->|"method-call: assignUserRole->assignUserRole"| N71
+  N72 -->|"method-call: removeUserRole->removeUserRole"| N71
+  N72 -->|"method-call: registerUser->registerUser"| N71
+  N72 -->|"generic-type"| N185
+  N73 -->|"method-call: getUserHierarchyAccess->getUserHierarchyAccess"| N78
+  N74 -->|"type-reference: selectByUserId"| N205
+  N74 -->|"generic-type"| N118
+  N74 -->|"soql-object"| N118
+  N74 -->|"soql-field"| N179
+  N74 -->|"soql-field"| N180
+  N74 -->|"soql-field"| N175
+  N74 -->|"soql-field"| N181
+  N75 -->|"method-call: handleBeforeInsertOrUpdate->populateContactIds"| N69
+  N75 -->|"method-call: handleAfterInsert->logAction"| N11
+  N75 -->|"type-reference: handleBeforeInsertOrUpdate"| N198
+  N75 -->|"type-reference: validateAndDeduplicateRoles"| N116
+  N75 -->|"type-reference: handleBeforeInsertOrUpdate"| N118
+  N75 -->|"generic-type: handleBeforeInsertOrUpdate"| N118
+  N75 -->|"soql-object"| N224
+  N75 -->|"soql-object"| N116
+  N75 -->|"soql-field"| N159
+  N75 -->|"soql-object"| N118
+  N75 -->|"soql-field"| N181
+  N75 -->|"soql-field"| N175
+  N75 -->|"soql-field"| N179
+  N75 -->|"soql-field"| N180
+  N76 -->|"instantiation: setup"| N116
+  N76 -->|"instantiation: testTriggerLifecycleAndHandlerExecution"| N118
+  N76 -->|"instantiation: testContactLookupAssociation"| N198
+  N76 -->|"instantiation: testP20_2_ContactOnlyRoleWorks"| N197
+  N76 -->|"method-call: testHandlerExecutionFlag->isFalse"| N184
+  N76 -->|"method-call: testHandlerExecutionFlag->isExecuting"| N75
+  N76 -->|"method-call: testHandlerExecutionFlag->setExecuting"| N75
+  N76 -->|"method-call: testHandlerExecutionFlag->isTrue"| N184
+  N76 -->|"method-call: testContactLookupAssociation->areEqual"| N184
+  N76 -->|"method-call: testP20_1_UserOnlyRoleWorks->isNotNull"| N184
+  N76 -->|"method-call: testP20_8_RemovingUserPreservesContactAccess->isNull"| N184
+  N76 -->|"method-call: testP20_10_SystemAdminBehaviorUnchanged->isSystemAdmin"| N65
+  N76 -->|"type-reference: setup"| N116
+  N76 -->|"type-reference: testTriggerLifecycleAndHandlerExecution"| N118
+  N76 -->|"type-reference: testContactLookupAssociation"| N198
+  N76 -->|"type-reference: testP20_2_ContactOnlyRoleWorks"| N197
+  N76 -->|"generic-type: testP20_5_ContactTenantMismatchRejected"| N197
+  N76 -->|"generic-type: testP20_12_BulkRoleMixedInsertUpdate"| N198
+  N76 -->|"generic-type: testP20_12_BulkRoleMixedInsertUpdate"| N118
+  N76 -->|"soql-object"| N116
+  N76 -->|"soql-object"| N118
+  N76 -->|"soql-field"| N175
+  N76 -->|"soql-field"| N181
+  N76 -->|"test-reference"| N75
+  N76 -->|"test-reference"| N65
+  N77 -->|"generic-type"| N185
+  N77 -->|"generic-type"| N187
+  N77 -->|"soql-object"| N194
+  N77 -->|"soql-object"| N191
+  N78 -->|"instantiation"| N239
+  N78 -->|"instantiation: getUserHierarchyAccess"| N240
+  N78 -->|"instantiation: assignUserRole"| N118
+  N78 -->|"instantiation"| N185
+  N78 -->|"method-call: getUserHierarchyAccess->selectAllWithUserInfo"| N74
+  N78 -->|"method-call: getUserHierarchyAccess->selectByIds"| N51
+  N78 -->|"method-call: getUsersList->selectActiveUsers"| N77
+  N78 -->|"method-call: assignUserRole->selectByUserIdAndOrgId"| N74
+  N78 -->|"method-call: assignUserRole->logAction"| N11
+  N78 -->|"method-call: removeUserRole->selectById"| N74
+  N78 -->|"method-call: registerUser->selectProfileByName"| N77
+  N78 -->|"method-call: registerUser->selectAnyProfile"| N77
+  N78 -->|"type-reference: getUserHierarchyAccess"| N116
+  N78 -->|"type-reference: getUserHierarchyAccess"| N118
+  N78 -->|"type-reference"| N185
+  N78 -->|"generic-type"| N239
+  N78 -->|"generic-type: getUserHierarchyAccess"| N118
+  N78 -->|"generic-type"| N185
+  N78 -->|"generic-type: registerUser"| N187
+  N78 -->|"generic-type"| N240
+  N79 -->|"instantiation: setup"| N197
+  N79 -->|"instantiation: setup"| N116
+  N79 -->|"instantiation: setup"| N118
+  N79 -->|"method-call: testGetUserHierarchyAccess->getUserHierarchyAccess"| N78
+  N79 -->|"method-call: testGetUserHierarchyAccess->isFalse"| N184
+  N79 -->|"method-call: testGetUserHierarchyAccess->areEqual"| N184
+  N79 -->|"method-call: testGetUsersList->getUsersList"| N78
+  N79 -->|"method-call: testAssignAndRemoveUserRole->assignUserRole"| N78
+  N79 -->|"method-call: testAssignAndRemoveUserRole->removeUserRole"| N78
+  N79 -->|"method-call: testAssignAndRemoveUserRole->isTrue"| N184
+  N79 -->|"method-call: testRegisterUserValidAndBlank->registerUser"| N78
+  N79 -->|"method-call: testRegisterUserValidAndBlank->fail"| N184
+  N79 -->|"method-call: testRegisterUserValidAndBlank->isNotNull"| N184
+  N79 -->|"type-reference: setup"| N197
+  N79 -->|"type-reference: setup"| N116
+  N79 -->|"type-reference: setup"| N118
+  N79 -->|"type-reference"| N185
+  N79 -->|"generic-type: testGetUsersList"| N185
+  N79 -->|"generic-type: testAssignAndRemoveUserRole"| N118
+  N79 -->|"soql-object"| N116
+  N79 -->|"soql-object"| N118
+  N79 -->|"soql-object"| N194
+  N79 -->|"test-reference"| N78
+  N83 -->|"lwc-apex: getAccountsWithServices"| N1
+  N83 -->|"lwc-apex: getAccountSpendHistory"| N1
+  N84 -->|"lwc-apex: getAuditLogs"| N5
+  N85 -->|"lwc-apex: getOrganizationBudgets"| N17
+  N87 -->|"lwc-apex: getObjectRecords"| N6
+  N88 -->|"lwc-apex: getHealthStatus"| N7
+  N93 -->|"lwc-apex: getOverviewMetrics"| N8
+  N94 -->|"lwc-apex: getGlobalSpendExplorer"| N9
+  N97 -->|"lwc-apex: processInvoiceCSV"| N46
+  N99 -->|"lwc-apex: getUserOrganizations"| N50
+  N100 -->|"lwc-apex: manageForecasts"| N42
+  N100 -->|"lwc-apex: getForecasts"| N42
+  N100 -->|"lwc-apex: getUserOrganizations"| N50
+  N100 -->|"lwc-apex: getAggregatedSpend"| N60
+  N100 -->|"lwc-apex: getPeriodMapping"| N38
+  N100 -->|"lwc-apex: getOrganizationBudgets"| N17
+  N100 -->|"lwc-apex: manageBudget"| N17
+  N100 -->|"lwc-apex: clearBudget"| N17
+  N101 -->|"lwc-apex: getAggregatedSpend"| N60
+  N101 -->|"lwc-apex: getOrganizationBudgets"| N17
+  N101 -->|"lwc-apex: getUserOrganizations"| N50
+  N101 -->|"lwc-apex: getBudgetAlerts"| N14
+  N101 -->|"lwc-import"| N108
+  N102 -->|"lwc-apex: getUserOrganizations"| N53
+  N102 -->|"lwc-apex: getAggregatedSpend"| N60
+  N102 -->|"lwc-import"| N108
+  N103 -->|"lwc-apex: getAggregatedSpend"| N60
+  N103 -->|"lwc-apex: getUserOrganizations"| N50
+  N103 -->|"lwc-apex: getOrganizationBudgets"| N17
+  N103 -->|"lwc-apex: getForecasts"| N42
+  N106 -->|"lwc-apex: getAggregatedSpend"| N60
+  N107 -->|"lwc-apex: getUserHierarchyAccess"| N71
+  N107 -->|"lwc-apex: getUsersList"| N71
+  N107 -->|"lwc-apex: getUserOrganizations"| N50
+  N107 -->|"lwc-apex: assignUserRole"| N71
+  N107 -->|"lwc-apex: removeUserRole"| N71
+  N84 -->|"lwc-template-child"| N98
+  N85 -->|"lwc-template-child"| N98
+  N86 -->|"lwc-template-child"| N83
+  N87 -->|"lwc-template-child"| N98
+  N88 -->|"lwc-template-child"| N98
+  N90 -->|"lwc-template-child"| N100
+  N91 -->|"lwc-template-child"| N107
+  N91 -->|"lwc-template-child"| N97
+  N92 -->|"lwc-template-child"| N102
+  N93 -->|"lwc-template-child"| N98
+  N94 -->|"lwc-template-child"| N98
+  N95 -->|"lwc-template-child"| N107
+  N96 -->|"lwc-template-child"| N104
+  N96 -->|"lwc-template-child"| N91
+  N101 -->|"lwc-template-child"| N103
+  N101 -->|"lwc-template-child"| N106
+  N102 -->|"lwc-template-child"| N98
+  N104 -->|"lwc-template-child"| N101
+  N104 -->|"lwc-template-child"| N102
+  N104 -->|"lwc-template-child"| N83
+  N104 -->|"lwc-template-child"| N100
+  N104 -->|"lwc-template-child"| N99
+  N104 -->|"lwc-template-child"| N103
+  N105 -->|"lwc-template-child"| N93
+  N105 -->|"lwc-template-child"| N94
+  N105 -->|"lwc-template-child"| N87
+  N105 -->|"lwc-template-child"| N92
+  N105 -->|"lwc-template-child"| N86
+  N105 -->|"lwc-template-child"| N85
+  N105 -->|"lwc-template-child"| N90
+  N105 -->|"lwc-template-child"| N95
+  N105 -->|"lwc-template-child"| N84
+  N105 -->|"lwc-template-child"| N88
+  N80 -->|"trigger-handler: populateSpendMonth"| N28
+  N80 -->|"trigger-object"| N112
+  N81 -->|"trigger-handler: handleBeforeInsert"| N55
+  N81 -->|"trigger-handler: handleBeforeUpdate"| N55
+  N81 -->|"trigger-handler: handleAfterInsert"| N55
+  N81 -->|"trigger-object"| N116
+  N82 -->|"trigger-handler: handleBeforeInsertOrUpdate"| N75
+  N82 -->|"trigger-handler: handleAfterInsert"| N75
+  N82 -->|"trigger-handler: handleAfterUpdate"| N75
+  N82 -->|"trigger-handler: handleAfterDelete"| N75
+  N82 -->|"trigger-object"| N118

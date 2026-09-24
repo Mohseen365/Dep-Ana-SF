@@ -6,5 +6,8 @@ explorer/node_modules/
 explorer/dist/
 explorer/.vite/
 .sf/orgs/00Dak0000192Bo5EAE/metadata-catalog/catalog.json
-explorer/public/projects
-analyze/projects
+explorer/public/projects/bouquet
+explorer/public/projects/bouquet-salesforce
+explorer/public/projects/food
+analyze/projects/movie
+analyze/projects/food
