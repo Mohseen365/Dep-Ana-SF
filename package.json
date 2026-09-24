@@ -5,7 +5,7 @@
   "description": "Salesforce Architecture & Refactoring Explorer Root Command Scripts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/run-explorer.cjs --build",
     "preview": "vite preview",
     "explorer": "node scripts/run-explorer.cjs",
     "explorer:fresh": "node scripts/run-explorer.cjs --fresh",

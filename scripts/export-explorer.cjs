@@ -452,6 +452,51 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   const projectDesc =
     options.projectDesc || "Salesforce DX Architecture Analysis";
 
+  const isAlreadyExplorerData = Boolean(
+    reportData.schemaVersion &&
+      reportData.summary &&
+      Array.isArray(reportData.nodes) &&
+      reportData.nodes.length > 0 &&
+      reportData.nodes[0].metrics &&
+      reportData.nodes[0].risk !== undefined
+  );
+
+  if (isAlreadyExplorerData) {
+    const explorerData = JSON.parse(JSON.stringify(reportData));
+    const projectMetadata = {
+      ...explorerData.project,
+      id: projectId,
+      name: options.projectName || explorerData.project?.name || (projectId !== "default" ? projectId : "Default Salesforce Project"),
+      description: options.projectDesc || explorerData.project?.description || "Salesforce DX Architecture Analysis",
+      analysisPath: projectId !== "default" ? `/projects/${projectId}/explorer-data.json` : "/explorer-data.json",
+    };
+    explorerData.project = projectMetadata;
+
+    // Ensure output parent directory exists
+    const resolvedOutputFile = path.resolve(effectiveOutputPath);
+    const parentDir = path.dirname(resolvedOutputFile);
+    if (!fs.existsSync(parentDir)) {
+      fs.mkdirSync(parentDir, { recursive: true });
+    }
+
+    const jsonContent = JSON.stringify(explorerData, null, 2);
+    fs.writeFileSync(resolvedOutputFile, jsonContent, "utf8");
+
+    // Save project-metadata.json alongside explorer-data.json
+    const metadataPath = path.join(parentDir, "project-metadata.json");
+    fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
+
+    updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
+    publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
+
+    return {
+      inputFile: resolvedInputFile,
+      outputFile: resolvedOutputFile,
+      projectMetadata,
+      explorerData,
+    };
+  }
+
   // Build Registry Lookup Map
   const registryMap = {};
   if (Array.isArray(reportData.registry)) {
