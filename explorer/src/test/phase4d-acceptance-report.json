@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-22T16:12:48.191Z",
+  "timestamp": "2026-09-24T15:45:24.515Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
@@ -14,19 +14,19 @@
     "domainCohesionScore": 0.9558128789281555
   },
   "pathB_currentHybrid": {
-    "primaryCrossings": 8704,
-    "primarySatelliteCrossings": 41590,
-    "satelliteSatelliteCrossings": 41544,
-    "totalCrossings": 94662,
-    "averageEdgeLength": 2233.028768784292,
+    "primaryCrossings": 8746,
+    "primarySatelliteCrossings": 41657,
+    "satelliteSatelliteCrossings": 41848,
+    "totalCrossings": 95151,
+    "averageEdgeLength": 2153.2675837207885,
     "maxEdgeLength": 5780.607268153858,
     "primaryOverlapCount": 0,
     "satelliteOverlapCount": 0,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.8830388782524944,
-    "medianIntraFeatureDistance": 1101.6812171838105,
+    "domainCohesionScore": 0.881135486138018,
+    "medianIntraFeatureDistance": 1067.7720967453977,
     "medianInterFeatureDistance": 1020,
-    "intraToInterRatio": 1.0800796246900104
+    "intraToInterRatio": 1.0468353889660762
   },
   "mandatoryHardGates": {
     "layerViolationsZero": true,
@@ -39,7 +39,7 @@
     "localityGatePassed": false,
     "primaryQualityGatePassed": true,
     "prefPrimaryCrossingsPassed": false,
-    "prefTotalCrossingsPassed": true,
+    "prefTotalCrossingsPassed": false,
     "prefCohesionPassed": false
   }
 }
