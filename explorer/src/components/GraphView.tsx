@@ -7,7 +7,7 @@ import 'cytoscape-navigator/cytoscape.js-navigator.css';
 import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
-import { getLayoutOptions, runLayout, GraphLayoutOptions } from '../lib/graph-layout';
+import { getLayoutOptions, runLayout, runLayoutWithMetadata, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
@@ -188,6 +188,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
+  const [featureRegions, setFeatureRegions] = useState<Map<string, FeatureRegion> | undefined>(undefined);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Derive Feature Discovery Result deterministically
@@ -261,7 +262,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const targetProvenance: LayoutProvenance =
       architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical';
 
-    runLayout(cy, {
+    const layoutRes = runLayoutWithMetadata(cy, {
       ...effectiveLayoutOptionsRef.current,
       nodes: nodesRef.current,
       edges: edgesRef.current,
@@ -269,6 +270,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       animate: false,
       enableFeatureLayout: architectureMode === 'hybrid',
     });
+    setFeatureRegions(layoutRes.featureRegions);
 
     captureAndPersistPositions(targetProvenance);
   }, [architectureMode, captureAndPersistPositions]);
@@ -315,21 +317,23 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       pendingLayoutStopRef.current = onStop;
       cy.one('layoutstop', onStop);
 
-      runLayout(cy, {
+      const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
         nodes: nodesRef.current,
         edges: edgesRef.current,
         nodeCount,
         animate: true,
       });
+      setFeatureRegions(layoutRes.featureRegions);
     } else {
-      runLayout(cy, {
+      const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
         nodes: nodesRef.current,
         edges: edgesRef.current,
         nodeCount,
         animate: false,
       });
+      setFeatureRegions(layoutRes.featureRegions);
       captureAndPersistPositions();
     }
   }, [captureAndPersistPositions]);
@@ -761,21 +765,23 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         cy.one('layoutstop', () => {
           captureAndPersistPositions();
         });
-        runLayout(cy, {
+        const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
           nodes,
           edges,
           nodeCount: nodes.length,
           animate: true,
         });
+        setFeatureRegions(layoutRes.featureRegions);
       } else {
-        runLayout(cy, {
+        const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
           nodes,
           edges,
           nodeCount: nodes.length,
           animate: false,
         });
+        setFeatureRegions(layoutRes.featureRegions);
         captureAndPersistPositions();
       }
     }
@@ -1053,6 +1059,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         nodePositions={nodePositions}
         findings={findings}
         enableOverlay={true}
+        featureRegions={featureRegions}
       />
 
       {/* Mode Indicator Overlay Badge */}

@@ -6,7 +6,7 @@ import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './la
 import { discoverDomains, extractDomainStem } from './layout/domains';
 import { classifyAllFeatureRoles, type FeatureRole, type FeatureRoleContext } from './layout/feature-roles';
 import { discoverFeatures, type FeatureDiscoveryResult } from './layout/features';
-import { computeGlobalDomainLayout, computeGlobalFeatureLayout } from './layout/global-layout';
+import { computeGlobalDomainLayout, computeGlobalFeatureLayout, type FeatureRegion } from './layout/global-layout';
 import { reduceEdgeCrossings } from './layout/ordering';
 import { computeLocalNodeLayout } from './layout/local-layout';
 import {
@@ -34,8 +34,13 @@ export interface ArchitectureLayoutOptions {
   enableFeatureLayout?: boolean;
 }
 
+export interface ArchitectureLayoutResultWithMetadata {
+  positions: Record<string, { x: number; y: number }>;
+  featureRegions?: Map<string, FeatureRegion>;
+}
+
 export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
-export type { ArchitectureLayer, FeatureRole, FeatureDiscoveryResult };
+export type { ArchitectureLayer, FeatureRole, FeatureDiscoveryResult, FeatureRegion };
 
 /**
  * Intelligent Architecture-Aware Layout Orchestrator
@@ -61,6 +66,14 @@ export function computeArchitectureLayout(
   edges: ExplorerEdge[],
   options: ArchitectureLayoutOptions = {}
 ): Record<string, { x: number; y: number }> {
+  return computeArchitectureLayoutWithMetadata(nodes, edges, options).positions;
+}
+
+export function computeArchitectureLayoutWithMetadata(
+  nodes: ExplorerNode[],
+  edges: ExplorerEdge[],
+  options: ArchitectureLayoutOptions = {}
+): ArchitectureLayoutResultWithMetadata {
   const {
     nodeWidth = 120,
     nodeHeight = 60,
@@ -141,6 +154,10 @@ export function computeArchitectureLayout(
   // Sort nodes & edges deterministically by ID
   safeNodes.sort((a, b) => a.id.localeCompare(b.id));
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
+
+  if (safeNodes.length === 0) {
+    return { positions: { ...existingPositions } };
+  }
 
   // Construct LayoutGraphIndex immediately after Stage 0 normalization
   const index = createLayoutGraphIndex(safeNodes, safeEdges);
@@ -418,5 +435,8 @@ export function computeArchitectureLayout(
     }
   }
 
-  return resultPositions;
+  return {
+    positions: resultPositions,
+    featureRegions: (globalDomainResult as any)?.featureRegions,
+  };
 }

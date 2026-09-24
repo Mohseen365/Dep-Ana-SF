@@ -24,6 +24,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   nodes,
   edges,
   discoveryResult,
+  featureRegions,
   selectedNodeId,
   hoveredNodeId,
   nodePositions,
@@ -92,6 +93,12 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     }
     return modelPositions;
   }, [nodePositions, modelPositions]);
+
+  // Convert featureRegions Map to Array safely for rendering
+  const featureRegionsList = useMemo(() => {
+    if (!enableOverlay || !featureRegions || featureRegions.size === 0) return [];
+    return Array.from(featureRegions.values());
+  }, [enableOverlay, featureRegions]);
 
   // Pre-construct single graph index instance for node/edge topology
   const graphIndex = useMemo(() => {
@@ -188,6 +195,53 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       data-testid="feature-overlay-canvas"
     >
       <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+        {/* Render Outer Semantic Feature Region Enclosure Boxes (Suppressed at Far Zoom) */}
+        {!isFarZoom &&
+          featureRegionsList.map((region) => {
+            const { featureId, xMin, yMin, width, height } = region;
+            const labelText = `Feature: ${featureId}`;
+            const labelWidth = labelText.length * 6.5 + 20;
+
+            return (
+              <g
+                key={`feature_region_${featureId}`}
+                className="semantic-feature-region-overlay"
+                data-testid={`feature-region-${featureId}`}
+              >
+                <rect
+                  x={xMin}
+                  y={yMin}
+                  width={width}
+                  height={height}
+                  rx={16}
+                  fill="rgba(59, 130, 246, 0.02)"
+                  stroke="rgba(59, 130, 246, 0.35)"
+                  strokeWidth={2}
+                />
+                <rect
+                  x={xMin + 12}
+                  y={yMin - 13}
+                  width={labelWidth}
+                  height={22}
+                  rx={6}
+                  fill="rgba(15, 23, 42, 0.92)"
+                  stroke="rgba(59, 130, 246, 0.6)"
+                  strokeWidth={1.2}
+                />
+                <text
+                  x={xMin + 22}
+                  y={yMin + 2}
+                  fill="#93c5fd"
+                  fontSize={11}
+                  fontWeight={700}
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >
+                  {labelText}
+                </text>
+              </g>
+            );
+          })}
+
         {/* Render LWC Composition Group Outline Boxes (Suppressed at Far Zoom) */}
         {!isFarZoom &&
           compositionGroups.map((group) => {
