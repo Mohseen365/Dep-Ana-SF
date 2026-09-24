@@ -1059,7 +1059,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         nodePositions={nodePositions}
         findings={findings}
         enableOverlay={true}
-        featureRegions={featureRegions}
+        featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
       />
 
       {/* Mode Indicator Overlay Badge */}
