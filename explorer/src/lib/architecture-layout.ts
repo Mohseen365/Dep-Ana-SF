@@ -260,6 +260,7 @@ export function computeArchitectureLayout(
       nodeHeight,
       domainSpacing,
       layerYMap: globalDomainResult.layerYMap,
+      featureLayerYMap: globalDomainResult.featureLayerYMap,
     },
   });
 

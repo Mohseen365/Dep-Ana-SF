@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-22T16:13:28.553Z",
+  "timestamp": "2026-09-24T09:09:44.409Z",
   "fixtureSha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
@@ -16,19 +16,19 @@
       "domainCohesion": 0.9558128789281555
     },
     "candidateB_currentHybrid": {
-      "primaryCrossings": 8704,
-      "primarySatelliteCrossings": 41590,
-      "satelliteSatelliteCrossings": 41544,
-      "totalCrossings": 94662,
-      "averageEdgeLength": 2233.028768784292,
+      "primaryCrossings": 8746,
+      "primarySatelliteCrossings": 41657,
+      "satelliteSatelliteCrossings": 41848,
+      "totalCrossings": 95151,
+      "averageEdgeLength": 2153.2675837207885,
       "maxEdgeLength": 5780.607268153858,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0,
       "layerViolations": 0,
-      "domainCohesion": 0.8830388782524944,
-      "medianIntraDistance": 1101.6812171838105,
+      "domainCohesion": 0.881135486138018,
+      "medianIntraDistance": 1067.7720967453977,
       "medianInterDistance": 1020,
-      "intraToInterRatio": 1.0800796246900104
+      "intraToInterRatio": 1.0468353889660762
     }
   },
   "stageInstrumentation": [
@@ -139,18 +139,18 @@
       "unauthorizedRelayoutsZero": true
     },
     "primaryGate": {
-      "c_pp": 8704,
+      "c_pp": 8746,
       "target": 9335,
       "passed": true
     },
     "localityGate": {
-      "medianIntraDistance": 1101.6812171838105,
+      "medianIntraDistance": 1067.7720967453977,
       "medianInterDistance": 1020,
       "passed": false
     },
     "preferredTargets": {
       "c_pp_target_8500": false,
-      "c_total_target_95000": true,
+      "c_total_target_95000": false,
       "cohesion_target_0_920": false
     }
   },
