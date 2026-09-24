@@ -197,4 +197,68 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
     );
     expect(container3.querySelectorAll('.semantic-feature-region-overlay').length).toBe(0);
   });
+
+  describe('GraphView Caller Boundary Architecture Mode Enclosure Gating', () => {
+    it('suppresses semantic feature region enclosures when architectureMode is hierarchical', () => {
+      const layoutResult = computeArchitectureLayoutWithMetadata(nodes, edges, { enableFeatureLayout: true });
+      expect(layoutResult.featureRegions).toBeDefined();
+
+      const discovery = discoverFeatures(nodes, edges);
+
+      const mockCy = {
+        pan: () => ({ x: 0, y: 0 }),
+        zoom: () => 1.0,
+        on: vi.fn(),
+        off: vi.fn(),
+        nodes: () => [],
+      } as unknown as cytoscape.Core;
+
+      const architectureMode = 'hierarchical';
+
+      const { container } = render(
+        <FeatureOverlayCanvas
+          cy={mockCy}
+          nodes={nodes}
+          edges={edges}
+          discoveryResult={discovery}
+          featureRegions={architectureMode === 'hybrid' ? layoutResult.featureRegions : undefined}
+          nodePositions={layoutResult.positions}
+          enableOverlay={true}
+        />
+      );
+
+      expect(container.querySelectorAll('.semantic-feature-region-overlay').length).toBe(0);
+    });
+
+    it('renders semantic feature region enclosures when architectureMode is hybrid', () => {
+      const layoutResult = computeArchitectureLayoutWithMetadata(nodes, edges, { enableFeatureLayout: true });
+      expect(layoutResult.featureRegions).toBeDefined();
+
+      const discovery = discoverFeatures(nodes, edges);
+
+      const mockCy = {
+        pan: () => ({ x: 0, y: 0 }),
+        zoom: () => 1.0,
+        on: vi.fn(),
+        off: vi.fn(),
+        nodes: () => [],
+      } as unknown as cytoscape.Core;
+
+      const architectureMode = 'hybrid';
+
+      const { container } = render(
+        <FeatureOverlayCanvas
+          cy={mockCy}
+          nodes={nodes}
+          edges={edges}
+          discoveryResult={discovery}
+          featureRegions={architectureMode === 'hybrid' ? layoutResult.featureRegions : undefined}
+          nodePositions={layoutResult.positions}
+          enableOverlay={true}
+        />
+      );
+
+      expect(container.querySelectorAll('.semantic-feature-region-overlay').length).toBe(layoutResult.featureRegions!.size);
+    });
+  });
 });
