@@ -6,6 +6,27 @@
 
 ---
 
+### Context Retrieval Protocol
+
+For all non-trivial engineering tasks, follow:
+
+`CONTEXT-RETRIEVAL-PROTOCOL.md`
+
+This document defines the repository's authoritative rules for:
+- task-driven context routing,
+- minimum-sufficient-context retrieval,
+- authority and supersession resolution,
+- current-state orientation,
+- domain context selection,
+- implementation verification,
+- broad-search escalation,
+- retrieval stopping conditions,
+- and context synchronization.
+
+Do not create a parallel retrieval protocol. `AGENT.md` remains the primary task router; `CONTEXT-RETRIEVAL-PROTOCOL.md` defines how routed context must be retrieved.
+
+---
+
 ### Retrieval Flows & Source Relationships
 
 ```text
