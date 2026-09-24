@@ -397,6 +397,48 @@ describe('Quantitative Layout Metrics Library', () => {
       expect(metrics.componentSeparation).toBeDefined();
       expect(metrics.hubLocality).toBeDefined();
       expect(metrics.bridgePlacement).toBeDefined();
+      expect(metrics.featureLocality?.sameLayerLocality).toBeDefined();
+      expect(metrics.featureLocality?.crossLayerLocality).toBeDefined();
+    });
+
+    it('calculates same-layer and cross-layer feature locality metrics cleanly', () => {
+      const nodes = [
+        makeNode('Page', 'LWC', 'OrderView'),
+        makeNode('Comp', 'LWC', 'OrderCard'),
+        makeNode('Service', 'ApexClass', 'OrderService'),
+        makeNode('Repo', 'ApexClass', 'OrderRepository'),
+      ];
+      const edges: ExplorerEdge[] = [
+        createEdge('Page', 'Comp'),      // intra-feature, same layer (presentation-presentation)
+        createEdge('Page', 'Service'),   // intra-feature, cross layer (presentation-application)
+        createEdge('Service', 'Repo'),   // intra-feature, cross layer (application-domain)
+      ];
+      const positions = {
+        Page: { x: 0, y: 0 },
+        Comp: { x: 100, y: 0 },
+        Service: { x: 0, y: 350 },
+        Repo: { x: 0, y: 600 },
+      };
+
+      const metrics = calculateLayoutMetrics(nodes, edges, positions);
+      const featureLocality = metrics.featureLocality!;
+
+      expect(featureLocality.sameLayerLocality).toEqual({
+        medianIntraEdgeLength: 100,
+        medianInterEdgeLength: 0,
+        intraToInterRatio: 0,
+        intraCount: 1,
+        interCount: 0,
+        isSameLayerIntraShorterThanInter: false,
+      });
+
+      expect(featureLocality.crossLayerLocality).toEqual({
+        medianIntraEdgeLength: 300,
+        medianInterEdgeLength: 0,
+        intraToInterRatio: 0,
+        intraCount: 2,
+        interCount: 0,
+      });
     });
   });
 });

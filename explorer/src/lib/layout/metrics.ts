@@ -1,5 +1,6 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { discoverFeatures, type FeatureDiscoveryResult } from './features';
+import { classifyNodeLayer } from './layers';
 
 /**
  * Node position map mapping node ID to (x, y) coordinates.
@@ -46,6 +47,23 @@ export interface FeatureLocalityDiagnostics {
   crossBandDependencyDistance: CrossBandDependencyDistance;
   /** Flag indicating whether intra-feature edge distance is strictly smaller than inter-feature edge distance */
   isIntraShorterThanInter: boolean;
+
+  /** Layer-aware diagnostic locality measurements separating same-layer and cross-layer relationships */
+  sameLayerLocality: {
+    medianIntraEdgeLength: number;
+    medianInterEdgeLength: number;
+    intraToInterRatio: number;
+    intraCount: number;
+    interCount: number;
+    isSameLayerIntraShorterThanInter: boolean;
+  };
+  crossLayerLocality: {
+    medianIntraEdgeLength: number;
+    medianInterEdgeLength: number;
+    intraToInterRatio: number;
+    intraCount: number;
+    interCount: number;
+  };
 }
 
 export interface DomainCohesionResult {
@@ -857,6 +875,11 @@ export function calculateFeatureLocalityDiagnostics(
   const crossBandEdgeLengths: number[] = [];
   const utilityEdgeLengths: number[] = [];
 
+  const intraSameLayerLengths: number[] = [];
+  const interSameLayerLengths: number[] = [];
+  const intraCrossLayerLengths: number[] = [];
+  const interCrossLayerLengths: number[] = [];
+
   for (const edge of edges) {
     const pos1 = positions[edge.source];
     const pos2 = positions[edge.target];
@@ -869,6 +892,10 @@ export function calculateFeatureLocalityDiagnostics(
 
     const node1 = nodeMap.get(edge.source);
     const node2 = nodeMap.get(edge.target);
+
+    const layer1 = node1 ? classifyNodeLayer(node1) : null;
+    const layer2 = node2 ? classifyNodeLayer(node2) : null;
+    const isSameLayer = layer1 !== null && layer1 === layer2;
 
     // High coupling / utility check
     const isShared1 =
@@ -893,9 +920,19 @@ export function calculateFeatureLocalityDiagnostics(
     ) {
       if (f1 === f2) {
         intraEdgeLengths.push(dist);
+        if (isSameLayer) {
+          intraSameLayerLengths.push(dist);
+        } else {
+          intraCrossLayerLengths.push(dist);
+        }
       } else {
         interEdgeLengths.push(dist);
         crossBandEdgeLengths.push(dist);
+        if (isSameLayer) {
+          interSameLayerLengths.push(dist);
+        } else {
+          interCrossLayerLengths.push(dist);
+        }
       }
     } else if (f1 !== f2) {
       crossBandEdgeLengths.push(dist);
@@ -938,6 +975,20 @@ export function calculateFeatureLocalityDiagnostics(
       ? medianIntraFeatureEdgeLength / medianInterFeatureEdgeLength
       : 0;
 
+  const medianIntraSameLayer = computeMedian(intraSameLayerLengths);
+  const medianInterSameLayer = computeMedian(interSameLayerLengths);
+  const intraToInterSameLayerRatio =
+    medianInterSameLayer > EPSILON
+      ? medianIntraSameLayer / medianInterSameLayer
+      : 0;
+
+  const medianIntraCrossLayer = computeMedian(intraCrossLayerLengths);
+  const medianInterCrossLayer = computeMedian(interCrossLayerLengths);
+  const intraToInterCrossLayerRatio =
+    medianInterCrossLayer > EPSILON
+      ? medianIntraCrossLayer / medianInterCrossLayer
+      : 0;
+
   return {
     medianIntraFeatureEdgeLength,
     medianInterFeatureEdgeLength,
@@ -955,6 +1006,24 @@ export function calculateFeatureLocalityDiagnostics(
     },
     isIntraShorterThanInter:
       medianIntraFeatureEdgeLength < medianInterFeatureEdgeLength,
+    sameLayerLocality: {
+      medianIntraEdgeLength: medianIntraSameLayer,
+      medianInterEdgeLength: medianInterSameLayer,
+      intraToInterRatio: intraToInterSameLayerRatio,
+      intraCount: intraSameLayerLengths.length,
+      interCount: interSameLayerLengths.length,
+      isSameLayerIntraShorterThanInter:
+        intraSameLayerLengths.length > 0 && interSameLayerLengths.length > 0
+          ? medianIntraSameLayer < medianInterSameLayer
+          : false,
+    },
+    crossLayerLocality: {
+      medianIntraEdgeLength: medianIntraCrossLayer,
+      medianInterEdgeLength: medianInterCrossLayer,
+      intraToInterRatio: intraToInterCrossLayerRatio,
+      intraCount: intraCrossLayerLengths.length,
+      interCount: interCrossLayerLengths.length,
+    },
   };
 }
 
