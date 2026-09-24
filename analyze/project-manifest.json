@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "bqstudio",
+  "activeProjectId": "cst",
   "projects": [
     {
       "id": "foodies",
@@ -45,10 +45,10 @@
       "id": "movie",
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "../Interview Project/Movie-App/force-app/main/default",
-      "createdAt": "2026-09-18T16:02:48.156Z",
-      "updatedAt": "2026-09-18T16:02:48.156Z",
-      "lastAnalyzedAt": "2026-09-18T16:02:48.156Z",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Movie-App\\force-app\\main\\default",
+      "createdAt": "2026-09-24T06:24:42.839Z",
+      "updatedAt": "2026-09-24T06:24:42.839Z",
+      "lastAnalyzedAt": "2026-09-24T06:24:42.839Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 9,
       "dependencyCount": 16,
@@ -105,6 +105,58 @@
       "componentCount": 274,
       "dependencyCount": 603,
       "analysisPath": "/projects/bqstudio/explorer-data.json"
+    },
+    {
+      "id": "food",
+      "name": "food",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Food-App\\force-app\\main\\default",
+      "createdAt": "2026-09-24T06:36:58.776Z",
+      "updatedAt": "2026-09-24T06:36:58.776Z",
+      "lastAnalyzedAt": "2026-09-24T06:36:58.776Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 31,
+      "dependencyCount": 84,
+      "analysisPath": "/projects/food/explorer-data.json"
+    },
+    {
+      "id": "pub-infra-mang",
+      "name": "pub-infra-mang",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Pub-Infra-Mang\\force-app\\main\\default",
+      "createdAt": "2026-09-24T06:44:57.270Z",
+      "updatedAt": "2026-09-24T06:44:57.270Z",
+      "lastAnalyzedAt": "2026-09-24T06:44:57.270Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 528,
+      "dependencyCount": 2063,
+      "analysisPath": "/projects/pub-infra-mang/explorer-data.json"
+    },
+    {
+      "id": "bqc",
+      "name": "bqc",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Bouquet-Experience-Cloud\\force-app\\main\\default",
+      "createdAt": "2026-09-24T06:50:53.122Z",
+      "updatedAt": "2026-09-24T06:50:53.122Z",
+      "lastAnalyzedAt": "2026-09-24T06:50:53.122Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bqc/explorer-data.json"
+    },
+    {
+      "id": "cst",
+      "name": "cst",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default",
+      "createdAt": "2026-09-24T06:56:49.825Z",
+      "updatedAt": "2026-09-24T06:56:49.825Z",
+      "lastAnalyzedAt": "2026-09-24T06:56:49.825Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 240,
+      "dependencyCount": 1024,
+      "analysisPath": "/projects/cst/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -132,7 +184,7 @@
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:f6792c0d4329c26c047aa722324c847c670ed0d4c290b2ec8d32cfef3e490fdb",
+      "fileHash": "sha256:05daab9bad3a0099199eebff0a1dcdccf8ba6b760f38cdabb1aaf0ec72a24a55",
       "nodeCount": 9,
       "edgeCount": 16
     },
@@ -163,6 +215,34 @@
       "fileHash": "sha256:cbd3aa9531eca662715f54920bba45e5eb6a42050e41a03d61e7d935ddc73c17",
       "nodeCount": 274,
       "edgeCount": 603
+    },
+    "food": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:c83ceefa2c31d51daeae58d886a4a24f6723ce521df525ccd70260cf54cfa75a",
+      "nodeCount": 31,
+      "edgeCount": 84
+    },
+    "pub-infra-mang": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:d5465b665accccd89437ced754f41b068c541c4923318b7bc88b388c96b6b943",
+      "nodeCount": 528,
+      "edgeCount": 2063
+    },
+    "bqc": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:b6e5a5c9579556ee6c5dec9bd8c961e2ff4c00e3da028d7d931ca7507e770df5",
+      "nodeCount": 274,
+      "edgeCount": 603
+    },
+    "cst": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:00b0962b7c80047dee12529c17ff4bdea0605b3cb4417c624dfaa093db32449d",
+      "nodeCount": 240,
+      "edgeCount": 1024
     }
   }
 }
