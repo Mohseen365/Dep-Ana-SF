@@ -2,20 +2,24 @@ import type { LayoutOptions } from 'cytoscape';
 import type { ExplorerNode, ExplorerEdge, ExplorerNodeType, ExplorerRiskLevel } from '../types/explorer';
 import {
   computeArchitectureLayout,
+  computeArchitectureLayoutWithMetadata,
   ArchitectureLayoutOptions,
+  ArchitectureLayoutResultWithMetadata,
   classifyNodeLayer,
   extractDomainStem,
   isTestNode,
   ArchitectureLayer,
+  FeatureRegion,
 } from './architecture-layout';
 
 export {
   computeArchitectureLayout,
+  computeArchitectureLayoutWithMetadata,
   classifyNodeLayer,
   extractDomainStem,
   isTestNode,
 };
-export type { ArchitectureLayoutOptions, ArchitectureLayer };
+export type { ArchitectureLayoutOptions, ArchitectureLayoutResultWithMetadata, ArchitectureLayer, FeatureRegion };
 
 export interface GraphLayoutOptions extends ArchitectureLayoutOptions {
   nodeCount?: number;
@@ -183,6 +187,13 @@ export function createLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): 
 }
 
 export function runLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): void {
+  runLayoutWithMetadata(cy, options);
+}
+
+export function runLayoutWithMetadata(
+  cy: cytoscape.Core,
+  options?: GraphLayoutOptions
+): ArchitectureLayoutResultWithMetadata {
   const useArch = options?.useArchitectureLayout !== false;
 
   if (useArch && cy.nodes().length > 0) {
@@ -190,7 +201,8 @@ export function runLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): voi
     const finalNodes = options?.nodes && options.nodes.length > 0 ? options.nodes : nodes;
     const finalEdges = options?.edges && options.edges.length > 0 ? options.edges : edges;
 
-    const posMap = computeArchitectureLayout(finalNodes, finalEdges, options);
+    const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
+    const posMap = result.positions;
 
     if (options?.animate) {
       cy.layout({
@@ -214,9 +226,15 @@ export function runLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): voi
         cy.fit(cy.elements(), options?.padding ?? 50);
       }
     }
-    return;
+    return result;
   }
 
   const layout = createLayout(cy, options);
   layout.run();
+
+  const currentPositions: Record<string, { x: number; y: number }> = {};
+  cy.nodes().forEach(node => {
+    currentPositions[node.id()] = node.position();
+  });
+  return { positions: currentPositions };
 }
