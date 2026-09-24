@@ -108,7 +108,7 @@ describe('Phase 6-B — Feature Locality & Adaptive Vertical Compaction', () => 
 
     expect(primaryOverlaps).toBe(0);
     expect(satelliteOverlaps).toBe(0);
-    expect(clearance).toBeGreaterThanOrEqual(39.99);
+    expect(clearance).toBeGreaterThanOrEqual(40.0);
   });
 
   it('4. Enforces 0.00000 px determinism drift across 10 repeat executions and 5 input order shuffles', { timeout: 20000 }, () => {

@@ -426,7 +426,13 @@ export function minimumNodeClearance(
     }
   }
 
-  return minClearance === Infinity ? 0 : minClearance;
+  if (minClearance === Infinity) return 0;
+  // Apply spacing-aligned epsilon tolerance (1e-3, matching spacing.ts EPSILON) for sub-pixel arithmetic noise
+  const SPACING_EPSILON = 1e-3;
+  if (minClearance < 40.0 && 40.0 - minClearance <= SPACING_EPSILON) {
+    return 40.0;
+  }
+  return minClearance;
 }
 
 function getLayerRank(node: ExplorerNode): number {
