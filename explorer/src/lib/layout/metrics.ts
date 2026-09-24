@@ -426,9 +426,7 @@ export function minimumNodeClearance(
     }
   }
 
-  if (minClearance === Infinity) return 0;
-  // Apply sub-pixel precision normalization (2 decimal places) to eliminate floating-point arithmetic noise
-  return Math.round(minClearance * 100) / 100;
+  return minClearance === Infinity ? 0 : minClearance;
 }
 
 function getLayerRank(node: ExplorerNode): number {
