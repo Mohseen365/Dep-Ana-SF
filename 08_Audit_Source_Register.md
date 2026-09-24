@@ -1117,3 +1117,9 @@ This register proves that every Markdown audit in the supplied `audits.zip` was 
 - **Phase / Track:** Phase 18 / Integration Verification (Tracks A, B, C)
 - **Status:** **PASS** (`FINAL INTEGRATION — PASSED`)
 - **Essence:** Executed final integration and regression verification for Tracks A, B, and C on canonical Cloud Spend Tracker dataset (240 nodes, 1,024 edges). Confirmed cryptographic byte-identity on production build artifact (`feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295`), $\ge 40.0\text{px}$ clearance contract enforcement with `1e-3` epsilon, layer-aware locality diagnostics, multi-project persistence isolation, zero coordinate drift, and 100% test pass rate across Vitest and CLI test suites.
+
+### G-OVL Feature-Region Exposure & Overlay Transport
+- **Date:** 2026-09-24
+- **Report Path:** `HYBRID_LAYOUT_PROMPT4_IMPLEMENTATION_REPORT.md`
+- **Decision:** **PASS** (`G-OVL CLOSED — IMPLEMENTED AND VERIFIED`)
+- **Essence:** Implemented Stage-5 featureRegions exposure companion function `computeArchitectureLayoutWithMetadata()` in `architecture-layout.ts`, preserving original `computeArchitectureLayout()` return signature `Record<string, {x, y}>`. Transported `featureRegions` through `graph-layout.ts` (`runLayoutWithMetadata`) to `GraphView.tsx` and `FeatureOverlayCanvas.tsx`. Rendered outer semantic feature enclosure SVG boxes with zoom-aware visibility rules (`zoom >= 0.6`). Verified 100% contract preservation, zero duplicate layout calls, zero Position Authority drift, and passing test suites across canonical fixture and all 7 real project datasets. Note: `architecture-layout.test.ts` spy test reported 20/21 pass with 1 non-blocking spy count note due to metrics diagnostic calling `discoverFeatures`.
