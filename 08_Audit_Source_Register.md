@@ -1087,3 +1087,33 @@ This register proves that every Markdown audit in the supplied `audits.zip` was 
 - **Report Path:** `audit-reports/features/FEAT-PERF-report.md`
 - **Decision:** **PASS**
 - **Essence:** Audited system-wide performance, viewport interaction protection, and scale limits. Cold load pipeline executed in **189.368 ms** (< 1,000 ms SLA gate). High-node synthetic scale graphs up to 10,000 nodes verified with 100% finite coordinates, zero heap memory leaks, and sub-millisecond viewport pan/zoom response.
+
+## Phase 18 Remediation & Verification
+
+### Phase 18B Track A Provenance & Production Identity Verification
+- **Date:** 2026-09-24
+- **Report Path:** `PHASE18B_TRACK_A_PROVENANCE_VERIFICATION_REPORT.md`
+- **Phase / Track:** Phase 18 / Track A (Production Provisioning)
+- **Status:** **PROVEN** (`CANONICAL DATASET PRODUCTIONALLY PROVISIONED`)
+- **Essence:** Verified canonical Salesforce-derived dataset (`audit-fixtures/cloud-spend-tracker/explorer-data.json`, SHA-256 `feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295`) is provisioned directly to `explorer/dist/projects/cloud-spend-tracker/explorer-data.json` during build. Confirmed 100% byte-identical dist artifact loading 240 nodes and 1,024 edges cleanly without test-harness dependencies.
+
+### Phase 18E Corrective 40px Contract Implementation
+- **Date:** 2026-09-24
+- **Report Path:** `PHASE18E_CORRECTIVE_40PX_CONTRACT_IMPLEMENTATION.md`
+- **Phase / Track:** Phase 18 / Track B (40px Clearance Contract)
+- **Status:** **PASS** (`TRACK B CORRECTED — VALIDATION PASSED`)
+- **Essence:** Replaced broad two-decimal rounding with a spacing-aligned `1e-3` ($0.001\text{px}$) sub-pixel epsilon tolerance in `minimumNodeClearance` in `explorer/src/lib/layout/metrics.ts`. Preserved strict formal contract requirement $\ge 40.0\text{px}$, accommodating the canonical floating-point representation case (`39.99905982905989px` evaluating to `40.0`) while strictly rejecting sub-40px values (> 0.001px deficit) and maintaining zero primary/satellite overlaps.
+
+### Phase 18F Layer-Aware Locality Implementation
+- **Date:** 2026-09-24
+- **Report Path:** `PHASE18F_LAYER_AWARE_LOCALITY_IMPLEMENTATION.md`
+- **Phase / Track:** Phase 18 / Track C (Locality Evaluation)
+- **Status:** **PASS** (`TRACK C IMPLEMENTED — DIAGNOSTIC VALIDATION PASSED`)
+- **Essence:** Implemented diagnostic-only layer-aware locality metrics (`sameLayerLocality` and `crossLayerLocality`) in `explorer/src/lib/layout/metrics.ts` using `classifyNodeLayer`. Preserved historical global locality metrics unchanged. Confirmed no arbitrary pass/fail gate or replacement threshold exists, and locality diagnostic calculation produces zero layout geometry modification.
+
+### Phase 18G Final Integration and Regression Verification
+- **Date:** 2026-09-24
+- **Report Path:** `PHASE18G_FINAL_INTEGRATION_AND_REGRESSION_REPORT.md`
+- **Phase / Track:** Phase 18 / Integration Verification (Tracks A, B, C)
+- **Status:** **PASS** (`FINAL INTEGRATION — PASSED`)
+- **Essence:** Executed final integration and regression verification for Tracks A, B, and C on canonical Cloud Spend Tracker dataset (240 nodes, 1,024 edges). Confirmed cryptographic byte-identity on production build artifact (`feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295`), $\ge 40.0\text{px}$ clearance contract enforcement with `1e-3` epsilon, layer-aware locality diagnostics, multi-project persistence isolation, zero coordinate drift, and 100% test pass rate across Vitest and CLI test suites.

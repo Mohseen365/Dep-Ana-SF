@@ -36,6 +36,10 @@ Raw measurement / forensic question → audit-evidence/
 | Raw benchmark / telemetry data | `audit-evidence/` | Relevant benchmark file in `features/` or `gap-fill/` |
 | Fixture SHA-256 verification | `08_Audit_Source_Register.md` or `P0-FIX-01` report | `audit-evidence/P0-FIX-01/` |
 | Environment & Governance Intake | `audit-reports/INTAKE-PHASE-0-REPORT.md` | Relevant evidence |
+| Production Fixture Routing (Track A) | `PHASE18B_TRACK_A_PROVENANCE_VERIFICATION_REPORT.md` | `08_Audit_Source_Register.md` → Track A entry |
+| 40px Clearance Contract (Track B) | `PHASE18E_CORRECTIVE_40PX_CONTRACT_IMPLEMENTATION.md` | `08_Audit_Source_Register.md` → Track B entry |
+| Locality Diagnostics (Track C) | `PHASE18F_LAYER_AWARE_LOCALITY_IMPLEMENTATION.md` | `08_Audit_Source_Register.md` → Track C entry |
+| Phase 18 Final Integration Status | `PHASE18G_FINAL_INTEGRATION_AND_REGRESSION_REPORT.md` | `08_Audit_Source_Register.md` → Phase 18G entry |
 
 ---
 
