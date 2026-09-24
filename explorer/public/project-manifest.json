@@ -149,10 +149,10 @@
       "id": "cst",
       "name": "cst",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default",
-      "createdAt": "2026-09-24T06:56:49.825Z",
-      "updatedAt": "2026-09-24T06:56:49.825Z",
-      "lastAnalyzedAt": "2026-09-24T06:56:49.825Z",
+      "sourcePath": "tmp-integration-test/fixture",
+      "createdAt": "2026-09-24T07:44:52.923Z",
+      "updatedAt": "2026-09-24T07:44:52.923Z",
+      "lastAnalyzedAt": "2026-09-24T07:44:52.923Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 240,
       "dependencyCount": 1024,
@@ -240,9 +240,9 @@
     "cst": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:00b0962b7c80047dee12529c17ff4bdea0605b3cb4417c624dfaa093db32449d",
-      "nodeCount": 240,
-      "edgeCount": 1024
+      "fileHash": "sha256:5c10d1d0313607072b9d44d81c81aa0f8fdd83144861913c1190ab42c4c0cfcb",
+      "nodeCount": 4,
+      "edgeCount": 3
     }
   }
 }
