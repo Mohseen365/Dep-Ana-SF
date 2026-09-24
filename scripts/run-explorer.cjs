@@ -323,11 +323,27 @@ function runAdapter(projectId, sourceDir, explicitSource = false) {
   }
 }
 
+function provisionProductionFixtures() {
+  console.log("Provisioning production static project assets...");
+  const cloudSpendFixture = path.join(ROOT_DIR, "audit-fixtures", "cloud-spend-tracker", "explorer-data.json");
+  if (fs.existsSync(cloudSpendFixture)) {
+    const targetOutput = path.join(ROOT_DIR, "analyze", "projects", "cloud-spend-tracker", "explorer-data.json");
+    execSync(
+      `node "${ADAPTER_SCRIPT}" --input "${cloudSpendFixture}" --output "${targetOutput}" --project "cloud-spend-tracker"`,
+      {
+        cwd: ROOT_DIR,
+        stdio: "inherit",
+      }
+    );
+  }
+}
+
 function startExplorer(mode) {
   console.log(`Starting Salesforce Architecture Explorer (${mode} mode)...`);
 
   if (mode === "build") {
-    execSync("npm run build", { cwd: EXPLORER_DIR, stdio: "inherit" });
+    provisionProductionFixtures();
+    execSync("npx vite build", { cwd: EXPLORER_DIR, stdio: "inherit" });
     console.log("Explorer build completed successfully.");
     return;
   }
@@ -354,6 +370,11 @@ function main() {
     console.log("=============================================");
     console.log(`Project: ${project}`);
     console.log(`Source:  ${source || "(none)"}`);
+
+    if (mode === "build") {
+      startExplorer(mode);
+      return;
+    }
 
     if (explicitSource && source && !fs.existsSync(source)) {
       throw new Error(
