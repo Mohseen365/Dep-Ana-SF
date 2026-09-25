@@ -171,10 +171,7 @@ vi.mock('cytoscape', () => {
     getElementById: vi.fn().mockImplementation((id: string) => {
       const found = mockEles.find(e => e.id() === id);
       if (found) {
-        return {
-          ...found,
-          length: 1,
-        };
+        return found;
       }
       return { length: 0, isNode: () => false, isEdge: () => false };
     }),
@@ -232,6 +229,13 @@ const SAMPLE_EDGES: ExplorerEdge[] = [
 ];
 
 describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', () => {
+  const defaultGraphLayoutState = {
+    mode: 'static' as const,
+    architectureMode: 'hierarchical' as const,
+    layoutProvenance: 'automatic-hierarchical' as const,
+    nodePositions: { NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } },
+  };
+
   beforeEach(() => {
     mockEles = [];
     layoutRunCount = 0;
@@ -264,6 +268,7 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         layoutMode="static"
+        graphLayout={defaultGraphLayoutState}
         nodePositions={{ NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } }}
       />
     );
@@ -284,6 +289,12 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         layoutMode="static"
+        graphLayout={{
+          mode: 'static',
+          architectureMode: 'hierarchical',
+          layoutProvenance: 'automatic-hierarchical',
+          nodePositions: { NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } },
+        }}
         nodePositions={{ NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } }}
       />
     );
@@ -309,6 +320,7 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         layoutMode="static"
+        graphLayout={defaultGraphLayoutState}
         nodePositions={{ NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } }}
       />
     );
@@ -463,6 +475,7 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         layoutMode="static"
+        graphLayout={defaultGraphLayoutState}
         nodePositions={{ NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } }}
       />
     );
@@ -482,6 +495,7 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         layoutMode="static"
+        graphLayout={defaultGraphLayoutState}
         nodePositions={{ NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } }}
       />
     );
@@ -498,6 +512,7 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         layoutMode="static"
+        graphLayout={defaultGraphLayoutState}
         nodePositions={{ NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } }}
       />
     );

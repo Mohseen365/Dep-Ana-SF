@@ -3,10 +3,139 @@ import { render, act } from '@testing-library/react';
 import React from 'react';
 import type cytoscape from 'cytoscape';
 
+import { GraphView } from '../components/GraphView';
 import { FeatureOverlayCanvas } from '../components/graph-internals/FeatureOverlayCanvas';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import { discoverFeatures } from '../lib/layout/features';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+
+// Mock cytoscape and plugins for GraphView tests
+const { mockCy, mockCytoscapeFn, mockNodeObjMap } = vi.hoisted(() => {
+  const mockNodeObjMap: Record<string, any> = {};
+
+  const createMockNode = (id: string, x = 100, y = 100) => {
+    if (!mockNodeObjMap[id]) {
+      let curPos = { x, y };
+      const mockCollection = {
+        length: 0,
+        forEach: vi.fn(),
+        removeClass: vi.fn().mockReturnThis(),
+        addClass: vi.fn().mockReturnThis(),
+      };
+
+      const mockEles = {
+        length: 1,
+        id: () => id,
+        data: vi.fn().mockReturnValue({
+          id,
+          displayName: id,
+          type: id.includes('Trigger') ? 'ApexTrigger' : id.includes('LWC') ? 'LWC' : 'ApexClass',
+        }),
+        isNode: () => true,
+        isEdge: () => false,
+        position: vi.fn((newPos?: { x: number; y: number }) => {
+          if (newPos && typeof newPos.x === 'number' && typeof newPos.y === 'number') {
+            curPos = { ...newPos };
+          }
+          return curPos;
+        }),
+        neighborhood: vi.fn().mockReturnValue(mockCollection),
+        connectedEdges: vi.fn().mockReturnValue(mockCollection),
+        addClass: vi.fn().mockReturnThis(),
+        removeClass: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        unselect: vi.fn().mockReturnThis(),
+      };
+      mockNodeObjMap[id] = mockEles;
+    }
+    return mockNodeObjMap[id];
+  };
+
+  const cyInstance = {
+    zoom: vi.fn().mockReturnValue(1),
+    pan: vi.fn().mockReturnValue({ x: 0, y: 0 }),
+    center: vi.fn(),
+    width: vi.fn().mockReturnValue(800),
+    height: vi.fn().mockReturnValue(600),
+    resize: vi.fn(),
+    elements: vi.fn().mockReturnValue({
+      removeClass: vi.fn().mockReturnThis(),
+      addClass: vi.fn().mockReturnThis(),
+      unselect: vi.fn().mockReturnThis(),
+      remove: vi.fn().mockReturnThis(),
+    }),
+    nodes: vi.fn().mockImplementation(() => {
+      const arr = Object.values(mockNodeObjMap);
+      (arr as any).forEach = Array.prototype.forEach.bind(arr);
+      return arr;
+    }),
+    edges: vi.fn().mockReturnValue([]),
+    add: vi.fn((els) => {
+      if (Array.isArray(els)) {
+        els.forEach((el) => {
+          if (el.data?.id && !el.data.source) {
+            createMockNode(el.data.id, el.position?.x ?? 100, el.position?.y ?? 100);
+          }
+        });
+      }
+    }),
+    layout: vi.fn().mockReturnValue({ run: vi.fn() }),
+    batch: vi.fn((fn: () => void) => fn()),
+    on: vi.fn(),
+    off: vi.fn(),
+    one: vi.fn(),
+    animate: vi.fn(),
+    fit: vi.fn(),
+    getElementById: vi.fn().mockImplementation((id) => {
+      const found = mockNodeObjMap[id];
+      if (found) return found;
+      const emptyCol = { removeClass: vi.fn().mockReturnThis(), addClass: vi.fn().mockReturnThis() };
+      return { length: 0, isNode: () => false, isEdge: () => false, neighborhood: () => emptyCol, connectedEdges: () => emptyCol };
+    }),
+    destroy: vi.fn(),
+    navigator: vi.fn().mockReturnValue({ destroy: vi.fn() }),
+  };
+
+  const fn: any = vi.fn().mockImplementation((opts) => {
+    if (opts?.elements) {
+      cyInstance.add(opts.elements);
+    }
+    return cyInstance;
+  });
+  fn.use = vi.fn();
+
+  return { mockCy: cyInstance, mockCytoscapeFn: fn, mockNodeObjMap };
+});
+
+vi.mock('cytoscape', () => ({
+  default: mockCytoscapeFn,
+}));
+
+vi.mock('cytoscape-fcose', () => ({ default: vi.fn() }));
+vi.mock('cytoscape-navigator', () => ({ default: vi.fn() }));
+
+// Mock ResizeObserver
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
+
+// Mock matchMedia
+if (typeof window.matchMedia === 'undefined') {
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+}
 
 function createMockNode(id: string, displayName: string, type: ExplorerNode['type'] = 'ApexClass'): ExplorerNode {
   return {
@@ -81,7 +210,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
 
     const discovery = discoverFeatures(nodes, edges);
 
-    const mockCy = {
+    const testCy = {
       pan: () => ({ x: 0, y: 0 }),
       zoom: () => 1.0,
       on: vi.fn(),
@@ -91,7 +220,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
 
     const { container } = render(
       <FeatureOverlayCanvas
-        cy={mockCy}
+        cy={testCy}
         nodes={nodes}
         edges={edges}
         discoveryResult={discovery}
@@ -118,7 +247,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
     let currentZoom = 1.0;
     let zoomListener: (() => void) | null = null;
 
-    const mockCy = {
+    const testCy = {
       pan: () => ({ x: 0, y: 0 }),
       zoom: () => currentZoom,
       on: vi.fn((evt: string, fn: () => void) => {
@@ -130,7 +259,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
 
     const { container } = render(
       <FeatureOverlayCanvas
-        cy={mockCy}
+        cy={testCy}
         nodes={nodes}
         edges={edges}
         discoveryResult={discovery}
@@ -153,7 +282,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
   it('3. Renders cleanly without errors when featureRegions is undefined or null or empty', () => {
     const discovery = discoverFeatures(nodes, edges);
 
-    const mockCy = {
+    const testCy = {
       pan: () => ({ x: 0, y: 0 }),
       zoom: () => 1.0,
       on: vi.fn(),
@@ -163,7 +292,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
 
     const { container: container1 } = render(
       <FeatureOverlayCanvas
-        cy={mockCy}
+        cy={testCy}
         nodes={nodes}
         edges={edges}
         discoveryResult={discovery}
@@ -175,7 +304,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
 
     const { container: container2 } = render(
       <FeatureOverlayCanvas
-        cy={mockCy}
+        cy={testCy}
         nodes={nodes}
         edges={edges}
         discoveryResult={discovery}
@@ -187,7 +316,7 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
 
     const { container: container3 } = render(
       <FeatureOverlayCanvas
-        cy={mockCy}
+        cy={testCy}
         nodes={nodes}
         edges={edges}
         discoveryResult={discovery}
@@ -199,66 +328,44 @@ describe('FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overl
   });
 
   describe('GraphView Caller Boundary Architecture Mode Enclosure Gating', () => {
-    it('suppresses semantic feature region enclosures when architectureMode is hierarchical', () => {
-      const layoutResult = computeArchitectureLayoutWithMetadata(nodes, edges, { enableFeatureLayout: true });
-      expect(layoutResult.featureRegions).toBeDefined();
+    it('suppresses semantic feature region enclosures when architectureMode is hierarchical', async () => {
+      let container: HTMLElement;
+      await act(async () => {
+        const res = render(
+          <GraphView
+            nodes={nodes}
+            edges={edges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            architectureMode="hierarchical"
+          />
+        );
+        container = res.container;
+      });
 
-      const discovery = discoverFeatures(nodes, edges);
-
-      const mockCy = {
-        pan: () => ({ x: 0, y: 0 }),
-        zoom: () => 1.0,
-        on: vi.fn(),
-        off: vi.fn(),
-        nodes: () => [],
-      } as unknown as cytoscape.Core;
-
-      const architectureMode = 'hierarchical';
-
-      const { container } = render(
-        <FeatureOverlayCanvas
-          cy={mockCy}
-          nodes={nodes}
-          edges={edges}
-          discoveryResult={discovery}
-          featureRegions={architectureMode === 'hybrid' ? layoutResult.featureRegions : undefined}
-          nodePositions={layoutResult.positions}
-          enableOverlay={true}
-        />
-      );
-
-      expect(container.querySelectorAll('.semantic-feature-region-overlay').length).toBe(0);
+      expect(container!.querySelectorAll('.semantic-feature-region-overlay').length).toBe(0);
     });
 
-    it('renders semantic feature region enclosures when architectureMode is hybrid', () => {
-      const layoutResult = computeArchitectureLayoutWithMetadata(nodes, edges, { enableFeatureLayout: true });
-      expect(layoutResult.featureRegions).toBeDefined();
+    it('renders semantic feature region enclosures when architectureMode is hybrid', async () => {
+      let container: HTMLElement;
+      await act(async () => {
+        const res = render(
+          <GraphView
+            nodes={nodes}
+            edges={edges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            architectureMode="hybrid"
+          />
+        );
+        container = res.container;
+      });
 
-      const discovery = discoverFeatures(nodes, edges);
-
-      const mockCy = {
-        pan: () => ({ x: 0, y: 0 }),
-        zoom: () => 1.0,
-        on: vi.fn(),
-        off: vi.fn(),
-        nodes: () => [],
-      } as unknown as cytoscape.Core;
-
-      const architectureMode = 'hybrid';
-
-      const { container } = render(
-        <FeatureOverlayCanvas
-          cy={mockCy}
-          nodes={nodes}
-          edges={edges}
-          discoveryResult={discovery}
-          featureRegions={architectureMode === 'hybrid' ? layoutResult.featureRegions : undefined}
-          nodePositions={layoutResult.positions}
-          enableOverlay={true}
-        />
-      );
-
-      expect(container.querySelectorAll('.semantic-feature-region-overlay').length).toBe(layoutResult.featureRegions!.size);
+      expect(container!.querySelectorAll('.semantic-feature-region-overlay').length).toBeGreaterThan(0);
     });
   });
 });
