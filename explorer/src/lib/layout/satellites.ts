@@ -16,6 +16,11 @@ export interface SatelliteLayoutOptions {
   layerSpacing?: number;
   /** Base Y offsets per layer */
   layerYOffsets?: Record<ArchitectureLayer, number>;
+  /** Feature-specific layer Y coordinates for compact feature-aware satellite placement */
+  featureLayerYMap?: Record<string, Record<ArchitectureLayer, number>>
+                   | Map<string, Record<ArchitectureLayer, number>>;
+  /** Feature map (nodeId -> featureId) for resolving feature-local Y anchors */
+  featureMap?: Map<string, string> | Record<string, string>;
   /** Default X center if domain X is unknown */
   defaultDomainX?: number;
   /** Minimum horizontal gap between nodes (default: 40) */
@@ -343,6 +348,28 @@ export function placeSatellites(
   const verticalGap = options.verticalGap ?? 40;
   const maxSatelliteDistance = options.maxSatelliteDistance ?? 280;
   const layerYOffsets = options.layerYOffsets ?? DEFAULT_LAYER_Y_OFFSETS;
+
+  // Normalise featureMap once
+  const _featureMap: Map<string, string> | null = options.featureMap instanceof Map
+    ? options.featureMap
+    : options.featureMap
+      ? new Map(Object.entries(options.featureMap))
+      : null;
+
+  // Returns the best available Y base for `layer` relative to a given node
+  function resolveLayerY(nodeId: string, layer: ArchitectureLayer): number {
+    if (options.featureLayerYMap && _featureMap) {
+      const featureId = _featureMap.get(nodeId);
+      if (featureId) {
+        const fMap = options.featureLayerYMap instanceof Map
+          ? options.featureLayerYMap.get(featureId)
+          : options.featureLayerYMap[featureId];
+        if (fMap && fMap[layer] !== undefined) return fMap[layer];
+      }
+    }
+    return layerYOffsets[layer] ?? DEFAULT_LAYER_Y_OFFSETS[layer];
+  }
+
   const defaultDomainX = options.defaultDomainX ?? 0;
   const index = options.index;
 
@@ -432,7 +459,7 @@ export function placeSatellites(
     let trigX = parentObjectPos ? parentObjectPos.x : defaultDomainX;
     let trigY = parentObjectPos
       ? parentObjectPos.y - (nodeHeight + verticalGap)
-      : layerYOffsets.application;
+      : resolveLayerY(triggerItem.nodeId, 'application');
 
     // Check collision for trigger candidate
     const minDx = nodeWidth + horizontalGap;
@@ -529,7 +556,7 @@ export function placeSatellites(
     }
 
     let hX = anchorPos ? anchorPos.x + nodeWidth + horizontalGap : defaultDomainX;
-    let hY = anchorPos ? anchorPos.y : layerYOffsets.application;
+    let hY = anchorPos ? anchorPos.y : resolveLayerY(handlerItem.nodeId, 'application');
 
     const minDx = nodeWidth + horizontalGap;
     const minDy = nodeHeight + verticalGap;
@@ -642,7 +669,10 @@ export function placeSatellites(
   // Place unanchored fields in schema layer fallback grid
   unanchoredFields.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
   if (unanchoredFields.length > 0) {
-    const fallbackAnchor: Point = { x: defaultDomainX, y: layerYOffsets.schema };
+    const fallbackAnchor: Point = {
+      x: defaultDomainX,
+      y: resolveLayerY(unanchoredFields[0].nodeId, 'schema'),
+    };
     const fallbackSlots = generateSatelliteSlots(
       fallbackAnchor,
       unanchoredFields.length,
@@ -752,7 +782,10 @@ export function placeSatellites(
   // Place unanchored tests in fallback domain/layer cluster
   unanchoredTests.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
   if (unanchoredTests.length > 0) {
-    const fallbackAnchor: Point = { x: defaultDomainX, y: layerYOffsets.application };
+    const fallbackAnchor: Point = {
+      x: defaultDomainX,
+      y: resolveLayerY(unanchoredTests[0].nodeId, 'application'),
+    };
     const fallbackSlots = generateSatelliteSlots(
       fallbackAnchor,
       unanchoredTests.length,

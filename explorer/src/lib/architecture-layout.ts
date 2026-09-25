@@ -335,6 +335,9 @@ export function computeArchitectureLayoutWithMetadata(
       layerSpacing,
       layerYOffsets: globalDomainResult.layerYMap,
       index,
+      ...(enableFeatureLayout && globalDomainResult.featureLayerYMap
+        ? { featureLayerYMap: globalDomainResult.featureLayerYMap, featureMap }
+        : {}),
     }
   );
 
@@ -418,6 +421,9 @@ export function computeArchitectureLayoutWithMetadata(
       nodeHeight,
       layerMap,
       domainMap: activeSpatialMap,
+      ...(enableFeatureLayout && globalDomainResult.domainBounds
+        ? { domainBounds: globalDomainResult.domainBounds }
+        : {}),
     },
   });
 
