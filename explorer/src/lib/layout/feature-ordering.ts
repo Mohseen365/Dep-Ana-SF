@@ -508,13 +508,11 @@ export function compute2DFeatureBandOrdering(
 
   // 5. Construct Final Placements Map and Ordered List
   const placements = new Map<string, Feature2DPlacement>();
-  const orderedFeatures: string[] = [];
 
   LAYER_ORDER.forEach(l => {
     const list = bandFeatures.get(l)!;
     const bandIdx = LAYER_PRIORITY[l];
     list.forEach((f, orderIdx) => {
-      orderedFeatures.push(f);
       placements.set(f, {
         featureId: f,
         primaryLayer: l,
@@ -524,6 +522,13 @@ export function compute2DFeatureBandOrdering(
         estimatedY: estimatedY.get(f) ?? LAYER_BASE_Y[l],
       });
     });
+  });
+
+  const orderedFeatures: string[] = [];
+
+  LAYER_ORDER.forEach(l => {
+    const list = bandFeatures.get(l)!;
+    list.forEach(f => orderedFeatures.push(f));
   });
 
   // 6. Compute 2D Spatial Locality & Locality Metrics

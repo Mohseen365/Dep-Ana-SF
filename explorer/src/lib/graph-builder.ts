@@ -26,6 +26,7 @@ export interface GraphEdgeData {
   method: string | null;
   unresolved: boolean;
   evidence: string;
+  isInterFeature: boolean;
 }
 
 export function getFindingStatsForNode(
@@ -62,7 +63,8 @@ export function getFindingStatsForNode(
 export function buildGraphElements(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
-  findings?: ArchitectureFinding[]
+  findings?: ArchitectureFinding[],
+  featureMap?: Map<string, string>
 ): ElementDefinition[] {
   const elements: ElementDefinition[] = [];
   
@@ -85,7 +87,7 @@ export function buildGraphElements(
       knownNodeIds.add(edge.target);
       elements.push(createExternalNodeElement(edge.target));
     }
-    elements.push(createEdgeElement(edge));
+    elements.push(createEdgeElement(edge, featureMap));
   }
   
   return elements;
@@ -144,7 +146,24 @@ function createExternalNodeElement(nodeId: string): NodeDefinition {
   };
 }
 
-function createEdgeElement(edge: ExplorerEdge): EdgeDefinition {
+function createEdgeElement(
+  edge: ExplorerEdge,
+  featureMap?: Map<string, string>
+): EdgeDefinition {
+  const sourceFeature = featureMap?.get(edge.source);
+  const targetFeature = featureMap?.get(edge.target);
+  // isInterFeature: true only when BOTH endpoints have a known, non-utility feature
+  // and those features differ. Unassigned / Shared edges are treated as intra-feature.
+  const isInterFeature = Boolean(
+    sourceFeature &&
+    targetFeature &&
+    sourceFeature !== 'Unassigned' &&
+    targetFeature !== 'Unassigned' &&
+    sourceFeature !== 'Shared' &&
+    targetFeature !== 'Shared' &&
+    sourceFeature !== targetFeature
+  );
+
   const edgeData: GraphEdgeData = {
     id: edge.id,
     source: edge.source,
@@ -152,7 +171,8 @@ function createEdgeElement(edge: ExplorerEdge): EdgeDefinition {
     relationshipType: edge.relationshipType,
     method: edge.method,
     unresolved: edge.unresolved,
-    evidence: edge.evidence
+    evidence: edge.evidence,
+    isInterFeature,
   };
   
   return {

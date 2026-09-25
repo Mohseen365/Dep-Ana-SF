@@ -261,6 +261,7 @@ export function computeArchitectureLayoutWithMetadata(
     layerMap,
     domainMap: activeSpatialMap,
     domainOrder: globalDomainResult.orderedDomains,
+    layerYMap: globalDomainResult.layerYMap,
   });
 
   // Step 7: Primary Production Local Layout (Wave 3A)
