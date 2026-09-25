@@ -452,6 +452,24 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       style: {
         'label': 'data(relationshipType)'
       }
+    },
+    // Intra-feature edges: thinner and muted — local dependency, low visual noise
+    {
+      selector: 'edge[isInterFeature = "false"]',
+      style: {
+        'width': 1.5,
+        'opacity': 0.6,
+      }
+    },
+    // Inter-feature edges: dashed and prominent — cross-feature architectural boundary
+    {
+      selector: 'edge[isInterFeature = "true"]',
+      style: {
+        'width': 2.5,
+        'line-style': 'dashed',
+        'line-dash-pattern': [6, 3],
+        'opacity': 0.9,
+      }
     }
   ];
 

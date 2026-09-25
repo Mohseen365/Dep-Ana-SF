@@ -11,6 +11,8 @@ export interface NodeOrderingInput {
   domainMap?: Map<string, string> | Record<string, string>;
   domainOrder?: string[];
   maxIterations?: number;
+  /** Actual layout layer Y offsets — improves crossing estimation accuracy in Hybrid mode */
+  layerYMap?: Record<ArchitectureLayer, number>;
 }
 
 export interface LayerRegionOrder {
@@ -137,7 +139,8 @@ function normalizeDomainMap(
  */
 export function computeSimulatedPositions(
   bucketOrder: Map<string, string[]>,
-  domainOrder: string[]
+  domainOrder: string[],
+  layerYMap?: Record<ArchitectureLayer, number>
 ): PositionMap {
   const positions: PositionMap = {};
   const domainIndexMap = new Map<string, number>();
@@ -145,7 +148,9 @@ export function computeSimulatedPositions(
 
   for (const layer of LAYERS_IN_ORDER) {
     const layerIdx = LAYER_RANK[layer];
-    const y = 100 + layerIdx * 250;
+    const y = layerYMap
+      ? (layerYMap[layer] ?? 100 + layerIdx * 250)
+      : 100 + layerIdx * 250;
 
     for (const domain of domainOrder) {
       const bucketKey = `${layer}:${domain}`;
@@ -307,11 +312,13 @@ export function estimateCrossingsForOrder(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   bucketOrder: Map<string, string[]>,
-  domainOrder: string[]
+  domainOrder: string[],
+  layerYMap?: Record<ArchitectureLayer, number>
 ): number {
   const positions = computeSimulatedPositions(
     bucketOrder,
-    domainOrder
+    domainOrder,
+    layerYMap
   );
   return fastEdgeCrossingCount(nodes, edges, positions);
 }
@@ -423,7 +430,8 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     nodes,
     edges,
     bucketOrder,
-    domainOrder
+    domainOrder,
+    input.layerYMap
   );
   let bestBucketOrder = cloneBucketOrder(bucketOrder);
 
@@ -557,7 +565,8 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
       nodes,
       edges,
       bucketOrder,
-      domainOrder
+      domainOrder,
+      input.layerYMap
     );
 
     if (currentCrossings < bestCrossings) {

@@ -196,6 +196,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     return discoverFeatures(nodes, edges);
   }, [nodes, edges]);
 
+  // Build nodeId → featureId map for edge inter-feature classification (Hybrid mode only)
+  const featureAssignmentMap = useMemo((): Map<string, string> | undefined => {
+    if (architectureMode !== 'hybrid') return undefined;
+    const map = new Map<string, string>();
+    discoveryResult.assignments.forEach((assignment, nodeId) => {
+      map.set(nodeId, assignment.primaryFeatureId);
+    });
+    return map;
+  }, [architectureMode, discoveryResult]);
+
   // Keep internal refs synchronized
   useEffect(() => {
     nodesRef.current = nodes;
@@ -376,7 +386,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const elements = buildGraphElements(nodesRef.current, edgesRef.current, findings);
+    const elements = buildGraphElements(nodesRef.current, edgesRef.current, findings, featureAssignmentMap);
     const styles = getGraphStyles({
       nodeWidth: 50,
       nodeHeight: 50,
@@ -717,7 +727,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       hasNewNodes: hasGenuinelyNewNodes,
     });
 
-    const newElements = buildGraphElements(nodes, edges, findings);
+    const newElements = buildGraphElements(nodes, edges, findings, featureAssignmentMap);
 
     cy.batch(() => {
       cy.elements().remove();
