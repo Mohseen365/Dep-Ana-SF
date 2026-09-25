@@ -1219,7 +1219,9 @@ export function computeGlobalDomainLayout(
     });
 
     const targetRowWidth = isFeatureLayout
-      ? Math.max(1200, Math.min(3200, Math.sqrt(totalWidthSum * 300 * 1.6)))
+      ? (orderedDomains.length >= 25
+          ? Math.max(4800, Math.min(8000, Math.sqrt(totalWidthSum * 600 * 1.6)))
+          : Math.max(1200, Math.min(3200, Math.sqrt(totalWidthSum * 300 * 1.6))))
       : Math.max(2400, Math.min(4800, Math.sqrt(totalWidthSum * 800 * 1.6)));
     let currentY = baseY;
 
