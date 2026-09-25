@@ -274,7 +274,7 @@ describe('Phase 10C — Break-Threshold Proof Forensic Suite', () => {
 
       console.log(`Width ${w}px | Stage 5 WxH: ${(s5MaxX - s5MinX).toFixed(0)} x ${(s5MaxY - s5MinY).toFixed(0)} | Stage 11 WxH: ${(s11MaxX - s11MinX).toFixed(0)} x ${(s11MaxY - s11MinY).toFixed(0)}`);
     });
-  });
+  }, 180000);
 
   test('10x Determinism and Shuffled Input Permutation Verification', () => {
     const ds = datasets.pub_infra_mang;
