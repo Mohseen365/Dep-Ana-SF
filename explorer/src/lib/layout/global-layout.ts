@@ -425,9 +425,13 @@ export function computeFeatureLayerYMap(
       const rows = rowCounts[layer].domainRows[featureId] || 0;
       featureYMap[featureId][layer] = currentY;
 
-      const height = rows > 0 ? rows * nodeHeight + (rows - 1) * verticalGap : 0;
-      const step = Math.max(height + interLayerGap, 120);
-      currentY += step;
+      if (rows > 0) {
+        // Only advance Y when this feature actually has nodes in this layer
+        const height = rows * nodeHeight + (rows - 1) * verticalGap;
+        const step = Math.max(height + interLayerGap, nodeHeight + interLayerGap);
+        currentY += step;
+      }
+      // rows === 0: leave currentY unchanged — no vertical gap for empty layers
     });
   });
 
