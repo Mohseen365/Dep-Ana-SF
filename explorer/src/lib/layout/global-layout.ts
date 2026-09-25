@@ -118,6 +118,8 @@ export interface GlobalLayoutResult {
   domainBounds?: Record<string, { xMin: number; xMax: number }>;
 }
 
+export const DEFAULT_FEATURE_LAYER_SPACING = 60;
+
 export const LAYER_Y_MAP: Record<ArchitectureLayer, number> = {
   presentation: 100,
   application: 350,
@@ -399,7 +401,7 @@ export function computeFeatureLayerYMap(
     options.featureLayerSpacing ??
     (options.layerSpacing !== undefined && options.layerSpacing !== 250
       ? options.layerSpacing
-      : 60);
+      : DEFAULT_FEATURE_LAYER_SPACING);
   const baseY = options.baseY ?? 100;
 
   const rowCounts = calculatePrimaryLayerRowCounts(nodes, edges, {
