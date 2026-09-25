@@ -350,6 +350,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={{ mode: 'interactive', architectureMode: 'hierarchical', layoutProvenance: 'automatic-hierarchical', nodePositions: persistedPositions }}
         nodePositions={persistedPositions}
       />
     );
@@ -381,6 +382,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 200, y: 200 },
     };
 
+    const graphLayoutState = { mode: 'static' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={sampleNodes}
@@ -389,6 +392,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -405,6 +409,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -420,6 +425,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -435,6 +441,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 200, y: 200 },
     };
 
+    const graphLayoutState = { mode: 'static' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={sampleNodes}
@@ -443,6 +451,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -460,6 +469,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         selectedEdgeId={null}
         focusedNodeId="ApexClass:HubService"
         focusState={{ enabled: true, focusNodeId: 'ApexClass:HubService', direction: 'dependencies', depth: 1 }}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -477,6 +487,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         selectedEdgeId={null}
         focusedNodeId="ApexClass:HubService"
         focusState={{ enabled: true, focusNodeId: 'ApexClass:HubService', direction: 'dependencies', depth: 2 }}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -609,6 +620,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 200, y: 200 },
     };
 
+    const graphLayoutState = { mode: 'static' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={sampleNodes.slice(0, 2)}
@@ -617,6 +630,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -667,6 +681,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -690,6 +705,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 400, y: 400 },
     };
 
+    const graphLayoutState = { mode: 'static' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={[sampleNodes[0]]}
@@ -698,6 +715,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -711,6 +729,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
         layoutMode="static"
       />
@@ -745,6 +764,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
     mockLayoutRun.mockClear();
 
     const apexNodes = sampleNodes.filter(n => n.type === 'ApexClass');
+    const userAuthLayout = { mode: 'interactive' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'user-authored' as const, nodePositions: { 'ApexClass:HubService': { x: 999, y: 999 } } };
+
     rerender(
       <GraphView
         nodes={apexNodes}
@@ -753,6 +774,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={userAuthLayout}
+        nodePositions={{ 'ApexClass:HubService': { x: 999, y: 999 } }}
         onNodePositionsChange={onNodePositionsChange}
       />
     );
@@ -767,6 +790,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={userAuthLayout}
+        nodePositions={{ 'ApexClass:HubService': { x: 999, y: 999 } }}
         onNodePositionsChange={onNodePositionsChange}
       />
     );
@@ -827,6 +852,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 600, y: 600 },
     };
 
+    const graphLayoutState = { mode: 'interactive' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={sampleNodes}
@@ -835,6 +862,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -847,6 +875,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -859,6 +888,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -873,6 +903,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 333, y: 444 },
     };
 
+    const graphLayoutState = { mode: 'interactive' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={sampleNodes}
@@ -881,6 +913,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -898,6 +931,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -913,6 +947,8 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 300, y: 400 },
     };
 
+    const graphLayoutState = { mode: 'interactive' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+
     const { rerender } = render(
       <GraphView
         nodes={sampleNodes}
@@ -921,6 +957,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -936,6 +973,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         selectedNodeId={null}
         selectedEdgeId={null}
         selectedCycleNodeIds={['ApexClass:HubService', 'ApexClass:BridgeAdapter']}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -952,6 +990,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
         selectedNodeId={null}
         selectedEdgeId={null}
         selectedCycleNodeIds={null}
+        graphLayout={graphLayoutState}
         nodePositions={persistedPositions}
       />
     );
@@ -972,7 +1011,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
     );
 
     expect(mockCytoscapeFn).toHaveBeenCalledTimes(1);
-    expect(mockLayoutRun).not.toHaveBeenCalled();
+    expect(mockLayoutRun).toHaveBeenCalledTimes(1);
   });
 
   it('18. No automatic force-layout override: preset architecture layout is not replaced by fcose', () => {

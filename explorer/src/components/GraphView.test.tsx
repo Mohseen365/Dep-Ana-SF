@@ -30,6 +30,8 @@ const { mockElementsRemove, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
     layout: vi.fn().mockReturnValue({ run: vi.fn() }),
     batch: vi.fn((fn: () => void) => fn()),
     on: vi.fn(),
+    off: vi.fn(),
+    one: vi.fn(),
     animate: vi.fn(),
     fit: vi.fn(),
     getElementById: vi.fn().mockReturnValue({
@@ -448,9 +450,10 @@ describe('GraphEngine Components & Integration', () => {
       });
 
       expect(onNodeDragEnd).toHaveBeenCalledWith('ApexClass:AccountController', { x: 150, y: 250 });
-      expect(onNodePositionChange).toHaveBeenCalledWith({
-        'ApexClass:AccountController': { x: 150, y: 250 },
-      });
+      expect(onNodePositionChange).toHaveBeenCalledWith(
+        { 'ApexClass:AccountController': { x: 150, y: 250 } },
+        'user-authored'
+      );
     });
 
     it('displays mode badge indicator showing current mode and preservation message in Static mode', () => {
@@ -911,6 +914,7 @@ describe('GraphEngine Components & Integration', () => {
             length: 1,
             isNode: () => true,
             isEdge: () => false,
+            data: vi.fn().mockReturnValue({ id, displayName: id, type: 'ApexClass' }),
             select: vi.fn().mockReturnThis(),
             addClass: vi.fn().mockReturnThis(),
             removeClass: vi.fn().mockReturnThis(),
@@ -1013,6 +1017,7 @@ describe('GraphEngine Components & Integration', () => {
           length: 1,
           isNode: () => true,
           isEdge: () => false,
+          data: vi.fn().mockReturnValue({ id, displayName: id, type: 'ApexClass' }),
           select: vi.fn().mockReturnThis(),
           addClass: vi.fn().mockReturnThis(),
           removeClass: vi.fn().mockReturnThis(),
