@@ -423,10 +423,20 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': ''
       }
     },
+    // FAR ZOOM — mute all edges; keep inter-feature edges lightly visible for orientation
     {
       selector: 'edge.zoom-far',
       style: {
-        'label': ''
+        'label': '',
+        'opacity': 0.18,
+        'width': 1,
+      }
+    },
+    {
+      selector: 'edge[isInterFeature = "true"].zoom-far',
+      style: {
+        'opacity': 0.55,
+        'width': 1.8,
       }
     },
     {
@@ -435,10 +445,18 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': 'data(label)'
       }
     },
+    // MID ZOOM — moderate edge visibility; inter-feature edges stay prominent
     {
       selector: 'edge.zoom-mid',
       style: {
-        'label': ''
+        'label': '',
+        'opacity': 0.45,
+      }
+    },
+    {
+      selector: 'edge[isInterFeature = "true"].zoom-mid',
+      style: {
+        'opacity': 0.85,
       }
     },
     {
@@ -447,10 +465,11 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': 'data(label)'
       }
     },
+    // NEAR ZOOM — full visibility, show relationship type label
     {
       selector: 'edge.zoom-near',
       style: {
-        'label': 'data(relationshipType)'
+        'label': 'data(relationshipType)',
       }
     },
     // Intra-feature edges: thinner and muted — local dependency, low visual noise
