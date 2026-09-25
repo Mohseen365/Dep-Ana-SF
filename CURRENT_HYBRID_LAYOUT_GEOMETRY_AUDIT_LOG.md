@@ -1,9 +1,9 @@
 # Current Hybrid Layout Geometry — Living Audit Log
 
-> **Status:** Investigation ongoing  
-> **Current phase:** Phase 12 reviewed; Phase 12A required before optimization implementation  
-> **Production-code status:** No production changes from Phase 12  
-> **Primary issue:** Dense Hybrid graphs can become extremely tall; current `pub-infra-mang` production geometry is approximately `12,760 × 24,670px`.
+> **Status:** Controlled implementation & regression validation complete
+> **Current phase:** Phase 13 completed & verified
+> **Production-code status:** Minimal production implementation applied (`DEFAULT_FEATURE_LAYER_SPACING = 60` & `featureLayerSpacing` exposed)
+> **Primary issue:** Controlled feature-layer spacing implementation completed and verified with 100% invariant compliance.
 
 ## 1. Executive Summary
 
@@ -911,3 +911,16 @@ This file is both:
 
 1. the current-state issue summary; and
 2. the historical audit trail for the Hybrid layout geometry investigation.
+
+---
+
+# 28. Phase 13 — Feature-Layer Spacing Implementation & Validation
+
+Phase 13 completed the controlled production implementation and full regression validation of Hybrid feature-local layer spacing (`featureLayerSpacing`).
+
+### Key Results
+- **Minimal Production Code Changes:** Added `DEFAULT_FEATURE_LAYER_SPACING = 60` in `global-layout.ts` and exposed `featureLayerSpacing` in `ArchitectureLayoutOptions` in `architecture-layout.ts`.
+- **Global `layerSpacing = 250px` Protected:** Global domain spacing remains strictly untouched and unaffected.
+- **100% Invariant Compliance:** 0 primary overlaps, 0 satellite overlaps, minimum clearance >= 40.0px (40.00px measured), 0.00000px determinism drift across repeated and shuffled runs.
+- **Baseline Reconfirmed:** Production default geometry matches authoritative baseline at `12,760 × 24,670px`. Compact option (`featureLayerSpacing = 40`) yields `12,760 × 23,840px` (-830px / -3.4%).
+- **Verification:** Passed all Vitest suites and CLI architecture change gates.

@@ -24,6 +24,8 @@ export interface ArchitectureLayoutOptions {
   nodeHeight?: number;
   /** Vertical distance between architectural layer bands (default: 250) */
   layerSpacing?: number;
+  /** Feature-local vertical layer spacing inside feature regions (default: 60) */
+  featureLayerSpacing?: number;
   /** Horizontal distance between domain/subsystem clusters (default: 380) */
   domainSpacing?: number;
   /** Clearance gap between disconnected graph components (default: 100) */
@@ -224,6 +226,7 @@ export function computeArchitectureLayoutWithMetadata(
     const featureLayoutResult = computeGlobalFeatureLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,
+      featureLayerSpacing: options.featureLayerSpacing,
       nodeWidth,
       nodeHeight,
       analysis,
