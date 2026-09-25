@@ -1099,7 +1099,7 @@ export function computeGlobalDomainLayout(
 
   const isFeatureLayout = options.isFeatureLayout ?? false;
   const isMultiRowNeeded = isFeatureLayout
-    ? false
+    ? (orderedDomains.length >= 4 || totalWidthSum > 1200)
     : (orderedDomains.length >= 25 || totalWidthSum > 5000);
 
   if (!isMultiRowNeeded) {
@@ -1214,7 +1214,9 @@ export function computeGlobalDomainLayout(
       domainsByLayer[primaryLayer].push(domain);
     });
 
-    const targetRowWidth = Math.max(2400, Math.min(4800, Math.sqrt(totalWidthSum * 800 * 1.6)));
+    const targetRowWidth = isFeatureLayout
+      ? Math.max(1200, Math.min(3200, Math.sqrt(totalWidthSum * 300 * 1.6)))
+      : Math.max(2400, Math.min(4800, Math.sqrt(totalWidthSum * 800 * 1.6)));
     let currentY = baseY;
 
     LAYERS_IN_ORDER.forEach(layer => {
