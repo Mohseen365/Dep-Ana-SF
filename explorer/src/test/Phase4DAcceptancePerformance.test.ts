@@ -2,18 +2,16 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { computeArchitectureLayout, classifyNodeLayer } from '../lib/architecture-layout';
+import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { measurePipelineStageMetrics } from '../lib/layout/pipeline-stage-diagnostics';
-import { evaluateLayout, compareLayoutMetrics } from '../lib/layout/evaluate-layout';
+import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import {
-  calculateLayoutMetrics,
   calculateFeatureLocalityDiagnostics,
   calculateDetailedEdgeCrossings,
   edgeCrossingCount,
   primaryNodeOverlapCount,
   satelliteNodeOverlapCount,
   nodeOverlapCount,
-  PositionMap,
 } from '../lib/layout/metrics';
 import { discoverFeatures } from '../lib/layout/features';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
@@ -98,37 +96,12 @@ describe('Phase 4-D: Canonical Acceptance, Performance & Determinism Verificatio
 
       const metrics = evaluateLayout(cloudSpendNodes, cloudSpendEdges, positions);
       const detailedCrossings = calculateDetailedEdgeCrossings(cloudSpendNodes, cloudSpendEdges, positions);
-      const featureLocality = calculateFeatureLocalityDiagnostics(cloudSpendNodes, cloudSpendEdges, positions);
       const featureDiscovery = discoverFeatures(cloudSpendNodes, cloudSpendEdges);
 
       // 1. Primary Architecture Metrics
       const primaryPrimaryCrossings = detailedCrossings.primaryPrimaryCrossings;
       const layerViolations = metrics.layerViolationCount;
       const primaryOverlaps = primaryNodeOverlapCount(cloudSpendNodes, cloudSpendEdges, positions);
-
-      // Calculate primary edge lengths
-      const primaryNodeIds = new Set(
-        cloudSpendNodes
-          .filter(n => !n.behavior?.isTest && n.type !== 'Field' && n.type !== 'CustomField')
-          .map(n => n.id)
-      );
-      const primaryEdgeLengths: number[] = [];
-      cloudSpendEdges.forEach(e => {
-        if (primaryNodeIds.has(e.source) && primaryNodeIds.has(e.target)) {
-          const p1 = positions[e.source];
-          const p2 = positions[e.target];
-          if (p1 && p2) {
-            const dx = p1.x - p2.x;
-            const dy = p1.y - p2.y;
-            primaryEdgeLengths.push(Math.sqrt(dx * dx + dy * dy));
-          }
-        }
-      });
-      const avgPrimaryEdgeLength =
-        primaryEdgeLengths.length > 0
-          ? primaryEdgeLengths.reduce((a, b) => a + b, 0) / primaryEdgeLengths.length
-          : 0;
-      const maxPrimaryEdgeLength = primaryEdgeLengths.length > 0 ? Math.max(...primaryEdgeLengths) : 0;
 
       // 2. Feature Locality Metrics
       const featureMap = new Map<string, string>();
@@ -182,13 +155,10 @@ describe('Phase 4-D: Canonical Acceptance, Performance & Determinism Verificatio
           : 0;
 
       // 4. Satellite Metrics
-      const primarySatelliteCrossings = detailedCrossings.primarySatelliteCrossings;
-      const satelliteSatelliteCrossings = detailedCrossings.satelliteSatelliteCrossings;
       const satelliteOverlaps = satelliteNodeOverlapCount(cloudSpendNodes, cloudSpendEdges, positions);
 
       // 5. Global Metrics
       const totalCrossings = detailedCrossings.totalGeometricCrossings;
-      const totalOverlaps = nodeOverlapCount(cloudSpendNodes, cloudSpendEdges, positions);
 
       let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
       cloudSpendNodes.forEach(n => {

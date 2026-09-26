@@ -1,7 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import React from 'react';
-import cytoscape from 'cytoscape';
+import { describe, it, expect, vi } from 'vitest';
+import { render } from '@testing-library/react';
 
 import { ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../types/explorer';
 import { buildGraphElements, createNodeMap } from '../lib/graph-builder';
@@ -11,7 +9,7 @@ import { discoverFeatures } from '../lib/layout/features';
 import { deriveFeatureCompositionGroups } from '../lib/layout/feature-composition';
 import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
-import { computeFocusedGraph, createEmptyFocusState } from '../lib/focus-graph';
+import { computeFocusedGraph } from '../lib/focus-graph';
 import { applyFilters, createEmptyFilterState } from '../lib/search-filter';
 import { createFinding } from '../lib/intelligence/finding';
 import { GraphView } from '../components/GraphView';
@@ -381,7 +379,7 @@ describe('Prompt 6F — Graph Data Integrity, Incremental Updates & Mutation For
         description: 'OrderService and PaymentGateway form a cycle',
         nodeIds: ['ApexClass:OrderService', 'ApexClass:PaymentGateway'],
         edgeIds: ['e-1', 'e-2'],
-        provenance: { origin: 'analyzer', source: 'dependency-graph' },
+        provenance: { origin: 'ANALYZER_FACT', source: 'dependency-graph', facts: {} },
         rule: {
           ruleId: 'R-CYCLE-01',
           ruleVersion: '1.0',

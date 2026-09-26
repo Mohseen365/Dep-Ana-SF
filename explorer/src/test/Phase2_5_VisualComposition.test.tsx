@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, act } from '@testing-library/react';
-import React from 'react';
 import fs from 'fs';
 import path from 'path';
 import cytoscape from 'cytoscape';
@@ -30,7 +29,6 @@ describe('Phase 2.5 — Visual Composition & Representation Acceptance Suite', (
     // Execute Hybrid layout
     const nodePositions = computeArchitectureLayout(nodes, edges, {
       enableFeatureLayout: true,
-      layoutMode: 'static',
     });
 
     const discovery = discoverFeatures(nodes, edges);
@@ -185,7 +183,6 @@ describe('Phase 2.5 — Visual Composition & Representation Acceptance Suite', (
 
     const hybridPositions = computeArchitectureLayout(nodes, edges, {
       enableFeatureLayout: true,
-      layoutMode: 'static',
     });
 
     const discovery = discoverFeatures(nodes, edges);
@@ -193,9 +190,15 @@ describe('Phase 2.5 — Visual Composition & Representation Acceptance Suite', (
     const sampleFindings = [
       {
         id: 'finding_1',
-        title: 'High Coupling',
+        type: 'HIGH_COUPLING',
         severity: 'HIGH' as const,
+        title: 'High Coupling',
+        description: 'High coupling detected',
         nodeIds: ['LWC:forecast-manager'],
+        edgeIds: [],
+        evidence: [],
+        provenance: { origin: 'DERIVED_RULE' as const, source: 'rule', facts: {} },
+        rule: { ruleId: 'HIGH_COUPLING', ruleVersion: '1.0', name: 'High Coupling' },
       },
     ];
 
@@ -234,7 +237,6 @@ describe('Phase 2.5 — Visual Composition & Representation Acceptance Suite', (
     const layoutSpy = vi.fn();
     const basePositions = computeArchitectureLayout(nodes, edges, {
       enableFeatureLayout: true,
-      layoutMode: 'static',
     });
 
     const mockCy = {
@@ -331,13 +333,11 @@ describe('Phase 2.5 — Visual Composition & Representation Acceptance Suite', (
     // Path A: Legacy domain hierarchy
     const pathA = computeArchitectureLayout(nodes, edges, {
       enableFeatureLayout: false,
-      layoutMode: 'static',
     });
 
     // Path C: Genuine 2D Hybrid layout
     const pathC = computeArchitectureLayout(nodes, edges, {
       enableFeatureLayout: true,
-      layoutMode: 'static',
     });
 
     // Compare node position geometry across Path A vs Path C

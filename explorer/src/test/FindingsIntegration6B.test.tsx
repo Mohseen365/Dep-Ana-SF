@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureFinding } from '../lib/intelligence';
 import { getFindingStatsForNode, buildGraphElements } from '../lib/graph-builder';
@@ -17,9 +16,10 @@ const mockNodes: ExplorerNode[] = [
     type: 'ApexClass',
     risk: 'HIGH',
     metrics: { score: 85, fanIn: 12, fanOut: 4, coupling: 16, unresolved: 0 },
-    refactoringReadiness: { testCoverageStatus: 'COVERED', hasCycles: true, hasUnresolved: false },
-    behavior: { isTest: false, queryCount: 2, dmlCount: 1, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: true, testCoverageStatus: 'COVERED', hasCycles: true, hasUnresolved: false },
+    behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 2, dmlCount: 1, calloutCount: 0 },
     file: 'force-app/main/default/classes/ServiceA.cls',
+    riskReasons: [],
   },
   {
     id: 'ApexClass:ServiceB',
@@ -28,9 +28,10 @@ const mockNodes: ExplorerNode[] = [
     type: 'ApexClass',
     risk: 'MEDIUM',
     metrics: { score: 60, fanIn: 3, fanOut: 8, coupling: 11, unresolved: 1 },
-    refactoringReadiness: { testCoverageStatus: 'NO_TESTS', hasCycles: true, hasUnresolved: true },
-    behavior: { isTest: false, queryCount: 5, dmlCount: 0, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: false, testCoverageStatus: 'NO_TESTS', hasCycles: true, hasUnresolved: true },
+    behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 5, dmlCount: 0, calloutCount: 0 },
     file: 'force-app/main/default/classes/ServiceB.cls',
+    riskReasons: [],
   },
   {
     id: 'ApexClass:SharedUtil',
@@ -39,9 +40,10 @@ const mockNodes: ExplorerNode[] = [
     type: 'ApexClass',
     risk: 'LOW',
     metrics: { score: 20, fanIn: 25, fanOut: 0, coupling: 25, unresolved: 0 },
-    refactoringReadiness: { testCoverageStatus: 'COVERED', hasCycles: false, hasUnresolved: false },
-    behavior: { isTest: false, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: false, testCoverageStatus: 'COVERED', hasCycles: false, hasUnresolved: false },
+    behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
     file: 'force-app/main/default/classes/SharedUtil.cls',
+    riskReasons: [],
   },
   {
     id: 'ApexClass:ServiceATest',
@@ -50,9 +52,10 @@ const mockNodes: ExplorerNode[] = [
     type: 'ApexClass',
     risk: 'LOW',
     metrics: { score: 10, fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0 },
-    refactoringReadiness: { testCoverageStatus: 'COVERED', hasCycles: false, hasUnresolved: false },
-    behavior: { isTest: true, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: false, testCoverageStatus: 'COVERED', hasCycles: false, hasUnresolved: false },
+    behavior: { isTest: true, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
     file: 'force-app/main/default/classes/ServiceATest.cls',
+    riskReasons: [],
   },
 ];
 
@@ -66,6 +69,18 @@ const mockEdges: ExplorerEdge[] = [
     unresolved: false,
     evidence: 'ServiceB.processData()',
     line: 42,
+    column: 1,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    methodOwner: 'ServiceB',
+    file: 'ServiceA.cls',
+    canonical: {
+      source: { type: 'ApexClass', name: 'ServiceA' },
+      target: { type: 'ApexClass', name: 'ServiceB' },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
   },
   {
     id: 'edge_B_A',
@@ -76,6 +91,18 @@ const mockEdges: ExplorerEdge[] = [
     unresolved: false,
     evidence: 'ServiceA.notifyStatus()',
     line: 88,
+    column: 1,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    methodOwner: 'ServiceA',
+    file: 'ServiceB.cls',
+    canonical: {
+      source: { type: 'ApexClass', name: 'ServiceB' },
+      target: { type: 'ApexClass', name: 'ServiceA' },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
   },
   {
     id: 'edge_A_Util',
@@ -86,6 +113,18 @@ const mockEdges: ExplorerEdge[] = [
     unresolved: false,
     evidence: 'SharedUtil.log()',
     line: 12,
+    column: 1,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    methodOwner: 'SharedUtil',
+    file: 'ServiceA.cls',
+    canonical: {
+      source: { type: 'ApexClass', name: 'ServiceA' },
+      target: { type: 'ApexClass', name: 'SharedUtil' },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
   },
   {
     id: 'edge_Test_A',
@@ -96,6 +135,18 @@ const mockEdges: ExplorerEdge[] = [
     unresolved: false,
     evidence: 'ServiceA s = new ServiceA()',
     line: 15,
+    column: 1,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    methodOwner: 'ServiceA',
+    file: 'ServiceATest.cls',
+    canonical: {
+      source: { type: 'ApexClass', name: 'ServiceATest' },
+      target: { type: 'ApexClass', name: 'ServiceA' },
+      relationship: { type: 'test-reference', resolution: 'EXACT' },
+      location: {},
+    },
   },
 ];
 

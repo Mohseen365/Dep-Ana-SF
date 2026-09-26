@@ -5,7 +5,7 @@
 * **Audit Date:** 2026-09-25
 * **Repository / Branch:** `salesforce-architecture-refactoring-explorer` / `jules-5070679506713809822-e8375f1c`
 * **Audit Scope:** Read-only, evidence-driven, adversarial audit across the entire codebase and context architecture.
-* **Audit Methodology:**
+* **Audit Methodology:** 
   1. Contract recovery via `AGENT.md`, `08_Audit_Source_Register.md`, and `CURRENT-STATE-BASELINE.md`.
   2. Implementation verification across backend CommonJS analyzers, frontend React/Vite/Cytoscape modules, and layout algorithms.
   3. Validation testing using CLI integration suites (`npm run test:cli`), TypeScript compilation (`tsc`), and Vitest component/layout suites.

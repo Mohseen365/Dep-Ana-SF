@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "cst",
+  "activeProjectId": "pbim",
   "projects": [
     {
       "id": "foodies",
@@ -149,14 +149,40 @@
       "id": "cst",
       "name": "cst",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "tmp-integration-test/fixture",
-      "createdAt": "2026-09-24T07:44:52.923Z",
-      "updatedAt": "2026-09-24T07:44:52.923Z",
-      "lastAnalyzedAt": "2026-09-24T07:44:52.923Z",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default",
+      "createdAt": "2026-09-24T06:56:49.825Z",
+      "updatedAt": "2026-09-24T06:56:49.825Z",
+      "lastAnalyzedAt": "2026-09-24T06:56:49.825Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 240,
       "dependencyCount": 1024,
       "analysisPath": "/projects/cst/explorer-data.json"
+    },
+    {
+      "id": "cstk",
+      "name": "cstk",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default",
+      "createdAt": "2026-09-25T04:50:31.850Z",
+      "updatedAt": "2026-09-25T04:50:31.850Z",
+      "lastAnalyzedAt": "2026-09-25T04:50:31.850Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 240,
+      "dependencyCount": 1024,
+      "analysisPath": "/projects/cstk/explorer-data.json"
+    },
+    {
+      "id": "pbim",
+      "name": "pbim",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Pub-Infra-Mang\\force-app\\main\\default",
+      "createdAt": "2026-09-25T04:55:57.331Z",
+      "updatedAt": "2026-09-25T04:55:57.331Z",
+      "lastAnalyzedAt": "2026-09-25T04:55:57.331Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 528,
+      "dependencyCount": 2063,
+      "analysisPath": "/projects/pbim/explorer-data.json"
     }
   ],
   "artifacts": {
@@ -240,9 +266,23 @@
     "cst": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:5c10d1d0313607072b9d44d81c81aa0f8fdd83144861913c1190ab42c4c0cfcb",
-      "nodeCount": 4,
-      "edgeCount": 3
+      "fileHash": "sha256:00b0962b7c80047dee12529c17ff4bdea0605b3cb4417c624dfaa093db32449d",
+      "nodeCount": 240,
+      "edgeCount": 1024
+    },
+    "cstk": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:a77bab098a225c43eae268ce7b136251657681296b65a0be335ce9e969011d6b",
+      "nodeCount": 240,
+      "edgeCount": 1024
+    },
+    "pbim": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:d194052cff3164865feedc3b79f4e40ebbd708d5f3755502fca1ae4398d094d9",
+      "nodeCount": 528,
+      "edgeCount": 2063
     }
   }
 }

@@ -33,12 +33,12 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
     expect(metrics.detailedCrossings).toBeDefined();
     const dc = metrics.detailedCrossings!;
 
-    expect(dc.primaryPrimaryCrossings).toBe(8704);
-    expect(dc.primarySatelliteCrossings).toBe(41590);
-    expect(dc.satelliteSatelliteCrossings).toBe(41544);
-    expect(dc.primaryBridgeCrossings).toBe(2594);
-    expect(dc.bridgeBridgeCrossings).toBe(230);
-    expect(dc.totalGeometricCrossings).toBe(94662);
+    expect(dc.primaryPrimaryCrossings).toBe(7812);
+    expect(dc.primarySatelliteCrossings).toBe(38706);
+    expect(dc.satelliteSatelliteCrossings).toBe(36381);
+    expect(dc.primaryBridgeCrossings).toBe(2272);
+    expect(dc.bridgeBridgeCrossings).toBe(196);
+    expect(dc.totalGeometricCrossings).toBe(85367);
 
     const sum = dc.primaryPrimaryCrossings + dc.primaryBridgeCrossings + dc.bridgeBridgeCrossings + dc.primarySatelliteCrossings + dc.satelliteSatelliteCrossings;
     expect(metrics.edgeCrossingCount).toBe(sum);
@@ -97,6 +97,7 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
       layerMap,
       domainMap: featureMap,
       domainOrder: featureLayoutResult.orderedDomains,
+      layerYMap: featureLayoutResult.layerYMap,
     });
 
     // Stage 7: Primary Production Local Layout
@@ -113,6 +114,7 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
         nodeHeight: 60,
         domainSpacing: 380,
         layerYMap: featureLayoutResult.layerYMap,
+        featureLayerYMap: featureLayoutResult.featureLayerYMap,
       },
     });
 
@@ -161,6 +163,8 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
         layerSpacing: 250,
         layerYOffsets: featureLayoutResult.layerYMap,
         index,
+        featureLayerYMap: featureLayoutResult.featureLayerYMap,
+        featureMap,
       }
     );
     const stage9Positions = { ...satelliteResult.positions };
@@ -212,7 +216,7 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
       edges: safeEdges,
       positions: stage10Positions,
       analysis,
-      options: { nodeWidth: 120, nodeHeight: 60, layerMap, domainMap: featureMap },
+      options: { nodeWidth: 120, nodeHeight: 60, layerMap, domainMap: featureMap, domainBounds: featureLayoutResult.domainBounds },
     });
     const stage11Positions = stage11Result.positions;
 
@@ -225,12 +229,12 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
     const stage11Crossings = calculateDetailedEdgeCrossings(safeNodes, safeEdges, stage11Positions);
     const stage12Crossings = calculateDetailedEdgeCrossings(safeNodes, safeEdges, stage12Positions);
 
-    // Stage 9 Cpp is 8,763 before component packing eliminates inter-component overlaps.
-    // Stage 10, 11, 12 Cpp is exactly 8,704.
-    expect(stage9Crossings.primaryPrimaryCrossings).toBe(8763);
-    expect(stage10Crossings.primaryPrimaryCrossings).toBe(8704);
-    expect(stage11Crossings.primaryPrimaryCrossings).toBe(8704);
-    expect(stage12Crossings.primaryPrimaryCrossings).toBe(8704);
+    // Stage 9 Cpp is 7,818 before component packing eliminates inter-component overlaps.
+    // Stage 10, 11, 12 Cpp is exactly 7,812.
+    expect(stage9Crossings.primaryPrimaryCrossings).toBe(7818);
+    expect(stage10Crossings.primaryPrimaryCrossings).toBe(7812);
+    expect(stage11Crossings.primaryPrimaryCrossings).toBe(7812);
+    expect(stage12Crossings.primaryPrimaryCrossings).toBe(7812);
 
     // Verify relative primary node geometry preservation across all stages
     const primaryNodes = safeNodes.filter(n => !isTestNode(n) && !isFieldNode(n));

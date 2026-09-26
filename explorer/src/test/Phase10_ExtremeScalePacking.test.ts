@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { computeGlobalFeatureLayout, computeFeatureLayerYMap } from '../lib/layout/global-layout';
+import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
 import { calculateLayoutMetrics } from '../lib/layout/metrics';
 
 interface ProjectDataset {
@@ -40,9 +40,7 @@ describe('Phase 10 — Extreme-Scale Feature Packing Optimization Harness', () =
 
     Object.entries(datasets).forEach(([key, ds]) => {
       // Stage 5: Global Feature Layout alone
-      const stage5Result = computeGlobalFeatureLayout(ds.nodes, ds.edges, {
-        enableFeatureLayout: true,
-      });
+      const stage5Result = computeGlobalFeatureLayout(ds.nodes, ds.edges);
 
       let stage5MinY = Infinity;
       let stage5MaxY = -Infinity;
@@ -174,15 +172,13 @@ describe('Phase 10 — Extreme-Scale Feature Packing Optimization Harness', () =
     console.log('\n=== PHASE 10: FEATURE-LOCAL Y SAFETY VERIFICATION (PHASE 02 CONTRACT) ===\n');
 
     Object.entries(datasets).forEach(([key, ds]) => {
-      const globalResult = computeGlobalFeatureLayout(ds.nodes, ds.edges, {
-        enableFeatureLayout: true,
-      });
+      const globalResult = computeGlobalFeatureLayout(ds.nodes, ds.edges);
 
       const featureYMap = globalResult.featureLayerYMap;
       expect(featureYMap).toBeDefined();
 
       if (featureYMap) {
-        Object.entries(featureYMap).forEach(([fId, layerY]) => {
+        Object.entries(featureYMap).forEach(([, layerY]) => {
           const layers = ['presentation', 'application', 'domain', 'schema'] as const;
           for (let i = 0; i < layers.length - 1; i++) {
             // Verify structure

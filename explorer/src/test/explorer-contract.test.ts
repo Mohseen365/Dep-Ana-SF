@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { ExplorerNode as ContractExplorerNode } from '../../explorer-contract';
+import type { ExplorerNode as ContractExplorerNode } from '../../../explorer-contract';
 import type { ExplorerNode as AppExplorerNode } from '../types/explorer';
 import { ExplorerNodeZ } from '../lib/schema';
 

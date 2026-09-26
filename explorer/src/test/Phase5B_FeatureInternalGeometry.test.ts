@@ -5,7 +5,6 @@ import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import {
-  calculateLayoutMetrics,
   calculateFeatureLocalityDiagnostics,
   calculateDetailedEdgeCrossings,
   primaryNodeOverlapCount,

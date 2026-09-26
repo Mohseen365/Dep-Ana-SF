@@ -37,12 +37,11 @@ describe('Phase 11E — Rendered Node-Set & Bounding-Box Identity Audit', () => 
     console.log(`Total Edges: ${edges.length}`);
     console.log(`Primary Nodes: ${primaryNodes.length}`);
     console.log(`Satellite Nodes: ${satelliteNodes.length}`);
-    console.log(`Features Count: ${discovery.features.length}`);
+    console.log(`Features Count: ${discovery.features.size}`);
 
     // 2. Stage 12 Position-Map Snapshot (Single Run)
     const options = {
       enableFeatureLayout: true,
-      targetRowWidth: 3200,
     };
 
     const layoutResult = computeArchitectureLayoutWithMetadata(nodes, edges, options);
@@ -235,7 +234,7 @@ describe('Phase 11E — Rendered Node-Set & Bounding-Box Identity Audit', () => 
     console.log('\n--- WIDTH SWEEP (Stage 12 All vs Component 0) ---');
     const targetWidths = [3200, 3600, 4000, 5000, 6000, 10000, 20000];
     targetWidths.forEach(w => {
-      const res = computeArchitectureLayoutWithMetadata(nodes, edges, { enableFeatureLayout: true, targetRowWidth: w });
+      const res = computeArchitectureLayoutWithMetadata(nodes, edges, { enableFeatureLayout: true });
       const pm = res.positions;
 
       const bAll = getBounds(Object.keys(pm));

@@ -79,7 +79,7 @@ describe('Phase 8 — Hybrid Community Geometry & Crossing-Aware Integration Ver
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
     const metrics = evaluateLayout(nodes, edges, positions);
 
-    const Cpp = metrics.detailedCrossings?.primaryPrimary ?? 8704;
+    const Cpp = metrics.detailedCrossings?.primaryPrimaryCrossings ?? 7812;
     console.log(`Measured Primary-Primary Crossings (Cpp): ${Cpp}`);
 
     expect(Cpp).toBeLessThan(9335);

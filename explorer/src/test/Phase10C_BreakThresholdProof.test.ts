@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { computeGlobalFeatureLayout, type DomainGraph, type FeatureRegion } from '../lib/layout/global-layout';
+import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 
 interface ProjectDataset {

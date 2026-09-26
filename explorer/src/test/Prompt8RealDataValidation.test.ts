@@ -6,14 +6,11 @@ import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/ex
 import {
   applySimulationOperations,
   computeFindingDelta,
-  computeStepImpact,
   computeTemporarySimulatedPositions,
   createProposalFromTargetNodes,
   createProposalFromFinding,
-  isProposalStale,
   validateProposalCommit,
   computeGraphHash,
-  type RefactoringProposal,
   type RefactoringOperation,
 } from '../lib/refactoring-simulation';
 import { runAllRules, createArchitectureContext } from '../lib/intelligence';

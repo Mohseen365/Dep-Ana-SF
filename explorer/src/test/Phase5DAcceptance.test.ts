@@ -3,35 +3,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { computeArchitectureLayout, classifyNodeLayer } from '../lib/architecture-layout';
+import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { measurePipelineStageMetrics } from '../lib/layout/pipeline-stage-diagnostics';
-import { evaluateLayout, compareLayoutMetrics } from '../lib/layout/evaluate-layout';
+import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import {
-  calculateLayoutMetrics,
   calculateFeatureLocalityDiagnostics,
   calculateDetailedEdgeCrossings,
-  edgeCrossingCount,
   primaryNodeOverlapCount,
   satelliteNodeOverlapCount,
-  nodeOverlapCount,
-  PositionMap,
 } from '../lib/layout/metrics';
-import { discoverFeatures } from '../lib/layout/features';
 import { filterGraphByNodeTypes } from '../lib/search-filter';
 import { computeFocusedGraph } from '../lib/focus-graph';
 import { applySimulationOperations } from '../lib/refactoring-simulation';
 
-// Helper to compute percentile
-function computePercentile(values: number[], p: number): number {
-  if (values.length === 0) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
-  const index = (sorted.length - 1) * p;
-  const lower = Math.floor(index);
-  const upper = Math.ceil(index);
-  const weight = index - lower;
-  if (lower === upper) return sorted[lower];
-  return sorted[lower] * (1 - weight) + sorted[upper] * weight;
-}
 
 // SHA-256 calculator
 function getFileSha256(filePath: string): string {
@@ -71,28 +55,6 @@ describe('PHASE 5-D: Canonical Hybrid Acceptance & Adversarial Validation', () =
     const posB = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, { enableFeatureLayout: true });
     const runtimeB = performance.now() - t0B;
 
-    // Candidate C: Phase 5-A Variant (Feature Layout with candidate tuning / options)
-    const t0C = performance.now();
-    const posC = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, { enableFeatureLayout: true });
-    const runtimeC = performance.now() - t0C;
-
-    // Candidate D: Phase 5-B Variant (Feature Layout variant)
-    const t0D = performance.now();
-    const posD = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, { enableFeatureLayout: true });
-    const runtimeD = performance.now() - t0D;
-
-    // Candidate E: Phase 5-A + 5-B Variant
-    const t0E = performance.now();
-    const posE = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, { enableFeatureLayout: true });
-    const runtimeE = performance.now() - t0E;
-
-    // Candidate F: Phase 5-A + 5-B + 5-C Variant
-    const t0F = performance.now();
-    const posF = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, { enableFeatureLayout: true });
-    const runtimeF = performance.now() - t0F;
-
-    const evalA = evaluateLayout(cloudSpendNodes, cloudSpendEdges, posA);
-    const evalB = evaluateLayout(cloudSpendNodes, cloudSpendEdges, posB);
 
     const detailedA = calculateDetailedEdgeCrossings(cloudSpendNodes, cloudSpendEdges, posA);
     const detailedB = calculateDetailedEdgeCrossings(cloudSpendNodes, cloudSpendEdges, posB);
@@ -246,7 +208,7 @@ describe('PHASE 5-D: Canonical Hybrid Acceptance & Adversarial Validation', () =
     });
 
     // 5. Visibility Filtering
-    const visibleTypes = new Set(['ApexClass', 'ApexTrigger', 'LWC']);
+    const visibleTypes = ['ApexClass', 'ApexTrigger', 'LWC'] as any;
     const filteredGraph = filterGraphByNodeTypes(cloudSpendNodes, cloudSpendEdges, visibleTypes);
     expect(filteredGraph.nodes.length).toBeLessThan(cloudSpendNodes.length);
     // Position of retained visible nodes matches canonical
@@ -265,7 +227,7 @@ describe('PHASE 5-D: Canonical Hybrid Acceptance & Adversarial Validation', () =
     expect(focusedGraph.nodes.length).toBeGreaterThan(0);
 
     // 7. Refactoring Simulation Integration
-    const simResult = applySimulationOperations({ nodes: cloudSpendNodes, edges: cloudSpendEdges }, []);
+    const simResult = applySimulationOperations({ ...cloudSpendData }, []);
     expect(simResult.nodes.length).toBe(cloudSpendNodes.length);
 
     // Final SHA-256 check

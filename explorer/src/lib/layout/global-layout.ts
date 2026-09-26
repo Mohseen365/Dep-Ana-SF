@@ -103,6 +103,10 @@ export interface GlobalLayoutOptions {
   index?: LayoutGraphIndex;
   /** Internal flag indicating feature-level spatial layout */
   isFeatureLayout?: boolean;
+  /** Enables Feature-aware spatial layout */
+  enableFeatureLayout?: boolean;
+  /** Optional target row width override for multi-row packing experiments */
+  targetRowWidthOverride?: number;
 }
 
 export interface GlobalLayoutResult {
@@ -1220,9 +1224,9 @@ export function computeGlobalDomainLayout(
       domainsByLayer[primaryLayer].push(domain);
     });
 
-    const targetRowWidth = isFeatureLayout
+    const targetRowWidth = options.targetRowWidthOverride ?? (isFeatureLayout
       ? Math.max(1200, Math.min(3200, Math.sqrt(totalWidthSum * 300 * 1.6)))
-      : Math.max(2400, Math.min(4800, Math.sqrt(totalWidthSum * 800 * 1.6)));
+      : Math.max(2400, Math.min(4800, Math.sqrt(totalWidthSum * 800 * 1.6))));
     let currentY = baseY;
 
     LAYERS_IN_ORDER.forEach(layer => {
