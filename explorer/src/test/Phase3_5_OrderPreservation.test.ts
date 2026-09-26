@@ -30,8 +30,9 @@ describe('Phase 3.5: Order Preservation & Crossing Conservation Test Suite', () 
     const featureOrder = globalFeatureResult.orderedDomains;
     expect(featureOrder.length).toBeGreaterThanOrEqual(14);
 
+    const featureDiscovery = discoverFeatures(safeNodes, safeEdges);
     const featureMap = new Map<string, string>();
-    globalFeatureResult.featureDiscovery?.assignments.forEach((assignment, nodeId) => {
+    featureDiscovery.assignments.forEach((assignment: { primaryFeatureId: string }, nodeId: string) => {
       featureMap.set(nodeId, assignment.primaryFeatureId);
     });
 

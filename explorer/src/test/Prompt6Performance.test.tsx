@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, fireEvent } from '@testing-library/react';
-import React from 'react';
+import { render } from '@testing-library/react';
 import { GraphView } from '../components/GraphView';
 import { FeatureOverlayCanvas } from '../components/graph-internals/FeatureOverlayCanvas';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
@@ -9,7 +8,6 @@ import * as featuresModule from '../lib/layout/features';
 import { discoverFeatures } from '../lib/layout/features';
 import { deriveFeatureCompositionGroups } from '../lib/layout/feature-composition';
 import { getSharedHighlightData } from '../lib/layout/shared-highlight';
-import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 // Mock Cytoscape for JSDOM render tests
 const { mockCy, mockCytoscapeFn } = vi.hoisted(() => {

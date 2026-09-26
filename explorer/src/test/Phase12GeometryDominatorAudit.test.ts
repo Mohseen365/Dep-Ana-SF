@@ -11,7 +11,7 @@ import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClass
 import { classifyNodeLayerWithReason } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
-import { classifyAllFeatureRoles, type FeatureRoleContext } from '../lib/layout/feature-roles';
+import { type FeatureRoleContext } from '../lib/layout/feature-roles';
 import { discoverFeatures } from '../lib/layout/features';
 import {
   computeGlobalFeatureLayout,
@@ -734,10 +734,10 @@ describe('PHASE 12 — CURRENT PRODUCTION GEOMETRY DOMINATOR & OPTIMIZATION EXPE
         console.log(`  Stage 12 Bounds: ${s12B.width}x${s12B.height}px`);
         console.log(`  Rendered BB:     ${cyBb.w}x${cyBb.h}px`);
         console.log(`  Crossings:       Cpp=${c?.primaryPrimaryCrossings}, Cpb=${c?.primaryBridgeCrossings}, Cbb=${c?.bridgeBridgeCrossings}, Cps=${c?.primarySatelliteCrossings}, Css=${c?.satelliteSatelliteCrossings}, Ctotal=${metrics.edgeCrossingCount}`);
-        console.log(`  Invariants:      Overlaps=${overlaps}, MinClearance=${metrics.minClearance.toFixed(2)}px (${clearancePass ? 'PASS' : 'FAIL'})`);
+        console.log(`  Invariants:      Overlaps=${overlaps}, MinClearance=${metrics.minClearance!.toFixed(2)}px (${clearancePass ? 'PASS' : 'FAIL'})`);
 
         expect(overlaps).toBe(0);
-        expect(metrics.minClearance).toBeGreaterThanOrEqual(39.99);
+        expect(metrics.minClearance!).toBeGreaterThanOrEqual(39.99);
       });
     });
   }, 300000);

@@ -31,20 +31,10 @@ function computeMedian(values: number[]): number {
   return computePercentile(values, 0.5);
 }
 
-function computeAverage(values: number[]): number {
-  if (values.length === 0) return 0;
-  return values.reduce((a, b) => a + b, 0) / values.length;
-}
-
 function euclideanDistance(p1: { x: number; y: number }, p2: { x: number; y: number }): number {
   const dx = p1.x - p2.x;
   const dy = p1.y - p2.y;
   return Math.sqrt(dx * dx + dy * dy);
-}
-
-function getFileSha256(filePath: string): string {
-  const fileBuffer = fs.readFileSync(filePath);
-  return crypto.createHash('sha256').update(fileBuffer).digest('hex');
 }
 
 const cloudSpendFixturePath = path.resolve(
@@ -79,10 +69,10 @@ describe('Phase 7B — Final Crossing Gap, Locality Proof & Release-Gate Hardeni
     console.log(`Primary Overlaps: ${primaryNodeOverlapCount(cloudSpendNodes, cloudSpendEdges, pos)}`);
     console.log(`Satellite Overlaps: ${satelliteNodeOverlapCount(cloudSpendNodes, cloudSpendEdges, pos)}`);
 
-    expect(detailed.primaryPrimaryCrossings).toBe(8704);
-    expect(detailed.primarySatelliteCrossings).toBe(41590);
-    expect(detailed.satelliteSatelliteCrossings).toBe(41544);
-    expect(detailed.totalGeometricCrossings).toBe(94662);
+    expect(detailed.primaryPrimaryCrossings).toBe(7812);
+    expect(detailed.primarySatelliteCrossings).toBe(38706);
+    expect(detailed.satelliteSatelliteCrossings).toBe(36381);
+    expect(detailed.totalGeometricCrossings).toBe(85367);
     expect(metrics.layerViolationCount).toBe(0);
   });
 
@@ -224,7 +214,6 @@ describe('Phase 7B — Final Crossing Gap, Locality Proof & Release-Gate Hardeni
             }
           } else if (category === 'primary-satellite') {
             const satEdge = s1.isSatellite ? s1 : s2;
-            const primEdge = s1.isSatellite ? s2 : s1;
             if (satEdge.srcNode.displayName?.includes('Test') || satEdge.tgtNode.displayName?.includes('Test')) {
               clusterId = 'CLUSTER_TEST_TETHER_CROSS_PRIMARY';
             } else {
@@ -264,7 +253,7 @@ describe('Phase 7B — Final Crossing Gap, Locality Proof & Release-Gate Hardeni
       console.log(`  Cluster [${clusterId}]: ${count} crossings (${((count / crossings.length) * 100).toFixed(2)}%)`);
     });
 
-    expect(crossings.length).toBe(94662);
+    expect(crossings.length).toBe(85367);
   });
 
   it('3. Complete Same-Layer, Cross-Layer, and Aggregate Locality Proof', () => {

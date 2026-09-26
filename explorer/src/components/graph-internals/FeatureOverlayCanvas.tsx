@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import type cytoscape from 'cytoscape';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { FeatureDiscoveryResult } from '../../lib/layout/features';
+import type { FeatureRegion } from '../../lib/layout/global-layout';
 import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '../../lib/layout/feature-composition';
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
 import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
@@ -12,6 +13,7 @@ export interface FeatureOverlayCanvasProps {
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   discoveryResult?: FeatureDiscoveryResult | null;
+  featureRegions?: Map<string, FeatureRegion> | null;
   selectedNodeId?: string | null;
   hoveredNodeId?: string | null;
   nodePositions?: Record<string, { x: number; y: number }>;

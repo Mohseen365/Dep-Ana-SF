@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, act } from '@testing-library/react';
-import React from 'react';
 import type cytoscape from 'cytoscape';
 
 import { GraphView } from '../components/GraphView';
@@ -10,7 +9,7 @@ import { discoverFeatures } from '../lib/layout/features';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 // Mock cytoscape and plugins for GraphView tests
-const { mockCy, mockCytoscapeFn, mockNodeObjMap } = vi.hoisted(() => {
+const { mockCytoscapeFn } = vi.hoisted(() => {
   const mockNodeObjMap: Record<string, any> = {};
 
   const createMockNode = (id: string, x = 100, y = 100) => {

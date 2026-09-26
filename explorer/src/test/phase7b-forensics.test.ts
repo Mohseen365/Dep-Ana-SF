@@ -1,15 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
-import { discoverFeatures } from '../lib/layout/features';
-import { classifyNodeLayerWithReason } from '../lib/layout/layers';
-import { placeSatellites } from '../lib/satellites';
 import {
   calculateLayoutMetrics,
   calculateDetailedEdgeCrossings,
-  calculateFeatureLocalityDiagnostics,
   primaryNodeOverlapCount,
   satelliteNodeOverlapCount,
   minimumNodeClearance,

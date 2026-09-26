@@ -3,7 +3,6 @@ import React from 'react';
 import { render, act } from '@testing-library/react';
 import { GraphView, GraphViewRef } from '../components/GraphView';
 import * as graphLayoutModule from '../lib/graph-layout';
-import * as archLayoutModule from '../lib/architecture-layout';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 let mockEles: any[] = [];
@@ -169,7 +168,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
         isHighRisk: false,
         hasCycles: false,
         hasUnresolved: false,
-        testCoverageStatus: 'TESTED',
+        testCoverageStatus: 'COVERED',
       },
     },
     {
@@ -193,7 +192,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
         isHighRisk: false,
         hasCycles: false,
         hasUnresolved: false,
-        testCoverageStatus: 'TESTED',
+        testCoverageStatus: 'COVERED',
       },
     },
   ];
@@ -203,7 +202,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
       id: 'e1',
       source: 'Apex1',
       target: 'Apex2',
-      relationshipType: 'Calls',
+      relationshipType: 'method-call',
       method: 'test',
       evidence: '',
       unresolved: false,
@@ -217,7 +216,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
       canonical: {
         source: { type: 'ApexClass', name: 'Apex1' },
         target: { type: 'ApexClass', name: 'Apex2' },
-        relationship: { type: 'Calls', resolution: 'EXACT' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
         location: {},
       },
     },
@@ -350,7 +349,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
     const getLayoutOptionsSpy = vi.spyOn(graphLayoutModule, 'getLayoutOptions');
 
     // Project A without feature layout
-    const { rerender } = render(
+    render(
       <GraphView
         nodes={sampleNodes}
         edges={sampleEdges}

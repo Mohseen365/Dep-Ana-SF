@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout, classifyNodeLayer } from '../lib/architecture-layout';
-import { getLayoutOptions, runLayout } from '../lib/graph-layout';
+import { getLayoutOptions } from '../lib/graph-layout';
 import { discoverFeatures } from '../lib/layout/features';
 import { evaluateLayout, compareLayoutMetrics } from '../lib/layout/evaluate-layout';
 import { PositionMap } from '../lib/layout/metrics';
@@ -108,7 +108,7 @@ describe('Workstream B6: Hybrid Layout Acceptance & Regression Test Harness', ()
       });
 
       // Assert each feature region with multiple nodes has valid non-zero extent
-      Object.entries(featureBounds).forEach(([featureId, bounds]) => {
+      Object.entries(featureBounds).forEach(([, bounds]) => {
         if (bounds.nodeCount > 1) {
           expect(bounds.maxX - bounds.minX).toBeGreaterThanOrEqual(0);
           expect(bounds.maxY - bounds.minY).toBeGreaterThanOrEqual(0);
@@ -265,8 +265,6 @@ describe('Workstream B6: Hybrid Layout Acceptance & Regression Test Harness', ()
     });
 
     it('correctly classifies a theoretical layout satisfying all thresholds as Path C (Genuine Hybrid)', () => {
-      // Theoretical mock positions meeting Path C quality gate thresholds
-      const mockGenuinePositions: PositionMap = {};
       const posBase = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, { enableFeatureLayout: true });
 
       // We test that the classification algorithm evaluates actual metrics rather than just relying on feature flag
@@ -416,9 +414,6 @@ describe('Workstream B6: Hybrid Layout Acceptance & Regression Test Harness', ()
       const initialPos = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, {
         enableFeatureLayout: true,
       });
-
-      // Simulated viewport state mutations
-      const viewportState = { zoom: 1.5, pan: { x: 200, y: -150 }, selectedNodeId: cloudSpendNodes[0].id, hoveredNodeId: cloudSpendNodes[1].id };
 
       // Node coordinates in position map must remain identical regardless of viewport state
       const currentPos = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, {

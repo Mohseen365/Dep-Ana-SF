@@ -231,6 +231,7 @@ const SAMPLE_EDGES: ExplorerEdge[] = [
 describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', () => {
   const defaultGraphLayoutState = {
     mode: 'static' as const,
+    layoutName: 'cose',
     architectureMode: 'hierarchical' as const,
     layoutProvenance: 'automatic-hierarchical' as const,
     nodePositions: { NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } },
@@ -291,6 +292,7 @@ describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', 
         layoutMode="static"
         graphLayout={{
           mode: 'static',
+          layoutName: 'cose',
           architectureMode: 'hierarchical',
           layoutProvenance: 'automatic-hierarchical',
           nodePositions: { NodeA: { x: 100, y: 100 }, NodeB: { x: 200, y: 200 }, NodeC: { x: 300, y: 300 } },

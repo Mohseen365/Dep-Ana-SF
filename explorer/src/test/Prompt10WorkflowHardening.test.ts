@@ -3,31 +3,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 
-import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge, Position } from '../types/explorer';
-import {
-  type ArchitectureFinding,
-} from '../lib/intelligence';
+import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 import {
   runArchitectureRules,
   computeGraphHash,
-  isProposalStale,
   validateProposalCommit,
   applySimulationOperations,
   computeFindingDelta,
   computeStepImpact,
   computeTemporarySimulatedPositions,
   createProposalFromTargetNodes,
-  createProposalFromFinding,
   type RefactoringProposal,
-  type RefactoringOperation,
-  type RefactoringStep,
 } from '../lib/refactoring-simulation';
 import {
   loadProjectState,
   saveProjectState,
-  updateProjectState,
   clearProjectState,
-  type ProjectUIState,
 } from '../lib/projectState';
 
 const FIXTURE_PATH = path.resolve(__dirname, '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
@@ -43,8 +34,8 @@ function computeFileSha256(filePath: string): string {
   return crypto.createHash('sha256').update(content).digest('hex');
 }
 
-function getBasePositions(graphData: ExplorerDataSchema): Record<string, Position> {
-  const positions: Record<string, Position> = {};
+function getBasePositions(graphData: ExplorerDataSchema): Record<string, { x: number; y: number }> {
+  const positions: Record<string, { x: number; y: number }> = {};
   graphData.nodes.forEach((node, idx) => {
     positions[node.id] = {
       x: (idx % 10) * 100 + 50,
@@ -87,9 +78,12 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
         id: 'ApexClass:ExtractedSpendHelper',
         displayName: 'ExtractedSpendHelper',
         type: 'ApexClass',
-        layer: 'application',
+        file: 'ExtractedSpendHelper.cls',
         risk: 'LOW',
-        metrics: { linesOfCode: 90, fanIn: 1, fanOut: 0, cyclomaticComplexity: 3, weightedMethodCount: 3 },
+        riskReasons: [],
+        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 5 },
+        behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
       };
 
       const proposal: RefactoringProposal = {
@@ -194,8 +188,23 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
         id: `edge-${sourceNode.id}-to-${targetNode.id}-custom`,
         source: sourceNode.id,
         target: targetNode.id,
-        relationshipType: 'calls',
-        label: 'test call',
+        relationshipType: 'method-call',
+        method: 'testCall',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: 1,
+        column: 1,
+        methodOwner: targetNode.id,
+        file: 'test.cls',
+        canonical: {
+          source: { type: sourceNode.type, name: sourceNode.displayName },
+          target: { type: targetNode.type, name: targetNode.displayName },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
       };
 
       const proposal: RefactoringProposal = {
@@ -272,7 +281,7 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
               {
                 type: 'modify-node',
                 nodeId: targetNode.id,
-                changes: { risk: 'HIGH', layer: 'domain' },
+                changes: { risk: 'HIGH' },
               },
             ],
           },
@@ -282,7 +291,6 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
       const simulatedGraph = applySimulationOperations(baselineGraph, proposal.steps[0].operations);
       const modified = simulatedGraph.nodes.find(n => n.id === targetNode.id)!;
       expect(modified.risk).toBe('HIGH');
-      expect(modified.layer).toBe('domain');
       expect(modified.displayName).toBe(targetNode.displayName);
 
       // Incident edges preserved
@@ -339,9 +347,12 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
         id: 'ApexClass:UnrelatedHelperClass',
         displayName: 'UnrelatedHelperClass',
         type: 'ApexClass',
-        layer: 'application',
+        file: 'UnrelatedHelperClass.cls',
         risk: 'LOW',
-        metrics: { linesOfCode: 50, fanIn: 0, fanOut: 0, cyclomaticComplexity: 1, weightedMethodCount: 1 },
+        riskReasons: [],
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
       };
 
       const proposal: RefactoringProposal = {
@@ -413,9 +424,12 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
         id: 'ApexClass:ExcessiveFanInHub',
         displayName: 'ExcessiveFanInHub',
         type: 'ApexClass',
-        layer: 'domain',
+        file: 'ExcessiveFanInHub.cls',
         risk: 'HIGH',
-        metrics: { linesOfCode: 500, fanIn: 25, fanOut: 2, cyclomaticComplexity: 15, weightedMethodCount: 10 },
+        riskReasons: [],
+        metrics: { fanIn: 25, fanOut: 2, coupling: 27, unresolved: 0, score: 80 },
+        behavior: { isTest: false, publicContractsCount: 10, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
       };
 
       const proposal: RefactoringProposal = {
@@ -476,7 +490,7 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
       unrelatedFindingsBefore.forEach(beforeF => {
         const afterF = unrelatedFindingsAfter.find(f => f.id === beforeF.id);
         expect(afterF).toBeDefined();
-        expect(afterF!.ruleId).toBe(beforeF.ruleId);
+        expect(afterF!.rule.ruleId).toBe(beforeF.rule.ruleId);
         expect(afterF!.severity).toBe(beforeF.severity);
       });
     });
@@ -492,9 +506,12 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
         id: 'ApexClass:MultiStepHelperService',
         displayName: 'MultiStepHelperService',
         type: 'ApexClass',
-        layer: 'domain',
+        file: 'MultiStepHelperService.cls',
         risk: 'LOW',
-        metrics: { linesOfCode: 120, fanIn: 1, fanOut: 0, cyclomaticComplexity: 2, weightedMethodCount: 2 },
+        riskReasons: [],
+        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 5 },
+        behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
       };
 
       const edgeA = baselineGraph.edges[0];
@@ -524,8 +541,23 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
                   id: `edge-ms-1`,
                   source: baselineGraph.nodes[0].id,
                   target: helperNode.id,
-                  relationshipType: 'calls',
-                  label: 'delegates',
+                  relationshipType: 'method-call',
+                  method: 'delegates',
+                  evidence: '',
+                  unresolved: false,
+                  resolutionClassification: 'RESOLVED_LOCAL',
+                  resolutionStrategy: 'EXACT',
+                  confidence: '1.0',
+                  line: 1,
+                  column: 1,
+                  methodOwner: helperNode.id,
+                  file: 'test.cls',
+                  canonical: {
+                    source: { type: baselineGraph.nodes[0].type, name: baselineGraph.nodes[0].displayName },
+                    target: { type: helperNode.type, name: helperNode.displayName },
+                    relationship: { type: 'method-call', resolution: 'EXACT' },
+                    location: {},
+                  },
                 },
               },
               { type: 'remove-edge', edgeId: edgeA.id },
@@ -555,7 +587,7 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
       let currentGraph = baselineGraph;
       const stepHashes: string[] = [];
 
-      multiStepProposal.steps.forEach((step, idx) => {
+      multiStepProposal.steps.forEach((step) => {
         currentGraph = applySimulationOperations(currentGraph, step.operations);
         const hash = computeGraphHash(currentGraph);
         stepHashes.push(hash);
@@ -620,9 +652,12 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
             id: 'ApexClass:ExternalMutatedClass',
             displayName: 'ExternalMutatedClass',
             type: 'ApexClass',
-            layer: 'domain',
+            file: 'ExternalMutatedClass.cls',
             risk: 'LOW',
-            metrics: { linesOfCode: 10, fanIn: 0, fanOut: 0, cyclomaticComplexity: 1, weightedMethodCount: 1 },
+            riskReasons: [],
+            metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+            behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+            refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
           },
         ],
       };
@@ -714,13 +749,16 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
         id: 'ApexClass:SimulatedTempClass',
         displayName: 'SimulatedTempClass',
         type: 'ApexClass',
-        layer: 'domain',
+        file: 'SimulatedTempClass.cls',
         risk: 'LOW',
-        metrics: { linesOfCode: 50, fanIn: 0, fanOut: 0, cyclomaticComplexity: 1, weightedMethodCount: 1 },
+        riskReasons: [],
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
       };
 
       const simulatedGraph = applySimulationOperations(baselineGraph, [{ type: 'add-node', node: helperNode }]);
-      const simPositions = computeTemporarySimulatedPositions(simulatedGraph.nodes, simulatedGraph.edges, basePositions);
+      computeTemporarySimulatedPositions(simulatedGraph.nodes, simulatedGraph.edges, basePositions);
 
       const reloadedState = loadProjectState('cloud-spend-proj');
       expect(reloadedState.graphLayout.nodePositions[helperNode.id]).toBeUndefined();
@@ -821,7 +859,7 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
 
       const t2 = performance.now();
       const beforeFindings = runArchitectureRules(baselineGraph);
-      const stepImpact = computeStepImpact(baselineGraph, simulatedGraph, beforeFindings, proposal.steps[0].operations);
+      computeStepImpact(baselineGraph, simulatedGraph, beforeFindings, proposal.steps[0].operations);
       const tImpact = performance.now() - t2;
 
       const t3 = performance.now();
@@ -833,7 +871,7 @@ describe('Prompt 10 — Architecture Decision Workflow Hardening & Adversarial E
       const tCommit = performance.now() - t4;
 
       const t5 = performance.now();
-      const postFindings = runArchitectureRules(committedGraph);
+      runArchitectureRules(committedGraph);
       const tReanalysis = performance.now() - t5;
 
       const t6 = performance.now();

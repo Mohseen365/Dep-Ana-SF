@@ -216,6 +216,7 @@ export function measurePipelineStageMetrics(
     layerMap,
     domainMap: activeSpatialMap,
     domainOrder: globalDomainResult.orderedDomains,
+    layerYMap: globalDomainResult.layerYMap,
   });
 
   // Note: Stage 6 outputs bucketOrder (ordering ranks). The coordinates at Stage 6 remain the Stage 5 region centers.
@@ -241,6 +242,7 @@ export function measurePipelineStageMetrics(
       nodeHeight,
       domainSpacing,
       layerYMap: globalDomainResult.layerYMap,
+      featureLayerYMap: globalDomainResult.featureLayerYMap,
     },
   });
 
@@ -312,6 +314,9 @@ export function measurePipelineStageMetrics(
       layerSpacing,
       layerYOffsets: globalDomainResult.layerYMap,
       index,
+      ...(enableFeatureLayout && globalDomainResult.featureLayerYMap
+        ? { featureLayerYMap: globalDomainResult.featureLayerYMap, featureMap }
+        : {}),
     }
   );
 
@@ -409,6 +414,9 @@ export function measurePipelineStageMetrics(
       nodeHeight,
       layerMap,
       domainMap: activeSpatialMap,
+      ...(enableFeatureLayout && globalDomainResult.domainBounds
+        ? { domainBounds: globalDomainResult.domainBounds }
+        : {}),
     },
   });
 

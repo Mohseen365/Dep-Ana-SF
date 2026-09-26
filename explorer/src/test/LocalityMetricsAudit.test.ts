@@ -6,17 +6,8 @@ import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { discoverFeatures, calculateSemanticFeatureCohesion } from '../lib/layout/features';
 import {
   calculateFeatureLocalityDiagnostics,
-  domainCohesion,
-  calculateDetailedEdgeCrossings,
 } from '../lib/layout/metrics';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
-import { determineGlobalFeatureOrder } from '../lib/layout/feature-ordering';
-import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
-import { discoverDomains } from '../lib/layout/domains';
-import { computeArchitectureAnalysis } from '../lib/layout/analysis';
-import { classifyNodeLayerWithReason } from '../lib/layout/layers';
-import { classifyAllFeatureRoles, FeatureRoleContext } from '../lib/layout/feature-roles';
-import { ArchitectureLayer } from '../lib/layout/types';
 
 // Load Cloud Spend Tracker benchmark fixture
 const cloudSpendFixturePath = path.resolve(
