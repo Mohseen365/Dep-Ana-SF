@@ -222,7 +222,7 @@ Inputs: `beforeSnapshot: ExplorerDataSchema`, `afterSnapshot: ExplorerDataSchema
 Outputs: `DiffResult` (summary counts, added/removed/changed arrays) and `DiffOverlayGraph` (`DiffOverlayNode[]`, `DiffOverlayEdge[]`).
 Consumers: `DiffSelector.tsx`, `ComparePanel.tsx`, `GraphView.tsx`.
 Mutation Rules: Pure calculation over input snapshots. Assigns `diffState: 'added' | 'removed' | 'changed' | 'unchanged'` to overlay nodes/edges.
-Evidence: `explorer/src/lib/diff-adapter.ts` lines 1–280.
+Evidence: `architecture-diff.cjs`, `explorer/src/lib/diff-adapter.ts` lines 1–280.
 
 Finding: Diff Engine Capability
 Evidence: `diffSnapshots()` in `architecture-diff.cjs` executes in $< 15\text{ ms}$ on canonical 240-node snapshots, producing structured diff overlays without modifying original snapshot objects.
@@ -276,7 +276,7 @@ Evidence: The repository uses Vitest as its primary runner (`npm run test:cli`) 
 * **Test Fixture Helpers**: `explorer/src/test/scalability-generator.ts`, `position-test-helpers.ts`, `setup.ts`.
 Source: `explorer/src/test/`
 
-Interpretation: Existing analytics demonstrate high reusability for future data adapters due to pure functional inputs/outputs and zero DOM dependencies.
+Interpretation: The existing Vitest infrastructure provides reusable unit, integration, UI, and fixture-test utilities for future visualization implementation phases without requiring a new test framework.
 Decision: Phase 0 testing contract requires registering test utilities in `explorer/src/test/` for reuse in Phase 1–8 adapter and UI tests without creating a new test framework.
 
 ---
@@ -349,8 +349,10 @@ Phase 0 MUST establish exactly three contract deliverables before Phase 1 implem
 ### Deliverable B — Telemetry & Determinism Baseline Ledger
 * Execute `Phase4DAcceptancePerformance.test.ts` on `audit-fixtures/cloud-spend-tracker/explorer-data.json` during Phase 0 execution and record cold pipeline execution time ($231.14\text{ ms}$ baseline), primary crossings ($C_{\text{pp}} = 8,704$), total crossings ($C_{\text{total}} = 94,662$), and determinism drift ($0.00000\text{ px}$).
 
-### Deliverable C — Phase 0 Contract Acceptance Report
-* Create `ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md` (this planning specification document).
+### Deliverable C — Phase 0 Contract Acceptance Record
+* Validate and freeze the existing `ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md` as the planning and execution-control document for Phase 0.
+* Do not create a replacement contract during Phase 0 execution.
+* Any future Phase 0 execution results must be recorded separately from this contract unless a future task explicitly authorizes modification of this file.
 
 ---
 
@@ -418,7 +420,7 @@ Dependency: N/A.
 | `explorer/src/lib/diff-adapter.ts` | **READ ONLY** | None | **NOT TOUCHED** | Diff overlay builder; untouched in Phase 0. |
 | `explorer/src/test/benchmark-wave7b.ts` | **READ ONLY** | Telemetry logging (Phase 1) | **NOT TOUCHED** | Existing benchmark utility (`EXISTING — EXTEND`). |
 | `audit-fixtures/cloud-spend-tracker/...` | **READ ONLY** | None | **NOT TOUCHED** | Benchmark fixture SHA-256 strictly preserved. |
-| `ARCHITECTURE_VISUALIZATION_PHASE0_...` | **CREATE** | New planning file | **ALLOWED** | Single permitted planning artifact created. |
+| `ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md` | **EXISTING — CONTROLLED DOCUMENT** | Amend only when explicitly authorized | **NOT TOUCHED BY DEFAULT** | Existing Phase 0 planning and execution-control contract; no replacement document required. |
 
 ---
 
