@@ -11,7 +11,6 @@ import {
   edgeCrossingCount,
   primaryNodeOverlapCount,
   satelliteNodeOverlapCount,
-  nodeOverlapCount,
 } from '../lib/layout/metrics';
 import { discoverFeatures } from '../lib/layout/features';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';

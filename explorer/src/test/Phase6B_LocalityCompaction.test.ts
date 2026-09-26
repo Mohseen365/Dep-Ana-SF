@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout, computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import {
   calculateFeatureLocalityDiagnostics,
@@ -45,7 +44,6 @@ describe('Phase 6-B — Feature Locality & Adaptive Vertical Compaction', () => 
     const domainMap = new Map();
     domainDiscovery.assignments.forEach((assignment, nodeId) => domainMap.set(nodeId, assignment.primaryDomain));
     analysis = applyDomainClassification(analysis, domainMap);
-    const centralityMap = computeGraphCentralityAnalysis(safeNodes, safeEdges, domainMap, layerMap, { index });
 
     const discovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
