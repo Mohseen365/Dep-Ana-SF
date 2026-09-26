@@ -29,23 +29,23 @@ function loadCloudSpendFixture(): { nodes: ExplorerNode[]; edges: ExplorerEdge[]
 }
 
 function makeClassNode(id: string, displayName?: string): ExplorerNode {
-  return createNode(id, 'ApexClass', displayName);
+  return createNode(id, 'ApexClass', { displayName });
 }
 
 function makeObjectNode(id: string, displayName?: string): ExplorerNode {
-  return createNode(id, 'CustomObject', displayName);
+  return createNode(id, 'CustomObject', { displayName });
 }
 
 function makeFieldNode(id: string, displayName?: string): ExplorerNode {
-  return createNode(id, 'Field', displayName);
+  return createNode(id, 'Field', { displayName });
 }
 
 function makeTriggerNode(id: string, displayName?: string): ExplorerNode {
-  return createNode(id, 'ApexTrigger', displayName);
+  return createNode(id, 'ApexTrigger', { displayName });
 }
 
 function makeLwcNode(id: string, displayName?: string): ExplorerNode {
-  return createNode(id, 'LWC', displayName);
+  return createNode(id, 'LWC', { displayName });
 }
 
 describe('Phase 4-C — Shared Infrastructure & Satellite Relationship Geometry Test Suite', () => {
@@ -77,16 +77,6 @@ describe('Phase 4-C — Shared Infrastructure & Satellite Relationship Geometry 
   });
 
   it('2. Two-feature shared utility: verifies relationship centroid candidate position in corridor', () => {
-    const sharedUtil = makeClassNode('DateUtils', 'DateUtils');
-    const featA = makeClassNode('OrderController', 'OrderController');
-    const featB = makeClassNode('InvoiceController', 'InvoiceController');
-
-    const nodes = [sharedUtil, featA, featB];
-    const edges = [
-      createEdge('OrderController', 'DateUtils'),
-      createEdge('InvoiceController', 'DateUtils'),
-    ];
-
     const domainXCenters = { FeatureA: 200, FeatureB: 800 };
     const domainBounds = {
       FeatureA: { minX: 100, maxX: 300 },

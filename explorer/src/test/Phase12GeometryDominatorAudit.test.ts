@@ -722,7 +722,7 @@ describe('PHASE 12 — CURRENT PRODUCTION GEOMETRY DOMINATOR & OPTIMIZATION EXPE
         const c = metrics.detailedCrossings;
 
         const overlaps = (metrics.primaryOverlapCount ?? 0) + (metrics.satelliteOverlapCount ?? 0);
-        const clearancePass = metrics.minClearance >= 39.99;
+        const clearancePass = (metrics.minClearance ?? 0) >= 39.99;
 
         console.log(`\n[Target Row Width: ${tw}px]`);
         console.log(`  Stage 5 Bounds:  ${s5B.width}x${s5B.height}px`);

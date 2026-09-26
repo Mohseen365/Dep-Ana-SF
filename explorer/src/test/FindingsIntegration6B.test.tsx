@@ -11,7 +11,6 @@ import { InvestigationDrawer } from '../components/InvestigationDrawer';
 const mockNodes: ExplorerNode[] = [
   {
     id: 'ApexClass:ServiceA',
-    name: 'ServiceA',
     displayName: 'ServiceA',
     type: 'ApexClass',
     risk: 'HIGH',
@@ -23,7 +22,6 @@ const mockNodes: ExplorerNode[] = [
   },
   {
     id: 'ApexClass:ServiceB',
-    name: 'ServiceB',
     displayName: 'ServiceB',
     type: 'ApexClass',
     risk: 'MEDIUM',
@@ -35,7 +33,6 @@ const mockNodes: ExplorerNode[] = [
   },
   {
     id: 'ApexClass:SharedUtil',
-    name: 'SharedUtil',
     displayName: 'SharedUtil',
     type: 'ApexClass',
     risk: 'LOW',
@@ -47,7 +44,6 @@ const mockNodes: ExplorerNode[] = [
   },
   {
     id: 'ApexClass:ServiceATest',
-    name: 'ServiceATest',
     displayName: 'ServiceATest',
     type: 'ApexClass',
     risk: 'LOW',

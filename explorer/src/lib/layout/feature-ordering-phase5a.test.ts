@@ -23,7 +23,8 @@ import { placeSatellites } from './satellites';
 import { resolveSpacingAndCollisions } from './spacing';
 import { calculateLayoutMetrics } from './metrics';
 import { createLayoutGraphIndex } from './graph-index';
-import type { ExplorerNode, ExplorerEdge, ArchitectureLayer } from '../../types/explorer';
+import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { ArchitectureLayer } from './types';
 
 const FIXTURE_PATH = path.resolve(__dirname, '../../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
 

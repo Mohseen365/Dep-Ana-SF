@@ -194,7 +194,6 @@ function runPhase11ExperimentPipeline(
       layerCounts[l] = (layerCounts[l] || 0) + 1;
     });
 
-    const representedLayers = LAYERS_IN_ORDER.filter(l => layerCounts[l] > 0);
 
     const maxCols = Math.max(1, ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.min(4, layerCounts[l]) : 0)));
     const maxRows = Math.max(1, ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.ceil(layerCounts[l] / 4) : 0)));

@@ -4,11 +4,10 @@ import fs from 'fs';
 import {
   determineGlobalFeatureOrder,
   buildFeatureDependencyMatrix,
-  orderStrategyF_SharedHierarchyAware,
   compute2DFeatureBandOrdering,
   assignFeature2DBands,
 } from './feature-ordering';
-import { buildDomainGraph, computeGlobalFeatureLayout } from './global-layout';
+import { buildDomainGraph } from './global-layout';
 import { discoverFeatures } from './features';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 
@@ -21,7 +20,7 @@ describe('Phase 3.3 2D Multi-Row Feature Ordering Test Suite', () => {
   const cloudSpendEdges = fixture.edges as ExplorerEdge[];
 
   // Helper factory for mock nodes
-  function createMockNode(id: string, type: string, layer: string): ExplorerNode {
+  function createMockNode(id: string, type: string, _layer: string): ExplorerNode {
     return {
       id,
       displayName: id.split(':').pop() || id,
@@ -48,6 +47,31 @@ describe('Phase 3.3 2D Multi-Row Feature Ordering Test Suite', () => {
     };
   }
 
+  function createMockEdge(id: string, source: string, target: string): ExplorerEdge {
+    return {
+      id,
+      source,
+      target,
+      relationshipType: 'method-call',
+      method: '',
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: 'HIGH',
+      line: 1,
+      column: 1,
+      methodOwner: '',
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: source },
+        target: { type: 'ApexClass', name: target },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    };
+  }
+
   // 1. Strongly coupled pair across bands
   it('1. verifies strongly coupled feature pair across layer bands is horizontally aligned', () => {
     const nodes: ExplorerNode[] = [
@@ -57,14 +81,9 @@ describe('Phase 3.3 2D Multi-Row Feature Ordering Test Suite', () => {
     ];
     const edges: ExplorerEdge[] = [
       // Strongly coupled P1 -> A1 (10 calls)
-      ...Array.from({ length: 10 }, (_, i) => ({
-        id: `e1_${i}`,
-        source: 'LWC:P1',
-        target: 'ApexClass:A1',
-        relationship: 'Calls' as const,
-      })),
+      ...Array.from({ length: 10 }, (_, i) => createMockEdge(`e1_${i}`, 'LWC:P1', 'ApexClass:A1')),
       // Weakly coupled P1 -> A2 (1 call)
-      { id: 'e2', source: 'LWC:P1', target: 'ApexClass:A2', relationship: 'Calls' as const },
+      createMockEdge('e2', 'LWC:P1', 'ApexClass:A2'),
     ];
     const featureMap = new Map<string, string>([
       ['LWC:P1', 'feature_P1'],
@@ -99,8 +118,8 @@ describe('Phase 3.3 2D Multi-Row Feature Ordering Test Suite', () => {
       createMockNode('CustomObject:Bot', 'CustomObject', 'schema'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'LWC:Top', target: 'ApexClass:Mid', relationship: 'Calls' as const },
-      { id: 'e2', source: 'ApexClass:Mid', target: 'CustomObject:Bot', relationship: 'Calls' as const },
+      createMockEdge('e1', 'LWC:Top', 'ApexClass:Mid'),
+      createMockEdge('e2', 'ApexClass:Mid', 'CustomObject:Bot'),
     ];
     const featureMap = new Map<string, string>([
       ['LWC:Top', 'feature_A'],
@@ -134,9 +153,9 @@ describe('Phase 3.3 2D Multi-Row Feature Ordering Test Suite', () => {
       createMockNode('CustomObject:N3', 'CustomObject', 'schema'),
     ];
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'LWC:N1', target: 'ApexClass:Hub', relationship: 'Calls' as const },
-      { id: 'e2', source: 'LWC:N2', target: 'ApexClass:Hub', relationship: 'Calls' as const },
-      { id: 'e3', source: 'ApexClass:Hub', target: 'CustomObject:N3', relationship: 'Calls' as const },
+      createMockEdge('e1', 'LWC:N1', 'ApexClass:Hub'),
+      createMockEdge('e2', 'LWC:N2', 'ApexClass:Hub'),
+      createMockEdge('e3', 'ApexClass:Hub', 'CustomObject:N3'),
     ];
     const featureMap = new Map<string, string>([
       ['ApexClass:Hub', 'feature_Hub'],

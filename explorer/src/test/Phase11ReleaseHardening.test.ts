@@ -10,7 +10,7 @@ import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { classifyNodeLayerWithReason } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
-import { classifyAllFeatureRoles, type FeatureRoleContext } from '../lib/layout/feature-roles';
+import { type FeatureRoleContext } from '../lib/layout/feature-roles';
 import { discoverFeatures } from '../lib/layout/features';
 import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
@@ -72,7 +72,6 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
         roleOverride: analysis.nodes.get(node.id)?.role || null,
       });
     });
-    const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
     const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
     const featureMap = new Map();
     featureDiscovery.assignments.forEach((assignment, nodeId) => featureMap.set(nodeId, assignment.primaryFeatureId));
@@ -384,7 +383,6 @@ describe('Phase 11 — Hybrid Layout Release Hardening & Visual Validation Suite
 
   it('7. Verifies Exact Legacy Isolation Default Flag (enableFeatureLayout = false)', () => {
     const legacyRun = computeArchitectureLayout(fixtureNodes, fixtureEdges, { enableFeatureLayout: false });
-    const legacyMetrics = evaluateLayout(fixtureNodes, fixtureEdges, legacyRun);
 
     // Verify default call without options resolves to enableFeatureLayout = false
     const defaultRun = computeArchitectureLayout(fixtureNodes, fixtureEdges);

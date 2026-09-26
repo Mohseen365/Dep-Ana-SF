@@ -90,7 +90,7 @@ export function GraphSlot(props: {
   focusState?: any;
   onFocusChange?: (focusState: any) => void;
   nodePositions?: Record<string, { x: number; y: number }>;
-  onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>) => void;
+  onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>, provenance?: string) => void;
   layoutMode?: 'static' | 'interactive';
   onLayoutModeChange?: (mode: 'static' | 'interactive') => void;
   architectureMode?: ArchitectureLayoutMode;

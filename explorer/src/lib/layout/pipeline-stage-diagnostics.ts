@@ -7,7 +7,7 @@ import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClass
 import { classifyNodeLayerWithReason } from './layers';
 import { discoverDomains } from './domains';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from './centrality';
-import { classifyAllFeatureRoles, type FeatureRoleContext } from './feature-roles';
+import { type FeatureRoleContext } from './feature-roles';
 import { discoverFeatures } from './features';
 import { computeGlobalFeatureLayout, computeGlobalDomainLayout } from './global-layout';
 import { reduceEdgeCrossings } from './ordering';
@@ -146,7 +146,6 @@ export function measurePipelineStageMetrics(
       roleOverride: analysis.nodes.get(node.id)?.role || null,
     });
   });
-  const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
 
   const featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
     index,
