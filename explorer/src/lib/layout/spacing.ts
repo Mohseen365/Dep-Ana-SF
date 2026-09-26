@@ -22,6 +22,53 @@ export interface ComponentBounds {
   yMax: number;
 }
 
+export interface SpacingIterationTelemetry {
+  iteration: number;
+  durationMs: number;
+  candidateGenMs: number;
+  collisionTestMs: number;
+  resolutionMs: number;
+  candidatePairsGenerated: number;
+  candidatePairsTested: number;
+  collisionsFound: number;
+  repairsApplied: number;
+}
+
+export interface SpacingTelemetry {
+  /** Metric A: Complete Stage 11 execution time (ms) */
+  stage11TotalMs: number;
+  /** Metric E: Pre-processing, analysis, and bounds setup duration (ms) */
+  geometryRecomputationMs: number;
+  /** Metric B: Time spent identifying candidate collision pairs (ms) */
+  candidateGenTotalMs: number;
+  /** Metric C: Time spent determining whether candidate objects actually overlap (ms) */
+  collisionTestTotalMs: number;
+  /** Metric D: Time spent calculating and applying displacements/repairs (ms) */
+  resolutionTotalMs: number;
+  /** Metric G: Unclassified Stage 11 time (stage11TotalMs - measured categories) (ms) */
+  unclassifiedMs: number;
+  /** Structural count: total raw candidate pairs generated across all iterations */
+  totalCandidatesGenerated: number;
+  /** Structural count: total candidate pairs tested across all iterations */
+  totalCandidatesTested: number;
+  /** Structural count: total actual overlaps detected across all iterations */
+  totalCollisionsDetected: number;
+  /** Structural count: total repair/displacement operations applied across all iterations */
+  totalRepairsApplied: number;
+  /** Structural max: maximum candidate pairs generated in a single iteration */
+  maxCandidatesPerIteration: number;
+  /** Structural max: maximum overlaps detected in a single iteration */
+  maxCollisionsPerIteration: number;
+  /** Structural avg: average candidate pairs generated per iteration */
+  avgCandidatesPerIteration: number;
+  /** Structural avg: average overlaps detected per iteration */
+  avgCollisionsPerIteration: number;
+  /** Structural avg: average repairs applied per iteration */
+  avgRepairsPerIteration: number;
+  /** Metric F: Detailed per-iteration telemetry breakdown */
+  iterations: SpacingIterationTelemetry[];
+}
+
 export interface SpacingOptions {
   /** Node width for bounding box clearance calculation (default: 120) */
   nodeWidth?: number;
@@ -45,6 +92,8 @@ export interface SpacingOptions {
   componentBounds?: Map<number, ComponentBounds> | Record<number, ComponentBounds>;
   /** Maximum distance a satellite (test/field) can be displaced from its parent target (default: 300) */
   maxSatelliteDistance?: number;
+  /** Enable detailed non-invasive forensic measurement telemetry */
+  enableTelemetry?: boolean;
 }
 
 export interface CleanupInput {
@@ -73,6 +122,8 @@ export interface SpacingResult {
   maxDisplacement: number;
   /** Total cumulative displacement across all nodes */
   totalDisplacement: number;
+  /** Non-invasive forensic measurement telemetry (populated if enableTelemetry: true) */
+  telemetry?: SpacingTelemetry;
 }
 
 const EPSILON = 1e-3;
@@ -183,6 +234,12 @@ class SpatialGrid {
  * local satellite relationships (tests and fields near target production/object nodes).
  */
 export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult {
+  const options = input.options || {};
+  const enableTelemetry = options.enableTelemetry ?? false;
+  const tStartStage11 = enableTelemetry ? performance.now() : 0;
+
+  const tStartGeom = enableTelemetry ? performance.now() : 0;
+
   const safeNodes = Array.isArray(input.nodes) ? [...input.nodes] : [];
   const safeEdges = Array.isArray(input.edges) ? [...input.edges] : [];
 
@@ -192,7 +249,6 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
   const nodeIndexMap = new Map<string, number>();
   safeNodes.forEach((node, idx) => nodeIndexMap.set(node.id, idx));
 
-  const options = input.options || {};
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
   const horizontalGap = options.horizontalGap ?? 40;
@@ -293,6 +349,8 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
     }
   });
 
+  const geometryRecomputationMs = enableTelemetry ? performance.now() - tStartGeom : 0;
+
   // Helper to count active overlaps
   const getOverlapCount = (posMap: PositionMap): number => {
     const activeIndices: number[] = [];
@@ -341,6 +399,28 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
   const initialOverlapCount = getOverlapCount(currentPositions);
 
   if (safeNodes.length <= 1 || initialOverlapCount === 0) {
+    const stage11TotalMs = enableTelemetry ? performance.now() - tStartStage11 : 0;
+    const telemetry: SpacingTelemetry | undefined = enableTelemetry
+      ? {
+          stage11TotalMs,
+          geometryRecomputationMs,
+          candidateGenTotalMs: 0,
+          collisionTestTotalMs: 0,
+          resolutionTotalMs: 0,
+          unclassifiedMs: Math.max(0, stage11TotalMs - geometryRecomputationMs),
+          totalCandidatesGenerated: 0,
+          totalCandidatesTested: 0,
+          totalCollisionsDetected: 0,
+          totalRepairsApplied: 0,
+          maxCandidatesPerIteration: 0,
+          maxCollisionsPerIteration: 0,
+          avgCandidatesPerIteration: 0,
+          avgCollisionsPerIteration: 0,
+          avgRepairsPerIteration: 0,
+          iterations: [],
+        }
+      : undefined;
+
     return {
       positions: currentPositions,
       iterations: 0,
@@ -348,6 +428,7 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
       finalOverlapCount: initialOverlapCount,
       maxDisplacement: 0,
       totalDisplacement: 0,
+      telemetry,
     };
   }
 
@@ -394,9 +475,25 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
   let iteration = 0;
   const visitedMarker = new Int32Array(safeNodes.length);
 
+  const iterationTelemetry: SpacingIterationTelemetry[] = [];
+  let candidateGenTotalMs = 0;
+  let collisionTestTotalMs = 0;
+  let resolutionTotalMs = 0;
+
+  let totalCandidatesGenerated = 0;
+  let totalCandidatesTested = 0;
+  let totalCollisionsDetected = 0;
+  let totalRepairsApplied = 0;
+
+  let maxCandidatesPerIteration = 0;
+  let maxCollisionsPerIteration = 0;
+
   while (iteration < maxIterations) {
     iteration++;
+    const tIterStart = enableTelemetry ? performance.now() : 0;
 
+    // --- Metric B: Candidate Generation ---
+    const tCandStart = enableTelemetry ? performance.now() : 0;
     spatialGrid.clear();
     for (let i = 0; i < safeNodes.length; i++) {
       const pos = currentPositions[safeNodes[i].id];
@@ -408,16 +505,21 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
     const collidingPairs: Array<{ idA: string; idB: string; indexA: number; indexB: number }> = [];
     visitedMarker.fill(-1);
 
+    let candidatesGeneratedInIter = 0;
+    let candidatesTestedInIter = 0;
+
     for (let i = 0; i < safeNodes.length; i++) {
       const posA = currentPositions[safeNodes[i].id];
       if (!posA) continue;
 
       const candidates = spatialGrid.getCandidates(posA.x, posA.y);
+      candidatesGeneratedInIter += candidates.length;
 
       for (let j = 0; j < candidates.length; j++) {
         const indexB = candidates[j];
         if (indexB <= i || visitedMarker[indexB] === i) continue;
         visitedMarker[indexB] = i;
+        candidatesTestedInIter++;
 
         const posB = currentPositions[safeNodes[indexB].id];
         if (!posB) continue;
@@ -431,12 +533,47 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
       }
     }
 
+    const iterCandGenMs = enableTelemetry ? performance.now() - tCandStart : 0;
+    candidateGenTotalMs += iterCandGenMs;
+
+    const iterCollisionsFound = collidingPairs.length;
+    totalCandidatesGenerated += candidatesGeneratedInIter;
+    totalCandidatesTested += candidatesTestedInIter;
+    totalCollisionsDetected += iterCollisionsFound;
+
+    if (candidatesGeneratedInIter > maxCandidatesPerIteration) {
+      maxCandidatesPerIteration = candidatesGeneratedInIter;
+    }
+    if (iterCollisionsFound > maxCollisionsPerIteration) {
+      maxCollisionsPerIteration = iterCollisionsFound;
+    }
+
     if (collidingPairs.length === 0) {
+      if (enableTelemetry) {
+        const iterDurationMs = performance.now() - tIterStart;
+        iterationTelemetry.push({
+          iteration,
+          durationMs: iterDurationMs,
+          candidateGenMs: iterCandGenMs,
+          collisionTestMs: 0,
+          resolutionMs: 0,
+          candidatePairsGenerated: candidatesGeneratedInIter,
+          candidatePairsTested: candidatesTestedInIter,
+          collisionsFound: 0,
+          repairsApplied: 0,
+        });
+      }
       break;
     }
 
+    // --- Metric C: Collision Testing & Sorting ---
+    const tTestStart = enableTelemetry ? performance.now() : 0;
     collidingPairs.sort((p1, p2) => (p1.indexA - p2.indexA) || (p1.indexB - p2.indexB));
+    const iterCollisionTestMs = enableTelemetry ? performance.now() - tTestStart : 0;
+    collisionTestTotalMs += iterCollisionTestMs;
 
+    // --- Metric D: Resolution / Displacement ---
+    const tResStart = enableTelemetry ? performance.now() : 0;
     let resolvesInThisPass = 0;
 
     collidingPairs.forEach(({ idA, idB }) => {
@@ -544,6 +681,25 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
       }
     });
 
+    const iterResolutionMs = enableTelemetry ? performance.now() - tResStart : 0;
+    resolutionTotalMs += iterResolutionMs;
+    totalRepairsApplied += resolvesInThisPass;
+
+    if (enableTelemetry) {
+      const iterDurationMs = performance.now() - tIterStart;
+      iterationTelemetry.push({
+        iteration,
+        durationMs: iterDurationMs,
+        candidateGenMs: iterCandGenMs,
+        collisionTestMs: iterCollisionTestMs,
+        resolutionMs: iterResolutionMs,
+        candidatePairsGenerated: candidatesGeneratedInIter,
+        candidatePairsTested: candidatesTestedInIter,
+        collisionsFound: iterCollisionsFound,
+        repairsApplied: resolvesInThisPass,
+      });
+    }
+
     if (resolvesInThisPass === 0) {
       break;
     }
@@ -567,6 +723,31 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
 
   const finalOverlapCount = getOverlapCount(currentPositions);
 
+  const stage11TotalMs = enableTelemetry ? performance.now() - tStartStage11 : 0;
+  const measuredSum = geometryRecomputationMs + candidateGenTotalMs + collisionTestTotalMs + resolutionTotalMs;
+  const unclassifiedMs = enableTelemetry ? Math.max(0, stage11TotalMs - measuredSum) : 0;
+
+  const telemetry: SpacingTelemetry | undefined = enableTelemetry
+    ? {
+        stage11TotalMs,
+        geometryRecomputationMs,
+        candidateGenTotalMs,
+        collisionTestTotalMs,
+        resolutionTotalMs,
+        unclassifiedMs,
+        totalCandidatesGenerated,
+        totalCandidatesTested,
+        totalCollisionsDetected,
+        totalRepairsApplied,
+        maxCandidatesPerIteration,
+        maxCollisionsPerIteration,
+        avgCandidatesPerIteration: iteration > 0 ? totalCandidatesGenerated / iteration : 0,
+        avgCollisionsPerIteration: iteration > 0 ? totalCollisionsDetected / iteration : 0,
+        avgRepairsPerIteration: iteration > 0 ? totalRepairsApplied / iteration : 0,
+        iterations: iterationTelemetry,
+      }
+    : undefined;
+
   return {
     positions: currentPositions,
     iterations: iteration,
@@ -574,5 +755,6 @@ export function resolveSpacingAndCollisions(input: CleanupInput): SpacingResult 
     finalOverlapCount,
     maxDisplacement,
     totalDisplacement,
+    telemetry,
   };
 }
