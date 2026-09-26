@@ -134,7 +134,7 @@ Evidence: `explorer/src/lib/position-policy.ts` lines 1–150.
 Finding: Position Authority Resolution
 Evidence: `resolveAuthoritativePosition()` in `position-policy.ts` evaluates Levels 1 through 3 sequentially and returns `null` if no authoritative position exists, allowing Stage 12 layout to execute.
 Source: `explorer/src/lib/position-policy.ts`
-Interpretation: The position policy mechanism guarantees coordinate preservation across all visualization views.
+Interpretation: The position policy mechanism currently preserves authoritative coordinate precedence within the existing graph/layout workflow. Future visualization lenses must consume these authoritative coordinates without becoming a new position authority.
 Decision: Visualization lenses may consume Level 1–5 coordinates as read-only inputs, but visualization adapters must NOT become position authorities.
 
 ---
@@ -489,7 +489,7 @@ Phase 0 may be declared COMPLETE and ready for Phase 1 execution **ONLY** when a
 * [ ] Roadmap corrections (4 items) are documented.
 * [ ] Common interface `visualization-adapter.ts` is deferred until after `matrix-adapter.ts` in Phase 1 establishes concrete adapter patterns (`JUSTIFIED AFTER FIRST ADAPTER`).
 
-### Final Readiness Status: `PHASE 0 CONTRACT SPECIFICATION COMPLETE — EXECUTION & VERIFICATION PENDING`
+### Final Readiness Status: `CONTRACT READY FOR CONTROLLED PHASE 0 EXECUTION (EXECUTION & VERIFICATION PENDING)`
 
 ---
 
