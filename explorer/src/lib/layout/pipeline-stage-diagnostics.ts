@@ -70,7 +70,7 @@ function isSecondaryNode(node: ExplorerNode): boolean {
 export function measurePipelineStageMetrics(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
-  options: ArchitectureLayoutOptions = {}
+  options: ArchitectureLayoutOptions & { skipSnapshotMetrics?: boolean } = {}
 ): PipelineDiagnosticsResult {
   const {
     nodeWidth = 120,
@@ -80,11 +80,31 @@ export function measurePipelineStageMetrics(
     componentGap = 100,
     existingPositions = {},
     enableFeatureLayout = true,
+    skipSnapshotMetrics = false,
   } = options;
+
+  const dummyMetrics: ComprehensiveLayoutMetrics = {
+    edgeCrossingCount: 0,
+    averageEdgeLength: 0,
+    maxEdgeLength: 0,
+    nodeOverlapCount: 0,
+    layerViolationCount: 0,
+    domainCohesion: { averageIntraDomainDistance: 0, domainCohesionScore: 1, domainDistances: {} },
+    componentSeparation: { overlappingComponentPairs: 0, gapViolationCount: 0, minComponentDistance: null },
+    hubLocality: { hubCount: 0, averageHubNeighborDistance: 0 },
+    bridgePlacement: { bridgeCount: 0, averageBridgeToDomainCentroidDistance: 0 },
+  };
+
+  const getMetrics = (posMap: PositionMap) => {
+    if (skipSnapshotMetrics || Object.keys(posMap).length === 0) return dummyMetrics;
+    return calculateLayoutMetrics(safeNodes, safeEdges, posMap, { nodeWidth, nodeHeight });
+  };
 
   const stageTimesMs: Record<string, number> = {};
   const getNow = () => (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
+  const tStartFull = getNow();
 
+  // Stage 0: Graph Normalization & Indexing
   const tStart0 = getNow();
   const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
@@ -125,25 +145,76 @@ export function measurePipelineStageMetrics(
   safeEdges.sort((a, b) => a.id.localeCompare(b.id));
 
   const index = createLayoutGraphIndex(safeNodes, safeEdges);
-  stageTimesMs['Stage 0'] = getNow() - tStart0;
+  const dur0 = getNow() - tStart0;
+  stageTimesMs['Stage 0'] = dur0;
 
-  // Stage 1-4 Analysis setup
-  const tStart1_4 = getNow();
+  const snapshots: Record<string, StageMetricSnapshot> = {};
+
+  snapshots['Stage 0'] = {
+    stageNumber: 0,
+    stageName: 'Graph Normalization & Indexing',
+    positions: {},
+    positionedNodeCount: 0,
+    metrics: getMetrics({}),
+    durationMs: dur0,
+  };
+
+  // Stage 1: Base Architecture Analysis
+  const tStart1 = getNow();
   let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
+  const dur1 = getNow() - tStart1;
+  stageTimesMs['Stage 1'] = dur1;
 
+  snapshots['Stage 1'] = {
+    stageNumber: 1,
+    stageName: 'Base Architecture Analysis',
+    positions: {},
+    positionedNodeCount: 0,
+    metrics: getMetrics({}),
+    durationMs: dur1,
+  };
+
+  // Stage 2: Layer Classification
+  const tStart2 = getNow();
   const layerMap = new Map();
   safeNodes.forEach(node => {
     layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
   });
   analysis = applyLayerClassification(analysis, layerMap);
+  const dur2 = getNow() - tStart2;
+  stageTimesMs['Stage 2'] = dur2;
 
+  snapshots['Stage 2'] = {
+    stageNumber: 2,
+    stageName: 'Layer Classification',
+    positions: {},
+    positionedNodeCount: 0,
+    metrics: getMetrics({}),
+    durationMs: dur2,
+  };
+
+  // Stage 3: Domain Discovery
+  const tStart3 = getNow();
   const domainDiscovery = discoverDomains(safeNodes, safeEdges);
   const domainMap = new Map();
   domainDiscovery.assignments.forEach((assignment, nodeId) => {
     domainMap.set(nodeId, assignment.primaryDomain);
   });
   analysis = applyDomainClassification(analysis, domainMap);
+  const dur3 = getNow() - tStart3;
+  stageTimesMs['Stage 3'] = dur3;
 
+  snapshots['Stage 3'] = {
+    stageNumber: 3,
+    stageName: 'Domain Discovery',
+    positions: {},
+    positionedNodeCount: 0,
+    metrics: getMetrics({}),
+    durationMs: dur3,
+  };
+
+  // Stage 4: Centrality & Semantic Feature Discovery
+  const tStart4 = getNow();
   const centralityMap = computeGraphCentralityAnalysis(safeNodes, safeEdges, domainMap, layerMap, { index });
 
   const featureRoleContextMap = new Map<string, FeatureRoleContext>();
@@ -167,9 +238,17 @@ export function measurePipelineStageMetrics(
   featureDiscovery.assignments.forEach((assignment, nodeId) => {
     featureMap.set(nodeId, assignment.primaryFeatureId);
   });
-  stageTimesMs['Stage 1-4'] = getNow() - tStart1_4;
+  const dur4 = getNow() - tStart4;
+  stageTimesMs['Stage 4'] = dur4;
 
-  const snapshots: Record<string, StageMetricSnapshot> = {};
+  snapshots['Stage 4'] = {
+    stageNumber: 4,
+    stageName: 'Centrality & Feature Discovery',
+    positions: {},
+    positionedNodeCount: 0,
+    metrics: getMetrics({}),
+    durationMs: dur4,
+  };
 
   // Stage 5: Global Feature Layout
   const tStart5 = getNow();
@@ -219,7 +298,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Global Feature Layout',
     positions: stage5Positions,
     positionedNodeCount: Object.keys(stage5Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage5Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage5Positions),
     durationMs: dur5,
   };
 
@@ -232,6 +311,7 @@ export function measurePipelineStageMetrics(
     domainMap: activeSpatialMap,
     domainOrder: globalDomainResult.orderedDomains,
     layerYMap: globalDomainResult.layerYMap,
+    maxIterations: options.maxIterations,
   });
 
   const dur6 = getNow() - tStart6;
@@ -243,7 +323,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Layer Ordering & Crossing Reduction (Ranks)',
     positions: stage5Positions,
     positionedNodeCount: Object.keys(stage5Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage5Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage5Positions),
     durationMs: dur6,
   };
 
@@ -275,7 +355,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Primary Production Local Layout',
     positions: stage7Positions,
     positionedNodeCount: Object.keys(stage7Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage7Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage7Positions),
     durationMs: dur7,
   };
 
@@ -326,7 +406,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Hub & Bridge Spatial Refinement',
     positions: stage8Positions,
     positionedNodeCount: Object.keys(stage8Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage8Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage8Positions),
     durationMs: dur8,
   };
 
@@ -358,7 +438,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Secondary Satellite Placement',
     positions: stage9Positions,
     positionedNodeCount: Object.keys(stage9Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage9Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage9Positions),
     durationMs: dur9,
   };
 
@@ -436,7 +516,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Disconnected Component Packing',
     positions: stage10Positions,
     positionedNodeCount: Object.keys(stage10Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage10Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage10Positions),
     durationMs: dur10,
   };
 
@@ -467,7 +547,7 @@ export function measurePipelineStageMetrics(
     stageName: 'Final Global Spatial Cleanup Pass',
     positions: stage11Positions,
     positionedNodeCount: Object.keys(stage11Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage11Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage11Positions),
     durationMs: dur11,
   };
 
@@ -488,29 +568,46 @@ export function measurePipelineStageMetrics(
     stageName: 'Position Authority Restoration',
     positions: stage12Positions,
     positionedNodeCount: Object.keys(stage12Positions).length,
-    metrics: calculateLayoutMetrics(safeNodes, safeEdges, stage12Positions, { nodeWidth, nodeHeight }),
+    metrics: getMetrics(stage12Positions),
     durationMs: dur12,
   };
 
+  const durFull = getNow() - tStartFull;
+  stageTimesMs['Full Pipeline'] = durFull;
+
   // Build comparison table
-  const stageKeys = ['Stage 5', 'Stage 6', 'Stage 7', 'Stage 8', 'Stage 9', 'Stage 10', 'Stage 11', 'Stage 12'];
+  const stageKeys = [
+    'Stage 0',
+    'Stage 1',
+    'Stage 2',
+    'Stage 3',
+    'Stage 4',
+    'Stage 5',
+    'Stage 6',
+    'Stage 7',
+    'Stage 8',
+    'Stage 9',
+    'Stage 10',
+    'Stage 11',
+    'Stage 12',
+  ];
   const stageTable = stageKeys.map(key => {
     const snap = snapshots[key];
-    const m = snap.metrics;
+    const m = snap ? snap.metrics : ({} as ComprehensiveLayoutMetrics);
     return {
       stage: key,
-      stageName: snap.stageName,
-      positionedNodeCount: snap.positionedNodeCount,
+      stageName: snap ? snap.stageName : key,
+      positionedNodeCount: snap ? snap.positionedNodeCount : 0,
       primaryPrimaryCrossings: m.detailedCrossings?.primaryPrimaryCrossings ?? 0,
-      totalCrossings: m.edgeCrossingCount,
-      avgEdgeLength: m.averageEdgeLength,
-      maxEdgeLength: m.maxEdgeLength,
-      cohesionScore: m.domainCohesion.domainCohesionScore,
-      layerViolations: m.layerViolationCount,
+      totalCrossings: m.edgeCrossingCount ?? 0,
+      avgEdgeLength: m.averageEdgeLength ?? 0,
+      maxEdgeLength: m.maxEdgeLength ?? 0,
+      cohesionScore: m.domainCohesion?.domainCohesionScore ?? 0,
+      layerViolations: m.layerViolationCount ?? 0,
       primaryOverlaps: m.primaryOverlapCount ?? 0,
       satelliteOverlaps: m.satelliteOverlapCount ?? 0,
       minClearance: m.minClearance ?? 0,
-      durationMs: snap.durationMs ?? 0,
+      durationMs: snap ? snap.durationMs ?? 0 : 0,
     };
   });
 
