@@ -14,6 +14,7 @@ import { ProjectDashboard } from './components/ProjectDashboard';
 import { FeatureMatrixPanel } from './components/FeatureMatrixPanel';
 import { FeatureTreePanel } from './components/FeatureTreePanel';
 import { FeatureProfilePanel } from './components/FeatureProfilePanel';
+import { RadarPanel } from './components/RadarPanel';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { HotspotPanel } from './components/HotspotPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
@@ -865,6 +866,23 @@ export function App() {
                     <FeatureProfilePanel
                       data={activeData}
                       selectedNodeId={selection.selectedNodeId}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+
+              {workspaceViewMode === 'radar' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <RadarPanel
+                      data={activeData}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
