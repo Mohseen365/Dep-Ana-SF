@@ -9,7 +9,6 @@ import {
   calculateBridgeCandidatePosition,
   computeNodeHubMetrics,
 } from './centrality';
-import { calculateLayoutMetrics, calculateDetailedEdgeCrossings } from './metrics';
 import { createLayoutGraphIndex } from './graph-index';
 import { computeArchitectureAnalysis } from './analysis';
 import { discoverFeatures } from './features';
@@ -49,7 +48,7 @@ describe('Phase 2.4 — Shared Infrastructure, Bridge, and Satellite Spatial Beh
 
       const fanIn = index.incidentEdgesByNode.get(nodeId)?.filter(e => e.target === nodeId).length || 0;
       const fanOut = index.incidentEdgesByNode.get(nodeId)?.filter(e => e.source === nodeId).length || 0;
-      const { hubScore, isHub, hubType } = computeNodeHubMetrics(fanIn, fanOut);
+      const { isHub, hubType } = computeNodeHubMetrics(fanIn, fanOut);
 
       expect(isHub || fanIn >= 20).toBe(true);
       expect(hubType).toBe('fan-in');
@@ -175,8 +174,23 @@ describe('Phase 2.4 — Shared Infrastructure, Bridge, and Satellite Spatial Beh
         id: `Edge:DenseObject__c-Field_${i}`,
         source: 'Object:DenseObject__c',
         target: fieldId,
-        type: 'FieldAccess',
-        isUnresolved: false,
+        relationshipType: 'field-reference',
+        method: null,
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: null,
+        column: null,
+        methodOwner: null,
+        file: '',
+        canonical: {
+          source: { type: 'CustomObject', name: 'DenseObject__c' },
+          target: { type: 'CustomField', name: `Field_${i}__c` },
+          relationship: { type: 'field-reference', resolution: 'EXACT' },
+          location: {},
+        },
       });
     }
 
@@ -199,8 +213,8 @@ describe('Phase 2.4 — Shared Infrastructure, Bridge, and Satellite Spatial Beh
 
     for (let i = 0; i < allPositions.length; i++) {
       for (let j = i + 1; j < allPositions.length; j++) {
-        const [idA, posA] = allPositions[i];
-        const [idB, posB] = allPositions[j];
+        const [, posA] = allPositions[i];
+        const [, posB] = allPositions[j];
 
         const dx = Math.abs(posA.x - posB.x);
         const dy = Math.abs(posA.y - posB.y);

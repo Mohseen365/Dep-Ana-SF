@@ -7,7 +7,7 @@ import 'cytoscape-navigator/cytoscape.js-navigator.css';
 import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
-import { getLayoutOptions, runLayout, runLayoutWithMetadata, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
+import { getLayoutOptions, runLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';

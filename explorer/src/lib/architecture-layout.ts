@@ -91,7 +91,7 @@ export function computeArchitectureLayoutWithMetadata(
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
 
   if (safeNodes.length === 0) {
-    return { ...existingPositions };
+    return { positions: { ...existingPositions } };
   }
 
   // Ensure all edge endpoints are present in safeNodes
@@ -201,7 +201,6 @@ export function computeArchitectureLayoutWithMetadata(
       roleOverride: analysis.nodes.get(node.id)?.role || null,
     });
   });
-  const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
 
   const featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
     index,

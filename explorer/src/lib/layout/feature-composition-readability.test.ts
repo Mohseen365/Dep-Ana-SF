@@ -20,16 +20,68 @@ const cloudSpendNodes: ExplorerNode[] = rawData.nodes || [];
 const cloudSpendEdges: ExplorerEdge[] = rawData.edges || [];
 
 describe('Prompt 4 — Visual Composition & Shared Infrastructure Readability Suite', () => {
+  function createMockNode(id: string): ExplorerNode {
+    return {
+      id,
+      displayName: id.split(':').pop() || id,
+      type: 'ApexClass' as const,
+      file: `${id}.cls`,
+      metrics: { score: 10, fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0 },
+      risk: 'LOW',
+      riskReasons: [],
+      behavior: {
+        isTest: false,
+        publicContractsCount: 1,
+        asyncPatterns: [],
+        securitySignalsCount: 0,
+        queryCount: 0,
+        dmlCount: 0,
+        calloutCount: 0,
+      },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
+    };
+  }
+
   it('S1 — Single Component: PaymentDomain + PaymentSelector + PaymentService resolves into 1 coherent composition region', () => {
     const nodes: ExplorerNode[] = [
-      { id: 'ApexClass:PaymentDomain', name: 'PaymentDomain', displayName: 'PaymentDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentSelector', name: 'PaymentSelector', displayName: 'PaymentSelector', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentService', name: 'PaymentService', displayName: 'PaymentService', type: 'ApexClass', risk: 'LOW' },
+      createMockNode('ApexClass:PaymentDomain'),
+      createMockNode('ApexClass:PaymentSelector'),
+      createMockNode('ApexClass:PaymentService'),
     ];
 
+    function createMockEdge(id: string, source: string, target: string): ExplorerEdge {
+      return {
+        id,
+        source,
+        target,
+        relationshipType: 'method-call',
+        method: '',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'HIGH',
+        line: 1,
+        column: 1,
+        methodOwner: '',
+        file: '',
+        canonical: {
+          source: { type: 'ApexClass', name: source },
+          target: { type: 'ApexClass', name: target },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
+      };
+    }
+
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentDomain' },
-      { id: 'e2', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentSelector' },
+      createMockEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+      createMockEdge('e2', 'ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
     ];
 
     const discovery = discoverFeatures(nodes, edges);
@@ -56,19 +108,44 @@ describe('Prompt 4 — Visual Composition & Shared Infrastructure Readability Su
 
   it('S2 — Multiple Components: Payment trio vs Order trio form 2 distinct semantic regions without accidental merging', () => {
     const nodes: ExplorerNode[] = [
-      { id: 'ApexClass:PaymentDomain', name: 'PaymentDomain', displayName: 'PaymentDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentSelector', name: 'PaymentSelector', displayName: 'PaymentSelector', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentService', name: 'PaymentService', displayName: 'PaymentService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderDomain', name: 'OrderDomain', displayName: 'OrderDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderSelector', name: 'OrderSelector', displayName: 'OrderSelector', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderService', name: 'OrderService', displayName: 'OrderService', type: 'ApexClass', risk: 'LOW' },
+      createMockNode('ApexClass:PaymentDomain'),
+      createMockNode('ApexClass:PaymentSelector'),
+      createMockNode('ApexClass:PaymentService'),
+      createMockNode('ApexClass:OrderDomain'),
+      createMockNode('ApexClass:OrderSelector'),
+      createMockNode('ApexClass:OrderService'),
     ];
 
+    function createMockEdge(id: string, source: string, target: string): ExplorerEdge {
+      return {
+        id,
+        source,
+        target,
+        relationshipType: 'method-call',
+        method: '',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: 'HIGH',
+        line: 1,
+        column: 1,
+        methodOwner: '',
+        file: '',
+        canonical: {
+          source: { type: 'ApexClass', name: source },
+          target: { type: 'ApexClass', name: target },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
+      };
+    }
+
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentDomain' },
-      { id: 'e2', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentSelector' },
-      { id: 'e3', source: 'ApexClass:OrderService', target: 'ApexClass:OrderDomain' },
-      { id: 'e4', source: 'ApexClass:OrderService', target: 'ApexClass:OrderSelector' },
+      createMockEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+      createMockEdge('e2', 'ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
+      createMockEdge('e3', 'ApexClass:OrderService', 'ApexClass:OrderDomain'),
+      createMockEdge('e4', 'ApexClass:OrderService', 'ApexClass:OrderSelector'),
     ];
 
     const discovery = discoverFeatures(nodes, edges);

@@ -7,7 +7,6 @@ import { discoverFeatures } from './features';
 import { classifyNodeLayer } from './layers';
 import { isTestNode, isFieldNode } from './analysis';
 import { evaluateLayout } from './evaluate-layout';
-import { deriveFeatureCompositionGroups } from './feature-composition';
 import { shouldAutoLayout } from '../position-policy';
 import { filterGraphByNodeTypes } from '../search-filter';
 import { computeFocusedGraph } from '../focus-graph';
@@ -79,17 +78,52 @@ function getMinPrimaryClearance(nodes: ExplorerNode[], positions: Record<string,
 
 describe('Prompt 5 — Hybrid Hierarchy + Cluster Spatial Coherence Adversarial Suite', () => {
   it('S1 — Simple component: PaymentDomain + PaymentSelector + PaymentService preserves same cluster & correct layer hierarchy', () => {
+    const makeNode = (id: string, type: ExplorerNode['type'], displayName: string): ExplorerNode => ({
+      id,
+      displayName,
+      type,
+      file: `${displayName}.cls`,
+      risk: 'LOW',
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    });
+
+    const makeEdge = (id: string, source: string, target: string): ExplorerEdge => ({
+      id,
+      source,
+      target,
+      relationshipType: 'method-call',
+      method: null,
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: source },
+        target: { type: 'ApexClass', name: target },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    });
+
     const nodes: ExplorerNode[] = [
-      { id: 'LWC:PaymentController', name: 'PaymentController', displayName: 'PaymentController', type: 'LWC', risk: 'LOW' },
-      { id: 'ApexClass:PaymentService', name: 'PaymentService', displayName: 'PaymentService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentDomain', name: 'PaymentDomain', displayName: 'PaymentDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentSelector', name: 'PaymentSelector', displayName: 'PaymentSelector', type: 'ApexClass', risk: 'LOW' },
+      makeNode('LWC:PaymentController', 'LWC', 'PaymentController'),
+      makeNode('ApexClass:PaymentService', 'ApexClass', 'PaymentService'),
+      makeNode('ApexClass:PaymentDomain', 'ApexClass', 'PaymentDomain'),
+      makeNode('ApexClass:PaymentSelector', 'ApexClass', 'PaymentSelector'),
     ];
 
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'LWC:PaymentController', target: 'ApexClass:PaymentService' },
-      { id: 'e2', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentDomain' },
-      { id: 'e3', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentSelector' },
+      makeEdge('e1', 'LWC:PaymentController', 'ApexClass:PaymentService'),
+      makeEdge('e2', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+      makeEdge('e3', 'ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
     ];
 
     const discovery = discoverFeatures(nodes, edges);
@@ -114,19 +148,54 @@ describe('Prompt 5 — Hybrid Hierarchy + Cluster Spatial Coherence Adversarial 
   });
 
   it('S2 — Multi-layer component: Component spanning Presentation → Application → Domain → Schema maintains layer correctness & spatial alignment', () => {
+    const makeNode = (id: string, type: ExplorerNode['type'], displayName: string): ExplorerNode => ({
+      id,
+      displayName,
+      type,
+      file: `${displayName}.cls`,
+      risk: 'LOW',
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    });
+
+    const makeEdge = (id: string, source: string, target: string): ExplorerEdge => ({
+      id,
+      source,
+      target,
+      relationshipType: 'method-call',
+      method: null,
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: source },
+        target: { type: 'ApexClass', name: target },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    });
+
     const nodes: ExplorerNode[] = [
-      { id: 'LWC:OrderForm', name: 'OrderForm', displayName: 'OrderForm', type: 'LWC', risk: 'LOW' },
-      { id: 'ApexClass:OrderController', name: 'OrderController', displayName: 'OrderController', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderService', name: 'OrderService', displayName: 'OrderService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderDomain', name: 'OrderDomain', displayName: 'OrderDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'CustomObject:Order__c', name: 'Order__c', displayName: 'Order__c', type: 'CustomObject', risk: 'LOW' },
+      makeNode('LWC:OrderForm', 'LWC', 'OrderForm'),
+      makeNode('ApexClass:OrderController', 'ApexClass', 'OrderController'),
+      makeNode('ApexClass:OrderService', 'ApexClass', 'OrderService'),
+      makeNode('ApexClass:OrderDomain', 'ApexClass', 'OrderDomain'),
+      makeNode('CustomObject:Order__c', 'CustomObject', 'Order__c'),
     ];
 
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'LWC:OrderForm', target: 'ApexClass:OrderController' },
-      { id: 'e2', source: 'ApexClass:OrderController', target: 'ApexClass:OrderService' },
-      { id: 'e3', source: 'ApexClass:OrderService', target: 'ApexClass:OrderDomain' },
-      { id: 'e4', source: 'ApexClass:OrderDomain', target: 'CustomObject:Order__c' },
+      makeEdge('e1', 'LWC:OrderForm', 'ApexClass:OrderController'),
+      makeEdge('e2', 'ApexClass:OrderController', 'ApexClass:OrderService'),
+      makeEdge('e3', 'ApexClass:OrderService', 'ApexClass:OrderDomain'),
+      makeEdge('e4', 'ApexClass:OrderDomain', 'CustomObject:Order__c'),
     ];
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -147,20 +216,55 @@ describe('Prompt 5 — Hybrid Hierarchy + Cluster Spatial Coherence Adversarial 
   });
 
   it('S3 — Two components: Payment trio vs Order trio form 2 distinct non-overlapping spatial regions', () => {
+    const makeNode = (id: string, type: ExplorerNode['type'], displayName: string): ExplorerNode => ({
+      id,
+      displayName,
+      type,
+      file: `${displayName}.cls`,
+      risk: 'LOW',
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    });
+
+    const makeEdge = (id: string, source: string, target: string): ExplorerEdge => ({
+      id,
+      source,
+      target,
+      relationshipType: 'method-call',
+      method: null,
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: source },
+        target: { type: 'ApexClass', name: target },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    });
+
     const nodes: ExplorerNode[] = [
-      { id: 'ApexClass:PaymentDomain', name: 'PaymentDomain', displayName: 'PaymentDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentSelector', name: 'PaymentSelector', displayName: 'PaymentSelector', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentService', name: 'PaymentService', displayName: 'PaymentService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderDomain', name: 'OrderDomain', displayName: 'OrderDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderSelector', name: 'OrderSelector', displayName: 'OrderSelector', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderService', name: 'OrderService', displayName: 'OrderService', type: 'ApexClass', risk: 'LOW' },
+      makeNode('ApexClass:PaymentDomain', 'ApexClass', 'PaymentDomain'),
+      makeNode('ApexClass:PaymentSelector', 'ApexClass', 'PaymentSelector'),
+      makeNode('ApexClass:PaymentService', 'ApexClass', 'PaymentService'),
+      makeNode('ApexClass:OrderDomain', 'ApexClass', 'OrderDomain'),
+      makeNode('ApexClass:OrderSelector', 'ApexClass', 'OrderSelector'),
+      makeNode('ApexClass:OrderService', 'ApexClass', 'OrderService'),
     ];
 
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentDomain' },
-      { id: 'e2', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentSelector' },
-      { id: 'e3', source: 'ApexClass:OrderService', target: 'ApexClass:OrderDomain' },
-      { id: 'e4', source: 'ApexClass:OrderService', target: 'ApexClass:OrderSelector' },
+      makeEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+      makeEdge('e2', 'ApexClass:PaymentService', 'ApexClass:PaymentSelector'),
+      makeEdge('e3', 'ApexClass:OrderService', 'ApexClass:OrderDomain'),
+      makeEdge('e4', 'ApexClass:OrderService', 'ApexClass:OrderSelector'),
     ];
 
     const discovery = discoverFeatures(nodes, edges);
@@ -216,12 +320,47 @@ describe('Prompt 5 — Hybrid Hierarchy + Cluster Spatial Coherence Adversarial 
     const nodes: ExplorerNode[] = [];
     const edges: ExplorerEdge[] = [];
 
+    const makeNode = (id: string, displayName: string): ExplorerNode => ({
+      id,
+      displayName,
+      type: 'ApexClass',
+      file: `${displayName}.cls`,
+      risk: 'LOW',
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    });
+
+    const makeEdge = (id: string, source: string, target: string): ExplorerEdge => ({
+      id,
+      source,
+      target,
+      relationshipType: 'method-call',
+      method: null,
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: source },
+        target: { type: 'ApexClass', name: target },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    });
+
     // Create a 50-node dense component
-    nodes.push({ id: 'ApexClass:CoreHub', name: 'CoreHub', displayName: 'CoreHub', type: 'ApexClass', risk: 'LOW' });
+    nodes.push(makeNode('ApexClass:CoreHub', 'CoreHub'));
     for (let i = 1; i <= 50; i++) {
       const nodeId = `ApexClass:Worker_${i}`;
-      nodes.push({ id: nodeId, name: `Worker_${i}`, displayName: `Worker_${i}`, type: 'ApexClass', risk: 'LOW' });
-      edges.push({ id: `e_${i}`, source: 'ApexClass:CoreHub', target: nodeId });
+      nodes.push(makeNode(nodeId, `Worker_${i}`));
+      edges.push(makeEdge(`e_${i}`, 'ApexClass:CoreHub', nodeId));
     }
 
     const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
@@ -242,23 +381,58 @@ describe('Prompt 5 — Hybrid Hierarchy + Cluster Spatial Coherence Adversarial 
   });
 
   it('S9 — Shared infrastructure: Utility node serving multiple components does not collapse feature regions', () => {
+    const makeNode = (id: string, displayName: string): ExplorerNode => ({
+      id,
+      displayName,
+      type: 'ApexClass',
+      file: `${displayName}.cls`,
+      risk: 'LOW',
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+    });
+
+    const makeEdge = (id: string, source: string, target: string): ExplorerEdge => ({
+      id,
+      source,
+      target,
+      relationshipType: 'method-call',
+      method: null,
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: source },
+        target: { type: 'ApexClass', name: target },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    });
+
     const nodes: ExplorerNode[] = [
-      { id: 'ApexClass:AppLogger', name: 'AppLogger', displayName: 'AppLogger', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentService', name: 'PaymentService', displayName: 'PaymentService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:PaymentDomain', name: 'PaymentDomain', displayName: 'PaymentDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderService', name: 'OrderService', displayName: 'OrderService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:OrderDomain', name: 'OrderDomain', displayName: 'OrderDomain', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:BillingService', name: 'BillingService', displayName: 'BillingService', type: 'ApexClass', risk: 'LOW' },
-      { id: 'ApexClass:BillingDomain', name: 'BillingDomain', displayName: 'BillingDomain', type: 'ApexClass', risk: 'LOW' },
+      makeNode('ApexClass:AppLogger', 'AppLogger'),
+      makeNode('ApexClass:PaymentService', 'PaymentService'),
+      makeNode('ApexClass:PaymentDomain', 'PaymentDomain'),
+      makeNode('ApexClass:OrderService', 'OrderService'),
+      makeNode('ApexClass:OrderDomain', 'OrderDomain'),
+      makeNode('ApexClass:BillingService', 'BillingService'),
+      makeNode('ApexClass:BillingDomain', 'BillingDomain'),
     ];
 
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'ApexClass:PaymentService', target: 'ApexClass:PaymentDomain' },
-      { id: 'e2', source: 'ApexClass:OrderService', target: 'ApexClass:OrderDomain' },
-      { id: 'e3', source: 'ApexClass:BillingService', target: 'ApexClass:BillingDomain' },
-      { id: 'e4', source: 'ApexClass:PaymentService', target: 'ApexClass:AppLogger' },
-      { id: 'e5', source: 'ApexClass:OrderService', target: 'ApexClass:AppLogger' },
-      { id: 'e6', source: 'ApexClass:BillingService', target: 'ApexClass:AppLogger' },
+      makeEdge('e1', 'ApexClass:PaymentService', 'ApexClass:PaymentDomain'),
+      makeEdge('e2', 'ApexClass:OrderService', 'ApexClass:OrderDomain'),
+      makeEdge('e3', 'ApexClass:BillingService', 'ApexClass:BillingDomain'),
+      makeEdge('e4', 'ApexClass:PaymentService', 'ApexClass:AppLogger'),
+      makeEdge('e5', 'ApexClass:OrderService', 'ApexClass:AppLogger'),
+      makeEdge('e6', 'ApexClass:BillingService', 'ApexClass:AppLogger'),
     ];
 
     const discovery = discoverFeatures(nodes, edges);

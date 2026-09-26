@@ -340,7 +340,6 @@ export function placeSatellites(
   primaryPositions: Record<string, { x: number; y: number }>,
   options: SatelliteLayoutOptions = {}
 ): SatellitePlacementResult {
-  const safeNodes = Array.isArray(nodes) ? nodes : [];
   const safeEdges = Array.isArray(edges) ? edges : [];
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
@@ -833,7 +832,7 @@ export function placeSatellites(
       const candidateCrossings = evaluateTotalCrossings(safeEdges, candidatePositions);
       if (candidateCrossings < currentBestCrossings) {
         currentBestCrossings = candidateCrossings;
-        fieldIds.forEach((id, idx) => {
+        fieldIds.forEach((id) => {
           positions[id] = candidatePositions[id];
           satellitePositions[id] = candidatePositions[id];
         });

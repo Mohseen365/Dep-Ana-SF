@@ -2,24 +2,20 @@ import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import type { ComprehensiveLayoutMetrics, PositionMap } from '../lib/layout/metrics';
+import type { PositionMap } from '../lib/layout/metrics';
 import { calculateLayoutMetrics } from '../lib/layout/metrics';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
-import { classifyAllFeatureRoles, type FeatureRoleContext } from '../lib/layout/feature-roles';
+import { type FeatureRoleContext } from '../lib/layout/feature-roles';
 import { discoverFeatures } from '../lib/layout/features';
 import {
-  computeGlobalFeatureLayout,
-  computeGlobalDomainLayout,
   buildDomainGraph,
   computeFeatureLayerYMap,
-  calculatePrimaryLayerRowCounts,
   type FeatureRegion,
   type DomainRegion,
-  type GlobalFeatureLayoutResult,
   LAYER_Y_MAP,
 } from '../lib/layout/global-layout';
 import { determineGlobalFeatureOrder } from '../lib/layout/feature-ordering';
@@ -198,7 +194,6 @@ function runPhase11ExperimentPipeline(
       layerCounts[l] = (layerCounts[l] || 0) + 1;
     });
 
-    const representedLayers = LAYERS_IN_ORDER.filter(l => layerCounts[l] > 0);
 
     const maxCols = Math.max(1, ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.min(4, layerCounts[l]) : 0)));
     const maxRows = Math.max(1, ...LAYERS_IN_ORDER.map(l => (layerCounts[l] > 0 ? Math.ceil(layerCounts[l] / 4) : 0)));
@@ -667,7 +662,7 @@ describe('Phase 11 — Controlled Aspect-Ratio Optimization Experiment Suite', (
           `${String(c?.primarySatelliteCrossings).padStart(5)} | ` +
           `${String(c?.satelliteSatelliteCrossings).padStart(5)} | ` +
           `${String(m.edgeCrossingCount).padStart(6)} | ` +
-          `${m.minClearance.toFixed(1).padStart(9)}px | ` +
+          `${m.minClearance!.toFixed(1).padStart(9)}px | ` +
           `${statusStr}`
         );
       });

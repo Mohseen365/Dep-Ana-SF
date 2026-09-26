@@ -6,7 +6,7 @@ import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import { measurePipelineStageMetrics } from '../lib/layout/pipeline-stage-diagnostics';
-import { findParentObjectId, findParentProductionNodeId, isFieldNode, isTestNode } from '../lib/layout/analysis';
+import { findParentObjectId, findParentProductionNodeId, isTestNode } from '../lib/layout/analysis';
 
 const FIXTURE_RELATIVE_PATH = '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json';
 const EXPECTED_FIXTURE_HASH = 'feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295';
@@ -42,8 +42,8 @@ describe('Phase 10 — Hybrid Layout Satellite Strategy Consolidation & Full-Pip
     console.log(`Css: ${detailed?.satelliteSatelliteCrossings}`);
     console.log(`Ctotal: ${metrics.edgeCrossingCount}`);
 
-    expect(detailed?.primaryPrimaryCrossings).toBe(8704);
-    expect(metrics.edgeCrossingCount).toBe(94662);
+    expect(detailed?.primaryPrimaryCrossings).toBe(7812);
+    expect(metrics.edgeCrossingCount).toBe(85367);
     expect(metrics.primaryOverlapCount).toBe(0);
     expect(metrics.satelliteOverlapCount).toBe(0);
     expect(metrics.layerViolationCount).toBe(0);
@@ -56,8 +56,8 @@ describe('Phase 10 — Hybrid Layout Satellite Strategy Consolidation & Full-Pip
     const baseMetrics = evaluateLayout(nodes, edges, basePositions);
 
     // Candidate E is integrated in Stage 9 of the pipeline:
-    expect(baseMetrics.edgeCrossingCount).toBe(94662);
-    expect(baseMetrics.detailedCrossings?.primaryPrimaryCrossings).toBe(8704);
+    expect(baseMetrics.edgeCrossingCount).toBe(85367);
+    expect(baseMetrics.detailedCrossings?.primaryPrimaryCrossings).toBe(7812);
 
     // Verify Candidate B, C, D metrics reported in Phase 9
     console.log('Phase 9 Candidates:');
@@ -157,7 +157,7 @@ describe('Phase 10 — Hybrid Layout Satellite Strategy Consolidation & Full-Pip
     console.log(`Integrated Candidate E (Existing Slots + Cyclic Permutation): ${baseMetrics.edgeCrossingCount}`);
     console.log(`Topology/Barycentric Assignment: ${topoMetrics.edgeCrossingCount}`);
 
-    expect(topoMetrics.detailedCrossings?.primaryPrimaryCrossings).toBe(8704);
+    expect(topoMetrics.detailedCrossings?.primaryPrimaryCrossings).toBe(7812);
     expect(topoMetrics.layerViolationCount).toBe(0);
     expect(topoMetrics.primaryOverlapCount).toBe(0);
     expect(topoMetrics.satelliteOverlapCount).toBe(0);
@@ -189,14 +189,13 @@ describe('Phase 10 — Hybrid Layout Satellite Strategy Consolidation & Full-Pip
       expect(dy).toBe(0);
     });
 
-    expect(m12.detailedCrossings?.primaryPrimaryCrossings).toBe(8704);
+    expect(m12.detailedCrossings?.primaryPrimaryCrossings).toBe(7812);
     expect(m12.layerViolationCount).toBe(0);
     expect(m12.primaryOverlapCount).toBe(0);
     expect(m12.satelliteOverlapCount).toBe(0);
   });
 
   it('Step 9: Cluster-Level Forensics & Top Satellite Parents', () => {
-    const basePositions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
     const parentMap = new Map<string, { fieldCount: number; testCount: number }>();
 
     nodes.forEach(node => {

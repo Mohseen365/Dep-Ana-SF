@@ -478,10 +478,7 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
 
         for (let i = 0; i < ids.length; i++) {
           const id = ids[i];
-          const neighbors = adjMap.get(id) || [];
           let sumPos = 0;
-          let count = 0;
-
           let sumWeight = 0;
 
           edges.forEach(e => {

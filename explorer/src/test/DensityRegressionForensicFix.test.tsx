@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
-import { shouldAutoLayout, resolveAuthoritativePosition, calculateDeterministicNewNodePosition } from '../lib/position-policy';
+import { resolveAuthoritativePosition, calculateDeterministicNewNodePosition } from '../lib/position-policy';
 import { createSparseGraphFixture } from '../lib/layout/fixtures/sparse-graph';
 import { createDenseCrossDomainFixture } from '../lib/layout/fixtures/dense-cross-domain';
 import { createTestHeavyFixture } from '../lib/layout/fixtures/test-heavy';
@@ -77,7 +77,7 @@ describe('Forensic Fix — Graph Node Density & Position Authority Regression Te
 
   it('Fixture 6 — Filtered graph: only visible nodes participate in layout', () => {
     const fixture = createDenseCrossDomainFixture();
-    const visibleTypes = ['LWC', 'ApexClass'];
+    const visibleTypes = ['LWC', 'ApexClass'] as any;
     const filtered = filterGraphByNodeTypes(fixture.nodes, fixture.edges, visibleTypes);
 
     const positions = computeArchitectureLayout(filtered.nodes, filtered.edges);

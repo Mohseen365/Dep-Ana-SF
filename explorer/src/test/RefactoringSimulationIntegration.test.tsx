@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
 import {
@@ -8,11 +7,11 @@ import {
   computeFindingDelta,
   type RefactoringProposal,
 } from '../lib/refactoring-simulation';
-import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge, Position } from '../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureFinding } from '../lib/intelligence';
 
 // Mock cytoscape and plugins for integration testing
-const { mockRunLayout, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
+const { mockCytoscapeFn } = vi.hoisted(() => {
   const mockRunLayout = vi.fn();
   const mockElementsCollection = {
     removeClass: vi.fn().mockReturnThis(),
@@ -50,7 +49,7 @@ const { mockRunLayout, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
   const mockCytoscapeFn: any = vi.fn().mockReturnValue(mockCy);
   mockCytoscapeFn.use = vi.fn();
 
-  return { mockRunLayout, mockCy, mockCytoscapeFn };
+  return { mockCytoscapeFn };
 });
 
 vi.mock('cytoscape', () => ({
@@ -69,38 +68,96 @@ const baseGraph: ExplorerDataSchema = {
     totalEdges: 2,
     sourceProject: 'default',
   },
+  summary: {
+    nodeCount: 3,
+    edgeCount: 2,
+    highRiskCount: 1,
+    mediumRiskCount: 0,
+    lowRiskCount: 2,
+    cycleCount: 0,
+    unresolvedCount: 0,
+    inventory: { files: 3, apexClasses: 3, apexTriggers: 0, lwcJs: 0, lwcHtml: 0, visualforce: 0, flows: 0, objects: 0, fields: 0 },
+  },
   nodes: [
     {
       id: 'ServiceA',
       displayName: 'ServiceA',
       type: 'ApexClass',
-      layer: 'application',
+      file: 'ServiceA.cls',
       risk: 'LOW',
-      metrics: { linesOfCode: 100, fanIn: 1, fanOut: 1, cyclomaticComplexity: 4, weightedMethodCount: 4 },
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 1, coupling: 2, unresolved: 0, score: 5 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
       refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
     },
     {
       id: 'ServiceB',
       displayName: 'ServiceB',
       type: 'ApexClass',
-      layer: 'domain',
+      file: 'ServiceB.cls',
       risk: 'HIGH',
-      metrics: { linesOfCode: 300, fanIn: 2, fanOut: 2, cyclomaticComplexity: 12, weightedMethodCount: 12 },
+      riskReasons: [],
+      metrics: { fanIn: 2, fanOut: 2, coupling: 4, unresolved: 0, score: 20 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
       refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'NO_TESTS' },
     },
     {
       id: 'RepoC',
       displayName: 'RepoC',
       type: 'ApexClass',
-      layer: 'schema',
+      file: 'RepoC.cls',
       risk: 'LOW',
-      metrics: { linesOfCode: 50, fanIn: 1, fanOut: 0, cyclomaticComplexity: 2, weightedMethodCount: 2 },
+      riskReasons: [],
+      metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 3 },
+      behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
       refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
     },
   ],
   edges: [
-    { id: 'edge-A-B', source: 'ServiceA', target: 'ServiceB', relationshipType: 'calls' },
-    { id: 'edge-B-C', source: 'ServiceB', target: 'RepoC', relationshipType: 'calls' },
+    {
+      id: 'edge-A-B',
+      source: 'ServiceA',
+      target: 'ServiceB',
+      relationshipType: 'method-call',
+      method: 'doCall',
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: 1,
+      column: 1,
+      methodOwner: 'ServiceB',
+      file: 'ServiceA.cls',
+      canonical: {
+        source: { type: 'ApexClass', name: 'ServiceA' },
+        target: { type: 'ApexClass', name: 'ServiceB' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    },
+    {
+      id: 'edge-B-C',
+      source: 'ServiceB',
+      target: 'RepoC',
+      relationshipType: 'method-call',
+      method: 'doCall',
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: 1,
+      column: 1,
+      methodOwner: 'RepoC',
+      file: 'ServiceB.cls',
+      canonical: {
+        source: { type: 'ApexClass', name: 'ServiceB' },
+        target: { type: 'ApexClass', name: 'RepoC' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    },
   ],
   impactSummaries: {},
   entryPoints: [],
@@ -135,7 +192,7 @@ describe('Refactoring Simulation Position Authority & Non-Destructive Invariants
   });
 
   it('Invariant A: Opening simulation does NOT alter existing node positions or invoke layout', () => {
-    const basePositions: Record<string, Position> = {
+      const basePositions: Record<string, { x: number; y: number }> = {
       ServiceA: { x: 100, y: 200 },
       ServiceB: { x: 300, y: 200 },
       RepoC: { x: 500, y: 200 },
@@ -154,7 +211,7 @@ describe('Refactoring Simulation Position Authority & Non-Destructive Invariants
   });
 
   it('Invariant B & C: Simulated Add & Remove do NOT mutate existing node positions', () => {
-    const basePositions: Record<string, Position> = {
+      const basePositions: Record<string, { x: number; y: number }> = {
       ServiceA: { x: 100, y: 200 },
       ServiceB: { x: 300, y: 200 },
       RepoC: { x: 500, y: 200 },
@@ -164,14 +221,34 @@ describe('Refactoring Simulation Position Authority & Non-Destructive Invariants
       id: 'ServiceHelper',
       displayName: 'ServiceHelper',
       type: 'ApexClass',
-      layer: 'application',
+        file: 'ServiceHelper.cls',
+        risk: 'LOW',
+        riskReasons: [],
+        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 5 },
+        behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
       refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
     };
     const newEdge: ExplorerEdge = {
       id: 'edge-A-Helper',
       source: 'ServiceA',
       target: 'ServiceHelper',
-      relationshipType: 'calls',
+        relationshipType: 'method-call',
+        method: 'helperCall',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: 1,
+        column: 1,
+        methodOwner: 'ServiceHelper',
+        file: 'ServiceA.cls',
+        canonical: {
+          source: { type: 'ApexClass', name: 'ServiceA' },
+          target: { type: 'ApexClass', name: 'ServiceHelper' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
     };
 
     const ops = [
@@ -230,11 +307,15 @@ describe('Refactoring Simulation Position Authority & Non-Destructive Invariants
   it('computes finding delta accurately during simulation steps', () => {
     const finding1: ArchitectureFinding = {
       id: 'f-1',
-      ruleId: 'HIGH_RISK',
+      type: 'HIGH_RISK',
       severity: 'HIGH',
       title: 'High Risk Component',
       description: 'Component ServiceB is high risk',
-      affectedNodeIds: ['ServiceB'],
+      nodeIds: ['ServiceB'],
+      edgeIds: [],
+      evidence: [],
+      provenance: { origin: 'DERIVED_RULE', source: 'rule', facts: {} },
+      rule: { ruleId: 'HIGH_RISK', ruleVersion: '1.0', name: 'High Risk' },
     };
 
     const before = [finding1];

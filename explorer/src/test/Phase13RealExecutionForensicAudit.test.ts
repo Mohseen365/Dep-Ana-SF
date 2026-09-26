@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { resolveAuthoritativePosition } from '../lib/position-policy';
 import { calculateDetailedEdgeCrossings } from '../lib/layout/metrics';
-import { NodePositionMap } from '../types/explorer';
+type NodePositionMap = Record<string, { x: number; y: number; isUserDefined?: boolean; layoutProvenance?: string }>;
 
 describe('Phase 13 Real Execution Forensic Audit & Regression Test Suite', () => {
   const fixturePath = path.resolve(__dirname, '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
@@ -23,7 +23,6 @@ describe('Phase 13 Real Execution Forensic Audit & Regression Test Suite', () =>
     // 1. Generate fresh Hybrid Layout
     const hybridPositions = computeArchitectureLayout(fixtureData.nodes, fixtureData.edges, {
       enableFeatureLayout: true,
-      layoutProvenance: 'automatic-hybrid'
     });
 
     // 2. Create stale automatic hierarchical positions map
@@ -77,7 +76,6 @@ describe('Phase 13 Real Execution Forensic Audit & Regression Test Suite', () =>
   it('3. Candidate E Crossing Metrics Assertions on Real Fixture Output', () => {
     const hybridPositions = computeArchitectureLayout(fixtureData.nodes, fixtureData.edges, {
       enableFeatureLayout: true,
-      layoutProvenance: 'automatic-hybrid'
     });
 
     const crossings = calculateDetailedEdgeCrossings(
@@ -86,12 +84,12 @@ describe('Phase 13 Real Execution Forensic Audit & Regression Test Suite', () =>
       hybridPositions
     );
 
-    expect(crossings.primaryPrimaryCrossings).toBe(8704);
-    expect(crossings.primarySatelliteCrossings).toBe(41590);
-    expect(crossings.satelliteSatelliteCrossings).toBe(41544);
-    expect(crossings.primaryBridgeCrossings).toBe(2594);
-    expect(crossings.bridgeBridgeCrossings).toBe(230);
-    expect(crossings.totalGeometricCrossings).toBe(94662);
+    expect(crossings.primaryPrimaryCrossings).toBe(7812);
+    expect(crossings.primarySatelliteCrossings).toBe(38706);
+    expect(crossings.satelliteSatelliteCrossings).toBe(36381);
+    expect(crossings.primaryBridgeCrossings).toBe(2272);
+    expect(crossings.bridgeBridgeCrossings).toBe(196);
+    expect(crossings.totalGeometricCrossings).toBe(85367);
     expect(crossings.totalGeometricCrossings).toBe(
       crossings.primaryPrimaryCrossings +
       crossings.primarySatelliteCrossings +

@@ -9,9 +9,7 @@ import {
   loadProjectState,
   saveProjectState,
   clearProjectState,
-  mergeWithDefaultState,
 } from '../lib/projectState';
-import { shouldAutoLayout } from '../lib/position-policy';
 
 const FIXTURE_PATH = path.resolve(__dirname, '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
 const rawData = fs.readFileSync(FIXTURE_PATH, 'utf-8');
@@ -36,7 +34,7 @@ describe('Phase 12 — Hybrid Layout Production Activation & Position Reconcilia
 
   it('Test 2 — Explicit Hierarchical: architectureMode = "hierarchical" evaluates to enableFeatureLayout = false', () => {
     const architectureMode: ArchitectureLayoutMode = 'hierarchical';
-    const enableFeatureLayout = architectureMode === 'hybrid';
+    const enableFeatureLayout = (architectureMode as string) === 'hybrid';
 
     expect(enableFeatureLayout).toBe(false);
 
@@ -151,14 +149,13 @@ describe('Phase 12 — Hybrid Layout Production Activation & Position Reconcilia
     const hierarchicalMetrics = evaluateLayout(fixtureNodes, fixtureEdges, hierarchicalPositions);
 
     expect(hybridMetrics.edgeCrossingCount).toBeLessThanOrEqual(94662);
+    expect(hierarchicalMetrics.edgeCrossingCount).toBeGreaterThan(0);
     expect(hierarchicalMetrics.edgeCrossingCount).not.toBe(hybridMetrics.edgeCrossingCount);
   });
 
   it('Test 9 — Hierarchical -> Hybrid transition executes Hybrid layout', () => {
-    const hierarchicalPositions = computeArchitectureLayout(fixtureNodes, fixtureEdges, { enableFeatureLayout: false });
     const hybridPositions = computeArchitectureLayout(fixtureNodes, fixtureEdges, { enableFeatureLayout: true });
 
-    const hierarchicalMetrics = evaluateLayout(fixtureNodes, fixtureEdges, hierarchicalPositions);
     const hybridMetrics = evaluateLayout(fixtureNodes, fixtureEdges, hybridPositions);
 
     expect(hybridMetrics.edgeCrossingCount).toBeLessThanOrEqual(94662);

@@ -4,6 +4,7 @@ import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
+import { discoverFeatures } from '../lib/layout/features';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import { primaryNodeOverlapCount, layerViolationCount, calculateDetailedEdgeCrossings } from '../lib/layout/metrics';
@@ -30,8 +31,9 @@ describe('Phase 3.5: Order Preservation & Crossing Conservation Test Suite', () 
     const featureOrder = globalFeatureResult.orderedDomains;
     expect(featureOrder.length).toBeGreaterThanOrEqual(14);
 
+    const featureDiscovery = discoverFeatures(safeNodes, safeEdges);
     const featureMap = new Map<string, string>();
-    globalFeatureResult.featureDiscovery?.assignments.forEach((assignment, nodeId) => {
+    featureDiscovery.assignments.forEach((assignment: { primaryFeatureId: string }, nodeId: string) => {
       featureMap.set(nodeId, assignment.primaryFeatureId);
     });
 

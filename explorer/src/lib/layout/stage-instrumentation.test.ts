@@ -20,7 +20,6 @@ describe('Stage Instrumentation & Metric Conservation Test Suite', () => {
 
     const stage8PrimaryCrossings = result.snapshots['Stage 8'].metrics.detailedCrossings?.primaryPrimaryCrossings;
     const stage9PrimaryCrossings = result.snapshots['Stage 9'].metrics.detailedCrossings?.primaryPrimaryCrossings;
-    const stage10PrimaryCrossings = result.snapshots['Stage 10'].metrics.detailedCrossings?.primaryPrimaryCrossings;
     const stage11PrimaryCrossings = result.snapshots['Stage 11'].metrics.detailedCrossings?.primaryPrimaryCrossings;
 
     expect(stage8PrimaryCrossings).toBeGreaterThan(0);

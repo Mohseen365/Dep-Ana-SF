@@ -7,7 +7,7 @@ import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClass
 import { classifyNodeLayerWithReason } from './layers';
 import { discoverDomains } from './domains';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from './centrality';
-import { classifyAllFeatureRoles, type FeatureRoleContext } from './feature-roles';
+import { type FeatureRoleContext } from './feature-roles';
 import { discoverFeatures } from './features';
 import { computeGlobalFeatureLayout, computeGlobalDomainLayout } from './global-layout';
 import { reduceEdgeCrossings } from './ordering';
@@ -146,7 +146,6 @@ export function measurePipelineStageMetrics(
       roleOverride: analysis.nodes.get(node.id)?.role || null,
     });
   });
-  const featureRoles = classifyAllFeatureRoles(safeNodes, featureRoleContextMap);
 
   const featureDiscovery = discoverFeatures(safeNodes, safeEdges, {
     index,
@@ -216,6 +215,7 @@ export function measurePipelineStageMetrics(
     layerMap,
     domainMap: activeSpatialMap,
     domainOrder: globalDomainResult.orderedDomains,
+    layerYMap: globalDomainResult.layerYMap,
   });
 
   // Note: Stage 6 outputs bucketOrder (ordering ranks). The coordinates at Stage 6 remain the Stage 5 region centers.
@@ -241,6 +241,7 @@ export function measurePipelineStageMetrics(
       nodeHeight,
       domainSpacing,
       layerYMap: globalDomainResult.layerYMap,
+      featureLayerYMap: globalDomainResult.featureLayerYMap,
     },
   });
 
@@ -312,6 +313,9 @@ export function measurePipelineStageMetrics(
       layerSpacing,
       layerYOffsets: globalDomainResult.layerYMap,
       index,
+      ...(enableFeatureLayout && globalDomainResult.featureLayerYMap
+        ? { featureLayerYMap: globalDomainResult.featureLayerYMap, featureMap }
+        : {}),
     }
   );
 
@@ -409,6 +413,9 @@ export function measurePipelineStageMetrics(
       nodeHeight,
       layerMap,
       domainMap: activeSpatialMap,
+      ...(enableFeatureLayout && globalDomainResult.domainBounds
+        ? { domainBounds: globalDomainResult.domainBounds }
+        : {}),
     },
   });
 

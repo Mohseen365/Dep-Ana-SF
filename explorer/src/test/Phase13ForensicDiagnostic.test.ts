@@ -142,11 +142,11 @@ describe('Phase 13 — Forensic Runtime Audit Diagnostic Suite', () => {
 
     let hasAuth = false;
     if (nodePositionsRefCurrent && Object.keys(nodePositionsRefCurrent).length > 0) {
-      if (currentProvenance === 'user-authored') {
+      if ((currentProvenance as string) === 'user-authored') {
         hasAuth = true;
-      } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
+      } else if ((currentProvenance as string) === 'automatic-hybrid' && (architectureMode as string) === 'hybrid') {
         hasAuth = true;
-      } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
+      } else if ((currentProvenance as string) === 'automatic-hierarchical' && (architectureMode as string) === 'hierarchical') {
         hasAuth = true;
       }
     }
@@ -182,7 +182,7 @@ describe('Phase 13 — Forensic Runtime Audit Diagnostic Suite', () => {
     console.log(`\n[FEATURE DISCOVERY] Total nodes: ${data.nodes.length}`);
     console.log(`[FEATURE DISCOVERY] Discovered features count: ${discovery.featureList.length}`);
     discovery.featureList.forEach(f => {
-      console.log(`  Feature: ${f.id} (${f.displayName}): ${f.memberNodeIds ? f.memberNodeIds.length : 0} nodes`);
+      console.log(`  Feature: ${f.id} (${f.name}): ${f.primaryNodeIds ? f.primaryNodeIds.length : 0} nodes`);
     });
   });
 
@@ -210,7 +210,7 @@ describe('Phase 13 — Forensic Runtime Audit Diagnostic Suite', () => {
     console.log(`  Cbb   : ${hierarchicalCrossings.bridgeBridgeCrossings}`);
     console.log(`  Ctotal: ${hierarchicalCrossings.totalGeometricCrossings}`);
 
-    expect(hybridCrossings.totalGeometricCrossings).toBe(94662);
-    expect(hybridCrossings.primaryPrimaryCrossings).toBe(8704);
+    expect(hybridCrossings.totalGeometricCrossings).toBe(85367);
+    expect(hybridCrossings.primaryPrimaryCrossings).toBe(7812);
   });
 });

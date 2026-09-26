@@ -13,7 +13,7 @@ import {
   resolveAuthoritativePosition,
   calculateDeterministicNewNodePosition,
 } from '../lib/position-policy';
-import { ALL_EXPLORER_NODE_TYPES } from '../types/explorer';
+import { ALL_EXPLORER_NODE_TYPES, type ExplorerEdge } from '../types/explorer';
 
 describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Acceptance Suite', () => {
   beforeEach(() => {
@@ -96,8 +96,29 @@ describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Accepta
       });
 
       // New node C arrives with an edge to A
-      const edges = [
-        { id: 'e1', source: 'ApexClass:A', target: 'ApexClass:C' },
+      const edges: ExplorerEdge[] = [
+        {
+          id: 'e1',
+          source: 'ApexClass:A',
+          target: 'ApexClass:C',
+          relationshipType: 'method-call',
+          method: null,
+          evidence: '',
+          unresolved: false,
+          resolutionClassification: 'RESOLVED_LOCAL',
+          resolutionStrategy: 'EXACT',
+          confidence: '1.0',
+          line: null,
+          column: null,
+          methodOwner: null,
+          file: '',
+          canonical: {
+            source: { type: 'ApexClass', name: 'A' },
+            target: { type: 'ApexClass', name: 'C' },
+            relationship: { type: 'method-call', resolution: 'EXACT' },
+            location: {},
+          },
+        },
       ];
 
       const newPosC = calculateDeterministicNewNodePosition(
@@ -191,11 +212,12 @@ describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Accepta
       const sequence = ['proj-1', 'proj-2', 'proj-3', 'proj-1', 'proj-3', 'proj-2'];
       let currentLoadedState: ProjectUIState | null = null;
 
-      sequence.forEach((pid) => {
+      for (const pid of sequence) {
         currentLoadedState = loadProjectState(pid);
-      });
+      }
 
       // Final state must match proj-2
+      expect(currentLoadedState).not.toBeNull();
       expect(currentLoadedState?.projectId).toBe('proj-2');
       expect(currentLoadedState?.filters.searchQuery).toBe('Query-proj-2');
       expect(currentLoadedState?.zoom.zoom).toBe(1.2);

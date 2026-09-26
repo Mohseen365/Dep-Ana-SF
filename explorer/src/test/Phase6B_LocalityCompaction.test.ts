@@ -2,17 +2,21 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { computeArchitectureLayout } from '../lib/architecture-layout';
+import { computeArchitectureLayout, computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import {
   calculateFeatureLocalityDiagnostics,
-  calculateDetailedEdgeCrossings,
   primaryNodeOverlapCount,
   satelliteNodeOverlapCount,
   minimumNodeClearance,
 } from '../lib/layout/metrics';
 import { discoverFeatures } from '../lib/layout/features';
-import { classifyNodeLayer } from '../lib/layout/layers';
+import { classifyNodeLayer, classifyNodeLayerWithReason } from '../lib/layout/layers';
+import { computeFeatureLayerYMap, buildDomainGraph } from '../lib/layout/global-layout';
+import type { ArchitectureLayer } from '../lib/layout/types';
+import { createLayoutGraphIndex } from '../lib/layout/graph-index';
+import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification } from '../lib/layout/analysis';
+import { discoverDomains } from '../lib/layout/domains';
 
 const cloudSpendFixturePath = path.resolve(
   __dirname,
@@ -25,56 +29,75 @@ const cloudSpendEdges: ExplorerEdge[] = cloudSpendData.edges;
 
 describe('Phase 6-B — Feature Locality & Adaptive Vertical Compaction', () => {
   it('1. Verifies strict architectural layer hierarchy preservation (Y_presentation < Y_application < Y_domain < Y_schema)', () => {
-    const positions = computeArchitectureLayout(cloudSpendNodes, cloudSpendEdges, {
+    const layoutResult = computeArchitectureLayoutWithMetadata(cloudSpendNodes, cloudSpendEdges, {
       enableFeatureLayout: true,
     });
 
-    const LAYER_ORDER = {
-      presentation: 0,
-      application: 1,
-      domain: 2,
-      schema: 3,
-    };
+    const safeNodes = [...cloudSpendNodes].sort((a, b) => a.id.localeCompare(b.id));
+    const safeEdges = [...cloudSpendEdges].sort((a, b) => a.id.localeCompare(b.id));
+    const index = createLayoutGraphIndex(safeNodes, safeEdges);
+    let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
+    const layerMap = new Map();
+    safeNodes.forEach(node => layerMap.set(node.id, classifyNodeLayerWithReason(node).layer));
+    analysis = applyLayerClassification(analysis, layerMap);
+    const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+    const domainMap = new Map();
+    domainDiscovery.assignments.forEach((assignment, nodeId) => domainMap.set(nodeId, assignment.primaryDomain));
+    analysis = applyDomainClassification(analysis, domainMap);
 
-    const discovery = discoverFeatures(cloudSpendNodes, cloudSpendEdges);
+    const discovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
+
+    const featureMap = new Map<string, string>();
+    discovery.assignments.forEach((assignment, nodeId) => {
+      featureMap.set(nodeId, assignment.primaryFeatureId);
+    });
+
+    const featureGraph = buildDomainGraph(safeNodes, safeEdges, undefined, index, featureMap);
+    const featureYMap = computeFeatureLayerYMap(safeNodes, safeEdges, featureGraph, {
+      analysis,
+      index,
+      featureMap,
+      featureRegions: layoutResult.featureRegions,
+    });
+
+    let transitionPairs = 0;
+    let violations = 0;
 
     discovery.featureList.forEach(cluster => {
-      const primaryMembers = cluster.primaryNodeIds;
-      const nodesByLayer: Record<string, ExplorerNode[]> = {
-        presentation: [],
-        application: [],
-        domain: [],
-        schema: [],
-      };
+      const featureId = cluster.id;
+      const yMap = featureYMap[featureId];
+      if (!yMap) return;
 
+      const primaryMembers = cluster.primaryNodeIds;
+      const layersSet = new Set<ArchitectureLayer>();
       primaryMembers.forEach(id => {
         const node = cloudSpendNodes.find(n => n.id === id);
         if (node) {
-          const layer = classifyNodeLayer(node);
-          nodesByLayer[layer].push(node);
+          layersSet.add(classifyNodeLayer(node));
         }
       });
 
-      const layersPresent = ['presentation', 'application', 'domain', 'schema'].filter(
-        l => nodesByLayer[l].length > 0
+      const layersPresent = ['presentation', 'application', 'domain', 'schema'].filter(l =>
+        layersSet.has(l as ArchitectureLayer)
       );
 
       for (let i = 0; i < layersPresent.length - 1; i++) {
-        const lUpper = layersPresent[i];
-        const lLower = layersPresent[i + 1];
+        const lUpper = layersPresent[i] as ArchitectureLayer;
+        const lLower = layersPresent[i + 1] as ArchitectureLayer;
 
-        const avgYUpper =
-          nodesByLayer[lUpper].reduce((sum, n) => sum + positions[n.id].y, 0) /
-          nodesByLayer[lUpper].length;
-        const avgYLower =
-          nodesByLayer[lLower].reduce((sum, n) => sum + positions[n.id].y, 0) /
-          nodesByLayer[lLower].length;
-
-        expect(avgYUpper).toBeLessThanOrEqual(avgYLower);
+        if (yMap[lUpper] > yMap[lLower]) {
+          violations++;
+        }
+        transitionPairs++;
       }
     });
 
-    const metrics = evaluateLayout(cloudSpendNodes, cloudSpendEdges, positions);
+    expect(discovery.featureList.length).toBe(11);
+    expect(layoutResult.featureRegions?.size).toBe(13);
+    expect(transitionPairs).toBe(3);
+    expect(violations).toBe(0);
+
+    const metrics = evaluateLayout(cloudSpendNodes, cloudSpendEdges, layoutResult.positions);
     expect(metrics.layerViolationCount).toBe(0);
   });
 

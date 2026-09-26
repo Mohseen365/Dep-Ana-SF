@@ -286,7 +286,7 @@ describe('Prompt 9 — End-to-End Architecture Decision Workflow & Post-Commit V
   it('11. persists committed state and restores accurately on reload with cross-project isolation', () => {
     const proposal = createProposalFromTargetNodes(['ApexClass:AccountController'], cstBase, PRIMARY_PROJECT_ID);
     const ops = proposal.steps.flatMap(s => s.operations);
-    const committedGraph = applySimulationOperations(cstBase, ops);
+    applySimulationOperations(cstBase, ops);
 
     const initialP1State = createDefaultProjectUIState(PRIMARY_PROJECT_ID);
     const updatedPositions: Record<string, { x: number; y: number }> = {

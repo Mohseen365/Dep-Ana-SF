@@ -136,7 +136,7 @@ describe('Phase 3.4 — Shared Infrastructure & Corridor Spatial Behavior Verifi
           isHighRisk: false,
           hasCycles: false,
           hasUnresolved: false,
-          testCoverageStatus: 'TESTED',
+          testCoverageStatus: 'COVERED',
         },
       },
     ];
@@ -166,13 +166,30 @@ describe('Phase 3.4 — Shared Infrastructure & Corridor Spatial Behavior Verifi
           isHighRisk: false,
           hasCycles: false,
           hasUnresolved: false,
-          testCoverageStatus: 'TESTED',
+          testCoverageStatus: 'COVERED',
         },
       });
       mockEdges.push({
+        id: `e-field-${i}`,
         source: 'Object:Test_Object__c',
         target: fieldId,
-        type: 'contains',
+        relationshipType: 'field-reference',
+        method: null,
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: null,
+        column: null,
+        methodOwner: null,
+        file: '',
+        canonical: {
+          source: { type: 'CustomObject', name: 'Test_Object__c' },
+          target: { type: 'CustomField', name: `Field_${i}__c` },
+          relationship: { type: 'field-reference', resolution: 'EXACT' },
+          location: {},
+        },
       });
     }
 

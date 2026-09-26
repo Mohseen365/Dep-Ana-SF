@@ -47,7 +47,28 @@ describe('Phase 4-B — Feature Semantics & True 2D Region Geometry Test Suite',
     ];
 
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'LWC:SingleLayerComponent', target: 'ApexClass:SingleLayerController', type: 'calls' },
+      {
+        id: 'e1',
+        source: 'LWC:SingleLayerComponent',
+        target: 'ApexClass:SingleLayerController',
+        relationshipType: 'method-call',
+        method: 'call',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: null,
+        column: null,
+        methodOwner: null,
+        file: '',
+        canonical: {
+          source: { type: 'LWC', name: 'SingleLayerComponent' },
+          target: { type: 'ApexClass', name: 'SingleLayerController' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
+      },
     ];
 
     const discovery = discoverFeatures(nodes, edges);
@@ -92,8 +113,50 @@ describe('Phase 4-B — Feature Semantics & True 2D Region Geometry Test Suite',
     ];
 
     const edges: ExplorerEdge[] = [
-      { id: 'e1', source: 'ApexClass:MultiLayerController', target: 'ApexClass:MultiLayerService', type: 'calls' },
-      { id: 'e2', source: 'ApexClass:MultiLayerService', target: 'ApexClass:MultiLayerSelector', type: 'calls' },
+      {
+        id: 'e1',
+        source: 'ApexClass:MultiLayerController',
+        target: 'ApexClass:MultiLayerService',
+        relationshipType: 'method-call',
+        method: 'call',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: null,
+        column: null,
+        methodOwner: null,
+        file: '',
+        canonical: {
+          source: { type: 'ApexClass', name: 'MultiLayerController' },
+          target: { type: 'ApexClass', name: 'MultiLayerService' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
+      },
+      {
+        id: 'e2',
+        source: 'ApexClass:MultiLayerService',
+        target: 'ApexClass:MultiLayerSelector',
+        relationshipType: 'method-call',
+        method: 'call',
+        evidence: '',
+        unresolved: false,
+        resolutionClassification: 'RESOLVED_LOCAL',
+        resolutionStrategy: 'EXACT',
+        confidence: '1.0',
+        line: null,
+        column: null,
+        methodOwner: null,
+        file: '',
+        canonical: {
+          source: { type: 'ApexClass', name: 'MultiLayerService' },
+          target: { type: 'ApexClass', name: 'MultiLayerSelector' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
+          location: {},
+        },
+      },
     ];
 
     const discovery = discoverFeatures(nodes, edges);
