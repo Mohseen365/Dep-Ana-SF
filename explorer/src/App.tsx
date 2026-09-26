@@ -11,6 +11,7 @@ import { Sidebar } from './components/Sidebar';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
 import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { ProjectDashboard } from './components/ProjectDashboard';
+import { FeatureMatrixPanel } from './components/FeatureMatrixPanel';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { HotspotPanel } from './components/HotspotPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
@@ -830,6 +831,28 @@ export function App() {
                     onViewHistory={() => setWorkspaceViewMode('history')}
                   />
                 </div>
+              )}
+
+              {workspaceViewMode === 'matrix' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <FeatureMatrixPanel
+                      data={activeData}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                      onSelectFeatureAnchor={(anchorNodeId) => {
+                        selection.selectNode(anchorNodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
               )}
 
               {workspaceViewMode === 'findings' && (

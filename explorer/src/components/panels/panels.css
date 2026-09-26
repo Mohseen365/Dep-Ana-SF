@@ -532,6 +532,36 @@
   font-style: italic;
 }
 
+/* FeatureMatrixPanel Scoped Styles */
+.feature-matrix-panel {
+  background-color: var(--surface-panel, #111827);
+  color: var(--text-primary, #f8fafc);
+  padding: 1rem;
+  border-radius: var(--radius-lg, 8px);
+  border: 1px solid var(--border-default, #334155);
+}
+
+.feature-matrix-panel .matrix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-default, #334155);
+  padding-bottom: 0.5rem;
+}
+
+.feature-matrix-panel .feature-matrix-table {
+  border-collapse: collapse;
+  width: max-content;
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+}
+
+.feature-matrix-panel .feature-matrix-table th,
+.feature-matrix-panel .feature-matrix-table td {
+  border-right: 1px solid var(--border-subtle, #1e293b);
+  border-bottom: 1px solid var(--border-subtle, #1e293b);
+}
+
 /* ComparePanel Scoped Styles */
 .compare-panel-container {
   background-color: var(--surface-panel, #111827);

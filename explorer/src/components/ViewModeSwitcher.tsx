@@ -3,6 +3,7 @@ import React from "react";
 export type WorkspaceViewMode =
   | "graph"
   | "dashboard"
+  | "matrix"
   | "findings"
   | "hotspots"
   | "diagnostics"
@@ -40,6 +41,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-dashboard"
         >
           <span className="btn-icon">📊</span> Overview
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "matrix" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("matrix")}
+          title="Feature Dependency Matrix Lens"
+          data-testid="view-btn-matrix"
+        >
+          <span className="btn-icon">🧩</span> Matrix
         </button>
         <button
           className={`view-mode-btn ${viewMode === "findings" ? "active" : ""}`}
