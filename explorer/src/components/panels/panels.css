@@ -273,6 +273,31 @@
   color: #ffffff;
 }
 
+/* FeatureProfilePanel Scoped Styles */
+.feature-profile-panel {
+  background-color: var(--surface-panel, #111827);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 8px;
+  border: 1px solid var(--border-default, #334155);
+}
+
+.feature-profile-panel .profile-component-list::-webkit-scrollbar,
+.feature-profile-panel .profile-detail-pane::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.feature-profile-panel .profile-component-list::-webkit-scrollbar-thumb,
+.feature-profile-panel .profile-detail-pane::-webkit-scrollbar-thumb {
+  background: var(--border-strong, #475569);
+  border-radius: 3px;
+}
+
+.feature-profile-panel .profile-component-list::-webkit-scrollbar-track,
+.feature-profile-panel .profile-detail-pane::-webkit-scrollbar-track {
+  background: var(--surface-base, #090d16);
+}
+
 .hotspot-panel .readiness-filter-bar {
   padding: 4px 0;
 }
