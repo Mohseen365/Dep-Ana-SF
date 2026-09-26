@@ -273,6 +273,31 @@
   color: #ffffff;
 }
 
+/* RadarPanel Scoped Styles */
+.radar-panel {
+  background-color: var(--surface-panel, #111827);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 8px;
+  border: 1px solid var(--border-default, #334155);
+}
+
+.radar-panel .radar-svg-container::-webkit-scrollbar,
+.radar-panel .radar-inspector-pane::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.radar-panel .radar-svg-container::-webkit-scrollbar-thumb,
+.radar-panel .radar-inspector-pane::-webkit-scrollbar-thumb {
+  background: var(--border-strong, #475569);
+  border-radius: 3px;
+}
+
+.radar-panel .radar-svg-container::-webkit-scrollbar-track,
+.radar-panel .radar-inspector-pane::-webkit-scrollbar-track {
+  background: var(--surface-base, #090d16);
+}
+
 /* FeatureProfilePanel Scoped Styles */
 .feature-profile-panel {
   background-color: var(--surface-panel, #111827);
