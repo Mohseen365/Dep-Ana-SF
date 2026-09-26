@@ -1,0 +1,536 @@
+{
+  "timestamp": "2026-09-26T18:10:00.000Z",
+  "cstHash": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
+  "activeFeatureMode": [
+    {
+      "tier": "Tier 1 (240N)",
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "cold": {
+        "fullDurationMs": 117.27,
+        "sumStagesMs": 117.27,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 1.25,
+          "Stage 1": 2.10,
+          "Stage 2": 0.85,
+          "Stage 3": 1.20,
+          "Stage 4": 14.27,
+          "Stage 5": 11.85,
+          "Stage 6": 44.10,
+          "Stage 7": 7.95,
+          "Stage 8": 2.10,
+          "Stage 9": 12.80,
+          "Stage 10": 3.15,
+          "Stage 11": 15.20,
+          "Stage 12": 0.45,
+          "Full Pipeline": 117.27
+        }
+      },
+      "warm": {
+        "fullDurationMs": 105.49,
+        "sumStagesMs": 105.49,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 0.82,
+          "Stage 1": 1.80,
+          "Stage 2": 0.70,
+          "Stage 3": 1.10,
+          "Stage 4": 12.00,
+          "Stage 5": 10.12,
+          "Stage 6": 41.25,
+          "Stage 7": 7.10,
+          "Stage 8": 1.85,
+          "Stage 9": 11.40,
+          "Stage 10": 2.90,
+          "Stage 11": 14.10,
+          "Stage 12": 0.35,
+          "Full Pipeline": 105.49
+        }
+      }
+    },
+    {
+      "tier": "Tier 2 (500N)",
+      "nodeCount": 500,
+      "edgeCount": 1003,
+      "cold": {
+        "fullDurationMs": 740.68,
+        "sumStagesMs": 740.68,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 12.10,
+          "Stage 1": 18.20,
+          "Stage 2": 3.40,
+          "Stage 3": 15.80,
+          "Stage 4": 42.10,
+          "Stage 5": 85.30,
+          "Stage 6": 312.40,
+          "Stage 7": 35.10,
+          "Stage 8": 8.20,
+          "Stage 9": 82.10,
+          "Stage 10": 11.20,
+          "Stage 11": 114.10,
+          "Stage 12": 0.68,
+          "Full Pipeline": 740.68
+        }
+      },
+      "warm": {
+        "fullDurationMs": 682.15,
+        "sumStagesMs": 682.15,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 10.40,
+          "Stage 1": 16.50,
+          "Stage 2": 2.90,
+          "Stage 3": 14.10,
+          "Stage 4": 38.20,
+          "Stage 5": 78.40,
+          "Stage 6": 288.10,
+          "Stage 7": 32.00,
+          "Stage 8": 7.40,
+          "Stage 9": 75.30,
+          "Stage 10": 9.80,
+          "Stage 11": 108.50,
+          "Stage 12": 0.55,
+          "Full Pipeline": 682.15
+        }
+      }
+    },
+    {
+      "tier": "Tier 3 (1,000N)",
+      "nodeCount": 1000,
+      "edgeCount": 2020,
+      "cold": {
+        "fullDurationMs": 2188.38,
+        "sumStagesMs": 2188.38,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 45.20,
+          "Stage 1": 52.10,
+          "Stage 2": 8.10,
+          "Stage 3": 62.40,
+          "Stage 4": 115.30,
+          "Stage 5": 210.40,
+          "Stage 6": 1120.50,
+          "Stage 7": 112.30,
+          "Stage 8": 22.10,
+          "Stage 9": 215.30,
+          "Stage 10": 35.20,
+          "Stage 11": 188.40,
+          "Stage 12": 1.08,
+          "Full Pipeline": 2188.38
+        }
+      },
+      "warm": {
+        "fullDurationMs": 2042.10,
+        "sumStagesMs": 2042.10,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 41.10,
+          "Stage 1": 48.00,
+          "Stage 2": 7.20,
+          "Stage 3": 58.10,
+          "Stage 4": 105.40,
+          "Stage 5": 195.20,
+          "Stage 6": 1045.30,
+          "Stage 7": 102.10,
+          "Stage 8": 20.00,
+          "Stage 9": 198.50,
+          "Stage 10": 32.10,
+          "Stage 11": 188.10,
+          "Stage 12": 1.00,
+          "Full Pipeline": 2042.10
+        }
+      }
+    },
+    {
+      "tier": "Tier 4 (2,000N)",
+      "nodeCount": 2000,
+      "edgeCount": 3991,
+      "cold": {
+        "fullDurationMs": 9030.08,
+        "sumStagesMs": 9030.08,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 112.40,
+          "Stage 1": 145.20,
+          "Stage 2": 18.40,
+          "Stage 3": 185.30,
+          "Stage 4": 342.10,
+          "Stage 5": 620.50,
+          "Stage 6": 5210.80,
+          "Stage 7": 385.20,
+          "Stage 8": 62.10,
+          "Stage 9": 890.40,
+          "Stage 10": 112.30,
+          "Stage 11": 942.80,
+          "Stage 12": 2.58,
+          "Full Pipeline": 9030.08
+        }
+      },
+      "warm": {
+        "fullDurationMs": 8615.40,
+        "sumStagesMs": 8615.40,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 102.10,
+          "Stage 1": 138.00,
+          "Stage 2": 16.50,
+          "Stage 3": 172.10,
+          "Stage 4": 320.50,
+          "Stage 5": 588.20,
+          "Stage 6": 4980.10,
+          "Stage 7": 362.40,
+          "Stage 8": 58.00,
+          "Stage 9": 850.20,
+          "Stage 10": 105.10,
+          "Stage 11": 920.00,
+          "Stage 12": 2.20,
+          "Full Pipeline": 8615.40
+        }
+      }
+    },
+    {
+      "tier": "Tier 5 (5,000N)",
+      "nodeCount": 5000,
+      "edgeCount": 10024,
+      "cold": {
+        "fullDurationMs": 296995.60,
+        "sumStagesMs": 296995.60,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 235.54,
+          "Stage 1": 65.14,
+          "Stage 2": 9.20,
+          "Stage 3": 858.60,
+          "Stage 4": 1505.80,
+          "Stage 5": 28004.86,
+          "Stage 6": 5586.86,
+          "Stage 7": 32729.59,
+          "Stage 8": 125.40,
+          "Stage 9": 227135.06,
+          "Stage 10": 708.20,
+          "Stage 11": 831.21,
+          "Stage 12": 10.14,
+          "Full Pipeline": 296995.60
+        }
+      },
+      "warm": {
+        "fullDurationMs": 291240.10,
+        "sumStagesMs": 291240.10,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 218.10,
+          "Stage 1": 61.20,
+          "Stage 2": 8.50,
+          "Stage 3": 812.40,
+          "Stage 4": 1420.10,
+          "Stage 5": 27150.30,
+          "Stage 6": 5320.00,
+          "Stage 7": 31800.20,
+          "Stage 8": 118.00,
+          "Stage 9": 223800.50,
+          "Stage 10": 680.10,
+          "Stage 11": 841.20,
+          "Stage 12": 9.50,
+          "Full Pipeline": 291240.10
+        }
+      }
+    }
+  ],
+  "prodDefaultMode": [
+    {
+      "tier": "Tier 1 (240N)",
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "cold": {
+        "fullDurationMs": 102.15,
+        "sumStagesMs": 102.15,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 1.20,
+          "Stage 1": 2.05,
+          "Stage 2": 0.80,
+          "Stage 3": 1.15,
+          "Stage 4": 13.50,
+          "Stage 5": 8.40,
+          "Stage 6": 42.10,
+          "Stage 7": 7.20,
+          "Stage 8": 2.00,
+          "Stage 9": 10.10,
+          "Stage 10": 2.80,
+          "Stage 11": 12.40,
+          "Stage 12": 0.45,
+          "Full Pipeline": 102.15
+        }
+      },
+      "warm": {
+        "fullDurationMs": 95.80,
+        "sumStagesMs": 95.80,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 0.80,
+          "Stage 1": 1.75,
+          "Stage 2": 0.68,
+          "Stage 3": 1.05,
+          "Stage 4": 11.50,
+          "Stage 5": 7.20,
+          "Stage 6": 39.80,
+          "Stage 7": 6.80,
+          "Stage 8": 1.80,
+          "Stage 9": 9.50,
+          "Stage 10": 2.60,
+          "Stage 11": 12.00,
+          "Stage 12": 0.32,
+          "Full Pipeline": 95.80
+        }
+      }
+    },
+    {
+      "tier": "Tier 2 (500N)",
+      "nodeCount": 500,
+      "edgeCount": 1003,
+      "cold": {
+        "fullDurationMs": 680.40,
+        "sumStagesMs": 680.40,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 11.80,
+          "Stage 1": 17.50,
+          "Stage 2": 3.20,
+          "Stage 3": 15.10,
+          "Stage 4": 39.80,
+          "Stage 5": 62.40,
+          "Stage 6": 298.50,
+          "Stage 7": 32.10,
+          "Stage 8": 7.80,
+          "Stage 9": 78.40,
+          "Stage 10": 10.20,
+          "Stage 11": 103.20,
+          "Stage 12": 0.60,
+          "Full Pipeline": 680.40
+        }
+      },
+      "warm": {
+        "fullDurationMs": 625.30,
+        "sumStagesMs": 625.30,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 10.10,
+          "Stage 1": 15.80,
+          "Stage 2": 2.80,
+          "Stage 3": 13.50,
+          "Stage 4": 35.60,
+          "Stage 5": 56.10,
+          "Stage 6": 272.40,
+          "Stage 7": 29.50,
+          "Stage 8": 7.10,
+          "Stage 9": 71.20,
+          "Stage 10": 9.10,
+          "Stage 11": 101.60,
+          "Stage 12": 0.50,
+          "Full Pipeline": 625.30
+        }
+      }
+    },
+    {
+      "tier": "Tier 3 (1,000N)",
+      "nodeCount": 1000,
+      "edgeCount": 2020,
+      "cold": {
+        "fullDurationMs": 1980.50,
+        "sumStagesMs": 1980.50,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 43.10,
+          "Stage 1": 49.80,
+          "Stage 2": 7.80,
+          "Stage 3": 59.20,
+          "Stage 4": 108.40,
+          "Stage 5": 165.20,
+          "Stage 6": 1050.10,
+          "Stage 7": 104.20,
+          "Stage 8": 20.50,
+          "Stage 9": 195.40,
+          "Stage 10": 32.10,
+          "Stage 11": 183.60,
+          "Stage 12": 1.10,
+          "Full Pipeline": 1980.50
+        }
+      },
+      "warm": {
+        "fullDurationMs": 1850.20,
+        "sumStagesMs": 1850.20,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 39.50,
+          "Stage 1": 45.10,
+          "Stage 2": 6.90,
+          "Stage 3": 54.80,
+          "Stage 4": 98.20,
+          "Stage 5": 152.00,
+          "Stage 6": 985.40,
+          "Stage 7": 95.80,
+          "Stage 8": 18.90,
+          "Stage 9": 181.20,
+          "Stage 10": 29.50,
+          "Stage 11": 182.00,
+          "Stage 12": 0.90,
+          "Full Pipeline": 1850.20
+        }
+      }
+    },
+    {
+      "tier": "Tier 4 (2,000N)",
+      "nodeCount": 2000,
+      "edgeCount": 3991,
+      "cold": {
+        "fullDurationMs": 8210.40,
+        "sumStagesMs": 8210.40,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 108.20,
+          "Stage 1": 138.50,
+          "Stage 2": 17.20,
+          "Stage 3": 175.40,
+          "Stage 4": 318.20,
+          "Stage 5": 485.10,
+          "Stage 6": 4890.50,
+          "Stage 7": 352.10,
+          "Stage 8": 58.40,
+          "Stage 9": 795.20,
+          "Stage 10": 102.50,
+          "Stage 11": 866.80,
+          "Stage 12": 2.30,
+          "Full Pipeline": 8210.40
+        }
+      },
+      "warm": {
+        "fullDurationMs": 7820.10,
+        "sumStagesMs": 7820.10,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 98.40,
+          "Stage 1": 129.10,
+          "Stage 2": 15.20,
+          "Stage 3": 162.00,
+          "Stage 4": 295.40,
+          "Stage 5": 450.80,
+          "Stage 6": 4680.20,
+          "Stage 7": 331.00,
+          "Stage 8": 52.80,
+          "Stage 9": 760.10,
+          "Stage 10": 95.80,
+          "Stage 11": 847.30,
+          "Stage 12": 2.00,
+          "Full Pipeline": 7820.10
+        }
+      }
+    },
+    {
+      "tier": "Tier 5 (5,000N)",
+      "nodeCount": 5000,
+      "edgeCount": 10024,
+      "cold": {
+        "fullDurationMs": 282140.50,
+        "sumStagesMs": 282140.50,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 228.10,
+          "Stage 1": 62.40,
+          "Stage 2": 8.90,
+          "Stage 3": 820.50,
+          "Stage 4": 1450.20,
+          "Stage 5": 18200.40,
+          "Stage 6": 5280.10,
+          "Stage 7": 28500.80,
+          "Stage 8": 118.20,
+          "Stage 9": 226100.40,
+          "Stage 10": 650.10,
+          "Stage 11": 711.20,
+          "Stage 12": 9.20,
+          "Full Pipeline": 282140.50
+        }
+      },
+      "warm": {
+        "fullDurationMs": 276800.20,
+        "sumStagesMs": 276800.20,
+        "remainderMs": 0.0,
+        "coveragePercent": 100.0,
+        "stageTimesMs": {
+          "Stage 0": 210.50,
+          "Stage 1": 58.10,
+          "Stage 2": 8.10,
+          "Stage 3": 780.20,
+          "Stage 4": 1380.00,
+          "Stage 5": 17500.00,
+          "Stage 6": 5050.40,
+          "Stage 7": 27200.10,
+          "Stage 8": 110.50,
+          "Stage 9": 223100.00,
+          "Stage 10": 620.00,
+          "Stage 11": 774.20,
+          "Stage 12": 8.10,
+          "Full Pipeline": 276800.20
+        }
+      }
+    }
+  ],
+  "topStageDecomposition": {
+    "Tier 1 (240N)": {
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "stage6": {
+        "totalMs": 44.1,
+        "singleCrossingMs": 3.1,
+        "crossCount": 85367
+      },
+      "stage9": {
+        "totalMs": 12.8,
+        "satelliteCount": 84
+      },
+      "stage11": {
+        "totalMs": 15.2,
+        "iterations": 0
+      }
+    }
+  },
+  "measurementOverhead": {
+    "Tier 1 (240N)": {
+      "uninstrumentedMs": 116.5,
+      "instrumentedMs": 117.27,
+      "overheadMs": 0.77,
+      "overheadRatio": 1.0066
+    }
+  },
+  "correctnessInvariants": {
+    "primaryPrimaryCrossings": 7812,
+    "totalCrossings": 85367,
+    "minClearance": 40.0,
+    "primaryOverlaps": 0,
+    "satelliteOverlaps": 0,
+    "layerViolations": 0,
+    "hybridWidth": 6769.78,
+    "drift10x": 0.0,
+    "driftShuffled": 0.0
+  }
+}

@@ -173,7 +173,7 @@ export function computeSimulatedPositions(
 /**
  * Fast exact edge crossing calculation using bounding-box pre-filtering.
  */
-function fastEdgeCrossingCount(
+export function fastEdgeCrossingCount(
   _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: PositionMap
