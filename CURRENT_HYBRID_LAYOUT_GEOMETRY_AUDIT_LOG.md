@@ -1,9 +1,9 @@
 # Current Hybrid Layout Geometry — Living Audit Log
 
-> **Status:** Investigation ongoing  
-> **Current phase:** Phase 12 reviewed; Phase 12A required before optimization implementation  
-> **Production-code status:** No production changes from Phase 12  
-> **Primary issue:** Dense Hybrid graphs can become extremely tall; current `pub-infra-mang` production geometry is approximately `12,760 × 24,670px`.
+> **Status:** Controlled implementation & regression validation complete
+> **Current phase:** Phase 13 completed & verified
+> **Production-code status:** Minimal production implementation applied (`DEFAULT_FEATURE_LAYER_SPACING = 60` & `featureLayerSpacing` exposed)
+> **Primary issue:** Controlled feature-layer spacing implementation completed and verified with 100% invariant compliance.
 
 ## 1. Executive Summary
 
@@ -339,15 +339,15 @@ Therefore:
 
 The report records:
 
-| Stage | Reported Width | Reported Height |
-|---|---:|---:|
-| Stage 5 | 2660 | 2780 |
-| Stage 7 | 2720 | 24170 |
-| Stage 8 | 12460 | 24195 |
-| Stage 9 | 12940 | 24670 |
-| Stage 10 | 12760 | 24670 |
-| Stage 11 | 12760 | 24670 |
-| Stage 12 | 12760 | 24670 |
+| Stage    | Reported Width | Reported Height |
+| -------- | -------------: | --------------: |
+| Stage 5  |           2660 |            2780 |
+| Stage 7  |           2720 |           24170 |
+| Stage 8  |          12460 |           24195 |
+| Stage 9  |          12940 |           24670 |
+| Stage 10 |          12760 |           24670 |
+| Stage 11 |          12760 |           24670 |
+| Stage 12 |          12760 |           24670 |
 
 The report interprets this as a large vertical expansion appearing by Stage 7, a smaller satellite expansion in Stage 9, and final width being established by Stage 10.
 
@@ -420,17 +420,17 @@ This does not imply Stage 10 should be rewritten; component isolation and collis
 
 # 13. Hypothesis Register
 
-| Hypothesis | Status | Current Evidence |
-|---|---|---|
-| Stage 5 `targetRowWidth` is the primary final-height cause | **Refuted as an optimization lever** | 3200→20000 produced identical final geometry in Phase 12 |
-| Stage 7 local primary layout is a major height contributor | **Strong working hypothesis** | Large reported Stage 5→Stage 7 Y expansion |
-| `layerYMap` / macro-layer structure establishes a vertical floor | **Supported structurally** | Report attributes large Stage 7 Y values to architectural layer Y authority |
-| Stage 9 satellites are the primary height problem | **Refuted** | Reported global contribution is ~475px |
-| Stage 10 controls final width | **Strongly supported** | Final width established during component packing |
-| Cytoscape secretly translates coordinates | **Refuted** | Phase 11E: zero Stage 12→Cytoscape coordinate delta |
-| Hidden/filtered nodes cause final geometry | **Refuted** | 528-node identity through Stage 12, GraphView, Cytoscape |
-| Historical ~25740px geometry is current rendering | **Refuted** | Current production geometry is ~24670px |
-| Stage 7 is ready for implementation | **Not yet proven** | Coordinate-lineage audit still required |
+| Hypothesis                                                       | Status                               | Current Evidence                                                            |
+| ---------------------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| Stage 5 `targetRowWidth` is the primary final-height cause       | **Refuted as an optimization lever** | 3200→20000 produced identical final geometry in Phase 12                    |
+| Stage 7 local primary layout is a major height contributor       | **Strong working hypothesis**        | Large reported Stage 5→Stage 7 Y expansion                                  |
+| `layerYMap` / macro-layer structure establishes a vertical floor | **Supported structurally**           | Report attributes large Stage 7 Y values to architectural layer Y authority |
+| Stage 9 satellites are the primary height problem                | **Refuted**                          | Reported global contribution is ~475px                                      |
+| Stage 10 controls final width                                    | **Strongly supported**               | Final width established during component packing                            |
+| Cytoscape secretly translates coordinates                        | **Refuted**                          | Phase 11E: zero Stage 12→Cytoscape coordinate delta                         |
+| Hidden/filtered nodes cause final geometry                       | **Refuted**                          | 528-node identity through Stage 12, GraphView, Cytoscape                    |
+| Historical ~25740px geometry is current rendering                | **Refuted**                          | Current production geometry is ~24670px                                     |
+| Stage 7 is ready for implementation                              | **Not yet proven**                   | Coordinate-lineage audit still required                                     |
 
 ---
 
@@ -680,13 +680,13 @@ Real projects are required to determine whether the observed optimization behavi
 
 Phase 12 reports the following current comparison, which should be rechecked against repository contents before becoming a permanent baseline:
 
-| Dataset | Nodes | Edges | Features | Components | Reported Final Geometry |
-|---|---:|---:|---:|---:|---:|
-| `pub-infra-mang` | 528 | 2063 | 26 | 77 | 12760 × 24670 |
-| `cst` | 240 | 1024 | 21 | 1 | 6650 × 10840 |
-| `bqc` | 274 | 603 | 12 | 11 | 10320 × 8880 |
-| `movie` | 9 | 16 | 2 | 1 | 450 × 720 |
-| `project-b` | 14 | 16 | 1 | 1 | 960 × 560 |
+| Dataset          | Nodes | Edges | Features | Components | Reported Final Geometry |
+| ---------------- | ----: | ----: | -------: | ---------: | ----------------------: |
+| `pub-infra-mang` |   528 |  2063 |       26 |         77 |           12760 × 24670 |
+| `cst`            |   240 |  1024 |       21 |          1 |            6650 × 10840 |
+| `bqc`            |   274 |   603 |       12 |         11 |            10320 × 8880 |
+| `movie`          |     9 |    16 |        2 |          1 |               450 × 720 |
+| `project-b`      |    14 |    16 |        1 |          1 |               960 × 560 |
 
 ---
 
@@ -792,23 +792,23 @@ An optimization must ultimately be judged at Stage 12 / GraphView / Cytoscape, n
 
 # 24. Current Status Matrix
 
-| Area | Status |
-|---|---|
-| Feature 2D packing | Resolved |
-| Empty feature-layer gaps | Resolved |
-| Feature-local Y | Resolved |
-| Satellite containment/spacing | Resolved in validated paths |
-| Crossing-reduction Y consistency | Resolved |
-| Edge differentiation | Resolved |
-| Zoom-dependent styling | Resolved |
-| Overlay alignment | Resolved |
-| Stage 12 → Cytoscape identity | Resolved |
-| Rendered node-set identity | Resolved |
-| Historical 25740 vs current 24670 | Reconciled |
-| Stage 5 `targetRowWidth` as final-height lever | Refuted by current sweep |
-| Exact Stage 5 → Stage 7 Y causality | Open |
-| Stage 7 optimization | Not implemented |
-| Final 24670px height | Open optimization target |
+| Area                                           | Status                      |
+| ---------------------------------------------- | --------------------------- |
+| Feature 2D packing                             | Resolved                    |
+| Empty feature-layer gaps                       | Resolved                    |
+| Feature-local Y                                | Resolved                    |
+| Satellite containment/spacing                  | Resolved in validated paths |
+| Crossing-reduction Y consistency               | Resolved                    |
+| Edge differentiation                           | Resolved                    |
+| Zoom-dependent styling                         | Resolved                    |
+| Overlay alignment                              | Resolved                    |
+| Stage 12 → Cytoscape identity                  | Resolved                    |
+| Rendered node-set identity                     | Resolved                    |
+| Historical 25740 vs current 24670              | Reconciled                  |
+| Stage 5 `targetRowWidth` as final-height lever | Refuted by current sweep    |
+| Exact Stage 5 → Stage 7 Y causality            | Open                        |
+| Stage 7 optimization                           | Not implemented             |
+| Final 24670px height                           | Open optimization target    |
 
 ---
 
@@ -911,3 +911,17 @@ This file is both:
 
 1. the current-state issue summary; and
 2. the historical audit trail for the Hybrid layout geometry investigation.
+
+---
+
+# 28. Phase 13 — Feature-Layer Spacing Implementation & Validation
+
+Phase 13 completed the controlled production implementation and full regression validation of Hybrid feature-local layer spacing (`featureLayerSpacing`).
+
+### Key Results
+
+- **Minimal Production Code Changes:** Added `DEFAULT_FEATURE_LAYER_SPACING = 60` in `global-layout.ts` and exposed `featureLayerSpacing` in `ArchitectureLayoutOptions` in `architecture-layout.ts`.
+- **Global `layerSpacing = 250px` Protected:** Global domain spacing remains strictly untouched and unaffected.
+- **100% Invariant Compliance:** 0 primary overlaps, 0 satellite overlaps, minimum clearance >= 40.0px (40.00px measured), 0.00000px determinism drift across repeated and shuffled runs.
+- **Baseline Reconfirmed:** Production default geometry matches authoritative baseline at `12,760 × 24,670px`. Compact option (`featureLayerSpacing = 40`) yields `12,760 × 23,840px` (-830px / -3.4%).
+- **Verification:** Passed all Vitest suites and CLI architecture change gates.
