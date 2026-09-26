@@ -562,6 +562,27 @@
   border-bottom: 1px solid var(--border-subtle, #1e293b);
 }
 
+/* FeatureTreePanel Scoped Styles */
+.feature-tree-panel {
+  background-color: var(--surface-panel, #111827);
+  color: var(--text-primary, #f8fafc);
+  padding: 1rem;
+  border-radius: var(--radius-lg, 8px);
+  border: 1px solid var(--border-default, #334155);
+}
+
+.feature-tree-panel .tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-default, #334155);
+  padding-bottom: 0.5rem;
+}
+
+.feature-tree-panel .tree-node-row:hover {
+  background-color: var(--surface-hover, #2d3748);
+}
+
 /* ComparePanel Scoped Styles */
 .compare-panel-container {
   background-color: var(--surface-panel, #111827);
