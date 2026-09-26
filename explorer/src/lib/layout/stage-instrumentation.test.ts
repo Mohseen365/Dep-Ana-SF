@@ -13,7 +13,7 @@ describe('Pipeline Stage Timing Instrumentation', () => {
       risk: 'LOW',
       riskReasons: [],
       behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
-      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'TESTED' },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
     },
     {
       id: 'ApexClass:AccountService',
@@ -24,7 +24,7 @@ describe('Pipeline Stage Timing Instrumentation', () => {
       risk: 'LOW',
       riskReasons: [],
       behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
-      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'TESTED' },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
     },
   ];
 
@@ -33,7 +33,23 @@ describe('Pipeline Stage Timing Instrumentation', () => {
       id: 'ApexClass:AccountController->ApexClass:AccountService',
       source: 'ApexClass:AccountController',
       target: 'ApexClass:AccountService',
-      type: 'Calls',
+      relationshipType: 'method-call',
+      method: 'execute',
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: 'high',
+      line: 1,
+      column: 1,
+      methodOwner: 'execute',
+      file: 'AccountController.cls',
+      canonical: {
+        source: { type: 'ApexClass', name: 'AccountController' },
+        target: { type: 'ApexClass', name: 'AccountService' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
     },
   ];
 
