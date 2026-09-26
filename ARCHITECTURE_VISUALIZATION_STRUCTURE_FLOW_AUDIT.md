@@ -29,20 +29,22 @@ Provides a high-level semantic land map of the system architecture, partitioning
 - Which features have the highest density of cross-feature dependencies?
 
 ### Required Data
-- Feature region clustering and assignments.
-- Architectural layer classifications (`presentation`, `application`, `domain`, `schema`).
-- Node role classifications (`Anchor`, `Core`, `Bridge`, `SharedInfrastructure`, `Test`).
-- Bounding geometry and bounding boxes for feature regions.
+- Feature region clustering and assignments (`HEURISTIC CLASSIFICATION` via `discoverFeatures()`).
+- Architectural layer classifications (`HEURISTIC CLASSIFICATION` via `classifyNodeLayer()`: `presentation`, `application`, `domain`, `schema`).
+- Node role classifications (`HEURISTIC CLASSIFICATION` via `classifyFeatureRole()`: `FeatureAnchor`, `FeatureCore`, `FeatureBridge`, `SharedInfrastructure`, `FeatureTest`).
+- Bounding geometry and bounding boxes for feature regions (`DERIVED CLASSIFICATION` via `computeGlobalFeatureLayout()`).
 
 ### Existing Data Support
-- **Full Data Support**: `discoverFeatures()` in `explorer/src/lib/layout/features.ts` identifies semantic feature clusters and assigns primary feature membership.
-- Node types (`ApexClass`, `LWC`, `CustomObject`, etc.) and risk scores (`HIGH`, `MEDIUM`, `LOW`) are fully typed in `ExplorerDataSchema` (`explorer/src/types/explorer.ts`).
-- `feature-roles.ts` classifies components into `SharedInfrastructure` (35 nodes on benchmark), `Bridge` (18 nodes), `Anchor` (12 nodes), `Core` (120 nodes), and `Test` (55 nodes).
+- **Data Status**: `DERIVABLE` (`HEURISTIC CLASSIFICATION`)
+- `discoverFeatures()` in `explorer/src/lib/layout/features.ts` identifies semantic feature clusters and assigns primary feature membership.
+- Node types (`ApexClass`, `LWC`, `CustomObject`, etc.) are `SOURCE METADATA` (`ExplorerNode.type`).
+- `feature-roles.ts` classifies components into `SharedInfrastructure` (35 nodes on benchmark), `FeatureBridge` (18 nodes), `FeatureAnchor` (12 nodes), `FeatureCore` (120 nodes), and `FeatureTest` (55 nodes).
 
-### Existing Code Support
+### Existing Code & Rendering Support
+- **Rendering Status**: `VERIFIED` (for base Hybrid layout view) / `NEW UI REQUIRED` (for interactive drilldown)
 - Stage 5 of `architecture-layout.ts` computes dynamic 2D multi-row band packing for feature regions.
 - `computeArchitectureLayoutWithMetadata()` returns Stage 5 `featureRegions` containing precise canvas bounding boxes `(minX, maxX, minY, maxY)`.
-- `FeatureOverlayCanvas.tsx` renders outer SVG feature enclosures, semantic title headers, background tints, and hover highlights over the Cytoscape graph.
+- `FeatureOverlayCanvas.tsx` renders outer SVG feature enclosures, semantic title headers, background tints, and hover highlights over the Cytoscape graph in Hybrid mode (`architectureMode="hybrid"`).
 
 ### Reusable Components
 - `FeatureOverlayCanvas.tsx`: Renders outer semantic enclosures and labels.
@@ -50,22 +52,24 @@ Provides a high-level semantic land map of the system architecture, partitioning
 - `discoverFeatures()` & `global-layout.ts`: Derives features and packages 2D region bounds.
 
 ### Missing Infrastructure
-- None for basic atlas view. To support interactive drilldown from Atlas region boxes to focused sub-graphs without reloading, seamless bounding-box zoom transitions can be connected to the existing `focusOnNode` / `focusState` pipeline.
+- UI interaction handlers for zooming smoothly into an atlas region or isolating a feature neighborhood on double-click (`NEW UI REQUIRED`).
 
-### Feasibility
-**READY**
+### Feasibility Classification
+`VERIFIED` (Base Layout & Rendering) / `NEW UI REQUIRED` (Interactive Region Drilldown)
 
-### Benefits
-- Directly addresses high-level architectural comprehension without requiring users to navigate 240 individual nodes.
+### Intended Benefits
+- Addresses high-level architectural comprehension without requiring users to navigate 240 individual nodes.
 - Built-in alignment with existing Hybrid layout mode and SVG overlay pipeline.
-- Preserves 100% Position Authority and 0.00000 px determinism.
+- Preserves 100% Position Authority and $0.00000\text{ px}$ determinism.
 
-### Limitations
-- Visual density in dense feature regions can cause text label clipping when zoom level is far (< 0.6).
+### Technical Limitations
+- Visual density in dense feature regions can cause text label clipping when zoom level is far ($< 0.6$).
 - Overlay SVG canvas must re-sync coordinates on window/panel resizing.
 
-### Scalability
-- High: O(N) bounding box derivation and SVG polygon rendering handles up to 5,000+ nodes smoothly.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| \log \|V\| + \|E\|)$
+- **Measured Performance**: $231.14\text{ ms}$ cold run on Cloud Spend Tracker ($240\text{ nodes}, 1024\text{ edges}$)
+- **Large Scale Estimate**: `UNMEASURED TARGET / ESTIMATE` for $5,000+$ nodes.
 
 ### Interaction Requirements
 - Click on feature enclosure header to select/focus all feature components.
@@ -73,13 +77,7 @@ Provides a high-level semantic land map of the system architecture, partitioning
 - Hover feature region to highlight intra-feature vs inter-feature edge connections.
 
 ### Relationship to Current 2D Graph
-- Direct 1:1 mapping: Existing Hybrid layout mode with `FeatureOverlayCanvas` IS the Architecture Atlas.
-
-### Implementation Scope
-- Zero core engine changes needed. Only minor UI polish for interactive region clicking and drilldown transitions.
-
-### Evidence
-- `FeatureOverlayCanvas.tsx` currently renders 13 semantic feature regions in production when `architectureMode="hybrid"`. Verified by `FeatureRegionOverlay.test.tsx` and `feature-composition-readability.test.ts`.
+- Direct 1:1 mapping: Existing Hybrid layout mode with `FeatureOverlayCanvas` functions as the Architecture Atlas.
 
 ---
 
@@ -103,55 +101,38 @@ Dynamically alters information density and level-of-detail (LOD) based on the vi
 - Viewport zoom event telemetry (`cy.zoom()`).
 
 ### Existing Data Support
-- **Full Data Support**: Node types, relationship types (`ExplorerRelationshipType`), method names (`canonical.source.method`), risk reasons, and metrics exist in `ExplorerDataSchema`.
+- **Data Status**: `VERIFIED`
+- Node types, relationship types (`ExplorerRelationshipType`), method names (`canonical.source.method`), risk reasons, and metrics exist in `ExplorerDataSchema`.
 
-### Existing Code Support
+### Existing Code & Rendering Support
+- **Rendering Status**: `PARTIALLY SUPPORTED` (3 zoom tiers exist) / `NEW RENDERING REQUIRED` (for 5 discrete LOD thresholds)
 - `GraphView.tsx` monitors viewport zoom and updates Cytoscape CSS classes dynamically:
   - `.zoom-far` (`zoom < 0.5`): Suppresses node labels, mutes intra-feature edges (`opacity: 0.18`), retains inter-feature edge visibility (`opacity: 0.55`).
   - `.zoom-mid` (`0.5 <= zoom < 1.5`): Displays node display names and moderate edge opacity (`opacity: 0.45`).
   - `.zoom-near` (`zoom >= 1.5`): Displays relationship type labels on edges (`data(relationshipType)`).
 - `FeatureOverlayCanvas.tsx` suppresses feature region SVG overlays when `zoom < 0.6`.
 
-### Reusable Components
-- Viewport zoom listener in `GraphView.tsx`.
-- Cytoscape stylesheet selectors in `graph-style.ts` (`.zoom-far`, `.zoom-mid`, `.zoom-near`).
-- Min-zoomed font size configuration (`min-zoomed-font-size: 10`).
-
 ### Missing Infrastructure
-- Current code implements 3 zoom tiers (`.zoom-far`, `.zoom-mid`, `.zoom-near`). Extending to 5 discrete semantic zoom levels requires adding 2 additional CSS class thresholds in `GraphView.tsx` (e.g. `.zoom-level-1` through `.zoom-level-5`) and semantic element collapse rules (hiding secondary satellite nodes at far zoom).
+- Expanding current 3 zoom tiers to 5 discrete semantic zoom levels requires adding 2 additional CSS class thresholds in `GraphView.tsx` and semantic element collapse rules (`NEW RENDERING REQUIRED`).
 
-### Feasibility
-**HIGH**
+### Feasibility Classification
+`PARTIALLY SUPPORTED` / `NEW RENDERING REQUIRED`
 
-### Benefits
-- Dramatically reduces visual noise on large-scale graphs (1,000+ nodes) without altering spatial node coordinates.
-- Preserves 60 FPS rendering performance during pan/zoom operations.
+### Intended Benefits
+- Reduces visual clutter on large-scale graphs without altering spatial node coordinates.
+- Preserves smooth rendering frame rates during pan/zoom operations.
 
-### Limitations
-- Cytoscape element filtering (`display: none` or `visibility: hidden`) during zoom transitions must be batched to prevent UI thread stutter on large graphs.
-
-### Scalability
-- High: Cytoscape batching (`cy.batch()`) handles zoom tier class toggling in < 5ms for 1,000 nodes.
-
-### Interaction Requirements
-- Continuous smooth scroll wheel zooming with automatic LOD transition triggers.
-- Breadcrumb display indicating current semantic zoom depth.
-
-### Relationship to Current 2D Graph
-- Operates directly on the current 2D Cytoscape canvas as a pure visual styling transform.
-
-### Implementation Scope
-- Adding 2 extra zoom class thresholds in `GraphView.tsx` and updating `graph-style.ts` stylesheet rules.
-
-### Evidence
-- `graph-style.ts` lines 270–330 define existing `.zoom-far`, `.zoom-mid`, and `.zoom-near` CSS stylesheet rules verified in `wave11-visualization-hardening.test.ts`.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| + \|E\|)$ CSS selector update
+- **Measured Performance**: $< 5\text{ ms}$ class toggle on $240\text{ nodes}$
+- **Target Estimate**: `UNMEASURED TARGET / ESTIMATE` (60 FPS on 1,000+ nodes)
 
 ---
 
 ## C. Architecture Stack
 
 ### Purpose
-Visualizes the org structure as a strict top-to-bottom architectural layer hierarchy: Presentation (LWC/Visualforce) $\rightarrow$ Application (Controllers/Services) $\rightarrow$ Domain (Business Logic/Selectors) $\rightarrow$ Schema (CustomObjects/Fields).
+Visualizes the org structure as a strict top-to-bottom architectural layer hierarchy: Presentation (LWC/Visualforce) $\to$ Application (Controllers/Services) $\to$ Domain (Business Logic/Selectors) $\to$ Schema (CustomObjects/Fields).
 
 ### User Questions
 - Does my presentation layer bypass the service layer and directly access database selectors or objects?
@@ -159,55 +140,39 @@ Visualizes the org structure as a strict top-to-bottom architectural layer hiera
 - Are vertical dependencies strictly downwards, or are there upward/cross-layer violations?
 
 ### Required Data
-- Layer classifications for every node (`presentation`, `application`, `domain`, `schema`).
+- Layer classifications for every node (`HEURISTIC CLASSIFICATION` via `classifyNodeLayer()`: `presentation`, `application`, `domain`, `schema`).
 - Component sub-role metadata (LWC, Controller, Service, Selector, Object, Field).
-- Vertical dependency directional vectors (`source.layer` $\rightarrow$ `target.layer`).
+- Vertical dependency directional vectors (`source.layer` $\to$ `target.layer`).
+- **CRITICAL**: Layer placement represents static dependency rank, NOT dynamic runtime execution sequence.
 
 ### Existing Data Support
-- **Full Data Support**: Layer classification is computed in Stage 2 of `architecture-layout.ts` and stored in `layers.ts`.
-- Node types strictly map to layers:
-  - `presentation`: `LWC`, `Visualforce`.
-  - `application`: `ApexClass` (Controllers), `Flow`, `ApexTrigger`.
-  - `domain`: `ApexClass` (Services, Selectors, Domain Handlers).
-  - `schema`: `CustomObject`, `Object`, `CustomField`, `Field`, `External`.
+- **Data Status**: `DERIVABLE` (`HEURISTIC CLASSIFICATION`)
+- Layer classification is computed in Stage 2 of `architecture-layout.ts` and stored in `layers.ts`.
+- Node types map heuristically to layers:
+  - `presentation`: `LWC`, `Visualforce` (`SOURCE METADATA`).
+  - `application`: `ApexClass` (Controllers), `Flow`, `ApexTrigger` (`HEURISTIC CLASSIFICATION`).
+  - `domain`: `ApexClass` (Services, Selectors, Domain Handlers) (`HEURISTIC CLASSIFICATION`).
+  - `schema`: `CustomObject`, `Object`, `CustomField`, `Field`, `External` (`SOURCE METADATA`).
 
-### Existing Code Support
+### Existing Code & Rendering Support
+- **Rendering Status**: `VERIFIED` (Hierarchical Mode) / `NEW UI REQUIRED` (for sub-layer shelf grouping)
 - Hierarchical Mode (`architectureMode="hierarchical"`) in `architecture-layout.ts` enforces strict top-to-bottom vertical layer band ordering.
-- `getGraphStyles()` applies distinct visual shapes per entity type: `LWC` (rectangle), `ApexTrigger` (triangle), `ApexClass` (ellipse), `CustomObject` (octagon), `CustomField` (cut-rectangle).
-
-### Reusable Components
-- `architecture-layout.ts`: Stage 2 Layer Classifier and Stage 6 Barycentric Layer Ordering.
-- `layers.ts`: Layer definitions and Y-coordinate band assignment.
-- `GraphView.tsx`: Hierarchical mode toggle (`architectureMode="hierarchical"`).
+- `getGraphStyles()` applies distinct visual shapes per entity type.
 
 ### Missing Infrastructure
-- None for the base stack view. Hierarchical mode is fully implemented. To enhance sub-layer role breakdown (e.g. separating `Services` from `Selectors` within `domain`), naming heuristic classifiers or method call inspection can group `ApexClass` components into sub-layer shelves.
+- To support sub-layer shelf grouping (e.g., visually separating `Services` from `Selectors` within `domain`), dedicated sub-layer shelf layout rules and UI indicators are needed (`NEW UI REQUIRED`).
 
-### Feasibility
-**READY**
+### Feasibility Classification
+`VERIFIED` (Base Hierarchical Stack) / `NEW UI REQUIRED` (Sub-layer Shelf Grouping)
 
-### Benefits
-- Instantly highlights architectural layer violations (e.g. LWC querying custom field directly via SOQL).
-- Clean, intuitive top-to-bottom vertical flow matching standard Salesforce software engineering architecture guidelines.
+### Intended Benefits
+- Highlights architectural layer violations (e.g. LWC querying custom field directly via SOQL).
+- Top-to-bottom vertical flow aligning with standard software engineering layer guidelines.
 
-### Limitations
-- Large orgs with hundreds of schema fields expand the bottom schema layer horizontally.
-
-### Scalability
-- High: Handles 10,000+ nodes using O(N) layer bucket assignment.
-
-### Interaction Requirements
-- Click layer header to isolate all components in that tier.
-- Hover inter-layer edge to highlight vertical dependency chain.
-
-### Relationship to Current 2D Graph
-- Direct 1:1 mapping: Existing Hierarchical layout mode IS the Architecture Stack.
-
-### Implementation Scope
-- Zero engine changes required. Sub-layer shelf styling can be added via simple CSS stylesheet additions.
-
-### Evidence
-- `architecture-layout.ts` Stages 2, 5, 6, 7 enforce vertical layer hierarchy verified across 79 test files and 733 unit tests.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| + \|E\|)$
+- **Measured Performance**: $189.37\text{ ms}$ on Cloud Spend Tracker ($240\text{ nodes}$)
+- **Large Scale Estimate**: `UNMEASURED TARGET / ESTIMATE` for $10,000+$ nodes.
 
 ---
 
@@ -217,69 +182,49 @@ Visualizes the org structure as a strict top-to-bottom architectural layer hiera
 Metaphorical 3D urban landscape visualization where features represent land neighborhoods, components represent buildings (height = coupling/fan-in, footprint = complexity/risk), shared services represent central towers, and dependencies represent road/transit networks.
 
 ### User Questions
-- Which components are the massive "skyscrapers" (high coupling / fan-in) in my org?
+- Which components are high-coupling / high-fan-in structures in my org?
 - What features form dense urban "neighborhoods"?
-- Where are the shared service "central towers" located relative to feature districts?
+- Where are shared service "central towers" located relative to feature districts?
 
 ### Required Data
-- 2D Canvas positions $(X, Y)$ for feature region neighborhood placement.
+- District region boundaries derived from feature assignments.
 - Component metric dimensions for 3D building geometry:
-  - Height = `metrics.coupling` or `metrics.fanIn`.
-  - Footprint width/depth = risk score or line count.
-  - Color = entity type or health status.
-- Deterministic $Z$ elevation derived from layer tier or feature role.
+  - Height = `metrics.coupling` or `metrics.fanIn` (`DERIVED CLASSIFICATION`).
+  - Footprint width/depth = risk score or line count (`DERIVED CLASSIFICATION` / `SOURCE METADATA`).
+- 3D spatial area packing coordinates $(X, Y, Z)$ (distinct from 2D DAG layout).
 
 ### Existing Data Support
-- **Full Data Support**: All required building metrics (`fanIn`, `fanOut`, `coupling`, `risk`, `file`, `type`) exist in `ExplorerNodeMetrics` and `ExplorerNode`.
-- Feature neighborhood groupings (13 features) are provided by `discoverFeatures()`.
+- **Data Status**: `DERIVABLE` (Node metrics and feature groupings exist)
+- All required building metrics (`fanIn`, `fanOut`, `coupling`, `risk`, `file`, `type`) exist in `ExplorerNodeMetrics` and `ExplorerNode`.
 
-### Existing Code Support
-- 2D positional layout $(X, Y)$ computed by `architecture-layout.ts` provides authoritative building ground coordinates.
-- Proved in `3D_ARCHITECTURE_GRAPH_FEASIBILITY_INVESTIGATION.md` and `3D_FEASIBILITY_DECISION_READINESS_AUDIT.md`: $Z$ coordinate can be derived deterministically as $Z = f(\text{role}, \text{layer})$ without altering 2D Position Authority.
+### Code & Rendering Status
+- **Rendering Status**: `NEW RENDERING REQUIRED` / `EXPERIMENTAL`
+- The current codebase is strictly 2D (Cytoscape.js canvas + SVG overlay). It contains zero WebGL or Three.js dependencies.
+- City layout **cannot** reuse 2D Cytoscape graph layout; it requires a dedicated 3D spatial area packing engine.
 
-### Reusable Components
-- `architecture-layout.ts`: Authoritative $(X, Y)$ ground placement.
-- `discoverFeatures()`: Neighborhood region partitioning.
-- `position-policy.ts`: Read-only Level 1–5 Position Authority pipeline.
+### Feasibility Classification
+`EXPERIMENTAL` / `NEW RENDERING REQUIRED` / `NEW ANALYSIS REQUIRED`
 
-### Missing Infrastructure
-- Requires WebGL 2.0 / Three.js canvas overlay component (`GraphView3D.tsx` candidate) to render 3D box meshes (buildings), extruded polygon slabs (neighborhood districts), and curved 3D line arcs (road dependencies).
-- Requires 3D camera controls (orbit rotate, pitch, pan, zoom) and WebGL raycasting for hover cards.
+### Hypothesized Benefits
+- Alternative spatial metaphor for exploring high-risk hotspots.
+- Replaces edge crossings with ground-plane road networks.
 
-### Feasibility
-**EXPERIMENTAL**
-
-### Benefits
-- Compelling spatial metaphor for identifying high-risk architectural hotspots ("monolithic skyscrapers").
-- Solves 2D planarity limits for dense satellite clusters by separating edge arcs in 3D depth.
-
-### Limitations
+### Technical Limitations & Trade-offs
 - Camera occlusion (foreground buildings hiding background structures).
-- Requires WebGL 2.0 hardware support in browser (+550 KB library bundle footprint).
-- High interaction friction (6 degrees of camera freedom vs 2D pan/zoom).
+- Requires WebGL 2.0 hardware support (+550 KB library footprint).
+- Higher interaction friction (6 degrees of camera freedom vs 2D pan/zoom).
+- **Incompatible with 2D Position Authority**: Uses area bin packing rather than 2D DAG node coordinates.
 
-### Scalability
-- Medium: WebGL instanced mesh rendering handles up to 5,000 building blocks at 60 FPS.
-
-### Interaction Requirements
-- Orbit/tilt/pan camera controls with 1-click reset to top-down 2D view.
-- Raycasting mouse hover highlighting building roof badges and connecting road arcs.
-
-### Relationship to Current 2D Graph
-- Operates as an downstream, isolated 3D projection overlay reading authoritative $(X, Y)$ coordinates from the 2D layout engine.
-
-### Implementation Scope
-- Dedicated experimental WebGL viewport component (`GraphView3D.tsx`) behind feature flag (`enable3DPrototype: false`). Zero changes to 2D production layout pipeline.
-
-### Evidence
-- `3D_ARCHITECTURE_GRAPH_FEASIBILITY_INVESTIGATION.md` & `3D_FEASIBILITY_DECISION_READINESS_AUDIT.md` formally document 3D feasibility, Z-derivation determinism, and 2D Position Authority compatibility.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| \log \|V\|)$ spatial bin packing + WebGL mesh rendering
+- **Measured Performance**: `UNMEASURED TARGET / ESTIMATE` (No WebGL prototype in production)
 
 ---
 
 ## E. Dependency River / Sankey
 
 ### Purpose
-Visualizes aggregated dependency flow volumes passing vertically or horizontally through architectural tiers (Feature $\rightarrow$ LWC $\rightarrow$ Controller $\rightarrow$ Service $\rightarrow$ Selector $\rightarrow$ Object $\rightarrow$ Field) as smooth, proportional flow streams.
+Visualizes aggregated dependency flow volumes passing vertically or horizontally through architectural tiers (Feature $\to$ LWC $\to$ Controller $\to$ Service $\to$ Selector $\to$ Object $\to$ Field) as smooth, proportional flow streams.
 
 ### User Questions
 - What is the total volume of dependencies flowing from Feature A into Schema Object B?
@@ -290,49 +235,27 @@ Visualizes aggregated dependency flow volumes passing vertically or horizontally
 - Aggregated flow matrix $M[T_i, T_j] = \text{count of edges from Tier } T_i \text{ to Tier } T_j$.
 - Consumer/supplier counts per tier.
 - Inter-feature vs intra-feature flow volumes.
+- Cycle-breaking / feedback loop handling for graph cycles.
 
 ### Existing Data Support
-- **Full Data Support**: Raw dependency links between all components exist in `ExplorerEdge[]`.
+- **Data Status**: `DERIVABLE`
+- Raw dependency links between all components exist in `ExplorerEdge[]`.
 - Component impact summaries (`impactSummaries`) in `ExplorerDataSchema` contain precomputed direct and transitive dependency lists for every node.
 
-### Existing Code Support
-- `impact-analysis.ts` computes transitive dependency sets and impact paths.
-- `dependency-analyzer.cjs` CLI provides backend matrix aggregation.
-
-### Reusable Components
-- `impact-analysis.ts`: Dependency traversal and path calculation.
-- `ExplorerDataSchema.impactSummaries`: Direct and transitive dependency lists.
-
 ### Missing Infrastructure
-- Requires a dedicated Sankey layout engine (e.g. `d3-sankey` or custom multi-stage horizontal flow algorithm) that computes node Y-offsets and smooth Bezier ribbon widths proportional to flow volume.
-- Requires a dedicated SVG/Canvas flow renderer distinct from Cytoscape node-link rendering.
+- Requires a Sankey layout engine (e.g., `d3-sankey` or custom multi-stage flow algorithm) that computes node Y-offsets, handles cyclic edges, and computes smooth Bezier ribbon widths proportional to flow volume (`NEW ANALYSIS REQUIRED`).
+- Requires a dedicated SVG/Canvas flow renderer distinct from Cytoscape node-link rendering (`NEW RENDERING REQUIRED`).
 
-### Feasibility
-**MEDIUM**
+### Feasibility Classification
+`DERIVABLE` / `NEW ANALYSIS REQUIRED` / `NEW RENDERING REQUIRED` / `NEW UI REQUIRED`
 
-### Benefits
-- Excellent for high-level executive overviews of structural dependency volume and architectural fan-in/fan-out.
-- Eliminates individual edge crossing clutter by aggregating hundreds of edges into thick, readable streams.
+### Intended Benefits
+- Provides high-level aggregated overview of structural dependency volume and fan-in/fan-out.
+- Reduces individual edge line clutter by aggregating hundreds of edges into thick, readable streams.
 
-### Limitations
-- Abstracted flow ribbons hide individual component identities until hovered/selected.
-- Cyclic dependencies (cycles) violate strict acyclic Sankey flow requirements and must be handled via feedback loop arcs or cycle breaking.
-
-### Scalability
-- High for aggregated flows (10–20 flow bands); Medium for unaggregated low-level components.
-
-### Interaction Requirements
-- Hover flow stream to highlight source feature and target schema object.
-- Click flow stream to expand ribbon into detailed component-level node-link view.
-
-### Relationship to Current 2D Graph
-- Alternative aggregated view mode using the same underlying `nodes` and `edges` dataset.
-
-### Implementation Scope
-- New view component (`SankeyView.tsx`) using D3 flow layout libraries.
-
-### Evidence
-- `ExplorerDataSchema.impactSummaries` in `explorer/src/types/explorer.ts` provides direct/transitive dependency counts per component.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| + \|E\|)$ matrix aggregation + $O(\|T\|^2)$ flow placement
+- **Measured Performance**: `UNMEASURED TARGET / ESTIMATE`
 
 ---
 
@@ -348,51 +271,28 @@ Formats feature dependency chains as schematic transit "lines" and shared/cross-
 
 ### Required Data
 - Linear dependency chains / routes ($R_k = [N_1, N_2, \dots, N_m]$).
-- Interchange station identification (`SharedInfrastructure` and `Bridge` nodes with high cross-feature fan-in).
+- Interchange station identification (`SharedInfrastructure` and `FeatureBridge` nodes with high cross-feature fan-in).
 - Line color assignments per feature region.
 
 ### Existing Data Support
-- **Full Data Support**: Feature assignments derived via `discoverFeatures()`.
-- Interchange stations identified by `feature-roles.ts` (`SharedInfrastructure`: 35 nodes, `Bridge`: 18 nodes on benchmark graph).
+- **Data Status**: `PARTIALLY SUPPORTED`
+- Feature assignments derived via `discoverFeatures()`.
+- Interchange stations identified by `feature-roles.ts` (`SharedInfrastructure`: 35 nodes, `FeatureBridge`: 18 nodes on benchmark graph).
 - Inter-feature edges flagged via `isInterFeature` in `graph-builder.ts`.
 
-### Existing Code Support
-- `feature-roles.ts` classifies `SharedInfrastructure` and `Bridge` nodes.
-- `graph-style.ts` supports dashed line styles (`line-dash-pattern: [6, 3]`) for inter-feature routes.
-
-### Reusable Components
-- `feature-roles.ts`: Identifies shared interchange stations.
-- `graph-style.ts`: Color palette and dashed line styles for metro lines.
-
 ### Missing Infrastructure
-- Requires an octilinear layout algorithm (restricting edge routing strictly to $0^\circ, 45^\circ, 90^\circ$ angles with rounded corners) and line-ordering heuristics to align parallel feature lines smoothly without line overlaps.
+- Requires an octilinear layout algorithm (restricting edge routing strictly to $0^\circ, 45^\circ, 90^\circ$ angles with rounded corners) and line-ordering heuristics to align parallel feature lines smoothly without line overlaps (`NEW ANALYSIS REQUIRED` / `NEW RENDERING REQUIRED`).
 
-### Feasibility
-**MEDIUM**
+### Feasibility Classification
+`PARTIALLY SUPPORTED` / `NEW ANALYSIS REQUIRED` / `NEW RENDERING REQUIRED` / `NEW UI REQUIRED`
 
-### Benefits
-- Highly readable, familiar mental model for navigating complex cross-feature dependencies.
-- Clear visual emphasis on shared infrastructure "transfer stations" (`SharedInfrastructure`).
+### Intended Benefits
+- Provides a schematic route model for navigating complex cross-feature dependencies.
+- Highlights shared infrastructure interchange stations (`SharedInfrastructure`).
 
-### Limitations
-- Dense orgs with high cycle counts make linear route decomposition complex.
-- Requires dedicated octilinear grid layout distinct from force or hierarchical layouts.
-
-### Scalability
-- Medium: Best suited for core features and top 50–100 components; less effective for un-clustered field nodes.
-
-### Interaction Requirements
-- Click subway line to highlight entire feature route from end to end.
-- Click interchange station to view all passing feature lines.
-
-### Relationship to Current 2D Graph
-- Customized 2D schematic layout of the same graph data.
-
-### Implementation Scope
-- Adding an octilinear line-routing pass to the 2D layout engine.
-
-### Evidence
-- `feature-roles.ts` explicitly classifies shared infrastructure and bridge nodes, verified in `phase4-c-shared-satellite.test.ts`.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| + \|E\| \log \|E\|)$ octilinear line routing
+- **Measured Performance**: `UNMEASURED TARGET / ESTIMATE`
 
 ---
 
@@ -408,47 +308,30 @@ Visualizes the static architectural dependency sequence (topological DAG call ch
 
 ### Required Data
 - Static dependency DAG topological rank ($Rank(N) = 1 + \max_{(U, N) \in E} Rank(U)$).
-- Async execution signals (`behavior.asyncPatterns`, e.g. `@future`, `Queueable`, `Batchable`).
+- Async execution signals (`behavior.asyncPatterns`, e.g., `@future`, `Queueable`, `Batchable`).
 - Trigger execution event classifications (`ApexTrigger` on-before/on-after).
+- **EXPLICIT WARNING — NO RUNTIME EXECUTION TIMING**: Current static analysis does **NOT** capture dynamic runtime execution timing, thread sequencing, or CPU duration. The timeline visualizes static code structure ONLY.
 
 ### Existing Data Support
-- **Full Data Support for Architectural Dependency Rank**: Topological layer ranks and bucket ordering exist in `ordering.ts` and Stage 6 of `architecture-layout.ts`.
-- **EXPLICIT WARNING — NO RUNTIME EXECUTION TIMING**: Current static code analysis does NOT capture actual runtime CPU execution order, call duration, or dynamic thread execution timing. The code models static code structure ONLY.
-
-### Existing Code Support
-- `ordering.ts` computes topological ordering and layer ranks for crossing reduction.
+- **Data Status**: `DERIVABLE` (Static DAG Topological Rank) / `NEW DATA REQUIRED` (Dynamic Runtime Execution)
+- Topological layer ranks and bucket ordering exist in `ordering.ts` and Stage 6 of `architecture-layout.ts`.
 - `path-analyzer.cjs` computes longest static dependency paths.
 
-### Reusable Components
-- `ordering.ts`: Topological sorting and rank assignment algorithms.
-- `path-analyzer.cjs`: Longest dependency path calculation.
-
 ### Missing Infrastructure
-- Horizontal swimlane / sequence diagram layout component placing components along a horizontal step sequence ($X = \text{Topological Rank}, Y = \text{Component Tier}$).
+- Horizontal swimlane / sequence diagram layout component placing components along a horizontal step sequence ($X = \text{Topological Rank}, Y = \text{Component Tier}$) (`NEW RENDERING REQUIRED` / `NEW UI REQUIRED`).
 
-### Feasibility
-**LOW**
+### Feasibility Classification
+`DERIVABLE` (Static DAG Topological Sequence) / `NEW RENDERING REQUIRED` / `NEW UI REQUIRED` (Static Graph Only; Dynamic Runtime Execution is `NEW DATA REQUIRED`)
 
-### Benefits
-- Excellent for planning refactoring sequences and understanding static instantiation prerequisites.
+### Intended Benefits
+- Assists in planning refactoring sequences and understanding static instantiation prerequisites.
 
-### Limitations
-- **CRITICAL**: Must NEVER claim to represent actual runtime execution timing or chronological performance traces, as static analysis cannot predict dynamic execution flow, runtime conditionals, or database performance.
+### Technical Limitations
+- Must **NEVER** claim to represent dynamic runtime execution timing or chronological performance traces.
 
-### Scalability
-- High for single feature execution chains (10–30 nodes); Low for entire org graphs (240+ nodes).
-
-### Interaction Requirements
-- Step-by-step forward/backward stepping along the static dependency chain.
-
-### Relationship to Current 2D Graph
-- Linear horizontal transformation of 2D DAG dependency paths.
-
-### Implementation Scope
-- Horizontal sequence layout generator for focused dependency chains.
-
-### Evidence
-- `ordering.ts` implements topological rank ordering for Stage 6 crossing reduction, verified in `ordering.test.ts`.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|V\| + \|E\|)$ topological sort
+- **Measured Performance**: `UNMEASURED TARGET / ESTIMATE`
 
 ---
 
@@ -458,102 +341,65 @@ Visualizes the static architectural dependency sequence (topological DAG call ch
 Visualizes architectural dependency volume, reusability density, and cross-feature coupling intensity using dynamic visual cues such as line width, animated dash flows, and node heat map coloring.
 
 ### User Questions
-- Which dependencies represent the heaviest traffic corridors in the org?
-- Where is cross-feature coupling creating high architectural congestion?
+- Which dependencies represent the heaviest structural corridors in the org?
+- Where is cross-feature coupling creating high structural congestion?
 - Which database objects endure the highest incoming fan-in traffic from application services?
 
 ### Required Data
 - Dependency traffic signals:
-  - `metrics.fanIn`: Incoming consumer count.
-  - `metrics.fanOut`: Outgoing dependency count.
-  - `metrics.coupling`: Structural reusability index.
-  - `behavior.publicContractsCount`: Number of public methods exposed.
-  - `behavior.queryCount` / `behavior.dmlCount` / `behavior.calloutCount`: Database & callout traffic signals.
-  - `isInterFeature`: Cross-feature boundary flag.
-  - `totalImpactCount`: Transitive blast radius from `impactSummaries`.
+  - `metrics.fanIn`: Incoming consumer count (`DERIVED CLASSIFICATION`).
+  - `metrics.fanOut`: Outgoing dependency count (`DERIVED CLASSIFICATION`).
+  - `metrics.coupling`: Structural reusability index (`DERIVED CLASSIFICATION`).
+  - `behavior.publicContractsCount`: Number of public methods exposed (`SOURCE METADATA`).
+  - `behavior.queryCount` / `behavior.dmlCount` / `behavior.calloutCount`: Database & callout signals (`SOURCE METADATA`).
+  - `isInterFeature`: Cross-feature boundary flag (`DERIVED CLASSIFICATION`).
+  - `totalImpactCount`: Transitive blast radius from `impactSummaries` (`DERIVED CLASSIFICATION`).
 
 ### Existing Data Support
-- **Full Data Support**: Every required traffic signal (`fanIn`, `fanOut`, `coupling`, `queryCount`, `dmlCount`, `calloutCount`, `totalImpactCount`) is fully populated in `ExplorerNodeMetrics`, `ExplorerNodeBehavior`, and `ExplorerDataSchema.impactSummaries`.
+- **Data Status**: `DERIVABLE`
+- Every required traffic signal is fully populated in `ExplorerNodeMetrics`, `ExplorerNodeBehavior`, and `ExplorerDataSchema.impactSummaries`.
 
-### Existing Code Support
-- `graph-style.ts` natively supports dynamic edge styling, line widths (`width: 2.5`), dashed patterns (`line-dash-pattern: [6, 3]`), and node border colors based on risk/metrics.
-- `impact-analysis.ts` highlights active impact traffic paths (`impact-origin`, `impact-affected`, `impact-muted`).
-
-### Reusable Components
-- `graph-style.ts`: Dynamic Cytoscape stylesheet engine.
-- `impact-analysis.ts`: Blast radius and path highlighting.
-- `ExplorerNodeMetrics`: Fully populated metric data.
+### Existing Code & Rendering Support
+- **Rendering Status**: `PARTIALLY SUPPORTED` (Cytoscape stylesheet supports dynamic widths, dash patterns, opacity) / `NEW UI REQUIRED` (Traffic score calculator and threshold slider)
+- `graph-style.ts` natively supports dynamic edge styling, line widths (`width: 2.5`), dashed patterns (`line-dash-pattern: [6, 3]`), and node border colors.
 
 ### Missing Infrastructure
-- A traffic score calculation function: $\text{Traffic}(E) = w_1 \cdot \text{FanIn}(Target) + w_2 \cdot \text{Coupling}(Source) + w_3 \cdot \text{IsInterFeature}$.
-- UI slider control to filter graph visibility by minimum traffic threshold.
+- A traffic scoring function: $\text{Traffic}(E) = w_1 \cdot \text{FanIn}(Target) + w_2 \cdot \text{Coupling}(Source) + w_3 \cdot \text{IsInterFeature}$ (`NEW ANALYSIS REQUIRED`).
+- UI slider control to filter graph visibility by minimum traffic threshold (`NEW UI REQUIRED`).
 
-### Feasibility
-**HIGH**
+### Feasibility Classification
+`DERIVABLE` / `NEW ANALYSIS REQUIRED` / `NEW UI REQUIRED`
 
-### Benefits
-- Instantly draws user attention to high-risk structural bottlenecks and heavily reused shared components.
-- Leverages existing 2D rendering pipeline with zero layout computation overhead.
+### Intended Benefits
+- Draws user attention to structural bottlenecks and heavily reused shared components.
+- Leverages existing 2D Cytoscape rendering engine without layout overhead.
 
-### Limitations
-- Excessive animated dash flows can increase GPU rendering load if enabled on all 1,024 edges simultaneously.
-
-### Scalability
-- High: Cytoscape handles edge width and color styling for 1,000+ edges at 60 FPS.
-
-### Interaction Requirements
-- Traffic threshold slider in graph controls panel.
-- Hover edge to display exact traffic volume breakdown card.
-
-### Relationship to Current 2D Graph
-- Direct visual enhancement applied onto existing 2D Hierarchical or Hybrid layout modes.
-
-### Implementation Scope
-- Adding traffic scoring function in `graph-style.ts` and connecting UI slider in `GraphControls.tsx`.
-
-### Evidence
-- `graph-style.ts` lines 280–320 implement edge width, opacity, and dash patterns verified in `PROMPT_05_EDGE_DIFFERENTIATION` and `PROMPT_06_ZOOM_EDGE_OPACITY` reports.
+### Performance Profile
+- **Theoretical Complexity**: $O(\|E\|)$ edge style calculation
+- **Measured Performance**: $< 2\text{ ms}$ style update on Cloud Spend Tracker ($1,024\text{ edges}$)
 
 ---
 
-# 2. MASTER MATRIX
+# 2. MASTER RECONCILIATION MATRIX
 
-| Visualization | Data Support | Layout Support | Rendering Support | Interaction Support | New Analysis | Feasibility |
+| Visualization Lens | Data Status | Layout Support | Rendering Support | UI Support | New Analysis | Feasibility Classification |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Architecture Atlas** | High | High | High | High | Minimal | **READY** |
-| **Semantic Zoom** | High | High | Medium | High | Minimal | **HIGH** |
-| **Architecture Stack** | High | High | High | High | Minimal | **READY** |
-| **Architecture City** | High | Low-Medium | Low | Low-Medium | Minimal | **EXPERIMENTAL** |
-| **Dependency River** | Medium | Low | Low-Medium | Medium | Medium | **MEDIUM** |
-| **Subway Map** | High | Low-Medium | Medium | High | Medium | **MEDIUM** |
-| **Dependency Timeline**| Low-Medium | Medium | Medium | High | Medium | **LOW** |
-| **Architecture Traffic**| High | High | High | High | Low | **HIGH** |
+| **Architecture Atlas** | `DERIVABLE` | `VERIFIED` | `VERIFIED` | `NEW UI REQUIRED` | Minimal | `VERIFIED` / `NEW UI REQUIRED` |
+| **Semantic Zoom** | `VERIFIED` | `VERIFIED` | `PARTIALLY SUPPORTED` | `NEW UI REQUIRED` | Minimal | `PARTIALLY SUPPORTED` / `NEW RENDERING REQUIRED` |
+| **Architecture Stack** | `DERIVABLE` | `VERIFIED` | `VERIFIED` | `NEW UI REQUIRED` | Minimal | `VERIFIED` / `NEW UI REQUIRED` |
+| **Architecture City** | `DERIVABLE` | `NEW LAYOUT REQUIRED` | `NEW RENDERING REQUIRED` | `NEW UI REQUIRED` | Area Packing | `EXPERIMENTAL` / `NEW RENDERING REQUIRED` |
+| **Dependency River** | `DERIVABLE` | `NEW LAYOUT REQUIRED` | `NEW RENDERING REQUIRED` | `NEW UI REQUIRED` | Flow Matrix | `DERIVABLE` / `NEW ANALYSIS REQUIRED` |
+| **Subway Map** | `PARTIALLY SUPPORTED` | `NEW LAYOUT REQUIRED` | `NEW RENDERING REQUIRED` | `NEW UI REQUIRED` | Octilinear Routing | `PARTIALLY SUPPORTED` / `NEW ANALYSIS REQUIRED` |
+| **Dependency Timeline**| `DERIVABLE` (Static DAG) | `NEW LAYOUT REQUIRED` | `NEW RENDERING REQUIRED` | `NEW UI REQUIRED` | Topological Rank | `DERIVABLE` (Static DAG) / `NEW RENDERING REQUIRED` |
+| **Architecture Traffic**| `DERIVABLE` | `VERIFIED` | `PARTIALLY SUPPORTED` | `NEW UI REQUIRED` | Traffic Weighting | `DERIVABLE` / `NEW ANALYSIS REQUIRED` |
 
 ---
 
-# 3. FINAL ASSESSMENT
+# 3. FINAL RECONCILED ASSESSMENT
 
-### Most naturally supported by current architecture
-1. **Architecture Atlas**: Existing Hybrid Mode with `FeatureOverlayCanvas.tsx` and Stage 5 multi-row 2D packing IS an Architecture Atlas. Requires zero engine changes.
-2. **Architecture Stack**: Existing Hierarchical Mode with Stage 2 Layer Classifier and vertical band ordering IS an Architecture Stack. Fully functional in production today.
-3. **Architecture Traffic**: All underlying metrics (`fanIn`, `fanOut`, `coupling`, `queryCount`, `dmlCount`, `impactSummaries`) exist in schema. `graph-style.ts` natively supports edge widths, dash patterns, and highlight classes.
-
-### Requires only visualization work
-1. **Semantic Zoom**: Expanding existing 3-tier zoom CSS stylesheet (`.zoom-far`, `.zoom-mid`, `.zoom-near` in `graph-style.ts`) to 5 discrete LOD thresholds with element visibility filtering.
-2. **Architecture Traffic**: Adding traffic scoring weight function in `graph-style.ts` and connecting a traffic threshold slider in `GraphControls.tsx`.
-
-### Requires new aggregation/metrics
-1. **Dependency River / Sankey**: Requires aggregating component-level dependency links into tier-to-tier flow matrices and handling cycle feedback loops.
-2. **Subway Map**: Requires decomposing dependency graphs into topological linear feature routes and identifying shared interchange station intersections.
-
-### Requires new layout infrastructure
-1. **Subway Map**: Requires an octilinear layout algorithm ($0^\circ, 45^\circ, 90^\circ$ edge routing) to render clean metro line schematics.
-2. **Dependency River / Sankey**: Requires a dedicated Sankey flow placement engine (e.g. `d3-sankey`).
-3. **Dependency Timeline**: Requires a horizontal swimlane / sequence diagram layout engine.
-
-### Requires fundamentally new rendering
-1. **Architecture City / 3D City**: Requires a WebGL 2.0 / Three.js viewport component (`GraphView3D.tsx`) to render 3D building meshes, extruded neighborhood slabs, and 3D arc lines with camera orbit controls and raycasting.
-
-### Best candidates for controlled future experiments
-1. **Architecture City / 3D City**: Isolated WebGL prototype (`Phase 3D-PROTO`) as documented in `3D_ARCHITECTURE_GRAPH_FEASIBILITY_INVESTIGATION.md`, operating downstream of 2D Position Authority without mutating stored 2D layout state.
-2. **Architecture Subway Map**: Feature-gated 2D octilinear layout experiment for simplified cross-feature route navigation.
+1. **Architecture Atlas**: Existing Hybrid Mode with `FeatureOverlayCanvas.tsx` and Stage 5 multi-row 2D packing functions as an Architecture Atlas. Base layout and SVG rendering are `VERIFIED`; region drilldown interactivity requires `NEW UI REQUIRED`.
+2. **Architecture Stack**: Existing Hierarchical Mode with Stage 2 Layer Classifier and vertical band ordering functions as an Architecture Stack. Fully `VERIFIED` in production; sub-layer shelf grouping requires `NEW UI REQUIRED`.
+3. **Architecture Traffic**: All underlying metrics (`fanIn`, `fanOut`, `coupling`, `queryCount`, `dmlCount`, `impactSummaries`) exist in schema (`DERIVABLE`). `graph-style.ts` natively supports edge widths and dash patterns; requires `NEW ANALYSIS REQUIRED` for traffic scoring and `NEW UI REQUIRED` for threshold slider.
+4. **Semantic Zoom**: 3 zoom tiers exist (`PARTIALLY SUPPORTED`). Extending to 5 discrete LOD thresholds requires `NEW RENDERING REQUIRED` and `NEW UI REQUIRED`.
+5. **Dependency River / Subway Map / Dependency Timeline**: Require `NEW ANALYSIS REQUIRED`, `NEW RENDERING REQUIRED`, and `NEW UI REQUIRED`. Static DAG sequence must never be presented as dynamic runtime execution timing.
+6. **Architecture City**: Requires a WebGL 2.0 / Three.js viewport and a 3D spatial area packing engine (`EXPERIMENTAL` / `NEW RENDERING REQUIRED`). Incompatible with 2D Position Authority.
