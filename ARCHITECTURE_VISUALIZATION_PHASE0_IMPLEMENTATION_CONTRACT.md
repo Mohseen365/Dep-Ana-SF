@@ -42,11 +42,11 @@ In resolving all facts, contracts, and boundaries for Phase 0, the following pre
 
 1. **Current production source code** (`explorer/src/`, `dependency-analyzer.cjs`, `architecture-layout.ts`, `position-policy.ts`) — **AUTHORITATIVE GROUND TRUTH**
 2. `AGENT.md` & `08_Audit_Source_Register.md`
-3. `ARCHITECTURE_VISUALIZATION_FOUNDATION_AUDIT.md`
-4. `ARCHITECTURE_VISUALIZATION_AUDIT_RECONCILIATION.md`
-5. `ARCHITECTURE_VISUALIZATION_FINAL_SYNTHESIS.md`
-6. `ARCHITECTURE_VISUALIZATION_FINAL_SYNTHESIS_INTEGRITY_AUDIT.md`
-7. `ARCHITECTURE_VISUALIZATION_IMPLEMENTATION_ROADMAP.md`
+3. Existing audit and context files (`ARCHITECTURE_VISUALIZATION_FOUNDATION_AUDIT.md`, `ARCHITECTURE_VISUALIZATION_AUDIT_RECONCILIATION.md`)
+4. `ARCHITECTURE_VISUALIZATION_FINAL_SYNTHESIS.md`
+5. `ARCHITECTURE_VISUALIZATION_FINAL_SYNTHESIS_INTEGRITY_AUDIT.md`
+6. `ARCHITECTURE_VISUALIZATION_IMPLEMENTATION_ROADMAP.md`
+7. `ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md` (**SUBJECT OF THIS CONTRACT**)
 
 Where discrepancies exist between documentation or roadmap assumptions and current production source code, **current production source code is treated as absolute truth**. Roadmap assumptions are audited and reported in Section 18.
 
@@ -134,7 +134,7 @@ Evidence: `explorer/src/lib/position-policy.ts` lines 1–150.
 Finding: Position Authority Resolution
 Evidence: `resolveAuthoritativePosition()` in `position-policy.ts` evaluates Levels 1 through 3 sequentially and returns `null` if no authoritative position exists, allowing Stage 12 layout to execute.
 Source: `explorer/src/lib/position-policy.ts`
-Interpretation: The position policy mechanism guarantees coordinate preservation across all visualization views.
+Interpretation: The position policy mechanism currently preserves authoritative coordinate precedence within the existing graph/layout workflow. Future visualization lenses must consume these authoritative coordinates without becoming a new position authority.
 Decision: Visualization lenses may consume Level 1–5 coordinates as read-only inputs, but visualization adapters must NOT become position authorities.
 
 ---
@@ -187,10 +187,10 @@ Mutation Rules: **STRICTLY READ-ONLY & PURE**. Analytics modules do not mutate i
 Evidence: `explorer/src/lib/` analytics module implementations.
 
 Finding: Reusability of Existing Analytics
-Evidence: All 8 analytics modules accept canonical `ExplorerNode[]` and `ExplorerEdge[]` and return pure JavaScript objects/maps without DOM or Cytoscape dependencies.
+Evidence: Existing analytics demonstrate high reusability for future visualization data adapters because they use pure functional inputs/outputs and have no DOM or Cytoscape rendering dependencies.
 Source: `explorer/src/lib/`
-Interpretation: Existing analytics are 100% reusable for future visualization lenses without modification.
-Decision: Phase 0 MUST register existing analytics as reusable baseline feeds.
+Interpretation: Existing analytics provide clean, pure data transformation functions without DOM or rendering side-effects.
+Decision: Phase 0 contract records existing analytics as reusable baseline feeds for future adapters.
 
 ---
 
@@ -257,12 +257,12 @@ Source: `explorer/src/test/benchmark-wave7b.ts`, `Phase4DAcceptancePerformance.t
 ├────────────────────────────┼─────────────────────────────┼───────────────────────────────┤
 │ Determinism Verification   │ Phase3_7 / benchmark-wave7b │ EXISTING                      │
 ├────────────────────────────┼─────────────────────────────┼───────────────────────────────┤
-│ Lens Adapter Timing        │ None                        │ EXTENDABLE (Add to benchmark) │
+│ Lens Adapter Telemetry     │ None                        │ EXTENDABLE (Add to benchmark) │
 └────────────────────────────┴─────────────────────────────┴───────────────────────────────┘
 ```
 
-Interpretation: A brand-new benchmark framework is **NOT REQUIRED**. The existing `benchmark-wave7b.ts` and `Phase4DAcceptancePerformance.test.ts` utilities can be extended to log adapter transformation timing alongside layout stage profiling.
-Decision: Reclassify roadmap "UNIT-002-BENCHMARK-HARNESS" from `NEW — JUSTIFIED` to `EXISTING — EXTEND`.
+Interpretation: A brand-new benchmark framework is **NOT REQUIRED**. The existing `benchmark-wave7b.ts` and `Phase4DAcceptancePerformance.test.ts` utilities can be extended when adapter telemetry is implemented in later phases.
+Decision: Classify benchmark infrastructure strictly as `EXISTING — EXTEND` (extending `benchmark-wave7b.ts` rather than constructing a new framework).
 
 ---
 
@@ -276,7 +276,7 @@ Evidence: The repository uses Vitest as its primary runner (`npm run test:cli`) 
 * **Test Fixture Helpers**: `explorer/src/test/scalability-generator.ts`, `position-test-helpers.ts`, `setup.ts`.
 Source: `explorer/src/test/`
 
-Interpretation: The test infrastructure is comprehensive, covering schema, layout stages, position authority, UI interactions, and determinism.
+Interpretation: Existing analytics demonstrate high reusability for future data adapters due to pure functional inputs/outputs and zero DOM dependencies.
 Decision: Phase 0 testing contract requires registering test utilities in `explorer/src/test/` for reuse in Phase 1–8 adapter and UI tests without creating a new test framework.
 
 ---
@@ -343,14 +343,14 @@ Lens-Specific Data Contract (JSON / TS Interface)
 
 Phase 0 MUST establish exactly three contract deliverables before Phase 1 implementation begins:
 
-### Deliverable A — Baseline Contracts & Types Specification
-* Document formal TypeScript interface contracts for future adapters in `explorer/src/types/visualization-adapter.ts` (Phase 1 candidate).
+### Deliverable A — Baseline Contracts Specification
+* Document formal specifications for future adapter data contracts. Evaluating a common `visualization-adapter.ts` interface is deferred until after the first concrete adapter (`matrix-adapter.ts` in Phase 1) establishes concrete shared patterns (`JUSTIFIED AFTER FIRST ADAPTER`).
 
 ### Deliverable B — Telemetry & Determinism Baseline Ledger
-* Execute `Phase4DAcceptancePerformance.test.ts` on `audit-fixtures/cloud-spend-tracker/explorer-data.json` and record cold pipeline execution time ($231.14\text{ ms}$ baseline), primary crossings ($C_{\text{pp}} = 8,704$), total crossings ($C_{\text{total}} = 94,662$), and determinism drift ($0.00000\text{ px}$).
+* Execute `Phase4DAcceptancePerformance.test.ts` on `audit-fixtures/cloud-spend-tracker/explorer-data.json` during Phase 0 execution and record cold pipeline execution time ($231.14\text{ ms}$ baseline), primary crossings ($C_{\text{pp}} = 8,704$), total crossings ($C_{\text{total}} = 94,662$), and determinism drift ($0.00000\text{ px}$).
 
 ### Deliverable C — Phase 0 Contract Acceptance Report
-* Create `ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md` (this planning document).
+* Create `ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md` (this planning specification document).
 
 ---
 
@@ -378,16 +378,16 @@ Risk: Overwriting position policy corrupts user-authored overrides.
 Dependency: None.
 
 File: explorer/src/types/visualization-adapter.ts
-Status: NEW — JUSTIFIED
-Why Needed: Defines common TypeScript interface for Phase 1 data adapters.
-Existing Equivalent: None (type contracts currently scattered in UI files).
-Evidence: Needed to enforce strict adapter contracts before Phase 1.
-Change Type: Proposed future file (Phase 1).
+Status: JUSTIFIED AFTER FIRST ADAPTER (Phase 1)
+Why Needed: Common interface proposal for Phase 1 data adapters.
+Existing Equivalent: None.
+Evidence: Deferred until matrix-adapter.ts establishes concrete shared patterns.
+Change Type: Proposed future file (Phase 1 post-matrix adapter step).
 Risk: Minimal (pure TypeScript type definitions).
 Dependency: explorer/src/types/explorer.ts.
 
 File: explorer/src/lib/adapters/matrix-adapter.ts
-Status: NEW — JUSTIFIED
+Status: NEW — JUSTIFIED (Phase 1)
 Why Needed: Transforms canonical graph into N x N feature coupling matrix.
 Existing Equivalent: buildFeatureDependencyMatrix() in feature-ordering.ts.
 Evidence: Isolates matrix data calculation from layout reordering code.
@@ -416,7 +416,7 @@ Dependency: N/A.
 | `explorer/src/lib/architecture-layout.ts` | **READ ONLY** | None | **NOT TOUCHED** | 13-stage layout engine; must remain untouched. |
 | `explorer/src/lib/projectState.ts` | **READ ONLY** | Lens state extension (Phase 8) | **NOT TOUCHED** | UI state manager; untouched in Phase 0. |
 | `explorer/src/lib/diff-adapter.ts` | **READ ONLY** | None | **NOT TOUCHED** | Diff overlay builder; untouched in Phase 0. |
-| `explorer/src/test/benchmark-wave7b.ts` | **READ ONLY** | Telemetry logging | **NOT TOUCHED** | Existing benchmark utility. |
+| `explorer/src/test/benchmark-wave7b.ts` | **READ ONLY** | Telemetry logging (Phase 1) | **NOT TOUCHED** | Existing benchmark utility (`EXISTING — EXTEND`). |
 | `audit-fixtures/cloud-spend-tracker/...` | **READ ONLY** | None | **NOT TOUCHED** | Benchmark fixture SHA-256 strictly preserved. |
 | `ARCHITECTURE_VISUALIZATION_PHASE0_...` | **CREATE** | New planning file | **ALLOWED** | Single permitted planning artifact created. |
 
@@ -429,7 +429,7 @@ An audit of `ARCHITECTURE_VISUALIZATION_IMPLEMENTATION_ROADMAP.md` against curre
 1. **Correction 1: Benchmark Harness Classification**:
    * *Roadmap Assumption*: Phase 0 Unit 002 proposed building a new automated benchmark harness (`UNIT-002-BENCHMARK-HARNESS`).
    * *Source Code Truth*: `benchmark-wave7b.ts` and `Phase4DAcceptancePerformance.test.ts` already exist and provide automated cold load profiling, memory tracking, and stage timing.
-   * *Correction*: Extend existing benchmark utilities rather than building a new harness.
+   * *Correction*: Reclassify benchmark infrastructure consistently as `EXISTING — EXTEND` (extending `benchmark-wave7b.ts` rather than building a new harness).
 
 2. **Correction 2: Adapter Framework Over-Engineering**:
    * *Roadmap Assumption*: Roadmap implied an extensible adapter framework / registry layer.
@@ -450,7 +450,7 @@ An audit of `ARCHITECTURE_VISUALIZATION_IMPLEMENTATION_ROADMAP.md` against curre
 
 ## 19. Phase 0 Acceptance Criteria
 
-Phase 0 contract completion is evaluated against 7 evidence-based acceptance criteria:
+Phase 0 contract specification is evaluated against 7 evidence-based acceptance criteria:
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────────────────┐
@@ -464,9 +464,9 @@ Phase 0 contract completion is evaluated against 7 evidence-based acceptance cri
 ├─────────────────┼────────────────────────────────────────────────────────────────────────┤
 │ 3. Position     │ 5-Level Position Authority documented with Level 1--2 preservation rule│
 ├─────────────────┼────────────────────────────────────────────────────────────────────────┤
-│ 4. Determinism  │ 0.00000px determinism drift baseline verified on Cloud Spend fixture  │
+│ 4. Determinism  │ 0.00000px determinism drift baseline to be verified during Phase 0 exec│
 ├─────────────────┼────────────────────────────────────────────────────────────────────────┤
-│ 5. Performance  │ Existing benchmark-wave7b.ts identified as extendable benchmark baseline│
+│ 5. Performance  │ Existing benchmark-wave7b.ts classified as EXISTING -- EXTEND          │
 ├─────────────────┼────────────────────────────────────────────────────────────────────────┤
 │ 6. Testing      │ Existing Vitest suite (npm run test:cli, 31 suites) verified passing │
 ├─────────────────┼────────────────────────────────────────────────────────────────────────┤
@@ -478,18 +478,18 @@ Phase 0 contract completion is evaluated against 7 evidence-based acceptance cri
 
 ## 20. Phase 0 Exit Gate
 
-Phase 0 may be declared COMPLETE and ready for Phase 1 execution **ONLY** when all 8 conditions are satisfied:
+Phase 0 may be declared COMPLETE and ready for Phase 1 execution **ONLY** when all 8 conditions are verified upon Phase 0 execution:
 
-* [x] Canonical graph contracts in `explorer/src/types/explorer.ts` are documented and protected.
-* [x] Position Authority hierarchy in `position-policy.ts` is documented and protected.
-* [x] Determinism baseline ($0.00000\text{ px}$ drift) is verified on Cloud Spend Tracker fixture.
-* [x] Analytics contract inventory confirms 100% reusability of existing `explorer/src/lib/` modules.
-* [x] Existing benchmark infrastructure (`benchmark-wave7b.ts`) is identified as the extendable telemetry harness.
-* [x] Adapter necessity analysis confirms pure adapter functions are justified and rejects heavy registry framework.
-* [x] Roadmap corrections (4 items) are documented.
-* [x] Exactly one planning document (`ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md`) has been created with zero production code changes.
+* [ ] Canonical graph contracts in `explorer/src/types/explorer.ts` are documented and protected.
+* [ ] Position Authority hierarchy in `position-policy.ts` is documented and protected.
+* [ ] Determinism baseline ($0.00000\text{ px}$ drift) is verified on Cloud Spend Tracker fixture during Phase 0 execution.
+* [ ] Analytics contract inventory confirms high reusability of existing `explorer/src/lib/` modules due to pure functional contracts and zero DOM dependencies.
+* [ ] Existing benchmark infrastructure (`benchmark-wave7b.ts`) is classified as `EXISTING — EXTEND`.
+* [ ] Adapter necessity analysis confirms pure adapter functions are justified and rejects heavy registry framework.
+* [ ] Roadmap corrections (4 items) are documented.
+* [ ] Common interface `visualization-adapter.ts` is deferred until after `matrix-adapter.ts` in Phase 1 establishes concrete adapter patterns (`JUSTIFIED AFTER FIRST ADAPTER`).
 
-### Final Readiness Status: `PHASE 0 CONTRACT COMPLETE — READY FOR PHASE 1 PLANNING`
+### Final Readiness Status: `CONTRACT READY FOR CONTROLLED PHASE 0 EXECUTION (EXECUTION & VERIFICATION PENDING)`
 
 ---
 
@@ -517,18 +517,19 @@ Before Phase 1 (Shared Visualization Data Infrastructure) implementation may beg
 [x] Final synthesis document remained untouched.
 [x] Integrity audit document remained untouched.
 [x] Implementation roadmap document remained untouched.
-[x] Exactly one new .md file created (ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md).
+[x] Exactly one existing contract document modified (ARCHITECTURE_VISUALIZATION_PHASE0_IMPLEMENTATION_CONTRACT.md).
 [x] Existing contracts inventoried from active source files.
 [x] Position Authority 5-level hierarchy documented and protected.
-[x] Determinism contract (0.00000px drift) documented.
-[x] Analytics contract inventory confirmed 100% reusable.
-[x] Benchmark infrastructure audited (benchmark-wave7b.ts identified as reusable).
-[x] Testing infrastructure audited (npm run test:cli identified as reusable).
+[ ] Determinism contract (0.00000px drift) to be verified upon Phase 0 execution.
+[x] Analytics reusability wording bounded to pure functional contracts and zero DOM dependencies.
+[x] Benchmark infrastructure reclassified as EXISTING -- EXTEND (benchmark-wave7b.ts).
+[x] Testing infrastructure audited (npm run test:cli, 31 suites).
 [x] Adapter necessity analyzed (pure functions justified, heavy registry framework rejected).
+[x] visualization-adapter.ts timing deferred until after first concrete adapter (JUSTIFIED AFTER FIRST ADAPTER).
 [x] Candidate files analyzed with explicit status classifications.
 [x] Exact change boundaries defined.
 [x] Roadmap corrections (4 items) documented.
-[x] Phase 0 exit gate conditions defined and satisfied.
+[ ] Phase 0 exit gate conditions defined; satisfaction requires Phase 0 execution evidence.
 [x] Document explicitly states PLANNING ARTIFACT ONLY.
 ```
 
