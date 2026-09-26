@@ -7,9 +7,9 @@
       "name": "Default Salesforce Project",
       "description": "Salesforce DX Architecture Analysis",
       "sourcePath": "tmp-integration-test/fixture",
-      "createdAt": "2026-09-26T10:40:18.329Z",
-      "updatedAt": "2026-09-26T10:40:18.329Z",
-      "lastAnalyzedAt": "2026-09-26T10:40:18.329Z",
+      "createdAt": "2026-09-26T15:35:06.139Z",
+      "updatedAt": "2026-09-26T15:35:06.139Z",
+      "lastAnalyzedAt": "2026-09-26T15:35:06.139Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 4,
       "dependencyCount": 3,
@@ -20,7 +20,7 @@
     "default": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:ba03726d5d1f4a986a9cff6d03af01fe97262f53f52ad34d4b6548f2a983c2b4",
+      "fileHash": "sha256:d12be938b981783655645f1df9bc163cfc454b34974b4bee0850e5a5350d1b1d",
       "nodeCount": 4,
       "edgeCount": 3
     }
