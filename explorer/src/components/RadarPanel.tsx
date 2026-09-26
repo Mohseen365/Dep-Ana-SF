@@ -83,26 +83,28 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
 
   const activeDim = dimensions.find(d => d.id === (hoveredDimId || selectedDimId)) || null;
 
-  // SVG Radar Layout Geometry Parameters
-  const size = 380;
-  const center = size / 2;
-  const radius = 140;
+  // SVG Radar Layout Geometry Parameters with generous padding for non-clipped label rendering
+  const width = 560;
+  const height = 440;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = 125;
   const angleStep = (2 * Math.PI) / dimensions.length;
 
   // Compute radial axis points and polygon vertex positions
   const axisPoints = dimensions.map((dim, idx) => {
     const angle = idx * angleStep - Math.PI / 2;
-    const xEnd = center + radius * Math.cos(angle);
-    const yEnd = center + radius * Math.sin(angle);
+    const xEnd = centerX + radius * Math.cos(angle);
+    const yEnd = centerY + radius * Math.sin(angle);
 
     const normVal = getVisualNormalizedValue(dim, summary);
-    const xVal = center + radius * normVal * Math.cos(angle);
-    const yVal = center + radius * normVal * Math.sin(angle);
+    const xVal = centerX + radius * normVal * Math.cos(angle);
+    const yVal = centerY + radius * normVal * Math.sin(angle);
 
     // Label positioning slightly past axis end
-    const labelRadius = radius + 22;
-    const xLabel = center + labelRadius * Math.cos(angle);
-    const yLabel = center + labelRadius * Math.sin(angle);
+    const labelRadius = radius + 18;
+    const xLabel = centerX + labelRadius * Math.cos(angle);
+    const yLabel = centerY + labelRadius * Math.sin(angle);
 
     return {
       dim,
@@ -208,11 +210,11 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
           }}
         >
           <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
+            width={width}
+            height={height}
+            viewBox={`0 0 ${width} ${height}`}
             data-testid="radar-svg"
-            style={{ maxWidth: '100%', maxHeight: '100%' }}
+            style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
           >
             <defs>
               <linearGradient id="radarAreaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -227,7 +229,7 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
               const ringPointsStr = axisPoints
                 .map((_, idx) => {
                   const angle = idx * angleStep - Math.PI / 2;
-                  return `${(center + ringRadius * Math.cos(angle)).toFixed(1)},${(center + ringRadius * Math.sin(angle)).toFixed(1)}`;
+                  return `${(centerX + ringRadius * Math.cos(angle)).toFixed(1)},${(centerY + ringRadius * Math.sin(angle)).toFixed(1)}`;
                 })
                 .join(' ');
 
@@ -241,8 +243,8 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
                     strokeDasharray={ringLevel === 1.0 ? 'none' : '2,2'}
                   />
                   <text
-                    x={center + 4}
-                    y={center - ringRadius + 10}
+                    x={centerX + 4}
+                    y={centerY - ringRadius + 10}
                     fill="var(--text-muted, #475569)"
                     fontSize="9"
                     fontFamily="monospace"
@@ -257,8 +259,8 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
             {axisPoints.map((p) => (
               <line
                 key={`axis-${p.dim.id}`}
-                x1={center}
-                y1={center}
+                x1={centerX}
+                y1={centerY}
                 x2={p.xEnd}
                 y2={p.yEnd}
                 stroke="var(--border-default, #334155)"
@@ -304,7 +306,7 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
                   <text
                     x={p.xLabel}
                     y={p.yLabel}
-                    textAnchor={p.xLabel > center + 10 ? 'start' : p.xLabel < center - 10 ? 'end' : 'middle'}
+                    textAnchor={p.xLabel > centerX + 15 ? 'start' : p.xLabel < centerX - 15 ? 'end' : 'middle'}
                     dominantBaseline="middle"
                     fill={isHighlighted ? '#38bdf8' : 'var(--text-secondary, #cbd5e1)'}
                     fontSize={isHighlighted ? '11' : '10'}
@@ -332,6 +334,8 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
             flexDirection: 'column',
             gap: '12px',
             overflowY: 'auto',
+            paddingRight: '4px',
+            paddingBottom: '12px',
           }}
         >
           {/* Active Dimension Inspection Card */}
