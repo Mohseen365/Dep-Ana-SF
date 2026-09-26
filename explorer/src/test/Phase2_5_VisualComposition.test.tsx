@@ -296,7 +296,6 @@ describe('Phase 2.5 — Visual Composition & Representation Acceptance Suite', (
   it('5. Composition derivation is 100% deterministic over 10 consecutive runs', () => {
     const basePositions = computeArchitectureLayout(nodes, edges, {
       enableFeatureLayout: true,
-      layoutMode: 'static',
     });
 
     const discovery = discoverFeatures(nodes, edges);

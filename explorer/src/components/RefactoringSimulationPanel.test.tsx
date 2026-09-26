@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RefactoringSimulationPanel } from './RefactoringSimulationPanel';
 import type { RefactoringProposal, StepImpact } from '../lib/refactoring-simulation';
@@ -22,7 +21,17 @@ const sampleProposal: RefactoringProposal = {
       operations: [
         {
           type: 'add-node',
-          node: { id: 'new-helper', displayName: 'NewHelper', type: 'ApexClass' },
+          node: {
+            id: 'new-helper',
+            displayName: 'NewHelper',
+            type: 'ApexClass',
+            file: 'NewHelper.cls',
+            risk: 'LOW',
+            riskReasons: [],
+            metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 3 },
+            behavior: { isTest: false, publicContractsCount: 1, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+            refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
+          },
         },
       ],
     },
@@ -37,11 +46,15 @@ const sampleStepImpact: StepImpact = {
     resolved: [
       {
         id: 'f-1',
-        ruleId: 'RULE1',
+        type: 'RULE1',
         severity: 'HIGH',
         title: 'Resolved Finding',
         description: 'Finding details',
-        affectedNodeIds: ['old-service'],
+        nodeIds: ['old-service'],
+        edgeIds: [],
+        evidence: [],
+        provenance: { origin: 'DERIVED_RULE', source: 'rule', facts: {} },
+        rule: { ruleId: 'RULE1', ruleVersion: '1.0', name: 'Rule 1' },
       },
     ],
     introduced: [],

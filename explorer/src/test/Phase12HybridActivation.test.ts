@@ -154,10 +154,8 @@ describe('Phase 12 — Hybrid Layout Production Activation & Position Reconcilia
   });
 
   it('Test 9 — Hierarchical -> Hybrid transition executes Hybrid layout', () => {
-    const hierarchicalPositions = computeArchitectureLayout(fixtureNodes, fixtureEdges, { enableFeatureLayout: false });
     const hybridPositions = computeArchitectureLayout(fixtureNodes, fixtureEdges, { enableFeatureLayout: true });
 
-    const hierarchicalMetrics = evaluateLayout(fixtureNodes, fixtureEdges, hierarchicalPositions);
     const hybridMetrics = evaluateLayout(fixtureNodes, fixtureEdges, hybridPositions);
 
     expect(hybridMetrics.edgeCrossingCount).toBeLessThanOrEqual(94662);

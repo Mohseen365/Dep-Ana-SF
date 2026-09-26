@@ -31,7 +31,7 @@ export type GraphInteractionMode = 'interactive' | 'static';
 export type LayoutProvenance = 'automatic-hierarchical' | 'automatic-hybrid' | 'user-authored';
 
 export interface GraphLayoutState {
-  layoutName: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
+  layoutName?: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
   mode: GraphInteractionMode;
   architectureMode?: ArchitectureLayoutMode;
   layoutProvenance?: LayoutProvenance;

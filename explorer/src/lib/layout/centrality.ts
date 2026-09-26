@@ -533,7 +533,7 @@ export type ConceptualNodeCategory =
  * 5. feature-local: node strongly tied to a single feature region
  */
 export function classifyNodeConceptualCategory(
-  nodeId: string,
+  _nodeId: string,
   node: ExplorerNode,
   centrality: NodeCentralityAnalysis,
   domainOrFeature: string | null,

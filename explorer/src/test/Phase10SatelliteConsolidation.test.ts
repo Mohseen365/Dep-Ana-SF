@@ -196,7 +196,6 @@ describe('Phase 10 — Hybrid Layout Satellite Strategy Consolidation & Full-Pip
   });
 
   it('Step 9: Cluster-Level Forensics & Top Satellite Parents', () => {
-    const basePositions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
     const parentMap = new Map<string, { fieldCount: number; testCount: number }>();
 
     nodes.forEach(node => {

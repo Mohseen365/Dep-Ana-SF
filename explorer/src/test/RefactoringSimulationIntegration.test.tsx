@@ -68,6 +68,16 @@ const baseGraph: ExplorerDataSchema = {
     totalEdges: 2,
     sourceProject: 'default',
   },
+  summary: {
+    nodeCount: 3,
+    edgeCount: 2,
+    highRiskCount: 1,
+    mediumRiskCount: 0,
+    lowRiskCount: 2,
+    cycleCount: 0,
+    unresolvedCount: 0,
+    inventory: { files: 3, apexClasses: 3, apexTriggers: 0, lwcJs: 0, lwcHtml: 0, visualforce: 0, flows: 0, objects: 0, fields: 0 },
+  },
   nodes: [
     {
       id: 'ServiceA',

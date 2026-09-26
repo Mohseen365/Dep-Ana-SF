@@ -8,7 +8,6 @@ import {
   type BridgePlacementResult,
   type DetailedCrossingBreakdown,
   type FeatureLocalityDiagnostics,
-  edgeCrossingCount,
   calculateDetailedEdgeCrossings,
   averageEdgeLength,
   maxEdgeLength,

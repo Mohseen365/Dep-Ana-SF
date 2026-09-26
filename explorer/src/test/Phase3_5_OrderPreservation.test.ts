@@ -4,6 +4,7 @@ import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
+import { discoverFeatures } from '../lib/layout/features';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import { primaryNodeOverlapCount, layerViolationCount, calculateDetailedEdgeCrossings } from '../lib/layout/metrics';

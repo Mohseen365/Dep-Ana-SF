@@ -46,17 +46,23 @@ export interface ProjectAnalysisHistory {
 }
 
 export interface ExplorerDataSchema {
-  schemaVersion: string;
-  analyzerVersion: string;
-  generatedAt: string;
-  sourceDirectory: string;
+  schemaVersion?: string;
+  analyzerVersion?: string;
+  generatedAt?: string;
+  sourceDirectory?: string;
   project?: ProjectMetadata;
+  metadata?: Record<string, any>;
+  entryPoints?: string[];
+  databaseAccess?: any[];
   summary: ExplorerSummary;
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   cycles: ExplorerCycleGroup[];
   unresolvedReferences: ExplorerUnresolvedReference[];
   impactSummaries: Record<string, ExplorerComponentImpactSummary>;
+  metrics?: any;
+  riskDistribution?: any;
+  layerDistribution?: any;
 }
 
 export interface ExplorerSummary {

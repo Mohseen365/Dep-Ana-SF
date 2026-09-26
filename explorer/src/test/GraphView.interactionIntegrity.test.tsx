@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import React from 'react';
+import { render, act } from '@testing-library/react';
 import { GraphView } from '../components/GraphView';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
@@ -48,7 +47,7 @@ const createMockNode = (id: string, initialX = 100, initialY = 100) => {
       };
       return edges;
     },
-    neighborhood: (selector?: string) => {
+    neighborhood: () => {
       const neighborIds = new Set<string>();
       mockEles.forEach(e => {
         if (e.isEdge()) {
@@ -190,33 +189,33 @@ vi.mock('cytoscape-navigator', () => ({ default: vi.fn() }));
 const SAMPLE_NODES: ExplorerNode[] = [
   {
     id: 'NodeA',
-    name: 'NodeA',
     displayName: 'Node A',
     type: 'ApexClass',
+    file: 'NodeA.cls',
     risk: 'LOW',
-    layer: 'Business Logic',
+    riskReasons: [],
     metrics: { fanIn: 1, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
     behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
     refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
   },
   {
     id: 'NodeB',
-    name: 'NodeB',
     displayName: 'Node B',
     type: 'ApexClass',
+    file: 'NodeB.cls',
     risk: 'MEDIUM',
-    layer: 'Business Logic',
+    riskReasons: [],
     metrics: { fanIn: 1, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
     behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
     refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
   },
   {
     id: 'NodeC',
-    name: 'NodeC',
     displayName: 'Node C',
-    type: 'LightningComponent',
+    type: 'LWC',
+    file: 'NodeC.js',
     risk: 'LOW',
-    layer: 'Presentation',
+    riskReasons: [],
     metrics: { fanIn: 0, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
     behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
     refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' },
@@ -224,8 +223,50 @@ const SAMPLE_NODES: ExplorerNode[] = [
 ];
 
 const SAMPLE_EDGES: ExplorerEdge[] = [
-  { id: 'edgeAB', source: 'NodeA', target: 'NodeB', type: 'DEPENDS_ON' },
-  { id: 'edgeBC', source: 'NodeB', target: 'NodeC', type: 'DEPENDS_ON' },
+  {
+    id: 'edgeAB',
+    source: 'NodeA',
+    target: 'NodeB',
+    relationshipType: 'method-call',
+    method: 'execute',
+    evidence: '',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    line: 1,
+    column: 1,
+    methodOwner: 'NodeB',
+    file: 'NodeA.cls',
+    canonical: {
+      source: { type: 'ApexClass', name: 'NodeA' },
+      target: { type: 'ApexClass', name: 'NodeB' },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
+  },
+  {
+    id: 'edgeBC',
+    source: 'NodeB',
+    target: 'NodeC',
+    relationshipType: 'method-call',
+    method: 'execute',
+    evidence: '',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    line: 1,
+    column: 1,
+    methodOwner: 'NodeC',
+    file: 'NodeB.cls',
+    canonical: {
+      source: { type: 'ApexClass', name: 'NodeB' },
+      target: { type: 'LWC', name: 'NodeC' },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
+  },
 ];
 
 describe('Prompt 6C — Graph Interaction Correctness & State Integrity Suite', () => {

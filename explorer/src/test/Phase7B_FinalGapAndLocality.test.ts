@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as crypto from 'crypto';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { discoverFeatures } from '../lib/layout/features';
@@ -12,8 +11,6 @@ import {
   calculateFeatureLocalityDiagnostics,
   primaryNodeOverlapCount,
   satelliteNodeOverlapCount,
-  minimumNodeClearance,
-  PositionMap,
 } from '../lib/layout/metrics';
 
 function computePercentile(values: number[], p: number): number {

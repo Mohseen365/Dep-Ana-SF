@@ -30,7 +30,7 @@ describe('Wave 10E Forensic Acceptance Metrics Capture', () => {
     const { nodes, edges } = loadCloudSpendFixture();
 
     const t0 = performance.now();
-    const positions = computeArchitectureLayout(nodes, edges);
+    const positions = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
     const t1 = performance.now();
 
     const safeNodes = [...nodes];
@@ -118,8 +118,8 @@ describe('Wave 10E Forensic Acceptance Metrics Capture', () => {
     const getSatP = (p: number) => satDistances[Math.floor(satDistances.length * p)] || 0;
 
     // Determinism test
-    const posRun1 = computeArchitectureLayout(nodes, edges);
-    const posRun2 = computeArchitectureLayout(nodes, edges);
+    const posRun1 = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
+    const posRun2 = computeArchitectureLayout(nodes, edges, { enableFeatureLayout: true });
     let repeatDelta = 0;
     safeNodes.forEach(n => {
       if (posRun1[n.id] && posRun2[n.id]) {

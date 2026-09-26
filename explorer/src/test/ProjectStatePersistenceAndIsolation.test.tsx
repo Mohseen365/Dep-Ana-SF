@@ -13,7 +13,7 @@ import {
   resolveAuthoritativePosition,
   calculateDeterministicNewNodePosition,
 } from '../lib/position-policy';
-import { ALL_EXPLORER_NODE_TYPES } from '../types/explorer';
+import { ALL_EXPLORER_NODE_TYPES, type ExplorerEdge } from '../types/explorer';
 
 describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Acceptance Suite', () => {
   beforeEach(() => {

@@ -852,7 +852,7 @@ describe('Wave 6 — Runtime Integration & Position Authority Test Matrix', () =
       'ApexClass:BridgeAdapter': { x: 600, y: 600 },
     };
 
-    const graphLayoutState = { mode: 'interactive' as const, architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
+    const graphLayoutState = { mode: 'interactive' as const, layoutName: 'cose', architectureMode: 'hierarchical' as const, layoutProvenance: 'automatic-hierarchical' as const, nodePositions: persistedPositions };
 
     const { rerender } = render(
       <GraphView

@@ -1,11 +1,11 @@
 import { describe, it } from 'vitest';
 import path from 'path';
 import fs from 'fs';
-import { calculateLayoutMetrics } from './metrics';
 import { computeGlobalFeatureLayout } from './global-layout';
 import { discoverFeatures } from './features';
 import { type FeatureOrderingStrategy } from './feature-ordering';
-import type { ExplorerNode, ExplorerEdge, ArchitectureLayer } from '../../types/explorer';
+import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { ArchitectureLayer } from './types';
 import { computeArchitectureAnalysis } from './analysis';
 import { classifyNodeLayerWithReason } from './layers';
 

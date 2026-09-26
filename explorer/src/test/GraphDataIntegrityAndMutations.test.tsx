@@ -246,9 +246,7 @@ describe('Prompt 6F — Graph Data Integrity, Incremental Updates & Mutation For
     });
 
     it('repairs focus graph and filters cleanly when focused node is removed', () => {
-      const nodeA = createBaseNode('ApexClass:NodeA');
       const nodeB = createBaseNode('ApexClass:NodeB');
-      const edgeAB = createBaseEdge('e-ab', nodeA.id, nodeB.id);
 
       const focusState = {
         enabled: true,
