@@ -4,6 +4,7 @@ export type WorkspaceViewMode =
   | "graph"
   | "dashboard"
   | "matrix"
+  | "tree"
   | "findings"
   | "hotspots"
   | "diagnostics"
@@ -49,6 +50,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-matrix"
         >
           <span className="btn-icon">🧩</span> Matrix
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "tree" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("tree")}
+          title="Feature Hierarchy Tree Lens"
+          data-testid="view-btn-tree"
+        >
+          <span className="btn-icon">🌳</span> Tree
         </button>
         <button
           className={`view-mode-btn ${viewMode === "findings" ? "active" : ""}`}
