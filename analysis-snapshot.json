@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "analyzerVersion": "13",
   "analyzer": "Salesforce Dependency Analyzer v13",
-  "generatedAt": "2026-09-27T11:35:56.120Z",
+  "generatedAt": "2026-09-27T12:19:27.384Z",
   "sourceDirectory": "scripts/temp-snapshot-test-fixture",
   "inventory": {
     "files": 2,
@@ -43,12 +43,12 @@
     {
       "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
       "size": 72,
-      "mtimeMs": 1790506613004.4292
+      "mtimeMs": 1790510536619.3047
     },
     {
       "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
       "size": 72,
-      "mtimeMs": 1790506613004.4292
+      "mtimeMs": 1790510536619.3047
     }
   ],
   "options": {
