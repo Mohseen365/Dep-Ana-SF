@@ -6,6 +6,7 @@ export type WorkspaceViewMode =
   | "matrix"
   | "heatmap"
   | "tree"
+  | "treemap"
   | "profile"
   | "radar"
   | "dna"
@@ -71,6 +72,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-tree"
         >
           <span className="btn-icon">🌳</span> Tree
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "treemap" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("treemap")}
+          title="Architecture Treemap Spatial Lens"
+          data-testid="view-btn-treemap"
+        >
+          <span className="btn-icon">🗺️</span> Treemap
         </button>
         <button
           className={`view-mode-btn ${viewMode === "profile" ? "active" : ""}`}

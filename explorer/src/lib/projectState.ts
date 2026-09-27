@@ -67,6 +67,7 @@ export type AnalysisViewMode =
   | 'matrix'
   | 'heatmap'
   | 'tree'
+  | 'treemap'
   | 'profile'
   | 'radar'
   | 'dna'
