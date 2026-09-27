@@ -7,6 +7,7 @@ export type WorkspaceViewMode =
   | "tree"
   | "profile"
   | "radar"
+  | "dna"
   | "findings"
   | "hotspots"
   | "diagnostics"
@@ -76,6 +77,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-radar"
         >
           <span className="btn-icon">🎯</span> Radar
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "dna" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("dna")}
+          title="Architecture DNA / Barcode Multi-Band Lens"
+          data-testid="view-btn-dna"
+        >
+          <span className="btn-icon">🧬</span> DNA
         </button>
         <button
           className={`view-mode-btn ${viewMode === "findings" ? "active" : ""}`}

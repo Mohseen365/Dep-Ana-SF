@@ -15,6 +15,7 @@ import { FeatureMatrixPanel } from './components/FeatureMatrixPanel';
 import { FeatureTreePanel } from './components/FeatureTreePanel';
 import { FeatureProfilePanel } from './components/FeatureProfilePanel';
 import { RadarPanel } from './components/RadarPanel';
+import { ArchitectureDNABarcode } from './components/ArchitectureDNABarcode';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { HotspotPanel } from './components/HotspotPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
@@ -850,6 +851,24 @@ export function App() {
                       }}
                       onSelectFeatureAnchor={(anchorNodeId) => {
                         selection.selectNode(anchorNodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+
+              {workspaceViewMode === 'dna' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <ArchitectureDNABarcode
+                      data={activeData}
+                      selectedNodeId={selection.selectedNodeId}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
                         setWorkspaceViewMode('graph');
                       }}
