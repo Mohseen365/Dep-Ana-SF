@@ -1,5 +1,5 @@
 import React from "react";
-
+import { WorkspaceViewMode } from "../lib/projectState";
 export type WorkspaceViewMode =
   | "graph"
   | "dashboard"
@@ -17,6 +17,97 @@ export type WorkspaceViewMode =
   | "diagnostics"
   | "compare"
   | "history";
+export interface ViewModeSwitcherProps {
+  currentMode: WorkspaceViewMode;
+  onModeChange: (mode: WorkspaceViewMode) => void;
+}
+
+/**
+ * Phase 3C ViewModeSwitcher supporting Graph, Matrix, Tree, Profile, Radar, DNA, Heatmap, 4-Dir, and Subway modes.
+ */
+export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
+  currentMode,
+  onModeChange,
+}) => {
+  const modes: {
+    mode: WorkspaceViewMode;
+    label: string;
+    icon: string;
+    description: string;
+  }[] = [
+    {
+      mode: "graph",
+      label: "Graph",
+      icon: "🕸️",
+      description: "Interactive Cytoscape topology graph",
+    },
+    {
+      mode: "matrix",
+      label: "Matrix",
+      icon: "📊",
+      description: "Feature dependency matrix grid",
+    },
+    {
+      mode: "tree",
+      label: "Tree",
+      icon: "🌲",
+      description: "Hierarchical feature & component tree",
+    },
+    {
+      mode: "profile",
+      label: "Profile",
+      icon: "📋",
+      description: "Component metrics & risk profile",
+    },
+    {
+      mode: "radar",
+      label: "Radar",
+      icon: "🎯",
+      description: "Architectural dimension radar",
+    },
+    {
+      mode: "dna",
+      label: "DNA",
+      icon: "🧬",
+      description: "Architecture DNA & barcode",
+    },
+    {
+      mode: "heatmap",
+      label: "Heatmap",
+      icon: "🔥",
+      description: "Coupling & risk heatmap",
+    },
+    {
+      mode: "four-direction",
+      label: "4-Dir",
+      icon: "🧭",
+      description: "Four-cardinal dependency neighborhood",
+    },
+    {
+      mode: "subway",
+      label: "Subway",
+      icon: "🚇",
+      description: "Feature subway routes & component transfer stations",
+    },
+  ];
+
+  return (
+    <div className="view-mode-switcher" data-testid="view-mode-switcher">
+      {modes.map((m) => (
+        <button
+          key={m.mode}
+          className={`view-mode-btn ${currentMode === m.mode ? "active" : ""}`}
+          onClick={() => onModeChange(m.mode)}
+          title={m.description}
+          data-testid={`view-mode-btn-${m.mode}`}
+        >
+          <span className="icon">{m.icon}</span>
+          <span className="label">{m.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+};
 
 export interface ViewModeSwitcherProps {
   viewMode: WorkspaceViewMode;
@@ -32,8 +123,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`view-mode-switcher-bar ${className}`} data-testid="view-mode-switcher">
-      <div className="view-mode-toggle-group" style={{ display: 'flex', gap: '4px' }}>
+    <div
+      className={`view-mode-switcher-bar ${className}`}
+      data-testid="view-mode-switcher"
+    >
+      <div
+        className="view-mode-toggle-group"
+        style={{ display: "flex", gap: "4px" }}
+      >
         <button
           className={`view-mode-btn ${viewMode === "graph" ? "active" : ""}`}
           onClick={() => onChangeViewMode("graph")}
@@ -129,7 +226,9 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-findings"
         >
           <span className="btn-icon">📋</span> Findings
-          {findingsCount > 0 && <span className="findings-count-pill">{findingsCount}</span>}
+          {findingsCount > 0 && (
+            <span className="findings-count-pill">{findingsCount}</span>
+          )}
         </button>
         <button
           className={`view-mode-btn ${viewMode === "hotspots" ? "active" : ""}`}

@@ -6,7 +6,11 @@
  * never pollutes or overwrites state for Project B (e.g., sidebar expanded, zoom 120%).
  */
 
-import { ExplorerNodeType, ALL_EXPLORER_NODE_TYPES, ArchitectureLayoutMode } from '../types/explorer';
+import {
+  ExplorerNodeType,
+  ALL_EXPLORER_NODE_TYPES,
+  ArchitectureLayoutMode,
+} from "../types/explorer";
 
 export interface SelectedComponentState {
   selectedNodeId: string | null;
@@ -26,9 +30,12 @@ export interface FilterUIState {
   visibleNodeTypes?: ExplorerNodeType[];
 }
 
-export type GraphInteractionMode = 'interactive' | 'static';
+export type GraphInteractionMode = "interactive" | "static";
 
-export type LayoutProvenance = 'automatic-hierarchical' | 'automatic-hybrid' | 'user-authored';
+export type LayoutProvenance =
+  | "automatic-hierarchical"
+  | "automatic-hybrid"
+  | "user-authored";
 
 export interface GraphLayoutState {
   layoutName?: string; // e.g. 'cola' | 'cose' | 'grid' | 'concentric' | 'dagre'
@@ -62,26 +69,36 @@ export interface NavigatorUIState {
 }
 
 export type AnalysisViewMode =
-  | 'graph'
-  | 'dashboard'
-  | 'matrix'
-  | 'heatmap'
-  | 'river'
-  | 'tree'
-  | 'treemap'
-  | 'profile'
-  | 'radar'
-  | 'dna'
-  | 'four-direction'
-  | 'findings'
-  | 'hotspots'
-  | 'diagnostics'
-  | 'compare';
+  | "graph"
+  | "dashboard"
+  | "matrix"
+  | "heatmap"
+  | "river"
+  | "tree"
+  | "treemap"
+  | "profile"
+  | "radar"
+  | "dna"
+  | "four-direction"
+  | "findings"
+  | "hotspots"
+  | "diagnostics"
+  | "compare";
 
+export type WorkspaceViewMode =
+  | "graph"
+  | "matrix"
+  | "tree"
+  | "profile"
+  | "radar"
+  | "dna"
+  | "heatmap"
+  | "four-direction"
+  | "subway";
 
 export interface AnalysisViewUIState {
   viewMode: AnalysisViewMode;
-  diagnosticsTab: 'cycles' | 'unresolved' | 'none';
+  diagnosticsTab: "cycles" | "unresolved" | "none";
   selectedFindingId: string | null;
   selectedCycleId: string | null;
   selectedUnresolvedEdgeId: string | null;
@@ -108,12 +125,12 @@ export interface ProjectUIState {
   updatedAt: string;
 }
 
-const STORAGE_PREFIX = 'explorer.projectState.';
+const STORAGE_PREFIX = "explorer.projectState.";
 const inMemoryStateMap = new Map<string, string>();
 
 function getStoredItem(key: string): string | null {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       return window.localStorage.getItem(key);
     }
   } catch (_) {
@@ -124,7 +141,7 @@ function getStoredItem(key: string): string | null {
 
 function setStoredItem(key: string, value: string): void {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       window.localStorage.setItem(key, value);
     }
   } catch (_) {
@@ -135,7 +152,7 @@ function setStoredItem(key: string, value: string): void {
 
 function removeStoredItem(key: string): void {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       window.localStorage.removeItem(key);
     }
   } catch (_) {
@@ -156,9 +173,9 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
       selectedInvestigationId: null,
     },
     filters: {
-      searchQuery: '',
-      typeFilter: '',
-      riskFilter: '',
+      searchQuery: "",
+      typeFilter: "",
+      riskFilter: "",
       hasCallouts: false,
       withoutSharing: false,
       hideTests: false,
@@ -167,10 +184,10 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
       visibleNodeTypes: [...ALL_EXPLORER_NODE_TYPES],
     },
     graphLayout: {
-      layoutName: 'cola',
-      mode: 'interactive',
-      architectureMode: 'hierarchical',
-      layoutProvenance: 'automatic-hierarchical',
+      layoutName: "cola",
+      mode: "interactive",
+      architectureMode: "hierarchical",
+      layoutProvenance: "automatic-hierarchical",
       nodePositions: {},
     },
     zoom: {
@@ -179,29 +196,29 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
     },
     sidebarState: {
       collapsed: false,
-      activeTab: 'all',
-      searchQuery: '',
+      activeTab: "all",
+      searchQuery: "",
     },
     inspectorState: {
       pinned: false,
       detached: false,
-      activeTab: 'overview',
+      activeTab: "overview",
     },
     navigatorState: {
       visible: true,
       collapsed: false,
     },
     analysisView: {
-      viewMode: 'graph',
-      diagnosticsTab: 'none',
+      viewMode: "graph",
+      diagnosticsTab: "none",
       selectedFindingId: null,
       selectedCycleId: null,
       selectedUnresolvedEdgeId: null,
     },
     comparisonState: {
       isActive: false,
-      beforeRaw: '',
-      afterRaw: '',
+      beforeRaw: "",
+      afterRaw: "",
       focusedEntityId: null,
     },
     updatedAt: new Date().toISOString(),
@@ -221,7 +238,7 @@ export function getProjectStorageKey(projectId: string): string {
  */
 export function loadProjectState(projectId: string): ProjectUIState {
   if (!projectId) {
-    return createDefaultProjectUIState('default');
+    return createDefaultProjectUIState("default");
   }
 
   try {
@@ -239,9 +256,12 @@ export function loadProjectState(projectId: string): ProjectUIState {
 /**
  * Merges loaded JSON object with default project state to handle partial state updates or schema evolution.
  */
-export function mergeWithDefaultState(projectId: string, loaded: Partial<ProjectUIState>): ProjectUIState {
+export function mergeWithDefaultState(
+  projectId: string,
+  loaded: Partial<ProjectUIState>,
+): ProjectUIState {
   const defaults = createDefaultProjectUIState(projectId);
-  if (!loaded || typeof loaded !== 'object') {
+  if (!loaded || typeof loaded !== "object") {
     return defaults;
   }
 
@@ -259,15 +279,31 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
         : defaults.filters.visibleNodeTypes,
     },
     graphLayout: {
-      layoutName: loaded.graphLayout?.layoutName || defaults.graphLayout.layoutName,
-      mode: ((loaded.graphLayout as any)?.mode === 'static' || (loaded.graphLayout as any)?.layoutMode === 'static') ? 'static' : 'interactive',
-      architectureMode: (loaded.graphLayout as any)?.architectureMode === 'hybrid' ? 'hybrid' : 'hierarchical',
-      layoutProvenance: (loaded.graphLayout as any)?.layoutProvenance ||
-        ((loaded.graphLayout as any)?.architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical'),
-      nodePositions: (loaded.graphLayout && typeof loaded.graphLayout.nodePositions === 'object' && loaded.graphLayout.nodePositions !== null)
-        ? loaded.graphLayout.nodePositions
-        : defaults.graphLayout.nodePositions,
-      ...(loaded.graphLayout?.layoutVersion !== undefined ? { layoutVersion: loaded.graphLayout.layoutVersion } : {}),
+      layoutName:
+        loaded.graphLayout?.layoutName || defaults.graphLayout.layoutName,
+      mode:
+        (loaded.graphLayout as any)?.mode === "static" ||
+        (loaded.graphLayout as any)?.layoutMode === "static"
+          ? "static"
+          : "interactive",
+      architectureMode:
+        (loaded.graphLayout as any)?.architectureMode === "hybrid"
+          ? "hybrid"
+          : "hierarchical",
+      layoutProvenance:
+        (loaded.graphLayout as any)?.layoutProvenance ||
+        ((loaded.graphLayout as any)?.architectureMode === "hybrid"
+          ? "automatic-hybrid"
+          : "automatic-hierarchical"),
+      nodePositions:
+        loaded.graphLayout &&
+        typeof loaded.graphLayout.nodePositions === "object" &&
+        loaded.graphLayout.nodePositions !== null
+          ? loaded.graphLayout.nodePositions
+          : defaults.graphLayout.nodePositions,
+      ...(loaded.graphLayout?.layoutVersion !== undefined
+        ? { layoutVersion: loaded.graphLayout.layoutVersion }
+        : {}),
     },
     zoom: {
       ...defaults.zoom,
@@ -300,7 +336,10 @@ export function mergeWithDefaultState(projectId: string, loaded: Partial<Project
 /**
  * Saves project-scoped UI state to localStorage.
  */
-export function saveProjectState(projectId: string, state: ProjectUIState): void {
+export function saveProjectState(
+  projectId: string,
+  state: ProjectUIState,
+): void {
   if (!projectId) return;
 
   try {
@@ -321,7 +360,7 @@ export function saveProjectState(projectId: string, state: ProjectUIState): void
  */
 export function updateProjectState(
   projectId: string,
-  update: Partial<ProjectUIState>
+  update: Partial<ProjectUIState>,
 ): ProjectUIState {
   const current = loadProjectState(projectId);
   const updated = mergeWithDefaultState(projectId, {
@@ -351,7 +390,7 @@ export function clearProjectState(projectId: string): void {
 export function getAllSavedProjectIds(): string[] {
   const result = new Set<string>();
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       for (let i = 0; i < window.localStorage.length; i++) {
         const key = window.localStorage.key(i);
         if (key && key.startsWith(STORAGE_PREFIX)) {
@@ -370,4 +409,10 @@ export function getAllSavedProjectIds(): string[] {
   }
 
   return Array.from(result);
+}
+export interface ProjectState {
+  viewMode: WorkspaceViewMode;
+  selectedNodeId?: string | null;
+  selectedFeatureId?: string | null;
+  focusDepth?: number;
 }

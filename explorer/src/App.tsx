@@ -1,6 +1,10 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
+import React from 'react';
+import { ViewModeSwitcher } from './components/ViewModeSwitcher';
+import { SubwayPanel } from './components/SubwayPanel';
+import { adaptSubwayMap } from './lib/adapters/subway-adapter';
 import { useProject } from './context/ProjectContext';
 import { useProjectState } from './context/ProjectStateContext';
 import { useExplorerData } from './hooks/useExplorerData';
@@ -142,6 +146,44 @@ export function GraphSlot(props: {
   );
 }
 
+/**
+ * Main App Component integrating Phase 3C Subway Map lens.
+ */
+export const App: React.FC = () => {
+  const { projectState, setViewMode, setSelectedNodeId } = useProjectState();
+  const { explorerData, loading, error } = useExplorerData();
+
+  const handleNodeSelect = (nodeId: string) => {
+    setSelectedNodeId(nodeId);
+  };
+
+  
+  const handleExploreInGraph = (nodeId: string) => {
+    setSelectedNodeId(nodeId);
+    setViewMode('graph');
+  };
+  
+  if (loading) return <div>Loading Explorer...</div>;
+  if (error || !explorerData) return <div>Error loading project data.</div>;
+
+  const renderContent = () => {
+    switch (projectState.viewMode) {
+      case 'subway': {
+        const subwayData = adaptSubwayMap(explorerData, {
+          selectedNodeId: projectState.selectedNodeId
+        });
+        return (
+          <SubwayPanel
+            data={subwayData}
+            onSelectNode={handleNodeSelect}
+            onExploreInGraph={handleExploreInGraph}
+          />
+        );
+      }
+      default:
+        return <div>Graph View</div>;
+    }
+  };
 function NotAnalyzedScreen({
   project,
 }: {
@@ -828,7 +870,19 @@ export function App() {
                   onCommit={handleCommitSimulation}
                 />
               )}
-
+    <div className="app-shell">
+      <header className="app-header">
+        <ViewModeSwitcher
+          currentMode={projectState.viewMode}
+          onModeChange={setViewMode}
+        />
+              </header>
+      <main className="app-content">
+        {renderContent()}
+      </main>
+      
+  );
+};
               {workspaceViewMode === 'dashboard' && (
                 <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                   <ProjectDashboard
