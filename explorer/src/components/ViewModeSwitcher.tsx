@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { WorkspaceViewMode } from "../lib/projectState";
 
 export type { WorkspaceViewMode };
@@ -24,6 +24,17 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
   className = "",
 }) => {
   const activeMode = viewMode ?? currentMode ?? "graph";
+  const activeBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (activeBtnRef.current) {
+      activeBtnRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
+  }, [activeMode]);
 
   const handleModeSelect = (m: WorkspaceViewMode) => {
     if (onChangeViewMode) onChangeViewMode(m);
@@ -35,11 +46,9 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
       className={`view-mode-switcher-bar view-mode-switcher ${className}`}
       data-testid="view-mode-switcher"
     >
-      <div
-        className="view-mode-toggle-group"
-        style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}
-      >
+      <div className="view-mode-toggle-group">
         <button
+          ref={activeMode === "graph" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "graph" ? "active" : ""}`}
           onClick={() => handleModeSelect("graph")}
           title="Interactive Dependency Graph Canvas"
@@ -48,6 +57,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🕸️</span> <span className="label">Graph</span>
         </button>
         <button
+          ref={activeMode === "dashboard" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "dashboard" ? "active" : ""}`}
           onClick={() => handleModeSelect("dashboard")}
           title="Project Portfolio & Overview Dashboard"
@@ -56,6 +66,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">📊</span> <span className="label">Overview</span>
         </button>
         <button
+          ref={activeMode === "matrix" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "matrix" ? "active" : ""}`}
           onClick={() => handleModeSelect("matrix")}
           title="Feature Dependency Matrix Lens"
@@ -64,6 +75,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🧩</span> <span className="label">Matrix</span>
         </button>
         <button
+          ref={activeMode === "heatmap" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "heatmap" ? "active" : ""}`}
           onClick={() => handleModeSelect("heatmap")}
           title="Feature Coupling Heatmap Lens"
@@ -72,6 +84,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🌡️</span> <span className="label">Heatmap</span>
         </button>
         <button
+          ref={activeMode === "river" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "river" ? "active" : ""}`}
           onClick={() => handleModeSelect("river")}
           title="Dependency River / Sankey Macro Flow Lens"
@@ -80,6 +93,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🌊</span> <span className="label">River</span>
         </button>
         <button
+          ref={activeMode === "tree" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "tree" ? "active" : ""}`}
           onClick={() => handleModeSelect("tree")}
           title="Feature Hierarchy Tree Lens"
@@ -88,6 +102,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🌳</span> <span className="label">Tree</span>
         </button>
         <button
+          ref={activeMode === "treemap" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "treemap" ? "active" : ""}`}
           onClick={() => handleModeSelect("treemap")}
           title="Architecture Treemap Spatial Lens"
@@ -96,6 +111,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🗺️</span> <span className="label">Treemap</span>
         </button>
         <button
+          ref={activeMode === "subway" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "subway" ? "active" : ""}`}
           onClick={() => handleModeSelect("subway")}
           title="Feature Subway Routes & Component Transfer Stations"
@@ -104,6 +120,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🚇</span> <span className="label">Subway</span>
         </button>
         <button
+          ref={activeMode === "constellation" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "constellation" ? "active" : ""}`}
           onClick={() => handleModeSelect("constellation")}
           title="Dependency Constellation Radial Lens"
@@ -112,6 +129,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🌌</span> <span className="label">Constellation</span>
         </button>
         <button
+          ref={activeMode === "profile" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "profile" ? "active" : ""}`}
           onClick={() => handleModeSelect("profile")}
           title="Component Architecture Profile Lens"
@@ -120,6 +138,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">👤</span> <span className="label">Profile</span>
         </button>
         <button
+          ref={activeMode === "radar" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "radar" ? "active" : ""}`}
           onClick={() => handleModeSelect("radar")}
           title="Architecture Radar Multi-Dimensional Lens"
@@ -128,6 +147,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🎯</span> <span className="label">Radar</span>
         </button>
         <button
+          ref={activeMode === "dna" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "dna" ? "active" : ""}`}
           onClick={() => handleModeSelect("dna")}
           title="Architecture DNA / Barcode Multi-Band Lens"
@@ -136,6 +156,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🧬</span> <span className="label">DNA</span>
         </button>
         <button
+          ref={activeMode === "four-direction" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "four-direction" ? "active" : ""}`}
           onClick={() => handleModeSelect("four-direction")}
           title="Four-Direction Cardinal Neighborhood Lens"
@@ -144,6 +165,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🧭</span> <span className="label">Four-Dir</span>
         </button>
         <button
+          ref={activeMode === "findings" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "findings" ? "active" : ""}`}
           onClick={() => handleModeSelect("findings")}
           title="Architecture Rule Findings"
@@ -155,6 +177,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           )}
         </button>
         <button
+          ref={activeMode === "hotspots" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "hotspots" ? "active" : ""}`}
           onClick={() => handleModeSelect("hotspots")}
           title="Architectural Hotspots & Refactoring Readiness"
@@ -163,6 +186,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🔥</span> <span className="label">Hotspots</span>
         </button>
         <button
+          ref={activeMode === "diagnostics" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "diagnostics" ? "active" : ""}`}
           onClick={() => handleModeSelect("diagnostics")}
           title="Circular Dependencies & Unresolved References"
@@ -171,6 +195,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">⚡</span> <span className="label">Diagnostics</span>
         </button>
         <button
+          ref={activeMode === "compare" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "compare" ? "active" : ""}`}
           onClick={() => handleModeSelect("compare")}
           title="Architecture Snapshot Diff Comparison"
@@ -179,6 +204,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🔍</span> <span className="label">Compare</span>
         </button>
         <button
+          ref={activeMode === "history" ? activeBtnRef : null}
           className={`view-mode-btn ${activeMode === "history" ? "active" : ""}`}
           onClick={() => handleModeSelect("history")}
           title="Project Analysis History & Timeline"
