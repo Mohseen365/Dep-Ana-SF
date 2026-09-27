@@ -80,21 +80,31 @@ export type AnalysisViewMode =
   | "radar"
   | "dna"
   | "four-direction"
+  | "subway"
   | "findings"
   | "hotspots"
   | "diagnostics"
-  | "compare";
+  | "compare"
+  | "history";
 
 export type WorkspaceViewMode =
   | "graph"
+  | "dashboard"
   | "matrix"
+  | "heatmap"
+  | "river"
   | "tree"
+  | "treemap"
   | "profile"
   | "radar"
   | "dna"
-  | "heatmap"
   | "four-direction"
-  | "subway";
+  | "subway"
+  | "findings"
+  | "hotspots"
+  | "diagnostics"
+  | "compare"
+  | "history";
 
 export interface AnalysisViewUIState {
   viewMode: AnalysisViewMode;
