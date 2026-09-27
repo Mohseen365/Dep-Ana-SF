@@ -12,6 +12,7 @@ import { InvestigationDrawer } from './components/InvestigationDrawer';
 import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { ProjectDashboard } from './components/ProjectDashboard';
 import { FeatureMatrixPanel } from './components/FeatureMatrixPanel';
+import { CouplingHeatmapPanel } from './components/CouplingHeatmapPanel';
 import { FeatureTreePanel } from './components/FeatureTreePanel';
 import { FeatureProfilePanel } from './components/FeatureProfilePanel';
 import { RadarPanel } from './components/RadarPanel';
@@ -843,6 +844,28 @@ export function App() {
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <FeatureMatrixPanel
+                      data={activeData}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                      onSelectFeatureAnchor={(anchorNodeId) => {
+                        selection.selectNode(anchorNodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+
+              {workspaceViewMode === 'heatmap' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <CouplingHeatmapPanel
                       data={activeData}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
