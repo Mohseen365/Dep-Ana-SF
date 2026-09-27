@@ -104,6 +104,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           <span className="btn-icon icon">🚇</span> <span className="label">Subway</span>
         </button>
         <button
+          className={`view-mode-btn ${activeMode === "constellation" ? "active" : ""}`}
+          onClick={() => handleModeSelect("constellation")}
+          title="Dependency Constellation Radial Lens"
+          data-testid="view-btn-constellation"
+        >
+          <span className="btn-icon icon">🌌</span> <span className="label">Constellation</span>
+        </button>
+        <button
           className={`view-mode-btn ${activeMode === "profile" ? "active" : ""}`}
           onClick={() => handleModeSelect("profile")}
           title="Component Architecture Profile Lens"

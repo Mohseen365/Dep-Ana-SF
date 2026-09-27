@@ -5,6 +5,8 @@ import { SelectionProvider } from './context/SelectionContext';
 import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { SubwayPanel } from './components/SubwayPanel';
 import { adaptSubwayMap } from './lib/adapters/subway-adapter';
+import { DependencyConstellationPanel } from './components/DependencyConstellationPanel';
+import { adaptConstellation } from './lib/adapters/constellation-adapter';
 import { useProject } from './context/ProjectContext';
 import { useProjectState } from './context/ProjectStateContext';
 import { useExplorerData } from './hooks/useExplorerData';
@@ -302,6 +304,16 @@ export function App() {
 
   // Active workspace view mode
   const [workspaceViewMode, setWorkspaceViewMode] = useState<WorkspaceViewMode>('graph');
+
+  // Constellation lens transient options state
+  const [constellationOptions, setConstellationOptions] = useState<{
+    focalNodeId?: string;
+    maxDepth?: number;
+    direction?: 'both' | 'dependencies' | 'dependents';
+  }>({
+    maxDepth: 2,
+    direction: 'both',
+  });
 
   // Sidebar collapse state
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -860,6 +872,32 @@ export function App() {
                       onSelectFeatureAnchor={(anchorNodeId) => {
                         selection.selectNode(anchorNodeId);
                         view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+
+              {workspaceViewMode === 'constellation' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <DependencyConstellationPanel
+                      data={adaptConstellation(activeData, {
+                        focalNodeId: constellationOptions.focalNodeId || selection.selectedNodeId,
+                        maxDepth: constellationOptions.maxDepth,
+                        direction: constellationOptions.direction,
+                      })}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                      }}
+                      onOptionChange={(opts) => {
+                        setConstellationOptions((prev) => ({ ...prev, ...opts }));
+                      }}
+                      onReturnToGraph={() => {
                         setWorkspaceViewMode('graph');
                       }}
                     />
