@@ -4,6 +4,7 @@ export type WorkspaceViewMode =
   | "graph"
   | "dashboard"
   | "matrix"
+  | "heatmap"
   | "tree"
   | "profile"
   | "radar"
@@ -54,6 +55,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-matrix"
         >
           <span className="btn-icon">🧩</span> Matrix
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "heatmap" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("heatmap")}
+          title="Feature Coupling Heatmap Lens"
+          data-testid="view-btn-heatmap"
+        >
+          <span className="btn-icon">🌡️</span> Heatmap
         </button>
         <button
           className={`view-mode-btn ${viewMode === "tree" ? "active" : ""}`}
