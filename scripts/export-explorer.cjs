@@ -267,6 +267,59 @@ function resolveInputFile(inputPath, options = {}) {
   throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
 }
 
+/**
+ * Normalizes a source path into a portable, deterministic POSIX representation.
+ * Handles Windows drive letters, Windows backslashes, machine-specific absolute prefixes,
+ * and relative navigation while preserving meaningful project-relative path structure.
+ */
+function normalizeSourcePath(rawPath) {
+  if (!rawPath || typeof rawPath !== "string") return "force-app/main/default";
+
+  let p = rawPath.trim();
+  if (!p) return "force-app/main/default";
+
+  // Strip Windows drive letter prefix (e.g., C:, D:)
+  p = p.replace(/^[a-zA-Z]:/, "");
+
+  // Convert all backslashes to forward slashes
+  p = p.replace(/\\/g, "/");
+
+  // Collapse duplicate slashes
+  p = p.replace(/\/+/g, "/");
+
+  // Strip leading slashes
+  p = p.replace(/^\/+/, "");
+
+  // Normalize absolute or deep machine-specific paths (e.g. Users/.../Downloads/Interview Project/Cloud-Spend-Tracker/force-app/main/default)
+  const forceAppIdx = p.indexOf("force-app/");
+  if (forceAppIdx > 0) {
+    const preceding = p.substring(0, forceAppIdx).replace(/\/+$/, "");
+    const parts = preceding.split("/").filter(Boolean);
+    const genericDirs = new Set(["users", "user", "downloads", "desktop", "documents", "app", "tmp", "temp", "home", "src", "interview project"]);
+    let projDir = "";
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const part = parts[i];
+      if (!genericDirs.has(part.toLowerCase())) {
+        projDir = parts.slice(i).join("/");
+        break;
+      }
+    }
+    if (projDir) {
+      p = `${projDir}/${p.substring(forceAppIdx)}`;
+    } else {
+      p = p.substring(forceAppIdx);
+    }
+  } else {
+    // Strip leading relative navigation (e.g., ../..)
+    p = p.replace(/^(\.\.\/)+/, "");
+  }
+
+  // Strip trailing slashes
+  p = p.replace(/\/+$/, "");
+
+  return p || "force-app/main/default";
+}
+
 function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
   if (!id) return `${fallbackType}:${fallbackName}`;
   if (id.includes(":")) return id;
@@ -443,8 +496,9 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     reportData.analyzer ||
     DEFAULT_ANALYZER_VERSION;
   const generatedAt = reportData.generatedAt || new Date().toISOString();
-  const sourceDirectory =
+  const rawSourceDirectory =
     options.source || reportData.sourceDirectory || "force-app/main/default";
+  const sourceDirectory = normalizeSourcePath(rawSourceDirectory);
 
   const projectName =
     options.projectName ||
@@ -463,11 +517,13 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
 
   if (isAlreadyExplorerData) {
     const explorerData = JSON.parse(JSON.stringify(reportData));
+    explorerData.sourceDirectory = normalizeSourcePath(explorerData.sourceDirectory || reportData.sourceDirectory);
     const projectMetadata = {
       ...explorerData.project,
       id: projectId,
       name: options.projectName || explorerData.project?.name || (projectId !== "default" ? projectId : "Default Salesforce Project"),
       description: options.projectDesc || explorerData.project?.description || "Salesforce DX Architecture Analysis",
+      sourcePath: normalizeSourcePath(options.source || explorerData.project?.sourcePath || explorerData.sourceDirectory),
       analysisPath: projectId !== "default" ? `/projects/${projectId}/explorer-data.json` : "/explorer-data.json",
     };
     explorerData.project = projectMetadata;
@@ -1050,6 +1106,7 @@ module.exports = {
   normalizeNodeId,
   normalizeNodeType,
   normalizeTestCoverageStatus,
+  normalizeSourcePath,
   buildImpactSummaries,
   slugify,
 };

@@ -9,7 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
-const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus } = require("./export-explorer.cjs");
+const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, normalizeSourcePath } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR = path.join(__dirname, "../temp-test-fixture-realistic");
 const ANALYZE_OUT_DIR = path.join(FIXTURE_DIR, "analyze");
@@ -456,6 +456,50 @@ function runSpecificRegressionTests() {
   } finally {
     if (fs.existsSync(tempProjectDir)) fs.rmSync(tempProjectDir, { recursive: true, force: true });
   }
+
+  // TEST E: Source Path Normalization (DEFECT-02)
+  console.log("\nTest E: Source Path Normalization (DEFECT-02)");
+  assert.strictEqual(
+    normalizeSourcePath("C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default"),
+    "Cloud-Spend-Tracker/force-app/main/default",
+    "Windows absolute path with drive letter must normalize to portable POSIX path"
+  );
+  assert.strictEqual(
+    normalizeSourcePath("/app/tmp-cli-forwarding-test/src/force-app/main/default"),
+    "tmp-cli-forwarding-test/src/force-app/main/default",
+    "POSIX absolute path must normalize to clean portable POSIX path"
+  );
+  assert.strictEqual(
+    normalizeSourcePath("..\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default"),
+    "Cloud-Spend-Tracker/force-app/main/default",
+    "Relative path with backslashes and parent dirs must normalize"
+  );
+  assert.strictEqual(
+    normalizeSourcePath("C:/Users\\User/Downloads\\Interview Project/Cloud-Spend-Tracker\\force-app/main\\default"),
+    "Cloud-Spend-Tracker/force-app/main/default",
+    "Mixed separator path must normalize cleanly"
+  );
+  assert.strictEqual(
+    normalizeSourcePath("C:\\Users\\User\\Downloads\\My Special Org\\force-app\\main\\default"),
+    "My Special Org/force-app/main/default",
+    "Paths with spaces must normalize cleanly"
+  );
+  assert.strictEqual(
+    normalizeSourcePath("force-app/main/default"),
+    "force-app/main/default",
+    "Clean relative path must remain unchanged"
+  );
+  assert.strictEqual(
+    normalizeSourcePath(""),
+    "force-app/main/default",
+    "Empty string fallback must return default path"
+  );
+  assert.strictEqual(
+    normalizeSourcePath(undefined),
+    "force-app/main/default",
+    "Undefined fallback must return default path"
+  );
+  console.log("  ✓ Test E PASSED: normalizeSourcePath handles all required path variations deterministically");
 }
 
 if (require.main === module) {
