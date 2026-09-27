@@ -8,6 +8,7 @@ export type WorkspaceViewMode =
   | "profile"
   | "radar"
   | "dna"
+  | "four-direction"
   | "findings"
   | "hotspots"
   | "diagnostics"
@@ -85,6 +86,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-dna"
         >
           <span className="btn-icon">🧬</span> DNA
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "four-direction" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("four-direction")}
+          title="Four-Direction Cardinal Neighborhood Lens"
+          data-testid="view-btn-four-direction"
+        >
+          <span className="btn-icon">🧭</span> Four-Dir
         </button>
         <button
           className={`view-mode-btn ${viewMode === "findings" ? "active" : ""}`}
