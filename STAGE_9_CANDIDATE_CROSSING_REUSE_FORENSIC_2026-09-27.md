@@ -1,9 +1,9 @@
 # Stage 9 — Candidate Crossing-Reuse Forensic Report
 
-**Report Date:** September 27, 2026  
-**Investigator:** Jules (Principal Software Engineer / System Auditor)  
-**Target Subsystem:** Stage 9 Secondary Satellite Placement (`explorer/src/lib/layout/satellites.ts`)  
-**Canonical Benchmark Fixture:** `audit-fixtures/cloud-spend-tracker/explorer-data.json`  
+**Report Date:** September 27, 2026
+**Investigator:** Jules (Principal Software Engineer / System Auditor)
+**Target Subsystem:** Stage 9 Secondary Satellite Placement (`explorer/src/lib/layout/satellites.ts`)
+**Canonical Benchmark Fixture:** `audit-fixtures/cloud-spend-tracker/explorer-data.json`
 **Fixture SHA-256 Digest:** `feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295` (240 nodes, 1,024 edges)
 
 ---
@@ -64,13 +64,13 @@ Different parent anchors are placed at distinct $(x, y)$ coordinates across the 
 
 ## 5. Final Conclusion
 
-1. **Is duplicate candidate-crossing work significant?**  
+1. **Is duplicate candidate-crossing work significant?**
    **Yes.** During candidate satellite slot scoring on the canonical fixture, **1,074,631 out of 4,554,858 primary intersection evaluations (23.59%)** test exact duplicate `candidate tether + primary segment` geometric pairs.
 
-2. **Where does it occur?**  
+2. **Where does it occur?**
    Duplicate evaluations occur **within single candidate scoring operations** when multiple incident endpoints (`endpointsToTest`) evaluate a candidate slot tether against the same static primary segments.
 
-3. **Is there a semantics-preserving reuse opportunity worth a separate A/B experiment?**  
+3. **Is there a semantics-preserving reuse opportunity worth a separate A/B experiment?**
    **Yes.**
 
 ```text
