@@ -323,6 +323,31 @@
   background: var(--surface-base, #090d16);
 }
 
+/* ArchitectureDNABarcode Scoped Styles */
+.architecture-dna-panel {
+  background-color: var(--surface-panel, #111827);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 8px;
+  border: 1px solid var(--border-default, #334155);
+}
+
+.architecture-dna-panel .dna-component-list::-webkit-scrollbar,
+.architecture-dna-panel .dna-detail-pane::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.architecture-dna-panel .dna-component-list::-webkit-scrollbar-thumb,
+.architecture-dna-panel .dna-detail-pane::-webkit-scrollbar-thumb {
+  background: var(--border-strong, #475569);
+  border-radius: 3px;
+}
+
+.architecture-dna-panel .dna-component-list::-webkit-scrollbar-track,
+.architecture-dna-panel .dna-detail-pane::-webkit-scrollbar-track {
+  background: var(--surface-base, #090d16);
+}
+
 .hotspot-panel .readiness-filter-bar {
   padding: 4px 0;
 }

@@ -61,7 +61,7 @@ export interface NavigatorUIState {
   collapsed?: boolean;
 }
 
-export type AnalysisViewMode = 'graph' | 'dashboard' | 'matrix' | 'tree' | 'profile' | 'radar' | 'findings' | 'hotspots' | 'diagnostics' | 'compare';
+export type AnalysisViewMode = 'graph' | 'dashboard' | 'matrix' | 'tree' | 'profile' | 'radar' | 'dna' | 'findings' | 'hotspots' | 'diagnostics' | 'compare';
 
 export interface AnalysisViewUIState {
   viewMode: AnalysisViewMode;
