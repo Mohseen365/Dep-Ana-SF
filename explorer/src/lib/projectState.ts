@@ -66,6 +66,7 @@ export type AnalysisViewMode =
   | 'dashboard'
   | 'matrix'
   | 'heatmap'
+  | 'river'
   | 'tree'
   | 'treemap'
   | 'profile'

@@ -5,6 +5,7 @@ export type WorkspaceViewMode =
   | "dashboard"
   | "matrix"
   | "heatmap"
+  | "river"
   | "tree"
   | "treemap"
   | "profile"
@@ -64,6 +65,14 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
           data-testid="view-btn-heatmap"
         >
           <span className="btn-icon">🌡️</span> Heatmap
+        </button>
+        <button
+          className={`view-mode-btn ${viewMode === "river" ? "active" : ""}`}
+          onClick={() => onChangeViewMode("river")}
+          title="Dependency River / Sankey Macro Flow Lens"
+          data-testid="view-btn-river"
+        >
+          <span className="btn-icon">🌊</span> River
         </button>
         <button
           className={`view-mode-btn ${viewMode === "tree" ? "active" : ""}`}
