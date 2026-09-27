@@ -17,6 +17,8 @@ import { FeatureTreePanel } from './components/FeatureTreePanel';
 import { FeatureProfilePanel } from './components/FeatureProfilePanel';
 import { RadarPanel } from './components/RadarPanel';
 import { ArchitectureDNABarcode } from './components/ArchitectureDNABarcode';
+import { FourDirectionPanel } from './components/FourDirectionPanel';
+import { adaptFourDirectionView } from './lib/adapters/four-direction-adapter';
 import { FindingsPanel } from './components/findings/FindingsPanel';
 import { HotspotPanel } from './components/HotspotPanel';
 import { DiagnosticsPanel } from './components/DiagnosticsPanel';
@@ -853,6 +855,25 @@ export function App() {
                       onSelectFeatureAnchor={(anchorNodeId) => {
                         selection.selectNode(anchorNodeId);
                         view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+              {workspaceViewMode === 'four-direction' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <FourDirectionPanel
+                      data={adaptFourDirectionView(activeData, {
+                        selectedNodeId: selection.selectedNodeId,
+                      })}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                      }}
+                      onReturnToGraph={() => {
                         setWorkspaceViewMode('graph');
                       }}
                     />
