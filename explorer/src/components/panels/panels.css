@@ -400,6 +400,14 @@
   border: 1px solid var(--border-default, #334155);
 }
 
+/* DependencyConstellationPanel Scoped Styles */
+.dependency-constellation-panel {
+  background-color: var(--surface-panel, #111827);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 8px;
+  border: 1px solid var(--border-default, #334155);
+}
+
 /* DependencyRiverPanel Scoped Styles */
 .dependency-river-panel {
   background-color: var(--surface-panel, #111827);
