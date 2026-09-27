@@ -68,6 +68,7 @@ export type AnalysisViewMode =
   | 'heatmap'
   | 'river'
   | 'tree'
+  | 'treemap'
   | 'profile'
   | 'radar'
   | 'dna'

@@ -18,6 +18,7 @@ import { FeatureTreePanel } from './components/FeatureTreePanel';
 import { FeatureProfilePanel } from './components/FeatureProfilePanel';
 import { RadarPanel } from './components/RadarPanel';
 import { ArchitectureDNABarcode } from './components/ArchitectureDNABarcode';
+import { ArchitectureTreemapPanel } from './components/ArchitectureTreemapPanel';
 import { FourDirectionPanel } from './components/FourDirectionPanel';
 import { adaptFourDirectionView } from './lib/adapters/four-direction-adapter';
 import { FindingsPanel } from './components/findings/FindingsPanel';
@@ -855,6 +856,27 @@ export function App() {
                       }}
                       onSelectFeatureAnchor={(anchorNodeId) => {
                         selection.selectNode(anchorNodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+
+              {workspaceViewMode === 'treemap' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <ArchitectureTreemapPanel
+                      data={activeData}
+                      onSelectComponent={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                      }}
+                      onExploreInGraph={(nodeId) => {
+                        selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
                         setWorkspaceViewMode('graph');
                       }}
