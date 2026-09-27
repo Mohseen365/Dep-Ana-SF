@@ -2,7 +2,7 @@
   "id": "cst",
   "name": "cst",
   "description": "Salesforce DX Architecture Analysis",
-  "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default",
+  "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
   "createdAt": "2026-09-24T06:56:49.825Z",
   "updatedAt": "2026-09-24T06:56:49.825Z",
   "lastAnalyzedAt": "2026-09-24T06:56:49.825Z",

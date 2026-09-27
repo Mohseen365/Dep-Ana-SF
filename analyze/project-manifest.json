@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "cloud-spend-tracker",
+  "activeProjectId": "movie",
   "projects": [
     {
       "id": "foodies",
@@ -19,7 +19,7 @@
       "id": "cloud-spend-tracker",
       "name": "cloud-spend-tracker",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "../Interview Project/Cloud-Spend-Tracker/force-app/main/default",
+      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
       "createdAt": "2026-09-17T06:20:55.547Z",
       "updatedAt": "2026-09-17T06:20:55.547Z",
       "lastAnalyzedAt": "2026-09-17T06:20:55.547Z",
@@ -45,7 +45,7 @@
       "id": "movie",
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Movie-App\\force-app\\main\\default",
+      "sourcePath": "Movie-App/force-app/main/default",
       "createdAt": "2026-09-24T06:24:42.839Z",
       "updatedAt": "2026-09-24T06:24:42.839Z",
       "lastAnalyzedAt": "2026-09-24T06:24:42.839Z",
@@ -123,7 +123,7 @@
       "id": "pub-infra-mang",
       "name": "pub-infra-mang",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Pub-Infra-Mang\\force-app\\main\\default",
+      "sourcePath": "Pub-Infra-Mang/force-app/main/default",
       "createdAt": "2026-09-24T06:44:57.270Z",
       "updatedAt": "2026-09-24T06:44:57.270Z",
       "lastAnalyzedAt": "2026-09-24T06:44:57.270Z",
@@ -136,7 +136,7 @@
       "id": "bqc",
       "name": "bqc",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Bouquet-Experience-Cloud\\force-app\\main\\default",
+      "sourcePath": "Bouquet-Experience-Cloud/force-app/main/default",
       "createdAt": "2026-09-24T06:50:53.122Z",
       "updatedAt": "2026-09-24T06:50:53.122Z",
       "lastAnalyzedAt": "2026-09-24T06:50:53.122Z",
@@ -149,7 +149,7 @@
       "id": "cst",
       "name": "cst",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "C:\\Users\\User\\Downloads\\Interview Project\\Cloud-Spend-Tracker\\force-app\\main\\default",
+      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
       "createdAt": "2026-09-24T06:56:49.825Z",
       "updatedAt": "2026-09-24T06:56:49.825Z",
       "lastAnalyzedAt": "2026-09-24T06:56:49.825Z",
@@ -196,7 +196,7 @@
     "cloud-spend-tracker": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
+      "fileHash": "sha256:1597135320cbf0a13e6ee932e13b8dbdeb6771e0745f1ab1651fe08a17087907",
       "nodeCount": 240,
       "edgeCount": 1024
     },
@@ -210,7 +210,7 @@
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:05daab9bad3a0099199eebff0a1dcdccf8ba6b760f38cdabb1aaf0ec72a24a55",
+      "fileHash": "sha256:fcf46e84ed89f45f7fccdff6acbc1489ca22e75bd5726bd34d5d0f6deea4d8d3",
       "nodeCount": 9,
       "edgeCount": 16
     },
@@ -252,21 +252,21 @@
     "pub-infra-mang": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:d5465b665accccd89437ced754f41b068c541c4923318b7bc88b388c96b6b943",
+      "fileHash": "sha256:3163548903169fe7f5a2564578d1c3e99421d51cec65c6778489afa410b6d808",
       "nodeCount": 528,
       "edgeCount": 2063
     },
     "bqc": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:b6e5a5c9579556ee6c5dec9bd8c961e2ff4c00e3da028d7d931ca7507e770df5",
+      "fileHash": "sha256:0f67b64c00e39ca2e98a5406d08a690292b4e8ea75b7ac96f4c4ff1b3ab4c7a1",
       "nodeCount": 274,
       "edgeCount": 603
     },
     "cst": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:00b0962b7c80047dee12529c17ff4bdea0605b3cb4417c624dfaa093db32449d",
+      "fileHash": "sha256:69a91fc9143641fbe0fe76aa1245f847ab8db455d4ee786ce0ead6ea30dc1209",
       "nodeCount": 240,
       "edgeCount": 1024
     },

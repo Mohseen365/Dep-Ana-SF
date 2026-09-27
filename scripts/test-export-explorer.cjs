@@ -153,13 +153,8 @@ function runTests() {
     const analyzerPath = path.join(__dirname, "../dependency-analyzer.cjs");
     const { execSync } = require("child_process");
 
-    // Execute analyzer CLI
-    execSync(`node "${analyzerPath}" analyze "${FIXTURE_DIR}"`, { stdio: "ignore" });
-
-    // Relocate output if default analyze directory was written to repo root
-    if (fs.existsSync("analyze") && !fs.existsSync(ANALYZE_OUT_DIR)) {
-      fs.renameSync("analyze", ANALYZE_OUT_DIR);
-    }
+    // Execute analyzer CLI directly to fixture analyze directory
+    execSync(`node "${analyzerPath}" analyze "${FIXTURE_DIR}" --output-dir "${ANALYZE_OUT_DIR}"`, { stdio: "ignore" });
 
     const analyzerReportPath = path.join(ANALYZE_OUT_DIR, "dependency-report.json");
     assert.ok(fs.existsSync(analyzerReportPath), "dependency-report.json must exist in fixture directory");
@@ -167,7 +162,7 @@ function runTests() {
     const rawAnalyzerReport = JSON.parse(fs.readFileSync(analyzerReportPath, "utf8"));
 
     // Execute adapter export
-    const result = exportExplorerData(ANALYZE_OUT_DIR, EXPLORER_OUT_FILE);
+    const result = exportExplorerData(ANALYZE_OUT_DIR, EXPLORER_OUT_FILE, { skipManifest: true });
     assert.ok(fs.existsSync(EXPLORER_OUT_FILE), "explorer-data.json output file must exist");
 
     const data = result.explorerData;
@@ -319,7 +314,7 @@ function runTests() {
     // VALIDATION 12: Adapter output is deterministic for the same input
     console.log("Validation 12: Adapter output is deterministic for identical input");
     const run1JSON = JSON.stringify(data);
-    const run2Result = exportExplorerData(ANALYZE_OUT_DIR, EXPLORER_OUT_FILE);
+    const run2Result = exportExplorerData(ANALYZE_OUT_DIR, EXPLORER_OUT_FILE, { skipManifest: true });
     const run2JSON = JSON.stringify(run2Result.explorerData);
     assert.strictEqual(run1JSON, run2JSON, "Adapter output MUST be 100% byte-for-byte deterministic");
     console.log(`  ✓ Determinism verified`);
@@ -361,9 +356,6 @@ function runTests() {
 
   } finally {
     cleanupFixture();
-    if (fs.existsSync("analyze")) {
-      fs.rmSync("analyze", { recursive: true, force: true });
-    }
   }
 }
 
@@ -417,7 +409,7 @@ function runSpecificRegressionTests() {
     fs.writeFileSync(reportFile, JSON.stringify(rawReport));
 
     const exportOut = path.join(tempTestDir, "explorer-data.json");
-    const exported = exportExplorerData(tempTestDir, exportOut, { project: "test-canonical-project" });
+    const exported = exportExplorerData(tempTestDir, exportOut, { project: "test-canonical-project", skipManifest: true });
     const edge = exported.explorerData.edges[0];
     assert.strictEqual(edge.canonical.source.type, "ApexTrigger", "canonical.source.type must be ApexTrigger");
     assert.strictEqual(edge.canonical.target.type, "CustomObject", "canonical.target.type must be CustomObject");
@@ -429,32 +421,39 @@ function runSpecificRegressionTests() {
   // TEST C & D: Public Project Artifact & Multi-Project Isolation
   console.log("Test C & D: Public Project Artifact Synchronization & Multi-Project Isolation");
   const tempProjectDir = path.join(__dirname, "../temp-test-projects");
+  const testMoviePublicPath = path.resolve(__dirname, "../explorer/public/projects/test-movie-app");
+  const testFoodPublicPath = path.resolve(__dirname, "../explorer/public/projects/test-food-app");
+  const manifestPath = path.resolve(__dirname, "../explorer/public/project-manifest.json");
+  const origManifest = fs.existsSync(manifestPath) ? fs.readFileSync(manifestPath, "utf8") : null;
   fs.mkdirSync(tempProjectDir, { recursive: true });
   try {
     const minReport = { nodes: [{ id: "ApexClass:Foo", name: "Foo", type: "ApexClass" }], edges: [] };
     const repFile = path.join(tempProjectDir, "dependency-report.json");
     fs.writeFileSync(repFile, JSON.stringify(minReport));
 
-    const movieOut = path.join(tempProjectDir, "projects", "movie-app", "explorer-data.json");
-    const foodOut = path.join(tempProjectDir, "projects", "food-app", "explorer-data.json");
+    const movieOut = path.join(tempProjectDir, "projects", "test-movie-app", "explorer-data.json");
+    const foodOut = path.join(tempProjectDir, "projects", "test-food-app", "explorer-data.json");
 
-    exportExplorerData(repFile, movieOut, { project: "movie-app", projectName: "Movie App" });
-    exportExplorerData(repFile, foodOut, { project: "food-app", projectName: "Food App" });
+    exportExplorerData(repFile, movieOut, { project: "test-movie-app", projectName: "Test Movie App" });
+    exportExplorerData(repFile, foodOut, { project: "test-food-app", projectName: "Test Food App" });
 
-    const moviePublicPath = path.resolve(__dirname, "../explorer/public/projects/movie-app/explorer-data.json");
-    const foodPublicPath = path.resolve(__dirname, "../explorer/public/projects/food-app/explorer-data.json");
+    const movieFile = path.join(testMoviePublicPath, "explorer-data.json");
+    const foodFile = path.join(testFoodPublicPath, "explorer-data.json");
 
-    assert.ok(fs.existsSync(moviePublicPath), "movie-app public contract file must exist");
-    assert.ok(fs.existsSync(foodPublicPath), "food-app public contract file must exist");
+    assert.ok(fs.existsSync(movieFile), "test-movie-app public contract file must exist");
+    assert.ok(fs.existsSync(foodFile), "test-food-app public contract file must exist");
 
-    const movieContent = JSON.parse(fs.readFileSync(moviePublicPath, "utf8"));
-    const foodContent = JSON.parse(fs.readFileSync(foodPublicPath, "utf8"));
+    const movieContent = JSON.parse(fs.readFileSync(movieFile, "utf8"));
+    const foodContent = JSON.parse(fs.readFileSync(foodFile, "utf8"));
 
-    assert.strictEqual(movieContent.project.id, "movie-app");
-    assert.strictEqual(foodContent.project.id, "food-app");
+    assert.strictEqual(movieContent.project.id, "test-movie-app");
+    assert.strictEqual(foodContent.project.id, "test-food-app");
     console.log("  ✓ Test C & D PASSED: Public artifacts automatically synchronized for multiple distinct projects");
   } finally {
+    if (origManifest !== null) fs.writeFileSync(manifestPath, origManifest, "utf8");
     if (fs.existsSync(tempProjectDir)) fs.rmSync(tempProjectDir, { recursive: true, force: true });
+    if (fs.existsSync(testMoviePublicPath)) fs.rmSync(testMoviePublicPath, { recursive: true, force: true });
+    if (fs.existsSync(testFoodPublicPath)) fs.rmSync(testFoodPublicPath, { recursive: true, force: true });
   }
 
   // TEST E: Source Path Normalization (DEFECT-02)
