@@ -125,7 +125,7 @@ describe('SubwayPanel Component', () => {
 
     expect(onSelectNode).toHaveBeenCalledWith('node1');
     expect(screen.getByTestId('subway-inspector')).toBeInTheDocument();
-    expect(screen.getByText('Transfer Station (Cross-Feature Hub)')).toBeInTheDocument();
+    expect(screen.getByText(/Transfer Station \(Cross-Feature Hub\)/)).toBeInTheDocument();
   });
 
   it('filters stations via search query input', () => {

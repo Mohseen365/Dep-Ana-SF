@@ -75,6 +75,17 @@ const DEFAULT_STATION_SPACING = 140;
 const DEFAULT_START_X = 120;
 const DEFAULT_START_Y = 100;
 
+const FEATURE_COLORS = [
+  '#3b82f6', // blue
+  '#10b981', // emerald
+  '#f59e0b', // amber
+  '#8b5cf6', // purple
+  '#ec4899', // pink
+  '#06b6d4', // cyan
+  '#f97316', // orange
+  '#64748b', // slate
+];
+
 /**
  * Generates octilinear / orthogonal SVG route paths between two station points.
  * Supports horizontal segments, 45-degree diagonal transitions, and vertical connections.
@@ -157,10 +168,16 @@ export function adaptSubwayMap(
   const startX = options?.startX ?? DEFAULT_START_X;
   const startY = options?.startY ?? DEFAULT_START_Y;
 
+  // Helper to determine if a cluster represents shared infrastructure
+  const isClusterShared = (cluster: FeatureCluster) =>
+    cluster.id === 'Shared' || (cluster.roleDistribution?.SharedInfrastructure ?? 0) > 0;
+
   // Group features deterministically
   const sortedFeatureClusters: FeatureCluster[] = Array.from(discovery.features.values()).sort((a, b) => {
-    if (a.isSharedInfrastructure !== b.isSharedInfrastructure) {
-      return a.isSharedInfrastructure ? 1 : -1;
+    const sharedA = isClusterShared(a);
+    const sharedB = isClusterShared(b);
+    if (sharedA !== sharedB) {
+      return sharedA ? 1 : -1;
     }
     return a.name.localeCompare(b.name);
   });
@@ -172,19 +189,31 @@ export function adaptSubwayMap(
   let currentY = startY;
 
   sortedFeatureClusters.forEach((cluster, lineIdx) => {
-    const clusterNodes = cluster.nodeIds
+    const nodeIds = Array.from(
+      new Set([...(cluster.primaryNodeIds || []), ...(cluster.secondaryNodeIds || [])])
+    );
+
+    const clusterNodes = nodeIds
       .map(id => index.nodeById.get(id))
       .filter((n): n is ExplorerNode => n !== undefined)
       .sort((a, b) => {
         const layerA = classifyNodeLayer(a).order;
         const layerB = classifyNodeLayer(b).order;
         if (layerA !== layerB) return layerA - layerB;
-        const degreeA = (index.fanIn.get(a.id) ?? 0) + (index.fanOut.get(a.id) ?? 0);
-        const degreeB = (index.fanIn.get(b.id) ?? 0) + (index.fanOut.get(b.id) ?? 0);
+        const fanInA = index.incomingEdgesByNode.get(a.id)?.length ?? 0;
+        const fanOutA = index.outgoingEdgesByNode.get(a.id)?.length ?? 0;
+        const degreeA = fanInA + fanOutA;
+
+        const fanInB = index.incomingEdgesByNode.get(b.id)?.length ?? 0;
+        const fanOutB = index.outgoingEdgesByNode.get(b.id)?.length ?? 0;
+        const degreeB = fanInB + fanOutB;
+
         if (degreeB !== degreeA) return degreeB - degreeA;
         return (a.displayName || a.id).localeCompare(b.displayName || b.id);
       });
 
+    const lineColor = FEATURE_COLORS[lineIdx % FEATURE_COLORS.length];
+    const isShared = isClusterShared(cluster);
     const lineStations: SubwayStation[] = [];
 
     clusterNodes.forEach((node, stationIdx) => {
@@ -203,6 +232,8 @@ export function adaptSubwayMap(
 
       const layer = classifyNodeLayer(node);
       const stationX = startX + stationIdx * stationSpacing;
+      const fanIn = index.incomingEdgesByNode.get(node.id)?.length ?? 0;
+      const fanOut = index.outgoingEdgesByNode.get(node.id)?.length ?? 0;
 
       const station: SubwayStation = {
         nodeId: node.id,
@@ -217,10 +248,10 @@ export function adaptSubwayMap(
         y: currentY,
         lineIndex: lineIdx,
         stationIndex: stationIdx,
-        isShared: !!cluster.isSharedInfrastructure,
+        isShared,
         isTransfer,
-        fanIn: index.fanIn.get(node.id) ?? 0,
-        fanOut: index.fanOut.get(node.id) ?? 0,
+        fanIn,
+        fanOut,
         connectedEdgeIds: incidentEdges.map(e => e.id).sort(),
       };
 
@@ -232,10 +263,10 @@ export function adaptSubwayMap(
     const subwayLine: SubwayLine = {
       lineId: cluster.id,
       name: cluster.name,
-      color: cluster.color,
+      color: lineColor,
       y: currentY,
       stations: lineStations,
-      isShared: !!cluster.isSharedInfrastructure,
+      isShared,
     };
 
     lines.push(subwayLine);
@@ -253,7 +284,7 @@ export function adaptSubwayMap(
 
     const isCrossLine = sourceStation.featureId !== targetStation.featureId;
     const sourceLine = lines[sourceStation.lineIndex];
-    const color = isCrossLine ? '#94a3b8' : sourceLine.color;
+    const color = isCrossLine ? '#94a3b8' : (sourceLine?.color || '#3b82f6');
 
     const pathSvg = generateSubwayRoutePath(
       sourceStation.x,

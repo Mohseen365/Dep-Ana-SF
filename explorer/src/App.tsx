@@ -1,8 +1,8 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import React from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
-import React from 'react';
-import { ViewModeSwitcher } from './components/ViewModeSwitcher';
+import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { SubwayPanel } from './components/SubwayPanel';
 import { adaptSubwayMap } from './lib/adapters/subway-adapter';
 import { useProject } from './context/ProjectContext';
@@ -13,7 +13,6 @@ import { useViewState } from './hooks/useViewState';
 import { GraphView, GraphViewRef } from './components/GraphView';
 import { Sidebar } from './components/Sidebar';
 import { InvestigationDrawer } from './components/InvestigationDrawer';
-import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { ProjectDashboard } from './components/ProjectDashboard';
 import { FeatureMatrixPanel } from './components/FeatureMatrixPanel';
 import { CouplingHeatmapPanel } from './components/CouplingHeatmapPanel';
@@ -146,44 +145,6 @@ export function GraphSlot(props: {
   );
 }
 
-/**
- * Main App Component integrating Phase 3C Subway Map lens.
- */
-export const App: React.FC = () => {
-  const { projectState, setViewMode, setSelectedNodeId } = useProjectState();
-  const { explorerData, loading, error } = useExplorerData();
-
-  const handleNodeSelect = (nodeId: string) => {
-    setSelectedNodeId(nodeId);
-  };
-
-  
-  const handleExploreInGraph = (nodeId: string) => {
-    setSelectedNodeId(nodeId);
-    setViewMode('graph');
-  };
-  
-  if (loading) return <div>Loading Explorer...</div>;
-  if (error || !explorerData) return <div>Error loading project data.</div>;
-
-  const renderContent = () => {
-    switch (projectState.viewMode) {
-      case 'subway': {
-        const subwayData = adaptSubwayMap(explorerData, {
-          selectedNodeId: projectState.selectedNodeId
-        });
-        return (
-          <SubwayPanel
-            data={subwayData}
-            onSelectNode={handleNodeSelect}
-            onExploreInGraph={handleExploreInGraph}
-          />
-        );
-      }
-      default:
-        return <div>Graph View</div>;
-    }
-  };
 function NotAnalyzedScreen({
   project,
 }: {
@@ -870,19 +831,7 @@ export function App() {
                   onCommit={handleCommitSimulation}
                 />
               )}
-    <div className="app-shell">
-      <header className="app-header">
-        <ViewModeSwitcher
-          currentMode={projectState.viewMode}
-          onModeChange={setViewMode}
-        />
-              </header>
-      <main className="app-content">
-        {renderContent()}
-      </main>
-      
-  );
-};
+
               {workspaceViewMode === 'dashboard' && (
                 <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                   <ProjectDashboard
@@ -938,6 +887,30 @@ export function App() {
                   </div>
                 )
               )}
+
+              {workspaceViewMode === 'subway' && (
+                isNotAnalyzed || !activeData ? (
+                  <NotAnalyzedScreen project={activeProject} />
+                ) : (
+                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
+                    <SubwayPanel
+                      data={adaptSubwayMap(activeData, {
+                        selectedStationId: selection.selectedNodeId,
+                      })}
+                      onSelectNode={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                      }}
+                      onExploreInGraph={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
+                        setWorkspaceViewMode('graph');
+                      }}
+                    />
+                  </div>
+                )
+              )}
+
               {workspaceViewMode === 'four-direction' && (
                 isNotAnalyzed || !activeData ? (
                   <NotAnalyzedScreen project={activeProject} />
