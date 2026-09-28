@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason } from '../lib/layout/layers';
@@ -71,10 +72,12 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       const safeEdges = [...edges].sort((a, b) => a.id.localeCompare(b.id));
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map<string, string>();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((a, id) => domainMap.set(id, a.primaryDomain));
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       // Measure Stage 5 sub-operations
       const t0 = performance.now();
@@ -93,7 +96,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       const t2 = performance.now();
       const featureMapTime = t2 - t1;
 
-      const featureGraph = buildDomainGraph(sNodes, sEdges, undefined, index, featureMap);
+      buildDomainGraph(sNodes, sEdges, undefined, index, featureMap);
       const t3 = performance.now();
       const featureGraphTime = t3 - t2;
 
@@ -103,7 +106,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
       });
       const tf1 = performance.now();
@@ -129,10 +132,12 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       const safeEdges = [...edges].sort((a, b) => a.id.localeCompare(b.id));
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map<string, string>();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((a, id) => domainMap.set(id, a.primaryDomain));
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const featureMap = new Map<string, string>();
       featureDiscovery.assignments.forEach((assignment, nodeId) => {
@@ -143,7 +148,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
       });
 
@@ -185,7 +190,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       console.log(`  - Single simPositions Call : ${singleSimPosTime.toFixed(2)} ms`);
       console.log(`  - Single fastCrossing Call : ${singleCrossTime.toFixed(2)} ms (Crossings: ${singleCrossVal})`);
       console.log(`  - Single estimateOrder Call: ${singleEstTime.toFixed(2)} ms (Estimated: ${singleEstCrossings})`);
-      console.log(`  - Final Stage 6 Crossings  : ${orderingResult.crossings}`);
+      console.log(`  - Final Stage 6 Crossings  : ${orderingResult.estimatedCrossings}`);
     }
   });
 
@@ -200,10 +205,12 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       const safeEdges = [...edges].sort((a, b) => a.id.localeCompare(b.id));
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map<string, string>();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((a, id) => domainMap.set(id, a.primaryDomain));
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const featureMap = new Map<string, string>();
       featureDiscovery.assignments.forEach((assignment, nodeId) => {
@@ -214,7 +221,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
       });
 
@@ -243,10 +250,10 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
 
       // Sub-operation analysis inside Stage 7
       const tF0 = performance.now();
-      const primaryNodes = safeNodes.filter(n => {
-        const isField = n.type === 'field' || n.type === 'CustomField';
-        const isTest = n.type === 'test' || n.type === 'ApexTest' || n.name?.toLowerCase().endsWith('test');
-        const isTriggerHandler = n.type === 'trigger' || n.type === 'handler' || n.type === 'ApexTrigger';
+      safeNodes.filter(n => {
+        const isField = n.type === 'Field' || n.type === 'CustomField';
+        const isTest = n.behavior?.isTest || false;
+        const isTriggerHandler = n.type === 'ApexTrigger' || /(?:trigger|handler)$/i.test(n.displayName || n.id);
         return !isField && !isTest && !isTriggerHandler;
       });
       const tF1 = performance.now();
@@ -270,21 +277,23 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       const safeEdges = [...edges].sort((a, b) => a.id.localeCompare(b.id));
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map<string, string>();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((a, id) => domainMap.set(id, a.primaryDomain));
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const featureMap = new Map<string, string>();
       featureDiscovery.assignments.forEach((assignment, nodeId) => {
         featureMap.set(nodeId, assignment.primaryFeatureId);
       });
 
-      const stage5Result = computeGlobalFeatureLayout(safeNodes, safeEdges, {
+      computeGlobalFeatureLayout(safeNodes, safeEdges, {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
       });
 
@@ -299,7 +308,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
         ...safeNodes.map(node => ({
           data: {
             id: node.id,
-            label: node.name || node.id,
+            label: node.displayName || node.id,
             type: node.type,
             layer: layerMap.get(node.id) || 'unknown',
             feature: featureMap.get(node.id) || 'Unassigned',
@@ -311,7 +320,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
             id: edge.id || `${edge.source}->${edge.target}`,
             source: edge.source,
             target: edge.target,
-            type: edge.type,
+            type: edge.relationshipType,
           },
         })),
       ];
@@ -347,10 +356,10 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
           // Far zoom suppression contract
           return;
         }
-        Object.entries(featureBounds).forEach(([featureId, b]) => {
+        Object.entries(featureBounds).forEach(([_featureId, b]) => {
           const padding = 20 * zoom;
           const pathStr = `M ${b.minX - padding} ${b.minY - padding} L ${b.maxX + padding} ${b.minY - padding} L ${b.maxX + padding} ${b.maxY + padding} L ${b.minX - padding} ${b.maxY + padding} Z`;
-          generatedPaths++;
+          if (pathStr) generatedPaths++;
         });
       });
       const tSvg1 = performance.now();
@@ -380,10 +389,12 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
     const sEdges1 = sortTracker(edges);
     const index = createLayoutGraphIndex(sNodes1, sEdges1);
     const analysis = computeArchitectureAnalysis(sNodes1, sEdges1, { index });
-    const layerMap = new Map<string, string>();
+    const layerMap = new Map<string, ArchitectureLayer>();
     sNodes1.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-    const domainDiscovery = discoverDomains(sNodes1, sEdges1, { index, analysis, layerMap });
-    const featureDiscovery = discoverFeatures(sNodes1, sEdges1, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(sNodes1, sEdges1);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((a, id) => domainMap.set(id, a.primaryDomain));
+      const featureDiscovery = discoverFeatures(sNodes1, sEdges1, { index, analysis, layerMap, domainMap });
 
     const featureMap = new Map<string, string>();
     featureDiscovery.assignments.forEach((assignment, nodeId) => {
@@ -396,7 +407,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
       index,
       analysis,
       layerMap,
-      domainMap: domainDiscovery.domainMap,
+        domainMap,
       featureDiscovery,
     });
 
@@ -413,7 +424,7 @@ describe('Combined Performance Forensic Audit Benchmark', () => {
 
     const sNodes4 = sortTracker(nodes);
     const sEdges4 = sortTracker(edges);
-    const localResult = computeLocalNodeLayout({
+    computeLocalNodeLayout({
       nodes: sNodes4,
       edges: sEdges4,
       analysis,

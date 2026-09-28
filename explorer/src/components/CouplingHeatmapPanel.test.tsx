@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { CouplingHeatmapPanel } from './CouplingHeatmapPanel';
 import type { ExplorerDataSchema } from '../types/explorer';
+import { createMockNode, createMockEdge, createMockDataSchema } from '../test/mock-factories';
 
 // Mock HTML5 Canvas context for JSDOM
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
@@ -22,61 +22,20 @@ HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
   measureText: vi.fn().mockReturnValue({ width: 20 }),
 }) as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
-const mockExplorerData: ExplorerDataSchema = {
-  version: '1.0.0',
-  timestamp: '2026-09-26T00:00:00.000Z',
-  nodes: [
-    {
-      id: 'A1',
-      name: 'AccountController',
-      type: 'ApexClass',
-      layer: 'presentation',
-      feature: 'AccountManagement',
-      domain: 'Sales',
-      metrics: { loc: 100, fanIn: 2, fanOut: 3, cbo: 5, lcom: 0.2, changeCoupling: 0.1, cyclomaticComplexity: 4, riskScore: 20, debtRatio: 0.05 },
-      status: 'active',
-    },
-    {
-      id: 'A2',
-      name: 'AccountService',
-      type: 'ApexClass',
-      layer: 'application',
-      feature: 'AccountManagement',
-      domain: 'Sales',
-      metrics: { loc: 150, fanIn: 4, fanOut: 2, cbo: 6, lcom: 0.1, changeCoupling: 0.2, cyclomaticComplexity: 6, riskScore: 30, debtRatio: 0.08 },
-      status: 'active',
-    },
-    {
-      id: 'B1',
-      name: 'OrderController',
-      type: 'ApexClass',
-      layer: 'presentation',
-      feature: 'OrderManagement',
-      domain: 'Sales',
-      metrics: { loc: 120, fanIn: 1, fanOut: 4, cbo: 5, lcom: 0.3, changeCoupling: 0.15, cyclomaticComplexity: 5, riskScore: 25, debtRatio: 0.06 },
-      status: 'active',
-    },
-    {
-      id: 'B2',
-      name: 'OrderService',
-      type: 'ApexClass',
-      layer: 'application',
-      feature: 'OrderManagement',
-      domain: 'Sales',
-      metrics: { loc: 200, fanIn: 5, fanOut: 1, cbo: 6, lcom: 0.15, changeCoupling: 0.25, cyclomaticComplexity: 8, riskScore: 40, debtRatio: 0.1 },
-      status: 'active',
-    },
+const mockExplorerData: ExplorerDataSchema = createMockDataSchema(
+  [
+    createMockNode('A1', 'AccountController', 'ApexClass', 'LOW', 'AccountController.cls'),
+    createMockNode('A2', 'AccountService', 'ApexClass', 'LOW', 'AccountService.cls'),
+    createMockNode('B1', 'OrderController', 'ApexClass', 'LOW', 'OrderController.cls'),
+    createMockNode('B2', 'OrderService', 'ApexClass', 'LOW', 'OrderService.cls'),
   ],
-  links: [
-    { source: 'A1', target: 'A2', type: 'calls', weight: 1 },
-    { source: 'A1', target: 'B2', type: 'calls', weight: 1 },
-    { source: 'B1', target: 'B2', type: 'calls', weight: 1 },
-    { source: 'B1', target: 'A2', type: 'calls', weight: 1 },
-  ],
-  clusters: [],
-  layers: [],
-  domains: [],
-};
+  [
+    createMockEdge('e1', 'A1', 'A2', 'method-call'),
+    createMockEdge('e2', 'A1', 'B2', 'method-call'),
+    createMockEdge('e3', 'B1', 'B2', 'method-call'),
+    createMockEdge('e4', 'B1', 'A2', 'method-call'),
+  ]
+);
 
 describe('CouplingHeatmapPanel Component', () => {
   it('renders empty state when data is null', () => {

@@ -16,6 +16,7 @@ import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layou
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import { findParentProductionNodeId, findParentObjectId } from '../lib/layout/analysis';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
+import { createMockNode, createMockEdge } from './mock-factories';
 import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureLayer, ArchitectureGraphAnalysis, ArchitectureNodeAnalysis } from '../lib/layout/types';
 
@@ -1141,34 +1142,34 @@ describe('Stage 9 Spatial Index A/B Differential Test Suite', () => {
       const nodes: ExplorerNode[] = [];
       const edges: ExplorerEdge[] = [];
 
-      nodes.push({ id: 'AnchorObj', name: 'AnchorObj', data: { name: 'AnchorObj', label: 'AnchorObj' } });
+      nodes.push(createMockNode('AnchorObj', 'AnchorObj', 'CustomObject'));
       const primaryPositions: Record<string, { x: number; y: number }> = {
         'AnchorObj': { x: 1000, y: 1000 }
       };
 
       if (sId === 1) {
-        nodes.push({ id: 'Field1__c', name: 'Field1__c', data: { name: 'Field1__c', isField: true } });
-        edges.push({ id: 'e1', source: 'AnchorObj', target: 'Field1__c', data: {} });
+        nodes.push(createMockNode('Field1__c', 'Field1__c', 'CustomField'));
+        edges.push(createMockEdge('e1', 'AnchorObj', 'Field1__c'));
       } else if (sId === 2) {
         for (let i = 1; i <= 3; i++) {
-          nodes.push({ id: `Field${i}__c`, name: `Field${i}__c`, data: { name: `Field${i}__c`, isField: true } });
-          edges.push({ id: `e${i}`, source: 'AnchorObj', target: `Field${i}__c`, data: {} });
+          nodes.push(createMockNode(`Field${i}__c`, `Field${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`e${i}`, 'AnchorObj', `Field${i}__c`));
         }
       } else if (sId === 3) {
         for (let i = 1; i <= 25; i++) {
-          nodes.push({ id: `Field${i}__c`, name: `Field${i}__c`, data: { name: `Field${i}__c`, isField: true } });
-          edges.push({ id: `e${i}`, source: 'AnchorObj', target: `Field${i}__c`, data: {} });
+          nodes.push(createMockNode(`Field${i}__c`, `Field${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`e${i}`, 'AnchorObj', `Field${i}__c`));
         }
       } else if (sId === 4) {
         for (let i = 1; i <= 25; i++) {
-          nodes.push({ id: `Test${i}Test`, name: `Test${i}Test`, data: { name: `Test${i}Test`, isTest: true } });
-          edges.push({ id: `e${i}`, source: `Test${i}Test`, target: 'AnchorObj', data: {} });
+          nodes.push(createMockNode(`Test${i}Test`, `Test${i}Test`, 'ApexClass', 'LOW', undefined, true));
+          edges.push(createMockEdge(`e${i}`, `Test${i}Test`, 'AnchorObj'));
         }
       } else if (sId === 5) {
-        nodes.push({ id: 'AccountTrigger', name: 'AccountTrigger', data: { name: 'AccountTrigger', type: 'ApexTrigger' } });
-        nodes.push({ id: 'AccountHandler', name: 'AccountHandler', data: { name: 'AccountHandler' } });
-        edges.push({ id: 'e1', source: 'AnchorObj', target: 'AccountTrigger', data: {} });
-        edges.push({ id: 'e2', source: 'AccountTrigger', target: 'AccountHandler', data: {} });
+        nodes.push(createMockNode('AccountTrigger', 'AccountTrigger', 'ApexTrigger'));
+        nodes.push(createMockNode('AccountHandler', 'AccountHandler', 'ApexClass'));
+        edges.push(createMockEdge('e1', 'AnchorObj', 'AccountTrigger'));
+        edges.push(createMockEdge('e2', 'AccountTrigger', 'AccountHandler'));
       } else if (sId === 6) {
         const offsets = [
           [-160, -100], [0, -100], [160, -100],
@@ -1177,44 +1178,44 @@ describe('Stage 9 Spatial Index A/B Differential Test Suite', () => {
         ];
         offsets.forEach(([dx, dy], idx) => {
           const pId = `PrimaryRing_${idx}`;
-          nodes.push({ id: pId, name: pId, data: { name: pId } });
+          nodes.push(createMockNode(pId, pId, 'ApexClass'));
           primaryPositions[pId] = { x: 1000 + dx, y: 1000 + dy };
         });
         for (let i = 1; i <= 5; i++) {
-          nodes.push({ id: `Field${i}__c`, name: `Field${i}__c`, data: { name: `Field${i}__c`, isField: true } });
-          edges.push({ id: `e${i}`, source: 'AnchorObj', target: `Field${i}__c`, data: {} });
+          nodes.push(createMockNode(`Field${i}__c`, `Field${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`e${i}`, 'AnchorObj', `Field${i}__c`));
         }
       } else if (sId === 7) {
-        nodes.push({ id: 'PrimaryA', name: 'PrimaryA', data: {} });
-        nodes.push({ id: 'PrimaryB', name: 'PrimaryB', data: {} });
+        nodes.push(createMockNode('PrimaryA', 'PrimaryA', 'ApexClass'));
+        nodes.push(createMockNode('PrimaryB', 'PrimaryB', 'ApexClass'));
         primaryPositions['PrimaryA'] = { x: 800, y: 1100 };
         primaryPositions['PrimaryB'] = { x: 1200, y: 1100 };
-        edges.push({ id: 'eprim', source: 'PrimaryA', target: 'PrimaryB', data: {} });
+        edges.push(createMockEdge('eprim', 'PrimaryA', 'PrimaryB'));
 
         for (let i = 1; i <= 5; i++) {
-          nodes.push({ id: `Field${i}__c`, name: `Field${i}__c`, data: { name: `Field${i}__c`, isField: true } });
-          edges.push({ id: `e${i}`, source: 'AnchorObj', target: `Field${i}__c`, data: {} });
+          nodes.push(createMockNode(`Field${i}__c`, `Field${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`e${i}`, 'AnchorObj', `Field${i}__c`));
         }
       } else if (sId === 8) {
         for (let i = 1; i <= 10; i++) {
-          nodes.push({ id: `Field${i}__c`, name: `Field${i}__c`, data: { name: `Field${i}__c`, isField: true } });
-          edges.push({ id: `e${i}`, source: 'AnchorObj', target: `Field${i}__c`, data: {} });
+          nodes.push(createMockNode(`Field${i}__c`, `Field${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`e${i}`, 'AnchorObj', `Field${i}__c`));
         }
       } else if (sId === 9) {
-        nodes.push({ id: 'AnchorObj2', name: 'AnchorObj2', data: {} });
+        nodes.push(createMockNode('AnchorObj2', 'AnchorObj2', 'CustomObject'));
         primaryPositions['AnchorObj2'] = { x: 1500, y: 1000 };
         for (let i = 1; i <= 5; i++) {
-          nodes.push({ id: `FieldA_${i}__c`, name: `FieldA_${i}__c`, data: { name: `FieldA_${i}__c`, isField: true } });
-          edges.push({ id: `ea${i}`, source: 'AnchorObj', target: `FieldA_${i}__c`, data: {} });
+          nodes.push(createMockNode(`FieldA_${i}__c`, `FieldA_${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`ea${i}`, 'AnchorObj', `FieldA_${i}__c`));
         }
         for (let i = 1; i <= 5; i++) {
-          nodes.push({ id: `FieldB_${i}__c`, name: `FieldB_${i}__c`, data: { name: `FieldB_${i}__c`, isField: true } });
-          edges.push({ id: `eb${i}`, source: 'AnchorObj2', target: `FieldB_${i}__c`, data: {} });
+          nodes.push(createMockNode(`FieldB_${i}__c`, `FieldB_${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`eb${i}`, 'AnchorObj2', `FieldB_${i}__c`));
         }
       } else if (sId === 10) {
         for (let i = 1; i <= 100; i++) {
-          nodes.push({ id: `Field${i}__c`, name: `Field${i}__c`, data: { name: `Field${i}__c`, isField: true } });
-          edges.push({ id: `e${i}`, source: 'AnchorObj', target: `Field${i}__c`, data: {} });
+          nodes.push(createMockNode(`Field${i}__c`, `Field${i}__c`, 'CustomField'));
+          edges.push(createMockEdge(`e${i}`, 'AnchorObj', `Field${i}__c`));
         }
       }
 
@@ -1240,7 +1241,7 @@ describe('Stage 9 Spatial Index A/B Differential Test Suite', () => {
       for (let p = 0; p < parentCount; p++) {
         const pId = `ParentObj_${p}`;
         parentIds.push(pId);
-        nodes.push({ id: pId, name: pId, data: { name: pId, type: 'CustomObject' } });
+        nodes.push(createMockNode(pId, pId, 'CustomObject'));
         primaryPositions[pId] = {
           x: Math.floor(prng() * 3000),
           y: Math.floor(prng() * 3000)
@@ -1249,12 +1250,7 @@ describe('Stage 9 Spatial Index A/B Differential Test Suite', () => {
 
       for (let i = 0; i < parentIds.length - 1; i++) {
         if (prng() > 0.5) {
-          edges.push({
-            id: `pedge_${i}`,
-            source: parentIds[i],
-            target: parentIds[i + 1],
-            data: {}
-          });
+          edges.push(createMockEdge(`pedge_${i}`, parentIds[i], parentIds[i + 1]));
         }
       }
 
@@ -1263,16 +1259,16 @@ describe('Stage 9 Spatial Index A/B Differential Test Suite', () => {
         const cat = prng();
         if (cat < 0.6) {
           const sId = `Field_${n}__c`;
-          nodes.push({ id: sId, name: sId, data: { name: sId, isField: true } });
-          edges.push({ id: `sedge_${n}`, source: parentId, target: sId, data: {} });
+          nodes.push(createMockNode(sId, sId, 'CustomField'));
+          edges.push(createMockEdge(`sedge_${n}`, parentId, sId));
         } else if (cat < 0.85) {
           const sId = `Test_${n}Test`;
-          nodes.push({ id: sId, name: sId, data: { name: sId, isTest: true } });
-          edges.push({ id: `sedge_${n}`, source: sId, target: parentId, data: {} });
+          nodes.push(createMockNode(sId, sId, 'ApexClass', 'LOW', undefined, true));
+          edges.push(createMockEdge(`sedge_${n}`, sId, parentId));
         } else {
           const sId = `Trigger_${n}Trigger`;
-          nodes.push({ id: sId, name: sId, data: { name: sId, type: 'ApexTrigger' } });
-          edges.push({ id: `sedge_${n}`, source: parentId, target: sId, data: {} });
+          nodes.push(createMockNode(sId, sId, 'ApexTrigger'));
+          edges.push(createMockEdge(`sedge_${n}`, parentId, sId));
         }
       }
 

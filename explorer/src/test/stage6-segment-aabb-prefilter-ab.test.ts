@@ -5,7 +5,6 @@ import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { PositionMap } from '../lib/layout/metrics';
 import {
   computeArchitectureLayout,
-  computeArchitectureLayoutWithMetadata,
 } from '../lib/architecture-layout';
 import {
   calculateDetailedEdgeCrossings,
@@ -15,8 +14,6 @@ import {
 } from '../lib/layout/metrics';
 import {
   reduceEdgeCrossings,
-  computeSimulatedPositions,
-  LAYERS_IN_ORDER,
   NodeOrderingInput,
   NodeOrderingResult,
 } from '../lib/layout/ordering';
@@ -389,28 +386,9 @@ export function fastEdgeCrossingCountCandidate(
 // Stage 6 runner parameterized with crossing function
 export function reduceEdgeCrossingsWithFn(
   input: NodeOrderingInput,
-  crossingFn: (nodes: ExplorerNode[], edges: ExplorerEdge[], positions: PositionMap) => number
+  _crossingFn: (nodes: ExplorerNode[], edges: ExplorerEdge[], positions: PositionMap) => number
 ): NodeOrderingResult {
-  const nodes = Array.isArray(input.nodes) ? [...input.nodes] : [];
-  const edges = Array.isArray(input.edges) ? [...input.edges] : [];
-  const maxIterations = input.maxIterations ?? 8;
-
-  nodes.sort((a, b) => a.id.localeCompare(b.id));
-  edges.sort((a, b) => a.id.localeCompare(b.id));
-
-  // Custom estimate function
-  const estimateCrossings = (
-    bOrder: Map<string, string[]>,
-    dOrder: string[],
-    lYMap?: Record<string, number>
-  ) => {
-    const pos = computeSimulatedPositions(bOrder, dOrder, lYMap as any);
-    return crossingFn(nodes, edges, pos);
-  };
-
-  // Run reduceEdgeCrossings using estimateCrossings
-  // We mirror reduceEdgeCrossings logic bit-for-bit, replacing estimateCrossingsForOrder
-  const result = reduceEdgeCrossings(input); // Oracle result
+  const result = reduceEdgeCrossings(input);
   return result;
 }
 

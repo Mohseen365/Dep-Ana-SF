@@ -17,7 +17,6 @@ import {
   isHandlerNode,
   SatelliteLayoutOptions,
   SatellitePlacementResult,
-  placeSatellites,
 } from '../lib/layout/satellites';
 import {
   computeArchitectureLayoutWithMetadata,

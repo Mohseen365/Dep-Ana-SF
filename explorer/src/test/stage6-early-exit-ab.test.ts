@@ -654,7 +654,7 @@ describe('Stage 6 Strict Corrected Forensic A/B Experiment Suite', () => {
     const featureMapCST = new Map<string, string>();
     featureDiscoveryCST.assignments.forEach((a, id) => featureMapCST.set(id, a.primaryFeatureId));
 
-    const candCST8 = reduceEdgeCrossingsWithEarlyExit({
+    reduceEdgeCrossingsWithEarlyExit({
       nodes: fixture.nodes,
       edges: fixture.edges,
       layerMap: layerMapCST,

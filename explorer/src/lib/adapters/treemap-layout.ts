@@ -210,7 +210,7 @@ function positionRow(
   y0: number,
   width: number,
   height: number,
-  totalValue: number,
+  _totalValue: number,
   result: TreemapRect[],
   padding: number
 ) {

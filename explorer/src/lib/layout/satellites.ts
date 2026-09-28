@@ -21,6 +21,8 @@ export interface SatelliteLayoutOptions {
                    | Map<string, Record<ArchitectureLayer, number>>;
   /** Feature map (nodeId -> featureId) for resolving feature-local Y anchors */
   featureMap?: Map<string, string> | Record<string, string>;
+  /** Whether feature layout is enabled */
+  enableFeatureLayout?: boolean;
   /** Default X center if domain X is unknown */
   defaultDomainX?: number;
   /** Minimum horizontal gap between nodes (default: 40) */

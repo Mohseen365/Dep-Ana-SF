@@ -113,7 +113,7 @@ export class CandidateCrossingTracker {
   public recordEvaluation(
     genCallId: number,
     category: 'field' | 'test' | 'trigger' | 'handler',
-    anchor: Point,
+    _anchor: Point,
     slotIndex: number,
     candPoint: Point,
     ep: Point,

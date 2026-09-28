@@ -1,148 +1,34 @@
 import { describe, it, expect } from 'vitest';
 import { adaptConstellation } from './constellation-adapter';
-import { ExplorerDataSchema } from '../../types/explorer';
+import type { ExplorerDataSchema } from '../../types/explorer';
+import { createMockNode, createMockEdge, createMockDataSchema } from '../../test/mock-factories';
 
 describe('Constellation Adapter', () => {
+  const nodeController = createMockNode('ApexClass:OrderController', 'OrderController', 'ApexClass', 'HIGH', 'OrderController.cls');
+  nodeController.metrics = { fanIn: 1, fanOut: 2, coupling: 3, unresolved: 0, score: 50 };
+
+  const nodeView = createMockNode('LWC:OrderView', 'OrderView', 'LWC', 'LOW', 'orderView.js');
+  nodeView.metrics = { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 10 };
+
+  const nodeService = createMockNode('ApexClass:OrderService', 'OrderService', 'ApexClass', 'MEDIUM', 'OrderService.cls');
+  nodeService.metrics = { fanIn: 2, fanOut: 1, coupling: 3, unresolved: 0, score: 40 };
+
+  const nodeRepo = createMockNode('ApexClass:OrderRepository', 'OrderRepository', 'ApexClass', 'LOW', 'OrderRepository.cls');
+  nodeRepo.metrics = { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 20 };
+
   const sampleSchema: ExplorerDataSchema = {
+    ...createMockDataSchema(
+      [nodeController, nodeView, nodeService, nodeRepo],
+      [
+        createMockEdge('e1', 'LWC:OrderView', 'ApexClass:OrderController', 'method-call'),
+        createMockEdge('e2', 'ApexClass:OrderController', 'ApexClass:OrderService', 'method-call'),
+        createMockEdge('e3', 'ApexClass:OrderService', 'ApexClass:OrderRepository', 'type-reference'),
+      ]
+    ),
     schemaVersion: '1.0',
     analyzerVersion: '1.0',
     generatedAt: '2026-09-27T00:00:00Z',
     sourceDirectory: '/project/src',
-    summary: {
-      nodeCount: 4,
-      edgeCount: 3,
-      highRiskCount: 1,
-      mediumRiskCount: 1,
-      lowRiskCount: 2,
-      cycleCount: 0,
-      unresolvedCount: 0,
-      inventory: {
-        files: 4,
-        apexClasses: 3,
-        apexTriggers: 0,
-        lwcJs: 1,
-        lwcHtml: 1,
-        visualforce: 0,
-        flows: 0,
-        objects: 0,
-        fields: 0,
-      },
-    },
-    nodes: [
-      {
-        id: 'ApexClass:OrderController',
-        displayName: 'OrderController',
-        type: 'ApexClass',
-        file: 'OrderController.cls',
-        metrics: { fanIn: 1, fanOut: 2, coupling: 3, unresolved: 0, score: 50 },
-        risk: 'HIGH',
-        riskReasons: ['High coupling'],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 2,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 1,
-          dmlCount: 1,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: true,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-      {
-        id: 'LWC:OrderView',
-        displayName: 'OrderView',
-        type: 'LWC',
-        file: 'orderView.js',
-        metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 10 },
-        risk: 'LOW',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 1,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 0,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-      {
-        id: 'ApexClass:OrderService',
-        displayName: 'OrderService',
-        type: 'ApexClass',
-        file: 'OrderService.cls',
-        metrics: { fanIn: 2, fanOut: 1, coupling: 3, unresolved: 0, score: 40 },
-        risk: 'MEDIUM',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 1,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 1,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-      {
-        id: 'ApexClass:OrderRepository',
-        displayName: 'OrderRepository',
-        type: 'ApexClass',
-        file: 'OrderRepository.cls',
-        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 20 },
-        risk: 'LOW',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 1,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 1,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-    ],
-    edges: [
-      {
-        source: 'LWC:OrderView',
-        target: 'ApexClass:OrderController',
-        relationshipType: 'calls',
-      },
-      {
-        source: 'ApexClass:OrderController',
-        target: 'ApexClass:OrderService',
-        relationshipType: 'calls',
-      },
-      {
-        source: 'ApexClass:OrderService',
-        target: 'ApexClass:OrderRepository',
-        relationshipType: 'queries',
-      },
-    ],
   };
 
   it('adapts schema with focal node and produces concentric rings', () => {

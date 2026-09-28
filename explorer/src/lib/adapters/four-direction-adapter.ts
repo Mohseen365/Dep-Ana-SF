@@ -1,4 +1,4 @@
-import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerRelationshipType } from '../../types/explorer';
+import { ExplorerDataSchema, ExplorerNode, ExplorerRelationshipType } from '../../types/explorer';
 import { createLayoutGraphIndex } from '../layout/graph-index';
 import { discoverFeatures } from '../layout/features';
 import { classifyNodeLayer } from '../layout/layers';
@@ -159,7 +159,7 @@ export function adaptFourDirectionView(
     file: subjectNode.file || '',
     risk: subjectNode.risk || 'LOW',
     featureName: subjectFeatureName,
-    layerName: subjectLayer.name,
+    layerName: subjectLayer,
     metrics: {
       fanIn: subjectNode.metrics?.fanIn ?? 0,
       fanOut: subjectNode.metrics?.fanOut ?? 0,
@@ -242,7 +242,7 @@ export function adaptFourDirectionView(
       relationshipTypes: relTypes,
       distance: 1,
       featureName: neighborFeatureName,
-      layerName: neighborLayer.name,
+      layerName: neighborLayer,
     };
 
     if (direction === 'up') itemsUp.push(item);

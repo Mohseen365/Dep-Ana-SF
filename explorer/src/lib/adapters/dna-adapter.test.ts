@@ -1,78 +1,30 @@
 import { describe, it, expect } from 'vitest';
 import type { ExplorerDataSchema } from '../../types/explorer';
 import { adaptArchitectureDna } from './dna-adapter';
+import { createMockNode, createMockEdge, createMockDataSchema } from '../../test/mock-factories';
 
 describe('adaptArchitectureDna', () => {
+  const nodeB = createMockNode('ApexClass:ServiceB', 'ServiceB', 'ApexClass', 'HIGH', 'force-app/main/default/classes/ServiceB.cls');
+  nodeB.metrics = { fanIn: 10, fanOut: 2, coupling: 12, unresolved: 0, score: 85 };
+
+  const nodeA = createMockNode('ApexClass:ControllerA', 'ControllerA', 'ApexClass', 'LOW', 'force-app/main/default/classes/ControllerA.cls');
+  nodeA.metrics = { fanIn: 0, fanOut: 5, coupling: 5, unresolved: 0, score: 10 };
+
+  const nodeC = createMockNode('CustomObject:SchemaC', 'SchemaC', 'CustomObject', 'MEDIUM', 'force-app/main/default/objects/SchemaC.object');
+  nodeC.metrics = { fanIn: 8, fanOut: 0, coupling: 8, unresolved: 1, score: 45 };
+
   const mockSchema: ExplorerDataSchema = {
+    ...createMockDataSchema(
+      [nodeB, nodeA, nodeC],
+      [
+        createMockEdge('edge-1', 'ApexClass:ControllerA', 'ApexClass:ServiceB', 'method-call'),
+        createMockEdge('edge-2', 'ApexClass:ServiceB', 'CustomObject:SchemaC', 'type-reference'),
+      ]
+    ),
     schemaVersion: '1.0.0',
     analyzerVersion: '1.0.0',
     generatedAt: '2026-09-27T00:00:00.000Z',
     sourceDirectory: 'force-app/main/default',
-    project: {
-      id: 'test-project',
-      name: 'Test Project',
-      description: 'Test Dataset',
-      sourcePath: 'force-app/main/default',
-      createdAt: '2026-09-27T00:00:00.000Z',
-      updatedAt: '2026-09-27T00:00:00.000Z',
-      lastAnalyzedAt: '2026-09-27T00:00:00.000Z',
-      analysisStatus: 'COMPLETE',
-      componentCount: 3,
-      dependencyCount: 2,
-    },
-    nodes: [
-      {
-        id: 'ApexClass:ServiceB',
-        name: 'ServiceB',
-        displayName: 'ServiceB',
-        type: 'ApexClass',
-        file: 'force-app/main/default/classes/ServiceB.cls',
-        layer: 'domain',
-        domain: 'DomainB',
-        risk: 'HIGH',
-        metrics: { fanIn: 10, fanOut: 2, coupling: 12, unresolved: 0, score: 85 },
-        refactoringReadiness: { isHighRisk: true, hasCycles: false, hasUnresolved: false },
-      },
-      {
-        id: 'ApexClass:ControllerA',
-        name: 'ControllerA',
-        displayName: 'ControllerA',
-        type: 'ApexClass',
-        file: 'force-app/main/default/classes/ControllerA.cls',
-        layer: 'presentation',
-        domain: 'DomainA',
-        risk: 'LOW',
-        metrics: { fanIn: 0, fanOut: 5, coupling: 5, unresolved: 0, score: 10 },
-      },
-      {
-        id: 'CustomObject:SchemaC',
-        name: 'SchemaC',
-        displayName: 'SchemaC',
-        type: 'CustomObject',
-        file: 'force-app/main/default/objects/SchemaC.object',
-        layer: 'schema',
-        domain: 'DomainC',
-        risk: 'MEDIUM',
-        metrics: { fanIn: 8, fanOut: 0, coupling: 8, unresolved: 1, score: 45 },
-        refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: true },
-      },
-    ],
-    edges: [
-      {
-        id: 'edge-1',
-        source: 'ApexClass:ControllerA',
-        target: 'ApexClass:ServiceB',
-        type: 'calls',
-      },
-      {
-        id: 'edge-2',
-        source: 'ApexClass:ServiceB',
-        target: 'CustomObject:SchemaC',
-        type: 'references',
-      },
-    ],
-    cycles: [],
-    impactSummaries: {},
   };
 
   it('1. adapts valid real-shaped dataset and generates 7 distinct DNA bands per node', () => {

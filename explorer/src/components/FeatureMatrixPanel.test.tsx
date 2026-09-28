@@ -1,9 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import type { ExplorerDataSchema, ExplorerNode } from '../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { FeatureMatrixPanel } from './FeatureMatrixPanel';
 import { adaptFeatureMatrix } from '../lib/adapters/matrix-adapter';
 

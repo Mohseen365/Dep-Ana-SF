@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import type { ExplorerDataSchema, ExplorerNode } from '../types/explorer';
+import type { ExplorerDataSchema } from '../types/explorer';
 import { adaptTreemap, type TreemapMetricMode, type TreemapNode, type TreemapData } from '../lib/adapters/treemap-adapter';
 import { computeTreemapLayout, type TreemapRect } from '../lib/adapters/treemap-layout';
 
@@ -351,14 +351,14 @@ export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> =
           borderRadius: '6px',
           padding: '12px',
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           minHeight: '48px',
         }}
         data-testid="treemap-inspector-footer"
       >
         {hoveredNode ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', width: '100%', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '16px' }}>
             <div>
               <span style={{ fontWeight: 600, fontSize: '13px', color: '#f8fafc' }}>
                 {hoveredNode.displayName}

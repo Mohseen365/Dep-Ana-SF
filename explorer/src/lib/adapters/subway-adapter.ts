@@ -1,4 +1,4 @@
-import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerRelationshipType } from '../../types/explorer';
+import { ExplorerDataSchema, ExplorerNode, ExplorerRelationshipType } from '../../types/explorer';
 import { createLayoutGraphIndex } from '../layout/graph-index';
 import { discoverFeatures, FeatureCluster } from '../layout/features';
 import { classifyNodeLayer } from '../layout/layers';
@@ -95,7 +95,7 @@ export function generateSubwayRoutePath(
   y1: number,
   x2: number,
   y2: number,
-  radius: number = 12
+  _radius: number = 12
 ): string {
   if (Math.abs(y1 - y2) < 2) {
     // Same horizontal line
@@ -197,8 +197,9 @@ export function adaptSubwayMap(
       .map(id => index.nodeById.get(id))
       .filter((n): n is ExplorerNode => n !== undefined)
       .sort((a, b) => {
-        const layerA = classifyNodeLayer(a).order;
-        const layerB = classifyNodeLayer(b).order;
+        const LAYER_ORDER_MAP: Record<string, number> = { presentation: 0, application: 1, domain: 2, schema: 3 };
+        const layerA = LAYER_ORDER_MAP[classifyNodeLayer(a)] ?? 99;
+        const layerB = LAYER_ORDER_MAP[classifyNodeLayer(b)] ?? 99;
         if (layerA !== layerB) return layerA - layerB;
         const fanInA = index.incomingEdgesByNode.get(a.id)?.length ?? 0;
         const fanOutA = index.outgoingEdgesByNode.get(a.id)?.length ?? 0;
@@ -243,7 +244,7 @@ export function adaptSubwayMap(
         risk: node.risk || 'LOW',
         featureId: cluster.id,
         featureName: cluster.name,
-        layerName: layer.name,
+        layerName: layer,
         x: stationX,
         y: currentY,
         lineIndex: lineIdx,
