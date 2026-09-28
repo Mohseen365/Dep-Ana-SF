@@ -98,7 +98,9 @@ describe('App composed shell', () => {
     expect(container.querySelector('[data-slot="graph"]')).toBeInTheDocument();
     expect(container.querySelector('[data-slot="sidebar"]')).not.toBeInTheDocument();
     expect(container.querySelector('.summary-bar')).not.toBeInTheDocument();
-    expect(container.querySelector('.status-bar')).toBeInTheDocument();
+    expect(container.querySelector('.status-bar')).not.toBeInTheDocument();
+    expect(container.querySelector('.sidebar-slot')).not.toBeInTheDocument();
+    expect(container.querySelector('.app-workspace-bar')).not.toBeInTheDocument();
   });
 
   it('updates focused graph when focus depth and direction change', async () => {
