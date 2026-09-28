@@ -2,28 +2,34 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
 // Mock matchMedia for jsdom
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
 
-// Mock ResizeObserver
-class MockResizeObserver {
+  // Mock ResizeObserver
+  class MockResizeObserver {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+  }
+  (window as any).ResizeObserver = MockResizeObserver;
+}
+(globalThis as any).ResizeObserver = class {
   observe = vi.fn();
   unobserve = vi.fn();
   disconnect = vi.fn();
-}
-(window as any).ResizeObserver = MockResizeObserver;
-(globalThis as any).ResizeObserver = MockResizeObserver;
+};
 
 // Ensure a working in-memory localStorage implementation for test environment
 if (typeof window !== 'undefined') {
@@ -46,7 +52,8 @@ if (typeof window !== 'undefined') {
 }
 
 // Mock HTMLCanvasElement 2D context for Cytoscape in jsdom
-HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
+if (typeof HTMLCanvasElement !== 'undefined') {
+  HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
   fillRect: vi.fn(),
   clearRect: vi.fn(),
   getImageData: vi.fn(),
@@ -74,4 +81,5 @@ HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
   transform: vi.fn(),
   rect: vi.fn(),
   clip: vi.fn(),
-}) as any;
+  }) as any;
+}

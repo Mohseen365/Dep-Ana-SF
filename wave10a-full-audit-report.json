@@ -1,9 +1,9 @@
 {
   "performance": {
-    "analysisTimeMs": "15.56",
-    "layoutTimeMs": "1219.73",
-    "evaluationTimeMs": "96.47",
-    "totalTimeMs": "1331.76"
+    "analysisTimeMs": "14.51",
+    "layoutTimeMs": "1168.40",
+    "evaluationTimeMs": "117.25",
+    "totalTimeMs": "1300.16"
   },
   "domainAnalysis": {
     "totalDomains": 106,
@@ -2572,16 +2572,46 @@
     "bridgeCrossings": 99563,
     "satelliteCrossings": 85562,
     "topDomainPairs": [
-      ["Account <-> Shared <-> Shared <-> User", 193],
-      ["Account <-> Cloud_Account <-> Shared <-> Shared", 149],
-      ["AdminDataExplorer <-> AdminOverview <-> Shared <-> Shared", 149],
-      ["AdminDataExplorer <-> Shared <-> User <-> UserManagement", 148],
-      ["Account <-> Cloud_Spend <-> Shared <-> Shared", 135],
-      ["Account <-> Organization <-> Shared <-> Shared", 127],
-      ["AdminDataExplorer <-> Assert <-> Organization <-> Shared", 120],
-      ["Organization <-> Organization_Hierarchy <-> Shared <-> Shared", 117],
-      ["Account <-> Shared <-> User <-> UserContactMapping", 115],
-      ["Account <-> Organization <-> Organization_Hierarchy <-> Shared", 111]
+      [
+        "Account <-> Shared <-> Shared <-> User",
+        193
+      ],
+      [
+        "Account <-> Cloud_Account <-> Shared <-> Shared",
+        149
+      ],
+      [
+        "AdminDataExplorer <-> AdminOverview <-> Shared <-> Shared",
+        149
+      ],
+      [
+        "AdminDataExplorer <-> Shared <-> User <-> UserManagement",
+        148
+      ],
+      [
+        "Account <-> Cloud_Spend <-> Shared <-> Shared",
+        135
+      ],
+      [
+        "Account <-> Organization <-> Shared <-> Shared",
+        127
+      ],
+      [
+        "AdminDataExplorer <-> Assert <-> Organization <-> Shared",
+        120
+      ],
+      [
+        "Organization <-> Organization_Hierarchy <-> Shared <-> Shared",
+        117
+      ],
+      [
+        "Account <-> Shared <-> User <-> UserContactMapping",
+        115
+      ],
+      [
+        "Account <-> Organization <-> Organization_Hierarchy <-> Shared",
+        111
+      ]
     ]
   },
   "longEdges": {

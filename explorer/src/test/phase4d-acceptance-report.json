@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-27T17:55:51.282Z",
+  "timestamp": "2026-09-28T13:39:16.952Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
@@ -24,9 +24,9 @@
     "satelliteOverlapCount": 0,
     "layerViolationCount": 0,
     "domainCohesionScore": 0.8508280601692482,
-    "medianIntraFeatureDistance": 5080.08858190611,
-    "medianInterFeatureDistance": 340,
-    "intraToInterRatio": 14.941437005606208
+    "medianIntraFeatureDistance": 4361.754234250252,
+    "medianInterFeatureDistance": 6585.401238352522,
+    "intraToInterRatio": 0.6623368989041946
   },
   "mandatoryHardGates": {
     "layerViolationsZero": true,
@@ -36,7 +36,7 @@
     "shuffledDriftZero": true
   },
   "qualityGates": {
-    "localityGatePassed": false,
+    "localityGatePassed": true,
     "primaryQualityGatePassed": true,
     "prefPrimaryCrossingsPassed": true,
     "prefTotalCrossingsPassed": true,

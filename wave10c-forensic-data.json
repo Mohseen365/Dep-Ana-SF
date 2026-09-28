@@ -4,12 +4,12 @@
     "nodeCount": 240,
     "edgeCount": 1024,
     "domainCount": 106,
-    "timestamp": "2026-09-27T06:49:22.251Z"
+    "timestamp": "2026-09-28T13:28:49.856Z"
   },
   "performanceTimingsMs": {
-    "analysis": "14.83",
-    "layout": "1324.25",
-    "total": "1339.08"
+    "analysis": "23.18",
+    "layout": "1492.66",
+    "total": "1515.84"
   },
   "pipelineStagesSnapshots": [
     {
