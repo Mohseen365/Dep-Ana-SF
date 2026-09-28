@@ -1123,3 +1123,49 @@ This register proves that every Markdown audit in the supplied `audits.zip` was 
 - **Report Path:** `HYBRID_LAYOUT_PROMPT4_IMPLEMENTATION_REPORT.md`
 - **Decision:** **PASS** (`G-OVL CLOSED — IMPLEMENTED AND VERIFIED`)
 - **Essence:** Implemented Stage-5 featureRegions exposure companion function `computeArchitectureLayoutWithMetadata()` in `architecture-layout.ts`, preserving original `computeArchitectureLayout()` return signature `Record<string, {x, y}>`. Transported `featureRegions` through `graph-layout.ts` (`runLayoutWithMetadata`) to `GraphView.tsx` and `FeatureOverlayCanvas.tsx`. Rendered outer semantic feature enclosure SVG boxes with zoom-aware visibility rules (`zoom >= 0.6`). Verified 100% contract preservation, zero duplicate layout calls, zero Position Authority drift, and passing test suites across canonical fixture and all 7 real project datasets. Note: `architecture-layout.test.ts` spy test reported 20/21 pass with 1 non-blocking spy count note due to metrics diagnostic calling `discoverFeatures`.
+
+## Recent Layout Engine Optimizations (September 2026)
+
+### Stage 5 — Feature Graph Reuse Production Implementation
+- **Date:** 2026-09-27
+- **Report Path:** `STAGE_5_FEATURE_GRAPH_REUSE_PRODUCTION_IMPLEMENTATION.md`
+- **Status:** **PASS** (`PRODUCTIONIZED`)
+- **Essence:** Productionized Stage 0 feature graph reuse in `explorer/src/lib/layout/global-layout.ts`. Eliminates redundant $O(N \cdot E)$ feature graph reconstruction and node-to-feature mapping passes during Stage 5 global layout computation. Confirmed 0.00000 px coordinate drift, 0 metric changes, and passing test suites (`stage5-feature-graph-reuse-ab.test.ts`).
+
+### Stage 6 — T2 Early Exit Crossing Reduction Productionization
+- **Date:** 2026-09-28
+- **Report Path:** `STAGE_6_T2_PRODUCTIONIZATION_AB_EXPERIMENT_2026-09-28.md`
+- **Status:** **PASS** (`PRODUCTIONIZED — COMMIT 567ce61`)
+- **Essence:** Productionized $T_2$ early exit sweep threshold in `explorer/src/lib/layout/ordering.ts`. When crossing reduction sweeps achieve a crossing count below $T_2$ or improvement stagnates, Stage 6 terminates early, saving up to 83.4% of Stage 6 runtime on large graphs while maintaining bit-for-bit identical node order and zero coordinate drift on canonical fixtures. Supersedes uncorrected forensic sweeps (`STAGE_6_EARLY_EXIT_SWEEP_AB_EXPERIMENT_2026-09-27.md`).
+
+### Stage 7 — Single-Pass X-Centering Production Implementation
+- **Date:** 2026-09-27
+- **Report Path:** `STAGE_7_SINGLE_PASS_X_CENTER_PRODUCTION_IMPLEMENTATION.md`
+- **Status:** **PASS** (`PRODUCTIONIZED`)
+- **Essence:** Productionized single-pass local tier X-centering in `explorer/src/lib/layout/local-layout.ts`. Eliminates iterative X-centering passes, calculating local tier offsets deterministically in a single linear scan. Confirmed 0.00000 px coordinate drift, zero overlap regressions, and passing test suites (`stage7-single-pass-x-center-ab.test.ts`).
+
+### Stage 9 — Concentric Ring Traversal Production Implementation
+- **Date:** 2026-09-27
+- **Report Path:** `STAGE_9_CONCENTRIC_RING_TRAVERSAL_PRODUCTION_IMPLEMENTATION.md`
+- **Status:** **PASS** (`PRODUCTIONIZED`)
+- **Essence:** Productionized concentric ring candidate slot order in `explorer/src/lib/layout/satellites.ts`. Orders candidate grid slots outward in concentric rings around parent primary anchors, reducing slot search radius and candidates evaluated by > 70% while preserving exact satellite placement geometry and 0.00000 px coordinate drift.
+
+### Stage 11 — Collision Cleanup Forensic Measurement
+- **Date:** 2026-09-26
+- **Report Path:** `STAGE_11_COLLISION_CLEANUP_FORENSIC_MEASUREMENT_2026-09-26.md`
+- **Status:** **PASS** (`MEASURED / VERIFIED`)
+- **Essence:** Measured Stage 11 collision cleanup execution in `explorer/src/lib/layout/collision-cleanup.ts` (`spacing.ts`). Proved Stage 11 takes ~20ms at 240N and < 1.9s at 5,000N (< 1% of total layout pipeline time), refuting previous unmeasured ~135s estimates. Verified geometry setup dominates Stage 11 time while pairwise collision displacement resolution consumes < 1.1%.
+
+## Analytical Lenses (Phases 2 & 3)
+
+### Phase 2 — Seven Analytical Lenses Final Closure & Synthesis
+- **Date:** 2026-09-27
+- **Report Path:** `PHASE_2_FINAL_CLOSURE_AND_SYNTHESIS.md`
+- **Status:** **PASS** (`PHASE 2 COMPLETE`)
+- **Essence:** Closed Phase 2 across all seven 2D analytical lenses: Matrix (`matrix-adapter.ts`), Tree (`tree-adapter.ts`), Profile (`profile-adapter.ts`), Radar (`radar-adapter.ts`), Architecture DNA Barcode (`dna-adapter.ts`), Coupling Heatmap (`heatmap-adapter.ts`), and Four-Direction View (`four-direction-adapter.ts`). Verified pure read-only data transformation, 0 Position Authority calls/writes, 0 canonical graph mutations, and 100% passing Vitest component tests.
+
+### Phase 3 — Four Advanced Analytical Lenses Final Closure
+- **Date:** 2026-09-28
+- **Report Path:** `PHASE_3D_CLOSE_FINAL_CURRENT_STATE.md`
+- **Status:** **PASS** (`PHASE 3 COMPLETE`)
+- **Essence:** Closed Phase 3 across all four advanced analytical lenses: Squarified Treemap 3A (`treemap-adapter.ts`, `treemap-layout.ts`), Sankey Dependency River 3B (`sankey-adapter.ts`, `sankey-layout.ts`), Subway Map 3C (`subway-adapter.ts`, `subway-layout.ts`), and Dependency Constellation 3D (`constellation-adapter.ts`, `constellation-layout.ts`). Verified pure data transformation, real-browser Playwright verification across 10 project datasets, 0 Position Authority writes, and 0 canonical graph mutations.
