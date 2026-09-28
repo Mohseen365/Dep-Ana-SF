@@ -20,6 +20,7 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
   const [metricMode, setMetricMode] = useState<HeatmapMetricMode>('combined');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
+  const [manualMinThreshold, setManualMinThreshold] = useState<number | null>(null);
 
   const [hoveredCellInfo, setHoveredCellInfo] = useState<{
     sourceName: string;
@@ -316,6 +317,14 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
 
   const { features, summary } = matrixData;
 
+  // Data-driven threshold policy: defaults to 0 so all non-zero relationships are visible
+  const activeThreshold = useMemo(() => {
+    if (manualMinThreshold !== null) {
+      return manualMinThreshold;
+    }
+    return 0;
+  }, [manualMinThreshold]);
+
   const metricLabels: Record<HeatmapMetricMode, { title: string; desc: string }> = {
     combined: {
       title: 'Combined Coupling Weight',
@@ -392,8 +401,33 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
           ))}
         </div>
 
-        {/* Summary Indicators */}
-        <div style={{ display: 'flex', gap: '12px', fontSize: '12px' }}>
+        {/* Threshold Filter & Summary Indicators */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted, #94a3b8)' }}>
+            <label htmlFor="heatmap-threshold-filter" style={{ fontSize: '11px' }}>Min Weight Filter:</label>
+            <input
+              id="heatmap-threshold-filter"
+              type="number"
+              min="0"
+              max={maxMetricWeight || 100}
+              step="0.1"
+              value={activeThreshold}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setManualMinThreshold(isNaN(val) ? 0 : Math.max(0, val));
+              }}
+              data-testid="heatmap-threshold-input"
+              style={{
+                width: '56px',
+                padding: '2px 4px',
+                fontSize: '11px',
+                borderRadius: '4px',
+                border: '1px solid var(--border-default, #334155)',
+                backgroundColor: 'var(--surface-base, #090d16)',
+                color: 'var(--text-primary, #f8fafc)',
+              }}
+            />
+          </div>
           <span style={{ color: 'var(--text-muted, #94a3b8)' }}>
             Features: <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{features.length}</strong>
           </span>

@@ -22,6 +22,7 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
   } | null>(null);
 
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
+  const [manualMinThreshold, setManualMinThreshold] = useState<number | null>(null);
 
   // Safely invoke adaptFeatureMatrix without mutating input data
   const matrixData: FeatureMatrixData | null = useMemo(() => {
@@ -65,6 +66,14 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
 
   const { features, summary } = matrixData;
 
+  // Data-driven threshold calculation: default policy ensures visible relationships for small/sparse datasets
+  const activeThreshold = useMemo(() => {
+    if (manualMinThreshold !== null) {
+      return manualMinThreshold;
+    }
+    return 0; // Default policy: threshold 0 guarantees all non-zero relationships are visible
+  }, [manualMinThreshold]);
+
   const getLayerColor = (layer: string) => {
     switch (layer) {
       case 'presentation':
@@ -105,7 +114,32 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
             Feature Dependency Matrix
           </h2>
         </div>
-        <div style={{ display: 'flex', gap: '12px', fontSize: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted, #94a3b8)' }}>
+            <label htmlFor="matrix-threshold-filter" style={{ fontSize: '11px' }}>Min Weight Filter:</label>
+            <input
+              id="matrix-threshold-filter"
+              type="number"
+              min="0"
+              max={summary.maxCombinedWeight || 100}
+              step="0.1"
+              value={activeThreshold}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setManualMinThreshold(isNaN(val) ? 0 : Math.max(0, val));
+              }}
+              data-testid="matrix-threshold-input"
+              style={{
+                width: '56px',
+                padding: '2px 4px',
+                fontSize: '11px',
+                borderRadius: '4px',
+                border: '1px solid var(--border-default, #334155)',
+                backgroundColor: 'var(--surface-base, #090d16)',
+                color: 'var(--text-primary, #f8fafc)',
+              }}
+            />
+          </div>
           <span style={{ color: 'var(--text-muted, #94a3b8)' }}>
             Features: <strong style={{ color: 'var(--text-primary, #f8fafc)' }}>{summary.totalFeatures}</strong>
           </span>
@@ -234,7 +268,8 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
                         );
                       }
 
-                      const intensityStyle = cell
+                      const isCellPassing = cell && cell.combinedWeight >= activeThreshold;
+                      const intensityStyle = isCellPassing
                         ? getCellIntensityStyle(cell.combinedWeight, summary.maxCombinedWeight)
                         : { backgroundColor: 'transparent', color: 'var(--border-default, #1e293b)' };
 
@@ -246,12 +281,12 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
                             borderBottom: '1px solid var(--border-subtle, #1e293b)',
                             textAlign: 'center',
                             padding: '4px',
-                            cursor: cell ? 'pointer' : 'default',
+                            cursor: isCellPassing ? 'pointer' : 'default',
                             transition: 'all 0.1s ease',
                             ...intensityStyle,
                           }}
                           onMouseEnter={() => {
-                            if (cell) {
+                            if (cell && isCellPassing) {
                               setHoveredCell({
                                 sourceName: rowFeat.name,
                                 targetName: colFeat.name,
@@ -266,7 +301,7 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
                             }
                           }}
                         >
-                          {cell ? cell.combinedWeight : '·'}
+                          {isCellPassing ? cell.combinedWeight : '·'}
                         </td>
                       );
                     })}

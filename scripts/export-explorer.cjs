@@ -919,10 +919,9 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
       fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
     }
 
-    // Check for alias mapping (e.g. movie <-> movie-app)
+    // Check for alias mapping (e.g. movie -> movie-app)
     const aliases = [];
     if (projectId === "movie") aliases.push("movie-app");
-    if (projectId === "movie-app") aliases.push("movie");
 
     for (const alias of aliases) {
       const aliasPublicDir = path.join(explorerPublicDir, "projects", alias);

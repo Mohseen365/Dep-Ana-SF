@@ -123,4 +123,30 @@ describe('FeatureMatrixPanel Component Tests', () => {
     fireEvent.click(rowHeaders[0]);
     expect(onSelectFeatureAnchor).toHaveBeenCalled();
   });
+
+  it('7. renders visible relationships for small sparse movie dataset (DEFECT-03) and supports threshold filtering', () => {
+    const moviePath = path.resolve(__dirname, '../../public/projects/movie/explorer-data.json');
+    const movieData: ExplorerDataSchema = JSON.parse(fs.readFileSync(moviePath, 'utf8'));
+
+    const { container } = render(<FeatureMatrixPanel data={movieData} />);
+
+    expect(screen.getByTestId('feature-matrix-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('matrix-threshold-input')).toBeInTheDocument();
+
+    const thresholdInput = screen.getByTestId('matrix-threshold-input') as HTMLInputElement;
+    expect(thresholdInput.value).toBe('0');
+
+    // Confirm relationship cells are rendered and non-empty
+    const cells = container.querySelectorAll('tbody td');
+    const activeCells = Array.from(cells).filter(c => c.textContent && c.textContent !== '\\' && c.textContent !== '·');
+    expect(activeCells.length).toBeGreaterThan(0);
+
+    // Test user manual threshold filter update
+    fireEvent.change(thresholdInput, { target: { value: '999' } });
+    expect(thresholdInput.value).toBe('999');
+
+    // High threshold should filter out low-weight cells
+    const activeCellsFiltered = Array.from(container.querySelectorAll('tbody td')).filter(c => c.textContent && c.textContent !== '\\' && c.textContent !== '·');
+    expect(activeCellsFiltered.length).toBe(0);
+  });
 });
