@@ -9,6 +9,7 @@ import {
 
 export interface RadarPanelProps {
   data: ExplorerDataSchema | null;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   className?: string;
 }
@@ -51,6 +52,7 @@ export function getVisualNormalizedValue(dim: RadarDimension, summary: RadarSumm
 
 export const RadarPanel: React.FC<RadarPanelProps> = ({
   data,
+  selectedNodeId: _selectedNodeId,
   onSelectNode: _onSelectNode,
   className = '',
 }) => {

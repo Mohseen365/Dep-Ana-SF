@@ -212,11 +212,13 @@ export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
               </div>
             ) : (
               filteredProfiles.map(prof => {
-                const isSelected = activeProfile?.id === prof.id;
+                const isSelected = activeProfile?.id === prof.id || selectedNodeId === prof.id;
+                const isDimmed = !!selectedNodeId && prof.id !== selectedNodeId;
                 return (
                   <div
                     key={prof.id}
                     data-testid={`profile-item-${prof.id}`}
+                    className={`profile-item ${isDimmed ? 'dimmed' : ''}`}
                     onClick={() => {
                       setActiveProfileId(prof.id);
                       if (onSelectNode) {
@@ -236,6 +238,7 @@ export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '4px',
+                      opacity: isDimmed ? 0.35 : 1.0,
                       transition: 'all 0.15s ease',
                     }}
                   >

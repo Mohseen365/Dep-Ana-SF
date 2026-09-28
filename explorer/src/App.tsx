@@ -417,6 +417,19 @@ export function App() {
     }
   }, [activeData, selection, view, view.filterState.visibleNodeTypes]);
 
+  // Global Escape key listener to clear node selection across all views
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selection.selectedNodeId) {
+        selection.clear();
+        setDrillPath([]);
+        view.setIsInvestigating(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selection, view]);
+
   const handleTogglePin = useCallback(() => {
     setIsPinned((prev) => {
       const next = !prev;
@@ -558,7 +571,19 @@ export function App() {
     return { nodes: res.nodes, edges: res.edges };
   }, [activeData, effectiveFocusState]);
 
-  // Apply node-type visibility filter
+  // Canonical visibility-filtered activeData for all layout lenses
+  const visibleActiveData = useMemo(() => {
+    if (!activeData) return null;
+    const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+    const { nodes, edges } = filterGraphByNodeTypes(activeData.nodes, activeData.edges, visibleTypes);
+    return {
+      ...activeData,
+      nodes,
+      edges,
+    };
+  }, [activeData, view.filterState.visibleNodeTypes]);
+
+  // Apply node-type visibility filter to focused graph data
   const visibleGraphData = useMemo(() => {
     const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
     return filterGraphByNodeTypes(focusedGraphData.nodes, focusedGraphData.edges, visibleTypes);
@@ -858,12 +883,13 @@ export function App() {
               )}
 
               {workspaceViewMode === 'matrix' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <FeatureMatrixPanel
-                      data={activeData}
+                      data={visibleActiveData}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -880,16 +906,17 @@ export function App() {
               )}
 
               {workspaceViewMode === 'constellation' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <DependencyConstellationPanel
-                      data={adaptConstellation(activeData, {
+                      data={adaptConstellation(visibleActiveData, {
                         focalNodeId: constellationOptions.focalNodeId || selection.selectedNodeId,
                         maxDepth: constellationOptions.maxDepth,
                         direction: constellationOptions.direction,
                       })}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -906,12 +933,13 @@ export function App() {
               )}
 
               {workspaceViewMode === 'treemap' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <ArchitectureTreemapPanel
-                      data={activeData}
+                      data={visibleActiveData}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectComponent={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -927,14 +955,15 @@ export function App() {
               )}
 
               {workspaceViewMode === 'subway' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <SubwayPanel
-                      data={adaptSubwayMap(activeData, {
+                      data={adaptSubwayMap(visibleActiveData, {
                         selectedStationId: selection.selectedNodeId,
                       })}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -950,14 +979,15 @@ export function App() {
               )}
 
               {workspaceViewMode === 'four-direction' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <FourDirectionPanel
-                      data={adaptFourDirectionView(activeData, {
+                      data={adaptFourDirectionView(visibleActiveData, {
                         selectedNodeId: selection.selectedNodeId,
                       })}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                       }}
@@ -970,12 +1000,13 @@ export function App() {
               )}
 
               {workspaceViewMode === 'heatmap' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <CouplingHeatmapPanel
-                      data={activeData}
+                      data={visibleActiveData}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -992,12 +1023,13 @@ export function App() {
               )}
 
               {workspaceViewMode === 'river' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <DependencyRiverPanel
-                      data={activeData}
+                      data={visibleActiveData}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -1012,12 +1044,12 @@ export function App() {
               )}
 
               {workspaceViewMode === 'dna' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <ArchitectureDNABarcode
-                      data={activeData}
+                      data={visibleActiveData}
                       selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
@@ -1030,12 +1062,12 @@ export function App() {
               )}
 
               {workspaceViewMode === 'profile' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <FeatureProfilePanel
-                      data={activeData}
+                      data={visibleActiveData}
                       selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
@@ -1048,12 +1080,13 @@ export function App() {
               )}
 
               {workspaceViewMode === 'radar' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <RadarPanel
-                      data={activeData}
+                      data={visibleActiveData}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
@@ -1065,12 +1098,13 @@ export function App() {
               )}
 
               {workspaceViewMode === 'tree' && (
-                isNotAnalyzed || !activeData ? (
+                isNotAnalyzed || !visibleActiveData ? (
                   <NotAnalyzedScreen project={activeProject} />
                 ) : (
                   <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
                     <FeatureTreePanel
-                      data={activeData}
+                      data={visibleActiveData}
+                      selectedNodeId={selection.selectedNodeId}
                       onSelectNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);

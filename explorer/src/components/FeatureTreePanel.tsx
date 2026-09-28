@@ -8,12 +8,14 @@ import {
 
 export interface FeatureTreePanelProps {
   data: ExplorerDataSchema | null;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   className?: string;
 }
 
 export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
   data,
+  selectedNodeId,
   onSelectNode,
   className = '',
 }) => {
@@ -67,6 +69,23 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
 
     return matches;
   }, [treeData, searchQuery]);
+
+  // Auto-expand path to selectedNodeId when selectedNodeId changes
+  useEffect(() => {
+    if (!treeData || !selectedNodeId) return;
+    const targetNode = Object.values(treeData.nodes).find(n => n.sourceNodeId === selectedNodeId || n.id === selectedNodeId);
+    if (!targetNode) return;
+
+    setExpandedNodeIds(prev => {
+      const next = new Set<string>(prev);
+      let curr: FeatureTreeNode | undefined = targetNode;
+      while (curr && curr.parentId) {
+        next.add(curr.parentId);
+        curr = treeData.nodes[curr.parentId];
+      }
+      return next;
+    });
+  }, [treeData, selectedNodeId]);
 
   // Auto-expand path to matching nodes when search query changes
   useEffect(() => {
@@ -204,14 +223,16 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
 
     const hasChildren = node.childIds && node.childIds.length > 0;
     const isExpanded = expandedNodeIds.has(node.id);
-    const isSelected = selectedTreeNodeId === node.id;
+    const isCanonicalSelected = selectedNodeId ? (node.sourceNodeId === selectedNodeId || node.id === selectedNodeId) : false;
+    const isSelected = selectedTreeNodeId === node.id || isCanonicalSelected;
     const isHovered = hoveredTreeNodeId === node.id;
     const isMatch = matchingNodeIds ? matchingNodeIds.has(node.id) : false;
+    const isDimmed = !!selectedNodeId && !isCanonicalSelected && node.type === 'component';
 
     return (
-      <div key={node.id} className="tree-node-wrapper" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div key={node.id} className="tree-node-wrapper" style={{ display: 'flex', flexDirection: 'column', opacity: isDimmed ? 0.35 : 1 }}>
         <div
-          className={`tree-node-row ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`}
+          className={`tree-node-row ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''} ${isDimmed ? 'dimmed' : ''}`}
           data-testid={`tree-node-${node.id}`}
           style={{
             display: 'flex',
@@ -221,7 +242,7 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
             borderRadius: '4px',
             cursor: 'pointer',
             backgroundColor: isSelected
-              ? 'rgba(59, 130, 246, 0.2)'
+              ? 'rgba(59, 130, 246, 0.25)'
               : isHovered
               ? 'var(--surface-hover, #2d3748)'
               : isMatch

@@ -187,11 +187,13 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
               </div>
             ) : (
               filteredProfiles.map(prof => {
-                const isSelected = activeProfile?.id === prof.id;
+                const isSelected = activeProfile?.id === prof.id || selectedNodeId === prof.id;
+                const isDimmed = !!selectedNodeId && prof.id !== selectedNodeId;
                 return (
                   <div
                     key={prof.id}
                     data-testid={`dna-item-${prof.id}`}
+                    className={`dna-item ${isDimmed ? 'dimmed' : ''}`}
                     onClick={() => {
                       setActiveComponentId(prof.id);
                       if (onSelectNode) {
@@ -211,6 +213,7 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '6px',
+                      opacity: isDimmed ? 0.35 : 1.0,
                       transition: 'all 0.15s ease',
                     }}
                   >
