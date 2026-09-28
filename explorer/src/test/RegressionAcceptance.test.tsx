@@ -168,7 +168,16 @@ const mockValidDataPayload = {
   analyzerVersion: '13.0.0',
   generatedAt: new Date().toISOString(),
   sourceDirectory: 'force-app/main/default',
-  project: { id: 'default', name: 'Default', sourcePath: 'force-app/main/default' },
+  project: {
+    id: 'default',
+    name: 'Default',
+    sourcePath: 'force-app/main/default',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    analysisStatus: 'COMPLETE' as const,
+    componentCount: 4,
+    dependencyCount: 3,
+  },
   summary: {
     nodeCount: 4,
     edgeCount: 3,

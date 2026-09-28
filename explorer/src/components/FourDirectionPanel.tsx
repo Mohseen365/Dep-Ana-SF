@@ -8,6 +8,7 @@ import {
 
 export interface FourDirectionPanelProps {
   data: FourDirectionData;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   onReturnToGraph?: () => void;
   className?: string;
@@ -15,12 +16,14 @@ export interface FourDirectionPanelProps {
 
 export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
   data,
+  selectedNodeId: selectedNodeIdProp,
   onSelectNode,
   onReturnToGraph,
   className = '',
 }) => {
   const [filterText, setFilterText] = useState('');
   const [selectedItemNodeId, setSelectedItemNodeId] = useState<string | null>(null);
+  const activeSelectedId = selectedNodeIdProp || selectedItemNodeId;
 
   const { subject, quadrants, summary, availableNodes } = data;
 
@@ -91,15 +94,19 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
         ) : (
           <div className="quadrant-item-list" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {filteredItems.map(item => {
-              const isSelected = selectedItemNodeId === item.nodeId;
+              const isSelected = activeSelectedId === item.nodeId;
+              const isDimmed = !!selectedNodeIdProp && item.nodeId !== selectedNodeIdProp;
               const riskColor = item.risk === 'HIGH' ? '#ef4444' : item.risk === 'MEDIUM' ? '#f59e0b' : '#10b981';
 
               return (
                 <div
                   key={item.nodeId}
-                  className={`quadrant-item ${isSelected ? 'selected' : ''}`}
+                  className={`quadrant-item ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`}
                   data-testid={`item-${item.nodeId}`}
-                  onClick={() => setSelectedItemNodeId(item.nodeId)}
+                  onClick={() => {
+                    setSelectedItemNodeId(item.nodeId);
+                    if (onSelectNode) onSelectNode(item.nodeId);
+                  }}
                   onDoubleClick={() => onSelectNode && onSelectNode(item.nodeId)}
                   style={{
                     background: isSelected ? '#1e293b' : '#1e293b80',
@@ -107,7 +114,9 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
                     border: isSelected ? '1px solid #3b82f6' : '1px solid #334155',
                     borderRadius: '4px',
                     padding: '8px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    opacity: isDimmed ? 0.35 : 1.0,
+                    transition: 'opacity 0.15s ease'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

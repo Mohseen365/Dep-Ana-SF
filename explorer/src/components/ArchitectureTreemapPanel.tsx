@@ -7,6 +7,7 @@ export type TreemapColorScheme = 'layer' | 'risk';
 
 export interface ArchitectureTreemapPanelProps {
   data: ExplorerDataSchema;
+  selectedNodeId?: string | null;
   onSelectComponent?: (nodeId: string) => void;
   onExploreInGraph?: (nodeId: string) => void;
   className?: string;
@@ -29,6 +30,7 @@ const RISK_COLORS: Record<string, { bg: string; border: string; text: string }> 
 
 export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> = ({
   data,
+  selectedNodeId,
   onSelectComponent,
   onExploreInGraph,
   className = '',
@@ -98,15 +100,20 @@ export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> =
       text: '#cbd5e1',
     };
 
+    const isMatchingSelected = selectedNodeId ? (node.sourceNodeId === selectedNodeId || node.id === selectedNodeId) : false;
+    const isDimmed = !!selectedNodeId && isComponent && !isMatchingSelected;
+
     if (isComponent) {
-      if (colorScheme === 'risk' && node.risk) {
+      if (isMatchingSelected) {
+        styleConfig = { bg: 'rgba(59, 130, 246, 0.45)', border: '#3b82f6', text: '#ffffff' };
+      } else if (colorScheme === 'risk' && node.risk) {
         styleConfig = RISK_COLORS[node.risk] || styleConfig;
       } else if (colorScheme === 'layer' && node.layer) {
         styleConfig = LAYER_COLORS[node.layer] || styleConfig;
       }
     }
 
-    const opacity = matchesSearch ? 1 : 0.2;
+    const opacity = matchesSearch ? (isDimmed ? 0.25 : 1) : 0.2;
 
     return (
       <div

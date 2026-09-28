@@ -5,6 +5,7 @@ import { computeSankeyLayout } from '../lib/layout/sankey-layout';
 
 export interface DependencyRiverPanelProps {
   data: ExplorerDataSchema;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   onReturnToGraph?: () => void;
   className?: string;
@@ -12,13 +13,15 @@ export interface DependencyRiverPanelProps {
 
 export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
   data,
+  selectedNodeId: selectedNodeIdProp,
   onSelectNode,
   onReturnToGraph,
   className = '',
 }) => {
   const [selectedFlowId, setSelectedFlowId] = useState<string | null>(null);
   const [hoveredFlowId, setHoveredFlowId] = useState<string | null>(null);
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [internalSelectedNodeId, setInternalSelectedNodeId] = useState<string | null>(null);
+  const canonicalSelectedId = selectedNodeIdProp || internalSelectedNodeId;
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -39,10 +42,10 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
   }, [selectedFlowId, hoveredFlowId, adapterData.flowMap]);
 
   const activeNode: SankeyNode | null = useMemo(() => {
-    const id = selectedNodeId || hoveredNodeId;
+    const id = canonicalSelectedId || hoveredNodeId;
     if (!id) return null;
     return adapterData.nodeMap.get(id) ?? null;
-  }, [selectedNodeId, hoveredNodeId, adapterData.nodeMap]);
+  }, [canonicalSelectedId, hoveredNodeId, adapterData.nodeMap]);
 
   // Filtered nodes or flows by search query
   const matchesSearch = (nodeId: string, nodeName: string) => {
@@ -195,8 +198,8 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                 selectedFlowId === flowGeom.flowId ||
                 (hoveredNodeId &&
                   (flow.sourceFeatureId === hoveredNodeId || flow.targetFeatureId === hoveredNodeId)) ||
-                (selectedNodeId &&
-                  (flow.sourceFeatureId === selectedNodeId || flow.targetFeatureId === selectedNodeId));
+                (canonicalSelectedId &&
+                  (flow.sourceFeatureId === canonicalSelectedId || flow.targetFeatureId === canonicalSelectedId));
 
               const isMatch =
                 matchesSearch(flow.sourceFeatureId, flow.sourceFeatureId) ||
@@ -218,7 +221,7 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                   onMouseLeave={() => setHoveredFlowId(null)}
                   onClick={() => {
                     setSelectedFlowId(flowGeom.flowId === selectedFlowId ? null : flowGeom.flowId);
-                    setSelectedNodeId(null);
+                    setInternalSelectedNodeId(null);
                   }}
                   data-testid={`sankey-flow-${flowGeom.flowId}`}
                 />
@@ -230,20 +233,30 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
               const node = adapterData.nodeMap.get(nodeGeom.nodeId);
               if (!node) return null;
 
-              const isSelected = selectedNodeId === nodeGeom.nodeId;
+              const isNodeMatching = canonicalSelectedId ? (
+                node.anchorNodeId === canonicalSelectedId ||
+                node.id === canonicalSelectedId ||
+                nodeGeom.nodeId === canonicalSelectedId
+              ) : false;
+
+              const isSelected = canonicalSelectedId === nodeGeom.nodeId || isNodeMatching;
               const isHovered = hoveredNodeId === nodeGeom.nodeId;
               const isMatch = matchesSearch(node.id, node.name);
+              const isDimmed = !!canonicalSelectedId && !isNodeMatching;
 
               return (
                 <g
                   key={nodeGeom.nodeId}
                   transform={`translate(${nodeGeom.x}, ${nodeGeom.y})`}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', opacity: isDimmed ? 0.25 : isMatch ? 1.0 : 0.3 }}
                   onMouseEnter={() => setHoveredNodeId(nodeGeom.nodeId)}
                   onMouseLeave={() => setHoveredNodeId(null)}
                   onClick={() => {
-                    setSelectedNodeId(nodeGeom.nodeId === selectedNodeId ? null : nodeGeom.nodeId);
+                    setInternalSelectedNodeId(nodeGeom.nodeId === internalSelectedNodeId ? null : nodeGeom.nodeId);
                     setSelectedFlowId(null);
+                    if (node.anchorNodeId && onSelectNode) {
+                      onSelectNode(node.anchorNodeId);
+                    }
                   }}
                   data-testid={`sankey-node-${nodeGeom.nodeId}`}
                 >
@@ -262,7 +275,6 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                         : '#1e293b'
                     }
                     strokeWidth={isSelected || isHovered ? 2 : 1}
-                    opacity={isMatch ? 1.0 : 0.3}
                   />
 
                   {/* Left Layer Indicator Bar */}
