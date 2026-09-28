@@ -273,11 +273,13 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
   const intraBucketAdj = new Map<string, Set<string>>();
   const intraBucketInDegree = new Map<string, number>();
   const intraBucketOutDegree = new Map<string, number>();
+  const nodePrimaryEdgesMap = new Map<string, { neighborId: string; relationshipType?: string; isOutgoing: boolean }[]>();
 
   primaryNodes.forEach(n => {
     intraBucketAdj.set(n.id, new Set());
     intraBucketInDegree.set(n.id, 0);
     intraBucketOutDegree.set(n.id, 0);
+    nodePrimaryEdgesMap.set(n.id, []);
   });
 
   safeEdges.forEach(e => {
@@ -285,6 +287,9 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       intraBucketAdj.get(e.source)?.add(e.target);
       intraBucketOutDegree.set(e.source, (intraBucketOutDegree.get(e.source) || 0) + 1);
       intraBucketInDegree.set(e.target, (intraBucketInDegree.get(e.target) || 0) + 1);
+
+      nodePrimaryEdgesMap.get(e.source)?.push({ neighborId: e.target, relationshipType: e.relationshipType, isOutgoing: true });
+      nodePrimaryEdgesMap.get(e.target)?.push({ neighborId: e.source, relationshipType: e.relationshipType, isOutgoing: false });
     }
   });
 
@@ -428,13 +433,18 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
 
-        safeEdges.forEach(e => {
-          if (e.source === a && (tier1.includes(e.target) || tier2.includes(e.target))) {
-            sumA += initialRankMap.get(e.target) ?? 0;
+        const relEdgesA = nodePrimaryEdgesMap.get(a) || [];
+        relEdgesA.forEach(({ neighborId, isOutgoing }) => {
+          if (isOutgoing && (tier1.includes(neighborId) || tier2.includes(neighborId))) {
+            sumA += initialRankMap.get(neighborId) ?? 0;
             countA++;
           }
-          if (e.source === b && (tier1.includes(e.target) || tier2.includes(e.target))) {
-            sumB += initialRankMap.get(e.target) ?? 0;
+        });
+
+        const relEdgesB = nodePrimaryEdgesMap.get(b) || [];
+        relEdgesB.forEach(({ neighborId, isOutgoing }) => {
+          if (isOutgoing && (tier1.includes(neighborId) || tier2.includes(neighborId))) {
+            sumB += initialRankMap.get(neighborId) ?? 0;
             countB++;
           }
         });
@@ -455,28 +465,25 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
 
-        safeEdges.forEach(e => {
-          const isA = e.source === a || e.target === a;
-          const isB = e.source === b || e.target === b;
-          if (isA) {
-            const other = e.source === a ? e.target : e.source;
-            if (tier0.includes(other)) {
-              sumA += tier0.indexOf(other);
-              countA++;
-            } else if (tier2.includes(other)) {
-              sumA += initialRankMap.get(other) ?? 0;
-              countA++;
-            }
+        const relEdgesA = nodePrimaryEdgesMap.get(a) || [];
+        relEdgesA.forEach(({ neighborId }) => {
+          if (tier0.includes(neighborId)) {
+            sumA += tier0.indexOf(neighborId);
+            countA++;
+          } else if (tier2.includes(neighborId)) {
+            sumA += initialRankMap.get(neighborId) ?? 0;
+            countA++;
           }
-          if (isB) {
-            const other = e.source === b ? e.target : e.source;
-            if (tier0.includes(other)) {
-              sumB += tier0.indexOf(other);
-              countB++;
-            } else if (tier2.includes(other)) {
-              sumB += initialRankMap.get(other) ?? 0;
-              countB++;
-            }
+        });
+
+        const relEdgesB = nodePrimaryEdgesMap.get(b) || [];
+        relEdgesB.forEach(({ neighborId }) => {
+          if (tier0.includes(neighborId)) {
+            sumB += tier0.indexOf(neighborId);
+            countB++;
+          } else if (tier2.includes(neighborId)) {
+            sumB += initialRankMap.get(neighborId) ?? 0;
+            countB++;
           }
         });
 
@@ -496,28 +503,25 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
         let sumA = 0, countA = 0;
         let sumB = 0, countB = 0;
 
-        safeEdges.forEach(e => {
-          const isA = e.source === a || e.target === a;
-          const isB = e.source === b || e.target === b;
-          if (isA) {
-            const other = e.source === a ? e.target : e.source;
-            if (tier1.includes(other)) {
-              sumA += tier1.indexOf(other);
-              countA++;
-            } else if (tier0.includes(other)) {
-              sumA += tier0.indexOf(other);
-              countA++;
-            }
+        const relEdgesA = nodePrimaryEdgesMap.get(a) || [];
+        relEdgesA.forEach(({ neighborId }) => {
+          if (tier1.includes(neighborId)) {
+            sumA += tier1.indexOf(neighborId);
+            countA++;
+          } else if (tier0.includes(neighborId)) {
+            sumA += tier0.indexOf(neighborId);
+            countA++;
           }
-          if (isB) {
-            const other = e.source === b ? e.target : e.source;
-            if (tier1.includes(other)) {
-              sumB += tier1.indexOf(other);
-              countB++;
-            } else if (tier0.includes(other)) {
-              sumB += tier0.indexOf(other);
-              countB++;
-            }
+        });
+
+        const relEdgesB = nodePrimaryEdgesMap.get(b) || [];
+        relEdgesB.forEach(({ neighborId }) => {
+          if (tier1.includes(neighborId)) {
+            sumB += tier1.indexOf(neighborId);
+            countB++;
+          } else if (tier0.includes(neighborId)) {
+            sumB += tier0.indexOf(neighborId);
+            countB++;
           }
         });
 
@@ -589,6 +593,8 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
       });
 
       for (let sweep = 0; sweep < 6; sweep++) {
+        let orderChangedInSweep = false;
+
         localRows.forEach((rowNodeIds) => {
           if (rowNodeIds.length <= 1) return;
 
@@ -596,26 +602,22 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
 
           rowNodeIds.forEach(id => {
             let sumX = 0, sumW = 0;
-            safeEdges.forEach(e => {
-              if (e.source === id || e.target === id) {
-                const neighborId = e.source === id ? e.target : e.source;
-                if (primaryNodeSet.has(neighborId) && neighborId !== id) {
-                  const neighborDomain = domainMap.get(neighborId) || 'Shared';
-                  let neighborX: number;
-                  let w = getRelationshipWeight(e.relationshipType);
+            const relEdges = nodePrimaryEdgesMap.get(id) || [];
+            relEdges.forEach(({ neighborId, relationshipType }) => {
+              const neighborDomain = domainMap.get(neighborId) || 'Shared';
+              let neighborX: number;
+              let w = getRelationshipWeight(relationshipType);
 
-                  if (neighborDomain === domain) {
-                    neighborX = currentTierXMap.get(neighborId) ?? domainXCenter;
-                    w *= 2.0;
-                  } else {
-                    neighborX = primaryNodePositions[neighborId]?.x ?? domainXCenterMap.get(neighborDomain) ?? domainXCenter;
-                    w *= 1.8;
-                  }
-
-                  sumX += neighborX * w;
-                  sumW += w;
-                }
+              if (neighborDomain === domain) {
+                neighborX = currentTierXMap.get(neighborId) ?? domainXCenter;
+                w *= 2.0;
+              } else {
+                neighborX = primaryNodePositions[neighborId]?.x ?? domainXCenterMap.get(neighborDomain) ?? domainXCenter;
+                w *= 1.8;
               }
+
+              sumX += neighborX * w;
+              sumW += w;
             });
 
             if (sumW > 0) {
@@ -624,6 +626,8 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
               rowBarycenters.set(id, currentTierXMap.get(id) ?? domainXCenter);
             }
           });
+
+          const prevOrder = rowNodeIds.join(',');
 
           rowNodeIds.sort((a, b) => {
             const bcA = rowBarycenters.get(a) ?? domainXCenter;
@@ -635,6 +639,10 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             return a.localeCompare(b);
           });
 
+          if (rowNodeIds.join(',') !== prevOrder) {
+            orderChangedInSweep = true;
+          }
+
           const colCount = rowNodeIds.length;
           const rowWidth = colCount * nodeWidth + (colCount - 1) * horizontalGap;
           const rowStartX = domainXCenter - rowWidth / 2 + nodeWidth / 2;
@@ -643,6 +651,10 @@ export function computeLocalNodeLayout(input: LocalLayoutInput): LocalLayoutResu
             currentTierXMap.set(id, x);
           });
         });
+
+        if (!orderChangedInSweep) {
+          break;
+        }
       }
 
       localRows.forEach((rowNodeIds, rowIdx) => {
