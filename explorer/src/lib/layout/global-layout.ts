@@ -107,6 +107,8 @@ export interface GlobalLayoutOptions {
   enableFeatureLayout?: boolean;
   /** Optional target row width override for multi-row packing experiments */
   targetRowWidthOverride?: number;
+  /** Optional pre-constructed DomainGraph to reuse and avoid redundant graph builds */
+  domainGraph?: DomainGraph;
 }
 
 export interface GlobalLayoutResult {
@@ -1034,7 +1036,7 @@ export function computeGlobalDomainLayout(
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
 
-  const domainGraph = buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index, options.domainMap);
+  const domainGraph = options.domainGraph || buildDomainGraph(safeNodes, safeEdges, options.domainDiscovery, index, options.domainMap);
   const orderedDomains = options.orderedDomains || determineGlobalDomainOrder(domainGraph);
 
   const dynamicLayerResult = computeDynamicLayerYMap(safeNodes, safeEdges, options);
@@ -1429,6 +1431,7 @@ export function computeGlobalFeatureLayout(
     minRegionWidth: options.minRegionWidth ?? 280,
     domainMap: featureMap,
     isFeatureLayout: true,
+    domainGraph: featureGraph,
   });
 
   const featureRegions = new Map<string, FeatureRegion>();
