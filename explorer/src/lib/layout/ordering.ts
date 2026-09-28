@@ -436,6 +436,7 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
   let bestBucketOrder = cloneBucketOrder(bucketOrder);
 
   let iterationsExecuted = 0;
+  let consecutiveNonImproving = 0;
 
   for (let iter = 0; iter < maxIterations; iter++) {
     iterationsExecuted++;
@@ -569,6 +570,13 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
     if (currentCrossings < bestCrossings) {
       bestCrossings = currentCrossings;
       bestBucketOrder = cloneBucketOrder(bucketOrder);
+      consecutiveNonImproving = 0;
+    } else {
+      consecutiveNonImproving++;
+    }
+
+    if (consecutiveNonImproving >= 2) {
+      break;
     }
   }
 
