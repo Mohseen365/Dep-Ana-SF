@@ -2,11 +2,9 @@ import React, { useState, useMemo } from 'react';
 import {
   ConstellationData,
   ConstellationNode,
-  ConstellationEdge,
 } from '../lib/adapters/constellation-adapter';
 import {
   computeConstellationLayout,
-  ConstellationLayoutNodePosition,
 } from '../lib/layout/constellation-layout';
 import { FocusDirection } from '../lib/focus-graph';
 
@@ -29,7 +27,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [filterText, setFilterText] = useState('');
 
-  const { focalNode, rings, nodes, edges, availableNodes, summary, options } = data;
+  const { focalNode, nodes, edges, availableNodes, summary, options } = data;
 
   // Compute local polar layout geometry
   const layout = useMemo(() => {
@@ -129,7 +127,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
         className="panel-header"
         style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           background: '#0f172a',
           padding: '12px 16px',
@@ -241,7 +239,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
       <div
         style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           background: '#0f172a',
           padding: '8px 16px',
@@ -286,7 +284,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
             position: 'relative',
             padding: '16px',
             display: 'flex',
-            justify: 'center',
+            justifyContent: 'center',
             alignItems: 'center',
             minHeight: '620px',
             overflow: 'hidden',
@@ -421,7 +419,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   <text
                     y={4}
                     fill="#f8fafc"
-                    fontSize={isFocal ? "10" : "8"}
+                    fontSize={isFocal ? '10' : '8'}
                     fontWeight="bold"
                     textAnchor="middle"
                   >

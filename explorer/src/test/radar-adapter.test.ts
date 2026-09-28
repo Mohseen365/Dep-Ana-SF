@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import { adaptRadarDimensions, RadarData } from '../lib/adapters/radar-adapter';
-import { ExplorerDataSchema } from '../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { calculateArchitectureHealth } from '../lib/health';
 import { getArchitecturalHotspots } from '../lib/hotspots';
 
@@ -144,9 +144,9 @@ describe('Radar Adapter (`explorer/src/lib/adapters/radar-adapter.ts`)', () => {
 
     const frozenFixture: ExplorerDataSchema = Object.freeze({
       ...fixture,
-      nodes: Object.freeze(fixture.nodes.map(n => Object.freeze({ ...n }))),
-      edges: Object.freeze(fixture.edges.map(e => Object.freeze({ ...e }))),
-      cycles: Object.freeze((fixture.cycles || []).map(c => Object.freeze({ ...c })))
+      nodes: Object.freeze(fixture.nodes.map(n => Object.freeze({ ...n }))) as unknown as ExplorerNode[],
+      edges: Object.freeze(fixture.edges.map(e => Object.freeze({ ...e }))) as unknown as ExplorerEdge[],
+      cycles: Object.freeze((fixture.cycles || []).map(c => Object.freeze({ ...c }))) as unknown as any[]
     });
 
     expect(() => adaptRadarDimensions(frozenFixture)).not.toThrow();

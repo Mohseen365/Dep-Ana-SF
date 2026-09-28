@@ -4,9 +4,6 @@ import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import {
   reduceEdgeCrossings,
-  estimateCrossingsForOrder,
-  LAYERS_IN_ORDER,
-  LAYER_RANK,
 } from '../lib/layout/ordering';
 import type { NodeOrderingInput } from '../lib/layout/ordering';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';

@@ -4,7 +4,6 @@ import {
   adaptArchitectureDna,
   type ArchitectureDnaData,
   type ComponentDna,
-  type DnaBand,
 } from '../lib/adapters/dna-adapter';
 
 export interface ArchitectureDNABarcodeProps {

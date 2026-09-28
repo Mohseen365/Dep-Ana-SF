@@ -1,24 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import { adaptSubwayMap, generateSubwayRoutePath } from './subway-adapter';
-import { ExplorerDataSchema } from '../../types/explorer';
+import { createMockNode, createMockEdge, createMockDataSchema } from '../../test/mock-factories';
 
 describe('subway-adapter', () => {
-  const sampleData: ExplorerDataSchema = {
-    nodes: [
-      { id: 'node1', displayName: 'AccountController', type: 'ApexClass', risk: 'HIGH', file: 'AccountController.cls' },
-      { id: 'node2', displayName: 'AccountService', type: 'ApexClass', risk: 'MEDIUM', file: 'AccountService.cls' },
-      { id: 'node3', displayName: 'AccountTrigger', type: 'ApexTrigger', risk: 'LOW', file: 'AccountTrigger.trigger' },
-      { id: 'node4', displayName: 'LoggerUtil', type: 'ApexClass', risk: 'LOW', file: 'LoggerUtil.cls' },
+  const sampleData = createMockDataSchema(
+    [
+      createMockNode('node1', 'AccountController', 'ApexClass', 'HIGH', 'AccountController.cls'),
+      createMockNode('node2', 'AccountService', 'ApexClass', 'MEDIUM', 'AccountService.cls'),
+      createMockNode('node3', 'AccountTrigger', 'ApexTrigger', 'LOW', 'AccountTrigger.trigger'),
+      createMockNode('node4', 'LoggerUtil', 'ApexClass', 'LOW', 'LoggerUtil.cls'),
     ],
-    edges: [
-      { id: 'e1', source: 'node1', target: 'node2', relationshipType: 'CALLS' },
-      { id: 'e2', source: 'node3', target: 'node2', relationshipType: 'CALLS' },
-      { id: 'e3', source: 'node2', target: 'node4', relationshipType: 'CALLS' },
+    [
+      createMockEdge('e1', 'node1', 'node2', 'method-call'),
+      createMockEdge('e2', 'node3', 'node2', 'method-call'),
+      createMockEdge('e3', 'node2', 'node4', 'method-call'),
     ]
-  };
+  );
 
   it('handles empty data gracefully', () => {
-    const result = adaptSubwayMap({ nodes: [], edges: [] });
+    const result = adaptSubwayMap(createMockDataSchema([], []));
     expect(result.lines).toEqual([]);
     expect(result.stations).toEqual([]);
     expect(result.routes).toEqual([]);

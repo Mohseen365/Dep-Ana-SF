@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { adaptFeatureMatrix, type FeatureMatrixData } from '../lib/adapters/matrix-adapter';
+import { adaptFeatureMatrix } from '../lib/adapters/matrix-adapter';
 import { discoverFeatures } from '../lib/layout/features';
-import { buildFeatureDependencyMatrix, compute2DFeatureBandOrdering } from '../lib/layout/feature-ordering';
+import { buildFeatureDependencyMatrix } from '../lib/layout/feature-ordering';
 import { buildDomainGraph } from '../lib/layout/global-layout';
 
 describe('Feature Matrix Adapter Unit Tests', () => {

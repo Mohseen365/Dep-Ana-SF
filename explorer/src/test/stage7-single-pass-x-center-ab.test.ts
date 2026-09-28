@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import type { LocalLayoutInput, LocalLayoutResult, LocalBucketLayout } from '../lib/layout/local-layout';
-import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import { classifyNodeLayer } from '../lib/layout/layers';
 import { classifyNodeDomain } from '../lib/layout/domains';
 import { computeArchitectureAnalysis } from '../lib/layout/analysis';
@@ -12,6 +12,7 @@ import { calculateLayoutMetrics, type PositionMap } from '../lib/layout/metrics'
 import { computeArchitectureLayout } from '../lib/architecture-layout';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
+import { createMockNode, createMockEdge } from './mock-factories';
 
 // Load Canonical Benchmark Fixture
 const CANONICAL_FIXTURE_PATH = path.resolve(__dirname, '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
@@ -263,7 +264,7 @@ export function computeLocalNodeLayoutOracleWithCounters(input: LocalLayoutInput
 
       const layerBaseY = (featureYMap && featureYMap[layer] !== undefined)
         ? featureYMap[layer]
-        : ((options.layerYMap && options.layerYMap[layer]) ?? LAYER_Y_BASE[layer]);
+        : ((options.layerYMap && options.layerYMap[layer as unknown as keyof typeof options.layerYMap]) ?? LAYER_Y_BASE[layer]);
 
       const tier0: string[] = [];
       const tier1: string[] = [];
@@ -590,7 +591,7 @@ export function computeLocalNodeLayoutOracleWithCounters(input: LocalLayoutInput
 
       bucketLayouts.set(bucketKey, {
         bucketKey,
-        layer,
+        layer: layer as ArchitectureLayer,
         domain,
         nodeIds: orderedNodeIds,
         bounds: {
@@ -824,7 +825,7 @@ export function computeLocalNodeLayoutCandidateA(
 
       const layerBaseY = (featureYMap && featureYMap[layer] !== undefined)
         ? featureYMap[layer]
-        : ((options.layerYMap && options.layerYMap[layer]) ?? LAYER_Y_BASE[layer]);
+        : ((options.layerYMap && options.layerYMap[layer as unknown as keyof typeof options.layerYMap]) ?? LAYER_Y_BASE[layer]);
 
       const tier0: string[] = [];
       const tier1: string[] = [];
@@ -1163,7 +1164,7 @@ export function computeLocalNodeLayoutCandidateA(
 
       bucketLayouts.set(bucketKey, {
         bucketKey,
-        layer,
+        layer: layer as any,
         domain,
         nodeIds: orderedNodeIds,
         bounds: {
@@ -1257,30 +1258,22 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
   it('2. Adversarial Test Cases (12 Scenarios)', () => {
     // 1. One row
     const nodes1Row: ExplorerNode[] = [
-      { id: 'A', name: 'A', type: 'ApexClass' },
-      { id: 'B', name: 'B', type: 'ApexClass' },
-      { id: 'C', name: 'C', type: 'ApexClass' },
+      createMockNode('A', 'A'),
+      createMockNode('B', 'B'),
+      createMockNode('C', 'C'),
     ];
     const res1RowO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodes1Row, edges: [] });
     const res1RowC = computeLocalNodeLayoutCandidateA({ nodes: nodes1Row, edges: [] });
     expect(res1RowC.result.primaryNodePositions).toEqual(res1RowO.result.primaryNodePositions);
 
     // 2. Multiple rows
-    const nodesMultiRow: ExplorerNode[] = Array.from({ length: 9 }, (_, i) => ({
-      id: `Node_${i}`,
-      name: `Node_${i}`,
-      type: 'ApexClass',
-    }));
+    const nodesMultiRow: ExplorerNode[] = Array.from({ length: 9 }, (_, i) => createMockNode(`Node_${i}`, `Node_${i}`));
     const resMultiO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesMultiRow, edges: [] });
     const resMultiC = computeLocalNodeLayoutCandidateA({ nodes: nodesMultiRow, edges: [] });
     expect(resMultiC.result.primaryNodePositions).toEqual(resMultiO.result.primaryNodePositions);
 
     // 3. Uneven row widths
-    const nodesUneven: ExplorerNode[] = Array.from({ length: 7 }, (_, i) => ({
-      id: `N_${i}`,
-      name: `N_${i}`,
-      type: 'ApexClass',
-    }));
+    const nodesUneven: ExplorerNode[] = Array.from({ length: 7 }, (_, i) => createMockNode(`N_${i}`, `N_${i}`));
     const resUnevenO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesUneven, edges: [] });
     const resUnevenC = computeLocalNodeLayoutCandidateA({ nodes: nodesUneven, edges: [] });
     expect(resUnevenC.result.primaryNodePositions).toEqual(resUnevenO.result.primaryNodePositions);
@@ -1301,24 +1294,20 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
     expect(resEmptyC.result.primaryNodePositions).toEqual(resEmptyO.result.primaryNodePositions);
 
     // 7. Single-node bucket
-    const nodesSingle: ExplorerNode[] = [{ id: 'Solo', name: 'Solo', type: 'ApexClass' }];
+    const nodesSingle: ExplorerNode[] = [createMockNode('Solo', 'Solo')];
     const resSoloO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesSingle, edges: [] });
     const resSoloC = computeLocalNodeLayoutCandidateA({ nodes: nodesSingle, edges: [] });
     expect(resSoloC.result.primaryNodePositions).toEqual(resSoloO.result.primaryNodePositions);
 
     // 8. Maximum density bucket (16 nodes)
-    const nodesDense: ExplorerNode[] = Array.from({ length: 16 }, (_, i) => ({
-      id: `D_${i}`,
-      name: `D_${i}`,
-      type: 'ApexClass',
-    }));
+    const nodesDense: ExplorerNode[] = Array.from({ length: 16 }, (_, i) => createMockNode(`D_${i}`, `D_${i}`));
     const resDenseO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesDense, edges: [] });
     const resDenseC = computeLocalNodeLayoutCandidateA({ nodes: nodesDense, edges: [] });
     expect(resDenseC.result.primaryNodePositions).toEqual(resDenseO.result.primaryNodePositions);
 
     // 9. Feature/layer boundaries clamping
     const domainRegions: Record<string, DomainRegion> = {
-      Shared: { domain: 'Shared', xMin: 0, xMax: 200, width: 200, xCenter: 100, yMin: 0, yMax: 500, height: 500, orderIndex: 0 },
+      Shared: { domain: 'Shared', xMin: 0, xMax: 200, width: 200, xCenter: 100, yMin: 0, yMax: 500, height: 500, orderIndex: 0, yCenter: 250, nodeCount: 1, primaryLayer: 'application' },
     };
     const resClampO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesDense, edges: [], domainRegions });
     const resClampC = computeLocalNodeLayoutCandidateA({ nodes: nodesDense, edges: [], domainRegions });
@@ -1326,10 +1315,10 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
 
     // 10. Cases triggering repeated centering (barycenter pull across tiers)
     const edgesChain: ExplorerEdge[] = [
-      { id: 'E1', source: 'N_0', target: 'N_1', relationshipType: 'method-call' },
-      { id: 'E2', source: 'N_1', target: 'N_2', relationshipType: 'method-call' },
-      { id: 'E3', source: 'N_2', target: 'N_3', relationshipType: 'method-call' },
-      { id: 'E4', source: 'N_3', target: 'N_4', relationshipType: 'method-call' },
+      createMockEdge('E1', 'N_0', 'N_1', 'method-call'),
+      createMockEdge('E2', 'N_1', 'N_2', 'method-call'),
+      createMockEdge('E3', 'N_2', 'N_3', 'method-call'),
+      createMockEdge('E4', 'N_3', 'N_4', 'method-call'),
     ];
     const resChainO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesUneven, edges: edgesChain });
     const resChainC = computeLocalNodeLayoutCandidateA({ nodes: nodesUneven, edges: edgesChain });
@@ -1337,8 +1326,8 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
 
     // 11. Symmetric rows
     const edgesSym: ExplorerEdge[] = [
-      { id: 'S1', source: 'N_0', target: 'N_2', relationshipType: 'method-call' },
-      { id: 'S2', source: 'N_1', target: 'N_3', relationshipType: 'method-call' },
+      createMockEdge('S1', 'N_0', 'N_2', 'method-call'),
+      createMockEdge('S2', 'N_1', 'N_3', 'method-call'),
     ];
     const resSymO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesUneven, edges: edgesSym });
     const resSymC = computeLocalNodeLayoutCandidateA({ nodes: nodesUneven, edges: edgesSym });
@@ -1346,10 +1335,10 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
 
     // 12. Asymmetric rows
     const edgesAsym: ExplorerEdge[] = [
-      { id: 'A1', source: 'N_0', target: 'N_1', relationshipType: 'method-call' },
-      { id: 'A2', source: 'N_0', target: 'N_2', relationshipType: 'method-call' },
-      { id: 'A3', source: 'N_0', target: 'N_3', relationshipType: 'method-call' },
-      { id: 'A4', source: 'N_4', target: 'N_5', relationshipType: 'method-call' },
+      createMockEdge('A1', 'N_0', 'N_1', 'method-call'),
+      createMockEdge('A2', 'N_0', 'N_2', 'method-call'),
+      createMockEdge('A3', 'N_0', 'N_3', 'method-call'),
+      createMockEdge('A4', 'N_4', 'N_5', 'method-call'),
     ];
     const resAsymO = computeLocalNodeLayoutOracleWithCounters({ nodes: nodesUneven, edges: edgesAsym });
     const resAsymC = computeLocalNodeLayoutCandidateA({ nodes: nodesUneven, edges: edgesAsym });
@@ -1372,23 +1361,23 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
       const nodeCount = Math.floor(rng() * 20) + 5;
       const edgeCount = Math.floor(rng() * nodeCount * 1.5);
 
-      const randNodes: ExplorerNode[] = Array.from({ length: nodeCount }, (_, i) => ({
-        id: `RNode_${i}`,
-        name: `RNode_${i}`,
-        type: rng() > 0.3 ? 'ApexClass' : 'CustomObject',
-      }));
+      const randNodes: ExplorerNode[] = Array.from({ length: nodeCount }, (_, i) =>
+        createMockNode(`RNode_${i}`, `RNode_${i}`, rng() > 0.3 ? 'ApexClass' : 'CustomObject')
+      );
 
       const randEdges: ExplorerEdge[] = [];
       for (let e = 0; e < edgeCount; e++) {
         const srcIdx = Math.floor(rng() * nodeCount);
         let tgtIdx = Math.floor(rng() * nodeCount);
         if (srcIdx !== tgtIdx) {
-          randEdges.push({
-            id: `REdge_${e}`,
-            source: `RNode_${srcIdx}`,
-            target: `RNode_${tgtIdx}`,
-            relationshipType: rng() > 0.5 ? 'method-call' : 'type-reference',
-          });
+          randEdges.push(
+            createMockEdge(
+              `REdge_${e}`,
+              `RNode_${srcIdx}`,
+              `RNode_${tgtIdx}`,
+              rng() > 0.5 ? 'method-call' : 'type-reference'
+            )
+          );
         }
       }
 

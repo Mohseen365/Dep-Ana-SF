@@ -1,7 +1,5 @@
 import {
   ConstellationData,
-  ConstellationNode,
-  ConstellationEdge,
 } from '../adapters/constellation-adapter';
 
 export interface ConstellationLayoutNodePosition {

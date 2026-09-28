@@ -279,7 +279,7 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
             padding: '16px',
             display: 'flex',
             flexDirection: 'column',
-            justify: 'center',
+            justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
             boxShadow: '0 4px 20px #00000055'

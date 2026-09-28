@@ -1,10 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import * as fs from 'fs';
 import * as path from 'path';
 import { RadarPanel, getVisualNormalizedValue } from './RadarPanel';
-import { ExplorerDataSchema } from '../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { adaptRadarDimensions } from '../lib/adapters/radar-adapter';
 import * as positionPolicy from '../lib/position-policy';
 
@@ -112,8 +111,8 @@ describe('RadarPanel Component Tests (`explorer/src/components/RadarPanel.test.t
   it('7. guarantees input graph schema immutability during rendering', () => {
     const frozenSchema: ExplorerDataSchema = Object.freeze({
       ...canonicalData,
-      nodes: Object.freeze(canonicalData.nodes.map(n => Object.freeze({ ...n }))),
-      edges: Object.freeze(canonicalData.edges.map(e => Object.freeze({ ...e }))),
+      nodes: Object.freeze(canonicalData.nodes.map(n => Object.freeze({ ...n }))) as unknown as ExplorerNode[],
+      edges: Object.freeze(canonicalData.edges.map(e => Object.freeze({ ...e }))) as unknown as ExplorerEdge[],
     });
 
     expect(() => render(<RadarPanel data={frozenSchema} />)).not.toThrow();

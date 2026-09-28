@@ -27,7 +27,7 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
   const activeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    if (activeBtnRef.current) {
+    if (activeBtnRef.current?.scrollIntoView) {
       activeBtnRef.current.scrollIntoView({
         behavior: "smooth",
         block: "nearest",

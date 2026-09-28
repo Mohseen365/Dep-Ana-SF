@@ -1,7 +1,7 @@
 import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerRelationshipType } from '../../types/explorer';
 import { discoverFeatures, FeatureDiscoveryOptions } from '../layout/features';
 import { classifyNodeLayer } from '../layout/layers';
-import { FocusDirection, FocusDepth } from '../focus-graph';
+import { FocusDirection } from '../focus-graph';
 
 export interface ConstellationFocalNode {
   id: string;

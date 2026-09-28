@@ -1,4 +1,4 @@
-import type { SankeyAdapterData, SankeyNode, SankeyFlow, SankeyStage } from '../adapters/sankey-adapter';
+import type { SankeyAdapterData } from '../adapters/sankey-adapter';
 
 export interface SankeyLayoutOptions {
   width?: number;

@@ -3,16 +3,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import type { ArchitectureLayer, ArchitectureGraphAnalysis } from '../lib/layout/types';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import type { LayoutGraphIndex } from '../lib/layout/graph-index';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
-import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from '../lib/layout/analysis';
+import { computeArchitectureAnalysis, isFieldNode } from '../lib/layout/analysis';
 import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
-import { discoverDomains, classifyNodeDomain, type DomainDiscoveryResult } from '../lib/layout/domains';
-import { discoverFeatures, type FeatureDiscoveryResult } from '../lib/layout/features';
-import { determineGlobalFeatureOrder, type FeatureOrderingStrategy } from '../lib/layout/feature-ordering';
+import { discoverDomains, type DomainDiscoveryResult } from '../lib/layout/domains';
+import { discoverFeatures } from '../lib/layout/features';
+import { determineGlobalFeatureOrder } from '../lib/layout/feature-ordering';
 import {
-  computeGlobalDomainLayout,
   computeGlobalFeatureLayout,
   buildDomainGraph,
   computeDynamicLayerYMap,
@@ -26,6 +25,7 @@ import {
   type FeatureRegion,
   type DomainRegion,
 } from '../lib/layout/global-layout';
+import { createMockNode, createMockEdge } from './mock-factories';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
@@ -852,8 +852,12 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
       const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((assignment, nodeId) => {
+        domainMap.set(nodeId, assignment.primaryDomain);
+      });
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const featureMap = new Map<string, string>();
       featureDiscovery.assignments.forEach((assignment, nodeId) => {
@@ -898,8 +902,12 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
       const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((assignment, nodeId) => {
+        domainMap.set(nodeId, assignment.primaryDomain);
+      });
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const featureMap = new Map<string, string>();
       featureDiscovery.assignments.forEach((assignment, nodeId) => {
@@ -917,7 +925,7 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
         prebuiltFeatureGraph: prebuiltGraph,
       });
@@ -942,14 +950,18 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
       const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((assignment, nodeId) => {
+        domainMap.set(nodeId, assignment.primaryDomain);
+      });
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const options = {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
       };
 
@@ -980,14 +992,16 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
       const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
       const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-      const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+      const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+      const domainMap = new Map<string, string>();
+      domainDiscovery.assignments.forEach((a, id) => domainMap.set(id, a.primaryDomain));
+      const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
       const options = {
         index,
         analysis,
         layerMap,
-        domainMap: domainDiscovery.domainMap,
+        domainMap,
         featureDiscovery,
       };
 
@@ -1036,7 +1050,7 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 2. Single feature
       const singleNode: ExplorerNode[] = [
-        { id: 'ApexClass:Single', name: 'Single', type: 'ApexClass', data: { name: 'Single' } },
+        createMockNode('ApexClass:Single', 'Single'),
       ];
 
       const oracleSingle = computeGlobalFeatureLayout(singleNode, []);
@@ -1046,9 +1060,9 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 3. Multiple disconnected features
       const discNodes: ExplorerNode[] = [
-        { id: 'ApexClass:FeatureA_Class', name: 'FeatureA_Class', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:FeatureB_Class', name: 'FeatureB_Class', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:FeatureC_Class', name: 'FeatureC_Class', type: 'ApexClass', data: {} },
+        createMockNode('ApexClass:FeatureA_Class', 'FeatureA_Class'),
+        createMockNode('ApexClass:FeatureB_Class', 'FeatureB_Class'),
+        createMockNode('ApexClass:FeatureC_Class', 'FeatureC_Class'),
       ];
       const oracleDisc = computeGlobalFeatureLayout(discNodes, []);
       const candDisc = computeGlobalFeatureLayoutCandidate(discNodes, []);
@@ -1057,14 +1071,14 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 4. Densely connected features
       const denseNodes: ExplorerNode[] = [
-        { id: 'ApexClass:FeatureA_1', name: 'FeatureA_1', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:FeatureB_1', name: 'FeatureB_1', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:FeatureC_1', name: 'FeatureC_1', type: 'ApexClass', data: {} },
+        createMockNode('ApexClass:FeatureA_1', 'FeatureA_1'),
+        createMockNode('ApexClass:FeatureB_1', 'FeatureB_1'),
+        createMockNode('ApexClass:FeatureC_1', 'FeatureC_1'),
       ];
       const denseEdges: ExplorerEdge[] = [
-        { id: 'e1', source: 'ApexClass:FeatureA_1', target: 'ApexClass:FeatureB_1', data: {} },
-        { id: 'e2', source: 'ApexClass:FeatureB_1', target: 'ApexClass:FeatureC_1', data: {} },
-        { id: 'e3', source: 'ApexClass:FeatureC_1', target: 'ApexClass:FeatureA_1', data: {} },
+        createMockEdge('e1', 'ApexClass:FeatureA_1', 'ApexClass:FeatureB_1'),
+        createMockEdge('e2', 'ApexClass:FeatureB_1', 'ApexClass:FeatureC_1'),
+        createMockEdge('e3', 'ApexClass:FeatureC_1', 'ApexClass:FeatureA_1'),
       ];
       const oracleDense = computeGlobalFeatureLayout(denseNodes, denseEdges);
       const candDense = computeGlobalFeatureLayoutCandidate(denseNodes, denseEdges);
@@ -1073,8 +1087,8 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 5. Multiple domains
       const domNodes: ExplorerNode[] = [
-        { id: 'ApexClass:AccountController', name: 'AccountController', file: 'force-app/main/default/classes/AccountController.cls', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:OpportunityService', name: 'OpportunityService', file: 'force-app/main/default/classes/OpportunityService.cls', type: 'ApexClass', data: {} },
+        createMockNode('ApexClass:AccountController', 'AccountController', 'ApexClass', 'LOW', 'force-app/main/default/classes/AccountController.cls'),
+        createMockNode('ApexClass:OpportunityService', 'OpportunityService', 'ApexClass', 'LOW', 'force-app/main/default/classes/OpportunityService.cls'),
       ];
       const oracleDom = computeGlobalFeatureLayout(domNodes, []);
       const candDom = computeGlobalFeatureLayoutCandidate(domNodes, []);
@@ -1082,13 +1096,13 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 6. Features shared across domains
       const sharedNodes: ExplorerNode[] = [
-        { id: 'ApexClass:SharedUtils', name: 'SharedUtils', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:AccountService', name: 'AccountService', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:OrderService', name: 'OrderService', type: 'ApexClass', data: {} },
+        createMockNode('ApexClass:SharedUtils', 'SharedUtils'),
+        createMockNode('ApexClass:AccountService', 'AccountService'),
+        createMockNode('ApexClass:OrderService', 'OrderService'),
       ];
       const sharedEdges: ExplorerEdge[] = [
-        { id: 'e1', source: 'ApexClass:AccountService', target: 'ApexClass:SharedUtils', data: {} },
-        { id: 'e2', source: 'ApexClass:OrderService', target: 'ApexClass:SharedUtils', data: {} },
+        createMockEdge('e1', 'ApexClass:AccountService', 'ApexClass:SharedUtils'),
+        createMockEdge('e2', 'ApexClass:OrderService', 'ApexClass:SharedUtils'),
       ];
       const oracleShared = computeGlobalFeatureLayout(sharedNodes, sharedEdges);
       const candShared = computeGlobalFeatureLayoutCandidate(sharedNodes, sharedEdges);
@@ -1096,9 +1110,9 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 7. Asymmetric adjacency
       const asymEdges: ExplorerEdge[] = [
-        { id: 'e1', source: 'ApexClass:FeatureA_1', target: 'ApexClass:FeatureB_1', data: {} },
-        { id: 'e2', source: 'ApexClass:FeatureA_1', target: 'ApexClass:FeatureB_1', data: {} },
-        { id: 'e3', source: 'ApexClass:FeatureA_1', target: 'ApexClass:FeatureB_1', data: {} },
+        createMockEdge('e1', 'ApexClass:FeatureA_1', 'ApexClass:FeatureB_1'),
+        createMockEdge('e2', 'ApexClass:FeatureA_1', 'ApexClass:FeatureB_1'),
+        createMockEdge('e3', 'ApexClass:FeatureA_1', 'ApexClass:FeatureB_1'),
       ];
       const oracleAsym = computeGlobalFeatureLayout(denseNodes, asymEdges);
       const candAsym = computeGlobalFeatureLayoutCandidate(denseNodes, asymEdges);
@@ -1106,8 +1120,8 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 8. Feature ordering ties
       const tieNodes: ExplorerNode[] = [
-        { id: 'ApexClass:TieA_Service', name: 'TieA_Service', type: 'ApexClass', data: {} },
-        { id: 'ApexClass:TieB_Service', name: 'TieB_Service', type: 'ApexClass', data: {} },
+        createMockNode('ApexClass:TieA_Service', 'TieA_Service'),
+        createMockNode('ApexClass:TieB_Service', 'TieB_Service'),
       ];
       const oracleTie = computeGlobalFeatureLayout(tieNodes, []);
       const candTie = computeGlobalFeatureLayoutCandidate(tieNodes, []);
@@ -1127,7 +1141,7 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
 
       // 11. Graph with fallback assignments
       const fallbackNodes: ExplorerNode[] = [
-        { id: 'ApexClass:X_123', name: 'X_123', type: 'ApexClass', data: {} },
+        createMockNode('ApexClass:X_123', 'X_123'),
       ];
       const oracleFallback = computeGlobalFeatureLayout(fallbackNodes, []);
       const candFallback = computeGlobalFeatureLayoutCandidate(fallbackNodes, []);
@@ -1250,8 +1264,12 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
         const analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
         const layerMap = new Map<string, ArchitectureLayer>();
         safeNodes.forEach(n => layerMap.set(n.id, classifyNodeLayerWithReason(n).layer));
-        const domainDiscovery = discoverDomains(safeNodes, safeEdges, { index, analysis, layerMap });
-        const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap: domainDiscovery.domainMap });
+        const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+        const domainMap = new Map<string, string>();
+        domainDiscovery.assignments.forEach((assignment, nodeId) => {
+          domainMap.set(nodeId, assignment.primaryDomain);
+        });
+        const featureDiscovery = discoverFeatures(safeNodes, safeEdges, { index, analysis, layerMap, domainMap });
 
         const featureMap = new Map<string, string>();
         featureDiscovery.assignments.forEach((assignment, nodeId) => {
@@ -1290,7 +1308,6 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
         computeGlobalFeatureLayoutCandidate(nodes, edges, { countBuilds: true });
         const candidateBuilds = globalGraphBuildCounter.count;
         const candidateNodesProcessed = globalGraphBuildCounter.nodesProcessed;
-        const candidateEdgesProcessed = globalGraphBuildCounter.edgesProcessed;
 
         resetGlobalGraphBuildCounter();
         // Oracle calls buildDomainGraph twice
@@ -1301,7 +1318,6 @@ describe('Stage 5 — Feature Graph Reuse A/B Experiment Harness', () => {
         buildDomainGraphWithCounter(safeNodes, safeEdges, domainDiscovery, index, featureMap);
         const oracleBuilds = 2;
         const oracleNodesProcessed = nodes.length * 2;
-        const oracleEdgesProcessed = edges.length * 2;
 
         expect(candidateBuilds).toBe(1);
         expect(oracleBuilds).toBe(2);

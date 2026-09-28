@@ -13,7 +13,6 @@ import { discoverFeatures } from '../lib/layout/features';
 import { classifyNodeLayerWithReason } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { evaluateLayout } from '../lib/layout/evaluate-layout';
 import { findParentProductionNodeId, findParentObjectId } from '../lib/layout/analysis';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
 import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
@@ -1136,7 +1135,7 @@ describe('Stage 9 Candidate Slot Enumeration Necessity Forensic Suite', () => {
       });
 
       resetForensicTelemetry();
-      const res = placeSatellitesInstrumented(nodes, edges, analysis, primaryPositions);
+      placeSatellitesInstrumented(nodes, edges, analysis, primaryPositions);
 
       const calls = forensicTelemetry.calls;
       let totalTheoretical = 0;

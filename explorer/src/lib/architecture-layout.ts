@@ -34,6 +34,8 @@ export interface ArchitectureLayoutOptions {
   existingPositions?: Record<string, { x: number; y: number }>;
   /** Enables Feature-aware spatial layout (default: false) */
   enableFeatureLayout?: boolean;
+  /** Maximum iterations for layer ordering passes */
+  maxIterations?: number;
 }
 
 export interface ArchitectureLayoutResultWithMetadata {

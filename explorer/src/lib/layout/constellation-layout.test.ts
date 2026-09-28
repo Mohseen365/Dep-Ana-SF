@@ -1,121 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { adaptConstellation } from '../adapters/constellation-adapter';
 import { computeConstellationLayout } from './constellation-layout';
-import { ExplorerDataSchema } from '../../types/explorer';
+import type { ExplorerDataSchema } from '../../types/explorer';
+import { createMockNode, createMockEdge, createMockDataSchema } from '../../test/mock-factories';
 
 describe('Constellation Layout Generator', () => {
-  const sampleSchema: ExplorerDataSchema = {
-    schemaVersion: '1.0',
-    analyzerVersion: '1.0',
-    generatedAt: '2026-09-27T00:00:00Z',
-    sourceDirectory: '/project/src',
-    summary: {
-      nodeCount: 3,
-      edgeCount: 2,
-      highRiskCount: 1,
-      mediumRiskCount: 0,
-      lowRiskCount: 2,
-      cycleCount: 0,
-      unresolvedCount: 0,
-      inventory: {
-        files: 3,
-        apexClasses: 2,
-        apexTriggers: 0,
-        lwcJs: 1,
-        lwcHtml: 0,
-        visualforce: 0,
-        flows: 0,
-        objects: 0,
-        fields: 0,
-      },
-    },
-    nodes: [
-      {
-        id: 'ApexClass:OrderController',
-        displayName: 'OrderController',
-        type: 'ApexClass',
-        file: 'OrderController.cls',
-        metrics: { fanIn: 1, fanOut: 1, coupling: 2, unresolved: 0, score: 50 },
-        risk: 'HIGH',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 1,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 0,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: true,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-      {
-        id: 'LWC:OrderView',
-        displayName: 'OrderView',
-        type: 'LWC',
-        file: 'orderView.js',
-        metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 10 },
-        risk: 'LOW',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 1,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 0,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-      {
-        id: 'ApexClass:OrderService',
-        displayName: 'OrderService',
-        type: 'ApexClass',
-        file: 'OrderService.cls',
-        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 30 },
-        risk: 'LOW',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 1,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 0,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'COVERED',
-        },
-      },
-    ],
-    edges: [
-      {
-        source: 'LWC:OrderView',
-        target: 'ApexClass:OrderController',
-        relationshipType: 'calls',
-      },
-      {
-        source: 'ApexClass:OrderController',
-        target: 'ApexClass:OrderService',
-        relationshipType: 'calls',
-      },
-    ],
-  };
+  const nodeController = createMockNode('ApexClass:OrderController', 'OrderController', 'ApexClass', 'HIGH', 'OrderController.cls');
+  const nodeView = createMockNode('LWC:OrderView', 'OrderView', 'LWC', 'LOW', 'orderView.js');
+  const nodeService = createMockNode('ApexClass:OrderService', 'OrderService', 'ApexClass', 'LOW', 'OrderService.cls');
+
+  const sampleSchema: ExplorerDataSchema = createMockDataSchema(
+    [nodeController, nodeView, nodeService],
+    [
+      createMockEdge('e1', 'LWC:OrderView', 'ApexClass:OrderController', 'method-call'),
+      createMockEdge('e2', 'ApexClass:OrderController', 'ApexClass:OrderService', 'method-call'),
+    ]
+  );
 
   it('computes polar positions and edge curves deterministically', () => {
     const adapterData = adaptConstellation(sampleSchema, {

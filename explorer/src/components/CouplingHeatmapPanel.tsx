@@ -19,7 +19,7 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
 }) => {
   const [metricMode, setMetricMode] = useState<HeatmapMetricMode>('combined');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
+  const [_selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   const [manualMinThreshold, setManualMinThreshold] = useState<number | null>(null);
 
   const [hoveredCellInfo, setHoveredCellInfo] = useState<{
@@ -40,15 +40,6 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
     return adaptFeatureMatrix(data);
   }, [data]);
 
-  // Filter features if searchQuery is present
-  const filteredFeatures = useMemo(() => {
-    if (!matrixData) return [];
-    if (!searchQuery.trim()) return matrixData.features;
-    const q = searchQuery.toLowerCase();
-    return matrixData.features.filter(
-      f => f.name.toLowerCase().includes(q) || f.primaryDomain.toLowerCase().includes(q) || f.primaryLayer.toLowerCase().includes(q)
-    );
-  }, [matrixData, searchQuery]);
 
   // Quick lookup grid for cells by sourceIndex and targetIndex
   const cellGridMap = useMemo(() => {
@@ -176,7 +167,7 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
       ctx.fillText(`#${rowIdx + 1} ${rowFeat.name}`, 22, rowY + cellSize / 2);
 
       // Render Cells across columns
-      features.forEach((colFeat, colIdx) => {
+      features.forEach((_colFeat, colIdx) => {
         const colX = headerOffset + colIdx * cellSize;
 
         if (rowIdx === colIdx) {
@@ -315,7 +306,7 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
     );
   }
 
-  const { features, summary } = matrixData;
+  const { features } = matrixData;
 
   // Data-driven threshold policy: defaults to 0 so all non-zero relationships are visible
   const activeThreshold = useMemo(() => {

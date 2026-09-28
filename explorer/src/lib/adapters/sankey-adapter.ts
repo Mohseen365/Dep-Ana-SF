@@ -1,4 +1,4 @@
-import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { ExplorerDataSchema, ExplorerNode } from '../../types/explorer';
 import type { ArchitectureLayer } from '../layout/types';
 import { discoverFeatures, type FeatureDiscoveryOptions } from '../layout/features';
 import { buildDomainGraph } from '../layout/global-layout';
@@ -119,9 +119,9 @@ export function adaptSankeyRiver(
     const provenanceItem: SankeyEdgeProvenance = {
       edgeId: edge.id,
       sourceComponentId: edge.source,
-      sourceComponentName: srcNode?.displayName || srcNode?.name || edge.source,
+      sourceComponentName: srcNode?.displayName || edge.source,
       targetComponentId: edge.target,
-      targetComponentName: tgtNode?.displayName || tgtNode?.name || edge.target,
+      targetComponentName: tgtNode?.displayName || edge.target,
     };
 
     if (!flowMap.has(flowId)) {

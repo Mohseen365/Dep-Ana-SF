@@ -781,8 +781,6 @@ describe('Stage 6 T2/T3 Performance Validation Suite', () => {
     t2: {} as any,
     t3: {} as any,
   };
-  let determinismPassed = true;
-  let shuffledInvariancePassed = true;
 
   it('1. Correctness Corpus (1,000 Seeded Topologies + Canonical CST)', () => {
     const fixture = loadCanonicalFixture();
@@ -1052,9 +1050,9 @@ describe('Stage 6 T2/T3 Performance Validation Suite', () => {
       cpp: oracleMetrics.detailedCrossings?.primaryPrimaryCrossings,
       ctotal: oracleMetrics.detailedCrossings?.totalGeometricCrossings,
       minClearance: oracleClearance,
-      primaryOverlaps: oracleMetrics.nodeOverlaps ?? oracleMetrics.primaryNodeOverlaps ?? 0,
-      satelliteOverlaps: oracleMetrics.satelliteOverlaps ?? 0,
-      layerViolations: oracleMetrics.layerOrderViolations ?? oracleMetrics.layerViolations ?? 0,
+      primaryOverlaps: oracleMetrics.primaryOverlapCount ?? 0,
+      satelliteOverlaps: oracleMetrics.satelliteOverlapCount ?? 0,
+      layerViolations: oracleMetrics.layerViolationCount ?? 0,
       positionsHash: JSON.stringify(oracleMeta.positions).length,
     };
 
