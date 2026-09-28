@@ -3,7 +3,7 @@
   "analyzerVersion": "13",
   "analyzer": "Salesforce Dependency Analyzer v13",
   "snapshotIdentity": "arch-snap-sha256:b3da298d355d52e03a4cfcfadc49a50106b15ba369eddc392db0fa6a6b285d05",
-  "generatedAt": "2026-09-28T11:48:29.612Z",
+  "generatedAt": "2026-09-28T16:52:52.464Z",
   "sourceDirectory": "/app/scripts/temp-snapshot-test-fixture",
   "metadata": {
     "fileCount": 2,
