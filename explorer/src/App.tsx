@@ -2,6 +2,8 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import React from 'react';
 import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
+import { InvestigationProvider } from './context/InvestigationContext';
+import { WorkspaceRouterProvider } from './context/WorkspaceRouterContext';
 import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { SubwayPanel } from './components/SubwayPanel';
 import { adaptSubwayMap } from './lib/adapters/subway-adapter';
@@ -270,7 +272,7 @@ function ErrorScreen({ error, onRetry }: { error: Error | null; onRetry: () => v
   );
 }
 
-export function App() {
+function AppContent() {
   const projectContext = useProjectSafe();
   const projectStateContext = useProjectStateSafe();
 
@@ -1319,6 +1321,16 @@ export function App() {
         />
       </div>
     </SelectionProvider>
+  );
+}
+
+export function App() {
+  return (
+    <InvestigationProvider>
+      <WorkspaceRouterProvider>
+        <AppContent />
+      </WorkspaceRouterProvider>
+    </InvestigationProvider>
   );
 }
 

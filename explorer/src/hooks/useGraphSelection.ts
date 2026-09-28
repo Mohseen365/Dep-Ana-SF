@@ -1,4 +1,13 @@
 import { useState, useCallback } from 'react';
+import { useInvestigation } from '../context/InvestigationContext';
+
+function useInvestigationSafe() {
+  try {
+    return useInvestigation();
+  } catch (_) {
+    return null;
+  }
+}
 
 export function useGraphSelection(): {
   selectedNodeId: string | null;
@@ -9,15 +18,17 @@ export function useGraphSelection(): {
   clear: () => void;
   clearHistory: () => void;
 } {
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-  const [history, setHistory] = useState<string[]>([]);
+  const investigation = useInvestigationSafe();
 
-  const selectNode = useCallback((id: string | null) => {
-    setSelectedNodeId(id);
+  const [localNodeId, setLocalNodeId] = useState<string | null>(null);
+  const [localEdgeId, setLocalEdgeId] = useState<string | null>(null);
+  const [localHistory, setLocalHistory] = useState<string[]>([]);
+
+  const selectNodeFallback = useCallback((id: string | null) => {
+    setLocalNodeId(id);
     if (id !== null) {
-      setSelectedEdgeId(null);
-      setHistory((prev) => {
+      setLocalEdgeId(null);
+      setLocalHistory((prev) => {
         if (prev.length > 0 && prev[prev.length - 1] === id) {
           return prev;
         }
@@ -27,29 +38,41 @@ export function useGraphSelection(): {
     }
   }, []);
 
-  const selectEdge = useCallback((id: string | null) => {
-    setSelectedEdgeId(id);
+  const selectEdgeFallback = useCallback((id: string | null) => {
+    setLocalEdgeId(id);
     if (id !== null) {
-      setSelectedNodeId(null);
+      setLocalNodeId(null);
     }
   }, []);
 
-  const clear = useCallback(() => {
-    setSelectedNodeId(null);
-    setSelectedEdgeId(null);
+  const clearFallback = useCallback(() => {
+    setLocalNodeId(null);
+    setLocalEdgeId(null);
   }, []);
 
-  const clearHistory = useCallback(() => {
-    setHistory([]);
+  const clearHistoryFallback = useCallback(() => {
+    setLocalHistory([]);
   }, []);
+
+  if (investigation) {
+    return {
+      selectedNodeId: investigation.state.selectedNodeId,
+      selectedEdgeId: investigation.state.selectedEdgeId,
+      history: investigation.state.selectionHistory,
+      selectNode: investigation.selectNode,
+      selectEdge: investigation.selectEdge,
+      clear: investigation.clearSelection,
+      clearHistory: () => {},
+    };
+  }
 
   return {
-    selectedNodeId,
-    selectedEdgeId,
-    history,
-    selectNode,
-    selectEdge,
-    clear,
-    clearHistory,
+    selectedNodeId: localNodeId,
+    selectedEdgeId: localEdgeId,
+    history: localHistory,
+    selectNode: selectNodeFallback,
+    selectEdge: selectEdgeFallback,
+    clear: clearFallback,
+    clearHistory: clearHistoryFallback,
   };
 }
