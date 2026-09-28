@@ -1482,12 +1482,24 @@ body {
 }
 
 /* View Mode Switcher Styling */
+.view-mode-switcher-bar {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
 .view-mode-switcher-overlay {
   position: absolute;
   top: 14px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
+  max-width: calc(100% - 32px);
 }
 
 .view-mode-toggle-group {
@@ -1500,6 +1512,9 @@ body {
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  flex-wrap: nowrap;
+  width: max-content;
+  max-width: 100%;
 }
 
 .view-mode-btn {
@@ -1516,6 +1531,8 @@ body {
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition-fast);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .view-mode-btn:hover {

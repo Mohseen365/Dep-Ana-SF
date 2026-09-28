@@ -124,7 +124,25 @@ function isSlotOccupied(
 }
 
 /**
+ * Production-Equivalent Deterministic Comparator
+ */
+function candidateComparator(
+  a: { effectiveScore: number; dist: number; row: number; col: number },
+  b: { effectiveScore: number; dist: number; row: number; col: number }
+): number {
+  if (Math.abs(a.effectiveScore - b.effectiveScore) > 1e-4) {
+    return a.effectiveScore - b.effectiveScore;
+  }
+  if (Math.abs(a.dist - b.dist) > 1e-4) {
+    return a.dist - b.dist;
+  }
+  if (a.row !== b.row) return a.row - b.row;
+  return a.col - b.col;
+}
+
+/**
  * Generates non-overlapping, gap-aware candidate placement slots around an anchor position.
+ * Uses Chebyshev concentric ring expansion with distance lower-bound early termination.
  */
 function generateSatelliteSlots(
   anchor: Point,
@@ -145,6 +163,7 @@ function generateSatelliteSlots(
 
   const dx = nodeWidth + horizontalGap;
   const dy = nodeHeight + verticalGap;
+  const minStep = Math.min(dx, dy);
   const effectiveMaxDist = Math.max(
     maxDistance,
     Math.ceil(Math.sqrt(count)) * Math.max(dx, dy) * 1.2
@@ -161,9 +180,24 @@ function generateSatelliteSlots(
 
   const maxSearchRadius = Math.max(12, Math.ceil(Math.sqrt(count) * 3));
 
-  for (let r = -maxSearchRadius; r <= maxSearchRadius; r++) {
-    for (let c = -maxSearchRadius; c <= maxSearchRadius; c++) {
-      if (c === 0 && r === 0) continue; // Skip anchor slot itself
+  // Evaluate concentric rings R = 1 ... maxSearchRadius
+  for (let ring = 1; ring <= maxSearchRadius; ring++) {
+    // Collect all grid cell coordinates (r, c) on Chebyshev ring R
+    const ringCells: Array<{ r: number; c: number }> = [];
+
+    // Top & Bottom edges
+    for (let c = -ring; c <= ring; c++) {
+      ringCells.push({ r: -ring, c }); // Top edge
+      ringCells.push({ r: ring, c });  // Bottom edge
+    }
+    // Left & Right edges
+    for (let r = -ring + 1; r <= ring - 1; r++) {
+      ringCells.push({ r, c: -ring }); // Left edge
+      ringCells.push({ r, c: ring });  // Right edge
+    }
+
+    for (let idx = 0; idx < ringCells.length; idx++) {
+      const { r, c } = ringCells[idx];
 
       // Directional constraints
       if (bias === 'test' && c === 0) {
@@ -247,19 +281,21 @@ function generateSatelliteSlots(
 
       candidateSlots.push({ x, y, dist, effectiveScore, row: r, col: c });
     }
+
+    // Check distance lower-bound termination condition after completing ring
+    if (candidateSlots.length >= count) {
+      candidateSlots.sort(candidateComparator);
+      const currentWorstSelectedScore = candidateSlots[count - 1].effectiveScore;
+      const futureLowerBound = (ring + 1) * minStep;
+
+      if (futureLowerBound > currentWorstSelectedScore) {
+        break; // Safe early loop termination!
+      }
+    }
   }
 
   // Sort candidate slots deterministically
-  candidateSlots.sort((a, b) => {
-    if (Math.abs(a.effectiveScore - b.effectiveScore) > 1e-4) {
-      return a.effectiveScore - b.effectiveScore;
-    }
-    if (Math.abs(a.dist - b.dist) > 1e-4) {
-      return a.dist - b.dist;
-    }
-    if (a.row !== b.row) return a.row - b.row;
-    return a.col - b.col;
-  });
+  candidateSlots.sort(candidateComparator);
 
   const selectedSlots = candidateSlots.slice(0, count).map(s => ({ x: s.x, y: s.y }));
 

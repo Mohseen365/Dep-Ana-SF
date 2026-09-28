@@ -285,12 +285,27 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     captureAndPersistPositions(targetProvenance);
   }, [architectureMode, captureAndPersistPositions]);
 
+  // Safe helper to unbind and destroy Cytoscape Navigator
+  const destroyNavigator = useCallback(() => {
+    if (navRef.current) {
+      try {
+        if (typeof navRef.current._removeCyListeners === 'function') {
+          navRef.current._removeCyListeners();
+        }
+        if (typeof navRef.current.destroy === 'function') {
+          navRef.current.destroy();
+        }
+      } catch (e) {
+        // Safe cleanup fallback
+      }
+      navRef.current = null;
+    }
+  }, []);
+
   // Re-attach cytoscape navigator
   useEffect(() => {
     if (isNavigatorVisible && cyRef.current && minimapRef.current) {
-      if (navRef.current && typeof navRef.current.destroy === 'function') {
-        try { navRef.current.destroy(); } catch (e) {}
-      }
+      destroyNavigator();
       try {
         const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
         navRef.current = (cyRef.current as any).navigator({
@@ -301,7 +316,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         console.warn('Cytoscape navigator re-init notice:', err);
       }
     }
-  }, [isNavigatorVisible]);
+    return () => {
+      destroyNavigator();
+    };
+  }, [isNavigatorVisible, destroyNavigator]);
 
   // Reset Layout handler
   const executeResetLayout = useCallback(() => {
@@ -510,18 +528,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    if (minimapRef.current && isNavigatorVisible) {
-      try {
-        const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
-        navRef.current = (cy as any).navigator({
-          container: bodyEl,
-          scale: 0.15
-        });
-      } catch (err) {
-        console.warn('Cytoscape navigator init notice:', err);
-      }
-    }
-
     const nodeCount = nodesRef.current.length;
     const initialZoom = nodeCount < 15 ? 1.4
                       : nodeCount < 50 ? 1.0
@@ -670,8 +676,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       resizeObserver.disconnect();
       window.removeEventListener('transitionend', handleTransitionEnd);
 
-      if (navRef.current && typeof navRef.current.destroy === 'function') {
-        try { navRef.current.destroy(); } catch (e) {}
+      destroyNavigator();
+
+      if (cyRef.current) {
+        try { cyRef.current.off('render'); } catch (e) {}
       }
 
       document.body.style.cursor = 'default';

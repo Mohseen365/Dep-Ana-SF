@@ -542,8 +542,10 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     const metadataPath = path.join(parentDir, "project-metadata.json");
     fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
 
-    updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
-    publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
+    if (!options.skipManifest) {
+      updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
+      publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
+    }
 
     return {
       inputFile: resolvedInputFile,
@@ -881,8 +883,10 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   const metadataPath = path.join(parentDir, "project-metadata.json");
   fs.writeFileSync(metadataPath, JSON.stringify(projectMetadata, null, 2), "utf8");
 
-  updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
-  publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
+  if (!options.skipManifest) {
+    updateManifestWithExplorerData(resolvedOutputFile, explorerData, projectMetadata);
+    publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata);
+  }
 
   return {
     inputFile: resolvedInputFile,

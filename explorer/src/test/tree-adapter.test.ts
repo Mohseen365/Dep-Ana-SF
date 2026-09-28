@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { adaptFeatureTree, type FeatureTreeData } from '../lib/adapters/tree-adapter';
+import { adaptFeatureTree } from '../lib/adapters/tree-adapter';
 
 describe('Feature Tree Adapter Unit Tests', () => {
   const fixturePath = path.resolve(__dirname, '../../../audit-fixtures/cloud-spend-tracker/explorer-data.json');
