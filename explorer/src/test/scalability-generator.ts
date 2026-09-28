@@ -198,7 +198,7 @@ export function generateSyntheticSalesforceGraph(options: SyntheticGraphOptions)
         const tgtNode = nodes[tgtIdx];
         const relationshipType: ExplorerRelationshipType = 'type-reference';
         edges.push({
-          id: `bridge:${srcNode.id}->${tgtNode.id}`,
+          id: `bridge:${srcNode.id}->${tgtNode.id}:${b}`,
           source: srcNode.id,
           target: tgtNode.id,
           relationshipType,
