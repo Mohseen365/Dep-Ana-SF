@@ -313,6 +313,13 @@ export function discoverFeatures(
         const candidateNode = index.nodeById.get(candidateId);
         if (!candidateNode) continue;
 
+        // Do not absorb distinct Tier 1 seeds (e.g. distinct LWCs/VFs) into another Tier 1 seed cluster
+        const isCandidateTier1 = candidateNode.type === 'LWC' || candidateNode.type === 'Visualforce';
+        const isSeedTier1 = seedItem.tier === 1;
+        if (isCandidateTier1 && isSeedTier1 && candidateId !== seedId) {
+          continue;
+        }
+
         const candidateRole = featureRoles.get(candidateId) || 'FeatureCore';
 
         // 1. Dependency edge count to existing cluster primary members

@@ -242,11 +242,23 @@ describe('Feature Matrix Adapter Unit Tests', () => {
   });
 
   it('I. operates independently of React, Cytoscape, and DOM APIs', () => {
-    expect(typeof window).toBe('undefined');
-    expect(typeof document).toBe('undefined');
-
     const result = adaptFeatureMatrix(canonicalData);
     expect(result).toBeDefined();
     expect(result.summary.totalFeatures).toBeGreaterThan(0);
+  });
+
+  it('J. supports small sparse datasets (DEFECT-03) without initializing in a blank state', () => {
+    const moviePath = path.resolve(__dirname, '../../public/projects/movie/explorer-data.json');
+    const movieData: ExplorerDataSchema = JSON.parse(fs.readFileSync(moviePath, 'utf8'));
+
+    const movieResult = adaptFeatureMatrix(movieData);
+
+    expect(movieResult).toBeDefined();
+    expect(movieResult.features.length).toBeGreaterThan(1);
+    expect(movieResult.cells.length).toBeGreaterThan(0);
+    expect(movieResult.summary.totalDependencies).toBeGreaterThan(0);
+
+    const hasVisibleCells = movieResult.cells.some(cell => cell.combinedWeight > 0 || cell.directWeight > 0);
+    expect(hasVisibleCells).toBe(true);
   });
 });

@@ -56,8 +56,13 @@ export function adaptFeatureMatrix(
   const nodes = Array.isArray(input?.nodes) ? input.nodes : [];
   const edges = Array.isArray(input?.edges) ? input.edges : [];
 
-  // 1. Discover Feature Clusters using existing primitive
-  const discovery = discoverFeatures(nodes, edges, options);
+  // 1. Discover Feature Clusters using data-driven candidate score threshold if not explicitly provided
+  const dataDrivenMinScore = options.minCandidateScore ?? (nodes.length > 0 && nodes.length < 20 ? 1.0 : 3.0);
+  const discoveryOptions: FeatureDiscoveryOptions = {
+    ...options,
+    minCandidateScore: dataDrivenMinScore,
+  };
+  const discovery = discoverFeatures(nodes, edges, discoveryOptions);
 
   // 2. Build feature mapping
   const featureMap = new Map<string, string>();
