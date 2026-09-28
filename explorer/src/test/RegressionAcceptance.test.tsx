@@ -168,7 +168,16 @@ const mockValidDataPayload = {
   analyzerVersion: '13.0.0',
   generatedAt: new Date().toISOString(),
   sourceDirectory: 'force-app/main/default',
-  project: { id: 'default', name: 'Default', sourcePath: 'force-app/main/default' },
+  project: {
+    id: 'default',
+    name: 'Default',
+    sourcePath: 'force-app/main/default',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    analysisStatus: 'COMPLETE' as const,
+    componentCount: 4,
+    dependencyCount: 3,
+  },
   summary: {
     nodeCount: 4,
     edgeCount: 3,
@@ -216,7 +225,7 @@ describe('Parallel Agent E Acceptance Suite', () => {
   });
 
   describe('LAYOUT TESTS', () => {
-    it('verifies sidebar open vs closed space reservation requirement', async () => {
+    it('verifies no permanent sidebar chrome is rendered on overview surface', async () => {
       vi.stubGlobal('fetch', vi.fn().mockImplementation(() =>
         Promise.resolve({
           ok: true,
@@ -230,20 +239,14 @@ describe('Parallel Agent E Acceptance Suite', () => {
         </ProjectProvider>
       );
 
-      // Wait for data to load
+      // Wait for data to load and verify full canvas graph renders without permanent sidebar
       await waitFor(() => {
-        expect(container.querySelector('.sidebar-slot')).not.toBeNull();
+        expect(container.querySelector('main.graph-pane')).not.toBeNull();
       });
 
-      // Collapse sidebar using collapse button
-      const collapseBtn = container.querySelector('.sidebar-toggle-btn') as HTMLButtonElement;
-      if (collapseBtn) {
-        act(() => {
-          fireEvent.click(collapseBtn);
-        });
-        // CRITICAL REQUIREMENT: Closed panel must NOT reserve layout space (sidebar-slot unmounted)
-        expect(container.querySelector('.sidebar-slot')).toBeNull();
-      }
+      expect(container.querySelector('.sidebar-slot')).toBeNull();
+      expect(container.querySelector('.app-workspace-bar')).toBeNull();
+      expect(container.querySelector('.status-bar')).toBeNull();
     });
 
     it('verifies drawer layout participation: no selected node -> no drawer-slot even if pinned', async () => {
@@ -264,7 +267,7 @@ describe('Parallel Agent E Acceptance Suite', () => {
 
       // Wait for data load
       await waitFor(() => {
-        expect(container.querySelector('.sidebar-slot')).not.toBeNull();
+        expect(container.querySelector('main.graph-pane')).not.toBeNull();
       });
 
       // Crucial Fix Check: pinned is true but no node selected -> no drawer-slot in layout
