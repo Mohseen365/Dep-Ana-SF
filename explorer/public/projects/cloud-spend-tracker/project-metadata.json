@@ -2,7 +2,7 @@
   "id": "cloud-spend-tracker",
   "name": "cloud-spend-tracker",
   "description": "Salesforce DX Architecture Analysis",
-  "sourcePath": "../Interview Project/Cloud-Spend-Tracker/force-app/main/default",
+  "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
   "createdAt": "2026-09-17T06:20:55.547Z",
   "updatedAt": "2026-09-17T06:20:55.547Z",
   "lastAnalyzedAt": "2026-09-17T06:20:55.547Z",
