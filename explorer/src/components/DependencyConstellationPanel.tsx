@@ -10,6 +10,7 @@ import { FocusDirection } from '../lib/focus-graph';
 
 export interface DependencyConstellationPanelProps {
   data: ConstellationData;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   onOptionChange?: (options: { focalNodeId?: string; maxDepth?: number; direction?: FocusDirection }) => void;
   onReturnToGraph?: () => void;
@@ -18,13 +19,15 @@ export interface DependencyConstellationPanelProps {
 
 export const DependencyConstellationPanel: React.FC<DependencyConstellationPanelProps> = ({
   data,
+  selectedNodeId: selectedNodeIdProp,
   onSelectNode,
   onOptionChange,
   onReturnToGraph,
   className = '',
 }) => {
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [internalSelectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const canonicalSelectedId = selectedNodeIdProp || internalSelectedNodeId;
   const [filterText, setFilterText] = useState('');
 
   const { focalNode, nodes, edges, availableNodes, summary, options } = data;
@@ -57,7 +60,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     );
   }
 
-  const activeInspectId = hoveredNodeId || selectedNodeId || focalNode.id;
+  const activeInspectId = hoveredNodeId || canonicalSelectedId || focalNode.id;
   const activeInspectNode: ConstellationNode | null = nodes[activeInspectId] || null;
 
   // Compute highlighted edge IDs when node is hovered/selected
@@ -377,7 +380,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
               const nodeData = nodes[pos.nodeId];
               const isFocal = pos.nodeId === focalNode.id;
               const isHighlighted = highlightedNodeIds.has(pos.nodeId);
-              const isSelected = selectedNodeId === pos.nodeId;
+              const isSelected = canonicalSelectedId === pos.nodeId;
               const matches = nodeData ? matchesFilter(nodeData) : true;
 
               const r = isFocal ? 18 : 12;

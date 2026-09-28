@@ -4,6 +4,7 @@ import { adaptFeatureMatrix, type FeatureMatrixData, type FeatureMatrixCell } fr
 
 export interface FeatureMatrixPanelProps {
   data: ExplorerDataSchema | null;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   onSelectFeatureAnchor?: (anchorNodeId: string) => void;
   className?: string;
@@ -11,6 +12,7 @@ export interface FeatureMatrixPanelProps {
 
 export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
   data,
+  selectedNodeId,
   onSelectNode,
   onSelectFeatureAnchor,
   className = '',
@@ -197,9 +199,23 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
             </thead>
             <tbody>
               {features.map((rowFeat, rowIdx) => {
-                const isRowSelected = selectedFeatureId === rowFeat.id;
+                const isFeatureMatching = selectedNodeId ? (
+                  rowFeat.anchorNodeId === selectedNodeId ||
+                  rowFeat.id === selectedNodeId
+                ) : false;
+                const isRowSelected = selectedFeatureId === rowFeat.id || isFeatureMatching;
+                const isRowDimmed = !!selectedNodeId && !isFeatureMatching;
+
                 return (
-                  <tr key={`row-${rowFeat.id}`} style={{ backgroundColor: isRowSelected ? 'rgba(59, 130, 246, 0.1)' : 'transparent' }}>
+                  <tr
+                    key={`row-${rowFeat.id}`}
+                    className={`matrix-row ${isRowDimmed ? 'dimmed' : ''}`}
+                    style={{
+                      backgroundColor: isRowSelected ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
+                      opacity: isRowDimmed ? 0.35 : 1,
+                      transition: 'opacity 0.15s ease',
+                    }}
+                  >
                     {/* Row Header */}
                     <th
                       style={{

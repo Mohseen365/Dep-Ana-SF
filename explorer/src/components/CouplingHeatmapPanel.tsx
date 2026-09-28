@@ -6,6 +6,7 @@ export type HeatmapMetricMode = 'combined' | 'direct' | 'flow' | 'shared';
 
 export interface CouplingHeatmapPanelProps {
   data: ExplorerDataSchema | null;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   onSelectFeatureAnchor?: (anchorNodeId: string) => void;
   className?: string;
@@ -13,6 +14,7 @@ export interface CouplingHeatmapPanelProps {
 
 export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
   data,
+  selectedNodeId,
   onSelectNode,
   onSelectFeatureAnchor,
   className = '',
@@ -167,7 +169,7 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
       ctx.fillText(`#${rowIdx + 1} ${rowFeat.name}`, 22, rowY + cellSize / 2);
 
       // Render Cells across columns
-      features.forEach((_colFeat, colIdx) => {
+      features.forEach((colFeat, colIdx) => {
         const colX = headerOffset + colIdx * cellSize;
 
         if (rowIdx === colIdx) {
@@ -186,9 +188,22 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
           const weight = getCellWeight(cell, metricMode);
           const ratio = weight > 0 ? Math.min(1, Math.max(0.1, weight / maxMetricWeight)) : 0;
 
-          // Fill heatmap cell color
+          // Fill heatmap cell color with dimming when selectedNodeId is active
+          const isRowOrColMatching = selectedNodeId ? (
+            rowFeat.anchorNodeId === selectedNodeId ||
+            colFeat.anchorNodeId === selectedNodeId ||
+            rowFeat.id === selectedNodeId ||
+            colFeat.id === selectedNodeId
+          ) : true;
+
+          ctx.save();
+          if (!isRowOrColMatching && selectedNodeId) {
+            ctx.globalAlpha = 0.3;
+          }
+
           ctx.fillStyle = getHeatmapColor(ratio);
           ctx.fillRect(colX + 1, rowY + 1, cellSize - 2, cellSize - 2);
+          ctx.restore();
 
           // Highlight row/cell hover if matching
           if (

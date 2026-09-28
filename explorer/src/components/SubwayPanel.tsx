@@ -3,12 +3,14 @@ import { SubwayMapData, SubwayStation } from '../lib/adapters/subway-adapter';
 
 export interface SubwayPanelProps {
   data: SubwayMapData;
+  selectedNodeId?: string | null;
   onSelectNode?: (nodeId: string) => void;
   onExploreInGraph?: (nodeId: string) => void;
 }
 
 export const SubwayPanel: React.FC<SubwayPanelProps> = ({
   data,
+  selectedNodeId,
   onSelectNode,
   onExploreInGraph,
 }) => {
@@ -170,7 +172,9 @@ export const SubwayPanel: React.FC<SubwayPanelProps> = ({
 
           {/* Station Nodes */}
           {filteredStations.map(station => {
-            const isSelected = selectedStation?.nodeId === station.nodeId;
+            const isCanonicalSelected = selectedNodeId ? station.nodeId === selectedNodeId : false;
+            const isSelected = selectedStation?.nodeId === station.nodeId || isCanonicalSelected;
+            const isDimmed = !!selectedNodeId && !isCanonicalSelected;
             const line = data.lines[station.lineIndex];
             const stationColor = line?.color || '#3b82f6';
 
@@ -178,7 +182,8 @@ export const SubwayPanel: React.FC<SubwayPanelProps> = ({
               <g
                 key={station.nodeId}
                 transform={`translate(${station.x}, ${station.y})`}
-                className={`subway-station-node ${station.isTransfer ? 'transfer-hub' : ''} ${isSelected ? 'selected' : ''}`}
+                className={`subway-station-node ${station.isTransfer ? 'transfer-hub' : ''} ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`}
+                style={{ opacity: isDimmed ? 0.25 : 1.0, transition: 'opacity 0.15s ease' }}
                 onClick={() => handleStationClick(station)}
                 cursor="pointer"
               >
