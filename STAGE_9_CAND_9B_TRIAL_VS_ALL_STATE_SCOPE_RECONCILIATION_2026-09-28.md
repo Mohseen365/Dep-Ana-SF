@@ -25,11 +25,7 @@ This gate establishes the exact source-derived accounting domains, proves the ma
 - **Repository Branch**: `jules-123032650531111528-48b47755`
 - **Git Status**:
   ```text
-  A  STAGE_9_CAND_9B_CONTROLLED_AB_EXPERIMENT_2026-09-28.md
-  A  STAGE_9_CAND_9B_EXPERIMENT_RECONCILIATION_AND_PRODUCTIONIZATION_GATE_2026-09-28.md
-  A  STAGE_9_CAND_9B_TELEMETRY_RECONCILIATION_2026-09-28.md
   A  STAGE_9_CAND_9B_TRIAL_VS_ALL_STATE_SCOPE_RECONCILIATION_2026-09-28.md
-  A  explorer/src/test/stage4-incident-bounded-ab.test.ts
   ```
 - **Protected Source Code Audit**:
   - `explorer/src/lib/layout/satellites.ts`: **CLEAN (0 diff)**
@@ -97,7 +93,7 @@ Tracing all invocations of `evaluateIncidentCrossingsCandidate` inside `runStage
 | **Shift 2** | Trial shift 2 permutation | 12 (1 per group) | 28,006 (Avg) | **YES** | **YES** ($336,072$ total) |
 | **Shift 3** | Trial shift 3 permutation | 12 (1 per group) | 28,006 (Avg) | **YES** | **YES** ($335,712$ total) |
 
-- **Candidate Trial Evals (Domain A)**: $336,072 + 336,072 + 335,712 = \mathbf{1,007,856 \text{ pair evaluations}}$ (Accumulated into `totalCandidatePairEvals` in lines 360–361).
+- **Candidate Trial Evals (Domain A)**: $336,072 + 336,072 + 335,712 = \mathbf{1,007,856 \text{ pair evaluations}}$ (Accumulated into `totalCandidatePairEvals`).
 - **Candidate All-Recorded-State Evals (Domain B)**: $319,296 + 1,007,856 = \mathbf{1,327,152 \text{ pair evaluations}}$ (Reported in historical table as candidate group evaluation total across all 48 states).
 
 ---
@@ -108,7 +104,7 @@ Calculating the exact difference:
 $$1,327,152 - 1,007,856 = \mathbf{319,296 \text{ evaluations}}$$
 
 **Source-Derived Explanation**:
-The additional $319,296$ candidate pair evaluations represent the **12 shift-0 baseline recording passes** ($12 \text{ groups} \times \text{CandidatePairs}(F)$) executed at line 347 of `stage4-incident-bounded-ab.test.ts` to record initial unshifted candidate scores before entering the trial loop ($shift = 1..3$).
+The additional $319,296$ candidate pair evaluations represent the **12 shift-0 baseline recording passes** ($12 \text{ groups} \times \text{CandidatePairs}(F)$) executed in `stage4-incident-bounded-ab.test.ts` to record initial unshifted candidate scores before entering the trial loop ($shift = 1..3$).
 
 ---
 
@@ -142,10 +138,10 @@ To maintain mathematical validity, pair reductions must compare identical accoun
 ## 10. Performance Measurement Scope
 
 Tracing the benchmark runtime function in `stage4-incident-bounded-ab.test.ts`:
-- **Oracle Runtime**: Measures strictly lines 294–318 (the 36 trial shift permutations).
-- **Candidate Runtime**: Measures strictly lines 324–386 (including shift 0 static setup + the 36 trial shift permutations).
-- **Measurement Boundary**: Both Oracle and Candidate evaluate identical shift sets across identical groups on identical input graph data.
-- **Classification**: **DIRECTLY COMPARABLE** (Candidate includes static-static crossing setup overhead per group and still achieves $3.47\text{x}$ to $3.96\text{x}$ isolated Stage 4 speedup).
+- **Oracle Runtime**: Measures strictly the 36 trial shift permutations.
+- **Candidate Runtime**: Measures shift 0 static setup + the 36 trial shift permutations + recording calls.
+- **Measurement Boundary**: Candidate timer includes static precomputation and test recording calls.
+- **Classification**: **CONSERVATIVE CANDIDATE TIMING** (Candidate runtime includes additional test setup and dual Oracle verification calls, making Candidate's $38.36\text{ ms}$ a conservative upper bound).
 
 ---
 
@@ -222,11 +218,7 @@ Productionization remains **OUT OF SCOPE** for this task. `explorer/src/lib/layo
 
 ```bash
 $ git status --short
-A  STAGE_9_CAND_9B_CONTROLLED_AB_EXPERIMENT_2026-09-28.md
-A  STAGE_9_CAND_9B_EXPERIMENT_RECONCILIATION_AND_PRODUCTIONIZATION_GATE_2026-09-28.md
-A  STAGE_9_CAND_9B_TELEMETRY_RECONCILIATION_2026-09-28.md
 A  STAGE_9_CAND_9B_TRIAL_VS_ALL_STATE_SCOPE_RECONCILIATION_2026-09-28.md
-A  explorer/src/test/stage4-incident-bounded-ab.test.ts
 ```
 
 - Production source changes: **0 files**.
