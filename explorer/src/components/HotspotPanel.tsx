@@ -18,6 +18,7 @@ interface HotspotPanelProps {
   onSelectHotspot: (node: ExplorerNode) => void;
   selectedNodeId: string | null;
   onShowImpact?: (nodeId: string) => void;
+  onExploreInGraph?: (nodeId: string) => void;
 }
 
 type TabType =
@@ -36,6 +37,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
   onSelectHotspot,
   selectedNodeId,
   onShowImpact,
+  onExploreInGraph,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("ranked");
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
@@ -320,6 +322,17 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
                             >
                               🔍 Select Component
                             </button>
+                            {onExploreInGraph && (
+                              <button
+                                className="hotspot-action-btn explore-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onExploreInGraph(item.node.id);
+                                }}
+                              >
+                                🗺️ Explore in Graph
+                              </button>
+                            )}
                             {onShowImpact && (
                               <button
                                 className="hotspot-action-btn impact-btn"

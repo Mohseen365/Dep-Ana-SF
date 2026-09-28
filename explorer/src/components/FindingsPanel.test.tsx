@@ -119,9 +119,10 @@ describe("FindingsPanel Component", () => {
     expect(screen.getByText("@AuraEnabled public static List<Movie__c> getMovies()")).toBeInTheDocument();
   });
 
-  it("triggers Investigate callback and selects component node", () => {
+  it("triggers Investigate callback and selects component node without implicit navigation, and triggers Explore on explicit click", () => {
     const onSelectFinding = vi.fn();
     const onInvestigateNode = vi.fn();
+    const onExploreInGraph = vi.fn();
 
     render(
       <FindingsPanel
@@ -130,14 +131,21 @@ describe("FindingsPanel Component", () => {
         onSelectFinding={onSelectFinding}
         onClearSelection={vi.fn()}
         onInvestigateNode={onInvestigateNode}
+        onExploreInGraph={onExploreInGraph}
       />
     );
 
-    const investigateBtn = screen.getAllByText(/Investigate MovieController/i)[0];
-    fireEvent.click(investigateBtn);
+    const selectBtn = screen.getAllByText(/Select MovieController/i)[0];
+    fireEvent.click(selectBtn);
 
     expect(onSelectFinding).toHaveBeenCalledWith(sampleFindings[0]);
     expect(onInvestigateNode).toHaveBeenCalledWith("ApexClass:MovieController");
+    expect(onExploreInGraph).not.toHaveBeenCalled();
+
+    const exploreBtn = screen.getAllByText(/Explore in Graph/i)[0];
+    fireEvent.click(exploreBtn);
+
+    expect(onExploreInGraph).toHaveBeenCalledWith("ApexClass:MovieController");
   });
 
   it("supports inline Resolve and Reopen review workflow actions", () => {
