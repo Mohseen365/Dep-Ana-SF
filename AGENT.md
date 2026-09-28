@@ -57,6 +57,13 @@ Raw measurement / forensic question → audit-evidence/
 | Feature Discovery & 2D Geometry                 | `audit-reports/features/FEAT-FEATURE-report-v2.md`    | `audit-evidence/features/FEAT-FEATURE-v2/`             |
 | Visual Overlays & Explainability                | `audit-reports/features/FEAT-OVERLAY-report.md`       | `audit-evidence/features/FEAT-OVERLAY/`                |
 | Backend CLI Analyzer Subsystem                  | `audit-reports/features/FEAT-ANALYZER-report.md`      | `audit-evidence/features/FEAT-ANALYZER/`               |
+| Stage 5 Feature Graph Reuse                     | `STAGE_5_FEATURE_GRAPH_REUSE_PRODUCTION_IMPLEMENTATION.md` | `explorer/src/lib/layout/global-layout.ts`       |
+| Stage 6 Crossing Reduction & T2 Early Exit      | `STAGE_6_T2_PRODUCTIONIZATION_AB_EXPERIMENT_2026-09-28.md` | `explorer/src/lib/layout/ordering.ts`            |
+| Stage 7 Single-Pass X-Centering                 | `STAGE_7_SINGLE_PASS_X_CENTER_PRODUCTION_IMPLEMENTATION.md` | `explorer/src/lib/layout/local-layout.ts`       |
+| Stage 9 Concentric Ring Traversal               | `STAGE_9_CONCENTRIC_RING_TRAVERSAL_PRODUCTION_IMPLEMENTATION.md` | `explorer/src/lib/layout/satellites.ts`        |
+| Stage 11 Collision Cleanup                      | `STAGE_11_COLLISION_CLEANUP_FORENSIC_MEASUREMENT_2026-09-26.md` | `explorer/src/lib/layout/collision-cleanup.ts`  |
+| Phase 2 Analytical Lenses                       | `PHASE_2_FINAL_CLOSURE_AND_SYNTHESIS.md`             | `explorer/src/lib/adapters/`                           |
+| Phase 3 Advanced Analytical Lenses              | `PHASE_3D_CLOSE_FINAL_CURRENT_STATE.md`              | `explorer/src/lib/adapters/`                           |
 | Raw benchmark / telemetry data                  | `audit-evidence/`                                     | Relevant benchmark file in `features/` or `gap-fill/`  |
 | Fixture SHA-256 verification                    | `08_Audit_Source_Register.md` or `P0-FIX-01` report   | `audit-evidence/P0-FIX-01/`                            |
 | Environment & Governance Intake                 | `audit-reports/INTAKE-PHASE-0-REPORT.md`              | Relevant evidence                                      |
