@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
@@ -8,6 +8,7 @@ import {
   LAYERS_IN_ORDER,
   LAYER_RANK,
 } from '../lib/layout/ordering';
+import * as orderingModule from '../lib/layout/ordering';
 import type { NodeOrderingInput } from '../lib/layout/ordering';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import { evaluateLayout } from '../lib/layout/evaluate-layout';
@@ -329,41 +330,133 @@ describe('Stage 6 T2 Productionization A/B Experiment', () => {
   // ═══════════════════════════════════════════════════════════════════════
   // TEST 7: Full-Pipeline Performance A/B
   // ═══════════════════════════════════════════════════════════════════════
-  it('Test 7: Full-pipeline performance A/B — 3 scale tiers', { timeout: 600_000 }, () => {
+  it('Test 7: Full-pipeline performance A/B — 5 scale tiers', { timeout: 1_200_000 }, () => {
     const tiers = [
       { name: 'T1', nodeCount: 240, seed: 42 },
       { name: 'T2', nodeCount: 500, seed: 100 },
       { name: 'T3', nodeCount: 1000, seed: 200 },
+      { name: 'T4', nodeCount: 2000, seed: 300 },
+      { name: 'T5', nodeCount: 5000, seed: 500 },
     ];
 
     console.log(`\n=== TEST 7: Full-Pipeline Performance A/B ===`);
-    console.log('(Production function now has T2 — measuring full computeArchitectureLayoutWithMetadata)');
 
     for (const tier of tiers) {
       const synthetic = generateSyntheticSalesforceGraph({ nodeCount: tier.nodeCount, seed: tier.seed });
 
-      // Cold run
-      const coldStart = performance.now();
-      const coldResult = computeArchitectureLayoutWithMetadata(synthetic.nodes, synthetic.edges);
-      const coldMs = performance.now() - coldStart;
+      // 1. Oracle Full-Pipeline Execution (using spy on orderingModule.reduceEdgeCrossings)
+      const spy = vi.spyOn(orderingModule, 'reduceEdgeCrossings').mockImplementation((input) => {
+        return reduceEdgeCrossingsOracleWithCount(input).result;
+      });
 
-      // Warm runs
-      const warmMs: number[] = [];
-      for (let w = 0; w < 3; w++) {
+      const oracleColdStart = performance.now();
+      const oracleColdRes = computeArchitectureLayoutWithMetadata(synthetic.nodes, synthetic.edges, { enableFeatureLayout: true });
+      const oracleColdMs = performance.now() - oracleColdStart;
+
+      const oracleWarmMs: number[] = [];
+      let oracleLastResult = oracleColdRes;
+      for (let w = 0; w < 5; w++) {
         const ws = performance.now();
-        computeArchitectureLayoutWithMetadata(synthetic.nodes, synthetic.edges);
-        warmMs.push(performance.now() - ws);
+        oracleLastResult = computeArchitectureLayoutWithMetadata(synthetic.nodes, synthetic.edges, { enableFeatureLayout: true });
+        oracleWarmMs.push(performance.now() - ws);
       }
 
-      const warmMedian = median(warmMs);
+      spy.mockRestore();
 
-      console.log(`\n--- ${tier.name}: ${tier.nodeCount} nodes / ${synthetic.edges.length} edges ---`);
-      console.log(`  Cold: ${coldMs.toFixed(2)}ms`);
-      console.log(`  Warm: [${warmMs.map(v => v.toFixed(2)).join(', ')}]  median=${warmMedian.toFixed(2)}ms`);
+      // 2. T2 Candidate Full-Pipeline Execution (production reduceEdgeCrossings with T2)
+      const t2ColdStart = performance.now();
+      const t2ColdRes = computeArchitectureLayoutWithMetadata(synthetic.nodes, synthetic.edges, { enableFeatureLayout: true });
+      const t2ColdMs = performance.now() - t2ColdStart;
 
-      // Sanity: layout produced a result
-      expect(coldResult).toBeDefined();
-      expect(coldResult.positions).toBeDefined();
+      const t2WarmMs: number[] = [];
+      let t2LastResult = t2ColdRes;
+      for (let w = 0; w < 5; w++) {
+        const ws = performance.now();
+        t2LastResult = computeArchitectureLayoutWithMetadata(synthetic.nodes, synthetic.edges, { enableFeatureLayout: true });
+        t2WarmMs.push(performance.now() - ws);
+      }
+
+      const oracleMinMs = Math.min(...oracleWarmMs);
+      const oracleMedianMs = median(oracleWarmMs);
+      const oracleMaxMs = Math.max(...oracleWarmMs);
+
+      const t2MinMs = Math.min(...t2WarmMs);
+      const t2MedianMs = median(t2WarmMs);
+      const t2MaxMs = Math.max(...t2WarmMs);
+
+      const absoluteSavingMs = oracleMedianMs - t2MedianMs;
+      const speedup = oracleMedianMs / t2MedianMs;
+      const reductionPct = (absoluteSavingMs / oracleMedianMs) * 100;
+
+      const logLine = (msg: string) => {
+        console.log(msg);
+        process.stdout.write(msg + '\n');
+      };
+
+      logLine(`\n--- ${tier.name}: ${tier.nodeCount} nodes / ${synthetic.edges.length} edges ---`);
+      logLine(`  Oracle Cold: ${oracleColdMs.toFixed(2)}ms | Warm: [${oracleWarmMs.map(v => v.toFixed(2)).join(', ')}] ms`);
+      logLine(`  Oracle Warm: min=${oracleMinMs.toFixed(2)}ms, median=${oracleMedianMs.toFixed(2)}ms, max=${oracleMaxMs.toFixed(2)}ms`);
+      logLine(`  T2 Cold: ${t2ColdMs.toFixed(2)}ms | Warm: [${t2WarmMs.map(v => v.toFixed(2)).join(', ')}] ms`);
+      logLine(`  T2 Warm: min=${t2MinMs.toFixed(2)}ms, median=${t2MedianMs.toFixed(2)}ms, max=${t2MaxMs.toFixed(2)}ms`);
+      logLine(`  Full-Pipeline Absolute Saving: ${absoluteSavingMs.toFixed(2)}ms`);
+      logLine(`  Full-Pipeline Speedup: ${speedup.toFixed(2)}x`);
+      logLine(`  Full-Pipeline % Reduction: ${reductionPct.toFixed(2)}%`);
+
+      // 3. Correctness Guard
+      // Compare Oracle and T2 full pipeline layout outputs
+      const oracleEval = evaluateLayout(synthetic.nodes, synthetic.edges, oracleLastResult.positions);
+      const t2Eval = evaluateLayout(synthetic.nodes, synthetic.edges, t2LastResult.positions);
+
+      const oracleClearance = minimumNodeClearance(synthetic.nodes, synthetic.edges, oracleLastResult.positions);
+      const t2Clearance = minimumNodeClearance(synthetic.nodes, synthetic.edges, t2LastResult.positions);
+
+      // Node coordinate drift check across all nodes
+      let maxCoordDrift = 0;
+      for (const nodeId of Object.keys(oracleLastResult.positions)) {
+        const oPos = oracleLastResult.positions[nodeId];
+        const tPos = t2LastResult.positions[nodeId];
+        if (!oPos || !tPos) {
+          maxCoordDrift = Infinity;
+          break;
+        }
+        const dx = Math.abs(oPos.x - tPos.x);
+        const dy = Math.abs(oPos.y - tPos.y);
+        maxCoordDrift = Math.max(maxCoordDrift, dx, dy);
+      }
+
+      // Feature region / domain bounds check
+      let featureRegionMatch = true;
+      if (oracleLastResult.featureRegions && t2LastResult.featureRegions) {
+        if (oracleLastResult.featureRegions.size !== t2LastResult.featureRegions.size) {
+          featureRegionMatch = false;
+        } else {
+          for (const [fKey, oReg] of oracleLastResult.featureRegions.entries()) {
+            const tReg = t2LastResult.featureRegions.get(fKey);
+            if (!tReg || Math.abs(oReg.xMin - tReg.xMin) > 1e-4 || Math.abs(oReg.xMax - tReg.xMax) > 1e-4 || Math.abs(oReg.yMin - tReg.yMin) > 1e-4 || Math.abs(oReg.yMax - tReg.yMax) > 1e-4) {
+              featureRegionMatch = false;
+              break;
+            }
+          }
+        }
+      }
+
+      logLine(`  Correctness Guard (${tier.name}):`);
+      logLine(`    Max node coordinate drift: ${maxCoordDrift.toFixed(5)}px`);
+      logLine(`    C_pp Oracle: ${oracleEval.detailedCrossings?.primaryPrimaryCrossings} vs T2: ${t2Eval.detailedCrossings?.primaryPrimaryCrossings}`);
+      logLine(`    C_total Oracle: ${oracleEval.edgeCrossingCount} vs T2: ${t2Eval.edgeCrossingCount}`);
+      logLine(`    Min clearance Oracle: ${oracleClearance.toFixed(5)}px vs T2: ${t2Clearance.toFixed(5)}px`);
+      logLine(`    Primary overlaps Oracle: ${oracleEval.primaryOverlapCount} vs T2: ${t2Eval.primaryOverlapCount}`);
+      logLine(`    Satellite overlaps Oracle: ${oracleEval.satelliteOverlapCount} vs T2: ${t2Eval.satelliteOverlapCount}`);
+      logLine(`    Layer violations Oracle: ${oracleEval.layerViolationCount} vs T2: ${t2Eval.layerViolationCount}`);
+
+      expect(maxCoordDrift).toBe(0);
+      expect(featureRegionMatch).toBe(true);
+      expect(oracleEval.detailedCrossings?.primaryPrimaryCrossings).toBe(t2Eval.detailedCrossings?.primaryPrimaryCrossings);
+      expect(oracleEval.edgeCrossingCount).toBe(t2Eval.edgeCrossingCount);
+      expect(oracleEval.primaryOverlapCount).toBe(t2Eval.primaryOverlapCount);
+      expect(oracleEval.satelliteOverlapCount).toBe(t2Eval.satelliteOverlapCount);
+      expect(oracleEval.layerViolationCount).toBe(t2Eval.layerViolationCount);
+      expect(t2Clearance).toBeGreaterThanOrEqual(39.999);
     }
   });
 });
