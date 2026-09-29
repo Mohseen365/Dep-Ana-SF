@@ -1,5 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import { WorkspaceViewMode } from "../lib/projectState";
+import {
+  getAllWorkspaceModes,
+  getWorkspaceDefinition,
+} from "../registry/workspace-registry";
 
 export type { WorkspaceViewMode };
 
@@ -13,7 +17,8 @@ export interface ViewModeSwitcherProps {
 }
 
 /**
- * Reconciled ViewModeSwitcher supporting all Phase 0–2 modes and Phase 3 modes (Treemap, River/Sankey, Subway).
+ * Reconciled ViewModeSwitcher consuming canonical Lens and Surface Registries.
+ * Eliminates duplicate view lists and hardcoded view mode button arrays.
  */
 export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
   viewMode,
@@ -41,177 +46,37 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
     if (onModeChange) onModeChange(m);
   };
 
+  const allModes = getAllWorkspaceModes();
+
   return (
     <div
       className={`view-mode-switcher-bar view-mode-switcher ${className}`}
       data-testid="view-mode-switcher"
     >
       <div className="view-mode-toggle-group">
-        <button
-          ref={activeMode === "graph" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "graph" ? "active" : ""}`}
-          onClick={() => handleModeSelect("graph")}
-          title="Interactive Dependency Graph Canvas"
-          data-testid="view-btn-graph"
-        >
-          <span className="btn-icon icon">🕸️</span> <span className="label">Graph</span>
-        </button>
-        <button
-          ref={activeMode === "dashboard" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "dashboard" ? "active" : ""}`}
-          onClick={() => handleModeSelect("dashboard")}
-          title="Project Portfolio & Overview Dashboard"
-          data-testid="view-btn-dashboard"
-        >
-          <span className="btn-icon icon">📊</span> <span className="label">Overview</span>
-        </button>
-        <button
-          ref={activeMode === "matrix" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "matrix" ? "active" : ""}`}
-          onClick={() => handleModeSelect("matrix")}
-          title="Feature Dependency Matrix Lens"
-          data-testid="view-btn-matrix"
-        >
-          <span className="btn-icon icon">🧩</span> <span className="label">Matrix</span>
-        </button>
-        <button
-          ref={activeMode === "heatmap" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "heatmap" ? "active" : ""}`}
-          onClick={() => handleModeSelect("heatmap")}
-          title="Feature Coupling Heatmap Lens"
-          data-testid="view-btn-heatmap"
-        >
-          <span className="btn-icon icon">🌡️</span> <span className="label">Heatmap</span>
-        </button>
-        <button
-          ref={activeMode === "river" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "river" ? "active" : ""}`}
-          onClick={() => handleModeSelect("river")}
-          title="Dependency River / Sankey Macro Flow Lens"
-          data-testid="view-btn-river"
-        >
-          <span className="btn-icon icon">🌊</span> <span className="label">River</span>
-        </button>
-        <button
-          ref={activeMode === "tree" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "tree" ? "active" : ""}`}
-          onClick={() => handleModeSelect("tree")}
-          title="Feature Hierarchy Tree Lens"
-          data-testid="view-btn-tree"
-        >
-          <span className="btn-icon icon">🌳</span> <span className="label">Tree</span>
-        </button>
-        <button
-          ref={activeMode === "treemap" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "treemap" ? "active" : ""}`}
-          onClick={() => handleModeSelect("treemap")}
-          title="Architecture Treemap Spatial Lens"
-          data-testid="view-btn-treemap"
-        >
-          <span className="btn-icon icon">🗺️</span> <span className="label">Treemap</span>
-        </button>
-        <button
-          ref={activeMode === "subway" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "subway" ? "active" : ""}`}
-          onClick={() => handleModeSelect("subway")}
-          title="Feature Subway Routes & Component Transfer Stations"
-          data-testid="view-btn-subway"
-        >
-          <span className="btn-icon icon">🚇</span> <span className="label">Subway</span>
-        </button>
-        <button
-          ref={activeMode === "constellation" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "constellation" ? "active" : ""}`}
-          onClick={() => handleModeSelect("constellation")}
-          title="Dependency Constellation Radial Lens"
-          data-testid="view-btn-constellation"
-        >
-          <span className="btn-icon icon">🌌</span> <span className="label">Constellation</span>
-        </button>
-        <button
-          ref={activeMode === "profile" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "profile" ? "active" : ""}`}
-          onClick={() => handleModeSelect("profile")}
-          title="Component Architecture Profile Lens"
-          data-testid="view-btn-profile"
-        >
-          <span className="btn-icon icon">👤</span> <span className="label">Profile</span>
-        </button>
-        <button
-          ref={activeMode === "radar" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "radar" ? "active" : ""}`}
-          onClick={() => handleModeSelect("radar")}
-          title="Architecture Radar Multi-Dimensional Lens"
-          data-testid="view-btn-radar"
-        >
-          <span className="btn-icon icon">🎯</span> <span className="label">Radar</span>
-        </button>
-        <button
-          ref={activeMode === "dna" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "dna" ? "active" : ""}`}
-          onClick={() => handleModeSelect("dna")}
-          title="Architecture DNA / Barcode Multi-Band Lens"
-          data-testid="view-btn-dna"
-        >
-          <span className="btn-icon icon">🧬</span> <span className="label">DNA</span>
-        </button>
-        <button
-          ref={activeMode === "four-direction" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "four-direction" ? "active" : ""}`}
-          onClick={() => handleModeSelect("four-direction")}
-          title="Four-Direction Cardinal Neighborhood Lens"
-          data-testid="view-btn-four-direction"
-        >
-          <span className="btn-icon icon">🧭</span> <span className="label">Four-Dir</span>
-        </button>
-        <button
-          ref={activeMode === "findings" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "findings" ? "active" : ""}`}
-          onClick={() => handleModeSelect("findings")}
-          title="Architecture Rule Findings"
-          data-testid="view-btn-findings"
-        >
-          <span className="btn-icon icon">📋</span> <span className="label">Findings</span>
-          {findingsCount > 0 && (
-            <span className="findings-count-pill">{findingsCount}</span>
-          )}
-        </button>
-        <button
-          ref={activeMode === "hotspots" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "hotspots" ? "active" : ""}`}
-          onClick={() => handleModeSelect("hotspots")}
-          title="Architectural Hotspots & Refactoring Readiness"
-          data-testid="view-btn-hotspots"
-        >
-          <span className="btn-icon icon">🔥</span> <span className="label">Hotspots</span>
-        </button>
-        <button
-          ref={activeMode === "diagnostics" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "diagnostics" ? "active" : ""}`}
-          onClick={() => handleModeSelect("diagnostics")}
-          title="Circular Dependencies & Unresolved References"
-          data-testid="view-btn-diagnostics"
-        >
-          <span className="btn-icon icon">⚡</span> <span className="label">Diagnostics</span>
-        </button>
-        <button
-          ref={activeMode === "compare" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "compare" ? "active" : ""}`}
-          onClick={() => handleModeSelect("compare")}
-          title="Architecture Snapshot Diff Comparison"
-          data-testid="view-btn-compare"
-        >
-          <span className="btn-icon icon">🔍</span> <span className="label">Compare</span>
-        </button>
-        <button
-          ref={activeMode === "history" ? activeBtnRef : null}
-          className={`view-mode-btn ${activeMode === "history" ? "active" : ""}`}
-          onClick={() => handleModeSelect("history")}
-          title="Project Analysis History & Timeline"
-          data-testid="view-btn-history"
-        >
-          <span className="btn-icon icon">📜</span> <span className="label">History</span>
-        </button>
+        {allModes.map((mode) => {
+          const def = getWorkspaceDefinition(mode);
+          if (!def) return null;
+
+          const isActive = activeMode === mode;
+
+          return (
+            <button
+              key={mode}
+              ref={isActive ? activeBtnRef : null}
+              className={`view-mode-btn ${isActive ? "active" : ""}`}
+              onClick={() => handleModeSelect(mode)}
+              title={def.title}
+              data-testid={`view-btn-${mode}`}
+            >
+              <span className="btn-icon icon">{def.icon}</span>{" "}
+              <span className="label">{def.label}</span>
+              {mode === "findings" && findingsCount > 0 && (
+                <span className="findings-count-pill">{findingsCount}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
