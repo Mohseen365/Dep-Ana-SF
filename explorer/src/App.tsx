@@ -1,39 +1,16 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import React from 'react';
-import { Header } from './components/Header';
 import { SelectionProvider } from './context/SelectionContext';
 import { InvestigationProvider } from './context/InvestigationContext';
-import { WorkspaceRouterProvider } from './context/WorkspaceRouterContext';
-import { ViewModeSwitcher, WorkspaceViewMode } from './components/ViewModeSwitcher';
-import { SubwayPanel } from './components/SubwayPanel';
-import { adaptSubwayMap } from './lib/adapters/subway-adapter';
-import { DependencyConstellationPanel } from './components/DependencyConstellationPanel';
-import { adaptConstellation } from './lib/adapters/constellation-adapter';
+import { WorkspaceRouterProvider, useWorkspaceRouter } from './context/WorkspaceRouterContext';
+import { WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { useProject } from './context/ProjectContext';
 import { useProjectState } from './context/ProjectStateContext';
 import { useExplorerData } from './hooks/useExplorerData';
 import { useGraphSelection } from './hooks/useGraphSelection';
 import { useViewState } from './hooks/useViewState';
-import { GraphView, GraphViewRef } from './components/GraphView';
-import { Sidebar } from './components/Sidebar';
-import { InvestigationDrawer } from './components/InvestigationDrawer';
-import { ProjectDashboard } from './components/ProjectDashboard';
-import { FeatureMatrixPanel } from './components/FeatureMatrixPanel';
-import { CouplingHeatmapPanel } from './components/CouplingHeatmapPanel';
-import { DependencyRiverPanel } from './components/DependencyRiverPanel';
-import { FeatureTreePanel } from './components/FeatureTreePanel';
-import { FeatureProfilePanel } from './components/FeatureProfilePanel';
-import { RadarPanel } from './components/RadarPanel';
-import { ArchitectureDNABarcode } from './components/ArchitectureDNABarcode';
-import { ArchitectureTreemapPanel } from './components/ArchitectureTreemapPanel';
-import { FourDirectionPanel } from './components/FourDirectionPanel';
-import { adaptFourDirectionView } from './lib/adapters/four-direction-adapter';
-import { FindingsPanel } from './components/findings/FindingsPanel';
-import { HotspotPanel } from './components/HotspotPanel';
-import { DiagnosticsPanel } from './components/DiagnosticsPanel';
-import { ComparePanel } from './components/ComparePanel';
-import { AnalysisHistoryPanel } from './components/AnalysisHistoryPanel';
-import { StatusBar } from './components/StatusBar';
+import { GraphViewRef } from './components/GraphView';
+import { WorkspaceShell } from './components/workspace/WorkspaceShell';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
@@ -41,12 +18,9 @@ import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
 import { createEmptyImpactState } from './lib/impact-analysis';
 import { createEmptyFilterState, searchNodes, filterGraphByNodeTypes } from './lib/search-filter';
 import { loadProjectState, saveProjectState } from './lib/projectState';
-import { CommandPalette } from './components/CommandPalette';
 import { useCommandPalette } from './hooks/useCommandPalette';
 import { useCompareState } from './hooks/useCompareState';
-import { RefactorHandoffModal } from './components/RefactorHandoffModal';
 import { buildHandoffPayload, openHandoff, HandoffTarget } from './lib/refactor-handoff';
-import { RefactoringSimulationPanel } from './components/RefactoringSimulationPanel';
 import {
   applySimulationOperations,
   computeStepImpact,
@@ -70,6 +44,9 @@ import {
 } from './types/explorer';
 import './index.css';
 
+// Re-export GraphSlot for compatibility & registry component resolution
+export { GraphSlot } from './components/GraphSlot';
+
 function useProjectSafe() {
   try {
     return useProject();
@@ -86,70 +63,7 @@ function useProjectStateSafe() {
   }
 }
 
-/**
- * GraphSlot renders the main interactive Cytoscape graph canvas.
- */
-export function GraphSlot(props: {
-  nodes: ExplorerNode[];
-  edges: ExplorerEdge[];
-  selectedNodeId: string | null;
-  selectedEdgeId: string | null;
-  onSelectNode: (node: ExplorerNode | null) => void;
-  onSelectEdge: (edgeId: string) => void;
-  impactResult?: any;
-  selectedCycleNodeIds?: string[] | null;
-  findings?: ArchitectureFinding[];
-  selectedFinding?: ArchitectureFinding | null;
-  isFullscreen?: boolean;
-  onToggleFullscreen?: () => void;
-  graphRef?: React.RefObject<GraphViewRef>;
-  focusedNodeId?: string | null;
-  focusState?: any;
-  onFocusChange?: (focusState: any) => void;
-  nodePositions?: Record<string, { x: number; y: number }>;
-  onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>, provenance?: string) => void;
-  layoutMode?: 'static' | 'interactive';
-  onLayoutModeChange?: (mode: 'static' | 'interactive') => void;
-  architectureMode?: ArchitectureLayoutMode;
-  onArchitectureModeChange?: (mode: ArchitectureLayoutMode) => void;
-  simulatedNodeIds?: string[];
-  simulatedRemovedNodeIds?: string[];
-  simulatedEdgeIds?: string[];
-}) {
-  return (
-    <div className="graph-container" data-slot="graph" style={{ width: '100%', height: '100%', position: 'relative' }}>
-      <GraphView
-        ref={props.graphRef}
-        nodes={props.nodes}
-        edges={props.edges}
-        selectedNodeId={props.selectedNodeId}
-        selectedEdgeId={props.selectedEdgeId}
-        onSelectNode={props.onSelectNode}
-        onSelectEdge={props.onSelectEdge}
-        impactResult={props.impactResult}
-        selectedCycleNodeIds={props.selectedCycleNodeIds}
-        findings={props.findings}
-        selectedFinding={props.selectedFinding}
-        isFullscreen={props.isFullscreen}
-        onToggleFullscreen={props.onToggleFullscreen}
-        focusedNodeId={props.focusedNodeId}
-        focusState={props.focusState}
-        onFocusChange={props.onFocusChange}
-        nodePositions={props.nodePositions}
-        onNodePositionsChange={props.onNodePositionsChange}
-        layoutMode={props.layoutMode}
-        onLayoutModeChange={props.onLayoutModeChange}
-        architectureMode={props.architectureMode}
-        onArchitectureModeChange={props.onArchitectureModeChange}
-        simulatedNodeIds={props.simulatedNodeIds}
-        simulatedRemovedNodeIds={props.simulatedRemovedNodeIds}
-        simulatedEdgeIds={props.simulatedEdgeIds}
-      />
-    </div>
-  );
-}
-
-function NotAnalyzedScreen({
+export function NotAnalyzedScreen({
   project,
 }: {
   project?: { name: string; id: string; sourcePath?: string } | null;
@@ -273,6 +187,7 @@ function ErrorScreen({ error, onRetry }: { error: Error | null; onRetry: () => v
 }
 
 function AppContent() {
+  const router = useWorkspaceRouter();
   const projectContext = useProjectSafe();
   const projectStateContext = useProjectStateSafe();
 
@@ -303,9 +218,6 @@ function AppContent() {
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
   const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
   const [diagnosticsTab, setDiagnosticsTab] = useState<'cycles' | 'unresolved' | 'none'>('cycles');
-
-  // Active workspace view mode
-  const [workspaceViewMode, setWorkspaceViewMode] = useState<WorkspaceViewMode>('graph');
 
   // Constellation lens transient options state
   const [constellationOptions, setConstellationOptions] = useState<{
@@ -491,9 +403,8 @@ function AppContent() {
     const proposal = createProposalFromTargetNodes([nodeId], activeData, activeProjectId);
     setActiveSimulationProposal(proposal);
     setSimulationStepIndex(0);
-    setWorkspaceViewMode('graph');
-  }, [activeData, activeProjectId]);
-
+    router.navigateToView('graph');
+  }, [activeData, activeProjectId, router]);
 
   // Sync compare focused entity selection
   useEffect(() => {
@@ -504,7 +415,7 @@ function AppContent() {
         selection.selectEdge(compareState.focusedEntityId);
       }
     }
-  }, [compareState.focusedEntityId, activeData]);
+  }, [compareState.focusedEntityId, activeData, selection]);
 
   // Sync drill path and recent items
   useEffect(() => {
@@ -552,8 +463,6 @@ function AppContent() {
       if (selection.selectedNodeId !== targetId) {
         selection.selectNode(targetId);
       }
-    } else if (selection.selectedNodeId) {
-      selection.selectNode(null);
     }
   }, [activeData, (view as any).selectedNodeId, view.urlNodeId]);
 
@@ -743,591 +652,69 @@ function AppContent() {
     setSimulationStepIndex(0);
   };
 
-  const hasDrawerContent = selectedNode !== null;
-  const isDrawerOpen = hasDrawerContent && (view.isInvestigating || isPinned);
-
   if (loading) return <LoadingScreen />;
   if (error && !isNotAnalyzed) return <ErrorScreen error={error} onRetry={retry} />;
 
   return (
     <SelectionProvider value={selection}>
-      <div
-        className="app-layout"
-        data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
-        data-drawer={isDrawerOpen ? 'open' : 'closed'}
-        style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}
-      >
-        {/* Top Header */}
-        <Header
-          onResetView={handleResetView}
-          onToggleCompare={() =>
-            setWorkspaceViewMode((prev) => (prev === 'compare' ? 'graph' : 'compare'))
-          }
-          isCompareOpen={workspaceViewMode === 'compare'}
-          onOpenCommandPalette={() => palette.open()}
-          onOpenPanel={(panelId) => setWorkspaceViewMode(panelId as WorkspaceViewMode)}
-        />
-
-        {/* Main Body Container */}
-        <div
-          className="app-body-container"
-          data-sidebar={isSidebarCollapsed ? 'closed' : 'open'}
-          data-drawer={isDrawerOpen ? 'open' : 'closed'}
-          style={{ display: 'flex', flex: 1, width: '100%', minHeight: 0, overflow: 'hidden', position: 'relative' }}
-        >
-          {/* Collapsible Left Sidebar Slot */}
-          {!isSidebarCollapsed && (
-            <div
-              className="sidebar-slot"
-              style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
-            >
-              <Sidebar
-                nodes={activeData?.nodes ?? []}
-                displayNodes={displayNodes}
-                filterState={view.filterState}
-                selectedNodeId={selection.selectedNodeId}
-                collapsed={isSidebarCollapsed}
-                onToggleCollapse={() => setIsSidebarCollapsed(true)}
-                onFilterChange={view.setFilterState}
-                onSelectNode={(node) => {
-                  selection.selectNode(node.id);
-                  view.setIsInvestigating(true);
-                }}
-              />
-            </div>
-          )}
-
-          {/* Center Workspace */}
-          <div className="workspace-center-pane" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minWidth: 0, overflow: 'hidden', position: 'relative' }}>
-            {/* View Mode Switcher Action Bar */}
-            <div className="app-workspace-bar" style={{ background: 'var(--surface-panel, #111827)', borderBottom: '1px solid var(--border-default, #334155)', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-              <ViewModeSwitcher
-                viewMode={workspaceViewMode}
-                onChangeViewMode={setWorkspaceViewMode}
-                findingsCount={findings.length}
-              />
-              {isSidebarCollapsed && (
-                <button
-                  className="ui-btn ui-btn-secondary ui-btn-sm"
-                  onClick={() => setIsSidebarCollapsed(false)}
-                  title="Expand Component Inventory Sidebar"
-                  data-testid="expand-sidebar-btn"
-                >
-                  ▶ Component Sidebar
-                </button>
-              )}
-            </div>
-
-            {/* Active View Container */}
-            <main className="graph-pane" style={{ flex: 1, position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
-              {workspaceViewMode === 'graph' && (
-                isNotAnalyzed || !activeData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <GraphSlot
-                    graphRef={graphRef}
-                    nodes={simulatedGraph.nodes}
-                    edges={simulatedGraph.edges}
-                    selectedNodeId={selection.selectedNodeId}
-                    selectedEdgeId={selection.selectedEdgeId}
-                    onSelectNode={(node) => {
-                      selection.selectNode(node ? node.id : null);
-                      if (node) {
-                        view.setIsInvestigating(true);
-                      }
-                    }}
-                    onSelectEdge={(edgeId) => selection.selectEdge(edgeId)}
-                    selectedCycleNodeIds={highlightedCycleNodeIds}
-                    findings={findings}
-                    selectedFinding={selectedFinding}
-                    focusedNodeId={
-                      isDrawerOpen && drillPath.length > 1
-                        ? drillPath[drillPath.length - 1]
-                        : null
-                    }
-                    focusState={effectiveFocusState}
-                    onFocusChange={view.setFocusState}
-                    nodePositions={effectivePositions}
-                    onNodePositionsChange={(positions, provenance) => projectStateContext?.updateGraphLayout({ nodePositions: positions, ...(provenance ? { layoutProvenance: provenance as any } : {}) })}
-                    layoutMode={layoutMode}
-                    onLayoutModeChange={(mode) => projectStateContext?.updateGraphLayout({ mode })}
-                    architectureMode={architectureMode}
-                    onArchitectureModeChange={(mode) => projectStateContext?.updateGraphLayout({ architectureMode: mode })}
-                    simulatedNodeIds={simulatedAddedNodeIds}
-                    simulatedRemovedNodeIds={simulatedRemovedNodeIds}
-                    simulatedEdgeIds={simulatedEdgeIds}
-                  />
-                )
-              )}
-
-              {activeSimulationProposal && stepImpact && (
-                <RefactoringSimulationPanel
-                  proposal={activeSimulationProposal}
-                  currentStepIndex={simulationStepIndex}
-                  stepImpact={stepImpact}
-                  onStepChange={setSimulationStepIndex}
-                  onCancel={() => setActiveSimulationProposal(null)}
-                  onCommit={handleCommitSimulation}
-                />
-              )}
-
-              {workspaceViewMode === 'dashboard' && (
-                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                  <ProjectDashboard
-                    project={activeData?.project ?? activeProject}
-                    data={activeData}
-                    findings={findings}
-                    onExploreGraph={() => setWorkspaceViewMode('graph')}
-                    onViewFindings={() => setWorkspaceViewMode('findings')}
-                    onViewHistory={() => setWorkspaceViewMode('history')}
-                  />
-                </div>
-              )}
-
-              {workspaceViewMode === 'matrix' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <FeatureMatrixPanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                      onSelectFeatureAnchor={(anchorNodeId) => {
-                        selection.selectNode(anchorNodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'constellation' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <DependencyConstellationPanel
-                      data={adaptConstellation(visibleActiveData, {
-                        focalNodeId: constellationOptions.focalNodeId || selection.selectedNodeId,
-                        maxDepth: constellationOptions.maxDepth,
-                        direction: constellationOptions.direction,
-                      })}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                      }}
-                      onOptionChange={(opts) => {
-                        setConstellationOptions((prev) => ({ ...prev, ...opts }));
-                      }}
-                      onReturnToGraph={() => {
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'treemap' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <ArchitectureTreemapPanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectComponent={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                      }}
-                      onExploreInGraph={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'subway' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <SubwayPanel
-                      data={adaptSubwayMap(visibleActiveData, {
-                        selectedStationId: selection.selectedNodeId,
-                      })}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                      }}
-                      onExploreInGraph={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'four-direction' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <FourDirectionPanel
-                      data={adaptFourDirectionView(visibleActiveData, {
-                        selectedNodeId: selection.selectedNodeId,
-                      })}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                      }}
-                      onReturnToGraph={() => {
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'heatmap' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <CouplingHeatmapPanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                      onSelectFeatureAnchor={(anchorNodeId) => {
-                        selection.selectNode(anchorNodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'river' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <DependencyRiverPanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                      onReturnToGraph={() => {
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'dna' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <ArchitectureDNABarcode
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'profile' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <FeatureProfilePanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'radar' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <RadarPanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'tree' && (
-                isNotAnalyzed || !visibleActiveData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <FeatureTreePanel
-                      data={visibleActiveData}
-                      selectedNodeId={selection.selectedNodeId}
-                      onSelectNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'findings' && (
-                isNotAnalyzed || !activeData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <FindingsPanel
-                      findings={findings}
-                      selectedFindingId={selectedFinding?.id ?? null}
-                      onSelectFinding={handleSelectFinding}
-                      onClearSelection={handleClearFinding}
-                      onInvestigateNode={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                      }}
-                      onExploreInGraph={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'hotspots' && (
-                isNotAnalyzed || !activeData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <HotspotPanel
-                      nodes={activeData?.nodes ?? []}
-                      cycles={activeData?.cycles ?? []}
-                      impactSummaries={activeData?.impactSummaries ?? {}}
-                      onSelectHotspot={(node) => {
-                        selection.selectNode(node.id);
-                        view.setIsInvestigating(true);
-                      }}
-                      onExploreInGraph={(nodeId) => {
-                        selection.selectNode(nodeId);
-                        view.setIsInvestigating(true);
-                        setWorkspaceViewMode('graph');
-                      }}
-                      selectedNodeId={selection.selectedNodeId}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'diagnostics' && (
-                isNotAnalyzed || !activeData ? (
-                  <NotAnalyzedScreen project={activeProject} />
-                ) : (
-                  <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                    <DiagnosticsPanel
-                      cycles={activeData?.cycles ?? []}
-                      unresolvedReferences={activeData?.unresolvedReferences ?? []}
-                      nodes={activeData?.nodes ?? []}
-                      activeTab={diagnosticsTab}
-                      selectedCycleId={selectedCycleId}
-                      selectedUnresolvedEdgeId={selection.selectedEdgeId}
-                      onSelectCycle={(cycle) => {
-                        setSelectedCycleId(cycle ? cycle.id : null);
-                        if (cycle && cycle.nodes.length > 0) {
-                          selection.selectNode(cycle.nodes[0]);
-                        }
-                      }}
-                      onSelectUnresolved={(ref) => {
-                        if (ref) {
-                          selection.selectEdge(ref.edgeId);
-                          selection.selectNode(ref.sourceNodeId);
-                        } else {
-                          selection.clear();
-                        }
-                      }}
-                      onTabChange={(tab) => setDiagnosticsTab(tab)}
-                    />
-                  </div>
-                )
-              )}
-
-              {workspaceViewMode === 'compare' && (
-                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                  <ComparePanel
-                    compareState={compareState}
-                    onClose={() => setWorkspaceViewMode('graph')}
-                  />
-                </div>
-              )}
-
-              {workspaceViewMode === 'history' && (
-                <div style={{ height: '100%', overflowY: 'auto', padding: '16px' }}>
-                  <AnalysisHistoryPanel
-                    projectId={activeProjectId}
-                    projectMeta={activeData?.project ?? activeProject}
-                    currentData={activeData}
-                    compareState={compareState}
-                    onCompareSnapshots={(snapA, snapB) => {
-                      if (snapA.rawSchemaJson) compareState.setBeforeRaw(snapA.rawSchemaJson);
-                      if (snapB.rawSchemaJson) compareState.setAfterRaw(snapB.rawSchemaJson);
-                      compareState.runCompare();
-                      setWorkspaceViewMode('compare');
-                    }}
-                  />
-                </div>
-              )}
-            </main>
-          </div>
-
-          {/* Collapsible Right Inspector Drawer Slot */}
-          {isDrawerOpen && (
-            <div
-              className="drawer-slot"
-              style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
-            >
-              <InvestigationDrawer
-                node={selectedNode}
-                open={isDrawerOpen}
-                onClose={() => {
-                  view.setIsInvestigating(false);
-                  if (isPinned) setIsPinned(false);
-                }}
-                onDrill={handleDrill}
-                data={activeData}
-                findings={findings}
-                drillPath={drillPath}
-                onNavigateBreadcrumb={handleNavigateBreadcrumb}
-                recentNodeIds={recentNodeIds}
-                onSelectRecentNode={handleSelectRecentNode}
-                onRequestHandoff={handleRequestHandoff}
-                onSimulateRefactoring={handleStartSimulationForNode}
-                isPinned={isPinned}
-                onTogglePin={handleTogglePin}
-                isDetached={isDetached}
-                onDetach={handleDetach}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Status Indicator Bar */}
-        <StatusBar
-          totalNodes={activeData?.summary?.nodeCount ?? activeData?.nodes?.length ?? 0}
-          totalEdges={activeData?.summary?.edgeCount ?? activeData?.edges?.length ?? 0}
-          visibleNodes={simulatedGraph.nodes.length}
-          selectedNodeName={selectedNode?.displayName ?? null}
-          activeFilterCount={view.filterState.searchQuery ? 1 : 0}
-          cycleCount={activeData?.summary?.cycleCount ?? activeData?.cycles?.length ?? 0}
-          unresolvedCount={activeData?.summary?.unresolvedCount ?? activeData?.unresolvedReferences?.length ?? 0}
-        />
-
-        {/* Command Palette Modal */}
-        <CommandPalette
-          isOpen={palette.isOpen}
-          onClose={palette.close}
-          nodes={activeData?.nodes ?? []}
-          query={palette.query}
-          onQueryChange={palette.setQuery}
-          data={activeData}
-          selectedNodeId={selection.selectedNodeId}
-          isInvestigating={view.isInvestigating}
-          findings={findings}
-          selectedFindingId={selectedFinding?.id ?? null}
-          onSelectFinding={(f) => {
-            handleSelectFinding(f);
-            palette.close();
-          }}
-          onClearFinding={handleClearFinding}
-          compareState={compareState}
-          activeRiskFilter={view.filterState.riskFilter}
-          onRiskFilterChange={(risk) => view.setFilterState({ ...view.filterState, riskFilter: risk })}
-          onSelectNode={(nodeId) => {
-            selection.selectNode(nodeId);
-            view.setIsInvestigating(true);
-            palette.close();
-          }}
-          onApplyFocus={() => {
-            if (selection.selectedNodeId) {
-              view.setFocusState({
-                enabled: true,
-                focusNodeId: selection.selectedNodeId,
-                depth: 1,
-                direction: 'both',
-              });
-            }
-            palette.close();
-          }}
-          onShowImpact={() => {
-            if (selection.selectedNodeId) {
-              view.setImpactState({ enabled: true, originNodeId: selection.selectedNodeId, depth: 'ALL' });
-            }
-            palette.close();
-          }}
-          onToggleViewMode={() => {
-            setWorkspaceViewMode((prev) => (prev === 'graph' ? 'findings' : 'graph'));
-            palette.close();
-          }}
-          onRequestHandoff={handleRequestHandoff}
-        />
-
-        <RefactorHandoffModal
-          target={handoffTarget}
-          onConfirm={() => {
-            if (handoffTarget) openHandoff(handoffTarget);
-            setHandoffTarget(null);
-          }}
-          onSimulate={(target) => {
-            handleStartSimulationForNode(target.nodeId);
-          }}
-          onCancel={() => setHandoffTarget(null)}
-        />
-      </div>
+      <WorkspaceShell
+        activeProjectId={activeProjectId}
+        activeProject={activeProject}
+        activeData={activeData}
+        visibleActiveData={visibleActiveData}
+        simulatedGraph={simulatedGraph}
+        displayNodes={displayNodes}
+        selection={selection}
+        view={view}
+        compareState={compareState}
+        palette={palette}
+        projectStateContext={projectStateContext}
+        findings={findings}
+        selectedFinding={selectedFinding}
+        highlightedCycleNodeIds={highlightedCycleNodeIds}
+        effectiveFocusState={effectiveFocusState}
+        effectivePositions={effectivePositions}
+        layoutMode={layoutMode}
+        architectureMode={architectureMode}
+        simulatedAddedNodeIds={simulatedAddedNodeIds}
+        simulatedRemovedNodeIds={simulatedRemovedNodeIds}
+        simulatedEdgeIds={simulatedEdgeIds}
+        graphRef={graphRef}
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+        isPinned={isPinned}
+        handleTogglePin={handleTogglePin}
+        isDetached={isDetached}
+        handleDetach={handleDetach}
+        selectedNode={selectedNode}
+        drillPath={drillPath}
+        handleDrill={handleDrill}
+        handleNavigateBreadcrumb={handleNavigateBreadcrumb}
+        recentNodeIds={recentNodeIds}
+        handleSelectRecentNode={handleSelectRecentNode}
+        handleRequestHandoff={handleRequestHandoff}
+        handleStartSimulationForNode={handleStartSimulationForNode}
+        constellationOptions={constellationOptions}
+        setConstellationOptions={setConstellationOptions}
+        activeSimulationProposal={activeSimulationProposal}
+        simulationStepIndex={simulationStepIndex}
+        stepImpact={stepImpact}
+        setSimulationStepIndex={setSimulationStepIndex}
+        setActiveSimulationProposal={setActiveSimulationProposal}
+        handleCommitSimulation={handleCommitSimulation}
+        handleResetView={handleResetView}
+        handleSelectFinding={handleSelectFinding}
+        handleClearFinding={handleClearFinding}
+        diagnosticsTab={diagnosticsTab}
+        selectedCycleId={selectedCycleId}
+        setSelectedCycleId={setSelectedCycleId}
+        setDiagnosticsTab={setDiagnosticsTab}
+        isNotAnalyzed={isNotAnalyzed}
+        handoffTarget={handoffTarget}
+        setHandoffTarget={setHandoffTarget}
+        openHandoff={openHandoff}
+        NotAnalyzedScreen={NotAnalyzedScreen}
+      />
     </SelectionProvider>
   );
 }
