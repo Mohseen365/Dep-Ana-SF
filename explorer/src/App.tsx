@@ -258,18 +258,15 @@ function AppContent() {
       setActiveSimulationProposal(null);
       setSimulationStepIndex(0);
       selection.clear();
+      investigation.resetInvestigationContext();
       setSelectedFinding(null);
       setHighlightedImpactNodeIds(null);
       setSelectedCycleId(null);
       view.setIsInvestigating(false);
-      view.setFocusState(createEmptyFocusState());
-      view.setImpactState(createEmptyImpactState());
       view.setFilterState({
         ...createEmptyFilterState(),
         visibleNodeTypes: projState.filters?.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES,
       });
-      (view as any).setSelectedNodeId?.(null);
-      (view as any).setSelectedFindingId?.(null);
     };
 
     window.addEventListener('explorer:project-changed', handleProjectChanged as EventListener);
@@ -404,7 +401,7 @@ function AppContent() {
   // Sync node selection from view state
   useEffect(() => {
     if (!activeData) return;
-    const urlNode = (view as any).selectedNodeId || view.urlNodeId;
+    const urlNode = view.selectedNodeId || view.urlNodeId;
     if (urlNode) {
       const matchedNode = activeData.nodes.find(
         (n: any) => n.id === urlNode || n.name === urlNode || n.displayName === urlNode
@@ -414,7 +411,7 @@ function AppContent() {
         selection.selectNode(targetId);
       }
     }
-  }, [activeData, (view as any).selectedNodeId, view.urlNodeId]);
+  }, [activeData, view.selectedNodeId, view.urlNodeId, selection]);
 
   // Derive effective focus state
   const effectiveFocusState = useMemo(() => ({
@@ -537,11 +534,8 @@ function AppContent() {
 
   const handleResetView = () => {
     selection.clear();
+    investigation.resetInvestigationContext();
     view.setFilterState(createEmptyFilterState());
-    view.setFocusState(createEmptyFocusState());
-    view.setImpactState(createEmptyImpactState());
-    (view as any).setSelectedNodeId?.(null);
-    (view as any).setSelectedFindingId?.(null);
     setSelectedFinding(null);
     setHighlightedImpactNodeIds(null);
     setActiveSimulationProposal(null);
@@ -552,16 +546,16 @@ function AppContent() {
 
   const handleSelectFinding = (finding: ArchitectureFinding) => {
     setSelectedFinding(finding);
-    (view as any).setSelectedFindingId?.(finding.id);
+    view.setSelectedFindingId(finding.id);
     if (finding.nodeIds && finding.nodeIds.length > 0) {
       selection.selectNode(finding.nodeIds[0]);
-      (view as any).setSelectedNodeId?.(finding.nodeIds[0]);
+      view.setSelectedNodeId(finding.nodeIds[0]);
     }
   };
 
   const handleClearFinding = () => {
     setSelectedFinding(null);
-    (view as any).setSelectedFindingId?.(null);
+    view.setSelectedFindingId(null);
   };
 
   const handleDrill = (targetId: string) => {

@@ -3,6 +3,7 @@ import { SearchFilterState, createEmptyFilterState } from '../lib/search-filter'
 import { FocusState, createEmptyFocusState } from '../lib/focus-graph';
 import { ImpactState, createEmptyImpactState } from '../lib/impact-analysis';
 import { useWorkspaceRouter } from '../context/WorkspaceRouterContext';
+import { useInvestigation } from '../context/InvestigationContext';
 import { WorkspaceViewMode } from '../lib/projectState';
 import {
   filterQuery,
@@ -22,38 +23,171 @@ function useWorkspaceRouterSafe() {
   }
 }
 
+function useInvestigationSafe() {
+  try {
+    return useInvestigation();
+  } catch (_) {
+    return null;
+  }
+}
+
 export function useViewState() {
   const router = useWorkspaceRouterSafe();
+  const investigation = useInvestigationSafe();
+
+  const routerRef = useRef(router);
+  routerRef.current = router;
+
+  const investigationRef = useRef(investigation);
+  investigationRef.current = investigation;
+
   const [localViewMode, setLocalViewMode] = useState<WorkspaceViewMode>('graph');
 
   const activeViewMode: WorkspaceViewMode = router ? router.activeViewMode : localViewMode;
 
   const setViewMode = useCallback(
     (mode: WorkspaceViewMode) => {
-      if (router) {
-        router.setViewMode(mode);
+      if (routerRef.current) {
+        routerRef.current.setViewMode(mode);
       } else {
         setLocalViewMode(mode);
       }
     },
-    [router]
+    []
   );
+
+  // Local state fallbacks for standalone hook usage without InvestigationContext
   const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState);
-  const [focusState, setFocusState] = useState<FocusState>(createEmptyFocusState);
-  const [impactState, setImpactState] = useState<ImpactState>(createEmptyImpactState);
-  const [connectionState, setConnectionState] = useState<ConnectionQueryState>({
+  const [localFocusState, setLocalFocusState] = useState<FocusState>(createEmptyFocusState);
+  const [localImpactState, setLocalImpactState] = useState<ImpactState>(createEmptyImpactState);
+  const [localConnectionState, setLocalConnectionState] = useState<ConnectionQueryState>({
     direction: 'both',
     depth: 2,
   });
   const [diagnosticsTab, setDiagnosticsTab] = useState<'cycles' | 'unresolved' | 'none'>('none');
-  const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
-  const [selectedUnresolvedEdgeId, setSelectedUnresolvedEdgeId] = useState<string | null>(null);
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [selectedFindingId, setSelectedFindingId] = useState<string | null>(null);
+  const [localSelectedCycleId, setLocalSelectedCycleId] = useState<string | null>(null);
+  const [localSelectedUnresolvedEdgeId, setLocalSelectedUnresolvedEdgeId] = useState<string | null>(null);
+  const [localSelectedNodeId, setLocalSelectedNodeId] = useState<string | null>(null);
+  const [localSelectedFindingId, setLocalSelectedFindingId] = useState<string | null>(null);
   const [selectedInvestigationId, setSelectedInvestigationId] = useState<string | null>(null);
   const [isInvestigating, setIsInvestigating] = useState<boolean>(false);
   const [urlNodeId, setUrlNodeId] = useState<string | null>(null);
   const [urlEdgeId, setUrlEdgeId] = useState<string | null>(null);
+
+  // Canonical investigation state derived directly from InvestigationContext when present
+  const selectedNodeId = investigation ? investigation.state.selectedNodeId : localSelectedNodeId;
+  const selectedFindingId = investigation ? investigation.state.selectedFindingId : localSelectedFindingId;
+  const selectedCycleId = investigation ? investigation.state.selectedCycleId : localSelectedCycleId;
+  const selectedUnresolvedEdgeId = investigation ? investigation.state.selectedUnresolvedEdgeId : localSelectedUnresolvedEdgeId;
+  const focusState = investigation ? investigation.state.focusState : localFocusState;
+  const impactState = investigation ? investigation.state.impactState : localImpactState;
+  const connectionState = investigation ? investigation.state.connectionState : localConnectionState;
+
+  const setSelectedNodeId = useCallback(
+    (nodeId: string | null) => {
+      if (investigationRef.current) {
+        investigationRef.current.selectNode(nodeId);
+      } else {
+        setLocalSelectedNodeId(nodeId);
+      }
+    },
+    []
+  );
+
+  const setSelectedFindingId = useCallback(
+    (findingId: string | null, associatedNodeId?: string | null) => {
+      if (investigationRef.current) {
+        investigationRef.current.selectFinding(findingId, associatedNodeId);
+      } else {
+        setLocalSelectedFindingId(findingId);
+        if (associatedNodeId) setLocalSelectedNodeId(associatedNodeId);
+      }
+    },
+    []
+  );
+
+  const setSelectedCycleId = useCallback(
+    (cycleId: string | null, associatedNodeId?: string | null) => {
+      if (investigationRef.current) {
+        investigationRef.current.selectCycle(cycleId, associatedNodeId);
+      } else {
+        setLocalSelectedCycleId(cycleId);
+        if (associatedNodeId) setLocalSelectedNodeId(associatedNodeId);
+      }
+    },
+    []
+  );
+
+  const setSelectedUnresolvedEdgeId = useCallback(
+    (edgeId: string | null, associatedNodeId?: string | null) => {
+      if (investigationRef.current) {
+        investigationRef.current.selectUnresolvedEdge(edgeId, associatedNodeId);
+      } else {
+        setLocalSelectedUnresolvedEdgeId(edgeId);
+        if (associatedNodeId) setLocalSelectedNodeId(associatedNodeId);
+      }
+    },
+    []
+  );
+
+  const setFocusState = useCallback(
+    (focus: Partial<FocusState> | ((prev: FocusState) => FocusState)) => {
+      if (investigationRef.current) {
+        if (typeof focus === 'function') {
+          const next = focus(investigationRef.current.state.focusState);
+          if (next.enabled === false) {
+            investigationRef.current.clearFocus();
+          } else {
+            investigationRef.current.setFocus(next);
+          }
+        } else if (focus.enabled === false) {
+          investigationRef.current.clearFocus();
+        } else {
+          investigationRef.current.setFocus(focus);
+        }
+      } else {
+        setLocalFocusState((prev) => (typeof focus === 'function' ? focus(prev) : { ...prev, ...focus }));
+      }
+    },
+    []
+  );
+
+  const setImpactState = useCallback(
+    (impact: Partial<ImpactState> | ((prev: ImpactState) => ImpactState)) => {
+      if (investigationRef.current) {
+        if (typeof impact === 'function') {
+          const next = impact(investigationRef.current.state.impactState);
+          if (next.enabled === false) {
+            investigationRef.current.clearImpact();
+          } else {
+            investigationRef.current.setImpact(next);
+          }
+        } else if (impact.enabled === false) {
+          investigationRef.current.clearImpact();
+        } else {
+          investigationRef.current.setImpact(impact);
+        }
+      } else {
+        setLocalImpactState((prev) => (typeof impact === 'function' ? impact(prev) : { ...prev, ...impact }));
+      }
+    },
+    []
+  );
+
+  const setConnectionState = useCallback(
+    (conn: Partial<ConnectionQueryState> | ((prev: ConnectionQueryState) => ConnectionQueryState)) => {
+      if (investigationRef.current) {
+        if (typeof conn === 'function') {
+          investigationRef.current.setConnection(conn(investigationRef.current.state.connectionState));
+        } else {
+          investigationRef.current.setConnection(conn);
+        }
+      } else {
+        setLocalConnectionState((prev) => (typeof conn === 'function' ? conn(prev) : { ...prev, ...conn }));
+      }
+    },
+    []
+  );
 
   const isInitialMountRef = useRef(true);
   const prevViewModeRef = useRef<WorkspaceViewMode>(activeViewMode);
@@ -65,10 +199,18 @@ export function useViewState() {
     const initialNode = params.get('node') || params.get('component');
     if (initialNode) {
       setUrlNodeId(initialNode);
-      setSelectedNodeId(initialNode);
+      if (investigationRef.current) {
+        investigationRef.current.selectNode(initialNode);
+      } else {
+        setLocalSelectedNodeId(initialNode);
+      }
     } else {
       setUrlNodeId(null);
-      setSelectedNodeId(null);
+      if (investigationRef.current) {
+        investigationRef.current.selectNode(null);
+      } else {
+        setLocalSelectedNodeId(null);
+      }
     }
 
     const initialEdge = params.get('edge');
@@ -79,27 +221,59 @@ export function useViewState() {
     }
 
     const filterParsed = filterQuery.fromQuery(params);
-    if (router) {
-      router.setViewMode(filterParsed.viewMode);
+    if (routerRef.current) {
+      routerRef.current.setViewMode(filterParsed.viewMode);
     } else {
       setLocalViewMode(filterParsed.viewMode);
     }
     setFilterState(filterParsed.filterState);
 
     const focusParsed = focusQuery.fromQuery(params, initialNode);
-    setFocusState(focusParsed);
+    if (investigationRef.current) {
+      if (focusParsed.enabled) {
+        investigationRef.current.setFocus(focusParsed);
+      } else {
+        investigationRef.current.clearFocus();
+      }
+    } else {
+      setLocalFocusState(focusParsed);
+    }
 
     const impactParsed = impactQuery.fromQuery(params, initialNode);
-    setImpactState(impactParsed);
+    if (investigationRef.current) {
+      if (impactParsed.enabled) {
+        investigationRef.current.setImpact(impactParsed);
+      } else {
+        investigationRef.current.clearImpact();
+      }
+    } else {
+      setLocalImpactState(impactParsed);
+    }
 
     const connParsed = connectionQuery.fromQuery(params);
-    setConnectionState(connParsed);
+    if (investigationRef.current) {
+      investigationRef.current.setConnection(connParsed);
+    } else {
+      setLocalConnectionState(connParsed);
+    }
 
     const findingsParsed = findingsQuery.fromQuery(params);
     setDiagnosticsTab(findingsParsed.diagnosticsTab);
-    setSelectedCycleId(findingsParsed.selectedCycleId);
-    setSelectedUnresolvedEdgeId(findingsParsed.selectedUnresolvedEdgeId);
-    setSelectedFindingId(findingsParsed.selectedFindingId);
+    if (investigationRef.current) {
+      if (findingsParsed.selectedCycleId) {
+        investigationRef.current.selectCycle(findingsParsed.selectedCycleId);
+      }
+      if (findingsParsed.selectedUnresolvedEdgeId) {
+        investigationRef.current.selectUnresolvedEdge(findingsParsed.selectedUnresolvedEdgeId);
+      }
+      if (findingsParsed.selectedFindingId) {
+        investigationRef.current.selectFinding(findingsParsed.selectedFindingId);
+      }
+    } else {
+      setLocalSelectedCycleId(findingsParsed.selectedCycleId);
+      setLocalSelectedUnresolvedEdgeId(findingsParsed.selectedUnresolvedEdgeId);
+      setLocalSelectedFindingId(findingsParsed.selectedFindingId);
+    }
 
     const invParsed = investigationQuery.fromQuery(params);
     setSelectedInvestigationId(invParsed.selectedInvestigationId);
@@ -107,7 +281,7 @@ export function useViewState() {
     setIsInvestigating(params.get('investigate') === 'true');
   }, []);
 
-  // Read initial values from URL on mount
+  // Read initial values from URL on mount and popstate
   useEffect(() => {
     readStateFromUrl();
 
@@ -126,18 +300,22 @@ export function useViewState() {
     if (typeof window === 'undefined') return;
 
     const handleProjectChanged = () => {
-      setSelectedNodeId(null);
-      setSelectedFindingId(null);
-      setSelectedCycleId(null);
-      setSelectedUnresolvedEdgeId(null);
+      if (investigationRef.current) {
+        investigationRef.current.resetInvestigationContext();
+      } else {
+        setLocalSelectedNodeId(null);
+        setLocalSelectedFindingId(null);
+        setLocalSelectedCycleId(null);
+        setLocalSelectedUnresolvedEdgeId(null);
+        setLocalFocusState(createEmptyFocusState());
+        setLocalImpactState(createEmptyImpactState());
+        setLocalConnectionState({ direction: 'both', depth: 2 });
+      }
       setSelectedInvestigationId(null);
       setIsInvestigating(false);
       setUrlNodeId(null);
       setUrlEdgeId(null);
       setFilterState(createEmptyFilterState());
-      setFocusState(createEmptyFocusState());
-      setImpactState(createEmptyImpactState());
-      setConnectionState({ direction: 'both', depth: 2 });
       setDiagnosticsTab('none');
     };
 

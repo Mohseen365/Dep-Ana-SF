@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useEffect, ReactNode } from 'react';
 import { FocusState, createEmptyFocusState } from '../lib/focus-graph';
 import { ImpactState, createEmptyImpactState } from '../lib/impact-analysis';
 import { ConnectionQueryState } from '../lib/url';
@@ -426,6 +426,17 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
 
   const [state, dispatch] = useReducer(investigationReducer, mergedInitialState);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleProjectChanged = () => {
+      dispatch({ type: 'RESET_INVESTIGATION_CONTEXT' });
+    };
+    window.addEventListener('explorer:project-changed', handleProjectChanged);
+    return () => {
+      window.removeEventListener('explorer:project-changed', handleProjectChanged);
+    };
+  }, []);
+
   const selectNode = useCallback((nodeId: string | null) => {
     dispatch({ type: 'SELECT_NODE', payload: { nodeId } });
   }, []);
@@ -508,29 +519,54 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
     dispatch({ type: 'RESET_INVESTIGATION_CONTEXT' });
   }, []);
 
-  const value: InvestigationContextValue = {
-    state,
-    dispatch,
-    selectNode,
-    selectEdge,
-    selectFinding,
-    selectCycle,
-    selectUnresolvedEdge,
-    clearSelection,
-    setFocus,
-    clearFocus,
-    setImpact,
-    clearImpact,
-    setConnection,
-    clearConnection,
-    openDrawer,
-    closeDrawer,
-    setDrawerPinned,
-    setDrawerDetached,
-    drillIntoComponent,
-    navigateBreadcrumb,
-    resetInvestigationContext,
-  };
+  const value = React.useMemo<InvestigationContextValue>(
+    () => ({
+      state,
+      dispatch,
+      selectNode,
+      selectEdge,
+      selectFinding,
+      selectCycle,
+      selectUnresolvedEdge,
+      clearSelection,
+      setFocus,
+      clearFocus,
+      setImpact,
+      clearImpact,
+      setConnection,
+      clearConnection,
+      openDrawer,
+      closeDrawer,
+      setDrawerPinned,
+      setDrawerDetached,
+      drillIntoComponent,
+      navigateBreadcrumb,
+      resetInvestigationContext,
+    }),
+    [
+      state,
+      dispatch,
+      selectNode,
+      selectEdge,
+      selectFinding,
+      selectCycle,
+      selectUnresolvedEdge,
+      clearSelection,
+      setFocus,
+      clearFocus,
+      setImpact,
+      clearImpact,
+      setConnection,
+      clearConnection,
+      openDrawer,
+      closeDrawer,
+      setDrawerPinned,
+      setDrawerDetached,
+      drillIntoComponent,
+      navigateBreadcrumb,
+      resetInvestigationContext,
+    ]
+  );
 
   return (
     <InvestigationContext.Provider value={value}>
