@@ -152,6 +152,19 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
   const hasDrawerContent = selectedNode !== null;
   const isDrawerOpen = hasDrawerContent && (view.isInvestigating || isPinned);
 
+  // Keyboard Escape listener to dismiss drawer when active
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isDrawerOpen && view.setIsInvestigating) {
+          view.setIsInvestigating(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDrawerOpen, view]);
+
   return (
     <div
       className="app-layout"
@@ -159,6 +172,26 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
       data-drawer={isDrawerOpen ? 'open' : 'closed'}
       style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}
     >
+      {/* Visually hidden live region for workspace and selection announcements */}
+      <div
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="workspace-a11y-announcer"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {`Active workspace: ${activeViewMode}${selectedNode ? `. Selected: ${selectedNode.displayName}` : ''}`}
+      </div>
       {/* Top Header */}
       <Header
         onResetView={handleResetView}

@@ -266,6 +266,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
             outline: "none"
           }}
         >
+          {/* Visually hidden live region for screen-reader announcements */}
+          <div
+            className="sr-only"
+            aria-live="polite"
+            aria-atomic="true"
+            data-testid="sidebar-a11y-status"
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
+          >
+            {isLoading
+              ? 'Loading components'
+              : error
+              ? 'Error loading components'
+              : `Showing ${processedNodes.length} components`}
+          </div>
+
           {isLoading ? (
             /* Skeleton Loading State */
             <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>

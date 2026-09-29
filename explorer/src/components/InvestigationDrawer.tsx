@@ -926,6 +926,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
       {node && (
         <nav
           className="ui-tabs"
+          role="tablist"
           aria-label="Inspector Navigation Tabs"
           data-testid="inspector-tabs"
           style={{
@@ -937,6 +938,8 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
         >
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'overview'}
             className={`ui-tab-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveTab('overview')}
             data-testid="tab-overview"
@@ -945,6 +948,8 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'dependencies'}
             className={`ui-tab-item ${activeTab === 'dependencies' ? 'active' : ''}`}
             onClick={() => setActiveTab('dependencies')}
             data-testid="tab-dependencies"
@@ -953,6 +958,8 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'dependents'}
             className={`ui-tab-item ${activeTab === 'dependents' ? 'active' : ''}`}
             onClick={() => setActiveTab('dependents')}
             data-testid="tab-dependents"
@@ -961,6 +968,8 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'evidence'}
             className={`ui-tab-item ${activeTab === 'evidence' ? 'active' : ''}`}
             onClick={() => setActiveTab('evidence')}
             data-testid="tab-evidence"
@@ -969,6 +978,8 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'actions'}
             className={`ui-tab-item ${activeTab === 'actions' ? 'active' : ''}`}
             onClick={() => setActiveTab('actions')}
             data-testid="tab-actions"

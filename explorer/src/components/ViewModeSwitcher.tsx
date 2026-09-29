@@ -53,7 +53,11 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
       className={`view-mode-switcher-bar view-mode-switcher ${className}`}
       data-testid="view-mode-switcher"
     >
-      <div className="view-mode-toggle-group">
+      <div
+        className="view-mode-toggle-group"
+        role="tablist"
+        aria-label="Workspace View Modes"
+      >
         {allModes.map((mode) => {
           const def = getWorkspaceDefinition(mode);
           if (!def) return null;
@@ -64,6 +68,9 @@ export const ViewModeSwitcher: React.FC<ViewModeSwitcherProps> = ({
             <button
               key={mode}
               ref={isActive ? activeBtnRef : null}
+              role="tab"
+              aria-selected={isActive}
+              aria-label={`${def.label} view: ${def.title}`}
               className={`view-mode-btn ${isActive ? "active" : ""}`}
               onClick={() => handleModeSelect(mode)}
               title={def.title}

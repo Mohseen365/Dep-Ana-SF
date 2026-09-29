@@ -171,6 +171,29 @@ export const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
 
   return (
     <div className="sidebar-search-filter-panel" style={{ padding: "0 12px 12px 12px", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
+      {/* Visually hidden live region for search results */}
+      <div
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="search-a11y-status"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {localQuery.trim()
+          ? `${searchResults.length} search results found for ${localQuery}`
+          : ''}
+      </div>
+
       {/* Graph Visibility Filter Control */}
       <div
         className="graph-visibility-control"
