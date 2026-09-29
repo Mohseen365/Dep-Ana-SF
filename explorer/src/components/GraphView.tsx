@@ -33,6 +33,7 @@ import {
 
 import { discoverFeatures, type FeatureDiscoveryResult } from '../lib/layout/features';
 import type { ArchitectureFinding } from '../lib/intelligence';
+import { computeCanvasLODLevel } from '../lib/canvas-lod';
 import { GraphControls } from './GraphControls';
 import { GraphLegend } from './GraphLegend';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
@@ -541,14 +542,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
     const updateZoomClass = () => {
       const currentZoom = cy.zoom();
+      const nodeCount = nodesRef.current.length;
+      const edgeCount = edgesRef.current.length;
+      const lodConfig = computeCanvasLODLevel({ zoom: currentZoom, nodeCount, edgeCount });
+
       cy.batch(() => {
-        cy.elements().removeClass('zoom-far zoom-mid zoom-near');
-        if (currentZoom < 0.5) {
-          cy.elements().addClass('zoom-far');
-        } else if (currentZoom < 1.5) {
-          cy.elements().addClass('zoom-mid');
+        cy.elements().removeClass('zoom-far zoom-mid zoom-near lod-0 lod-1 lod-2 lod-3 lod-4');
+
+        if (lodConfig.lodLevel >= 2) {
+          cy.elements().addClass(`zoom-far lod-${lodConfig.lodLevel}`);
+        } else if (lodConfig.lodLevel === 1) {
+          cy.elements().addClass(`zoom-mid lod-${lodConfig.lodLevel}`);
         } else {
-          cy.elements().addClass('zoom-near');
+          cy.elements().addClass(`zoom-near lod-${lodConfig.lodLevel}`);
         }
       });
     };
