@@ -11,6 +11,7 @@ import {
   ArchitectureLayer,
   FeatureRegion,
 } from './architecture-layout';
+import { LayoutWorkerClient, type CalculateLayoutAsyncResult } from './workers/layout-worker-client';
 
 export {
   computeArchitectureLayout,
@@ -20,6 +21,8 @@ export {
   isTestNode,
 };
 export type { ArchitectureLayoutOptions, ArchitectureLayoutResultWithMetadata, ArchitectureLayer, FeatureRegion };
+
+export const globalWorkerClient = new LayoutWorkerClient();
 
 export interface GraphLayoutOptions extends ArchitectureLayoutOptions {
   nodeCount?: number;
@@ -34,6 +37,7 @@ export interface GraphLayoutOptions extends ArchitectureLayoutOptions {
   edges?: ExplorerEdge[];
   fit?: boolean;
   useArchitectureLayout?: boolean;
+  projectId?: string;
   [key: string]: any;
 }
 
@@ -237,4 +241,68 @@ export function runLayoutWithMetadata(
     currentPositions[node.id()] = node.position();
   });
   return { positions: currentPositions };
+}
+
+export async function runLayoutWithMetadataAsync(
+  cy: cytoscape.Core,
+  options?: GraphLayoutOptions
+): Promise<CalculateLayoutAsyncResult> {
+  const useArch = options?.useArchitectureLayout !== false;
+
+  if (useArch && cy.nodes().length > 0) {
+    const { nodes, edges } = extractNodesAndEdgesFromCy(cy);
+    const finalNodes = options?.nodes && options.nodes.length > 0 ? options.nodes : nodes;
+    const finalEdges = options?.edges && options.edges.length > 0 ? options.edges : edges;
+
+    const result = await globalWorkerClient.calculateLayoutAsync({
+      projectId: options?.projectId || 'default',
+      nodes: finalNodes,
+      edges: finalEdges,
+      options,
+      existingCanvasPositions: options?.existingPositions,
+    });
+
+    const posMap = result.positions;
+
+    if (options?.animate) {
+      cy.layout({
+        name: 'preset',
+        positions: (node: any) => posMap[node.id()] || node.position(),
+        animate: true,
+        animationDuration: options?.animationDuration ?? 500,
+        padding: options?.padding ?? 50,
+        fit: options?.fit ?? true,
+      } as any).run();
+    } else {
+      cy.batch(() => {
+        cy.nodes().forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+      });
+      if (options?.fit !== false) {
+        cy.fit(cy.elements(), options?.padding ?? 50);
+      }
+    }
+    return result;
+  }
+
+  const layout = createLayout(cy, options);
+  layout.run();
+
+  const currentPositions: Record<string, { x: number; y: number }> = {};
+  cy.nodes().forEach(node => {
+    currentPositions[node.id()] = node.position();
+  });
+  return {
+    positions: currentPositions,
+    requestGeneration: 0,
+    projectId: options?.projectId || 'default',
+    isOffloaded: false,
+    computeDurationMs: 0,
+    ipcDurationMs: 0,
+    totalDurationMs: 0,
+  };
 }
