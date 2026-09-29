@@ -410,11 +410,16 @@ export interface InvestigationProviderProps {
 }
 
 export function InvestigationProvider({ children, initialState }: InvestigationProviderProps): JSX.Element {
+  const defaultPinned = typeof window !== 'undefined' ? localStorage.getItem('explorer.drawer.pinned') === 'true' : false;
+  const defaultDetached = typeof window !== 'undefined' ? localStorage.getItem('explorer.drawer.detached') === 'true' : false;
+
   const mergedInitialState: InvestigationState = {
     ...initialInvestigationState,
     ...initialState,
     drawerState: {
       ...initialInvestigationState.drawerState,
+      isPinned: defaultPinned,
+      isDetached: defaultDetached,
       ...(initialState?.drawerState || {}),
     },
   };
@@ -478,10 +483,16 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
   }, []);
 
   const setDrawerPinned = useCallback((pinned: boolean) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('explorer.drawer.pinned', String(pinned));
+    }
     dispatch({ type: 'SET_DRAWER_PINNED', payload: pinned });
   }, []);
 
   const setDrawerDetached = useCallback((detached: boolean) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('explorer.drawer.detached', String(detached));
+    }
     dispatch({ type: 'SET_DRAWER_DETACHED', payload: detached });
   }, []);
 

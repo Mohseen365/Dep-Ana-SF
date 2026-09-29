@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { SearchFilterState, createEmptyFilterState } from '../lib/search-filter';
 import { FocusState, createEmptyFocusState } from '../lib/focus-graph';
 import { ImpactState, createEmptyImpactState } from '../lib/impact-analysis';
+import { useWorkspaceRouter } from '../context/WorkspaceRouterContext';
+import { WorkspaceViewMode } from '../lib/projectState';
 import {
   filterQuery,
   focusQuery,
@@ -12,8 +14,30 @@ import {
   ConnectionQueryState,
 } from '../lib/url';
 
+function useWorkspaceRouterSafe() {
+  try {
+    return useWorkspaceRouter();
+  } catch (_) {
+    return null;
+  }
+}
+
 export function useViewState() {
-  const [viewMode, setViewMode] = useState<'graph' | 'findings'>('graph');
+  const router = useWorkspaceRouterSafe();
+  const [localViewMode, setLocalViewMode] = useState<WorkspaceViewMode>('graph');
+
+  const activeViewMode: WorkspaceViewMode = router ? router.activeViewMode : localViewMode;
+
+  const setViewMode = useCallback(
+    (mode: WorkspaceViewMode) => {
+      if (router) {
+        router.setViewMode(mode);
+      } else {
+        setLocalViewMode(mode);
+      }
+    },
+    [router]
+  );
   const [filterState, setFilterState] = useState<SearchFilterState>(createEmptyFilterState);
   const [focusState, setFocusState] = useState<FocusState>(createEmptyFocusState);
   const [impactState, setImpactState] = useState<ImpactState>(createEmptyImpactState);
@@ -54,7 +78,11 @@ export function useViewState() {
     }
 
     const filterParsed = filterQuery.fromQuery(params);
-    setViewMode(filterParsed.viewMode);
+    if (router) {
+      router.setViewMode(filterParsed.viewMode);
+    } else {
+      setLocalViewMode(filterParsed.viewMode);
+    }
     setFilterState(filterParsed.filterState);
 
     const focusParsed = focusQuery.fromQuery(params, initialNode);
@@ -180,8 +208,8 @@ export function useViewState() {
       filterState.hideTests ||
       filterState.hasAsyncPatterns;
 
-    if (viewMode !== 'graph' || isFilterActive) {
-      filterQuery.toQuery({ viewMode, filterState }, params);
+    if (activeViewMode !== 'graph' || isFilterActive) {
+      filterQuery.toQuery({ viewMode: activeViewMode, filterState }, params);
     }
 
     const searchString = params.toString() ? `?${params.toString()}` : '';
@@ -190,7 +218,7 @@ export function useViewState() {
       window.history.replaceState(null, '', newUrl);
     }
   }, [
-    viewMode,
+    activeViewMode,
     filterState,
     focusState,
     connectionState,
@@ -209,7 +237,7 @@ export function useViewState() {
   }, [syncToUrl]);
 
   return {
-    viewMode,
+    viewMode: activeViewMode,
     setViewMode,
     filterState,
     setFilterState,

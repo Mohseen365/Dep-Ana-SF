@@ -1,8 +1,10 @@
 import { createEmptyFilterState, SearchFilterState } from "../search-filter";
 import type { ExplorerNodeType, ExplorerRiskLevel } from "../../types/explorer";
+import type { WorkspaceViewMode } from "../projectState";
+import { getWorkspaceDefinition } from "../../registry/workspace-registry";
 
 export interface ViewAndFilterQueryState {
-  viewMode: "graph" | "findings";
+  viewMode: WorkspaceViewMode;
   filterState: SearchFilterState;
 }
 
@@ -30,12 +32,14 @@ const VALID_RISKS: Set<ExplorerRiskLevel> = new Set([
 
 export function fromQuery(params: URLSearchParams): ViewAndFilterQueryState {
   const viewModeParam =
+    params.get("view") ||
     params.get("view.mode") ||
-    params.get("viewMode") ||
-    params.get("view");
+    params.get("viewMode");
 
-  const viewMode: "graph" | "findings" =
-    viewModeParam === "findings" ? "findings" : "graph";
+  let viewMode: WorkspaceViewMode = "graph";
+  if (viewModeParam && getWorkspaceDefinition(viewModeParam as WorkspaceViewMode)) {
+    viewMode = viewModeParam as WorkspaceViewMode;
+  }
 
   const filterState = createEmptyFilterState();
 
@@ -105,7 +109,7 @@ export function toQuery(
   params: URLSearchParams = new URLSearchParams(),
 ): URLSearchParams {
   if (state.viewMode !== "graph") {
-    params.set("view.mode", state.viewMode);
+    params.set("view", state.viewMode);
   }
 
   const f = state.filterState;

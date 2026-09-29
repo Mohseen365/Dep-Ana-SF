@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import React from 'react';
 import { SelectionProvider } from './context/SelectionContext';
-import { InvestigationProvider } from './context/InvestigationContext';
+import { InvestigationProvider, useInvestigation } from './context/InvestigationContext';
 import { WorkspaceRouterProvider, useWorkspaceRouter } from './context/WorkspaceRouterContext';
 import { WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { useProject } from './context/ProjectContext';
@@ -210,6 +210,7 @@ function AppContent() {
     (!activeData && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:')));
 
   const selection = useGraphSelection();
+  const investigation = useInvestigation();
   const view = useViewState();
   const compareState = useCompareState();
   const palette = useCommandPalette();
@@ -236,29 +237,16 @@ function AppContent() {
   const [activeSimulationProposal, setActiveSimulationProposal] = useState<RefactoringProposal | null>(null);
   const [simulationStepIndex, setSimulationStepIndex] = useState<number>(0);
 
-  // Drawer pin & detach states
-  const [isPinned, setIsPinned] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('explorer.drawer.pinned') === 'true';
-    }
-    return false;
-  });
-
-  const [isDetached, setIsDetached] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('explorer.drawer.detached') === 'true';
-    }
-    return false;
-  });
+  // Canonical investigation state derived directly from InvestigationContext
+  const isPinned = investigation.state.drawerState.isPinned;
+  const isDetached = investigation.state.drawerState.isDetached;
+  const drillPath = investigation.state.drillPath;
+  const recentNodeIds = investigation.state.recentNodeIds;
 
   const detachedWindowRef = useRef<Window | null>(null);
 
   // Refactor handoff target state
   const [handoffTarget, setHandoffTarget] = useState<HandoffTarget | null>(null);
-
-  // Progressive drilling and session-only recent list state
-  const [drillPath, setDrillPath] = useState<string[]>([]);
-  const [recentNodeIds, setRecentNodeIds] = useState<string[]>([]);
 
   const graphRef = useRef<GraphViewRef>(null);
 
@@ -271,8 +259,6 @@ function AppContent() {
       setSimulationStepIndex(0);
       selection.clear();
       setSelectedFinding(null);
-      setDrillPath([]);
-      setRecentNodeIds([]);
       setHighlightedImpactNodeIds(null);
       setSelectedCycleId(null);
       view.setIsInvestigating(false);
@@ -318,14 +304,12 @@ function AppContent() {
       const selectedNode = activeData.nodes.find((n) => n.id === selection.selectedNodeId);
       if (!selectedNode) {
         selection.clear();
-        setDrillPath([]);
         view.setIsInvestigating(false);
         return;
       }
       const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
       if (!visibleTypes.includes(selectedNode.type)) {
         selection.clear();
-        setDrillPath([]);
         view.setIsInvestigating(false);
       }
     }
@@ -336,7 +320,6 @@ function AppContent() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selection.selectedNodeId) {
         selection.clear();
-        setDrillPath([]);
         view.setIsInvestigating(false);
       }
     };
@@ -345,34 +328,22 @@ function AppContent() {
   }, [selection, view]);
 
   const handleTogglePin = useCallback(() => {
-    setIsPinned((prev) => {
-      const next = !prev;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('explorer.drawer.pinned', String(next));
-      }
-      return next;
-    });
-  }, []);
+    investigation.setDrawerPinned(!isPinned);
+  }, [investigation, isPinned]);
 
   const handleDetach = useCallback(() => {
     if (!isDetached) {
       const win = openDetachedWindow();
       detachedWindowRef.current = win;
-      setIsDetached(true);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('explorer.drawer.detached', 'true');
-      }
+      investigation.setDrawerDetached(true);
     } else {
       if (detachedWindowRef.current && !detachedWindowRef.current.closed) {
         detachedWindowRef.current.close();
       }
       detachedWindowRef.current = null;
-      setIsDetached(false);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('explorer.drawer.detached', 'false');
-      }
+      investigation.setDrawerDetached(false);
     }
-  }, [isDetached]);
+  }, [investigation, isDetached]);
 
   // BroadcastChannel setup for detached drawer
   useEffect(() => {
@@ -417,27 +388,6 @@ function AppContent() {
     }
   }, [compareState.focusedEntityId, activeData, selection]);
 
-  // Sync drill path and recent items
-  useEffect(() => {
-    const id = selection.selectedNodeId;
-    if (!id) return;
-
-    setRecentNodeIds((prev) => {
-      const filtered = prev.filter((item) => item !== id);
-      return [id, ...filtered].slice(0, 5);
-    });
-
-    setDrillPath((prev) => {
-      if (prev.length > 0 && prev[prev.length - 1] === id) {
-        return prev;
-      }
-      const existingIndex = prev.indexOf(id);
-      if (existingIndex !== -1) {
-        return prev.slice(0, existingIndex + 1);
-      }
-      return [id];
-    });
-  }, [selection.selectedNodeId]);
 
   // Compute architecture context and findings
   const ctx = useMemo(() => (activeData ? createArchitectureContext(activeData as any) : null), [activeData]);
@@ -594,7 +544,6 @@ function AppContent() {
     (view as any).setSelectedFindingId?.(null);
     setSelectedFinding(null);
     setHighlightedImpactNodeIds(null);
-    setDrillPath([]);
     setActiveSimulationProposal(null);
     if (graphRef.current) {
       graphRef.current.fitView();
@@ -616,24 +565,21 @@ function AppContent() {
   };
 
   const handleDrill = (targetId: string) => {
-    setDrillPath((prev) => [...prev, targetId]);
-    selection.selectNode(targetId);
+    investigation.drillIntoComponent(targetId);
     view.setIsInvestigating(true);
   };
 
   const handleNavigateBreadcrumb = (targetId: string) => {
-    setDrillPath((prev) => {
-      const idx = prev.indexOf(targetId);
-      if (idx !== -1) {
-        return prev.slice(0, idx + 1);
-      }
-      return [targetId];
-    });
-    selection.selectNode(targetId);
+    const idx = drillPath.indexOf(targetId);
+    if (idx !== -1) {
+      investigation.navigateBreadcrumb(idx);
+    } else {
+      investigation.selectNode(targetId);
+    }
   };
 
   const handleSelectRecentNode = (targetId: string) => {
-    selection.selectNode(targetId);
+    investigation.selectNode(targetId);
     view.setIsInvestigating(true);
   };
 
