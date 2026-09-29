@@ -5,6 +5,7 @@ import {
   FourDirectionQuadrant,
   CardinalDirection
 } from '../lib/adapters/four-direction-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface FourDirectionPanelProps {
   data: FourDirectionData;
@@ -21,9 +22,20 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
   onReturnToGraph,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
   const [filterText, setFilterText] = useState('');
   const [selectedItemNodeId, setSelectedItemNodeId] = useState<string | null>(null);
-  const activeSelectedId = selectedNodeIdProp || selectedItemNodeId;
+  const activeSelectedId = selectedNodeIdProp || investigation?.state.selectedNodeId || selectedItemNodeId;
+
+  const handleSelectNode = (nodeId: string) => {
+    setSelectedItemNodeId(nodeId);
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNode) {
+      onSelectNode(nodeId);
+    }
+  };
 
   const { subject, quadrants, summary, availableNodes } = data;
 
@@ -105,9 +117,9 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
                   data-testid={`item-${item.nodeId}`}
                   onClick={() => {
                     setSelectedItemNodeId(item.nodeId);
-                    if (onSelectNode) onSelectNode(item.nodeId);
+                    handleSelectNode(item.nodeId);
                   }}
-                  onDoubleClick={() => onSelectNode && onSelectNode(item.nodeId)}
+                  onDoubleClick={() => handleSelectNode(item.nodeId)}
                   style={{
                     background: isSelected ? '#1e293b' : '#1e293b80',
                     borderLeft: `3px solid ${riskColor}`,
@@ -138,13 +150,12 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
                       ))}
                     </div>
                   )}
-                  {onSelectNode && (
-                    <button
-                      className="make-subject-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectNode(item.nodeId);
-                      }}
+                  <button
+                    className="make-subject-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectNode(item.nodeId);
+                    }}
                       style={{
                         marginTop: '6px',
                         fontSize: '10px',
@@ -158,7 +169,6 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
                     >
                       Focus as Subject Center →
                     </button>
-                  )}
                 </div>
               );
             })}
@@ -186,7 +196,7 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
           <select
             data-testid="subject-selector"
             value={subject.nodeId}
-            onChange={(e) => onSelectNode && onSelectNode(e.target.value)}
+            onChange={(e) => e.target.value && handleSelectNode(e.target.value)}
             style={{
               background: '#1e293b',
               color: '#f8fafc',

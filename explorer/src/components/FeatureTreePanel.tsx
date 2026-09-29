@@ -5,6 +5,7 @@ import {
   type FeatureTreeData,
   type FeatureTreeNode,
 } from '../lib/adapters/tree-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface FeatureTreePanelProps {
   data: ExplorerDataSchema | null;
@@ -15,10 +16,21 @@ export interface FeatureTreePanelProps {
 
 export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
   data,
-  selectedNodeId,
-  onSelectNode,
+  selectedNodeId: selectedNodeIdProp,
+  onSelectNode: onSelectNodeProp,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedNodeId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
+
+  const handleSelectNode = (nodeId: string) => {
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNodeProp) {
+      onSelectNodeProp(nodeId);
+    }
+  };
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedNodeIds, setExpandedNodeIds] = useState<Set<string>>(new Set());
   const [selectedTreeNodeId, setSelectedTreeNodeId] = useState<string | null>(null);
@@ -70,10 +82,10 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
     return matches;
   }, [treeData, searchQuery]);
 
-  // Auto-expand path to selectedNodeId when selectedNodeId changes
+  // Auto-expand path to selectedNodeId when canonicalSelectedNodeId changes
   useEffect(() => {
-    if (!treeData || !selectedNodeId) return;
-    const targetNode = Object.values(treeData.nodes).find(n => n.sourceNodeId === selectedNodeId || n.id === selectedNodeId);
+    if (!treeData || !canonicalSelectedNodeId) return;
+    const targetNode = Object.values(treeData.nodes).find(n => n.sourceNodeId === canonicalSelectedNodeId || n.id === canonicalSelectedNodeId);
     if (!targetNode) return;
 
     setExpandedNodeIds(prev => {
@@ -85,7 +97,7 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
       }
       return next;
     });
-  }, [treeData, selectedNodeId]);
+  }, [treeData, canonicalSelectedNodeId]);
 
   // Auto-expand path to matching nodes when search query changes
   useEffect(() => {
@@ -223,11 +235,11 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
 
     const hasChildren = node.childIds && node.childIds.length > 0;
     const isExpanded = expandedNodeIds.has(node.id);
-    const isCanonicalSelected = selectedNodeId ? (node.sourceNodeId === selectedNodeId || node.id === selectedNodeId) : false;
+    const isCanonicalSelected = canonicalSelectedNodeId ? (node.sourceNodeId === canonicalSelectedNodeId || node.id === canonicalSelectedNodeId) : false;
     const isSelected = selectedTreeNodeId === node.id || isCanonicalSelected;
+    const isDimmed = !!canonicalSelectedNodeId && !isCanonicalSelected && node.type === 'component';
     const isHovered = hoveredTreeNodeId === node.id;
     const isMatch = matchingNodeIds ? matchingNodeIds.has(node.id) : false;
-    const isDimmed = !!selectedNodeId && !isCanonicalSelected && node.type === 'component';
 
     return (
       <div key={node.id} className="tree-node-wrapper" style={{ display: 'flex', flexDirection: 'column', opacity: isDimmed ? 0.35 : 1 }}>
@@ -255,8 +267,8 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
           }}
           onClick={() => {
             setSelectedTreeNodeId(node.id);
-            if (node.type === 'component' && node.sourceNodeId && onSelectNode) {
-              onSelectNode(node.sourceNodeId);
+            if (node.type === 'component' && node.sourceNodeId) {
+              handleSelectNode(node.sourceNodeId);
             }
           }}
           onMouseEnter={() => setHoveredTreeNodeId(node.id)}
@@ -663,11 +675,11 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
                       </div>
                     </div>
 
-                    {inspectedNode.sourceNodeId && onSelectNode && (
+                    {inspectedNode.sourceNodeId && (
                       <button
                         className="ui-btn ui-btn-primary ui-btn-sm"
                         data-testid="inspect-in-graph-btn"
-                        onClick={() => onSelectNode(inspectedNode.sourceNodeId!)}
+                        onClick={() => handleSelectNode(inspectedNode.sourceNodeId!)}
                         style={{
                           marginTop: '4px',
                           padding: '4px 8px',

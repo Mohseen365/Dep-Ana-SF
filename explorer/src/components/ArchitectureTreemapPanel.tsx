@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { ExplorerDataSchema } from '../types/explorer';
 import { adaptTreemap, type TreemapMetricMode, type TreemapNode, type TreemapData } from '../lib/adapters/treemap-adapter';
 import { computeTreemapLayout, type TreemapRect } from '../lib/adapters/treemap-layout';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export type TreemapColorScheme = 'layer' | 'risk';
 
@@ -30,11 +31,22 @@ const RISK_COLORS: Record<string, { bg: string; border: string; text: string }> 
 
 export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> = ({
   data,
-  selectedNodeId,
-  onSelectComponent,
+  selectedNodeId: selectedNodeIdProp,
+  onSelectComponent: onSelectComponentProp,
   onExploreInGraph,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedNodeId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
+
+  const handleSelectComponent = (nodeId: string) => {
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectComponentProp) {
+      onSelectComponentProp(nodeId);
+    }
+  };
   const [metricMode, setMetricMode] = useState<TreemapMetricMode>('count');
   const [colorScheme, setColorScheme] = useState<TreemapColorScheme>('layer');
   const [searchQuery, setSearchQuery] = useState('');
@@ -100,8 +112,8 @@ export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> =
       text: '#cbd5e1',
     };
 
-    const isMatchingSelected = selectedNodeId ? (node.sourceNodeId === selectedNodeId || node.id === selectedNodeId) : false;
-    const isDimmed = !!selectedNodeId && isComponent && !isMatchingSelected;
+    const isMatchingSelected = canonicalSelectedNodeId ? (node.sourceNodeId === canonicalSelectedNodeId || node.id === canonicalSelectedNodeId) : false;
+    const isDimmed = !!canonicalSelectedNodeId && isComponent && !isMatchingSelected;
 
     if (isComponent) {
       if (isMatchingSelected) {
@@ -135,7 +147,7 @@ export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> =
           onClick={(e) => {
             e.stopPropagation();
             if (isComponent && node.sourceNodeId) {
-              onSelectComponent?.(node.sourceNodeId);
+              handleSelectComponent(node.sourceNodeId);
             } else if (!isComponent && node.childIds.length > 0) {
               setActiveSubtreeId(node.id);
             }

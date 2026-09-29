@@ -38,6 +38,7 @@ import { GraphLegend } from './GraphLegend';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
 import { EdgeHoverCard } from './graph-internals/EdgeHoverCard';
 import { FeatureOverlayCanvas } from './graph-internals/FeatureOverlayCanvas';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 import './graph-internals/graph.css';
 
 cytoscape.use(fcose);
@@ -103,6 +104,7 @@ interface EdgeHoverCardData {
 type HoverCardState = NodeHoverCardData | EdgeHoverCardData | null;
 
 export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) => {
+  const investigation = useInvestigationOptional();
   const {
     nodes,
     edges,
@@ -624,6 +626,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
         const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
+        if (investigation) {
+          investigation.selectNode(fullNode ? fullNode.id : null);
+        }
         onSelectNodeRef.current(fullNode);
       },
       onNodeDoubleTap: (nodeId, selectedNode) => {
@@ -634,10 +639,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       },
       onEdgeSelect: (edgeId) => {
         if (edgeId) {
+          if (investigation) {
+            investigation.selectEdge(edgeId);
+          }
           onSelectEdgeRef.current(edgeId);
         }
       },
       onBackgroundTap: () => {
+        if (investigation) {
+          investigation.clearSelection();
+        }
         onSelectNodeRef.current(null);
       }
     }, nodesRef.current);

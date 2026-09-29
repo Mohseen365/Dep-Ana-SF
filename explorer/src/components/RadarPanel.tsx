@@ -6,6 +6,7 @@ import {
   type RadarDimension,
   type RadarSummary,
 } from '../lib/adapters/radar-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface RadarPanelProps {
   data: ExplorerDataSchema | null;
@@ -52,10 +53,12 @@ export function getVisualNormalizedValue(dim: RadarDimension, summary: RadarSumm
 
 export const RadarPanel: React.FC<RadarPanelProps> = ({
   data,
-  selectedNodeId: _selectedNodeId,
+  selectedNodeId: selectedNodeIdProp,
   onSelectNode: _onSelectNode,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedNodeId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
   const [hoveredDimId, setHoveredDimId] = useState<string | null>(null);
   const [selectedDimId, setSelectedDimId] = useState<string | null>(null);
 

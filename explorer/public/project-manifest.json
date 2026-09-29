@@ -1,68 +1,28 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "pbim",
+  "activeProjectId": "default",
   "projects": [
     {
-      "id": "movie",
-      "name": "movie",
+      "id": "default",
+      "name": "Default Salesforce Project",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Movie-App/force-app/main/default",
-      "createdAt": "2026-09-24T06:24:42.839Z",
-      "updatedAt": "2026-09-24T06:24:42.839Z",
-      "lastAnalyzedAt": "2026-09-24T06:24:42.839Z",
+      "sourcePath": "tmp-integration-test/fixture",
+      "createdAt": "2026-09-29T05:03:01.647Z",
+      "updatedAt": "2026-09-29T05:03:01.647Z",
+      "lastAnalyzedAt": "2026-09-29T05:03:01.647Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 9,
-      "dependencyCount": 16,
-      "analysisPath": "/projects/movie/explorer-data.json"
-    },
-    {
-      "id": "cstk",
-      "name": "cstk",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
-      "createdAt": "2026-09-25T04:50:31.850Z",
-      "updatedAt": "2026-09-25T04:50:31.850Z",
-      "lastAnalyzedAt": "2026-09-25T04:50:31.850Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 240,
-      "dependencyCount": 1024,
-      "analysisPath": "/projects/cstk/explorer-data.json"
-    },
-    {
-      "id": "pbim",
-      "name": "pbim",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Pub-Infra-Mang/force-app/main/default",
-      "createdAt": "2026-09-25T04:55:57.331Z",
-      "updatedAt": "2026-09-25T04:55:57.331Z",
-      "lastAnalyzedAt": "2026-09-25T04:55:57.331Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 528,
-      "dependencyCount": 2063,
-      "analysisPath": "/projects/pbim/explorer-data.json"
+      "componentCount": 4,
+      "dependencyCount": 3,
+      "analysisPath": "/explorer-data.json"
     }
   ],
   "artifacts": {
-    "movie": {
+    "default": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:fcf46e84ed89f45f7fccdff6acbc1489ca22e75bd5726bd34d5d0f6deea4d8d3",
-      "nodeCount": 9,
-      "edgeCount": 16
-    },
-    "cstk": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:5db399dce59c247bfe5419a150493d2cce0cdcf53768d28e1b07fc1183a3a8a3",
-      "nodeCount": 240,
-      "edgeCount": 1024
-    },
-    "pbim": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
-      "nodeCount": 528,
-      "edgeCount": 2063
+      "fileHash": "sha256:3e5abfb62df5f68d6d9f680313bd08653012427f271f447274a0323defcbfccb",
+      "nodeCount": 4,
+      "edgeCount": 3
     }
   }
 }

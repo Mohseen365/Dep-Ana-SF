@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { SubwayMapData, SubwayStation } from '../lib/adapters/subway-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface SubwayPanelProps {
   data: SubwayMapData;
@@ -10,10 +11,12 @@ export interface SubwayPanelProps {
 
 export const SubwayPanel: React.FC<SubwayPanelProps> = ({
   data,
-  selectedNodeId,
-  onSelectNode,
+  selectedNodeId: selectedNodeIdProp,
+  onSelectNode: onSelectNodeProp,
   onExploreInGraph,
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedNodeId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
   const [selectedStation, setSelectedStation] = useState<SubwayStation | null>(null);
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -46,8 +49,11 @@ export const SubwayPanel: React.FC<SubwayPanelProps> = ({
 
   const handleStationClick = (station: SubwayStation) => {
     setSelectedStation(station);
-    if (onSelectNode) {
-      onSelectNode(station.nodeId);
+    if (investigation) {
+      investigation.selectNode(station.nodeId);
+    }
+    if (onSelectNodeProp) {
+      onSelectNodeProp(station.nodeId);
     }
   };
 
@@ -172,9 +178,9 @@ export const SubwayPanel: React.FC<SubwayPanelProps> = ({
 
           {/* Station Nodes */}
           {filteredStations.map(station => {
-            const isCanonicalSelected = selectedNodeId ? station.nodeId === selectedNodeId : false;
+            const isCanonicalSelected = canonicalSelectedNodeId ? station.nodeId === canonicalSelectedNodeId : false;
             const isSelected = selectedStation?.nodeId === station.nodeId || isCanonicalSelected;
-            const isDimmed = !!selectedNodeId && !isCanonicalSelected;
+            const isDimmed = !!canonicalSelectedNodeId && !isCanonicalSelected;
             const line = data.lines[station.lineIndex];
             const stationColor = line?.color || '#3b82f6';
 

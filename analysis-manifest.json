@@ -2,31 +2,31 @@
   "manifestVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-09-28T11:48:29.610Z",
+  "generatedAt": "2026-09-29T05:03:19.226Z",
   "source": {
     "directory": "scripts/temp-snapshot-test-fixture",
     "sourceDir": "/app/scripts/temp-snapshot-test-fixture",
     "fileCount": 2,
     "sourceHash": "sha256:204c9f8c56e337fbbe9a6da038e0a5d83203fc3a483f79757f9609d1cc8dcc15",
-    "gitCommit": "2889bd8e412f0da4f61bf98c760c91b30bf85fba"
+    "gitCommit": "0c58b8efca7ee703ae2220bb323e7162c0cb4cfd"
   },
   "status": "COMPLETE",
   "artifacts": {
     "dependencyReport": {
       "path": "dependency-report.json",
-      "fileHash": "sha256:3125354cda391f725eecdbb540a8b6a1f80b21555b70a37d889ffc0f48ec8fd6"
+      "fileHash": "sha256:479afa0bc93935316a0dbe11286ca53f8408f388d5b4af34dbcbe391c50e2205"
     },
     "analysisSnapshot": {
       "path": "analysis-snapshot.json",
-      "fileHash": "sha256:8b5065de2e0b075abd2767af81f814ac4aa9c153c58a549d05cee766a4f66b3b"
+      "fileHash": "sha256:39576d258531a5c4502cf44ad235c8981fd4954c77455de0af3fdd1a3c7b1f70"
     },
     "architectureSnapshot": {
       "path": "architecture-snapshot.json",
-      "fileHash": "sha256:1292b046465acdf7907c9e28357c2dee99f454d9be12f560cede0af3e361ac9c"
+      "fileHash": "sha256:63189a8392f230ca1f0386836a67b2a6085e3d2268bb4df20561e3b3234d2c32"
     },
     "architectureMetrics": {
       "path": "architecture-metrics.json",
-      "fileHash": "sha256:48e958269fce72ce9094959b8e890af809a1de2f15f919a08bf73372e99e760a"
+      "fileHash": "sha256:71893cc6730324b9823e30782f386e8a8f3577bd4d56883b08244bb4eb4a6b6b"
     },
     "dependencyReportMd": {
       "path": "dependency-report.md",
@@ -34,7 +34,7 @@
     },
     "dependencySummaryMd": {
       "path": "dependency-summary.md",
-      "fileHash": "sha256:fe1f78b197399bd9717f1c4f70c6aec797ec15a14025ad0fdd09869dba4e86d4"
+      "fileHash": "sha256:38fb9efaf564b50c8a27f47d13e8acc0b292838d636812f29da8632c84a0cd8c"
     },
     "unresolvedReferencesMd": {
       "path": "unresolved-references.md",

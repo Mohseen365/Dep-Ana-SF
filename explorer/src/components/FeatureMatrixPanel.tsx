@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import type { ExplorerDataSchema } from '../types/explorer';
 import { adaptFeatureMatrix, type FeatureMatrixData, type FeatureMatrixCell } from '../lib/adapters/matrix-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface FeatureMatrixPanelProps {
   data: ExplorerDataSchema | null;
@@ -12,11 +13,22 @@ export interface FeatureMatrixPanelProps {
 
 export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
   data,
-  selectedNodeId,
-  onSelectNode,
+  selectedNodeId: selectedNodeIdProp,
+  onSelectNode: onSelectNodeProp,
   onSelectFeatureAnchor,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedNodeId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
+
+  const handleSelectNode = (nodeId: string) => {
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNodeProp) {
+      onSelectNodeProp(nodeId);
+    }
+  };
   const [hoveredCell, setHoveredCell] = useState<{
     sourceName: string;
     targetName: string;
@@ -199,12 +211,12 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
             </thead>
             <tbody>
               {features.map((rowFeat, rowIdx) => {
-                const isFeatureMatching = selectedNodeId ? (
-                  rowFeat.anchorNodeId === selectedNodeId ||
-                  rowFeat.id === selectedNodeId
+                const isFeatureMatching = canonicalSelectedNodeId ? (
+                  rowFeat.anchorNodeId === canonicalSelectedNodeId ||
+                  rowFeat.id === canonicalSelectedNodeId
                 ) : false;
                 const isRowSelected = selectedFeatureId === rowFeat.id || isFeatureMatching;
-                const isRowDimmed = !!selectedNodeId && !isFeatureMatching;
+                const isRowDimmed = !!canonicalSelectedNodeId && !isFeatureMatching;
 
                 return (
                   <tr
