@@ -168,6 +168,12 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
 
       {/* Main Matrix Container */}
       <div className="matrix-content-area" style={{ display: 'flex', flex: 1, gap: '16px', minHeight: 0, overflow: 'hidden' }}>
+        {/* High-density warning banner when F >= 80 */}
+        {features.length >= 80 && (
+          <div style={{ position: 'absolute', top: '48px', left: '12px', right: '12px', zIndex: 10, padding: '6px 12px', backgroundColor: 'rgba(234, 179, 8, 0.15)', border: '1px solid #eab308', borderRadius: '4px', fontSize: '11px', color: '#fef08a', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+            <span>⚡ High Density Mode Active: {features.length} features ({features.length * features.length} potential cells). Consider using Coupling Heatmap lens or Min Weight Filter for faster rendering.</span>
+          </div>
+        )}
         {/* Matrix Grid Table Viewport */}
         <div className="matrix-grid-scroll-container" style={{ flex: 1, overflow: 'auto', border: '1px solid var(--border-default, #334155)', borderRadius: '6px', backgroundColor: 'var(--surface-base, #090d16)' }}>
           <table className="feature-matrix-table" data-testid="feature-matrix-table" style={{ borderCollapse: 'collapse', width: 'max-content', fontSize: '11px', fontFamily: 'var(--font-mono, monospace)' }}>
