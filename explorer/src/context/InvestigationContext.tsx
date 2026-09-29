@@ -528,6 +528,10 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
   );
 }
 
+export function useInvestigationOptional(): InvestigationContextValue | null {
+  return useContext(InvestigationContext);
+}
+
 export function useInvestigation(): InvestigationContextValue {
   const context = useContext(InvestigationContext);
   if (!context) {

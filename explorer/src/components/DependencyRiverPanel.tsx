@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import type { ExplorerDataSchema } from '../types/explorer';
 import { adaptSankeyRiver, type SankeyFlow, type SankeyNode } from '../lib/adapters/sankey-adapter';
 import { computeSankeyLayout } from '../lib/layout/sankey-layout';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface DependencyRiverPanelProps {
   data: ExplorerDataSchema;
@@ -18,10 +19,25 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
   onReturnToGraph,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
   const [selectedFlowId, setSelectedFlowId] = useState<string | null>(null);
   const [hoveredFlowId, setHoveredFlowId] = useState<string | null>(null);
   const [internalSelectedNodeId, setInternalSelectedNodeId] = useState<string | null>(null);
-  const canonicalSelectedId = selectedNodeIdProp || internalSelectedNodeId;
+  const canonicalSelectedId = selectedNodeIdProp || investigation?.state.selectedNodeId || internalSelectedNodeId;
+
+  const handleNodeClick = (targetNodeId: string, anchorNodeId?: string) => {
+    const nextSelected = targetNodeId === internalSelectedNodeId ? null : targetNodeId;
+    setInternalSelectedNodeId(nextSelected);
+    setSelectedFlowId(null);
+
+    const nodeToDispatch = anchorNodeId || targetNodeId;
+    if (investigation && nodeToDispatch) {
+      investigation.selectNode(nodeToDispatch);
+    }
+    if (onSelectNode && nodeToDispatch) {
+      onSelectNode(nodeToDispatch);
+    }
+  };
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -251,13 +267,7 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                   style={{ cursor: 'pointer', opacity: isDimmed ? 0.25 : isMatch ? 1.0 : 0.3 }}
                   onMouseEnter={() => setHoveredNodeId(nodeGeom.nodeId)}
                   onMouseLeave={() => setHoveredNodeId(null)}
-                  onClick={() => {
-                    setInternalSelectedNodeId(nodeGeom.nodeId === internalSelectedNodeId ? null : nodeGeom.nodeId);
-                    setSelectedFlowId(null);
-                    if (node.anchorNodeId && onSelectNode) {
-                      onSelectNode(node.anchorNodeId);
-                    }
-                  }}
+                  onClick={() => handleNodeClick(nodeGeom.nodeId, node.anchorNodeId)}
                   data-testid={`sankey-node-${nodeGeom.nodeId}`}
                 >
                   <rect
@@ -513,9 +523,9 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                 Layer: {activeNode.primaryLayer} · Domain: {activeNode.primaryDomain}
               </div>
 
-              {onSelectNode && activeNode.anchorNodeId && (
+              {activeNode.anchorNodeId && (
                 <button
-                  onClick={() => onSelectNode(activeNode.anchorNodeId)}
+                  onClick={() => handleNodeClick(activeNode.nodeId, activeNode.anchorNodeId)}
                   style={{
                     width: '100%',
                     padding: '6px',

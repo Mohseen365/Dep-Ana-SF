@@ -5,6 +5,7 @@ import {
   type ComponentProfileData,
   type ComponentProfile,
 } from '../lib/adapters/profile-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface FeatureProfilePanelProps {
   data: ExplorerDataSchema | null;
@@ -15,12 +16,24 @@ export interface FeatureProfilePanelProps {
 
 export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
   data,
-  selectedNodeId,
+  selectedNodeId: selectedNodeIdProp,
   onSelectNode,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeProfileId, setActiveProfileId] = useState<string | null>(selectedNodeId ?? null);
+  const [activeProfileId, setActiveProfileId] = useState<string | null>(canonicalSelectedId ?? null);
+
+  const handleSelectNode = (nodeId: string) => {
+    setActiveProfileId(nodeId);
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNode) {
+      onSelectNode(nodeId);
+    }
+  };
 
   // Pure adaptation from input data
   const profileData: ComponentProfileData | null = useMemo(() => {
@@ -30,12 +43,12 @@ export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
     return adaptComponentProfile(data);
   }, [data]);
 
-  // Sync external selectedNodeId prop changes into local activeProfileId
+  // Sync external/canonical selectedNodeId prop changes into local activeProfileId
   useEffect(() => {
-    if (selectedNodeId) {
-      setActiveProfileId(selectedNodeId);
+    if (canonicalSelectedId) {
+      setActiveProfileId(canonicalSelectedId);
     }
-  }, [selectedNodeId]);
+  }, [canonicalSelectedId]);
 
   // Fallback active profile if none selected or invalid
   const activeProfile: ComponentProfile | null = useMemo(() => {
@@ -212,19 +225,14 @@ export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
               </div>
             ) : (
               filteredProfiles.map(prof => {
-                const isSelected = activeProfile?.id === prof.id || selectedNodeId === prof.id;
-                const isDimmed = !!selectedNodeId && prof.id !== selectedNodeId;
+                const isSelected = activeProfile?.id === prof.id || canonicalSelectedId === prof.id;
+                const isDimmed = !!canonicalSelectedId && prof.id !== canonicalSelectedId;
                 return (
                   <div
                     key={prof.id}
                     data-testid={`profile-item-${prof.id}`}
                     className={`profile-item ${isDimmed ? 'dimmed' : ''}`}
-                    onClick={() => {
-                      setActiveProfileId(prof.id);
-                      if (onSelectNode) {
-                        onSelectNode(prof.id);
-                      }
-                    }}
+                    onClick={() => handleSelectNode(prof.id)}
                     style={{
                       padding: '8px',
                       borderRadius: '4px',
@@ -331,10 +339,9 @@ export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
                       </span>
                     </div>
                   </div>
-                  {onSelectNode && (
-                    <button
-                      onClick={() => onSelectNode(activeProfile.id)}
-                      data-testid="profile-explore-graph-btn"
+                  <button
+                    onClick={() => handleSelectNode(activeProfile.id)}
+                    data-testid="profile-explore-graph-btn"
                       style={{
                         padding: '6px 12px',
                         fontSize: '11px',
@@ -348,7 +355,6 @@ export const FeatureProfilePanel: React.FC<FeatureProfilePanelProps> = ({
                     >
                       Explore in Graph Canvas →
                     </button>
-                  )}
                 </div>
 
                 {activeProfile.file && (

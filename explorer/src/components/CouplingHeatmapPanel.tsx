@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import type { ExplorerDataSchema } from '../types/explorer';
 import { adaptFeatureMatrix, type FeatureMatrixData, type FeatureMatrixCell } from '../lib/adapters/matrix-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export type HeatmapMetricMode = 'combined' | 'direct' | 'flow' | 'shared';
 
@@ -14,11 +15,22 @@ export interface CouplingHeatmapPanelProps {
 
 export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
   data,
-  selectedNodeId,
-  onSelectNode,
+  selectedNodeId: selectedNodeIdProp,
+  onSelectNode: onSelectNodeProp,
   onSelectFeatureAnchor,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedNodeId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
+
+  const handleSelectNode = useCallback((nodeId: string) => {
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNodeProp) {
+      onSelectNodeProp(nodeId);
+    }
+  }, [investigation, onSelectNodeProp]);
   const [metricMode, setMetricMode] = useState<HeatmapMetricMode>('combined');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [_selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
@@ -189,15 +201,15 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
           const ratio = weight > 0 ? Math.min(1, Math.max(0.1, weight / maxMetricWeight)) : 0;
 
           // Fill heatmap cell color with dimming when selectedNodeId is active
-          const isRowOrColMatching = selectedNodeId ? (
-            rowFeat.anchorNodeId === selectedNodeId ||
-            colFeat.anchorNodeId === selectedNodeId ||
-            rowFeat.id === selectedNodeId ||
-            colFeat.id === selectedNodeId
+          const isRowOrColMatching = canonicalSelectedNodeId ? (
+            rowFeat.anchorNodeId === canonicalSelectedNodeId ||
+            colFeat.anchorNodeId === canonicalSelectedNodeId ||
+            rowFeat.id === canonicalSelectedNodeId ||
+            colFeat.id === canonicalSelectedNodeId
           ) : true;
 
           ctx.save();
-          if (!isRowOrColMatching && selectedNodeId) {
+          if (!isRowOrColMatching && canonicalSelectedNodeId) {
             ctx.globalAlpha = 0.3;
           }
 
@@ -297,10 +309,9 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
     const rowFeat = matrixData.features[hoveredCellInfo.cell.sourceIndex];
     if (rowFeat && rowFeat.anchorNodeId) {
       setSelectedFeatureId(rowFeat.id);
+      handleSelectNode(rowFeat.anchorNodeId);
       if (onSelectFeatureAnchor) {
         onSelectFeatureAnchor(rowFeat.anchorNodeId);
-      } else if (onSelectNode) {
-        onSelectNode(rowFeat.anchorNodeId);
       }
     }
   };

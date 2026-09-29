@@ -7,6 +7,7 @@ import {
   computeConstellationLayout,
 } from '../lib/layout/constellation-layout';
 import { FocusDirection } from '../lib/focus-graph';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface DependencyConstellationPanelProps {
   data: ConstellationData;
@@ -25,9 +26,20 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
   onReturnToGraph,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [internalSelectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const canonicalSelectedId = selectedNodeIdProp || internalSelectedNodeId;
+  const canonicalSelectedId = selectedNodeIdProp || investigation?.state.selectedNodeId || internalSelectedNodeId;
+
+  const handleSelectNode = (nodeId: string) => {
+    setSelectedNodeId(nodeId);
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNode) {
+      onSelectNode(nodeId);
+    }
+  };
   const [filterText, setFilterText] = useState('');
 
   const { focalNode, nodes, edges, availableNodes, summary, options } = data;

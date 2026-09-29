@@ -5,6 +5,7 @@ import {
   type ArchitectureDnaData,
   type ComponentDna,
 } from '../lib/adapters/dna-adapter';
+import { useInvestigationOptional } from '../context/InvestigationContext';
 
 export interface ArchitectureDNABarcodeProps {
   data: ExplorerDataSchema | null;
@@ -15,13 +16,25 @@ export interface ArchitectureDNABarcodeProps {
 
 export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
   data,
-  selectedNodeId,
+  selectedNodeId: selectedNodeIdProp,
   onSelectNode,
   className = '',
 }) => {
+  const investigation = useInvestigationOptional();
+  const canonicalSelectedId = selectedNodeIdProp ?? investigation?.state.selectedNodeId;
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeComponentId, setActiveComponentId] = useState<string | null>(selectedNodeId ?? null);
+  const [activeComponentId, setActiveComponentId] = useState<string | null>(canonicalSelectedId ?? null);
   const [hoveredBandId, setHoveredBandId] = useState<string | null>(null);
+
+  const handleSelectNode = (nodeId: string) => {
+    setActiveComponentId(nodeId);
+    if (investigation) {
+      investigation.selectNode(nodeId);
+    }
+    if (onSelectNode) {
+      onSelectNode(nodeId);
+    }
+  };
 
   // Pure adaptation from input schema
   const dnaData: ArchitectureDnaData | null = useMemo(() => {
@@ -31,12 +44,12 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
     return adaptArchitectureDna(data);
   }, [data]);
 
-  // Sync external selectedNodeId into local active component
+  // Sync external/canonical selectedNodeId into local active component
   useEffect(() => {
-    if (selectedNodeId) {
-      setActiveComponentId(selectedNodeId);
+    if (canonicalSelectedId) {
+      setActiveComponentId(canonicalSelectedId);
     }
-  }, [selectedNodeId]);
+  }, [canonicalSelectedId]);
 
   // Fallback active component profile
   const activeProfile: ComponentDna | null = useMemo(() => {
@@ -187,19 +200,14 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
               </div>
             ) : (
               filteredProfiles.map(prof => {
-                const isSelected = activeProfile?.id === prof.id || selectedNodeId === prof.id;
-                const isDimmed = !!selectedNodeId && prof.id !== selectedNodeId;
+                const isSelected = activeProfile?.id === prof.id || canonicalSelectedId === prof.id;
+                const isDimmed = !!canonicalSelectedId && prof.id !== canonicalSelectedId;
                 return (
                   <div
                     key={prof.id}
                     data-testid={`dna-item-${prof.id}`}
                     className={`dna-item ${isDimmed ? 'dimmed' : ''}`}
-                    onClick={() => {
-                      setActiveComponentId(prof.id);
-                      if (onSelectNode) {
-                        onSelectNode(prof.id);
-                      }
-                    }}
+                    onClick={() => handleSelectNode(prof.id)}
                     style={{
                       padding: '8px',
                       borderRadius: '4px',
@@ -311,10 +319,9 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
                       </span>
                     </div>
                   </div>
-                  {onSelectNode && (
-                    <button
-                      onClick={() => onSelectNode(activeProfile.id)}
-                      data-testid="dna-explore-graph-btn"
+                  <button
+                    onClick={() => handleSelectNode(activeProfile.id)}
+                    data-testid="dna-explore-graph-btn"
                       style={{
                         padding: '6px 12px',
                         fontSize: '11px',
@@ -328,7 +335,6 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
                     >
                       Explore in Graph Canvas →
                     </button>
-                  )}
                 </div>
 
                 {activeProfile.file && (
