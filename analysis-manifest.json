@@ -2,7 +2,7 @@
   "manifestVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-09-29T06:48:34.640Z",
+  "generatedAt": "2026-09-29T06:44:26.169Z",
   "source": {
     "directory": "scripts/temp-snapshot-test-fixture",
     "sourceDir": "/app/scripts/temp-snapshot-test-fixture",
@@ -14,19 +14,19 @@
   "artifacts": {
     "dependencyReport": {
       "path": "dependency-report.json",
-      "fileHash": "sha256:fb1ea5c8b1a6367d204557afe6622d0def9e56907991f1b281f3084ac33a820e"
+      "fileHash": "sha256:ce5a5e6201b8df361f81c1589ceb27b90b71dfd29aa16af3bb080fa9bdb049ac"
     },
     "analysisSnapshot": {
       "path": "analysis-snapshot.json",
-      "fileHash": "sha256:0e1788d53c720f43ae1c491f5867345a5a4187590f4939cd78837159a2dafccd"
+      "fileHash": "sha256:bb5910607568bdbdcee8f0e025d16fe461f4eae6ad1078e5599e30763e9d99ca"
     },
     "architectureSnapshot": {
       "path": "architecture-snapshot.json",
-      "fileHash": "sha256:5bffd863ccd0c23e0815db2e087c94028ed4ab7e95cf51cf5905cb122c307b9b"
+      "fileHash": "sha256:ef2412024480789f6b138d885be00b4e478630bdb933f1f85070d0424a9ce5bc"
     },
     "architectureMetrics": {
       "path": "architecture-metrics.json",
-      "fileHash": "sha256:0ed9dd42e911dad070b0fc5981fc6642e5ffe2fa01fbe773f3c156c13befa42b"
+      "fileHash": "sha256:aed1e633d5f7312f684a4e56233a4fbba63ddcca19b38088fdec4557245080e4"
     },
     "dependencyReportMd": {
       "path": "dependency-report.md",
@@ -34,7 +34,7 @@
     },
     "dependencySummaryMd": {
       "path": "dependency-summary.md",
-      "fileHash": "sha256:fe201203980b363ccfe2847eea3307b782143eb266a11df09e47df0df3c72453"
+      "fileHash": "sha256:ec05455d0d0d5fec98c40a859a492c1913f49bffb4ce00de79044260dc19be0d"
     },
     "unresolvedReferencesMd": {
       "path": "unresolved-references.md",
