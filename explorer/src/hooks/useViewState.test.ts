@@ -292,7 +292,7 @@ describe('useViewState', () => {
     });
 
     const search = window.location.search;
-    expect(search).toContain('view.mode=findings');
+    expect(search).toContain('view=findings');
     expect(search).toContain('node=ApexClass%3ATargetService');
     expect(search).toContain('finding=finding%3Ashared-state%3A1');
     expect(search).toContain('filter.q=Order');

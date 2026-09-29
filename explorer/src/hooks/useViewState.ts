@@ -56,6 +56,7 @@ export function useViewState() {
   const [urlEdgeId, setUrlEdgeId] = useState<string | null>(null);
 
   const isInitialMountRef = useRef(true);
+  const prevViewModeRef = useRef<WorkspaceViewMode>(activeViewMode);
 
   const readStateFromUrl = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -151,6 +152,7 @@ export function useViewState() {
     if (typeof window === 'undefined') return;
     if (isInitialMountRef.current) {
       isInitialMountRef.current = false;
+      prevViewModeRef.current = activeViewMode;
       return;
     }
 
@@ -215,7 +217,12 @@ export function useViewState() {
     const searchString = params.toString() ? `?${params.toString()}` : '';
     const newUrl = `${window.location.pathname}${searchString}`;
     if (window.location.search !== searchString) {
-      window.history.replaceState(null, '', newUrl);
+      if (prevViewModeRef.current !== activeViewMode) {
+        window.history.pushState(null, '', newUrl);
+        prevViewModeRef.current = activeViewMode;
+      } else {
+        window.history.replaceState(null, '', newUrl);
+      }
     }
   }, [
     activeViewMode,
