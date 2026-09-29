@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 import { WorkspaceViewMode } from '../lib/projectState';
 import {
   WorkspaceDomain,
@@ -69,14 +69,17 @@ export function WorkspaceRouterProvider({
     setViewMode('graph');
   }, [setViewMode]);
 
-  const value: WorkspaceRouterContextValue = {
-    activeDomain,
-    activeViewMode,
-    navigateToDomain,
-    navigateToView,
-    setViewMode,
-    resetWorkspace,
-  };
+  const value = useMemo<WorkspaceRouterContextValue>(
+    () => ({
+      activeDomain,
+      activeViewMode,
+      navigateToDomain,
+      navigateToView,
+      setViewMode,
+      resetWorkspace,
+    }),
+    [activeDomain, activeViewMode, navigateToDomain, navigateToView, setViewMode, resetWorkspace]
+  );
 
   return (
     <WorkspaceRouterContext.Provider value={value}>
