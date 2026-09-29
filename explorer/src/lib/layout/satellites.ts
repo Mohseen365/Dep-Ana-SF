@@ -7,6 +7,8 @@ import type {
 } from './types';
 import { findParentProductionNodeId, findParentObjectId } from './analysis';
 
+export const STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD = 750;
+
 export interface SatelliteLayoutOptions {
   /** Width of nodes used for geometry calculations (default: 120) */
   nodeWidth?: number;
@@ -31,8 +33,20 @@ export interface SatelliteLayoutOptions {
   verticalGap?: number;
   /** Maximum distance a satellite can be displaced from its parent target (default: 280) */
   maxSatelliteDistance?: number;
+  /** Whether Stage 9 coarse anchor bounding-region pruning is enabled (default: true if node count >= 750) */
+  enableCoarsePruning?: boolean;
   /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
   index?: LayoutGraphIndex;
+}
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface Segment {
+  p1: Point;
+  p2: Point;
 }
 
 export interface SatellitePlacementResult {
@@ -72,9 +86,71 @@ export function isHandlerNode(nodeAnalysis: ArchitectureNodeAnalysis): boolean {
   return /(?:handler|handlers|controllerextension|controllerext)$/i.test(name) && !nodeAnalysis.isTest;
 }
 
-interface Point {
-  x: number;
-  y: number;
+/**
+ * Broad-Phase Coarse Bounding-Region Segment Filter.
+ * Filters primary segments once per cluster before ring expansion.
+ * Guarantees zero false negatives: retains all segments whose AABB overlaps the cluster candidate bounding region.
+ */
+export function filterPrimarySegmentsCoarse(
+  anchor: Point,
+  count: number,
+  nodeWidth: number,
+  nodeHeight: number,
+  horizontalGap: number,
+  verticalGap: number,
+  maxDistance: number,
+  primarySegments: Segment[],
+  incidentEndpoints?: Point[]
+): Segment[] {
+  if (!primarySegments || primarySegments.length === 0) {
+    return [];
+  }
+
+  const dx = nodeWidth + horizontalGap;
+  const dy = nodeHeight + verticalGap;
+  // Maximum search radius including potential fallback expansion (+30)
+  const maxSearchRadius = Math.max(12, Math.ceil(Math.sqrt(count) * 3)) + 30;
+
+  // Compute cluster candidate bounding box
+  let minX = anchor.x - maxSearchRadius * dx;
+  let maxX = anchor.x + maxSearchRadius * dx;
+  let minY = anchor.y - maxSearchRadius * dy;
+  let maxY = anchor.y + maxSearchRadius * dy;
+
+  // Expand bounding box to encompass all incident endpoints (e.g. parent object or production node)
+  if (incidentEndpoints && incidentEndpoints.length > 0) {
+    for (let i = 0; i < incidentEndpoints.length; i++) {
+      const ep = incidentEndpoints[i];
+      if (ep.x < minX) minX = ep.x;
+      if (ep.x > maxX) maxX = ep.x;
+      if (ep.y < minY) minY = ep.y;
+      if (ep.y > maxY) maxY = ep.y;
+    }
+  }
+
+  // Safety buffer to prevent floating-point boundary misses
+  const EPS = 1e-3;
+  minX -= EPS;
+  maxX += EPS;
+  minY -= EPS;
+  maxY += EPS;
+
+  const relevantSegments: Segment[] = [];
+
+  for (let i = 0; i < primarySegments.length; i++) {
+    const seg = primarySegments[i];
+    const sMinX = seg.p1.x < seg.p2.x ? seg.p1.x : seg.p2.x;
+    const sMaxX = seg.p1.x > seg.p2.x ? seg.p1.x : seg.p2.x;
+    const sMinY = seg.p1.y < seg.p2.y ? seg.p1.y : seg.p2.y;
+    const sMaxY = seg.p1.y > seg.p2.y ? seg.p1.y : seg.p2.y;
+
+    // AABB Overlap Condition
+    if (sMaxX >= minX && sMinX <= maxX && sMaxY >= minY && sMinY <= maxY) {
+      relevantSegments.push(seg);
+    }
+  }
+
+  return relevantSegments;
 }
 
 /**
@@ -157,9 +233,10 @@ function generateSatelliteSlots(
   maxDistance: number,
   bias: 'field' | 'test' | 'neutral',
   targetVector?: Point,
-  primarySegments?: Array<{ p1: Point; p2: Point }>,
-  placedSatelliteSegments?: Array<{ p1: Point; p2: Point }>,
-  incidentEndpoints?: Point[]
+  primarySegments?: Segment[],
+  placedSatelliteSegments?: Segment[],
+  incidentEndpoints?: Point[],
+  enableCoarsePruning?: boolean
 ): Point[] {
   if (count <= 0) return [];
 
@@ -170,6 +247,21 @@ function generateSatelliteSlots(
     maxDistance,
     Math.ceil(Math.sqrt(count)) * Math.max(dx, dy) * 1.2
   );
+
+  const rawPrimarySegments = primarySegments || [];
+  const relevantSegments = (enableCoarsePruning && rawPrimarySegments.length > 0)
+    ? filterPrimarySegmentsCoarse(
+        anchor,
+        count,
+        nodeWidth,
+        nodeHeight,
+        horizontalGap,
+        verticalGap,
+        maxDistance,
+        rawPrimarySegments,
+        incidentEndpoints
+      )
+    : rawPrimarySegments;
 
   const candidateSlots: Array<{
     x: number;
@@ -260,9 +352,9 @@ function generateSatelliteSlots(
       for (let epIdx = 0; epIdx < endpointsToTest.length; epIdx++) {
         const ep = endpointsToTest[epIdx];
 
-        if (primarySegments && primarySegments.length > 0) {
-          for (let i = 0; i < primarySegments.length; i++) {
-            if (segmentsIntersect(ep, candPoint, primarySegments[i].p1, primarySegments[i].p2)) {
+        if (relevantSegments.length > 0) {
+          for (let i = 0; i < relevantSegments.length; i++) {
+            if (segmentsIntersect(ep, candPoint, relevantSegments[i].p1, relevantSegments[i].p2)) {
               primaryCrossings++;
             }
           }
@@ -410,6 +502,8 @@ export function placeSatellites(
   const defaultDomainX = options.defaultDomainX ?? 0;
   const index = options.index;
 
+  const enableCoarsePruning = options.enableCoarsePruning ?? (nodes.length >= STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD);
+
   // Immutably clone primary positions into result positions
   const positions: Record<string, { x: number; y: number }> = { ...primaryPositions };
   const satellitePositions: Record<string, { x: number; y: number }> = {};
@@ -511,7 +605,12 @@ export function placeSatellites(
         horizontalGap,
         verticalGap,
         maxSatelliteDistance,
-        'neutral'
+          'neutral',
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          enableCoarsePruning
       );
       if (slots.length > 0) {
         trigX = slots[0].x;
@@ -559,7 +658,12 @@ export function placeSatellites(
             horizontalGap,
             verticalGap,
             maxSatelliteDistance,
-            'neutral'
+            'neutral',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            enableCoarsePruning
           );
           if (handlerSlots.length > 0) {
             handlerX = handlerSlots[0].x;
@@ -607,7 +711,12 @@ export function placeSatellites(
         horizontalGap,
         verticalGap,
         maxSatelliteDistance,
-        'neutral'
+        'neutral',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        enableCoarsePruning
       );
       if (slots.length > 0) {
         hX = slots[0].x;
@@ -686,7 +795,9 @@ export function placeSatellites(
       'field',
       targetVector,
       primarySegments,
-      placedSatelliteSegments
+      placedSatelliteSegments,
+      [parentPos],
+      enableCoarsePruning
     );
 
     fields.forEach((fieldItem, idx) => {
@@ -719,7 +830,12 @@ export function placeSatellites(
       horizontalGap,
       verticalGap,
       maxSatelliteDistance,
-      'field'
+      'field',
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      enableCoarsePruning
     );
 
     unanchoredFields.forEach((fieldItem, idx) => {
@@ -799,7 +915,9 @@ export function placeSatellites(
       'test',
       targetVector,
       primarySegments,
-      placedSatelliteSegments
+      placedSatelliteSegments,
+      [targetPos],
+      enableCoarsePruning
     );
 
     tests.forEach((testItem, idx) => {
@@ -832,7 +950,12 @@ export function placeSatellites(
       horizontalGap,
       verticalGap,
       maxSatelliteDistance,
-      'test'
+      'test',
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      enableCoarsePruning
     );
 
     unanchoredTests.forEach((testItem, idx) => {

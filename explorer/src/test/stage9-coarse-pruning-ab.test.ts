@@ -5,6 +5,7 @@ import {
   placeSatellites,
   isTriggerNode,
   isHandlerNode,
+  STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD,
   SatelliteLayoutOptions,
   SatellitePlacementResult,
 } from '../lib/layout/satellites';
@@ -1310,5 +1311,77 @@ describe('Stage 9 Coarse Anchor Bounding-Region Pruning A/B Experiment Suite', (
     expect(evalMetrics.satelliteOverlapCount).toBe(0);
     expect(evalMetrics.layerViolationCount).toBe(0);
     expect(evalMetrics.minClearance).toBeGreaterThanOrEqual(39.99);
+  });
+
+  it('6. Production Activation Boundary Tests (N = 749, N = 750, N = 751)', () => {
+    const boundaryNodeCounts = [
+      STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD - 1, // 749: Oracle path
+      STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD,     // 750: Pruning activated
+      STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD + 1  // 751: Pruning activated
+    ];
+
+    boundaryNodeCounts.forEach(count => {
+      const synthetic = generateSyntheticSalesforceGraph({ nodeCount: count, seed: 12345 });
+      const nodes = synthetic.nodes;
+      const edges = synthetic.edges;
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+
+      const primaryPositions: Record<string, { x: number; y: number }> = {};
+      analysis.nodeList.forEach((item, idx) => {
+        if (!item.isTest && !item.isField && !isTriggerNode(item) && !isHandlerNode(item)) {
+          primaryPositions[item.nodeId] = {
+            x: (idx % 20) * 200,
+            y: Math.floor(idx / 20) * 300,
+          };
+        }
+      });
+
+      // Explicit Oracle reference call
+      const oracleRes = placeSatellites(nodes, edges, analysis, primaryPositions, { enableCoarsePruning: false });
+
+      // Default production call (relies on activation threshold guard)
+      const prodRes = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      // Verify exact differential equivalence
+      assertExactEquivalence(oracleRes, prodRes, `Boundary N=${count}`);
+
+      // Verify forced override switches behavior
+      const forcedPrunedRes = placeSatellites(nodes, edges, analysis, primaryPositions, { enableCoarsePruning: true });
+      assertExactEquivalence(oracleRes, forcedPrunedRes, `Forced Pruned Boundary N=${count}`);
+    });
+  });
+
+  it('7. Direct Differential Regression: Production vs Oracle Across Scale Tiers', () => {
+    const scaleTiers = [240, 500, 749, 750, 1000, 2000, 3500];
+
+    scaleTiers.forEach(nodeCount => {
+      let nodes: ExplorerNode[];
+      let edges: ExplorerEdge[];
+
+      if (nodeCount === 240) {
+        nodes = dataset.nodes;
+        edges = dataset.edges;
+      } else {
+        const synthetic = generateSyntheticSalesforceGraph({ nodeCount, seed: 999 });
+        nodes = synthetic.nodes;
+        edges = synthetic.edges;
+      }
+
+      const analysis = computeArchitectureAnalysis(nodes, edges);
+      const primaryPositions: Record<string, { x: number; y: number }> = {};
+      analysis.nodeList.forEach((item, idx) => {
+        if (!item.isTest && !item.isField && !isTriggerNode(item) && !isHandlerNode(item)) {
+          primaryPositions[item.nodeId] = {
+            x: (idx % 20) * 200,
+            y: Math.floor(idx / 20) * 300,
+          };
+        }
+      });
+
+      const oracleRes = placeSatellites(nodes, edges, analysis, primaryPositions, { enableCoarsePruning: false });
+      const prodRes = placeSatellites(nodes, edges, analysis, primaryPositions);
+
+      assertExactEquivalence(oracleRes, prodRes, `Production vs Oracle Scale N=${nodeCount}`);
+    });
   });
 });
