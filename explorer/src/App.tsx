@@ -1130,6 +1130,10 @@ function AppContent() {
                       onInvestigateNode={(nodeId) => {
                         selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
+                      }}
+                      onExploreInGraph={(nodeId) => {
+                        selection.selectNode(nodeId);
+                        view.setIsInvestigating(true);
                         setWorkspaceViewMode('graph');
                       }}
                     />
@@ -1148,6 +1152,10 @@ function AppContent() {
                       impactSummaries={activeData?.impactSummaries ?? {}}
                       onSelectHotspot={(node) => {
                         selection.selectNode(node.id);
+                        view.setIsInvestigating(true);
+                      }}
+                      onExploreInGraph={(nodeId) => {
+                        selection.selectNode(nodeId);
                         view.setIsInvestigating(true);
                         setWorkspaceViewMode('graph');
                       }}

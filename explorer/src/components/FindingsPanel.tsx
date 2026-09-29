@@ -14,6 +14,7 @@ export interface FindingsPanelProps {
   onSelectFinding: (finding: ArchitectureFinding) => void;
   onClearSelection: () => void;
   onInvestigateNode?: (nodeId: string) => void;
+  onExploreInGraph?: (nodeId: string) => void;
 }
 
 export type StatusFilterOption = "ALL" | "UNRESOLVED" | "RESOLVED";
@@ -39,7 +40,8 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
   selectedFindingId,
   onSelectFinding,
   onClearSelection,
-  onInvestigateNode
+  onInvestigateNode,
+  onExploreInGraph
 }) => {
   const [selectedSeverities, setSelectedSeverities] = useState<Set<FindingSeverity>>(
     new Set(SEVERITY_ORDER)
@@ -268,10 +270,29 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                           {finding.nodeIds.length > 0 && (
                             <button
                               className="action-btn investigate-btn"
-                              onClick={e => handleInvestigate(e, finding)}
-                              title={`Investigate ${finding.nodeIds[0]}`}
+                              onClick={e => {
+                                e.stopPropagation();
+                                onSelectFinding(finding);
+                                if (onInvestigateNode) {
+                                  onInvestigateNode(finding.nodeIds[0]);
+                                }
+                              }}
+                              title={`Select ${finding.nodeIds[0]}`}
                             >
-                              🔍 Investigate {finding.nodeIds[0].split(":")[1] || finding.nodeIds[0]}
+                              🔍 Select {finding.nodeIds[0].split(":")[1] || finding.nodeIds[0]}
+                            </button>
+                          )}
+                          {finding.nodeIds.length > 0 && onExploreInGraph && (
+                            <button
+                              className="action-btn explore-btn"
+                              onClick={e => {
+                                e.stopPropagation();
+                                onSelectFinding(finding);
+                                onExploreInGraph(finding.nodeIds[0]);
+                              }}
+                              title={`Explore ${finding.nodeIds[0]} in Graph`}
+                            >
+                              🗺️ Explore in Graph
                             </button>
                           )}
                           {review.status === "RESOLVED" ? (

@@ -49,6 +49,56 @@ describe('WorkspaceRouterContext', () => {
     expect(screen.getByTestId('active-view').textContent).toBe('graph');
   });
 
+  it("verifies all 18 view modes map correctly to their respective 5 domains", () => {
+    const viewModeDomainMap: Record<string, string> = {
+      dashboard: 'portfolio',
+      compare: 'portfolio',
+      history: 'portfolio',
+      graph: 'topological',
+      subway: 'topological',
+      constellation: 'topological',
+      tree: 'topological',
+      treemap: 'topological',
+      matrix: 'feature',
+      heatmap: 'feature',
+      river: 'feature',
+      dna: 'feature',
+      profile: 'local',
+      radar: 'local',
+      'four-direction': 'local',
+      findings: 'governance',
+      hotspots: 'governance',
+      diagnostics: 'governance',
+    };
+
+    const TestAllMapComponent: React.FC = () => {
+      const { setViewMode, activeDomain, activeViewMode } = useWorkspaceRouter();
+      return (
+        <div>
+          <div data-testid="curr-domain">{activeDomain}</div>
+          <div data-testid="curr-view">{activeViewMode}</div>
+          {Object.keys(viewModeDomainMap).map((view) => (
+            <button key={view} onClick={() => setViewMode(view as any)}>
+              SetView-{view}
+            </button>
+          ))}
+        </div>
+      );
+    };
+
+    render(
+      <WorkspaceRouterProvider>
+        <TestAllMapComponent />
+      </WorkspaceRouterProvider>
+    );
+
+    for (const [view, domain] of Object.entries(viewModeDomainMap)) {
+      fireEvent.click(screen.getByText(`SetView-${view}`));
+      expect(screen.getByTestId('curr-view').textContent).toBe(view);
+      expect(screen.getByTestId('curr-domain').textContent).toBe(domain);
+    }
+  });
+
   it('navigates across domains and view modes cleanly', () => {
     const handleChange = vi.fn();
 
