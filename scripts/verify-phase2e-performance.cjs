@@ -42,7 +42,7 @@ async function runPerformanceRealBrowserVerification() {
     { from: 'constellation', to: 'profile', btnText: 'Profile' },
     { from: 'profile', to: 'radar', btnText: 'Radar' },
     { from: 'radar', to: 'dna', btnText: 'DNA' },
-    { from: 'dna', to: 'four-direction', btnText: '4-Dir' },
+    { from: 'dna', to: 'four-direction', btnText: 'Four-Dir' },
     { from: 'four-direction', to: 'findings', btnText: 'Findings' },
   ];
 
