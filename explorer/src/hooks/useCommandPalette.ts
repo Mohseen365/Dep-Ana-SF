@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 export interface UseCommandPaletteReturn {
   isOpen: boolean;
@@ -11,21 +11,23 @@ export interface UseCommandPaletteReturn {
 
 export function useCommandPalette(): UseCommandPaletteReturn {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
-
+  const [query, setQuery] = useState("");
+  const setQueryMemo = useCallback((q: string) => {
+    setQuery(q);
+  }, []);
   const open = useCallback(() => {
     setIsOpen(true);
   }, []);
 
   const close = useCallback(() => {
     setIsOpen(false);
-    setQuery('');
+    setQuery("");
   }, []);
 
   const toggle = useCallback(() => {
     setIsOpen((prev) => {
       if (prev) {
-        setQuery('');
+        setQuery("");
         return false;
       }
       return true;
@@ -34,25 +36,25 @@ export function useCommandPalette(): UseCommandPaletteReturn {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         toggle();
-      } else if (event.key === 'Escape' && isOpen) {
+      } else if (event.key === "Escape" && isOpen) {
         event.preventDefault();
         close();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [toggle, close, isOpen]);
 
   return {
     isOpen,
     query,
-    setQuery,
+    setQuery: setQueryMemo,
     open,
     close,
     toggle,

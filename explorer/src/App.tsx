@@ -205,10 +205,13 @@ function AppContent() {
   const activeData = committedMutatedGraph || data;
 
   const isNotAnalyzed =
-    activeProject?.analysisStatus === 'NOT_ANALYZED' ||
-    (error && error.message.startsWith('NOT_ANALYZED:')) ||
-    (!activeData && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:')));
+      !loading &&
+      !projectContext?.loading &&
+      (activeProject?.analysisStatus === 'NOT_ANALYZED' ||
+        (error && error.message.startsWith('NOT_ANALYZED:')) ||
+        (!activeData && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:'))));
 
+  
   const selection = useGraphSelection();
   const investigation = useInvestigation();
   const view = useViewState();

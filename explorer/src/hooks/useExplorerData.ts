@@ -1,32 +1,32 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import type { ExplorerDataSchema } from '../types/explorer';
-import { parseExplorerData } from '../lib/schema';
+import { useState, useEffect, useCallback, useRef } from "react";
+import type { ExplorerDataSchema } from "../types/explorer";
+import { parseExplorerData } from "../lib/schema";
 
 function slugify(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function resolveDataUrl(projectIdOrUrl?: string): string {
   if (!projectIdOrUrl) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        const urlProject = urlParams.get('project');
-        if (urlProject && urlProject !== 'default') {
+        const urlProject = urlParams.get("project");
+        if (urlProject && urlProject !== "default") {
           const slugProject = slugify(urlProject);
-          if (slugProject && slugProject !== 'default') {
+          if (slugProject && slugProject !== "default") {
             return `/projects/${slugProject}/explorer-data.json`;
           }
         }
-        const savedProject = localStorage.getItem('explorer.activeProjectId');
-        if (savedProject && savedProject !== 'default') {
+        const savedProject = localStorage.getItem("explorer.activeProjectId");
+        if (savedProject && savedProject !== "default") {
           const slugProject = slugify(savedProject);
-          if (slugProject && slugProject !== 'default') {
+          if (slugProject && slugProject !== "default") {
             return `/projects/${slugProject}/explorer-data.json`;
           }
         }
@@ -34,21 +34,21 @@ function resolveDataUrl(projectIdOrUrl?: string): string {
         // Ignore
       }
     }
-    return '/explorer-data.json';
+    return "/explorer-data.json";
   }
 
   if (
-    projectIdOrUrl.startsWith('/') ||
-    projectIdOrUrl.startsWith('http') ||
-    projectIdOrUrl.endsWith('.json')
+    projectIdOrUrl.startsWith("/") ||
+    projectIdOrUrl.startsWith("http") ||
+    projectIdOrUrl.endsWith(".json")
   ) {
     return projectIdOrUrl;
   }
 
   const slugId = slugify(projectIdOrUrl);
 
-  if (slugId === 'default' || !slugId) {
-    return '/explorer-data.json';
+  if (slugId === "default" || !slugId) {
+    return "/explorer-data.json";
   }
 
   return `/projects/${slugId}/explorer-data.json`;
@@ -80,13 +80,16 @@ export function useExplorerData(projectIdOrUrl?: string): {
       setRetryTrigger((prev) => prev + 1);
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('explorer:project-changed', handleProjectChange);
+    if (typeof window !== "undefined") {
+      window.addEventListener("explorer:project-changed", handleProjectChange);
     }
 
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('explorer:project-changed', handleProjectChange);
+      if (typeof window !== "undefined") {
+        window.removeEventListener(
+          "explorer:project-changed",
+          handleProjectChange,
+        );
       }
     };
   }, []);
@@ -95,50 +98,60 @@ export function useExplorerData(projectIdOrUrl?: string): {
     const controller = new AbortController();
     let isSubscribed = true;
 
+    retryCountRef.current = 0;
+
     setData(null);
     setLoading(true);
     setError(null);
 
     async function fetchData() {
+      console.log("[useExplorerData] Fetching resolvedUrl:", resolvedUrl);
 
-      const isDefaultUrl = resolvedUrl === '/explorer-data.json';
+      const isDefaultUrl = resolvedUrl === "/explorer-data.json";
 
       try {
         const res = await fetch(resolvedUrl, { signal: controller.signal });
 
         if (!res.ok) {
           if (!isDefaultUrl) {
-            throw new Error(`NOT_ANALYZED: Project analysis data not found (HTTP ${res.status})`);
+            throw new Error(
+              `NOT_ANALYZED: Project analysis data not found (HTTP ${res.status})`,
+            );
           }
           throw new Error(`Failed to load explorer data: HTTP ${res.status}`);
         }
 
         const contentType =
-          res.headers && typeof res.headers.get === 'function'
-            ? res.headers.get('content-type') || ''
-            : '';
+          res.headers && typeof res.headers.get === "function"
+            ? res.headers.get("content-type") || ""
+            : "";
 
-        let text = '';
-        if (typeof res.text === 'function') {
+        let text = "";
+        if (typeof res.text === "function") {
           text = await res.text();
-        } else if (typeof res.json === 'function') {
+        } else if (typeof res.json === "function") {
           const jsonVal = await res.json();
-          text = typeof jsonVal === 'string' ? jsonVal : JSON.stringify(jsonVal);
+          text =
+            typeof jsonVal === "string" ? jsonVal : JSON.stringify(jsonVal);
         }
 
         const trimmedText = text.trim();
 
         const isHtml =
-          contentType.includes('text/html') ||
-          trimmedText.startsWith('<') ||
-          trimmedText.startsWith('<!DOCTYPE') ||
-          trimmedText.startsWith('<!doctype');
+          contentType.includes("text/html") ||
+          trimmedText.startsWith("<") ||
+          trimmedText.startsWith("<!DOCTYPE") ||
+          trimmedText.startsWith("<!doctype");
 
         if (isHtml) {
           if (!isDefaultUrl) {
-            throw new Error(`NOT_ANALYZED: Project analysis data not found (HTML SPA fallback)`);
+            throw new Error(
+              `NOT_ANALYZED: Project analysis data not found (HTML SPA fallback)`,
+            );
           }
-          throw new Error('Failed to load explorer data: Server returned HTML instead of JSON');
+          throw new Error(
+            "Failed to load explorer data: Server returned HTML instead of JSON",
+          );
         }
 
         let json: unknown;
@@ -146,7 +159,7 @@ export function useExplorerData(projectIdOrUrl?: string): {
           json = JSON.parse(text);
         } catch (parseErr) {
           throw new Error(
-            `Failed to parse explorer data: ${parseErr instanceof Error ? parseErr.message : 'Invalid JSON'}`
+            `Failed to parse explorer data: ${parseErr instanceof Error ? parseErr.message : "Invalid JSON"}`,
           );
         }
 
@@ -160,8 +173,10 @@ export function useExplorerData(projectIdOrUrl?: string): {
         if (controller.signal.aborted) return;
 
         const errMessage = err instanceof Error ? err.message : String(err);
-        const isNotAnalyzed = errMessage.startsWith('NOT_ANALYZED:');
-        const isParseError = errMessage.includes('Failed to parse explorer data');
+        const isNotAnalyzed = errMessage.startsWith("NOT_ANALYZED:");
+        const isParseError = errMessage.includes(
+          "Failed to parse explorer data",
+        );
 
         if (retryCountRef.current < 1 && !isNotAnalyzed && !isParseError) {
           retryCountRef.current += 1;

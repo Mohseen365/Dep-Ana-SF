@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { searchNodes, SearchResult } from '../lib/search-filter';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
+import { searchNodes, SearchResult } from "../lib/search-filter";
 import {
   ExplorerNode,
   ExplorerDataSchema,
@@ -7,27 +13,27 @@ import {
   ExplorerUnresolvedReference,
   ExplorerRiskLevel,
   ProjectMetadata,
-} from '../types/explorer';
-import { useProject } from '../context/ProjectContext';
-import { SummaryBar } from './SummaryBar';
-import { HotspotPanel } from './HotspotPanel';
-import { DiagnosticsPanel } from './DiagnosticsPanel';
-import { FindingsPanel } from './findings/FindingsPanel';
-import { ComparePanel } from './ComparePanel';
-import { ArchitectureFinding } from '../lib/intelligence';
+} from "../types/explorer";
+import { useProject } from "../context/ProjectContext";
+import { SummaryBar } from "./SummaryBar";
+import { HotspotPanel } from "./HotspotPanel";
+import { DiagnosticsPanel } from "./DiagnosticsPanel";
+import { FindingsPanel } from "./findings/FindingsPanel";
+import { ComparePanel } from "./ComparePanel";
+import { ArchitectureFinding } from "../lib/intelligence";
 
 export type PalettePanelId =
-  | 'summary'
-  | 'hotspots'
-  | 'diagnostics'
-  | 'findings'
-  | 'compare'
+  | "summary"
+  | "hotspots"
+  | "diagnostics"
+  | "findings"
+  | "compare"
   | null;
 
 export interface CommandEntry {
   id: string;
   title: string;
-  category: 'Panel' | 'Action' | 'Project';
+  category: "Panel" | "Action" | "Project";
   panelId?: PalettePanelId;
   action?: () => void;
   description?: string;
@@ -52,10 +58,10 @@ export interface CommandPaletteProps {
   onSelectFinding?: (finding: ArchitectureFinding) => void;
   onClearFinding?: () => void;
   compareState?: any;
-  activeRiskFilter?: ExplorerRiskLevel | '';
+  activeRiskFilter?: ExplorerRiskLevel | "";
   onRiskFilterChange?: (risk: ExplorerRiskLevel) => void;
-  diagnosticTab?: 'cycles' | 'unresolved' | 'none';
-  onDiagnosticTabChange?: (tab: 'cycles' | 'unresolved' | 'none') => void;
+  diagnosticTab?: "cycles" | "unresolved" | "none";
+  onDiagnosticTabChange?: (tab: "cycles" | "unresolved" | "none") => void;
   selectedCycleId?: string | null;
   onSelectCycle?: (cycle: ExplorerCycleGroup | null) => void;
   selectedUnresolvedEdgeId?: string | null;
@@ -88,7 +94,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onClose,
   nodes,
   onSelectNode,
-  query = '',
+  query = "",
   onQueryChange,
   data = null,
   selectedNodeId = null,
@@ -97,9 +103,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onSelectFinding,
   onClearFinding,
   compareState,
-  activeRiskFilter = '',
+  activeRiskFilter = "",
   onRiskFilterChange,
-  diagnosticTab = 'cycles',
+  diagnosticTab = "cycles",
   onDiagnosticTabChange,
   selectedCycleId = null,
   onSelectCycle,
@@ -126,109 +132,114 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const projectContext = useProjectSafe();
   const availableProjects = projectContext?.projects || propProjects || [];
-  const currentProjectId = projectContext?.activeProjectId || propActiveProjectId;
-  const handleSelectProject = projectContext?.selectProject || propSelectProject;
+  const currentProjectId =
+    projectContext?.activeProjectId || propActiveProjectId;
+  const handleSelectProject =
+    projectContext?.selectProject || propSelectProject;
 
-  const isNodeInvestigated = Boolean(selectedNodeId) && (isInvestigating ?? true);
+  const isNodeInvestigated =
+    Boolean(selectedNodeId) && (isInvestigating ?? true);
 
   // Command entries definition
   const commandEntries: CommandEntry[] = useMemo(() => {
     const entries: CommandEntry[] = [
       {
-        id: 'cmd-summary',
-        title: 'Open Summary',
-        category: 'Panel',
-        panelId: 'summary',
-        description: 'View architecture summary & health metrics',
+        id: "cmd-summary",
+        title: "Open Summary",
+        category: "Panel",
+        panelId: "summary",
+        description: "View architecture summary & health metrics",
       },
       {
-        id: 'cmd-hotspots',
-        title: 'Open Hotspots',
-        category: 'Panel',
-        panelId: 'hotspots',
-        description: 'View architectural hotspots and refactoring readiness',
+        id: "cmd-hotspots",
+        title: "Open Hotspots",
+        category: "Panel",
+        panelId: "hotspots",
+        description: "View architectural hotspots and refactoring readiness",
       },
       {
-        id: 'cmd-diagnostics',
-        title: 'Open Diagnostics',
-        category: 'Panel',
-        panelId: 'diagnostics',
-        description: 'View circular dependencies & unresolved references',
+        id: "cmd-diagnostics",
+        title: "Open Diagnostics",
+        category: "Panel",
+        panelId: "diagnostics",
+        description: "View circular dependencies & unresolved references",
       },
       {
-        id: 'cmd-cycles',
-        title: 'Find cycles',
-        category: 'Panel',
-        panelId: 'diagnostics',
+        id: "cmd-cycles",
+        title: "Find cycles",
+        category: "Panel",
+        panelId: "diagnostics",
         action: () => {
-          onDiagnosticTabChange?.('cycles');
+          onDiagnosticTabChange?.("cycles");
         },
-        description: 'Find circular dependencies and risk cycles in the active project',
+        description:
+          "Find circular dependencies and risk cycles in the active project",
       },
       {
-        id: 'cmd-findings',
-        title: 'Open Findings',
-        category: 'Panel',
-        panelId: 'findings',
-        description: 'View architecture rule findings & violations',
+        id: "cmd-findings",
+        title: "Open Findings",
+        category: "Panel",
+        panelId: "findings",
+        description: "View architecture rule findings & violations",
       },
       {
-        id: 'cmd-compare',
-        title: 'Compare snapshots',
-        category: 'Panel',
-        panelId: 'compare',
+        id: "cmd-compare",
+        title: "Compare snapshots",
+        category: "Panel",
+        panelId: "compare",
         action: () => {
           onToggleCompare?.();
         },
-        description: 'Compare current architecture with previous snapshot',
+        description: "Compare current architecture with previous snapshot",
       },
       {
-        id: 'cmd-reset-graph',
-        title: 'Reset graph',
-        category: 'Action',
+        id: "cmd-reset-graph",
+        title: "Reset graph",
+        category: "Action",
         action: () => {
           onResetView?.();
         },
-        description: 'Reset active graph filters, selection, and zoom level',
+        description: "Reset active graph filters, selection, and zoom level",
       },
       {
-        id: 'handoff-to-refactor',
-        title: 'Hand off to refactor',
-        category: 'Action',
+        id: "handoff-to-refactor",
+        title: "Hand off to refactor",
+        category: "Action",
         disabled: !isNodeInvestigated,
         action: () => {
           if (selectedNodeId && onRequestHandoff) {
             onRequestHandoff(selectedNodeId);
           }
         },
-        description: 'Open the refactor handoff confirmation for the currently investigated node.',
+        description:
+          "Open the refactor handoff confirmation for the currently investigated node.",
       },
       {
-        id: 'cmd-focus',
-        title: 'Focus on selected node',
-        category: 'Action',
+        id: "cmd-focus",
+        title: "Focus on selected node",
+        category: "Action",
         action: () => {
           onApplyFocus?.();
         },
-        description: 'Isolate neighborhood around selected component',
+        description: "Isolate neighborhood around selected component",
       },
       {
-        id: 'cmd-impact',
-        title: 'Show impact of selected node',
-        category: 'Action',
+        id: "cmd-impact",
+        title: "Show impact of selected node",
+        category: "Action",
         action: () => {
           onShowImpact?.();
         },
-        description: 'Highlight blast radius for selected component',
+        description: "Highlight blast radius for selected component",
       },
       {
-        id: 'cmd-toggle-view',
-        title: 'Toggle view mode',
-        category: 'Action',
+        id: "cmd-toggle-view",
+        title: "Toggle view mode",
+        category: "Action",
         action: () => {
           onToggleViewMode?.();
         },
-        description: 'Switch between Graph and Findings view modes',
+        description: "Switch between Graph and Findings view modes",
       },
     ];
 
@@ -237,7 +248,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       entries.push({
         id: `cmd-project-${proj.id}`,
         title: `Switch project: ${proj.name}`,
-        category: 'Project',
+        category: "Project",
         projectId: proj.id,
         disabled: proj.id === currentProjectId,
         action: () => {
@@ -283,16 +294,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     }
   }, [isOpen, activePanel]);
 
+  const onQueryChangeRef = useRef(onQueryChange);
+  onQueryChangeRef.current = onQueryChange;
   // Debounce input at 100ms
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(inputVal);
-      if (onQueryChange) {
-        onQueryChange(inputVal);
+      if (onQueryChangeRef.current) {
+        onQueryChangeRef.current(inputVal);
       }
     }, 100);
     return () => clearTimeout(timer);
-  }, [inputVal, onQueryChange]);
+  }, [inputVal]);
 
   // Filter matching commands
   const matchingCommands = useMemo(() => {
@@ -301,7 +314,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     return commandEntries.filter(
       (cmd) =>
         cmd.title.toLowerCase().includes(q) ||
-        (cmd.description && cmd.description.toLowerCase().includes(q))
+        (cmd.description && cmd.description.toLowerCase().includes(q)),
     );
   }, [commandEntries, debouncedQuery]);
 
@@ -310,8 +323,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     if (!debouncedQuery.trim()) {
       return nodes.map((node) => ({
         node,
-        matchField: 'displayName',
-        matchValue: '',
+        matchField: "displayName",
+        matchValue: "",
       }));
     }
     return searchNodes(nodes, debouncedQuery);
@@ -320,10 +333,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   // Combined selectable list: matching commands first, then matching nodes
   const combinedList = useMemo(() => {
     const items: Array<
-      { kind: 'command'; item: CommandEntry } | { kind: 'node'; item: SearchResult }
+      | { kind: "command"; item: CommandEntry }
+      | { kind: "node"; item: SearchResult }
     > = [];
-    matchingCommands.forEach((cmd) => items.push({ kind: 'command', item: cmd }));
-    matchingNodes.forEach((nodeResult) => items.push({ kind: 'node', item: nodeResult }));
+    matchingCommands.forEach((cmd) =>
+      items.push({ kind: "command", item: cmd }),
+    );
+    matchingNodes.forEach((nodeResult) =>
+      items.push({ kind: "node", item: nodeResult }),
+    );
     return items;
   }, [matchingCommands, matchingNodes]);
 
@@ -335,7 +353,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   useEffect(() => {
     if (itemRefs.current[selectedIndex]) {
       itemRefs.current[selectedIndex]?.scrollIntoView?.({
-        block: 'nearest',
+        block: "nearest",
       });
     }
   }, [selectedIndex]);
@@ -345,7 +363,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       onSelectNode(nodeId);
       onClose();
     },
-    [onSelectNode, onClose]
+    [onSelectNode, onClose],
   );
 
   const handleSelectCommand = useCallback(
@@ -354,37 +372,39 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       if (cmd.action) {
         cmd.action();
       }
-      if (cmd.category === 'Panel' && cmd.panelId) {
+      if (cmd.category === "Panel" && cmd.panelId) {
         setActivePanel(cmd.panelId);
       } else {
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown') {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       if (combinedList.length > 0) {
         setSelectedIndex((prev) => (prev + 1) % combinedList.length);
       }
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (combinedList.length > 0) {
-        setSelectedIndex((prev) => (prev - 1 + combinedList.length) % combinedList.length);
+        setSelectedIndex(
+          (prev) => (prev - 1 + combinedList.length) % combinedList.length,
+        );
       }
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       if (combinedList.length > 0 && combinedList[selectedIndex]) {
         const selected = combinedList[selectedIndex];
-        if (selected.kind === 'command') {
+        if (selected.kind === "command") {
           handleSelectCommand(selected.item);
         } else {
           handleSelectNode(selected.item.node.id);
         }
       }
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       e.preventDefault();
       onClose();
     }
@@ -394,13 +414,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         e.preventDefault();
         onClose();
       }
     };
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -421,7 +441,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       >
         {activePanel !== null ? (
           /* Panel Mode View */
-          <div className="command-palette-panel-view" data-testid="command-palette-panel-view">
+          <div
+            className="command-palette-panel-view"
+            data-testid="command-palette-panel-view"
+          >
             <div className="command-palette-panel-header">
               <button
                 className="command-palette-back-btn"
@@ -435,16 +458,22 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               </span>
               <kbd className="command-palette-shortcut-hint">ESC to close</kbd>
             </div>
-            <div className="command-palette-panel-content" data-testid={`command-palette-panel-content-${activePanel}`}>
-              {activePanel === 'summary' && (
+            <div
+              className="command-palette-panel-content"
+              data-testid={`command-palette-panel-content-${activePanel}`}
+            >
+              {activePanel === "summary" && (
                 <SummaryBar
                   summary={
                     data?.summary ?? {
                       nodeCount: nodes.length,
                       edgeCount: data?.edges?.length ?? 0,
-                      highRiskCount: nodes.filter((n) => n.risk === 'HIGH').length,
-                      mediumRiskCount: nodes.filter((n) => n.risk === 'MEDIUM').length,
-                      lowRiskCount: nodes.filter((n) => n.risk === 'LOW').length,
+                      highRiskCount: nodes.filter((n) => n.risk === "HIGH")
+                        .length,
+                      mediumRiskCount: nodes.filter((n) => n.risk === "MEDIUM")
+                        .length,
+                      lowRiskCount: nodes.filter((n) => n.risk === "LOW")
+                        .length,
                       cycleCount: data?.cycles?.length ?? 0,
                       unresolvedCount: data?.unresolvedReferences?.length ?? 0,
                       inventory: {
@@ -466,7 +495,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   sidebarCollapsed={true}
                 />
               )}
-              {activePanel === 'hotspots' && (
+              {activePanel === "hotspots" && (
                 <HotspotPanel
                   nodes={nodes}
                   cycles={data?.cycles ?? []}
@@ -477,7 +506,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   }}
                 />
               )}
-              {activePanel === 'diagnostics' && (
+              {activePanel === "diagnostics" && (
                 <DiagnosticsPanel
                   cycles={data?.cycles ?? []}
                   unresolvedReferences={data?.unresolvedReferences ?? []}
@@ -490,7 +519,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   onTabChange={onDiagnosticTabChange ?? (() => {})}
                 />
               )}
-              {activePanel === 'findings' && (
+              {activePanel === "findings" && (
                 <FindingsPanel
                   findings={findings}
                   selectedFindingId={selectedFindingId}
@@ -503,7 +532,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   onClearSelection={onClearFinding ?? (() => {})}
                 />
               )}
-              {activePanel === 'compare' && (
+              {activePanel === "compare" && (
                 <ComparePanel
                   compareState={
                     compareState ?? {
@@ -512,7 +541,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       rightSnapshot: null,
                       diff: null,
                       focusedEntityId: null,
-                      filterType: 'ALL',
+                      filterType: "ALL",
                     }
                   }
                   onClose={() => setActivePanel(null)}
@@ -545,13 +574,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               data-testid="command-palette-results"
             >
               {combinedList.length === 0 ? (
-                <div className="command-palette-empty" data-testid="command-palette-empty">
+                <div
+                  className="command-palette-empty"
+                  data-testid="command-palette-empty"
+                >
                   No matches
                 </div>
               ) : (
                 combinedList.map((entry, index) => {
                   const isSelected = index === selectedIndex;
-                  if (entry.kind === 'command') {
+                  if (entry.kind === "command") {
                     const cmd = entry.item;
                     return (
                       <div
@@ -560,10 +592,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                           itemRefs.current[index] = el;
                         }}
                         className={`command-palette-item command-palette-command-item ${
-                          isSelected ? 'selected' : ''
-                        } ${cmd.disabled ? 'disabled' : ''}`}
-                        style={cmd.disabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
-                        onClick={() => !cmd.disabled && handleSelectCommand(cmd)}
+                          isSelected ? "selected" : ""
+                        } ${cmd.disabled ? "disabled" : ""}`}
+                        style={
+                          cmd.disabled
+                            ? { opacity: 0.5, cursor: "not-allowed" }
+                            : undefined
+                        }
+                        onClick={() =>
+                          !cmd.disabled && handleSelectCommand(cmd)
+                        }
                         onMouseEnter={() => setSelectedIndex(index)}
                         role="option"
                         aria-selected={isSelected}
@@ -571,11 +609,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                         data-testid={`command-palette-item-${cmd.id}`}
                       >
                         <div className="command-palette-item-main">
-                          <span className="command-palette-item-name">⚡ {cmd.title}</span>
-                          <span className="command-palette-item-id">{cmd.description}</span>
+                          <span className="command-palette-item-name">
+                            ⚡ {cmd.title}
+                          </span>
+                          <span className="command-palette-item-id">
+                            {cmd.description}
+                          </span>
                         </div>
                         <div className="command-palette-item-meta">
-                          <span className="command-palette-item-type">{cmd.category}</span>
+                          <span className="command-palette-item-type">
+                            {cmd.category}
+                          </span>
                         </div>
                       </div>
                     );
@@ -587,7 +631,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                         ref={(el) => {
                           itemRefs.current[index] = el;
                         }}
-                        className={`command-palette-item ${isSelected ? 'selected' : ''}`}
+                        className={`command-palette-item ${isSelected ? "selected" : ""}`}
                         onClick={() => handleSelectNode(result.node.id)}
                         onMouseEnter={() => setSelectedIndex(index)}
                         role="option"
@@ -598,11 +642,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                           <span className="command-palette-item-name">
                             {result.node.displayName}
                           </span>
-                          <span className="command-palette-item-id">{result.node.id}</span>
+                          <span className="command-palette-item-id">
+                            {result.node.id}
+                          </span>
                         </div>
                         <div className="command-palette-item-meta">
-                          <span className="command-palette-item-type">{result.node.type}</span>
-                          <span className={`result-risk risk-${result.node.risk.toLowerCase()}`}>
+                          <span className="command-palette-item-type">
+                            {result.node.type}
+                          </span>
+                          <span
+                            className={`result-risk risk-${result.node.risk.toLowerCase()}`}
+                          >
                             {result.node.risk}
                           </span>
                         </div>

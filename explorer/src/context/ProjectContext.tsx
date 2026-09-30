@@ -1,5 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import type { ProjectMetadata, MultiProjectManifest } from '../types/explorer';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import type { ProjectMetadata, MultiProjectManifest } from "../types/explorer";
 
 export interface ProjectContextValue {
   projects: ProjectMetadata[];
@@ -10,17 +17,17 @@ export interface ProjectContextValue {
   error: Error | null;
   clearError: () => void;
   selectProject: (projectId: string) => void;
-  createProject: (
-    input: {
-      name: string;
-      id?: string;
-      description?: string;
-      sourcePath?: string;
-    }
-  ) => Promise<ProjectMetadata>;
+  createProject: (input: {
+    name: string;
+    id?: string;
+    description?: string;
+    sourcePath?: string;
+  }) => Promise<ProjectMetadata>;
   updateProject: (
     id: string,
-    updates: Partial<Pick<ProjectMetadata, 'name' | 'description' | 'sourcePath'>>
+    updates: Partial<
+      Pick<ProjectMetadata, "name" | "description" | "sourcePath">
+    >,
   ) => Promise<ProjectMetadata>;
   reanalyzeProject: (id: string) => Promise<ProjectMetadata>;
   duplicateProject: (id: string) => Promise<ProjectMetadata>;
@@ -32,39 +39,23 @@ export interface ProjectContextValue {
 }
 
 export const DEFAULT_PROJECT: ProjectMetadata = {
-  id: 'default',
-  name: 'Default Salesforce Project',
-  description: 'Primary Salesforce DX package directory',
-  sourcePath: 'force-app/main/default',
+  id: "default",
+  name: "Default Salesforce Project",
+  description: "Primary Salesforce DX package directory",
+  sourcePath: "force-app/main/default",
   createdAt: new Date(0).toISOString(),
   updatedAt: new Date(0).toISOString(),
   lastAnalyzedAt: null,
-  analysisStatus: 'COMPLETE',
+  analysisStatus: "COMPLETE",
   componentCount: 0,
   dependencyCount: 0,
-  analysisPath: '/explorer-data.json',
+  analysisPath: "/explorer-data.json",
 };
-
-const ProjectContext = createContext<ProjectContextValue | null>(null);
-
-const ACTIVE_PROJECT_KEY = 'explorer.activeProjectId';
-const RECENT_PROJECTS_KEY = 'explorer.recentProjectIds';
-const LOCAL_PROJECTS_KEY = 'explorer.localProjects';
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
 function getInitialProjectId(): string {
-  if (typeof window === 'undefined') return DEFAULT_PROJECT.id;
+  if (typeof window === "undefined") return DEFAULT_PROJECT.id;
   try {
     const urlParams = new URLSearchParams(window.location.search);
-    const urlProject = urlParams.get('project');
+    const urlProject = urlParams.get("project");
     if (urlProject) return slugify(urlProject) || DEFAULT_PROJECT.id;
 
     const savedProject = localStorage.getItem(ACTIVE_PROJECT_KEY);
@@ -74,14 +65,29 @@ function getInitialProjectId(): string {
   }
   return DEFAULT_PROJECT.id;
 }
+const ProjectContext = createContext<ProjectContextValue | null>(null);
+
+const ACTIVE_PROJECT_KEY = "explorer.activeProjectId";
+const RECENT_PROJECTS_KEY = "explorer.recentProjectIds";
+const LOCAL_PROJECTS_KEY = "explorer.localProjects";
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 function getStoredRecentIds(): string[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === "undefined") return [];
   try {
     const stored = localStorage.getItem(RECENT_PROJECTS_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed.map((x) => slugify(String(x))).filter(Boolean);
+      if (Array.isArray(parsed))
+        return parsed.map((x) => slugify(String(x))).filter(Boolean);
     }
   } catch (_) {
     // Ignore
@@ -93,10 +99,18 @@ export const ProjectProvider: React.FC<{
   children: React.ReactNode;
   initialProjectId?: string;
   manifestUrl?: string;
-}> = ({ children, initialProjectId, manifestUrl = '/project-manifest.json' }) => {
-  const [projects, setProjects] = useState<ProjectMetadata[]>([DEFAULT_PROJECT]);
+}> = ({
+  children,
+  initialProjectId,
+  manifestUrl = "/project-manifest.json",
+}) => {
+  const [projects, setProjects] = useState<ProjectMetadata[]>([
+    DEFAULT_PROJECT,
+  ]);
   const [activeProjectId, setActiveProjectId] = useState<string>(
-    initialProjectId ? slugify(initialProjectId) || DEFAULT_PROJECT.id : getInitialProjectId()
+    initialProjectId
+      ? slugify(initialProjectId) || DEFAULT_PROJECT.id
+      : getInitialProjectId(),
   );
   const [recentIds, setRecentIds] = useState<string[]>(getStoredRecentIds());
   const [loading, setLoading] = useState<boolean>(true);
@@ -148,15 +162,24 @@ export const ProjectProvider: React.FC<{
       mergedMap.set(pId, {
         ...p,
         id: pId,
-        analysisPath: pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json',
+        analysisPath:
+          p.analysisPath ||
+          (pId !== "default"
+            ? `/projects/${pId}/explorer-data.json`
+            : "/explorer-data.json"),
       });
     });
+
     localProjects.forEach((p) => {
       const pId = slugify(p.id) || p.id;
       mergedMap.set(pId, {
         ...p,
         id: pId,
-        analysisPath: pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json',
+        analysisPath:
+          p.analysisPath ||
+          (pId !== "default"
+            ? `/projects/${pId}/explorer-data.json`
+            : "/explorer-data.json"),
       });
     });
 
@@ -164,12 +187,14 @@ export const ProjectProvider: React.FC<{
     setProjects(allProjects);
 
     // Determine target active project
-    const currentId = initialProjectId ? slugify(initialProjectId) : getInitialProjectId();
+    const currentId = initialProjectId
+      ? slugify(initialProjectId)
+      : getInitialProjectId();
     const validId = mergedMap.has(currentId)
       ? currentId
       : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
-      ? activeIdFromManifest
-      : DEFAULT_PROJECT.id;
+        ? activeIdFromManifest
+        : DEFAULT_PROJECT.id;
 
     setActiveProjectId(validId);
     setLoading(false);
@@ -179,49 +204,53 @@ export const ProjectProvider: React.FC<{
     refreshProjects();
   }, [refreshProjects]);
 
-  const selectProject = useCallback(
-    (projectId: string) => {
-      const targetId = slugify(projectId) || DEFAULT_PROJECT.id;
-      setActiveProjectId(targetId);
+  const selectProject = useCallback((projectId: string) => {
+    const targetId = slugify(projectId) || DEFAULT_PROJECT.id;
+    setActiveProjectId(targetId);
 
-      try {
-        localStorage.setItem(ACTIVE_PROJECT_KEY, targetId);
+    try {
+      localStorage.setItem(ACTIVE_PROJECT_KEY, targetId);
 
-        // Update recent IDs
-        setRecentIds((prev) => {
-          const updated = [targetId, ...prev.filter((id) => id !== targetId)].slice(0, 5);
-          try {
-            localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
-          } catch (_) {
-            // Ignore
-          }
-          return updated;
-        });
-
-        // Update URL query parameter
-        if (typeof window !== 'undefined' && window.history) {
-          const url = new URL(window.location.href);
-          if (url.searchParams.get('project') !== targetId) {
-            url.searchParams.set('project', targetId);
-            // Clear single-project component selection on project switch for isolation
-            url.searchParams.delete('node');
-            url.searchParams.delete('finding');
-            window.history.pushState({}, '', url.pathname + url.search + url.hash);
-          }
+      // Update recent IDs
+      setRecentIds((prev) => {
+        const updated = [
+          targetId,
+          ...prev.filter((id) => id !== targetId),
+        ].slice(0, 5);
+        try {
+          localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
+        } catch (_) {
+          // Ignore
         }
+        return updated;
+      });
 
-        // Notify app of project change
-        window.dispatchEvent(
-          new CustomEvent('explorer:project-changed', {
-            detail: { projectId: targetId },
-          })
-        );
-      } catch (_) {
-        // Storage / history failure
+      // Update URL query parameter
+      if (typeof window !== "undefined" && window.history) {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get("project") !== targetId) {
+          url.searchParams.set("project", targetId);
+          // Clear single-project component selection on project switch for isolation
+          url.searchParams.delete("node");
+          url.searchParams.delete("finding");
+          window.history.pushState(
+            {},
+            "",
+            url.pathname + url.search + url.hash,
+          );
+        }
       }
-    },
-    []
-  );
+
+      // Notify app of project change
+      window.dispatchEvent(
+        new CustomEvent("explorer:project-changed", {
+          detail: { projectId: targetId },
+        }),
+      );
+    } catch (_) {
+      // Storage / history failure
+    }
+  }, []);
 
   const createProject = useCallback(
     async (input: {
@@ -232,7 +261,7 @@ export const ProjectProvider: React.FC<{
     }): Promise<ProjectMetadata> => {
       const trimmedName = input.name.trim();
       if (!trimmedName) {
-        const err = new Error('Project name cannot be empty');
+        const err = new Error("Project name cannot be empty");
         setError(err);
         throw err;
       }
@@ -241,7 +270,7 @@ export const ProjectProvider: React.FC<{
       const id = slugify(rawId);
 
       if (!id) {
-        const err = new Error('Invalid project ID generated');
+        const err = new Error("Invalid project ID generated");
         setError(err);
         throw err;
       }
@@ -250,15 +279,18 @@ export const ProjectProvider: React.FC<{
       const newProject: ProjectMetadata = {
         id,
         name: trimmedName,
-        description: input.description?.trim() || '',
-        sourcePath: input.sourcePath?.trim() || 'force-app/main/default',
+        description: input.description?.trim() || "",
+        sourcePath: input.sourcePath?.trim() || "force-app/main/default",
         createdAt: now,
         updatedAt: now,
         lastAnalyzedAt: null,
-        analysisStatus: 'NOT_ANALYZED',
+        analysisStatus: "NOT_ANALYZED",
         componentCount: 0,
         dependencyCount: 0,
-        analysisPath: id !== 'default' ? `/projects/${id}/explorer-data.json` : '/explorer-data.json',
+        analysisPath:
+          id !== "default"
+            ? `/projects/${id}/explorer-data.json`
+            : "/explorer-data.json",
       };
 
       setProjects((prev) => {
@@ -282,19 +314,23 @@ export const ProjectProvider: React.FC<{
       });
 
       try {
-        const customOnly = projects.concat(newProject).filter((p) => p.id !== DEFAULT_PROJECT.id);
+        const customOnly = projects
+          .concat(newProject)
+          .filter((p) => p.id !== DEFAULT_PROJECT.id);
         localStorage.setItem(LOCAL_PROJECTS_KEY, JSON.stringify(customOnly));
       } catch (_) {}
 
       selectProject(id);
       return newProject;
     },
-    [selectProject, projects]
+    [selectProject, projects],
   );
 
   const saveLocalProjects = (updatedProjects: ProjectMetadata[]) => {
     try {
-      const customOnly = updatedProjects.filter((p) => p.id !== DEFAULT_PROJECT.id);
+      const customOnly = updatedProjects.filter(
+        (p) => p.id !== DEFAULT_PROJECT.id,
+      );
       localStorage.setItem(LOCAL_PROJECTS_KEY, JSON.stringify(customOnly));
     } catch (_) {
       // Ignore
@@ -305,8 +341,8 @@ export const ProjectProvider: React.FC<{
     (projectId?: string): string => {
       const rawId = projectId || activeProjectId;
       const targetId = slugify(rawId) || DEFAULT_PROJECT.id;
-      if (targetId === 'default') {
-        return '/explorer-data.json';
+      if (targetId === "default") {
+        return "/explorer-data.json";
       }
       const proj = projects.find((p) => p.id === targetId);
       if (proj && proj.analysisPath) {
@@ -314,13 +350,15 @@ export const ProjectProvider: React.FC<{
       }
       return `/projects/${targetId}/explorer-data.json`;
     },
-    [activeProjectId, projects]
+    [activeProjectId, projects],
   );
 
   const updateProject = useCallback(
     async (
       id: string,
-      updates: Partial<Pick<ProjectMetadata, 'name' | 'description' | 'sourcePath'>>
+      updates: Partial<
+        Pick<ProjectMetadata, "name" | "description" | "sourcePath">
+      >,
     ): Promise<ProjectMetadata> => {
       const targetId = slugify(id);
       const existing = projects.find((p) => p.id === targetId);
@@ -331,8 +369,14 @@ export const ProjectProvider: React.FC<{
       const updatedProject: ProjectMetadata = {
         ...existing,
         name: updates.name !== undefined ? updates.name.trim() : existing.name,
-        description: updates.description !== undefined ? updates.description.trim() : existing.description,
-        sourcePath: updates.sourcePath !== undefined ? updates.sourcePath.trim() : existing.sourcePath,
+        description:
+          updates.description !== undefined
+            ? updates.description.trim()
+            : existing.description,
+        sourcePath:
+          updates.sourcePath !== undefined
+            ? updates.sourcePath.trim()
+            : existing.sourcePath,
         updatedAt: now,
       };
 
@@ -344,7 +388,7 @@ export const ProjectProvider: React.FC<{
 
       return updatedProject;
     },
-    [projects]
+    [projects],
   );
 
   const reanalyzeProject = useCallback(
@@ -356,7 +400,11 @@ export const ProjectProvider: React.FC<{
 
       // Set state to ANALYZING first
       setProjects((prev) => {
-        const next = prev.map((p) => (p.id === targetId ? { ...p, analysisStatus: 'ANALYZING' as const, updatedAt: now } : p));
+        const next = prev.map((p) =>
+          p.id === targetId
+            ? { ...p, analysisStatus: "ANALYZING" as const, updatedAt: now }
+            : p,
+        );
         saveLocalProjects(next);
         return next;
       });
@@ -366,12 +414,14 @@ export const ProjectProvider: React.FC<{
         const res = await fetch(url);
         let componentCount = projectToReanalyze.componentCount;
         let dependencyCount = projectToReanalyze.dependencyCount;
-        let status: ProjectMetadata['analysisStatus'] = 'COMPLETE';
+        let status: ProjectMetadata["analysisStatus"] = "COMPLETE";
 
         if (res.ok) {
           const data = await res.json();
-          componentCount = data?.summary?.nodeCount ?? data?.nodes?.length ?? componentCount;
-          dependencyCount = data?.summary?.edgeCount ?? data?.edges?.length ?? dependencyCount;
+          componentCount =
+            data?.summary?.nodeCount ?? data?.nodes?.length ?? componentCount;
+          dependencyCount =
+            data?.summary?.edgeCount ?? data?.edges?.length ?? dependencyCount;
         }
 
         const completionTime = new Date().toISOString();
@@ -413,7 +463,7 @@ export const ProjectProvider: React.FC<{
             if (p.id === targetId) {
               updated = {
                 ...p,
-                analysisStatus: p.componentCount > 0 ? 'COMPLETE' : 'FAILED',
+                analysisStatus: p.componentCount > 0 ? "COMPLETE" : "FAILED",
                 lastAnalyzedAt: completionTime,
                 updatedAt: completionTime,
               };
@@ -427,13 +477,13 @@ export const ProjectProvider: React.FC<{
         if (updated) return updated;
         return {
           ...projectToReanalyze,
-          analysisStatus: 'COMPLETE',
+          analysisStatus: "COMPLETE",
           lastAnalyzedAt: completionTime,
           updatedAt: completionTime,
         };
       }
     },
-    [projects, getProjectDataUrl]
+    [projects, getProjectDataUrl],
   );
 
   const duplicateProject = useCallback(
@@ -468,7 +518,7 @@ export const ProjectProvider: React.FC<{
 
       return duplicate;
     },
-    [projects]
+    [projects],
   );
 
   const archiveProject = useCallback(
@@ -492,7 +542,7 @@ export const ProjectProvider: React.FC<{
 
       return updatedProject;
     },
-    [projects]
+    [projects],
   );
 
   const deleteProject = useCallback(
@@ -514,11 +564,12 @@ export const ProjectProvider: React.FC<{
 
       if (activeProjectId === targetId) {
         const remaining = projects.filter((p) => p.id !== targetId);
-        const fallbackId = remaining.length > 0 ? remaining[0].id : DEFAULT_PROJECT.id;
+        const fallbackId =
+          remaining.length > 0 ? remaining[0].id : DEFAULT_PROJECT.id;
         selectProject(fallbackId);
       }
     },
-    [activeProjectId, projects, selectProject]
+    [activeProjectId, projects, selectProject],
   );
 
   const exportProject = useCallback(
@@ -537,31 +588,37 @@ export const ProjectProvider: React.FC<{
       } catch (_) {}
 
       const exportObject = {
-        manifestVersion: '1.0.0',
+        manifestVersion: "1.0.0",
         exportedAt: new Date().toISOString(),
         project: proj,
         data: dataPayload,
       };
 
       const jsonString = JSON.stringify(exportObject, null, 2);
-      if (typeof window !== 'undefined' && window.document) {
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const createUrl = typeof URL.createObjectURL === 'function'
-          ? URL.createObjectURL
-          : () => 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonString);
+      if (typeof window !== "undefined" && window.document) {
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const createUrl =
+          typeof URL.createObjectURL === "function"
+            ? URL.createObjectURL
+            : () =>
+                "data:application/json;charset=utf-8," +
+                encodeURIComponent(jsonString);
         const downloadUrl = createUrl(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = downloadUrl;
         a.download = `${proj.id}-project-export.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        if (typeof URL.revokeObjectURL === 'function' && downloadUrl.startsWith('blob:')) {
+        if (
+          typeof URL.revokeObjectURL === "function" &&
+          downloadUrl.startsWith("blob:")
+        ) {
           URL.revokeObjectURL(downloadUrl);
         }
       }
     },
-    [projects, getProjectDataUrl]
+    [projects, getProjectDataUrl],
   );
 
   const activeProject = useMemo(() => {
@@ -617,16 +674,18 @@ export const ProjectProvider: React.FC<{
       exportProject,
       refreshProjects,
       getProjectDataUrl,
-    ]
+    ],
   );
 
-  return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
+  return (
+    <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
+  );
 };
 
 export function useProject(): ProjectContextValue {
   const context = useContext(ProjectContext);
   if (!context) {
-    throw new Error('useProject must be used within a ProjectProvider');
+    throw new Error("useProject must be used within a ProjectProvider");
   }
   return context;
 }
