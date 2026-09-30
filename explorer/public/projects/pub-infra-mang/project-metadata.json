@@ -1,5 +1,5 @@
 {
-  "id": "pub-infra-mang",
+  "id": "pbim",
   "name": "pub-infra-mang",
   "description": "Salesforce DX Architecture Analysis",
   "sourcePath": "Pub-Infra-Mang/force-app/main/default",
@@ -9,5 +9,5 @@
   "analysisStatus": "COMPLETE",
   "componentCount": 528,
   "dependencyCount": 2063,
-  "analysisPath": "/projects/pub-infra-mang/explorer-data.json"
+  "analysisPath": "/projects/pbim/explorer-data.json"
 }
