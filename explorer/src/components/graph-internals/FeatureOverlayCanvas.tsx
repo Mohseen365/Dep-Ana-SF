@@ -7,6 +7,7 @@ import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '..
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
 import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
 import { createLayoutGraphIndex } from '../../lib/layout/graph-index';
+import { computeCanvasLODLevel } from '../../lib/canvas-lod';
 
 export interface FeatureOverlayCanvasProps {
   cy: cytoscape.Core | null;
@@ -39,6 +40,15 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   });
 
   const [modelPositions, setModelPositions] = useState<Record<string, { x: number; y: number }>>({});
+
+  // Compute Canvas LOD Config deterministically from zoom and scale
+  const lodConfig = useMemo(() => {
+    return computeCanvasLODLevel({
+      zoom: transform.zoom,
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+    });
+  }, [transform.zoom, nodes.length, edges.length]);
 
   // Track Cytoscape pan and zoom transform (viewport only)
   useEffect(() => {
@@ -107,9 +117,9 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     return createLayoutGraphIndex(nodes, edges);
   }, [nodes, edges]);
 
-  // Derive LWC composition groups for all features
+  // Derive LWC composition groups for all features (Suppressed at high LOD / scale)
   const compositionGroups = useMemo(() => {
-    if (!enableOverlay || !discoveryResult) return [];
+    if (!enableOverlay || !discoveryResult || !lodConfig.showCompositionGroups) return [];
 
     const allGroups: FeatureCompositionGroup[] = [];
     discoveryResult.features.forEach((feature) => {
@@ -124,7 +134,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     });
 
     return allGroups;
-  }, [enableOverlay, discoveryResult, nodes, edges, currentPositions, graphIndex]);
+  }, [enableOverlay, discoveryResult, lodConfig.showCompositionGroups, nodes, edges, currentPositions, graphIndex]);
 
   // Derive Shared Infrastructure highlight connections
   const activeHighlightNodeId = hoveredNodeId || selectedNodeId || null;
@@ -146,7 +156,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   // Group findings by node ID for fast SVG badge rendering
   const nodeFindingsMap = useMemo(() => {
     const map = new Map<string, { count: number; maxSeverity: FindingSeverity }>();
-    if (!findings || findings.length === 0) return map;
+    if (!findings || findings.length === 0 || !lodConfig.showFindingBadges) return map;
 
     const severityRank: Record<FindingSeverity, number> = {
       CRITICAL: 5,
@@ -171,15 +181,13 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       }
     }
     return map;
-  }, [findings]);
+  }, [findings, lodConfig.showFindingBadges]);
 
   if (!enableOverlay || !cy) {
     return null;
   }
 
   const { pan, zoom } = transform;
-  const isFarZoom = zoom < 0.6;
-  const isCloseZoom = zoom >= 1.2;
 
   return (
     <svg
@@ -201,9 +209,6 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
         {featureRegionsList.map((region) => {
           const { featureId, xMin, yMin, width, height } = region;
 
-          // Convert raw feature ID to human-readable title
-          // e.g. "feature_cloud-spend__c"  →  "Cloud Spend"
-          //      "feature_user-org-role"   →  "User Org Role"
           const labelText = featureId
             .replace(/^feature_/, '')
             .replace(/-/g, ' ')
@@ -211,9 +216,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
             .trim()
             .replace(/\b\w/g, (c) => c.toUpperCase());
 
-          if (isFarZoom) {
-            // Far zoom: minimal unlabelled outline only.
-            // Preserves spatial orientation without cluttering the overview.
+          if (!lodConfig.showFeatureRegionLabels) {
+            // Far zoom / high scale: minimal unlabelled outline only.
             return (
               <rect
                 key={`fr_min_${featureId}`}
@@ -272,8 +276,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
           );
         })}
 
-        {/* Render LWC Composition Group Outline Boxes (Suppressed at Far Zoom) */}
-        {!isFarZoom &&
+        {/* Render LWC Composition Group Outline Boxes */}
+        {lodConfig.showCompositionGroups &&
           compositionGroups.map((group) => {
             if (!group.bounds) return null;
             const { xMin, yMin, width, height } = group.bounds;
@@ -289,7 +293,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   rx={10}
                   fill="rgba(99, 102, 241, 0.03)"
                   stroke="rgba(99, 102, 241, 0.45)"
-                  strokeWidth={isCloseZoom ? 2.0 : 1.5}
+                  strokeWidth={1.5}
                   strokeDasharray="5 5"
                 />
                 <rect
@@ -327,7 +331,6 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                 const feature = discoveryResult?.features.get(fId);
                 if (!feature) return null;
 
-                // Calculate centroid of connected feature
                 let sumX = 0;
                 let sumY = 0;
                 let count = 0;
@@ -366,8 +369,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
           </g>
         )}
 
-        {/* Render Compact Finding Summary Badges over Finding-Bearing Nodes (Suppressed at Far Zoom) */}
-        {!isFarZoom &&
+        {/* Render Compact Finding Summary Badges over Finding-Bearing Nodes */}
+        {lodConfig.showFindingBadges &&
           nodes.map((node) => {
             const findingData = nodeFindingsMap.get(node.id);
             if (!findingData || findingData.count === 0) return null;
