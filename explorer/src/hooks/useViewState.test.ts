@@ -270,6 +270,48 @@ describe('useViewState', () => {
     expect(result.current.selectedFindingId).toBe('finding:123');
   });
 
+  it('preserves project query parameter when URL sync triggers on view mode change', () => {
+    window.history.replaceState(null, '', '/?project=pbim&view=graph');
+
+    const { result } = renderHook(() => useViewState());
+
+    act(() => {
+      result.current.setViewMode('matrix');
+    });
+
+    const search = window.location.search;
+    expect(search).toContain('project=pbim');
+    expect(search).toContain('view=matrix');
+  });
+
+  it('preserves project query parameter when node selection or focus changes', () => {
+    window.history.replaceState(null, '', '/?project=pbim&view=graph');
+
+    const { result } = renderHook(() => useViewState());
+
+    act(() => {
+      result.current.setSelectedNodeId('ApexClass:OrderService');
+    });
+
+    const search = window.location.search;
+    expect(search).toContain('project=pbim');
+    expect(search).toContain('node=ApexClass%3AOrderService');
+  });
+
+  it('does not add project query parameter if project parameter was not in URL', () => {
+    window.history.replaceState(null, '', '/');
+
+    const { result } = renderHook(() => useViewState());
+
+    act(() => {
+      result.current.setViewMode('matrix');
+    });
+
+    const search = window.location.search;
+    expect(search).not.toContain('project=');
+    expect(search).toContain('view=matrix');
+  });
+
   it('round-trips complex combined state to query string and back', () => {
     const { result } = renderHook(() => useViewState());
 

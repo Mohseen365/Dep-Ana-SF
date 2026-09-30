@@ -147,6 +147,7 @@ describe('useExplorerData', () => {
   });
 
   it('Case F — browser reload with custom project in URL parameter loads project-specific data', async () => {
+    window.history.replaceState(null, '', '/');
     const mockProjectData = {
       ...validData,
       summary: {
@@ -157,7 +158,12 @@ describe('useExplorerData', () => {
       project: {
         id: 'movie-app',
         name: 'movie-app',
+        sourcePath: 'force-app/main/default',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         analysisStatus: 'COMPLETE',
+        componentCount: 9,
+        dependencyCount: 16,
         analysisPath: '/projects/movie-app/explorer-data.json',
       },
     };

@@ -334,7 +334,14 @@ export function useViewState() {
       return;
     }
 
+    const currentParams = new URLSearchParams(window.location.search);
+    const existingProject = currentParams.get('project');
+
     const params = new URLSearchParams();
+
+    if (existingProject) {
+      params.set('project', existingProject);
+    }
 
     const effectiveNode = selectedNodeId || focusState.focusNodeId || impactState.originNodeId;
     if (effectiveNode) {
