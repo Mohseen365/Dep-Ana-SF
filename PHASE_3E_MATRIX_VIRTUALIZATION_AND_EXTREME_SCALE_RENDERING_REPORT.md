@@ -13,12 +13,13 @@ Phase 3E successfully designed, implemented, and validated DOM Virtualization fo
 
 Key determinations established by Phase 3E:
 
-1. **Matrix DOM Virtualization Verified**: Windowed viewport rendering reduces rendered DOM cell count from $O(F^2)$ down to $O(1)$ ($\le 625$ active cell elements in DOM regardless of feature count $F$). Render element reduction exceeds **99.75%** at $F = 500$ ($250,000$ conceptual cells reduced to 625 active DOM cells).
+1. **Matrix DOM Virtualization Verified**: Windowed viewport rendering bounds DOM realization (`DOM REALIZATION = BOUNDED`), maintaining $\le 625$ active cell elements in DOM regardless of feature count $F$, while preserving underlying $O(F^2)$ logical matrix coupling structures. Render element reduction exceeds **99.75%** at $F = 500$ ($250,000$ conceptual cells reduced to 625 active DOM cells).
 2. **Accessibility & Interaction Contracts Preserved**: Full WAI-ARIA `role="grid"` / table semantics, keyboard arrow navigation, focus management, sticky row/column headers, hover cards, threshold filtering, and cross-layout entity selection remain 100% operational.
 3. **Deterministic Canvas LOD Tiers Implemented**: Integrated `computeCanvasLODLevel` providing 5 deterministic rendering tiers (LOD 0 through LOD 4) based on zoom level and graph scale ($N \in \{240, 1000, 2500, 5000, 10000\}$).
 4. **Position Authority Protected**: Canvas LOD and Matrix Virtualization operate strictly as rendering view-model transformations with **$0.00000\text{ px}$ MAX COORDINATE DRIFT**, zero unauthorized coordinate writes, and zero unintended `cy.layout` invocations.
-5. **Project Isolation & Memory Boundaries Verified**: Verified zero memory accumulation ($0.00\text{ MB}$ unbounded growth across 10 repeat project switches) and complete project state isolation.
-6. **Full Pipeline Regression**: 100% test pass rate across root CLI integration suites (`31/31 PASS`) and Vitest unit/component/benchmark suites (`100% PASS`).
+5. **Project Isolation & Memory Boundaries Verified**: Verified `NO UNBOUNDED MEMORY GROWTH IN TESTED LIFECYCLES` ($0.00\text{ MB}$ unbounded growth across 10 repeat project switches) and complete project state isolation.
+6. **Frame Rate & Hardware Telemetry Classification**: Hardware WebGL frame-drop counters are classified as `FRAME_DROP_CLAIM = UNMEASURED`, preserving main-thread responsiveness without unmeasured FPS claims.
+7. **Full Pipeline Regression**: 100% test pass rate across root CLI integration suites (`31/31 PASS`) and Vitest unit/component/benchmark suites (`100% PASS`).
 
 ---
 
@@ -138,7 +139,7 @@ Deterministic Canvas LOD helper implemented in `explorer/src/lib/canvas-lod.ts`:
 | **1000** | 1,000 | 1,988 | LOD 1 | Reduced Edge Labels | `SUPPORTED` |
 | **2500** | 2,500 | 3,982 | LOD 2 | Simplified Edges / Suppressed Labels | `DEGRADED` |
 | **5000** | 5,000 | 7,025 | LOD 3 | Density Representation | `DEGRADED` |
-| **10000** | 10,000 | 19,917 | LOD 4 | Overview Density View | `UNSUPPORTED` |
+| **10000** | 10,000 | 19,917 | LOD 4 | Overview Density View | `10,000N = characterized but unsupported` |
 
 ---
 
@@ -149,7 +150,7 @@ Deterministic Canvas LOD helper implemented in `explorer/src/lib/canvas-lod.ts`:
 - **Lifecycle Cleanliness**: Repeated sequence (`render -> resize -> filter -> zoom -> switch layout -> switch project`) measured $0.00\text{ MB}$ unbounded heap growth across 10 cycles.
 
 ```text
-MEMORY_VALIDATION_STATUS = PASS (0.00 MB Unbounded Growth)
+MEMORY_VALIDATION_STATUS = PASS (NO UNBOUNDED MEMORY GROWTH IN TESTED LIFECYCLES)
 ```
 
 ---
@@ -253,12 +254,13 @@ No new state architecture or router refactors introduced. Production diff is tig
 ===============================================================================
 PHASE 3E COMPLETION GATE EVALUATION
 ===============================================================================
-MATRIX_VIRTUALIZATION:      VALIDATED (O(1) DOM Cell Count <= 625)
+MATRIX_VIRTUALIZATION:      VALIDATED (DOM REALIZATION = BOUNDED, <= 625 cells)
 MATRIX_ACCESSIBILITY:        PASS (ARIA grid, Arrow Key Nav, Focus Management)
 EXTREME_SCALE_MATRIX:        VALIDATED (F = 500 rendered in 8.5ms)
 CANVAS_LOD:                 VALIDATED (5 Tiers LOD 0 - LOD 4)
-EXTREME_SCALE_RENDERING:    VALIDATED (240N to 10000N)
-MEMORY:                     VALIDATED (0.00 MB Unbounded Heap Growth)
+EXTREME_SCALE_RENDERING:    CHARACTERIZED (240N-1000N Supported, 10000N Characterized but Unsupported)
+RESPONSIVENESS_TELEMETRY:   FRAME_DROP_CLAIM = UNMEASURED
+MEMORY:                     PASS (NO UNBOUNDED MEMORY GROWTH IN TESTED LIFECYCLES)
 POSITION_AUTHORITY:         PROTECTED (0.00000px Max Drift)
 SELECTION_NAVIGATION:       PROTECTED
 PROJECT_ISOLATION:          PROTECTED
@@ -304,12 +306,14 @@ No further major implementation phases remain.
 ===============================================================================
 PHASE 3E — FINAL DECISION BLOCK
 ===============================================================================
-MATRIX_VIRTUALIZATION_STATUS:   VALIDATED AND PROMOTED
+MATRIX_VIRTUALIZATION_STATUS:   VALIDATED AND PROMOTED (DOM REALIZATION = BOUNDED)
 DOM_CELL_REDUCTION:             > 99.75% REDUCTION AT F = 500
 CANVAS_LOD_STATUS:              VALIDATED AND PROMOTED
 CANVAS_LOD_TIERS:               5 TIERS (LOD 0 through LOD 4)
+SCALE_BOUNDARY_10000N:          10,000N = characterized but unsupported
+FRAME_DROP_CLAIM:               UNMEASURED
 POSITION_AUTHORITY:             PROTECTED (0.00000px MAX DRIFT)
-MEMORY_ACCUMULATION:            PASS (0.00 MB UNBOUNDED GROWTH)
+MEMORY_ACCUMULATION:            PASS (NO UNBOUNDED MEMORY GROWTH IN TESTED LIFECYCLES)
 PROJECT_ISOLATION:              PROTECTED
 WORKER_LAYOUT_INTEGRATION:      PROTECTED
 FULL_REGRESSION_SUITE:          PASS (31/31 CLI, 100% VITEST)
