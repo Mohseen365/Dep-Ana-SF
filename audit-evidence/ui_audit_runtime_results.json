@@ -1,0 +1,78 @@
+{
+  "modeResults": {
+    "graph": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo"
+    },
+    "subway": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=subway"
+    },
+    "constellation": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=constellation"
+    },
+    "tree": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=tree"
+    },
+    "treemap": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=treemap"
+    },
+    "matrix": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=matrix"
+    },
+    "heatmap": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=heatmap"
+    },
+    "river": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=river"
+    },
+    "dna": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=dna"
+    },
+    "profile": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=profile"
+    },
+    "radar": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=radar"
+    },
+    "four-direction": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=four-direction"
+    },
+    "dashboard": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=dashboard"
+    },
+    "compare": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=compare"
+    },
+    "history": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=history"
+    },
+    "findings": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=findings"
+    },
+    "hotspots": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=hotspots"
+    },
+    "diagnostics": {
+      "visible": true,
+      "url": "http://localhost:3000/?node=LWC%3Ademo&view=diagnostics"
+    }
+  },
+  "logEvents": [],
+  "timestamp": "2026-09-30T05:22:21.950Z"
+}
