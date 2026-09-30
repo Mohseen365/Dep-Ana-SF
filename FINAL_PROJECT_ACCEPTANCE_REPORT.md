@@ -5,6 +5,7 @@
 **Date:** September 30, 2026
 **Status:** PROGRAM COMPLETE — FINAL ACCEPTANCE GRANTED
 **Deliverable:** `FINAL_PROJECT_ACCEPTANCE_REPORT.md`
+**Validated Commit SHA:** `b00c3fdaf0caebddf44abd3f48fd43c89710ca09`
 **Final Decision:** `PROJECT_ACCEPTED_WITH_DOCUMENTED_LIMITATIONS`
 **Project Status:** `PROJECT_COMPLETE`
 
@@ -12,7 +13,7 @@
 
 ## 1. EXECUTIVE ACCEPTANCE VERDICT
 
-Following the complete execution, verification, and evidence reconciliation of all program phases—including Phase 1 Architecture Contracts, Phase 2 Lenses Unification (2A through 2G), Phase 3A Treemap, Phase 3B Sankey Dependency River, Phase 3C Stage 9 Pruning, Phase 3D Web Worker Layout Offloading, Phase 3D-1 Benchmark Reconciliation, Phase 3E Matrix Virtualization & Canvas LOD, and Final Post-Phase-3E Integration & Clean-Room Verification—the entire Salesforce Architecture Visualization & Dependency Analyzer program has satisfied its complete acceptance contract.
+Following the complete execution, verification, and evidence reconciliation of all program phases—including Phase 1 Architecture Contracts, Phase 2 Lenses Unification (2A through 2G), Phase 3A Scalability & Extreme-Scale Discovery, Phase 3A-1 Stage 9 Evidence / Complexity / Performance Reconciliation, Phase 3B Stage 9 Coarse Anchor Bounding-Region Pruning A/B, Phase 3C Stage 9 Coarse Pruning Production Promotion, Phase 3D Web Worker Layout Offloading, Phase 3D-1 Web Worker Evidence / Benchmark Reconciliation, Phase 3E Matrix Virtualization & Canvas LOD, and Final Post-Phase-3E Integration & Clean-Room Verification—the entire Salesforce Architecture Visualization & Dependency Analyzer program has satisfied its complete acceptance contract.
 
 ### Formal Acceptance Verdict
 ```text
@@ -24,9 +25,9 @@ FINAL PROJECT ACCEPTANCE VERDICT:
 ===============================================================================
 ```
 
-All 18 workspace view modes across 5 semantic domains are verified operational, accessible, and regression-safe. All constitutional state authority, position authority, selection/navigation, adapter purity, worker isolation, matrix DOM realization, and canvas LOD contracts are strictly preserved.
+All 18 workspace view modes across 5 semantic domains are verified operational, accessible, and regression-safe on the final validated commit `b00c3fdaf0caebddf44abd3f48fd43c89710ca09`. All constitutional state authority, position authority, selection/navigation, adapter purity, worker isolation, matrix DOM realization, and canvas LOD contracts are strictly preserved.
 
-No further major implementation phase remains. The project transitions from active implementation to maintenance and post-project enhancement backlog.
+No further major implementation phase remains (`PHASE_4 = NONE_REQUIRED`). The project transitions from active implementation to maintenance and post-project enhancement backlog.
 
 ---
 
@@ -64,12 +65,14 @@ The complete accepted scope encompasses:
 17. `compare` — Multi-Project Comparison Surface
 18. `history` — Analysis History Surface
 
-### Scalability & Extreme-Scale Infrastructure
-- Phase 3C Stage 9 Coarse Anchor Bounding-Region Pruning in `satellites.ts`.
-- Phase 3D Web Worker Layout Offloading in `layout.worker.ts` and `LayoutWorkerClient`.
-- Phase 3D-1 Reconciled Full-Pipeline Layout Performance Baseline.
-- Phase 3E Matrix DOM Virtualization in `FeatureMatrixPanel.tsx`.
-- Phase 3E Canvas Level-of-Detail (LOD) rendering in `canvas-lod.ts`.
+### Phase 3 Scalability & Extreme-Scale Infrastructure
+- **Phase 3A**: Scalability & Extreme-Scale Discovery
+- **Phase 3A-1**: Stage 9 Evidence / Complexity / Performance Reconciliation
+- **Phase 3B**: Stage 9 Coarse Anchor Bounding-Region Pruning A/B Experiment
+- **Phase 3C**: Stage 9 Coarse Anchor Bounding-Region Pruning Production Promotion in `satellites.ts`
+- **Phase 3D**: Web Worker Layout Offloading in `layout.worker.ts` and `LayoutWorkerClient`
+- **Phase 3D-1**: Web Worker Evidence / Benchmark Reconciliation (full 13-stage pipeline performance baseline)
+- **Phase 3E**: Matrix DOM Virtualization in `FeatureMatrixPanel.tsx` & Canvas Level-of-Detail (LOD) rendering in `canvas-lod.ts`
 
 ---
 
@@ -216,7 +219,7 @@ Audited Measurements:
 ```text
 UNAUTHORIZED_POSITION_WRITES = 0
 UNINTENDED_CY_LAYOUT = 0
-COORDINATE_DRIFT = 0.00000px
+COORDINATE_DRIFT = 0.00000px (COORDINATE_EXACT)
 ```
 
 ---
@@ -234,8 +237,8 @@ COORDINATE_DRIFT = 0.00000px
 Phase 3C production promotion of Stage 9 Coarse Anchor Bounding-Region Pruning in `explorer/src/lib/layout/satellites.ts`:
 
 - Prunes candidate satellite placement slots outside outer feature bounding hulls.
-- Achieved **55% to 66% crossing reduction** on secondary satellite placement.
-- Bit-for-bit identical layout semantics and 0.00000px coordinate drift.
+- Achieved up to **50.37% primary segment predicate call reduction** at $3,500\text{N}$ scale and $1.10\text{x}–1.29\text{x}$ execution speedup saving up to $9.8\text{s}$ at $3,500\text{N}$.
+- Guaranteed $0.00000\text{ px}$ coordinate drift (`COORDINATE_EXACT`) against the Oracle baseline across all scale tiers.
 
 ---
 
@@ -244,7 +247,7 @@ Phase 3C production promotion of Stage 9 Coarse Anchor Bounding-Region Pruning i
 Phase 3D Web Worker layout offloading architecture in `explorer/src/lib/workers/layout.worker.ts` and `LayoutWorkerClient`:
 
 - Offloads 13-stage layout pipeline execution off the main UI thread.
-- Main-thread blocking duration reduced from up to $357.94\text{s}$ down to $\le 117.61\text{ ms}$ at $3,500\text{N}$ scale.
+- Main-thread blocking duration reduced from up to $357.94\text{s}$ down to $117.61\text{ ms}$ at $3,500\text{N}$ scale ($4.34\text{ ms}$ at $240\text{N}$).
 - Guaranteed $0.00000\text{ px}$ max coordinate drift (`COORDINATE_EXACT`) vs synchronous execution.
 - Monotonically increasing `requestGeneration` counter rejects stale layout responses.
 - Automatic synchronous fallback on worker error or environment restriction.
@@ -259,7 +262,7 @@ Reconciled historical Phase 3C vs Phase 3D benchmark discrepancies, establishing
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | **240** | 240 | 1,024 | 1,334.84 ms | 1,055.84 ms | 3.03 ms | 4.34 ms | 0.00000 px |
 | **500** | 500 | 975 | 2,163.46 ms | 1,792.82 ms | 3.68 ms | 4.67 ms | 0.00000 px |
-| **750** | 750 | 1,501 | 5.03796 ms | 4,026.13 ms | 5.07 ms | 10.32 ms | 0.00000 px |
+| **750** | 750 | 1,501 | 5,037.96 ms | 4,026.13 ms | 5.07 ms | 10.32 ms | 0.00000 px |
 | **1000** | 1,000 | 1,988 | 10,016.22 ms | 8,979.81 ms | 4.86 ms | 9.38 ms | 0.00000 px |
 | **2000** | 2,000 | 3,982 | 67,504.27 ms | 61,702.41 ms | 6.00 ms | 19.13 ms | 0.00000 px |
 | **3500** | 3,500 | 7,025 | 357,941.65 ms | 357,941.65 ms | 117.61 ms | 117.61 ms | 0.00000 px |
@@ -286,7 +289,7 @@ Phase 3E Canvas Level-of-Detail (LOD) rendering in `explorer/src/lib/canvas-lod.
 - **LOD 3 (Density View, $5000 \le N < 10000$)**: Outline cluster region boxes.
 - **LOD 4 (Overview Density, $N \ge 10000$)**: Muted overview density representation.
 
-Verified: 0 coordinate writes, 0 layout calls, $0.00000\text{ px}$ coordinate drift.
+Verified: 0 coordinate writes, 0 layout calls, $0.00000\text{ px}$ coordinate drift (`COORDINATE_EXACT`).
 
 ---
 
@@ -313,8 +316,8 @@ MEMORY_VERIFICATION_STATUS = PASS (NO UNBOUNDED MEMORY GROWTH IN TESTED LIFECYCL
 
 ## 18. PERFORMANCE VERIFICATION
 
-- Main-thread transition latencies across all 12 lenses average **105 ms to 168 ms** in real-browser Playwright verification.
-- Web Worker layout offloading keeps main-thread UI responsive during heavy calculations.
+- Main-thread transition latencies across all 12 lenses average **100 ms to 158 ms** in real-browser Playwright verification.
+- Web Worker layout offloading keeps main-thread UI responsive during heavy calculations ($4.34\text{ ms}$ main-thread blocking time at $240\text{N}$, $117.61\text{ ms}$ at $3,500\text{N}$).
 - Responsive viewport rendering remains fluid from $1440 \times 900$ down to $768 \times 1024$.
 
 ---
@@ -339,7 +342,7 @@ Authoritative classification of system support across scale tiers:
 
 ## 20. CLEAN-ROOM VERIFICATION
 
-Clean-room Playwright browser verification results on final commit:
+Clean-room Playwright browser verification results on final commit (`b00c3fdaf0caebddf44abd3f48fd43c89710ca09`):
 
 - **Console Errors**: **0**
 - **Page Errors**: **0**
@@ -473,8 +476,8 @@ PROJECT_COMPLETE
 
 ## 25. PROJECT COMPLETION DECLARATION
 
-All acceptance criteria across Phase 1, Phase 2, and Phase 3 (3A through 3E) have passed.
+All acceptance criteria across Phase 1, Phase 2, and Phase 3 (3A, 3A-1, 3B, 3C, 3D, 3D-1, 3E) have passed.
 
 The Salesforce Architecture Visualization & Dependency Analyzer project is hereby formally declared **COMPLETE** under the status **`PROJECT_ACCEPTED_WITH_DOCUMENTED_LIMITATIONS`**.
 
-There is no Phase 4. The project transitions from active implementation to maintenance and post-project enhancement backlog.
+There is no Phase 4 (`PHASE_4 = NONE_REQUIRED`). The project transitions from active implementation to maintenance and post-project enhancement backlog.
