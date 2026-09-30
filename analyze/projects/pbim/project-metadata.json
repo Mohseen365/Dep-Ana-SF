@@ -1,0 +1,13 @@
+{
+  "id": "pbim",
+  "name": "pbim",
+  "description": "Salesforce DX Architecture Analysis",
+  "sourcePath": "Pub-Infra-Mang/force-app/main/default",
+  "createdAt": "2026-09-25T04:55:57.331Z",
+  "updatedAt": "2026-09-25T04:55:57.331Z",
+  "lastAnalyzedAt": "2026-09-25T04:55:57.331Z",
+  "analysisStatus": "COMPLETE",
+  "componentCount": 528,
+  "dependencyCount": 2063,
+  "analysisPath": "/projects/pbim/explorer-data.json"
+}
