@@ -91,7 +91,7 @@ describe('App composed shell', () => {
     const { container } = render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText('Dependency Explorer')).toBeInTheDocument();
+      expect(screen.getByText('Architecture Explorer')).toBeInTheDocument();
     });
 
     expect(container.querySelector('main.graph-pane')).toBeInTheDocument();
@@ -214,7 +214,7 @@ describe('App composed shell', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText('Dependency Explorer')).toBeInTheDocument();
+      expect(screen.getByText('Architecture Explorer')).toBeInTheDocument();
     });
 
     // Check Focus controls are rendered
@@ -232,7 +232,7 @@ describe('App composed shell', () => {
     const { container } = render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText('Dependency Explorer')).toBeInTheDocument();
+      expect(screen.getByText('Architecture Explorer')).toBeInTheDocument();
     });
 
     // Initially no node is selected -> no drawer slot in DOM

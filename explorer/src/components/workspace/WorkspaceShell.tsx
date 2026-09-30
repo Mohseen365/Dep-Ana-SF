@@ -1,7 +1,7 @@
 import React from 'react';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
-import { ViewModeSwitcher } from '../ViewModeSwitcher';
+import { WorkspaceHeader } from './WorkspaceHeader';
 import { InvestigationDrawer } from '../InvestigationDrawer';
 import { StatusBar } from '../StatusBar';
 import { CommandPalette } from '../CommandPalette';
@@ -232,23 +232,13 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
 
         {/* Center Workspace */}
         <div className="workspace-center-pane" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minWidth: 0, overflow: 'hidden', position: 'relative' }}>
-          {/* View Mode Switcher Action Bar */}
-          <div className="app-workspace-bar" style={{ background: 'var(--surface-panel, #111827)', borderBottom: '1px solid var(--border-default, #334155)', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-            <ViewModeSwitcher
-              viewMode={activeViewMode}
-              onChangeViewMode={navigateToView}
+          {/* Workspace Header with Domain Navigation and Lens Switcher */}
+          <div className="app-workspace-bar" style={{ background: 'var(--surface-panel, #111827)', borderBottom: '1px solid var(--border-default, #334155)', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, minHeight: 0 }}>
+            <WorkspaceHeader
               findingsCount={findings.length}
+              isSidebarCollapsed={isSidebarCollapsed}
+              onExpandSidebar={() => setIsSidebarCollapsed(false)}
             />
-            {isSidebarCollapsed && (
-              <button
-                className="ui-btn ui-btn-secondary ui-btn-sm"
-                onClick={() => setIsSidebarCollapsed(false)}
-                title="Expand Component Inventory Sidebar"
-                data-testid="expand-sidebar-btn"
-              >
-                ▶ Component Sidebar
-              </button>
-            )}
           </div>
 
           {/* Active View Surface Container */}

@@ -1768,3 +1768,241 @@ body {
   font-family: monospace;
   color: var(--text-main);
 }
+/* ==========================================================================
+   LAPTOP RESPONSIVE LAYOUT - Prompt 2 Viewport Hardening
+   ========================================================================== */
+
+/* Responsive Sidebar - Laptop-first approach */
+.sidebar-slot {
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+  flex-shrink: 0;
+  transition: width 0.2s ease, min-width 0.2s ease, max-width 0.2s ease;
+}
+
+/* Responsive Drawer - Laptop-first approach */
+.drawer-slot {
+  width: 380px;
+  min-width: 380px;
+  max-width: 380px;
+  flex-shrink: 0;
+  transition: width 0.2s ease, min-width 0.2s ease, max-width 0.2s ease;
+}
+
+/* 
+ * Laptop Viewport Responsive Behavior
+ * Target: 1280x800 minimum supported laptop
+ * Sidebar (280) + Drawer (380) = 660px overhead
+ * Center workspace needs minimum ~500px for usable visualization
+ */
+@media (max-width: 1440px) {
+  .sidebar-slot {
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+  }
+  
+  .drawer-slot {
+    width: 340px;
+    min-width: 340px;
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 1366px) {
+  .sidebar-slot {
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+  }
+  
+  .drawer-slot {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+  }
+}
+
+/* 
+ * Minimum supported laptop: 1280x800
+ * Ensure center workspace remains usable
+ */
+@media (max-width: 1280px) {
+  .sidebar-slot {
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+  }
+  
+  .drawer-slot {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+  }
+  
+  /* At 1280px, allow center to shrink further if needed */
+  .workspace-center-pane {
+    min-width: 400px;
+  }
+}
+
+/* Larger viewports - use more space */
+@media (min-width: 1536px) {
+  .sidebar-slot {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+  }
+  
+  .drawer-slot {
+    width: 400px;
+    min-width: 400px;
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .sidebar-slot {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+  }
+  
+  .drawer-slot {
+    width: 420px;
+    min-width: 420px;
+    max-width: 420px;
+  }
+}
+
+/* Workspace Header - Responsive domain navigation pills */
+.workspace-header-panel {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.domain-nav-pills {
+  flex-shrink: 0;
+}
+
+.domain-tab-btn {
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+}
+
+.domain-lenses-bar {
+  flex-shrink: 0;
+  min-height: 32px;
+}
+
+.lens-switch-btn {
+  height: 26px !important;
+  padding: 0 8px !important;
+  font-size: 11px !important;
+}
+
+/* Responsive domain pills at smaller viewports */
+@media (max-width: 1366px) {
+  .domain-tab-btn {
+    padding: 3px 6px !important;
+    font-size: 9px !important;
+  }
+  
+  .domain-tab-btn span {
+    display: none;
+  }
+  
+  .domain-tab-btn::after {
+    content: attr(data-domain-short);
+  }
+}
+
+@media (max-width: 1280px) {
+  .active-domain-info {
+    display: none !important;
+  }
+  
+  .domain-nav-pills {
+    gap: 2px !important;
+  }
+}
+
+/* View Mode Switcher - Ensure horizontal scroll doesn't break layout */
+.view-mode-switcher-bar {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+.view-mode-switcher-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.view-mode-switcher-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.view-mode-switcher-bar::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 2px;
+}
+
+/* Domain group styling */
+.domain-group {
+  flex-shrink: 0;
+}
+
+.domain-group-label {
+  font-size: 8px !important;
+  padding: 0 3px !important;
+}
+
+/* Lens buttons in compact mode */
+.lens-switch-btn .label {
+  display: inline;
+}
+
+@media (max-width: 1366px) {
+  .lens-switch-btn .label {
+    display: none;
+  }
+  
+  .lens-switch-btn {
+    padding: 0 6px !important;
+  }
+  
+  .lens-switch-btn .btn-icon {
+    font-size: 14px;
+  }
+}
+
+/* Ensure pointer events work correctly - no intercepting overlays */
+.app-body-container {
+  pointer-events: auto;
+}
+
+.sidebar-slot,
+.drawer-slot {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.workspace-center-pane {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Fix potential pointer event issues */
+.app-layout[data-sidebar="closed"] .sidebar-slot,
+.app-layout[data-drawer="closed"] .drawer-slot {
+  pointer-events: none;
+  width: 0;
+  min-width: 0;
+  max-width: 0;
+  overflow: hidden;
+}
