@@ -9,9 +9,10 @@ This document establishes the authoritative, verified current-state handoff for 
 * **Audit Closure**: COMPLETE (`PHASE18H_FINAL_AUDIT_CLOSURE_REPORT.md`).
 * **Context Retrieval Quality**: VERIFIED (`PHASE19A_CONTEXT_RETRIEVAL_QUALITY_AUDIT.md`).
 * **Agent Navigation Robustness**: ROBUST (`PHASE19B_AGENT_CONTEXT_NAVIGATION_STRESS_TEST.md`).
-* **Analytical Lenses Suite (Phases 2 & 3)**: Fully complete across all authorized 2D analytical lenses:
-  * Phase 2: Matrix, Tree, Profile, Radar, DNA Barcode, Coupling Heatmap, Four-Direction View (`PHASE_2_FINAL_CLOSURE_AND_SYNTHESIS.md`).
-  * Phase 3: Treemap 3A (`PHASE_3A_TREEMAP_IMPLEMENTATION_AND_REAL_BROWSER_VERIFICATION.md`), Sankey Dependency River 3B (`PHASE_3B_SANKEY_DEPENDENCY_RIVER_IMPLEMENTATION_AND_REAL_BROWSER_VERIFICATION.md`), Subway Map 3C (`PHASE_3C_SUBWAY_IMPLEMENTATION_AND_REAL_BROWSER_VERIFICATION.md`), Dependency Constellation 3D (`PHASE_3D_CLOSE_FINAL_CURRENT_STATE.md`).
+* **Analytical Lenses Suite (Phases 2 & 3)**: Fully complete across all 12 interactive visualization lenses and 6 supporting workflow surfaces:
+  * Phase 2 Lenses: Matrix, Tree, Profile, Radar, DNA Barcode, Coupling Heatmap, Four-Direction View (`PHASE_2_FINAL_CLOSURE_AND_SYNTHESIS.md`).
+  * Phase 3 Lenses: Treemap 3A (`PHASE_3A_TREEMAP_IMPLEMENTATION_AND_REAL_BROWSER_VERIFICATION.md`), Sankey Dependency River 3B (`PHASE_3B_SANKEY_DEPENDENCY_RIVER_IMPLEMENTATION_AND_REAL_BROWSER_VERIFICATION.md`), Subway Map 3C (`PHASE_3C_SUBWAY_IMPLEMENTATION_AND_REAL_BROWSER_VERIFICATION.md`), Dependency Constellation 3D (`PHASE_3D_CLOSE_FINAL_CURRENT_STATE.md`).
+  * Phase 3 Scalability & Rendering: Phase 3C Stage 9 Coarse Anchor Pruning (`PHASE_3C_STAGE9_COARSE_PRUNING_PRODUCTION_PROMOTION_AND_REGRESSION.md`), Phase 3D Web Worker Layout Offloading (`PHASE_3D_WEB_WORKER_LAYOUT_OFFLOADING_VALIDATION.md`), Phase 3D-1 Benchmark Reconciliation (`PHASE_3D-1_WEB_WORKER_EVIDENCE_AND_BENCHMARK_RECONCILIATION.md`), Phase 3E Matrix Virtualization & Canvas LOD (`PHASE_3E_MATRIX_VIRTUALIZATION_AND_EXTREME_SCALE_RENDERING_REPORT.md`).
 * **Layout Pipeline Production Optimizations (September 2026)**:
   * **Stage 5 — Feature Graph Reuse**: Productionized in `global-layout.ts`. Reuses Stage 0 feature graph structure, eliminating $O(N \cdot E)$ re-evaluations (`STAGE_5_FEATURE_GRAPH_REUSE_PRODUCTION_IMPLEMENTATION.md`).
   * **Stage 6 — T2 Early Exit Crossing Reduction**: Productionized in `ordering.ts`. Employs early-exit threshold when crossing count falls below $T_2$ or improvement stagnates (`STAGE_6_T2_PRODUCTIONIZATION_AB_EXPERIMENT_2026-09-28.md`, commit `567ce61`).
@@ -50,6 +51,11 @@ This baseline artifact serves as a navigation and status entry point for future 
 | **Stage 11 Optimization** | VERIFIED / MEASURED | `STAGE_11_COLLISION_CLEANUP_FORENSIC_MEASUREMENT_2026-09-26.md` |
 | **Phase 2 Analytical Lenses** | CLOSED — COMPLETE | `PHASE_2_FINAL_CLOSURE_AND_SYNTHESIS.md` |
 | **Phase 3 Analytical Lenses** | CLOSED — COMPLETE | `PHASE_3D_CLOSE_FINAL_CURRENT_STATE.md` |
+| **Phase 3C Stage 9 Pruning** | PRODUCTIONIZED | `PHASE_3C_STAGE9_COARSE_PRUNING_PRODUCTION_PROMOTION_AND_REGRESSION.md` |
+| **Phase 3D Web Worker Layout** | PRODUCTIONIZED | `PHASE_3D_WEB_WORKER_LAYOUT_OFFLOADING_VALIDATION.md` |
+| **Phase 3D-1 Reconciliation** | RECONCILED / AUTHORITATIVE | `PHASE_3D-1_WEB_WORKER_EVIDENCE_AND_BENCHMARK_RECONCILIATION.md` |
+| **Phase 3E Matrix Virtualization** | PRODUCTIONIZED (DOM REALIZATION = BOUNDED) | `PHASE_3E_MATRIX_VIRTUALIZATION_AND_EXTREME_SCALE_RENDERING_REPORT.md` |
+| **Phase 3E Canvas LOD** | PRODUCTIONIZED (5 Tiers) | `PHASE_3E_MATRIX_VIRTUALIZATION_AND_EXTREME_SCALE_RENDERING_REPORT.md` |
 
 ---
 
@@ -176,7 +182,23 @@ specific source evidence (only when line-level confirmation is required)
 
 ---
 
-## 10. Known Limitation
+## 10. Reconciled Full-Pipeline Layout Performance Baseline
+
+The authoritative full-pipeline layout baseline established in Phase 3D-1 and validated in Phase 3E across 6 scale tiers:
+
+| Scale Tier ($N$) | Nodes | Edges | $T_{\text{sync}}$ | $T_{\text{worker\_compute}}$ | Main-Thread Blocking | Coordinate Drift | Scale Classification |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | :--- |
+| **240** | 240 | 1,024 | 1.33484s | 1.05584s | 4.34ms | 0.00000 px | `SUPPORTED` |
+| **500** | 500 | 975 | 2.16346s | 1.79282s | 4.67ms | 0.00000 px | `SUPPORTED` |
+| **750** | 750 | 1,501 | 5.03796s | 4.02613s | 10.32ms | 0.00000 px | `SUPPORTED` |
+| **1000** | 1,000 | 1,988 | 10.01622s | 8.97981s | 9.38ms | 0.00000 px | `SUPPORTED` |
+| **2000** | 2,000 | 3,982 | 67.50427s | 61.70241s | 19.13ms | 0.00000 px | `DEGRADED` |
+| **3500** | 3,500 | 7,025 | 357.94165s | 357.94165s | 117.61ms | 0.00000 px | `DEGRADED` |
+| **10000** | 10,000 | 19,917 | > 300s | > 300s | N/A | 0.00000 px | `10,000N = characterized but unsupported` |
+
+---
+
+## 11. Known Limitations
 
 The canonical dataset (`audit-fixtures/cloud-spend-tracker/explorer-data.json`) contains zero same-layer inter-feature dependency edges because inter-feature couplings in this org's architecture span across distinct vertical layers (e.g. presentation-to-application or application-to-domain). Consequently, the `medianInterEdgeLength` diagnostic field under `sameLayerLocality` evaluates to `0.00px` on this dataset. This is an empirical property of the dataset's coupling topology, not an engine defect.
 
