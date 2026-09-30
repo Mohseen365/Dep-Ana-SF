@@ -5,7 +5,7 @@ import { Header } from './Header';
 describe('Header Component', () => {
   it('renders application title and brand', () => {
     render(<Header />);
-    expect(screen.getByText('Dependency Analyzer')).toBeInTheDocument();
+    expect(screen.getByText('Architecture Explorer')).toBeInTheDocument();
   });
 
   it('displays active project name and status badge', () => {

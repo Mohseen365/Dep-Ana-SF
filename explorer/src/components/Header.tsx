@@ -477,8 +477,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="header-title" data-testid="header-title">
           <span className="icon" aria-hidden="true">⚡</span>
           <div className="header-title-group">
-            <h1>Dependency Analyzer</h1>
-            <span className="header-subtitle">Dependency Explorer</span>
+            <h1>Architecture Explorer</h1>
+            <span className="header-subtitle">Dependency &amp; Refactoring System</span>
           </div>
         </div>
 
