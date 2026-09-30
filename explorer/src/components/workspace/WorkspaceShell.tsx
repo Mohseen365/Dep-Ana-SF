@@ -212,7 +212,7 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
         {!isSidebarCollapsed && (
           <div
             className="sidebar-slot"
-            style={{ width: '280px', minWidth: '280px', height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
+            style={{ height: '100%', borderRight: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
           >
             <Sidebar
               nodes={activeData?.nodes ?? []}
@@ -292,7 +292,7 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
         {isDrawerOpen && (
           <div
             className="drawer-slot"
-            style={{ width: '380px', minWidth: '380px', height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
+            style={{ height: '100%', borderLeft: '1px solid var(--border-default, #334155)', flexShrink: 0 }}
           >
             <InvestigationDrawer
               node={selectedNode}

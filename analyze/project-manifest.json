@@ -1,15 +1,15 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "cloud-spend-tracker",
+  "activeProjectId": "movie",
   "projects": [
     {
       "id": "movie",
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
       "sourcePath": "Movie-App/force-app/main/default",
-      "createdAt": "2026-09-24T06:24:42.839Z",
-      "updatedAt": "2026-09-24T06:24:42.839Z",
-      "lastAnalyzedAt": "2026-09-24T06:24:42.839Z",
+      "createdAt": "2026-09-30T07:54:09.494Z",
+      "updatedAt": "2026-09-30T07:54:09.494Z",
+      "lastAnalyzedAt": "2026-09-30T07:54:09.494Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 9,
       "dependencyCount": 16,
@@ -59,7 +59,7 @@
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:fcf46e84ed89f45f7fccdff6acbc1489ca22e75bd5726bd34d5d0f6deea4d8d3",
+      "fileHash": "sha256:900b4069abffe45c858f221ed595c2749b919828390498670b5644f1af598743",
       "nodeCount": 9,
       "edgeCount": 16
     },
