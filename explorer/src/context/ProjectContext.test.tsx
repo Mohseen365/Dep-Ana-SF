@@ -240,6 +240,50 @@ describe('ProjectContext & Provider', () => {
     expect(result.current.getProjectDataUrl('default')).toBe('/explorer-data.json');
   });
 
+  it('resolves PBIM project manifest path correctly to pub-infra-mang dataset', async () => {
+    const mockManifest = {
+      manifestVersion: '1.0.0',
+      activeProjectId: 'movie',
+      projects: [
+        {
+          id: 'pbim',
+          name: 'pbim',
+          description: 'Salesforce DX Architecture Analysis',
+          sourcePath: 'Pub-Infra-Mang/force-app/main/default',
+          createdAt: '2026-09-25T04:55:57.331Z',
+          updatedAt: '2026-09-25T04:55:57.331Z',
+          lastAnalyzedAt: '2026-09-25T04:55:57.331Z',
+          analysisStatus: 'COMPLETE',
+          componentCount: 528,
+          dependencyCount: 2063,
+          analysisPath: '/projects/pub-infra-mang/explorer-data.json',
+        },
+      ],
+    };
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return {
+        ok: true,
+        json: async () => mockManifest,
+      } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const pbimProject = result.current.projects.find((p) => p.id === 'pbim');
+    expect(pbimProject).toBeDefined();
+    expect(pbimProject?.analysisPath).toBe('/projects/pub-infra-mang/explorer-data.json');
+    expect(pbimProject?.componentCount).toBe(528);
+    expect(pbimProject?.dependencyCount).toBe(2063);
+    expect(result.current.getProjectDataUrl('pbim')).toBe('/projects/pub-infra-mang/explorer-data.json');
+  });
+
   it('browser reload with custom project in URL restores that project as active', async () => {
     window.history.pushState({}, '', '/?project=movie-app');
 

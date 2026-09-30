@@ -148,7 +148,7 @@ export const ProjectProvider: React.FC<{
       mergedMap.set(pId, {
         ...p,
         id: pId,
-        analysisPath: pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json',
+        analysisPath: p.analysisPath || (pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json'),
       });
     });
     localProjects.forEach((p) => {
@@ -156,7 +156,7 @@ export const ProjectProvider: React.FC<{
       mergedMap.set(pId, {
         ...p,
         id: pId,
-        analysisPath: pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json',
+        analysisPath: p.analysisPath || (pId !== 'default' ? `/projects/${pId}/explorer-data.json` : '/explorer-data.json'),
       });
     });
 
