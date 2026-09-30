@@ -235,36 +235,59 @@ function resolveInputFile(inputPath, options = {}) {
     }
   }
 
-  // 2. Check project-specific analyze directory
+  // 2. Check project-specific analyze and public directories (and alias mappings)
   if (projectId !== "default") {
-    const projReport = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "dependency-report.json");
-    const projSnapshot = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "analysis-snapshot.json");
-    const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
-    if (foundProj && matchesSource(foundProj)) return foundProj;
-    if (foundProj && explicitSource) {
-      throw new Error(`Analyzer output file in directory 'analyze/projects/${projectId}' does not match explicit source: ${options.source}`);
+    const candidateProjectDirs = [
+      path.resolve(ROOT_DIR, "analyze", "projects", projectId),
+      path.resolve(ROOT_DIR, "explorer", "public", "projects", projectId)
+    ];
+    if (projectId === "pbim") {
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "analyze", "projects", "pub-infra-mang"));
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "explorer", "public", "projects", "pub-infra-mang"));
+    } else if (projectId === "pub-infra-mang") {
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "analyze", "projects", "pbim"));
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "explorer", "public", "projects", "pbim"));
+    } else if (projectId === "movie") {
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "analyze", "projects", "movie-app"));
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "explorer", "public", "projects", "movie-app"));
+    } else if (projectId === "movie-app") {
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "analyze", "projects", "movie"));
+      candidateProjectDirs.push(path.resolve(ROOT_DIR, "explorer", "public", "projects", "movie"));
     }
-    if (explicitSource) {
-      throw new Error(`Analyzer output file not found matching explicit source '${options.source}' in directory: analyze/projects/${projectId}`);
+
+    for (const dir of candidateProjectDirs) {
+      if (fs.existsSync(dir) && fs.statSync(dir).isDirectory()) {
+        const projReport = path.join(dir, "dependency-report.json");
+        const projSnapshot = path.join(dir, "analysis-snapshot.json");
+        const projExplorer = path.join(dir, "explorer-data.json");
+        const foundProj = fs.existsSync(projReport)
+          ? projReport
+          : fs.existsSync(projSnapshot)
+          ? projSnapshot
+          : fs.existsSync(projExplorer)
+          ? projExplorer
+          : null;
+        if (foundProj && matchesSource(foundProj)) return foundProj;
+      }
     }
-    throw new Error(`Analyzer output file not found in project directory: analyze/projects/${projectId}`);
   }
 
-  // 3. Check root or default analyze directory for report ONLY IF projectId === "default"
+  // 3. Check root or default analyze directory for report
   const analyzeReport = path.resolve(ROOT_DIR, "analyze", "dependency-report.json");
   const analyzeSnapshot = path.resolve(ROOT_DIR, "analyze", "analysis-snapshot.json");
+  const analyzeExplorer = path.resolve(ROOT_DIR, "analyze", "explorer-data.json");
   const rootReport = path.resolve(ROOT_DIR, "dependency-report.json");
   const rootSnapshot = path.resolve(ROOT_DIR, "analysis-snapshot.json");
+  const rootExplorer = path.resolve(ROOT_DIR, "explorer-data.json");
 
-  // Prefer analyze/ directory over root test artifacts
-  const candidateDefaults = [analyzeReport, analyzeSnapshot, rootReport, rootSnapshot];
+  const candidateDefaults = [analyzeReport, analyzeSnapshot, analyzeExplorer, rootReport, rootSnapshot, rootExplorer];
   const foundDefault = candidateDefaults.find((f) => fs.existsSync(f) && matchesSource(f));
   if (foundDefault) return foundDefault;
 
   if (explicitSource) {
     throw new Error(`Analyzer output file not found matching explicit source '${options.source}' in directory: ${inputPath}`);
   }
-  throw new Error(`Analyzer output file not found in directory: ${inputPath}`);
+  throw new Error(`Analyzer output file not found in project or analyze directory for project: ${projectId}`);
 }
 
 /**
@@ -919,9 +942,12 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
       fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
     }
 
-    // Check for alias mapping (e.g. movie -> movie-app)
+    // Check for alias mapping (e.g. movie -> movie-app, pbim -> pub-infra-mang)
     const aliases = [];
     if (projectId === "movie") aliases.push("movie-app");
+    if (projectId === "movie-app") aliases.push("movie");
+    if (projectId === "pbim") aliases.push("pub-infra-mang");
+    if (projectId === "pub-infra-mang") aliases.push("pbim");
 
     for (const alias of aliases) {
       const aliasPublicDir = path.join(explorerPublicDir, "projects", alias);
