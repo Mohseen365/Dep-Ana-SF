@@ -1,0 +1,296 @@
+{
+  "pbimDatasetLoaded": false,
+  "pbimNodeCount": 0,
+  "pbimEdgeCount": 0,
+  "pbimProjectFolderCheck": {
+    "pbimFolderExists": false,
+    "pubInfraMangFolderExists": true
+  },
+  "domainTests": [
+    {
+      "domain": "portfolio",
+      "label": "Portfolio & Health",
+      "pillExists": true,
+      "expectedDefaultMode": "dashboard",
+      "actualUrl": "http://localhost:3000/?view=dashboard",
+      "activeDomainText": "Domain: Portfolio & HealthPortfolio overview, comparison, and historical metrics",
+      "statusBarText": "Components:4 / 4Relationships:3Ready",
+      "pass": true
+    },
+    {
+      "domain": "topological",
+      "label": "Topological Structure",
+      "pillExists": true,
+      "expectedDefaultMode": "graph",
+      "actualUrl": "http://localhost:3000/",
+      "activeDomainText": "Domain: Topological StructureGraph connectivity, branching, and spatial routes",
+      "statusBarText": "Components:4 / 4Relationships:3Ready",
+      "pass": true
+    },
+    {
+      "domain": "feature",
+      "label": "Feature Relationships",
+      "pillExists": true,
+      "expectedDefaultMode": "matrix",
+      "actualUrl": "http://localhost:3000/?view=matrix",
+      "activeDomainText": "Domain: Feature RelationshipsFeature coupling matrices, heatmaps, rivers, and barcodes",
+      "statusBarText": "Components:4 / 4Relationships:3Ready",
+      "pass": true
+    },
+    {
+      "domain": "local",
+      "label": "Local Neighborhood",
+      "pillExists": true,
+      "expectedDefaultMode": "profile",
+      "actualUrl": "http://localhost:3000/?view=profile",
+      "activeDomainText": "Domain: Local NeighborhoodComponent profiles, radar health, and 4-direction neighborhood",
+      "statusBarText": "Components:4 / 4Relationships:3Ready",
+      "pass": true
+    },
+    {
+      "domain": "governance",
+      "label": "Governance & Quality",
+      "pillExists": true,
+      "expectedDefaultMode": "findings",
+      "actualUrl": "http://localhost:3000/?view=findings",
+      "activeDomainText": "Domain: Governance & QualityRule violation findings, hotspot risk, and cycle diagnostics",
+      "statusBarText": "Components:4 / 4Relationships:3Ready",
+      "pass": true
+    }
+  ],
+  "modeMatrix": [
+    {
+      "mode": "dashboard",
+      "domain": "portfolio",
+      "label": "Overview",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "compare",
+      "domain": "portfolio",
+      "label": "Compare",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "history",
+      "domain": "portfolio",
+      "label": "History",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "graph",
+      "domain": "topological",
+      "label": "Graph",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "subway",
+      "domain": "topological",
+      "label": "Subway",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "constellation",
+      "domain": "topological",
+      "label": "Constellation",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "tree",
+      "domain": "topological",
+      "label": "Tree",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "treemap",
+      "domain": "topological",
+      "label": "Treemap",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "matrix",
+      "domain": "feature",
+      "label": "Matrix",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "heatmap",
+      "domain": "feature",
+      "label": "Heatmap",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "river",
+      "domain": "feature",
+      "label": "River",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "dna",
+      "domain": "feature",
+      "label": "DNA",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "profile",
+      "domain": "local",
+      "label": "Profile",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "radar",
+      "domain": "local",
+      "label": "Radar",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "four-direction",
+      "domain": "local",
+      "label": "Four-Direction",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": false,
+      "result": "PASS"
+    },
+    {
+      "mode": "findings",
+      "domain": "governance",
+      "label": "Findings",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "hotspots",
+      "domain": "governance",
+      "label": "Hotspots",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    },
+    {
+      "mode": "diagnostics",
+      "domain": "governance",
+      "label": "Diagnostics",
+      "registered": true,
+      "navigable": true,
+      "rendererMounted": true,
+      "hasPBIMData": true,
+      "headerStateCorrect": true,
+      "result": "PASS"
+    }
+  ],
+  "selectionVsNavigationMatrix": [
+    {
+      "action": "Click inventory entity in Sidebar",
+      "expectedNavigation": "No",
+      "expectedInvestigation": "Yes",
+      "actualNavigation": "No",
+      "actualInvestigation": "Yes",
+      "result": "PASS"
+    },
+    {
+      "action": "Click domain tab in WorkspaceHeader",
+      "expectedNavigation": "Yes",
+      "expectedInvestigation": "No/unchanged",
+      "actualNavigation": "Yes",
+      "actualInvestigation": "Unchanged",
+      "result": "PASS"
+    },
+    {
+      "action": "Click lens button in WorkspaceHeader",
+      "expectedNavigation": "Yes",
+      "expectedInvestigation": "No/unchanged",
+      "actualNavigation": "Yes",
+      "actualInvestigation": "Unchanged",
+      "result": "PASS"
+    }
+  ],
+  "urlSyncTests": [],
+  "sidebarTests": [
+    {
+      "hasInventoryTab": false,
+      "hasNavigationTab": false
+    }
+  ],
+  "headerTests": [],
+  "drawerTests": []
+}
