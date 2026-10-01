@@ -12,7 +12,7 @@ describe('Adversarial Convergence & PBIM Truth Audit', () => {
       { name: 'food-app', relPath: '../../../public/projects/food-app/explorer-data.json' },
       { name: 'cst', relPath: '../../../public/projects/cst/explorer-data.json' },
       { name: 'bqc', relPath: '../../../public/projects/bqc/explorer-data.json' },
-      { name: 'pbim', relPath: '../../../public/projects/pub-infra-mang/explorer-data.json' },
+      { name: 'pbim', relPath: '../../../public/projects/pbim/explorer-data.json' },
     ];
 
     const results: Record<string, any> = {};
@@ -96,7 +96,7 @@ describe('Adversarial Convergence & PBIM Truth Audit', () => {
         maxSectorPop,
         projectedN: semResult.nodeList.length,
         geometryN: Object.keys(geoResult.positions).length,
-        initialCollisions: geoResult.diagnostics.collisionCount,
+        initialCollisions: geoResult.diagnostics.initialCollisionCount,
         repairOps: geoResult.diagnostics.repairCount,
         finalCollisions,
         collisionPairs: collisionPairs.slice(0, 10),
