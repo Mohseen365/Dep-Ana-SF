@@ -1,0 +1,179 @@
+{
+  "gate1": {
+    "cyNodes": 528,
+    "cyEdges": 2063,
+    "zoom": 0.1,
+    "pan": {
+      "x": 674.3955826479787,
+      "y": 331.91315000000014
+    },
+    "circles": [
+      {
+        "r": "200",
+        "fill": "rgba(56, 189, 248, 0.03)",
+        "stroke": "rgba(56, 189, 248, 0.4)"
+      },
+      {
+        "r": "12",
+        "fill": "#38bdf8",
+        "stroke": null
+      },
+      {
+        "r": "600",
+        "fill": "none",
+        "stroke": "rgba(148, 163, 184, 0.18)"
+      },
+      {
+        "r": "4600",
+        "fill": "none",
+        "stroke": "rgba(148, 163, 184, 0.18)"
+      },
+      {
+        "r": "8600",
+        "fill": "none",
+        "stroke": "rgba(148, 163, 184, 0.18)"
+      },
+      {
+        "r": "12600",
+        "fill": "none",
+        "stroke": "rgba(148, 163, 184, 0.18)"
+      },
+      {
+        "r": "16600",
+        "fill": "none",
+        "stroke": "rgba(148, 163, 184, 0.18)"
+      },
+      {
+        "r": "20600",
+        "fill": "none",
+        "stroke": "rgba(148, 163, 184, 0.18)"
+      }
+    ],
+    "lineCount": 65,
+    "textCount": 71,
+    "sampleTexts": [
+      {
+        "text": "Nucleus / Core (R0)",
+        "x": "610",
+        "y": "-10",
+        "fontSize": "11",
+        "fill": "#94a3b8"
+      },
+      {
+        "text": "Presentation Layer (R1)",
+        "x": "4610",
+        "y": "-10",
+        "fontSize": "11",
+        "fill": "#94a3b8"
+      },
+      {
+        "text": "Application Layer (R2)",
+        "x": "8610",
+        "y": "-10",
+        "fontSize": "11",
+        "fill": "#94a3b8"
+      },
+      {
+        "text": "Domain Layer (R3)",
+        "x": "12610",
+        "y": "-10",
+        "fontSize": "11",
+        "fill": "#94a3b8"
+      },
+      {
+        "text": "Schema Layer (R4)",
+        "x": "16610",
+        "y": "-10",
+        "fontSize": "11",
+        "fill": "#94a3b8"
+      },
+      {
+        "text": "Supporting Layer (R5)",
+        "x": "20610",
+        "y": "-10",
+        "fontSize": "11",
+        "fill": "#94a3b8"
+      },
+      {
+        "text": "approval-flow (1)",
+        "x": "2399.75",
+        "y": "34.8",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-charts (1)",
+        "x": "2397.73",
+        "y": "104.37",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-dashboard-container (1)",
+        "x": "2393.7",
+        "y": "173.85",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-detail-dashboard (1)",
+        "x": "2387.77",
+        "y": "241.99",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-health-map (1)",
+        "x": "2379.9",
+        "y": "309.93",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-history (1)",
+        "x": "2369.92",
+        "y": "378.81",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-kpi-card (1)",
+        "x": "2357.94",
+        "y": "447.37",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-list (1)",
+        "x": "2343.97",
+        "y": "515.55",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      },
+      {
+        "text": "asset-management-dashboard (1)",
+        "x": "2328.04",
+        "y": "583.3",
+        "fontSize": "10",
+        "fill": "#cbd5e1"
+      }
+    ],
+    "modeBadge": "🔀 Interactive Mode (Orbit)"
+  },
+  "gate8": {
+    "coreInCytoscapeGraph": false,
+    "coreCirclesInSVG": 2,
+    "coreCircleAttributes": [
+      {
+        "r": "200",
+        "fill": "rgba(56, 189, 248, 0.03)",
+        "stroke": "rgba(56, 189, 248, 0.4)"
+      },
+      {
+        "r": "12",
+        "fill": "#38bdf8",
+        "stroke": null
+      }
+    ]
+  }
+}
