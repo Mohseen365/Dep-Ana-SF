@@ -467,6 +467,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cyRef.current = cy;
+    if (typeof window !== 'undefined') {
+      (window as any).__CY__ = cy;
+    }
 
     const knownPosMap: Record<string, Position> = {};
     cy.nodes().forEach((cyNode) => {
@@ -578,7 +581,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
-      const pos = evt.renderedPosition;
+      const pos = evt.renderedPosition || (typeof node.renderedPosition === 'function' ? node.renderedPosition() : { x: 0, y: 0 });
       const nodeId = node.id();
       const nodeObj = nodesRef.current.find(n => n.id === nodeId);
 
@@ -586,7 +589,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
 
-      if (nodeObj) {
+      if (nodeObj && pos) {
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'node',
@@ -707,6 +710,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
 
       document.body.style.cursor = 'default';
+      if (typeof window !== 'undefined' && (window as any).__CY__ === cy) {
+        (window as any).__CY__ = null;
+      }
       cy.destroy();
       cyRef.current = null;
     };
