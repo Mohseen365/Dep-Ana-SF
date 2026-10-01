@@ -1,9 +1,9 @@
 # ARCHITECTURE ORBIT — C9 RELEASE DOCUMENTATION + CONTRACT FREEZE
 
-**Document Status:** FROZEN AUTHORITATIVE RELEASE CONTRACT (RECONCILED VIA C9R & C9R2)
+**Document Status:** FROZEN AUTHORITATIVE RELEASE CONTRACT (RECONCILED VIA C9R, C9R2 & C9R3)
 **Phase:** C9 Release Documentation & Contract Freeze
 **Preceding Phases Closed:** C4 (Semantic + Visual Geometry Truth), C5 (Real Browser Visual UX Acceptance), C6 / C6R / C6R2 (Scale Stress + Benchmark Provenance Closure), C7 / C7R (Cross-Layout Contract + Regression Closure), C8 / C8R (Production Hardening + Evidence Reconciliation)
-**Evidence Reconciliation Phases:** C9R (`ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md`), C9R2 (`ARCHITECTURE_ORBIT_C9R2_FINAL_METRIC_AND_CONTRACT_INTEGRITY_CLOSURE.md`)
+**Evidence Reconciliation Phases:** C9R (`ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md`), C9R2 (`ARCHITECTURE_ORBIT_C9R2_FINAL_METRIC_AND_CONTRACT_INTEGRITY_CLOSURE.md`), C9R3 (`ARCHITECTURE_ORBIT_C9R3_FINAL_TWO_ISSUE_CONTRACT_CLOSURE.md`)
 **Next Phase:** C10 CLEAN-ROOM FINAL ORBIT ACCEPTANCE
 **Final Release Verdict:** `C9 RELEASE DOCUMENTATION & CONTRACT FREEZE CLOSED`
 
@@ -74,7 +74,7 @@ $$R_{\text{base}}(r, \text{secIdx}, k) = 600 + r \times 4000 + (\text{secIdx} \b
 
 ## 5. RADIAL EXTENT DISTINCTIONS
 
-As proven in C8R and C9R2, four distinct radial concept boundaries exist in the codebase and must **never** be conflated:
+As proven in C8R, C9R2, and C9R3, four distinct radial concept boundaries exist in the codebase and must **never** be conflated:
 
 1. **Sector Text Label Anchor Radius**: `2,400` px (`labelR = 2400` in `FeatureOverlayCanvas.tsx`, SVG text label rendering anchor in inner hub).
 2. **Sector Guide Spoke Line Extent**: `2,600` px (`guideR = 2600` in `FeatureOverlayCanvas.tsx`, visual spoke line extent from $R_0$ to $R_1$).
@@ -96,7 +96,7 @@ $$\text{Overlap}(A, B) \iff |x_A - x_B| < \frac{W_A + W_B}{2} \land |y_A - y_B| 
 ## 7. REPAIR TERMINOLOGY
 
 * `maxRepairPasses = 20` (Safety bounds limit on outer repair sweep iterations).
-* **Pass vs Operation Distinction (Reconciled in C6R2 & C9R2)**: A single outer repair *pass* scans all pairs once and executes multiple atomic repair *operations* (e.g., track push $k \leftarrow k+1$, angular nudge $\theta \leftarrow \theta + \Delta\theta$).
+* **Pass vs Operation Distinction (Reconciled in C6R2, C9R2 & C9R3)**: A single outer repair *pass* scans all pairs once and executes multiple atomic repair *operations* (e.g., track push $k \leftarrow k+1$, angular nudge $\theta \leftarrow \theta + \Delta\theta$).
 * The 23 repair operations required for PBIM occur entirely within **1 outer repair pass** (`actualPasses = 1`).
 
 ---
@@ -118,15 +118,30 @@ $$\text{Overlap}(A, B) \iff |x_A - x_B| < \frac{W_A + W_B}{2} \land |y_A - y_B| 
 
 ---
 
-## 10. PERSISTENCE CONTRACT
+## 10. WORKSPACE PERSISTENCE CONTRACT
 
-* Active layout mode (`architectureMode = 'orbit'`) is persisted in workspace state (`saveProjectState()`) and hydrated via URL query parameter `?mode=orbit`.
-* Explicit user-dragged node positions stored in `existingPositions` take precedence without corrupting the algorithmic layout of un-dragged nodes.
-* Orbit recomputes its geometry on demand and does NOT attempt to overwrite global persistent positions for other view modes.
+Workspace persistence concerns state serialized across browser page reloads (`F5`) or URL copy-paste hydration:
+
+* **Active Mode Hydration**: Active layout mode (`architectureMode = 'orbit'`) is serialized in workspace state (`saveProjectState()`) and hydrated via URL query parameter `?mode=orbit`.
+* **Dataset Selection**: Active project dataset (`project = 'pbim'`) is serialized in URL parameter `?project=pbim`.
+* **Selection State**: Selected component (`selectedNodeId`) is serialized and restored.
+* **Active Filters**: Visible layer/type filters (`visibleNodeTypes`) are serialized and restored.
+* **Explicit Dragged Position Overrides**: User-dragged node positions stored in `existingPositions` take precedence for dragged nodes without corrupting algorithmic placement of un-dragged nodes.
+* **Position Authority Isolation**: Orbit recomputes its geometry on demand and does NOT overwrite global persistent positions for other view modes.
 
 ---
 
-## 11. CROSS-LAYOUT OWNERSHIP
+## 11. CROSS-LAYOUT STATE PRESERVATION & ISOLATION CONTRACT
+
+Cross-layout state preservation concerns transient in-memory workspace state surviving mode transitions (e.g., switching `hierarchical` $\rightarrow$ `orbit` $\rightarrow$ `hybrid`) within an active browser session:
+
+* **State Preservation Across Mode Switching**:
+  * `selectedNodeId`: Preserved bit-for-bit across layout mode switches (`PROVEN`).
+  * `active filters` (`visibleNodeTypes`): Preserved across layout mode switches (`PROVEN`).
+  * `search query`: Preserved across layout mode switches in memory (`PROVEN`).
+  * `inspection drawer`: Preserved across layout mode switches in memory (`PROVEN`).
+  * `dataset selection`: Preserved across layout mode switches (`PROVEN`).
+* **Cross-Layout Ownership Matrix**:
 
 | Architectural Surface / Entity | Owned by Architecture Orbit | Owned by Global Subsystems / External |
 | :--- | :---: | :---: |
@@ -138,7 +153,7 @@ $$\text{Overlap}(A, B) \iff |x_A - x_B| < \frac{W_A + W_B}{2} \land |y_A - y_B| 
 | Global Selection, Hover, Visibility State | NO | **Global Workspace State** (`projectState.ts`) |
 | Position Authority & Persistence | NO | **Position Authority** (`projectState.ts`) |
 
-Switching between Orbit and any other layout mode preserves $100\%$ of global graph selection, active filters, search queries, inspection drawer state, and project dataset selections without side effects.
+Switching between Orbit and any other layout mode preserves $100\%$ of global graph selection, active filters, search queries, inspection drawer state, and project dataset selections without side effects or coordinate leakage.
 
 ---
 
@@ -181,12 +196,14 @@ To eliminate conflation across test environments and functions, benchmark measur
 
 ## 14. OPERATIONAL SCALE ENVELOPE
 
+Scope B production pipeline evidence ends at the measured 5,000 node point ($3.86\text{ s}$). Scope B 20k runtime is explicitly unmeasured and not claimed.
+
 | Scale Tier | Node Count ($N$) | Scope A: Pure Geometry (`computeOrbitLayout`) | Scope B: Full Pipeline (`computeArchitectureLayoutWithMetadata`) | Scope C: Real Browser Execution | Operating Envelope Classification |
 | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Tier 1** | $N \le 1,000$ | $\le 43.28\text{ ms}$ (at $N=1,000$) | $\le 124.70\text{ ms}$ (at $N=1,000$) | **PROVEN** (PBIM $528\text{N}$: $<250\text{ms}$ total UI) | **Comfortable / Interactive Target** |
 | **Tier 2** | $1,000 < N \le 2,000$ | $43.28\text{ ms} - 181.01\text{ ms}$ | $124.70\text{ ms} - 496.10\text{ ms}$ | `Not Claimed` | **Degraded (Noticeable UI Pause)** |
 | **Tier 3** | $2,000 < N \le 5,000$ | $1.43\text{ s}$ (at $N=5,000$) | $3.86\text{ s}$ (at $N=5,000$) | `Not Claimed` | **Impractical for Synchronous UI Thread** |
-| **Tier 4** | $5,000 < N \le 20,000$ | $35.83\text{ s}$ (at $N=20,000$) | $> 40.0\text{ s}$ | `Not Claimed` | **Node-Side Stress Limit Only** |
+| **Tier 4** | $5,000 < N \le 20,000$ | $35.83\text{ s}$ (at $N=20,000$) | **Not Measured / Not Claimed** | `Not Claimed` | **Node-Side Stress Limit Only (Scope A)** |
 | **Tier 5** | $N > 20,000$ | `Not Tested` | `Not Tested` | `Not Claimed` | **Not Tested / Not Claimed** |
 
 ---
@@ -269,6 +286,7 @@ The following five items represent documented operational and geometric characte
 | **C8** | `orbit-c8-production-hardening.test.tsx` | PBIM, CST, BQC, Food, Edge | Node / Vitest / JSDOM | Production Edge Cases | **PASS** | Scope B: $1\text{k}=124.7\text{ms}, \text{PBIM}=35.3\text{ms}$ |
 | **C8R** | `orbit-c8r-reconciliation.test.ts` | PBIM (528/2063) | Node / Vitest | Immutability & Radius Proof | **PASS** | Deep immutability confirmed |
 | **C9R2** | `ARCHITECTURE_ORBIT_C9R2_FINAL_METRIC_AND_CONTRACT_INTEGRITY_CLOSURE.md` | All Fixtures & Reports | Forensic Reconciliation | Metric & Contract Closure | **PASS** | Scope A, B, C reconciled |
+| **C9R3** | `ARCHITECTURE_ORBIT_C9R3_FINAL_TWO_ISSUE_CONTRACT_CLOSURE.md` | All Fixtures & Reports | Contract Reconciliation | Two-Issue Contract Closure | **PASS** | Scope B 20k extrapolation removed |
 
 ---
 
@@ -289,13 +307,13 @@ All audited claims have an explicit provenance disposition; unsupported or scope
 
 | Discrepancy Item | Draft C9 Statement | Authoritative Resolution | Source Reference | Resolution Status |
 | :--- | :--- | :--- | :---: | :---: |
-| **20k Performance Timing** | `$12.4\text{ sec}$ at $N=20,000$` | Replaced with Scope A geometry benchmark timing ($35.83\text{ s}$). | C6R, C6R2 Gate 1 | `CLOSED` |
+| **20k Performance Timing** | `$12.4\text{ sec}$ at $N=20,000$` | Replaced with Scope A geometry benchmark timing ($35.83\text{ s}$). Scope B set to `Not Measured / Not Claimed`. | C6R, C6R2, C9R3 | `CLOSED` |
 | **5k Performance Timing** | `$0.8–2.5\text{ sec}$ for 2000–5000` | Replaced with explicit Scope A ($1.43\text{ s}$) and Scope B ($3.86\text{ s}$) timings. | C6R2, C8 Sec. 7 | `CLOSED` |
 | **1k Performance Timing** | `$<50\text{ ms}$ for $N \le 1,000$` | Reconciled as $\le 43.28\text{ ms}$ Scope A geometry compute and $\le 124.70\text{ ms}$ Scope B full pipeline. | C6R Sec. 5, C8 Sec. 7 | `CLOSED` |
 | **Shuffle Determinism Count** | `100 randomized orderings` | Replaced 100 with 10 randomized array order shuffles. | C4 Sec. 10, C6 Sec. 10 | `CLOSED` |
 | **Fixture Mappings** | `Browser & Vitest` across all fixtures | Mapped per-fixture execution environment explicitly (PBIM/CST browser proven). | C5, C7R, C8R | `CLOSED` |
 | **Viewport Resolution Claims**| `320x568` to `3840x2160` | Narrowed to C5 tested viewports ($1024 \times 768 \dots 2560 \times 1440$). | C5 Sec. 8 | `CLOSED` |
-| **Persistence Wording** | `FULL WORKSPACE PERSISTENCE` | Narrowed to specific persisted parameters (`architectureMode`, user overrides). | C7R Sec. 4 | `CLOSED` |
+| **Persistence Wording** | `FULL WORKSPACE PERSISTENCE` | Separated reload persistence (Sec. 10) from cross-layout state preservation (Sec. 11). | C7R Sec. 4, C9R3 | `CLOSED` |
 | **Accessibility Color Constants** | `2px solid #0070D2` | Narrowed to evidenced Cytoscape focus ring and high-contrast outline behavior. | C5 Sec. 7 | `CLOSED` |
 
 ---
@@ -317,10 +335,10 @@ All audited claims have an explicit provenance disposition; unsupported or scope
 * **Ownership Boundary Contract**: Strictly mode-owned layout coordinates; zero position corruption on global graph state.
 * **Interaction & Overlay Contract**: Real graph edges rendered; virtual core and guides non-selectable.
 * **Persistence & Mode Switching**: Hydrated via `architectureMode`; explicit user positions preserved.
-* **Scale Envelope**: $N \le 1,000$ interactive browser target; $N \le 20,000$ Scope A Node benchmark limit ($35.83\text{ s}$).
+* **Scale Envelope**: $N \le 1,000$ interactive browser target; $N \le 20,000$ Scope A Node benchmark limit ($35.83\text{ s}$). Scope B evidence ends at 5k ($3.86\text{ s}$).
 * **Real Fixtures Validated**: PBIM ($528/2063$), CST ($240/1024$), BQC ($274/603$), Food-App ($1/0$).
-* **Production Files Modified in C9/C9R/C9R2**: **0 files** ($0\%$ source code mutation).
-* **Report Lineage**: C4 $\rightarrow$ C5 $\rightarrow$ C6 $\rightarrow$ C6R $\rightarrow$ C6R2 $\rightarrow$ C7 $\rightarrow$ C7R $\rightarrow$ C8 $\rightarrow$ C8R $\rightarrow$ C9R $\rightarrow$ C9R2 $\rightarrow$ **C9 (Frozen Release Contract)**.
+* **Production Files Modified in C9/C9R/C9R2/C9R3**: **0 files** ($0\%$ source code mutation).
+* **Report Lineage**: C4 $\rightarrow$ C5 $\rightarrow$ C6 $\rightarrow$ C6R $\rightarrow$ C6R2 $\rightarrow$ C7 $\rightarrow$ C7R $\rightarrow$ C8 $\rightarrow$ C8R $\rightarrow$ C9R $\rightarrow$ C9R2 $\rightarrow$ C9R3 $\rightarrow$ **C9 (Frozen Release Contract)**.
 
 ---
 
