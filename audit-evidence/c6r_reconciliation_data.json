@@ -1,0 +1,110 @@
+[
+  {
+    "dataset": "food-app",
+    "nodes": 1,
+    "edges": 0,
+    "initialCollisions": 0,
+    "repairPassesExecuted": 1,
+    "repairOperations": 0,
+    "finalCollisions": 0,
+    "maxTrack": 0,
+    "maxRadius": 4600,
+    "runtimeMs": 1.34
+  },
+  {
+    "dataset": "cst",
+    "nodes": 240,
+    "edges": 1024,
+    "initialCollisions": 15,
+    "repairPassesExecuted": 1,
+    "repairOperations": 9,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 23200,
+    "runtimeMs": 25.5
+  },
+  {
+    "dataset": "bqc",
+    "nodes": 274,
+    "edges": 603,
+    "initialCollisions": 7,
+    "repairPassesExecuted": 1,
+    "repairOperations": 4,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 23000,
+    "runtimeMs": 13.35
+  },
+  {
+    "dataset": "pbim",
+    "nodes": 528,
+    "edges": 2063,
+    "initialCollisions": 37,
+    "repairPassesExecuted": 1,
+    "repairOperations": 23,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 24200,
+    "runtimeMs": 9.37
+  },
+  {
+    "dataset": "Synthetic-1000N",
+    "nodes": 1000,
+    "edges": 1997,
+    "initialCollisions": 417,
+    "repairPassesExecuted": 1,
+    "repairOperations": 442,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 23200,
+    "runtimeMs": 43.28
+  },
+  {
+    "dataset": "Synthetic-2000N",
+    "nodes": 2000,
+    "edges": 3978,
+    "initialCollisions": 1571,
+    "repairPassesExecuted": 1,
+    "repairOperations": 1361,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 24200,
+    "runtimeMs": 181.01
+  },
+  {
+    "dataset": "Synthetic-5000N",
+    "nodes": 5000,
+    "edges": 10015,
+    "initialCollisions": 7544,
+    "repairPassesExecuted": 1,
+    "repairOperations": 10101,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 24800,
+    "runtimeMs": 1242.71
+  },
+  {
+    "dataset": "Synthetic-10000N",
+    "nodes": 10000,
+    "edges": 19928,
+    "initialCollisions": 37631,
+    "repairPassesExecuted": 1,
+    "repairOperations": 48319,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 41120.017,
+    "runtimeMs": 7276.38
+  },
+  {
+    "dataset": "Synthetic-20000N",
+    "nodes": 20000,
+    "edges": 39939,
+    "initialCollisions": 133154,
+    "repairPassesExecuted": 1,
+    "repairOperations": 173926,
+    "finalCollisions": 0,
+    "maxTrack": 9,
+    "maxRadius": 80550.113,
+    "runtimeMs": 35833.28
+  }
+]

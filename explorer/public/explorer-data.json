@@ -1,34 +1,34 @@
 {
   "schemaVersion": "1.0.0",
   "analyzerVersion": "13.0.0",
-  "generatedAt": "2026-10-01T14:39:16.637Z",
-  "sourceDirectory": "scripts/temp-snapshot-test-fixture",
+  "generatedAt": "2026-10-01T15:58:15.810Z",
+  "sourceDirectory": "tmp-integration-test/fixture",
   "project": {
     "id": "default",
     "name": "Default Salesforce Project",
     "description": "Salesforce DX Architecture Analysis",
-    "sourcePath": "scripts/temp-snapshot-test-fixture",
-    "createdAt": "2026-10-01T14:39:16.637Z",
-    "updatedAt": "2026-10-01T14:39:16.637Z",
-    "lastAnalyzedAt": "2026-10-01T14:39:16.637Z",
+    "sourcePath": "tmp-integration-test/fixture",
+    "createdAt": "2026-10-01T15:58:15.810Z",
+    "updatedAt": "2026-10-01T15:58:15.810Z",
+    "lastAnalyzedAt": "2026-10-01T15:58:15.810Z",
     "analysisStatus": "COMPLETE",
-    "componentCount": 2,
-    "dependencyCount": 2,
+    "componentCount": 4,
+    "dependencyCount": 3,
     "analysisPath": "/explorer-data.json"
   },
   "summary": {
-    "nodeCount": 2,
-    "edgeCount": 2,
+    "nodeCount": 4,
+    "edgeCount": 3,
     "highRiskCount": 0,
     "mediumRiskCount": 0,
-    "lowRiskCount": 2,
-    "cycleCount": 1,
+    "lowRiskCount": 4,
+    "cycleCount": 0,
     "unresolvedCount": 0,
     "inventory": {
-      "files": 2,
+      "files": 4,
       "apexClasses": 2,
-      "apexTriggers": 0,
-      "lwcJs": 0,
+      "apexTriggers": 1,
+      "lwcJs": 1,
       "lwcHtml": 0,
       "visualforce": 0,
       "flows": 0,
@@ -38,14 +38,14 @@
   },
   "nodes": [
     {
-      "id": "ApexClass:ClassA",
-      "displayName": "ClassA",
+      "id": "ApexClass:SampleHelper",
+      "displayName": "SampleHelper",
       "type": "ApexClass",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
+      "file": "tmp-integration-test/fixture/classes/SampleHelper.cls",
       "metrics": {
         "fanIn": 1,
-        "fanOut": 1,
-        "coupling": 2,
+        "fanOut": 0,
+        "coupling": 1,
         "unresolved": 0,
         "score": 0
       },
@@ -56,27 +56,60 @@
         "sharing": null,
         "publicContractsCount": 0,
         "asyncPatterns": [],
-        "securitySignalsCount": 0,
+        "securitySignalsCount": 1,
         "queryCount": 0,
         "dmlCount": 0,
         "calloutCount": 0
       },
       "refactoringReadiness": {
         "isHighRisk": false,
-        "hasCycles": true,
+        "hasCycles": false,
         "hasUnresolved": false,
         "testCoverageStatus": "NO_TESTS"
       }
     },
     {
-      "id": "ApexClass:ClassB",
-      "displayName": "ClassB",
+      "id": "ApexClass:SampleService",
+      "displayName": "SampleService",
       "type": "ApexClass",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
+      "file": "tmp-integration-test/fixture/classes/SampleService.cls",
       "metrics": {
-        "fanIn": 1,
+        "fanIn": 2,
         "fanOut": 1,
-        "coupling": 2,
+        "coupling": 3,
+        "unresolved": 0,
+        "score": 2
+      },
+      "risk": "LOW",
+      "riskReasons": [
+        "direct LWC consumer"
+      ],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 1,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "NO_TESTS"
+      }
+    },
+    {
+      "id": "LWC:demo",
+      "displayName": "demo",
+      "type": "LWC",
+      "file": "tmp-integration-test/fixture/lwc/demo/demo.js",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 1,
+        "coupling": 1,
         "unresolved": 0,
         "score": 0
       },
@@ -94,7 +127,38 @@
       },
       "refactoringReadiness": {
         "isHighRisk": false,
-        "hasCycles": true,
+        "hasCycles": false,
+        "hasUnresolved": false,
+        "testCoverageStatus": "NO_TESTS"
+      }
+    },
+    {
+      "id": "Trigger:SampleTrigger",
+      "displayName": "SampleTrigger",
+      "type": "ApexTrigger",
+      "file": "tmp-integration-test/fixture/triggers/SampleTrigger.trigger",
+      "metrics": {
+        "fanIn": 0,
+        "fanOut": 1,
+        "coupling": 1,
+        "unresolved": 0,
+        "score": 0
+      },
+      "risk": "LOW",
+      "riskReasons": [],
+      "behavior": {
+        "isTest": false,
+        "sharing": null,
+        "publicContractsCount": 0,
+        "asyncPatterns": [],
+        "securitySignalsCount": 0,
+        "queryCount": 0,
+        "dmlCount": 0,
+        "calloutCount": 0
+      },
+      "refactoringReadiness": {
+        "isHighRisk": false,
+        "hasCycles": false,
         "hasUnresolved": false,
         "testCoverageStatus": "NO_TESTS"
       }
@@ -102,123 +166,178 @@
   ],
   "edges": [
     {
-      "id": "ApexClass:ClassA|ApexClass:ClassB|method-call|doHelp|ClassB.doHelp()",
-      "source": "ApexClass:ClassA",
-      "target": "ApexClass:ClassB",
+      "id": "ApexClass:SampleService|ApexClass:SampleHelper|method-call|help|SampleHelper.help()",
+      "source": "ApexClass:SampleService",
+      "target": "ApexClass:SampleHelper",
       "relationshipType": "method-call",
-      "method": "doHelp",
-      "evidence": "ClassB.doHelp()",
+      "method": "help",
+      "evidence": "SampleHelper.help()",
       "unresolved": false,
       "resolutionClassification": "RESOLVED_LOCAL",
       "resolutionStrategy": "EXACT",
       "confidence": "high",
-      "line": 1,
-      "column": 53,
+      "line": 3,
+      "column": 9,
       "methodOwner": "doWork",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassA.cls",
+      "file": "tmp-integration-test/fixture/classes/SampleService.cls",
       "canonical": {
         "source": {
           "type": "ApexClass",
-          "name": "ClassA",
+          "name": "SampleService",
           "method": "doWork"
         },
         "target": {
           "type": "ApexClass",
-          "name": "ClassB",
-          "method": "doHelp"
+          "name": "SampleHelper",
+          "method": "help"
         },
         "relationship": {
           "type": "method-call",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 1,
-          "column": 53
+          "line": 3,
+          "column": 9
         }
       }
     },
     {
-      "id": "ApexClass:ClassB|ApexClass:ClassA|method-call|doWork|ClassA.doWork()",
-      "source": "ApexClass:ClassB",
-      "target": "ApexClass:ClassA",
-      "relationshipType": "method-call",
+      "id": "LWC:demo|ApexClass:SampleService|lwc-apex|doWork|@salesforce/apex/SampleService.doWork",
+      "source": "LWC:demo",
+      "target": "ApexClass:SampleService",
+      "relationshipType": "lwc-apex",
       "method": "doWork",
-      "evidence": "ClassA.doWork()",
+      "evidence": "@salesforce/apex/SampleService.doWork",
       "unresolved": false,
       "resolutionClassification": "RESOLVED_LOCAL",
       "resolutionStrategy": "EXACT",
-      "confidence": "high",
-      "line": 1,
-      "column": 53,
-      "methodOwner": "doHelp",
-      "file": "scripts/temp-snapshot-test-fixture/classes/ClassB.cls",
+      "confidence": "HIGH",
+      "line": 2,
+      "column": 25,
+      "methodOwner": null,
+      "file": "tmp-integration-test/fixture/lwc/demo/demo.js",
       "canonical": {
         "source": {
-          "type": "ApexClass",
-          "name": "ClassB",
-          "method": "doHelp"
+          "type": "LWC",
+          "name": "demo",
+          "method": null
         },
         "target": {
           "type": "ApexClass",
-          "name": "ClassA",
+          "name": "SampleService",
           "method": "doWork"
         },
         "relationship": {
-          "type": "method-call",
+          "type": "lwc-apex",
           "resolution": "EXACT"
         },
         "location": {
-          "line": 1,
-          "column": 53
+          "line": 2,
+          "column": 25
+        }
+      }
+    },
+    {
+      "id": "Trigger:SampleTrigger|ApexClass:SampleService|trigger-handler|doWork|SampleService.doWork()",
+      "source": "Trigger:SampleTrigger",
+      "target": "ApexClass:SampleService",
+      "relationshipType": "trigger-handler",
+      "method": "doWork",
+      "evidence": "SampleService.doWork()",
+      "unresolved": false,
+      "resolutionClassification": "RESOLVED_LOCAL",
+      "resolutionStrategy": "EXACT",
+      "confidence": "LOW",
+      "line": 2,
+      "column": 7,
+      "methodOwner": null,
+      "file": "tmp-integration-test/fixture/triggers/SampleTrigger.trigger",
+      "canonical": {
+        "source": {
+          "type": "ApexTrigger",
+          "name": "SampleTrigger",
+          "method": null
+        },
+        "target": {
+          "type": "ApexClass",
+          "name": "SampleService",
+          "method": "doWork"
+        },
+        "relationship": {
+          "type": "trigger-handler",
+          "resolution": "INFERRED"
+        },
+        "location": {
+          "line": 2,
+          "column": 7
         }
       }
     }
   ],
-  "cycles": [
-    {
-      "id": "cycle-1",
-      "size": 2,
-      "nodes": [
-        "ApexClass:ClassA",
-        "ApexClass:ClassB"
-      ]
-    }
-  ],
+  "cycles": [],
   "unresolvedReferences": [],
   "impactSummaries": {
-    "ApexClass:ClassA": {
-      "id": "ApexClass:ClassA",
-      "directDependencies": [
-        "ApexClass:ClassB"
-      ],
+    "ApexClass:SampleHelper": {
+      "id": "ApexClass:SampleHelper",
+      "directDependencies": [],
       "directDependents": [
-        "ApexClass:ClassB"
+        "ApexClass:SampleService"
       ],
-      "transitiveDependencies": [
-        "ApexClass:ClassB"
-      ],
+      "transitiveDependencies": [],
       "transitiveDependents": [
-        "ApexClass:ClassB"
+        "ApexClass:SampleService",
+        "LWC:demo",
+        "Trigger:SampleTrigger"
       ],
       "impactedTests": [],
-      "totalImpactCount": 1
+      "totalImpactCount": 3
     },
-    "ApexClass:ClassB": {
-      "id": "ApexClass:ClassB",
+    "ApexClass:SampleService": {
+      "id": "ApexClass:SampleService",
       "directDependencies": [
-        "ApexClass:ClassA"
+        "ApexClass:SampleHelper"
       ],
       "directDependents": [
-        "ApexClass:ClassA"
+        "LWC:demo",
+        "Trigger:SampleTrigger"
       ],
       "transitiveDependencies": [
-        "ApexClass:ClassA"
+        "ApexClass:SampleHelper"
       ],
       "transitiveDependents": [
-        "ApexClass:ClassA"
+        "LWC:demo",
+        "Trigger:SampleTrigger"
       ],
       "impactedTests": [],
-      "totalImpactCount": 1
+      "totalImpactCount": 3
+    },
+    "LWC:demo": {
+      "id": "LWC:demo",
+      "directDependencies": [
+        "ApexClass:SampleService"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:SampleHelper",
+        "ApexClass:SampleService"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 2
+    },
+    "Trigger:SampleTrigger": {
+      "id": "Trigger:SampleTrigger",
+      "directDependencies": [
+        "ApexClass:SampleService"
+      ],
+      "directDependents": [],
+      "transitiveDependencies": [
+        "ApexClass:SampleHelper",
+        "ApexClass:SampleService"
+      ],
+      "transitiveDependents": [],
+      "impactedTests": [],
+      "totalImpactCount": 2
     }
   }
 }
