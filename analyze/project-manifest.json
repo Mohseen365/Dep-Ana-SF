@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "default",
+  "activeProjectId": "cloud-spend-tracker",
   "projects": [
     {
       "id": "movie",
