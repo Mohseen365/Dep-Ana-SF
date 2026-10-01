@@ -100,6 +100,19 @@ export function computeArchitectureLayoutWithMetadata(
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
 
   if (safeNodes.length === 0) {
+    if (architectureMode === 'orbit') {
+      const orbitOutput = computeOrbitLayout({
+        nodes: [],
+        options: {
+          nodeWidth,
+          nodeHeight,
+        },
+      });
+      return {
+        positions: { ...existingPositions },
+        orbitGuides: orbitOutput.guides,
+      };
+    }
     return { positions: { ...existingPositions } };
   }
 
