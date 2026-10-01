@@ -9,7 +9,7 @@
     "finalCollisions": 0,
     "maxTrack": 0,
     "maxRadius": 4600,
-    "runtimeMs": 1.34
+    "runtimeMs": 1.24
   },
   {
     "dataset": "cst",
@@ -21,7 +21,7 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 23200,
-    "runtimeMs": 25.5
+    "runtimeMs": 34.12
   },
   {
     "dataset": "bqc",
@@ -45,7 +45,7 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 24200,
-    "runtimeMs": 9.37
+    "runtimeMs": 8.95
   },
   {
     "dataset": "Synthetic-1000N",
@@ -57,7 +57,7 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 23200,
-    "runtimeMs": 43.28
+    "runtimeMs": 36.55
   },
   {
     "dataset": "Synthetic-2000N",
@@ -69,7 +69,7 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 24200,
-    "runtimeMs": 181.01
+    "runtimeMs": 181.15
   },
   {
     "dataset": "Synthetic-5000N",
@@ -81,7 +81,7 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 24800,
-    "runtimeMs": 1242.71
+    "runtimeMs": 1432.15
   },
   {
     "dataset": "Synthetic-10000N",
@@ -93,7 +93,7 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 41120.017,
-    "runtimeMs": 7276.38
+    "runtimeMs": 7287.41
   },
   {
     "dataset": "Synthetic-20000N",
@@ -105,6 +105,6 @@
     "finalCollisions": 0,
     "maxTrack": 9,
     "maxRadius": 80550.113,
-    "runtimeMs": 35833.28
+    "runtimeMs": 35123.96
   }
 ]
