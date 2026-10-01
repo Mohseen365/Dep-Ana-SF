@@ -1,8 +1,9 @@
 # ARCHITECTURE ORBIT — C9 RELEASE DOCUMENTATION + CONTRACT FREEZE
 
-**Document Status:** FROZEN AUTHORITATIVE RELEASE CONTRACT
+**Document Status:** FROZEN AUTHORITATIVE RELEASE CONTRACT (RECONCILED VIA C9R)
 **Phase:** C9 Release Documentation & Contract Freeze
 **Preceding Phases Closed:** C4 (Semantic + Visual Geometry Truth), C5 (Real Browser Visual UX Acceptance), C6 / C6R / C6R2 (Scale Stress + Benchmark Provenance Closure), C7 / C7R (Cross-Layout Contract + Regression Closure), C8 / C8R (Production Hardening + Evidence Reconciliation)
+**Evidence Reconciliation Phase:** C9R (`ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md`)
 **Next Phase:** C10 CLEAN-ROOM FINAL ORBIT ACCEPTANCE
 **Final Release Verdict:** `C9 RELEASE DOCUMENTATION & CONTRACT FREEZE CLOSED`
 
@@ -22,6 +23,7 @@ This release documentation and frozen contract consolidates all empirical eviden
 7. `ARCHITECTURE_ORBIT_C7R_FINAL_CROSS_LAYOUT_EVIDENCE_RECONCILIATION.md` — Final cross-layout evidence reconciliation, real Salesforce fixture counts, and persistence/position authority isolation.
 8. `ARCHITECTURE_ORBIT_C8_PRODUCTION_HARDENING.md` — Edge cases, malformed metadata handling, N=0/1/2 dataset stability, and rapid mode-switching stress testing.
 9. `ARCHITECTURE_ORBIT_C8R_FINAL_PRODUCTION_HARDENING_EVIDENCE_RECONCILIATION.md` — Final production hardening reconciliation, 2,400px sector label anchor radius vs 20,600px/24,200px layout radius reconciliation, and zero source mutation verification.
+10. `ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md` — C9R forensic evidence reconciliation and claim alignment.
 
 ### 1.2 Executive Summary
 Phase C9 establishes the canonical release documentation and frozen contract for Architecture Orbit. C9 is strictly non-executing and non-modifying: **0 production source files have been modified**. All existing evidence, mathematical constants, semantic classifiers, geometry formulas, collision bounds, scale envelopes, and interaction guarantees are frozen bit-for-bit.
@@ -44,7 +46,7 @@ C9 introduces zero architectural or visual redesign. Specifically:
 * **Production Code Modifications Count = 0**.
 * **Test Code Modifications Count = 0**.
 * The current repository implementation in `explorer/src/lib/orbit-layout.ts`, `explorer/src/lib/layout/orbit-semantics.ts`, and `explorer/src/lib/architecture-layout.ts` perfectly satisfies the established frozen contract.
-* No documentation discrepancies were resolved by editing production code; all historical terminology variations (e.g., 2,400px label anchor radius vs 20,600px layout guide radius) have been reconciled within this contract document based on C8R evidence.
+* No documentation discrepancies were resolved by editing production code; all historical terminology variations (e.g., 2,400px label anchor radius vs 20,600px layout guide radius) have been reconciled within this contract document based on C8R and C9R evidence.
 
 ---
 
@@ -217,7 +219,7 @@ $$\text{Overlap}(A, B) \iff |x_A - x_B| < \frac{W_A + W_B}{2} \land |y_A - y_B| 
 ## 8. DETERMINISM CONTRACT
 
 ### 8.1 Empirical Determinism Evidence
-* **Input-Order Invariance**: Shuffling input node array 100 times (`Math.random()` seed permutations) produces bit-for-bit identical $(x,y)$ coordinates for every node ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px).
+* **Input-Order Invariance**: Shuffling input node array 10 times (`Math.random()` seed permutations) produces bit-for-bit identical $(x,y)$ coordinates for every node ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px).
 * **Layout Reset Stability**: Re-triggering Orbit layout on an active graph produces identical node coordinates.
 * **Mode-Switching Stability**: Switching away from Orbit to Hybrid/Hierarchical/Constellation and returning to Orbit restores identical coordinates.
 * **Sector & Ring Assignment Stability**: $100\%$ deterministic sector ordering based on `semanticOrderKey` string sorting (`R{ring}:S{sector}:T{type}:N{id}`).
@@ -295,15 +297,15 @@ Orbit renders non-interactive SVG/Canvas visual guides to aid cognitive interpre
 
 ## 13. SCALE / PERFORMANCE CONTRACT
 
-### 13.1 Operational Scale Envelope
+### 13.1 Reconciled Operational Scale Envelope (via C6R/C6R2)
 
-| Scale Tier | Node Count ($N$) | Execution Environment | Performance Status |
-| :---: | :---: | :---: | :--- |
-| **Tier 1** | $N \le 1,000$ | Browser & Node/Vitest | **Fully Supported / Interactive** ($< 50$ ms layout time) |
-| **Tier 2** | $1,000 < N \le 2,000$ | Browser & Node/Vitest | **Supported with Degradation** ($100$ – $300$ ms layout time) |
-| **Tier 3** | $2,000 < N \le 5,000$ | Node/Vitest (Browser Impractical) | **Impractical for Synchronous Main Thread** ($0.8$ – $2.5$ sec) |
-| **Tier 4** | $5,000 < N \le 20,000$ | Node/Vitest Benchmark Only | **Stress Limit Only** ($12.4$ sec at $N=20,000$) |
-| **Tier 5** | $N > 20,000$ | Not Tested | **Not Claimed** |
+| Scale Tier | Node Count ($N$) | Execution Environment | Measured Compute Time | Status Classification |
+| :---: | :---: | :---: | :---: | :--- |
+| **Tier 1** | $N \le 1,000$ | Browser & Node/Vitest | $\le 43.28\text{ ms}$ (at $N=1,000$) | **Comfortable / Interactive Target** |
+| **Tier 2** | $1,000 < N \le 2,000$ | Browser & Node/Vitest | $43.28\text{ ms} - 181.0\text{ ms}$ | **Degraded (Noticeable UI Pause)** |
+| **Tier 3** | $2,000 < N \le 5,000$ | Node/Vitest (Browser Impractical) | $\approx 1.43\text{ s}$ (at $N=5,000$) | **Impractical for Synchronous Main Thread** |
+| **Tier 4** | $5,000 < N \le 20,000$ | Node/Vitest Benchmark Only | $35.83\text{ s}$ (at $N=20,000$) | **Node-Side Stress Limit Only** |
+| **Tier 5** | $N > 20,000$ | Not Measured | N/A | **Not Tested / Not Claimed** |
 
 ### 13.2 Formal Scale Statement
 > **Large-scale benchmark measurements ($\mathbf{N \ge 1,000}$) are Node/Vitest measurements unless browser evidence is explicitly identified.**
@@ -322,21 +324,23 @@ To prevent future documentation from converting offline benchmark numbers into b
 
 ### 14.1 Proven in Real Browser (Playwright / Chromium Environment)
 * Real Salesforce PBIM Dataset ($N=528, E=2,063$): $100\%$ zero-collision rendering, 65 sectors, 6 concentric rings.
+* Real Salesforce CST Dataset ($N=240, E=1,024$): $100\%$ zero-collision rendering, 26 sectors.
 * Cytoscape viewport pan, zoom, fit-view, and node drag interactions.
-* Mode switching across Orbit, Hybrid, Hierarchical, and Constellation across 30 rapid cycles.
+* Mode switching across Orbit, Hybrid, Hierarchical, and Constellation across tested cycles.
 * Canvas overlay guide rendering, text label positioning, and high-DPI scaling.
 * Keyboard navigation, ARIA accessibility trees, and focus indicators.
-* Compact viewport responsiveness ($320 \times 568$ px to $3840 \times 2160$ px).
+* Viewport responsiveness across tested resolutions ($1024 \times 768 \dots 2560 \times 1440$).
 
-### 14.2 Proven in Node / Vitest (Headless Execution Environment)
+### 14.2 Proven in Node / Vitest / JSDOM (Headless Execution Environment)
 * Synthetic scale stress testing ($N=1,000, 2,000, 5,000, 10,000, 20,000$).
 * Numerical boundary and pathological edge cases ($N=0, N=1, N=2$, all nodes in 1 sector, all nodes in 1 ring).
-* Input array permutation shuffle determinism testing (100 randomized orderings).
+* Input array permutation shuffle determinism testing (10 randomized orderings).
 * Mathematical numerical safety (division by zero, angle normalization around $0 / 2\pi$, float sub-pixel noise).
 * Deep source object immutability verification (`JSON.stringify` snapshot comparisons).
+* Rapid 30-cycle mode switching under JSDOM environment.
 
 ### 14.3 Not Claimed
-* Synchronous real-browser rendering for graphs with $N > 1,000$ nodes at 60 FPS.
+* Synchronous real-browser rendering for graphs with $N \ge 1,000$ nodes at 60 FPS.
 * Web Worker offloading for Orbit layout execution (Orbit layout runs synchronously in current release).
 * WebGL 3D perspective projection rendering.
 
@@ -345,11 +349,11 @@ To prevent future documentation from converting offline benchmark numbers into b
 ## 15. ACCESSIBILITY CONTRACT
 
 ### 15.1 Evidenced Accessibility Behavior
-* **Keyboard Navigation**: Node focus can be traversed using standard DOM tab order and arrow keys within Cytoscape canvas focus trap.
-* **Focus Visibility**: Active focused node renders high-contrast focus outline ($2$ px solid `#0070D2`).
-* **ARIA & Hidden Semantic Tree**: Background accessibility tree mirrors active graph nodes with `role="button"` and `aria-label` containing component name, type, ring layer, and sector.
-* **Non-Interactive Guides**: SVG/Canvas overlay guides carry `aria-hidden="true"` and `pointer-events: none` to prevent screen reader noise.
-* **Virtual Core**: Origin visual indicator carries `aria-hidden="true"`.
+* **Keyboard Navigation**: Node focus can be traversed using standard DOM tab order within Cytoscape canvas focus trap (`PROVEN`).
+* **Focus & Selection Highlight**: Active focused node renders high-contrast outline and highlights connected dependency paths in bright cyan (`#38bdf8`) (`PROVEN`).
+* **ARIA & Hidden Semantic Tree**: Background accessibility tree mirrors active graph nodes with `role="button"` and `aria-label` containing component name, type, ring layer, and sector (`PROVEN`).
+* **Non-Interactive Guides**: SVG/Canvas overlay guides carry `aria-hidden="true"` and `pointer-events: none` to prevent screen reader noise (`PROVEN`).
+* **Virtual Core**: Origin visual indicator carries `aria-hidden="true"` (`PROVEN`).
 
 ---
 
@@ -385,15 +389,6 @@ The following items represent documented geometric and operational characteristi
 | `explorer/src/components/GraphView.tsx` | Cytoscape Canvas & Overlay Renderer | Viewport UI | `GraphView` | Sec. 9, 12, 15 | `orbit-c5-browser.test.tsx` | C5, C8 |
 | `explorer/src/lib/projectState.ts` | Global Workspace State & Mode Persistence | Workspace State | `projectState`, `saveProjectState` | Sec. 10, 11 | `orbit-c7-cross-layout.test.tsx` | C7, C7R |
 
-### Execution Pipeline Trace
-$$\text{Workspace Mode Toggle ('orbit')} \longrightarrow \text{computeArchitectureLayoutWithMetadata()}$$
-$$\Downarrow$$
-$$\text{projectOrbitSemantics(nodes, edges)} \longrightarrow \text{OrbitNodeMetadata[]}$$
-$$\Downarrow$$
-$$\text{computeOrbitLayout(\{ nodes: metadata \})} \longrightarrow \text{\{ positions, guides, metadata \}}$$
-$$\Downarrow$$
-$$\text{Cytoscape.js Position Hydration \& SVG Overlay Rendering}$$
-
 ---
 
 ## 18. TEST / VALIDATION MAP
@@ -407,21 +402,21 @@ $$\text{Cytoscape.js Position Hydration \& SVG Overlay Rendering}$$
 | **C6R2** | `c6r2-benchmark-provenance.test.ts` | Synthetic, PBIM | Node / Vitest | State Machine Proof | **PASS** | Infinity fallbacks verified |
 | **C7** | `orbit-c7-cross-layout.test.tsx` | PBIM, CST, BQC, Food | Node / JSDOM | Cross-Layout Isolation | **PASS** | 12 mode transitions |
 | **C7R** | `orbit-c7r-reconciliation.test.tsx` | PBIM, CST, BQC, Food | Node / JSDOM | Fixture Baseline Sync | **PASS** | 0 position corruption |
-| **C8** | `orbit-c8-production-hardening.test.tsx` | PBIM, CST, BQC, Food, Edge | Node / Vitest / JSDOM | Production Edge Cases | **PASS** | Rapid mode switching (30x) |
+| **C8** | `orbit-c8-production-hardening.test.tsx` | PBIM, CST, BQC, Food, Edge | Node / Vitest / JSDOM | Production Edge Cases | **PASS** | Rapid mode switching |
 | **C8R** | `orbit-c8r-reconciliation.test.ts` | PBIM (528/2063) | Node / Vitest | Immutability & Radius Proof | **PASS** | Deep immutability confirmed |
 
 ---
 
 ## 19. REAL FIXTURE BASELINE
 
-The reconciled production dataset fixture baselines established in C7R/C8R are frozen:
+The reconciled production dataset fixture baselines established in C7R/C8R and C9R are frozen:
 
-| Fixture ID | Project Name | Node Count ($N$) | Edge Count ($E$) | Layout Modes Tested | Evidence Type | Orbit Validation Status |
+| Fixture ID | Project Name | Node Count ($N$) | Edge Count ($E$) | Real Browser Evidence | Node / Vitest / JSDOM Evidence | Orbit Validation Status |
 | :--- | :--- | ---: | ---: | :---: | :---: | :---: |
-| **`pbim`** | Public Safety & Incident Management | 528 | 2,063 | All 4 Modes | Browser & Vitest | **PASS** (0 Collisions, 65 Sectors) |
-| **`cst`** | Cloud Spend Tracker | 240 | 1,024 | All 4 Modes | Browser & Vitest | **PASS** (0 Collisions, 26 Sectors) |
-| **`bqc`** | BigQuery Connector | 274 | 603 | All 4 Modes | Browser & Vitest | **PASS** (0 Collisions, 18 Sectors) |
-| **`food-app`** | Food Delivery App | 1 | 0 | All 4 Modes | Browser & Vitest | **PASS** (Single Node Center Placement) |
+| **`pbim`** | Public Safety & Incident Management | 528 | 2,063 | **PROVEN** (Chromium C5) | **PROVEN** (Vitest C4/C6/C8) | **PASS** (0 Collisions, 65 Sectors) |
+| **`cst`** | Cloud Spend Tracker | 240 | 1,024 | **PROVEN** (Chromium C5) | **PROVEN** (Vitest C7/C8) | **PASS** (0 Collisions, 26 Sectors) |
+| **`bqc`** | BigQuery Connector | 274 | 603 | `NOT RUN IN BROWSER` | **PROVEN** (Vitest C7R/C8) | **PASS** (0 Collisions, 18 Sectors) |
+| **`food-app`** | Food Delivery App | 1 | 0 | `NOT RUN IN BROWSER` | **PROVEN** (Vitest C7R/C8) | **PASS** (Single Node Center Placement) |
 
 ---
 
@@ -432,7 +427,7 @@ All historical evidence variations across C4–C8R reports have been reconciled 
 | Discrepancy Item | Original Historical Discrepancy | Authoritative Resolution | Source Report | Current Canonical Wording |
 | :--- | :--- | :--- | :---: | :--- |
 | **Radial Geometry Values** | `2400` vs `20600` vs `24200` radial values in C4 vs C6 text | `2400` px is Sector Label Anchor Radius; `20600` px is Ring 5 Base Guide Radius; `24200` px is Max Outer Node Radius on PBIM. | C8R Gate 3 | Values represent distinct geometric boundaries and are not interchangeable. |
-| **20k Scale Performance** | C6 reported 20k stress test; C6R reconciled browser vs Node execution | 20,000 node benchmark was executed exclusively in Node/Vitest headless environment. | C6R, C6R2 | Large-scale benchmark measurements ($\ge 1,000$ N) are Node/Vitest measurements. |
+| **20k Scale Performance** | C6 reported 20k stress test; C6R reconciled browser vs Node execution | 20,000 node benchmark was executed exclusively in Node/Vitest headless environment ($35.83\text{ s}$). | C6R, C6R2, C9R | Large-scale benchmark measurements ($\ge 1,000$ N) are Node/Vitest measurements. |
 | **Collision Repair Passes** | C4 reported large repair "passes" count | Reconciled as 23 repair *operations* occurring within 1 outer repair *pass* (`actualPasses = 1`). | C6R2 Gate 4 | `maxRepairPasses = 20`; outer sweeps iterate until 0 collisions or limit reached. |
 | **C7 Gate Test Count** | C7 text referenced 16 tests vs 23 gates | Reconciled as 23 total audit gates grouped across 16 test executable blocks. | C7R Gate 1 | 23 audit gates verified with $100\%$ pass rate. |
 | **BQC Fixture Counts** | Early drafts reported outdated BQC counts ($250/500$) | Updated to canonical extracted BQC dataset counts ($N=274, E=603$). | C7R Sec. 3 | Canonical BQC counts = 274 nodes, 603 edges. |
@@ -458,11 +453,11 @@ The following status terms are frozen for all Orbit documentation and future acc
 * **Orbit Geometry Contract Version**: `v1.0.0-frozen`
 * **Ownership Boundary Contract**: Strictly mode-owned layout coordinates; zero position corruption on global graph state.
 * **Interaction & Overlay Contract**: Real graph edges rendered; virtual core and guides non-selectable.
-* **Persistence & Mode Switching**: Fully hydrated via `architectureMode`; explicit user positions preserved.
-* **Scale Envelope**: $N \le 1,000$ interactive browser target; $N \le 20,000$ Node benchmark limit.
+* **Persistence & Mode Switching**: Hydrated via `architectureMode`; explicit user positions preserved.
+* **Scale Envelope**: $N \le 1,000$ interactive browser target; $N \le 20,000$ Node benchmark limit ($35.83\text{ s}$).
 * **Real Fixtures Validated**: PBIM ($528/2063$), CST ($240/1024$), BQC ($274/603$), Food-App ($1/0$).
 * **Production Files Modified in C9**: **0 files** ($0\%$ source code mutation).
-* **Report Lineage**: C4 $\rightarrow$ C5 $\rightarrow$ C6 $\rightarrow$ C6R $\rightarrow$ C6R2 $\rightarrow$ C7 $\rightarrow$ C7R $\rightarrow$ C8 $\rightarrow$ C8R $\rightarrow$ **C9 (Frozen Release Contract)**.
+* **Report Lineage**: C4 $\rightarrow$ C5 $\rightarrow$ C6 $\rightarrow$ C6R $\rightarrow$ C6R2 $\rightarrow$ C7 $\rightarrow$ C7R $\rightarrow$ C8 $\rightarrow$ C8R $\rightarrow$ C9R $\rightarrow$ **C9 (Frozen Release Contract)**.
 
 ---
 
@@ -503,17 +498,17 @@ In accordance with non-negotiable C9 rules:
 
 ## C9 FROZEN STATE
 
-1. **Canonical Contract**: `ARCHITECTURE_ORBIT_C9_RELEASE_DOCUMENTATION_CONTRACT_FREEZE.md` is now the single authoritative release contract source of truth for Architecture Orbit.
+1. **Canonical Contract**: `ARCHITECTURE_ORBIT_C9_RELEASE_DOCUMENTATION_CONTRACT_FREEZE.md` (reconciled via C9R) is now the single authoritative release contract source of truth for Architecture Orbit.
 2. **Proven Capabilities**:
    - $100\%$ zero-collision concentric radial geometry on real Salesforce datasets ($N=528, E=2,063$).
-   - Bit-for-bit input-order shuffle determinism ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px).
+   - Bit-for-bit input-order shuffle determinism ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px across 10 shuffles).
    - Complete cross-layout isolation across Orbit, Hybrid, Hierarchical, and Constellation modes (30x rapid switching with zero position corruption).
-   - Full workspace state, filter, search, selection, and viewport persistence.
+   - Workspace state, filter, search, selection, and viewport persistence.
 3. **Observed Characteristics**:
    - Radial extent reaches $R=24,200$ px on outer Ring 5 track expansion.
-   - Synchronous layout computation completes in $<50$ ms for $N \le 1,000$ nodes.
+   - Synchronous layout computation completes in $\le 43.28$ ms for $N \le 1,000$ nodes.
 4. **Intentionally Unclaimed Scope**:
-   - Real-browser main-thread interactivity for extreme scale graphs ($N > 2,000$).
+   - Real-browser main-thread interactivity for extreme scale graphs ($N \ge 1,000$).
    - Web Worker asynchronous offloading or WebGL 3D perspective projection.
 5. **Implementation Source of Truth**:
    - `explorer/src/lib/layout/orbit-semantics.ts` (Semantic Projection)
