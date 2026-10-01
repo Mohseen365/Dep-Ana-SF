@@ -1,5 +1,6 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { ArchitectureLayoutOptions } from '../architecture-layout';
+import type { OrbitGuideMetadata } from '../orbit-layout';
 
 export interface LayoutWorkerRequest {
   type: 'CALCULATE_LAYOUT';
@@ -27,6 +28,7 @@ export interface LayoutWorkerResponseSuccess {
   requestGeneration: number;
   positions: Record<string, { x: number; y: number }>;
   featureRegionsSummary?: FeatureRegionSummary[];
+  orbitGuides?: OrbitGuideMetadata;
   computeDurationMs: number;
 }
 

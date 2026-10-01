@@ -35,6 +35,7 @@ export type GraphInteractionMode = "interactive" | "static";
 export type LayoutProvenance =
   | "automatic-hierarchical"
   | "automatic-hybrid"
+  | "automatic-orbit"
   | "user-authored";
 
 export interface GraphLayoutState {
@@ -299,12 +300,16 @@ export function mergeWithDefaultState(
           ? "static"
           : "interactive",
       architectureMode:
-        (loaded.graphLayout as any)?.architectureMode === "hybrid"
+        (loaded.graphLayout as any)?.architectureMode === "orbit"
+          ? "orbit"
+          : (loaded.graphLayout as any)?.architectureMode === "hybrid"
           ? "hybrid"
           : "hierarchical",
       layoutProvenance:
         (loaded.graphLayout as any)?.layoutProvenance ||
-        ((loaded.graphLayout as any)?.architectureMode === "hybrid"
+        ((loaded.graphLayout as any)?.architectureMode === "orbit"
+          ? "automatic-orbit"
+          : (loaded.graphLayout as any)?.architectureMode === "hybrid"
           ? "automatic-hybrid"
           : "automatic-hierarchical"),
       nodePositions:

@@ -105,15 +105,27 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
       <div className="graph-control-group layout-group" role="group" aria-label="Layout controls">
         {onToggleArchitectureMode && (
           <button
-            className={`graph-control-btn ${architectureMode === 'hybrid' ? 'active' : ''}`}
+            className={`graph-control-btn ${architectureMode !== 'hierarchical' ? 'active' : ''}`}
             onClick={onToggleArchitectureMode}
-            title={architectureMode === 'hybrid' ? 'Hybrid Layout (Clustered Feature Regions)' : 'Hierarchical Layout (Layered Flow)'}
-            aria-label={architectureMode === 'hybrid' ? 'Switch to Hierarchical Layout' : 'Switch to Hybrid Layout'}
-            aria-pressed={architectureMode === 'hybrid'}
+            title={
+              architectureMode === 'orbit'
+                ? 'Architecture Orbit (Radial Concentric Bands)'
+                : architectureMode === 'hybrid'
+                ? 'Hybrid Layout (Clustered Feature Regions)'
+                : 'Hierarchical Layout (Layered Flow)'
+            }
+            aria-label={
+              architectureMode === 'orbit'
+                ? 'Switch to Hierarchical Layout'
+                : architectureMode === 'hybrid'
+                ? 'Switch to Architecture Orbit'
+                : 'Switch to Hybrid Layout'
+            }
+            aria-pressed={architectureMode !== 'hierarchical'}
             data-testid="architecture-mode-toggle"
             type="button"
           >
-            {architectureMode === 'hybrid' ? '🧩' : '🏢'}
+            {architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}
           </button>
         )}
         {onToggleLayoutMode && (
