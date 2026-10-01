@@ -8,7 +8,7 @@ import { classifyFeatureRole } from './feature-roles';
 
 describe('Deep Technical Forensic Script for Orbit Convergence Audit', () => {
   it('generates PBIM node-level golden manifest and detailed metrics', () => {
-    const pbimPath = path.resolve(__dirname, '../../../public/projects/pub-infra-mang/explorer-data.json');
+    const pbimPath = path.resolve(__dirname, '../../../public/projects/pbim/explorer-data.json');
     const raw = JSON.parse(fs.readFileSync(pbimPath, 'utf8'));
     const rawNodes = raw.nodes || [];
     const rawEdges = raw.edges || [];

@@ -841,8 +841,8 @@ Min Usable Angle: 0.0145 rad
 Initial Collisions: 37
 Final Collisions: 0
 Repair Operations: 23
-Cold Execution Time (Vitest/Node): 43.37 ms
-Warm Execution Time (Vitest/Node): 16.11 ms
+Cold Execution Time (Vitest/Node): 14.87 ms
+Warm Execution Time (Vitest/Node): 9.56 ms
 ```
 
 ---
@@ -869,8 +869,8 @@ Epsilon policy $\epsilon = 10^{-3}$. Validated near theta boundaries and AABB li
 
 ```text
 Environment: Vitest / Node.js v22.22.1
-PBIM Cold Start Execution: 43.37 ms
-PBIM Warm SLA Execution: 16.11 ms (< 250ms SLA)
+PBIM Cold Start Execution: 14.87 ms
+PBIM Warm SLA Execution: 9.56 ms (< 250ms SLA)
 ```
 
 ---
@@ -907,7 +907,7 @@ Hierarchical layout (`global-layout.ts`), Hybrid layout (`local-layout.ts`), and
 | PBIM zero final collisions | Diagnostic counter | Exact predicate check | Passed (0 collisions) | PROVEN |
 | Determinism | 100% coordinate match | Bit-for-bit identity | Passed | PROVEN |
 | Permutation invariance | 100% coordinate match | Order shuffle identity | Passed | PROVEN |
-| Performance SLA | 16.11 ms warm | $O(N)$ placement algorithm | Passed | VERIFIED |
+| Performance SLA | 9.56 ms warm | $O(N)$ placement algorithm | Passed | VERIFIED |
 
 ---
 
