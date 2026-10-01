@@ -1,56 +1,15 @@
 # ARCHITECTURE ORBIT — C9 RELEASE DOCUMENTATION + CONTRACT FREEZE
 
-**Document Status:** FROZEN AUTHORITATIVE RELEASE CONTRACT (RECONCILED VIA C9R)
+**Document Status:** FROZEN AUTHORITATIVE RELEASE CONTRACT (RECONCILED VIA C9R & C9R2)
 **Phase:** C9 Release Documentation & Contract Freeze
 **Preceding Phases Closed:** C4 (Semantic + Visual Geometry Truth), C5 (Real Browser Visual UX Acceptance), C6 / C6R / C6R2 (Scale Stress + Benchmark Provenance Closure), C7 / C7R (Cross-Layout Contract + Regression Closure), C8 / C8R (Production Hardening + Evidence Reconciliation)
-**Evidence Reconciliation Phase:** C9R (`ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md`)
+**Evidence Reconciliation Phases:** C9R (`ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md`), C9R2 (`ARCHITECTURE_ORBIT_C9R2_FINAL_METRIC_AND_CONTRACT_INTEGRITY_CLOSURE.md`)
 **Next Phase:** C10 CLEAN-ROOM FINAL ORBIT ACCEPTANCE
 **Final Release Verdict:** `C9 RELEASE DOCUMENTATION & CONTRACT FREEZE CLOSED`
 
 ---
 
-## 1. AUTHORITATIVE INPUTS & EXECUTIVE SUMMARY
-
-### 1.1 Authoritative Inputs
-This release documentation and frozen contract consolidates all empirical evidence, mathematical proofs, runtime measurements, and cross-layout contracts established across the Architecture Orbit delivery program. The authoritative input reports comprise:
-
-1. `ARCHITECTURE_ORBIT_C4_FINAL_SEMANTIC_VISUAL_GEOMETRY_TRUTH.md` — Final semantic classification, 6-ring concentric layout rules, AABB collision models, and initial geometry baseline.
-2. `ARCHITECTURE_ORBIT_C5_REAL_BROWSER_VISUAL_UX_ACCEPTANCE.md` — Real-browser visual UX acceptance, Cytoscape integration, canvas overlay rendering, and interactive feedback.
-3. `ARCHITECTURE_ORBIT_C6_SCALE_STRESS_VALIDATION.md` — Scale stress testing across Tier 1–5 synthetic topologies up to 20,000 nodes.
-4. `ARCHITECTURE_ORBIT_C6R_EVIDENCE_RECONCILIATION.md` — Reconciliation of synthetic scale measurements, collision repair bounds, and main-thread execution characteristics.
-5. `ARCHITECTURE_ORBIT_C6R2_FINAL_BENCHMARK_PROVENANCE_CLOSURE.md` — Final benchmark provenance closure, repair pass state machine semantics, and numerical infinity fallback validation.
-6. `ARCHITECTURE_ORBIT_C7_CROSS_LAYOUT_CONTRACT_REGRESSION_CLOSURE.md` — Cross-layout mode switching, global selection/hover/visibility state preservation, and 12-transition cross-mode matrix.
-7. `ARCHITECTURE_ORBIT_C7R_FINAL_CROSS_LAYOUT_EVIDENCE_RECONCILIATION.md` — Final cross-layout evidence reconciliation, real Salesforce fixture counts, and persistence/position authority isolation.
-8. `ARCHITECTURE_ORBIT_C8_PRODUCTION_HARDENING.md` — Edge cases, malformed metadata handling, N=0/1/2 dataset stability, and rapid mode-switching stress testing.
-9. `ARCHITECTURE_ORBIT_C8R_FINAL_PRODUCTION_HARDENING_EVIDENCE_RECONCILIATION.md` — Final production hardening reconciliation, 2,400px sector label anchor radius vs 20,600px/24,200px layout radius reconciliation, and zero source mutation verification.
-10. `ARCHITECTURE_ORBIT_C9R_FINAL_RELEASE_DOCUMENTATION_EVIDENCE_RECONCILIATION.md` — C9R forensic evidence reconciliation and claim alignment.
-
-### 1.2 Executive Summary
-Phase C9 establishes the canonical release documentation and frozen contract for Architecture Orbit. C9 is strictly non-executing and non-modifying: **0 production source files have been modified**. All existing evidence, mathematical constants, semantic classifiers, geometry formulas, collision bounds, scale envelopes, and interaction guarantees are frozen bit-for-bit.
-
----
-
-## 2. NON-NEGOTIABLE C9 RULES
-
-### 2.1 No Redesign
-C9 introduces zero architectural or visual redesign. Specifically:
-* **0** new Orbit features or controls.
-* **0** changes to layout semantics or ring definitions.
-* **0** alterations to sector allocation or track expansion formulas.
-* **0** modifications to collision repair or geometry algorithms.
-* **0** changes to interaction, selection, hover, or filtering behavior.
-* **0** new or altered scale/performance claims.
-* **0** changes to architectural module or component ownership.
-
-### 2.2 No Silent Production Changes
-* **Production Code Modifications Count = 0**.
-* **Test Code Modifications Count = 0**.
-* The current repository implementation in `explorer/src/lib/orbit-layout.ts`, `explorer/src/lib/layout/orbit-semantics.ts`, and `explorer/src/lib/architecture-layout.ts` perfectly satisfies the established frozen contract.
-* No documentation discrepancies were resolved by editing production code; all historical terminology variations (e.g., 2,400px label anchor radius vs 20,600px layout guide radius) have been reconciled within this contract document based on C8R and C9R evidence.
-
----
-
-## 3. CANONICAL ORBIT GRAMMAR
+## 1. CANONICAL ORBIT GRAMMAR
 
 Architecture Orbit encodes architectural graph relationships into a radial concentric geometry. The exact semantic visual grammar is frozen as follows:
 
@@ -60,31 +19,9 @@ Architecture Orbit encodes architectural graph relationships into a radial conce
 * **Guides = Interpretation Aids**: Ring circles, sector spokes, sector labels, and core indicators are non-graph visual overlays provided strictly for cognitive framing.
 * **Center = Virtual Architectural Core**: Origin $(0,0)$ represents the non-selectable virtual nucleus around which the architecture orbits.
 
-### Ownership Boundary Matrix
-
-| Architectural Surface / Entity | Owned by Architecture Orbit | Owned by Global Subsystems / External |
-| :--- | :---: | :---: |
-| Node Coordinates $(x, y)$ in Orbit Mode | **YES** | NO |
-| Polar Geometry $(r, \theta, \text{track}, \text{ring})$ | **YES** | NO |
-| Ring & Sector Guide Overlays | **YES** | NO |
-| Orbit Layout Metadata & Sector Geometry | **YES** | NO |
-| Graph Existence & Node/Edge Identity | NO | **Global Graph Model** (`ExplorerNode`, `ExplorerEdge`) |
-| Global Selection, Hover, Visibility State | NO | **Global Workspace State** (`projectState.ts`) |
-| Semantic Ontology & Classifiers | NO | **Semantic Subsystem** (`layers.ts`, `features.ts`, `domains.ts`) |
-| Graph Indexing & Topology Lookup | NO | **Graph Index** (`GraphIndex`) |
-| Global Position Authority & Persistence | NO | **Position Authority** (`projectState.ts`, local storage) |
-| Feature Discovery & Domain Discovery | NO | **Discovery Adapters** (`features.ts`, `domains.ts`) |
-
-### Boundary Against Other Analytical Layout Lenses
-* **Hybrid Layout**: Owns 2D multi-row domain boxes, feature region bounding boxes, bridge corridors, and satellite slot placement. Orbit shares semantic layer classification but does NOT write feature region rectangles or satellite slot coordinates.
-* **Hierarchical Layout**: Owns vertical DAG layer Y-coordinates and barycentric crossing-minimization X-ordering. Orbit operates independently of DAG rank ordering.
-* **Dependency Constellation**: Owns focal-node k-hop egocentric radial distance projections and halo geometry. Orbit is an allocentric, global radial architecture view and does NOT consume focal-node k-hop state.
-
 ---
 
-## 4. FROZEN SEMANTIC CONTRACT
-
-### 4.1 The Six-Ring Architectural Layer Model
+## 2. THE SIX-RING SEMANTIC CONTRACT
 
 Orbit projects every component into exactly one of six concentric architectural rings ($R_0$ to $R_5$):
 
@@ -97,7 +34,7 @@ Orbit projects every component into exactly one of six concentric architectural 
 | **R4** | Schema Detail & External | CustomField, Field, External integrations, `schema` layer (fields) |
 | **R5** | Supporting / Tests / Shared | Apex Tests (`FeatureTest`), Shared Infrastructure, Satellites |
 
-### 4.2 Precedence Classifier Rule Sequence
+### Precedence Classifier Rule Sequence
 The exact precedence evaluated by `computeOrbitRingIndex(node, layer, role)` in `explorer/src/lib/layout/orbit-semantics.ts` is frozen as:
 
 1. `isTestNode(node) || role === 'SharedInfrastructure' || role === 'FeatureTest'` $\rightarrow$ **Ring 5**
@@ -109,55 +46,19 @@ The exact precedence evaluated by `computeOrbitRingIndex(node, layer, role)` in 
 7. `layer === 'schema'` (fallback when type is not Object/Field) $\rightarrow$ **Ring 3**
 8. Deterministic Fallback $\rightarrow$ **Ring 1**
 
-### 4.3 Sector Assignment Contract
+---
+
+## 3. SECTOR CONTRACT
+
 * Every node is assigned to a sector identity: `orbitSectorId = primaryFeatureId`.
 * Nodes not belonging to a named feature are assigned to `orbitSectorId = 'Unassigned'`.
 * Domain fallback maps shared components across domains to `primaryDomainId = 'Shared'`.
-
-### 4.4 Validated Real PBIM Semantic Observation Baseline (528 Nodes, 2,063 Edges)
-* **Total Nodes**: 528
-* **Total Edges**: 2,063
-* **Total Sectors**: 65 (63 named feature sectors + `Unassigned` + `Shared`)
-* **Feature Sectors Node Population**: 144 nodes
-* **Unassigned Sector Node Population**: 318 nodes
-* **Shared Domain Node Population**: 66 nodes
+* Sector angular share is calculated via proportional water-filling allocation conserving $2\pi$ radians with a $5\%$ global angular safety margin.
 
 ---
 
-## 5. SEMANTIC SOURCE OF TRUTH
+## 4. GEOMETRY CONSTANTS
 
-### 5.1 Production File Architecture Map
-The production implementation relies on existing shared semantic infrastructure and Orbit-specific projection modules. The explicit repository paths are:
-
-* `deterministic/contract.cjs` — Central deterministic node/edge contract definition.
-* `layer-classifier.cjs` — Core layer classification rules.
-* `role-classifier.cjs` — Architectural component role classifier.
-* `domain-classifier.cjs` — Functional domain assignment classifier.
-* `entry-points.cjs` — Presentation entry-point identification heuristics.
-* `explorer/src/lib/layout/orbit-semantics.ts` — **Authoritative Orbit Semantic Projection** (`projectOrbitSemantics`, `computeOrbitRingIndex`).
-* `explorer/src/lib/layout/layers.ts` — Node layer classifier (`classifyNodeLayerWithReason`).
-* `explorer/src/lib/layout/domains.ts` — Functional domain discovery engine (`discoverDomains`).
-* `explorer/src/lib/layout/features.ts` — Feature boundary discovery engine (`discoverFeatures`).
-* `explorer/src/lib/layout/feature-roles.ts` — Fine-grained feature role classifier (`classifyFeatureRole`).
-* `explorer/src/lib/layout/centrality.ts` — Graph centrality metrics used for ordering tie-breakers.
-
-### 5.2 Authoritative Semantic Evidence Hierarchy
-Semantic classification resolves ambiguity strictly using the following 6-tier precedence:
-
-1. **Explicit AST / Node Annotations**: Metadata attached directly to `ExplorerNode` (e.g., explicit `type` field).
-2. **Inheritance & Structural Context Binding**: Direct relationships to parent objects or triggers.
-3. **Directory / Source Path Parsing**: Path conventions (e.g., `force-app/main/default/lwc/`, `classes/*Controller.cls`).
-4. **Runtime Operations & Call Behaviors**: Directed edge traffic and execution flows.
-5. **Naming Suffixes & Domain Stems**: Suffix patterns (e.g., `*Test`, `*Service`, `*Batch`).
-6. **Deterministic Fallback**: Fallback to Ring 1 (Application) with `confidence < 0.6` flag recorded in `fallbackFlags`.
-
-`projectOrbitSemantics()` in `explorer/src/lib/layout/orbit-semantics.ts` is the single authoritative entry point for Orbit semantic projection.
-
----
-
-## 6. FROZEN GEOMETRY CONTRACT
-
-### 6.1 Production Layout Parameters & Constants
 The exact geometric parameters implemented in `explorer/src/lib/orbit-layout.ts` are frozen:
 
 * `innerRadius = 600` px (Base radius for Ring 0 nucleus perimeter)
@@ -165,164 +66,134 @@ The exact geometric parameters implemented in `explorer/src/lib/orbit-layout.ts`
 * `trackSpacing = 200` px (Radial offset between expansion tracks within a ring)
 * `EVEN_SECTOR_OFFSET = 2000` px (`(secIdx % 2) * 2000`, staggered radial offset between adjacent sectors to prevent cross-sector AABB overlaps)
 
-### 6.2 Base Radius Equation
+### Base Radius Equation
 For a node in ring $r \in \{0,1,2,3,4,5\}$, sector index $\text{secIdx}$, and track $k \ge 0$:
 $$R_{\text{base}}(r, \text{secIdx}, k) = 600 + r \times 4000 + (\text{secIdx} \bmod 2) \times 2000 + k \times 200$$
 
-### 6.3 Required Radius (Chord Clearance) Formula
-To guarantee horizontal/vertical clearance between nodes in the same track separated by angular span $\Delta\theta$:
-$$R_{\text{required}} = \frac{\text{effSeparation}}{2 \sin\left(\frac{\Delta\theta}{2}\right)}$$
-where $\text{effSeparation} = 160$ px (effective clearance width).
+---
 
-### 6.4 Validated PBIM Geometry Baseline Table
+## 5. RADIAL EXTENT DISTINCTIONS
 
-| Ring | Population ($N$) | Base Radius ($R_{\text{base}}$) | Radial Radius Range (px) | Max Track Index ($k$) |
-| :---: | ---: | ---: | ---: | ---: |
-| **R0** | 43 | 600 | 600 | 0 |
-| **R1** | 38 | 4,600 | 4,600 – 4,800 | 1 |
-| **R2** | 15 | 8,600 | 8,600 – 8,800 | 1 |
-| **R3** | 6 | 12,600 | 12,600 | 0 |
-| **R4** | 264 | 16,600 | 16,600 – 18,400 | 9 |
-| **R5** | 162 | 20,600 | 20,600 – 24,200 | 18 |
+As proven in C8R and C9R2, four distinct radial concept boundaries exist in the codebase and must **never** be conflated:
 
-### 6.5 Reconciled Radial Extent Distinctions
-As proven in C8R, the following radial measurement boundaries are distinct and **must never be conflated**:
-
-* **Sector Label Anchor Radius**: `2,400` px (Used strictly for visual placement of sector text labels in the inner hub ring).
-* **Sector Guide Spoke Extent**: `2,600` px (Used strictly for drawing sector background visual guide lines from $R_0$ to $R_1$).
-* **R5 Base Layout Guide Radius**: `20,600` px (The base geometric radius of Ring 5).
-* **Maximum PBIM Graph Node Radius**: `24,200` px (The outer radial coordinate reached by track expansion $k=18$ on dense Unassigned Ring 5 nodes).
+1. **Sector Text Label Anchor Radius**: `2,400` px (`labelR = 2400` in `FeatureOverlayCanvas.tsx`, SVG text label rendering anchor in inner hub).
+2. **Sector Guide Spoke Line Extent**: `2,600` px (`guideR = 2600` in `FeatureOverlayCanvas.tsx`, visual spoke line extent from $R_0$ to $R_1$).
+3. **Ring 5 Base Layout Guide Radius**: `20,600` px ($R_{\text{base}}(5) = 600 + 5 \times 4000 = 20,600$ px, base geometric radius of Ring 5).
+4. **Maximum Outer Node Radial Position**: `24,200` px (Outer polar coordinate reached by track expansion $k=18$ on dense Ring 5 nodes in PBIM).
 
 ---
 
-## 7. COLLISION CONTRACT
+## 6. COLLISION CONTRACT
 
-### 7.1 Clearance & AABB Box Bounds
 * **Visual Node Box**: $120 \times 60$ px (`width = 120`, `height = 60`).
 * **Effective Collision Clearance Box**: $160 \times 100$ px (`clearanceX = 160`, `clearanceY = 100`, providing 20px padding on all sides).
 * **Collision Check**: Pairwise Exact Axis-Aligned Bounding Box (AABB) overlap predicate:
 $$\text{Overlap}(A, B) \iff |x_A - x_B| < \frac{W_A + W_B}{2} \land |y_A - y_B| < \frac{H_A + H_B}{2}$$
+* **PBIM Empirical Zero-Collision Result**: $0\text{ collisions}$ across all $139,128\text{ pair checks}$ ($100\%$ zero collision rate).
 
-### 7.2 PBIM Empirical Zero-Collision Verification
-* **Total Node Pair Comparisons**: $N(N-1)/2 = 528 \times 527 / 2 = 139,128$ pair checks.
-* **Initial Collisions (Pre-Repair)**: 37 initial overlapping pairs on Ring 0 Track 0 (due to high node density in dense sectors).
-* **Final Collisions (Post-Repair)**: **0 collisions** ($0.0000\%$ overlap rate).
-* **Minimum Boundary Clearance**: $> 0.001$ px across all 139,128 pairs.
+---
 
-### 7.3 Deterministic Collision Repair Mechanism
+## 7. REPAIR TERMINOLOGY
+
 * `maxRepairPasses = 20` (Safety bounds limit on outer repair sweep iterations).
-* **Pass vs Operation Distinction (Reconciled in C6R2)**: A single outer repair pass scans all pairs once and executes multiple atomic repair *operations* (e.g., track push $k \leftarrow k+1$, angular nudge $\theta \leftarrow \theta + \Delta\theta$).
+* **Pass vs Operation Distinction (Reconciled in C6R2 & C9R2)**: A single outer repair *pass* scans all pairs once and executes multiple atomic repair *operations* (e.g., track push $k \leftarrow k+1$, angular nudge $\theta \leftarrow \theta + \Delta\theta$).
 * The 23 repair operations required for PBIM occur entirely within **1 outer repair pass** (`actualPasses = 1`).
 
 ---
 
 ## 8. DETERMINISM CONTRACT
 
-### 8.1 Empirical Determinism Evidence
-* **Input-Order Invariance**: Shuffling input node array 10 times (`Math.random()` seed permutations) produces bit-for-bit identical $(x,y)$ coordinates for every node ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px).
+* **Array Order Invariance**: Shuffling input node array 10 times (`Math.random()` seed permutations) produces bit-for-bit identical $(x,y)$ coordinates for every node ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px).
 * **Layout Reset Stability**: Re-triggering Orbit layout on an active graph produces identical node coordinates.
 * **Mode-Switching Stability**: Switching away from Orbit to Hybrid/Hierarchical/Constellation and returning to Orbit restores identical coordinates.
-* **Sector & Ring Assignment Stability**: $100\%$ deterministic sector ordering based on `semanticOrderKey` string sorting (`R{ring}:S{sector}:T{type}:N{id}`).
-
-### 8.2 Determinism vs. Semantic Correctness
-Determinism guarantees repeatability ($\text{Input}_A \rightarrow \text{Output}_A$), but determinism alone does not guarantee semantic or visual correctness. Correctness is independently established by C4 (semantic mapping truth) and C5 (visual UX acceptance).
 
 ---
 
 ## 9. INTERACTION CONTRACT
 
-### 9.1 Interactive Surface Behaviors
-* **Selection State**: Clicking a node selects it globally across all view modes. Selection state is maintained in `projectState.ts` (`selectedNodeId`).
+* **Selection State**: Clicking a node selects it globally across all view modes (`selectedNodeId`).
 * **Hover State**: Hovering a node highlights its immediate graph dependencies and dims unrelated nodes and edges.
 * **Visibility / Filtering State**: Applying layer, type, or domain filters updates node visibility without corrupting background Orbit geometry calculation for visible nodes.
-* **Mode Switching**: Toggling between Orbit and other lenses triggers animated Cytoscape layout transitions (`duration: 500ms`, `easing: ease-in-out-cubic`).
-* **Pan / Zoom / Fit View**: Standard Cytoscape viewport controls operate seamlessly in Orbit mode. "Fit View" computes bounding box including outer nodes up to $R=24,200$ px.
-* **Overlay Synchronization**: Visual guide circles and sector labels update canvas coordinates during viewport pan/zoom.
-
-### 9.2 Non-Graph Entity Rules
-* **Virtual Origin Core**: Origin $(0,0)$ is a non-selectable visual indicator. It cannot be clicked, hovered, or selected.
-* **Overlay Guides**: Ring circles and sector spokes are interpretation aids drawn on SVG/Canvas overlays. They are not graph nodes or edges and do not accept pointer events.
-* **Graph Dependencies**: Edges rendered in Orbit mode represent true underlying architectural graph dependencies (`ExplorerEdge`).
+* **Pan / Zoom / Fit View**: Cytoscape viewport controls operate in Orbit mode. "Fit View" computes bounding box including outer nodes up to $R=24,200$ px.
 
 ---
 
 ## 10. PERSISTENCE CONTRACT
 
-### 10.1 Workspace Mode Persistence
-* Active layout mode (`architectureMode = 'orbit'`) is persisted in workspace state (`saveProjectState()`).
-* Query parameter synchronization: `?mode=orbit` correctly hydrates Orbit view on cold page load.
-
-### 10.2 Position Authority Isolation Rule
-* **Orbit Owns Its Calculated Geometry**: Selecting Orbit mode causes `computeArchitectureLayoutWithMetadata()` to recompute Orbit geometry on demand.
-* **Explicit User Positions**: If a user manually drags a node in Orbit mode, the dragged position is stored in `existingPositions`.
-* **Position Recovery**: User overrides take precedence for dragged nodes without corrupting the algorithmic layout of un-dragged nodes. Orbit does NOT attempt to overwrite global persistent positions for other view modes.
+* Active layout mode (`architectureMode = 'orbit'`) is persisted in workspace state (`saveProjectState()`) and hydrated via URL query parameter `?mode=orbit`.
+* Explicit user-dragged node positions stored in `existingPositions` take precedence without corrupting the algorithmic layout of un-dragged nodes.
+* Orbit recomputes its geometry on demand and does NOT attempt to overwrite global persistent positions for other view modes.
 
 ---
 
-## 11. CROSS-LAYOUT ISOLATION CONTRACT
+## 11. CROSS-LAYOUT OWNERSHIP
 
-### 11.1 Cross-Layout Feature Matrix
+| Architectural Surface / Entity | Owned by Architecture Orbit | Owned by Global Subsystems / External |
+| :--- | :---: | :---: |
+| Node Coordinates $(x, y)$ in Orbit Mode | **YES** | NO |
+| Polar Geometry $(r, \theta, \text{track}, \text{ring})$ | **YES** | NO |
+| Ring & Sector Guide Overlays | **YES** | NO |
+| Orbit Layout Metadata | **YES** | NO |
+| Graph Existence & Node/Edge Identity | NO | **Global Graph Model** (`ExplorerNode`, `ExplorerEdge`) |
+| Global Selection, Hover, Visibility State | NO | **Global Workspace State** (`projectState.ts`) |
+| Position Authority & Persistence | NO | **Position Authority** (`projectState.ts`) |
 
-| Concern | Orbit Mode | Hybrid Mode | Hierarchical Mode | Dependency Constellation Mode |
-| :--- | :---: | :---: | :---: | :---: |
-| **Semantic Infrastructure** | Shared (`layers.ts`, `features.ts`) | Shared | Shared | Shared |
-| **Geometric Layout** | Allocentric Radial Rings | Multi-Row 2D Packing | Vertical DAG Layers | Egocentric Radial Spoke |
-| **Node Position Ownership** | Mode-Owned (`orbitPositions`) | Mode-Owned (`hybridPositions`) | Mode-Owned (`hierarchicalPositions`) | Mode-Owned (`constellationPositions`) |
-| **Feature Region Rectangles** | **NO** | YES (`featureBounds`) | YES (`featureBounds`) | **NO** |
-| **Focal Node Semantics** | **NO** | **NO** | **NO** | YES (`focalNodeId`) |
-| **K-Hop Neighborhood Filtering**| **NO** | **NO** | **NO** | YES (`kHopDepth`) |
-| **Global Visibility Ownership** | **NO** (Reads Global State) | **NO** (Reads Global State) | **NO** (Reads Global State) | **NO** (Reads Global State) |
-| **Global Selection Ownership** | **NO** (Reads Global State) | **NO** (Reads Global State) | **NO** (Reads Global State) | **NO** (Reads Global State) |
-
-### 11.2 State Isolation Guarantee
 Switching between Orbit and any other layout mode preserves $100\%$ of global graph selection, active filters, search queries, inspection drawer state, and project dataset selections without side effects.
 
 ---
 
 ## 12. OVERLAY CONTRACT
 
-### 12.1 Overlay Elements
-Orbit renders non-interactive SVG/Canvas visual guides to aid cognitive interpretation:
+Orbit renders non-interactive SVG/Canvas visual guides:
 1. **Concentric Ring Circles**: Dotted concentric circles at base radii $R_0 = 600, R_1 = 4600, R_2 = 8600, R_3 = 12600, R_4 = 16600, R_5 = 20600$ px.
-2. **Sector Guide Spokes**: Radial lines extending from $R_0 = 600$ px to $R_{\text{guide}} = 2600$ px delineating feature sector boundaries.
+2. **Sector Guide Spokes**: Radial lines extending from $R_0 = 600$ px to $R_{\text{guide}} = 2600$ px.
 3. **Sector Text Labels**: Archival text labels rendered at $R_{\text{label}} = 2400$ px aligned with sector bisectors.
 4. **Virtual Core Indicator**: Core visual glyph rendered at $(0,0)$.
 
-### 12.2 Structural Distinction
-* **Semantic Guides Explain Architecture**: Guides provide visual context for concentric layers and radial sectors.
-* **Edges Represent Actual Dependencies**: Graph lines connect nodes based on real source dependencies.
-* Guides must **never** be converted into or treated as synthetic graph edges.
+Guides are non-selectable framing elements and must never be converted into synthetic graph edges.
 
 ---
 
-## 13. SCALE / PERFORMANCE CONTRACT
+## 13. METRIC DEFINITIONS & SCOPES
 
-### 13.1 Reconciled Operational Scale Envelope (via C6R/C6R2)
+To eliminate conflation across test environments and functions, benchmark measurements are partitioned into three explicit, non-overlapping scopes:
 
-| Scale Tier | Node Count ($N$) | Execution Environment | Measured Compute Time | Status Classification |
-| :---: | :---: | :---: | :---: | :--- |
-| **Tier 1** | $N \le 1,000$ | Browser & Node/Vitest | $\le 43.28\text{ ms}$ (at $N=1,000$) | **Comfortable / Interactive Target** |
-| **Tier 2** | $1,000 < N \le 2,000$ | Browser & Node/Vitest | $43.28\text{ ms} - 181.0\text{ ms}$ | **Degraded (Noticeable UI Pause)** |
-| **Tier 3** | $2,000 < N \le 5,000$ | Node/Vitest (Browser Impractical) | $\approx 1.43\text{ s}$ (at $N=5,000$) | **Impractical for Synchronous Main Thread** |
-| **Tier 4** | $5,000 < N \le 20,000$ | Node/Vitest Benchmark Only | $35.83\text{ s}$ (at $N=20,000$) | **Node-Side Stress Limit Only** |
-| **Tier 5** | $N > 20,000$ | Not Measured | N/A | **Not Tested / Not Claimed** |
+* **Scope A: Pure Orbit Geometry Computation (`computeOrbitLayout`)**: Measures pure layout math function execution time in `orbit-layout.ts` under Node/Vitest process.
+* **Scope B: Production Layout Pipeline (`computeArchitectureLayoutWithMetadata`)**: Measures complete pipeline execution including domain/feature discovery, semantic projection, pure layout execution, and guide formatting in `architecture-layout.ts` under Node/Vitest/JSDOM harness.
+* **Scope C: Real Browser Rendering / Interaction**: Measures end-to-end user interaction to painted frame time in Chromium browser including Cytoscape batch DOM position updates and GPU canvas composite.
 
-### 13.2 Formal Scale Statement
-> **Large-scale benchmark measurements ($\mathbf{N \ge 1,000}$) are Node/Vitest measurements unless browser evidence is explicitly identified.**
+### Consolidated Metric Reference Matrix
 
-### 13.3 Computational Complexity Bounds
-* **Semantic Projection**: $O(N + E)$ linear time complexity.
-* **Base Polar Placement**: $O(N \log N)$ due to sorting by `semanticOrderKey`.
-* **AABB Collision Checks**: $O(N^2)$ worst-case pairwise comparison complexity during repair pass sweeps.
-* Synchronous execution on the browser main thread is bounded to $N \le 1,000$ nodes to prevent UI frame drops ($>16$ ms).
+| Metric Name | Measurement Scope | Exec Environment | $N$ | $E$ | Measured Time | Source Reference |
+| :--- | :--- | :--- | ---: | ---: | ---: | :--- |
+| **`T_geo_pbim`** | Scope A (Pure Orbit Geometry) | Node.js / Vitest | 528 | 2,063 | **15.24 ms** | C4 Sec. 11, C6 Sec. 4 |
+| **`T_pipe_pbim`** | Scope B (Production Pipeline) | Node.js / Vitest | 528 | 2,063 | **35.30 ms** | C8 Sec. 7, C8R Sec. 5 |
+| **`T_browser_pbim`**| Scope C (Browser Render) | Chromium Playwright | 528 | 2,063 | **9.37 ms** (Layout) / **< 250 ms** (Total UI) | C5 Sec. 4, C6R Sec. 5 |
+| **`T_geo_1k`** | Scope A (Pure Orbit Geometry) | Node.js / Vitest | 1,000 | 2,000 | **43.28 ms** | C6R Sec. 5 |
+| **`T_pipe_1k`** | Scope B (Production Pipeline) | Node.js / Vitest | 1,000 | 2,000 | **124.70 ms** | C8 Sec. 7 |
+| **`T_geo_2k`** | Scope A (Pure Orbit Geometry) | Node.js / Vitest | 2,000 | 4,000 | **181.01 ms** | C6R Sec. 5 |
+| **`T_pipe_2k`** | Scope B (Production Pipeline) | Node.js / Vitest | 2,000 | 4,000 | **496.10 ms** | C8 Sec. 7 |
+| **`T_geo_5k`** | Scope A (Pure Orbit Geometry) | Node.js / Vitest | 5,000 | 10,000 | **1.24 s – 1.43 s** | C6R Sec. 5, C6R2 Sec. 12 |
+| **`T_pipe_5k`** | Scope B (Production Pipeline) | Node.js / Vitest | 5,000 | 10,000 | **3.86 s** | C8 Sec. 7 |
+| **`T_geo_20k`** | Scope A (Pure Orbit Geometry) | Node.js / Vitest | 20,000 | 39,939 | **35.83 s** | C6R Sec. 5, C6R2 Gate 1 |
 
 ---
 
-## 14. REAL-BROWSER EVIDENCE BOUNDARY
+## 14. OPERATIONAL SCALE ENVELOPE
 
-To prevent future documentation from converting offline benchmark numbers into browser guarantees, evidence is explicitly partitioned across execution environments:
+| Scale Tier | Node Count ($N$) | Scope A: Pure Geometry (`computeOrbitLayout`) | Scope B: Full Pipeline (`computeArchitectureLayoutWithMetadata`) | Scope C: Real Browser Execution | Operating Envelope Classification |
+| :---: | :---: | :---: | :---: | :---: | :--- |
+| **Tier 1** | $N \le 1,000$ | $\le 43.28\text{ ms}$ (at $N=1,000$) | $\le 124.70\text{ ms}$ (at $N=1,000$) | **PROVEN** (PBIM $528\text{N}$: $<250\text{ms}$ total UI) | **Comfortable / Interactive Target** |
+| **Tier 2** | $1,000 < N \le 2,000$ | $43.28\text{ ms} - 181.01\text{ ms}$ | $124.70\text{ ms} - 496.10\text{ ms}$ | `Not Claimed` | **Degraded (Noticeable UI Pause)** |
+| **Tier 3** | $2,000 < N \le 5,000$ | $1.43\text{ s}$ (at $N=5,000$) | $3.86\text{ s}$ (at $N=5,000$) | `Not Claimed` | **Impractical for Synchronous UI Thread** |
+| **Tier 4** | $5,000 < N \le 20,000$ | $35.83\text{ s}$ (at $N=20,000$) | $> 40.0\text{ s}$ | `Not Claimed` | **Node-Side Stress Limit Only** |
+| **Tier 5** | $N > 20,000$ | `Not Tested` | `Not Tested` | `Not Claimed` | **Not Tested / Not Claimed** |
 
-### 14.1 Proven in Real Browser (Playwright / Chromium Environment)
+---
+
+## 15. BROWSER / NODE / JSDOM EVIDENCE BOUNDARY
+
+### 15.1 Real Browser / Chromium Proven (C5, C6R Evidence)
 * Real Salesforce PBIM Dataset ($N=528, E=2,063$): $100\%$ zero-collision rendering, 65 sectors, 6 concentric rings.
 * Real Salesforce CST Dataset ($N=240, E=1,024$): $100\%$ zero-collision rendering, 26 sectors.
 * Cytoscape viewport pan, zoom, fit-view, and node drag interactions.
@@ -331,113 +202,105 @@ To prevent future documentation from converting offline benchmark numbers into b
 * Keyboard navigation, ARIA accessibility trees, and focus indicators.
 * Viewport responsiveness across tested resolutions ($1024 \times 768 \dots 2560 \times 1440$).
 
-### 14.2 Proven in Node / Vitest / JSDOM (Headless Execution Environment)
+### 15.2 Node / Vitest Proven (C4, C6, C6R, C6R2, C8R Evidence)
 * Synthetic scale stress testing ($N=1,000, 2,000, 5,000, 10,000, 20,000$).
 * Numerical boundary and pathological edge cases ($N=0, N=1, N=2$, all nodes in 1 sector, all nodes in 1 ring).
 * Input array permutation shuffle determinism testing (10 randomized orderings).
-* Mathematical numerical safety (division by zero, angle normalization around $0 / 2\pi$, float sub-pixel noise).
+* Mathematical numerical safety (division by zero, angle normalization around $0 / 2\pi$).
 * Deep source object immutability verification (`JSON.stringify` snapshot comparisons).
-* Rapid 30-cycle mode switching under JSDOM environment.
 
-### 14.3 Not Claimed
-* Synchronous real-browser rendering for graphs with $N \ge 1,000$ nodes at 60 FPS.
-* Web Worker offloading for Orbit layout execution (Orbit layout runs synchronously in current release).
-* WebGL 3D perspective projection rendering.
+### 15.3 JSDOM Proven (C7, C7R, C8 Evidence)
+* Rapid 30-cycle mode switching under JSDOM environment.
+* Workspace state persistence and query parameter `?mode=orbit` hydration.
+* Pipeline execution across BQC ($274\text{N}/603\text{E}$) and Food-App ($1\text{N}/0\text{E}$).
+
+### 15.4 Not Claimed
+* Synchronous real-browser rendering for graphs with $N \ge 1,000$ nodes.
+* Mobile viewport sizes ($320 \times 568$).
+* Web Worker asynchronous offloading.
 
 ---
 
-## 15. ACCESSIBILITY CONTRACT
+## 16. ACCESSIBILITY CONTRACT
 
-### 15.1 Evidenced Accessibility Behavior
-* **Keyboard Navigation**: Node focus can be traversed using standard DOM tab order within Cytoscape canvas focus trap (`PROVEN`).
-* **Focus & Selection Highlight**: Active focused node renders high-contrast outline and highlights connected dependency paths in bright cyan (`#38bdf8`) (`PROVEN`).
-* **ARIA & Hidden Semantic Tree**: Background accessibility tree mirrors active graph nodes with `role="button"` and `aria-label` containing component name, type, ring layer, and sector (`PROVEN`).
-* **Non-Interactive Guides**: SVG/Canvas overlay guides carry `aria-hidden="true"` and `pointer-events: none` to prevent screen reader noise (`PROVEN`).
+* **Keyboard Navigation**: Focus traversed using DOM tab order within Cytoscape canvas focus trap (`PROVEN`).
+* **Focus & Selection Highlight**: Active focused node renders high-contrast outline and highlights connected dependency paths in cyan (`#38bdf8`) (`PROVEN`).
+* **ARIA Structure**: Accessibility tree mirrors active graph nodes with `role="button"` and `aria-label` containing component name, type, ring layer, and sector (`PROVEN`).
+* **Non-Interactive Guides**: SVG/Canvas overlay guides carry `aria-hidden="true"` and `pointer-events: none` (`PROVEN`).
 * **Virtual Core**: Origin visual indicator carries `aria-hidden="true"` (`PROVEN`).
 
 ---
 
-## 16. KNOWN / ACCEPTED OBSERVATIONS
+## 17. ACCEPTED OBSERVATIONS
 
-The following items represent documented geometric and operational characteristics carried forward from previous closed phases. They are accepted observations and do **not** block release:
+The following five items represent documented operational and geometric characteristics carried forward from previous closed phases. They are accepted observations and do **not** block release:
 
-1. **Large Radial Span**: Dense outer rings ($R_4, R_5$) reach radial distances up to $R=24,200$ px, requiring initial viewport "Fit View" scaling to zoom out significantly on dense graphs.
-   * *Impact*: Initial view displays high component density; zooming in reveals individual component labels.
-   * *Disposition*: Accepted geometry characteristic.
-2. **Unassigned Sector Dominance**: On graphs with low feature tag coverage (e.g., PBIM), the `Unassigned` sector contains 318 of 528 nodes ($60.2\%$).
-   * *Impact*: `Unassigned` sector expands across multiple tracks ($k=0\dots18$) in $R_4$ and $R_5$.
-   * *Disposition*: Accepted data characteristics baseline; feature tagging is dataset-dependent.
-3. **Sector Guide Spoke Extent Ending at $R=2600$**: Visual sector spoke lines end at $R=2600$ px rather than extending to $R=24,200$ px.
-   * *Impact*: Sector background spokes visually frame the inner hub without cluttering dense outer rings.
-   * *Disposition*: Accepted UX design decision per C5/C8R.
-4. **$O(N^2)$ Pairwise Collision Repair**: Pairwise collision checks scale quadratically with node count.
-   * *Impact*: Layout re-computation time increases for $N > 1,000$.
-   * *Disposition*: Accepted algorithm characteristic for synchronous 2D layout.
-5. **Synchronous Execution Model**: Orbit layout executes synchronously on the main thread.
-   * *Impact*: Large graphs ($N > 1,000$) block the UI thread for $>100$ ms during mode toggle.
-   * *Disposition*: Accepted operational envelope bound.
+1. **Large Radial Span**: Outer Ring 5 nodes reach radial coordinates up to $R=24,200\text{ px}$ on PBIM, requiring initial viewport "Fit View" scaling to zoom out significantly.
+2. **Unassigned Sector Dominance**: Datasets lacking explicit feature annotations assign unmapped nodes to `Unassigned` sector (318 of 528 nodes on PBIM), expanding multi-track radial depth ($k=0\dots18$).
+3. **Sector Guide Spoke Extent Ending at $R=2600$**: Visual sector spoke lines extend from $R=600\text{ px}$ to $R=2600\text{ px}$ framing the inner hub without cluttering outer nodes ($R=24,200\text{ px}$).
+4. **$\mathcal{O}(N^2)$ Pairwise Collision Repair**: Pairwise AABB collision detection and repair scales quadratically with node count ($N(N-1)/2$), dominating layout compute time for $N > 1,000$.
+5. **Synchronous Main-Thread Execution**: Orbit layout calculation executes synchronously on the main thread, causing noticeable UI pauses for $N > 1,000$ nodes.
 
 ---
 
-## 17. IMPLEMENTATION SOURCE MAP
+## 18. IMPLEMENTATION SOURCE MAP
 
 | File Path | Subsystem Responsibility | Ownership Boundary | Exported Function / Entity | Contract Section | Test File Reference | Evidence Report |
 | :--- | :--- | :--- | :--- | :---: | :--- | :--- |
-| `explorer/src/lib/layout/orbit-semantics.ts` | Orbit Semantic Projection | Orbit Semantics | `projectOrbitSemantics`, `computeOrbitRingIndex` | Sec. 4, 5 | `orbit-semantics.test.ts` | C4, C8R |
-| `explorer/src/lib/orbit-layout.ts` | Radial Polar Geometry & AABB Collision Repair | Orbit Layout | `computeOrbitLayout`, `checkAABBOverlap`, `normalizeAngle` | Sec. 6, 7, 8 | `orbit-layout.test.ts` | C4, C6R2, C8R |
-| `explorer/src/lib/architecture-layout.ts` | Master Layout Pipeline Orchestration | Layout Orchestration | `computeArchitectureLayoutWithMetadata` | Sec. 10, 11, 17 | `orbit-c8-production-hardening.test.tsx` | C7R, C8 |
-| `explorer/src/components/GraphView.tsx` | Cytoscape Canvas & Overlay Renderer | Viewport UI | `GraphView` | Sec. 9, 12, 15 | `orbit-c5-browser.test.tsx` | C5, C8 |
+| `explorer/src/lib/layout/orbit-semantics.ts` | Orbit Semantic Projection | Orbit Semantics | `projectOrbitSemantics`, `computeOrbitRingIndex` | Sec. 2, 3 | `orbit-semantics.test.ts` | C4, C8R |
+| `explorer/src/lib/orbit-layout.ts` | Radial Polar Geometry & AABB Collision Repair | Orbit Layout | `computeOrbitLayout`, `checkAABBOverlap`, `normalizeAngle` | Sec. 4, 6, 7 | `orbit-layout.test.ts` | C4, C6R2, C8R |
+| `explorer/src/lib/architecture-layout.ts` | Master Layout Pipeline Orchestration | Layout Orchestration | `computeArchitectureLayoutWithMetadata` | Sec. 10, 11 | `orbit-c8-production-hardening.test.tsx` | C7R, C8 |
+| `explorer/src/components/GraphView.tsx` | Cytoscape Canvas & Overlay Renderer | Viewport UI | `GraphView` | Sec. 9, 12, 16 | `orbit-c5-browser.test.tsx` | C5, C8 |
 | `explorer/src/lib/projectState.ts` | Global Workspace State & Mode Persistence | Workspace State | `projectState`, `saveProjectState` | Sec. 10, 11 | `orbit-c7-cross-layout.test.tsx` | C7, C7R |
 
 ---
 
-## 18. TEST / VALIDATION MAP
+## 19. VALIDATION / EVIDENCE MAP
 
-| Phase / Contract | Test Spec / Report Reference | Fixture Used | Environment | Evidence Type | Status | Operational Limitations |
+| Phase / Contract | Test Spec / Report Reference | Fixture Used | Environment | Evidence Type | Status | Operational Scope |
 | :---: | :--- | :--- | :---: | :---: | :---: | :--- |
-| **C4** | `orbit-truth-closure.test.ts` | PBIM (528/2063) | Node / Vitest | Empirical Math / AABB | **PASS** | $N \le 1,000$ recommended |
-| **C5** | `ARCHITECTURE_ORBIT_C5_REAL_BROWSER_VISUAL_UX_ACCEPTANCE.md` | PBIM, CST | Playwright / Browser | Visual UX / Screenshots | **PASS** | Real browser rendering |
-| **C6** | `orbit-c6-stress.test.ts` | Synthetic T1–T5 | Node / Vitest | Performance / Scale Bounds | **PASS** | $N > 2,000$ headless only |
-| **C6R** | `ARCHITECTURE_ORBIT_C6R_EVIDENCE_RECONCILIATION.md` | Synthetic T1–T5 | Node / Vitest | Telemetry Reconciliation | **PASS** | Main-thread bounds |
+| **C4** | `orbit-truth-closure.test.ts` | PBIM (528/2063) | Node / Vitest | Empirical Math / AABB | **PASS** | Scope A: $15.24\text{ms}$ |
+| **C5** | `ARCHITECTURE_ORBIT_C5_REAL_BROWSER_VISUAL_UX_ACCEPTANCE.md` | PBIM, CST | Playwright / Browser | Visual UX / Screenshots | **PASS** | Scope C: Real browser |
+| **C6** | `orbit-c6-stress.test.ts` | Synthetic T1–T5 | Node / Vitest | Performance / Scale Bounds | **PASS** | Scope A: $N \le 20,000$ |
+| **C6R** | `ARCHITECTURE_ORBIT_C6R_EVIDENCE_RECONCILIATION.md` | Synthetic T1–T5 | Node / Vitest | Telemetry Reconciliation | **PASS** | Scope A: $1\text{k}=43.28\text{ms}, 20\text{k}=35.83\text{s}$ |
 | **C6R2** | `c6r2-benchmark-provenance.test.ts` | Synthetic, PBIM | Node / Vitest | State Machine Proof | **PASS** | Infinity fallbacks verified |
 | **C7** | `orbit-c7-cross-layout.test.tsx` | PBIM, CST, BQC, Food | Node / JSDOM | Cross-Layout Isolation | **PASS** | 12 mode transitions |
 | **C7R** | `orbit-c7r-reconciliation.test.tsx` | PBIM, CST, BQC, Food | Node / JSDOM | Fixture Baseline Sync | **PASS** | 0 position corruption |
-| **C8** | `orbit-c8-production-hardening.test.tsx` | PBIM, CST, BQC, Food, Edge | Node / Vitest / JSDOM | Production Edge Cases | **PASS** | Rapid mode switching |
+| **C8** | `orbit-c8-production-hardening.test.tsx` | PBIM, CST, BQC, Food, Edge | Node / Vitest / JSDOM | Production Edge Cases | **PASS** | Scope B: $1\text{k}=124.7\text{ms}, \text{PBIM}=35.3\text{ms}$ |
 | **C8R** | `orbit-c8r-reconciliation.test.ts` | PBIM (528/2063) | Node / Vitest | Immutability & Radius Proof | **PASS** | Deep immutability confirmed |
+| **C9R2** | `ARCHITECTURE_ORBIT_C9R2_FINAL_METRIC_AND_CONTRACT_INTEGRITY_CLOSURE.md` | All Fixtures & Reports | Forensic Reconciliation | Metric & Contract Closure | **PASS** | Scope A, B, C reconciled |
 
 ---
 
-## 19. REAL FIXTURE BASELINE
-
-The reconciled production dataset fixture baselines established in C7R/C8R and C9R are frozen:
+## 20. REAL FIXTURE BASELINE
 
 | Fixture ID | Project Name | Node Count ($N$) | Edge Count ($E$) | Real Browser Evidence | Node / Vitest / JSDOM Evidence | Orbit Validation Status |
 | :--- | :--- | ---: | ---: | :---: | :---: | :---: |
 | **`pbim`** | Public Safety & Incident Management | 528 | 2,063 | **PROVEN** (Chromium C5) | **PROVEN** (Vitest C4/C6/C8) | **PASS** (0 Collisions, 65 Sectors) |
 | **`cst`** | Cloud Spend Tracker | 240 | 1,024 | **PROVEN** (Chromium C5) | **PROVEN** (Vitest C7/C8) | **PASS** (0 Collisions, 26 Sectors) |
 | **`bqc`** | BigQuery Connector | 274 | 603 | `NOT RUN IN BROWSER` | **PROVEN** (Vitest C7R/C8) | **PASS** (0 Collisions, 18 Sectors) |
-| **`food-app`** | Food Delivery App | 1 | 0 | `NOT RUN IN BROWSER` | **PROVEN** (Vitest C7R/C8) | **PASS** (Single Node Center Placement) |
+| **`food-app`** | Food Delivery App | 1 | 0 | `NOT RUN IN BROWSER` | **PROVEN** (Vitest C7R/C8) | **PASS** (Single Node Placement) |
 
 ---
 
-## 20. CONTRADICTION / PROVENANCE REGISTER
+## 21. CONTRADICTION / PROVENANCE REGISTER
 
-All historical evidence variations across C4–C8R reports have been reconciled and recorded below. No unresolved discrepancies remain.
+All audited claims have an explicit provenance disposition; unsupported or scope-ambiguous claims have been narrowed or marked unclaimed.
 
-| Discrepancy Item | Original Historical Discrepancy | Authoritative Resolution | Source Report | Current Canonical Wording |
-| :--- | :--- | :--- | :---: | :--- |
-| **Radial Geometry Values** | `2400` vs `20600` vs `24200` radial values in C4 vs C6 text | `2400` px is Sector Label Anchor Radius; `20600` px is Ring 5 Base Guide Radius; `24200` px is Max Outer Node Radius on PBIM. | C8R Gate 3 | Values represent distinct geometric boundaries and are not interchangeable. |
-| **20k Scale Performance** | C6 reported 20k stress test; C6R reconciled browser vs Node execution | 20,000 node benchmark was executed exclusively in Node/Vitest headless environment ($35.83\text{ s}$). | C6R, C6R2, C9R | Large-scale benchmark measurements ($\ge 1,000$ N) are Node/Vitest measurements. |
-| **Collision Repair Passes** | C4 reported large repair "passes" count | Reconciled as 23 repair *operations* occurring within 1 outer repair *pass* (`actualPasses = 1`). | C6R2 Gate 4 | `maxRepairPasses = 20`; outer sweeps iterate until 0 collisions or limit reached. |
-| **C7 Gate Test Count** | C7 text referenced 16 tests vs 23 gates | Reconciled as 23 total audit gates grouped across 16 test executable blocks. | C7R Gate 1 | 23 audit gates verified with $100\%$ pass rate. |
-| **BQC Fixture Counts** | Early drafts reported outdated BQC counts ($250/500$) | Updated to canonical extracted BQC dataset counts ($N=274, E=603$). | C7R Sec. 3 | Canonical BQC counts = 274 nodes, 603 edges. |
-| **C5 Residual Risk Statement** | C5 mentioned "zero residual risks" | Reconciled against known accepted observations (large radial span, $O(N^2)$ repair). | C8R Sec. 6 | Replaced with "Accepted Inherited Observations" framework. |
+| Discrepancy Item | Draft C9 Statement | Authoritative Resolution | Source Reference | Resolution Status |
+| :--- | :--- | :--- | :---: | :---: |
+| **20k Performance Timing** | `$12.4\text{ sec}$ at $N=20,000$` | Replaced with Scope A geometry benchmark timing ($35.83\text{ s}$). | C6R, C6R2 Gate 1 | `CLOSED` |
+| **5k Performance Timing** | `$0.8–2.5\text{ sec}$ for 2000–5000` | Replaced with explicit Scope A ($1.43\text{ s}$) and Scope B ($3.86\text{ s}$) timings. | C6R2, C8 Sec. 7 | `CLOSED` |
+| **1k Performance Timing** | `$<50\text{ ms}$ for $N \le 1,000$` | Reconciled as $\le 43.28\text{ ms}$ Scope A geometry compute and $\le 124.70\text{ ms}$ Scope B full pipeline. | C6R Sec. 5, C8 Sec. 7 | `CLOSED` |
+| **Shuffle Determinism Count** | `100 randomized orderings` | Replaced 100 with 10 randomized array order shuffles. | C4 Sec. 10, C6 Sec. 10 | `CLOSED` |
+| **Fixture Mappings** | `Browser & Vitest` across all fixtures | Mapped per-fixture execution environment explicitly (PBIM/CST browser proven). | C5, C7R, C8R | `CLOSED` |
+| **Viewport Resolution Claims**| `320x568` to `3840x2160` | Narrowed to C5 tested viewports ($1024 \times 768 \dots 2560 \times 1440$). | C5 Sec. 8 | `CLOSED` |
+| **Persistence Wording** | `FULL WORKSPACE PERSISTENCE` | Narrowed to specific persisted parameters (`architectureMode`, user overrides). | C7R Sec. 4 | `CLOSED` |
+| **Accessibility Color Constants** | `2px solid #0070D2` | Narrowed to evidenced Cytoscape focus ring and high-contrast outline behavior. | C5 Sec. 7 | `CLOSED` |
 
 ---
 
-## 21. CONTRACT TERMINOLOGY
-
-The following status terms are frozen for all Orbit documentation and future acceptance evaluations:
+## 22. FROZEN TERMINOLOGY
 
 * **PROVEN**: Directly established by explicit, reproducible empirical evidence or mathematical proof.
 * **OBSERVED**: Measured behavior documented by runtime telemetry or visual logs; informative but not a normative guarantee.
@@ -447,76 +310,24 @@ The following status terms are frozen for all Orbit documentation and future acc
 
 ---
 
-## 22. RELEASE / FREEZE MANIFEST
+## 23. RELEASE / FREEZE MANIFEST
 
 * **Orbit Semantic Contract Version**: `v1.0.0-frozen`
 * **Orbit Geometry Contract Version**: `v1.0.0-frozen`
 * **Ownership Boundary Contract**: Strictly mode-owned layout coordinates; zero position corruption on global graph state.
 * **Interaction & Overlay Contract**: Real graph edges rendered; virtual core and guides non-selectable.
 * **Persistence & Mode Switching**: Hydrated via `architectureMode`; explicit user positions preserved.
-* **Scale Envelope**: $N \le 1,000$ interactive browser target; $N \le 20,000$ Node benchmark limit ($35.83\text{ s}$).
+* **Scale Envelope**: $N \le 1,000$ interactive browser target; $N \le 20,000$ Scope A Node benchmark limit ($35.83\text{ s}$).
 * **Real Fixtures Validated**: PBIM ($528/2063$), CST ($240/1024$), BQC ($274/603$), Food-App ($1/0$).
-* **Production Files Modified in C9**: **0 files** ($0\%$ source code mutation).
-* **Report Lineage**: C4 $\rightarrow$ C5 $\rightarrow$ C6 $\rightarrow$ C6R $\rightarrow$ C6R2 $\rightarrow$ C7 $\rightarrow$ C7R $\rightarrow$ C8 $\rightarrow$ C8R $\rightarrow$ C9R $\rightarrow$ **C9 (Frozen Release Contract)**.
+* **Production Files Modified in C9/C9R/C9R2**: **0 files** ($0\%$ source code mutation).
+* **Report Lineage**: C4 $\rightarrow$ C5 $\rightarrow$ C6 $\rightarrow$ C6R $\rightarrow$ C6R2 $\rightarrow$ C7 $\rightarrow$ C7R $\rightarrow$ C8 $\rightarrow$ C8R $\rightarrow$ C9R $\rightarrow$ C9R2 $\rightarrow$ **C9 (Frozen Release Contract)**.
 
 ---
 
-## 23. HISTORICAL REPORT INTEGRITY
+## 24. CLEAN-ROOM C10 REQUIREMENTS
 
-In accordance with non-negotiable C9 rules:
-* All prior reports (C4, C5, C6, C6R, C6R2, C7, C7R, C8, C8R) remain completely untouched and preserved in repository history.
-* Historical terminology differences have been recorded in Section 20 (Contradiction / Provenance Register) without overwriting historical text.
-
----
-
-## 24. C9 RELEASE CRITERIA EVALUATION
-
-| Criterion | Requirement | Verification Result | Evaluation Status |
-| :--- | :--- | :--- | :---: |
-| **1. Internal Consistency** | Canonical contract internally consistent across all 26 sections | Verified across all sections | **PASS** |
-| **2. Constant Agreement** | Numerical constants agree with C8R (`innerRadius=600`, `ringSpacing=4000`) | Verified bit-for-bit | **PASS** |
-| **3. PBIM Geometry Agreement** | PBIM geometry values agree with C8R ($R_0=600 \dots R_5=24,200$) | Verified | **PASS** |
-| **4. Fixture Count Sync** | Fixture counts reconciled (PBIM 528/2063, CST 240/1024, BQC 274/603) | Reconciled in Sec. 19 | **PASS** |
-| **5. Evidence Boundary** | Browser vs Node evidence strictly separated | Partitioned in Sec. 14 | **PASS** |
-| **6. Ownership Boundary** | Ownership boundaries explicitly defined against Hybrid/Hierarchical/Constellation | Defined in Sec. 3, 11 | **PASS** |
-| **7. Accepted Observations** | Known observations preserved without false "zero risk" claims | Preserved in Sec. 16 | **PASS** |
-| **8. No Unsupported Claims** | No claims of browser $5\text{k}+$ performance or WebGL 3D | Excluded in Sec. 13, 14 | **PASS** |
-| **9. Implementation Source Map** | Production source file map verified against codebase | Verified in Sec. 17 | **PASS** |
-| **10. Validation Matrix** | Test and validation matrix complete across C4–C8R | Mapped in Sec. 18 | **PASS** |
-| **11. Contradiction Register** | Contradiction register complete with zero unresolved items | Completed in Sec. 20 | **PASS** |
-| **12. Zero Production Mutation** | Production code modifications count = 0 | 0 files changed | **PASS** |
-
----
-
-## 25. REQUIRED FINAL VERDICT
-
-`C9 RELEASE DOCUMENTATION & CONTRACT FREEZE CLOSED`
-
----
-
-## 26. FINAL HANDOFF
-
-## C9 FROZEN STATE
-
-1. **Canonical Contract**: `ARCHITECTURE_ORBIT_C9_RELEASE_DOCUMENTATION_CONTRACT_FREEZE.md` (reconciled via C9R) is now the single authoritative release contract source of truth for Architecture Orbit.
-2. **Proven Capabilities**:
-   - $100\%$ zero-collision concentric radial geometry on real Salesforce datasets ($N=528, E=2,063$).
-   - Bit-for-bit input-order shuffle determinism ($\Delta x = 0.00000$ px, $\Delta y = 0.00000$ px across 10 shuffles).
-   - Complete cross-layout isolation across Orbit, Hybrid, Hierarchical, and Constellation modes (30x rapid switching with zero position corruption).
-   - Workspace state, filter, search, selection, and viewport persistence.
-3. **Observed Characteristics**:
-   - Radial extent reaches $R=24,200$ px on outer Ring 5 track expansion.
-   - Synchronous layout computation completes in $\le 43.28$ ms for $N \le 1,000$ nodes.
-4. **Intentionally Unclaimed Scope**:
-   - Real-browser main-thread interactivity for extreme scale graphs ($N \ge 1,000$).
-   - Web Worker asynchronous offloading or WebGL 3D perspective projection.
-5. **Implementation Source of Truth**:
-   - `explorer/src/lib/layout/orbit-semantics.ts` (Semantic Projection)
-   - `explorer/src/lib/orbit-layout.ts` (Radial Geometry & Collision Repair)
-   - `explorer/src/lib/architecture-layout.ts` (Master Pipeline Integration)
-6. **Release Contract Source of Truth**:
-   - `ARCHITECTURE_ORBIT_C9_RELEASE_DOCUMENTATION_CONTRACT_FREEZE.md`
-7. **Clean-Room Verification Requirements for C10**:
-   - C10 clean-room acceptance must independently evaluate the repository against the frozen contract parameters ($innerRadius=600$, $ringSpacing=4000$, 6 rings, zero collisions, PBIM $528/2063$ fixture baselines) without relying on undocumented assumptions.
+1. **Source Code Immutability**: Production code modifications count must remain `0`.
+2. **Historical Integrity**: Historical reports C4 through C8R must remain $100\%$ untouched.
+3. **Independent Evaluation**: Clean-room C10 acceptance must independently evaluate the repository implementation against the frozen contract parameters ($innerRadius=600$, $ringSpacing=4000$, 6 rings, zero collisions, PBIM $528/2063$ fixture baselines) without relying on undocumented assertions.
 
 `NEXT PHASE: C10 CLEAN-ROOM FINAL ORBIT ACCEPTANCE`
