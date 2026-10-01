@@ -1,27 +1,24 @@
 {
   "pbimFileHash": "d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
   "hierarchicalState": {
-    "nodeCount": 528,
-    "edgeCount": 2063,
-    "badgeText": "🔀 Interactive Mode (Hierarchical)",
-    "buttonTitle": "Hierarchical Layout (Layered Flow)",
-    "buttonText": "🏢"
+    "nodeCount": 0,
+    "edgeCount": 0
   },
   "hybridState": {
-    "nodeCount": 528,
-    "edgeCount": 2063,
+    "nodeCount": 4,
+    "edgeCount": 3,
     "badgeText": "🔀 Interactive Mode (Hybrid)",
     "buttonTitle": "Hybrid Layout (Clustered Feature Regions)",
     "buttonText": "🧩"
   },
   "orbitStateSummary": {
-    "nodeCount": 528,
-    "edgeCount": 2063,
+    "nodeCount": 4,
+    "edgeCount": 3,
     "badgeText": "🔀 Interactive Mode (Orbit)",
     "svgCirclesCount": 8,
-    "svgTextsCount": 71,
-    "svgLinesCount": 65,
-    "renderTimeMs": 26896
+    "svgTextsCount": 7,
+    "svgLinesCount": 1,
+    "renderTimeMs": 2020
   },
   "svgCirclesTable": [
     {
@@ -82,10 +79,10 @@
     }
   ],
   "coordStats": {
-    "minX": -24096.565,
-    "maxX": 22399.935,
-    "minY": -21880.651,
-    "maxY": 22591.388,
+    "minX": 1885.1493183999999,
+    "maxX": 4594.1673166,
+    "minY": -229.9360064,
+    "maxY": 229.9360064,
     "nanCount": 0,
     "infinityCount": 0,
     "nullCount": 0,
@@ -97,19 +94,19 @@
     "worstPair": null
   },
   "hoverInfo": {
-    "id": "ApexClass:ApprovalFlowController",
+    "id": "ApexClass:SampleHelper",
     "pos": {
-      "x": -1251.9223173520213,
-      "y": 1513.8180500000003
+      "x": 1112.244399046152,
+      "y": 453.1313806659722
     },
     "isHovered": true
   },
   "selectInfo": {
-    "selectedId": "ApexClass:ApprovalFlowController",
+    "selectedId": "ApexClass:SampleHelper",
     "isSelected": true
   },
-  "determinismDriftPx": 0,
-  "pageErrorsCount": 1,
-  "consoleLogsCount": 4,
+  "determinismDriftPx": 0.08134976675457871,
+  "pageErrorsCount": 0,
+  "consoleLogsCount": 6,
   "failedRequestsCount": 1
 }
