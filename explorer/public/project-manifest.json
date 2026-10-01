@@ -1,108 +1,28 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "cloud-spend-tracker",
+  "activeProjectId": "default",
   "projects": [
-    {
-      "id": "movie",
-      "name": "movie",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Movie-App/force-app/main/default",
-      "createdAt": "2026-09-30T07:54:09.494Z",
-      "updatedAt": "2026-09-30T07:54:09.494Z",
-      "lastAnalyzedAt": "2026-09-30T07:54:09.494Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 9,
-      "dependencyCount": 16,
-      "analysisPath": "/projects/movie/explorer-data.json"
-    },
-    {
-      "id": "cstk",
-      "name": "cstk",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
-      "createdAt": "2026-09-25T04:50:31.850Z",
-      "updatedAt": "2026-09-25T04:50:31.850Z",
-      "lastAnalyzedAt": "2026-09-25T04:50:31.850Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 240,
-      "dependencyCount": 1024,
-      "analysisPath": "/projects/cstk/explorer-data.json"
-    },
-    {
-      "id": "pbim",
-      "name": "pbim",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Pub-Infra-Mang/force-app/main/default",
-      "createdAt": "2026-09-25T04:55:57.331Z",
-      "updatedAt": "2026-09-25T04:55:57.331Z",
-      "lastAnalyzedAt": "2026-09-25T04:55:57.331Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 528,
-      "dependencyCount": 2063,
-      "analysisPath": "/projects/pbim/explorer-data.json"
-    },
-    {
-      "id": "cloud-spend-tracker",
-      "name": "cloud-spend-tracker",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
-      "createdAt": "2026-09-17T06:20:55.547Z",
-      "updatedAt": "2026-09-17T06:20:55.547Z",
-      "lastAnalyzedAt": "2026-09-17T06:20:55.547Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 240,
-      "dependencyCount": 1024,
-      "analysisPath": "/projects/cloud-spend-tracker/explorer-data.json"
-    },
     {
       "id": "default",
       "name": "Default Salesforce Project",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "scripts/temp-snapshot-test-fixture",
-      "createdAt": "2026-10-01T14:39:16.637Z",
-      "updatedAt": "2026-10-01T14:39:16.637Z",
-      "lastAnalyzedAt": "2026-10-01T14:39:16.637Z",
+      "sourcePath": "tmp-integration-test/fixture",
+      "createdAt": "2026-10-01T17:51:21.896Z",
+      "updatedAt": "2026-10-01T17:51:21.896Z",
+      "lastAnalyzedAt": "2026-10-01T17:51:21.896Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 2,
-      "dependencyCount": 2,
+      "componentCount": 4,
+      "dependencyCount": 3,
       "analysisPath": "/explorer-data.json"
     }
   ],
   "artifacts": {
-    "movie": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:900b4069abffe45c858f221ed595c2749b919828390498670b5644f1af598743",
-      "nodeCount": 9,
-      "edgeCount": 16
-    },
-    "cstk": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:5db399dce59c247bfe5419a150493d2cce0cdcf53768d28e1b07fc1183a3a8a3",
-      "nodeCount": 240,
-      "edgeCount": 1024
-    },
-    "pbim": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
-      "nodeCount": 528,
-      "edgeCount": 2063
-    },
-    "cloud-spend-tracker": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:1597135320cbf0a13e6ee932e13b8dbdeb6771e0745f1ab1651fe08a17087907",
-      "nodeCount": 240,
-      "edgeCount": 1024
-    },
     "default": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:f1aba5392961313d856bd4958987d0c06af972ebc798b59b43d6aea433e136d5",
-      "nodeCount": 2,
-      "edgeCount": 2
+      "fileHash": "sha256:5acb4e40fc03cbdb39544f4eaae399326c26f409e00cd54d6bc007e23d64fcc6",
+      "nodeCount": 4,
+      "edgeCount": 3
     }
   }
 }
