@@ -1,0 +1,115 @@
+{
+  "pbimFileHash": "d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
+  "rawNodeCount": 528,
+  "rawEdgeCount": 2063,
+  "browserNodeCount": 528,
+  "browserEdgeCount": 2063,
+  "badgeText": "🔀 Interactive Mode (Orbit)",
+  "bounds": {
+    "minX": -24096.565,
+    "maxX": 22399.935,
+    "minY": -21880.651,
+    "maxY": 22591.388
+  },
+  "invalidCoordinates": {
+    "nanCount": 0,
+    "infinityCount": 0,
+    "nullCount": 0,
+    "dupPosCount": 0
+  },
+  "aabbCollisions": {
+    "count": 0,
+    "maxArea": 0,
+    "worstPair": null
+  },
+  "guideOverlay": {
+    "circlesCount": 8,
+    "linesCount": 65,
+    "textsCount": 71,
+    "circlesTable": [
+      {
+        "r": 200,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(56, 189, 248, 0.4)",
+        "fill": "rgba(56, 189, 248, 0.03)"
+      },
+      {
+        "r": 12,
+        "cx": 0,
+        "cy": 0,
+        "stroke": null,
+        "fill": "#38bdf8"
+      },
+      {
+        "r": 600,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(148, 163, 184, 0.18)",
+        "fill": "none"
+      },
+      {
+        "r": 4600,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(148, 163, 184, 0.18)",
+        "fill": "none"
+      },
+      {
+        "r": 8600,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(148, 163, 184, 0.18)",
+        "fill": "none"
+      },
+      {
+        "r": 12600,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(148, 163, 184, 0.18)",
+        "fill": "none"
+      },
+      {
+        "r": 16600,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(148, 163, 184, 0.18)",
+        "fill": "none"
+      },
+      {
+        "r": 20600,
+        "cx": 0,
+        "cy": 0,
+        "stroke": "rgba(148, 163, 184, 0.18)",
+        "fill": "none"
+      }
+    ]
+  },
+  "sampleEdges": [
+    {
+      "id": "ApexClass:ApprovalFlowController|ApexClass:ManagementApprovalService|method-call|getPendingRequests|ManagementApprovalService.getPendingRequests()",
+      "source": "ApexClass:ApprovalFlowController",
+      "target": "ApexClass:ManagementApprovalService"
+    },
+    {
+      "id": "ApexClass:ApprovalFlowController|ApexClass:ManagementApprovalService|method-call|processApprovalAction|ManagementApprovalService.processApprovalAction()",
+      "source": "ApexClass:ApprovalFlowController",
+      "target": "ApexClass:ManagementApprovalService"
+    },
+    {
+      "id": "ApexClass:ApprovalFlowController|Object:Maintenance_Request__c|generic-type||<Maintenance_Request__c>",
+      "source": "ApexClass:ApprovalFlowController",
+      "target": "Object:Maintenance_Request__c"
+    },
+    {
+      "id": "ApexClass:ApprovalFlowControllerTest|ApexClass:ApprovalFlowController|method-call|approveRequest|ApprovalFlowController.approveRequest()",
+      "source": "ApexClass:ApprovalFlowControllerTest",
+      "target": "ApexClass:ApprovalFlowController"
+    },
+    {
+      "id": "ApexClass:ApprovalFlowControllerTest|ApexClass:ApprovalFlowController|method-call|getPendingRequests|ApprovalFlowController.getPendingRequests()",
+      "source": "ApexClass:ApprovalFlowControllerTest",
+      "target": "ApexClass:ApprovalFlowController"
+    }
+  ]
+}

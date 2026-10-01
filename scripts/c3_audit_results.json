@@ -1,0 +1,115 @@
+{
+  "pbimFileHash": "d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
+  "hierarchicalState": {
+    "nodeCount": 528,
+    "edgeCount": 2063,
+    "badgeText": "🔀 Interactive Mode (Hierarchical)",
+    "buttonTitle": "Hierarchical Layout (Layered Flow)",
+    "buttonText": "🏢"
+  },
+  "hybridState": {
+    "nodeCount": 528,
+    "edgeCount": 2063,
+    "badgeText": "🔀 Interactive Mode (Hybrid)",
+    "buttonTitle": "Hybrid Layout (Clustered Feature Regions)",
+    "buttonText": "🧩"
+  },
+  "orbitStateSummary": {
+    "nodeCount": 528,
+    "edgeCount": 2063,
+    "badgeText": "🔀 Interactive Mode (Orbit)",
+    "svgCirclesCount": 8,
+    "svgTextsCount": 71,
+    "svgLinesCount": 65,
+    "renderTimeMs": 26896
+  },
+  "svgCirclesTable": [
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 200,
+      "fill": "rgba(56, 189, 248, 0.03)",
+      "stroke": "rgba(56, 189, 248, 0.4)"
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 12,
+      "fill": "#38bdf8",
+      "stroke": null
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 600,
+      "fill": "none",
+      "stroke": "rgba(148, 163, 184, 0.18)"
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 4600,
+      "fill": "none",
+      "stroke": "rgba(148, 163, 184, 0.18)"
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 8600,
+      "fill": "none",
+      "stroke": "rgba(148, 163, 184, 0.18)"
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 12600,
+      "fill": "none",
+      "stroke": "rgba(148, 163, 184, 0.18)"
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 16600,
+      "fill": "none",
+      "stroke": "rgba(148, 163, 184, 0.18)"
+    },
+    {
+      "cx": "0",
+      "cy": "0",
+      "r": 20600,
+      "fill": "none",
+      "stroke": "rgba(148, 163, 184, 0.18)"
+    }
+  ],
+  "coordStats": {
+    "minX": -24096.565,
+    "maxX": 22399.935,
+    "minY": -21880.651,
+    "maxY": 22591.388,
+    "nanCount": 0,
+    "infinityCount": 0,
+    "nullCount": 0,
+    "dupCount": 0
+  },
+  "collisions": {
+    "count": 0,
+    "maxOverlapArea": 0,
+    "worstPair": null
+  },
+  "hoverInfo": {
+    "id": "ApexClass:ApprovalFlowController",
+    "pos": {
+      "x": -1251.9223173520213,
+      "y": 1513.8180500000003
+    },
+    "isHovered": true
+  },
+  "selectInfo": {
+    "selectedId": "ApexClass:ApprovalFlowController",
+    "isSelected": true
+  },
+  "determinismDriftPx": 0,
+  "pageErrorsCount": 1,
+  "consoleLogsCount": 4,
+  "failedRequestsCount": 1
+}

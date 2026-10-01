@@ -1,0 +1,29 @@
+{
+  "hoverResult": {
+    "targetId": "ApexClass:ApprovalFlowController",
+    "hasHoverCard": false,
+    "hoverCardText": null
+  },
+  "selectResult": {
+    "targetId": "ApexClass:ApprovalFlowController",
+    "selectedCyId": "ApexClass:ApprovalFlowController",
+    "isCySelected": true
+  },
+  "switch1State": {
+    "mode": "🔀 Interactive Mode (Hierarchical)"
+  },
+  "switch2State": {
+    "mode": "🔀 Interactive Mode (Hybrid)",
+    "featureRegionsCount": 0
+  },
+  "switch3State": {
+    "mode": "🔀 Interactive Mode (Orbit)",
+    "orbitOverlayPresent": true
+  },
+  "visibilityResult": {
+    "initialNodesCount": 528,
+    "hiddenLwcCount": 30,
+    "filteredNodesCount": 498,
+    "restoredNodesCount": 528
+  }
+}
