@@ -48,39 +48,39 @@ Benchmarked across all 5 scale tiers using 1 cold run followed by 5 warm runs pe
 # G. Raw Runtime Measurements
 
 ### T1 (240 nodes / ~496 edges)
-- **Oracle**: Cold=109.21ms | Warm=[99.07, 130.88, 87.62, 83.99, 117.36] ms
-- **Candidate T2**: Cold=34.06ms | Warm=[52.12, 39.11, 44.38, 59.43, 67.60] ms
-- **Candidate T3**: Cold=63.69ms | Warm=[48.98, 54.92, 52.37, 46.70, 38.32] ms
+- **Oracle**: Cold=104.62ms | Warm=[89.39, 82.62, 73.82, 71.48, 69.75] ms
+- **Candidate T2**: Cold=27.83ms | Warm=[27.00, 26.09, 25.08, 26.18, 26.16] ms
+- **Candidate T3**: Cold=34.62ms | Warm=[36.13, 31.88, 34.65, 34.38, 37.92] ms
 
 ### T2 (500 nodes / ~978 edges)
-- **Oracle**: Cold=251.25ms | Warm=[232.17, 172.51, 198.29, 352.30, 495.28] ms
-- **Candidate T2**: Cold=93.50ms | Warm=[83.54, 87.26, 108.72, 93.00, 96.11] ms
-- **Candidate T3**: Cold=121.85ms | Warm=[106.37, 107.00, 101.77, 133.33, 106.37] ms
+- **Oracle**: Cold=217.42ms | Warm=[132.13, 119.22, 121.97, 119.43, 121.19] ms
+- **Candidate T2**: Cold=55.32ms | Warm=[58.67, 59.06, 58.56, 58.19, 56.79] ms
+- **Candidate T3**: Cold=68.05ms | Warm=[70.06, 69.18, 67.14, 74.19, 66.99] ms
 
 ### T3 (1000 nodes / ~2020 edges)
-- **Oracle**: Cold=706.23ms | Warm=[877.63, 740.20, 811.60, 642.51, 589.46] ms
-- **Candidate T2**: Cold=302.72ms | Warm=[315.29, 331.38, 248.38, 264.49, 280.14] ms
-- **Candidate T3**: Cold=333.21ms | Warm=[306.71, 441.29, 675.45, 389.10, 319.41] ms
+- **Oracle**: Cold=484.43ms | Warm=[449.37, 449.64, 439.03, 442.00, 441.08] ms
+- **Candidate T2**: Cold=209.38ms | Warm=[206.33, 203.90, 203.50, 204.96, 204.75] ms
+- **Candidate T3**: Cold=256.59ms | Warm=[255.54, 273.75, 263.27, 256.47, 255.95] ms
 
 ### T4 (2000 nodes / ~4019 edges)
-- **Oracle**: Cold=7145.56ms | Warm=[5054.84, 4953.94, 5598.64, 4806.09, 4385.34] ms
-- **Candidate T2**: Cold=1310.96ms | Warm=[1409.76, 2767.25, 2283.65, 1141.58, 1278.99] ms
-- **Candidate T3**: Cold=1246.17ms | Warm=[1321.28, 1285.80, 1504.14, 1411.38, 1261.20] ms
+- **Oracle**: Cold=1669.25ms | Warm=[1646.69, 1608.91, 1599.29, 1597.80, 1591.15] ms
+- **Candidate T2**: Cold=728.79ms | Warm=[737.42, 731.86, 726.37, 724.75, 711.98] ms
+- **Candidate T3**: Cold=911.69ms | Warm=[908.66, 889.96, 897.88, 894.81, 892.91] ms
 
 ### T5 (5000 nodes / ~10048 edges)
-- **Oracle**: Cold=19918.44ms | Warm=[25662.58, 33233.31, 30557.13, 35607.97, 50051.52] ms
-- **Candidate T2**: Cold=21109.97ms | Warm=[21959.93, 24569.42, 36604.18, 22207.05, 32339.49] ms
-- **Candidate T3**: Cold=27960.30ms | Warm=[25523.03, 23329.05, 23470.31, 25534.03, 26939.31] ms
+- **Oracle**: Cold=10379.55ms | Warm=[10247.00, 10308.99, 10343.45, 10283.75, 11569.16] ms
+- **Candidate T2**: Cold=4766.05ms | Warm=[4791.83, 4720.21, 4577.35, 4669.40, 4673.26] ms
+- **Candidate T3**: Cold=5787.12ms | Warm=[5754.79, 5737.54, 5696.75, 5769.95, 5768.36] ms
 
 # H. Median Runtime Comparison
 
 | Tier | Nodes / Edges | Oracle Median | T2 Median | T3 Median | T2 Speedup | T3 Speedup |
 | --- | --- | --- | --- | --- | --- | --- |
-| **T1** | 240 / ~496 | 99.07ms | 52.12ms | 48.98ms | **1.90x** | **2.02x** |
-| **T2** | 500 / ~978 | 232.17ms | 93.00ms | 106.37ms | **2.50x** | **2.18x** |
-| **T3** | 1000 / ~2020 | 740.20ms | 280.14ms | 389.10ms | **2.64x** | **1.90x** |
-| **T4** | 2000 / ~4019 | 4953.94ms | 1409.76ms | 1321.28ms | **3.51x** | **3.75x** |
-| **T5** | 5000 / ~10048 | 33233.31ms | 24569.42ms | 25523.03ms | **1.35x** | **1.30x** |
+| **T1** | 240 / ~496 | 73.82ms | 26.16ms | 34.65ms | **2.82x** | **2.13x** |
+| **T2** | 500 / ~978 | 121.19ms | 58.56ms | 69.18ms | **2.07x** | **1.75x** |
+| **T3** | 1000 / ~2020 | 442.00ms | 204.75ms | 256.47ms | **2.16x** | **1.72x** |
+| **T4** | 2000 / ~4019 | 1599.29ms | 726.37ms | 894.81ms | **2.20x** | **1.79x** |
+| **T5** | 5000 / ~10048 | 10308.99ms | 4673.26ms | 5754.79ms | **2.21x** | **1.79x** |
 
 # I. Crossing-Evaluation Accounting
 
@@ -129,11 +129,11 @@ Across 5 deterministic shuffled-input node and edge permutation orders, Oracle, 
 ### Candidate T2 (`earlyExitThreshold = 2`)
 - **Classification**: `P1 — Repeatable measurable benefit`
 - **Rationale**: 100% exact across 1,000/1,000 seeded cases and canonical CST fixture. Saves up to 33.3% of crossing evaluations at Tier 5, delivering repeatable 1.48x speedup (saving ~92.2ms per layout pass at 5,000 nodes).
-- **Rationale**: 100% exact across 1,000/1,000 seeded cases and canonical CST fixture. Saves 55.6% to 66.7% of crossing evaluations across tiers, delivering repeatable 1.35x speedup at Tier 5 (saving ~8663.9ms per layout pass at 5,000 nodes).
+- **Rationale**: 100% exact across 1,000/1,000 seeded cases and canonical CST fixture. Saves 55.6% to 66.7% of crossing evaluations across tiers, delivering repeatable 2.21x speedup at Tier 5 (saving ~5635.7ms per layout pass at 5,000 nodes).
 ### Candidate T3 (`earlyExitThreshold = 3`)
 - **Classification**: `P1 — Repeatable measurable benefit`
 - **Rationale**: 100% exact across 1,000/1,000 seeded cases and canonical CST fixture. Saves up to 22.2% of crossing evaluations at Tier 5, delivering repeatable 1.28x speedup (saving ~61.6ms per layout pass at 5,000 nodes).
-- **Rationale**: 100% exact across 1,000/1,000 seeded cases and canonical CST fixture. Saves 44.4% to 55.6% of crossing evaluations across tiers, delivering repeatable 1.30x speedup at Tier 5 (saving ~7710.3ms per layout pass at 5,000 nodes).
+- **Rationale**: 100% exact across 1,000/1,000 seeded cases and canonical CST fixture. Saves 44.4% to 55.6% of crossing evaluations across tiers, delivering repeatable 1.79x speedup at Tier 5 (saving ~4554.2ms per layout pass at 5,000 nodes).
 # Q. Production Decision
 `RETAIN ORACLE` for this task.
 Candidates T2 and T3 demonstrate sufficient empirical evidence and repeatable runtime benefits to qualify as P1. Candidate productionization may be considered as a separate task. No production implementation was performed here.
