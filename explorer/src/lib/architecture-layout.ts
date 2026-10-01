@@ -16,8 +16,13 @@ import {
 import { placeSatellites } from './layout/satellites';
 import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLayout } from './layout/components';
 import { resolveSpacingAndCollisions } from './layout/spacing';
+import { projectOrbitSemantics } from './layout/orbit-semantics';
+import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
+import type { ArchitectureLayoutMode } from '../types/explorer';
 
 export interface ArchitectureLayoutOptions {
+  /** Architecture Layout Mode: 'hierarchical' | 'hybrid' | 'orbit' */
+  architectureMode?: ArchitectureLayoutMode;
   /** Width of nodes used for collision avoidance (default: 120) */
   nodeWidth?: number;
   /** Height of nodes used for collision avoidance (default: 60) */
@@ -41,6 +46,7 @@ export interface ArchitectureLayoutOptions {
 export interface ArchitectureLayoutResultWithMetadata {
   positions: Record<string, { x: number; y: number }>;
   featureRegions?: Map<string, FeatureRegion>;
+  orbitGuides?: OrbitGuideMetadata;
 }
 
 export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
@@ -85,6 +91,7 @@ export function computeArchitectureLayoutWithMetadata(
     domainSpacing = 380,
     componentGap = 100,
     existingPositions = {},
+    architectureMode,
     enableFeatureLayout = false,
   } = options;
 
@@ -94,6 +101,36 @@ export function computeArchitectureLayoutWithMetadata(
 
   if (safeNodes.length === 0) {
     return { positions: { ...existingPositions } };
+  }
+
+  // Check if Architecture Orbit mode is explicitly requested
+  const isOrbit = architectureMode === 'orbit';
+  if (isOrbit) {
+    const semanticProjection = projectOrbitSemantics(safeNodes, safeEdges);
+    const orbitOutput = computeOrbitLayout({
+      nodes: semanticProjection.nodeList,
+      options: {
+        nodeWidth,
+        nodeHeight,
+      },
+    });
+
+    const orbitPositions: Record<string, { x: number; y: number }> = {};
+    for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
+      orbitPositions[nodeId] = { x: pos.x, y: pos.y };
+    }
+
+    // Apply Position Authority overrides if explicitly provided
+    for (const [id, pos] of Object.entries(existingPositions)) {
+      if (pos) {
+        orbitPositions[id] = { x: pos.x, y: pos.y };
+      }
+    }
+
+    return {
+      positions: orbitPositions,
+      orbitGuides: orbitOutput.guides,
+    };
   }
 
   // Ensure all edge endpoints are present in safeNodes

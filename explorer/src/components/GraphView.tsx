@@ -192,6 +192,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
   const [featureRegions, setFeatureRegions] = useState<Map<string, FeatureRegion> | undefined>(undefined);
+  const [orbitGuides, setOrbitGuides] = useState<any | undefined>(undefined);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Derive Feature Discovery Result deterministically
@@ -281,9 +282,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       edges: edgesRef.current,
       nodeCount: nodesRef.current.length,
       animate: false,
+      architectureMode,
       enableFeatureLayout: architectureMode === 'hybrid',
     });
     setFeatureRegions(layoutRes.featureRegions);
+    setOrbitGuides(layoutRes.orbitGuides);
 
     captureAndPersistPositions(targetProvenance);
   }, [architectureMode, captureAndPersistPositions]);
@@ -354,8 +357,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         edges: edgesRef.current,
         nodeCount,
         animate: true,
+        architectureMode,
       });
       setFeatureRegions(layoutRes.featureRegions);
+      setOrbitGuides(layoutRes.orbitGuides);
     } else {
       const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
@@ -363,8 +368,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         edges: edgesRef.current,
         nodeCount,
         animate: false,
+        architectureMode,
       });
       setFeatureRegions(layoutRes.featureRegions);
+      setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions();
     }
   }, [captureAndPersistPositions]);
@@ -806,8 +813,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           edges,
           nodeCount: nodes.length,
           animate: true,
+          architectureMode,
         });
         setFeatureRegions(layoutRes.featureRegions);
+        setOrbitGuides(layoutRes.orbitGuides);
       } else {
         const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
@@ -815,8 +824,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           edges,
           nodeCount: nodes.length,
           animate: false,
+          architectureMode,
         });
         setFeatureRegions(layoutRes.featureRegions);
+        setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions();
       }
     }
@@ -1067,7 +1078,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [layoutMode, onLayoutModeChange, captureAndPersistPositions]);
 
   const handleToggleArchitectureModeInternal = useCallback(() => {
-    const nextMode: ArchitectureLayoutMode = architectureMode === 'hierarchical' ? 'hybrid' : 'hierarchical';
+    const nextMode: ArchitectureLayoutMode =
+      architectureMode === 'hierarchical'
+        ? 'hybrid'
+        : architectureMode === 'hybrid'
+        ? 'orbit'
+        : 'hierarchical';
     if (onArchitectureModeChange) {
       onArchitectureModeChange(nextMode);
     }
@@ -1083,7 +1099,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     >
       <div ref={containerRef} className="cytoscape-view" />
 
-      {/* Feature Composition Overlay Canvas */}
+      {/* Feature Composition & Orbit Guide Overlay Canvas */}
       <FeatureOverlayCanvas
         cy={cyRef.current}
         nodes={nodes}
@@ -1094,7 +1110,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         nodePositions={nodePositions}
         findings={findings}
         enableOverlay={true}
+        architectureMode={architectureMode}
         featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
+        orbitGuides={architectureMode === 'orbit' ? orbitGuides : undefined}
       />
 
       {/* Mode Indicator Overlay Badge */}
@@ -1103,7 +1121,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         data-testid="graph-mode-indicator"
         title={layoutMode === 'static' ? 'Node positions are preserved' : 'Graph automatically arranges nodes'}
       >
-        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : `🔀 Interactive Mode (${architectureMode === 'hybrid' ? 'Hybrid' : 'Hierarchical'})`}
+        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : `🔀 Interactive Mode (${architectureMode === 'orbit' ? 'Orbit' : architectureMode === 'hybrid' ? 'Hybrid' : 'Hierarchical'})`}
       </div>
 
       {/* Navigator Container */}
