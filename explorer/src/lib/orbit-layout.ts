@@ -22,15 +22,15 @@ export interface OrbitNodeMetadata {
 
 export interface OrbitLayoutOptions {
   center?: { x: number; y: number };
-  innerRadius?: number; // Nucleus clearance radius (default: 120px)
-  ringSpacing?: number; // Base radial spacing between rings (default: 160px >= W_eff)
+  innerRadius?: number; // Nucleus clearance radius (default: 200px)
+  ringSpacing?: number; // Base radial spacing between rings (default: 200px >= EFF_DIAG = 188.68px)
   nodeWidth?: number; // Bounding width W (default: 120px)
   nodeHeight?: number; // Bounding height H (default: 60px)
   horizontalGap?: number; // Horizontal clearance C_x (default: 40px)
   verticalGap?: number; // Vertical clearance C_y (default: 40px)
-  sectorMarginAngleRad?: number; // Inter-sector angular margin gap (default: 0.05 rad)
-  trackSpacingPx?: number; // Radial delta between tracks within same ring (default: 100px >= H_eff)
-  maxTracksPerRing?: number; // Max track expansion count (default: 10)
+  sectorMarginAngleRad?: number; // Inter-sector angular margin gap base
+  trackSpacingPx?: number; // Radial delta between tracks within same ring (default: 200px)
+  maxTracksPerRing?: number; // Max track expansion count (default: 20)
   maxRepairPasses?: number; // Max iterative collision repair passes (default: 20)
 }
 
@@ -45,9 +45,22 @@ export interface OrbitNodePosition {
   y: number; // Cartesian Y coordinate
 }
 
+export interface OrbitGuideSector {
+  sectorId: string;
+  label: string;
+  startAngleRad: number;
+  endAngleRad: number;
+  sectorBodyAngleRad: number;
+  sectorMarginAngleRad: number;
+  usableStartAngleRad: number;
+  usableEndAngleRad: number;
+  usableAngleRad: number;
+  nodeCount: number;
+}
+
 export interface OrbitGuideMetadata {
   rings: Array<{ ringIndex: number; radiusPx: number; label: string }>;
-  sectors: Array<{ sectorId: string; label: string; startAngleRad: number; endAngleRad: number }>;
+  sectors: OrbitGuideSector[];
 }
 
 export interface OrbitDiagnostics {
@@ -60,7 +73,9 @@ export interface OrbitDiagnostics {
   maxRadiusPx: number;
   minAngularSeparationRad: number;
   minAABBSeparationPx: number;
-  collisionCount: number;
+  initialCollisionCount: number;
+  collisionCount: number; // Final collision count
+  collisionPairsTested: number;
   repairCount: number;
   fallbackCount: number;
   nanCount: number;
@@ -152,21 +167,21 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
 
   const options = input.options || {};
   const center = options.center || { x: 0, y: 0 };
-  const innerRadius = options.innerRadius ?? 120;
-  const ringSpacing = options.ringSpacing ?? 160; // >= W_eff (120 + 40 = 160)
   const nodeWidth = options.nodeWidth ?? 120;
   const nodeHeight = options.nodeHeight ?? 60;
   const horizontalGap = options.horizontalGap ?? 40;
   const verticalGap = options.verticalGap ?? 40;
-  const sectorMargin = options.sectorMarginAngleRad ?? 0.05;
-  const trackSpacing = options.trackSpacingPx ?? 100; // >= H_eff (60 + 40 = 100)
+  const trackSpacing = options.trackSpacingPx ?? 200; // Guaranteed >= 188.68px (sqrt(160^2 + 100^2))
+  const numRadialTiers = 2; // Alternating even/odd sector radial tiering
   const maxTracksPerRing = options.maxTracksPerRing ?? 10;
+  const tierSpanPx = maxTracksPerRing * trackSpacing; // 2000px
+  const ringSpacing = options.ringSpacing ?? (numRadialTiers * tierSpanPx); // 4000px
+  const innerRadius = options.innerRadius ?? 600;
   const maxRepairPasses = options.maxRepairPasses ?? 20;
 
-  const effWidth = nodeWidth + horizontalGap;
-  const effHeight = nodeHeight + verticalGap;
-  // Diagonal effective chord clearance
-  const requiredChordSeparation = Math.sqrt(effWidth * effWidth + effHeight * effHeight) * 0.5;
+  const effWidth = nodeWidth + horizontalGap; // 160
+  const effHeight = nodeHeight + verticalGap; // 100
+  const requiredChordSeparation = Math.sqrt(effWidth * effWidth + effHeight * effHeight); // 188.6796px
 
   const rawNodes = Array.isArray(input.nodes) ? [...input.nodes] : [];
 
@@ -176,7 +191,6 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
   // Diagnostics counters
   let nanCount = 0;
   let infinityCount = 0;
-  let collisionCount = 0;
   let repairCount = 0;
   let fallbackCount = 0;
 
@@ -209,51 +223,92 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     return a.localeCompare(b);
   });
 
-  // Dynamic Angular Sector Allocation
+  // Dynamic Water-Filling Constrained Angular Sector Allocation
   const numSectors = sortedSectorIds.length;
   const totalCircleRad = 2 * Math.PI;
 
-  const sectorAngles = new Map<string, { startAngle: number; endAngle: number; usableAngle: number }>();
+  interface InternalSectorInfo {
+    sectorId: string;
+    startAngle: number;
+    endAngle: number;
+    sectorBodyAngle: number;
+    sectorMargin: number;
+    usableStart: number;
+    usableEnd: number;
+    usableAngle: number;
+    nodeCount: number;
+  }
+
+  const sectorAngles = new Map<string, InternalSectorInfo>();
 
   if (numSectors === 0) {
     // Empty graph
   } else if (numSectors === 1) {
     const secId = sortedSectorIds[0];
-    const usableAngle = Math.max(0.001, totalCircleRad - 2 * sectorMargin);
+    const margin = options.sectorMarginAngleRad ?? 0.05;
+    const bodyAngle = totalCircleRad;
+    const usableStart = margin;
+    const usableEnd = totalCircleRad - margin;
+    const usableAngle = usableEnd - usableStart;
     sectorAngles.set(secId, {
+      sectorId: secId,
       startAngle: 0,
       endAngle: totalCircleRad,
+      sectorBodyAngle: bodyAngle,
+      sectorMargin: margin,
+      usableStart,
+      usableEnd,
       usableAngle,
+      nodeCount: nodes.length,
     });
   } else {
-    // Proportional allocation based on total sector node population
-    const totalNodesCount = Math.max(1, nodes.length);
-    const minSectorSpan = Math.max(2 * sectorMargin + 0.05, totalCircleRad / (numSectors * 4));
+    // Water-Filling Allocation with derived sector margins:
+    // Sector margin total budget = 5% of 2pi across all S sectors
+    // Margin per side for sector s = (0.05 * 2pi) / (2 * S)
+    const margin = (0.05 * totalCircleRad) / (2 * numSectors);
 
-    const sectorSpans = new Map<string, number>();
+    // theta_min guarantees each sector receives at least 20% of equal-share span
+    const thetaMin = (totalCircleRad / numSectors) * 0.20;
+    const residualBudget = totalCircleRad - numSectors * thetaMin;
+
+    const totalNodesCount = Math.max(1, nodes.length);
+
+    // Calculate body angle per sector
+    const bodyAngles = new Map<string, number>();
+    let rawSum = 0;
     sortedSectorIds.forEach((secId) => {
       const pop = sectorNodeCounts[secId] || 1;
-      const proportion = pop / totalNodesCount;
-      const span = Math.max(minSectorSpan, proportion * totalCircleRad);
-      sectorSpans.set(secId, span);
+      const weight = pop / totalNodesCount;
+      const angle = thetaMin + residualBudget * weight;
+      bodyAngles.set(secId, angle);
+      rawSum += angle;
     });
 
-    // Renormalize spans to sum exactly to 2*pi
-    let sumSpans = 0;
-    sectorSpans.forEach((s) => (sumSpans += s));
+    // Enforce sum(bodyAngle) = 2pi exactly
     let currentAngle = 0;
+    sortedSectorIds.forEach((secId, idx) => {
+      let bodyAngle = (bodyAngles.get(secId)! / rawSum) * totalCircleRad;
+      if (idx === numSectors - 1) {
+        bodyAngle = totalCircleRad - currentAngle;
+      }
 
-    sortedSectorIds.forEach((secId) => {
-      const rawSpan = sectorSpans.get(secId)!;
-      const normalizedSpan = (rawSpan / sumSpans) * totalCircleRad;
       const startAngle = currentAngle;
-      const endAngle = currentAngle + normalizedSpan;
-      const usableAngle = Math.max(0.001, normalizedSpan - 2 * sectorMargin);
+      const endAngle = currentAngle + bodyAngle;
+
+      const usableStart = startAngle + margin;
+      const usableEnd = endAngle - margin;
+      const usableAngle = Math.max(1e-6, usableEnd - usableStart);
 
       sectorAngles.set(secId, {
+        sectorId: secId,
         startAngle,
         endAngle,
+        sectorBodyAngle: bodyAngle,
+        sectorMargin: margin,
+        usableStart,
+        usableEnd,
         usableAngle,
+        nodeCount: sectorNodeCounts[secId] || 0,
       });
 
       currentAngle = endAngle;
@@ -266,9 +321,19 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
   let minRadiusPx = Infinity;
   let maxRadiusPx = 0;
 
-  sortedSectorIds.forEach((secId) => {
+  sortedSectorIds.forEach((secId, secIdx) => {
     const secNodes = nodesBySector.get(secId) || [];
-    const angleInfo = sectorAngles.get(secId) || { startAngle: 0, endAngle: 2 * Math.PI, usableAngle: 2 * Math.PI - 0.1 };
+    const secInfo = sectorAngles.get(secId) || {
+      sectorId: secId,
+      startAngle: 0,
+      endAngle: 2 * Math.PI,
+      sectorBodyAngle: 2 * Math.PI,
+      sectorMargin: 0.05,
+      usableStart: 0.05,
+      usableEnd: 2 * Math.PI - 0.05,
+      usableAngle: 2 * Math.PI - 0.1,
+      nodeCount: secNodes.length,
+    };
 
     // Group nodes in this sector by ring
     const nodesByRingInSector = new Map<number, OrbitNodeMetadata[]>();
@@ -292,28 +357,20 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
         return a.nodeId.localeCompare(b.nodeId);
       });
 
-      const baseRingRadius = innerRadius + ring * ringSpacing;
       const n = ringNodes.length;
 
-      // Determine required tracks for this ring population
-      const reqRadiusForSingleTrack = calculateRequiredSectorRadius(n, angleInfo.usableAngle, requiredChordSeparation);
+      const tierIndex = numSectors <= 1 ? 0 : (secIdx % numRadialTiers);
+      const baseRingRadius = innerRadius + ring * ringSpacing + tierIndex * trackSpacing;
 
-      let tracksNeeded = 1;
-      if (reqRadiusForSingleTrack > baseRingRadius && n > 1) {
-        // Expand into multiple tracks
-        const approxCapacityPerTrack = Math.max(
-          1,
-          Math.floor((angleInfo.usableAngle * baseRingRadius) / requiredChordSeparation)
-        );
-        tracksNeeded = Math.min(maxTracksPerRing, Math.ceil(n / approxCapacityPerTrack));
-      }
-
+      // Dynamic track capacity based on available angular arc
+      const approxCapacity = Math.max(1, Math.min(8, Math.floor((secInfo.usableAngle * baseRingRadius) / requiredChordSeparation)));
+      const tracksNeeded = Math.min(maxTracksPerRing, Math.max(1, Math.ceil(n / approxCapacity)));
       trackCounts[secId] = Math.max(trackCounts[secId] || 0, tracksNeeded);
 
-      // Assign nodes to specific tracks and group nodes by track for exact track angular spacing
+      // Assign nodes to specific tracks based on dynamic track capacity
       const nodesByTrack = new Map<number, OrbitNodeMetadata[]>();
       ringNodes.forEach((node, nodeIdx) => {
-        const trk = nodeIdx % tracksNeeded;
+        const trk = Math.floor(nodeIdx / approxCapacity) % tracksNeeded;
         if (!nodesByTrack.has(trk)) {
           nodesByTrack.set(trk, []);
         }
@@ -326,15 +383,25 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
         const n_k = trackNodes.length;
 
         if (track > maxTrackIndex) maxTrackIndex = track;
-        const trackRadius = baseRingRadius + track * trackSpacing;
+
+        // Tier stagger m = secIdx % numRadialTiers
+        const tierIndex = numSectors <= 1 ? 0 : (secIdx % numRadialTiers);
+        const baseTrackRadius = innerRadius + ring * ringSpacing + tierIndex * tierSpanPx + track * trackSpacing;
+
+        // Same-track angular step
+        const deltaTheta_k = n_k <= 1 ? secInfo.usableAngle : secInfo.usableAngle / (n_k - 1);
+
+        // Required radius to ensure same-track adjacent chord distance >= requiredChordSeparation
+        const reqRadius = calculateRequiredSectorRadius(n_k, secInfo.usableAngle, requiredChordSeparation);
+
+        const trackRadius = Math.max(baseTrackRadius, reqRadius);
 
         trackNodes.forEach((node, nodeIdxOnTrack) => {
           let angle: number;
           if (n_k <= 1) {
-            angle = angleInfo.startAngle + sectorMargin + angleInfo.usableAngle / 2;
+            angle = secInfo.usableStart + secInfo.usableAngle / 2;
           } else {
-            const stepAngle = angleInfo.usableAngle / (n_k - 1);
-            angle = angleInfo.startAngle + sectorMargin + nodeIdxOnTrack * stepAngle;
+            angle = secInfo.usableStart + nodeIdxOnTrack * deltaTheta_k;
           }
 
           angle = normalizeAngle(angle);
@@ -348,15 +415,14 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
             if (!Number.isFinite(x) || !Number.isFinite(y)) nanCount++;
             if (x === Infinity || x === -Infinity || y === Infinity || y === -Infinity) infinityCount++;
 
-            // Deterministic fallback
             positions[node.nodeId] = {
               nodeId: node.nodeId,
               ring,
               sector: secId,
               track,
               angle: 0,
-              radius: baseRingRadius,
-              x: center.x + baseRingRadius,
+              radius: baseTrackRadius,
+              x: center.x + baseTrackRadius,
               y: center.y,
             };
             fallbackCount++;
@@ -380,7 +446,23 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     });
   });
 
-  // Multi-Pass Exact Pair Collision Repair
+  // Calculate Initial Collision Count across all node pairs
+  const initialPosList = Object.values(positions);
+  const totalPlaced = initialPosList.length;
+  let initialCollisionCount = 0;
+  let collisionPairsTested = 0;
+
+  for (let i = 0; i < totalPlaced; i++) {
+    for (let j = i + 1; j < totalPlaced; j++) {
+      collisionPairsTested++;
+      if (checkAABBOverlap(initialPosList[i], initialPosList[j], effWidth, effHeight)) {
+        initialCollisionCount++;
+        console.log(`Initial Collision #${initialCollisionCount}: A(${initialPosList[i].nodeId}, r=${initialPosList[i].ring}, s=${initialPosList[i].sector}, trk=${initialPosList[i].track}, rad=${initialPosList[i].radius}, ang=${initialPosList[i].angle.toFixed(4)}) vs B(${initialPosList[j].nodeId}, r=${initialPosList[j].ring}, s=${initialPosList[j].sector}, trk=${initialPosList[j].track}, rad=${initialPosList[j].radius}, ang=${initialPosList[j].angle.toFixed(4)})`);
+      }
+    }
+  }
+
+  // Multi-Pass Exact Pair Monotonic FSM Collision Repair (Defensive Fallback)
   let repairPass = 0;
 
   while (repairPass < maxRepairPasses) {
@@ -388,8 +470,6 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     let repairsInThisPass = 0;
 
     const placedPosList = Object.values(positions);
-    const totalPlaced = placedPosList.length;
-    if (totalPlaced <= 1) break;
 
     for (let i = 0; i < totalPlaced; i++) {
       const posA = placedPosList[i];
@@ -397,20 +477,12 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
       for (let j = i + 1; j < totalPlaced; j++) {
         const posB = placedPosList[j];
 
-        // Exact AABB collision test
         if (checkAABBOverlap(posA, posB, effWidth, effHeight)) {
-          collisionCount++;
-
-          // Deterministic Monotonic FSM Collision Repair:
-          // Shift lower priority / higher index node outwards radially along its angle
           const shiftNode = posB;
-          const shiftAngle = shiftNode.angle;
-
-          // Expand radius by trackSpacing
           shiftNode.track += 1;
           shiftNode.radius += trackSpacing;
-          shiftNode.x = Math.round((center.x + shiftNode.radius * Math.cos(shiftAngle)) * 1000) / 1000;
-          shiftNode.y = Math.round((center.y + shiftNode.radius * Math.sin(shiftAngle)) * 1000) / 1000;
+          shiftNode.x = Math.round((center.x + shiftNode.radius * Math.cos(shiftNode.angle)) * 1000) / 1000;
+          shiftNode.y = Math.round((center.y + shiftNode.radius * Math.sin(shiftNode.angle)) * 1000) / 1000;
 
           repairCount++;
           repairsInThisPass++;
@@ -424,9 +496,10 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     }
   }
 
-  // Calculate Minimum Angular & AABB Separations for Diagnostics
+  // Calculate Final Collision Count and Diagnostics
   const finalPosList = Object.values(positions);
   const totalFinal = finalPosList.length;
+  let finalCollisionCount = 0;
   let minAngularSeparationRad = Infinity;
   let minAABBSeparationPx = Infinity;
 
@@ -435,7 +508,10 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     for (let j = i + 1; j < totalFinal; j++) {
       const b = finalPosList[j];
 
-      // Angular separation for nodes in same ring
+      if (checkAABBOverlap(a, b, effWidth, effHeight)) {
+        finalCollisionCount++;
+      }
+
       if (a.ring === b.ring) {
         const diff = Math.abs(a.angle - b.angle);
         const angularDist = Math.min(diff, 2 * Math.PI - diff);
@@ -444,7 +520,6 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
         }
       }
 
-      // Center-to-center distance minus effective boundary
       const dx = Math.abs(a.x - b.x);
       const dy = Math.abs(a.y - b.y);
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -469,7 +544,7 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     });
   }
 
-  const guideSectors: Array<{ sectorId: string; label: string; startAngleRad: number; endAngleRad: number }> = [];
+  const guideSectors: OrbitGuideSector[] = [];
   sortedSectorIds.forEach((secId) => {
     const info = sectorAngles.get(secId);
     if (info) {
@@ -478,6 +553,12 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
         label: secId === '_unassigned' ? 'Unassigned Features' : secId,
         startAngleRad: Math.round(info.startAngle * 1000) / 1000,
         endAngleRad: Math.round(info.endAngle * 1000) / 1000,
+        sectorBodyAngleRad: Math.round(info.sectorBodyAngle * 1000) / 1000,
+        sectorMarginAngleRad: Math.round(info.sectorMargin * 1000) / 1000,
+        usableStartAngleRad: Math.round(info.usableStart * 1000) / 1000,
+        usableEndAngleRad: Math.round(info.usableEnd * 1000) / 1000,
+        usableAngleRad: Math.round(info.usableAngle * 1000) / 1000,
+        nodeCount: info.nodeCount,
       });
     }
   });
@@ -494,7 +575,9 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
     maxRadiusPx: Math.round(maxRadiusPx * 1000) / 1000,
     minAngularSeparationRad: Math.round(minAngularSeparationRad * 10000) / 10000,
     minAABBSeparationPx: Math.round(minAABBSeparationPx * 1000) / 1000,
-    collisionCount,
+    initialCollisionCount,
+    collisionCount: finalCollisionCount,
+    collisionPairsTested,
     repairCount,
     fallbackCount,
     nanCount,
