@@ -98,6 +98,8 @@ export interface CentralityOptions {
   horizontalGap?: number;
   /** Minimum vertical clearance gap between nodes (default: 40) */
   verticalGap?: number;
+  /** Immutable Stage 7 primary positions snapshot for dual-occupancy collision checking */
+  immutablePrimaryPositions?: Record<string, { x: number; y: number }>;
   /** Previously allocated bridge positions or existing positions map */
   allocatedPositions?: Record<string, { x: number; y: number }>;
   /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
@@ -457,6 +459,8 @@ export function calculateBridgeCandidatePosition(
     ...(options.allocatedPositions || {}),
   };
 
+  const immutablePrimary = options.immutablePrimaryPositions;
+
   // Strictly three legal Y lanes: Y0, Y0 - 100, Y0 + 100 (if trapped/multi-domain, prefer off-center Y0-100 first)
   const legalYLanes = (hasIntermediateTrap || sortedConnectedDomains.length >= 2)
     ? [baseY - minDy, baseY + minDy, baseY]
@@ -526,6 +530,20 @@ export function calculateBridgeCandidatePosition(
           ) {
             collides = true;
             break;
+          }
+        }
+
+        if (!collides && immutablePrimary) {
+          for (const [otherId, otherPos] of Object.entries(immutablePrimary)) {
+            if (otherId === nodeId) continue;
+            collisionChecks++;
+            if (
+              Math.abs(otherPos.x - testX) < minDx - 1e-3 &&
+              Math.abs(otherPos.y - testY) < minDy - 1e-3
+            ) {
+              collides = true;
+              break;
+            }
           }
         }
 
