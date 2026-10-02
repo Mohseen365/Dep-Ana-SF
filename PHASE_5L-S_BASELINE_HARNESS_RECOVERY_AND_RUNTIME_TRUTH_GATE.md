@@ -1,7 +1,7 @@
 # PHASE 5L-S — BASELINE HARNESS RECOVERY & RUNTIME TRUTH GATE REPORT
 
-**Status:** `BASELINE_RUNTIME_TRUTH_CONFIRMED`
-**Authorization:** `CANDIDATE_D_IMPLEMENTATION_AUTHORIZED`
+**Status:** `BASELINE_RUNTIME_TRUTH_NOT_CONFIRMED` (Superseded by Phase 5L-T Control Separation Audit)
+**Authorization:** `CANDIDATE_D_IMPLEMENTATION_BLOCKED`
 **Phase:** Phase 5L-S (Baseline Harness Recovery & Runtime Truth Gate)
 **Audit Date:** October 2, 2026
 **Target Repository Root:** `/app`
@@ -275,19 +275,13 @@ Running 3 identical, consecutive executions of the baseline suite confirmed 100%
 ## 16. Final Authorization Decision
 
 ```text
-BASELINE_RUNTIME_TRUTH_CONFIRMED
-CANDIDATE_D_IMPLEMENTATION_AUTHORIZED
+BASELINE_RUNTIME_TRUTH_NOT_CONFIRMED
+CANDIDATE_D_IMPLEMENTATION_BLOCKED
 ```
 
-All required conditions for baseline recovery and runtime truth confirmation are satisfied:
-1. The measurement environment is fully recovered with minimal test-only path fallback.
-2. SB1C baselines are 100% reproduced.
-3. H5A baselines are 100% reproduced.
-4. BQC boundary floating-point quantization mechanics ($159.99818...\text{px} < 159.999\text{px}$) are verified and reconciled.
-5. Historical overlap counts are reconciled as candidate-attempt rejections versus zero final residual overlaps.
-6. Stage 8 versus Final metrics are clearly separated.
-7. SHA provenance (`da70a1515eb67319307d5a7197c26039b5a52b3a`) is verified.
-8. Baseline layout calculations are 100% deterministic and input-order invariant.
-9. Zero production source code files were modified.
-
-Candidate D implementation is authorized for future controlled execution.
+### Authorization Rationale
+Per Section 31 of Phase 5L-S and the Phase 5L-T Independent Control Separation Audit:
+1. Production `architecture-layout.ts` (line 385) unconditionally executes H5A by passing `immutablePrimaryPositions: immutableStage7PrimaryPositions`.
+2. The initial Phase 5L-S harness invoked `computeArchitectureLayoutWithMetadata` for both control passes, executing H5A twice and reporting identical metrics for SB1C and H5A (`HARNESS_CONTROL_SEPARATION_FAILURE`).
+3. Independent control separation in Phase 5L-T proved that true SB1C (without `immutablePrimaryPositions`) and true H5A (with `immutablePrimaryPositions`) differ significantly across Stage 8 coordinates (66 bridges differ on PBIM), Stage 8 width (+360px expansion on PBIM), Stage 8 M1 (+39.71% regression under H5A), and Final M1 (+18.05% regression under H5A).
+4. Because the harness failed to separate SB1C from H5A control passes, Candidate D implementation is strictly **BLOCKED** until the layout options explicitly expose `enableImmutablePrimaryPositions: boolean`.
