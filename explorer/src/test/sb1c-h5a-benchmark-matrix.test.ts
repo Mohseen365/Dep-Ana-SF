@@ -78,9 +78,17 @@ function computeM1ForBridges(
   return computeQuantiles(distances);
 }
 
-describe('Phase 5L-U Control Separation Benchmark Suite', () => {
+describe('Phase 5L-V Movement Semantics & Baseline Reconciliation Suite', () => {
+  test('Verify Option Contract (enableImmutablePrimaryPositions true vs false)', () => {
+    const { nodes, edges } = loadDataset(DATASETS[0]);
+    const sb1cOut = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: false });
+    const h5aOut = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: true });
+    expect(sb1cOut.positions).toBeDefined();
+    expect(h5aOut.positions).toBeDefined();
+  });
+
   for (const ds of DATASETS) {
-    test(`Run Same-SHA Control Separation Pipeline for ${ds.key.toUpperCase()}`, () => {
+    test(`Run Complete Forensics for ${ds.key.toUpperCase()}`, () => {
       const { nodes, edges } = loadDataset(ds);
 
       const safeNodes = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
@@ -190,8 +198,6 @@ describe('Phase 5L-U Control Separation Benchmark Suite', () => {
 
             const layer = layerMap.get(node.id) || 'application';
 
-            // Trace rejections during bridge placement
-            // To trace candidate rejections, we re-simulate candidate search step by step
             const minDx = 160;
             const minDy = 100;
             const layerYOffsets = globalDomainResult.layerYMap;
@@ -350,9 +356,10 @@ describe('Phase 5L-U Control Separation Benchmark Suite', () => {
       const sb1cFull = computeArchitectureLayoutWithMetadata(safeNodes, safeEdges, { enableImmutablePrimaryPositions: false });
       const h5aFull = computeArchitectureLayoutWithMetadata(safeNodes, safeEdges, { enableImmutablePrimaryPositions: true });
 
-      // Calculate Movement from Stage 7 for both
+      // Metric A — Stage 7 displacement (MOVED_FROM_STAGE7)
       let sb1cMovedFromStage7 = 0;
       let h5aMovedFromStage7 = 0;
+      let structuralBridgeOffset = 0;
 
       bridgeIds.forEach(bId => {
         const stg7 = stage7PrimaryPositions[bId];
@@ -367,9 +374,27 @@ describe('Phase 5L-U Control Separation Benchmark Suite', () => {
           const dH = Math.hypot(h8.x - stg7.x, h8.y - stg7.y);
           if (dH > 0.01) h5aMovedFromStage7++;
         }
+        if (stg7 && sb8) {
+          const dStruct = Math.hypot(sb8.x - stg7.x, sb8.y - stg7.y);
+          if (dStruct > 0.01) structuralBridgeOffset++;
+        }
       });
 
-      // Calculate Stage 8 widths
+      // Metric B — SB1C/H5A divergence (CONTROL_DIVERGED)
+      let controlDiverged = 0;
+      const controlDeltas: number[] = [];
+      bridgeIds.forEach(bId => {
+        const p1 = sb1cStage8.positions[bId];
+        const p2 = h5aStage8.positions[bId];
+        if (p1 && p2) {
+          const d = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          if (d > 0.01) {
+            controlDiverged++;
+            controlDeltas.push(d);
+          }
+        }
+      });
+
       function calculateWidth(posMap: Record<string, { x: number; y: number }>): number {
         let minX = Infinity;
         let maxX = -Infinity;
@@ -385,40 +410,29 @@ describe('Phase 5L-U Control Separation Benchmark Suite', () => {
       const sb1cFinalWidth = calculateWidth(sb1cFull.positions);
       const h5aFinalWidth = calculateWidth(h5aFull.positions);
 
-      // Calculate M1 metrics
       const sb1cStage8M1 = computeM1ForBridges(bridgeIds, sb1cStage8.positions, neighborMap);
       const h5aStage8M1 = computeM1ForBridges(bridgeIds, h5aStage8.positions, neighborMap);
       const sb1cFinalM1 = computeM1ForBridges(bridgeIds, sb1cFull.positions, neighborMap);
       const h5aFinalM1 = computeM1ForBridges(bridgeIds, h5aFull.positions, neighborMap);
 
-      // Coordinate difference between SB1C and H5A at Stage 8
-      let diffBridgeCount = 0;
-      const deltas: number[] = [];
-      bridgeIds.forEach(bId => {
-        const p1 = sb1cStage8.positions[bId];
-        const p2 = h5aStage8.positions[bId];
-        if (p1 && p2) {
-          const d = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-          if (d > 0.01) {
-            diffBridgeCount++;
-            deltas.push(d);
-          }
-        }
-      });
-
-      const quantDeltas = computeQuantiles(deltas);
-
-      console.log(`\n=================== PHASE 5L-U RESULTS: ${ds.key.toUpperCase()} ===================`);
+      console.log(`\n=================== PHASE 5L-V RECONCILIATION: ${ds.key.toUpperCase()} ===================`);
       console.log(`Total Bridges: ${bridgeIds.length}`);
-      console.log(`SB1C: Primary Rejects = ${sb1cStage8.primaryRejections} | Dynamic Rejects = ${sb1cStage8.dynamicRejections} | Moved from Stage 7 = ${sb1cMovedFromStage7}`);
-      console.log(`H5A:  Primary Rejects = ${h5aStage8.primaryRejections} | Dynamic Rejects = ${h5aStage8.dynamicRejections} | Moved from Stage 7 = ${h5aMovedFromStage7}`);
-      console.log(`Stage 8 Coordinate Divergence: ${diffBridgeCount} bridges differ | Median Delta = ${quantDeltas.median.toFixed(2)}px | Max Delta = ${quantDeltas.max.toFixed(2)}px`);
-      console.log(`SB1C Stage 8 M1: Median = ${sb1cStage8M1.median.toFixed(2)}px | P95 = ${sb1cStage8M1.p95.toFixed(2)}px | Max = ${sb1cStage8M1.max.toFixed(2)}px | Width = ${sb1cStage8Width.toFixed(2)}px`);
-      console.log(`H5A  Stage 8 M1: Median = ${h5aStage8M1.median.toFixed(2)}px | P95 = ${h5aStage8M1.p95.toFixed(2)}px | Max = ${h5aStage8M1.max.toFixed(2)}px | Width = ${h5aStage8Width.toFixed(2)}px`);
-      console.log(`SB1C Final   M1: Median = ${sb1cFinalM1.median.toFixed(2)}px | P95 = ${sb1cFinalM1.p95.toFixed(2)}px | Max = ${sb1cFinalM1.max.toFixed(2)}px | Width = ${sb1cFinalWidth.toFixed(2)}px`);
-      console.log(`H5A  Final   M1: Median = ${h5aFinalM1.median.toFixed(2)}px | P95 = ${h5aFinalM1.p95.toFixed(2)}px | Max = ${h5aFinalM1.max.toFixed(2)}px | Width = ${h5aFinalWidth.toFixed(2)}px`);
+      console.log(`MOVED_FROM_STAGE7 (SB1C): ${sb1cMovedFromStage7} / ${bridgeIds.length}`);
+      console.log(`MOVED_FROM_STAGE7 (H5A):  ${h5aMovedFromStage7} / ${bridgeIds.length}`);
+      console.log(`CONTROL_DIVERGED (SB1C vs H5A): ${controlDiverged} / ${bridgeIds.length}`);
+      console.log(`STRUCTURAL_BRIDGE_OFFSET: ${structuralBridgeOffset} / ${bridgeIds.length}`);
+      console.log(`PRIMARY_REJECTIONS (H5A trial): ${h5aStage8.primaryRejections}`);
+      console.log(`DYNAMIC_REJECTIONS (H5A trial): ${h5aStage8.dynamicRejections}`);
+      console.log(`SB1C Stage8 M1: Median=${sb1cStage8M1.median.toFixed(2)}px | P95=${sb1cStage8M1.p95.toFixed(2)}px | Max=${sb1cStage8M1.max.toFixed(2)}px | Width=${sb1cStage8Width.toFixed(2)}px`);
+      console.log(`H5A  Stage8 M1: Median=${h5aStage8M1.median.toFixed(2)}px | P95=${h5aStage8M1.p95.toFixed(2)}px | Max=${h5aStage8M1.max.toFixed(2)}px | Width=${h5aStage8Width.toFixed(2)}px`);
+      console.log(`SB1C Final   M1: Median=${sb1cFinalM1.median.toFixed(2)}px | P95=${sb1cFinalM1.p95.toFixed(2)}px | Max=${sb1cFinalM1.max.toFixed(2)}px | Width=${sb1cFinalWidth.toFixed(2)}px`);
+      console.log(`H5A  Final   M1: Median=${h5aFinalM1.median.toFixed(2)}px | P95=${h5aFinalM1.p95.toFixed(2)}px | Max=${h5aFinalM1.max.toFixed(2)}px | Width=${h5aFinalWidth.toFixed(2)}px`);
 
-      expect(diffBridgeCount).toBeGreaterThanOrEqual(ds.key === 'pbim' ? 66 : 0);
+      if (ds.key === 'pbim') {
+        expect(controlDiverged).toBe(66);
+        expect(sb1cMovedFromStage7).toBe(104);
+        expect(h5aMovedFromStage7).toBe(104);
+      }
     });
   }
 });
