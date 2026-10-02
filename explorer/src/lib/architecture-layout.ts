@@ -43,6 +43,8 @@ export interface ArchitectureLayoutOptions {
   maxIterations?: number;
   /** Enables Stage 7 immutable primary occupancy checking in Stage 8 bridge placement (default: true for H5A, false for SB1C) */
   enableImmutablePrimaryPositions?: boolean;
+  /** Enables Candidate D processing-order-only pre-sorting for Stage 8 bridge candidate evaluation (default: false) */
+  enableCandidateDOrdering?: boolean;
 }
 
 export interface ArchitectureLayoutResultWithMetadata {
@@ -96,6 +98,7 @@ export function computeArchitectureLayoutWithMetadata(
     architectureMode,
     enableFeatureLayout = false,
     enableImmutablePrimaryPositions = true,
+    enableCandidateDOrdering = false,
   } = options;
 
   // Defensive deep clone of inputs to guarantee immutability
@@ -356,41 +359,71 @@ export function computeArchitectureLayoutWithMetadata(
     domainBounds[domain] = { minX: region.xMin, maxX: region.xMax };
   });
 
-  safeNodes.forEach(node => {
-    // Secondary satellite nodes (tests, fields) are placed exclusively in Step 9
-    if (isTestNode(node) || isFieldNode(node)) return;
-
+  const stage8BridgeNodes = safeNodes.filter(node => {
+    if (isTestNode(node) || isFieldNode(node)) return false;
     const centrality = centralityMap.get(node.id);
-    if (centrality?.isBridge && !centrality.isHub) {
-      const neighborPositions: Record<string, { x: number; y: number }> = {};
-      const nodeAnalysis = analysis.nodes.get(node.id);
+    return centrality?.isBridge && !centrality.isHub;
+  });
 
-      nodeAnalysis?.neighborIds.forEach(nId => {
-        if (basePositions[nId]) {
-          neighborPositions[nId] = basePositions[nId];
-        }
-      });
+  if (enableCandidateDOrdering) {
+    const layerOrderMap: Record<ArchitectureLayer, number> = {
+      presentation: 0,
+      application: 1,
+      domain: 2,
+      schema: 3,
+    };
+    stage8BridgeNodes.sort((a, b) => {
+      const cA = centralityMap.get(a.id);
+      const cB = centralityMap.get(b.id);
+      const spanA = cA?.connectedDomains.length || 0;
+      const spanB = cB?.connectedDomains.length || 0;
+      if (spanA !== spanB) {
+        return spanA - spanB;
+      }
+      const nA = analysis.nodes.get(a.id)?.neighborIds.length || 0;
+      const nB = analysis.nodes.get(b.id)?.neighborIds.length || 0;
+      if (nB !== nA) {
+        return nB - nA;
+      }
+      const lA = layerOrderMap[layerMap.get(a.id) || 'application'];
+      const lB = layerOrderMap[layerMap.get(b.id) || 'application'];
+      if (lA !== lB) {
+        return lA - lB;
+      }
+      return a.id.localeCompare(b.id);
+    });
+  }
 
-      const bridgeInfo = calculateBridgeCandidatePosition(
-        node.id,
-        layerMap.get(node.id) || 'application',
-        centrality.connectedDomains,
-        domainXCenters,
-        domainBounds,
-        neighborPositions,
-        {
-          layerSpacing,
-          nodeWidth,
-          nodeHeight,
-          layerYOffsets: globalDomainResult.layerYMap,
-          index,
-          allocatedPositions: basePositions,
-          immutablePrimaryPositions: enableImmutablePrimaryPositions ? immutableStage7PrimaryPositions : undefined,
-        }
-      );
+  stage8BridgeNodes.forEach(node => {
+    const centrality = centralityMap.get(node.id)!;
+    const neighborPositions: Record<string, { x: number; y: number }> = {};
+    const nodeAnalysis = analysis.nodes.get(node.id);
 
-      basePositions[node.id] = bridgeInfo.candidatePosition;
-    }
+    nodeAnalysis?.neighborIds.forEach(nId => {
+      if (basePositions[nId]) {
+        neighborPositions[nId] = basePositions[nId];
+      }
+    });
+
+    const bridgeInfo = calculateBridgeCandidatePosition(
+      node.id,
+      layerMap.get(node.id) || 'application',
+      centrality.connectedDomains,
+      domainXCenters,
+      domainBounds,
+      neighborPositions,
+      {
+        layerSpacing,
+        nodeWidth,
+        nodeHeight,
+        layerYOffsets: globalDomainResult.layerYMap,
+        index,
+        allocatedPositions: basePositions,
+        immutablePrimaryPositions: enableImmutablePrimaryPositions ? immutableStage7PrimaryPositions : undefined,
+      }
+    );
+
+    basePositions[node.id] = bridgeInfo.candidatePosition;
   });
 
   // Step 9: Secondary Satellite Placement (Tests, Fields, Trigger/Handlers) (Wave 3C)
