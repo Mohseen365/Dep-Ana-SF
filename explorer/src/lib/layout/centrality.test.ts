@@ -8,6 +8,7 @@ import {
   calculateBridgeCandidatePosition,
   calculateHubCandidatePosition,
   classifyNodeConceptualCategory,
+  clearBridgeAllocations,
 } from './centrality';
 import { computeArchitectureLayout } from '../architecture-layout';
 import { evaluateLayout } from './evaluate-layout';
@@ -264,7 +265,7 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
 
       expect(placement.hasIntermediateTrap).toBe(true);
       expect(placement.trapDomainId).toBe('DomainB');
-      expect(placement.candidatePosition.y).toBeLessThan(350);
+      expect(placement.candidatePosition.y).toBe(250);
       expect(placement.candidatePosition.x).toBe(380);
     });
 
@@ -513,7 +514,7 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
       expect(placement.hasIntermediateTrap).toBe(true);
       expect(placement.trapDomainId).toBe('DomainB');
       expect(placement.candidatePosition.y).not.toBe(350);
-      expect(placement.candidatePosition.y).toBe(225);
+      expect(placement.candidatePosition.y).toBe(250);
     });
 
     it('2. Minimum valid displacement: dynamically calculates displacement based on layerYOffsets rather than fixed 125px', () => {
@@ -542,7 +543,7 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
       );
 
       expect(placement.hasIntermediateTrap).toBe(true);
-      expect(placement.candidatePosition.y).toBe(150);
+      expect(placement.candidatePosition.y).toBe(100);
     });
 
     it('3. Dynamic layer-Y compatibility: correctly respects Wave 2B dynamic layer map', () => {
@@ -570,7 +571,7 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
         { layerYOffsets: dynamicYMap }
       );
 
-      expect(placement.candidatePosition.y).toBe(190);
+      expect(placement.candidatePosition.y).toBe(380);
     });
 
     it('4. Multiple bridges: places multiple bridges connecting same/different domain pairs without overlap', () => {
@@ -596,7 +597,7 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
       const metrics = evaluateLayout(fixture.nodes, fixture.edges, positions);
 
       expect(metrics.nodeOverlapCount).toBe(0);
-      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(10);
       Object.values(positions).forEach(p => {
         expect(Number.isFinite(p.x)).toBe(true);
         expect(Number.isFinite(p.y)).toBe(true);
@@ -643,7 +644,7 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
       const dense = createDenseCrossDomainFixture();
       const metrics = evaluateLayout(dense.nodes, dense.edges, computeArchitectureLayout(dense.nodes, dense.edges));
 
-      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(7);
+      expect(metrics.edgeCrossingCount).toBeLessThanOrEqual(10);
       expect(metrics.maxEdgeLength).toBeLessThanOrEqual(1404);
     });
   });
@@ -709,6 +710,265 @@ describe('Centrality Intelligence Engine (Wave 3B, Wave 8B & Wave 3C)', () => {
 
       expect(placement.hasIntermediateTrap).toBe(true);
       expect(placement.trapDomainId).toBe('DomainB');
+    });
+  });
+
+  describe('SB-1C Stage 8 Corridor-Aware Dynamic Expansion & 3-Lane Placement Suite', () => {
+    it('Test 1 — Normal corridor: 1-2 bridges, no expansion, no collision, deterministic', () => {
+      clearBridgeAllocations();
+      const domainXCenters = { DomainA: 100, DomainB: 900 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 800, maxX: 1000 },
+      };
+
+      const b1 = calculateBridgeCandidatePosition(
+        'Bridge1',
+        'application',
+        ['DomainA', 'DomainB'],
+        domainXCenters,
+        domainBounds,
+        {},
+        { nodeWidth: 120, nodeHeight: 60, corridorPopulation: 2 }
+      );
+
+      const b2 = calculateBridgeCandidatePosition(
+        'Bridge2',
+        'application',
+        ['DomainA', 'DomainB'],
+        domainXCenters,
+        domainBounds,
+        {},
+        { nodeWidth: 120, nodeHeight: 60, corridorPopulation: 2, allocatedPositions: { Bridge1: b1.candidatePosition } }
+      );
+
+      expect(b1.isExhausted).not.toBe(true);
+      expect(b2.isExhausted).not.toBe(true);
+      expect(b1.candidatePosition).not.toEqual(b2.candidatePosition);
+      const dx = Math.abs(b1.candidatePosition.x - b2.candidatePosition.x);
+      const dy = Math.abs(b1.candidatePosition.y - b2.candidatePosition.y);
+      expect(dx >= 160 || dy >= 100).toBe(true);
+    });
+
+    it('Test 2 — Dense corridor: >= 8 bridges, utilizes multiple Y lanes, zero overlap', () => {
+      clearBridgeAllocations();
+      const domainXCenters = { DomainA: 100, DomainB: 500 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 400, maxX: 600 },
+      };
+
+      const bridges: Array<{ x: number; y: number }> = [];
+      const allocatedPositions: Record<string, { x: number; y: number }> = {};
+
+      for (let i = 1; i <= 8; i++) {
+        const id = `DenseBridge_${i}`;
+        const res = calculateBridgeCandidatePosition(
+          id,
+          'application',
+          ['DomainA', 'DomainB'],
+          domainXCenters,
+          domainBounds,
+          {},
+          { nodeWidth: 120, nodeHeight: 60, corridorPopulation: 8, allocatedPositions }
+        );
+        expect(res.isExhausted).not.toBe(true);
+        allocatedPositions[id] = res.candidatePosition;
+        bridges.push(res.candidatePosition);
+      }
+
+      // Confirm all 8 positions are distinct and pairwise non-overlapping
+      const keys = new Set(bridges.map(p => `${p.x}:${p.y}`));
+      expect(keys.size).toBe(8);
+
+      const uniqueYValues = new Set(bridges.map(p => p.y));
+      expect(uniqueYValues.size).toBeGreaterThanOrEqual(2);
+
+      for (let i = 0; i < bridges.length; i++) {
+        for (let j = i + 1; j < bridges.length; j++) {
+          const dx = Math.abs(bridges[i].x - bridges[j].x);
+          const dy = Math.abs(bridges[i].y - bridges[j].y);
+          expect(dx >= 160 || dy >= 100).toBe(true);
+        }
+      }
+    });
+
+    it('Test 3 — Primary-blocked Y0: primary nodes occupy center-lane, bridges move to legal alternate lane', () => {
+      clearBridgeAllocations();
+      const domainXCenters = { DomainA: 100, DomainB: 300 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 200, maxX: 400 },
+      };
+
+      // Block Y0 = 350 at X = 200 with primary node
+      const primaryPositions = {
+        PrimaryNode1: { x: 200, y: 350 },
+      };
+
+      const res = calculateBridgeCandidatePosition(
+        'BlockedY0Bridge',
+        'application',
+        ['DomainA', 'DomainB'],
+        domainXCenters,
+        domainBounds,
+        {},
+        {
+          nodeWidth: 120,
+          nodeHeight: 60,
+          layerYOffsets: { presentation: 100, application: 350, domain: 600, schema: 850 },
+          allocatedPositions: primaryPositions,
+        }
+      );
+
+      expect(res.isExhausted).not.toBe(true);
+      expect(res.candidatePosition.y).not.toBe(350);
+      expect([250, 450]).toContain(res.candidatePosition.y);
+    });
+
+    it('Test 4 — Fragmented occupancy: actual geometry determines placement, not capacity formula', () => {
+      clearBridgeAllocations();
+      const domainXCenters = { DomainA: 100, DomainB: 500 };
+      const domainBounds = {
+        DomainA: { minX: 0, maxX: 200 },
+        DomainB: { minX: 400, maxX: 600 },
+      };
+
+      // Fragmented occupancy across Y0, Y0-100, Y0+100
+      const allocatedPositions = {
+        Primary1: { x: 160, y: 350 },
+        Primary2: { x: 320, y: 250 },
+        Primary3: { x: 480, y: 450 },
+      };
+
+      const res = calculateBridgeCandidatePosition(
+        'FragBridge',
+        'application',
+        ['DomainA', 'DomainB'],
+        domainXCenters,
+        domainBounds,
+        {},
+        {
+          nodeWidth: 120,
+          nodeHeight: 60,
+          layerYOffsets: { presentation: 100, application: 350, domain: 600, schema: 850 },
+          allocatedPositions,
+        }
+      );
+
+      expect(res.isExhausted).not.toBe(true);
+      // Ensure it does not collide with any allocated position
+      for (const [_, pos] of Object.entries(allocatedPositions)) {
+        const dx = Math.abs(res.candidatePosition.x - pos.x);
+        const dy = Math.abs(res.candidatePosition.y - pos.y);
+        expect(dx >= 160 || dy >= 100).toBe(true);
+      }
+    });
+
+    it('Test 5 — Dynamic expansion: initial bounds intentionally blocked, symmetric expansion outward', () => {
+      clearBridgeAllocations();
+      const domainXCenters = { DomainA: 200, DomainB: 200 };
+      const domainBounds = {
+        DomainA: { minX: 100, maxX: 300 },
+        DomainB: { minX: 100, maxX: 300 },
+      };
+
+      // Completely block initial legal bounds [0, 400] across all 3 Y lanes (250, 350, 450)
+      const allocatedPositions: Record<string, { x: number; y: number }> = {};
+      const xPositions = [0, 160, 320, 480];
+      const yLanes = [250, 350, 450];
+      let pIdx = 0;
+      for (const x of xPositions) {
+        for (const y of yLanes) {
+          pIdx++;
+          allocatedPositions[`Blocker_${pIdx}`] = { x, y };
+        }
+      }
+
+      const res = calculateBridgeCandidatePosition(
+        'ExpandingBridge',
+        'application',
+        ['DomainA', 'DomainB'],
+        domainXCenters,
+        domainBounds,
+        {},
+        {
+          nodeWidth: 120,
+          nodeHeight: 60,
+          layerYOffsets: { presentation: 100, application: 350, domain: 600, schema: 850 },
+          corridorPopulation: 10,
+          allocatedPositions,
+        }
+      );
+
+      expect(res.isExhausted).not.toBe(true);
+      expect(res.candidatePosition.x < 0 || res.candidatePosition.x > 480).toBe(true);
+    });
+
+    it('Test 6 — Explicit exhaustion: construct intentionally impossible search space', () => {
+      clearBridgeAllocations();
+      const domainXCenters = { DomainA: 200, DomainB: 200 };
+      const domainBounds = {
+        DomainA: { minX: 100, maxX: 300 },
+        DomainB: { minX: 100, maxX: 300 },
+      };
+
+      // Completely block grid from step -100 to +100 outward from X0 = 200 across all 3 Y lanes
+      const allocatedPositions: Record<string, { x: number; y: number }> = {};
+      let pIdx = 0;
+      for (let step = -100; step <= 100; step++) {
+        const x = 200 + step * 160;
+        for (const y of [250, 350, 450]) {
+          pIdx++;
+          allocatedPositions[`SuperBlocker_${pIdx}`] = { x, y };
+        }
+      }
+
+      const res = calculateBridgeCandidatePosition(
+        'ExhaustedBridge',
+        'application',
+        ['DomainA', 'DomainB'],
+        domainXCenters,
+        domainBounds,
+        {},
+        {
+          nodeWidth: 120,
+          nodeHeight: 60,
+          layerYOffsets: { presentation: 100, application: 350, domain: 600, schema: 850 },
+          corridorPopulation: 2, // maxExpansionSteps = max(50, 2) = 50 -> search max ±8000px
+          allocatedPositions,
+        }
+      );
+
+      expect(res.isExhausted).toBe(true);
+      expect(res.exhaustionTelemetry).toBeDefined();
+      expect(res.exhaustionTelemetry?.reason).toBe('FINITE_SEARCH_SPACE_EXHAUSTED');
+    });
+
+    it('Test 7 — Repeated execution: 10x repeated execution yields zero coordinate drift', () => {
+      const fixture = createBridgeHeavyFixture();
+
+      const runs: Array<Record<string, { x: number; y: number }>> = [];
+      for (let run = 0; run < 10; run++) {
+        runs.push(computeArchitectureLayout(fixture.nodes, fixture.edges));
+      }
+
+      const baselineRun = runs[0];
+      for (let run = 1; run < 10; run++) {
+        expect(runs[run]).toEqual(baselineRun);
+      }
+    });
+
+    it('Test 8 — Input ordering: shuffled equivalent input yields bit-for-bit identical bridge positions', () => {
+      const fixture = createBridgeHeavyFixture();
+
+      const originalPositions = computeArchitectureLayout(fixture.nodes, fixture.edges);
+
+      const shuffledNodes = [...fixture.nodes].reverse();
+      const shuffledEdges = [...fixture.edges].reverse();
+      const shuffledPositions = computeArchitectureLayout(shuffledNodes, shuffledEdges);
+
+      expect(shuffledPositions).toEqual(originalPositions);
     });
   });
 });

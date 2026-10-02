@@ -32,6 +32,26 @@ export interface NodeCentralityAnalysis {
 }
 
 /**
+ * Structured telemetry captured when finite corridor placement search is exhausted.
+ */
+export interface BridgeExhaustionTelemetry {
+  bridgeId: string;
+  corridorKey: string;
+  corridorPopulation: number;
+  allocationOrder: number;
+  initialMinX: number;
+  initialMaxX: number;
+  finalMinX: number;
+  finalMaxX: number;
+  baseY: number;
+  candidateCount: number;
+  collisionChecks: number;
+  expansionSteps: number;
+  primaryNodeCount: number;
+  reason: string;
+}
+
+/**
  * Candidate bridge placement details exposed as a contract for layout integration.
  */
 export interface BridgePlacementInfo {
@@ -44,6 +64,8 @@ export interface BridgePlacementInfo {
   candidatePosition: { x: number; y: number };
   hasIntermediateTrap: boolean;
   trapDomainId?: string;
+  isExhausted?: boolean;
+  exhaustionTelemetry?: BridgeExhaustionTelemetry;
 }
 
 /**
@@ -80,6 +102,8 @@ export interface CentralityOptions {
   allocatedPositions?: Record<string, { x: number; y: number }>;
   /** Optional transient LayoutGraphIndex for fast infrastructure lookups */
   index?: LayoutGraphIndex;
+  /** Optional bridge count in the current corridor for max expansion bound */
+  corridorPopulation?: number;
 }
 
 /**
@@ -309,7 +333,8 @@ export function computeGraphCentralityAnalysis(
 }
 
 /**
- * Calculates a relationship-aware candidate placement position for a cross-domain bridge node.
+ * Calculates a relationship-aware candidate placement position for a cross-domain bridge node
+ * using SB-1C Corridor-Aware 3-Lane 2D Slot Search & Finite Symmetric Dynamic Expansion.
  */
 export function calculateBridgeCandidatePosition(
   nodeId: string,
@@ -326,8 +351,8 @@ export function calculateBridgeCandidatePosition(
   const horizontalGap = options.horizontalGap ?? 40;
   const verticalGap = options.verticalGap ?? 40;
 
-  const minDx = nodeWidth + horizontalGap;
-  const minDy = nodeHeight + verticalGap;
+  const minDx = nodeWidth + horizontalGap; // 160px
+  const minDy = nodeHeight + verticalGap;  // 100px
 
   const layerYOffsets = options.layerYOffsets ?? {
     presentation: 100,
@@ -372,17 +397,14 @@ export function calculateBridgeCandidatePosition(
     }
   }
 
-  let candidateX = 0;
-  let candidateY = baseY;
-
+  let semanticCandidateX = 0;
   if (neighborCount > 0) {
-    candidateX = neighborSumX / neighborCount;
-    candidateY = neighborSumY / neighborCount;
+    semanticCandidateX = neighborSumX / neighborCount;
   } else if (domainCount > 0) {
-    candidateX = sumX / domainCount;
-    candidateY = baseY;
+    semanticCandidateX = sumX / domainCount;
   }
 
+  // Intermediate domain trap detection
   let hasIntermediateTrap = false;
   let trapDomainId: string | undefined = undefined;
 
@@ -396,75 +418,166 @@ export function calculateBridgeCandidatePosition(
     if (!bounds) continue;
 
     const margin = nodeWidth * 0.5;
-    if (candidateX >= bounds.minX - margin && candidateX <= bounds.maxX + margin) {
+    if (semanticCandidateX >= bounds.minX - margin && semanticCandidateX <= bounds.maxX + margin) {
       hasIntermediateTrap = true;
       trapDomainId = domainId;
       break;
     }
   }
 
-  if (hasIntermediateTrap || sortedConnectedDomains.length >= 2) {
-    const layerOrder: ArchitectureLayer[] = ['presentation', 'application', 'domain', 'schema'];
-    const layerIdx = layerOrder.indexOf(layer);
-    let corridorGap = layerSpacing;
-
-    if (layerIdx > 0) {
-      const prevLayer = layerOrder[layerIdx - 1];
-      const prevY = layerYOffsets[prevLayer];
-      if (prevY !== undefined && prevY < baseY) {
-        corridorGap = baseY - prevY;
-      }
-    } else if (layerIdx < layerOrder.length - 1) {
-      const nextLayer = layerOrder[layerIdx + 1];
-      const nextY = layerYOffsets[nextLayer];
-      if (nextY !== undefined && nextY > baseY) {
-        corridorGap = nextY - baseY;
-      }
+  // Determine initial connected domain span
+  let minConnectedX = Infinity;
+  let maxConnectedX = -Infinity;
+  for (const domain of sortedConnectedDomains) {
+    const bounds = domainBounds[domain];
+    if (bounds) {
+      if (bounds.minX < minConnectedX) minConnectedX = bounds.minX;
+      if (bounds.maxX > maxConnectedX) maxConnectedX = bounds.maxX;
+    } else if (domainXCenters[domain] !== undefined) {
+      const xc = domainXCenters[domain];
+      if (xc < minConnectedX) minConnectedX = xc;
+      if (xc > maxConnectedX) maxConnectedX = xc;
     }
-
-    const minClearance = nodeHeight * 0.5 + verticalGap * 0.5;
-    const geometryDisplacement = Math.max(minClearance, corridorGap * 0.5);
-
-    candidateY = baseY - geometryDisplacement;
   }
 
-  const existingPositions: Record<string, { x: number; y: number }> = {
+  if (!Number.isFinite(minConnectedX)) {
+    minConnectedX = semanticCandidateX;
+    maxConnectedX = semanticCandidateX;
+  }
+
+  const initialMinX = minConnectedX - minDx;
+  const initialMaxX = maxConnectedX + minDx;
+
+  const X0 = Math.max(initialMinX, Math.min(initialMaxX, semanticCandidateX));
+
+  // Active occupancy model: primary positions + neighbor positions + active bridge allocations
+  const activeOccupancy: Record<string, { x: number; y: number }> = {
     ...neighborPositions,
     ...Object.fromEntries(activeBridgeAllocations.entries()),
     ...(options.allocatedPositions || {}),
   };
 
-  let finalX = candidateX;
-  let finalY = candidateY;
-  let shiftIndex = 0;
+  // Strictly three legal Y lanes: Y0, Y0 - 100, Y0 + 100 (if trapped/multi-domain, prefer off-center Y0-100 first)
+  const legalYLanes = (hasIntermediateTrap || sortedConnectedDomains.length >= 2)
+    ? [baseY - minDy, baseY + minDy, baseY]
+    : [baseY, baseY - minDy, baseY + minDy];
 
-  while (true) {
-    let collides = false;
-    for (const [otherId, otherPos] of Object.entries(existingPositions)) {
-      if (otherId === nodeId) continue;
-      if (
-        Math.abs(otherPos.x - finalX) < minDx - 1e-3 &&
-        Math.abs(otherPos.y - finalY) < minDy - 1e-3
-      ) {
-        collides = true;
+  // Dynamic expansion bound: max(50, N_corridor) * 160px
+  const corridorPopulation = options.corridorPopulation ?? 50;
+  const maxExpansionSteps = Math.max(50, corridorPopulation);
+
+  let acceptedPos: { x: number; y: number } | null = null;
+  let candidateCount = 0;
+  let collisionChecks = 0;
+  let expansionSteps = 0;
+  const evaluatedXSet = new Set<number>();
+
+  for (let k = 0; k <= maxExpansionSteps; k++) {
+    expansionSteps = k;
+    const currentMinX = initialMinX - k * minDx;
+    const currentMaxX = initialMaxX + k * minDx;
+
+    // Candidate X coordinates step outward along X
+    const xSteps: number[] = [];
+    let stepIndex = 0;
+
+    while (true) {
+      let addedAny = false;
+      if (stepIndex === 0) {
+        if (X0 >= currentMinX - 1e-2 && X0 <= currentMaxX + 1e-2) {
+          xSteps.push(X0);
+          addedAny = true;
+        }
+      } else {
+        const rightX = X0 + stepIndex * minDx;
+        const leftX = X0 - stepIndex * minDx;
+
+        if (rightX <= currentMaxX + 1e-2 && rightX >= currentMinX - 1e-2) {
+          xSteps.push(rightX);
+          addedAny = true;
+        }
+        if (leftX >= currentMinX - 1e-2 && leftX <= currentMaxX + 1e-2) {
+          xSteps.push(leftX);
+          addedAny = true;
+        }
+      }
+
+      if (!addedAny && (X0 + stepIndex * minDx > currentMaxX + 1e-2) && (X0 - stepIndex * minDx < currentMinX - 1e-2)) {
         break;
       }
+      stepIndex++;
     }
 
-    if (!collides) break;
+    for (const testX of xSteps) {
+      const xKey = Math.round(testX * 100) / 100;
+      if (evaluatedXSet.has(xKey)) continue;
+      evaluatedXSet.add(xKey);
 
-    shiftIndex++;
-    const dir = shiftIndex % 2 === 1 ? -1 : 1;
-    const step = Math.ceil(shiftIndex / 2);
-    finalX = candidateX + dir * step * minDx;
+      for (const testY of legalYLanes) {
+        candidateCount++;
+        let collides = false;
+
+        for (const [otherId, otherPos] of Object.entries(activeOccupancy)) {
+          if (otherId === nodeId) continue;
+          collisionChecks++;
+          if (
+            Math.abs(otherPos.x - testX) < minDx - 1e-3 &&
+            Math.abs(otherPos.y - testY) < minDy - 1e-3
+          ) {
+            collides = true;
+            break;
+          }
+        }
+
+        if (!collides) {
+          acceptedPos = {
+            x: Math.round(testX * 100) / 100,
+            y: Math.round(testY * 100) / 100,
+          };
+          break;
+        }
+      }
+
+      if (acceptedPos) break;
+    }
+
+    if (acceptedPos) break;
   }
 
-  const finalPos = {
-    x: Math.round(finalX * 100) / 100,
-    y: Math.round(finalY * 100) / 100,
-  };
+  let isExhausted = false;
+  let exhaustionTelemetry: BridgeExhaustionTelemetry | undefined = undefined;
 
-  activeBridgeAllocations.set(nodeId, finalPos);
+  if (acceptedPos) {
+    activeBridgeAllocations.set(nodeId, acceptedPos);
+  } else {
+    isExhausted = true;
+    const finalMinX = initialMinX - maxExpansionSteps * minDx;
+    const finalMaxX = initialMaxX + maxExpansionSteps * minDx;
+    const primaryNodeCount = Object.keys(options.allocatedPositions || {}).length;
+    const corridorKey = `${layer}:${sortedConnectedDomains.join(',')}`;
+
+    exhaustionTelemetry = {
+      bridgeId: nodeId,
+      corridorKey,
+      corridorPopulation,
+      allocationOrder: activeBridgeAllocations.size + 1,
+      initialMinX: Math.round(initialMinX * 100) / 100,
+      initialMaxX: Math.round(initialMaxX * 100) / 100,
+      finalMinX: Math.round(finalMinX * 100) / 100,
+      finalMaxX: Math.round(finalMaxX * 100) / 100,
+      baseY: Math.round(baseY * 100) / 100,
+      candidateCount,
+      collisionChecks,
+      expansionSteps,
+      primaryNodeCount,
+      reason: 'FINITE_SEARCH_SPACE_EXHAUSTED',
+    };
+
+    acceptedPos = {
+      x: Math.round(X0 * 100) / 100,
+      y: Math.round(baseY * 100) / 100,
+    };
+  }
 
   return {
     nodeId,
@@ -473,9 +586,11 @@ export function calculateBridgeCandidatePosition(
     connectedDomainCenters,
     connectedNodePositions,
     connectedLayers: Array.from(connectedLayersSet),
-    candidatePosition: finalPos,
+    candidatePosition: acceptedPos,
     hasIntermediateTrap,
     trapDomainId,
+    isExhausted,
+    exhaustionTelemetry,
   };
 }
 
