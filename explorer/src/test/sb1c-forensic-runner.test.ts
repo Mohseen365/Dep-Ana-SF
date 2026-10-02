@@ -32,7 +32,9 @@ const DATASETS: Dataset[] = [
 ];
 
 function loadDataset(dataset: Dataset): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
-  const fullPath = path.resolve(process.cwd(), dataset.file);
+  const p1 = path.resolve(process.cwd(), dataset.file);
+  const p2 = path.resolve(__dirname, '../../', dataset.file);
+  const fullPath = fs.existsSync(p1) ? p1 : p2;
   const raw = fs.readFileSync(fullPath, 'utf8');
   const parsed = JSON.parse(raw);
   return {

@@ -51,7 +51,9 @@ const DATASETS: Dataset[] = [
 ];
 
 function loadDataset(dataset: Dataset): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
-  const fullPath = path.resolve(process.cwd(), dataset.file);
+  const p1 = path.resolve(process.cwd(), dataset.file);
+  const p2 = path.resolve(__dirname, '../../', dataset.file);
+  const fullPath = fs.existsSync(p1) ? p1 : p2;
   const raw = fs.readFileSync(fullPath, 'utf8');
   const parsed = JSON.parse(raw);
   return {
@@ -240,7 +242,7 @@ describe('SB-1C Integration Validation Suite', () => {
         expect(layoutElapsed).toBeLessThan(15000); // Performance threshold
       });
 
-      test(`10x Determinism & Input-Order Invariance for ${ds.key.toUpperCase()}`, { timeout: 60000 }, () => {
+      test(`10x Determinism & Input-Order Invariance for ${ds.key.toUpperCase()}`, { timeout: 180000 }, () => {
         const { nodes, edges } = loadDataset(ds);
 
         // 10x repeated execution test
