@@ -265,4 +265,50 @@ describe('SB-1C Integration Validation Suite', () => {
       });
     });
   }
+
+  describe('Control-Separation & Default Behavior Safety Gate (Phase 5L-U)', () => {
+    test('Default Invocation and Explicit H5A produce bit-for-bit identical coordinates', () => {
+      const { nodes, edges } = loadDataset(DATASETS[0]); // CST
+
+      const defaultResult = computeArchitectureLayoutWithMetadata(nodes, edges);
+      const explicitH5A = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: true });
+      const explicitOmitted = computeArchitectureLayoutWithMetadata(nodes, edges, {});
+
+      expect(defaultResult.positions).toEqual(explicitH5A.positions);
+      expect(defaultResult.positions).toEqual(explicitOmitted.positions);
+    });
+
+    test('CST Specimen Gate: DateUtils / StandardAccessPolicy collision check behavior', () => {
+      const { nodes, edges } = loadDataset(DATASETS[0]); // CST
+
+      const sb1cPositions = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: false }).positions;
+      const h5aPositions = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: true }).positions;
+
+      // Both must exist
+      expect(sb1cPositions['ApexClass:StandardAccessPolicy']).toBeDefined();
+      expect(h5aPositions['ApexClass:StandardAccessPolicy']).toBeDefined();
+
+      // StandardAccessPolicy candidate accepted at (4538.80, 260) under SB1C, but collides with DateUtils Stage 7 (4579.20, 260) under H5A and gets rejected to a different position
+      expect(sb1cPositions['ApexClass:StandardAccessPolicy'].x).not.toEqual(h5aPositions['ApexClass:StandardAccessPolicy'].x);
+    });
+
+    test('SB1C vs H5A runtime option control verification', () => {
+      const { nodes, edges } = loadDataset(DATASETS[2]); // PBIM
+
+      const sb1cResult = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: false });
+      const h5aResult = computeArchitectureLayoutWithMetadata(nodes, edges, { enableImmutablePrimaryPositions: true });
+
+      let diffCount = 0;
+      for (const nodeId of Object.keys(h5aResult.positions)) {
+        const p1 = sb1cResult.positions[nodeId];
+        const p2 = h5aResult.positions[nodeId];
+        if (p1 && p2 && (Math.abs(p1.x - p2.x) > 0.01 || Math.abs(p1.y - p2.y) > 0.01)) {
+          diffCount++;
+        }
+      }
+
+      // On PBIM, at least 66 bridge coordinates differ between SB1C and H5A
+      expect(diffCount).toBeGreaterThanOrEqual(66);
+    });
+  });
 });
