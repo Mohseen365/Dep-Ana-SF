@@ -27,20 +27,20 @@ This deliverable establishes the final read-only forensic audit report for Phase
      - Edge #22: `External:Object:Budget__Share` (safeNodes idx 227) -> `External:Org` (safeNodes idx 249) — reported in Phase 5H Table A as `52 -> 48`.
    - **Forensic Root Cause:** These 4 numerical violations were **report reconstruction errors** in Phase 5H Table A caused by static transcription errors from a secondary filtered bridge subset, whereas the actual runtime execution order on `safeNodes` strictly satisfies parent-before-child ordering for all 55 edges.
 
-2. **Cycle Detection & Topological Order:**
+2. **Cycle Detection & Topological Order Uniqueness:**
    - Directed graph cycle analysis on the reconstructed 55-edge PBIM graph $G = (V, E)$ ($|V| = 60, |E| = 55$) proves that $G$ is **100% directed acyclic** (`isAcyclic = true`, 0 cycles).
-   - Topological sorting yields a valid sequence perfectly aligned with runtime layer execution order.
+   - **Topological Order Uniqueness Test:** Topological ordering on $G$ is **non-unique** (e.g., the 23-node `ChartDataDTO` component alone possesses **9,792 valid topological orderings**). Therefore, `safeNodes` processing order is **a valid topological ordering** among many, proving $\text{index}(\text{parent}) < \text{index}(\text{child})$ without falsely asserting unique alignment.
 
-3. **Causal-Depth Recomputation & Reconciliation:**
+3. **Causal-Depth Recomputation & Phase 5F Methodology Reconciliation:**
    - Recomputing causal depth from first principles on the 55-edge PBIM graph establishes:
      - **Maximum Edge Depth:** **18 edges** ($18 \text{ steps}$)
      - **Maximum Node Depth:** **19 nodes**
      - **Deepest Node:** `Object:Maintenance_Approval__c`
      - **Longest Path:** `External:ChartDataDTO` -> `External:ChartDTO` -> `External:ComboboxOption` -> `External:InspectionResponseWrapper` -> `External:InspectionSubmissionWrapper` -> `External:Object:Budget__Share` -> `External:Org` -> `External:OrgPartition` -> `External:Phase` -> `External:QueryException` -> `External:QueueableContext` -> `External:Remarks__c` -> `External:Request` -> `External:SaveResult` -> `External:Skill__c` -> `External:SkillVerificationResult` -> `External:UserAuthorizationContext` -> `External:ZoneAccessContext` -> `Object:Maintenance_Approval__c`.
-   - **Historical Discrepancy Resolution:** Phase 5F's claim of "maximum causal depth = 7 steps" was a **measurement boundary error** that evaluated local neighborhood depths bounded by component clusters, whereas Phase 5H and Phase 5I evaluate the full multi-hop cascade path across the entire dataset.
+   - **Phase 5F Methodology Discrepancy Resolution:** In `PHASE_5F_CAUSAL_GRAPH_INTEGRITY_RECONCILIATION.md` Section 12, Phase 5F reported a 7-step path (`External:ChartDataDTO` -> ... -> `External:OptionWrapper`). Phase 5F evaluated only the DTO-linear branch terminating at `OptionWrapper` (depth 7 edges / 8 nodes) and omitted the branching dependency path through `InspectionSubmissionWrapper` -> `External:Object:Budget__Share` -> ... -> `Object:Maintenance_Approval__c` (depth 18 edges / 19 nodes). All 18 edges existed in Phase 5F's data, but Phase 5F's traversal terminated at the `OptionWrapper` branch.
 
 4. **Completeness & Final Closure Verdict:**
-   - All 66 moved PBIM bridges ($16 \text{ Roots} + 1 \text{ Hybrid} + 49 \text{ Dynamic}$) are 100% accounted for in the canonical depth table (Table D).
+   - All 66 moved PBIM bridges ($16 \text{ Roots} + 1 \text{ Hybrid} + 49 \text{ Dynamic}$) are 100% accounted for in the canonical depth table (Table D) as 60 nodes participating in the 55-edge graph plus 6 standalone moved bridges.
    - All 17 final integrity gates in Table I pass with 100% GREEN status.
    - Final verdict: **`CAUSAL_GRAPH_CLOSED`**.
 
@@ -257,7 +257,7 @@ For Edge #46 (`External:SelectorMock` -> `External:Status__c`):
 
 ---
 
-## 10. Cycle Detection & Topological Ordering
+## 10. Cycle Detection & Topological Ordering Uniqueness
 
 ### Table F — Cycle and Topological Results
 
@@ -265,7 +265,8 @@ For Edge #46 (`External:SelectorMock` -> `External:Status__c`):
 | :--- | :--- | :--- |
 | **Directed Cycles Found** | **0** | Kahn's Topological Sort processed all 60 nodes without queue exhaustion. |
 | **Graph Acyclicity** | **PASS** | $G$ is a strict Directed Acyclic Graph (DAG). |
-| **Topological Order Compatibility** | **100% CORRELATED** | Topological sequence aligns with layer-based `safeNodes` execution order. |
+| **Topological Order Compatibility** | **VALID TOPOLOGICAL ORDER** | Evaluated parent vs child position on `safeNodes` array proves $\text{parent.safeNodesIndex} < \text{child.safeNodesIndex}$ across all 55 edges. |
+| **Topological Order Uniqueness** | **NON-UNIQUE (9,792+ Orderings)** | Direct counting proves the 23-node `ChartDataDTO` component alone possesses **9,792 valid topological orderings**. `safeNodes` order is **one valid topological ordering** among many, not a unique alignment. |
 
 ---
 
@@ -369,15 +370,15 @@ For Edge #46 (`External:SelectorMock` -> `External:Status__c`):
 
 ---
 
-## 13. Historical Depth Reconciliation
+## 13. Historical Depth Reconciliation & Phase 5F Methodology
 
 ### Table G — Historical Depth Discrepancy Reconciliation
 
 | Source Report | Reported Depth | Measurement Boundary / Methodology | Forensic Verdict | Reconciled Explanation |
 | :--- | ---: | :--- | :--- | :--- |
-| **Phase 5F** | 7 edges / 8 nodes | Bounded local component subgraphs | `LOCAL_SUBGRAPH_METRIC` | Measured local neighborhood clusters (e.g. AssetSelectorMock -> ZoneKpis depth = 7). Did not evaluate full global multi-hop cascade path. |
+| **Phase 5F** | 7 edges / 8 nodes | Bounded DTO branch traversal (`OptionWrapper`) | `BRANCH_BOUNDED_METRIC` | In `PHASE_5F_CAUSAL_GRAPH_INTEGRITY_RECONCILIATION.md` Section 12, Phase 5F evaluated only the DTO-linear branch terminating at `OptionWrapper` (depth 7 edges / 8 nodes) and omitted the branching path through `InspectionSubmissionWrapper` -> `External:Object:Budget__Share` -> ... -> `Object:Maintenance_Approval__c` (depth 18 edges / 19 nodes). |
 | **Phase 5H** | ~18 edges / 19 nodes | Full global ancestry cascade chain | `GLOBAL_CASCADE_METRIC` | Evaluated full multi-hop path from `ChartDataDTO` to `Maintenance_Approval__c`. |
-| **Phase 5I** | **18 edges / 19 nodes** | Independent first-principles graph recomputation | `AUTHORITATIVE_GLOBAL_DEPTH` | Verified exact global DAG depth is 18 edges / 19 nodes, fully reconciling Phase 5F as a local subgraph measurement artifact. |
+| **Phase 5I** | **18 edges / 19 nodes** | Independent first-principles graph recomputation | `AUTHORITATIVE_GLOBAL_DEPTH` | Verified exact global DAG depth is 18 edges / 19 nodes, fully reconciling Phase 5F as a branch-bounded traversal limitation. |
 
 ---
 
@@ -456,9 +457,9 @@ Zero unresolved contradictions remain across processing order, node depth, ident
 | **processing-order contradiction resolved** | `PASS` | Proven as Phase 5H report reconstruction/transcription error; runtime array strictly preserves order ($55/55$ valid). |
 | **causal graph direction validated** | `PASS` | All 55 directed edges follow valid causal dependency flow. |
 | **cycle detection** | `PASS` | $G$ is 100% directed acyclic (0 cycles). |
-| **topological consistency** | `PASS` | Topological sort completed successfully and correlates with layer order. |
+| **topological consistency** | `PASS` | `safeNodes` order is proven as a valid topological ordering among 9,792+ valid orderings. |
 | **maximum depth reconciled** | `PASS` | Recomputed as 18 edges / 19 nodes. |
-| **historical depth discrepancy explained** | `PASS` | Phase 5F local subgraph (7 edges) vs Phase 5I global path (18 edges) reconciled. |
+| **historical depth discrepancy explained** | `PASS` | Phase 5F branch-bounded traversal (`OptionWrapper`, depth 7) vs Phase 5I global path (`Maintenance_Approval__c`, depth 18) reconciled. |
 | **canonical identifiers** | `PASS` | 0 shorthand or invalid IDs present. |
 | **BQC mechanism** | `PASS` | BQC $dx = 159.99818\text{px}$ floating point artifact confirmed. |
 | **evidence-calibrated causal interpretation** | `PASS` | Language calibrated to `STRONGLY_SUPPORTED_CAUSAL_CONTRIBUTION`. |
