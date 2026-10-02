@@ -41,6 +41,8 @@ export interface ArchitectureLayoutOptions {
   enableFeatureLayout?: boolean;
   /** Maximum iterations for layer ordering passes */
   maxIterations?: number;
+  /** Enables Stage 7 immutable primary occupancy checking in Stage 8 bridge placement (default: true for H5A, false for SB1C) */
+  enableImmutablePrimaryPositions?: boolean;
 }
 
 export interface ArchitectureLayoutResultWithMetadata {
@@ -93,6 +95,7 @@ export function computeArchitectureLayoutWithMetadata(
     existingPositions = {},
     architectureMode,
     enableFeatureLayout = false,
+    enableImmutablePrimaryPositions = true,
   } = options;
 
   // Defensive deep clone of inputs to guarantee immutability
@@ -382,7 +385,7 @@ export function computeArchitectureLayoutWithMetadata(
           layerYOffsets: globalDomainResult.layerYMap,
           index,
           allocatedPositions: basePositions,
-          immutablePrimaryPositions: immutableStage7PrimaryPositions,
+          immutablePrimaryPositions: enableImmutablePrimaryPositions ? immutableStage7PrimaryPositions : undefined,
         }
       );
 
