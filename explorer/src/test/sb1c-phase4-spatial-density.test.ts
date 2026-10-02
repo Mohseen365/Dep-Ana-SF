@@ -28,7 +28,9 @@ const DATASETS: Dataset[] = [
 ];
 
 function loadDataset(dataset: Dataset): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
-  const fullPath = path.resolve(process.cwd(), dataset.file);
+  const p1 = path.resolve(process.cwd(), dataset.file);
+  const p2 = path.resolve(__dirname, '../../', dataset.file);
+  const fullPath = fs.existsSync(p1) ? p1 : p2;
   const raw = fs.readFileSync(fullPath, 'utf8');
   const parsed = JSON.parse(raw);
   return {
@@ -709,7 +711,9 @@ describe('Phase 4 — SB-1C Spatial Density Truth Audit Measurement Runner', () 
   }
 
   test('Save Summaries to JSON File', () => {
-    const outPath = path.resolve(process.cwd(), '../audit-evidence/sb1c-phase4-measurements.json');
+    const outPath1 = path.resolve(process.cwd(), '../audit-evidence/sb1c-phase4-measurements.json');
+    const outPath2 = path.resolve(__dirname, '../../../audit-evidence/sb1c-phase4-measurements.json');
+    const outPath = process.cwd().endsWith('explorer') ? outPath1 : outPath2;
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     fs.writeFileSync(outPath, JSON.stringify(allSummaries, null, 2), 'utf8');
     console.log(`Saved measurements to ${outPath}`);
