@@ -340,6 +340,10 @@ export function computeArchitectureLayoutWithMetadata(
     ...localResult.primaryNodePositions,
   };
 
+  const immutableStage7PrimaryPositions: Record<string, { x: number; y: number }> = Object.freeze({
+    ...localResult.primaryNodePositions,
+  });
+
   // Step 8: Hub & Bridge Spatial Refinement (Wave 3B)
   const domainXCenters: Record<string, number> = {};
   const domainBounds: Record<string, { minX: number; maxX: number }> = {};
@@ -371,7 +375,15 @@ export function computeArchitectureLayoutWithMetadata(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index, allocatedPositions: basePositions }
+        {
+          layerSpacing,
+          nodeWidth,
+          nodeHeight,
+          layerYOffsets: globalDomainResult.layerYMap,
+          index,
+          allocatedPositions: basePositions,
+          immutablePrimaryPositions: immutableStage7PrimaryPositions,
+        }
       );
 
       basePositions[node.id] = bridgeInfo.candidatePosition;
