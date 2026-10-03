@@ -239,7 +239,8 @@ function resolveInputFile(inputPath, options = {}) {
   if (projectId !== "default") {
     const projReport = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "dependency-report.json");
     const projSnapshot = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "analysis-snapshot.json");
-    const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : null;
+    const projExplorer = path.resolve(ROOT_DIR, "analyze", "projects", projectId, "explorer-data.json");
+    const foundProj = fs.existsSync(projReport) ? projReport : fs.existsSync(projSnapshot) ? projSnapshot : fs.existsSync(projExplorer) ? projExplorer : null;
     if (foundProj && matchesSource(foundProj)) return foundProj;
     if (foundProj && explicitSource) {
       throw new Error(`Analyzer output file in directory 'analyze/projects/${projectId}' does not match explicit source: ${options.source}`);

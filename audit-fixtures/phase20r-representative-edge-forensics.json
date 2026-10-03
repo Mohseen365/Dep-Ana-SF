@@ -1,0 +1,2146 @@
+{
+  "cloud-spend-tracker": {
+    "maxEdge": {
+      "source": "ApexClass:SelectorsTest",
+      "target": "Object:Forecast__c",
+      "trace": [
+        {
+          "stage": "Stage5",
+          "sourcePos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "targetPos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage6",
+          "sourcePos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "targetPos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage7",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 759.7,
+            "y": 9660
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage8",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 759.7,
+            "y": 9660
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage9",
+          "sourcePos": {
+            "x": 959.9,
+            "y": -560
+          },
+          "targetPos": {
+            "x": 759.7,
+            "y": 9660
+          },
+          "distance": 10221.96
+        },
+        {
+          "stage": "Stage10",
+          "sourcePos": {
+            "x": 1019.9,
+            "y": 150
+          },
+          "targetPos": {
+            "x": 819.7,
+            "y": 10370
+          },
+          "distance": 10221.96
+        },
+        {
+          "stage": "Stage11",
+          "sourcePos": {
+            "x": 1019.9,
+            "y": 150
+          },
+          "targetPos": {
+            "x": 819.7,
+            "y": 10370
+          },
+          "distance": 10221.96
+        },
+        {
+          "stage": "Stage12",
+          "sourcePos": {
+            "x": 1019.9,
+            "y": 150
+          },
+          "targetPos": {
+            "x": 819.7,
+            "y": 10370
+          },
+          "distance": 10221.96
+        }
+      ]
+    },
+    "highEdges": [
+      {
+        "source": "ApexClass:SelectorsTest",
+        "target": "Object:Forecast__c",
+        "finalDist": 10222,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 959.9,
+              "y": -560
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:SelectorsTest",
+        "target": "Object:Forecast__c",
+        "finalDist": 10222,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 959.9,
+              "y": -560
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:SelectorsTest",
+        "target": "Object:Forecast__c",
+        "finalDist": 10222,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 959.9,
+              "y": -560
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9660
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1019.9,
+              "y": 150
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10370
+            },
+            "distance": 10221.96
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:UserServiceTest",
+        "target": "External:Account",
+        "finalDist": 10041,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 919.7,
+              "y": 9360
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 919.7,
+              "y": 9360
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1039.9,
+              "y": -680
+            },
+            "targetPos": {
+              "x": 919.7,
+              "y": 9360
+            },
+            "distance": 10040.72
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1099.9,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 979.7,
+              "y": 10070
+            },
+            "distance": 10040.72
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1099.9,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 979.7,
+              "y": 10070
+            },
+            "distance": 10040.72
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1099.9,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 979.7,
+              "y": 10070
+            },
+            "distance": 10040.72
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:UserServiceTest",
+        "target": "External:Account",
+        "finalDist": 10041,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 919.7,
+              "y": 9360
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 919.7,
+              "y": 9360
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1039.9,
+              "y": -680
+            },
+            "targetPos": {
+              "x": 919.7,
+              "y": 9360
+            },
+            "distance": 10040.72
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1099.9,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 979.7,
+              "y": 10070
+            },
+            "distance": 10040.72
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1099.9,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 979.7,
+              "y": 10070
+            },
+            "distance": 10040.72
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1099.9,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 979.7,
+              "y": 10070
+            },
+            "distance": 10040.72
+          }
+        ]
+      }
+    ],
+    "medianEdges": [
+      {
+        "source": "ApexClass:OrganizationHierarchyService",
+        "target": "Object:Organization_Hierarchy__c",
+        "finalDist": 1868,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": {
+              "x": 1079.7,
+              "y": 7220
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 1867.62
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": {
+              "x": 1079.7,
+              "y": 7220
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 1867.62
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1079.7,
+              "y": 7220
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 1867.62
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1139.7,
+              "y": 7930
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1867.62
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1139.7,
+              "y": 7930
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1867.62
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1139.7,
+              "y": 7930
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1867.62
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:ForecastSelector",
+        "target": "Field:Forecast__c.Cloud_Account__c",
+        "finalDist": 1863,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": {
+              "x": 1159.7,
+              "y": 8040
+            },
+            "targetPos": null,
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": {
+              "x": 1159.7,
+              "y": 8040
+            },
+            "targetPos": null,
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1159.7,
+              "y": 8040
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9860
+            },
+            "distance": 1863.44
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1219.7,
+              "y": 8750
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10570
+            },
+            "distance": 1863.44
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1219.7,
+              "y": 8750
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10570
+            },
+            "distance": 1863.44
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1219.7,
+              "y": 8750
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 10570
+            },
+            "distance": 1863.44
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:UserOrganizationRoleTriggerTest",
+        "target": "Object:Organization_Hierarchy__c",
+        "finalDist": 1854,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1399.7,
+              "y": 7320
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:UserOrganizationRoleTriggerTest",
+        "target": "Object:Organization_Hierarchy__c",
+        "finalDist": 1854,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1399.7,
+              "y": 7320
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:UserOrganizationRoleTriggerTest",
+        "target": "Object:Organization_Hierarchy__c",
+        "finalDist": 1854,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "targetPos": {
+              "x": 999.7,
+              "y": 8090
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1399.7,
+              "y": 7320
+            },
+            "targetPos": {
+              "x": 759.7,
+              "y": 9060
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 1459.7,
+              "y": 8030
+            },
+            "targetPos": {
+              "x": 819.7,
+              "y": 9770
+            },
+            "distance": 1853.97
+          }
+        ]
+      }
+    ]
+  },
+  "pbim": {
+    "maxEdge": {
+      "source": "ApexClass:TimelineControllerTest",
+      "target": "External:Profile",
+      "trace": [
+        {
+          "stage": "Stage5",
+          "sourcePos": {
+            "x": 920,
+            "y": 5370
+          },
+          "targetPos": {
+            "x": 420,
+            "y": 22290
+          },
+          "distance": 16927.39
+        },
+        {
+          "stage": "Stage6",
+          "sourcePos": {
+            "x": 920,
+            "y": 5370
+          },
+          "targetPos": {
+            "x": 420,
+            "y": 22290
+          },
+          "distance": 16927.39
+        },
+        {
+          "stage": "Stage7",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 180,
+            "y": 24160
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage8",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 180,
+            "y": 24160
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage9",
+          "sourcePos": {
+            "x": 1080,
+            "y": -140
+          },
+          "targetPos": {
+            "x": 180,
+            "y": 24160
+          },
+          "distance": 24316.66
+        },
+        {
+          "stage": "Stage10",
+          "sourcePos": {
+            "x": 3200,
+            "y": 30
+          },
+          "targetPos": {
+            "x": 2300,
+            "y": 24330
+          },
+          "distance": 24316.66
+        },
+        {
+          "stage": "Stage11",
+          "sourcePos": {
+            "x": 3200,
+            "y": 30
+          },
+          "targetPos": {
+            "x": 2300,
+            "y": 24330
+          },
+          "distance": 24316.66
+        },
+        {
+          "stage": "Stage12",
+          "sourcePos": {
+            "x": 3200,
+            "y": 30
+          },
+          "targetPos": {
+            "x": 2300,
+            "y": 24330
+          },
+          "distance": 24316.66
+        }
+      ]
+    },
+    "highEdges": [
+      {
+        "source": "ApexClass:TimelineControllerTest",
+        "target": "External:Profile",
+        "finalDist": 24317,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 180,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 180,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1080,
+              "y": -140
+            },
+            "targetPos": {
+              "x": 180,
+              "y": 24160
+            },
+            "distance": 24316.66
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24330
+            },
+            "distance": 24316.66
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24330
+            },
+            "distance": 24316.66
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24330
+            },
+            "distance": 24316.66
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:TimelineControllerTest",
+        "target": "External:UserRole",
+        "finalDist": 24311,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 340,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 340,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1080,
+              "y": -140
+            },
+            "targetPos": {
+              "x": 340,
+              "y": 24160
+            },
+            "distance": 24311.26
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2460,
+              "y": 24330
+            },
+            "distance": 24311.26
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2460,
+              "y": 24330
+            },
+            "distance": 24311.26
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2460,
+              "y": 24330
+            },
+            "distance": 24311.26
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:TimelineControllerTest",
+        "target": "External:User",
+        "finalDist": 24307,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1080,
+              "y": -140
+            },
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 24306.92
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 24306.92
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 24306.92
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 24306.92
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:TimelineControllerTest",
+        "target": "External:User",
+        "finalDist": 24307,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1080,
+              "y": -140
+            },
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 24306.92
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 24306.92
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 24306.92
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 24306.92
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:TimelineControllerTest",
+        "target": "External:Object:UserRole",
+        "finalDist": 24117,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 920,
+              "y": 5370
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 16927.39
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 180,
+              "y": 23960
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 180,
+              "y": 23960
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 1080,
+              "y": -140
+            },
+            "targetPos": {
+              "x": 180,
+              "y": 23960
+            },
+            "distance": 24116.8
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24130
+            },
+            "distance": 24116.8
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24130
+            },
+            "distance": 24116.8
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 3200,
+              "y": 30
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24130
+            },
+            "distance": 24116.8
+          }
+        ]
+      }
+    ],
+    "medianEdges": [
+      {
+        "source": "ApexClass:SLABatchTest",
+        "target": "External:Profile",
+        "finalDist": 2814,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 180,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 180,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 820,
+              "y": 21420
+            },
+            "targetPos": {
+              "x": 180,
+              "y": 24160
+            },
+            "distance": 2813.75
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24330
+            },
+            "distance": 2813.75
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24330
+            },
+            "distance": 2813.75
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2300,
+              "y": 24330
+            },
+            "distance": 2813.75
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:SLABatchTest",
+        "target": "External:User",
+        "finalDist": 2759,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 820,
+              "y": 21420
+            },
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 2758.62
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 2758.62
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 2758.62
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 2758.62
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:SLABatchTest",
+        "target": "External:User",
+        "finalDist": 2759,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 820,
+              "y": 21420
+            },
+            "targetPos": {
+              "x": 500,
+              "y": 24160
+            },
+            "distance": 2758.62
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 2758.62
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 2758.62
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 2940,
+              "y": 21590
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 24330
+            },
+            "distance": 2758.62
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:ContractorAssignmentServiceTest",
+        "target": "Field:Contractor_Assignment__c.Status__c",
+        "finalDist": 2745,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": null,
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": null,
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 700,
+              "y": 8900
+            },
+            "targetPos": {
+              "x": 540,
+              "y": 11640
+            },
+            "distance": 2744.67
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 2820,
+              "y": 9070
+            },
+            "targetPos": {
+              "x": 2660,
+              "y": 11810
+            },
+            "distance": 2744.67
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 2820,
+              "y": 9070
+            },
+            "targetPos": {
+              "x": 2660,
+              "y": 11810
+            },
+            "distance": 2744.67
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 2820,
+              "y": 9070
+            },
+            "targetPos": {
+              "x": 2660,
+              "y": 11810
+            },
+            "distance": 2744.67
+          }
+        ]
+      },
+      {
+        "source": "ApexClass:WeatherIntegrationServiceTest",
+        "target": "Object:City_Zone__c",
+        "finalDist": 2745,
+        "trace": [
+          {
+            "stage": "Stage5",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage6",
+            "sourcePos": {
+              "x": 420,
+              "y": 22290
+            },
+            "targetPos": {
+              "x": 420,
+              "y": 22290
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage7",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 23660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage8",
+            "sourcePos": null,
+            "targetPos": {
+              "x": 500,
+              "y": 23660
+            },
+            "distance": 0
+          },
+          {
+            "stage": "Stage9",
+            "sourcePos": {
+              "x": 660,
+              "y": 20920
+            },
+            "targetPos": {
+              "x": 500,
+              "y": 23660
+            },
+            "distance": 2744.67
+          },
+          {
+            "stage": "Stage10",
+            "sourcePos": {
+              "x": 2780,
+              "y": 21090
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 23830
+            },
+            "distance": 2744.67
+          },
+          {
+            "stage": "Stage11",
+            "sourcePos": {
+              "x": 2780,
+              "y": 21090
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 23830
+            },
+            "distance": 2744.67
+          },
+          {
+            "stage": "Stage12",
+            "sourcePos": {
+              "x": 2780,
+              "y": 21090
+            },
+            "targetPos": {
+              "x": 2620,
+              "y": 23830
+            },
+            "distance": 2744.67
+          }
+        ]
+      }
+    ]
+  }
+}
