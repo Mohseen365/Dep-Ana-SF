@@ -1,0 +1,212 @@
+{
+  "cloud-spend-tracker": {
+    "activationTable": {},
+    "viewports": {
+      "1024x768": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 365.6,
+          "y": -226
+        },
+        "nodeCount": 240,
+        "edgeCount": 1024,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 186,
+        "maxVisibleDist": 1022,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "1280x800": {
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 365.6,
+          "y": -226
+        },
+        "nodeCount": 240,
+        "edgeCount": 1024,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 186,
+        "maxVisibleDist": 1022,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "1440x900": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 445.6,
+          "y": -181
+        },
+        "nodeCount": 240,
+        "edgeCount": 1024,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 186,
+        "maxVisibleDist": 1022,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "1920x1080": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 665.6,
+          "y": -92.5
+        },
+        "nodeCount": 240,
+        "edgeCount": 1024,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 186,
+        "maxVisibleDist": 1022,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "2560x1440": {
+        "viewport": {
+          "width": 2560,
+          "height": 1440
+        },
+        "zoom": 0.107,
+        "pan": {
+          "x": 944.4,
+          "y": 49.8
+        },
+        "nodeCount": 240,
+        "edgeCount": 1024,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 199,
+        "maxVisibleDist": 1092,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      }
+    },
+    "exportSucceeded": true,
+    "runtimeFilesGenerated": true,
+    "sha256": "1597135320cbf0a13e6ee932e13b8dbdeb6771e0745f1ab1651fe08a17087907",
+    "fileNodeCount": 240,
+    "fileEdgeCount": 1024
+  },
+  "pbim": {
+    "activationTable": {},
+    "viewports": {
+      "1024x768": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 176.8,
+          "y": -949
+        },
+        "nodeCount": 528,
+        "edgeCount": 2063,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 276,
+        "maxVisibleDist": 2432,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "1280x800": {
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 176.8,
+          "y": -949
+        },
+        "nodeCount": 528,
+        "edgeCount": 2063,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 276,
+        "maxVisibleDist": 2432,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "1440x900": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 256.8,
+          "y": -904
+        },
+        "nodeCount": 528,
+        "edgeCount": 2063,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 276,
+        "maxVisibleDist": 2432,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "1920x1080": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 476.9,
+          "y": -815.5
+        },
+        "nodeCount": 528,
+        "edgeCount": 2063,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 276,
+        "maxVisibleDist": 2432,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      },
+      "2560x1440": {
+        "viewport": {
+          "width": 2560,
+          "height": 1440
+        },
+        "zoom": 0.1,
+        "pan": {
+          "x": 766.8,
+          "y": -635.5
+        },
+        "nodeCount": 528,
+        "edgeCount": 2063,
+        "adapterDrift": 0,
+        "domDrift": 0,
+        "medianVisibleDist": 276,
+        "maxVisibleDist": 2432,
+        "errorsCount": 0,
+        "status": "VERIFIED"
+      }
+    },
+    "exportSucceeded": true,
+    "runtimeFilesGenerated": true,
+    "sha256": "d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
+    "fileNodeCount": 528,
+    "fileEdgeCount": 2063
+  }
+}
