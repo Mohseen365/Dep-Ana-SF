@@ -1,5 +1,5 @@
 {
-  "cst": {
+  "cloud-spend-tracker": {
     "1024x768": {
       "viewport": {
         "width": 1024,
@@ -25,7 +25,35 @@
       "medianVisibleEdgeDist": 247,
       "maxVisibleEdgeDist": 402,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_cst_1024x768.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_cloud-spend-tracker_1024x768.png",
+      "status": "VERIFIED"
+    },
+    "1280x800": {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "zoom": 0.11563150511044928,
+      "pan": {
+        "x": 49.653105484668686,
+        "y": 225.49908985245838
+      },
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "containerBox": {
+        "x": 220,
+        "y": 122,
+        "width": 1060,
+        "height": 650
+      },
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "clippedNodesCount": 0,
+      "viewBoxScalingEffect": 0.11563150511044928,
+      "medianVisibleEdgeDist": 137,
+      "maxVisibleEdgeDist": 550,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_cloud-spend-tracker_1280x800.png",
       "status": "VERIFIED"
     },
     "1440x900": {
@@ -33,13 +61,13 @@
         "width": 1440,
         "height": 900
       },
-      "zoom": 1,
+      "zoom": 0.13008544324925544,
       "pan": {
-        "x": 0,
-        "y": 0
+        "x": 49.609743670252215,
+        "y": 256.5614760840157
       },
-      "nodeCount": 0,
-      "edgeCount": 0,
+      "nodeCount": 240,
+      "edgeCount": 1024,
       "containerBox": {
         "x": 260,
         "y": 135,
@@ -49,11 +77,11 @@
       "adapterRuntimeDrift": 0,
       "domRuntimeDrift": 0,
       "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 1,
-      "medianVisibleEdgeDist": 0,
-      "maxVisibleEdgeDist": 0,
+      "viewBoxScalingEffect": 0.13008544324925544,
+      "medianVisibleEdgeDist": 154,
+      "maxVisibleEdgeDist": 619,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_cst_1440x900.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_cloud-spend-tracker_1440x900.png",
       "status": "VERIFIED"
     },
     "1920x1080": {
@@ -81,7 +109,7 @@
       "medianVisibleEdgeDist": 213,
       "maxVisibleEdgeDist": 859,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_cst_1920x1080.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_cloud-spend-tracker_1920x1080.png",
       "status": "VERIFIED"
     },
     "2560x1440": {
@@ -89,13 +117,13 @@
         "width": 2560,
         "height": 1440
       },
-      "zoom": 0.25776189680870987,
+      "zoom": 3.5134328358208955,
       "pan": {
-        "x": 49.226714309573936,
-        "y": 416.6958877961051
+        "x": -78.9589552238806,
+        "y": -206.48059701492537
       },
-      "nodeCount": 240,
-      "edgeCount": 1024,
+      "nodeCount": 4,
+      "edgeCount": 3,
       "containerBox": {
         "x": 320,
         "y": 135,
@@ -105,125 +133,11 @@
       "adapterRuntimeDrift": 0,
       "domRuntimeDrift": 0,
       "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 0.25776189680870987,
-      "medianVisibleEdgeDist": 304,
-      "maxVisibleEdgeDist": 1226,
+      "viewBoxScalingEffect": 3.5134328358208955,
+      "medianVisibleEdgeDist": 562,
+      "maxVisibleEdgeDist": 913,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_cst_2560x1440.png",
-      "status": "VERIFIED"
-    }
-  },
-  "bqc": {
-    "1024x768": {
-      "viewport": {
-        "width": 1024,
-        "height": 768
-      },
-      "zoom": 0.11021526418786692,
-      "pan": {
-        "x": 54.84947162426613,
-        "y": 140.31553816046969
-      },
-      "nodeCount": 274,
-      "edgeCount": 603,
-      "containerBox": {
-        "x": 220,
-        "y": 122,
-        "width": 804,
-        "height": 618
-      },
-      "adapterRuntimeDrift": 0,
-      "domRuntimeDrift": 0,
-      "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 0.11021526418786692,
-      "medianVisibleEdgeDist": 106,
-      "maxVisibleEdgeDist": 495,
-      "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_bqc_1024x768.png",
-      "status": "VERIFIED"
-    },
-    "1440x900": {
-      "viewport": {
-        "width": 1440,
-        "height": 900
-      },
-      "zoom": 0.1690802348336595,
-      "pan": {
-        "x": 57.43953033268099,
-        "y": 109.72270058708415
-      },
-      "nodeCount": 274,
-      "edgeCount": 603,
-      "containerBox": {
-        "x": 260,
-        "y": 135,
-        "width": 1180,
-        "height": 737
-      },
-      "adapterRuntimeDrift": 0,
-      "domRuntimeDrift": 0,
-      "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 0.1690802348336595,
-      "medianVisibleEdgeDist": 163,
-      "maxVisibleEdgeDist": 759,
-      "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_bqc_1440x900.png",
-      "status": "VERIFIED"
-    },
-    "1920x1080": {
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "zoom": 0.23483365949119372,
-      "pan": {
-        "x": 60.33268101761257,
-        "y": 99.08708414872802
-      },
-      "nodeCount": 274,
-      "edgeCount": 603,
-      "containerBox": {
-        "x": 320,
-        "y": 135,
-        "width": 1600,
-        "height": 917
-      },
-      "adapterRuntimeDrift": 0,
-      "domRuntimeDrift": 0,
-      "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 0.23483365949119372,
-      "medianVisibleEdgeDist": 226,
-      "maxVisibleEdgeDist": 1054,
-      "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_bqc_1920x1080.png",
-      "status": "VERIFIED"
-    },
-    "2560x1440": {
-      "viewport": {
-        "width": 2560,
-        "height": 1440
-      },
-      "zoom": 0.3350293542074364,
-      "pan": {
-        "x": 64.7412915851271,
-        "y": 125.73757338551854
-      },
-      "nodeCount": 274,
-      "edgeCount": 603,
-      "containerBox": {
-        "x": 320,
-        "y": 135,
-        "width": 2240,
-        "height": 1277
-      },
-      "adapterRuntimeDrift": 0,
-      "domRuntimeDrift": 0,
-      "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 0.3350293542074364,
-      "medianVisibleEdgeDist": 323,
-      "maxVisibleEdgeDist": 1504,
-      "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_bqc_2560x1440.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_cloud-spend-tracker_2560x1440.png",
       "status": "VERIFIED"
     }
   },
@@ -233,13 +147,13 @@
         "width": 1024,
         "height": 768
       },
-      "zoom": 1.5462686567164179,
+      "zoom": 1,
       "pan": {
-        "x": -125.66417910447763,
-        "y": -62.87761194029849
+        "x": 0,
+        "y": 0
       },
-      "nodeCount": 4,
-      "edgeCount": 3,
+      "nodeCount": 0,
+      "edgeCount": 0,
       "containerBox": {
         "x": 220,
         "y": 122,
@@ -249,11 +163,39 @@
       "adapterRuntimeDrift": 0,
       "domRuntimeDrift": 0,
       "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 1.5462686567164179,
-      "medianVisibleEdgeDist": 247,
-      "maxVisibleEdgeDist": 402,
+      "viewBoxScalingEffect": 1,
+      "medianVisibleEdgeDist": 0,
+      "maxVisibleEdgeDist": 0,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_pbim_1024x768.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_pbim_1024x768.png",
+      "status": "VERIFIED"
+    },
+    "1280x800": {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "zoom": 1.6417910447761195,
+      "pan": {
+        "x": -30.2611940298508,
+        "y": -69.85074626865674
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "containerBox": {
+        "x": 220,
+        "y": 122,
+        "width": 1060,
+        "height": 650
+      },
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "clippedNodesCount": 0,
+      "viewBoxScalingEffect": 1.6417910447761195,
+      "medianVisibleEdgeDist": 263,
+      "maxVisibleEdgeDist": 427,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_pbim_1280x800.png",
       "status": "VERIFIED"
     },
     "1440x900": {
@@ -261,13 +203,13 @@
         "width": 1440,
         "height": 900
       },
-      "zoom": 1.9014925373134328,
+      "zoom": 1,
       "pan": {
-        "x": -58.884328358208904,
-        "y": -88.80895522388062
+        "x": 0,
+        "y": 0
       },
-      "nodeCount": 4,
-      "edgeCount": 3,
+      "nodeCount": 0,
+      "edgeCount": 0,
       "containerBox": {
         "x": 260,
         "y": 135,
@@ -277,11 +219,11 @@
       "adapterRuntimeDrift": 0,
       "domRuntimeDrift": 0,
       "clippedNodesCount": 0,
-      "viewBoxScalingEffect": 1.9014925373134328,
-      "medianVisibleEdgeDist": 304,
-      "maxVisibleEdgeDist": 494,
+      "viewBoxScalingEffect": 1,
+      "medianVisibleEdgeDist": 0,
+      "maxVisibleEdgeDist": 0,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_pbim_1440x900.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_pbim_1440x900.png",
       "status": "VERIFIED"
     },
     "1920x1080": {
@@ -309,7 +251,7 @@
       "medianVisibleEdgeDist": 390,
       "maxVisibleEdgeDist": 634,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_pbim_1920x1080.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_pbim_1920x1080.png",
       "status": "VERIFIED"
     },
     "2560x1440": {
@@ -317,10 +259,10 @@
         "width": 2560,
         "height": 1440
       },
-      "zoom": 1.4,
+      "zoom": 3.5134328358208955,
       "pan": {
-        "x": 1427.65,
-        "y": 1062
+        "x": -78.9589552238806,
+        "y": -206.48059701492537
       },
       "nodeCount": 4,
       "edgeCount": 3,
@@ -332,12 +274,12 @@
       },
       "adapterRuntimeDrift": 0,
       "domRuntimeDrift": 0,
-      "clippedNodesCount": 3,
-      "viewBoxScalingEffect": 1.4,
-      "medianVisibleEdgeDist": 224,
-      "maxVisibleEdgeDist": 364,
+      "clippedNodesCount": 0,
+      "viewBoxScalingEffect": 3.5134328358208955,
+      "medianVisibleEdgeDist": 562,
+      "maxVisibleEdgeDist": 913,
       "logErrorsCount": 0,
-      "screenshotPath": "/app/verification_b_screenshots/phase19_hybrid_pbim_2560x1440.png",
+      "screenshotPath": "/app/scripts/../verification_b_screenshots/phase19r_hybrid_pbim_2560x1440.png",
       "status": "VERIFIED"
     }
   }
