@@ -158,9 +158,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const effectiveLayoutOptions = useMemo((): GraphLayoutOptions => {
     return {
       enableFeatureLayout,
+      enableCandidateDOrdering: architectureMode === 'hierarchical',
       ...layoutOptions,
     };
-  }, [enableFeatureLayout, layoutOptions]);
+  }, [enableFeatureLayout, architectureMode, layoutOptions]);
 
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
