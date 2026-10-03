@@ -1,0 +1,44 @@
+{
+  "60": {
+    "ring1Population": 60,
+    "totalOverlaps": 0,
+    "sameTrackOverlaps": 0,
+    "occupiedWidth": 620.713137220964,
+    "occupiedHeight": 617.4442802201418
+  },
+  "100": {
+    "ring1Population": 100,
+    "totalOverlaps": 0,
+    "sameTrackOverlaps": 0,
+    "occupiedWidth": 622.8160370569631,
+    "occupiedHeight": 621.6344103943434
+  },
+  "120": {
+    "ring1Population": 120,
+    "totalOverlaps": 0,
+    "sameTrackOverlaps": 0,
+    "occupiedWidth": 620.713137220964,
+    "occupiedHeight": 624
+  },
+  "200": {
+    "ring1Population": 200,
+    "totalOverlaps": 70,
+    "sameTrackOverlaps": 70,
+    "occupiedWidth": 622.8160370569631,
+    "occupiedHeight": 624
+  },
+  "217": {
+    "ring1Population": 217,
+    "totalOverlaps": 91,
+    "sameTrackOverlaps": 91,
+    "occupiedWidth": 622.9848949627608,
+    "occupiedHeight": 624
+  },
+  "250": {
+    "ring1Population": 250,
+    "totalOverlaps": 162,
+    "sameTrackOverlaps": 162,
+    "occupiedWidth": 623.2299043026317,
+    "occupiedHeight": 624
+  }
+}

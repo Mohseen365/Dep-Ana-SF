@@ -1,0 +1,57 @@
+{
+  "1024x768": {
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "status": "VERIFIED",
+    "adapterCollisions": 0,
+    "domCollisions": 0,
+    "clipping": false,
+    "overflow": false
+  },
+  "1280x800": {
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "status": "VERIFIED",
+    "adapterCollisions": 0,
+    "domCollisions": 0,
+    "clipping": false,
+    "overflow": false
+  },
+  "1440x900": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "status": "VERIFIED",
+    "adapterCollisions": 0,
+    "domCollisions": 0,
+    "clipping": false,
+    "overflow": false
+  },
+  "1920x1080": {
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "status": "VERIFIED",
+    "adapterCollisions": 0,
+    "domCollisions": 0,
+    "clipping": false,
+    "overflow": false
+  },
+  "2560x1440": {
+    "viewport": {
+      "width": 2560,
+      "height": 1440
+    },
+    "status": "VERIFIED",
+    "adapterCollisions": 0,
+    "domCollisions": 0,
+    "clipping": false,
+    "overflow": false
+  }
+}
