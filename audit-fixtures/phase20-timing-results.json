@@ -1,0 +1,16 @@
+{
+  "cloud-spend-tracker": {
+    "Baseline": {
+      "min": 1192.23,
+      "median": 1480.45,
+      "max": 1759.93
+    }
+  },
+  "pbim": {
+    "Baseline": {
+      "min": 9710.83,
+      "median": 9922.58,
+      "max": 10064.15
+    }
+  }
+}
