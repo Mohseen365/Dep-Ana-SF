@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T07:14:42.259Z",
+  "generatedAt": "2026-10-03T15:39:42.676Z",
   "constellationScenarios": {
     "cst": {
       "dataset": "cst",
@@ -169,7 +169,7 @@
             "count": 120
           }
         ],
-        "overlaps": 120
+        "overlaps": 0
       },
       "scenario3Hop": {
         "maxDepth": 3,
@@ -395,7 +395,7 @@
             "count": 55
           }
         ],
-        "overlaps": 120
+        "overlaps": 0
       }
     },
     "bqc": {
@@ -550,7 +550,7 @@
             "count": 98
           }
         ],
-        "overlaps": 100
+        "overlaps": 0
       },
       "scenario3Hop": {
         "maxDepth": 3,
@@ -740,7 +740,7 @@
             "count": 35
           }
         ],
-        "overlaps": 100
+        "overlaps": 0
       }
     },
     "pbim": {
@@ -1048,7 +1048,7 @@
             "count": 217
           }
         ],
-        "overlaps": 565
+        "overlaps": 0
       },
       "scenario3Hop": {
         "maxDepth": 3,
@@ -1484,7 +1484,7 @@
             "count": 128
           }
         ],
-        "overlaps": 693
+        "overlaps": 0
       }
     }
   },
@@ -1499,7 +1499,7 @@
       "semanticLocalityMedian": 21796.36,
       "semanticLocalityP95": 43282.03,
       "overlaps": 0,
-      "executionTimeMs": 54.77
+      "executionTimeMs": 92.63
     },
     "bqc": {
       "dataset": "bqc",
@@ -1511,7 +1511,7 @@
       "semanticLocalityMedian": 18905.3,
       "semanticLocalityP95": 40799.95,
       "overlaps": 0,
-      "executionTimeMs": 59.93
+      "executionTimeMs": 54.19
     },
     "pbim": {
       "dataset": "pbim",
@@ -1523,7 +1523,7 @@
       "semanticLocalityMedian": 22189.28,
       "semanticLocalityP95": 44597.42,
       "overlaps": 0,
-      "executionTimeMs": 135.76
+      "executionTimeMs": 143.44
     }
   }
 }
