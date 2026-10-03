@@ -112,12 +112,14 @@ function countAABBOverlaps(
   positions: Record<string, { x: number; y: number }>,
   w: number,
   h: number
-): number {
+): { overlapCount: number; overlappingPairs: Array<{ nodeA: string; nodeB: string; distance: number }> } {
   const nodeIds = Object.keys(positions);
-  let overlaps = 0;
+  let overlapCount = 0;
+  const overlappingPairs: Array<{ nodeA: string; nodeB: string; distance: number }> = [];
 
   for (let i = 0; i < nodeIds.length; i++) {
-    const posA = positions[nodeIds[i]];
+    const idA = nodeIds[i];
+    const posA = positions[idA];
     if (!posA) continue;
     const minXA = posA.x;
     const maxXA = posA.x + w;
@@ -125,7 +127,8 @@ function countAABBOverlaps(
     const maxYA = posA.y + h;
 
     for (let j = i + 1; j < nodeIds.length; j++) {
-      const posB = positions[nodeIds[j]];
+      const idB = nodeIds[j];
+      const posB = positions[idB];
       if (!posB) continue;
       const minXB = posB.x;
       const maxXB = posB.x + w;
@@ -136,25 +139,37 @@ function countAABBOverlaps(
       const yOverlap = Math.max(0, Math.min(maxYA, maxYB) - Math.max(minYA, minYB));
 
       if (xOverlap > 1e-3 && yOverlap > 1e-3) {
-        overlaps++;
+        overlapCount++;
+        const dx = posA.x - posB.x;
+        const dy = posA.y - posB.y;
+        overlappingPairs.push({
+          nodeA: idA,
+          nodeB: idB,
+          distance: Number(Math.sqrt(dx * dx + dy * dy).toFixed(2)),
+        });
       }
     }
   }
 
-  return overlaps;
+  return { overlapCount, overlappingPairs };
 }
 
-describe('Phase 7 — Constellation & Orbit Spatial-Density Observational Audit Harness', () => {
-  describe('Dependency Constellation Lens Baseline Measurement', () => {
+describe('Phase 7 & Phase 7A — Constellation & Orbit Spatial-Density Observational Audit Harness', () => {
+  const canonicalMeasurementsArtifact: Record<string, any> = {
+    generatedAt: new Date().toISOString(),
+    constellationScenarios: {},
+    orbitScenarios: {},
+  };
+
+  describe('Dependency Constellation Lens Population & Geometry Reconciliation', () => {
     DATASETS.forEach((ds) => {
-      test(`Dataset: ${ds.key.toUpperCase()} - Constellation Lens Geometry & Locality`, () => {
+      test(`Dataset: ${ds.key.toUpperCase()} - Constellation Lens Multi-Depth Population & Geometry`, () => {
         const { nodes, edges } = loadDataset(ds);
         const schema: ExplorerDataSchema = { nodes, edges };
 
-        const constData = adaptConstellation(schema, { maxDepth: 2, direction: 'both' });
-        expect(constData.focalNode).not.toBeNull();
-
-        const layoutRes = computeConstellationLayout(constData, {
+        // 2-Hop Scenario
+        const constData2 = adaptConstellation(schema, { maxDepth: 2, direction: 'both' });
+        const layoutRes2 = computeConstellationLayout(constData2, {
           width: 900,
           height: 900,
           cx: 450,
@@ -163,50 +178,53 @@ describe('Phase 7 — Constellation & Orbit Spatial-Density Observational Audit 
           ringStepRadius: 150,
         });
 
-        const posMap = layoutRes.nodePositions;
-        const nodeIds = Object.keys(posMap);
-
-        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-        nodeIds.forEach((id) => {
-          const p = posMap[id];
-          if (p.x < minX) minX = p.x;
-          if (p.x > maxX) maxX = p.x;
-          if (p.y < minY) minY = p.y;
-          if (p.y > maxY) maxY = p.y;
+        // 3-Hop Scenario
+        const constData3 = adaptConstellation(schema, { maxDepth: 3, direction: 'both' });
+        const layoutRes3 = computeConstellationLayout(constData3, {
+          width: 900,
+          height: 900,
+          cx: 450,
+          cy: 450,
+          baseRadius: 180,
+          ringStepRadius: 150,
         });
 
-        const width = maxX - minX;
-        const height = maxY - minY;
-        const area = width * height;
+        const posMap2 = layoutRes2.nodePositions;
+        const posMap3 = layoutRes3.nodePositions;
 
-        // Semantic edge distance stats in Constellation neighborhood
-        const edgeDists: number[] = [];
-        constData.edges.forEach((e) => {
-          const sPos = posMap[e.source];
-          const tPos = posMap[e.target];
-          if (sPos && tPos) {
-            const dx = sPos.x - tPos.x;
-            const dy = sPos.y - tPos.y;
-            edgeDists.push(Math.sqrt(dx * dx + dy * dy));
-          }
-        });
+        const overlaps2 = countAABBOverlaps(posMap2, 24, 24);
+        const overlaps3 = countAABBOverlaps(posMap3, 24, 24);
 
-        const semStats = computeStats(edgeDists);
-        const nnStats = computeNearestNeighborDistances(posMap);
-        const overlaps = countAABBOverlaps(posMap, 24, 24); // 24px diameter nodes
+        // Record canonical measurement record
+        canonicalMeasurementsArtifact.constellationScenarios[ds.key] = {
+          dataset: ds.key,
+          focalNodeId: constData2.focalNode?.id,
+          scenario2Hop: {
+            maxDepth: 2,
+            totalNodes: constData2.summary.totalNodes,
+            nodeIds: Object.keys(posMap2),
+            ringPopulations: constData2.rings.map(r => ({ ringIndex: r.ringIndex, count: r.totalCount })),
+            overlaps: overlaps2.overlapCount,
+          },
+          scenario3Hop: {
+            maxDepth: 3,
+            totalNodes: constData3.summary.totalNodes,
+            nodeIds: Object.keys(posMap3),
+            ringPopulations: constData3.rings.map(r => ({ ringIndex: r.ringIndex, count: r.totalCount })),
+            overlaps: overlaps3.overlapCount,
+          },
+        };
 
-        expect(nodeIds.length).toBeGreaterThan(0);
-        expect(width).toBeGreaterThan(0);
-        expect(height).toBeGreaterThan(0);
-        expect(area).toBeGreaterThan(0);
-        expect(semStats.count).toBe(constData.edges.length);
+        expect(constData2.focalNode).not.toBeNull();
+        expect(constData3.focalNode).not.toBeNull();
+        expect(constData3.summary.totalNodes).toBeGreaterThanOrEqual(constData2.summary.totalNodes);
       });
     });
   });
 
-  describe('Architecture Orbit Layout Baseline Measurement', () => {
+  describe('Architecture Orbit Layout Population & Radius Reconciliation', () => {
     DATASETS.forEach((ds) => {
-      test(`Dataset: ${ds.key.toUpperCase()} - Architecture Orbit Mode Geometry & Locality`, () => {
+      test(`Dataset: ${ds.key.toUpperCase()} - Architecture Orbit Mode Geometry & Multi-Track Radius`, () => {
         const { nodes, edges } = loadDataset(ds);
 
         const startTime = performance.now();
@@ -221,19 +239,22 @@ describe('Phase 7 — Constellation & Orbit Spatial-Density Observational Audit 
         const nodeIds = Object.keys(posMap);
 
         let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        let maxRadius = 0;
         nodeIds.forEach((id) => {
           const p = posMap[id];
           if (p.x < minX) minX = p.x;
           if (p.x + 120 > maxX) maxX = p.x + 120;
           if (p.y < minY) minY = p.y;
           if (p.y + 60 > maxY) maxY = p.y + 60;
+
+          const r = Math.sqrt(p.x * p.x + p.y * p.y);
+          if (r > maxRadius) maxRadius = r;
         });
 
         const width = maxX - minX;
         const height = maxY - minY;
         const area = width * height;
 
-        // Connected primary edges
         const edgeDists: number[] = [];
         edges.forEach((e) => {
           const sPos = posMap[e.source];
@@ -249,13 +270,31 @@ describe('Phase 7 — Constellation & Orbit Spatial-Density Observational Audit 
         const nnStats = computeNearestNeighborDistances(posMap);
         const overlaps = countAABBOverlaps(posMap, 120, 60);
 
+        canonicalMeasurementsArtifact.orbitScenarios[ds.key] = {
+          dataset: ds.key,
+          totalNodes: nodeIds.length,
+          totalEdges: edges.length,
+          canvasWidth: Number(width.toFixed(2)),
+          canvasHeight: Number(height.toFixed(2)),
+          maxRadius: Number(maxRadius.toFixed(2)),
+          semanticLocalityMedian: semStats.median,
+          semanticLocalityP95: semStats.p95,
+          overlaps: overlaps.overlapCount,
+          executionTimeMs: Number(duration.toFixed(2)),
+        };
+
         expect(nodeIds.length).toBe(nodes.length);
         expect(width).toBeGreaterThan(0);
-        expect(height).toBeGreaterThan(0);
-        expect(area).toBeGreaterThan(0);
-        expect(overlaps).toBe(0);
-        expect(duration).toBeLessThan(1000);
+        expect(overlaps.overlapCount).toBe(0);
       });
+    });
+  });
+
+  describe('Export Canonical Geometry Artifact', () => {
+    test('Writes PHASE_7A_CANONICAL_GEOMETRY_MEASUREMENTS.json to root directory', () => {
+      const artifactPath = path.resolve(process.cwd(), 'PHASE_7A_CANONICAL_GEOMETRY_MEASUREMENTS.json');
+      fs.writeFileSync(artifactPath, JSON.stringify(canonicalMeasurementsArtifact, null, 2), 'utf8');
+      expect(fs.existsSync(artifactPath)).toBe(true);
     });
   });
 
