@@ -1,0 +1,146 @@
+{
+  "CST AccountController 2-hop": {
+    "label": "CST AccountController 2-hop",
+    "totalNodes": 37,
+    "focalNodeId": "ApexClass:AccountController",
+    "ringPopulations": [
+      3,
+      33
+    ],
+    "sameTrackOverlaps": 0,
+    "sameRingCrossTrackOverlaps": 0,
+    "crossRingOverlaps": 0,
+    "focalOverlaps": 0,
+    "totalAabbOverlaps": 0,
+    "bboxWidth": 864,
+    "bboxHeight": 864,
+    "medianLocality": 485.88739771207634,
+    "p95Locality": 739.2621216826585,
+    "maxLocality": 800,
+    "ringBaseRadii": [
+      180,
+      300
+    ]
+  },
+  "CST Org_Hierarchy 3-hop": {
+    "label": "CST Org_Hierarchy 3-hop",
+    "totalNodes": 205,
+    "focalNodeId": "Object:Organization_Hierarchy__c",
+    "ringPopulations": [
+      29,
+      120,
+      55
+    ],
+    "sameTrackOverlaps": 0,
+    "sameRingCrossTrackOverlaps": 0,
+    "crossRingOverlaps": 0,
+    "focalOverlaps": 0,
+    "totalAabbOverlaps": 0,
+    "bboxWidth": 1334.3757138094315,
+    "bboxHeight": 1324.8215995011944,
+    "medianLocality": 350.414026495262,
+    "p95Locality": 748.4072246974656,
+    "maxLocality": 1170.2181886472474,
+    "ringBaseRadii": [
+      180,
+      300,
+      540
+    ]
+  },
+  "BQC Bouquet_Order__c 2-hop": {
+    "label": "BQC Bouquet_Order__c 2-hop",
+    "totalNodes": 134,
+    "focalNodeId": "Object:Bouquet_Order__c",
+    "ringPopulations": [
+      35,
+      98
+    ],
+    "sameTrackOverlaps": 0,
+    "sameRingCrossTrackOverlaps": 0,
+    "crossRingOverlaps": 0,
+    "focalOverlaps": 0,
+    "totalAabbOverlaps": 0,
+    "bboxWidth": 1104,
+    "bboxHeight": 1104,
+    "medianLocality": 363.91984445998344,
+    "p95Locality": 719.9387991785688,
+    "maxLocality": 833.402644414846,
+    "ringBaseRadii": [
+      180,
+      420
+    ]
+  },
+  "BQC Bouquet_Order__c 3-hop": {
+    "label": "BQC Bouquet_Order__c 3-hop",
+    "totalNodes": 169,
+    "focalNodeId": "Object:Bouquet_Order__c",
+    "ringPopulations": [
+      35,
+      98,
+      35
+    ],
+    "sameTrackOverlaps": 0,
+    "sameRingCrossTrackOverlaps": 0,
+    "crossRingOverlaps": 0,
+    "focalOverlaps": 0,
+    "totalAabbOverlaps": 0,
+    "bboxWidth": 1584,
+    "bboxHeight": 1584,
+    "medianLocality": 390.5091585296798,
+    "p95Locality": 887.2359309261141,
+    "maxLocality": 1560,
+    "ringBaseRadii": [
+      180,
+      420,
+      660
+    ]
+  },
+  "PBIM Maintenance_Request__c 2-hop": {
+    "label": "PBIM Maintenance_Request__c 2-hop",
+    "totalNodes": 287,
+    "focalNodeId": "Object:Maintenance_Request__c",
+    "ringPopulations": [
+      69,
+      217
+    ],
+    "sameTrackOverlaps": 0,
+    "sameRingCrossTrackOverlaps": 0,
+    "crossRingOverlaps": 0,
+    "focalOverlaps": 0,
+    "totalAabbOverlaps": 0,
+    "bboxWidth": 1102.1728109329697,
+    "bboxHeight": 1104,
+    "medianLocality": 454.4574915677546,
+    "p95Locality": 755.33988425855,
+    "maxLocality": 973.2197571528596,
+    "ringBaseRadii": [
+      180,
+      420
+    ]
+  },
+  "PBIM Maintenance_Request__c 3-hop": {
+    "label": "PBIM Maintenance_Request__c 3-hop",
+    "totalNodes": 415,
+    "focalNodeId": "Object:Maintenance_Request__c",
+    "ringPopulations": [
+      69,
+      217,
+      128
+    ],
+    "sameTrackOverlaps": 0,
+    "sameRingCrossTrackOverlaps": 0,
+    "crossRingOverlaps": 0,
+    "focalOverlaps": 0,
+    "totalAabbOverlaps": 0,
+    "bboxWidth": 1584,
+    "bboxHeight": 1584,
+    "medianLocality": 490.0107279566094,
+    "p95Locality": 921.3370374719613,
+    "maxLocality": 1318.3466314913458,
+    "ringBaseRadii": [
+      180,
+      420,
+      660
+    ]
+  }
+}

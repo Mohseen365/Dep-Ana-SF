@@ -11,6 +11,7 @@ export interface ConstellationLayoutNodePosition {
   angleDeg: number;
   hopDistance: number;
   ringIndex: number;
+  trackIndex: number;
   label: string;
 }
 
@@ -34,6 +35,7 @@ export interface ConstellationLayoutEdgePath {
 export interface ConstellationLayoutRingGeometry {
   ringIndex: number;
   hopDistance: number;
+  trackIndex: number;
   radius: number;
   cx: number;
   cy: number;
@@ -51,22 +53,30 @@ export interface ConstellationLayoutResult {
     cx: number;
     cy: number;
     baseRadius: number;
-    ringStepRadius: number;
+    interRingGap: number;
+    trackSpacing: number;
+    sparseThreshold: number;
   };
 }
 
 export interface ConstellationLayoutOptions {
-  width?: number; // default 1000
-  height?: number; // default 1000
+  width?: number; // default 900
+  height?: number; // default 900
   cx?: number; // default width / 2
   cy?: number; // default height / 2
-  baseRadius?: number; // default 160 (radius of 1-hop ring)
-  ringStepRadius?: number; // default 140 (distance between consecutive rings)
+  baseRadius?: number; // default 180 (radius of 1-hop ring base)
+  interRingGap?: number; // default 120 (radial clearance gap between rings)
+  trackSpacing?: number; // default 40 (distance between multi-track sub-rings)
+  sparseThreshold?: number; // default 30 (node count threshold for sparse T=1 vs dense T=4)
+  maxTrackCount?: number; // default 4
+  ringStepRadius?: number; // legacy option fallback if interRingGap is not passed
   startAngleRad?: number; // default -Math.PI / 2 (-90deg, top)
 }
 
 /**
  * Deterministic local polar layout generator for the Dependency Constellation lens.
+ * Implements Phase 12 Candidate Geometry Contract (sparse threshold N<=30 -> T=1, N>30 -> T=4,
+ * trackSpacing 40px, interRingGap 120px, Strategy B interleaved track assignment).
  * Calculates lens-local coordinates (x, y, radius, angleRad) and smooth curved edge paths.
  * Guarantees zero side effects, no mutation of input data, and finite numbers (no NaN/Infinity).
  */
@@ -74,12 +84,15 @@ export function computeConstellationLayout(
   data: ConstellationData,
   options: ConstellationLayoutOptions = {}
 ): ConstellationLayoutResult {
-  const width = options.width ?? 1000;
-  const height = options.height ?? 1000;
+  const width = options.width ?? 900;
+  const height = options.height ?? 900;
   const cx = options.cx ?? width / 2;
   const cy = options.cy ?? height / 2;
-  const baseRadius = options.baseRadius ?? 160;
-  const ringStepRadius = options.ringStepRadius ?? 140;
+  const baseRadius = options.baseRadius ?? 180;
+  const interRingGap = options.interRingGap ?? options.ringStepRadius ?? 120;
+  const trackSpacing = options.trackSpacing ?? 40;
+  const sparseThreshold = options.sparseThreshold ?? 30;
+  const maxTrackCount = options.maxTrackCount ?? 4;
   const startAngleRad = options.startAngleRad ?? -Math.PI / 2;
 
   if (!data.focalNode) {
@@ -88,7 +101,16 @@ export function computeConstellationLayout(
       nodePositions: {},
       edgePaths: [],
       ringGeometries: [],
-      viewport: { width, height, cx, cy, baseRadius, ringStepRadius },
+      viewport: {
+        width,
+        height,
+        cx,
+        cy,
+        baseRadius,
+        interRingGap,
+        trackSpacing,
+        sparseThreshold,
+      },
     };
   }
 
@@ -102,6 +124,7 @@ export function computeConstellationLayout(
     angleDeg: 0,
     hopDistance: 0,
     ringIndex: 0,
+    trackIndex: 0,
     label: data.focalNode.displayName,
   };
 
@@ -110,44 +133,81 @@ export function computeConstellationLayout(
 
   const ringGeometries: ConstellationLayoutRingGeometry[] = [];
 
-  // Compute positions for nodes in each concentric ring
-  data.rings.forEach((ring) => {
+  let currentBaseRadius = baseRadius;
+
+  data.rings.forEach((ring, ringIdx) => {
     const hop = ring.hopDistance;
-    const radius = baseRadius + (hop - 1) * ringStepRadius;
-
-    ringGeometries.push({
-      ringIndex: ring.ringIndex,
-      hopDistance: hop,
-      radius,
-      cx,
-      cy,
-      label: ring.label,
-    });
-
     const items = ring.items;
     const itemCount = items.length;
+
+    // Determine effective track count T for this ring
+    const effectiveT = itemCount <= sparseThreshold ? 1 : maxTrackCount;
+
+    if (ringIdx === 0) {
+      currentBaseRadius = baseRadius;
+    } else {
+      const prevRing = data.rings[ringIdx - 1];
+      const prevCount = prevRing.items.length;
+      const prevT = prevCount <= sparseThreshold ? 1 : maxTrackCount;
+      const prevOuterRadius = currentBaseRadius + (prevT - 1) * trackSpacing;
+      currentBaseRadius = prevOuterRadius + interRingGap;
+    }
+
+    // Register geometries for each sub-track in the ring
+    for (let t = 0; t < effectiveT; t++) {
+      const subTrackRadius = currentBaseRadius + t * trackSpacing;
+      ringGeometries.push({
+        ringIndex: ring.ringIndex,
+        hopDistance: hop,
+        trackIndex: t,
+        radius: subTrackRadius,
+        cx,
+        cy,
+        label: t === 0 ? ring.label : '',
+      });
+    }
+
     if (itemCount === 0) return;
 
-    const angleStep = (2 * Math.PI) / itemCount;
+    // Calculate sub-track distribution
+    const baseCount = Math.floor(itemCount / effectiveT);
+    const remainder = itemCount % effectiveT;
+    const trackCounts: number[] = [];
+    for (let t = 0; t < effectiveT; t++) {
+      trackCounts.push(baseCount + (t < remainder ? 1 : 0));
+    }
 
-    items.forEach((item, index) => {
-      const angleRad = startAngleRad + index * angleStep;
+    // Strategy B Interleaved Sub-track Assignment
+    // Node i assigned to sub-track t = i % effectiveT
+    const trackNodeIndices: number[] = Array(effectiveT).fill(0);
+
+    items.forEach((item, i) => {
+      const t = i % effectiveT;
+      const indexInTrack = trackNodeIndices[t];
+      trackNodeIndices[t] += 1;
+
+      const trackCount = trackCounts[t];
+      const subTrackRadius = currentBaseRadius + t * trackSpacing;
+      const angleStep = (2 * Math.PI) / trackCount;
+
+      const angleRad = startAngleRad + indexInTrack * angleStep;
       let angleDeg = (angleRad * 180) / Math.PI;
       while (angleDeg < 0) angleDeg += 360;
       angleDeg = angleDeg % 360;
 
-      const x = cx + radius * Math.cos(angleRad);
-      const y = cy + radius * Math.sin(angleRad);
+      const x = cx + subTrackRadius * Math.cos(angleRad);
+      const y = cy + subTrackRadius * Math.sin(angleRad);
 
       nodePositions[item.nodeId] = {
         nodeId: item.nodeId,
         x: Number.isFinite(x) ? x : cx,
         y: Number.isFinite(y) ? y : cy,
-        radius,
+        radius: subTrackRadius,
         angleRad,
         angleDeg,
         hopDistance: hop,
         ringIndex: ring.ringIndex,
+        trackIndex: t,
         label: item.displayName,
       };
     });
@@ -181,10 +241,9 @@ export function computeConstellationLayout(
       controlX2 = midX;
       controlY2 = midY;
     } else if (edge.isSameRing) {
-      // Edge within same ring: bend curve towards origin (or outward) for clarity
+      // Edge within same ring: bend curve towards origin for clarity
       const midX = (sourceX + targetX) / 2;
       const midY = (sourceY + targetY) / 2;
-      // Pull control point towards center
       const pullFactor = 0.5;
       controlX1 = midX * (1 - pullFactor) + cx * pullFactor;
       controlY1 = midY * (1 - pullFactor) + cy * pullFactor;
@@ -231,6 +290,15 @@ export function computeConstellationLayout(
     nodePositions,
     edgePaths,
     ringGeometries,
-    viewport: { width, height, cx, cy, baseRadius, ringStepRadius },
+    viewport: {
+      width,
+      height,
+      cx,
+      cy,
+      baseRadius,
+      interRingGap,
+      trackSpacing,
+      sparseThreshold,
+    },
   };
 }
