@@ -49,8 +49,12 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     return computeConstellationLayout(data, {
       width: 900,
       height: 900,
+      cx: 450,
+      cy: 450,
       baseRadius: 180,
-      ringStepRadius: 150,
+      interRingGap: 120,
+      trackSpacing: 40,
+      sparseThreshold: 30,
     });
   }, [data]);
 
@@ -167,7 +171,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
             onChange={(e) => {
               const val = e.target.value;
               if (onOptionChange) onOptionChange({ focalNodeId: val });
-              if (onSelectNode) onSelectNode(val);
+              if (onSelectNode) handleSelectNode(val);
             }}
             style={{
               background: '#1e293b',
@@ -339,7 +343,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
 
             {/* Render Orbital Rings */}
             {layout.ringGeometries.map((ring) => (
-              <g key={`ring_${ring.ringIndex}`}>
+              <g key={`ring_${ring.ringIndex}_track_${ring.trackIndex}`}>
                 <circle
                   cx={ring.cx}
                   cy={ring.cy}
@@ -349,16 +353,18 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   strokeDasharray="4 4"
                   strokeWidth="1.5"
                 />
-                <text
-                  x={ring.cx}
-                  y={ring.cy - ring.radius - 6}
-                  fill="#64748b"
-                  fontSize="10"
-                  textAnchor="middle"
-                  fontWeight="600"
-                >
-                  {ring.label}
-                </text>
+                {ring.label && (
+                  <text
+                    x={ring.cx}
+                    y={ring.cy - ring.radius - 6}
+                    fill="#64748b"
+                    fontSize="10"
+                    textAnchor="middle"
+                    fontWeight="600"
+                  >
+                    {ring.label}
+                  </text>
+                )}
               </g>
             ))}
 
@@ -414,13 +420,10 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   style={{ cursor: 'pointer', opacity, transition: 'opacity 0.2s ease' }}
                   onMouseEnter={() => setHoveredNodeId(pos.nodeId)}
                   onMouseLeave={() => setHoveredNodeId(null)}
-                  onClick={() => {
-                    setSelectedNodeId(pos.nodeId);
-                    if (onSelectNode) onSelectNode(pos.nodeId);
-                  }}
+                  onClick={() => handleSelectNode(pos.nodeId)}
                   onDoubleClick={() => {
                     if (onOptionChange) onOptionChange({ focalNodeId: pos.nodeId });
-                    if (onSelectNode) onSelectNode(pos.nodeId);
+                    handleSelectNode(pos.nodeId);
                   }}
                 >
                   <circle
@@ -529,7 +532,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   className="make-focal-btn"
                   onClick={() => {
                     if (onOptionChange) onOptionChange({ focalNodeId: activeInspectNode.nodeId });
-                    if (onSelectNode) onSelectNode(activeInspectNode.nodeId);
+                    handleSelectNode(activeInspectNode.nodeId);
                   }}
                   style={{
                     marginTop: '12px',
