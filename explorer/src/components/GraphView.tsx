@@ -157,9 +157,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
   const effectiveLayoutOptions = useMemo((): GraphLayoutOptions => {
     return {
+      ...layoutOptions,
       enableFeatureLayout,
       enableCandidateDOrdering: architectureMode === 'hierarchical',
-      ...layoutOptions,
     };
   }, [enableFeatureLayout, architectureMode, layoutOptions]);
 

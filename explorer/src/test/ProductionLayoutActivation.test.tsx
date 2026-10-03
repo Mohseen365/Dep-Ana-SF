@@ -294,7 +294,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
   });
 
   it('propagates enableFeatureLayout: true through explicit Reset Layout action', () => {
-    const runLayoutSpy = vi.spyOn(graphLayoutModule, 'runLayout');
+    const runLayoutSpy = vi.spyOn(graphLayoutModule, 'runLayoutWithMetadata');
     const ref = React.createRef<GraphViewRef>();
 
     render(
@@ -335,6 +335,7 @@ describe('Production Layout Activation & Option Propagation (Workstream B4)', ()
         onSelectEdge={vi.fn()}
         selectedNodeId={null}
         selectedEdgeId={null}
+        graphLayout={{ mode: 'interactive', layoutProvenance: 'automatic-hierarchical', architectureMode: 'hierarchical', nodePositions: persistedPositions }}
         nodePositions={persistedPositions}
         enableFeatureLayout={true}
       />
