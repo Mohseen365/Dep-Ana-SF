@@ -1,0 +1,556 @@
+{
+  "cloud-spend-tracker": {
+    "Baseline": {
+      "m1_occupiedWidth": 3300,
+      "m2_occupiedHeight": 11000,
+      "m3_occupiedArea": 36297140,
+      "m4_emptySpaceRatio": 0.9524,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1863,
+        "p75": 6568,
+        "p95": 9151,
+        "p99": 9820,
+        "p100": 10222
+      },
+      "m6_semanticDist": {
+        "p50": 2734,
+        "p95": 9600,
+        "p100": 10940
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 171,
+        "p100": 1141
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismA_LayerSupremacy": {
+      "m1_occupiedWidth": 3540,
+      "m2_occupiedHeight": 9040,
+      "m3_occupiedArea": 32000022,
+      "m4_emptySpaceRatio": 0.946,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 1020,
+        "p75": 6181,
+        "p95": 7189,
+        "p99": 7881,
+        "p100": 8282
+      },
+      "m6_semanticDist": {
+        "p50": 2302,
+        "p95": 7909,
+        "p100": 8981
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 1141
+      },
+      "aabbCollisions": 46
+    },
+    "MechanismB_FeatureBandStacking": {
+      "m1_occupiedWidth": 4370,
+      "m2_occupiedHeight": 4820,
+      "m3_occupiedArea": 21062340,
+      "m4_emptySpaceRatio": 0.918,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1219,
+        "p75": 1927,
+        "p95": 2843,
+        "p99": 3362,
+        "p100": 3642
+      },
+      "m6_semanticDist": {
+        "p50": 1504,
+        "p95": 3425,
+        "p100": 4788
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 187,
+        "p100": 1240
+      },
+      "aabbCollisions": 15
+    },
+    "MechanismC_Stage8Bridge": {
+      "m1_occupiedWidth": 2020,
+      "m2_occupiedHeight": 10880,
+      "m3_occupiedArea": 21977600,
+      "m4_emptySpaceRatio": 0.9214,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1742,
+        "p75": 6563,
+        "p95": 8744,
+        "p99": 9521,
+        "p100": 10121
+      },
+      "m6_semanticDist": {
+        "p50": 1740,
+        "p95": 9340,
+        "p100": 10824
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 165,
+        "p100": 738
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismD_Stage9Satellite": {
+      "m1_occupiedWidth": 3300,
+      "m2_occupiedHeight": 9720,
+      "m3_occupiedArea": 32073473,
+      "m4_emptySpaceRatio": 0.965,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1986,
+        "p75": 6260,
+        "p95": 7620,
+        "p99": 8441,
+        "p100": 8641
+      },
+      "m6_semanticDist": {
+        "p50": 2345,
+        "p95": 8860,
+        "p100": 9693
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 220,
+        "p100": 1141
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismE_Stage10Packing": {
+      "m1_occupiedWidth": 2000,
+      "m2_occupiedHeight": 11000,
+      "m3_occupiedArea": 22000000,
+      "m4_emptySpaceRatio": 0.9215,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1863,
+        "p75": 6566,
+        "p95": 9151,
+        "p99": 9820,
+        "p100": 10222
+      },
+      "m6_semanticDist": {
+        "p50": 2734,
+        "p95": 9600,
+        "p100": 10940
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 160,
+        "p100": 376
+      },
+      "aabbCollisions": 1
+    },
+    "MechanismF_Stage11Collision": {
+      "m1_occupiedWidth": 3300,
+      "m2_occupiedHeight": 11000,
+      "m3_occupiedArea": 36297140,
+      "m4_emptySpaceRatio": 0.9524,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1863,
+        "p75": 6568,
+        "p95": 9151,
+        "p99": 9820,
+        "p100": 10222
+      },
+      "m6_semanticDist": {
+        "p50": 2734,
+        "p95": 9600,
+        "p100": 10940
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 171,
+        "p100": 1141
+      },
+      "aabbCollisions": 0
+    },
+    "Combo_A_plus_B": {
+      "m1_occupiedWidth": 3540,
+      "m2_occupiedHeight": 3760,
+      "m3_occupiedArea": 13309744,
+      "m4_emptySpaceRatio": 0.8702,
+      "m5_connectedDist": {
+        "p0": 60,
+        "p50": 738,
+        "p75": 1126,
+        "p95": 2005,
+        "p99": 2359,
+        "p100": 2888
+      },
+      "m6_semanticDist": {
+        "p50": 1082,
+        "p95": 2487,
+        "p100": 3905
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 197,
+        "p100": 710
+      },
+      "aabbCollisions": 86
+    },
+    "Combo_A_plus_C": {
+      "m1_occupiedWidth": 2580,
+      "m2_occupiedHeight": 9240,
+      "m3_occupiedArea": 23837621,
+      "m4_emptySpaceRatio": 0.9275,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 816,
+        "p75": 6093,
+        "p95": 7006,
+        "p99": 7582,
+        "p100": 7883
+      },
+      "m6_semanticDist": {
+        "p50": 862,
+        "p95": 7636,
+        "p100": 9253
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 165,
+        "p100": 738
+      },
+      "aabbCollisions": 210
+    },
+    "Combo_B_plus_C": {
+      "m1_occupiedWidth": 2820,
+      "m2_occupiedHeight": 4720,
+      "m3_occupiedArea": 13309593,
+      "m4_emptySpaceRatio": 0.8702,
+      "m5_connectedDist": {
+        "p0": 40,
+        "p50": 1168,
+        "p75": 1947,
+        "p95": 2795,
+        "p99": 3342,
+        "p100": 3642
+      },
+      "m6_semanticDist": {
+        "p50": 1398,
+        "p95": 3377,
+        "p100": 4660
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 160,
+        "p100": 240
+      },
+      "aabbCollisions": 23
+    },
+    "Combo_A_plus_B_plus_C": {
+      "m1_occupiedWidth": 2580,
+      "m2_occupiedHeight": 3060,
+      "m3_occupiedArea": 7894277,
+      "m4_emptySpaceRatio": 0.7811,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 605,
+        "p75": 877,
+        "p95": 1508,
+        "p99": 1831,
+        "p100": 2223
+      },
+      "m6_semanticDist": {
+        "p50": 728,
+        "p95": 1756,
+        "p100": 3115
+      },
+      "m7_nearestDist": {
+        "p50": 60,
+        "p95": 172,
+        "p100": 260
+      },
+      "aabbCollisions": 253
+    }
+  },
+  "pbim": {
+    "Baseline": {
+      "m1_occupiedWidth": 7160,
+      "m2_occupiedHeight": 25460,
+      "m3_occupiedArea": 182293600,
+      "m4_emptySpaceRatio": 0.9791,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2759,
+        "p75": 10824,
+        "p95": 18041,
+        "p99": 21085,
+        "p100": 24317
+      },
+      "m6_semanticDist": {
+        "p50": 10058,
+        "p95": 22359,
+        "p100": 25745
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 618
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismA_LayerSupremacy": {
+      "m1_occupiedWidth": 7320,
+      "m2_occupiedHeight": 23360,
+      "m3_occupiedArea": 170995200,
+      "m4_emptySpaceRatio": 0.9778,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 2249,
+        "p75": 10483,
+        "p95": 16890,
+        "p99": 20224,
+        "p100": 22207
+      },
+      "m6_semanticDist": {
+        "p50": 9881,
+        "p95": 20540,
+        "p100": 23606
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 202,
+        "p100": 700
+      },
+      "aabbCollisions": 143
+    },
+    "MechanismB_FeatureBandStacking": {
+      "m1_occupiedWidth": 7520,
+      "m2_occupiedHeight": 6180,
+      "m3_occupiedArea": 46473600,
+      "m4_emptySpaceRatio": 0.9182,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 2076,
+        "p75": 2973,
+        "p95": 4252,
+        "p99": 4759,
+        "p100": 5121
+      },
+      "m6_semanticDist": {
+        "p50": 2203,
+        "p95": 4872,
+        "p100": 8015
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 160,
+        "p100": 707
+      },
+      "aabbCollisions": 55
+    },
+    "MechanismC_Stage8Bridge": {
+      "m1_occupiedWidth": 7260,
+      "m2_occupiedHeight": 25220,
+      "m3_occupiedArea": 183090733,
+      "m4_emptySpaceRatio": 0.9792,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2452,
+        "p75": 10720,
+        "p95": 14290,
+        "p99": 18642,
+        "p100": 23856
+      },
+      "m6_semanticDist": {
+        "p50": 4053,
+        "p95": 19940,
+        "p100": 25588
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 189,
+        "p100": 480
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismD_Stage9Satellite": {
+      "m1_occupiedWidth": 6360,
+      "m2_occupiedHeight": 24420,
+      "m3_occupiedArea": 155311200,
+      "m4_emptySpaceRatio": 0.9876,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 5569,
+        "p75": 10804,
+        "p95": 19141,
+        "p99": 21320,
+        "p100": 23600
+      },
+      "m6_semanticDist": {
+        "p50": 3660,
+        "p95": 22061,
+        "p100": 24661
+      },
+      "m7_nearestDist": {
+        "p50": 102,
+        "p95": 220,
+        "p100": 412
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismE_Stage10Packing": {
+      "m1_occupiedWidth": 4920,
+      "m2_occupiedHeight": 25460,
+      "m3_occupiedArea": 125263200,
+      "m4_emptySpaceRatio": 0.9697,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2759,
+        "p75": 10824,
+        "p95": 18041,
+        "p99": 21085,
+        "p100": 24317
+      },
+      "m6_semanticDist": {
+        "p50": 9685,
+        "p95": 21952,
+        "p100": 25263
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 172,
+        "p100": 780
+      },
+      "aabbCollisions": 0
+    },
+    "MechanismF_Stage11Collision": {
+      "m1_occupiedWidth": 7160,
+      "m2_occupiedHeight": 25460,
+      "m3_occupiedArea": 182293600,
+      "m4_emptySpaceRatio": 0.9791,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2759,
+        "p75": 10824,
+        "p95": 18041,
+        "p99": 21085,
+        "p100": 24317
+      },
+      "m6_semanticDist": {
+        "p50": 10058,
+        "p95": 22359,
+        "p100": 25745
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 618
+      },
+      "aabbCollisions": 0
+    },
+    "Combo_A_plus_B": {
+      "m1_occupiedWidth": 6540,
+      "m2_occupiedHeight": 5620,
+      "m3_occupiedArea": 36754800,
+      "m4_emptySpaceRatio": 0.8966,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 1718,
+        "p75": 2552,
+        "p95": 3453,
+        "p99": 4259,
+        "p100": 5121
+      },
+      "m6_semanticDist": {
+        "p50": 2154,
+        "p95": 4100,
+        "p100": 8024
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 189,
+        "p100": 540
+      },
+      "aabbCollisions": 187
+    },
+    "Combo_A_plus_C": {
+      "m1_occupiedWidth": 6140,
+      "m2_occupiedHeight": 23260,
+      "m3_occupiedArea": 142810436,
+      "m4_emptySpaceRatio": 0.9734,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 1746,
+        "p75": 10412,
+        "p95": 12405,
+        "p99": 16582,
+        "p100": 22017
+      },
+      "m6_semanticDist": {
+        "p50": 2810,
+        "p95": 19588,
+        "p100": 23420
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 215,
+        "p100": 740
+      },
+      "aabbCollisions": 352
+    },
+    "Combo_B_plus_C": {
+      "m1_occupiedWidth": 6660,
+      "m2_occupiedHeight": 6280,
+      "m3_occupiedArea": 41823190,
+      "m4_emptySpaceRatio": 0.9091,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 1588,
+        "p75": 2494,
+        "p95": 4168,
+        "p99": 4674,
+        "p100": 4996
+      },
+      "m6_semanticDist": {
+        "p50": 2065,
+        "p95": 4870,
+        "p100": 7720
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 161,
+        "p100": 291
+      },
+      "aabbCollisions": 165
+    },
+    "Combo_A_plus_B_plus_C": {
+      "m1_occupiedWidth": 5640,
+      "m2_occupiedHeight": 5920,
+      "m3_occupiedArea": 33387282,
+      "m4_emptySpaceRatio": 0.8861,
+      "m5_connectedDist": {
+        "p0": 0,
+        "p50": 1159,
+        "p75": 1800,
+        "p95": 2552,
+        "p99": 3002,
+        "p100": 3619
+      },
+      "m6_semanticDist": {
+        "p50": 1709,
+        "p95": 3679,
+        "p100": 7473
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 189,
+        "p100": 621
+      },
+      "aabbCollisions": 489
+    }
+  }
+}
