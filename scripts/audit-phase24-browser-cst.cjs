@@ -86,7 +86,7 @@ async function runCST() {
       cstResults[candidateId][vp.name] = vpMetrics;
     }
 
-    console.log(`[CST] ${candidateId.padEnd(28)} -> 1440x900 Zoom: ${cstResults[candidateId]['1440x900'].zoom} | DOM Collisions: ${cstResults[candidateId]['1440x900'].domCollisions}`);
+    console.log(`[CST] ${candidateId.padEnd(26)} -> 1440x900 Zoom: ${cstResults[candidateId]['1440x900'].zoom} | DOM Collisions: ${cstResults[candidateId]['1440x900'].domCollisions}`);
   }
 
   await browser.close();
