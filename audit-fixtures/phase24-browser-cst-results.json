@@ -45,24 +45,24 @@
   },
   "P24-B_DOMAwareClearance": {
     "1024x768": {
-      "zoom": 0.107,
-      "domCollisions": 0
+      "zoom": 0.1,
+      "domCollisions": 54
     },
     "1280x720": {
       "zoom": 0.1,
-      "domCollisions": 0
+      "domCollisions": 54
     },
     "1440x900": {
       "zoom": 0.1,
-      "domCollisions": 0
+      "domCollisions": 54
     },
     "1920x1080": {
       "zoom": 0.1,
-      "domCollisions": 0
+      "domCollisions": 54
     },
     "2560x1440": {
-      "zoom": 0.1,
-      "domCollisions": 0
+      "zoom": 0.107,
+      "domCollisions": 54
     }
   },
   "P24-C_Max2NodesPerRow": {
