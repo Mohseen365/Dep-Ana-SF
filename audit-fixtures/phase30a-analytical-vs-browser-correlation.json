@@ -1,0 +1,86 @@
+{
+  "pbim": {
+    "R4_Baseline": {
+      "analyticalCollisionCount": 75,
+      "browserCollisionCount": 15,
+      "intersectionCount": 15,
+      "browserOnlyCount": 0,
+      "analyticalOnlyCount": 60,
+      "isSubset": true
+    },
+    "30A-Underscore": {
+      "analyticalCollisionCount": 182,
+      "browserCollisionCount": 119,
+      "intersectionCount": 106,
+      "browserOnlyCount": 13,
+      "analyticalOnlyCount": 76,
+      "isSubset": false
+    },
+    "30A-Dot": {
+      "analyticalCollisionCount": 75,
+      "browserCollisionCount": 15,
+      "intersectionCount": 15,
+      "browserOnlyCount": 0,
+      "analyticalOnlyCount": 60,
+      "isSubset": true
+    },
+    "30A-Both": {
+      "analyticalCollisionCount": 182,
+      "browserCollisionCount": 119,
+      "intersectionCount": 106,
+      "browserOnlyCount": 13,
+      "analyticalOnlyCount": 76,
+      "isSubset": false
+    },
+    "30A-Chunk": {
+      "analyticalCollisionCount": 154,
+      "browserCollisionCount": 118,
+      "intersectionCount": 103,
+      "browserOnlyCount": 15,
+      "analyticalOnlyCount": 51,
+      "isSubset": false
+    }
+  },
+  "cloud-spend-tracker": {
+    "R4_Baseline": {
+      "analyticalCollisionCount": 21,
+      "browserCollisionCount": 7,
+      "intersectionCount": 7,
+      "browserOnlyCount": 0,
+      "analyticalOnlyCount": 14,
+      "isSubset": true
+    },
+    "30A-Underscore": {
+      "analyticalCollisionCount": 50,
+      "browserCollisionCount": 34,
+      "intersectionCount": 29,
+      "browserOnlyCount": 5,
+      "analyticalOnlyCount": 21,
+      "isSubset": false
+    },
+    "30A-Dot": {
+      "analyticalCollisionCount": 21,
+      "browserCollisionCount": 7,
+      "intersectionCount": 7,
+      "browserOnlyCount": 0,
+      "analyticalOnlyCount": 14,
+      "isSubset": true
+    },
+    "30A-Both": {
+      "analyticalCollisionCount": 50,
+      "browserCollisionCount": 34,
+      "intersectionCount": 29,
+      "browserOnlyCount": 5,
+      "analyticalOnlyCount": 21,
+      "isSubset": false
+    },
+    "30A-Chunk": {
+      "analyticalCollisionCount": 49,
+      "browserCollisionCount": 35,
+      "intersectionCount": 29,
+      "browserOnlyCount": 6,
+      "analyticalOnlyCount": 20,
+      "isSubset": false
+    }
+  }
+}
