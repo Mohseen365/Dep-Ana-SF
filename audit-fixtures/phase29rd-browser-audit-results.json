@@ -1,0 +1,617 @@
+{
+  "candidateSummary": {
+    "pbim": {
+      "D_A_pair_gapX0": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 7,
+        "browserCollisions": 51,
+        "sameRow": 51,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_A_pair_gapX10": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 9,
+        "browserCollisions": 50,
+        "sameRow": 50,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_A_pair_gapX20": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 12,
+        "browserCollisions": 51,
+        "sameRow": 51,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_A_pair_gapX40": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 13,
+        "browserCollisions": 51,
+        "sameRow": 51,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_B_row_gapX0": {
+        "width": 7514,
+        "height": 27960,
+        "area": 210091440,
+        "shapeCollisions": 75,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_B_row_gapX10": {
+        "width": 7519,
+        "height": 27960,
+        "area": 210231240,
+        "shapeCollisions": 57,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_B_row_gapX20": {
+        "width": 7524,
+        "height": 27960,
+        "area": 210371040,
+        "shapeCollisions": 29,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_B_row_gapX40": {
+        "width": 7534,
+        "height": 27960,
+        "area": 210650640,
+        "shapeCollisions": 11,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_C_vert_gapY0": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 0,
+        "browserCollisions": 102,
+        "sameRow": 102,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_C_vert_gapY10": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 0,
+        "browserCollisions": 102,
+        "sameRow": 102,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_C_vert_gapY20": {
+        "width": 7472,
+        "height": 27960,
+        "area": 208917120,
+        "shapeCollisions": 0,
+        "browserCollisions": 102,
+        "sameRow": 102,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_C_vert_gapY40": {
+        "width": 7472,
+        "height": 28006,
+        "area": 209260832,
+        "shapeCollisions": 0,
+        "browserCollisions": 102,
+        "sameRow": 102,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY0": {
+        "width": 7514,
+        "height": 27960,
+        "area": 210091440,
+        "shapeCollisions": 75,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY10": {
+        "width": 7514,
+        "height": 27960,
+        "area": 210091440,
+        "shapeCollisions": 75,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY20": {
+        "width": 7514,
+        "height": 27960,
+        "area": 210091440,
+        "shapeCollisions": 75,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY40": {
+        "width": 7514,
+        "height": 28006,
+        "area": 210437084,
+        "shapeCollisions": 75,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY0": {
+        "width": 7519,
+        "height": 27960,
+        "area": 210231240,
+        "shapeCollisions": 57,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY10": {
+        "width": 7519,
+        "height": 27960,
+        "area": 210231240,
+        "shapeCollisions": 57,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY20": {
+        "width": 7519,
+        "height": 27960,
+        "area": 210231240,
+        "shapeCollisions": 57,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY40": {
+        "width": 7519,
+        "height": 28006,
+        "area": 210577114,
+        "shapeCollisions": 57,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY0": {
+        "width": 7524,
+        "height": 27960,
+        "area": 210371040,
+        "shapeCollisions": 29,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY10": {
+        "width": 7524,
+        "height": 27960,
+        "area": 210371040,
+        "shapeCollisions": 29,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY20": {
+        "width": 7524,
+        "height": 27960,
+        "area": 210371040,
+        "shapeCollisions": 29,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY40": {
+        "width": 7524,
+        "height": 28006,
+        "area": 210717144,
+        "shapeCollisions": 29,
+        "browserCollisions": 6,
+        "sameRow": 5,
+        "adjacentRow": 1,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY0": {
+        "width": 7534,
+        "height": 27960,
+        "area": 210650640,
+        "shapeCollisions": 11,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY10": {
+        "width": 7534,
+        "height": 27960,
+        "area": 210650640,
+        "shapeCollisions": 11,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY20": {
+        "width": 7534,
+        "height": 27960,
+        "area": 210650640,
+        "shapeCollisions": 11,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY40": {
+        "width": 7534,
+        "height": 28006,
+        "area": 210997204,
+        "shapeCollisions": 11,
+        "browserCollisions": 7,
+        "sameRow": 5,
+        "adjacentRow": 2,
+        "true2D": 0
+      }
+    },
+    "cloud-spend-tracker": {
+      "D_A_pair_gapX0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 3,
+        "browserCollisions": 21,
+        "sameRow": 21,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_A_pair_gapX10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 3,
+        "browserCollisions": 21,
+        "sameRow": 21,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_A_pair_gapX20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 3,
+        "browserCollisions": 21,
+        "sameRow": 21,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_A_pair_gapX40": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 3,
+        "browserCollisions": 21,
+        "sameRow": 21,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_B_row_gapX0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 19,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_B_row_gapX10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 15,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_B_row_gapX20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 10,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_B_row_gapX40": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 5,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_C_vert_gapY0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 1,
+        "browserCollisions": 36,
+        "sameRow": 36,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_C_vert_gapY10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 1,
+        "browserCollisions": 36,
+        "sameRow": 36,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_C_vert_gapY20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 1,
+        "browserCollisions": 36,
+        "sameRow": 36,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_C_vert_gapY40": {
+        "width": 3439,
+        "height": 13206,
+        "area": 45415434,
+        "shapeCollisions": 1,
+        "browserCollisions": 36,
+        "sameRow": 36,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 19,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 19,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 19,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX0_gapY40": {
+        "width": 3439,
+        "height": 13206,
+        "area": 45415434,
+        "shapeCollisions": 19,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 15,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 15,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 15,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX10_gapY40": {
+        "width": 3439,
+        "height": 13206,
+        "area": 45415434,
+        "shapeCollisions": 15,
+        "browserCollisions": 12,
+        "sameRow": 10,
+        "adjacentRow": 2,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 10,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 10,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 10,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX20_gapY40": {
+        "width": 3439,
+        "height": 13206,
+        "area": 45415434,
+        "shapeCollisions": 10,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY0": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 5,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY10": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 5,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY20": {
+        "width": 3439,
+        "height": 13190,
+        "area": 45360410,
+        "shapeCollisions": 5,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      },
+      "D_D_comb_gapX40_gapY40": {
+        "width": 3439,
+        "height": 13206,
+        "area": 45415434,
+        "shapeCollisions": 5,
+        "browserCollisions": 13,
+        "sameRow": 10,
+        "adjacentRow": 3,
+        "true2D": 0
+      }
+    }
+  },
+  "fullValidationResults": {
+    "pbim": {
+      "D_D_comb_gapX20_gapY20": {
+        "viewports": {
+          "1024x768": 214,
+          "1280x720": 214,
+          "1440x900": 214,
+          "1920x1080": 214,
+          "2560x1440": 214
+        },
+        "zooms": {
+          "0.05": 214,
+          "0.08": 214,
+          "0.1": 214,
+          "0.11": 214,
+          "0.12": 214,
+          "0.15": 214,
+          "0.2": 214,
+          "0.3": 214,
+          "0.4": 214,
+          "0.5": 214
+        }
+      }
+    },
+    "cloud-spend-tracker": {
+      "D_D_comb_gapX20_gapY20": {
+        "viewports": {
+          "1024x768": 55,
+          "1280x720": 55,
+          "1440x900": 55,
+          "1920x1080": 55,
+          "2560x1440": 55
+        },
+        "zooms": {
+          "0.05": 55,
+          "0.08": 55,
+          "0.1": 55,
+          "0.11": 55,
+          "0.12": 55,
+          "0.15": 55,
+          "0.2": 55,
+          "0.3": 55,
+          "0.4": 55,
+          "0.5": 55
+        }
+      }
+    }
+  },
+  "runtimeMs": 330759
+}
