@@ -1,0 +1,334 @@
+{
+  "scenarios": {
+    "asset-dashboard-container": {
+      "focalLwcId": "LWC:asset-dashboard-container",
+      "name": "asset-dashboard-container",
+      "modelSummary": {
+        "modelNodeCount": 128,
+        "modelEdgeCount": 211,
+        "modelMaxDepth": 7,
+        "modelRings": 8,
+        "modelChildLwcs": 4,
+        "modelSharedHubs": 1,
+        "modelCollisionCount": 0
+      },
+      "browserMetrics": {
+        "totalRenderedNodes": 128,
+        "totalRenderedEdges": 211,
+        "zooms": {
+          "1": {
+            "zoom": 1,
+            "renderedNodes": 128,
+            "collisions": 12
+          },
+          "2": {
+            "zoom": 2,
+            "renderedNodes": 128,
+            "collisions": 12
+          },
+          "0.25": {
+            "zoom": 0.25,
+            "renderedNodes": 128,
+            "collisions": 12
+          },
+          "0.5": {
+            "zoom": 0.5,
+            "renderedNodes": 128,
+            "collisions": 12
+          },
+          "0.75": {
+            "zoom": 0.75,
+            "renderedNodes": 128,
+            "collisions": 12
+          },
+          "1.5": {
+            "zoom": 1.5,
+            "renderedNodes": 128,
+            "collisions": 12
+          }
+        }
+      },
+      "viewports": {
+        "1024x768": {
+          "viewport": "1024x768",
+          "nodeCount": 4,
+          "collisions": 0,
+          "clipped": 0
+        },
+        "1280x800": {
+          "viewport": "1280x800",
+          "nodeCount": 4,
+          "collisions": 3,
+          "clipped": 4
+        },
+        "1440x900": {
+          "viewport": "1440x900",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 2
+        },
+        "1920x1080": {
+          "viewport": "1920x1080",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 0
+        },
+        "2560x1440": {
+          "viewport": "2560x1440",
+          "nodeCount": 4,
+          "collisions": 0,
+          "clipped": 0
+        }
+      },
+      "consoleErrorsCount": 0
+    },
+    "citizen-report-portal": {
+      "focalLwcId": "LWC:citizen-report-portal",
+      "name": "citizen-report-portal",
+      "modelSummary": {
+        "modelNodeCount": 102,
+        "modelEdgeCount": 181,
+        "modelMaxDepth": 5,
+        "modelRings": 6,
+        "modelChildLwcs": 0,
+        "modelSharedHubs": 3,
+        "modelCollisionCount": 0
+      },
+      "browserMetrics": {
+        "totalRenderedNodes": 102,
+        "totalRenderedEdges": 181,
+        "zooms": {
+          "1": {
+            "zoom": 1,
+            "renderedNodes": 102,
+            "collisions": 7
+          },
+          "2": {
+            "zoom": 2,
+            "renderedNodes": 102,
+            "collisions": 7
+          },
+          "0.25": {
+            "zoom": 0.25,
+            "renderedNodes": 102,
+            "collisions": 7
+          },
+          "0.5": {
+            "zoom": 0.5,
+            "renderedNodes": 102,
+            "collisions": 7
+          },
+          "0.75": {
+            "zoom": 0.75,
+            "renderedNodes": 102,
+            "collisions": 7
+          },
+          "1.5": {
+            "zoom": 1.5,
+            "renderedNodes": 102,
+            "collisions": 7
+          }
+        }
+      },
+      "viewports": {
+        "1024x768": {
+          "viewport": "1024x768",
+          "nodeCount": 4,
+          "collisions": 2,
+          "clipped": 4
+        },
+        "1280x800": {
+          "viewport": "1280x800",
+          "nodeCount": 4,
+          "collisions": 3,
+          "clipped": 4
+        },
+        "1440x900": {
+          "viewport": "1440x900",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 2
+        },
+        "1920x1080": {
+          "viewport": "1920x1080",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 0
+        },
+        "2560x1440": {
+          "viewport": "2560x1440",
+          "nodeCount": 4,
+          "collisions": 0,
+          "clipped": 0
+        }
+      },
+      "consoleErrorsCount": 0
+    },
+    "vendor-workspace": {
+      "focalLwcId": "LWC:vendor-workspace",
+      "name": "vendor-workspace",
+      "modelSummary": {
+        "modelNodeCount": 101,
+        "modelEdgeCount": 195,
+        "modelMaxDepth": 6,
+        "modelRings": 7,
+        "modelChildLwcs": 2,
+        "modelSharedHubs": 2,
+        "modelCollisionCount": 0
+      },
+      "browserMetrics": {
+        "totalRenderedNodes": 101,
+        "totalRenderedEdges": 195,
+        "zooms": {
+          "1": {
+            "zoom": 1,
+            "renderedNodes": 101,
+            "collisions": 5
+          },
+          "2": {
+            "zoom": 2,
+            "renderedNodes": 101,
+            "collisions": 5
+          },
+          "0.25": {
+            "zoom": 0.25,
+            "renderedNodes": 101,
+            "collisions": 5
+          },
+          "0.5": {
+            "zoom": 0.5,
+            "renderedNodes": 101,
+            "collisions": 5
+          },
+          "0.75": {
+            "zoom": 0.75,
+            "renderedNodes": 101,
+            "collisions": 5
+          },
+          "1.5": {
+            "zoom": 1.5,
+            "renderedNodes": 101,
+            "collisions": 5
+          }
+        }
+      },
+      "viewports": {
+        "1024x768": {
+          "viewport": "1024x768",
+          "nodeCount": 4,
+          "collisions": 0,
+          "clipped": 0
+        },
+        "1280x800": {
+          "viewport": "1280x800",
+          "nodeCount": 4,
+          "collisions": 3,
+          "clipped": 4
+        },
+        "1440x900": {
+          "viewport": "1440x900",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 2
+        },
+        "1920x1080": {
+          "viewport": "1920x1080",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 0
+        },
+        "2560x1440": {
+          "viewport": "2560x1440",
+          "nodeCount": 4,
+          "collisions": 0,
+          "clipped": 0
+        }
+      },
+      "consoleErrorsCount": 0
+    },
+    "error-panel": {
+      "focalLwcId": "LWC:error-panel",
+      "name": "error-panel",
+      "modelSummary": {
+        "modelNodeCount": 1,
+        "modelEdgeCount": 0,
+        "modelMaxDepth": 0,
+        "modelRings": 1,
+        "modelChildLwcs": 0,
+        "modelSharedHubs": 0,
+        "modelCollisionCount": 0
+      },
+      "browserMetrics": {
+        "totalRenderedNodes": 1,
+        "totalRenderedEdges": 0,
+        "zooms": {
+          "1": {
+            "zoom": 1,
+            "renderedNodes": 1,
+            "collisions": 0
+          },
+          "2": {
+            "zoom": 2,
+            "renderedNodes": 1,
+            "collisions": 0
+          },
+          "0.25": {
+            "zoom": 0.25,
+            "renderedNodes": 1,
+            "collisions": 0
+          },
+          "0.5": {
+            "zoom": 0.5,
+            "renderedNodes": 1,
+            "collisions": 0
+          },
+          "0.75": {
+            "zoom": 0.75,
+            "renderedNodes": 1,
+            "collisions": 0
+          },
+          "1.5": {
+            "zoom": 1.5,
+            "renderedNodes": 1,
+            "collisions": 0
+          }
+        }
+      },
+      "viewports": {
+        "1024x768": {
+          "viewport": "1024x768",
+          "nodeCount": 1,
+          "collisions": 0,
+          "clipped": 0
+        },
+        "1280x800": {
+          "viewport": "1280x800",
+          "nodeCount": 4,
+          "collisions": 2,
+          "clipped": 4
+        },
+        "1440x900": {
+          "viewport": "1440x900",
+          "nodeCount": 4,
+          "collisions": 3,
+          "clipped": 4
+        },
+        "1920x1080": {
+          "viewport": "1920x1080",
+          "nodeCount": 4,
+          "collisions": 1,
+          "clipped": 1
+        },
+        "2560x1440": {
+          "viewport": "2560x1440",
+          "nodeCount": 4,
+          "collisions": 0,
+          "clipped": 0
+        }
+      },
+      "consoleErrorsCount": 0
+    }
+  },
+  "determinism": {},
+  "contaminationAudit": {}
+}

@@ -205,8 +205,8 @@ export function computeComponentOrbitLayout(
       // Base radius for track
       const baseTrackRadius = baseRingRadius + trackIdx * trackSpacing;
 
-      // Required radius to satisfy arc-length & chord clearance
-      const reqRadius = calculateRequiredSectorRadius(n_k, fullCircleAngle, requiredChordSeparation);
+      // Required radius to satisfy arc-length & chord clearance on full 360-degree circle
+      const reqRadius = n_k <= 1 ? 0 : requiredChordSeparation / (2 * Math.sin(Math.PI / n_k));
       const trackRadius = Math.max(baseTrackRadius, reqRadius);
 
       // Stagger angular starting offset per track for visual distribution
