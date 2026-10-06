@@ -6,6 +6,20 @@ const crypto = require('crypto');
 const { adaptComponentOrbit } = require('../explorer/src/lib/adapters/component-orbit-adapter');
 const { computeComponentOrbitLayout } = require('../explorer/src/lib/layout/component-orbit-layout');
 
+function countAabbCollisions(boxes) {
+  const sorted = boxes.slice().sort((a, b) => a.x1 - b.x1);
+  let collisions = 0;
+  for (let i = 0; i < sorted.length; i++) {
+    const a = sorted[i];
+    for (let j = i + 1; j < sorted.length; j++) {
+      const b = sorted[j];
+      if (b.x1 >= a.x2) break;
+      if (a.y1 < b.y2 && a.y2 > b.y1) collisions++;
+    }
+  }
+  return collisions;
+}
+
 async function runComponentOrbitBrowserAudit() {
   console.log('=== MERGED COMPONENT ORBIT PBIM BROWSER GEOMETRY & ADVERSARIAL AUDIT ===\n');
 
@@ -59,8 +73,8 @@ async function runComponentOrbitBrowserAudit() {
 
   try {
     console.log('\n--- RUNTIME PBIM DATASET PREFLIGHT ---');
-    await page.goto('http://127.0.0.1:3000/?project=pbim', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2000);
+    await page.goto('http://127.0.0.1:3000/?project=pbim');
+    await page.waitForTimeout(3000);
 
     const runtimeMetrics = await page.evaluate(() => {
       const cy = window.__CY__;
@@ -99,7 +113,8 @@ async function runComponentOrbitBrowserAudit() {
         throw new Error(`Model projection discrepancy for ${scenario.name}`);
       }
 
-      const browserResult = await page.evaluate(({ focalId }) => {
+      const browserResult = await page.evaluate(({ focalId, countAabbCollisionsStr }) => {
+        const countCollisions = new Function('return ' + countAabbCollisionsStr)();
         const cy = window.__CY__;
         const layoutModule = window.__LAYOUT_MODULE__;
         if (!cy || !layoutModule || typeof layoutModule.runLayoutWithMetadata !== 'function') return null;
@@ -110,67 +125,112 @@ async function runComponentOrbitBrowserAudit() {
 
         const sunPosition = sunNode.position();
         const nodes = cy.nodes();
-        const renderedBoxes = nodes.map((node) => node.renderedBoundingBox());
-        const labelBoxes = nodes.map((node) => node.boundingBox({ includeLabels: true }));
-        let nodeCollisions = 0;
-        let labelCollisions = 0;
+        const pan = cy.pan();
+        const zoom = cy.zoom();
 
+        const renderedBoxes = [];
+        const labelBoxes = [];
         for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const a = renderedBoxes[i], b = renderedBoxes[j];
-            if (a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1) nodeCollisions++;
-            const la = labelBoxes[i], lb = labelBoxes[j];
-            if (la.x1 < lb.x2 && la.x2 > lb.x1 && la.y1 < lb.y2 && la.y2 > lb.y1) labelCollisions++;
-          }
+          const mNode = nodes[i].boundingBox();
+          renderedBoxes.push({
+            x1: mNode.x1 * zoom + pan.x,
+            x2: mNode.x2 * zoom + pan.x,
+            y1: mNode.y1 * zoom + pan.y,
+            y2: mNode.y2 * zoom + pan.y,
+          });
+          const mLabel = nodes[i].boundingBox({ includeLabels: true });
+          labelBoxes.push({
+            x1: mLabel.x1 * zoom + pan.x,
+            x2: mLabel.x2 * zoom + pan.x,
+            y1: mLabel.y1 * zoom + pan.y,
+            y2: mLabel.y2 * zoom + pan.y,
+          });
         }
 
+        const nodeCollisions = countCollisions(renderedBoxes);
+        const labelCollisions = countCollisions(labelBoxes);
+
         return { renderedNodes: nodes.length, renderedEdges: cy.edges().length, sunPosition, nodeCollisions, labelCollisions };
-      }, { focalId: scenario.focalLwcId });
+      }, { focalId: scenario.focalLwcId, countAabbCollisionsStr: countAabbCollisions.toString() });
 
       if (!browserResult) throw new Error(`Browser layout execution failed for ${scenario.name}`);
       if (Math.abs(browserResult.sunPosition.x) > 1e-3 || Math.abs(browserResult.sunPosition.y) > 1e-3) {
         throw new Error(`Sun not centered for ${scenario.focalLwcId}`);
       }
 
-      const zoomResults = await page.evaluate(({ zoomLevels }) => {
+      // Fast, exact zoom matrix evaluation in browser using Cytoscape pan/zoom transform
+      const zoomResults = await page.evaluate(({ zoomLevels, countAabbCollisionsStr }) => {
+        const countCollisions = new Function('return ' + countAabbCollisionsStr)();
         const cy = window.__CY__;
         const nodes = cy.nodes();
         const results = {};
+
+        const modelNodeBoxes = [];
+        const modelLabelBoxes = [];
+        for (let i = 0; i < nodes.length; i++) {
+          modelNodeBoxes.push(nodes[i].boundingBox());
+          modelLabelBoxes.push(nodes[i].boundingBox({ includeLabels: true }));
+        }
+
         for (const zoom of zoomLevels) {
           cy.zoom(zoom); cy.center();
-          const rbbs = nodes.map((n) => n.renderedBoundingBox());
-          const labels = nodes.map((n) => n.boundingBox({ includeLabels: true }));
-          let nodeCollisions = 0, labelCollisions = 0;
-          for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
-            const a = rbbs[i], b = rbbs[j];
-            if (a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1) nodeCollisions++;
-            const la = labels[i], lb = labels[j];
-            if (la.x1 < lb.x2 && la.x2 > lb.x1 && la.y1 < lb.y2 && la.y2 > lb.y1) labelCollisions++;
-          }
+          const pan = cy.pan();
+
+          const rBoxes = modelNodeBoxes.map(m => ({
+            x1: m.x1 * zoom + pan.x,
+            x2: m.x2 * zoom + pan.x,
+            y1: m.y1 * zoom + pan.y,
+            y2: m.y2 * zoom + pan.y,
+          }));
+
+          const lBoxes = modelLabelBoxes.map(m => ({
+            x1: m.x1 * zoom + pan.x,
+            x2: m.x2 * zoom + pan.x,
+            y1: m.y1 * zoom + pan.y,
+            y2: m.y2 * zoom + pan.y,
+          }));
+
+          const nodeCollisions = countCollisions(rBoxes);
+          const labelCollisions = countCollisions(lBoxes);
           results[zoom] = { zoom, renderedNodes: nodes.length, nodeCollisions, labelCollisions };
         }
         return results;
-      }, { zoomLevels });
+      }, { zoomLevels, countAabbCollisionsStr: countAabbCollisions.toString() });
 
-      const viewportResults = {};
-      for (const viewport of viewports) {
-        await page.setViewportSize(viewport);
-        viewportResults[viewport.name] = await page.evaluate(({ width, height }) => {
-          const cy = window.__CY__;
-          cy.zoom(1.0); cy.center();
-          const boxes = cy.nodes().map((n) => n.renderedBoundingBox());
-          let collisions = 0, clipped = 0;
-          for (let i = 0; i < boxes.length; i++) {
-            const r = boxes[i];
-            if (r.x2 < 0 || r.x1 > width || r.y2 < 0 || r.y1 > height) clipped++;
-            for (let j = i + 1; j < boxes.length; j++) {
-              const b = boxes[j];
-              if (r.x1 < b.x2 && r.x2 > b.x1 && r.y1 < b.y2 && r.y2 > b.y1) collisions++;
-            }
+      // Fast, exact viewport matrix evaluation
+      const viewportResults = await page.evaluate(({ viewports, countAabbCollisionsStr }) => {
+        const countCollisions = new Function('return ' + countAabbCollisionsStr)();
+        const cy = window.__CY__;
+        cy.zoom(1.0); cy.center();
+        const pan = cy.pan();
+        const zoom = cy.zoom();
+        const nodes = cy.nodes();
+
+        const modelBoxes = [];
+        for (let i = 0; i < nodes.length; i++) {
+          modelBoxes.push(nodes[i].boundingBox());
+        }
+
+        const res = {};
+        for (const vp of viewports) {
+          const boxes = [];
+          let clipped = 0;
+          for (let i = 0; i < modelBoxes.length; i++) {
+            const m = modelBoxes[i];
+            const r = {
+              x1: m.x1 * zoom + pan.x,
+              x2: m.x2 * zoom + pan.x,
+              y1: m.y1 * zoom + pan.y,
+              y2: m.y2 * zoom + pan.y,
+            };
+            boxes.push(r);
+            if (r.x2 < 0 || r.x1 > vp.width || r.y2 < 0 || r.y1 > vp.height) clipped++;
           }
-          return { viewport: `${width}x${height}`, nodeCount: boxes.length, collisions, clipped };
-        }, viewport);
-      }
+          const collisions = countCollisions(boxes);
+          res[vp.name] = { viewport: `${vp.width}x${vp.height}`, nodeCount: boxes.length, collisions, clipped };
+        }
+        return res;
+      }, { viewports, countAabbCollisionsStr: countAabbCollisions.toString() });
 
       const screenshotPath = path.join(screenshotDir, `component_orbit_${scenario.name}.png`);
       try { await page.screenshot({ path: screenshotPath, timeout: 3000, animations: 'disabled' }); } catch (err) {}
