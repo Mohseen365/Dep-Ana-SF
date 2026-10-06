@@ -7,7 +7,7 @@ import 'cytoscape-navigator/cytoscape.js-navigator.css';
 import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
-import { getLayoutOptions, runLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
+import { getLayoutOptions, runLayoutWithMetadata, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
@@ -471,6 +471,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     cyRef.current = cy;
     if (typeof window !== 'undefined') {
       (window as any).__CY__ = cy;
+      (window as any).__LAYOUT_MODULE__ = {
+        runLayoutWithMetadata,
+        computeArchitectureLayoutWithMetadata,
+      };
     }
 
     const knownPosMap: Record<string, Position> = {};
