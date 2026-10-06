@@ -167,7 +167,7 @@ export function computeArchitectureLayoutWithMetadata(
       }
 
       for (const [id, pos] of Object.entries(existingPositions)) {
-        if (pos) {
+        if (pos && !(id in orbitOutput.positions)) {
           orbitPositions[id] = { x: pos.x, y: pos.y };
         }
       }

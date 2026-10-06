@@ -1,334 +1,673 @@
 {
+  "runtimePbimVerified": true,
+  "pbimDataHash": "d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
   "scenarios": {
     "asset-dashboard-container": {
       "focalLwcId": "LWC:asset-dashboard-container",
-      "name": "asset-dashboard-container",
       "modelSummary": {
-        "modelNodeCount": 128,
-        "modelEdgeCount": 211,
-        "modelMaxDepth": 7,
-        "modelRings": 8,
-        "modelChildLwcs": 4,
-        "modelSharedHubs": 1,
-        "modelCollisionCount": 0
+        "nodeCount": 128,
+        "edgeCount": 211,
+        "maxDepth": 7,
+        "rings": 8,
+        "childLwcs": 4,
+        "sharedHubs": 1,
+        "modelCollisions": 0
       },
-      "browserMetrics": {
-        "totalRenderedNodes": 128,
-        "totalRenderedEdges": 211,
-        "zooms": {
-          "1": {
-            "zoom": 1,
-            "renderedNodes": 128,
-            "collisions": 12
-          },
-          "2": {
-            "zoom": 2,
-            "renderedNodes": 128,
-            "collisions": 12
-          },
-          "0.25": {
-            "zoom": 0.25,
-            "renderedNodes": 128,
-            "collisions": 12
-          },
-          "0.5": {
-            "zoom": 0.5,
-            "renderedNodes": 128,
-            "collisions": 12
-          },
-          "0.75": {
-            "zoom": 0.75,
-            "renderedNodes": 128,
-            "collisions": 12
-          },
-          "1.5": {
-            "zoom": 1.5,
-            "renderedNodes": 128,
-            "collisions": 12
-          }
+      "browserSummary": {
+        "renderedNodes": 528,
+        "renderedEdges": 2063,
+        "sunPosition": {
+          "x": 0,
+          "y": 0
+        },
+        "nodeCollisions": 145,
+        "labelCollisions": 145
+      },
+      "zooms": {
+        "1": {
+          "zoom": 1,
+          "renderedNodes": 528,
+          "nodeCollisions": 27,
+          "labelCollisions": 27
+        },
+        "2": {
+          "zoom": 2,
+          "renderedNodes": 528,
+          "nodeCollisions": 27,
+          "labelCollisions": 27
+        },
+        "0.25": {
+          "zoom": 0.25,
+          "renderedNodes": 528,
+          "nodeCollisions": 27,
+          "labelCollisions": 27
+        },
+        "0.5": {
+          "zoom": 0.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 27,
+          "labelCollisions": 27
+        },
+        "0.75": {
+          "zoom": 0.75,
+          "renderedNodes": 528,
+          "nodeCollisions": 27,
+          "labelCollisions": 27
+        },
+        "1.5": {
+          "zoom": 1.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 27,
+          "labelCollisions": 27
         }
       },
       "viewports": {
         "1024x768": {
           "viewport": "1024x768",
-          "nodeCount": 4,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 27,
+          "clipped": 497
         },
         "1280x800": {
           "viewport": "1280x800",
-          "nodeCount": 4,
-          "collisions": 3,
-          "clipped": 4
+          "nodeCount": 528,
+          "collisions": 27,
+          "clipped": 487
         },
         "1440x900": {
           "viewport": "1440x900",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 2
+          "nodeCount": 528,
+          "collisions": 27,
+          "clipped": 486
         },
         "1920x1080": {
           "viewport": "1920x1080",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 27,
+          "clipped": 485
         },
         "2560x1440": {
           "viewport": "2560x1440",
-          "nodeCount": 4,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 27,
+          "clipped": 485
         }
-      },
-      "consoleErrorsCount": 0
+      }
     },
     "citizen-report-portal": {
       "focalLwcId": "LWC:citizen-report-portal",
-      "name": "citizen-report-portal",
       "modelSummary": {
-        "modelNodeCount": 102,
-        "modelEdgeCount": 181,
-        "modelMaxDepth": 5,
-        "modelRings": 6,
-        "modelChildLwcs": 0,
-        "modelSharedHubs": 3,
-        "modelCollisionCount": 0
+        "nodeCount": 102,
+        "edgeCount": 181,
+        "maxDepth": 5,
+        "rings": 6,
+        "childLwcs": 0,
+        "sharedHubs": 3,
+        "modelCollisions": 0
       },
-      "browserMetrics": {
-        "totalRenderedNodes": 102,
-        "totalRenderedEdges": 181,
-        "zooms": {
-          "1": {
-            "zoom": 1,
-            "renderedNodes": 102,
-            "collisions": 7
-          },
-          "2": {
-            "zoom": 2,
-            "renderedNodes": 102,
-            "collisions": 7
-          },
-          "0.25": {
-            "zoom": 0.25,
-            "renderedNodes": 102,
-            "collisions": 7
-          },
-          "0.5": {
-            "zoom": 0.5,
-            "renderedNodes": 102,
-            "collisions": 7
-          },
-          "0.75": {
-            "zoom": 0.75,
-            "renderedNodes": 102,
-            "collisions": 7
-          },
-          "1.5": {
-            "zoom": 1.5,
-            "renderedNodes": 102,
-            "collisions": 7
-          }
+      "browserSummary": {
+        "renderedNodes": 528,
+        "renderedEdges": 2063,
+        "sunPosition": {
+          "x": 0,
+          "y": 0
+        },
+        "nodeCollisions": 20,
+        "labelCollisions": 20
+      },
+      "zooms": {
+        "1": {
+          "zoom": 1,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "2": {
+          "zoom": 2,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.25": {
+          "zoom": 0.25,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.5": {
+          "zoom": 0.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.75": {
+          "zoom": 0.75,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "1.5": {
+          "zoom": 1.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
         }
       },
       "viewports": {
         "1024x768": {
           "viewport": "1024x768",
-          "nodeCount": 4,
-          "collisions": 2,
-          "clipped": 4
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 489
         },
         "1280x800": {
           "viewport": "1280x800",
-          "nodeCount": 4,
-          "collisions": 3,
-          "clipped": 4
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 484
         },
         "1440x900": {
           "viewport": "1440x900",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 2
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 483
         },
         "1920x1080": {
           "viewport": "1920x1080",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 482
         },
         "2560x1440": {
           "viewport": "2560x1440",
-          "nodeCount": 4,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 482
         }
-      },
-      "consoleErrorsCount": 0
+      }
     },
     "vendor-workspace": {
       "focalLwcId": "LWC:vendor-workspace",
-      "name": "vendor-workspace",
       "modelSummary": {
-        "modelNodeCount": 101,
-        "modelEdgeCount": 195,
-        "modelMaxDepth": 6,
-        "modelRings": 7,
-        "modelChildLwcs": 2,
-        "modelSharedHubs": 2,
-        "modelCollisionCount": 0
+        "nodeCount": 101,
+        "edgeCount": 195,
+        "maxDepth": 6,
+        "rings": 7,
+        "childLwcs": 2,
+        "sharedHubs": 2,
+        "modelCollisions": 0
       },
-      "browserMetrics": {
-        "totalRenderedNodes": 101,
-        "totalRenderedEdges": 195,
-        "zooms": {
-          "1": {
-            "zoom": 1,
-            "renderedNodes": 101,
-            "collisions": 5
-          },
-          "2": {
-            "zoom": 2,
-            "renderedNodes": 101,
-            "collisions": 5
-          },
-          "0.25": {
-            "zoom": 0.25,
-            "renderedNodes": 101,
-            "collisions": 5
-          },
-          "0.5": {
-            "zoom": 0.5,
-            "renderedNodes": 101,
-            "collisions": 5
-          },
-          "0.75": {
-            "zoom": 0.75,
-            "renderedNodes": 101,
-            "collisions": 5
-          },
-          "1.5": {
-            "zoom": 1.5,
-            "renderedNodes": 101,
-            "collisions": 5
-          }
+      "browserSummary": {
+        "renderedNodes": 528,
+        "renderedEdges": 2063,
+        "sunPosition": {
+          "x": 0,
+          "y": 0
+        },
+        "nodeCollisions": 23,
+        "labelCollisions": 23
+      },
+      "zooms": {
+        "1": {
+          "zoom": 1,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "2": {
+          "zoom": 2,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.25": {
+          "zoom": 0.25,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.5": {
+          "zoom": 0.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.75": {
+          "zoom": 0.75,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "1.5": {
+          "zoom": 1.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
         }
       },
       "viewports": {
         "1024x768": {
           "viewport": "1024x768",
-          "nodeCount": 4,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 489
         },
         "1280x800": {
           "viewport": "1280x800",
-          "nodeCount": 4,
-          "collisions": 3,
-          "clipped": 4
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 484
         },
         "1440x900": {
           "viewport": "1440x900",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 2
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 483
         },
         "1920x1080": {
           "viewport": "1920x1080",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 482
         },
         "2560x1440": {
           "viewport": "2560x1440",
-          "nodeCount": 4,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 482
         }
-      },
-      "consoleErrorsCount": 0
+      }
     },
     "error-panel": {
       "focalLwcId": "LWC:error-panel",
-      "name": "error-panel",
       "modelSummary": {
-        "modelNodeCount": 1,
-        "modelEdgeCount": 0,
-        "modelMaxDepth": 0,
-        "modelRings": 1,
-        "modelChildLwcs": 0,
-        "modelSharedHubs": 0,
-        "modelCollisionCount": 0
+        "nodeCount": 1,
+        "edgeCount": 0,
+        "maxDepth": 0,
+        "rings": 1,
+        "childLwcs": 0,
+        "sharedHubs": 0,
+        "modelCollisions": 0
       },
-      "browserMetrics": {
-        "totalRenderedNodes": 1,
-        "totalRenderedEdges": 0,
-        "zooms": {
-          "1": {
-            "zoom": 1,
-            "renderedNodes": 1,
-            "collisions": 0
-          },
-          "2": {
-            "zoom": 2,
-            "renderedNodes": 1,
-            "collisions": 0
-          },
-          "0.25": {
-            "zoom": 0.25,
-            "renderedNodes": 1,
-            "collisions": 0
-          },
-          "0.5": {
-            "zoom": 0.5,
-            "renderedNodes": 1,
-            "collisions": 0
-          },
-          "0.75": {
-            "zoom": 0.75,
-            "renderedNodes": 1,
-            "collisions": 0
-          },
-          "1.5": {
-            "zoom": 1.5,
-            "renderedNodes": 1,
-            "collisions": 0
-          }
+      "browserSummary": {
+        "renderedNodes": 528,
+        "renderedEdges": 2063,
+        "sunPosition": {
+          "x": 0,
+          "y": 0
+        },
+        "nodeCollisions": 27,
+        "labelCollisions": 27
+      },
+      "zooms": {
+        "1": {
+          "zoom": 1,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "2": {
+          "zoom": 2,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.25": {
+          "zoom": 0.25,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.5": {
+          "zoom": 0.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "0.75": {
+          "zoom": 0.75,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
+        },
+        "1.5": {
+          "zoom": 1.5,
+          "renderedNodes": 528,
+          "nodeCollisions": 214,
+          "labelCollisions": 214
         }
       },
       "viewports": {
         "1024x768": {
           "viewport": "1024x768",
-          "nodeCount": 1,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 489
         },
         "1280x800": {
           "viewport": "1280x800",
-          "nodeCount": 4,
-          "collisions": 2,
-          "clipped": 4
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 484
         },
         "1440x900": {
           "viewport": "1440x900",
-          "nodeCount": 4,
-          "collisions": 3,
-          "clipped": 4
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 483
         },
         "1920x1080": {
           "viewport": "1920x1080",
-          "nodeCount": 4,
-          "collisions": 1,
-          "clipped": 1
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 482
         },
         "2560x1440": {
           "viewport": "2560x1440",
-          "nodeCount": 4,
-          "collisions": 0,
-          "clipped": 0
+          "nodeCount": 528,
+          "collisions": 214,
+          "clipped": 482
         }
-      },
-      "consoleErrorsCount": 0
+      }
     }
   },
-  "determinism": {},
-  "contaminationAudit": {}
+  "localityAudit": {
+    "totalReachable": 128,
+    "movedNodeCount": 116,
+    "sunMoved": false,
+    "crossRingMigration": false,
+    "movedNodesSample": [
+      {
+        "nodeId": "ApexClass:AssetSelector",
+        "ring": 3,
+        "oldPos": {
+          "nodeId": "ApexClass:AssetSelector",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 0.6981317007977318,
+          "radius": 720,
+          "x": 551.552,
+          "y": 462.807,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:AssetSelector",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 1.2566370614359172,
+          "radius": 720,
+          "x": 222.492,
+          "y": 684.761,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 396.92
+      },
+      {
+        "nodeId": "ApexClass:AssetSummaryBuilder",
+        "ring": 3,
+        "oldPos": {
+          "nodeId": "ApexClass:AssetSummaryBuilder",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 1.3962634015954636,
+          "radius": 720,
+          "x": 125.027,
+          "y": 709.062,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:AssetSummaryBuilder",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 2.5132741228718345,
+          "radius": 720,
+          "x": -582.492,
+          "y": 423.205,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 763.08
+      },
+      {
+        "nodeId": "ApexClass:DashboardContext",
+        "ring": 3,
+        "oldPos": {
+          "nodeId": "ApexClass:DashboardContext",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 2.0943951023931953,
+          "radius": 720,
+          "x": -360,
+          "y": 623.538,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:DashboardContext",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 3.7699111843077517,
+          "radius": 720,
+          "x": -582.492,
+          "y": -423.205,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1070.13
+      },
+      {
+        "nodeId": "ApexClass:ExternalIntegrationService",
+        "ring": 4,
+        "oldPos": {
+          "nodeId": "ApexClass:ExternalIntegrationService",
+          "ring": 4,
+          "depth": 4,
+          "track": 0,
+          "angle": 0.39269908169872414,
+          "radius": 940,
+          "x": 868.447,
+          "y": 359.722,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:ExternalIntegrationService",
+          "ring": 4,
+          "depth": 4,
+          "track": 0,
+          "angle": 1.2566370614359172,
+          "radius": 940,
+          "x": 290.476,
+          "y": 893.993,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 787.08
+      },
+      {
+        "nodeId": "ApexClass:HealthScoreCalculator",
+        "ring": 3,
+        "oldPos": {
+          "nodeId": "ApexClass:HealthScoreCalculator",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 2.792526803190927,
+          "radius": 720,
+          "x": -676.579,
+          "y": 246.255,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:HealthScoreCalculator",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 5.026548245743669,
+          "radius": 720,
+          "x": 222.492,
+          "y": -684.761,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1294.26
+      },
+      {
+        "nodeId": "ApexClass:InspectionSelector",
+        "ring": 4,
+        "oldPos": {
+          "nodeId": "ApexClass:InspectionSelector",
+          "ring": 4,
+          "depth": 4,
+          "track": 0,
+          "angle": 0.7853981633974483,
+          "radius": 940,
+          "x": 664.68,
+          "y": 664.68,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:InspectionSelector",
+          "ring": 4,
+          "depth": 4,
+          "track": 1,
+          "angle": 2.5132741228718345,
+          "radius": 1100,
+          "x": -889.919,
+          "y": 646.564,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1554.7
+      },
+      {
+        "nodeId": "ApexClass:MaintenanceSelector",
+        "ring": 4,
+        "oldPos": {
+          "nodeId": "ApexClass:MaintenanceSelector",
+          "ring": 4,
+          "depth": 4,
+          "track": 0,
+          "angle": 1.1780972450961724,
+          "radius": 940,
+          "x": 359.722,
+          "y": 868.447,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:MaintenanceSelector",
+          "ring": 4,
+          "depth": 4,
+          "track": 1,
+          "angle": 3.7699111843077517,
+          "radius": 1100,
+          "x": -889.919,
+          "y": -646.564,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1963.89
+      },
+      {
+        "nodeId": "ApexClass:MapBuilder",
+        "ring": 3,
+        "oldPos": {
+          "nodeId": "ApexClass:MapBuilder",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 3.490658503988659,
+          "radius": 720,
+          "x": -676.579,
+          "y": -246.255,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:MapBuilder",
+          "ring": 3,
+          "depth": 3,
+          "track": 1,
+          "angle": 0.7853981633974483,
+          "radius": 880,
+          "x": 622.254,
+          "y": 622.254,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1562.46
+      },
+      {
+        "nodeId": "ApexClass:TimelineBuilder",
+        "ring": 3,
+        "oldPos": {
+          "nodeId": "ApexClass:TimelineBuilder",
+          "ring": 3,
+          "depth": 3,
+          "track": 0,
+          "angle": 4.1887902047863905,
+          "radius": 720,
+          "x": -360,
+          "y": -623.538,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:TimelineBuilder",
+          "ring": 3,
+          "depth": 3,
+          "track": 1,
+          "angle": 2.356194490192345,
+          "radius": 880,
+          "x": -622.254,
+          "y": 622.254,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1273.1
+      },
+      {
+        "nodeId": "ApexClass:TimelineSortHelper",
+        "ring": 4,
+        "oldPos": {
+          "nodeId": "ApexClass:TimelineSortHelper",
+          "ring": 4,
+          "depth": 4,
+          "track": 0,
+          "angle": 1.5707963267948966,
+          "radius": 940,
+          "x": 0,
+          "y": 940,
+          "width": 120,
+          "height": 60
+        },
+        "newPos": {
+          "nodeId": "ApexClass:TimelineSortHelper",
+          "ring": 4,
+          "depth": 4,
+          "track": 0,
+          "angle": 5.026548245743669,
+          "radius": 940,
+          "x": 290.476,
+          "y": -893.993,
+          "width": 120,
+          "height": 60
+        },
+        "distance": 1856.85
+      }
+    ]
+  },
+  "consoleErrorsCount": 0
 }

@@ -108,7 +108,7 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata',
     expect(tilePos.y).toBe(0);
   });
 
-  test('preserves position authority when existingPositions are passed', () => {
+  test('Case A — retains position authority for focal Sun when stale existingPositions are passed', () => {
     const res = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
       architectureMode: 'orbit',
       focalLwcId: 'LWC:asset-dashboard-container',
@@ -117,6 +117,55 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata',
       },
     });
 
-    expect(res.positions['LWC:asset-dashboard-container']).toEqual({ x: 100, y: 200 });
+    // Component Orbit geometry is authoritative for projected Sun
+    expect(res.positions['LWC:asset-dashboard-container']).toEqual({ x: 0, y: 0 });
+  });
+
+  test('Case B — retains position authority for projected dependency when stale existingPositions are passed', () => {
+    const res = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
+      architectureMode: 'orbit',
+      focalLwcId: 'LWC:asset-dashboard-container',
+      existingPositions: {
+        'ApexClass:AssetController': { x: 999, y: 888 },
+      },
+    });
+
+    // Component Orbit geometry is authoritative for projected dependency
+    expect(res.positions['ApexClass:AssetController']).toEqual({ x: 280, y: 0 });
+  });
+
+  test('Case C — preserves existingPositions for unprojected nodes outside current orbit projection', () => {
+    const res = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
+      architectureMode: 'orbit',
+      focalLwcId: 'LWC:asset-dashboard-container',
+      existingPositions: {
+        'ApexClass:UnrelatedClass': { x: 500, y: 500 },
+      },
+    });
+
+    // Unprojected node retains its position
+    expect(res.positions['ApexClass:UnrelatedClass']).toEqual({ x: 500, y: 500 });
+  });
+
+  test('Case D — invariant layout geometry of projected nodes across varying stale position inputs', () => {
+    const pureRes = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
+      architectureMode: 'orbit',
+      focalLwcId: 'LWC:asset-dashboard-container',
+    });
+
+    const staleRes = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
+      architectureMode: 'orbit',
+      focalLwcId: 'LWC:asset-dashboard-container',
+      existingPositions: {
+        'LWC:asset-dashboard-container': { x: -1000, y: -2000 },
+        'ApexClass:AssetController': { x: 3000, y: 4000 },
+        'ApexClass:UnrelatedClass': { x: 500, y: 500 },
+      },
+    });
+
+    expect(staleRes.positions['LWC:asset-dashboard-container']).toEqual(pureRes.positions['LWC:asset-dashboard-container']);
+    expect(staleRes.positions['ApexClass:AssetController']).toEqual(pureRes.positions['ApexClass:AssetController']);
+    expect(staleRes.positions['LWC:asset-tile']).toEqual(pureRes.positions['LWC:asset-tile']);
+    expect(staleRes.positions['ApexClass:UnrelatedClass']).toEqual({ x: 500, y: 500 });
   });
 });
