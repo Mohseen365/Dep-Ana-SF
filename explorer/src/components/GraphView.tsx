@@ -189,6 +189,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Track previous modes
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
   const prevArchitectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
+  const prevFocalLwcIdRef = useRef<string | null | undefined>(effectiveLayoutOptions.focalLwcId);
 
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
@@ -266,11 +267,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [layoutMode, captureAndPersistPositions]);
 
-  // Handle Architecture Mode Switch (Hierarchical <-> Hybrid transitions)
+  // Handle Architecture Mode or Focal LWC Switch (Hierarchical <-> Hybrid <-> Orbit transitions & focal LWC changes)
   useEffect(() => {
-    if (prevArchitectureModeRef.current === architectureMode) return;
+    const modeChanged = prevArchitectureModeRef.current !== architectureMode;
+    const focalChanged = architectureMode === 'orbit' && prevFocalLwcIdRef.current !== effectiveLayoutOptions.focalLwcId;
+
+    if (!modeChanged && !focalChanged) return;
 
     prevArchitectureModeRef.current = architectureMode;
+    prevFocalLwcIdRef.current = effectiveLayoutOptions.focalLwcId;
 
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -291,7 +296,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     setOrbitGuides(layoutRes.orbitGuides);
 
     captureAndPersistPositions(targetProvenance);
-  }, [architectureMode, captureAndPersistPositions]);
+  }, [architectureMode, effectiveLayoutOptions.focalLwcId, captureAndPersistPositions]);
 
   // Safe helper to unbind and destroy Cytoscape Navigator
   const destroyNavigator = useCallback(() => {
@@ -811,9 +816,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       captureAndPersistPositions();
     }
 
-    if (autoLayoutPolicy === true) {
+    if (autoLayoutPolicy === true || architectureMode === 'orbit') {
       const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
-      const shouldAnimate = !prefersReducedMotion && nodes.length < 100;
+      const shouldAnimate = !prefersReducedMotion && nodes.length < 100 && architectureMode !== 'orbit';
 
       if (shouldAnimate) {
         cy.one('layoutstop', () => {
