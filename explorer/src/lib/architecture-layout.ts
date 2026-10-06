@@ -18,11 +18,17 @@ import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLa
 import { resolveSpacingAndCollisions } from './layout/spacing';
 import { projectOrbitSemantics } from './layout/orbit-semantics';
 import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
+import { adaptComponentOrbit, type ComponentOrbitAdapterOptions } from './adapters/component-orbit-adapter';
+import { computeComponentOrbitLayout } from './layout/component-orbit-layout';
 import type { ArchitectureLayoutMode } from '../types/explorer';
 
 export interface ArchitectureLayoutOptions {
   /** Architecture Layout Mode: 'hierarchical' | 'hybrid' | 'orbit' */
   architectureMode?: ArchitectureLayoutMode;
+  /** Focal LWC node ID for Component Orbit layout */
+  focalLwcId?: string | null;
+  /** Component Orbit adapter options */
+  componentOrbitOptions?: ComponentOrbitAdapterOptions;
   /** Width of nodes used for collision avoidance (default: 120) */
   nodeWidth?: number;
   /** Height of nodes used for collision avoidance (default: 60) */
@@ -51,6 +57,7 @@ export interface ArchitectureLayoutResultWithMetadata {
   positions: Record<string, { x: number; y: number }>;
   featureRegions?: Map<string, FeatureRegion>;
   orbitGuides?: OrbitGuideMetadata;
+  projectedNodeIds?: Set<string>;
 }
 
 export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
@@ -122,16 +129,36 @@ export function computeArchitectureLayoutWithMetadata(
     return { positions: { ...existingPositions } };
   }
 
-  // Check if Architecture Orbit mode is explicitly requested
+  // Check if Architecture Orbit / Component Orbit mode is explicitly requested
   const isOrbit = architectureMode === 'orbit';
   if (isOrbit) {
-    const semanticProjection = projectOrbitSemantics(safeNodes, safeEdges);
-    const orbitOutput = computeOrbitLayout({
-      nodes: semanticProjection.nodeList,
-      options: {
-        nodeWidth,
-        nodeHeight,
-      },
+    const dummySummary = {
+      totalNodes: safeNodes.length,
+      totalEdges: safeEdges.length,
+      nodeCount: safeNodes.length,
+      edgeCount: safeEdges.length,
+      highRiskCount: 0,
+      unresolvedCount: 0,
+      cyclesCount: 0,
+    };
+    const schemaInput = {
+      summary: dummySummary,
+      nodes: safeNodes,
+      edges: safeEdges,
+      cycles: [],
+      unresolvedReferences: [],
+      impactSummaries: {},
+    };
+    const projection = adaptComponentOrbit(
+      schemaInput,
+      {
+        focalLwcId: options.focalLwcId,
+        ...options.componentOrbitOptions,
+      }
+    );
+    const orbitOutput = computeComponentOrbitLayout(projection, {
+      nodeWidth,
+      nodeHeight,
     });
 
     const orbitPositions: Record<string, { x: number; y: number }> = {};
@@ -139,16 +166,16 @@ export function computeArchitectureLayoutWithMetadata(
       orbitPositions[nodeId] = { x: pos.x, y: pos.y };
     }
 
-    // Apply Position Authority overrides if explicitly provided
     for (const [id, pos] of Object.entries(existingPositions)) {
-      if (pos) {
+      if (pos && !(id in orbitOutput.positions)) {
         orbitPositions[id] = { x: pos.x, y: pos.y };
       }
     }
 
     return {
       positions: orbitPositions,
-      orbitGuides: orbitOutput.guides,
+      orbitGuides: orbitOutput.guides as any,
+      projectedNodeIds: new Set(Object.keys(projection.nodes)),
     };
   }
 

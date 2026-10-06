@@ -208,6 +208,41 @@ export function runLayoutWithMetadata(
     const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
     const posMap = result.positions;
 
+    const isOrbitComponentFilter = options?.architectureMode === 'orbit' && result.projectedNodeIds;
+    const focusedSet = result.projectedNodeIds;
+
+    cy.batch(() => {
+      if (isOrbitComponentFilter && focusedSet) {
+        const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
+        const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
+
+        toShowNodes.show();
+        toHideNodes.hide();
+
+        toShowNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+
+        const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
+        const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
+
+        toShowEdges.show();
+        toHideEdges.hide();
+      } else {
+        cy.nodes().show();
+        cy.edges().show();
+        cy.nodes().forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+      }
+    });
+
     if (options?.animate) {
       cy.layout({
         name: 'preset',
@@ -218,16 +253,20 @@ export function runLayoutWithMetadata(
         fit: options?.fit ?? true,
       } as any).run();
     } else {
-      cy.batch(() => {
-        cy.nodes().forEach(node => {
-          const id = node.id();
-          if (posMap[id]) {
-            node.position(posMap[id]);
-          }
-        });
-      });
       if (options?.fit !== false) {
-        cy.fit(cy.elements(), options?.padding ?? 50);
+        if (isOrbitComponentFilter && focusedSet) {
+          const visibleEles = cy.elements().filter(e => {
+            if (e.isNode()) return focusedSet.has(e.id());
+            return focusedSet.has(e.data('source')) && focusedSet.has(e.data('target'));
+          });
+          if (visibleEles.length > 0) {
+            cy.fit(visibleEles, options?.padding ?? 50);
+          } else {
+            cy.fit(cy.elements(), options?.padding ?? 50);
+          }
+        } else {
+          cy.fit(cy.elements(), options?.padding ?? 50);
+        }
       }
     }
     return result;
@@ -264,6 +303,41 @@ export async function runLayoutWithMetadataAsync(
 
     const posMap = result.positions;
 
+    const isOrbitComponentFilter = options?.architectureMode === 'orbit' && result.projectedNodeIds;
+    const focusedSet = result.projectedNodeIds;
+
+    cy.batch(() => {
+      if (isOrbitComponentFilter && focusedSet) {
+        const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
+        const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
+
+        toShowNodes.show();
+        toHideNodes.hide();
+
+        toShowNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+
+        const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
+        const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
+
+        toShowEdges.show();
+        toHideEdges.hide();
+      } else {
+        cy.nodes().show();
+        cy.edges().show();
+        cy.nodes().forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+      }
+    });
+
     if (options?.animate) {
       cy.layout({
         name: 'preset',
@@ -274,16 +348,20 @@ export async function runLayoutWithMetadataAsync(
         fit: options?.fit ?? true,
       } as any).run();
     } else {
-      cy.batch(() => {
-        cy.nodes().forEach(node => {
-          const id = node.id();
-          if (posMap[id]) {
-            node.position(posMap[id]);
-          }
-        });
-      });
       if (options?.fit !== false) {
-        cy.fit(cy.elements(), options?.padding ?? 50);
+        if (isOrbitComponentFilter && focusedSet) {
+          const visibleEles = cy.elements().filter(e => {
+            if (e.isNode()) return focusedSet.has(e.id());
+            return focusedSet.has(e.data('source')) && focusedSet.has(e.data('target'));
+          });
+          if (visibleEles.length > 0) {
+            cy.fit(visibleEles, options?.padding ?? 50);
+          } else {
+            cy.fit(cy.elements(), options?.padding ?? 50);
+          }
+        } else {
+          cy.fit(cy.elements(), options?.padding ?? 50);
+        }
       }
     }
     return result;
