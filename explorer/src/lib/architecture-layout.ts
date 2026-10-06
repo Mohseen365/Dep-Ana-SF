@@ -18,11 +18,20 @@ import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLa
 import { resolveSpacingAndCollisions } from './layout/spacing';
 import { projectOrbitSemantics } from './layout/orbit-semantics';
 import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
+import {
+  adaptComponentOrbit,
+  type ComponentOrbitAdapterOptions,
+} from './adapters/component-orbit-adapter';
+import { computeComponentOrbitLayout } from './layout/component-orbit-layout';
 import type { ArchitectureLayoutMode } from '../types/explorer';
 
 export interface ArchitectureLayoutOptions {
   /** Architecture Layout Mode: 'hierarchical' | 'hybrid' | 'orbit' */
   architectureMode?: ArchitectureLayoutMode;
+  /** Focal LWC node ID for Component Orbit layout */
+  focalLwcId?: string | null;
+  /** Component Orbit adapter options */
+  componentOrbitOptions?: ComponentOrbitAdapterOptions;
   /** Width of nodes used for collision avoidance (default: 120) */
   nodeWidth?: number;
   /** Height of nodes used for collision avoidance (default: 60) */
@@ -122,9 +131,64 @@ export function computeArchitectureLayoutWithMetadata(
     return { positions: { ...existingPositions } };
   }
 
-  // Check if Architecture Orbit mode is explicitly requested
+  // Check if Architecture Orbit or Component Orbit mode is explicitly requested
   const isOrbit = architectureMode === 'orbit';
   if (isOrbit) {
+    if (
+      options.focalLwcId !== undefined ||
+      options.componentOrbitOptions !== undefined
+    ) {
+      const dummySummary = {
+        totalNodes: safeNodes.length,
+        totalEdges: safeEdges.length,
+        nodeCount: safeNodes.length,
+        edgeCount: safeEdges.length,
+        highRiskCount: 0,
+        unresolvedCount: 0,
+        cyclesCount: 0,
+      };
+
+      const schemaInput = {
+        summary: dummySummary,
+        nodes: safeNodes,
+        edges: safeEdges,
+        cycles: [],
+        unresolvedReferences: [],
+        impactSummaries: {},
+      };
+
+      const projection = adaptComponentOrbit(
+        schemaInput as any,
+        {
+          focalLwcId: options.focalLwcId,
+          ...options.componentOrbitOptions,
+        }
+      );
+
+      const orbitOutput = computeComponentOrbitLayout(projection, {
+        nodeWidth,
+        nodeHeight,
+      });
+
+      const orbitPositions: Record<string, { x: number; y: number }> = {};
+
+      for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
+        orbitPositions[nodeId] = { x: pos.x, y: pos.y };
+      }
+
+      // Preserve existing positions ONLY for unprojected nodes to maintain Component Orbit position authority
+      for (const [id, pos] of Object.entries(existingPositions)) {
+        if (pos && !orbitPositions[id]) {
+          orbitPositions[id] = { x: pos.x, y: pos.y };
+        }
+      }
+
+      return {
+        positions: orbitPositions,
+        orbitGuides: orbitOutput.guides as any,
+      };
+    }
+
     const semanticProjection = projectOrbitSemantics(safeNodes, safeEdges);
     const orbitOutput = computeOrbitLayout({
       nodes: semanticProjection.nodeList,

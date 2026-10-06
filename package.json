@@ -45,8 +45,11 @@
     "test:debt": "node scripts/test-architecture-debt.cjs"
   },
   "dependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
     "cytoscape-fcose": "^2.2.0",
     "cytoscape-navigator": "^2.0.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {
