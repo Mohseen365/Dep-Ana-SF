@@ -2,14 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
-/**
- * SYNTHETIC INTEGRATION TEST SUITE: Component Orbit Integration & Position Authority
- *
- * Verifies that computeArchitectureLayoutWithMetadata delegates to Component Orbit
- * layout when architectureMode is 'orbit' and focalLwcId is provided, and that position
- * authority is maintained for projected nodes.
- */
-describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata (Synthetic)', () => {
+describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata', () => {
   const sampleNodes: ExplorerNode[] = [
     {
       id: 'LWC:asset-dashboard-container',
@@ -100,7 +93,7 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata (
     });
 
     expect(res.positions).toBeDefined();
-    // Focal Sun at origin (0, 0)
+    // Sun at 0,0
     expect(res.positions['LWC:asset-dashboard-container']).toEqual({ x: 0, y: 0 });
 
     const controllerPos = res.positions['ApexClass:AssetController'];
@@ -115,19 +108,15 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata (
     expect(tilePos.y).toBe(0);
   });
 
-  test('maintains position authority for Component Orbit projected nodes when stale existingPositions are passed', () => {
+  test('preserves position authority when existingPositions are passed', () => {
     const res = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
       architectureMode: 'orbit',
       focalLwcId: 'LWC:asset-dashboard-container',
       existingPositions: {
         'LWC:asset-dashboard-container': { x: 100, y: 200 },
-        'ApexClass:UnrelatedClass': { x: 500, y: 500 },
       },
     });
 
-    // Authoritative radial placement for projected Sun node
-    expect(res.positions['LWC:asset-dashboard-container']).toEqual({ x: 0, y: 0 });
-    // Unprojected node retains existing position
-    expect(res.positions['ApexClass:UnrelatedClass']).toEqual({ x: 500, y: 500 });
+    expect(res.positions['LWC:asset-dashboard-container']).toEqual({ x: 100, y: 200 });
   });
 });

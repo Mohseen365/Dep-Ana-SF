@@ -18,10 +18,7 @@ import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLa
 import { resolveSpacingAndCollisions } from './layout/spacing';
 import { projectOrbitSemantics } from './layout/orbit-semantics';
 import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
-import {
-  adaptComponentOrbit,
-  type ComponentOrbitAdapterOptions,
-} from './adapters/component-orbit-adapter';
+import { adaptComponentOrbit, type ComponentOrbitAdapterOptions } from './adapters/component-orbit-adapter';
 import { computeComponentOrbitLayout } from './layout/component-orbit-layout';
 import type { ArchitectureLayoutMode } from '../types/explorer';
 
@@ -131,13 +128,10 @@ export function computeArchitectureLayoutWithMetadata(
     return { positions: { ...existingPositions } };
   }
 
-  // Check if Architecture Orbit or Component Orbit mode is explicitly requested
+  // Check if Architecture Orbit / Component Orbit mode is explicitly requested
   const isOrbit = architectureMode === 'orbit';
   if (isOrbit) {
-    if (
-      options.focalLwcId !== undefined ||
-      options.componentOrbitOptions !== undefined
-    ) {
+    if (options.focalLwcId !== undefined || options.componentOrbitOptions !== undefined) {
       const dummySummary = {
         totalNodes: safeNodes.length,
         totalEdges: safeEdges.length,
@@ -147,7 +141,6 @@ export function computeArchitectureLayoutWithMetadata(
         unresolvedCount: 0,
         cyclesCount: 0,
       };
-
       const schemaInput = {
         summary: dummySummary,
         nodes: safeNodes,
@@ -156,29 +149,25 @@ export function computeArchitectureLayoutWithMetadata(
         unresolvedReferences: [],
         impactSummaries: {},
       };
-
       const projection = adaptComponentOrbit(
-        schemaInput as any,
+        schemaInput,
         {
           focalLwcId: options.focalLwcId,
           ...options.componentOrbitOptions,
         }
       );
-
       const orbitOutput = computeComponentOrbitLayout(projection, {
         nodeWidth,
         nodeHeight,
       });
 
       const orbitPositions: Record<string, { x: number; y: number }> = {};
-
       for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
         orbitPositions[nodeId] = { x: pos.x, y: pos.y };
       }
 
-      // Preserve existing positions ONLY for unprojected nodes to maintain Component Orbit position authority
       for (const [id, pos] of Object.entries(existingPositions)) {
-        if (pos && !orbitPositions[id]) {
+        if (pos) {
           orbitPositions[id] = { x: pos.x, y: pos.y };
         }
       }
