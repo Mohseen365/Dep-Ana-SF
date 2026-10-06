@@ -32,6 +32,7 @@ export interface OrbitLayoutOptions {
   trackSpacingPx?: number; // Radial delta between tracks within same ring (default: 200px)
   maxTracksPerRing?: number; // Max track expansion count (default: 20)
   maxRepairPasses?: number; // Max iterative collision repair passes (default: 20)
+  ringLabels?: Record<number, string>; // Dynamic ring labels override
 }
 
 export interface OrbitNodePosition {
@@ -534,13 +535,15 @@ export function computeOrbitLayout(input: OrbitLayoutInput): OrbitLayoutOutput {
   if (minRadiusPx === Infinity) minRadiusPx = 0;
 
   // Generate Visual Guide Metadata
+  const customRingLabels = options.ringLabels;
   const guideRings: Array<{ ringIndex: number; radiusPx: number; label: string }> = [];
   for (let r = 0; r <= 5; r++) {
     const radiusPx = innerRadius + r * ringSpacing;
+    const ringLabel = customRingLabels?.[r] ?? LAYER_LABELS[r] ?? `Ring ${r}`;
     guideRings.push({
       ringIndex: r,
       radiusPx,
-      label: LAYER_LABELS[r] || `Layer Ring ${r}`,
+      label: ringLabel,
     });
   }
 
