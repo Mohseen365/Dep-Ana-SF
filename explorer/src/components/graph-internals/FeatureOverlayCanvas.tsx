@@ -211,8 +211,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       data-testid="feature-overlay-canvas"
     >
       <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-        {/* Render Architecture Orbit Visual Guides (Rings, Sectors, Core) */}
-        {architectureMode === 'orbit' && (
+        {/* Render Architecture Orbit & Constellation Visual Guides (Rings, Sectors, Core) */}
+        {(architectureMode === 'orbit' || architectureMode === 'constellation') && (
           <g className="orbit-guides-overlay" data-testid="orbit-guides-overlay">
             {/* Central Architectural Core Circle */}
             <circle
