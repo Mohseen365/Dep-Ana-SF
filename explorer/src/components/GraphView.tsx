@@ -291,6 +291,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       animate: false,
       architectureMode,
       enableFeatureLayout: architectureMode === 'hybrid',
+      fit: true,
     });
     setFeatureRegions(layoutRes.featureRegions);
     setOrbitGuides(layoutRes.orbitGuides);
@@ -820,6 +821,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
       const shouldAnimate = !prefersReducedMotion && nodes.length < 100 && architectureMode !== 'orbit';
 
+      const fitInSyncEffect = architectureMode === 'orbit' ? false : undefined;
+
       if (shouldAnimate) {
         cy.one('layoutstop', () => {
           captureAndPersistPositions();
@@ -831,6 +834,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           nodeCount: nodes.length,
           animate: true,
           architectureMode,
+          fit: fitInSyncEffect,
         });
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
@@ -842,6 +846,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           nodeCount: nodes.length,
           animate: false,
           architectureMode,
+          fit: fitInSyncEffect,
         });
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
