@@ -36,6 +36,7 @@ export type LayoutProvenance =
   | "automatic-hierarchical"
   | "automatic-hybrid"
   | "automatic-orbit"
+  | "automatic-constellation"
   | "user-authored";
 
 export interface GraphLayoutState {
@@ -300,14 +301,18 @@ export function mergeWithDefaultState(
           ? "static"
           : "interactive",
       architectureMode:
-        (loaded.graphLayout as any)?.architectureMode === "orbit"
+        (loaded.graphLayout as any)?.architectureMode === "constellation"
+          ? "constellation"
+          : (loaded.graphLayout as any)?.architectureMode === "orbit"
           ? "orbit"
           : (loaded.graphLayout as any)?.architectureMode === "hybrid"
           ? "hybrid"
           : "hierarchical",
       layoutProvenance:
         (loaded.graphLayout as any)?.layoutProvenance ||
-        ((loaded.graphLayout as any)?.architectureMode === "orbit"
+        ((loaded.graphLayout as any)?.architectureMode === "constellation"
+          ? "automatic-constellation"
+          : (loaded.graphLayout as any)?.architectureMode === "orbit"
           ? "automatic-orbit"
           : (loaded.graphLayout as any)?.architectureMode === "hybrid"
           ? "automatic-hybrid"

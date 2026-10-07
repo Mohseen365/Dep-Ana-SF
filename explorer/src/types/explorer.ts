@@ -231,7 +231,7 @@ export interface ExplorerUnresolvedReference {
   reason: string;
 }
 
-export type ArchitectureLayoutMode = 'hierarchical' | 'hybrid' | 'orbit';
+export type ArchitectureLayoutMode = 'hierarchical' | 'hybrid' | 'orbit' | 'constellation';
 
 export interface ExplorerComponentImpactSummary {
   id: string;

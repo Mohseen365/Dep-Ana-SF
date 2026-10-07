@@ -1105,6 +1105,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         ? 'hybrid'
         : architectureMode === 'hybrid'
         ? 'orbit'
+        : architectureMode === 'orbit'
+        ? 'constellation'
         : 'hierarchical';
     if (onArchitectureModeChange) {
       onArchitectureModeChange(nextMode);
@@ -1143,7 +1145,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         data-testid="graph-mode-indicator"
         title={layoutMode === 'static' ? 'Node positions are preserved' : 'Graph automatically arranges nodes'}
       >
-        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : `🔀 Interactive Mode (${architectureMode === 'orbit' ? 'Orbit' : architectureMode === 'hybrid' ? 'Hybrid' : 'Hierarchical'})`}
+        {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : `🔀 Interactive Mode (${architectureMode === 'constellation' ? 'Constellation' : architectureMode === 'orbit' ? 'Orbit' : architectureMode === 'hybrid' ? 'Hybrid' : 'Hierarchical'})`}
       </div>
 
       {/* Navigator Container */}

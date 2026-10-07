@@ -108,15 +108,19 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             className={`graph-control-btn ${architectureMode !== 'hierarchical' ? 'active' : ''}`}
             onClick={onToggleArchitectureMode}
             title={
-              architectureMode === 'orbit'
+              architectureMode === 'constellation'
+                ? 'Component Constellation (Multi-Sun Macro View)'
+                : architectureMode === 'orbit'
                 ? 'Architecture Orbit (Radial Concentric Bands)'
                 : architectureMode === 'hybrid'
                 ? 'Hybrid Layout (Clustered Feature Regions)'
                 : 'Hierarchical Layout (Layered Flow)'
             }
             aria-label={
-              architectureMode === 'orbit'
+              architectureMode === 'constellation'
                 ? 'Switch to Hierarchical Layout'
+                : architectureMode === 'orbit'
+                ? 'Switch to Component Constellation'
                 : architectureMode === 'hybrid'
                 ? 'Switch to Architecture Orbit'
                 : 'Switch to Hybrid Layout'
@@ -125,7 +129,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             data-testid="architecture-mode-toggle"
             type="button"
           >
-            {architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}
+            {architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}
           </button>
         )}
         {onToggleLayoutMode && (

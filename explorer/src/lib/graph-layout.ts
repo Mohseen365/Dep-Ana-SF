@@ -208,7 +208,7 @@ export function runLayoutWithMetadata(
     const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
     const posMap = result.positions;
 
-    const isOrbitComponentFilter = options?.architectureMode === 'orbit' && result.projectedNodeIds;
+    const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
     const focusedSet = result.projectedNodeIds;
 
     cy.batch(() => {
