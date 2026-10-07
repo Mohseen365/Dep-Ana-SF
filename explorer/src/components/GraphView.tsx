@@ -160,9 +160,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       ...layoutOptions,
       enableFeatureLayout,
       enableCandidateDOrdering: architectureMode === 'hierarchical',
-      focalLwcId: layoutOptions?.focalLwcId ?? focusedNodeId ?? null,
+      focalLwcId: layoutOptions?.focalLwcId ?? selectedNodeId ?? focusedNodeId ?? null,
     };
-  }, [enableFeatureLayout, architectureMode, layoutOptions, focusedNodeId]);
+  }, [enableFeatureLayout, architectureMode, layoutOptions, selectedNodeId, focusedNodeId]);
 
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
