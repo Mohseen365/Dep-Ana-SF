@@ -11,7 +11,7 @@ Building upon prior contradiction-closure audits, this document defines the mult
 2. **Initial Sun Baseline**: 14 strict LWC composition roots (`inDegree = 0` in `lwc-template-child`), comprising **6 Root Containers** and **8 Standalone Roots**. All 30 LWCs remain 100% eligible for dynamic Sun promotion.
 3. **Single Identity / Zero Cloning Contract**: Standard graph engines create visual copies (`Apex:X-copy-A`, `Apex:X-copy-B`) when displaying shared dependencies across multiple clusters. This contract **strictly forbids node cloning**. A shared dependency retains a single authoritative node ID (`Apex:X`) in Cytoscape, positioned either at its multi-Sun centroid or in a dedicated central shared corridor.
 4. **Local Depth Trade-off**: At local depth $k=1$, 14 Suns project a total of 50 node occurrences (42 unique nodes, 7 shared). At $k=2$, this jumps to 184 node occurrences (118 unique nodes, 42 shared), causing severe visual edge tangle and cluster overlap in macro space. Thus, **macro view defaults to $k=1$**, leaving $k \ge 2$ exploration to single-focal drilldown.
-5. **Reconciled Macro Geometry**: The base geometric minimum clearance $D_{\text{base}} = 860\text{px}$ plus $40\text{px}$ safety margin yields selected inner macro radius $R_{\text{inner}} = 900\text{px}$ and outer macro radius $R_{\text{outer}} = 1760\text{px}$ with angular offset $\phi = 22.5^\circ$, achieving minimum Sun clearance of $875.62\text{px} \ge 860.00\text{px}$ with $0$ modeled AABB collisions.
+5. **Reconciled Macro Geometry**: Derived mathematical minimums ($R_{\text{inner, geom\_min}} = 860\text{px}$, $R_{\text{outer, geom\_min}} = 1744.24\text{px}$) plus safety margins yield selected inner macro radius $R_{\text{inner}} = 900\text{px}$ (+40px margin) and outer macro radius $R_{\text{outer}} = 1760\text{px}$ (+15.76px margin) with angular offset $\phi = 22.5^\circ$, achieving minimum Sun center clearance of $875.62\text{px} \ge 860.00\text{px}$ and cluster edge clearance of $75.62\text{px} \ge 60.00\text{px}$ with $0$ modeled AABB collisions.
 6. **Final Verdict**: `CONSTELLATION ARCHITECTURE CONTRACT READY — PRODUCT DECISIONS REMAIN`. All technical, mathematical, architectural, and identity boundaries are fully specified. Unresolved items are strictly product/UX choices (e.g., exact macro local depth default $k=1$ vs $k=2$, multi-Sun selection gesture behavior) and are explicitly mapped in the Design Decision Matrix.
 
 ---
@@ -207,7 +207,7 @@ Option B: Global Shared Corridor
 ### Recommendation:
 - **Primary**: **Multi-Sun Centroid Placement** with local collision displacement. The global position of shared node $v$ shared by Suns $S_v \subseteq S$ is:
   $$X_v = \frac{1}{|S_v|} \sum_{s \in S_v} X_s, \quad Y_v = \frac{1}{|S_v|} \sum_{s \in S_v} Y_s + \text{Displacement}$$
-- **Fallback**: If centroid placement produces AABB collisions with active Suns or unshared orbit nodes, step along radial normal until clearance $gap \ge 120\text{px}$ is achieved.
+- **Fallback**: If centroid placement produces AABB collisions with active Suns or unshared orbit nodes, step along radial normal until clearance $\text{sharedNodeSunAabbClearance} \ge 120\text{px}$ is achieved.
 
 ---
 
@@ -449,13 +449,17 @@ This matrix categorizes all design choices, establishing facts vs required produ
 The data flow contract across module boundaries is strictly typed:
 
 ```typescript
-export interface ReconciledConstellationLayoutOptions {
-  innerMacroRadius: 900;           // px (6 Root Containers)
-  outerMacroRadius: 1760;          // px (8 Standalone Roots)
-  interlacingOffsetDeg: 22.5;      // degrees
-  sunToSunClusterClearance: 860;   // px
-  sharedNodeSunClearance: 120;    // px
-  sharedNodeLocalPadding: 40;      // px
+export interface FinalConstellationGeometryContract {
+  innerMacroRadius: 900;             // px (6 Root Containers)
+  outerMacroRadius: 1760;            // px (8 Standalone Roots)
+  innerSunCount: 6;
+  outerSunCount: 8;
+  interlacingOffsetDeg: 22.5;        // degrees
+  minimumSunCenterDistance: 860;     // px
+  minimumClusterEdgeClearance: 60;   // px
+  sharedNodeSunAabbClearance: 120;   // px (edge-to-edge AABB gap)
+  sharedNodeSunCenterDistance: 240;  // px (center distance for 120px node width)
+  sharedNodeLocalPadding: 40;        // px
 }
 ```
 
