@@ -216,8 +216,16 @@ export function runLayoutWithMetadata(
         const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
         const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
 
-        toShowNodes.show();
-        toHideNodes.hide();
+        if (typeof (toShowNodes as any).show === 'function') {
+          (toShowNodes as any).show();
+        } else if (typeof (toShowNodes as any).style === 'function') {
+          toShowNodes.style('display', 'element');
+        }
+        if (typeof (toHideNodes as any).hide === 'function') {
+          (toHideNodes as any).hide();
+        } else if (typeof (toHideNodes as any).style === 'function') {
+          toHideNodes.style('display', 'none');
+        }
 
         toShowNodes.forEach(node => {
           const id = node.id();
@@ -229,12 +237,30 @@ export function runLayoutWithMetadata(
         const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
         const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
 
-        toShowEdges.show();
-        toHideEdges.hide();
+        if (typeof (toShowEdges as any).show === 'function') {
+          (toShowEdges as any).show();
+        } else if (typeof (toShowEdges as any).style === 'function') {
+          toShowEdges.style('display', 'element');
+        }
+        if (typeof (toHideEdges as any).hide === 'function') {
+          (toHideEdges as any).hide();
+        } else if (typeof (toHideEdges as any).style === 'function') {
+          toHideEdges.style('display', 'none');
+        }
       } else {
-        cy.nodes().show();
-        cy.edges().show();
-        cy.nodes().forEach(node => {
+        const allNodes = cy.nodes();
+        const allEdges = cy.edges();
+        if (typeof (allNodes as any).show === 'function') {
+          (allNodes as any).show();
+        } else if (typeof (allNodes as any).style === 'function') {
+          allNodes.style('display', 'element');
+        }
+        if (typeof (allEdges as any).show === 'function') {
+          (allEdges as any).show();
+        } else if (typeof (allEdges as any).style === 'function') {
+          allEdges.style('display', 'element');
+        }
+        allNodes.forEach(node => {
           const id = node.id();
           if (posMap[id]) {
             node.position(posMap[id]);
@@ -311,8 +337,16 @@ export async function runLayoutWithMetadataAsync(
         const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
         const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
 
-        toShowNodes.show();
-        toHideNodes.hide();
+        if (typeof (toShowNodes as any).show === 'function') {
+          (toShowNodes as any).show();
+        } else if (typeof (toShowNodes as any).style === 'function') {
+          toShowNodes.style('display', 'element');
+        }
+        if (typeof (toHideNodes as any).hide === 'function') {
+          (toHideNodes as any).hide();
+        } else if (typeof (toHideNodes as any).style === 'function') {
+          toHideNodes.style('display', 'none');
+        }
 
         toShowNodes.forEach(node => {
           const id = node.id();
@@ -324,12 +358,30 @@ export async function runLayoutWithMetadataAsync(
         const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
         const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
 
-        toShowEdges.show();
-        toHideEdges.hide();
+        if (typeof (toShowEdges as any).show === 'function') {
+          (toShowEdges as any).show();
+        } else if (typeof (toShowEdges as any).style === 'function') {
+          toShowEdges.style('display', 'element');
+        }
+        if (typeof (toHideEdges as any).hide === 'function') {
+          (toHideEdges as any).hide();
+        } else if (typeof (toHideEdges as any).style === 'function') {
+          toHideEdges.style('display', 'none');
+        }
       } else {
-        cy.nodes().show();
-        cy.edges().show();
-        cy.nodes().forEach(node => {
+        const allNodes = cy.nodes();
+        const allEdges = cy.edges();
+        if (typeof (allNodes as any).show === 'function') {
+          (allNodes as any).show();
+        } else if (typeof (allNodes as any).style === 'function') {
+          allNodes.style('display', 'element');
+        }
+        if (typeof (allEdges as any).show === 'function') {
+          (allEdges as any).show();
+        } else if (typeof (allEdges as any).style === 'function') {
+          allEdges.style('display', 'element');
+        }
+        allNodes.forEach(node => {
           const id = node.id();
           if (posMap[id]) {
             node.position(posMap[id]);
