@@ -11,7 +11,8 @@ Building upon prior contradiction-closure audits, this document defines the mult
 2. **Initial Sun Baseline**: 14 strict LWC composition roots (`inDegree = 0` in `lwc-template-child`), comprising **6 Root Containers** and **8 Standalone Roots**. All 30 LWCs remain 100% eligible for dynamic Sun promotion.
 3. **Single Identity / Zero Cloning Contract**: Standard graph engines create visual copies (`Apex:X-copy-A`, `Apex:X-copy-B`) when displaying shared dependencies across multiple clusters. This contract **strictly forbids node cloning**. A shared dependency retains a single authoritative node ID (`Apex:X`) in Cytoscape, positioned either at its multi-Sun centroid or in a dedicated central shared corridor.
 4. **Local Depth Trade-off**: At local depth $k=1$, 14 Suns project a total of 50 node occurrences (42 unique nodes, 7 shared). At $k=2$, this jumps to 184 node occurrences (118 unique nodes, 42 shared), causing severe visual edge tangle and cluster overlap in macro space. Thus, **macro view defaults to $k=1$**, leaving $k \ge 2$ exploration to single-focal drilldown.
-5. **Final Verdict**: `CONSTELLATION ARCHITECTURE CONTRACT READY — PRODUCT DECISIONS REMAIN`. All technical, mathematical, architectural, and identity boundaries are fully specified. Unresolved items are strictly product/UX choices (e.g., exact macro local depth default $k=1$ vs $k=2$, multi-Sun selection gesture behavior) and are explicitly mapped in the Design Decision Matrix.
+5. **Reconciled Macro Geometry**: The base geometric minimum clearance $D_{\text{base}} = 860\text{px}$ plus $40\text{px}$ safety margin yields selected inner macro radius $R_{\text{inner}} = 900\text{px}$ and outer macro radius $R_{\text{outer}} = 1760\text{px}$ with angular offset $\phi = 22.5^\circ$, achieving minimum Sun clearance of $875.62\text{px} \ge 860.00\text{px}$ with $0$ modeled AABB collisions.
+6. **Final Verdict**: `CONSTELLATION ARCHITECTURE CONTRACT READY — PRODUCT DECISIONS REMAIN`. All technical, mathematical, architectural, and identity boundaries are fully specified. Unresolved items are strictly product/UX choices (e.g., exact macro local depth default $k=1$ vs $k=2$, multi-Sun selection gesture behavior) and are explicitly mapped in the Design Decision Matrix.
 
 ---
 
@@ -206,7 +207,7 @@ Option B: Global Shared Corridor
 ### Recommendation:
 - **Primary**: **Multi-Sun Centroid Placement** with local collision displacement. The global position of shared node $v$ shared by Suns $S_v \subseteq S$ is:
   $$X_v = \frac{1}{|S_v|} \sum_{s \in S_v} X_s, \quad Y_v = \frac{1}{|S_v|} \sum_{s \in S_v} Y_s + \text{Displacement}$$
-- **Fallback**: If centroid placement produces AABB collisions with active Suns or unshared orbit nodes, step along radial normal until clearance $gap \ge 40\text{px}$ is achieved.
+- **Fallback**: If centroid placement produces AABB collisions with active Suns or unshared orbit nodes, step along radial normal until clearance $gap \ge 120\text{px}$ is achieved.
 
 ---
 
@@ -238,9 +239,9 @@ Five macro layout strategies were evaluated for positioning the 14 Initial Suns 
 
 The recommended macro layout engine uses **Concentric Macro Ring Packing with Lexical Sorting**:
 
-1. **Inner Macro Ring ($R_{\text{macro},0} = 0\text{px}$)**: Centered focal point or primary system container.
-2. **Primary Macro Ring ($R_{\text{macro},1} = 650\text{px}$)**: Holds the 6 Root Containers, distributed evenly by angle $\theta_i = \frac{2\pi i}{6}$.
-3. **Secondary Macro Ring ($R_{\text{macro},2} = 1200\text{px}$)**: Holds the 8 Standalone Roots, distributed evenly by angle $\theta_j = \frac{2\pi j}{8} + \phi_{\text{offset}}$.
+1. **Inner Macro Ring ($R_{\text{inner}} = 900\text{px}$)**: Holds the 6 Root Containers, distributed evenly by angle $\theta_i = \frac{2\pi i}{6}$.
+2. **Outer Macro Ring ($R_{\text{outer}} = 1760\text{px}$)**: Holds the 8 Standalone Roots, distributed evenly by angle $\theta_j = \frac{2\pi j}{8} + 22.5^\circ$.
+3. **Interlacing Angle Offset ($\phi_{\text{offset}} = 22.5^\circ$)**: Maximizes inter-ring radial distance between inner and outer Suns.
 4. **Deterministic Tie-Breaking**: Suns are sorted on each macro ring strictly by `displayName` (lexical order) to guarantee 100% input-order invariance.
 
 ---
@@ -249,10 +250,9 @@ The recommended macro layout engine uses **Concentric Macro Ring Packing with Le
 
 To prevent overlapping orbits between adjacent Suns:
 
-- **Cluster Radius ($R_{\text{cluster}}$)**: For local depth $k=1$, maximum local orbit radius is $R_{\text{local}} = 280\text{px}$ (Ring 1 radius) + $60\text{px}$ (half node height) + $40\text{px}$ (padding) = $380\text{px}$.
-- **Minimum Inter-Sun Distance**: Two Suns $S_A$ and $S_B$ must maintain center-to-center distance:
-  $$D(S_A, S_B) \ge R_{\text{cluster}, A} + R_{\text{cluster}, B} + \text{Clearance} = 380 + 380 + 100 = 860\text{px}$$
-- **Macro Ring Spacing**: Macro Ring 1 ($650\text{px}$) and Macro Ring 2 ($1200\text{px}$) have radial separation $\Delta R_{\text{macro}} = 550\text{px} \ge 2 \times 280\text{px} = 560\text{px}$, guaranteeing zero cross-macro-ring AABB collisions.
+- **Cluster Radius ($R_{\text{cluster}}$)**: For local depth $k=1$, maximum local orbit radius is $R_{\text{local}} = 280\text{px}$ (Ring 1 radius) + $60\text{px}$ (half node height) + $40\text{px}$ (padding) = $380\text{px}$ ($398.1\text{px} \approx 400\text{px}$ full envelope).
+- **Minimum Inter-Sun Distance**: Two Suns $S_A$ and $S_B$ must maintain center-to-center distance $D(S_A, S_B) \ge 860\text{px}$.
+- **Achieved Clearance**: At $R_{\text{inner}} = 900\text{px}, R_{\text{outer}} = 1760\text{px}, \phi = 22.5^\circ$, the minimum Sun-to-Sun distance across all 14 Suns is $875.62\text{px} \ge 860.00\text{px}$, guaranteeing $0$ modeled cluster overlaps.
 
 ---
 
@@ -285,7 +285,7 @@ Node labels in multi-Sun space can quickly cause visual clutter:
 - **Sun Labels**: Rendered in bold, enlarged font (14px) with background pill container (`#1e293b`). Always visible.
 - **Shared Hub Labels**: Rendered in medium font (12px) with distinct accent background (`#0f766e`). Always visible.
 - **Local Orbit Member Labels**: Rendered in standard font (10px). Truncated at 16 characters with ellipsis (`...`) unless hovered.
-- **Label AABB Clearance**: Label dimensions ($120\text{px} \times 20\text{px}$) are included in node AABB bounding checks ($120\text{px} \times 80\text{px}$ total node footprint).
+- **Label AABB Clearance**: Model envelope ($120\text{px} \times 20\text{px}$) tested with $0$ modeled collisions; browser DOM closure pending implementation phase.
 
 ---
 
@@ -296,7 +296,7 @@ To prevent interactive layout resets (a defect discovered in prior layout modes 
 1. **Layout vs Viewport Separation**: Layout coordinates $(X, Y)$ are computed **once** upon entering Constellation mode or changing active Sun selection.
 2. **Interaction Immunity**: Zooming, panning, dragging nodes, or releasing pointer **MUST NOT** re-trigger `runLayout()` or `cy.fit()`.
 3. **Initial Fit Boundary**: `cy.fit()` is called **exactly once** after macro layout calculation finishes, using a padding of $50\text{px}$.
-4. **Responsive Viewport Standard Targets**: Tested and verified across 5 standard viewport resolutions: `1024x768`, `1280x800`, `1440x900`, `1920x1080`, and `2560x1440`.
+4. **Responsive Viewport Standard Targets**: Model fit factors tested across 5 viewport resolutions (`1024x768`: $0.1778\times$, `1280x800`: $0.1852\times$, `1440x900`: $0.2083\times$, `1920x1080`: $0.2500\times$, `2560x1440`: $0.3333\times$).
 
 ---
 
@@ -398,11 +398,6 @@ explorer/src/lib/
     └── constellation-state.ts              (NEW: State Transitions & Persistence)
 ```
 
-### Module Boundary Principles:
-- `component-constellation-adapter.ts`: Consumes `ExplorerDataSchema` and `activeSunIds`, outputs combined multi-Sun metadata. Does NOT touch coordinates or DOM.
-- `component-constellation-layout.ts`: Consumes adapter output, produces deterministic global Cartesian coordinates $(X, Y)$ for all visible nodes. Does NOT touch Cytoscape instance.
-- `GraphView.tsx`: Orchestrates rendering, passes coordinates to Cytoscape, handles gestures.
-
 ---
 
 # 21. Performance Measurement Contract
@@ -439,7 +434,7 @@ This matrix categorizes all design choices, establishing facts vs required produ
 | Decision Area | Options Evaluated | Repository Fact | Real PBIM Observation | Recommended Choice | Classification |
 |---|---|---|---|---|---|
 | **Initial Sun Set** | 14 Roots vs 30 LWCs | 14 LWCs have `inDegree = 0` in `lwc-template-child` | Verified 14 initial roots | **14 Composition Roots** | **REPOSITORY FACT** |
-| **Macro Local Depth** | $k=1$ vs $k=2$ vs $k=7$ | $k=1 \implies 50$ nodes; $k=2 \implies 184$ nodes | $k=2$ causes cluster overlap | **Default $k=1$ in Macro View** | **PRODUCT DECISION REQUIRED** |
+| **Macro Local Depth** | $k=1$ vs $k=2$ vs $k=7$ | $k=1 \implies 50$ nodes; $k=2 \implies 184$ nodes | $k=2$ causes cluster overlap | **Default $k=1$ in Macro View** | **PBIM-SUPPORTED DESIGN** |
 | **Macro Layout Strategy** | Grid vs Concentric Rings vs Force | Radial geometry established in Orbit | 14 Suns fit clean on 2 macro rings | **Concentric Macro Rings** | **PROPOSED DESIGN** |
 | **Shared Node Placement** | Centroid vs Shared Corridor | 7 global shared Apex hubs identified | 7 hubs reach 100% of initial Suns | **Multi-Sun Centroid** | **PROPOSED GEOMETRY** |
 | **Sun Promotion Action** | Add Sun vs Replace Sun vs Drilldown | All 30 LWCs eligible | 3 bridges, 13 leaves available | **Add to Active Sun Set** | **PRODUCT DECISION REQUIRED** |
@@ -454,32 +449,13 @@ This matrix categorizes all design choices, establishing facts vs required produ
 The data flow contract across module boundaries is strictly typed:
 
 ```typescript
-// 1. Adapter Output
-export interface MultiSunProjection {
-  suns: ComponentOrbitNode[];
-  localProjections: Map<string, ComponentOrbitProjection>;
-  sharedDependencies: {
-    node: ComponentOrbitNode;
-    referencingSunIds: string[];
-  }[];
-  macroEdges: ComponentOrbitEdge[];
-}
-
-// 2. Layout Output
-export interface ConstellationLayoutResult {
-  nodePositions: Map<string, { x: number; y: number }>;
-  macroGuides: {
-    type: 'macro-ring' | 'cluster-halo';
-    center: { x: number; y: number };
-    radius: number;
-  }[];
-  bounds: { minX: number; maxX: number; minY: number; maxY: number };
-  diagnostics: {
-    totalSunsPlaced: number;
-    totalNodesPlaced: number;
-    aabbCollisions: number;
-    executionTimeMs: number;
-  };
+export interface ReconciledConstellationLayoutOptions {
+  innerMacroRadius: 900;           // px (6 Root Containers)
+  outerMacroRadius: 1760;          // px (8 Standalone Roots)
+  interlacingOffsetDeg: 22.5;      // degrees
+  sunToSunClusterClearance: 860;   // px
+  sharedNodeSunClearance: 120;    // px
+  sharedNodeLocalPadding: 40;      // px
 }
 ```
 
@@ -512,7 +488,7 @@ Future implementation must be validated by a comprehensive unit and integration 
 
 # 26. Remaining Product Decisions
 
-Before production code implementation begins, product management / UX design must explicitly confirm the following 3 choices:
+Before production code implementation begins, product management / UX design must explicitly confirm the following choices:
 
 1. **Macro Local Orbit Depth Default**: Confirm default visible depth in Constellation macro view ($k=1$ recommended vs opt-in toggle for $k=2$).
 2. **Multi-Sun Promotion Gesture**: Confirm UI gesture for promoting non-root LWCs to Suns (e.g. Right-click context menu "Promote to Sun" vs Shift-Click vs Inspector button).
@@ -549,4 +525,4 @@ The repository architecture and semantic foundation are fully prepared for imple
 CONSTELLATION ARCHITECTURE CONTRACT READY — PRODUCT DECISIONS REMAIN
 ```
 
-All architectural boundaries, graph identity contracts, geometry transformations, collision limits, module interfaces, and test plans for Multi-Sun Component Constellation are established with mathematical rigor and evidence from the canonical PBIM dataset. Implementation may proceed as soon as the 3 remaining product/UX decisions are confirmed.
+All architectural boundaries, graph identity contracts, geometry transformations, collision limits, module interfaces, and test plans for Multi-Sun Component Constellation are established with mathematical rigor and evidence from the canonical PBIM dataset. Implementation may proceed as soon as remaining product/UX decisions are confirmed.
