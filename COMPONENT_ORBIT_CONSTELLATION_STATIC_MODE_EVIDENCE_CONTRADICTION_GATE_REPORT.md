@@ -53,11 +53,7 @@ const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options
 The actual current production diff in the repository consists of a targeted 1-line change in `explorer/src/components/GraphView.tsx`:
 
 ```typescript
-<<<<<<< SEARCH
-    if (autoLayoutPolicy === true || architectureMode === 'orbit') {
-=======
     if (autoLayoutPolicy === true || architectureMode === 'orbit' || architectureMode === 'constellation') {
->>>>>>> REPLACE
 ```
 
 - **Production files changed**: `explorer/src/components/GraphView.tsx` (1 line)
