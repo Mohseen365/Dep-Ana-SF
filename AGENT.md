@@ -46,6 +46,10 @@ STOP retrieving context when:
 | **Project Overview & Orientation** | `context/PROJECT-OVERVIEW.md` | `README.md` | `npm run test:cli` |
 | **Workspace Architecture & Navigation** | `context/CURRENT-ARCHITECTURE.md` | `explorer/src/context/WorkspaceRouterContext.tsx` | `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` |
 | **Selection & Investigation Behavior** | `context/CURRENT-ARCHITECTURE.md` | `explorer/src/context/InvestigationContext.tsx` | `explorer/src/App.investigationWorkflow.test.tsx` |
+| **Command Palette & Relocated Surfaces** | `context/CURRENT-IMPLEMENTATION.md` | `explorer/src/components/CommandPalette.tsx` | `explorer/src/components/CommandPalette.test.tsx` |
+| **Investigation Drawer & One-Hop Drill** | `context/CURRENT-IMPLEMENTATION.md` | `explorer/src/components/InvestigationDrawer.tsx` | `explorer/src/components/InvestigationDrawer.test.tsx` |
+| **Detached Drawer Window IPC** | `context/CURRENT-CONTRACTS.md` | `explorer/src/lib/detached-drawer.ts` | `explorer/src/lib/detached-drawer.test.ts` |
+| **Refactor Handoff Export** | `context/CURRENT-IMPLEMENTATION.md` | `explorer/src/components/RefactorHandoffModal.tsx` | `explorer/src/components/RefactorHandoffModal.test.tsx` |
 | **Layout Engine & Pipeline (Stages 1–11)**| `context/CURRENT-IMPLEMENTATION.md` | `explorer/src/lib/layout/global-layout.ts` | `npm run test:cli` |
 | **Orbit Radial Polar Layout** | `context/CURRENT-CONTRACTS.md` | `explorer/src/lib/orbit-layout.ts` | `explorer/src/lib/orbit-layout.test.ts` |
 | **Web Worker Layout Offloading** | `context/CURRENT-CONTRACTS.md` | `explorer/src/lib/workers/layout.worker.ts` | `explorer/src/test/Phase3D_WebWorkerLayout.test.ts` |

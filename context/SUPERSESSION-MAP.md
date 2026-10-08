@@ -36,6 +36,10 @@ Constellation Projection Fix                 ──►  `explorer/src/components
 PBIM Project Path Correction                 ──►  `scripts/export-explorer.cjs`
 `PHASE_COMP_FIX_REPAIR_PBIM...`                   `project-manifest.json`
                                                   `explorer/public/projects/pbim/explorer-data.json`
+
+Graph-First Investigation (UX-GFI)          ──►  `explorer/src/App.tsx`
+`tasks/plan.md`                                   `explorer/src/components/CommandPalette.tsx`
+`tasks/todo.md`                                   `explorer/src/components/InvestigationDrawer.tsx`
 ```
 
 ## Historical Milestone Status Summary
@@ -48,4 +52,5 @@ PBIM Project Path Correction                 ──►  `scripts/export-explorer
 | **Phase 3 (3A .. 3E, 3D-1)**| Worker Offloading & Scale Benchmarks | CURRENT IN CODE | `explorer/src/lib/workers/` |
 | **Orbit C1 .. C11 Freeze** | Polar Orbit Geometry & Semantics | CURRENT IN CODE | `explorer/src/lib/orbit-layout.ts` |
 | **SB-1A .. SB-1C** | Stage 8 2D Corridor & Density Repair | CURRENT IN CODE | `explorer/src/lib/layout/centrality.ts` |
+| **UX-GFI (UX-1 .. UX-10)** | Graph-First Two-Pane UX Refinement | CURRENT IN CODE | `explorer/src/components/CommandPalette.tsx`, `InvestigationDrawer.tsx` |
 | **Phase 5A .. 6B** | Causal Graph & Candidate D Experiments | HISTORICAL / EXPERIMENTAL | `context/HISTORICAL-DECISIONS.md` |

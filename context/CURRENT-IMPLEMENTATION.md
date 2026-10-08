@@ -10,7 +10,9 @@ explorer/src/
 │   ├── GraphView.tsx              # Cytoscape interactive graph view & layout caller
 │   ├── WorkspaceHeader.tsx        # Top domain header & tab switcher
 │   ├── Sidebar.tsx                # Left navigation & component inventory drawer
-│   ├── InvestigationDrawer.tsx   # Right selection & investigation drawer
+│   ├── InvestigationDrawer.tsx   # Progressive one-hop investigation drawer & breadcrumbs
+│   ├── CommandPalette.tsx         # Cmd+K palette host for relocated analytical surfaces
+│   ├── RefactorHandoffModal.tsx   # Refactor handoff export modal (palette & drawer entry)
 │   ├── ViewModeSwitcher.tsx       # Domain-grouped view mode switcher
 │   ├── FeatureMatrixPanel.tsx     # Windowed feature matrix component
 │   ├── DependencyRiverPanel.tsx   # Sankey dependency river component
@@ -25,6 +27,9 @@ explorer/src/
 │   ├── architecture-layout.ts     # Unified layout dispatcher (hierarchical, hybrid, orbit)
 │   ├── orbit-layout.ts            # Concentric ring radial layout & water-filling polar math
 │   ├── orbit-semantics.ts         # Ring R0..R5 & sector classifier for Orbit mode
+│   ├── drill.ts                   # Ranked dependents computation & progressive drill logic
+│   ├── detached-drawer.ts         # BroadcastChannel IPC sync for detached drawer window
+│   ├── refactor-handoff.ts        # Refactor handoff payload builder & parent frame transport
 │   ├── graph-layout.ts            # Layout engine interface & async worker dispatcher
 │   ├── layout/                    # 11-Stage Hierarchical Layout Pipeline
 │   │   ├── global-layout.ts       # Stage 1-11 pipeline coordinator

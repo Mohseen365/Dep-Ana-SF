@@ -79,11 +79,24 @@ export interface Edge {
 
 ## 4. URL & State Persistence Contract (`explorer/src/hooks/useViewState.ts`)
 
+- **Opt-In URL Write Policy:**
+  - Primary URL parameters center on `?node=X` and `?investigate=true|false`.
+  - Modular feature query parameters (e.g. `focus.*`, `impact.*`, `findings.*`) are written to the URL **only** when their respective feature is actively enabled via Cmd+K or UI controls.
+  - Legacy deep-links containing all parameters parse correctly on initial load without crashing.
 - **Query Parameters:**
   - `project` — Active project ID e.g. `?project=pbim`.
   - `view` — Active view mode e.g. `&view=graph`, `&view=river`, `&view=matrix`.
   - `domain` — Active workspace domain e.g. `&domain=feature`.
   - `node` — Selected node ID e.g. `&node=ApexClass:ApprovalFlowController`.
+  - `investigate` — Investigation drawer visibility state (`true` | `false`).
 - **History Semantics:**
   - View mode & project switches use `window.history.pushState`.
-  - Transient selections, hover, and pan/zoom state use `window.history.replaceState`.
+  - Transient selections, hover, drawer toggles, and pan/zoom state use `window.history.replaceState`.
+
+## 5. Detached Drawer BroadcastChannel IPC Contract (`explorer/src/lib/detached-drawer.ts`)
+
+- **Channel Name:** `BroadcastChannel('investigator')`.
+- **Message Types:**
+  - `{ type: 'SELECT_NODE', nodeId: string }`: Synchronizes target node selection between main application window and detached drawer window.
+  - `{ type: 'STATE_SYNC', state: object }`: Bi-directional state echo across windows.
+- **Safety Invariant:** Closing or disconnecting the detached window gracefully falls back to docked drawer mode without throwing unhandled exceptions in the main thread.
