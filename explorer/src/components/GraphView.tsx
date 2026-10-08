@@ -828,7 +828,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       captureAndPersistPositions();
     }
 
-    if (autoLayoutPolicy === true || architectureMode === 'orbit') {
+    if (autoLayoutPolicy === true || architectureMode === 'orbit' || architectureMode === 'constellation') {
       const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
       const shouldAnimate = !prefersReducedMotion && nodes.length < 100 && architectureMode !== 'orbit';
 
