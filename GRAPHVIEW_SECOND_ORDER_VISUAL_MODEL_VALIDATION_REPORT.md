@@ -15,9 +15,9 @@ However, the replacement model proposed by the previous audit (`Architecture Orb
 1. **Architecture is Not Inherently Radial:** Forcing a multi-tier enterprise architecture (`Presentation` $\rightarrow$ `Application` $\rightarrow$ `Domain` $\rightarrow$ `Schema`) onto concentric polar rings creates severe inner-ring capacity choking ($R_0, R_1$), forces dynamic radius expansion that degrades responsive canvas scaling, and falsely implies that Presentation components are "semantically central" while Schema components are "peripheral."
 2. **Angle Has No Categorical Spatial Semantic:** Assigning feature clusters to angular sectors ($\theta_1 \dots \theta_k$) falsely implies that adjacent angular sectors are semantically "closer" or more related than opposite sectors. Angular distance is purely geometric partitioning, not domain truth.
 3. **Single-Focal vs Multi-Sun Are Two Fundamentally Different Questions:** Single-focal $k$-hop dependency neighborhood analysis ("What does component X depend on?") and Multi-Sun shared infrastructure topology analysis ("Which controllers and sObjects are shared across multiple LWC entry points?") represent two distinct analytical questions. Merging them under the overloaded name "Constellation" perpetuates visual ambiguity.
-4. **Selections, Focus, and Position Authority Must Be Strictly Uncoupled:** Selection ("I am inspecting this node") must be a presentation-only state. Focus ("Recompute the local graph projection around this node") is an analytical state. User drag overrides must be stored in isolated, view-specific presentation override maps `(layoutMode, nodeId) \rightarrow (\Delta x, \Delta y)` rather than mutating canonical layout truth.
+4. **Selections, Focus, and Position Authority Must Be Strictly Uncoupled:** Selection ("I am inspecting this node") must be a presentation-only state. Focus ("Recompute the local graph projection around this node") is an analytical state. User drag overrides must be stored in isolated, view-specific presentation override maps `UserDragMap(mode, nodeId) -> (dx, dy)` rather than mutating canonical layout truth.
 
-Therefore, the conceptual direction is **Partially Valid**: the uncoupled multi-tier architecture pipeline (`Domain Graph \rightarrow Analytical Projection \rightarrow Visual Layout Projection \rightarrow Rendering \rightarrow Interaction`) is validated and adopted, but the radial visual metaphor for global architecture and the overloaded "Constellation" name must be redesigned and reframed before implementation resumes.
+Therefore, the conceptual direction is **Partially Valid**: the uncoupled multi-tier architecture pipeline (`Domain Graph -> Analytical Projection -> Visual Layout Projection -> Rendering -> Interaction`) is validated and adopted, but the radial visual metaphor for global architecture and the overloaded "Constellation" name must be redesigned and reframed before implementation resumes.
 
 ---
 
@@ -185,7 +185,10 @@ An audit of `discoverFeatures()` in `explorer/src/lib/layout/features.ts` evalua
 
 When restricted to a single focal component, radial distance $r_k = k \cdot \Delta R$ is **semantically honest**: $r_k$ directly measures shortest-path transitive graph hop distance from the focal node.
 
-### Single-Focal vs Multi-Sun: Are They Different Questions?
+---
+
+## 10. Single-Focal vs Multi-Sun — Are They Actually Different Questions?
+
 **YES. They answer two completely different analytical questions:**
 
 ```text
@@ -206,7 +209,7 @@ Merging these two distinct analytical questions under the single overloaded name
 
 ---
 
-## 10. Selection vs Focus
+## 11. Selection vs Focus
 
 GraphView must explicitly separate **Selection** from **Focus** as distinct runtime concepts:
 
@@ -226,7 +229,7 @@ FOCUS ("Recompute the visualization around this node")
 
 ---
 
-## 11. Visibility vs Analytical Scope
+## 12. Visibility vs Analytical Scope
 
 GraphView must explicitly distinguish **Presentation Filtering** from **Analytical Scope Filtering**:
 
@@ -244,7 +247,7 @@ ANALYTICAL SCOPE FILTERING ("Recompute sub-graph layout")
 
 ---
 
-## 12. Position Authority — Deeper Validation
+## 13. Position Authority — Deeper Validation
 
 Should position ever be persistent semantic state at all?
 
@@ -262,7 +265,7 @@ Should position ever be persistent semantic state at all?
 
 ---
 
-## 13. Camera vs Graph Position State Taxonomy
+## 14. Camera vs Graph Position State Taxonomy
 
 GraphView state must be strictly categorized into four independent layers:
 
@@ -291,7 +294,7 @@ Camera viewport state (`zoom`, `pan`) belongs purely to rendering and must NEVER
 
 ---
 
-## 14. Stability Requirements
+## 15. Stability Requirements
 
 GraphView layout projections must satisfy six explicit stability guarantees:
 
@@ -304,7 +307,7 @@ GraphView layout projections must satisfy six explicit stability guarantees:
 
 ---
 
-## 15. Counterexample Results
+## 16. Counterexample Results
 
 Testing proposed visual models against 10 critical edge cases:
 
@@ -323,7 +326,7 @@ Testing proposed visual models against 10 critical edge cases:
 
 ---
 
-## 16. Alternative Visualization Models
+## 17. Alternative Visualization Models
 
 We generate and evaluate three competing visualization models for GraphView:
 
@@ -341,7 +344,7 @@ We generate and evaluate three competing visualization models for GraphView:
 
 ---
 
-## 17. Comparative Model Decision Matrix
+## 18. Comparative Model Decision Matrix
 
 | Criterion | Model 1 (Current Radial Orbit) | Model 2 (Layered Architectural Flow) | Model 3 (Dual Lens Architecture) |
 |---|---|---|---|
@@ -358,7 +361,7 @@ We generate and evaluate three competing visualization models for GraphView:
 
 ---
 
-## 18. Minimum Required Semantic Model
+## 19. Minimum Required Semantic Model
 
 Proving field-by-field necessity for the canonical node semantic contract:
 
@@ -374,7 +377,7 @@ Proving field-by-field necessity for the canonical node semantic contract:
 
 ---
 
-## 19. Analytical Projection Model
+## 20. Analytical Projection Model
 
 GraphView analysis must be structured as pure functional projections that accept the immutable canonical graph and return analytical metadata:
 
@@ -406,7 +409,7 @@ export interface SharedInfrastructureProjection {
 
 ---
 
-## 20. Layout Projection Model
+## 21. Layout Projection Model
 
 Layout projections consume analytical projections and viewport constraints to compute Cartesian coordinates without mutating graph state:
 
@@ -426,7 +429,7 @@ export type LayoutEngine = (
 
 ---
 
-## 21. Final Authority Matrix
+## 22. Final Authority Matrix
 
 | Concept | Domain Authority | Analytical Authority | Layout Authority | Interaction Authority |
 |---|---|---|---|---|
@@ -443,7 +446,7 @@ export type LayoutEngine = (
 
 ---
 
-## 22. Non-Negotiable GraphView Principles
+## 23. Non-Negotiable GraphView Principles
 
 1. **Semantic Truth Over Aesthetic Metaphor:** Visual geometry must communicate true domain relationships. Proximity, radius, and angle must never mislead the user.
 2. **Layout Engines Must Never Mutate Graph Data:** Layout routines are pure functions taking graph data and returning coordinate maps.
@@ -456,7 +459,7 @@ export type LayoutEngine = (
 
 ---
 
-## 23. Visualization Decisions
+## 24. Visualization Decisions
 
 For each visualization in the GraphView suite, we assign exactly one final verdict:
 
@@ -470,7 +473,7 @@ For each visualization in the GraphView suite, we assign exactly one final verdi
 
 ---
 
-## 24. Correct GraphView Conceptual Architecture
+## 25. Correct GraphView Conceptual Architecture
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -505,7 +508,7 @@ For each visualization in the GraphView suite, we assign exactly one final verdi
 
 ---
 
-## 25. What Must NOT Be Implemented Yet
+## 26. What Must NOT Be Implemented Yet
 
 Before implementation resumes, the following actions are strictly prohibited:
 
@@ -517,18 +520,18 @@ Before implementation resumes, the following actions are strictly prohibited:
 
 ---
 
-## 26. Final Design Gate
+## 27. Final Design Gate
 
 **CHOSEN DESIGN GATE: B — PROPOSED MODEL PARTIALLY VALID**
 
 ### Justification:
-The previous audit's structural diagnosis was 100% accurate regarding code bugs, bypassed layout engines, overloaded terms, hardcoded dataset strings, and position leaks. Furthermore, its proposed multi-tier execution pipeline (`Domain \rightarrow Projection \rightarrow Layout \rightarrow Render \rightarrow Interaction`) is validated and adopted.
+The previous audit's structural diagnosis was 100% accurate regarding code bugs, bypassed layout engines, overloaded terms, hardcoded dataset strings, and position leaks. Furthermore, its proposed multi-tier execution pipeline (`Domain -> Projection -> Layout -> Render -> Interaction`) is validated and adopted.
 
 However, its proposed replacement model (`Architecture Orbit = global radial architectural layers`, `Component Constellation = focal dependency neighborhood`) requires redesign and reframing. Global enterprise architecture is a directed DAG best represented by layered flow maps, and Single-Focal vs Multi-Sun analyses must be formally uncoupled into separate, dedicated visual lenses.
 
 ---
 
-## 27. Evidence Index
+## 28. Evidence Index
 
 | Finding / Topic | Repository Location | Code / Test Reference |
 |---|---|---|
@@ -543,7 +546,7 @@ However, its proposed replacement model (`Architecture Orbit = global radial arc
 
 ---
 
-## 28. Absolute Final Question Answer
+## 29. Absolute Final Question Answer
 
 > **If we deleted every existing Orbit and Constellation layout algorithm today and rebuilt GraphView from the raw graph data, what would be the most truthful visual questions to answer, and what should each visualization encode to answer those questions without misleading the user?**
 
