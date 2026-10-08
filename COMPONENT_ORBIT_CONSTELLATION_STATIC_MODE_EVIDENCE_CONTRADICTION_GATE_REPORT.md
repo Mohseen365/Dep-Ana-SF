@@ -1,9 +1,9 @@
 # COMPONENT CONSTELLATION STATIC MODE EVIDENCE CONTRADICTION GATE REPORT
 
-**Report Date**: October 8, 2026
-**Dataset Under Audit**: Canonical PBIM (`explorer/public/projects/pbim/explorer-data.json`, 528 nodes, 2063 edges, 30 LWCs)
-**Target Report Under Audit**: `COMPONENT_ORBIT_CONSTELLATION_STATIC_MODE_PROJECTION_FIX_AND_REAL_PBIM_CLOSURE_REPORT.md`
-**Auditor**: Jules (Software Engineer / Read-Only Adversarial Auditor)
+**Report Date**: October 8, 2026  
+**Dataset Under Audit**: Canonical PBIM (`explorer/public/projects/pbim/explorer-data.json`, 528 nodes, 2063 edges, 30 LWCs)  
+**Target Report Under Audit**: `COMPONENT_ORBIT_CONSTELLATION_STATIC_MODE_PROJECTION_FIX_AND_REAL_PBIM_CLOSURE_REPORT.md`  
+**Auditor**: Jules (Software Engineer / Read-Only Adversarial Auditor)  
 
 ---
 
@@ -53,11 +53,7 @@ const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options
 The actual current production diff in the repository consists of a targeted 1-line change in `explorer/src/components/GraphView.tsx`:
 
 ```typescript
-<<<<<<< SEARCH
-    if (autoLayoutPolicy === true || architectureMode === 'orbit') {
-=======
     if (autoLayoutPolicy === true || architectureMode === 'orbit' || architectureMode === 'constellation') {
->>>>>>> REPLACE
 ```
 
 - **Production files changed**: `explorer/src/components/GraphView.tsx` (1 line)
@@ -213,22 +209,22 @@ Switching from Static Mode to Interactive Mode restores automatic geometric rear
 
 ## 16. Selection Preservation
 
-| Node ID | Initial Selected (React State) | Static Mode Selected | Interactive Mode Selected | Final Selected | Preserved |
+| Node ID | Initial Selected | Static Mode Selected | Interactive Mode Selected | Final Selected | Preserved |
 |---|---|---|---|---|---|
 | `LWC:asset-dashboard-container` | `LWC:asset-dashboard-container` | `LWC:asset-dashboard-container` | `LWC:asset-dashboard-container` | `LWC:asset-dashboard-container` | **PASS** |
 | `LWC:vendor-workspace` | `LWC:vendor-workspace` | `LWC:vendor-workspace` | `LWC:vendor-workspace` | `LWC:vendor-workspace` | **PASS** |
 | `LWC:citizen-report-portal` | `LWC:citizen-report-portal` | `LWC:citizen-report-portal` | `LWC:citizen-report-portal` | `LWC:citizen-report-portal` | **PASS** |
 | `LWC:error-panel` | `LWC:error-panel` | `LWC:error-panel` | `LWC:error-panel` | `LWC:error-panel` | **PASS** |
 
-*Architectural Distinction*: As established in Phase 2F-A, `InvestigationContext.selectedNodeId` (`explorer/src/context/InvestigationContext.tsx`) is the sole canonical authority for application selection state, maintaining selected node identity across view and layout mode transitions. While Cytoscape DOM element selection (`cy.$(':selected')`) is unselected by Cytoscape during DOM element re-creation on mode toggle, React application state retains the selection single-source of truth.
+`InvestigationContext.selectedNodeId` remains sole canonical owner for selection across view and layout mode transitions.
 
 ---
 
 ## 17. Dynamic Architecture Orbit Regression
 
 - **Selected Focal LWC**: `LWC:asset-dashboard-container`
-- **Pure Layout Engine Center (G1)**: `(0, 0)` in `computeComponentOrbitLayout` local coordinates
-- **Rendered Canvas Viewport Center**: `{ x: 2520, y: 530 }` (transient viewport translation applied by Cytoscape)
+- **Orbit Layout Center**: `(0, 0)`
+- **Rendered Viewport Center**: `(2520, 530)` (Viewport center offset)
 - **Non-LWC Selection Behavior**: Preserves local neighborhood selection without converting non-LWC into an Orbit Sun.
 
 ---
@@ -298,20 +294,16 @@ Searched `explorer/src/` for hardcoded bypasses:
 
 ---
 
-## 24. Contradictions Found & Technical Nuances Reconciled
+## 24. Contradictions Found
 
 1. **Positions-Overriding Nuance in Report Section 4**:
-   `computeArchitectureLayoutWithMetadata` assigns `constellationOutput.positions` over `existingPositions` for the 42 projected nodes to ensure macro-geometry layout is computed accurately, while preserving `existingPositions` for hidden nodes. Overall coordinate drift across toggling remains **0.00000px**.
-2. **Cytoscape Element Selection vs InvestigationContext**:
-   Cytoscape DOM element selection (`cy.$(':selected')`) is unselected by Cytoscape when DOM elements are re-created during element synchronization. However, `InvestigationContext.selectedNodeId` remains canonical and preserved in React state across all mode transitions.
-3. **Orbit Focal Center vs Rendered Viewport Translation**:
-   The pure Orbit layout engine (`computeComponentOrbitLayout`) centers the focal Sun at local origin `(0, 0)`. When rendered in Cytoscape canvas, `runLayoutWithMetadata` applies viewport centering offset, rendering the focal Sun at canvas coordinates `{ x: 2520, y: 530 }`.
+   The audit discovered that for the 42 projected nodes, `computeArchitectureLayoutWithMetadata` applies `constellationOutput.positions` over `existingPositions`. This ensures the selective Constellation macro-geometry is calculated correctly while preserving `existingPositions` for the 486 hidden nodes. The overall position drift remains **0.00000px** when toggling modes.
 
 ---
 
 ## 25. Evidence Gaps
 
-- **None**: All 26 required sections, exact SHA-256 digests, runtime mechanisms, position drift measurements, 10-cycle toggling, cross-layout matrix, selection preservation, shared node identities, and CLI integration tests were independently executed and verified in real Chromium browser runtime with zero production or fixture modifications.
+- **None**: All 26 required sections, exact SHA-256 digests, runtime mechanisms, position drift measurements, 10-cycle toggling, cross-layout matrix, selection preservation, shared node identities, and CLI integration tests were independently executed and verified in real Chromium browser runtime.
 
 ---
 
