@@ -17,6 +17,8 @@ The repository consists of two primary operational subsystems:
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │                             Explorer Visualization Workspace                                │
 │  - React 19 + TypeScript (`explorer/src/`)                                                  │
+│  - Graph-First Two-Pane Shell (Full-canvas graph + Right Investigation Drawer)               │
+│  - Cmd+K Command Palette (`CommandPalette.tsx`) hosting relocated analytical surfaces        │
 │  - Single-owner State Contexts (`InvestigationContext`, `WorkspaceRouterContext`)            │
 │  - 18 View Modes across 5 Workspace Domains                                                 │
 │  - Multi-stage Layout Engine & Orbit Polar Layout (`explorer/src/lib/layout/`)             │
@@ -61,7 +63,7 @@ The workspace taxonomy defines 18 view modes organized into 5 canonical workspac
 State authority is governed by explicit single-owner React context providers:
 
 - **Routing Authority:** `WorkspaceRouterContext` (`explorer/src/context/WorkspaceRouterContext.tsx`) is sole owner of view mode (`viewMode`), domain (`activeDomain`), and project selection (`currentProject`).
-- **Investigation Authority:** `InvestigationContext` (`explorer/src/context/InvestigationContext.tsx`) is sole owner of selection (`selectedNodeId`, `selectedEdgeId`, `selectedFindingId`), drill path, drawer state, and focus state.
+- **Investigation Authority:** `InvestigationContext` (`explorer/src/context/InvestigationContext.tsx`) is sole owner of selection (`selectedNodeId`, `selectedEdgeId`, `selectedFindingId`), drill path, drawer state (`investigateOpen`, pinned state, detached window sync), and focus state.
 - **Project Data Authority:** `ProjectContext` (`explorer/src/context/ProjectContext.tsx`) manages project manifest loading and project metadata.
 - **Position Authority:** `ProjectStateContext` (`explorer/src/context/ProjectStateContext.tsx`) maintains rendered layout coordinate maps (`nodePositions`).
 

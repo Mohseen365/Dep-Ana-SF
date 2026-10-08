@@ -49,6 +49,11 @@ Key Vitest test files:
 - `explorer/src/test/Phase3D_WebWorkerLayout.test.ts` — Web Worker offloading, 0.00000px coordinate drift, stale result rejection, and synchronous fallback.
 - `explorer/src/test/static-constellation-projection.test.ts` — Constellation static vs interactive mode node projection synchronization.
 - `explorer/src/lib/orbit-layout.test.ts` — Orbit polar coordinate placement, water-filling sector allocation, and exact zero-collision AABB verification.
+- `explorer/src/lib/drill.test.ts` — Progressive one-hop dependent ranking and deterministic impact sorting.
+- `explorer/src/lib/detached-drawer.test.ts` — BroadcastChannel message-passing for detached drawer synchronization.
+- `explorer/src/hooks/useCommandPalette.test.ts` & `explorer/src/components/CommandPalette.test.tsx` — Cmd+K keyboard shortcut, search debouncing, and surface mounting.
+- `explorer/src/hooks/useViewState.test.ts` — Two-parameter URL state (`?node=X&investigate=true`) and opt-in feature query writing.
+- `explorer/src/components/InvestigationDrawer.test.tsx` — Breadcrumb navigation, progressive drilldown, pinned drawer state, and refactor handoff action.
 - `explorer/src/lib/adapters/*.test.ts` — Vitest unit tests for 12 canonical adapters (matrix, river, tree, radar, profile, dna, subway, constellation, etc.).
 - `explorer/src/App.test.tsx`, `App.deepLink.test.tsx`, `App.investigationWorkflow.test.tsx` — End-to-end React UI component and workflow integration tests.
 

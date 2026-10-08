@@ -32,7 +32,13 @@ The following architectural decisions are currently enforced by active source co
 - **Source:** `explorer/src/components/GraphView.tsx`.
 - **Verification:** `explorer/src/test/static-constellation-projection.test.ts`.
 
-## 6. Deterministic Safety Envelope & Change Gate
+## 6. Graph-First Two-Pane Shell & Command Palette Relocation
+- **Decision:** The application operates as a two-pane graph-first workspace (full-canvas graph + right Investigation Drawer). Permanent competing panels are relocated into a Cmd+K / Ctrl+K Command Palette host without modifying internal panel components.
+- **Enforcement:** `DetailsPanel.tsx` is deleted. Investigation Drawer (`InvestigationDrawer.tsx`) manages progressive one-hop drilling (`drill.ts`), breadcrumbs, pinning, and detached window IPC sync (`BroadcastChannel('investigator')`). Refactor Handoff (`RefactorHandoffModal.tsx`) is reinstated as a Cmd+K command and drawer header action.
+- **Source:** `explorer/src/App.tsx`, `explorer/src/components/CommandPalette.tsx`, `explorer/src/components/InvestigationDrawer.tsx`, `explorer/src/lib/drill.ts`, `explorer/src/lib/detached-drawer.ts`.
+- **Verification:** `explorer/src/components/CommandPalette.test.tsx`, `explorer/src/components/InvestigationDrawer.test.tsx`.
+
+## 7. Deterministic Safety Envelope & Change Gate
 - **Decision:** 100% deterministic analysis CLI pipeline. Zero LLM dependencies or runtime calls in analysis scripts.
 - **Enforcement:** Change gates trigger `SEMANTIC_INVESTIGATION_REQUIRED` flags only when genuine semantic uncertainty exists, while preserving 0 LLM calls in execution.
 - **Source:** `safety-envelope.cjs`, `architecture-change-gate.cjs`, `architecture-snapshot.cjs`.

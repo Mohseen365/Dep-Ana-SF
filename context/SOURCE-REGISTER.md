@@ -10,6 +10,10 @@ This source register maps architectural topics, subsystems, contracts, test suit
 | **Workspace Architecture** | `context/CURRENT-ARCHITECTURE.md` | CURRENT | Workspace composition, 5 workspace domains, 18 view modes | `explorer/src/types/explorer.ts` |
 | **Workspace Navigation** | `explorer/src/context/WorkspaceRouterContext.tsx` | CURRENT | Single state authority for workspace view/domain routing | `explorer/src/registry/workspace-registry.ts` |
 | **Selection & Investigation**| `explorer/src/context/InvestigationContext.tsx` | CURRENT | Single state authority for selection, drilldown, and drawer state | `explorer/src/hooks/useInvestigationSafe.ts` |
+| **Command Palette & Surfaces**| `explorer/src/components/CommandPalette.tsx` | CURRENT | Cmd+K palette host for relocated analytical surfaces | `explorer/src/hooks/useCommandPalette.ts` |
+| **Investigation Drawer & Drill**| `explorer/src/components/InvestigationDrawer.tsx` | CURRENT | Progressive one-hop investigation drawer & breadcrumb drill | `explorer/src/lib/drill.ts` |
+| **Detached Drawer IPC** | `explorer/src/lib/detached-drawer.ts` | CURRENT | BroadcastChannel IPC window synchronization | `explorer/public/detached.html` |
+| **Refactor Handoff Export** | `explorer/src/components/RefactorHandoffModal.tsx` | CURRENT | Refactor handoff export modal & payload builder | `explorer/src/lib/refactor-handoff.ts` |
 | **Layout Engine Pipeline** | `explorer/src/lib/layout/` | CURRENT | Core multi-stage hierarchical layout pipeline (Stages 1–11) | `explorer/src/lib/layout/global-layout.ts` |
 | **Orbit Layout Engine** | `explorer/src/lib/orbit-layout.ts` | CURRENT | Concentric ring radial layout math & polar coordinate placement | `explorer/src/lib/orbit-semantics.ts` |
 | **Web Worker Offloading** | `explorer/src/lib/workers/layout.worker.ts` | CURRENT | Async Web Worker layout offloading with stale rejection | `explorer/src/lib/workers/layout-worker-client.ts` |
