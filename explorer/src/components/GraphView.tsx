@@ -156,13 +156,24 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const navRef = useRef<any>(null);
 
   const effectiveLayoutOptions = useMemo((): GraphLayoutOptions => {
+    const isLwcNode = (id: string | null | undefined): boolean => {
+      if (!id) return false;
+      return nodes.some((n) => n.id === id && n.type === 'LWC');
+    };
+
+    const derivedFocalLwcId =
+      (isLwcNode(selectedNodeId) ? selectedNodeId : null) ??
+      (isLwcNode(layoutOptions?.focalLwcId) ? layoutOptions?.focalLwcId : null) ??
+      (isLwcNode(focusedNodeId) ? focusedNodeId : null) ??
+      null;
+
     return {
       ...layoutOptions,
       enableFeatureLayout,
       enableCandidateDOrdering: architectureMode === 'hierarchical',
-      focalLwcId: layoutOptions?.focalLwcId ?? selectedNodeId ?? focusedNodeId ?? null,
+      focalLwcId: derivedFocalLwcId,
     };
-  }, [enableFeatureLayout, architectureMode, layoutOptions, selectedNodeId, focusedNodeId]);
+  }, [enableFeatureLayout, architectureMode, layoutOptions, selectedNodeId, focusedNodeId, nodes]);
 
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
