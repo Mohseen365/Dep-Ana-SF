@@ -1,0 +1,51 @@
+{
+  "manifestVersion": "1.0.0",
+  "analyzerVersion": "13.0.0",
+  "contractVersion": "1.0.0",
+  "generatedAt": "2026-09-25T04:55:57.331Z",
+  "source": {
+    "directory": "../Interview Project/Pub-Infra-Mang/force-app/main/default",
+    "sourceDir": "C:/Users/User/Downloads/Interview Project/Pub-Infra-Mang/force-app/main/default",
+    "fileCount": 795,
+    "sourceHash": "sha256:ae3acc814253ca4ec81c11a5e6e5b60c3a6d04dd9be4a26e58395d4e52a181e8",
+    "gitCommit": "8658ba3a19d036b23652c4ba845eab97f253cec9"
+  },
+  "status": "COMPLETE",
+  "artifacts": {
+    "dependencyReport": {
+      "path": "dependency-report.json",
+      "fileHash": "sha256:e990943496e8d054cfa1a3d0d69f214d01105642c9fbac3f7c13bce4d480e85f"
+    },
+    "analysisSnapshot": {
+      "path": "analysis-snapshot.json",
+      "fileHash": "sha256:98de1fb239fe77e3cb92882a8e96780c5e4531181b5d4c60c7a913841eda14d2"
+    },
+    "architectureSnapshot": {
+      "path": "architecture-snapshot.json",
+      "fileHash": "sha256:204fa8129490c1bad12fb1dbf4c0397f83372d9a9553d0813c0893b9ed7e22c8"
+    },
+    "architectureMetrics": {
+      "path": "architecture-metrics.json",
+      "fileHash": "sha256:1738035c0b845d82902275ae827e36ddf8b9389a92ad0c334cd05acc09f17e5d"
+    },
+    "dependencyReportMd": {
+      "path": "dependency-report.md",
+      "fileHash": "sha256:9aaf22a1fb0f7f4e3e283e697054f6abd9e597fa52935a4f94435e536d3be08f"
+    },
+    "dependencySummaryMd": {
+      "path": "dependency-summary.md",
+      "fileHash": "sha256:495ee6b922f4a51084899578014b1aefba42dc9cb2c69579a8c55f4a98f272cb"
+    },
+    "unresolvedReferencesMd": {
+      "path": "unresolved-references.md",
+      "fileHash": "sha256:54dd74d41923e04e3772e244b0f4a0ce44a11472967bfafdc8e5ef7b4c0a4e18"
+    },
+    "explorerData": {
+      "path": "explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "sha256:d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
+      "nodeCount": 528,
+      "edgeCount": 2063
+    }
+  }
+}

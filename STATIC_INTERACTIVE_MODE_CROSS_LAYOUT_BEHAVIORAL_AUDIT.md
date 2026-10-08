@@ -1,9 +1,9 @@
 # STATIC VS INTERACTIVE MODE BEHAVIORAL CONTRADICTION AUDIT
 ## CONSTELLATION-FIRST & CROSS-LAYOUT REPOSITORY-TRUTH REPORT
 
-**Audit Date**: October 8, 2026  
-**Target Dataset**: Real PBIM (`explorer/public/projects/pbim/explorer-data.json`, 528 nodes, 2063 edges)  
-**SHA-256 Digest**: `d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b`  
+**Audit Date**: October 8, 2026
+**Target Dataset**: Real PBIM (`explorer/public/projects/pbim/explorer-data.json`, 528 nodes, 2063 edges)
+**SHA-256 Digest**: `d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b`
 **Auditor**: Jules (Software Engineer / Architecture Specialist)
 
 ---
@@ -201,11 +201,7 @@ Conversely, for Orbit mode, `architectureMode === 'orbit'` is present in line 83
 In `explorer/src/components/GraphView.tsx`, line 831, update the layout execution condition to include `architectureMode === 'constellation'`:
 
 ```typescript
-<<<<<<< SEARCH
-    if (autoLayoutPolicy === true || architectureMode === 'orbit') {
-=======
     if (autoLayoutPolicy === true || architectureMode === 'orbit' || architectureMode === 'constellation') {
->>>>>>> REPLACE
 ```
 
 ### Why This Solution is Minimal
