@@ -136,4 +136,79 @@ describe('Dynamic Architecture Orbit Focal LWC Selection Unit & Integration Suit
       expect(JSON.stringify(realPbimData)).toBe(originalJson);
     });
   });
+
+  describe('6. State Precedence Order (Selected LWC > Stale Focal LWC > Focused Fallback > Default)', () => {
+    function deriveFocalLwcId(
+      nodes: typeof realPbimData.nodes,
+      selectedNodeId: string | null,
+      layoutOptionsFocalLwcId: string | null | undefined,
+      focusedNodeId: string | null = null
+    ): string | null {
+      const isLwcNode = (id: string | null | undefined): boolean => {
+        if (!id) return false;
+        return nodes.some((n) => n.id === id && n.type === 'LWC');
+      };
+
+      return (
+        (isLwcNode(selectedNodeId) ? selectedNodeId : null) ??
+        (isLwcNode(layoutOptionsFocalLwcId) ? layoutOptionsFocalLwcId : null) ??
+        (isLwcNode(focusedNodeId) ? focusedNodeId : null) ??
+        null
+      );
+    }
+
+    it('Test A: selected LWC (LWC:asset-dashboard-container) overrides stale focal (LWC:vendor-assignment-panel)', () => {
+      const focal = deriveFocalLwcId(
+        realPbimData.nodes,
+        'LWC:asset-dashboard-container',
+        'LWC:vendor-assignment-panel'
+      );
+      expect(focal).toBe('LWC:asset-dashboard-container');
+    });
+
+    it('Test B: selected LWC (LWC:vendor-workspace) overrides stale focal (LWC:vendor-assignment-panel)', () => {
+      const focal = deriveFocalLwcId(
+        realPbimData.nodes,
+        'LWC:vendor-workspace',
+        'LWC:vendor-assignment-panel'
+      );
+      expect(focal).toBe('LWC:vendor-workspace');
+    });
+
+    it('Test C: selected LWC (LWC:citizen-report-portal) overrides stale focal (LWC:vendor-assignment-panel)', () => {
+      const focal = deriveFocalLwcId(
+        realPbimData.nodes,
+        'LWC:citizen-report-portal',
+        'LWC:vendor-assignment-panel'
+      );
+      expect(focal).toBe('LWC:citizen-report-portal');
+    });
+
+    it('Test D: selected LWC (LWC:error-panel) overrides stale focal (LWC:asset-dashboard-container)', () => {
+      const focal = deriveFocalLwcId(
+        realPbimData.nodes,
+        'LWC:error-panel',
+        'LWC:asset-dashboard-container'
+      );
+      expect(focal).toBe('LWC:error-panel');
+    });
+
+    it('Test E: non-LWC selection (ApexClass) does NOT become Sun, fallback focal is preserved', () => {
+      const focal = deriveFocalLwcId(
+        realPbimData.nodes,
+        'ApexClass:AssetDashboardController',
+        'LWC:vendor-assignment-panel'
+      );
+      expect(focal).toBe('LWC:vendor-assignment-panel');
+    });
+
+    it('Test F: null selection preserves layoutOptions focal fallback', () => {
+      const focal = deriveFocalLwcId(
+        realPbimData.nodes,
+        null,
+        'LWC:vendor-assignment-panel'
+      );
+      expect(focal).toBe('LWC:vendor-assignment-panel');
+    });
+  });
 });
