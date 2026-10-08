@@ -201,11 +201,7 @@ Conversely, for Orbit mode, `architectureMode === 'orbit'` is present in line 83
 In `explorer/src/components/GraphView.tsx`, line 831, update the layout execution condition to include `architectureMode === 'constellation'`:
 
 ```typescript
-<<<<<<< SEARCH
-    if (autoLayoutPolicy === true || architectureMode === 'orbit') {
-=======
     if (autoLayoutPolicy === true || architectureMode === 'orbit' || architectureMode === 'constellation') {
->>>>>>> REPLACE
 ```
 
 ### Why This Solution is Minimal
