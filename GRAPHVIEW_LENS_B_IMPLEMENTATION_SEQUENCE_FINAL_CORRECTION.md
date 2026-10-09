@@ -3,17 +3,17 @@
 ## 1. Context Retrieval & Context Precedence Hierarchy
 
 ### 1.1 Context Retrieval Summary
-This document establishes the corrected, source-grounded implementation sequence for **GraphView Lens B — Component Orbit / Component Constellation**.
+This document establishes the corrected, source-grounded implementation sequence and readiness boundary for **GraphView Lens B — Component Orbit / Component Constellation**.
 
-All authoritative context files and predecessor audit reports were retrieved and inspected directly in the repository:
+All authoritative context files, active application source code, test files, and predecessor audit reports were retrieved and inspected directly in the repository:
+- `explorer/src/lib/projectState.ts` (Inspected: `legacyNodePositions` is **PROPOSED / UNIMPLEMENTED**)
+- `explorer/src/lib/architecture-layout.ts` (Inspected: Lines 169–171 & 219–221 stale merge loops confirmed)
+- `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` (Inspected: Tests TST-STG1-01 and TST-STG1-02 are **MISSING**)
 - `context/CURRENT-DECISIONS.md` (Tier 1 Authority — 0 approved records for Gates A–D)
 - `context/CURRENT-CONTRACTS.md` (Tier 2 Technical Contract — Section 3 Position Authority Level 4)
-- `context/CURRENT-ARCHITECTURE.md` (Tier 2 Architecture Spec — Section 3 State Authority & Section 4 Position Authority)
+- `context/CURRENT-ARCHITECTURE.md` (Tier 2 Spec — Section 3 State Authority & Section 4 Position Authority)
 - `context/CURRENT-IMPLEMENTATION.md` (Tier 4 Implementation Map)
 - `context/CURRENT-TESTS.md` (Tier 5 Test Inventory)
-- `GRAPHVIEW_LENS_B_DOCUMENTATION_CONTRADICTION_CLOSURE.md` (Latest contradiction closure audit)
-- `GRAPHVIEW_LENS_B_SAFE_IMPLEMENTATION_SEQUENCE_CORRECTED.md` (Prior implementation sequence)
-- `GRAPHVIEW_LENS_B_FINAL_AUTHORIZATION_CHECKLIST_CORRECTED.md` (Prior authorization checklist)
 
 ### 1.2 Context Precedence Rules
 When sources conflict, the following strict authority hierarchy governs all present-state claims and implementation authorization:
@@ -27,28 +27,31 @@ When sources conflict, the following strict authority hierarchy governs all pres
 
 ---
 
-## 2. Authorization Track Separation (Track A vs. Track B)
+## 2. Authorization Track Separation (Track A Validation vs. Track B Integration)
 
-To resolve the contradiction where unresolved product decisions blocked independent technical bug fixes, work is split into two explicit authorization tracks.
+To prevent product decision blockers from halting independent bug fixes, work is split into two explicit authorization tracks with separate milestones, entry criteria, and exit criteria.
 
 ```text
 ===================================================================================
                        DUAL AUTHORIZATION TRACK ARCHITECTURE
 ===================================================================================
 
- [TRACK A: INDEPENDENT DEF-01 TECHNICAL FIX] ───► Ready for Code Review & Fix
-   - Target: Remove L169–171 & L219–221 stale merge loops in architecture-layout.ts
+ [TRACK A: INDEPENDENT DEF-01 VALIDATION] ───► Code Review Authorization Pending
+   - Milestone: DEF-01 Isolated Fix & Technical Validation
    - Scope: Pure calculation output filtering (Position Authority Level 4)
+   - Target Lines: Delete L169–171 and L219–221 in architecture-layout.ts
+   - Target Tests: Add missing TST-STG1-01 and TST-STG1-02 unit tests
    - Dependency on Product Gates A–D: NONE (0%)
 
- [TRACK B: PRODUCT-GATE DEPENDENT CHANGES]   ───► BLOCKED pending Product Approval
-   - Target: Gates A (SHARED badge), B (Sectors), C (DOM removal), D (Drag state)
+ [TRACK B: PRODUCT-DEPENDENT IMPLEMENTATION] ───► BLOCKED pending Product Approval
+   - Milestone: Product Feature Implementation & Full Workspace Integration
+   - Target Decisions: Gates A (Shared SObjects), B (Sectors), C (DOM), D (Drag Scope)
    - Dependency on Product Gates A–D: 100%
    - Status in context/CURRENT-DECISIONS.md: UNAPPROVED
 ===================================================================================
 ```
 
-### 2.1 Track A — Independent DEF-01 Technical Correction
+### 2.1 Track A — DEF-01 Isolated Fix & Technical Validation
 
 #### Scope & Target
 - **Source File:** `explorer/src/lib/architecture-layout.ts`
@@ -64,117 +67,142 @@ Inspecting `architecture-layout.ts` confirms that removing lines 169–171 and 2
 4. Does NOT alter `projectState.ts` storage keys or drag persistence (Gate D independent).
 5. Does NOT alter legacy flat position storage or migration policies (Migration independent).
 
-Therefore, DEF-01 layout calculation filtering is a **GENUINELY INDEPENDENT TECHNICAL FIX**.
-
 #### Track A Gate Criteria
 - **Entry Criteria:**
   1. Commit SHA and clean working-tree baseline recorded (`git status`).
   2. Source defect verified directly at `architecture-layout.ts` L169–171 and L219–221.
   3. Change-specific patch diff and rollback procedure defined.
-  4. Track A test matrix (`TST-STG1-01` through `TST-STG1-06`) verified.
-- **Blockers:** Code review approval required before applying fix. Zero product decision blockers.
-- **Exit Criteria:** `computeArchitectureLayoutWithMetadata` returns coordinates strictly for projected focal/constellation nodes in Orbit and Constellation modes. All 6 Track A tests pass 100%.
-- **Current Track A Status:** `READY_FOR_AUTHORIZATION_ATTEMPT`.
+  4. Code-review authorization requested.
+- **Blockers:** Code-review authorization is **PENDING**. Implementation must NOT proceed until authorized.
+- **Exit Criteria for Track A Validation:**
+  1. `computeArchitectureLayoutWithMetadata` returns coordinates strictly for projected focal/constellation nodes in Orbit and Constellation modes.
+  2. Missing unit tests `TST-STG1-01` and `TST-STG1-02` are added to `Phase2FA_CoreArchitecture.test.tsx` and pass 100%.
+  3. Relevant regression test suites pass 100%.
+  4. Post-implementation patch is verified via non-destructive diff comparison.
+- **Track A Authorization Status:** `PENDING_CODE_REVIEW`.
+- **Track A Technical Contract Status:** `READY`.
 
 ---
 
 ### 2.2 Track B — Product-Dependent Architecture and State Changes
 
-#### Scope & Targets
-- **Gate A:** SHARED SObject multi-parent representation & `"SHARED"` badge in `satellites.ts` and `FeatureOverlayCanvas.tsx`.
-- **Gate B:** Domain sector angular offsets and guidelines in `component-orbit-layout.ts`.
-- **Gate C:** Excluded node DOM canvas deletion via `cy.elements().remove()` in `GraphView.tsx`.
-- **Gate D:** Composite drag position persistence schema (`nodePositions[layoutMode][focalNodeId][nodeId]`) in `projectState.ts` and `GraphView.tsx`.
+#### Scope & Workstreams (Without Implied Choices)
+Track B covers decision-dependent workstreams. No option choice is presupposed:
+- **Gate A Workstream:** Implementation of shared SObject representation (evaluating Options A1 Multi-Tethers, A2 Single Node + Badge, A3 Clones).
+- **Gate B Workstream:** Implementation of angular placement semantics (evaluating Options B1 Geometry Packing, B2 Semantic Domain Sectors).
+- **Gate C Workstream:** Implementation of excluded node visibility policy (evaluating Options C1 Hide Unreachable, C2 Categorize Badges, C3 Peripheral Shell).
+- **Gate D Workstream:** Implementation of drag position persistence scope (evaluating Options D1 Session-Only, D2 Mode-Scoped, D3 Composite Mode+Focal Scoped) and legacy state migration.
 
 #### Track B Gate Criteria
 - **Entry Criteria:** Signed, attributable decision records recorded in `context/CURRENT-DECISIONS.md` for Gates A, B, C, and D.
-- **Blockers:** Missing Product Authority approval in `context/CURRENT-DECISIONS.md`.
+- **Blockers:** Missing Product Authority approval in `context/CURRENT-DECISIONS.md` (0 approved records).
 - **Exit Criteria:** UI feature implementation complete, verified against user acceptance criteria, passing full integration test suite.
-- **Current Track B Status:** `BLOCKED` (0 decision records present in `context/CURRENT-DECISIONS.md`).
+- **Current Track B Status:** `BLOCKED`.
 
 ---
 
-## 3. Provenance-Based Migration and Quarantine Policy (Correction B)
+## 3. Truthful Legacy Quarantine Schema & Migration Policy (Correction 2)
 
-### 3.1 Unrecoverability of Legacy Provenance
-Inspecting `projectState.ts` (L47) confirms that legacy `nodePositions` is stored as `Record<string, { x: number; y: number }>`.
-- It contains NO `architectureMode`, `layoutMode`, `focalNodeId`, `viewMode`, or timestamp metadata per coordinate.
-- Current application mode (e.g., `graphLayout.architectureMode`) reflects current user view selection, NOT the historical mode in which a specific node drag occurred.
-- Inferring historical coordinate provenance from current application state is **UNSAFE** and risks corrupting layouts by applying Orbit circular coordinates as Hierarchical drag overrides.
+### 3.1 Verification of `legacyNodePositions` in Source Code
+Direct inspection of `explorer/src/lib/projectState.ts` confirms:
+- The field `legacyNodePositions` **DOES NOT EXIST** in active source code.
+- `GraphLayoutState` currently contains only `nodePositions: Record<string, { x: number; y: number }>`.
+- `mergeWithDefaultState` does NOT handle, parse, or preserve `legacyNodePositions`.
+- **Finding:** `legacyNodePositions` is a **PROPOSED COMPATIBILITY STRUCTURE**, NOT an existing or operational field. Statements implying it is currently implemented are FALSE and corrected hereby.
 
-### 3.2 Mandatory Migration Rules
+### 3.2 Required Schema & Deserialization Behavior (Implementation Prerequisite)
+Before any state migration can occur under Track B, the following interface update and deserialization handling must be implemented as a prerequisite:
 
-1. **Proven-Context Migration (M1 Rule):**
-   A legacy flat position entry `legacyNodePositions[nodeId]` is migrated to `nodePositions[layoutMode][focalNodeId][nodeId]` ONLY when explicit historical metadata attached to that exact record proves its origin context.
+#### Proposed TypeScript Definition
+```typescript
+export interface GraphLayoutState {
+  layoutName?: string;
+  mode: GraphInteractionMode;
+  architectureMode?: ArchitectureLayoutMode;
+  layoutProvenance?: LayoutProvenance;
+  // Composite 3-tier scoped position map: [layoutMode][focalNodeId | 'global'][nodeId]
+  nodePositions: Record<string, Record<string, Record<string, { x: number; y: number }>>>;
+  // Proposed legacy compatibility store for unproven flat coordinates:
+  legacyNodePositions?: Record<string, { x: number; y: number }>;
+  layoutVersion?: string | number;
+}
+```
 
-2. **Default Compatibility Quarantine (M2 Rule):**
-   When provenance is ambiguous, missing, or inferred solely from current state, the coordinate is stored in `legacyNodePositions` compatibility field.
-   - Quarantined coordinates are **NEVER** automatically assigned to `nodePositions.hierarchical.global` or any active mode.
-   - Quarantined coordinates are never consumed as Level 2 active drag overrides.
-   - Quarantined coordinates remain preserved in raw JSON storage to prevent user data loss.
-
-3. **Collision & Anti-Duplication Handling:**
-   - If a valid composite entry `nodePositions[mode][focalId][nodeId]` already exists, it takes strict precedence over any legacy coordinate.
-   - Migration runs ONCE during state deserialization (`mergeWithDefaultState`). Migrated entries are deleted from `legacyNodePositions` to prevent re-migration or duplication.
-
-4. **Diagnostics and Export Availability:**
-   - Quarantined entries remain readable via `ProjectUIState.graphLayout.legacyNodePositions`.
-   - Admin UI or diagnostic export features can display quarantined positions for manual user restoration.
-
-5. **Unresolved Approvals Needed Before Implementation:**
-   - Product Authority must approve Policy D3 (Composite Storage Scope) and state migration rules (M1/M2) in `context/CURRENT-DECISIONS.md` before Track B migration code can be written.
+#### Required Migration & Quarantine Invariants
+1. **Explicit Provenance Requirement:** An individual legacy coordinate `legacyNodePositions[nodeId]` is migrated into `nodePositions[mode][focalId][nodeId]` ONLY when explicit historical metadata attached to that exact record proves its origin context.
+2. **Ambiguous Coordinate Quarantine:** If context is ambiguous, missing, or inferred solely from current application state, the coordinate MUST remain preserved in `legacyNodePositions` without active assignment to `hierarchical`, `global`, or any active mode.
+3. **Active Lookups Bypass Quarantine:** Quarantined coordinates in `legacyNodePositions` are NEVER consumed by Position Authority Level 2 active position lookups and DO NOT override layout calculation defaults.
+4. **Collision & Anti-Duplication Rules:**
+   - Existing composite entries `nodePositions[mode][focalId][nodeId]` take strict precedence over legacy coordinates.
+   - Migration runs ONCE during state deserialization (`mergeWithDefaultState`). Successfully migrated entries are removed from `legacyNodePositions` to prevent duplicate migration.
+5. **Authorization Dependency:** Implementation of the quarantine schema and migration rules remains **BLOCKED** until Gate D is formally approved in `context/CURRENT-DECISIONS.md`.
 
 ---
 
-## 4. Non-Destructive, Change-Specific Rollback Procedure (Correction C)
+## 4. Conditional Patch Rollback Procedure (Correction 5)
 
 ### 4.1 Safety Invariants
 1. **Zero Working-Tree Disruption:** Rollback commands must NEVER touch uncommitted audit deliverables (`GRAPHVIEW_LENS_B_*.md`), user configuration, or untracked workspace files.
 2. **Prohibited Destructive Commands:** Commands such as `git checkout .`, `git reset --hard`, or `git clean -fd` are strictly **PROHIBITED**.
+3. **Conditional Status:** Rollback readiness is classified as **`CONDITIONALLY_READY`**. It becomes fully operational ONLY after the actual implementation patch for DEF-01 is generated, isolated, and reviewed.
 
-### 4.2 Controlled Patch Reversion Checklist
+### 4.2 Controlled Patch Reversion Procedure
 
 ```text
-Step 1: Record Pre-Implementation Baseline
+Step 1: Record Pre-Implementation Git Status
   ├─► Execute `git status --porcelain` and record all pre-existing modified/untracked files.
-  └─► Confirm target file `explorer/src/lib/architecture-layout.ts` is unmodified.
+  └─► Confirm target file `explorer/src/lib/architecture-layout.ts` has no pre-existing uncommitted changes.
 
-Step 2: Isolate Implementation Diff
-  ├─► Apply DEF-01 changes to `architecture-layout.ts` (L169–171 and L219–221).
-  ├─► Generate isolated patch: `git diff explorer/src/lib/architecture-layout.ts > stage1_def01.patch`.
-  └─► Inspect `stage1_def01.patch` to verify it touches ONLY lines 169–171 and 219–221.
+Step 2: Isolate Authorized DEF-01 Patch
+  ├─► Apply DEF-01 changes strictly to `architecture-layout.ts` (L169–171 and L219–221).
+  ├─► Generate isolated patch diff: `git diff explorer/src/lib/architecture-layout.ts > stage1_def01.patch`.
+  └─► Review `stage1_def01.patch` to verify it contains ONLY lines 169–171 and 219–221 deletions.
 
-Step 3: Controlled Rollback Execution (If Verification Fails)
-  ├─► STOP CONDITION: If unrelated changes were made to `architecture-layout.ts`, DO NOT apply patch.
+Step 3: Stop Condition Verification
+  └─► STOP CONDITION: If unrelated changes exist in `architecture-layout.ts` or patch diff is unclean, DO NOT execute automated rollback. Request manual reconciliation.
+
+Step 4: Execute Targeted Patch Reversion (If Rollback Triggered)
   ├─► Execute reverse patch: `git apply -R stage1_def01.patch`.
   └─► Remove temporary patch file: `rm stage1_def01.patch`.
 
-Step 4: Post-Rollback Verification
-  ├─► Execute `git status --porcelain` and verify state matches Step 1 baseline exactly.
-  └─► Execute `npm run test:cli` to verify zero regressions.
+Step 5: Post-Rollback Verification
+  ├─► Compare `git status --porcelain` against Step 1 baseline.
+  └─► Execute `npm run test:cli` to confirm clean recovery.
 ```
 
 ---
 
-## 5. Reconciled DEF-01 Test Inventory (Correction D)
+## 5. Reconciled Truthful Test Inventory (Correction 1)
 
-All six test IDs (`TST-STG1-01` through `TST-STG1-06`) are reconciled directly against the repository source and test architecture in `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx`:
+Every test ID (`TST-STG1-01` through `TST-STG1-06`) is reconciled truthfully against active repository test files:
 
-| Test ID | Invariant Under Test | Source Module / Target Path | Expected Result | Existence Status | Execution Mode | Evidence Status |
-|---|---|---|---|---|---|---|
-| **TST-STG1-01** | Orbit L219–221 stale position loop removal | `architecture-layout.ts` L219–221 | `orbitOutput.positions` contains ONLY projected focal nodes; `existingPositions` entries absent | Must be added in Track A | Independent Vitest | `VERIFIED_CONTRACT_DEFECT` |
-| **TST-STG1-02** | Constellation L169–171 stale position loop removal | `architecture-layout.ts` L169–171 | `constellationOutput.positions` contains ONLY projected nodes; `existingPositions` entries absent | Must be added in Track A | Independent Vitest | `VERIFIED_CONTRACT_DEFECT` |
-| **TST-STG1-03** | Projected coordinate fidelity | `adapters/component-orbit-adapter.ts` | Projected node coordinates match adapter calculation bit-for-bit ($0.00000\text{px}$ drift) | Exists in `component-orbit-adapter.test.ts` | Independent Vitest | `VERIFIED_PASSING` |
-| **TST-STG1-04** | Hierarchical mode fallback protection | `architecture-layout.ts` (Hierarchical block) | Hierarchical layout calculation remains 100% unaffected | Exists in `Phase2FA_CoreArchitecture.test.tsx` | Independent Vitest | `VERIFIED_PASSING` |
-| **TST-STG1-05** | Empty / minimal graph edge cases | `architecture-layout.ts` (Stage 0 normalization) | Empty node/edge inputs return empty positions without throwing exceptions | Exists in `Phase2FA_CoreArchitecture.test.tsx` | Independent Vitest | `VERIFIED_PASSING` |
-| **TST-STG1-06** | Level 1–5 Position Authority pure function invariant | `architecture-layout.ts` | Calculation functions produce 0 state mutations and respect Level 4 purity | Exists in `Phase2FA_CoreArchitecture.test.tsx` | Independent Vitest | `VERIFIED_PASSING` |
+| Test ID | Invariant Under Test | Source File / Test Target | Existence Status | Execution Evidence | Track A Requirement |
+|---|---|---|---|---|---|
+| **TST-STG1-01** | Orbit L219–221 stale merge loop removal assertion | `Phase2FA_CoreArchitecture.test.tsx` | `DEFINED / MISSING` | Historical claim (not in codebase) | **MUST BE ADDED IN TRACK A** |
+| **TST-STG1-02** | Constellation L169–171 stale merge loop removal assertion | `Phase2FA_CoreArchitecture.test.tsx` | `DEFINED / MISSING` | Historical claim (not in codebase) | **MUST BE ADDED IN TRACK A** |
+| **TST-STG1-03** | Projected coordinate fidelity ($0.00000\text{px}$ drift) | `component-orbit-adapter.test.ts` | `EXISTS / VERIFIED` | Executed in CLI suite (`31/31 pass`) | Existing baseline regression check |
+| **TST-STG1-04** | Hierarchical mode fallback protection | `Phase2FA_CoreArchitecture.test.tsx` | `EXISTS / VERIFIED` | Executed in CLI suite (`31/31 pass`) | Existing baseline regression check |
+| **TST-STG1-05** | Empty / minimal graph edge case normalization | `orbit-layout.test.ts` | `EXISTS / VERIFIED` | Executed in CLI suite (`31/31 pass`) | Existing baseline regression check |
+| **TST-STG1-06** | Level 1–5 Position Authority pure calculation check | `Phase2FA_CoreArchitecture.test.tsx` | `EXISTS / VERIFIED` | Executed in CLI suite (`31/31 pass`) | Existing baseline regression check |
+
+### Classification Rules
+- **DEFINED:** Invariant and expected result are documented.
+- **EXISTS:** Test implementation file and `it(...)` block exist in codebase.
+- **VERIFIED:** Inspected and confirmed to assert the target invariant.
+- **MISSING:** Test implementation does not yet exist in active codebase.
+- **PASSING:** Executed and observed passing in the current run.
+- **UNVERIFIED:** Evidence is insufficient to establish status.
+
+*Test-inventory readiness (`TST-STG1-01` & `02` missing) does NOT imply Track A execution readiness. Adding `TST-STG1-01` and `TST-STG1-02` is an explicit prerequisite for Track A validation completion.*
 
 ---
 
 ## 6. Separation of Facts, Inferences, Recommendations, and Decisions
 
 - **Verified Fact (Tier 2):** Lines 169–171 and 219–221 in `architecture-layout.ts` forcibly merge `existingPositions` into Orbit/Constellation layout outputs.
+- **Verified Fact (Tier 2):** `legacyNodePositions` DOES NOT EXIST in `projectState.ts`.
+- **Verified Fact (Tier 2):** Tests `TST-STG1-01` and `TST-STG1-02` DO NOT EXIST in `Phase2FA_CoreArchitecture.test.tsx`.
 - **Verified Fact (Tier 1):** `context/CURRENT-DECISIONS.md` contains ZERO approved decision records for Gates A, B, C, or D.
 - **Technical Inference:** Deleting lines 169–171 and 219–221 enforces Position Authority Level 4 pure calculation rules without affecting DOM rendering or storage persistence.
-- **Engineering Recommendation:** Proceed with Track A code review for DEF-01, while keeping Track B strictly blocked.
+- **Engineering Recommendation:** Request code review authorization for Track A (DEF-01), while keeping Track B strictly blocked.
 - **Unresolved Decision:** Product Authority selection for Gates A–D in `context/CURRENT-DECISIONS.md`.
