@@ -68,27 +68,32 @@ Independent technical defect correction in `explorer/src/lib/architecture-layout
 
 ## 5. Truthful Test Inventory & Execution Disclosure (TST-STG1-01 through TST-STG1-06)
 
-| Test ID | Test Target / Description | Target File Location | Implementation Status | Assertion Inspected | Historical Claim | Current-Run Execution Result | Track A Status |
+| Test ID | Test Target / Description | Canonical Repository-Relative Path | Implementation Status | Assertion Inspected | Historical Claim | Current-Run Execution Result | Track A Status |
 |---|---|---|---|---|---|---|---|
-| **TST-STG1-01** | Orbit L219–221 stale merge loop removal assertion | `Phase2FA_CoreArchitecture.test.tsx` | `DEFINED / MISSING` | N/A (Missing) | Historical report claim | **NOT EXECUTED IN THIS RUN** | **PREREQUISITE FOR TRACK A VALIDATION** |
-| **TST-STG1-02** | Constellation L169–171 stale merge loop removal assertion | `Phase2FA_CoreArchitecture.test.tsx` | `DEFINED / MISSING` | N/A (Missing) | Historical report claim | **NOT EXECUTED IN THIS RUN** | **PREREQUISITE FOR TRACK A VALIDATION** |
-| **TST-STG1-03** | Projected coordinate fidelity ($0.00000\text{px}$ drift) | `component-orbit-adapter.test.ts` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
-| **TST-STG1-04** | Hierarchical mode fallback protection | `Phase2FA_CoreArchitecture.test.tsx` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
-| **TST-STG1-05** | Empty / minimal graph edge case normalization | `orbit-layout.test.ts` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
-| **TST-STG1-06** | Level 1–5 Position Authority pure calculation check | `Phase2FA_CoreArchitecture.test.tsx` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
+| **TST-STG1-01** | Orbit L219–221 stale merge loop removal assertion | `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` | `DEFINED / MISSING` | N/A (Missing) | Historical report claim | **NOT EXECUTED IN THIS RUN** | **PREREQUISITE FOR TRACK A VALIDATION** |
+| **TST-STG1-02** | Constellation L169–171 stale merge loop removal assertion | `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` | `DEFINED / MISSING` | N/A (Missing) | Historical report claim | **NOT EXECUTED IN THIS RUN** | **PREREQUISITE FOR TRACK A VALIDATION** |
+| **TST-STG1-03** | Projected coordinate fidelity ($0.00000\text{px}$ drift) | `explorer/src/lib/adapters/component-orbit-adapter.test.ts` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
+| **TST-STG1-04** | Hierarchical mode fallback protection | `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
+| **TST-STG1-05** | Empty / minimal graph edge case normalization | `explorer/src/lib/layout/orbit-layout.test.ts` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
+| **TST-STG1-06** | Level 1–5 Position Authority pure calculation check | `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` | `EXISTS` | `VERIFIED` | 31/31 CLI pass | **NOT EXECUTED IN THIS RUN** | Baseline regression check |
 
 *Disclosure: No tests were executed in this current documentation task. Historical claims are derived from audit artifact `audit-evidence/features/FEAT-PERF/cli-integration.log`.*
 
 ---
 
-## 6. Working-Tree and Rollback Safeguards
+## 6. Working-Tree and Tightened Rollback Safeguards
 
-- [x] **Pre-Implementation Baseline Captured:** `git status --porcelain` verified clean working tree.
-- [x] **Staged vs Unstaged State Mechanics Documented:** Standard `git diff <path>` noted as insufficient for staged changes; `git diff HEAD <path>` or `git diff --staged <path>` required.
+- [x] **Pre-Implementation Baseline Captured:** Clean pre-implementation baseline recorded via `git status --porcelain`.
+- [x] **Multi-Scope Differential Mechanics Documented:** `git diff` (unstaged), `git diff --staged` (index), and `git diff HEAD` (combined) explicitly distinguished. None alone is treated as proof of patch isolation.
+- [x] **Tightened Patch Isolation Preconditions Established:**
+  - Target file must match clean recorded pre-implementation baseline.
+  - Pre-existing staged, unstaged, overlapping, or unattributable changes prohibit automated patch reversal.
+  - Patch file must contain strictly the single authorized DEF-01 change (L169–171 & L219–221 deletions).
+  - Combined diffs containing unrelated edits prohibit automated rollback.
+  - Ownership or baseline uncertainty triggers immediate STOP condition requiring manual reconciliation.
 - [x] **Non-Destructive Patch Reversion Protocol Defined:** Reverse patch protocol (`git apply -R stage1_def01.patch`) documented.
 - [ ] **Patch Diff Isolated & Reviewed:** Patch file `stage1_def01.patch` created and verified clean: `[ ] PENDING IMPLEMENTATION AUTHORIZATION`
 - [x] **Audit Deliverables Protection:** Uncommitted documentation deliverables (`GRAPHVIEW_LENS_B_*.md`) protected from destructive commands (`git checkout .` prohibited).
-- [x] **Automatic Rollback Stop Conditions Established:** If target contains pre-existing, overlapping, staged, or unattributable changes, automatic rollback is prohibited.
 - [ ] **Rollback Readiness Classification:** `CONDITIONALLY_READY` (Pending generation and review of isolated DEF-01 patch).
 
 ---
@@ -112,12 +117,12 @@ Independent technical defect correction in `explorer/src/lib/architecture-layout
 |---|---|---|
 | **1. DEF-01 Technical-Contract Readiness** | `READY` | Source defect at L169–171 and L219–221 in `architecture-layout.ts` verified. Violation of Position Authority Level 4 confirmed. |
 | **2. DEF-01 Implementation Authorization** | `PENDING_CODE_REVIEW` | Scope isolated to Track A. Pending explicit code review authorization before implementation attempt. |
-| **3. Track A Test Readiness** | `CONDITIONALLY_READY` | Tests `TST-STG1-03` through `06` exist. Tests `TST-STG1-01` and `02` are missing and must be created during Track A implementation. |
+| **3. Track A Test Readiness** | `CONDITIONALLY_READY` | Tests `TST-STG1-03` through `06` exist at canonical paths. Tests `TST-STG1-01` and `02` are missing and must be created during Track A implementation. |
 | **4. Track A Validation Readiness** | `PENDING_AUTHORIZATION` | Blocked on code review approval for Track A and creation of missing unit tests `TST-STG1-01` and `TST-STG1-02`. |
 | **5. Track B Integration Readiness** | `BLOCKED` | Dependent on Gate A–D product decision records in `context/CURRENT-DECISIONS.md`. |
 | **6. Legacy Quarantine Schema Readiness** | `PROPOSED_NOT_IMPLEMENTED` | Inspected `projectState.ts`: `legacyNodePositions` field DOES NOT EXIST in active source code. Proposed schema is an implementation prerequisite for Track B. |
 | **7. Migration Readiness** | `BLOCKED` | Provenance-based M1/M2 policy defined. Blocked pending Track B Gate D authorization and quarantine schema implementation. |
-| **8. Rollback Readiness** | `CONDITIONALLY_READY` | Non-destructive reverse-patch procedure defined with explicit stop conditions. Pending isolation and review of actual DEF-01 patch diff. |
+| **8. Rollback Readiness** | `CONDITIONALLY_READY` | Non-destructive reverse-patch procedure defined with tightened preconditions and multi-scope diff checks. Pending isolation and review of actual DEF-01 patch diff. |
 | **9. Product-Gate Status** | `BLOCKED` | 0 decision records exist in `context/CURRENT-DECISIONS.md` for Gates A, B, C, or D. All options remain unresolved choices marked `PROPOSED DEFAULT — NOT APPROVED`. |
 | **10. Overall Implementation Readiness** | `TRACK_A_PENDING / TRACK_B_BLOCKED` | Track A (DEF-01) pending code review authorization; Track B (Gates A–D & state migration) strictly blocked. |
 
