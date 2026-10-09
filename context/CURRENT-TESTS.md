@@ -45,6 +45,7 @@ Run command: `cd explorer && npx vitest run`
 
 Key Vitest test files:
 
+- `explorer/src/test/def01-position-isolation.test.ts` — DEF-01 Lens B position-key isolation regression suite (Tests A–D: Orbit isolation, Constellation isolation, coordinate preservation, cross-focal isolation; run command: `cd explorer && npx vitest run src/test/def01-position-isolation.test.ts`).
 - `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` — Single-owner state authority, selection neutrality, 18-mode taxonomy mapping, URL history semantics, and project isolation.
 - `explorer/src/test/Phase3D_WebWorkerLayout.test.ts` — Web Worker offloading, 0.00000px coordinate drift, stale result rejection, and synchronous fallback.
 - `explorer/src/test/static-constellation-projection.test.ts` — Constellation static vs interactive mode node projection synchronization.

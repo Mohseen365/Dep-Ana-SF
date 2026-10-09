@@ -80,3 +80,5 @@ Layout calculations follow strict coordinate authority rules:
 5. Level 5: Cytoscape default fallback.
 
 Position authority enforces 0.00000px coordinate drift between synchronous and asynchronous Web Worker execution.
+
+In Lens B (Orbit and Constellation modes), layout calculations in `computeArchitectureLayoutWithMetadata` (`explorer/src/lib/architecture-layout.ts`) strictly isolate returned position maps to projected node IDs (`result.projectedNodeIds`), preventing stale `existingPositions` re-injection for unprojected nodes (DEF-01 closure, referenced in `GRAPHVIEW_DEF01_FINAL_EXECUTION_EVIDENCE_GATE_REPORT.md`).
