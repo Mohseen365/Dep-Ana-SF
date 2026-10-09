@@ -12,9 +12,6 @@ All authoritative context files, active application source code, test files, and
 - `explorer/src/lib/adapters/component-orbit-adapter.test.ts` (Inspected: Canonical path for TST-STG1-03)
 - `explorer/src/lib/layout/orbit-layout.test.ts` (Inspected: Canonical path for TST-STG1-05)
 - `context/CURRENT-DECISIONS.md` (Tier 1 Authority — 0 approved records for Gates A–D)
-- `context/CURRENT-CONTRACTS.md` (Tier 2 Technical Contract — Section 3 Position Authority Level 4)
-- `context/CURRENT-ARCHITECTURE.md` (Tier 2 Spec — Section 3 State Authority & Section 4 Position Authority)
-- `context/CURRENT-IMPLEMENTATION.md` (Tier 4 Implementation Map)
 - `context/CURRENT-TESTS.md` (Tier 5 Test Inventory)
 - `audit-evidence/features/FEAT-PERF/cli-integration.log` (Inspected: Historical log recording 31/31 CLI sub-tests passed in a prior run)
 
