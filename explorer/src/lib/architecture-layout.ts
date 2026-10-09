@@ -166,12 +166,6 @@ export function computeArchitectureLayoutWithMetadata(
       constellationPositions[nodeId] = { x: pos.x, y: pos.y };
     }
 
-    for (const [id, pos] of Object.entries(existingPositions)) {
-      if (pos && !(id in constellationOutput.positions)) {
-        constellationPositions[id] = { x: pos.x, y: pos.y };
-      }
-    }
-
     return {
       positions: constellationPositions,
       orbitGuides: constellationOutput.guides as any,
@@ -214,12 +208,6 @@ export function computeArchitectureLayoutWithMetadata(
     const orbitPositions: Record<string, { x: number; y: number }> = {};
     for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
       orbitPositions[nodeId] = { x: pos.x, y: pos.y };
-    }
-
-    for (const [id, pos] of Object.entries(existingPositions)) {
-      if (pos && !(id in orbitOutput.positions)) {
-        orbitPositions[id] = { x: pos.x, y: pos.y };
-      }
     }
 
     return {
