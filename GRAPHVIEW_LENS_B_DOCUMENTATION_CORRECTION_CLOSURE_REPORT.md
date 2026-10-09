@@ -2,10 +2,10 @@
 
 ## 1. Executive Verdict and Truthful 10-Part Readiness Status Model
 
-### 1.1 Executive Summary
-This closure report finalizes the documentation reconciliation for **GraphView Lens B — Component Orbit / Component Constellation**.
+### 1.1 Executive Summary & Adversarial Authorization Verdict
+This closure report finalizes the documentation reconciliation and adversarial authorization audit for **GraphView Lens B — Component Orbit / Component Constellation**.
 
-All identified path inconsistencies, test claim ambiguities, Git patch isolation preconditions, and execution safety risks across preceding reports have been fully reconciled. Track A (Independent DEF-01 Technical Correction) is cleanly decoupled from Track B (Product-Gate Dependent Integration). All present-state claims regarding test existence, historical test evidence, legacy quarantine schema implementation, and rollback readiness are strictly grounded in active repository source code, test files, and historical log artifacts.
+Primary Authorization Verdict: **SAFE ONLY WITH EXPLICIT CONDITIONS (B)**. The DEF-01 fix (deletion of lines 169–171 and 219–221 in `explorer/src/lib/architecture-layout.ts`) is technically sound, isolated, and strictly enforces Position Authority Level 4 pure function calculation contracts (`context/CURRENT-CONTRACTS.md` Section 3). It carries 0% dependency on unresolved Product Gates A–D in `context/CURRENT-DECISIONS.md`. Implementation is authorized for code-review authorization, subject to the explicit conditions detailed in Section 6.
 
 ### 1.2 Truthful 10-Part Independent Readiness Status Model
 
@@ -61,13 +61,14 @@ All identified path inconsistencies, test claim ambiguities, Git patch isolation
 3. `explorer/src/lib/adapters/component-orbit-adapter.test.ts` (Inspected: Canonical path for `TST-STG1-03`)
 4. `explorer/src/lib/layout/orbit-layout.test.ts` (Inspected: Canonical path for `TST-STG1-05`)
 5. `explorer/src/lib/architecture-layout.ts` (Inspected: L169–171 Constellation copy loop; L219–221 Orbit copy loop)
-6. `context/CURRENT-DECISIONS.md` (Tier 1 Authority — 0 records for Gates A, B, C, or D)
-7. `context/CURRENT-CONTRACTS.md` (Tier 2 Authority — Section 3 Position Authority Level 4 pure function rules)
-8. `context/CURRENT-ARCHITECTURE.md` (Tier 2 Spec — Section 3 State Authority & Section 4 Position Authority)
-9. `audit-evidence/features/FEAT-PERF/cli-integration.log` (Attributable historical execution log artifact for 31-suite CLI pass)
-10. `GRAPHVIEW_LENS_B_IMPLEMENTATION_SEQUENCE_FINAL_CORRECTION.md` (Deliverable 1)
-11. `GRAPHVIEW_LENS_B_FINAL_AUTHORIZATION_CHECKLIST_CORRECTED.md` (Deliverable 2)
-12. `GRAPHVIEW_LENS_B_DOCUMENTATION_CORRECTION_CLOSURE_REPORT.md` (Deliverable 3 — This file)
+6. `explorer/src/components/GraphView.tsx` (Inspected: Cytoscape position resolution & element lifecycle)
+7. `context/CURRENT-DECISIONS.md` (Tier 1 Authority — 0 records for Gates A, B, C, or D)
+8. `context/CURRENT-CONTRACTS.md` (Tier 2 Authority — Section 3 Position Authority Level 4 pure function rules)
+9. `context/CURRENT-ARCHITECTURE.md` (Tier 2 Spec — Section 3 State Authority & Section 4 Position Authority)
+10. `audit-evidence/features/FEAT-PERF/cli-integration.log` (Attributable historical execution log artifact for 31-suite CLI pass)
+11. `GRAPHVIEW_LENS_B_IMPLEMENTATION_SEQUENCE_FINAL_CORRECTION.md` (Deliverable 1)
+12. `GRAPHVIEW_LENS_B_FINAL_AUTHORIZATION_CHECKLIST_CORRECTED.md` (Deliverable 2)
+13. `GRAPHVIEW_LENS_B_DOCUMENTATION_CORRECTION_CLOSURE_REPORT.md` (Deliverable 3 — This file)
 
 ---
 
@@ -91,7 +92,7 @@ The documentation correction package comprises exactly three deliverables:
 In compliance with explicit closure mandates:
 - **Path Inconsistencies Corrected:** Normalized all test references to exact repository-relative paths (`explorer/src/test/Phase2FA_CoreArchitecture.test.tsx`, `explorer/src/lib/adapters/component-orbit-adapter.test.ts`, `explorer/src/lib/layout/orbit-layout.test.ts`).
 - **Tightened Rollback Preconditions:** Detailed staged/unstaged differential scopes, baseline clean status requirements, single-purpose patch rules, and stop conditions.
-- **Repository Evidence Inspected:** Inspected `projectState.ts`, `Phase2FA_CoreArchitecture.test.tsx`, `component-orbit-adapter.test.ts`, `orbit-layout.test.ts`, `architecture-layout.ts`, `CURRENT-DECISIONS.md`, and `cli-integration.log`.
+- **Repository Evidence Inspected:** Inspected `projectState.ts`, `Phase2FA_CoreArchitecture.test.tsx`, `component-orbit-adapter.test.ts`, `orbit-layout.test.ts`, `architecture-layout.ts`, `GraphView.tsx`, `CURRENT-DECISIONS.md`, and `cli-integration.log`.
 - **Usable Rollback Patch Status:** No patch file was generated or executed in this documentation task. Rollback protocol is defined and classified as `CONDITIONALLY_READY`.
 - **Attributable Test Execution Evidence:** 31-suite CLI result attributed to historical log artifact `audit-evidence/features/FEAT-PERF/cli-integration.log`. No tests executed in current task.
 - **Track A Independent Validation:** Confirmed Track A can be independently validated and completed without Track B or Gate A–D approvals.
@@ -105,8 +106,20 @@ In compliance with explicit closure mandates:
 
 ---
 
-## 6. Formal Engineering Recommendation
+## 6. Conditions for Track A Implementation Authorization
 
-**Recommendation:** The documentation package is **RECOMMENDED FOR TRACK A CODE-REVIEW AUTHORIZATION** to execute the DEF-01 independent technical fix and create unit tests `TST-STG1-01` and `TST-STG1-02` in `architecture-layout.ts` and `Phase2FA_CoreArchitecture.test.tsx` during a separately authorized implementation phase.
+Implementation authorization for DEF-01 may be granted in a separately authorized implementation phase ONLY when the following explicit conditions are satisfied:
+
+1. **Condition 1 (Code Review Approval):** Recipient of explicit code-review authorization specifically approving Track A scope (deletion of L169–171 and L219–221 in `architecture-layout.ts`).
+2. **Condition 2 (Baseline Working-Tree Verification):** Execution of `git status --porcelain` confirming `explorer/src/lib/architecture-layout.ts` is 100% clean prior to edit.
+3. **Condition 3 (Creation of Unit Tests TST-STG1-01 & 02):** Implementation of missing unit tests `TST-STG1-01` and `TST-STG1-02` in `explorer/src/test/Phase2FA_CoreArchitecture.test.tsx` asserting that stale positions in `existingPositions` are NOT copied into `orbitPositions` or `constellationPositions`.
+4. **Condition 4 (Patch Isolation & Multi-Scope Diff Audit):** Generation of isolated `stage1_def01.patch` and verification via `git diff`, `git diff --staged`, and `git diff HEAD` that no collateral or unrelated edits exist.
+5. **Condition 5 (Fresh Execution Evidence):** Execution and capture of attributable test run logs demonstrating 100% pass across Track A unit tests and baseline regression suites.
+
+---
+
+## 7. Formal Engineering Recommendation
+
+**Recommendation:** The documentation package is **RECOMMENDED FOR TRACK A CODE-REVIEW AUTHORIZATION** under verdict **SAFE ONLY WITH EXPLICIT CONDITIONS (B)** to proceed with the DEF-01 technical correction and test creation in a separately authorized implementation phase.
 
 *This recommendation provides technical readiness justification and does NOT constitute authorization to implement the fix.*

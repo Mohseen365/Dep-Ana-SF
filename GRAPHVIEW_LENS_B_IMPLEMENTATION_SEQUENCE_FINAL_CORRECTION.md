@@ -3,7 +3,7 @@
 ## 1. Context Retrieval & Context Precedence Hierarchy
 
 ### 1.1 Context Retrieval Summary
-This document establishes the corrected, source-grounded implementation sequence, test evidence framework, patch isolation rollback policy, canonical test paths, and readiness boundary for **GraphView Lens B — Component Orbit / Component Constellation**.
+This document establishes the corrected, source-grounded implementation sequence, test evidence framework, patch isolation rollback policy, canonical test paths, adversarial authorization audit, and readiness boundary for **GraphView Lens B — Component Orbit / Component Constellation**.
 
 All authoritative context files, active application source code, test files, and predecessor audit reports were retrieved and inspected directly in the repository:
 - `explorer/src/lib/projectState.ts` (Inspected: `legacyNodePositions` is **PROPOSED / UNIMPLEMENTED**)
