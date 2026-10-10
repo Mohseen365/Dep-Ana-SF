@@ -134,7 +134,7 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata',
     expect(res.positions['ApexClass:AssetController']).toEqual({ x: 280, y: 0 });
   });
 
-  test('Case C — preserves existingPositions for unprojected nodes outside current orbit projection', () => {
+  test('Case C — isolates position map output from unprojected nodes outside current orbit projection (DEF-01)', () => {
     const res = computeArchitectureLayoutWithMetadata(sampleNodes, sampleEdges, {
       architectureMode: 'orbit',
       focalLwcId: 'LWC:asset-dashboard-container',
@@ -143,8 +143,8 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata',
       },
     });
 
-    // Unprojected node retains its position
-    expect(res.positions['ApexClass:UnrelatedClass']).toEqual({ x: 500, y: 500 });
+    // Unprojected node is absent from returned position map under DEF-01
+    expect(res.positions['ApexClass:UnrelatedClass']).toBeUndefined();
   });
 
   test('Case D — invariant layout geometry of projected nodes across varying stale position inputs', () => {
@@ -166,6 +166,6 @@ describe('Component Orbit Integration in computeArchitectureLayoutWithMetadata',
     expect(staleRes.positions['LWC:asset-dashboard-container']).toEqual(pureRes.positions['LWC:asset-dashboard-container']);
     expect(staleRes.positions['ApexClass:AssetController']).toEqual(pureRes.positions['ApexClass:AssetController']);
     expect(staleRes.positions['LWC:asset-tile']).toEqual(pureRes.positions['LWC:asset-tile']);
-    expect(staleRes.positions['ApexClass:UnrelatedClass']).toEqual({ x: 500, y: 500 });
+    expect(staleRes.positions['ApexClass:UnrelatedClass']).toBeUndefined();
   });
 });

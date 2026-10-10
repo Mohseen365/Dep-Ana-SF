@@ -38,7 +38,7 @@ describe('Component Constellation Static Mode Projection Synchronization', () =>
 
     expect(projectedNodeIds.length).toBe(42);
     expect(projectedEdgeIds.length).toBe(71);
-    expect(projection.macroSuns.length).toBe(14);
+    expect(projection.suns.length).toBe(14);
   });
 
   test('computeArchitectureLayoutWithMetadata under constellation mode returns 42 projectedNodeIds', () => {
@@ -113,7 +113,7 @@ describe('Component Constellation Static Mode Projection Synchronization', () =>
     });
 
     const actualSharedNodes = Object.values(projection.nodes)
-      .filter((n) => n.isShared)
+      .filter((n) => n.isSharedNode)
       .map((n) => n.id)
       .sort();
 

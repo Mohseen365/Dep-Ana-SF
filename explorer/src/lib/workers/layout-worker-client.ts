@@ -183,6 +183,8 @@ export class LayoutWorkerClient {
       return {
         positions: finalPositions,
         featureRegions: syncResult.featureRegions,
+        orbitGuides: syncResult.orbitGuides,
+        projectedNodeIds: syncResult.projectedNodeIds,
         requestGeneration: requestGen,
         projectId,
         isOffloaded: false,
@@ -247,6 +249,8 @@ export class LayoutWorkerClient {
           return resolve({
             positions: finalPositions,
             featureRegions: syncResult.featureRegions,
+            orbitGuides: syncResult.orbitGuides,
+            projectedNodeIds: syncResult.projectedNodeIds,
             requestGeneration: requestGen,
             projectId,
             isOffloaded: false,
@@ -293,6 +297,8 @@ export class LayoutWorkerClient {
         resolve({
           positions: finalPositions,
           featureRegions,
+          orbitGuides: response.orbitGuides,
+          projectedNodeIds: response.projectedNodeIds ? new Set(response.projectedNodeIds) : undefined,
           requestGeneration: requestGen,
           projectId,
           isOffloaded: true,
@@ -327,6 +333,8 @@ export class LayoutWorkerClient {
         resolve({
           positions: finalPositions,
           featureRegions: syncResult.featureRegions,
+          orbitGuides: syncResult.orbitGuides,
+          projectedNodeIds: syncResult.projectedNodeIds,
           requestGeneration: requestGen,
           projectId,
           isOffloaded: false,
@@ -374,6 +382,8 @@ export class LayoutWorkerClient {
         resolve({
           positions: finalPositions,
           featureRegions: syncResult.featureRegions,
+          orbitGuides: syncResult.orbitGuides,
+          projectedNodeIds: syncResult.projectedNodeIds,
           requestGeneration: requestGen,
           projectId,
           isOffloaded: false,
