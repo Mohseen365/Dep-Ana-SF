@@ -1,7 +1,7 @@
 # COMP ORBIT / CONSTELLATION PBIM REAL-BROWSER RUNTIME CLOSURE REPORT
 
 **Report Identifier:** `COMP_ORBIT_PBIM_REAL_BROWSER_RUNTIME_CLOSURE_REPORT.md`
-**Target Project:** `PBIM`
+**Target Project:** `PBIM` (`pub-infra-mang`)
 **Final Verdict:** `PBIM EXPORT VERIFIED — BROWSER RUNTIME BLOCKED`
 **Closure Date:** October 10, 2026
 
@@ -10,38 +10,47 @@
 ## 1. Repository Identity and Provenance
 
 - **Working Directory:** `/app`
-- **Branch Name:** `jules-1029614528143778166-ea6cb8ef`
-- **Head Git SHA:** `73930465c9e37a8ac91ddb0e04408b6c3ebb14ab`
+- **Branch Name:** `jules-10991457070811613458-0290cc60`
+- **Head Git SHA:** `8ae0b078595315bcff856c5b571485e42509190e`
+- **Repository Structure Verification:**
+  - Confirmed repository layout: `/app` is the working root directory.
+  - Analyzer engine `dependency-analyzer.cjs` and export launcher `scripts/export-explorer.cjs` reside at `/app` root.
+  - There is no separate `dependency-analyzer/` subdirectory in this checkout; commands executed from `/app` target the correct analysis pipeline.
 - **Working Tree Status (`git status --short`):**
-  - Tracked generated export/manifest modifications:
+  - Tracked generated export/manifest modifications resulting from `node scripts/export-explorer.cjs --projectName PBIM`:
     - `M analysis-manifest.json`
     - `M analysis-snapshot.json`
-    - `M analyze/explorer-data.json`
-    - `M analyze/project-manifest.json`
-    - `M analyze/project-metadata.json`
     - `M architecture-metrics.json`
     - `M architecture-snapshot.json`
     - `M dependency-report.json`
     - `M dependency-summary.md`
     - `M explorer/public/explorer-data.json`
     - `M explorer/public/project-manifest.json`
-  - Source tree (`explorer/src/`, `scripts/`): **100% CLEAN**
+  - Untracked generated project artifact files:
+    - `analyze/projects/pbim/explorer-data.json`
+    - `analyze/projects/pbim/project-metadata.json`
+    - `explorer/public/projects/pbim/explorer-data.json`
+    - `explorer/public/projects/pbim/project-metadata.json`
+  - Production source code (`explorer/src/`, `scripts/`): **100% CLEAN & UNMODIFIED**.
 
 ---
 
 ## 2. Canonical Context Records Retrieved
 
-In accordance with `AGENT.md` and `CONTEXT-RETRIEVAL-PROTOCOL.md`, the following current-state records were retrieved and consulted:
-1. `context/CURRENT-DECISIONS.md` — Product Gates A–D remain UNAPPROVED/PROPOSED; DEF-01 position key isolation strictly enforced.
-2. `context/CURRENT-CONTRACTS.md` — Level 1–5 Position Authority Precedence and Web Worker IPC serialization contracts.
-3. `context/CURRENT-IMPLEMENTATION.md` — Worker offloading implementation in `layout.worker.ts`, `layout-worker-client.ts`, and `graph-layout.ts`.
-4. `context/CURRENT-TESTS.md` — Test suite topology and 31 CLI integration test scripts.
-5. `context/CURRENT-DATA-AND-FIXTURES.md` — PBIM canonical dataset specifications (528 nodes, 2063 edges).
-6. `COMP_ORBIT_PBIM_PROJECT_RUNTIME_VERIFICATION.md` — Prior report establishing PBIM export evidence and noting pending browser runtime status.
+In accordance with `AGENT.md` and `CONTEXT-RETRIEVAL-PROTOCOL.md`, the following authoritative context records were retrieved and consulted:
+
+1. `AGENT.md` — Task-based routing protocol and real-project validation assets.
+2. `CONTEXT-RETRIEVAL-PROTOCOL.md` — Minimum-sufficient context retrieval protocol and authority hierarchy.
+3. `context/CURRENT-DECISIONS.md` — Enforces state authority, `SELECTION ≠ NAVIGATION`, DEF-01 Lens B position key isolation, and preserves Product Gates A–D as UNAPPROVED/PROPOSED.
+4. `context/CURRENT-CONTRACTS.md` — Governs Level 1–5 Position Authority Precedence, Cartesian AABB collision predicates, and Web Worker IPC serialization protocols.
+5. `context/CURRENT-IMPLEMENTATION.md` — Details Web Worker offloading in `layout.worker.ts`, `layout-worker-client.ts`, and `graph-layout.ts`.
+6. `context/CURRENT-TESTS.md` — Outlines test suite topology across 31 standalone CLI scripts and Vitest unit tests.
+7. `context/CURRENT-DATA-AND-FIXTURES.md` — PBIM canonical dataset specifications (528 nodes, 2063 edges).
+8. `COMP_ORBIT_PBIM_PROJECT_RUNTIME_VERIFICATION.md` — Prior report establishing PBIM export evidence and noting pending browser runtime status.
 
 ---
 
-## 3. PBIM Export Execution and Identity Verification
+## 3. PBIM Export Command, Result, and Artifact Evidence
 
 ### Export Execution Details
 
@@ -53,7 +62,7 @@ In accordance with `AGENT.md` and `CONTEXT-RETRIEVAL-PROTOCOL.md`, the following
 - **Exit Code:** `0` (Success)
 - **Accepted Project Identifier:** `pbim` (slugified from `--projectName PBIM`)
 
-### Output Log Verification
+### Export Output Log
 
 ```text
 Salesforce Architecture Explorer Data Adapter
@@ -73,174 +82,232 @@ Successfully generated explorer data contract!
 Destination: /app/analyze/projects/pbim/explorer-data.json
 ```
 
-### Export Artifact Inventory & File Verification
+### Artifact Inventory & Integrity Check
 
-1. `analyze/projects/pbim/explorer-data.json` (4,253,569 bytes) — **VERIFIED**
-2. `explorer/public/projects/pbim/explorer-data.json` (4,253,569 bytes) — **VERIFIED**
-3. `analyze/projects/pbim/project-metadata.json` (422 bytes) — **VERIFIED**
-4. `explorer/public/projects/pbim/project-metadata.json` (422 bytes) — **VERIFIED**
-5. `analyze/project-manifest.json` (`activeProjectId: "pbim"`) — **VERIFIED**
-6. `explorer/public/project-manifest.json` (`activeProjectId: "pbim"`) — **VERIFIED**
+1. `/app/analyze/projects/pbim/explorer-data.json` (4,253,569 bytes) — **VERIFIED**
+2. `/app/explorer/public/projects/pbim/explorer-data.json` (4,253,569 bytes) — **VERIFIED**
+3. `/app/analyze/projects/pbim/project-metadata.json` (422 bytes) — **VERIFIED**
+4. `/app/explorer/public/projects/pbim/project-metadata.json` (422 bytes) — **VERIFIED**
+5. `/app/analyze/project-manifest.json` (`activeProjectId: "pbim"`) — **VERIFIED**
+6. `/app/explorer/public/project-manifest.json` (`activeProjectId: "pbim"`) — **VERIFIED**
 
-### PBIM Dataset Identity
+### PBIM Dataset Identity & Structural Breakdown
 
-Direct JSON inspection of `explorer/public/projects/pbim/explorer-data.json` confirms:
-- **Node Count:** 528
-- **Edge Count:** 2063
-- **High Risk Count:** 86
-- **Cycle Count:** 2
-- **Unresolved References:** 401
-- **Sample Node Identifiers:** `ApexClass:ApprovalFlowController`, `ApexClass:ApprovalFlowControllerTest`, `ApexClass:AssetDashboardController`, `ApexClass:AssetDashboardControllerTest`, `ApexClass:DateUtils`, `CustomObject:Maintenance_Approval__c`
+Direct JSON data contract validation confirms exact structural counts for the PBIM project:
+- **Node Count:** `528`
+- **Edge Count:** `2,063`
+- **High Risk Component Count:** `86`
+- **Cycle Count:** `2`
+- **Unresolved Reference Count:** `401`
+- **Representative Node Identifiers:** `ApexClass:ApprovalFlowController`, `ApexClass:ApprovalFlowControllerTest`, `ApexClass:AssetDashboardController`, `ApexClass:AssetDashboardControllerTest`, `ApexClass:DateUtils`, `CustomObject:Maintenance_Approval__c`
+
+### Application Data Loading Mechanics
+
+Analysis of `explorer/src/context/ProjectContext.tsx` confirms the exact frontend URL and project loading sequence:
+1. `getInitialProjectId()` inspects `window.location.search` for `?project=pbim`.
+2. `ProjectProvider` fetches `/project-manifest.json` to resolve project metadata and active project mapping.
+3. `getProjectDataUrl('pbim')` resolves the analysis data endpoint to `/projects/pbim/explorer-data.json`.
+4. `ProjectContext` fetches `/projects/pbim/explorer-data.json` and loads the 528-node / 2063-edge graph into React application state.
 
 ---
 
-## 4. Browser Launch & Application Inspection Status
+## 4. Real Application Launch & Browser Inspection Status
 
 ### Environment Capability Analysis
 
-- **Frontend Dev Server (`npm run dev` / `npx vite`):** **BLOCKED**. Execution fails with `sh: 1: vite: not found` because `node_modules/vite` is not installed in `/app` or `/app/explorer`.
-- **Browser Automation (`playwright` / Chromium):** **BLOCKED**. Playwright execution fails with:
-  ```text
-  Error: browserType.launch: Executable doesn't exist at /home/jules/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell
-  ```
-  Downloading binaries via `npx playwright install` is restricted in this sandbox environment.
+Inspection of the sandbox execution environment confirms that dependencies required for Vite dev server execution and Playwright browser automation are not present in local `node_modules`:
 
-### Resulting Status
+1. **Vite Dev Server Launch (`npm run dev` / `npx vite`):**
+   - Executing `node_modules` dependent commands fails because `/app/node_modules` and `/app/explorer/node_modules` do not exist.
+   - Running `npm run dev` attempts to execute `vite`, which is unavailable locally.
 
-- **Browser URL:** `http://localhost:3000/?project=pbim` (Connection Refused — server unable to start without Vite dependencies).
-- **Loaded Node / Edge Counts in Live DOM:** **BLOCKED** (Browser runtime unstartable).
-- **Exact Environment Prerequisite to Continue:** `npm install` inside `explorer/` and `npx playwright install chromium`.
+2. **Playwright Browser Script Execution:**
+   - Command 1: `node run_pbim_browser_verification.cjs`
+     - **Exit Code:** `1`
+     - **Stderr Output:** `Error: Cannot find module 'playwright'`
+   - Command 2: `node scripts/verify-phase-comp-fix-real-browser.cjs`
+     - **Exit Code:** `1`
+     - **Stderr Output:** `Error: Cannot find module 'playwright'`
 
----
+### Resulting Runtime Status
 
-## 5. Layout Controls DOM Inventory (Source-Derived)
+- **Browser Frontend URL:** `http://localhost:3000/?project=pbim` (Connection Refused — dev server unable to launch without installed dependencies).
+- **Loaded Node / Edge Counts in Live Browser DOM:** **BLOCKED (UNABLE TO EXECUTE)**.
+- **Exact Smallest Environment Prerequisite Required to Continue:**
+  1. `npm install` inside `/app` and `/app/explorer` to populate `node_modules`.
+  2. `npx playwright install chromium` to install the required Playwright headless shell binary.
 
-From `explorer/src/components/GraphControls.tsx` and `explorer/src/components/WorkspaceHeader.tsx`:
-
-- **Graph Container:** `.domain-lenses-bar[aria-label="Graph view: Interactive Dependency Graph Canvas"]`
-- **Floating Graph Controls:** `.graph-controls-floating`
-- **Control Buttons:** `.graph-control-btn`
-- **Control Definitions:**
-  - **Hierarchical Layout:** Title `"Hierarchical Layout"` (`.graph-control-btn`)
-  - **Hybrid Layout:** Title `"Hybrid Layout"` (`.graph-control-btn`)
-  - **Architecture Orbit:** Title `"Architecture Orbit"` (`.graph-control-btn`)
-  - **Component Constellation:** View Mode switch to `'constellation'` via Workspace Domain/Lens switcher.
+*Per explicit prompt directives, browser runtime observations are not manufactured, and the execution block is recorded accurately.*
 
 ---
 
-## 6. Scenario-by-Scenario Matrix
+## 5. Actual Layout Controls Inventory (Source-Derived)
 
-| Scenario | Mode | Execution Status | Evidence / Reason |
+Inspection of `explorer/src/components/GraphControls.tsx`, `explorer/src/components/WorkspaceHeader.tsx`, and `explorer/src/components/ViewModeSwitcher.tsx` establishes the exact DOM structure and selectors governing layout control:
+
+- **Graph View Container:** `.domain-lenses-bar[aria-label="Graph view: Interactive Dependency Graph Canvas"]`
+- **Floating Controls Container:** `.graph-controls-floating`
+- **Layout Buttons:** `.graph-control-btn`
+- **Active Control Selector:** `.graph-control-btn.active`
+- **Control Labels & Titles:**
+  - **Hierarchical Layout:** `.graph-control-btn[title*="Hierarchical"]` (Triggers 11-stage layout pipeline via fcose / preset)
+  - **Hybrid Layout:** `.graph-control-btn[title*="Hybrid"]` (Triggers 2D hybrid domain containment layout)
+  - **Architecture Orbit:** `.graph-control-btn[title*="Orbit"]` (Triggers radial polar 6-ring layout)
+  - **Component Constellation:** Activated by selecting `'constellation'` view mode via workspace domain tab switcher (`.workspace-tab-btn`) or view mode switcher dropdown.
+
+---
+
+## 6. Scenario-by-Scenario Layout Results Matrix
+
+| Scenario | Mode | Execution Status | Reason / Evidence |
 | :--- | :--- | :--- | :--- |
-| **Scenario A** | Hierarchical | **NOT RUN (BLOCKED)** | Sandbox environment lacks Vite dev server and Playwright browser binary. |
-| **Scenario B** | Architecture Orbit | **NOT RUN (BLOCKED)** | Sandbox environment lacks Vite dev server and Playwright browser binary. |
-| **Scenario C** | Component Constellation | **NOT RUN (BLOCKED)** | Sandbox environment lacks Vite dev server and Playwright browser binary. |
-| **Scenario D** | Repeated Transitions | **NOT RUN (BLOCKED)** | Sandbox environment lacks Vite dev server and Playwright browser binary. |
+| **Scenario A** | Hierarchical Layout | **NOT RUN (BLOCKED)** | Missing local `node_modules/vite` and Playwright browser binaries in sandbox environment. |
+| **Scenario B** | Architecture Orbit | **NOT RUN (BLOCKED)** | Missing local `node_modules/vite` and Playwright browser binaries in sandbox environment. |
+| **Scenario C** | Component Constellation | **NOT RUN (BLOCKED)** | Missing local `node_modules/vite` and Playwright browser binaries in sandbox environment. |
+| **Scenario D** | Repeated Transitions | **NOT RUN (BLOCKED)** | Missing local `node_modules/vite` and Playwright browser binaries in sandbox environment. |
 
 ---
 
-## 7. Worker Runtime vs. Source Review Evidence
+## 7. Web Worker Runtime Telemetry vs. Source Audit Evidence
 
-### Source-Reviewed Contract Verification
+### Source Code Audit Verification
 
-1. **Worker Serialization (`explorer/src/lib/workers/layout.worker.ts`):**
+Source inspection confirms full end-to-end IPC integration for off-thread Web Worker layout calculations:
+
+1. **`explorer/src/lib/workers/layout.worker.ts` (Lines 44–46):**
    ```typescript
    projectedNodeIds: result.projectedNodeIds ? Array.from(result.projectedNodeIds) : undefined,
    ```
-   Converts the layout result's `Set<string>` into a JSON-serializable `string[]` array.
+   Converts the layout engine's `Set<string>` of projected node IDs into a JSON-serializable `string[]` array before executing `postMessage()`.
 
-2. **Worker Client Deserialization (`explorer/src/lib/workers/layout-worker-client.ts`):**
+2. **`explorer/src/lib/workers/layout-worker-client.ts` (Line 299):**
    ```typescript
    projectedNodeIds: response.projectedNodeIds ? new Set(response.projectedNodeIds) : undefined,
    ```
-   Reconstructs the `string[]` payload back into a strongly-typed `Set<string>` upon IPC message receipt.
+   Reconstructs the `string[]` IPC payload back into a strongly-typed `Set<string>` upon message receipt on the main thread.
 
-3. **Visibility Filtering (`explorer/src/lib/graph-layout.ts`):**
+3. **`explorer/src/lib/graph-layout.ts` (`runLayoutWithMetadataAsync`, Line 332):**
    ```typescript
    const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
    ```
-   Line 332 ensures both `'orbit'` and `'constellation'` modes apply Cytoscape element visibility filtering (`display: element` for projected nodes/edges, `display: none` for non-projected nodes/edges).
+   Evaluates both `'orbit'` and `'constellation'` layout modes when applying Cytoscape element visibility (`display: element` for projected nodes/edges, `display: none` for unprojected nodes/edges). This guarantees that non-projected graph nodes remain hidden following asynchronous worker layout completion.
 
-### Runtime IPC Evidence Status
+### Runtime Telemetry Status
 
-- **Worker Dispatch & Response Telemetry:** **SOURCE-REVIEWED ONLY** (Runtime telemetry uncollected due to browser launch block).
+- **Worker Dispatch & Response Telemetry:** **SOURCE-REVIEWED ONLY** (Live browser IPC message tracing uncollected due to browser launch block).
 
 ---
 
-## 8. Console & Network Findings
+## 8. Console and Network Findings
 
-- **Console Errors:** None recorded during CLI execution.
-- **Network Requests:** Unable to capture browser network logs due to browser launch block.
+- **CLI Execution Console Output:** Zero errors encountered during export or test suite execution.
+- **Browser Console & Network Logs:** Uncollected due to browser execution block.
 
 ---
 
 ## 9. Test Commands and Reconciled Totals
 
-### Reconciled Test Suite Accounting
+### CLI Test Suite Execution
 
-The total count of **31 test suites** corresponds to the 31 standalone test scripts executed in sequence by `npm run test:cli`:
+- **Executed Command:** `npm run test:cli`
+- **Exit Code:** `0` (Success)
 
-1. `scripts/test-cli-integration.cjs` (1 suite)
-2. `scripts/test-explorer-cli-forwarding.cjs` (1 suite)
-3. `scripts/test-semantic-investigation-adapter.cjs` (1 suite)
-4. `scripts/test-roles.cjs` (1 suite)
-5. `scripts/test-layers.cjs` (1 suite)
-6. `scripts/test-entry-points.cjs` (1 suite)
-7. `scripts/test-external-boundaries.cjs` (1 suite)
-8. `scripts/test-deterministic-contract.cjs` (1 suite)
-9. `scripts/test-bottlenecks.cjs` (1 suite)
-10. `scripts/test-security-boundaries.cjs` (1 suite)
-11. `scripts/test-test-gap-analysis.cjs` (1 suite)
-12. `scripts/test-dependency-paths.cjs` (1 suite)
-13. `scripts/test-business-criticality.cjs` (1 suite)
-14. `scripts/test-data-impact.cjs` (1 suite)
-15. `scripts/test-architecture-profiles.cjs` (1 suite)
-16. `scripts/test-architecture-smells.cjs` (1 suite)
-17. `scripts/test-change-simulator.cjs` (1 suite)
-18. `scripts/test-architecture-maps.cjs` (1 suite)
-19. `scripts/test-architecture-health.cjs` (1 suite)
-20. `scripts/test-architecture-debt.cjs` (1 suite)
-21. `scripts/test-refactoring-sequencing.cjs` (1 suite)
-22. `scripts/test-safety-envelope.cjs` (1 suite)
-23. `scripts/test-architecture-quality-gates.cjs` (1 suite)
-24. `scripts/test-duplicate-responsibility.cjs` (1 suite)
-25. `scripts/test-architecture-snapshot.cjs` (12 individual tests) — **PASSED**
-26. `scripts/test-architecture-change-gate.cjs` (15 individual tests) — **PASSED**
-27. `scripts/test-investigation-eligibility.cjs` (15 individual tests) — **PASSED**
-28. `scripts/test-investigation-context-minimizer.cjs` (17 individual tests) — **PASSED**
-29. `scripts/test-architecture-decision-context.cjs` (20 individual tests) — **PASSED**
-30. `scripts/test-llm-usage-accounting.cjs` (16 individual tests) — **PASSED**
-31. `scripts/test-domains.cjs` (1 suite)
+### Test Count Reconciliation
+
+The previous report cited "31/31 test suites passed". The detailed breakdown below reconciles standalone test scripts versus individual test assertions:
+
+The master command `npm run test:cli` executes 30 chained Node.js test scripts (plus `scripts/test-domains.cjs`), bringing the total standalone test scripts to **31 test suites**:
+
+1. `scripts/test-cli-integration.cjs` — Master CLI integration test suite
+2. `scripts/test-explorer-cli-forwarding.cjs` — CLI flag forwarding test suite
+3. `scripts/test-semantic-investigation-adapter.cjs` — Semantic investigation adapter test suite
+4. `scripts/test-roles.cjs` — Component role classifier test suite
+5. `scripts/test-layers.cjs` — System layer classifier test suite
+6. `scripts/test-entry-points.cjs` — Entry point detection test suite
+7. `scripts/test-external-boundaries.cjs` — External boundaries test suite
+8. `scripts/test-deterministic-contract.cjs` — Deterministic change contract test suite
+9. `scripts/test-bottlenecks.cjs` — Performance bottleneck detector test suite
+10. `scripts/test-security-boundaries.cjs` — Security boundary validator test suite
+11. `scripts/test-test-gap-analysis.cjs` — Test coverage gap analyzer test suite
+12. `scripts/test-dependency-paths.cjs` — Dependency path analyzer test suite
+13. `scripts/test-business-criticality.cjs` — Business criticality scorer test suite
+14. `scripts/test-data-impact.cjs` — Data impact analyzer test suite
+15. `scripts/test-architecture-profiles.cjs` — Architecture profiler test suite
+16. `scripts/test-architecture-smells.cjs` — Architecture smell detector test suite
+17. `scripts/test-change-simulator.cjs` — Change simulator test suite
+18. `scripts/test-architecture-maps.cjs` — Architecture maps test suite
+19. `scripts/test-architecture-health.cjs` — Architecture health evaluator test suite
+20. `scripts/test-architecture-debt.cjs` — Technical debt calculator test suite
+21. `scripts/test-refactoring-sequencing.cjs` — Refactoring sequencer test suite
+22. `scripts/test-safety-envelope.cjs` — Safety envelope validator test suite
+23. `scripts/test-architecture-quality-gates.cjs` — Quality gates evaluator test suite
+24. `scripts/test-duplicate-responsibility.cjs` — Duplicate responsibility test suite
+25. `scripts/test-architecture-snapshot.cjs` — Snapshot generator test suite (12 assertions)
+26. `scripts/test-architecture-change-gate.cjs` — Change gate test suite (15 assertions)
+27. `scripts/test-investigation-eligibility.cjs` — Investigation eligibility test suite (15 assertions)
+28. `scripts/test-investigation-context-minimizer.cjs` — Context minimizer test suite (17 assertions)
+29. `scripts/test-architecture-decision-context.cjs` — Decision context test suite (20 assertions)
+30. `scripts/test-llm-usage-accounting.cjs` — LLM usage accounting test suite (16 assertions)
+31. `scripts/test-domains.cjs` — System domains test suite
 
 - **Total Test Suites Executed:** `31`
 - **Total Test Suites Passed:** `31` (100% pass rate)
-- **Individual Assertion Count Across All Suites:** `184` individual assertions passed.
+- **Total Individual Assertions Passed:** `184` individual assertions passed across all 31 suites.
+
+### Frontend Vitest Suite Status
+
+- **Vitest Unit Tests:** **PENDING / BLOCKED IN SANDBOX** (`vitest` runner fails to start due to missing local `node_modules` in `/app/explorer`).
 
 ---
 
 ## 10. Generated Artifact & Working-Tree Accounting
 
-Executing `node scripts/export-explorer.cjs --projectName PBIM` intentionally mutated tracked data contract files to publish PBIM data:
+### Export-Induced Modifications
 
-- `analyze/project-manifest.json` — Active project set to `"pbim"`
-- `explorer/public/project-manifest.json` — Active project set to `"pbim"`
-- `analyze/explorer-data.json` — Contains PBIM 528 nodes / 2063 edges
-- `explorer/public/explorer-data.json` — Contains PBIM 528 nodes / 2063 edges
-- Analyzer snapshot & metric output files (`dependency-report.json`, `architecture-snapshot.json`, etc.)
+Running `node scripts/export-explorer.cjs --projectName PBIM` produced the following tracked file modifications to publish the PBIM data contract:
 
-**Disposition Recommendation:** Retain PBIM generated project contracts in `analyze/projects/pbim/` and `explorer/public/projects/pbim/`. Do not revert or discard without team consensus.
+- `analysis-manifest.json` — Updated active project manifest to `"pbim"`
+- `analysis-snapshot.json` — Updated system snapshot metrics for PBIM
+- `architecture-metrics.json` — Updated architectural health metrics for PBIM
+- `architecture-snapshot.json` — Updated architecture snapshot for PBIM
+- `dependency-report.json` — Updated JSON dependency graph export
+- `dependency-summary.md` — Updated human-readable metrics summary
+- `explorer/public/explorer-data.json` — Replaced active data contract with PBIM dataset (528 nodes / 2063 edges)
+- `explorer/public/project-manifest.json` — Updated project registry with active ID `"pbim"`
+
+### Disposition Recommendation
+
+Retain the generated PBIM project data contracts in `analyze/projects/pbim/` and `explorer/public/projects/pbim/` and manifest active project updates. They represent valid, verified PBIM data contracts. Do not revert or discard without explicit instruction.
 
 ---
 
-## 11. Remaining Limitations & Next Actions
+## 11. Remaining Limitations & Next Required Action
 
-1. **Remaining Limitation:** Real browser E2E interaction, screenshot capturing, and live Cytoscape DOM visibility verification could not be executed due to missing frontend dev server dependencies (`vite`) and Playwright browser binaries in the sandbox environment.
-2. **Next Smallest Action Required:** Run `npm install` in `explorer/` and `npx playwright install chromium` in an internet-enabled environment to run `node scripts/verify-phase-comp-fix-real-browser.cjs`.
+1. **Remaining Limitation:** End-to-end interactive DOM verification, browser screenshot capture, and live Cytoscape visibility verification cannot be executed in this sandbox environment due to unpopulated local `node_modules` and missing Playwright browser binaries.
+2. **Next Smallest Required Action:** In an environment with internet access or pre-installed dependencies, execute:
+   ```bash
+   cd /app && npm install
+   cd /app/explorer && npm install
+   npx playwright install chromium
+   node run_pbim_browser_verification.cjs
+   ```
 
 ---
 
-## 12. Final Verdict
+## 12. Exact Evidence Locations
 
-**`PBIM EXPORT VERIFIED — BROWSER RUNTIME BLOCKED`**
+- **Export Execution Script:** `/app/scripts/export-explorer.cjs`
+- **Export Data Output:** `/app/explorer/public/projects/pbim/explorer-data.json`
+- **Project Manifest Output:** `/app/explorer/public/project-manifest.json`
+- **Browser Verification Script 1:** `/app/run_pbim_browser_verification.cjs`
+- **Browser Verification Script 2:** `/app/scripts/verify-phase-comp-fix-real-browser.cjs`
+- **CLI Test Suite Runner:** `/app/scripts/test-cli-integration.cjs`
+- **Worker Source Files:** `/app/explorer/src/lib/workers/layout.worker.ts`, `/app/explorer/src/lib/workers/layout-worker-client.ts`, `/app/explorer/src/lib/graph-layout.ts`
 
-*PBIM project export was executed cleanly, producing verified 528-node / 2063-edge data contracts in `analyze/projects/pbim/` and `explorer/public/projects/pbim/`. Source-level Worker patch code review confirms correct serialization and visibility filtering logic. Live browser runtime layout control verification is blocked due to sandbox environment limitations (missing dev server dependencies and browser binaries).*
+---
+
+## 13. Allowed Final Verdict Selection
+
+**Selected Verdict:** `PBIM EXPORT VERIFIED — BROWSER RUNTIME BLOCKED`
+
+*PBIM dataset export was successfully executed from `/app` using `node scripts/export-explorer.cjs --projectName PBIM`, producing fully verified 528-node / 2,063-edge data contracts in `analyze/projects/pbim/` and `explorer/public/projects/pbim/`. Source-level Worker patch code review confirms correct serialization (`Array.from`), deserialization (`new Set`), and Cytoscape visibility filtering (`display: element` / `display: none`). Live browser runtime layout control verification is blocked due to sandbox environment limitations (missing dev server dependencies and browser binaries).*
