@@ -122,55 +122,56 @@ describe('FINDING-01 — Web Worker Projection IPC Serialization and Async Visib
     expect(asyncResult.projectedNodeIds!.has('ApexClass:Hidden')).toBe(false);
   });
 
-  test('runLayoutWithMetadataAsync applies projection filter to Cytoscape for both orbit and constellation', async () => {
+  test('runLayoutWithMetadataAsync invokes calculateLayoutAsync and populates projectedNodeIds for constellation mode', async () => {
     const showMock = vi.fn();
     const hideMock = vi.fn();
     const positionMock = vi.fn();
 
-    const mockNodes = [
-      { id: () => 'LWC:sun', show: showMock, hide: hideMock, position: positionMock },
-      { id: () => 'ApexClass:Hidden', show: showMock, hide: hideMock, position: positionMock },
+    const mockNodeEles = [
+      { id: () => 'LWC:sun', show: showMock, hide: hideMock, position: positionMock, data: () => ({ id: 'LWC:sun', type: 'LWC' }) },
+      { id: () => 'ApexClass:Child', show: showMock, hide: hideMock, position: positionMock, data: () => ({ id: 'ApexClass:Child', type: 'ApexClass' }) },
     ];
 
     const mockCy = {
-      nodes: () => ({
-        length: 2,
-        filter: (predicate: any) => {
-          const filtered = mockNodes.filter(n => predicate(n));
+      nodes: () => {
+        const arr = [...mockNodeEles] as any;
+        arr.filter = (predicate: any) => {
+          const filtered = mockNodeEles.filter(n => predicate(n));
           return {
             show: showMock,
             hide: hideMock,
             forEach: (cb: any) => filtered.forEach(cb),
+            style: vi.fn(),
           };
-        },
-      }),
-      edges: () => ({
-        filter: () => ({
+        };
+        arr.forEach = (cb: any) => mockNodeEles.forEach(cb);
+        return arr;
+      },
+      edges: () => {
+        const arr = [] as any;
+        arr.filter = () => ({
           show: showMock,
           hide: hideMock,
-        }),
-      }),
+          style: vi.fn(),
+        });
+        arr.forEach = () => {};
+        return arr;
+      },
+      elements: () => {
+        const arr = [] as any;
+        arr.filter = () => [];
+        return arr;
+      },
       batch: (cb: any) => cb(),
       fit: vi.fn(),
     } as any;
 
-    const dummyResult = {
-      positions: { 'LWC:sun': { x: 0, y: 0 } },
-      projectedNodeIds: new Set(['LWC:sun']),
-      requestGeneration: 1,
-      projectId: 'p1',
-      isOffloaded: false,
-      computeDurationMs: 5,
-      ipcDurationMs: 0,
-      totalDurationMs: 5,
-    };
+    const res = await runLayoutWithMetadataAsync(mockCy, {
+      architectureMode: 'constellation',
+    });
 
-    // Verify orbit predicate logic
-    const isOrbitFilter = (mode: string, res: any) =>
-      (mode === 'orbit' || mode === 'constellation') && res.projectedNodeIds;
-
-    expect(isOrbitFilter('orbit', dummyResult)).toBeTruthy();
-    expect(isOrbitFilter('constellation', dummyResult)).toBeTruthy();
-    expect(isOrbitFilter('hierarchical', dummyResult)).toBeFalsy();
+    expect(res.projectedNodeIds).toBeDefined();
+    expect(res.projectedNodeIds).toBeInstanceOf(Set);
+    expect(res.projectedNodeIds!.has('LWC:sun')).toBe(true);
   });
 });
