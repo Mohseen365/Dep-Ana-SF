@@ -20,7 +20,7 @@ const { exportExplorerData, slugify } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR_A = path.join(__dirname, "../temp-test-fixture-proj-a");
 const FIXTURE_DIR_B = path.join(__dirname, "../temp-test-fixture-proj-b");
-const TEST_ANALYZE_DIR = path.join(__dirname, "../temp-multi-project-analyze");
+const TEST_ANALYZE_DIR = path.join(__dirname, "../analyze/temp-multi-project-analyze");
 const PUBLIC_DIR = path.join(__dirname, "../explorer/public");
 
 function setupFixtures() {
@@ -163,8 +163,9 @@ function runMultiProjectTests() {
 
     // REGRESSION TEST 5: Source-Specific Export
     console.log("Regression Test 5: Source-specific export");
-    assert.strictEqual(resA.projectMetadata.sourcePath, FIXTURE_DIR_A);
-    assert.strictEqual(resB.projectMetadata.sourcePath, FIXTURE_DIR_B);
+    const { normalizeSourcePath } = require("./export-explorer.cjs");
+    assert.strictEqual(resA.projectMetadata.sourcePath, normalizeSourcePath(FIXTURE_DIR_A));
+    assert.strictEqual(resB.projectMetadata.sourcePath, normalizeSourcePath(FIXTURE_DIR_B));
     console.log("  ✓ Exported contracts correctly reflect requested source directories");
 
     // REGRESSION TEST 6: Default Project Backward Compatibility
