@@ -901,8 +901,22 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
 
 function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata) {
   const rootDir = path.resolve(__dirname, "..");
+  const analyzeDir = path.join(rootDir, "analyze");
   const explorerPublicDir = path.join(rootDir, "explorer", "public");
   const explorerDistDir = path.join(rootDir, "explorer", "dist");
+
+  // Determine if resolvedOutputFile is targeting canonical analyze/ or explorer/ public/dist directories.
+  // Temporary test output directories (e.g., tmp-integration-test) must not mutate live public assets.
+  const absOutputFile = path.resolve(resolvedOutputFile);
+  const isCanonicalPath =
+    absOutputFile.startsWith(analyzeDir) ||
+    absOutputFile.startsWith(explorerPublicDir) ||
+    absOutputFile.startsWith(explorerDistDir);
+
+  if (!isCanonicalPath) {
+    // Skip publishing to live browser assets when outputting to temporary/isolated directories
+    return;
+  }
 
   if (!fs.existsSync(explorerPublicDir)) {
     fs.mkdirSync(explorerPublicDir, { recursive: true });
@@ -976,27 +990,18 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
     }
   }
 
-  // 2. Publish project-manifest.json safely without overwriting public manifest if multi-project entries exist
-  let manifestDir = path.dirname(resolvedOutputFile);
-  if (manifestDir.includes("projects")) {
-    const idx = manifestDir.lastIndexOf("projects");
-    if (idx > 0) {
-      manifestDir = manifestDir.substring(0, idx);
-    }
-  }
-
-  const analyzeManifestPath = path.join(manifestDir, "project-manifest.json");
-  const rootManifestPath = path.join(rootDir, "project-manifest.json");
-  const sourceManifest = fs.existsSync(analyzeManifestPath)
-    ? analyzeManifestPath
-    : fs.existsSync(rootManifestPath)
-      ? rootManifestPath
+  // 2. Publish project-manifest.json safely from canonical manifest sources
+  const canonicalAnalyzeManifestPath = path.join(rootDir, "analyze", "project-manifest.json");
+  const canonicalRootManifestPath = path.join(rootDir, "project-manifest.json");
+  const sourceManifest = fs.existsSync(canonicalAnalyzeManifestPath)
+    ? canonicalAnalyzeManifestPath
+    : fs.existsSync(canonicalRootManifestPath)
+      ? canonicalRootManifestPath
       : null;
 
   if (sourceManifest) {
-    // Also sync analyze/project-manifest.json and root project-manifest.json if sourceManifest exists
-    if (sourceManifest !== analyzeManifestPath) {
-      fs.copyFileSync(sourceManifest, analyzeManifestPath);
+    if (sourceManifest !== canonicalAnalyzeManifestPath) {
+      fs.copyFileSync(sourceManifest, canonicalAnalyzeManifestPath);
     }
     fs.copyFileSync(sourceManifest, path.join(explorerPublicDir, "project-manifest.json"));
     if (fs.existsSync(explorerDistDir)) {

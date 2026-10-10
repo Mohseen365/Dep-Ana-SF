@@ -93,6 +93,20 @@ function runTests() {
   console.log("Running Hardened CLI Integration Boundary Test Suite (DA-2.1)...");
   console.log("=============================================================");
 
+  // Capture snapshots of canonical manifest state before test execution
+  const canonicalManifests = [
+    path.join(ROOT_DIR, "project-manifest.json"),
+    path.join(ROOT_DIR, "analyze", "project-manifest.json"),
+    path.join(ROOT_DIR, "explorer", "public", "project-manifest.json")
+  ];
+
+  const manifestSnapshots = new Map();
+  for (const mPath of canonicalManifests) {
+    if (fs.existsSync(mPath)) {
+      manifestSnapshots.set(mPath, fs.readFileSync(mPath, "utf8"));
+    }
+  }
+
   setupFixture();
 
   try {
@@ -430,9 +444,28 @@ function runTests() {
     }
     console.log("  ✓ Upstream project-scoped artifact pipeline verified for food-app-style analysis");
 
-    console.log("\nALL 21 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!");
+    // -------------------------------------------------------------
+    // Test 22: Dedicated PBIM Data Path Verification
+    // -------------------------------------------------------------
+    console.log("Test 22: Dedicated PBIM Data Path Suite Verification");
+    const pbimSuite = require("./test-pbim-dedicated-data-path.cjs");
+    pbimSuite.runTests();
+    console.log("  ✓ Dedicated PBIM data path contract verified during master CLI suite");
+
+    console.log("\nALL 22 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!");
 
   } finally {
+    // Teardown: ensure manifest snapshots are reliably restored if mutated
+    for (const [mPath, content] of manifestSnapshots.entries()) {
+      try {
+        const currentContent = fs.existsSync(mPath) ? fs.readFileSync(mPath, "utf8") : null;
+        if (currentContent !== content) {
+          fs.writeFileSync(mPath, content, "utf8");
+        }
+      } catch (e) {
+        console.warn(`Warning: Failed to restore manifest snapshot for ${mPath}:`, e.message);
+      }
+    }
     cleanup();
   }
 }
