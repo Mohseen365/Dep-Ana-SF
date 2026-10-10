@@ -899,6 +899,14 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   };
 }
 
+function isPathContained(parentDir, targetPath) {
+  if (!parentDir || !targetPath) return false;
+  const absParent = path.resolve(parentDir);
+  const absTarget = path.resolve(targetPath);
+  const rel = path.relative(absParent, absTarget);
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+}
+
 function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata) {
   const rootDir = path.resolve(__dirname, "..");
   const analyzeDir = path.join(rootDir, "analyze");
@@ -909,9 +917,9 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
   // Temporary test output directories (e.g., tmp-integration-test) must not mutate live public assets.
   const absOutputFile = path.resolve(resolvedOutputFile);
   const isCanonicalPath =
-    absOutputFile.startsWith(analyzeDir) ||
-    absOutputFile.startsWith(explorerPublicDir) ||
-    absOutputFile.startsWith(explorerDistDir);
+    isPathContained(analyzeDir, absOutputFile) ||
+    isPathContained(explorerPublicDir, absOutputFile) ||
+    isPathContained(explorerDistDir, absOutputFile);
 
   if (!isCanonicalPath) {
     // Skip publishing to live browser assets when outputting to temporary/isolated directories
@@ -1146,4 +1154,5 @@ module.exports = {
   normalizeSourcePath,
   buildImpactSummaries,
   slugify,
+  isPathContained,
 };
