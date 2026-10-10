@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "pbim",
+  "activeProjectId": "default",
   "projects": [
     {
       "id": "default",
@@ -95,12 +95,12 @@
     },
     {
       "id": "pbim",
-      "name": "pbim",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Pub-Infra-Mang/force-app/main/default",
-      "createdAt": "2026-09-25T04:55:57.331Z",
-      "updatedAt": "2026-09-25T04:55:57.331Z",
-      "lastAnalyzedAt": "2026-09-25T04:55:57.331Z",
+      "name": "PBIM",
+      "description": "Salesforce DX Analysis for pbim",
+      "sourcePath": "projects/pbim",
+      "createdAt": "2026-10-06T10:43:07.592Z",
+      "updatedAt": "2026-10-06T10:43:07.592Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.592Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 528,
       "dependencyCount": 2063,
@@ -210,9 +210,9 @@
       "edgeCount": 16
     },
     "pbim": {
-      "path": "explorer-data.json",
+      "path": "projects/pbim/explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d",
+      "fileHash": "",
       "nodeCount": 528,
       "edgeCount": 2063
     },

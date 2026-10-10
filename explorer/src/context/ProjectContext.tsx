@@ -190,17 +190,44 @@ export const ProjectProvider: React.FC<{
     const allProjects = Array.from(mergedMap.values());
     setProjects(allProjects);
 
-    // Determine target active project
+    // Determine target active project safely
     const currentId = initialProjectId
       ? slugify(initialProjectId)
       : getInitialProjectId();
+
+    // If currentId is in mergedMap, use it.
+    // If currentId is unmanifested/custom, create a pending/placeholder project entry in mergedMap
+    // so activeProject metadata matches activeProjectId cleanly rather than silently returning DEFAULT_PROJECT.
+    if (!mergedMap.has(currentId) && currentId) {
+      const customProject: ProjectMetadata = {
+        id: currentId,
+        name: currentId === "pbim" ? "PBIM" : currentId.toUpperCase(),
+        description: `Requested project (${currentId})`,
+        sourcePath: `projects/${currentId}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastAnalyzedAt: null,
+        analysisStatus: "NOT_ANALYZED",
+        componentCount: 0,
+        dependencyCount: 0,
+        analysisPath:
+          currentId === "pbim"
+            ? "/pbim/explorer-data.json"
+            : currentId !== "default"
+              ? `/projects/${currentId}/explorer-data.json`
+              : "/explorer-data.json",
+      };
+      mergedMap.set(currentId, customProject);
+    }
+
+    const updatedAllProjects = Array.from(mergedMap.values());
+    setProjects(updatedAllProjects);
+
     const validId = mergedMap.has(currentId)
       ? currentId
-      : currentId !== DEFAULT_PROJECT.id
-        ? currentId
-        : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
-          ? activeIdFromManifest
-          : DEFAULT_PROJECT.id;
+      : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
+        ? activeIdFromManifest
+        : DEFAULT_PROJECT.id;
 
     setActiveProjectId(validId);
     setLoading(false);
@@ -353,9 +380,6 @@ export const ProjectProvider: React.FC<{
       const proj = projects.find((p) => p.id === targetId);
       if (proj && proj.analysisPath) {
         return proj.analysisPath;
-      }
-      if (targetId === "pbim") {
-        return "/pbim/explorer-data.json";
       }
       return `/projects/${targetId}/explorer-data.json`;
     },

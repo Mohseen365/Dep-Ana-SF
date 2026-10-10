@@ -423,8 +423,14 @@ function runSpecificRegressionTests() {
   const tempProjectDir = path.join(__dirname, "../temp-test-projects");
   const testMoviePublicPath = path.resolve(__dirname, "../explorer/public/projects/test-movie-app");
   const testFoodPublicPath = path.resolve(__dirname, "../explorer/public/projects/test-food-app");
-  const manifestPath = path.resolve(__dirname, "../explorer/public/project-manifest.json");
-  const origManifest = fs.existsSync(manifestPath) ? fs.readFileSync(manifestPath, "utf8") : null;
+  const publicManifestPath = path.resolve(__dirname, "../explorer/public/project-manifest.json");
+  const analyzeManifestPath = path.resolve(__dirname, "../analyze/project-manifest.json");
+  const rootManifestPath = path.resolve(__dirname, "../project-manifest.json");
+
+  const origPublicManifest = fs.existsSync(publicManifestPath) ? fs.readFileSync(publicManifestPath, "utf8") : null;
+  const origAnalyzeManifest = fs.existsSync(analyzeManifestPath) ? fs.readFileSync(analyzeManifestPath, "utf8") : null;
+  const origRootManifest = fs.existsSync(rootManifestPath) ? fs.readFileSync(rootManifestPath, "utf8") : null;
+
   fs.mkdirSync(tempProjectDir, { recursive: true });
   try {
     const minReport = { nodes: [{ id: "ApexClass:Foo", name: "Foo", type: "ApexClass" }], edges: [] };
@@ -450,7 +456,9 @@ function runSpecificRegressionTests() {
     assert.strictEqual(foodContent.project.id, "test-food-app");
     console.log("  ✓ Test C & D PASSED: Public artifacts automatically synchronized for multiple distinct projects");
   } finally {
-    if (origManifest !== null) fs.writeFileSync(manifestPath, origManifest, "utf8");
+    if (origPublicManifest !== null) fs.writeFileSync(publicManifestPath, origPublicManifest, "utf8");
+    if (origAnalyzeManifest !== null) fs.writeFileSync(analyzeManifestPath, origAnalyzeManifest, "utf8");
+    if (origRootManifest !== null) fs.writeFileSync(rootManifestPath, origRootManifest, "utf8");
     if (fs.existsSync(tempProjectDir)) fs.rmSync(tempProjectDir, { recursive: true, force: true });
     if (fs.existsSync(testMoviePublicPath)) fs.rmSync(testMoviePublicPath, { recursive: true, force: true });
     if (fs.existsSync(testFoodPublicPath)) fs.rmSync(testFoodPublicPath, { recursive: true, force: true });

@@ -976,7 +976,7 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
     }
   }
 
-  // 2. Publish project-manifest.json
+  // 2. Publish project-manifest.json safely without overwriting public manifest if multi-project entries exist
   let manifestDir = path.dirname(resolvedOutputFile);
   if (manifestDir.includes("projects")) {
     const idx = manifestDir.lastIndexOf("projects");
@@ -985,11 +985,22 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
     }
   }
 
-  const analyzeManifest = path.join(manifestDir, "project-manifest.json");
-  if (fs.existsSync(analyzeManifest)) {
-    fs.copyFileSync(analyzeManifest, path.join(explorerPublicDir, "project-manifest.json"));
+  const analyzeManifestPath = path.join(manifestDir, "project-manifest.json");
+  const rootManifestPath = path.join(rootDir, "project-manifest.json");
+  const sourceManifest = fs.existsSync(analyzeManifestPath)
+    ? analyzeManifestPath
+    : fs.existsSync(rootManifestPath)
+      ? rootManifestPath
+      : null;
+
+  if (sourceManifest) {
+    // Also sync analyze/project-manifest.json and root project-manifest.json if sourceManifest exists
+    if (sourceManifest !== analyzeManifestPath) {
+      fs.copyFileSync(sourceManifest, analyzeManifestPath);
+    }
+    fs.copyFileSync(sourceManifest, path.join(explorerPublicDir, "project-manifest.json"));
     if (fs.existsSync(explorerDistDir)) {
-      fs.copyFileSync(analyzeManifest, path.join(explorerDistDir, "project-manifest.json"));
+      fs.copyFileSync(sourceManifest, path.join(explorerDistDir, "project-manifest.json"));
     }
   }
 }
