@@ -76,8 +76,21 @@ function runTests() {
   assert.notStrictEqual(defaultData.summary.nodeCount, pbimData.summary.nodeCount);
   console.log('  ✓ Test 5 PASSED: Root default file /explorer-data.json is strictly distinct from PBIM artifact');
 
+  // Test 6: Manifest synchronization across analyze, root, and public manifests
+  const analyzeManifestPath = path.join(ROOT_DIR, 'analyze', 'project-manifest.json');
+  const rootManifestPath = path.join(ROOT_DIR, 'project-manifest.json');
+  assert.ok(fs.existsSync(analyzeManifestPath), 'analyze/project-manifest.json must exist');
+  assert.ok(fs.existsSync(rootManifestPath), 'project-manifest.json must exist');
+
+  const analyzeManifest = JSON.parse(fs.readFileSync(analyzeManifestPath, 'utf8'));
+  const rootManifest = JSON.parse(fs.readFileSync(rootManifestPath, 'utf8'));
+
+  assert.ok(analyzeManifest.projects.some((p) => p.id === 'pbim'), 'pbim must exist in analyze/project-manifest.json');
+  assert.ok(rootManifest.projects.some((p) => p.id === 'pbim'), 'pbim must exist in project-manifest.json');
+  console.log('  ✓ Test 6 PASSED: Manifest synchronization verified across public, analyze, and root manifests');
+
   console.log('============================================');
-  console.log('ALL 5 PBIM DEDICATED DATA PATH TESTS PASSED!');
+  console.log('ALL 6 PBIM DEDICATED DATA PATH TESTS PASSED!');
 }
 
 if (require.main === module) {
