@@ -164,9 +164,11 @@ export const ProjectProvider: React.FC<{
         id: pId,
         analysisPath:
           p.analysisPath ||
-          (pId !== "default"
-            ? `/projects/${pId}/explorer-data.json`
-            : "/explorer-data.json"),
+          (pId === "pbim"
+            ? "/pbim/explorer-data.json"
+            : pId !== "default"
+              ? `/projects/${pId}/explorer-data.json`
+              : "/explorer-data.json"),
       });
     });
 
@@ -177,9 +179,11 @@ export const ProjectProvider: React.FC<{
         id: pId,
         analysisPath:
           p.analysisPath ||
-          (pId !== "default"
-            ? `/projects/${pId}/explorer-data.json`
-            : "/explorer-data.json"),
+          (pId === "pbim"
+            ? "/pbim/explorer-data.json"
+            : pId !== "default"
+              ? `/projects/${pId}/explorer-data.json`
+              : "/explorer-data.json"),
       });
     });
 
@@ -192,9 +196,11 @@ export const ProjectProvider: React.FC<{
       : getInitialProjectId();
     const validId = mergedMap.has(currentId)
       ? currentId
-      : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
-        ? activeIdFromManifest
-        : DEFAULT_PROJECT.id;
+      : currentId !== DEFAULT_PROJECT.id
+        ? currentId
+        : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
+          ? activeIdFromManifest
+          : DEFAULT_PROJECT.id;
 
     setActiveProjectId(validId);
     setLoading(false);
@@ -347,6 +353,9 @@ export const ProjectProvider: React.FC<{
       const proj = projects.find((p) => p.id === targetId);
       if (proj && proj.analysisPath) {
         return proj.analysisPath;
+      }
+      if (targetId === "pbim") {
+        return "/pbim/explorer-data.json";
       }
       return `/projects/${targetId}/explorer-data.json`;
     },
