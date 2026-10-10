@@ -420,7 +420,7 @@ function runSpecificRegressionTests() {
 
   // TEST C & D: Public Project Artifact & Multi-Project Isolation
   console.log("Test C & D: Public Project Artifact Synchronization & Multi-Project Isolation");
-  const tempProjectDir = path.join(__dirname, "../temp-test-projects");
+  const tempProjectDir = path.join(__dirname, "../analyze/temp-test-projects");
   const testMoviePublicPath = path.resolve(__dirname, "../explorer/public/projects/test-movie-app");
   const testFoodPublicPath = path.resolve(__dirname, "../explorer/public/projects/test-food-app");
   const publicManifestPath = path.resolve(__dirname, "../explorer/public/project-manifest.json");
