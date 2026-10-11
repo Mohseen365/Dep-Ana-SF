@@ -53,3 +53,31 @@ describe('graph-interactions cycle highlighting', () => {
     expect(mockElements.removeClass).toHaveBeenCalledWith('dimmed highlighted');
   });
 });
+
+describe('graph-interactions zoom and pan runtime helpers', () => {
+  it('invokes userZoomingEnabled on cytoscape core', async () => {
+    const { setMouseWheelZoom } = await import('./graph-interactions');
+    const mockCy: any = {
+      userZoomingEnabled: vi.fn(),
+    };
+
+    setMouseWheelZoom(mockCy, false);
+    expect(mockCy.userZoomingEnabled).toHaveBeenCalledWith(false);
+
+    setMouseWheelZoom(mockCy, true);
+    expect(mockCy.userZoomingEnabled).toHaveBeenCalledWith(true);
+  });
+
+  it('invokes userPanningEnabled on cytoscape core', async () => {
+    const { setPanning } = await import('./graph-interactions');
+    const mockCy: any = {
+      userPanningEnabled: vi.fn(),
+    };
+
+    setPanning(mockCy, false);
+    expect(mockCy.userPanningEnabled).toHaveBeenCalledWith(false);
+
+    setPanning(mockCy, true);
+    expect(mockCy.userPanningEnabled).toHaveBeenCalledWith(true);
+  });
+});
