@@ -225,4 +225,41 @@ describe('DependencyConstellationPanel Component', () => {
     fireEvent.click(btn);
     expect(handleReturn).toHaveBeenCalledTimes(1);
   });
+
+  it('safely handles missing focalNode and transitions between valid and missing node states without Rules of Hooks errors', () => {
+    const emptyData: ConstellationData = {
+      focalNode: null,
+      rings: [],
+      nodes: {},
+      edges: [],
+      availableNodes: [],
+      summary: {
+        focalNodeId: null,
+        totalNodes: 0,
+        totalEdges: 0,
+        ringCount: 0,
+        maxHopDepth: 0,
+      },
+      options: {
+        focalNodeId: null,
+        maxDepth: 1,
+        direction: 'both',
+      },
+    };
+
+    // 1. Render with missing focalNode
+    const { rerender } = render(<DependencyConstellationPanel data={emptyData} />);
+    expect(screen.getByText('No focal component or graph data available in active dataset.')).toBeInTheDocument();
+    expect(screen.queryByTestId('constellation-svg')).not.toBeInTheDocument();
+
+    // 2. Rerender mounted instance with valid focalNode
+    rerender(<DependencyConstellationPanel data={sampleData} />);
+    expect(screen.getByTestId('constellation-svg')).toBeInTheDocument();
+    expect(screen.getByTestId('constellation-inspection-drawer')).toBeInTheDocument();
+
+    // 3. Rerender mounted instance back to missing focalNode
+    rerender(<DependencyConstellationPanel data={emptyData} />);
+    expect(screen.getByText('No focal component or graph data available in active dataset.')).toBeInTheDocument();
+    expect(screen.queryByTestId('constellation-svg')).not.toBeInTheDocument();
+  });
 });

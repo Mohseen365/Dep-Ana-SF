@@ -42,7 +42,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
   };
   const [filterText, setFilterText] = useState('');
 
-  const { focalNode, nodes, edges, availableNodes, summary, options } = data;
+  const { focalNode, nodes = {}, edges = [], availableNodes = [], summary = { ringCount: 0, totalNodes: 0, totalEdges: 0 }, options = { maxDepth: 1, direction: 'both' as FocusDirection } } = data;
 
   // Compute local polar layout geometry
   const layout = useMemo(() => {
@@ -58,26 +58,8 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     });
   }, [data]);
 
-  if (!focalNode) {
-    return (
-      <div className={`dependency-constellation-panel empty ${className}`} data-testid="dependency-constellation-panel">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: '#0f172a', borderBottom: '1px solid #1e293b' }}>
-          <h2 style={{ color: '#f8fafc', margin: 0, fontSize: '18px' }}>🌌 Dependency Constellation / Polar View</h2>
-          {onReturnToGraph && (
-            <button className="return-graph-btn" onClick={onReturnToGraph} data-testid="return-graph-btn" style={{ padding: '6px 12px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              ← Return to Graph Canvas
-            </button>
-          )}
-        </div>
-        <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
-          No focal component or graph data available in active dataset.
-        </div>
-      </div>
-    );
-  }
-
-  const activeInspectId = hoveredNodeId || canonicalSelectedId || focalNode.id;
-  const activeInspectNode: ConstellationNode | null = nodes[activeInspectId] || null;
+  const activeInspectId = hoveredNodeId || canonicalSelectedId || (focalNode ? focalNode.id : null);
+  const activeInspectNode: ConstellationNode | null = activeInspectId ? (nodes[activeInspectId] || null) : null;
 
   // Compute highlighted edge IDs when node is hovered/selected
   const highlightedEdgeIds = useMemo(() => {
@@ -101,6 +83,24 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     });
     return set;
   }, [activeInspectId, edges]);
+
+  if (!focalNode) {
+    return (
+      <div className={`dependency-constellation-panel empty ${className}`} data-testid="dependency-constellation-panel">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: '#0f172a', borderBottom: '1px solid #1e293b' }}>
+          <h2 style={{ color: '#f8fafc', margin: 0, fontSize: '18px' }}>🌌 Dependency Constellation / Polar View</h2>
+          {onReturnToGraph && (
+            <button className="return-graph-btn" onClick={onReturnToGraph} data-testid="return-graph-btn" style={{ padding: '6px 12px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              ← Return to Graph Canvas
+            </button>
+          )}
+        </div>
+        <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+          No focal component or graph data available in active dataset.
+        </div>
+      </div>
+    );
+  }
 
   const matchesFilter = (node: ConstellationNode) => {
     if (!filterText) return true;

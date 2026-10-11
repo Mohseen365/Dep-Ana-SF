@@ -26,7 +26,7 @@ export const ConnectionControls: React.FC<ConnectionControlsProps> = ({
   onShowConnection
 }) => {
   const controlId = useId();
-  const active = Boolean(connectionState.enabled && (connectionState.originNodeId || selectedNode));
+  const active = Boolean(connectionState.enabled);
 
   const handleDirectionChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     onConnectionChange({

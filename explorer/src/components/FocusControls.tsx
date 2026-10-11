@@ -15,13 +15,16 @@ export const FocusControls: React.FC<FocusControlsProps> = ({
   selectedNodeId,
 }) => {
   const handleToggleFocus = useCallback(() => {
-    const targetNodeId = focusState.focusNodeId || selectedNodeId || null;
+    const targetNodeId = focusState.enabled
+      ? null
+      : selectedNodeId || focusState.focusNodeId || null;
+
     if (!targetNodeId && !focusState.enabled) return;
 
     onFocusChange({
       ...focusState,
       enabled: !focusState.enabled,
-      focusNodeId: focusState.enabled ? focusState.focusNodeId : targetNodeId,
+      focusNodeId: targetNodeId,
     });
   }, [focusState, onFocusChange, selectedNodeId]);
 
