@@ -198,9 +198,13 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
 
           {isSidebarCollapsed && onExpandSidebar && (
             <button
+              type="button"
               className="ui-btn ui-btn-secondary ui-btn-sm"
               onClick={onExpandSidebar}
               title="Expand Component Inventory Sidebar"
+              aria-label="Expand Component Inventory Sidebar"
+              aria-expanded="false"
+              aria-controls="component-sidebar-panel"
               data-testid="expand-sidebar-btn"
               style={{
                 fontSize: '11px',

@@ -194,6 +194,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
+      id="component-sidebar-panel"
       className="sidebar ui-panel"
       aria-label="Component Inventory Sidebar"
       data-testid="component-sidebar"
@@ -248,6 +249,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={onToggleCollapse}
           title="Collapse Sidebar"
           aria-label="Collapse Component Sidebar"
+          aria-expanded="true"
+          aria-controls="component-sidebar-panel"
           data-testid="collapse-sidebar-btn"
           style={{
             background: "transparent",

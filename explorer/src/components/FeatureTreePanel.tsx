@@ -141,10 +141,12 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
 
   const toggleExpand = (nodeId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    const btnTarget = e?.currentTarget as HTMLElement | undefined;
     setExpandedNodeIds(prev => {
       const next = new Set(prev);
       if (next.has(nodeId)) {
         next.delete(nodeId);
+        btnTarget?.focus();
       } else {
         next.add(nodeId);
       }
@@ -235,6 +237,7 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
 
     const hasChildren = node.childIds && node.childIds.length > 0;
     const isExpanded = expandedNodeIds.has(node.id);
+    const childrenRegionId = `tree-children-${node.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
     const isCanonicalSelected = canonicalSelectedNodeId ? (node.sourceNodeId === canonicalSelectedNodeId || node.id === canonicalSelectedNodeId) : false;
     const isSelected = selectedTreeNodeId === node.id || isCanonicalSelected;
     const isDimmed = !!canonicalSelectedNodeId && !isCanonicalSelected && node.type === 'component';
@@ -277,6 +280,7 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
           {/* Expand / Collapse Chevron */}
           {hasChildren ? (
             <button
+              type="button"
               className="tree-expand-btn"
               data-testid={`expand-btn-${node.id}`}
               style={{
@@ -290,7 +294,10 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
                 textAlign: 'center',
               }}
               onClick={(e) => toggleExpand(node.id, e)}
-              title={isExpanded ? 'Collapse branch' : 'Expand branch'}
+              title={isExpanded ? `Collapse ${node.displayName}` : `Expand ${node.displayName}`}
+              aria-label={isExpanded ? `Collapse ${node.displayName}` : `Expand ${node.displayName}`}
+              aria-expanded={isExpanded}
+              aria-controls={isExpanded ? childrenRegionId : undefined}
             >
               {isExpanded ? '▼' : '▶'}
             </button>
@@ -419,7 +426,7 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
 
         {/* Children Subtree */}
         {hasChildren && isExpanded && (
-          <div className="tree-node-children" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div id={childrenRegionId} className="tree-node-children" style={{ display: 'flex', flexDirection: 'column' }}>
             {node.childIds.map(childId => renderTreeNode(childId))}
           </div>
         )}
