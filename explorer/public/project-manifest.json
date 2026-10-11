@@ -1,128 +1,248 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "food",
+  "activeProjectId": "default",
   "projects": [
     {
-      "id": "movie",
-      "name": "movie",
+      "id": "default",
+      "name": "Default Salesforce Project",
       "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Movie-App/force-app/main/default",
-      "createdAt": "2026-09-30T07:54:09.494Z",
-      "updatedAt": "2026-09-30T07:54:09.494Z",
-      "lastAnalyzedAt": "2026-09-30T07:54:09.494Z",
+      "sourcePath": "../Movie-App/force-app/main/default",
+      "createdAt": "2026-09-16T16:14:15.739Z",
+      "updatedAt": "2026-09-16T16:14:15.739Z",
+      "lastAnalyzedAt": "2026-09-16T16:14:15.739Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 9,
       "dependencyCount": 16,
-      "analysisPath": "/projects/movie/explorer-data.json"
+      "analysisPath": "/explorer-data.json"
     },
     {
-      "id": "cstk",
-      "name": "cstk",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
-      "createdAt": "2026-09-25T04:50:31.850Z",
-      "updatedAt": "2026-09-25T04:50:31.850Z",
-      "lastAnalyzedAt": "2026-09-25T04:50:31.850Z",
+      "id": "bqc",
+      "name": "BQC",
+      "description": "Salesforce DX Analysis for bqc",
+      "sourcePath": "projects/bqc",
+      "createdAt": "2026-10-06T10:43:07.540Z",
+      "updatedAt": "2026-10-06T10:43:07.540Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.540Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 240,
-      "dependencyCount": 1024,
-      "analysisPath": "/projects/cstk/explorer-data.json"
-    },
-    {
-      "id": "pbim",
-      "name": "pbim",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Pub-Infra-Mang/force-app/main/default",
-      "createdAt": "2026-09-25T04:55:57.331Z",
-      "updatedAt": "2026-09-25T04:55:57.331Z",
-      "lastAnalyzedAt": "2026-09-25T04:55:57.331Z",
-      "analysisStatus": "COMPLETE",
-      "componentCount": 528,
-      "dependencyCount": 2063,
-      "analysisPath": "/projects/pbim/explorer-data.json"
+      "componentCount": 274,
+      "dependencyCount": 603,
+      "analysisPath": "/projects/bqc/explorer-data.json"
     },
     {
       "id": "cloud-spend-tracker",
-      "name": "cloud-spend-tracker",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
-      "createdAt": "2026-09-17T06:20:55.547Z",
-      "updatedAt": "2026-09-17T06:20:55.547Z",
-      "lastAnalyzedAt": "2026-09-17T06:20:55.547Z",
+      "name": "CLOUD-SPEND-TRACKER",
+      "description": "Salesforce DX Analysis for cloud-spend-tracker",
+      "sourcePath": "projects/cloud-spend-tracker",
+      "createdAt": "2026-10-06T10:43:07.552Z",
+      "updatedAt": "2026-10-06T10:43:07.552Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.552Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 240,
       "dependencyCount": 1024,
       "analysisPath": "/projects/cloud-spend-tracker/explorer-data.json"
     },
     {
-      "id": "default",
-      "name": "Default Salesforce Project",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "scripts/temp-snapshot-test-fixture",
-      "createdAt": "2026-10-01T14:39:16.637Z",
-      "updatedAt": "2026-10-01T14:39:16.637Z",
-      "lastAnalyzedAt": "2026-10-01T14:39:16.637Z",
+      "id": "cst",
+      "name": "CST",
+      "description": "Salesforce DX Analysis for cst",
+      "sourcePath": "projects/cst",
+      "createdAt": "2026-10-06T10:43:07.562Z",
+      "updatedAt": "2026-10-06T10:43:07.562Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.562Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 2,
-      "dependencyCount": 2,
-      "analysisPath": "/explorer-data.json"
+      "componentCount": 240,
+      "dependencyCount": 1024,
+      "analysisPath": "/projects/cst/explorer-data.json"
     },
     {
-      "id": "food",
-      "name": "food",
-      "description": "Salesforce DX Architecture Analysis",
-      "sourcePath": "Food-App/force-app/main/default",
-      "createdAt": "2026-09-24T06:36:58.776Z",
-      "updatedAt": "2026-09-24T06:36:58.776Z",
-      "lastAnalyzedAt": "2026-09-24T06:36:58.776Z",
+      "id": "food-app",
+      "name": "FOOD-APP",
+      "description": "Salesforce DX Analysis for food-app",
+      "sourcePath": "projects/food-app",
+      "createdAt": "2026-10-06T10:43:07.562Z",
+      "updatedAt": "2026-10-06T10:43:07.562Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.562Z",
       "analysisStatus": "COMPLETE",
-      "componentCount": 31,
-      "dependencyCount": 84,
-      "analysisPath": "/projects/food/explorer-data.json"
+      "componentCount": 1,
+      "dependencyCount": 0,
+      "analysisPath": "/projects/food-app/explorer-data.json"
+    },
+    {
+      "id": "movie",
+      "name": "MOVIE",
+      "description": "Salesforce DX Analysis for movie",
+      "sourcePath": "projects/movie",
+      "createdAt": "2026-10-06T10:43:07.562Z",
+      "updatedAt": "2026-10-06T10:43:07.562Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.562Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 9,
+      "dependencyCount": 16,
+      "analysisPath": "/projects/movie/explorer-data.json"
+    },
+    {
+      "id": "movie-app",
+      "name": "MOVIE-APP",
+      "description": "Salesforce DX Analysis for movie-app",
+      "sourcePath": "projects/movie-app",
+      "createdAt": "2026-10-06T10:43:07.562Z",
+      "updatedAt": "2026-10-06T10:43:07.562Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.562Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 9,
+      "dependencyCount": 16,
+      "analysisPath": "/projects/movie-app/explorer-data.json"
+    },
+    {
+      "id": "pbim",
+      "name": "PBIM",
+      "description": "Salesforce DX Analysis for pbim",
+      "sourcePath": "projects/pbim",
+      "createdAt": "2026-10-06T10:43:07.592Z",
+      "updatedAt": "2026-10-06T10:43:07.592Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.592Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 528,
+      "dependencyCount": 2063,
+      "analysisPath": "/pbim/explorer-data.json"
+    },
+    {
+      "id": "project-b",
+      "name": "PROJECT-B",
+      "description": "Salesforce DX Analysis for project-b",
+      "sourcePath": "projects/project-b",
+      "createdAt": "2026-10-06T10:43:07.592Z",
+      "updatedAt": "2026-10-06T10:43:07.592Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.592Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 14,
+      "dependencyCount": 16,
+      "analysisPath": "/projects/project-b/explorer-data.json"
+    },
+    {
+      "id": "pub-infra-mang",
+      "name": "PUB-INFRA-MANG",
+      "description": "Salesforce DX Analysis for pub-infra-mang",
+      "sourcePath": "projects/pub-infra-mang",
+      "createdAt": "2026-10-06T10:43:07.623Z",
+      "updatedAt": "2026-10-06T10:43:07.623Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.623Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 528,
+      "dependencyCount": 2063,
+      "analysisPath": "/projects/pub-infra-mang/explorer-data.json"
+    },
+    {
+      "id": "test-canonical-project",
+      "name": "TEST-CANONICAL-PROJECT",
+      "description": "Salesforce DX Analysis for test-canonical-project",
+      "sourcePath": "projects/test-canonical-project",
+      "createdAt": "2026-10-06T10:43:07.623Z",
+      "updatedAt": "2026-10-06T10:43:07.623Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.623Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 2,
+      "dependencyCount": 1,
+      "analysisPath": "/projects/test-canonical-project/explorer-data.json"
+    },
+    {
+      "id": "test-norm-proj",
+      "name": "TEST-NORM-PROJ",
+      "description": "Salesforce DX Analysis for test-norm-proj",
+      "sourcePath": "projects/test-norm-proj",
+      "createdAt": "2026-10-06T10:43:07.623Z",
+      "updatedAt": "2026-10-06T10:43:07.623Z",
+      "lastAnalyzedAt": "2026-10-06T10:43:07.623Z",
+      "analysisStatus": "COMPLETE",
+      "componentCount": 1,
+      "dependencyCount": 0,
+      "analysisPath": "/projects/test-norm-proj/explorer-data.json"
     }
   ],
   "artifacts": {
-    "movie": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:900b4069abffe45c858f221ed595c2749b919828390498670b5644f1af598743",
-      "nodeCount": 9,
-      "edgeCount": 16
-    },
-    "cstk": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:5db399dce59c247bfe5419a150493d2cce0cdcf53768d28e1b07fc1183a3a8a3",
-      "nodeCount": 240,
-      "edgeCount": 1024
-    },
-    "pbim": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b",
-      "nodeCount": 528,
-      "edgeCount": 2063
-    },
-    "cloud-spend-tracker": {
-      "path": "explorer-data.json",
-      "schemaVersion": "1.0.0",
-      "fileHash": "sha256:1597135320cbf0a13e6ee932e13b8dbdeb6771e0745f1ab1651fe08a17087907",
-      "nodeCount": 240,
-      "edgeCount": 1024
-    },
     "default": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:f1aba5392961313d856bd4958987d0c06af972ebc798b59b43d6aea433e136d5",
-      "nodeCount": 2,
-      "edgeCount": 2
+      "fileHash": "sha256:c35af1eb0c25d6fa276c6bc184bd354f1867c946ccc8d6376fa23b9edc0bbba0",
+      "nodeCount": 4,
+      "edgeCount": 3
     },
-    "food": {
-      "path": "explorer-data.json",
+    "bqc": {
+      "path": "projects/bqc/explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:48b68b91ccf42fb3e6d4693362354d4fe52d7874ae24add9e24e8e2bc95b6931",
-      "nodeCount": 31,
-      "edgeCount": 84
+      "fileHash": "",
+      "nodeCount": 274,
+      "edgeCount": 603
+    },
+    "cloud-spend-tracker": {
+      "path": "projects/cloud-spend-tracker/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 240,
+      "edgeCount": 1024
+    },
+    "cst": {
+      "path": "projects/cst/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 240,
+      "edgeCount": 1024
+    },
+    "food-app": {
+      "path": "projects/food-app/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 1,
+      "edgeCount": 0
+    },
+    "movie": {
+      "path": "projects/movie/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 9,
+      "edgeCount": 16
+    },
+    "movie-app": {
+      "path": "projects/movie-app/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 9,
+      "edgeCount": 16
+    },
+    "pbim": {
+      "path": "projects/pbim/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 528,
+      "edgeCount": 2063
+    },
+    "project-b": {
+      "path": "projects/project-b/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 14,
+      "edgeCount": 16
+    },
+    "pub-infra-mang": {
+      "path": "projects/pub-infra-mang/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 528,
+      "edgeCount": 2063
+    },
+    "test-canonical-project": {
+      "path": "projects/test-canonical-project/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 2,
+      "edgeCount": 1
+    },
+    "test-norm-proj": {
+      "path": "projects/test-norm-proj/explorer-data.json",
+      "schemaVersion": "1.0.0",
+      "fileHash": "",
+      "nodeCount": 1,
+      "edgeCount": 0
     }
   }
 }

@@ -43,3 +43,9 @@ The following architectural decisions are currently enforced by active source co
 - **Enforcement:** Change gates trigger `SEMANTIC_INVESTIGATION_REQUIRED` flags only when genuine semantic uncertainty exists, while preserving 0 LLM calls in execution.
 - **Source:** `safety-envelope.cjs`, `architecture-change-gate.cjs`, `architecture-snapshot.cjs`.
 - **Verification:** `scripts/test-cli-integration.cjs`.
+
+## 8. DEF-01 Lens B Position-Key Isolation
+- **Decision:** For non-empty node inputs, the Orbit and Constellation layout calculation branches of `computeArchitectureLayoutWithMetadata` (`explorer/src/lib/architecture-layout.ts`) return position maps containing strictly projected node IDs (`result.projectedNodeIds`). Stale coordinates for unprojected nodes present in `existingPositions` are forbidden from being re-injected into layout calculation results.
+- **Enforcement:** Two stale `existingPositions` fallback loops were removed from `explorer/src/lib/architecture-layout.ts` (12 lines deleted). Product Gates A–D (shared SObjects visual anchors, angular sector semantics, unreachable-node UX presentation, drag persistence scoping) remain 100% open and unresolved.
+- **Source:** `explorer/src/lib/architecture-layout.ts`.
+- **Verification:** Dedicated Vitest suite `explorer/src/test/def01-position-isolation.test.ts` (4/4 passed, exit code 0) and final evidence gate report `GRAPHVIEW_DEF01_FINAL_EXECUTION_EVIDENCE_GATE_REPORT.md`.

@@ -92,7 +92,24 @@ STOP
 
 ---
 
-## 3. Stopping Conditions
+## 3. Freshness, Authority & Stale-Context Rejection Policy
+
+Agents working in this repository must strictly obey the following 10 freshness and authority rules when retrieving or evaluating context:
+
+1. **Revalidate on retrieval:** Context files, memory summaries, historical reports, generated inventories, prior chat summaries, and previous verdicts are discovery aids, never sufficient proof of current repository state.
+2. **Resolve conflicts by evidence, not convenience:** Prefer direct inspection of current source, current configuration/manifests, reproducible test output, and current artifact hashes over prose claims. Use Git history only to establish chronology or explain changes, not to assume a historical state is still active.
+3. **Track provenance:** Material claims must include the source path, relevant symbol/line or JSON field, commit/tree identity where applicable, observation date, and validation method.
+4. **Enforce freshness:** A claim about current implementation, test status, counts, paths, or architecture must be rechecked against the current checkout in the current run. If it cannot be rechecked, mark it `UNVERIFIED`, never `CURRENT_SUPPORTED`.
+5. **Detect shadow copies:** If multiple files appear to be canonical, identify the designated authority and update retrieval instructions to prevent a stale duplicate from silently overriding it. Do not delete duplicates without evidence that deletion is safe.
+6. **Separate present state from historical state:** Preserve useful historical decisions and reports, but label them with their valid commit/date/scope and mark superseded claims explicitly.
+7. **Fail closed:** If authoritative sources conflict, do not synthesize a new contract or choose whichever source gives a passing result. Report the conflict as `DECISION_REQUIRED` or `INDETERMINATE`.
+8. **Avoid self-validating documentation:** A context file cannot establish its own correctness merely by declaring itself canonical/current.
+9. **Update carefully:** Make only evidence-backed, minimal edits to context files. Preserve existing user changes. Do not bulk-rewrite, auto-format, or regenerate canonical documents wholesale.
+10. **Prevent stale closure:** "Fixed," "verified," "closed," and "passed" statements must cite the specific current evidence and scope. Where the evidence no longer applies to HEAD, relabel it historical.
+
+---
+
+## 4. Stopping Conditions
 
 An agent MUST stop context retrieval when:
 1. The exact implementation source files to modify are identified;

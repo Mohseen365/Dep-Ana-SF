@@ -29,6 +29,7 @@ export interface LayoutWorkerResponseSuccess {
   positions: Record<string, { x: number; y: number }>;
   featureRegionsSummary?: FeatureRegionSummary[];
   orbitGuides?: OrbitGuideMetadata;
+  projectedNodeIds?: string[];
   computeDurationMs: number;
 }
 

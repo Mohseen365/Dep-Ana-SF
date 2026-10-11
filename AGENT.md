@@ -1,6 +1,6 @@
 # Context Retrieval Protocol & Navigation Map
 
-`AGENT.md` is the primary task router for coding agents working in this repository.
+`AGENT.md` is the primary task router for coding agents working in this repository. All agents must strictly obey the Freshness, Authority & Stale-Context Rejection Policy in `CONTEXT-RETRIEVAL-PROTOCOL.md`.
 
 ## 1. Task-Based Context Retrieval Protocol
 
@@ -65,7 +65,7 @@ STOP retrieving context when:
 
 When validating graph or layout behavior against real Salesforce project structures, use datasets in:
 
-- `explorer/public/projects/pbim/explorer-data.json` (Primary 528-node dataset)
+- `explorer/public/pbim/explorer-data.json` (Primary 528-node dataset, URL: `/pbim/explorer-data.json`)
 - `explorer/public/projects/cst/explorer-data.json` (240-node dataset)
 - `explorer/public/projects/bqc/explorer-data.json` (274-node dataset)
 

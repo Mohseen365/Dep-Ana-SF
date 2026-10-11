@@ -9,7 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
-const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, normalizeSourcePath } = require("./export-explorer.cjs");
+const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, normalizeSourcePath, isPathContained } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR = path.join(__dirname, "../temp-test-fixture-realistic");
 const ANALYZE_OUT_DIR = path.join(FIXTURE_DIR, "analyze");
@@ -420,11 +420,17 @@ function runSpecificRegressionTests() {
 
   // TEST C & D: Public Project Artifact & Multi-Project Isolation
   console.log("Test C & D: Public Project Artifact Synchronization & Multi-Project Isolation");
-  const tempProjectDir = path.join(__dirname, "../temp-test-projects");
+  const tempProjectDir = path.join(__dirname, "../analyze/temp-test-projects");
   const testMoviePublicPath = path.resolve(__dirname, "../explorer/public/projects/test-movie-app");
   const testFoodPublicPath = path.resolve(__dirname, "../explorer/public/projects/test-food-app");
-  const manifestPath = path.resolve(__dirname, "../explorer/public/project-manifest.json");
-  const origManifest = fs.existsSync(manifestPath) ? fs.readFileSync(manifestPath, "utf8") : null;
+  const publicManifestPath = path.resolve(__dirname, "../explorer/public/project-manifest.json");
+  const analyzeManifestPath = path.resolve(__dirname, "../analyze/project-manifest.json");
+  const rootManifestPath = path.resolve(__dirname, "../project-manifest.json");
+
+  const origPublicManifest = fs.existsSync(publicManifestPath) ? fs.readFileSync(publicManifestPath, "utf8") : null;
+  const origAnalyzeManifest = fs.existsSync(analyzeManifestPath) ? fs.readFileSync(analyzeManifestPath, "utf8") : null;
+  const origRootManifest = fs.existsSync(rootManifestPath) ? fs.readFileSync(rootManifestPath, "utf8") : null;
+
   fs.mkdirSync(tempProjectDir, { recursive: true });
   try {
     const minReport = { nodes: [{ id: "ApexClass:Foo", name: "Foo", type: "ApexClass" }], edges: [] };
@@ -450,7 +456,9 @@ function runSpecificRegressionTests() {
     assert.strictEqual(foodContent.project.id, "test-food-app");
     console.log("  ✓ Test C & D PASSED: Public artifacts automatically synchronized for multiple distinct projects");
   } finally {
-    if (origManifest !== null) fs.writeFileSync(manifestPath, origManifest, "utf8");
+    if (origPublicManifest !== null) fs.writeFileSync(publicManifestPath, origPublicManifest, "utf8");
+    if (origAnalyzeManifest !== null) fs.writeFileSync(analyzeManifestPath, origAnalyzeManifest, "utf8");
+    if (origRootManifest !== null) fs.writeFileSync(rootManifestPath, origRootManifest, "utf8");
     if (fs.existsSync(tempProjectDir)) fs.rmSync(tempProjectDir, { recursive: true, force: true });
     if (fs.existsSync(testMoviePublicPath)) fs.rmSync(testMoviePublicPath, { recursive: true, force: true });
     if (fs.existsSync(testFoodPublicPath)) fs.rmSync(testFoodPublicPath, { recursive: true, force: true });
@@ -499,6 +507,20 @@ function runSpecificRegressionTests() {
     "Undefined fallback must return default path"
   );
   console.log("  ✓ Test E PASSED: normalizeSourcePath handles all required path variations deterministically");
+
+  // TEST F: Path Containment Guard (DEFECT-C5)
+  console.log("\nTest F: Exporter Path Containment Safety (isPathContained)");
+  const baseDir = path.resolve(__dirname, "../analyze");
+  assert.strictEqual(isPathContained(baseDir, baseDir), true, "Scenario 1: Base directory itself must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "explorer-data.json")), true, "Scenario 2: Direct child file must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "projects", "pbim", "explorer-data.json")), true, "Scenario 3: Deep descendant must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.resolve(__dirname, "../analyze-sibling/foo.json")), false, "Scenario 4: Sibling path sharing base directory prefix must NOT be contained");
+  assert.strictEqual(isPathContained(baseDir, path.resolve(baseDir, "../secret.json")), false, "Scenario 5: Parent-directory traversal escaping base directory must NOT be contained");
+  assert.strictEqual(isPathContained(baseDir, "/etc/passwd"), false, "Scenario 6: Unrelated absolute path must NOT be contained");
+  assert.strictEqual(isPathContained(null, baseDir), false, "Scenario 7A: Null parentDir must evaluate to false");
+  assert.strictEqual(isPathContained(baseDir, null), false, "Scenario 7B: Null targetPath must evaluate to false");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "..foo", "bar")), true, "Scenario 8: Legitimate child directory starting with .. (e.g. ..foo/bar) MUST be contained");
+  console.log("  ✓ Test F PASSED: isPathContained handles all 9 required path containment scenarios deterministically");
 }
 
 if (require.main === module) {

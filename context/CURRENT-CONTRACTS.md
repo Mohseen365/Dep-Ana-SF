@@ -56,6 +56,7 @@ export interface Edge {
 
 ## 2. Layout & Geometry Contracts (`explorer/src/lib/orbit-layout.ts`)
 
+- **Lens B Position Isolation Invariant (DEF-01):** For non-empty node inputs, Orbit and Constellation layout results returned by `computeArchitectureLayoutWithMetadata` (`explorer/src/lib/architecture-layout.ts`) must contain strictly projected node IDs (`result.projectedNodeIds`). Unprojected node IDs must not be inherited or re-injected merely because they exist in `existingPositions`.
 - **Node Dimensions:** Width $W = 120\text{px}$, Height $H = 60\text{px}$, Effective Collision Box $W_{\text{eff}} = 160\text{px}$, $H_{\text{eff}} = 100\text{px}$.
 - **Cartesian AABB Collision Predicate:** Two nodes collide if and only if $|\Delta x| < 160\text{px}$ AND $|\Delta y| < 100\text{px}$.
 - **Radial Ring Spacing:** Minimum track/ring radial step $R_{\text{step}} = 200\text{px}$ (exceeds $188.68\text{px}$ diagonal cross-track safety threshold).

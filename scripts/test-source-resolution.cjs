@@ -21,14 +21,53 @@ const ADAPTER_SCRIPT = path.join(ROOT_DIR, "scripts", "export-explorer.cjs");
 const ANALYZER_SCRIPT = path.join(ROOT_DIR, "dependency-analyzer.cjs");
 const TEMP_TEST_DIR = path.join(ROOT_DIR, "temp-test-source-resolution");
 
+const SHARED_SNAPSHOT_FILES = [
+  path.join(ROOT_DIR, "project-manifest.json"),
+  path.join(ROOT_DIR, "analyze", "project-manifest.json"),
+  path.join(ROOT_DIR, "explorer", "public", "project-manifest.json"),
+  path.join(ROOT_DIR, "explorer", "public", "projects", "movie", "explorer-data.json"),
+  path.join(ROOT_DIR, "explorer", "public", "projects", "movie", "project-metadata.json"),
+  path.join(ROOT_DIR, "explorer", "public", "projects", "movie-app", "explorer-data.json"),
+  path.join(ROOT_DIR, "explorer", "public", "projects", "movie-app", "project-metadata.json"),
+  path.join(ROOT_DIR, "analyze", "projects", "movie", "explorer-data.json"),
+  path.join(ROOT_DIR, "analyze", "projects", "movie", "project-metadata.json"),
+];
+
+const fileSnapshots = new Map();
+
+function snapshotSharedFiles() {
+  fileSnapshots.clear();
+  SHARED_SNAPSHOT_FILES.forEach((filePath) => {
+    if (fs.existsSync(filePath)) {
+      fileSnapshots.set(filePath, fs.readFileSync(filePath, "utf8"));
+    } else {
+      fileSnapshots.set(filePath, null);
+    }
+  });
+}
+
+function restoreSharedFiles() {
+  fileSnapshots.forEach((content, filePath) => {
+    if (content !== null) {
+      fs.writeFileSync(filePath, content, "utf8");
+    } else if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath, { force: true });
+    }
+  });
+}
+
 function setupFixtures() {
-  cleanupFixtures();
+  snapshotSharedFiles();
+  cleanupFixtures(false);
   fs.mkdirSync(TEMP_TEST_DIR, { recursive: true });
 }
 
-function cleanupFixtures() {
+function cleanupFixtures(doRestore = true) {
   if (fs.existsSync(TEMP_TEST_DIR)) {
     fs.rmSync(TEMP_TEST_DIR, { recursive: true, force: true });
+  }
+  if (doRestore) {
+    restoreSharedFiles();
   }
 }
 

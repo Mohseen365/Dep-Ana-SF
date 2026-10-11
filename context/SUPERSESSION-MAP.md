@@ -35,7 +35,7 @@ Constellation Projection Fix                 ──►  `explorer/src/components
 
 PBIM Project Path Correction                 ──►  `scripts/export-explorer.cjs`
 `PHASE_COMP_FIX_REPAIR_PBIM...`                   `project-manifest.json`
-                                                  `explorer/public/projects/pbim/explorer-data.json`
+                                                  `explorer/public/pbim/explorer-data.json`
 
 Graph-First Investigation (UX-GFI)          ──►  `explorer/src/App.tsx`
 `tasks/plan.md`                                   `explorer/src/components/CommandPalette.tsx`

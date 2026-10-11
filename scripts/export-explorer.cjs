@@ -842,9 +842,11 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     componentCount: normalizedNodes.length,
     dependencyCount: normalizedEdges.length,
     analysisPath:
-      projectId !== "default"
-        ? `/projects/${projectId}/explorer-data.json`
-        : "/explorer-data.json",
+      projectId === "pbim"
+        ? "/pbim/explorer-data.json"
+        : projectId !== "default"
+          ? `/projects/${projectId}/explorer-data.json`
+          : "/explorer-data.json",
   };
 
   const explorerData = {
@@ -897,10 +899,32 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
   };
 }
 
+function isPathContained(parentDir, targetPath) {
+  if (!parentDir || !targetPath) return false;
+  const absParent = path.resolve(parentDir);
+  const absTarget = path.resolve(targetPath);
+  const rel = path.relative(absParent, absTarget);
+  return rel === "" || (!rel.startsWith(".." + path.sep) && rel !== ".." && !rel.startsWith("../") && !path.isAbsolute(rel));
+}
+
 function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata) {
   const rootDir = path.resolve(__dirname, "..");
+  const analyzeDir = path.join(rootDir, "analyze");
   const explorerPublicDir = path.join(rootDir, "explorer", "public");
   const explorerDistDir = path.join(rootDir, "explorer", "dist");
+
+  // Determine if resolvedOutputFile is targeting canonical analyze/ or explorer/ public/dist directories.
+  // Temporary test output directories (e.g., tmp-integration-test) must not mutate live public assets.
+  const absOutputFile = path.resolve(resolvedOutputFile);
+  const isCanonicalPath =
+    isPathContained(analyzeDir, absOutputFile) ||
+    isPathContained(explorerPublicDir, absOutputFile) ||
+    isPathContained(explorerDistDir, absOutputFile);
+
+  if (!isCanonicalPath) {
+    // Skip publishing to live browser assets when outputting to temporary/isolated directories
+    return;
+  }
 
   if (!fs.existsSync(explorerPublicDir)) {
     fs.mkdirSync(explorerPublicDir, { recursive: true });
@@ -910,13 +934,28 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
 
   // 1. Publish project contract file
   if (projectId !== "default") {
-    const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
-    fs.mkdirSync(projPublicDir, { recursive: true });
-    fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
+    if (projectId === "pbim") {
+      const pbimPublicDir = path.join(explorerPublicDir, "pbim");
+      fs.mkdirSync(pbimPublicDir, { recursive: true });
+      fs.copyFileSync(resolvedOutputFile, path.join(pbimPublicDir, "explorer-data.json"));
+
+      const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
+      fs.mkdirSync(projPublicDir, { recursive: true });
+      fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
+    } else {
+      const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
+      fs.mkdirSync(projPublicDir, { recursive: true });
+      fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
+    }
 
     const parentDir = path.dirname(resolvedOutputFile);
     const metaPath = path.join(parentDir, "project-metadata.json");
     if (fs.existsSync(metaPath)) {
+      if (projectId === "pbim") {
+        fs.copyFileSync(metaPath, path.join(explorerPublicDir, "pbim", "project-metadata.json"));
+      }
+      const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
+      fs.mkdirSync(projPublicDir, { recursive: true });
       fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
     }
 
@@ -959,20 +998,22 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
     }
   }
 
-  // 2. Publish project-manifest.json
-  let manifestDir = path.dirname(resolvedOutputFile);
-  if (manifestDir.includes("projects")) {
-    const idx = manifestDir.lastIndexOf("projects");
-    if (idx > 0) {
-      manifestDir = manifestDir.substring(0, idx);
-    }
-  }
+  // 2. Publish project-manifest.json safely from canonical manifest sources
+  const canonicalAnalyzeManifestPath = path.join(rootDir, "analyze", "project-manifest.json");
+  const canonicalRootManifestPath = path.join(rootDir, "project-manifest.json");
+  const sourceManifest = fs.existsSync(canonicalAnalyzeManifestPath)
+    ? canonicalAnalyzeManifestPath
+    : fs.existsSync(canonicalRootManifestPath)
+      ? canonicalRootManifestPath
+      : null;
 
-  const analyzeManifest = path.join(manifestDir, "project-manifest.json");
-  if (fs.existsSync(analyzeManifest)) {
-    fs.copyFileSync(analyzeManifest, path.join(explorerPublicDir, "project-manifest.json"));
+  if (sourceManifest) {
+    if (sourceManifest !== canonicalAnalyzeManifestPath) {
+      fs.copyFileSync(sourceManifest, canonicalAnalyzeManifestPath);
+    }
+    fs.copyFileSync(sourceManifest, path.join(explorerPublicDir, "project-manifest.json"));
     if (fs.existsSync(explorerDistDir)) {
-      fs.copyFileSync(analyzeManifest, path.join(explorerDistDir, "project-manifest.json"));
+      fs.copyFileSync(sourceManifest, path.join(explorerDistDir, "project-manifest.json"));
     }
   }
 }
@@ -1113,4 +1154,5 @@ module.exports = {
   normalizeSourcePath,
   buildImpactSummaries,
   slugify,
+  isPathContained,
 };
