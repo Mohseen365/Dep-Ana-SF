@@ -153,6 +153,7 @@ export const ActiveWorkspaceRenderer: React.FC<ActiveWorkspaceRendererProps> = (
             onNodePositionsChange={(positions, provenance) =>
               projectStateContext?.updateGraphLayout({
                 nodePositions: positions,
+                architectureMode,
                 ...(provenance ? { layoutProvenance: provenance as any } : {}),
               })
             }
