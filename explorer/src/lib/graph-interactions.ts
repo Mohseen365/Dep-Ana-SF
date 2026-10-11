@@ -83,10 +83,22 @@ export function bindGraphInteractions(
     }
   });
 
+  let lastDblTapTime = 0;
+  let lastDblTapNodeId = '';
+
   // Node double tap / double click event
   cy.on('dbltap dblclick', 'node', (event) => {
     const node = event.target;
-    const nodeId = node.id();
+    const nodeId = typeof node?.id === 'function' ? node.id() : node?.id;
+    if (!nodeId) return;
+
+    const now = Date.now();
+    // Suppress duplicate event dispatches (e.g., Cytoscape emitting both dbltap and dblclick for the same gesture)
+    if (nodeId === lastDblTapNodeId && now - lastDblTapTime < 50) {
+      return;
+    }
+    lastDblTapTime = now;
+    lastDblTapNodeId = nodeId;
 
     let explorerNode: ExplorerNode | null = null;
     if (originalNodes) {
