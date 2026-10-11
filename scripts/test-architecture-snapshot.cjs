@@ -272,7 +272,9 @@ console.log("Test 9: Minimal / empty architecture...");
 // ---------------------------------------------------------------------------
 console.log("Test 10: Representative full architecture...");
 {
-  const result = analyze(FIXTURE_DIR, { maxGraphEdges: 10000 });
+  // Pass writeOutputs = false (3rd param) so analyze() executes in-memory
+  // without mutating shared repository output paths or canonical manifests.
+  const result = analyze(FIXTURE_DIR, { maxGraphEdges: 10000 }, false);
 
   const snap = createCanonicalArchitectureSnapshot({
     registry: result.registry,
@@ -295,7 +297,10 @@ console.log("Test 10: Representative full architecture...");
 // ---------------------------------------------------------------------------
 console.log("Test 11: Backward compatibility...");
 {
+  // Search pre-existing project artifact directories first before root/analyze
   const candidateDirs = [
+    path.resolve(__dirname, "../analyze/projects/pbim"),
+    path.resolve(__dirname, "../explorer/public/projects/pbim"),
     path.resolve(__dirname, ".."),
     path.resolve(__dirname, "../analyze"),
     process.cwd()
