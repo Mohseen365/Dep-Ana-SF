@@ -29,20 +29,16 @@ export interface FilteredGraphData {
   matchingNodeIds: Set<string>;
 }
 
-function getSearchFields(
-  node: ExplorerNode,
-): Array<{ field: string; value: string }> {
-  return [
-    { field: "displayName", value: node.displayName.toLowerCase() },
-    { field: "id", value: node.id.toLowerCase() },
-    { field: "file", value: node.file.toLowerCase() },
-    { field: "type", value: node.type.toLowerCase() },
-    { field: "risk", value: node.risk.toLowerCase() },
-    {
-      field: "name",
-      value: node.id.includes(":") ? node.id.split(":")[1].toLowerCase() : "",
-    },
-  ];
+const searchTokenCache = new WeakMap<ExplorerNode, string>();
+
+function getSearchToken(node: ExplorerNode): string {
+  let cached = searchTokenCache.get(node);
+  if (!cached) {
+    const nameStr = node.id.includes(":") ? node.id.split(":")[1] : "";
+    cached = `${node.displayName} ${node.id} ${node.file} ${node.type} ${node.risk} ${nameStr}`.toLowerCase();
+    searchTokenCache.set(node, cached);
+  }
+  return cached;
 }
 
 export function searchNodes(
@@ -59,23 +55,26 @@ export function searchNodes(
 
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
-    const searchFields = getSearchFields(node);
+    const searchToken = getSearchToken(node);
 
-    for (let j = 0; j < searchFields.length; j++) {
-      const { field, value } = searchFields[j];
-      if (!value) continue;
-
-      const isMatch = exact
-        ? value === normalizedQuery
-        : value.includes(normalizedQuery);
-
-      if (isMatch) {
+    if (exact) {
+      if (
+        node.displayName.toLowerCase() === normalizedQuery ||
+        node.id.toLowerCase() === normalizedQuery
+      ) {
         results.push({
           node,
-          matchField: field,
+          matchField: "id",
           matchValue: query.trim(),
         });
-        break;
+      }
+    } else {
+      if (searchToken.includes(normalizedQuery)) {
+        results.push({
+          node,
+          matchField: "displayName",
+          matchValue: query.trim(),
+        });
       }
     }
   }

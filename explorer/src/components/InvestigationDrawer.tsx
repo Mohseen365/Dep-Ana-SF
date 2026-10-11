@@ -58,6 +58,8 @@ const getRiskBadgeStyle = (risk?: string) => {
   }
 };
 
+const INITIAL_VISIBLE_COUNT = 30;
+
 export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   node,
   open,
@@ -81,6 +83,15 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<DrawerTab>('overview');
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [depsLimit, setDepsLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
+  const [dependentsLimit, setDependentsLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
+  const [evidenceLimit, setEvidenceLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
+
+  React.useEffect(() => {
+    setDepsLimit(INITIAL_VISIBLE_COUNT);
+    setDependentsLimit(INITIAL_VISIBLE_COUNT);
+    setEvidenceLimit(INITIAL_VISIBLE_COUNT);
+  }, [node?.id]);
 
   const handleTablistKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     const key = e.key;
@@ -504,6 +515,9 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   };
 
   const renderDependenciesTab = () => {
+    const visibleDeps = rankedDependencies.slice(0, depsLimit);
+    const hasMore = rankedDependencies.length > depsLimit;
+
     return (
       <div className="tab-content-dependencies" data-testid="tab-content-dependencies">
         <section className="drawer-section" data-testid="dependencies-section">
@@ -517,33 +531,46 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
               <p className="ui-empty-description">This component does not reference any other components.</p>
             </div>
           ) : (
-            <ul className="drill-list dependencies-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {rankedDependencies.map(({ node: depNode, impactCount }) => (
-                <li
-                  key={depNode.id}
-                  className="drill-row-item"
-                  onClick={() => handleRowClick(depNode.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleRowClick(depNode.id);
-                    }
-                  }}
-                  data-testid={`dependency-row-${depNode.id}`}
+            <>
+              <ul className="drill-list dependencies-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {visibleDeps.map(({ node: depNode, impactCount }) => (
+                  <li
+                    key={depNode.id}
+                    className="drill-row-item"
+                    onClick={() => handleRowClick(depNode.id)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleRowClick(depNode.id);
+                      }
+                    }}
+                    data-testid={`dependency-row-${depNode.id}`}
+                  >
+                    <div className="drill-row-main">
+                      <span className="drill-row-name">{depNode.displayName}</span>
+                      <span className="drill-row-type">{depNode.type}</span>
+                    </div>
+                    <div className="drill-row-meta">
+                      <span className="impact-count-badge" title="Impact Count">
+                        Impact: {impactCount}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {hasMore && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-ghost ui-btn-sm"
+                  style={{ width: '100%', marginTop: '8px' }}
+                  onClick={() => setDepsLimit((prev) => prev + 50)}
+                  data-testid="show-more-deps-btn"
                 >
-                  <div className="drill-row-main">
-                    <span className="drill-row-name">{depNode.displayName}</span>
-                    <span className="drill-row-type">{depNode.type}</span>
-                  </div>
-                  <div className="drill-row-meta">
-                    <span className="impact-count-badge" title="Impact Count">
-                      Impact: {impactCount}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  Show More ({rankedDependencies.length - depsLimit} remaining)
+                </button>
+              )}
+            </>
           )}
         </section>
       </div>
@@ -551,6 +578,9 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   };
 
   const renderDependentsTab = () => {
+    const visibleDependents = rankedDeps.slice(0, dependentsLimit);
+    const hasMore = rankedDeps.length > dependentsLimit;
+
     return (
       <div className="tab-content-dependents" data-testid="tab-content-dependents">
         <section className="drawer-section" data-testid="dependents-section">
@@ -564,36 +594,49 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
               <p className="ui-empty-description">No other components depend on this component.</p>
             </div>
           ) : (
-            <ul className="drill-list dependents-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {rankedDeps.map(({ node: depNode, impactCount, isDirect }) => (
-                <li
-                  key={depNode.id}
-                  className="drill-row-item"
-                  onClick={() => handleRowClick(depNode.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleRowClick(depNode.id);
-                    }
-                  }}
-                  data-testid={`dependent-row-${depNode.id}`}
+            <>
+              <ul className="drill-list dependents-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {visibleDependents.map(({ node: depNode, impactCount, isDirect }) => (
+                  <li
+                    key={depNode.id}
+                    className="drill-row-item"
+                    onClick={() => handleRowClick(depNode.id)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleRowClick(depNode.id);
+                      }
+                    }}
+                    data-testid={`dependent-row-${depNode.id}`}
+                  >
+                    <div className="drill-row-main">
+                      <span className="drill-row-name">{depNode.displayName}</span>
+                      <span className="drill-row-type">{depNode.type}</span>
+                    </div>
+                    <div className="drill-row-meta">
+                      <span className={`hop-badge ${isDirect ? 'direct' : 'transitive'}`}>
+                        {isDirect ? 'Direct' : 'Transitive'}
+                      </span>
+                      <span className="impact-count-badge" title="Impact Count">
+                        Impact: {impactCount}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {hasMore && (
+                <button
+                  type="button"
+                  className="ui-btn ui-btn-ghost ui-btn-sm"
+                  style={{ width: '100%', marginTop: '8px' }}
+                  onClick={() => setDependentsLimit((prev) => prev + 50)}
+                  data-testid="show-more-dependents-btn"
                 >
-                  <div className="drill-row-main">
-                    <span className="drill-row-name">{depNode.displayName}</span>
-                    <span className="drill-row-type">{depNode.type}</span>
-                  </div>
-                  <div className="drill-row-meta">
-                    <span className={`hop-badge ${isDirect ? 'direct' : 'transitive'}`}>
-                      {isDirect ? 'Direct' : 'Transitive'}
-                    </span>
-                    <span className="impact-count-badge" title="Impact Count">
-                      Impact: {impactCount}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  Show More ({rankedDeps.length - dependentsLimit} remaining)
+                </button>
+              )}
+            </>
           )}
         </section>
       </div>
