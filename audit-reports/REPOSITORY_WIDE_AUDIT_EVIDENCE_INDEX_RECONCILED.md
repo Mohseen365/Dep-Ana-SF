@@ -1,54 +1,24 @@
-# REPOSITORY-WIDE AUDIT EVIDENCE INDEX (RECONCILED)
+# REPOSITORY-WIDE AUDIT EVIDENCE INDEX (RECONCILED - COMP-VERIFY-3)
 
 **Reconciliation Date:** 2026-10-11
 **Repository Root:** `/app`
-**Git Branch:** `jules-11371428744969324532-3de1dae2`
-**Git Commit SHA:** `34b8915dea52fb3cd1c9633f3a953c72d73d639b`
+**Git Branch:** `jules-11838427169474202902-6327cf81`
+**Git Commit SHA:** `2938effd7b5e1b3587610138077ccd0a74d3f6ac`
+**Index Status:** `RECONCILIATION VERIFIED — SOURCE MAPPINGS AND TEST SAFETY SUPPORTED`
 
 ---
 
-## 1. Index of Executed Commands and Test Evidence
+## Evidence Entry Register
 
-| Evidence Type | Command / Script | Result | Severity / Verdict | Key Assertions / Invariants Verified | Status Label |
+| Ref ID | Project / Subsystem | Primary Artifact Path | Evidence Source Code & Test File | Verification Script / Method | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **E4 — Integration** | `npm run test:cli` | **PASS (31/31 suites)** | Informational | Snapshot, change gate, investigation eligibility, context minimizer, decision context, accounting, roles, layers, boundaries, safety envelope, quality gates | `FRESHLY_REPRODUCED` |
-| **E4 — Integration** | `node scripts/test-multi-project.cjs` | **PASS (10/10 tests)** | Informational | Slugification, project-scoped contract output, browser asset auto-publishing, multi-project independence, source-specific export, default project backward compatibility, project switching URL consistency, stale report prevention, Food-App pipeline, non-destructive cleanup safety | `FRESHLY_REPRODUCED` |
-| **E4 — Integration** | `node scripts/test-source-resolution.cjs` | **PASS (12/12 tests)** | Informational | Explorer source resolution, project flag parsing, case normalization, explicit source mismatch rejection, npm argument forwarding, root artifact protection | `FRESHLY_REPRODUCED` |
-| **E4 — Integration** | `node scripts/test-pbim-dedicated-data-path.cjs` | **PASS (6/6 tests)** | Informational | PBIM slugification, dedicated `/pbim/explorer-data.json` artifact presence (528N / 2063E), project manifest registration, default vs PBIM payload isolation, manifest synchronization | `FRESHLY_REPRODUCED` |
-| **E4 — Integration** | `node scripts/test-export-explorer.cjs` | **PASS (18 assertions)** | Informational | 12 validation invariants, edge source/target existence, node/edge type validity, risk levels, uncorrupted metrics, cycle node validity, unresolved reference distinction, code evidence preservation, determinism, AssetService graph equivalence, Tests A–E, and new Test F path containment safety | `FRESHLY_REPRODUCED` |
-| **E3 — Focused** | Node Filesystem Inspection | **PASS (13 public, 4 source datasets)** | Informational | Computed SHA-256 hashes, node/edge counts, verified 0 duplicate node IDs, 0 broken edge endpoints across all 13 public datasets | `SOURCE_INSPECTED` |
-| **E3 — Focused** | Cross-Project Isolation Verification | **PASS (Bit-for-Bit Identical)** | Informational | Verified PBIM, CST, and default dataset SHA-256 hashes remain bit-for-bit unchanged before and after multi-project exports | `FRESHLY_REPRODUCED` |
-| **E5 — Browser** | `npx vite build` / Playwright | **BLOCKED** | Environmental | Vite/Playwright binaries unavailable in sandbox node_modules | `BLOCKED` |
-
----
-
-## 2. Key Code Ranges and File References
-
-- **Context Protocol & Policy:**
-  - `CONTEXT-RETRIEVAL-PROTOCOL.md`: L93–L117 (Freshness, Authority & Stale-Context Rejection Policy)
-  - `AGENT.md`: L1–L5, L67–L71 (Policy directive & canonical PBIM path)
-
-- **Exporter Core Logic:** `scripts/export-explorer.cjs`
-  - `isPathContained()`: L902–L908
-  - `publishProjectToExplorerAssets()`: L910–L980
-  - `updateManifestWithExplorerData()`: L985–L1040
-
-- **Multi-Project Test Suite & Cleanup Safety:** `scripts/test-multi-project.cjs`
-  - `SHARED_SNAPSHOT_FILES`: L27–37
-  - `snapshotSharedFiles()` / `restoreSharedFiles()`: L41–58
-  - `setupFixtures()` / `cleanupFixtures()`: L60–115
-  - Regression Test 10 (Cleanup Safety Assertion): L283–293
-
-- **Exporter Test Suite & Test F:** `scripts/test-export-explorer.cjs`
-  - Test F (`isPathContained` regression suite): L511–L523
-
----
-
-## 3. Deliverables Index
-
-1. `REPOSITORY_WIDE_STALE_CONTEXT_LEDGER.md`
-2. `audit-reports/REPOSITORY_WIDE_AUDIT_RECONCILIATION_REPORT.md`
-3. `audit-reports/REPOSITORY_WIDE_PROJECT_VERIFICATION_MATRIX_RECONCILED.md`
-4. `audit-reports/REPOSITORY_WIDE_PROJECT_INVENTORY_RECONCILED.json`
-5. `audit-reports/REPOSITORY_WIDE_FIX_AND_REGRESSION_LOG_RECONCILED.md`
-6. `audit-reports/REPOSITORY_WIDE_AUDIT_EVIDENCE_INDEX_RECONCILED.md` (this report)
+| **E1** | Default Project | `explorer/public/explorer-data.json` | `scripts/export-explorer.cjs` L995 | `node scripts/test-export-explorer.cjs` | **VERIFIED** |
+| **E2** | BQC | `explorer/public/projects/bqc/explorer-data.json` | `explorer/public/project-manifest.json` L18 | `node scripts/test-multi-project.cjs` | **VERIFIED** |
+| **E3** | Cloud Spend Tracker | `explorer/public/projects/cloud-spend-tracker/explorer-data.json` | `analyze/projects/cloud-spend-tracker/explorer-data.json` | `node scripts/test-multi-project.cjs` | **VERIFIED** |
+| **E4** | Movie / Movie-App / Food-App | `explorer/public/projects/movie/explorer-data.json` | `scripts/test-source-resolution.cjs` L210 | `node scripts/test-source-resolution.cjs` | **VERIFIED** |
+| **E5** | PBIM | `explorer/public/pbim/explorer-data.json` | `scripts/test-pbim-dedicated-data-path.cjs` L15 | `node scripts/test-pbim-dedicated-data-path.cjs` | **VERIFIED** |
+| **E6** | Project B | `explorer/public/projects/project-b/explorer-data.json` | `explorer/public/project-manifest.json` L100 | `node scripts/test-multi-project.cjs` | **VERIFIED** |
+| **E7** | Test Projects | `explorer/public/projects/test-canonical-project/explorer-data.json` | `scripts/test-export-explorer.cjs` L180 | `node scripts/test-export-explorer.cjs` | **VERIFIED** |
+| **E8** | Path Containment Safety | `scripts/export-explorer.cjs` L902 | `scripts/test-export-explorer.cjs` L512 | `node scripts/test-export-explorer.cjs` | **VERIFIED** |
+| **E9** | Teardown Safety | `scripts/test-multi-project.cjs` L26 | `scripts/test-multi-project.cjs` L260 | `node scripts/test-multi-project.cjs` | **VERIFIED** |
+| **E10** | Stale Context Ledger | `REPOSITORY_WIDE_STALE_CONTEXT_LEDGER.md` | `REPOSITORY_WIDE_STALE_CONTEXT_LEDGER.md` | `cat REPOSITORY_WIDE_STALE_CONTEXT_LEDGER.md` | **VERIFIED** |
