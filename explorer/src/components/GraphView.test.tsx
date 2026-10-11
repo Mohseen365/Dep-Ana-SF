@@ -235,12 +235,12 @@ describe('GraphEngine Components & Integration', () => {
       // Verify minimap
       expect(region.querySelector('#minimap')).toBeInTheDocument();
 
-      // Verify accessible tree
-      const tree = screen.getByRole('tree', { name: /component nodes/i });
-      expect(tree).toBeInTheDocument();
-      const treeItems = screen.getAllByRole('treeitem');
-      expect(treeItems).toHaveLength(2);
-      expect(treeItems[0]).toHaveTextContent('AccountController');
+      // Verify accessible component list
+      const list = screen.getByRole('list', { name: /component nodes/i });
+      expect(list).toBeInTheDocument();
+      const listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(2);
+      expect(listItems[0]).toHaveTextContent('AccountController');
 
       // Verify floating toolbar controls
       expect(screen.getByRole('toolbar', { name: /graph controls/i })).toBeInTheDocument();

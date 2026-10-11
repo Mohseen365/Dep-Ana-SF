@@ -388,12 +388,18 @@ describe('Phase 1G-C Accessibility Tests', () => {
       expect(onSelectNode).toHaveBeenCalledWith('ApexClass:Util');
     });
 
-    it('CouplingHeatmapPanel canvas has role="img", aria-label, and tabIndex={0}', () => {
+    it('CouplingHeatmapPanel canvas has role="img", aria-label, aria-describedby, and tabIndex={0}', () => {
       render(<CouplingHeatmapPanel data={sampleExplorerData} />);
       const canvas = screen.getByTestId('coupling-heatmap-canvas');
       expect(canvas.getAttribute('role')).toBe('img');
       expect(canvas.getAttribute('aria-label')).toBe('Feature Coupling Heatmap Matrix');
       expect(canvas.tabIndex).toBe(0);
+
+      const describedBy = canvas.getAttribute('aria-describedby');
+      expect(describedBy).toBeTruthy();
+      const descEl = document.getElementById(describedBy!);
+      expect(descEl).toBeInTheDocument();
+      expect(descEl?.textContent).toContain('Interactive feature coupling heatmap matrix');
     });
 
     it('ArchitectureDNABarcode items are focusable and barcode strips labeled', () => {

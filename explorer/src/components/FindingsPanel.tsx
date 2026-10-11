@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useId } from "react";
 import type { ArchitectureFinding, FindingSeverity } from "../lib/intelligence";
 import {
   formatFindingReviewItem,
@@ -47,6 +47,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
     new Set(SEVERITY_ORDER)
   );
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("UNRESOLVED");
+  const instanceId = useId();
   const [expandedFindingIds, setExpandedFindingIds] = useState<Set<string>>(new Set());
   const [refreshCounter, setRefreshCounter] = useState(0);
 
@@ -234,7 +235,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                   {groupItems.map(({ finding, review }) => {
                     const isSelected = finding.id === selectedFindingId;
                     const isExpanded = expandedFindingIds.has(finding.id);
-                    const evidenceRegionId = `finding-evidence-${finding.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+                    const evidenceRegionId = `finding-evidence-${instanceId.replace(/:/g, '_')}-${finding.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
 
                     return (
                       <div
