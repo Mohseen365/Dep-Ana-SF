@@ -42,8 +42,68 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
   architectureMode = 'hierarchical',
   onToggleArchitectureMode,
 }) => {
+  const [activeControlIndex, setActiveControlIndex] = React.useState<number>(0);
+
+  const getInteractiveElements = (container: HTMLElement): HTMLElement[] => {
+    const selector = 'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter(
+      (el) => el.getAttribute('aria-hidden') !== 'true' && el.style.display !== 'none'
+    );
+  };
+
+  const handleToolbarKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const key = e.key;
+
+    // Protection for native controls (select, input, textarea, slider)
+    const target = e.target as HTMLElement;
+    const tagName = target.tagName.toLowerCase();
+    const role = target.getAttribute('role');
+    if (tagName === 'select' || tagName === 'input' || tagName === 'textarea' || role === 'slider') {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
+        return; // Do not hijack arrow, home, or end keys when inside inputs, selects, or textareas
+      }
+    }
+
+    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
+      return;
+    }
+
+    const container = e.currentTarget;
+    const controls = getInteractiveElements(container);
+    if (controls.length === 0) return;
+
+    const activeElement = document.activeElement as HTMLElement;
+    let currentIndex = controls.indexOf(activeElement);
+    if (currentIndex === -1) {
+      currentIndex = activeControlIndex < controls.length ? activeControlIndex : 0;
+    }
+
+    let nextIndex = currentIndex;
+    if (key === 'ArrowRight' || key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % controls.length;
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + controls.length) % controls.length;
+    } else if (key === 'Home') {
+      nextIndex = 0;
+    } else if (key === 'End') {
+      nextIndex = controls.length - 1;
+    }
+
+    e.preventDefault();
+    setActiveControlIndex(nextIndex);
+    const targetControl = controls[nextIndex];
+    if (targetControl) {
+      targetControl.focus();
+    }
+  };
+
   return (
-    <div className="graph-controls-floating" role="toolbar" aria-label="Graph controls">
+    <div
+      className="graph-controls-floating"
+      role="toolbar"
+      aria-label="Graph controls"
+      onKeyDown={handleToolbarKeyDown}
+    >
       {/* Analysis Section */}
       {focusState && onFocusChange && (
         <div className="graph-control-group analysis-group" role="group" aria-label="Analysis controls">
