@@ -9,24 +9,32 @@
 
 ## 1. Summary of Changes in Current Reconciliation
 
-During this reconciliation run, three categories of safe, evidence-backed changes were performed:
-1. **Context Policy & Guidance Corrections:** Added the 10-rule Freshness Policy to `CONTEXT-RETRIEVAL-PROTOCOL.md`, updated `AGENT.md`, corrected stale PBIM paths in `context/CURRENT-DATA-AND-FIXTURES.md`, `context/SOURCE-REGISTER.md`, and `context/SUPERSESSION-MAP.md`.
-2. **Missing Test Coverage Addition:** Added Test F (`isPathContained` regression test suite covering 8 scenarios) to `scripts/test-export-explorer.cjs`.
-3. **Audit Reconciliation Deliverables:** Created `REPOSITORY_WIDE_STALE_CONTEXT_LEDGER.md` and reconciled deliverables in `audit-reports/`.
+During this reconciliation run, four categories of safe, evidence-backed changes were performed:
+1. **Teardown Defect Repair & Safety Assertion:** Replaced destructive `git checkout HEAD -- analyze/ explorer/public/` in `scripts/test-multi-project.cjs` with in-memory snapshot/restore and added Regression Test 10 asserting pre-existing modification preservation.
+2. **Analyzer Output Directory Isolation:** Updated `setupFixtures()` in `scripts/test-multi-project.cjs` to pass `--output-dir` directly to `dependency-analyzer.cjs`, eliminating root `analyze/` directory mutation during multi-project test execution.
+3. **Context Policy & Guidance Corrections:** Added the 10-rule Freshness Policy to `CONTEXT-RETRIEVAL-PROTOCOL.md`, updated `AGENT.md`, corrected stale PBIM paths in `context/CURRENT-DATA-AND-FIXTURES.md`, `context/SOURCE-REGISTER.md`, and `context/SUPERSESSION-MAP.md`.
+4. **Missing Test Coverage Addition:** Added Test F (`isPathContained` regression test suite covering 8 scenarios) to `scripts/test-export-explorer.cjs`.
 
 ---
 
 ## 2. Detailed Log of Fixes & Test Suite Extensions
 
-### FIX-01 (Verified Harness Repair): Multi-Project Test Suite Directory Containment & Path Normalization
+### FIX-01 (Teardown Safety Repair): Non-Destructive Test Teardown & Sentinel Preservation
 - **Source File:** `scripts/test-multi-project.cjs`
 - **Original Defect:**
-  In `scripts/test-multi-project.cjs`, `TEST_ANALYZE_DIR` was originally set to `/app/temp-multi-project-analyze`.
-  Because this directory was outside `analyze/`, `exportExplorerData()`'s `isPathContained()` path safety check evaluated to `false` and skipped publishing browser assets to `explorer/public/projects/movie-app/explorer-data.json`.
-  Placing `TEST_ANALYZE_DIR` inside `analyze/` (`path.join(__dirname, "../analyze/temp-multi-project-analyze")`) allowed `isPathContained(analyzeDir, absOutputFile)` to evaluate to `true`, resolving asset publication while preserving path containment safety.
+  In `scripts/test-multi-project.cjs`, `cleanupFixtures()` previously executed `git checkout HEAD -- analyze/ explorer/public/`.
+  If run on a repository with uncommitted user modifications in `analyze/` or `explorer/public/`, this command permanently discarded uncommitted user work.
+  Additionally, running `setupFixtures()` without `--output-dir` caused `dependency-analyzer.cjs` to mutate and rename root `analyze/`.
+- **Repair Implemented:**
+  1. Removed `git checkout` command from `cleanupFixtures()`.
+  2. Implemented `snapshotSharedFiles()` and `restoreSharedFiles()` to snapshot and restore exact pre-test state for shared manifest and default files.
+  3. Passed `--output-dir` explicitly to `dependency-analyzer.cjs` in `setupFixtures()`.
+  4. Added Regression Test 10 asserting that pre-existing sentinel files/modifications are 100% preserved during setup and cleanup.
 - **Verification Command & Result:**
-  Executed `node scripts/test-multi-project.cjs` twice:
-  `ALL 9 REGRESSION TESTS PASSED SUCCESSFULLY!`
+  Executed `node scripts/test-multi-project.cjs`:
+  `Regression Test 10: Cleanup Safety & Pre-Existing Modification Preservation`
+  `✓ Test cleanup verified non-destructive: pre-existing user modifications strictly preserved`
+  `ALL 10 REGRESSION TESTS PASSED SUCCESSFULLY!`
 
 ---
 
@@ -69,7 +77,7 @@ During this reconciliation run, three categories of safe, evidence-backed change
    Result: ALL 31 CANONICAL CLI TEST SUITES PASSED (Exit code: 0)
 
 2. node scripts/test-multi-project.cjs
-   Result: ALL 9 MULTI-PROJECT REGRESSION TESTS PASSED (Exit code: 0)
+   Result: ALL 10 MULTI-PROJECT REGRESSION TESTS PASSED (Exit code: 0)
 
 3. node scripts/test-source-resolution.cjs
    Result: ALL 12 SOURCE RESOLUTION REGRESSION TESTS PASSED (Exit code: 0)

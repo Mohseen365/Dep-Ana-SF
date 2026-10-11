@@ -23,8 +23,45 @@ const FIXTURE_DIR_B = path.join(__dirname, "../temp-test-fixture-proj-b");
 const TEST_ANALYZE_DIR = path.join(__dirname, "../analyze/temp-multi-project-analyze");
 const PUBLIC_DIR = path.join(__dirname, "../explorer/public");
 
+// Snapshot state for tracked files modified during test execution
+const SHARED_SNAPSHOT_FILES = [
+  path.join(__dirname, "../project-manifest.json"),
+  path.join(__dirname, "../analyze/project-manifest.json"),
+  path.join(__dirname, "../explorer/public/project-manifest.json"),
+  path.join(__dirname, "../explorer/public/explorer-data.json"),
+  path.join(__dirname, "../analyze/explorer-data.json"),
+  path.join(__dirname, "../explorer/public/projects/movie-app/explorer-data.json"),
+  path.join(__dirname, "../explorer/public/projects/movie-app/project-metadata.json"),
+  path.join(__dirname, "../explorer/public/projects/food-app/explorer-data.json"),
+  path.join(__dirname, "../explorer/public/projects/food-app/project-metadata.json"),
+];
+
+const fileSnapshots = new Map();
+
+function snapshotSharedFiles() {
+  fileSnapshots.clear();
+  SHARED_SNAPSHOT_FILES.forEach((filePath) => {
+    if (fs.existsSync(filePath)) {
+      fileSnapshots.set(filePath, fs.readFileSync(filePath, "utf8"));
+    } else {
+      fileSnapshots.set(filePath, null);
+    }
+  });
+}
+
+function restoreSharedFiles() {
+  fileSnapshots.forEach((content, filePath) => {
+    if (content !== null) {
+      fs.writeFileSync(filePath, content, "utf8");
+    } else if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath, { force: true });
+    }
+  });
+}
+
 function setupFixtures() {
-  cleanupFixtures();
+  snapshotSharedFiles();
+  cleanupFixtures(false);
 
   // Project A Fixture (ApexClass: ServiceA)
   fs.mkdirSync(path.join(FIXTURE_DIR_A, "classes"), { recursive: true });
@@ -43,22 +80,18 @@ function setupFixtures() {
   const { execSync } = require("child_process");
   const analyzerPath = path.join(__dirname, "../dependency-analyzer.cjs");
 
-  // Analyze Project A
+  // Analyze Project A (explicitly specifying --output-dir prevents analyzer from mutating root analyze/ dir)
   const analyzeOutA = path.join(FIXTURE_DIR_A, "analyze");
-  execSync(`node "${analyzerPath}" analyze "${FIXTURE_DIR_A}"`, { stdio: "ignore" });
-  if (fs.existsSync("analyze") && !fs.existsSync(analyzeOutA)) {
-    fs.renameSync("analyze", analyzeOutA);
-  }
+  fs.mkdirSync(analyzeOutA, { recursive: true });
+  execSync(`node "${analyzerPath}" analyze "${FIXTURE_DIR_A}" --output-dir "${analyzeOutA}"`, { stdio: "ignore" });
 
-  // Analyze Project B
+  // Analyze Project B (explicitly specifying --output-dir prevents analyzer from mutating root analyze/ dir)
   const analyzeOutB = path.join(FIXTURE_DIR_B, "analyze");
-  execSync(`node "${analyzerPath}" analyze "${FIXTURE_DIR_B}"`, { stdio: "ignore" });
-  if (fs.existsSync("analyze") && !fs.existsSync(analyzeOutB)) {
-    fs.renameSync("analyze", analyzeOutB);
-  }
+  fs.mkdirSync(analyzeOutB, { recursive: true });
+  execSync(`node "${analyzerPath}" analyze "${FIXTURE_DIR_B}" --output-dir "${analyzeOutB}"`, { stdio: "ignore" });
 }
 
-function cleanupFixtures() {
+function cleanupFixtures(doRestore = true) {
   [FIXTURE_DIR_A, FIXTURE_DIR_B, TEST_ANALYZE_DIR].forEach((dir) => {
     if (fs.existsSync(dir)) {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -66,7 +99,7 @@ function cleanupFixtures() {
   });
 
   // Clean transient test project outputs from explorer/public/projects
-  const transientTestProjs = ["project-alpha", "project-beta", "stale-check", "invalid-proj"];
+  const transientTestProjs = ["project-alpha", "project-beta", "stale-check", "invalid-proj", "proj-a", "proj-b"];
   transientTestProjs.forEach((pId) => {
     const pPath = path.join(PUBLIC_DIR, "projects", pId);
     if (fs.existsSync(pPath)) {
@@ -74,11 +107,9 @@ function cleanupFixtures() {
     }
   });
 
-  // Restore any git-tracked files in analyze/ or explorer/public/ modified by test runs
-  const { execSync } = require("child_process");
-  try {
-    execSync("git checkout HEAD -- analyze/ explorer/public/", { stdio: "ignore" });
-  } catch (_) {}
+  if (doRestore) {
+    restoreSharedFiles();
+  }
 }
 
 function runMultiProjectTests() {
@@ -249,7 +280,19 @@ function runMultiProjectTests() {
 
     console.log("  ✓ Verified Food-App contract generation and automatic explorer/public/projects/food-app/ publication");
 
-    console.log("\nALL 9 REGRESSION TESTS PASSED SUCCESSFULLY!");
+    // REGRESSION TEST 10: Cleanup Safety & Pre-Existing Modification Preservation
+    console.log("Regression Test 10: Cleanup Safety & Pre-Existing Modification Preservation");
+    const sentinelFile = path.join(PUBLIC_DIR, "projects", "cst", "cleanup-sentinel-test.tmp");
+    fs.writeFileSync(sentinelFile, "pre-existing user sentinel modification", "utf8");
+
+    cleanupFixtures(true);
+    assert.ok(fs.existsSync(sentinelFile), "Cleanup MUST preserve pre-existing untracked/modified user files");
+    const sentinelContent = fs.readFileSync(sentinelFile, "utf8");
+    assert.strictEqual(sentinelContent, "pre-existing user sentinel modification", "Cleanup MUST NOT overwrite pre-existing user data");
+    fs.rmSync(sentinelFile, { force: true });
+    console.log("  ✓ Test cleanup verified non-destructive: pre-existing user modifications strictly preserved");
+
+    console.log("\nALL 10 REGRESSION TESTS PASSED SUCCESSFULLY!");
   } finally {
     cleanupFixtures();
   }
