@@ -70,4 +70,19 @@ describe('useGraphSelection', () => {
     });
     expect(result.current.history).toEqual([]);
   });
+
+  it('clears edge selection when selectNode(null) is called', () => {
+    const { result } = renderHook(() => useGraphSelection());
+
+    act(() => {
+      result.current.selectEdge('edge-1');
+    });
+    expect(result.current.selectedEdgeId).toBe('edge-1');
+
+    act(() => {
+      result.current.selectNode(null);
+    });
+    expect(result.current.selectedNodeId).toBeNull();
+    expect(result.current.selectedEdgeId).toBeNull();
+  });
 });

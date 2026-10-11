@@ -149,7 +149,9 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
     NotAnalyzedScreen,
   } = props;
 
-  const hasDrawerContent = selectedNode !== null;
+  const currentViewDef = getWorkspaceDefinition(activeViewMode);
+  const isSelectionSupported = currentViewDef?.capabilities?.supportsNodeSelection ?? true;
+  const hasDrawerContent = selectedNode !== null && isSelectionSupported;
   const isDrawerOpen = hasDrawerContent && (view.isInvestigating || isPinned);
 
   // Keyboard Escape listener to dismiss drawer when active
@@ -190,7 +192,7 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
           border: 0,
         }}
       >
-        {`Active workspace: ${activeViewMode}${selectedNode ? `. Selected: ${selectedNode.displayName}` : ''}`}
+        {`Active workspace: ${activeViewMode}${selectedNode && isSelectionSupported ? `. Selected: ${selectedNode.displayName}` : ''}`}
       </div>
       {/* Top Header */}
       <Header
@@ -324,7 +326,7 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = (props) => {
         totalNodes={activeData?.summary?.nodeCount ?? activeData?.nodes?.length ?? 0}
         totalEdges={activeData?.summary?.edgeCount ?? activeData?.edges?.length ?? 0}
         visibleNodes={simulatedGraph.nodes.length}
-        selectedNodeName={selectedNode?.displayName ?? null}
+        selectedNodeName={isSelectionSupported ? (selectedNode?.displayName ?? null) : null}
         activeFilterCount={view.filterState.searchQuery ? 1 : 0}
         cycleCount={activeData?.summary?.cycleCount ?? activeData?.cycles?.length ?? 0}
         unresolvedCount={activeData?.summary?.unresolvedCount ?? activeData?.unresolvedReferences?.length ?? 0}

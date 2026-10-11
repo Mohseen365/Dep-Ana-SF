@@ -26,8 +26,8 @@ export function useGraphSelection(): {
 
   const selectNodeFallback = useCallback((id: string | null) => {
     setLocalNodeId(id);
+    setLocalEdgeId(null);
     if (id !== null) {
-      setLocalEdgeId(null);
       setLocalHistory((prev) => {
         if (prev.length > 0 && prev[prev.length - 1] === id) {
           return prev;
