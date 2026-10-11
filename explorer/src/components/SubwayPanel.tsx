@@ -135,6 +135,8 @@ export const SubwayPanel: React.FC<SubwayPanelProps> = ({
           width={canvasWidth}
           height={canvasHeight}
           data-testid="subway-svg-canvas"
+          role="img"
+          aria-label="Architecture Module Subway Map"
         >
           {/* Feature Track Background Lines */}
           {data.lines.map(line => (
@@ -190,7 +192,16 @@ export const SubwayPanel: React.FC<SubwayPanelProps> = ({
                 transform={`translate(${station.x}, ${station.y})`}
                 className={`subway-station-node ${station.isTransfer ? 'transfer-hub' : ''} ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`}
                 style={{ opacity: isDimmed ? 0.25 : 1.0, transition: 'opacity 0.15s ease' }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Station ${station.displayName}, ${station.type}, line ${station.featureName}${station.isTransfer ? ', transfer hub' : ''}`}
                 onClick={() => handleStationClick(station)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleStationClick(station);
+                  }
+                }}
                 cursor="pointer"
               >
                 {/* Station Marker Outer Ring */}

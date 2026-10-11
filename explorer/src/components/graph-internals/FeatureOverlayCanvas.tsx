@@ -198,6 +198,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   return (
     <svg
       className="feature-overlay-canvas"
+      aria-hidden="true"
       style={{
         position: 'absolute',
         top: 0,
