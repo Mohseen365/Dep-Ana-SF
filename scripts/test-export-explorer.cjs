@@ -9,7 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
-const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, normalizeSourcePath } = require("./export-explorer.cjs");
+const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, normalizeSourcePath, isPathContained } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR = path.join(__dirname, "../temp-test-fixture-realistic");
 const ANALYZE_OUT_DIR = path.join(FIXTURE_DIR, "analyze");
@@ -507,6 +507,20 @@ function runSpecificRegressionTests() {
     "Undefined fallback must return default path"
   );
   console.log("  ✓ Test E PASSED: normalizeSourcePath handles all required path variations deterministically");
+
+  // TEST F: Path Containment Guard (DEFECT-C5)
+  console.log("\nTest F: Exporter Path Containment Safety (isPathContained)");
+  const baseDir = path.resolve(__dirname, "../analyze");
+  assert.strictEqual(isPathContained(baseDir, baseDir), true, "Exact root path must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "explorer-data.json")), true, "Direct child file must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "projects", "pbim", "explorer-data.json")), true, "Deep descendant must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.resolve(__dirname, "../analyze-sibling/foo.json")), false, "Sibling prefix directory must NOT be contained");
+  assert.strictEqual(isPathContained(baseDir, path.resolve(baseDir, "../secret.json")), false, "Path traversal escaping base directory must NOT be contained");
+  assert.strictEqual(isPathContained(baseDir, "/etc/passwd"), false, "Unrelated absolute path must NOT be contained");
+  assert.strictEqual(isPathContained(null, baseDir), false, "Null parentDir must evaluate to false");
+  assert.strictEqual(isPathContained(baseDir, null), false, "Null targetPath must evaluate to false");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "..foo", "bar")), false, "Child directory named ..foo must NOT be contained");
+  console.log("  ✓ Test F PASSED: isPathContained handles all 8 path containment scenarios deterministically");
 }
 
 if (require.main === module) {

@@ -23,7 +23,7 @@ This source register maps architectural topics, subsystems, contracts, test suit
 | **CLI Safety Envelope** | `safety-envelope.cjs` | CURRENT | Non-negotiable structural and security safety rules | `architecture-change-gate.cjs` |
 | **CLI Test Suite** | `scripts/test-cli-integration.cjs` | CURRENT | 31 root-level CLI integration test suites | `package.json` |
 | **Vitest Unit/UI Tests** | `explorer/src/test/` | CURRENT | Vitest component, hook, layout, and adapter regression tests | `explorer/vitest.config.ts` |
-| **Production Datasets** | `explorer/public/projects/pbim/explorer-data.json` | CURRENT | Authoritative 528-node / 2063-edge PBIM dataset | `project-manifest.json` |
+| **Production Datasets** | `explorer/public/pbim/explorer-data.json` | CURRENT | Authoritative 528-node / 2063-edge PBIM dataset | `project-manifest.json` |
 | **Historical Decisions** | `context/HISTORICAL-DECISIONS.md` | HISTORICAL | Key rationale, trade-offs, and rejected alternatives | `context/SUPERSESSION-MAP.md` |
 
 ## Authority Matrix
