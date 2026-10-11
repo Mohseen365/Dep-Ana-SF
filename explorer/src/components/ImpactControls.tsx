@@ -20,7 +20,7 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
   onShowImpact
 }) => {
   const controlId = useId();
-  const active = isImpactActive(impactState) && impactResult !== null;
+  const active = Boolean(impactState.enabled);
   const [showAffectedList, setShowAffectedList] = useState<boolean>(false);
 
   const handleDepthChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {

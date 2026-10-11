@@ -155,25 +155,28 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const cyRef = useRef<cytoscape.Core | null>(null);
   const navRef = useRef<any>(null);
 
-  const effectiveLayoutOptions = useMemo((): GraphLayoutOptions => {
+  const derivedFocalLwcId = useMemo(() => {
     const isLwcNode = (id: string | null | undefined): boolean => {
       if (!id) return false;
       return nodes.some((n) => n.id === id && n.type === 'LWC');
     };
 
-    const derivedFocalLwcId =
+    return (
       (isLwcNode(selectedNodeId) ? selectedNodeId : null) ??
       (isLwcNode(layoutOptions?.focalLwcId) ? layoutOptions?.focalLwcId : null) ??
       (isLwcNode(focusedNodeId) ? focusedNodeId : null) ??
-      null;
+      null
+    );
+  }, [selectedNodeId, layoutOptions?.focalLwcId, focusedNodeId, nodes]);
 
+  const effectiveLayoutOptions = useMemo((): GraphLayoutOptions => {
     return {
       ...layoutOptions,
       enableFeatureLayout,
       enableCandidateDOrdering: architectureMode === 'hierarchical',
       focalLwcId: derivedFocalLwcId,
     };
-  }, [enableFeatureLayout, architectureMode, layoutOptions, selectedNodeId, focusedNodeId, nodes]);
+  }, [enableFeatureLayout, architectureMode, layoutOptions, derivedFocalLwcId]);
 
   const nodesRef = useRef<ExplorerNode[]>(nodes);
   const edgesRef = useRef<ExplorerEdge[]>(edges);
@@ -184,12 +187,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const onNodeDragEndRef = useRef<((nodeId: string, position: Position) => void) | undefined>(onNodeDragEnd);
   const onSelectNodeRef = useRef(onSelectNode);
   const onSelectEdgeRef = useRef(onSelectEdge);
+  const onNodeDoubleTapRef = useRef(onNodeDoubleTapProp);
   const effectiveLayoutOptionsRef = useRef<GraphLayoutOptions>(effectiveLayoutOptions);
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
     onSelectEdgeRef.current = onSelectEdge;
-  }, [onSelectNode, onSelectEdge]);
+    onNodeDoubleTapRef.current = onNodeDoubleTapProp;
+  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp]);
 
   // In-session explicit drag positions
   const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
@@ -671,9 +676,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         onSelectNodeRef.current(fullNode);
       },
       onNodeDoubleTap: (nodeId, selectedNode) => {
-        if (onNodeDoubleTapProp) {
+        if (onNodeDoubleTapRef.current) {
           const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
-          onNodeDoubleTapProp(nodeId, fullNode);
+          onNodeDoubleTapRef.current(nodeId, fullNode);
         }
       },
       onEdgeSelect: (edgeId) => {
@@ -932,7 +937,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges, nodePositions, captureAndPersistPositions, simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
+  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, effectiveLayoutOptions, nodePositions, captureAndPersistPositions, simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
 
   // Handle selected node changes
   useEffect(() => {
