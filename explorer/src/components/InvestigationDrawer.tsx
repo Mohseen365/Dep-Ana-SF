@@ -82,6 +82,41 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   const [activeTab, setActiveTab] = useState<DrawerTab>('overview');
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  const handleTablistKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    const key = e.key;
+    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
+      return;
+    }
+    const container = e.currentTarget;
+    const tabs = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
+    if (tabs.length === 0) return;
+
+    const activeElement = document.activeElement as HTMLButtonElement;
+    let currentIndex = tabs.indexOf(activeElement);
+    if (currentIndex === -1) {
+      currentIndex = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+      if (currentIndex === -1) currentIndex = 0;
+    }
+
+    let nextIndex = currentIndex;
+    if (key === 'ArrowRight' || key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (key === 'Home') {
+      nextIndex = 0;
+    } else if (key === 'End') {
+      nextIndex = tabs.length - 1;
+    }
+
+    e.preventDefault();
+    const targetTab = tabs[nextIndex];
+    if (targetTab) {
+      targetTab.focus();
+      targetTab.click();
+    }
+  };
+
   if (!open) {
     return null;
   }
@@ -929,6 +964,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
           role="tablist"
           aria-label="Inspector Navigation Tabs"
           data-testid="inspector-tabs"
+          onKeyDown={handleTablistKeyDown}
           style={{
             display: 'flex',
             overflowX: 'auto',
@@ -940,6 +976,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
             type="button"
             role="tab"
             aria-selected={activeTab === 'overview'}
+            tabIndex={activeTab === 'overview' ? 0 : -1}
             className={`ui-tab-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveTab('overview')}
             data-testid="tab-overview"
@@ -950,6 +987,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
             type="button"
             role="tab"
             aria-selected={activeTab === 'dependencies'}
+            tabIndex={activeTab === 'dependencies' ? 0 : -1}
             className={`ui-tab-item ${activeTab === 'dependencies' ? 'active' : ''}`}
             onClick={() => setActiveTab('dependencies')}
             data-testid="tab-dependencies"
@@ -960,6 +998,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
             type="button"
             role="tab"
             aria-selected={activeTab === 'dependents'}
+            tabIndex={activeTab === 'dependents' ? 0 : -1}
             className={`ui-tab-item ${activeTab === 'dependents' ? 'active' : ''}`}
             onClick={() => setActiveTab('dependents')}
             data-testid="tab-dependents"
@@ -970,6 +1009,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
             type="button"
             role="tab"
             aria-selected={activeTab === 'evidence'}
+            tabIndex={activeTab === 'evidence' ? 0 : -1}
             className={`ui-tab-item ${activeTab === 'evidence' ? 'active' : ''}`}
             onClick={() => setActiveTab('evidence')}
             data-testid="tab-evidence"
@@ -980,6 +1020,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
             type="button"
             role="tab"
             aria-selected={activeTab === 'actions'}
+            tabIndex={activeTab === 'actions' ? 0 : -1}
             className={`ui-tab-item ${activeTab === 'actions' ? 'active' : ''}`}
             onClick={() => setActiveTab('actions')}
             data-testid="tab-actions"
