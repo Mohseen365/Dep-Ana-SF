@@ -1,0 +1,195 @@
+--- a/ConnectionControls.tsx
++++ b/ConnectionControls.tsx
+@@ -1,4 +1,4 @@
+-import React, { useCallback } from 'react';
++import React, { useCallback, useId } from 'react';
+ import { ConnectionQueryState, ConnectionDirection, ConnectionDepth } from '../lib/url/connectionQuery';
+ import { ConnectionAnalysis } from '../lib/connection-analysis';
+ import { ExplorerNode } from '../types/explorer';
+@@ -25,6 +25,7 @@
+   selectedNode,
+   onShowConnection
+ }) => {
++  const controlId = useId();
+   const active = Boolean(connectionState.enabled && (connectionState.originNodeId || selectedNode));
+ 
+   const handleDirectionChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+@@ -69,7 +70,7 @@
+           }
+           data-testid="connection-toggle-btn"
+         >
+-          <span className="connection-icon">🔗</span>
++          <span className="connection-icon" aria-hidden="true">🔗</span>
+           {active ? 'Exit Connections' : 'Analyze Connections'}
+         </button>
+ 
+@@ -84,8 +85,9 @@
+       {active && (
+         <div className="connection-options" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '8px', flexWrap: 'wrap' }}>
+           <div className="connection-option" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+-            <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Direction:</label>
++            <label htmlFor={`${controlId}-direction`} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Direction:</label>
+             <select
++              id={`${controlId}-direction`}
+               value={connectionState.direction}
+               onChange={handleDirectionChange}
+               className="connection-select ui-input"
+@@ -99,8 +101,9 @@
+           </div>
+ 
+           <div className="connection-option" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+-            <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Depth:</label>
++            <label htmlFor={`${controlId}-depth`} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Depth:</label>
+             <select
++              id={`${controlId}-depth`}
+               value={connectionState.depth === 'ALL' ? 'ALL' : String(connectionState.depth)}
+               onChange={handleDepthChange}
+               className="connection-select ui-input"
+--- a/ImpactControls.tsx
++++ b/ImpactControls.tsx
+@@ -1,4 +1,4 @@
+-import React, { useCallback, useState } from 'react';
++import React, { useCallback, useId, useState } from 'react';
+ import { ImpactState, ImpactDepth, ImpactAnalysisResult, isImpactActive } from '../lib/impact-analysis';
+ import { ExplorerNode } from '../types/explorer';
+ 
+@@ -19,6 +19,7 @@
+   selectedNode,
+   onShowImpact
+ }) => {
++  const controlId = useId();
+   const active = isImpactActive(impactState) && impactResult !== null;
+   const [showAffectedList, setShowAffectedList] = useState<boolean>(false);
+ 
+@@ -67,7 +68,7 @@
+               : 'Select a component to show impact'
+           }
+         >
+-          <span className="impact-icon">💥</span>
++          <span className="impact-icon" aria-hidden="true">💥</span>
+           {active ? 'Exit Impact' : 'Show Impact'}
+         </button>
+ 
+@@ -85,14 +86,15 @@
+       {active && impactResult && (
+         <>
+           <div className="impact-options">
++            <div className="impact-option" role="group" aria-labelledby={`${controlId}-impact-direction-label`}>
++              <span id={`${controlId}-impact-direction-label`} className="impact-direction-label">Impact Direction:</span>
++              <span className="impact-direction-badge">← Dependents (Affected)</span>
++            </div>
++
+             <div className="impact-option">
+-              <label>Impact Direction:</label>
+-              <span className="impact-direction-badge">← Dependents (Affected)</span>
+-            </div>
+-
+-            <div className="impact-option">
+-              <label>Depth:</label>
++              <label htmlFor={`${controlId}-depth`}>Depth:</label>
+               <select
++                id={`${controlId}-depth`}
+                 value={impactState.depth === 'ALL' ? 'ALL' : String(impactState.depth)}
+                 onChange={handleDepthChange}
+                 className="impact-select"
+@@ -147,7 +149,7 @@
+               onClick={() => setShowAffectedList(!showAffectedList)}
+             >
+               <span className="breakdown-title">
+-                🔍 Affected Dependents & Test Breakdown ({impactResult.affectedNodeIds.size - 1})
++                <span aria-hidden="true">🔍</span> Affected Dependents & Test Breakdown ({impactResult.affectedNodeIds.size - 1})
+               </span>
+               <button className="breakdown-toggle-btn">
+                 {showAffectedList ? '▲ Hide' : '▼ Details'}
+@@ -179,7 +181,7 @@
+                     ) : (
+                       impactResult.impactedTestNodeIds.map(id => (
+                         <span key={id} className="pill test-pill">
+-                          🧪 {id.split(':')[1] || id}
++                          <span aria-hidden="true">🧪</span> {id.split(':')[1] || id}
+                         </span>
+                       ))
+                     )}
+--- a/GraphControls.tsx
++++ b/GraphControls.tsx
+@@ -66,7 +66,7 @@
+           aria-label="Zoom In"
+           type="button"
+         >
+-          ➕
++          <span aria-hidden="true">➕</span>
+         </button>
+         <button
+           className="graph-control-btn"
+@@ -75,7 +75,7 @@
+           aria-label="Zoom Out"
+           type="button"
+         >
+-          ➖
++          <span aria-hidden="true">➖</span>
+         </button>
+         <button
+           className="graph-control-btn"
+@@ -84,7 +84,7 @@
+           aria-label="Fit View"
+           type="button"
+         >
+-          ⛶
++          <span aria-hidden="true">⛶</span>
+         </button>
+         {hasSelectedNode && (
+           <button
+@@ -94,7 +94,7 @@
+             aria-label="Center Selected"
+             type="button"
+           >
+-            🎯
++            <span aria-hidden="true">🎯</span>
+           </button>
+         )}
+       </div>
+@@ -129,7 +129,7 @@
+             data-testid="architecture-mode-toggle"
+             type="button"
+           >
+-            {architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}
++            <span aria-hidden="true">{architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}</span>
+           </button>
+         )}
+         {onToggleLayoutMode && (
+@@ -142,7 +142,7 @@
+             data-testid="layout-mode-toggle"
+             type="button"
+           >
+-            {layoutMode === 'static' ? '📌' : '🔀'}
++            <span aria-hidden="true">{layoutMode === 'static' ? '📌' : '🔀'}</span>
+           </button>
+         )}
+         <button
+@@ -152,7 +152,7 @@
+           aria-label="Reset Layout"
+           type="button"
+         >
+-          🔄
++          <span aria-hidden="true">🔄</span>
+         </button>
+       </div>
+ 
+@@ -170,7 +170,7 @@
+                 aria-pressed={isNavigatorVisible}
+                 type="button"
+               >
+-                🗺️
++                <span aria-hidden="true">🗺️</span>
+               </button>
+             )}
+             {onToggleFullscreen && (
+@@ -182,7 +182,7 @@
+                 aria-pressed={isFullscreen}
+                 type="button"
+               >
+-                {isFullscreen ? '⤢' : '⛶'}
++                <span aria-hidden="true">{isFullscreen ? '⤢' : '⛶'}</span>
+               </button>
+             )}
+           </div>
