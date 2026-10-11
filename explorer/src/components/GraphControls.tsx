@@ -66,7 +66,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           aria-label="Zoom In"
           type="button"
         >
-          ➕
+          <span aria-hidden="true">➕</span>
         </button>
         <button
           className="graph-control-btn"
@@ -75,7 +75,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           aria-label="Zoom Out"
           type="button"
         >
-          ➖
+          <span aria-hidden="true">➖</span>
         </button>
         <button
           className="graph-control-btn"
@@ -84,7 +84,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           aria-label="Fit View"
           type="button"
         >
-          ⛶
+          <span aria-hidden="true">⛶</span>
         </button>
         {hasSelectedNode && (
           <button
@@ -94,7 +94,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             aria-label="Center Selected"
             type="button"
           >
-            🎯
+            <span aria-hidden="true">🎯</span>
           </button>
         )}
       </div>
@@ -129,7 +129,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             data-testid="architecture-mode-toggle"
             type="button"
           >
-            {architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}
+            <span aria-hidden="true">{architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}</span>
           </button>
         )}
         {onToggleLayoutMode && (
@@ -142,7 +142,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             data-testid="layout-mode-toggle"
             type="button"
           >
-            {layoutMode === 'static' ? '📌' : '🔀'}
+            <span aria-hidden="true">{layoutMode === 'static' ? '📌' : '🔀'}</span>
           </button>
         )}
         <button
@@ -152,7 +152,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           aria-label="Reset Layout"
           type="button"
         >
-          🔄
+          <span aria-hidden="true">🔄</span>
         </button>
       </div>
 
@@ -170,7 +170,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
                 aria-pressed={isNavigatorVisible}
                 type="button"
               >
-                🗺️
+                <span aria-hidden="true">🗺️</span>
               </button>
             )}
             {onToggleFullscreen && (
@@ -182,7 +182,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
                 aria-pressed={isFullscreen}
                 type="button"
               >
-                {isFullscreen ? '⤢' : '⛶'}
+                <span aria-hidden="true">{isFullscreen ? '⤢' : '⛶'}</span>
               </button>
             )}
           </div>
