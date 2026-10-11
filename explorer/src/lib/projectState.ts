@@ -45,6 +45,8 @@ export interface GraphLayoutState {
   architectureMode?: ArchitectureLayoutMode;
   layoutProvenance?: LayoutProvenance;
   nodePositions: Record<string, { x: number; y: number }>;
+  layoutPositions?: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>>;
+  layoutProvenances?: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>>;
   layoutVersion?: string | number;
 }
 
@@ -203,6 +205,18 @@ export function createDefaultProjectUIState(projectId: string): ProjectUIState {
       architectureMode: "hierarchical",
       layoutProvenance: "automatic-hierarchical",
       nodePositions: {},
+      layoutPositions: {
+        hierarchical: {},
+        hybrid: {},
+        orbit: {},
+        constellation: {},
+      },
+      layoutProvenances: {
+        hierarchical: "automatic-hierarchical",
+        hybrid: "automatic-hybrid",
+        orbit: "automatic-orbit",
+        constellation: "automatic-constellation",
+      },
     },
     zoom: {
       zoom: 1.0,
@@ -292,41 +306,94 @@ export function mergeWithDefaultState(
         ? loaded.filters.visibleNodeTypes
         : defaults.filters.visibleNodeTypes,
     },
-    graphLayout: {
-      layoutName:
-        loaded.graphLayout?.layoutName || defaults.graphLayout.layoutName,
-      mode:
-        (loaded.graphLayout as any)?.mode === "static" ||
-        (loaded.graphLayout as any)?.layoutMode === "static"
+    graphLayout: (() => {
+      const gDefaults = defaults.graphLayout;
+      const gLoaded = loaded.graphLayout || {};
+
+      const mode: GraphInteractionMode =
+        (gLoaded as any)?.mode === "static" ||
+        (gLoaded as any)?.layoutMode === "static"
           ? "static"
-          : "interactive",
-      architectureMode:
-        (loaded.graphLayout as any)?.architectureMode === "constellation"
+          : "interactive";
+
+      const activeArchMode: ArchitectureLayoutMode =
+        (gLoaded as any)?.architectureMode === "constellation"
           ? "constellation"
-          : (loaded.graphLayout as any)?.architectureMode === "orbit"
+          : (gLoaded as any)?.architectureMode === "orbit"
           ? "orbit"
-          : (loaded.graphLayout as any)?.architectureMode === "hybrid"
+          : (gLoaded as any)?.architectureMode === "hybrid"
           ? "hybrid"
-          : "hierarchical",
-      layoutProvenance:
-        (loaded.graphLayout as any)?.layoutProvenance ||
-        ((loaded.graphLayout as any)?.architectureMode === "constellation"
+          : "hierarchical";
+
+      // Reconstruct or initialize layoutPositions map
+      const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> =
+        gLoaded.layoutPositions && typeof gLoaded.layoutPositions === "object"
+          ? { ...gLoaded.layoutPositions }
+          : {};
+
+      // Reconstruct or initialize layoutProvenances map
+      const loadedLayoutProvenances: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>> =
+        gLoaded.layoutProvenances && typeof gLoaded.layoutProvenances === "object"
+          ? { ...gLoaded.layoutProvenances }
+          : {};
+
+      // Legacy fallback: If flat nodePositions exists, migrate it into activeArchMode if activeArchMode is not yet set in layoutPositions
+      const flatNodePositions =
+        typeof gLoaded.nodePositions === "object" && gLoaded.nodePositions !== null
+          ? gLoaded.nodePositions
+          : {};
+
+      if (!loadedLayoutPositions[activeArchMode] && Object.keys(flatNodePositions).length > 0) {
+        loadedLayoutPositions[activeArchMode] = { ...flatNodePositions };
+      }
+
+      // Legacy fallback for layoutProvenance
+      const flatProvenance: LayoutProvenance =
+        gLoaded.layoutProvenance ||
+        (activeArchMode === "constellation"
           ? "automatic-constellation"
-          : (loaded.graphLayout as any)?.architectureMode === "orbit"
+          : activeArchMode === "orbit"
           ? "automatic-orbit"
-          : (loaded.graphLayout as any)?.architectureMode === "hybrid"
+          : activeArchMode === "hybrid"
           ? "automatic-hybrid"
-          : "automatic-hierarchical"),
-      nodePositions:
-        loaded.graphLayout &&
-        typeof loaded.graphLayout.nodePositions === "object" &&
-        loaded.graphLayout.nodePositions !== null
-          ? loaded.graphLayout.nodePositions
-          : defaults.graphLayout.nodePositions,
-      ...(loaded.graphLayout?.layoutVersion !== undefined
-        ? { layoutVersion: loaded.graphLayout.layoutVersion }
-        : {}),
-    },
+          : "automatic-hierarchical");
+
+      if (!loadedLayoutProvenances[activeArchMode]) {
+        loadedLayoutProvenances[activeArchMode] = flatProvenance;
+      }
+
+      // Ensure defaults exist for all modes
+      const finalLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> = {
+        hierarchical: loadedLayoutPositions.hierarchical || {},
+        hybrid: loadedLayoutPositions.hybrid || {},
+        orbit: loadedLayoutPositions.orbit || {},
+        constellation: loadedLayoutPositions.constellation || {},
+      };
+
+      const finalLayoutProvenances: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>> = {
+        hierarchical: loadedLayoutProvenances.hierarchical || "automatic-hierarchical",
+        hybrid: loadedLayoutProvenances.hybrid || "automatic-hybrid",
+        orbit: loadedLayoutProvenances.orbit || "automatic-orbit",
+        constellation: loadedLayoutProvenances.constellation || "automatic-constellation",
+      };
+
+      // Set current active alias properties to match active architecture mode
+      const activePositions = finalLayoutPositions[activeArchMode] || {};
+      const activeProvenance = finalLayoutProvenances[activeArchMode] || flatProvenance;
+
+      return {
+        layoutName: gLoaded.layoutName || gDefaults.layoutName,
+        mode,
+        architectureMode: activeArchMode,
+        layoutProvenance: activeProvenance,
+        nodePositions: activePositions,
+        layoutPositions: finalLayoutPositions,
+        layoutProvenances: finalLayoutProvenances,
+        ...(gLoaded.layoutVersion !== undefined
+          ? { layoutVersion: gLoaded.layoutVersion }
+          : {}),
+      };
+    })(),
     zoom: {
       ...defaults.zoom,
       ...(loaded.zoom || {}),
@@ -385,6 +452,46 @@ export function updateProjectState(
   update: Partial<ProjectUIState>,
 ): ProjectUIState {
   const current = loadProjectState(projectId);
+
+  // If graphLayout update is provided, handle mode-scoped synchronization
+  if (update.graphLayout) {
+    const curLayout = current.graphLayout;
+    const updateLayout = update.graphLayout;
+
+    const newArchMode = updateLayout.architectureMode || curLayout.architectureMode || 'hierarchical';
+
+    const layoutPositions = {
+      ...(curLayout.layoutPositions || {}),
+      ...(updateLayout.layoutPositions || {}),
+    };
+
+    const layoutProvenances = {
+      ...(curLayout.layoutProvenances || {}),
+      ...(updateLayout.layoutProvenances || {}),
+    };
+
+    if (updateLayout.nodePositions !== undefined) {
+      layoutPositions[newArchMode] = updateLayout.nodePositions;
+    }
+
+    if (updateLayout.layoutProvenance !== undefined) {
+      layoutProvenances[newArchMode] = updateLayout.layoutProvenance;
+    }
+
+    update = {
+      ...update,
+      graphLayout: {
+        ...curLayout,
+        ...updateLayout,
+        architectureMode: newArchMode,
+        layoutPositions,
+        layoutProvenances,
+        nodePositions: layoutPositions[newArchMode] || {},
+        layoutProvenance: layoutProvenances[newArchMode] || `automatic-${newArchMode}` as LayoutProvenance,
+      },
+    };
+  }
+
   const updated = mergeWithDefaultState(projectId, {
     ...current,
     ...update,

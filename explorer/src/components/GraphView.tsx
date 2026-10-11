@@ -293,11 +293,20 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     prevArchitectureModeRef.current = architectureMode;
     prevFocalLwcIdRef.current = effectiveLayoutOptions.focalLwcId;
 
+    // Clear transient drag positions from previous layout mode
+    sessionPositionsRef.current.clear();
+
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
     const targetProvenance: LayoutProvenance =
-      architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical';
+      architectureMode === 'hybrid'
+        ? 'automatic-hybrid'
+        : architectureMode === 'orbit'
+        ? 'automatic-orbit'
+        : architectureMode === 'constellation'
+        ? 'automatic-constellation'
+        : 'automatic-hierarchical';
 
     const layoutRes = runLayoutWithMetadata(cy, {
       ...effectiveLayoutOptionsRef.current,
@@ -448,15 +457,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     let hasAuth = false;
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
       const currentProvenance = graphLayoutRef.current?.layoutProvenance;
-      if (currentProvenance === 'user-authored') {
+      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
+      if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
         hasAuth = true;
       } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
         hasAuth = true;
       } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
         hasAuth = true;
+      } else if (currentProvenance === 'automatic-orbit' && architectureMode === 'orbit') {
+        hasAuth = true;
+      } else if (currentProvenance === 'automatic-constellation' && architectureMode === 'constellation') {
+        hasAuth = true;
       } else if (!currentProvenance) {
-        const storedArchMode = (graphLayoutRef.current as any)?.architectureMode;
-        if (storedArchMode && storedArchMode === architectureMode) {
+        if (storedArchMode === architectureMode) {
           hasAuth = true;
         }
       }
@@ -766,11 +779,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
       const currentProvenance = graphLayoutRef.current?.layoutProvenance;
-      if (currentProvenance === 'user-authored') {
+      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
+      if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
         hasAuthForUpdate = true;
       } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
         hasAuthForUpdate = true;
       } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
+        hasAuthForUpdate = true;
+      } else if (currentProvenance === 'automatic-orbit' && architectureMode === 'orbit') {
+        hasAuthForUpdate = true;
+      } else if (currentProvenance === 'automatic-constellation' && architectureMode === 'constellation') {
         hasAuthForUpdate = true;
       }
     }
