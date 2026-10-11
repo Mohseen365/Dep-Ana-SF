@@ -1207,11 +1207,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       )}
 
       {/* Accessible Node List */}
-      <ul role="tree" className="sr-only" aria-label="Component Nodes">
+      <ul role="list" className="sr-only" aria-label="Component Nodes">
         {nodes.map(n => (
           <li
             key={n.id}
-            role="treeitem"
+            role="listitem"
             tabIndex={0}
             aria-selected={n.id === selectedNodeId}
             aria-label={`${n.displayName}, ${n.type}, risk ${n.risk}`}

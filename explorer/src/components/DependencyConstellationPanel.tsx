@@ -311,6 +311,8 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
         >
           <svg
             data-testid="constellation-svg"
+            role="img"
+            aria-label="Dependency Constellation Orbital View"
             width={layout.viewport.width}
             height={layout.viewport.height}
             viewBox={`0 0 ${layout.viewport.width} ${layout.viewport.height}`}
@@ -418,12 +420,21 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   data-testid={`constellation-node-${pos.nodeId}`}
                   transform={`translate(${pos.x}, ${pos.y})`}
                   style={{ cursor: 'pointer', opacity, transition: 'opacity 0.2s ease' }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${pos.label}${isFocal ? ' (Focal Center)' : ''}, ${nodeData?.type || 'Component'}`}
                   onMouseEnter={() => setHoveredNodeId(pos.nodeId)}
                   onMouseLeave={() => setHoveredNodeId(null)}
                   onClick={() => handleSelectNode(pos.nodeId)}
                   onDoubleClick={() => {
                     if (onOptionChange) onOptionChange({ focalNodeId: pos.nodeId });
                     handleSelectNode(pos.nodeId);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelectNode(pos.nodeId);
+                    }
                   }}
                 >
                   <circle

@@ -511,9 +511,18 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
           <canvas
             ref={canvasRef}
             data-testid="coupling-heatmap-canvas"
+            role="img"
+            aria-label="Feature Coupling Heatmap Matrix"
+            tabIndex={0}
             onMouseMove={handleCanvasMouseMove}
             onMouseLeave={() => setHoveredCellInfo(null)}
             onClick={handleCanvasClick}
+            onKeyDown={(e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && hoveredCellInfo) {
+                e.preventDefault();
+                handleCanvasClick();
+              }
+            }}
             style={{ cursor: hoveredCellInfo ? 'pointer' : 'default', display: 'block' }}
           />
         </div>

@@ -165,6 +165,8 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
             height={layout.height}
             style={{ display: 'block' }}
             data-testid="sankey-svg"
+            role="img"
+            aria-label="Dependency River Sankey Diagram"
           >
             <defs>
               <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -233,11 +235,21 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                     cursor: 'pointer',
                     transition: 'stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease',
                   }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Flow stream from ${flow.sourceFeatureId} to ${flow.targetFeatureId}, weight ${flow.weight}`}
                   onMouseEnter={() => setHoveredFlowId(flowGeom.flowId)}
                   onMouseLeave={() => setHoveredFlowId(null)}
                   onClick={() => {
                     setSelectedFlowId(flowGeom.flowId === selectedFlowId ? null : flowGeom.flowId);
                     setInternalSelectedNodeId(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedFlowId(flowGeom.flowId === selectedFlowId ? null : flowGeom.flowId);
+                      setInternalSelectedNodeId(null);
+                    }
                   }}
                   data-testid={`sankey-flow-${flowGeom.flowId}`}
                 />
@@ -265,9 +277,18 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
                   key={nodeGeom.nodeId}
                   transform={`translate(${nodeGeom.x}, ${nodeGeom.y})`}
                   style={{ cursor: 'pointer', opacity: isDimmed ? 0.25 : isMatch ? 1.0 : 0.3 }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Feature ${node.name}, ${node.componentCount} components`}
                   onMouseEnter={() => setHoveredNodeId(nodeGeom.nodeId)}
                   onMouseLeave={() => setHoveredNodeId(null)}
                   onClick={() => handleNodeClick(nodeGeom.nodeId, node.anchorNodeId)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleNodeClick(nodeGeom.nodeId, node.anchorNodeId);
+                    }
+                  }}
                   data-testid={`sankey-node-${nodeGeom.nodeId}`}
                 >
                   <rect

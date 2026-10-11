@@ -249,6 +249,11 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
         <div
           className={`tree-node-row ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''} ${isDimmed ? 'dimmed' : ''}`}
           data-testid={`tree-node-${node.id}`}
+          role="treeitem"
+          tabIndex={0}
+          aria-expanded={hasChildren ? isExpanded : undefined}
+          aria-selected={isSelected}
+          aria-label={`${node.displayName}, ${node.type}`}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -274,6 +279,18 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
               handleSelectNode(node.sourceNodeId);
             }
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setSelectedTreeNodeId(node.id);
+              if (node.type === 'component' && node.sourceNodeId) {
+                handleSelectNode(node.sourceNodeId);
+              }
+            } else if (hasChildren && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+              e.preventDefault();
+              toggleExpand(node.id);
+            }
+          }}
           onMouseEnter={() => setHoveredTreeNodeId(node.id)}
           onMouseLeave={() => setHoveredTreeNodeId(null)}
         >
@@ -283,6 +300,8 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
               type="button"
               className="tree-expand-btn"
               data-testid={`expand-btn-${node.id}`}
+              aria-label={isExpanded ? `Collapse ${node.displayName}` : `Expand ${node.displayName}`}
+              aria-expanded={isExpanded}
               style={{
                 background: 'none',
                 border: 'none',
@@ -545,6 +564,8 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
         <div
           className="tree-viewport-scroll"
           data-testid="feature-tree-viewport"
+          role="tree"
+          aria-label="Feature Hierarchy Tree"
           style={{
             flex: 1,
             overflow: 'auto',

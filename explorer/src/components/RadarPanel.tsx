@@ -219,6 +219,8 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
             height={height}
             viewBox={`0 0 ${width} ${height}`}
             data-testid="radar-svg"
+            role="img"
+            aria-label="Architecture Radar Diagram"
             style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
           >
             <defs>
@@ -292,9 +294,18 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
                 <g
                   key={`point-group-${p.dim.id}`}
                   style={{ cursor: 'pointer' }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${p.dim.label}: ${p.dim.rawValue} (${p.dim.unit})`}
                   onMouseEnter={() => setHoveredDimId(p.dim.id)}
                   onMouseLeave={() => setHoveredDimId(null)}
                   onClick={() => setSelectedDimId(prev => (prev === p.dim.id ? null : p.dim.id))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedDimId(prev => (prev === p.dim.id ? null : p.dim.id));
+                    }
+                  }}
                   data-testid={`radar-axis-${p.dim.id}`}
                 >
                   {/* Vertex Circle */}
@@ -438,6 +449,9 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
                   return (
                     <tr
                       key={dim.id}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`${dim.label}: ${dim.rawValue} (${dim.unit})`}
                       style={{
                         backgroundColor: isHighlighted ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
                         borderBottom: '1px solid var(--border-subtle, #1e293b)',
@@ -446,6 +460,12 @@ export const RadarPanel: React.FC<RadarPanelProps> = ({
                       onMouseEnter={() => setHoveredDimId(dim.id)}
                       onMouseLeave={() => setHoveredDimId(null)}
                       onClick={() => setSelectedDimId(prev => (prev === dim.id ? null : dim.id))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedDimId(prev => (prev === dim.id ? null : dim.id));
+                        }
+                      }}
                     >
                       <td style={{ padding: '6px 8px', fontWeight: isHighlighted ? 700 : 500, color: 'var(--text-primary, #f8fafc)' }}>
                         {dim.label}
