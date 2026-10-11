@@ -5,7 +5,7 @@
 The repository maintains canonical datasets representing real-world Salesforce enterprise applications:
 
 ### Primary Production Dataset: PBIM (`pub-infra-mang` / `pbim`)
-- **Location on disk:** `explorer/public/projects/pbim/explorer-data.json` and `analyze/projects/pbim/explorer-data.json`.
+- **Location on disk:** `explorer/public/pbim/explorer-data.json` and `analyze/projects/pbim/explorer-data.json`.
 - **Dataset Size:** 528 components / nodes, 2,063 dependencies / edges.
 - **Subsystem Breakdown:**
   - 30 LWC Presentation Controllers
@@ -33,7 +33,7 @@ The repository maintains canonical datasets representing real-world Salesforce e
       "id": "pbim",
       "name": "Public Infrastructure Management",
       "description": "Enterprise Salesforce infrastructure & asset management application",
-      "dataPath": "/projects/pbim/explorer-data.json"
+      "analysisPath": "/pbim/explorer-data.json"
     },
     {
       "id": "cst",
