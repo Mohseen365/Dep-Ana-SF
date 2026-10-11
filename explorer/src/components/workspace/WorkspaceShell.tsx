@@ -8,6 +8,7 @@ import { CommandPalette } from '../CommandPalette';
 import { RefactorHandoffModal } from '../RefactorHandoffModal';
 import { ActiveWorkspaceRenderer } from './ActiveWorkspaceRenderer';
 import { useWorkspaceRouter } from '../../context/WorkspaceRouterContext';
+import { getWorkspaceDefinition } from '../../registry/workspace-registry';
 import { WorkspaceViewMode } from '../../lib/projectState';
 import type { ArchitectureFinding } from '../../lib/intelligence';
 import type { RefactoringProposal } from '../../lib/refactoring-simulation';
