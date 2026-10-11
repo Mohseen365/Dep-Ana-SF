@@ -56,14 +56,22 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     });
   }, [transform.zoom, nodes.length, edges.length]);
 
-  // Track Cytoscape pan and zoom transform (viewport only)
+  const rafIdRef = React.useRef<number | null>(null);
+
+  // Track Cytoscape pan and zoom transform with requestAnimationFrame coalescing
   useEffect(() => {
     if (!cy) return;
 
     const updateTransform = () => {
-      const pan = typeof cy.pan === 'function' ? cy.pan() : { x: 0, y: 0 };
-      const zoom = typeof cy.zoom === 'function' ? cy.zoom() : 1;
-      setTransform({ pan, zoom });
+      if (rafIdRef.current !== null) return;
+
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = null;
+        if (!cy) return;
+        const pan = typeof cy.pan === 'function' ? cy.pan() : { x: 0, y: 0 };
+        const zoom = typeof cy.zoom === 'function' ? cy.zoom() : 1;
+        setTransform({ pan, zoom });
+      });
     };
 
     updateTransform();
@@ -73,6 +81,10 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     }
 
     return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
       if (typeof cy.off === 'function') {
         cy.off('pan zoom', updateTransform);
       }

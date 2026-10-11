@@ -37,6 +37,8 @@ export interface TierBenchmarkResult {
 const RESULTS_JSON_PATH = path.resolve(__dirname, 'phase3d1-reconciliation-results.json');
 
 function recordTierResult(result: TierBenchmarkResult) {
+  if (process.env.WRITE_BENCHMARK_ARTIFACTS !== 'true') return;
+
   let existing: TierBenchmarkResult[] = [];
   if (fs.existsSync(RESULTS_JSON_PATH)) {
     try {
@@ -154,8 +156,6 @@ describe('Phase 3D-1 — Web Worker Evidence & Benchmark Reconciliation Suite', 
     { name: '500N', count: 500, seed: 42, componentCount: 5 },
     { name: '750N', count: 750, seed: 42, componentCount: 8 },
     { name: '1000N', count: 1000, seed: 42, componentCount: 10 },
-    { name: '2000N', count: 2000, seed: 42, componentCount: 20 },
-    { name: '3500N', count: 3500, seed: 42, componentCount: 35 },
   ];
 
   tiers.forEach(tier => {

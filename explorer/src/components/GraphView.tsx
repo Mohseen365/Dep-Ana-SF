@@ -7,7 +7,7 @@ import 'cytoscape-navigator/cytoscape.js-navigator.css';
 import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
-import { getLayoutOptions, runLayoutWithMetadata, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
+import { getLayoutOptions, runLayoutWithMetadata, runLayoutWithMetadataAsync, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
@@ -202,6 +202,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Pending layoutstop listener reference
   const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
 
+  // Request generation ref for async worker layout cancellation
+  const layoutRequestRef = useRef<number>(0);
+
   // Track previous modes
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
   const prevArchitectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
@@ -228,6 +231,17 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
     return map;
   }, [architectureMode, discoveryResult]);
+
+  // Derive bounded accessible node list to prevent DOM inflation on large graphs
+  const accessibleNodes = useMemo(() => {
+    if (nodes.length <= 50) return nodes;
+    const top50 = nodes.slice(0, 50);
+    if (selectedNodeId && !top50.some(n => n.id === selectedNodeId)) {
+      const selected = nodes.find(n => n.id === selectedNodeId);
+      if (selected) return [...top50, selected];
+    }
+    return top50;
+  }, [nodes, selectedNodeId]);
 
   // Keep internal refs synchronized
   useEffect(() => {
@@ -308,20 +322,54 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         ? 'automatic-constellation'
         : 'automatic-hierarchical';
 
-    const layoutRes = runLayoutWithMetadata(cy, {
-      ...effectiveLayoutOptionsRef.current,
-      nodes: nodesRef.current,
-      edges: edgesRef.current,
-      nodeCount: nodesRef.current.length,
-      animate: false,
-      architectureMode,
-      enableFeatureLayout: architectureMode === 'hybrid',
-      fit: true,
-    });
-    setFeatureRegions(layoutRes.featureRegions);
-    setOrbitGuides(layoutRes.orbitGuides);
+    const requestId = ++layoutRequestRef.current;
 
-    captureAndPersistPositions(targetProvenance);
+    if (nodesRef.current.length >= 20) {
+      runLayoutWithMetadataAsync(cy, {
+        ...effectiveLayoutOptionsRef.current,
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
+        nodeCount: nodesRef.current.length,
+        animate: false,
+        architectureMode,
+        enableFeatureLayout: architectureMode === 'hybrid',
+        fit: true,
+      }).then((layoutRes) => {
+        if (requestId !== layoutRequestRef.current) return;
+        setFeatureRegions(layoutRes.featureRegions);
+        setOrbitGuides(layoutRes.orbitGuides);
+        captureAndPersistPositions(targetProvenance);
+      }).catch(() => {
+        if (requestId !== layoutRequestRef.current) return;
+        const layoutRes = runLayoutWithMetadata(cy, {
+          ...effectiveLayoutOptionsRef.current,
+          nodes: nodesRef.current,
+          edges: edgesRef.current,
+          nodeCount: nodesRef.current.length,
+          animate: false,
+          architectureMode,
+          enableFeatureLayout: architectureMode === 'hybrid',
+          fit: true,
+        });
+        setFeatureRegions(layoutRes.featureRegions);
+        setOrbitGuides(layoutRes.orbitGuides);
+        captureAndPersistPositions(targetProvenance);
+      });
+    } else {
+      const layoutRes = runLayoutWithMetadata(cy, {
+        ...effectiveLayoutOptionsRef.current,
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
+        nodeCount: nodesRef.current.length,
+        animate: false,
+        architectureMode,
+        enableFeatureLayout: architectureMode === 'hybrid',
+        fit: true,
+      });
+      setFeatureRegions(layoutRes.featureRegions);
+      setOrbitGuides(layoutRes.orbitGuides);
+      captureAndPersistPositions(targetProvenance);
+    }
   }, [architectureMode, effectiveLayoutOptions.focalLwcId, captureAndPersistPositions]);
 
   // Safe helper to unbind and destroy Cytoscape Navigator
@@ -759,7 +807,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     };
   }, []);
 
-  // Element Synchronization Effect
+  // Structural Element Synchronization Effect (runs ONLY when nodes, edges, or structural options change)
   useEffect(() => {
     nodesRef.current = nodes;
     edgesRef.current = edges;
@@ -955,7 +1003,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, effectiveLayoutOptions, nodePositions, captureAndPersistPositions, simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
+  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, effectiveLayoutOptions, captureAndPersistPositions, simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
+
+  // Position-Only Synchronization Effect (runs when nodePositions prop changes without structural graph change)
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    cy.batch(() => {
+      cy.nodes().forEach((cyNode) => {
+        const id = cyNode.id();
+        const pos = sessionPositionsRef.current.get(id) || (nodePositions ? nodePositions[id] : undefined);
+        if (pos) {
+          const curr = cyNode.position();
+          if (curr.x !== pos.x || curr.y !== pos.y) {
+            cyNode.position({ x: pos.x, y: pos.y });
+          }
+        }
+      });
+    });
+  }, [nodePositions]);
 
   // Handle selected node changes
   useEffect(() => {
@@ -1208,7 +1275,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
       {/* Accessible Node List */}
       <ul role="list" className="sr-only" aria-label="Component Nodes">
-        {nodes.map(n => (
+        {accessibleNodes.map(n => (
           <li
             key={n.id}
             role="listitem"
@@ -1226,6 +1293,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
             {n.displayName}
           </li>
         ))}
+        {nodes.length > 50 && (
+          <li role="listitem" aria-label={`Showing ${accessibleNodes.length} of ${nodes.length} total components`}>
+            Showing {accessibleNodes.length} of {nodes.length} components. Select components or use search to navigate.
+          </li>
+        )}
       </ul>
 
       {/* Hover Cards */}
