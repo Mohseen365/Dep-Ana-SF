@@ -300,8 +300,6 @@ export const FeatureTreePanel: React.FC<FeatureTreePanelProps> = ({
               type="button"
               className="tree-expand-btn"
               data-testid={`expand-btn-${node.id}`}
-              aria-label={isExpanded ? `Collapse ${node.displayName}` : `Expand ${node.displayName}`}
-              aria-expanded={isExpanded}
               style={{
                 background: 'none',
                 border: 'none',

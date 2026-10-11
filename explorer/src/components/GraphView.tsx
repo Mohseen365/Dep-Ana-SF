@@ -199,8 +199,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // In-session explicit drag positions
   const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
 
-  // Pending layoutstop listener reference
+  // Pending layoutstop listener reference and layout running state
   const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
+  const pendingModeSwitchCaptureRef = useRef<((evt?: any) => void) | null>(null);
+  const isLayoutRunningRef = useRef<boolean>(false);
 
   // Request generation ref for async worker layout cancellation
   const layoutRequestRef = useRef<number>(0);
@@ -293,7 +295,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     prevLayoutModeRef.current = layoutMode;
 
     if (oldMode === 'interactive' && layoutMode === 'static') {
-      captureAndPersistPositions();
+      if (isLayoutRunningRef.current && cyRef.current) {
+        if (pendingModeSwitchCaptureRef.current) {
+          cyRef.current.off('layoutstop', pendingModeSwitchCaptureRef.current);
+        }
+        const onStop = () => {
+          pendingModeSwitchCaptureRef.current = null;
+          captureAndPersistPositions();
+        };
+        pendingModeSwitchCaptureRef.current = onStop;
+        cyRef.current.one('layoutstop', onStop);
+      } else {
+        captureAndPersistPositions();
+      }
     }
   }, [layoutMode, captureAndPersistPositions]);
 
@@ -635,6 +649,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
                       : nodeCount < 50 ? 1.0
                       : nodeCount < 200 ? 0.7
                       : 0.4;
+    cy.on('layoutstart', () => {
+      isLayoutRunningRef.current = true;
+    });
+
+    cy.on('layoutstop', () => {
+      isLayoutRunningRef.current = false;
+    });
+
     cy.zoom(initialZoom);
     cy.center();
 
@@ -786,6 +808,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       if (pendingLayoutStopRef.current && cyRef.current) {
         try { cyRef.current.off('layoutstop', pendingLayoutStopRef.current); } catch (e) {}
         pendingLayoutStopRef.current = null;
+      }
+      if (pendingModeSwitchCaptureRef.current && cyRef.current) {
+        try { cyRef.current.off('layoutstop', pendingModeSwitchCaptureRef.current); } catch (e) {}
+        pendingModeSwitchCaptureRef.current = null;
       }
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       if (zoomTimeout) clearTimeout(zoomTimeout);
@@ -1275,30 +1301,30 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
       {/* Accessible Node List */}
       <ul role="list" className="sr-only" aria-label="Component Nodes">
-        {accessibleNodes.map(n => (
-          <li
-            key={n.id}
-            role="listitem"
-            tabIndex={0}
-            aria-selected={n.id === selectedNodeId}
-            aria-label={`${n.displayName}, ${n.type}, risk ${n.risk}`}
-            onClick={() => onSelectNode(n)}
-            onKeyDown={(evt) => {
-              if (evt.key === 'Enter' || evt.key === ' ') {
-                evt.preventDefault();
-                onSelectNode(n);
-              }
-            }}
-          >
-            {n.displayName}
+        {accessibleNodes.map((n) => (
+          <li key={n.id} role="listitem">
+            <button
+              type="button"
+              aria-current={n.id === selectedNodeId ? 'true' : undefined}
+              aria-label={`${n.displayName}, ${n.type}, risk ${n.risk}`}
+              onClick={() => onSelectNode(n)}
+            >
+              {n.displayName}
+            </button>
           </li>
         ))}
+
         {nodes.length > 50 && (
-          <li role="listitem" aria-label={`Showing ${accessibleNodes.length} of ${nodes.length} total components`}>
-            Showing {accessibleNodes.length} of {nodes.length} components. Select components or use search to navigate.
+          <li
+            role="listitem"
+            aria-label={`Showing ${accessibleNodes.length} of ${nodes.length} total components`}
+          >
+            Showing {accessibleNodes.length} of {nodes.length} components.
+            Select components or use search to navigate.
           </li>
         )}
       </ul>
+
 
       {/* Hover Cards */}
       {hoverCard && hoverCard.type === 'node' && (
