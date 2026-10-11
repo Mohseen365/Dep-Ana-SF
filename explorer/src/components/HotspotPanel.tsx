@@ -45,6 +45,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
     useState<boolean>(false);
   const [expandedHotspotId, setExpandedHotspotId] = useState<string | null>(null);
 
+  const instanceId = useId();
   const panelBodyId = useId();
   const collapseBtnRef = useRef<HTMLButtonElement>(null);
   const panelBodyRef = useRef<HTMLDivElement>(null);
@@ -298,7 +299,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
               ) : (
                 hotspots.topRanked.map((item, idx) => {
                   const isExpanded = expandedHotspotId === item.node.id;
-                  const itemMetricsId = `hotspot-metrics-${item.node.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+                  const itemMetricsId = `hotspot-metrics-${instanceId.replace(/:/g, '_')}-${item.node.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
                   return (
                     <div
                       key={item.node.id}

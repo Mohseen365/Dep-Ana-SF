@@ -275,4 +275,39 @@ describe('Phase 1G-B Disclosure and Expanded/Collapsed Accessibility', () => {
     expect(id2).toBeTruthy();
     expect(id1).not.toBe(id2);
   });
+
+  it('9. Multiple HotspotPanel and FindingsPanel instances generate collision-free region IDs using useId()', () => {
+    render(
+      <div>
+        <HotspotPanel nodes={mockNodes} cycles={[]} impactSummaries={{}} onSelectHotspot={() => {}} selectedNodeId={null} />
+        <HotspotPanel nodes={mockNodes} cycles={[]} impactSummaries={{}} onSelectHotspot={() => {}} selectedNodeId={null} />
+        <FindingsPanel findings={mockFindings} selectedFindingId={null} onSelectFinding={() => {}} onClearSelection={() => {}} />
+        <FindingsPanel findings={mockFindings} selectedFindingId={null} onSelectFinding={() => {}} onClearSelection={() => {}} />
+      </div>
+    );
+
+    // Expand items in both HotspotPanel instances
+    const hotspotBtns = screen.getAllByRole('button', { name: /expand metrics for testclass/i });
+    expect(hotspotBtns).toHaveLength(2);
+    fireEvent.click(hotspotBtns[0]);
+    fireEvent.click(hotspotBtns[1]);
+
+    const hId1 = hotspotBtns[0].getAttribute('aria-controls');
+    const hId2 = hotspotBtns[1].getAttribute('aria-controls');
+    expect(hId1).toBeTruthy();
+    expect(hId2).toBeTruthy();
+    expect(hId1).not.toBe(hId2);
+
+    // Expand items in both FindingsPanel instances
+    const findingsBtns = screen.getAllByRole('button', { name: /expand evidence for high fan-in hub class/i });
+    expect(findingsBtns).toHaveLength(2);
+    fireEvent.click(findingsBtns[0]);
+    fireEvent.click(findingsBtns[1]);
+
+    const fId1 = findingsBtns[0].getAttribute('aria-controls');
+    const fId2 = findingsBtns[1].getAttribute('aria-controls');
+    expect(fId1).toBeTruthy();
+    expect(fId2).toBeTruthy();
+    expect(fId1).not.toBe(fId2);
+  });
 });
