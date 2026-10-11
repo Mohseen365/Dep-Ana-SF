@@ -904,7 +904,7 @@ function isPathContained(parentDir, targetPath) {
   const absParent = path.resolve(parentDir);
   const absTarget = path.resolve(targetPath);
   const rel = path.relative(absParent, absTarget);
-  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+  return rel === "" || (!rel.startsWith(".." + path.sep) && rel !== ".." && !rel.startsWith("../") && !path.isAbsolute(rel));
 }
 
 function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projectMetadata) {

@@ -511,16 +511,16 @@ function runSpecificRegressionTests() {
   // TEST F: Path Containment Guard (DEFECT-C5)
   console.log("\nTest F: Exporter Path Containment Safety (isPathContained)");
   const baseDir = path.resolve(__dirname, "../analyze");
-  assert.strictEqual(isPathContained(baseDir, baseDir), true, "Exact root path must be contained");
-  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "explorer-data.json")), true, "Direct child file must be contained");
-  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "projects", "pbim", "explorer-data.json")), true, "Deep descendant must be contained");
-  assert.strictEqual(isPathContained(baseDir, path.resolve(__dirname, "../analyze-sibling/foo.json")), false, "Sibling prefix directory must NOT be contained");
-  assert.strictEqual(isPathContained(baseDir, path.resolve(baseDir, "../secret.json")), false, "Path traversal escaping base directory must NOT be contained");
-  assert.strictEqual(isPathContained(baseDir, "/etc/passwd"), false, "Unrelated absolute path must NOT be contained");
-  assert.strictEqual(isPathContained(null, baseDir), false, "Null parentDir must evaluate to false");
-  assert.strictEqual(isPathContained(baseDir, null), false, "Null targetPath must evaluate to false");
-  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "..foo", "bar")), false, "Child directory named ..foo must NOT be contained");
-  console.log("  ✓ Test F PASSED: isPathContained handles all 8 path containment scenarios deterministically");
+  assert.strictEqual(isPathContained(baseDir, baseDir), true, "Scenario 1: Base directory itself must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "explorer-data.json")), true, "Scenario 2: Direct child file must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "projects", "pbim", "explorer-data.json")), true, "Scenario 3: Deep descendant must be contained");
+  assert.strictEqual(isPathContained(baseDir, path.resolve(__dirname, "../analyze-sibling/foo.json")), false, "Scenario 4: Sibling path sharing base directory prefix must NOT be contained");
+  assert.strictEqual(isPathContained(baseDir, path.resolve(baseDir, "../secret.json")), false, "Scenario 5: Parent-directory traversal escaping base directory must NOT be contained");
+  assert.strictEqual(isPathContained(baseDir, "/etc/passwd"), false, "Scenario 6: Unrelated absolute path must NOT be contained");
+  assert.strictEqual(isPathContained(null, baseDir), false, "Scenario 7A: Null parentDir must evaluate to false");
+  assert.strictEqual(isPathContained(baseDir, null), false, "Scenario 7B: Null targetPath must evaluate to false");
+  assert.strictEqual(isPathContained(baseDir, path.join(baseDir, "..foo", "bar")), true, "Scenario 8: Legitimate child directory starting with .. (e.g. ..foo/bar) MUST be contained");
+  console.log("  ✓ Test F PASSED: isPathContained handles all 9 required path containment scenarios deterministically");
 }
 
 if (require.main === module) {
