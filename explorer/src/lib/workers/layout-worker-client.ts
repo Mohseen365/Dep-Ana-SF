@@ -271,6 +271,7 @@ export class LayoutWorkerClient {
             const width = sum.xMax - sum.xMin;
             const height = sum.yMax - sum.yMin;
             const featureRegionObj: FeatureRegion = {
+              id: sum.id,
               featureId: sum.id,
               domain: sum.id,
               domainId: sum.domainId,
@@ -287,7 +288,6 @@ export class LayoutWorkerClient {
               primaryLayer: sum.primaryLayer || 'application',
               orderIndex: sum.orderIndex ?? 0,
             };
-            (featureRegionObj as any).id = sum.id;
             featureRegions!.set(sum.id, featureRegionObj);
           });
         }
