@@ -268,10 +268,11 @@ export class LayoutWorkerClient {
         if (response.featureRegionsSummary && response.featureRegionsSummary.length > 0) {
           featureRegions = new Map<string, FeatureRegion>();
           response.featureRegionsSummary.forEach(sum => {
-            featureRegions!.set(sum.id, {
+            const width = sum.xMax - sum.xMin;
+            const height = sum.yMax - sum.yMin;
+            const featureRegionObj: FeatureRegion = {
               featureId: sum.id,
               domain: sum.id,
-              id: sum.id,
               domainId: sum.domainId,
               xMin: sum.xMin,
               xMax: sum.xMax,
@@ -279,11 +280,15 @@ export class LayoutWorkerClient {
               yMax: sum.yMax,
               xCenter: sum.xCenter,
               yCenter: sum.yCenter,
-              primaryNodeIds: [],
-              sharedNodeIds: [],
-              satelliteNodeIds: [],
-              componentIds: [],
-            } as any);
+              width,
+              height,
+              nodeCount: sum.nodeCount ?? 0,
+              primaryNodeCount: sum.primaryNodeCount ?? 0,
+              primaryLayer: sum.primaryLayer || 'application',
+              orderIndex: sum.orderIndex ?? 0,
+            };
+            (featureRegionObj as any).id = sum.id;
+            featureRegions!.set(sum.id, featureRegionObj);
           });
         }
 
