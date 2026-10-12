@@ -326,24 +326,35 @@ export function mergeWithDefaultState(
           : "hierarchical";
 
       // Reconstruct or initialize layoutPositions map
+      const hasExplicitLayoutPositions =
+        gLoaded.layoutPositions &&
+        typeof gLoaded.layoutPositions === "object" &&
+        Object.keys(gLoaded.layoutPositions).length > 0;
+
       const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> =
-        gLoaded.layoutPositions && typeof gLoaded.layoutPositions === "object"
+        hasExplicitLayoutPositions
           ? { ...gLoaded.layoutPositions }
           : {};
 
       // Reconstruct or initialize layoutProvenances map
+      const hasExplicitLayoutProvenances =
+        gLoaded.layoutProvenances &&
+        typeof gLoaded.layoutProvenances === "object" &&
+        Object.keys(gLoaded.layoutProvenances).length > 0;
+
       const loadedLayoutProvenances: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>> =
-        gLoaded.layoutProvenances && typeof gLoaded.layoutProvenances === "object"
+        hasExplicitLayoutProvenances
           ? { ...gLoaded.layoutProvenances }
           : {};
 
-      // Legacy fallback: If flat nodePositions exists, migrate it into activeArchMode if activeArchMode is not yet set in layoutPositions
+      // Legacy fallback: If flat nodePositions exists AND layoutPositions was not explicitly provided in loaded state,
+      // migrate nodePositions into activeArchMode.
       const flatNodePositions =
         typeof gLoaded.nodePositions === "object" && gLoaded.nodePositions !== null
           ? gLoaded.nodePositions
           : {};
 
-      if (!loadedLayoutPositions[activeArchMode] && Object.keys(flatNodePositions).length > 0) {
+      if (!hasExplicitLayoutPositions && !loadedLayoutPositions[activeArchMode] && Object.keys(flatNodePositions).length > 0) {
         loadedLayoutPositions[activeArchMode] = { ...flatNodePositions };
       }
 
