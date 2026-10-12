@@ -20,6 +20,7 @@ export interface LayoutWorkerClientOptions {
 
 export interface CalculateLayoutAsyncParams {
   projectId: string;
+  correlationToken?: string;
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   options?: ArchitectureLayoutOptions;
@@ -34,6 +35,7 @@ export interface CalculateLayoutAsyncParams {
 export interface CalculateLayoutAsyncResult extends ArchitectureLayoutResultWithMetadata {
   requestGeneration: number;
   projectId: string;
+  correlationToken?: string;
   isOffloaded: boolean;
   computeDurationMs: number;
   ipcDurationMs: number;
@@ -132,6 +134,7 @@ export class LayoutWorkerClient {
   ): Promise<CalculateLayoutAsyncResult> {
     const {
       projectId,
+      correlationToken,
       nodes,
       edges,
       options = {},
@@ -187,6 +190,7 @@ export class LayoutWorkerClient {
         projectedNodeIds: syncResult.projectedNodeIds,
         requestGeneration: requestGen,
         projectId,
+        correlationToken,
         isOffloaded: false,
         computeDurationMs: totalDurationMs,
         ipcDurationMs: 0,
@@ -253,6 +257,7 @@ export class LayoutWorkerClient {
             projectedNodeIds: syncResult.projectedNodeIds,
             requestGeneration: requestGen,
             projectId,
+            correlationToken: response.correlationToken ?? correlationToken,
             isOffloaded: false,
             computeDurationMs: totalDurationMs,
             ipcDurationMs: 0,
@@ -308,6 +313,7 @@ export class LayoutWorkerClient {
           projectedNodeIds: response.projectedNodeIds ? new Set(response.projectedNodeIds) : undefined,
           requestGeneration: requestGen,
           projectId,
+          correlationToken: response.correlationToken ?? correlationToken,
           isOffloaded: true,
           computeDurationMs: response.computeDurationMs,
           ipcDurationMs,
@@ -344,6 +350,7 @@ export class LayoutWorkerClient {
           projectedNodeIds: syncResult.projectedNodeIds,
           requestGeneration: requestGen,
           projectId,
+          correlationToken,
           isOffloaded: false,
           computeDurationMs: totalDurationMs,
           ipcDurationMs: 0,
@@ -358,6 +365,7 @@ export class LayoutWorkerClient {
         type: 'CALCULATE_LAYOUT',
         projectId,
         requestGeneration: requestGen,
+        correlationToken,
         nodes,
         edges,
         options: workerOptions,
@@ -393,6 +401,7 @@ export class LayoutWorkerClient {
           projectedNodeIds: syncResult.projectedNodeIds,
           requestGeneration: requestGen,
           projectId,
+          correlationToken,
           isOffloaded: false,
           computeDurationMs: totalDurationMs,
           ipcDurationMs: 0,

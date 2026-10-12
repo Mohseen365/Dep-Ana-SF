@@ -6,6 +6,7 @@ export interface LayoutWorkerRequest {
   type: 'CALCULATE_LAYOUT';
   projectId: string;
   requestGeneration: number;
+  correlationToken?: string;
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   options?: ArchitectureLayoutOptions;
@@ -30,6 +31,7 @@ export interface LayoutWorkerResponseSuccess {
   type: 'LAYOUT_SUCCESS';
   projectId: string;
   requestGeneration: number;
+  correlationToken?: string;
   positions: Record<string, { x: number; y: number }>;
   featureRegionsSummary?: FeatureRegionSummary[];
   orbitGuides?: OrbitGuideMetadata;
@@ -41,6 +43,7 @@ export interface LayoutWorkerResponseError {
   type: 'LAYOUT_ERROR';
   projectId: string;
   requestGeneration: number;
+  correlationToken?: string;
   error: string;
   computeDurationMs: number;
 }

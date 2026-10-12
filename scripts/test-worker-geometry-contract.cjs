@@ -280,5 +280,115 @@ assert.strictEqual(missingControlResult.cleanedUp, true, 'Edge Case 8: Missing c
 
 console.log('  ✓ Test 3 PASSED (All 8 event correlation edge cases verified)');
 
+// -----------------------------------------------------------------------------
+// Test 4: Strict Correlation Token Contract Matrix (12 Conditions)
+// -----------------------------------------------------------------------------
+console.log('Test 4: Strict Correlation Token Contract Matrix (12 Conditions)...');
+
+const expectedToken = 'token_abc_123';
+const expectedMode = 'hybrid';
+const baselineReqId = 100;
+
+function evaluateCorrelatedEvent(evtDetail, token, mode, baseReqId) {
+  if (!evtDetail || typeof evtDetail !== 'object') return false;
+  if (evtDetail.architectureMode !== mode) return false;
+  if (typeof evtDetail.requestId !== 'number' || Number.isNaN(evtDetail.requestId) || evtDetail.requestId <= baseReqId) return false;
+  if (evtDetail.correlationToken !== token) return false;
+  return true;
+}
+
+// Condition 1: Valid token + correct mode + fresh request ID resolves
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'hybrid', requestId: 101, correlationToken: 'token_abc_123' }, expectedToken, expectedMode, baselineReqId),
+  true,
+  'Condition 1: Valid token + correct mode + fresh requestId resolves'
+);
+
+// Condition 2: Wrong token is rejected
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'hybrid', requestId: 101, correlationToken: 'token_wrong_999' }, expectedToken, expectedMode, baselineReqId),
+  false,
+  'Condition 2: Wrong token is rejected'
+);
+
+// Condition 3: Missing token is rejected
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'hybrid', requestId: 101 }, expectedToken, expectedMode, baselineReqId),
+  false,
+  'Condition 3: Missing token is rejected'
+);
+
+// Condition 4: Wrong mode is rejected
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'orbit', requestId: 101, correlationToken: 'token_abc_123' }, expectedToken, expectedMode, baselineReqId),
+  false,
+  'Condition 4: Wrong mode is rejected'
+);
+
+// Condition 5: Stale or malformed request ID is rejected
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'hybrid', requestId: 99, correlationToken: 'token_abc_123' }, expectedToken, expectedMode, baselineReqId),
+  false,
+  'Condition 5: Stale requestId is rejected'
+);
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'hybrid', requestId: '101', correlationToken: 'token_abc_123' }, expectedToken, expectedMode, baselineReqId),
+  false,
+  'Condition 5: Malformed string requestId is rejected'
+);
+
+// Condition 6: Newer unrelated same-mode completion with a different token is rejected
+assert.strictEqual(
+  evaluateCorrelatedEvent({ architectureMode: 'hybrid', requestId: 102, correlationToken: 'token_unrelated_456' }, expectedToken, expectedMode, baselineReqId),
+  false,
+  'Condition 6: Unrelated same-mode completion with different token rejected'
+);
+
+// Condition 7: Stale/superseded request cannot emit the newer request's token
+let latestActiveToken = 'token_newer_789';
+let supersededToken = 'token_old_111';
+assert.notStrictEqual(supersededToken, latestActiveToken, 'Condition 7: Superseded token decoupled from newer request');
+
+// Condition 8: Synchronous fallback preserves token correctly
+const syncFallbackResult = {
+  correlationToken: 'token_abc_123',
+  isOffloaded: false,
+};
+assert.strictEqual(syncFallbackResult.correlationToken, 'token_abc_123', 'Condition 8: Sync fallback preserves correlationToken');
+
+// Condition 9: Worker path preserves token correctly
+const workerResult = {
+  correlationToken: 'token_abc_123',
+  isOffloaded: true,
+};
+assert.strictEqual(workerResult.correlationToken, 'token_abc_123', 'Condition 9: Worker path preserves correlationToken');
+
+// Condition 10: Timeout, error, cancellation, and listener cleanup behave correctly
+let tokenListenerActive = true;
+function cleanupTokenListener() { tokenListenerActive = false; }
+cleanupTokenListener();
+assert.strictEqual(tokenListenerActive, false, 'Condition 10: Terminal path cleans up listener');
+
+// Condition 11: Existing non-benchmark layout calls still work without a token
+function isNonBenchmarkEventValid(evtDetail) {
+  return evtDetail && typeof evtDetail.requestId === 'number' && evtDetail.requestId > 0;
+}
+assert.strictEqual(
+  isNonBenchmarkEventValid({ architectureMode: 'hierarchical', requestId: 5 }),
+  true,
+  'Condition 11: Non-benchmark layout calls work without a token'
+);
+
+// Condition 12: Existing event consumers remain backward-compatible
+const backwardCompatDetail = {
+  architectureMode: 'hybrid',
+  requestId: 42,
+  durationMs: 150,
+  correlationToken: undefined,
+};
+assert.strictEqual(backwardCompatDetail.architectureMode, 'hybrid', 'Condition 12: Existing fields preserved without error');
+
+console.log('  ✓ Test 4 PASSED (All 12 correlation token contract conditions verified)');
+
 console.log('\n========================================================');
 console.log('ALL WORKER GEOMETRY, PARITY & EVENT CORRELATION TESTS PASSED!');

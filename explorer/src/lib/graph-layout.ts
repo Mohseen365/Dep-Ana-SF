@@ -38,6 +38,7 @@ export interface GraphLayoutOptions extends ArchitectureLayoutOptions {
   fit?: boolean;
   useArchitectureLayout?: boolean;
   projectId?: string;
+  correlationToken?: string;
   [key: string]: any;
 }
 
@@ -321,6 +322,7 @@ export async function runLayoutWithMetadataAsync(
 
     const result = await globalWorkerClient.calculateLayoutAsync({
       projectId: options?.projectId || 'default',
+      correlationToken: options?.correlationToken,
       nodes: finalNodes,
       edges: finalEdges,
       options,
