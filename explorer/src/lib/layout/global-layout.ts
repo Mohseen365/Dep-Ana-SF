@@ -36,6 +36,7 @@ export interface DomainNode {
 export interface FeatureRegion extends DomainRegion {
   featureId: string;
   domainId?: string;
+  id?: string;
 }
 
 export interface GlobalFeatureLayoutOptions extends GlobalLayoutOptions {
