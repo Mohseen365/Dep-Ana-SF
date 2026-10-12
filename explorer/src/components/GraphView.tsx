@@ -337,6 +337,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         : 'automatic-hierarchical';
 
     const requestId = ++layoutRequestRef.current;
+    const startTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
+
+    const notifyComplete = (outcome: 'complete' | 'fallback-complete') => {
+      if (typeof window !== 'undefined') {
+        const endTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        const durationMs = Math.round(endTime - startTime);
+        const detail = {
+          architectureMode,
+          layoutMode: layoutModeRef.current,
+          requestId,
+          timestamp: Date.now(),
+          durationMs,
+          outcome,
+          nodeCount: nodesRef.current.length,
+          edgeCount: edgesRef.current.length,
+        };
+        (window as any).__LAST_LAYOUT_COMPLETED__ = detail;
+        window.dispatchEvent(new CustomEvent('app:layoutcomplete', { detail }));
+      }
+    };
 
     if (nodesRef.current.length >= 20) {
       runLayoutWithMetadataAsync(cy, {
@@ -353,6 +373,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions(targetProvenance);
+        notifyComplete('complete');
       }).catch(() => {
         if (requestId !== layoutRequestRef.current) return;
         const layoutRes = runLayoutWithMetadata(cy, {
@@ -368,6 +389,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions(targetProvenance);
+        notifyComplete('fallback-complete');
       });
     } else {
       const layoutRes = runLayoutWithMetadata(cy, {
@@ -383,6 +405,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions(targetProvenance);
+      notifyComplete('complete');
     }
   }, [architectureMode, effectiveLayoutOptions.focalLwcId, captureAndPersistPositions]);
 

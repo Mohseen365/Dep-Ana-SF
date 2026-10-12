@@ -46,26 +46,64 @@ async function runPerformanceMatrix() {
     const cycleCount = proj.id === 'default' ? 2 : 4; // default dataset has 0 LWCs so 2 modes (Hierarchical, Hybrid)
 
     for (let modeIdx = 0; modeIdx < cycleCount; modeIdx++) {
-      const t0 = Date.now();
-
+      // 1. Ensure we are on the 'graph' view mode so the graph canvas and controls are rendered
       await page.evaluate(() => {
-        const btn = document.querySelector('[data-testid="architecture-mode-toggle"]');
-        if (btn) btn.click();
+        const graphTab = document.querySelector('[data-testid="nav-graph"]');
+        if (graphTab) graphTab.click();
+      });
+      await page.waitForSelector('[data-testid="architecture-mode-toggle"]', { timeout: 10000 }).catch(() => {});
+
+      // 2. Install observer before triggering mode toggle click
+      const completionPromise = page.evaluate(() => {
+        return new Promise((resolve) => {
+          const handler = (evt) => {
+            window.removeEventListener('app:layoutcomplete', handler);
+            resolve(evt.detail);
+          };
+          window.addEventListener('app:layoutcomplete', handler);
+
+          const btn = document.querySelector('[data-testid="architecture-mode-toggle"]');
+          if (btn) {
+            btn.click();
+          } else {
+            window.removeEventListener('app:layoutcomplete', handler);
+            resolve({ error: 'toggle-button-not-found' });
+          }
+        });
       });
 
-      await page.waitForTimeout(2000);
+      // Await the matching completion event or timeout (60s limit for large layouts)
+      const completionResult = await Promise.race([
+        completionPromise,
+        new Promise((resolve) => setTimeout(() => resolve({ error: 'timeout-exceeded-60s' }), 60000)),
+      ]);
+
+      // Small delay between mode steps to allow DOM/state settlement
+      await page.waitForTimeout(100);
 
       const currentModeText = await page.evaluate(() => {
         return document.querySelector('[data-testid="graph-mode-indicator"]')?.textContent?.trim();
       });
 
-      const elapsed = Date.now() - t0;
-      console.log(`  Cycle Step ${modeIdx + 1}: ${currentModeText} (elapsed ${elapsed}ms)`);
+      if (completionResult.error) {
+        console.error(`  Cycle Step ${modeIdx + 1} FAILED: ${completionResult.error}`);
+        modeTimings[`step_${modeIdx + 1}`] = {
+          modeText: currentModeText,
+          error: completionResult.error,
+        };
+      } else {
+        console.log(`  Cycle Step ${modeIdx + 1}: ${completionResult.architectureMode} (duration ${completionResult.durationMs}ms, outcome: ${completionResult.outcome}, nodes: ${completionResult.nodeCount}, edges: ${completionResult.edgeCount})`);
 
-      modeTimings[`step_${modeIdx + 1}`] = {
-        modeText: currentModeText,
-        elapsedMs: elapsed,
-      };
+        modeTimings[`step_${modeIdx + 1}`] = {
+          modeText: currentModeText,
+          architectureMode: completionResult.architectureMode,
+          durationMs: completionResult.durationMs,
+          outcome: completionResult.outcome,
+          nodeCount: completionResult.nodeCount,
+          edgeCount: completionResult.edgeCount,
+          requestId: completionResult.requestId,
+        };
+      }
     }
 
     resultsMatrix[proj.id] = {
