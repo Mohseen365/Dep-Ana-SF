@@ -374,4 +374,184 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
     expect(finalState.graphLayout.layoutPositions?.hierarchical).toEqual(userHierarchical);
     expect(finalState.graphLayout.layoutProvenances?.hierarchical).toBe('user-authored');
   });
+
+  describe('Adversarial Hydration Matrix A–H', () => {
+    it('Case A — Legacy-only: nodePositions exists; layoutPositions is absent', () => {
+      const rawLegacyState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'hierarchical',
+          nodePositions: { 'Node:a1': { x: 101, y: 102 } },
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawLegacyState as any);
+      expect(merged.graphLayout.architectureMode).toBe('hierarchical');
+      expect(merged.graphLayout.nodePositions).toEqual({ 'Node:a1': { x: 101, y: 102 } });
+      expect(merged.graphLayout.layoutPositions?.hierarchical).toEqual({ 'Node:a1': { x: 101, y: 102 } });
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.hybrid).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.constellation).toEqual({});
+    });
+
+    it('Case B — Scoped target empty: layoutPositions: { orbit: {} } plus stale flat positions; active mode orbit', () => {
+      const rawScopedEmptyState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'orbit',
+          nodePositions: { 'Node:stale-flat': { x: 999, y: 999 } },
+          layoutPositions: {
+            orbit: {},
+          },
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawScopedEmptyState as any);
+      expect(merged.graphLayout.architectureMode).toBe('orbit');
+      expect(merged.graphLayout.nodePositions).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.hierarchical).toEqual({});
+      expect(merged.graphLayout.nodePositions['Node:stale-flat']).toBeUndefined();
+    });
+
+    it('Case C — Explicit top-level empty map: layoutPositions: {} plus stale flat positions', () => {
+      const rawTopEmptyState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'hierarchical',
+          nodePositions: { 'Node:legacy-flat': { x: 888, y: 888 } },
+          layoutPositions: {},
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawTopEmptyState as any);
+      expect(merged.graphLayout.architectureMode).toBe('hierarchical');
+      // Under explicit top-level empty map, hasExplicitLayoutPositions is false (Object.keys({}).length === 0).
+      // The compatibility contract treats top-level {} identically to missing/unpopulated layoutPositions, migrating flat positions into active mode.
+      expect(merged.graphLayout.nodePositions).toEqual({ 'Node:legacy-flat': { x: 888, y: 888 } });
+      expect(merged.graphLayout.layoutPositions?.hierarchical).toEqual({ 'Node:legacy-flat': { x: 888, y: 888 } });
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({});
+    });
+
+    it('Case D — Other mode only: layoutPositions: { hierarchical: {...} } plus stale flat positions; active mode orbit', () => {
+      const rawOtherModeState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'orbit',
+          nodePositions: { 'Node:stale-flat': { x: 777, y: 777 } },
+          layoutPositions: {
+            hierarchical: { 'Node:h1': { x: 10, y: 20 } },
+          },
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawOtherModeState as any);
+      expect(merged.graphLayout.architectureMode).toBe('orbit');
+      // Presence of hierarchical entry makes hasExplicitLayoutPositions true, suppressing migration of flat nodePositions into Orbit.
+      expect(merged.graphLayout.nodePositions).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.hierarchical).toEqual({ 'Node:h1': { x: 10, y: 20 } });
+      expect(merged.graphLayout.nodePositions['Node:stale-flat']).toBeUndefined();
+    });
+
+    it('Case E — Scoped target populated: layoutPositions: { orbit: {...} } plus conflicting flat positions', () => {
+      const rawPopulatedState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'orbit',
+          nodePositions: { 'Node:conflict': { x: 999, y: 999 } },
+          layoutPositions: {
+            orbit: { 'Node:orbit-1': { x: 42, y: 84 } },
+          },
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawPopulatedState as any);
+      expect(merged.graphLayout.architectureMode).toBe('orbit');
+      expect(merged.graphLayout.nodePositions).toEqual({ 'Node:orbit-1': { x: 42, y: 84 } });
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({ 'Node:orbit-1': { x: 42, y: 84 } });
+      expect(merged.graphLayout.nodePositions['Node:conflict']).toBeUndefined();
+    });
+
+    it('Case F — Partial modern map: layoutPositions: { hierarchical: {...}, orbit: {} } plus flat positions', () => {
+      const rawPartialState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'orbit',
+          nodePositions: { 'Node:stale-flat': { x: 555, y: 555 } },
+          layoutPositions: {
+            hierarchical: { 'Node:hier-1': { x: 200, y: 300 } },
+            orbit: {},
+          },
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawPartialState as any);
+      expect(merged.graphLayout.architectureMode).toBe('orbit');
+      expect(merged.graphLayout.nodePositions).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({});
+      expect(merged.graphLayout.layoutPositions?.hierarchical).toEqual({ 'Node:hier-1': { x: 200, y: 300 } });
+      expect(merged.graphLayout.nodePositions['Node:stale-flat']).toBeUndefined();
+    });
+
+    it('Case G — Null or malformed field: layoutPositions is null or non-object, plus flat positions', () => {
+      const rawMalformedNullState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'hierarchical',
+          nodePositions: { 'Node:safe': { x: 444, y: 444 } },
+          layoutPositions: null,
+        },
+      };
+
+      const mergedNull = mergeWithDefaultState(PROJECT_A, rawMalformedNullState as any);
+      expect(mergedNull.graphLayout.architectureMode).toBe('hierarchical');
+      expect(mergedNull.graphLayout.nodePositions).toEqual({ 'Node:safe': { x: 444, y: 444 } });
+      expect(mergedNull.graphLayout.layoutPositions?.hierarchical).toEqual({ 'Node:safe': { x: 444, y: 444 } });
+
+      const rawMalformedStringState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'hierarchical',
+          nodePositions: { 'Node:safe2': { x: 333, y: 333 } },
+          layoutPositions: "invalid-string",
+        },
+      };
+
+      const mergedString = mergeWithDefaultState(PROJECT_A, rawMalformedStringState as any);
+      expect(mergedString.graphLayout.architectureMode).toBe('hierarchical');
+      expect(mergedString.graphLayout.nodePositions).toEqual({ 'Node:safe2': { x: 333, y: 333 } });
+      expect(mergedString.graphLayout.layoutPositions?.hierarchical).toEqual({ 'Node:safe2': { x: 333, y: 333 } });
+    });
+
+    it('Case H — Provenance mismatch: scoped positions exist but layoutProvenances is absent or partial', () => {
+      const rawProvenanceMismatchState = {
+        projectId: PROJECT_A,
+        graphLayout: {
+          mode: 'interactive',
+          architectureMode: 'orbit',
+          nodePositions: { 'Node:o1': { x: 10, y: 20 } },
+          layoutPositions: {
+            orbit: { 'Node:o1': { x: 10, y: 20 } },
+          },
+          layoutProvenances: {},
+        },
+      };
+
+      const merged = mergeWithDefaultState(PROJECT_A, rawProvenanceMismatchState as any);
+      expect(merged.graphLayout.architectureMode).toBe('orbit');
+      expect(merged.graphLayout.nodePositions).toEqual({ 'Node:o1': { x: 10, y: 20 } });
+      expect(merged.graphLayout.layoutPositions?.orbit).toEqual({ 'Node:o1': { x: 10, y: 20 } });
+      expect(merged.graphLayout.layoutProvenances?.orbit).toBe('automatic-orbit');
+      expect(merged.graphLayout.layoutProvenances?.hierarchical).toBe('automatic-hierarchical');
+    });
+  });
 });
