@@ -115,9 +115,24 @@ async function runPBIMPartialCycles() {
         return new Promise((resolve) => {
           const tStart = performance.now();
           let ackTime = null;
+          const initialReqId = (window.__LAST_LAYOUT_COMPLETED__ && window.__LAST_LAYOUT_COMPLETED__.requestId) || 0;
+          let timer = null;
+
+          const cleanup = () => {
+            window.removeEventListener('app:layoutcomplete', handler);
+            if (timer) clearTimeout(timer);
+          };
 
           const handler = (evt) => {
-            window.removeEventListener('app:layoutcomplete', handler);
+            const detail = evt.detail || {};
+            if (detail.architectureMode !== targetMode) {
+              return;
+            }
+            if (typeof detail.requestId === 'number' && detail.requestId <= initialReqId) {
+              return;
+            }
+
+            cleanup();
             const tEnd = performance.now();
             const cy = window.__CY__;
             const modeIndicatorText = document.querySelector('[data-testid="graph-mode-indicator"]')?.textContent?.trim();
@@ -125,7 +140,7 @@ async function runPBIMPartialCycles() {
             resolve({
               e2eMs: Math.round(tEnd - tStart),
               ackMs: ackTime ? Math.round(ackTime - tStart) : null,
-              detail: evt.detail,
+              detail,
               modeIndicatorText,
               visibleNodes: cy ? cy.nodes(':visible').length : 0,
               visibleEdges: cy ? cy.edges(':visible').length : 0,
@@ -134,12 +149,17 @@ async function runPBIMPartialCycles() {
 
           window.addEventListener('app:layoutcomplete', handler);
 
+          timer = setTimeout(() => {
+            cleanup();
+            resolve({ error: `timeout-waiting-for-${targetMode}` });
+          }, 180000);
+
           const btn = document.querySelector('[data-testid="architecture-mode-toggle"]');
           if (btn) {
             btn.click();
             ackTime = performance.now();
           } else {
-            window.removeEventListener('app:layoutcomplete', handler);
+            cleanup();
             resolve({ error: 'toggle-button-not-found' });
           }
         });

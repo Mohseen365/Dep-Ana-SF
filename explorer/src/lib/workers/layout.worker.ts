@@ -34,6 +34,10 @@ ctx.addEventListener('message', (event: MessageEvent<LayoutWorkerRequest>) => {
           yMax: region.yMax,
           xCenter: region.xCenter,
           yCenter: region.yCenter,
+          primaryLayer: region.primaryLayer,
+          orderIndex: region.orderIndex,
+          nodeCount: region.nodeCount,
+          primaryNodeCount: region.primaryNodeCount,
         });
       });
     }

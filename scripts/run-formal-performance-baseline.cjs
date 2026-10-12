@@ -29,7 +29,8 @@ async function runFormalBenchmark() {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
 
-  const outputPath = path.join(reportsDir, 'formal_multi_run_benchmark_results.json');
+  const timestampStr = new Date().toISOString().replace(/[:.]/g, '-');
+  const outputPath = path.join(reportsDir, `formal_multi_run_benchmark_results_reverification_${timestampStr}.json`);
   let fullResults = {
     metadata: {
       timestamp: new Date().toISOString(),
@@ -44,11 +45,6 @@ async function runFormalBenchmark() {
     consoleErrors: [],
   };
 
-  if (fs.existsSync(outputPath)) {
-    try {
-      fullResults = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-    } catch (_) {}
-  }
 
   const browser = await chromium.launch({ headless: true });
   fullResults.metadata.browserVersion = browser.version();
@@ -116,6 +112,9 @@ async function runFormalBenchmark() {
 
     const totalRuns = 1 + 5; // 1 warm-up + 5 measured
 
+    const sessionId = `session_${proj.id}_${Date.now()}`;
+    let navigationCount = 1;
+
     for (let transIdx = 0; transIdx < modeTransitions.length; transIdx++) {
       const trans = modeTransitions[transIdx];
       console.log(`\n  --- Transition ${transIdx + 1}: ${trans.name} (Target: ${trans.targetMode}) ---`);
@@ -136,9 +135,24 @@ async function runFormalBenchmark() {
           return new Promise((resolve) => {
             const tStart = performance.now();
             let ackTime = null;
+            const initialReqId = (window.__LAST_LAYOUT_COMPLETED__ && window.__LAST_LAYOUT_COMPLETED__.requestId) || 0;
+            let timer = null;
+
+            const cleanup = () => {
+              window.removeEventListener('app:layoutcomplete', handler);
+              if (timer) clearTimeout(timer);
+            };
 
             const handler = (evt) => {
-              window.removeEventListener('app:layoutcomplete', handler);
+              const detail = evt.detail || {};
+              if (detail.architectureMode !== targetMode) {
+                return;
+              }
+              if (typeof detail.requestId === 'number' && detail.requestId <= initialReqId) {
+                return;
+              }
+
+              cleanup();
               const tEnd = performance.now();
               const cy = window.__CY__;
               const modeIndicatorText = document.querySelector('[data-testid="graph-mode-indicator"]')?.textContent?.trim();
@@ -146,7 +160,7 @@ async function runFormalBenchmark() {
               resolve({
                 e2eMs: Math.round(tEnd - tStart),
                 ackMs: ackTime ? Math.round(ackTime - tStart) : null,
-                detail: evt.detail,
+                detail,
                 modeIndicatorText,
                 visibleNodes: cy ? cy.nodes(':visible').length : 0,
                 visibleEdges: cy ? cy.edges(':visible').length : 0,
@@ -155,12 +169,17 @@ async function runFormalBenchmark() {
 
             window.addEventListener('app:layoutcomplete', handler);
 
+            timer = setTimeout(() => {
+              cleanup();
+              resolve({ error: `timeout-waiting-for-${targetMode}` });
+            }, 180000);
+
             const btn = document.querySelector('[data-testid="architecture-mode-toggle"]');
             if (btn) {
               btn.click();
               ackTime = performance.now();
             } else {
-              window.removeEventListener('app:layoutcomplete', handler);
+              cleanup();
               resolve({ error: 'toggle-button-not-found' });
             }
           });
@@ -174,6 +193,8 @@ async function runFormalBenchmark() {
         const sample = {
           runLabel,
           isWarmup,
+          datasetId: proj.id,
+          targetMode: trans.targetMode,
           durationMs: runResult.detail.durationMs,
           e2eMs: runResult.e2eMs,
           ackMs: runResult.ackMs,
@@ -185,6 +206,10 @@ async function runFormalBenchmark() {
           visibleNodes: runResult.visibleNodes,
           visibleEdges: runResult.visibleEdges,
           modeIndicatorText: runResult.modeIndicatorText,
+          sessionId,
+          navigationCount,
+          timestamp: new Date().toISOString(),
+          classification: isWarmup ? 'warmup' : 'steady_state_measured',
         };
 
         if (isWarmup) {
@@ -201,14 +226,29 @@ async function runFormalBenchmark() {
           for (let step = 0; step < 3; step++) {
             await page.evaluate(() => {
               return new Promise((resolve) => {
-                const handler = (evt) => {
+                const initialReqId = (window.__LAST_LAYOUT_COMPLETED__ && window.__LAST_LAYOUT_COMPLETED__.requestId) || 0;
+                let timer = null;
+                const cleanup = () => {
                   window.removeEventListener('app:layoutcomplete', handler);
-                  resolve(evt.detail);
+                  if (timer) clearTimeout(timer);
+                };
+                const handler = (evt) => {
+                  const detail = evt.detail || {};
+                  if (typeof detail.requestId === 'number' && detail.requestId <= initialReqId) return;
+                  cleanup();
+                  resolve(detail);
                 };
                 window.addEventListener('app:layoutcomplete', handler);
+                timer = setTimeout(() => {
+                  cleanup();
+                  resolve(null);
+                }, 30000);
                 const btn = document.querySelector('[data-testid="architecture-mode-toggle"]');
                 if (btn) btn.click();
-                else resolve(null);
+                else {
+                  cleanup();
+                  resolve(null);
+                }
               });
             });
             await page.waitForTimeout(50);
