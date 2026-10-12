@@ -1,0 +1,1409 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-12T05:47:22.738Z",
+    "viewport": "1440x900",
+    "headless": true,
+    "modeOrder": "Fixed Sequence (Hierarchical -> Hybrid -> Orbit -> Constellation -> Hierarchical)",
+    "warmupRunsPerTransition": 1,
+    "measuredRunsPerTransition": 5,
+    "browserVersion": "153.0.8010.12"
+  },
+  "projects": {
+    "default": {
+      "id": "default",
+      "name": "Default (Small)",
+      "initialLoadMs": 966,
+      "sourceMetrics": {
+        "sourceNodes": 4,
+        "sourceEdges": 3,
+        "lwcCount": 1,
+        "visibleNodes": 4,
+        "visibleEdges": 3
+      },
+      "transitions": {
+        "hybrid": {
+          "transitionName": "Hierarchical -> Hybrid",
+          "targetMode": "hybrid",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 6,
+              "e2eMs": 15,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 1,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 3,
+              "e2eMs": 8,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 5,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 3,
+              "e2eMs": 8,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 9,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 4,
+              "e2eMs": 8,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 13,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 3,
+              "e2eMs": 7,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 17,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 3,
+              "e2eMs": 7,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 21,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            }
+          ],
+          "layoutStats": {
+            "min": 3,
+            "max": 4,
+            "median": 3,
+            "mean": 3.2,
+            "range": 1
+          },
+          "e2eStats": {
+            "min": 7,
+            "max": 8,
+            "median": 8,
+            "mean": 7.6,
+            "range": 1
+          }
+        },
+        "orbit": {
+          "transitionName": "Hybrid -> Orbit",
+          "targetMode": "orbit",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 2,
+              "e2eMs": 6,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 22,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 6,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 26,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 6,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 30,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 5,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 34,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 6,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 38,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 6,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 42,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            }
+          ],
+          "layoutStats": {
+            "min": 1,
+            "max": 1,
+            "median": 1,
+            "mean": 1,
+            "range": 0
+          },
+          "e2eStats": {
+            "min": 5,
+            "max": 6,
+            "median": 6,
+            "mean": 5.8,
+            "range": 1
+          }
+        },
+        "constellation": {
+          "transitionName": "Orbit -> Constellation",
+          "targetMode": "constellation",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 1,
+              "e2eMs": 7,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 43,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 5,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 47,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 5,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 51,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 5,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 55,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 7,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 59,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 1,
+              "e2eMs": 7,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 63,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            }
+          ],
+          "layoutStats": {
+            "min": 1,
+            "max": 1,
+            "median": 1,
+            "mean": 1,
+            "range": 0
+          },
+          "e2eStats": {
+            "min": 5,
+            "max": 7,
+            "median": 5,
+            "mean": 5.8,
+            "range": 2
+          }
+        },
+        "hierarchical": {
+          "transitionName": "Constellation -> Hierarchical",
+          "targetMode": "hierarchical",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 2,
+              "e2eMs": 7,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 64,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 2,
+              "e2eMs": 6,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 68,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 2,
+              "e2eMs": 7,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 72,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 2,
+              "e2eMs": 7,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 76,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 4,
+              "e2eMs": 8,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 80,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 2,
+              "e2eMs": 6,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 84,
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            }
+          ],
+          "layoutStats": {
+            "min": 2,
+            "max": 4,
+            "median": 2,
+            "mean": 2.4,
+            "range": 2
+          },
+          "e2eStats": {
+            "min": 6,
+            "max": 8,
+            "median": 7,
+            "mean": 6.8,
+            "range": 2
+          }
+        }
+      }
+    },
+    "cloud-spend-tracker": {
+      "id": "cloud-spend-tracker",
+      "name": "Cloud Spend Tracker (Medium)",
+      "initialLoadMs": 14613,
+      "sourceMetrics": {
+        "sourceNodes": 240,
+        "sourceEdges": 1024,
+        "lwcCount": 26,
+        "visibleNodes": 240,
+        "visibleEdges": 1024
+      },
+      "transitions": {
+        "hybrid": {
+          "transitionName": "Hierarchical -> Hybrid",
+          "targetMode": "hybrid",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 7677,
+              "e2eMs": 9260,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 1,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 1890,
+              "e2eMs": 3426,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 5,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 1868,
+              "e2eMs": 3404,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 9,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 2127,
+              "e2eMs": 3953,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 13,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 1837,
+              "e2eMs": 3382,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 17,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 1879,
+              "e2eMs": 3551,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 21,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            }
+          ],
+          "layoutStats": {
+            "min": 1837,
+            "max": 2127,
+            "median": 1879,
+            "mean": 1920.2,
+            "range": 290
+          },
+          "e2eStats": {
+            "min": 3382,
+            "max": 3953,
+            "median": 3426,
+            "mean": 3543.2,
+            "range": 571
+          }
+        },
+        "orbit": {
+          "transitionName": "Hybrid -> Orbit",
+          "targetMode": "orbit",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 421,
+              "e2eMs": 2101,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 22,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 129,
+              "visibleEdges": 302,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 420,
+              "e2eMs": 2120,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 26,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 129,
+              "visibleEdges": 302,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 423,
+              "e2eMs": 2139,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 30,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 129,
+              "visibleEdges": 302,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 393,
+              "e2eMs": 2029,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 34,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 129,
+              "visibleEdges": 302,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 403,
+              "e2eMs": 2034,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 38,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 129,
+              "visibleEdges": 302,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 423,
+              "e2eMs": 2061,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 42,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 129,
+              "visibleEdges": 302,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            }
+          ],
+          "layoutStats": {
+            "min": 393,
+            "max": 423,
+            "median": 420,
+            "mean": 412.4,
+            "range": 30
+          },
+          "e2eStats": {
+            "min": 2029,
+            "max": 2139,
+            "median": 2061,
+            "mean": 2076.6,
+            "range": 110
+          }
+        },
+        "constellation": {
+          "transitionName": "Orbit -> Constellation",
+          "targetMode": "constellation",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 357,
+              "e2eMs": 623,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 43,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 344,
+              "e2eMs": 602,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 47,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 340,
+              "e2eMs": 601,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 51,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 345,
+              "e2eMs": 612,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 55,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 347,
+              "e2eMs": 610,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 59,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 371,
+              "e2eMs": 638,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 63,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            }
+          ],
+          "layoutStats": {
+            "min": 340,
+            "max": 371,
+            "median": 345,
+            "mean": 349.4,
+            "range": 31
+          },
+          "e2eStats": {
+            "min": 601,
+            "max": 638,
+            "median": 610,
+            "mean": 612.6,
+            "range": 37
+          }
+        },
+        "hierarchical": {
+          "transitionName": "Constellation -> Hierarchical",
+          "targetMode": "hierarchical",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 1737,
+              "e2eMs": 1971,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 64,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 1741,
+              "e2eMs": 1968,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 68,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 1755,
+              "e2eMs": 1990,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 72,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 1790,
+              "e2eMs": 2017,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 76,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 1726,
+              "e2eMs": 1976,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 80,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 1770,
+              "e2eMs": 2022,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 84,
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            }
+          ],
+          "layoutStats": {
+            "min": 1726,
+            "max": 1790,
+            "median": 1755,
+            "mean": 1756.4,
+            "range": 64
+          },
+          "e2eStats": {
+            "min": 1968,
+            "max": 2022,
+            "median": 1990,
+            "mean": 1994.6,
+            "range": 54
+          }
+        }
+      }
+    },
+    "pbim": {
+      "id": "pbim",
+      "name": "PBIM (Large)",
+      "initialLoadMs": 109654,
+      "sourceMetrics": {
+        "sourceNodes": 528,
+        "sourceEdges": 2063,
+        "lwcCount": 30,
+        "visibleNodes": 528,
+        "visibleEdges": 2063
+      },
+      "transitions": {
+        "hybrid": {
+          "transitionName": "Hierarchical -> Hybrid",
+          "targetMode": "hybrid",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 47318,
+              "e2eMs": 57862,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 1,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 12131,
+              "e2eMs": 23167,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 5,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 16102,
+              "e2eMs": 28082,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 9,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 48650,
+              "e2eMs": 59659,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 1,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 12242,
+              "e2eMs": 23296,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 5,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 12026,
+              "e2eMs": 22479,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "requestId": 9,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hybrid)"
+            }
+          ],
+          "layoutStats": {
+            "min": 12026,
+            "max": 48650,
+            "median": 12242,
+            "mean": 20230.2,
+            "range": 36624
+          },
+          "e2eStats": {
+            "min": 22479,
+            "max": 59659,
+            "median": 23296,
+            "mean": 31336.6,
+            "range": 37180
+          }
+        },
+        "orbit": {
+          "transitionName": "Hybrid -> Orbit",
+          "targetMode": "orbit",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 1047,
+              "e2eMs": 12476,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 2,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 131,
+              "visibleEdges": 281,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 1148,
+              "e2eMs": 12936,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 6,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 131,
+              "visibleEdges": 281,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 1154,
+              "e2eMs": 12356,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 10,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 131,
+              "visibleEdges": 281,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 1048,
+              "e2eMs": 12485,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 2,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 131,
+              "visibleEdges": 281,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 1105,
+              "e2eMs": 12254,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 6,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 131,
+              "visibleEdges": 281,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 1211,
+              "e2eMs": 13061,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "requestId": 10,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 131,
+              "visibleEdges": 281,
+              "modeIndicatorText": "🔀 Interactive Mode (Orbit)"
+            }
+          ],
+          "layoutStats": {
+            "min": 1048,
+            "max": 1211,
+            "median": 1148,
+            "mean": 1133.2,
+            "range": 163
+          },
+          "e2eStats": {
+            "min": 12254,
+            "max": 13061,
+            "median": 12485,
+            "mean": 12618.4,
+            "range": 807
+          }
+        },
+        "constellation": {
+          "transitionName": "Orbit -> Constellation",
+          "targetMode": "constellation",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 928,
+              "e2eMs": 970,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 3,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 42,
+              "visibleEdges": 71,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 878,
+              "e2eMs": 918,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 7,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 42,
+              "visibleEdges": 71,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 914,
+              "e2eMs": 961,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 11,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 42,
+              "visibleEdges": 71,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 876,
+              "e2eMs": 919,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 3,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 42,
+              "visibleEdges": 71,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 888,
+              "e2eMs": 926,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 7,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 42,
+              "visibleEdges": 71,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 949,
+              "e2eMs": 988,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "requestId": 11,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 42,
+              "visibleEdges": 71,
+              "modeIndicatorText": "🔀 Interactive Mode (Constellation)"
+            }
+          ],
+          "layoutStats": {
+            "min": 876,
+            "max": 949,
+            "median": 888,
+            "mean": 901,
+            "range": 73
+          },
+          "e2eStats": {
+            "min": 918,
+            "max": 988,
+            "median": 926,
+            "mean": 942.4,
+            "range": 70
+          }
+        },
+        "hierarchical": {
+          "transitionName": "Constellation -> Hierarchical",
+          "targetMode": "hierarchical",
+          "warmupSamples": [
+            {
+              "runLabel": "Warm-up",
+              "isWarmup": true,
+              "durationMs": 11547,
+              "e2eMs": 11590,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 4,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            }
+          ],
+          "measuredSamples": [
+            {
+              "runLabel": "Run 1",
+              "isWarmup": false,
+              "durationMs": 11745,
+              "e2eMs": 11782,
+              "ackMs": 0,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 8,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 2",
+              "isWarmup": false,
+              "durationMs": 11593,
+              "e2eMs": 11639,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 12,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 3",
+              "isWarmup": false,
+              "durationMs": 11754,
+              "e2eMs": 11804,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 4,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 4",
+              "isWarmup": false,
+              "durationMs": 11428,
+              "e2eMs": 11466,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 8,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            },
+            {
+              "runLabel": "Run 5",
+              "isWarmup": false,
+              "durationMs": 11793,
+              "e2eMs": 11832,
+              "ackMs": 1,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "requestId": 12,
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063,
+              "modeIndicatorText": "🔀 Interactive Mode (Hierarchical)"
+            }
+          ],
+          "layoutStats": {
+            "min": 11428,
+            "max": 11793,
+            "median": 11745,
+            "mean": 11662.6,
+            "range": 365
+          },
+          "e2eStats": {
+            "min": 11466,
+            "max": 11832,
+            "median": 11782,
+            "mean": 11704.6,
+            "range": 366
+          }
+        }
+      }
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [
+    "Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+    "Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.%s \n    at http://localhost:3000/src/components/GraphView.tsx?t=1791783397738:56:25\n    at div\n    at GraphSlot (http://localhost:3000/src/components/GraphSlot.tsx?t=1791783397738:22:18)\n    at ActiveWorkspaceRenderer (http://localhost:3000/src/components/workspace/ActiveWorkspaceRenderer.tsx?t=1791783397738:25:5)\n    at main\n    at div\n    at div\n    at div\n    at WorkspaceShell (http://localhost:3000/src/components/workspace/WorkspaceShell.tsx?t=1791783397738:31:46)\n    at SelectionProvider (http://localhost:3000/src/context/SelectionContext.tsx:21:37)\n    at AppContent (http://localhost:3000/src/App.tsx?t=1791783397738:314:18)\n    at WorkspaceRouterProvider (http://localhost:3000/src/context/WorkspaceRouterContext.tsx:25:3)\n    at InvestigationProvider (http://localhost:3000/src/context/InvestigationContext.tsx:313:41)\n    at App\n    at SelectionProvider (http://localhost:3000/src/context/SelectionContext.tsx:21:37)\n    at ProjectStateProvider (http://localhost:3000/src/context/ProjectStateContext.tsx:47:3)\n    at ProjectProvider (http://localhost:3000/src/context/ProjectContext.tsx:72:3)",
+    "Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render."
+  ],
+  "memoryInfo": {
+    "usedJSHeapSizeMb": "87.45",
+    "totalJSHeapSizeMb": "227.93"
+  }
+}
