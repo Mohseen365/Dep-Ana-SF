@@ -269,6 +269,8 @@ export class LayoutWorkerClient {
           featureRegions = new Map<string, FeatureRegion>();
           response.featureRegionsSummary.forEach(sum => {
             featureRegions!.set(sum.id, {
+              featureId: sum.id,
+              domain: sum.id,
               id: sum.id,
               domainId: sum.domainId,
               xMin: sum.xMin,
@@ -281,7 +283,7 @@ export class LayoutWorkerClient {
               sharedNodeIds: [],
               satelliteNodeIds: [],
               componentIds: [],
-            });
+            } as any);
           });
         }
 
