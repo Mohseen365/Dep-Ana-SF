@@ -13,7 +13,7 @@ ctx.addEventListener('message', (event: MessageEvent<LayoutWorkerRequest>) => {
     return;
   }
 
-  const { projectId, requestGeneration, nodes, edges, options } = message;
+  const { projectId, requestGeneration, correlationToken, nodes, edges, options } = message;
   const startTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
   try {
@@ -46,6 +46,7 @@ ctx.addEventListener('message', (event: MessageEvent<LayoutWorkerRequest>) => {
       type: 'LAYOUT_SUCCESS',
       projectId,
       requestGeneration,
+      correlationToken,
       positions: result.positions,
       featureRegionsSummary,
       orbitGuides: result.orbitGuides,
@@ -62,6 +63,7 @@ ctx.addEventListener('message', (event: MessageEvent<LayoutWorkerRequest>) => {
       type: 'LAYOUT_ERROR',
       projectId,
       requestGeneration,
+      correlationToken,
       error: error?.message || String(error),
       computeDurationMs,
     };

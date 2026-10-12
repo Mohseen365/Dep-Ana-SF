@@ -111,7 +111,9 @@ async function runPBIMPartialCycles() {
     console.log(`\n=== STARTING ${cycleLabel.toUpperCase()} ===`);
 
     for (const trans of modeTransitions) {
-      const runResult = await page.evaluate((targetMode) => {
+      const actionToken = `token_${Math.random().toString(36).substring(2)}_${Date.now()}`;
+
+      const runResult = await page.evaluate(({ targetMode, actionToken }) => {
         return new Promise((resolve) => {
           const tStart = performance.now();
           let ackTime = null;
@@ -129,6 +131,9 @@ async function runPBIMPartialCycles() {
               return;
             }
             if (typeof detail.requestId === 'number' && detail.requestId <= initialReqId) {
+              return;
+            }
+            if (detail.correlationToken !== actionToken) {
               return;
             }
 
@@ -154,6 +159,8 @@ async function runPBIMPartialCycles() {
             resolve({ error: `timeout-waiting-for-${targetMode}` });
           }, 180000);
 
+          window.__CURRENT_CORRELATION_TOKEN__ = actionToken;
+
           const btn = document.querySelector('[data-testid="architecture-mode-toggle"]');
           if (btn) {
             btn.click();
@@ -163,7 +170,7 @@ async function runPBIMPartialCycles() {
             resolve({ error: 'toggle-button-not-found' });
           }
         });
-      }, trans.targetMode);
+      }, { targetMode: trans.targetMode, actionToken });
 
       if (runResult.error) {
         console.error(`  [${cycleLabel}] ${trans.name} FAILED: ${runResult.error}`);
@@ -174,11 +181,12 @@ async function runPBIMPartialCycles() {
         runLabel: isWarmup ? 'Warm-up' : `Run ${cycleIdx}`,
         isWarmup,
         durationMs: runResult.detail.durationMs,
-        e2eMs: runResult.e2eMs,
+        actionToCorrelatedLayoutCompleteMs: runResult.e2eMs,
         ackMs: runResult.ackMs,
         outcome: runResult.detail.outcome,
         architectureMode: runResult.detail.architectureMode,
         requestId: runResult.detail.requestId,
+        correlationToken: runResult.detail.correlationToken,
         nodeCount: runResult.detail.nodeCount,
         edgeCount: runResult.detail.edgeCount,
         visibleNodes: runResult.visibleNodes,

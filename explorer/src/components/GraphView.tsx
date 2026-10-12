@@ -339,7 +339,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const requestId = ++layoutRequestRef.current;
     const startTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
-    const notifyComplete = (outcome: 'complete' | 'fallback-complete') => {
+    const activeToken =
+      effectiveLayoutOptionsRef.current?.correlationToken ??
+      (typeof window !== 'undefined' ? (window as any).__CURRENT_CORRELATION_TOKEN__ : undefined);
+
+    if (typeof window !== 'undefined' && (window as any).__CURRENT_CORRELATION_TOKEN__) {
+      delete (window as any).__CURRENT_CORRELATION_TOKEN__;
+    }
+
+    const notifyComplete = (outcome: 'complete' | 'fallback-complete', correlationToken?: string) => {
       if (typeof window !== 'undefined') {
         const endTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
         const durationMs = Math.round(endTime - startTime);
@@ -347,6 +355,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           architectureMode,
           layoutMode: layoutModeRef.current,
           requestId,
+          correlationToken,
           timestamp: Date.now(),
           durationMs,
           outcome,
@@ -373,7 +382,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions(targetProvenance);
-        notifyComplete('complete');
+        notifyComplete('complete', layoutRes.correlationToken || activeToken);
       }).catch(() => {
         if (requestId !== layoutRequestRef.current) return;
         const layoutRes = runLayoutWithMetadata(cy, {
@@ -389,7 +398,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions(targetProvenance);
-        notifyComplete('fallback-complete');
+        notifyComplete('fallback-complete', activeToken);
       });
     } else {
       const layoutRes = runLayoutWithMetadata(cy, {
@@ -405,7 +414,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions(targetProvenance);
-      notifyComplete('complete');
+      notifyComplete('complete', activeToken);
     }
   }, [architectureMode, effectiveLayoutOptions.focalLwcId, captureAndPersistPositions]);
 
