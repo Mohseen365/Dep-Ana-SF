@@ -36,10 +36,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 1260.82,
-    "perfMedianMs": 1269.55,
-    "perfP95Ms": 1697.24,
-    "perfMaxMs": 1744.76
+    "perfMinMs": 1194.72,
+    "perfMedianMs": 1211.92,
+    "perfP95Ms": 1734.31,
+    "perfMaxMs": 1792.35
   },
   {
     "projectId": "bqc",
@@ -78,10 +78,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 753.2,
-    "perfMedianMs": 760.03,
-    "perfP95Ms": 824.31,
-    "perfMaxMs": 831.45
+    "perfMinMs": 754.46,
+    "perfMedianMs": 757.09,
+    "perfP95Ms": 877.01,
+    "perfMaxMs": 890.33
   },
   {
     "projectId": "pbim",
@@ -120,10 +120,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 9666.61,
-    "perfMedianMs": 9832.1,
-    "perfP95Ms": 10800.46,
-    "perfMaxMs": 10908.05
+    "perfMinMs": 13097.4,
+    "perfMedianMs": 13324.89,
+    "perfP95Ms": 14068.99,
+    "perfMaxMs": 14151.67
   },
   {
     "projectId": "cloud-spend-tracker",
@@ -162,10 +162,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 1188.52,
-    "perfMedianMs": 1200.37,
-    "perfP95Ms": 1231.55,
-    "perfMaxMs": 1235.02
+    "perfMinMs": 1354.3,
+    "perfMedianMs": 1363.27,
+    "perfP95Ms": 1366.19,
+    "perfMaxMs": 1366.51
   },
   {
     "projectId": "food-app",
@@ -204,10 +204,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 0.32,
-    "perfMedianMs": 0.59,
-    "perfP95Ms": 1.69,
-    "perfMaxMs": 1.81
+    "perfMinMs": 0.54,
+    "perfMedianMs": 0.76,
+    "perfP95Ms": 2.15,
+    "perfMaxMs": 2.3
   },
   {
     "projectId": "movie",
@@ -246,10 +246,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 1.82,
-    "perfMedianMs": 1.85,
-    "perfP95Ms": 2.65,
-    "perfMaxMs": 2.74
+    "perfMinMs": 2.67,
+    "perfMedianMs": 2.86,
+    "perfP95Ms": 3.22,
+    "perfMaxMs": 3.26
   },
   {
     "projectId": "movie-app",
@@ -288,10 +288,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 1.94,
-    "perfMedianMs": 1.96,
-    "perfP95Ms": 2.02,
-    "perfMaxMs": 2.03
+    "perfMinMs": 2.71,
+    "perfMedianMs": 2.72,
+    "perfP95Ms": 2.89,
+    "perfMaxMs": 2.91
   },
   {
     "projectId": "project-b",
@@ -330,10 +330,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 1.8,
-    "perfMedianMs": 1.82,
-    "perfP95Ms": 2.22,
-    "perfMaxMs": 2.27
+    "perfMinMs": 2.55,
+    "perfMedianMs": 2.55,
+    "perfP95Ms": 3.24,
+    "perfMaxMs": 3.31
   },
   {
     "projectId": "pub-infra-mang",
@@ -372,10 +372,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 9758.12,
-    "perfMedianMs": 9815.77,
-    "perfP95Ms": 9926.96,
-    "perfMaxMs": 9939.31
+    "perfMinMs": 12703.38,
+    "perfMedianMs": 12864.02,
+    "perfP95Ms": 12916.62,
+    "perfMaxMs": 12922.47
   },
   {
     "projectId": "test-canonical-project",
@@ -414,10 +414,10 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 0.31,
-    "perfMedianMs": 0.4,
-    "perfP95Ms": 0.77,
-    "perfMaxMs": 0.81
+    "perfMinMs": 0.56,
+    "perfMedianMs": 0.57,
+    "perfP95Ms": 0.88,
+    "perfMaxMs": 0.92
   },
   {
     "projectId": "test-norm-proj",
@@ -456,9 +456,9 @@
     "aabbCollisions": 0,
     "determinismDrift": 0,
     "inputOrderDrift": 0,
-    "perfMinMs": 0.18,
-    "perfMedianMs": 0.25,
-    "perfP95Ms": 0.36,
-    "perfMaxMs": 0.37
+    "perfMinMs": 0.37,
+    "perfMedianMs": 0.39,
+    "perfP95Ms": 0.62,
+    "perfMaxMs": 0.64
   }
 ]

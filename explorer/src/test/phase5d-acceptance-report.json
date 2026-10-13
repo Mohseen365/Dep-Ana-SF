@@ -1,34 +1,34 @@
 {
-  "timestamp": "2026-09-30T08:32:48.261Z",
+  "timestamp": "2026-10-13T10:54:01.724Z",
   "fixtureSha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "candidateComparison": {
     "candidateA_legacy": {
-      "primaryCrossings": 9562,
-      "totalCrossings": 103654,
-      "averageEdgeLength": 1473.2382489223667,
-      "maxEdgeLength": 6727.39722626812,
-      "primaryOverlaps": 11,
-      "satelliteOverlaps": 4,
+      "primaryCrossings": 9896,
+      "totalCrossings": 101093,
+      "averageEdgeLength": 1382.1448209623418,
+      "maxEdgeLength": 4658.969843216417,
+      "primaryOverlaps": 16,
+      "satelliteOverlaps": 2,
       "layerViolations": 0,
-      "domainCohesion": 0.9558128789281555
+      "domainCohesion": 0.9562040933182331
     },
     "candidateB_currentHybrid": {
-      "primaryCrossings": 7812,
-      "primarySatelliteCrossings": 38706,
-      "satelliteSatelliteCrossings": 36381,
-      "totalCrossings": 85367,
-      "averageEdgeLength": 3512.615489540768,
-      "maxEdgeLength": 10121.979470700824,
+      "primaryCrossings": 7839,
+      "primarySatelliteCrossings": 38372,
+      "satelliteSatelliteCrossings": 37474,
+      "totalCrossings": 86203,
+      "averageEdgeLength": 3521.194355705154,
+      "maxEdgeLength": 10221.960105835324,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0,
       "layerViolations": 0,
-      "domainCohesion": 0.8508280601692482,
-      "medianIntraDistance": 4361.754234250252,
-      "medianInterDistance": 6585.401238352522,
-      "intraToInterRatio": 0.6623368989041946
+      "domainCohesion": 0.8378515602284387,
+      "medianIntraDistance": 4220,
+      "medianInterDistance": 6101.457088130675,
+      "intraToInterRatio": 0.6916380692423908
     }
   },
   "stageInstrumentation": [
@@ -131,11 +131,11 @@
     {
       "stage": "Stage 8",
       "positionedNodeCount": 156,
-      "primaryCrossings": 7818,
-      "totalCrossings": 10286,
+      "primaryCrossings": 7846,
+      "totalCrossings": 10364,
       "primarySatelliteCrossings": 0,
       "satelliteSatelliteCrossings": 0,
-      "cohesion": 0.6939607846616067,
+      "cohesion": 0.6592396795605383,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -143,11 +143,11 @@
     {
       "stage": "Stage 9",
       "positionedNodeCount": 240,
-      "primaryCrossings": 7818,
-      "totalCrossings": 85373,
-      "primarySatelliteCrossings": 38706,
-      "satelliteSatelliteCrossings": 36381,
-      "cohesion": 0.8444541881032545,
+      "primaryCrossings": 7846,
+      "totalCrossings": 86210,
+      "primarySatelliteCrossings": 38372,
+      "satelliteSatelliteCrossings": 37474,
+      "cohesion": 0.8339768357757553,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -155,11 +155,11 @@
     {
       "stage": "Stage 10",
       "positionedNodeCount": 240,
-      "primaryCrossings": 7812,
-      "totalCrossings": 85367,
-      "primarySatelliteCrossings": 38706,
-      "satelliteSatelliteCrossings": 36381,
-      "cohesion": 0.8508280601692482,
+      "primaryCrossings": 7831,
+      "totalCrossings": 86195,
+      "primarySatelliteCrossings": 38372,
+      "satelliteSatelliteCrossings": 37474,
+      "cohesion": 0.8378518585052406,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -167,11 +167,11 @@
     {
       "stage": "Stage 11",
       "positionedNodeCount": 240,
-      "primaryCrossings": 7812,
-      "totalCrossings": 85367,
-      "primarySatelliteCrossings": 38706,
-      "satelliteSatelliteCrossings": 36381,
-      "cohesion": 0.8508280601692482,
+      "primaryCrossings": 7839,
+      "totalCrossings": 86203,
+      "primarySatelliteCrossings": 38372,
+      "satelliteSatelliteCrossings": 37474,
+      "cohesion": 0.8378515602284387,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -179,11 +179,11 @@
     {
       "stage": "Stage 12",
       "positionedNodeCount": 240,
-      "primaryCrossings": 7812,
-      "totalCrossings": 85367,
-      "primarySatelliteCrossings": 38706,
-      "satelliteSatelliteCrossings": 36381,
-      "cohesion": 0.8508280601692482,
+      "primaryCrossings": 7839,
+      "totalCrossings": 86203,
+      "primarySatelliteCrossings": 38372,
+      "satelliteSatelliteCrossings": 37474,
+      "cohesion": 0.8378515602284387,
       "layerViolations": 0,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
@@ -199,13 +199,13 @@
       "unauthorizedRelayoutsZero": true
     },
     "primaryGate": {
-      "c_pp": 7812,
+      "c_pp": 7839,
       "target": 9335,
       "passed": true
     },
     "localityGate": {
-      "medianIntraDistance": 4361.754234250252,
-      "medianInterDistance": 6585.401238352522,
+      "medianIntraDistance": 4220,
+      "medianInterDistance": 6101.457088130675,
       "passed": true
     },
     "preferredTargets": {
