@@ -232,6 +232,7 @@ function runPhase12PipelineTrace(
 
   // Stage 8: Hub & Bridge Refinement using globalDomainResult.layerYMap
   const stage8Positions: PositionMap = { ...stage7Positions };
+  const immutableStage7PrimaryPositions: PositionMap = Object.freeze({ ...stage7Positions });
   const domainXCenters: Record<string, number> = {};
   const domainBounds: Record<string, { minX: number; maxX: number }> = {};
 
@@ -261,7 +262,7 @@ function runPhase12PipelineTrace(
         domainXCenters,
         domainBounds,
         neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index, allocatedPositions: stage8Positions }
+        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index, allocatedPositions: stage8Positions, immutablePrimaryPositions: immutableStage7PrimaryPositions }
       );
 
       stage8Positions[node.id] = bridgeInfo.candidatePosition;
@@ -460,7 +461,7 @@ describe('PHASE 12 — CURRENT PRODUCTION GEOMETRY DOMINATOR & OPTIMIZATION EXPE
     console.log(`[Cytoscape cy.nodes().boundingBox()]`);
     console.log(`  BB: X=[${cyBb.x1}, ${cyBb.x2}] (W=${cyBb.w}px), Y=[${cyBb.y1}, ${cyBb.y2}] (H=${cyBb.h}px)`);
 
-    expect(getMapBounds(res.stage12Positions).height).toBe(24670);
+    expect(getMapBounds(res.stage12Positions).height).toBe(25400);
     expect(getMapBounds(res.stage12Positions).width).toBe(12760);
   });
 
