@@ -1,0 +1,69 @@
+{
+  "baselineMetadata": {
+    "commitSha": "91046a9f0d9d8226b2f7f9a8caab94ed1dd1436b",
+    "targetBaselineSha": "8427f8f7b51703ba0b5975a5239a918c3f207b12",
+    "timestamp": "2026-10-14T16:44:15+05:30",
+    "environment": {
+      "os": "Windows (win32 x64)",
+      "node": "v22.17.0",
+      "npm": "11.4.2",
+      "playwright": "1.64.0",
+      "chromium": "156.0.8078.4",
+      "vite": "5.4.21"
+    }
+  },
+  "serverExecution": {
+    "command": "npm run dev",
+    "workingDirectory": "C:\\Users\\User\\Downloads\\dependency-analyzer\\explorer",
+    "pid": 13784,
+    "port": 3000,
+    "readinessUrl": "http://localhost:3000/?project=default",
+    "readinessStatus": 200,
+    "shutdownOutcome": "SUCCESS (Task cancelled and PID terminated cleanly; port 3000 confirmed released)",
+    "stdoutLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/server-startup-91046a9.stdout.log",
+    "stderrLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/server-startup-91046a9.stderr.log",
+    "readinessLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/server-readiness-91046a9.log"
+  },
+  "commandExecutions": [
+    {
+      "id": "CMD-FORMAL-BENCHMARK-RUN-LIVE",
+      "command": "node scripts/run-formal-performance-baseline.cjs all",
+      "workingDirectory": "C:\\Users\\User\\Downloads\\dependency-analyzer",
+      "status": "FAIL",
+      "exitCode": 1,
+      "startTime": "2026-10-14T16:33:01.2064457+05:30",
+      "endTime": "2026-10-14T16:44:15.8609158+05:30",
+      "stdoutLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/formal-browser-baseline-91046a9.stdout.log",
+      "stderrLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/formal-browser-baseline-91046a9.stderr.log",
+      "timingLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/formal-browser-baseline-91046a9.timing.log",
+      "datasetResults": {
+        "default": {
+          "name": "Default (Small)",
+          "initialLoadMs": 1717,
+          "sourceMetrics": { "sourceNodes": 4, "sourceEdges": 3, "lwcCount": 1, "visibleNodes": 4, "visibleEdges": 3 },
+          "completedTransitions": 4,
+          "totalTransitions": 4,
+          "status": "PASS"
+        },
+        "cloud-spend-tracker": {
+          "name": "Cloud Spend Tracker (Medium)",
+          "initialLoadMs": 14253,
+          "sourceMetrics": { "sourceNodes": 240, "sourceEdges": 1024, "lwcCount": 26, "visibleNodes": 240, "visibleEdges": 1024 },
+          "completedTransitions": 4,
+          "totalTransitions": 4,
+          "status": "PASS"
+        },
+        "pbim": {
+          "name": "PBIM (Large)",
+          "initialLoadMs": null,
+          "sourceMetrics": null,
+          "completedTransitions": 0,
+          "totalTransitions": 4,
+          "status": "TIMEOUT",
+          "error": "TimeoutError: page.waitForSelector: Timeout 180000ms exceeded waiting for locator('[data-testid=\"architecture-mode-toggle\"]') to be visible"
+        }
+      },
+      "summary": "Datasets default and cloud-spend-tracker passed all 4 mode transitions (1 warm-up + 5 measured runs each). PBIM dataset failed on initial page navigation due to page.waitForSelector timeout (180,000ms) on [data-testid=\"architecture-mode-toggle\"]."
+    }
+  ]
+}
