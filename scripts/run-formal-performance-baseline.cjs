@@ -50,12 +50,6 @@ async function runFormalBenchmark() {
   fullResults.metadata.browserVersion = browser.version();
 
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  const page = await context.newPage();
-
-  page.on('pageerror', (err) => fullResults.pageErrors.push(err.message || String(err)));
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') fullResults.consoleErrors.push(msg.text());
-  });
 
   const allProjects = [
     { id: 'default', name: 'Default (Small)', url: 'http://localhost:3000/?project=default' },
@@ -79,13 +73,20 @@ async function runFormalBenchmark() {
     console.log(`BENCHMARKING DATASET: ${proj.name} (${proj.id})`);
     console.log(`================================================================`);
 
-    // Measure Initial Load Latency
-    const navStart = Date.now();
-    await page.goto(proj.url, { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('.app-layout', { timeout: 180000 });
-    await page.waitForSelector('[data-testid="architecture-mode-toggle"]', { timeout: 180000 });
-    const navEnd = Date.now();
-    const initialLoadMs = navEnd - navStart;
+    const page = await context.newPage();
+    page.on('pageerror', (err) => fullResults.pageErrors.push(err.message || String(err)));
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') fullResults.consoleErrors.push(msg.text());
+    });
+
+    try {
+      // Measure Initial Load Latency
+      const navStart = Date.now();
+      await page.goto(proj.url, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('.app-layout', { timeout: 180000 });
+      await page.waitForSelector('[data-testid="architecture-mode-toggle"]', { timeout: 180000 });
+      const navEnd = Date.now();
+      const initialLoadMs = navEnd - navStart;
 
     const sourceMetrics = await page.evaluate(() => {
       const cy = window.__CY__;
@@ -284,22 +285,25 @@ async function runFormalBenchmark() {
       };
     }
 
+    // Memory Check for current project page
+    const memoryInfo = await page.evaluate(() => {
+      const perf = window.performance;
+      if (perf && perf.memory) {
+        return {
+          usedJSHeapSizeMb: (perf.memory.usedJSHeapSize / (1024 * 1024)).toFixed(2),
+          totalJSHeapSizeMb: (perf.memory.totalJSHeapSize / (1024 * 1024)).toFixed(2),
+        };
+      }
+      return null;
+    });
+    projectResults.memoryInfo = memoryInfo;
+
     fullResults.projects[proj.id] = projectResults;
+    fullResults.memoryInfo = memoryInfo;
+  } finally {
+    await page.close();
   }
-
-  // Memory Check
-  const memoryInfo = await page.evaluate(() => {
-    const perf = window.performance;
-    if (perf && perf.memory) {
-      return {
-        usedJSHeapSizeMb: (perf.memory.usedJSHeapSize / (1024 * 1024)).toFixed(2),
-        totalJSHeapSizeMb: (perf.memory.totalJSHeapSize / (1024 * 1024)).toFixed(2),
-      };
-    }
-    return null;
-  });
-
-  fullResults.memoryInfo = memoryInfo;
+}
 
   await browser.close();
 

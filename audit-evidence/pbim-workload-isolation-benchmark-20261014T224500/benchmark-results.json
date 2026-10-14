@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-14T17:15:14.748Z",
+    "browser": "156.0.8078.4",
+    "node": "v22.17.0",
+    "runsPerScenario": 3
+  },
+  "scenarios": {
+    "scenarioA": [
+      {
+        "run": 1,
+        "domContentLoadedMs": 643,
+        "dataFetchedMs": 763,
+        "layoutReadyMs": 1021,
+        "togglePresentMs": 1021,
+        "toggleVisibleMs": 1021,
+        "toggleEnabledMs": 1021,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 1021,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 190
+      },
+      {
+        "run": 2,
+        "domContentLoadedMs": 592,
+        "dataFetchedMs": 679,
+        "layoutReadyMs": 921,
+        "togglePresentMs": 921,
+        "toggleVisibleMs": 921,
+        "toggleEnabledMs": 921,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 921,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 141
+      },
+      {
+        "run": 3,
+        "domContentLoadedMs": 636,
+        "dataFetchedMs": 715,
+        "layoutReadyMs": 975,
+        "togglePresentMs": 975,
+        "toggleVisibleMs": 975,
+        "toggleEnabledMs": 975,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 975,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 202
+      }
+    ],
+    "scenarioB": [
+      {
+        "run": 1,
+        "domContentLoadedMs": 417,
+        "dataFetchedMs": 504,
+        "layoutReadyMs": 778,
+        "togglePresentMs": 778,
+        "toggleVisibleMs": 778,
+        "toggleEnabledMs": 778,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 778,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 169
+      },
+      {
+        "run": 2,
+        "domContentLoadedMs": 467,
+        "dataFetchedMs": 508,
+        "layoutReadyMs": 767,
+        "togglePresentMs": 767,
+        "toggleVisibleMs": 767,
+        "toggleEnabledMs": 767,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 767,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 179
+      },
+      {
+        "run": 3,
+        "domContentLoadedMs": 496,
+        "dataFetchedMs": 546,
+        "layoutReadyMs": 814,
+        "togglePresentMs": 814,
+        "toggleVisibleMs": 814,
+        "toggleEnabledMs": 814,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 814,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 150
+      }
+    ],
+    "scenarioC": [
+      {
+        "run": 1,
+        "domContentLoadedMs": 390,
+        "dataFetchedMs": 469,
+        "layoutReadyMs": 724,
+        "togglePresentMs": 724,
+        "toggleVisibleMs": 724,
+        "toggleEnabledMs": 724,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 724,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 125
+      },
+      {
+        "run": 2,
+        "domContentLoadedMs": 342,
+        "dataFetchedMs": 405,
+        "layoutReadyMs": 674,
+        "togglePresentMs": 674,
+        "toggleVisibleMs": 674,
+        "toggleEnabledMs": 674,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 674,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 202
+      },
+      {
+        "run": 3,
+        "domContentLoadedMs": 339,
+        "dataFetchedMs": 413,
+        "layoutReadyMs": 660,
+        "togglePresentMs": 660,
+        "toggleVisibleMs": 660,
+        "toggleEnabledMs": 660,
+        "cytoscapeNodes": 528,
+        "totalElapsedMs": 660,
+        "failedRequests": 2,
+        "consoleErrors": 0,
+        "uncaughtErrors": 0,
+        "jsHeapUsedMb": 202
+      }
+    ]
+  }
+}
