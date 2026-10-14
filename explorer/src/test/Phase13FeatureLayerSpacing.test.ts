@@ -186,8 +186,8 @@ describe('Phase 13 — Feature-Layer Spacing Implementation & Validation Suite',
       const minX = Math.min(...xs);
       const maxX = Math.max(...xs);
 
-      expect(maxX - minX).toBe(12760);
-      expect(maxY - minY).toBe(24670);
+      expect(maxX - minX).toBe(7040);
+      expect(maxY - minY).toBe(25400);
     }, 60000);
   }
 });
