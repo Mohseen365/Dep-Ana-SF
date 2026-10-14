@@ -2,8 +2,8 @@
 
 **Audit Date:** October 2026
 **Repository Root:** `/app`
-**Branch:** `jules-2659521901491372017-674d646c`
-**HEAD SHA:** `45570d0f1926ed55c47ec3959a2a084eca3bcea0`
+**Branch:** `jules-5058169819641989774-00079a20`
+**HEAD SHA:** `5872a8b4649984c6bb1dd0346695ed1d97ebcf72`
 **Initial Git Baseline:** Clean working tree prior to deliverables generation
 **Final Git Status:** Modified deliverables tracked (`git status --short` verified)
 **Authoritative Source Inventory:** `ARCHITECTURE_EXPLORER_EXPANDED_HISTORICAL_ISSUE_INVENTORY.md`
@@ -70,11 +70,11 @@ Every historical issue is assigned **exactly one final status** based on direct,
 | **F4** | Effect dependency omissions / stale graph state | High | `explorer/src/components/GraphView.tsx` | `useEffect` dependencies updated to include `selectedNodeId` and layout options | **BLOCKED (Vitest)** (`node_modules` missing) | **FIXED, VERIFICATION INCOMPLETE** | Effect dependency arrays verified in source code. Vitest execution pending `node_modules`. |
 | **F5** | Loading/error/empty-state and malformed-state handling | Medium | `explorer/src/lib/projectState.ts` | Safe JSON parsing and fallback defaults implemented in `mergeWithDefaultState` | **BLOCKED (Vitest)** (`node_modules` missing) | **FIXED, VERIFICATION INCOMPLETE** | Defensive state parsing verified in source code. Vitest execution pending `node_modules`. |
 | **F6** | Type safety, depth parsing, loose types, and cleanup | Low | `explorer/src/lib/workers/layout-worker-types.ts` | Strict TypeScript interfaces enforced without `as any` casting in worker files | **UNEXECUTED (tsc)** (`tsc` uninstalled) | **FIXED, VERIFICATION INCOMPLETE** | Type definitions verified by code inspection. Direct `tsc` compiler run unexecuted as `tsc` binary is not installed in sandbox. |
-| **G1** | Reports generated against different branches/commits | Critical | Audit Process Governance | Exact HEAD SHA (`45570d0f1926ed55c47ec3959a2a084eca3bcea0`) and branch recorded | **ENFORCED IN AUDIT** | **FIXED AND VERIFIED** | Repository provenance rule strictly enforced during this audit run. |
+| **G1** | Reports generated against different branches/commits | Critical | Audit Process Governance | Exact HEAD SHA (`5872a8b4649984c6bb1dd0346695ed1d97ebcf72`) and branch recorded | **ENFORCED IN AUDIT** | **FIXED AND VERIFIED** | Repository provenance rule strictly enforced during this audit run. |
 | **G2** | Test matrix marked PASS when test runner could not start | Critical | Audit Process Governance | Strict rule enforced: blocked test suites receive `FIXED, VERIFICATION INCOMPLETE` | **ENFORCED IN AUDIT** | **FIXED AND VERIFIED** | Evidence boundary rule strictly enforced across all 41 issue matrix classifications. |
 | **G3** | CLI tests mistaken for browser verification | Critical | Audit Process Governance | CLI execution explicitly separated from browser automation gaps | **ENFORCED IN AUDIT** | **FIXED AND VERIFIED** | Evidence separation rule strictly enforced across all 41 issue matrix classifications. |
-| **G4** | Historical PASS reports may conflict with earlier FAIL reports | High | Audit Process Governance | Commit-level traceability required to reconcile historical PASS/FAIL claims | **ENFORCED IN AUDIT** | **FIXED AND VERIFIED** | Provenance rule enforced by mapping current HEAD SHA against historical inventory. |
-| **G5** | Broad audits can produce repeated reports without closing evidence gaps | Medium | Audit Process Governance | Targeted audit execution strategy implemented with explicit evidence boundaries | **ENFORCED IN AUDIT** | **FIXED AND VERIFIED** | Audit methodology rule enforced by delivering verifiable 1:1 mapped matrix. |
+| **G4** | Historical PASS reports may conflict with earlier FAIL reports | High | Audit Process Governance | Historical audit reports exhibit conflicting PASS/FAIL claims (e.g. performance baseline validity, runtime validation exceptions). While current audit process enforces commit-level SHA recording, comprehensive historical claim reconciliation across past commits remains incomplete. | **PARTIALLY VERIFIED (HISTORICAL RECONCILIATION INCOMPLETE)** | **FIXED, VERIFICATION INCOMPLETE** | Provenance rule enforced in current run, but full historical conflict resolution across earlier commits/reports is incomplete. |
+| **G5** | Broad audits can produce repeated reports without closing evidence gaps | Medium | Audit Process Governance | Process control rules proposed and applied in this targeted follow-up run; however, evidence does not establish that process failure of repeated unclosed broad audits is permanently resolved repository-wide. | **CONTROL APPLIED IN RUN (PROCESS-WIDE RESOLUTION UNPROVEN)** | **FIXED, VERIFICATION INCOMPLETE** | Targeted audit control followed in this run, but repository-wide prevention of repeated unclosed audits is not established as permanently fixed. |
 
 ---
 
@@ -99,8 +99,8 @@ Every historical ID from `ARCHITECTURE_EXPLORER_EXPANDED_HISTORICAL_ISSUE_INVENT
 
 | Status Classification | Count | Percentage |
 |---|---|---|
-| **FIXED AND VERIFIED** | 7 | 17.1% |
-| **FIXED, VERIFICATION INCOMPLETE** | 30 | 73.2% |
+| **FIXED AND VERIFIED** | 5 | 12.2% |
+| **FIXED, VERIFICATION INCOMPLETE** | 32 | 78.0% |
 | **CONTRACT-DEPENDENT** | 3 | 7.3% |
 | **OPEN / NOT YET REPRODUCED** | 1 | 2.4% |
 | **OPEN / REPRODUCED** | 0 | 0.0% |
