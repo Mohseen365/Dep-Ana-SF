@@ -1,0 +1,536 @@
+{
+  "provenance": {
+    "branch": "main",
+    "headSha": "c04015ca608c4022defd60578c91b86dcd917c83",
+    "workingTreeState": "Modified (Added Phase 1 verification deliverables)",
+    "nodeVersion": "v22.22.1",
+    "npmVersion": "11.11.0"
+  },
+  "environmentAvailability": {
+    "cliTestHarness": "AVAILABLE (npm run test:cli, npm run test:worker-geometry)",
+    "vitest": "BLOCKED (explorer/node_modules uninstalled in sandbox checkout)",
+    "typeScriptCompiler": "BLOCKED (typescript package uninstalled in sandbox checkout)",
+    "playwrightBrowser": "BLOCKED (playwright drivers & Vite dev server unavailable in sandbox checkout)"
+  },
+  "executedCommands": [
+    {
+      "command": "npm run test:cli",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "31 sub-test scripts passed successfully across 184 assertions."
+    },
+    {
+      "command": "npm run test:worker-geometry",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "4/4 test categories passed (deserialization, 100% FeatureRegion parity, 8 event correlation edge cases, 12 correlation token conditions)."
+    },
+    {
+      "command": "node scripts/test-worker-geometry-contract.cjs",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "100% worker vs main thread FeatureRegion geometry parity verified."
+    },
+    {
+      "command": "node scripts/test-multi-project.cjs",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "10/10 multi-project isolation regression tests passed."
+    }
+  ],
+  "recomputedTotals": {
+    "totalInspected": 41,
+    "verifiedClosed": 10,
+    "implementedUnverified": 26,
+    "openContractDependent": 3,
+    "blockedEnvironment": 1,
+    "notReproduced": 1
+  },
+  "inspectedIssues": [
+    {
+      "id": "A1",
+      "title": "Constellation filtering in the asynchronous worker path",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Worker path must apply identical Constellation node/edge filtering as synchronous fallback path.",
+      "sourcesInspected": [
+        "explorer/src/lib/workers/layout.worker.ts",
+        "explorer/src/lib/workers/layout-worker-client.ts"
+      ],
+      "relevantTest": "scripts/test-worker-geometry-contract.cjs",
+      "testExecuted": "YES (CLI)",
+      "executionResult": "PASS (CLI)",
+      "failureCoverage": "Partial (CLI tests verify message passing and correlation tokens; Vitest node/edge count suite unexecuted)",
+      "evidenceQuality": "CLI Node Execution + Static Source Inspection",
+      "remainingGap": "Execution of Vitest suite under explorer/src/test/static-constellation-projection.test.ts post-npm ci.",
+      "closureCondition": "Run Vitest suite static-constellation-projection.test.ts with 0 failures."
+    },
+    {
+      "id": "A2",
+      "title": "Cross-mode position contamination",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Layout node positions must be scoped per architecture mode without leaking across mode transitions.",
+      "sourcesInspected": [
+        "explorer/src/lib/projectState.ts",
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/test/Phase1F_PositionPersistenceContract.test.ts",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of Phase1F_PositionPersistenceContract.test.ts.",
+      "closureCondition": "Execute Phase1F_PositionPersistenceContract.test.ts in Vitest with 0 failures."
+    },
+    {
+      "id": "A3",
+      "title": "Shared position inheritance in layout engine",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "computeArchitectureLayoutWithMetadata must not copy or inherit existingPositions from previous layout modes.",
+      "sourcesInspected": [
+        "explorer/src/lib/architecture-layout.ts"
+      ],
+      "relevantTest": "explorer/src/test/def01-position-isolation.test.ts",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of def01-position-isolation.test.ts.",
+      "closureCondition": "Execute def01-position-isolation.test.ts under Vitest with 0 failures."
+    },
+    {
+      "id": "B3",
+      "title": "Legacy flat-position migration ambiguity",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Migration predicate in mergeWithDefaultState must distinguish uninitialized map from intentionally empty map.",
+      "sourcesInspected": [
+        "explorer/src/lib/projectState.ts"
+      ],
+      "relevantTest": "explorer/src/lib/projectState.test.ts",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of projectState.test.ts.",
+      "closureCondition": "Execute projectState.test.ts under Vitest with 0 failures."
+    },
+    {
+      "id": "B5",
+      "title": "Project-switch in-memory state isolation",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Switching active project must purge in-memory graph state and re-initialize mode layout maps.",
+      "sourcesInspected": [
+        "explorer/src/context/ProjectContext.tsx"
+      ],
+      "relevantTest": "scripts/test-multi-project.cjs",
+      "testExecuted": "YES (CLI)",
+      "executionResult": "PASS (CLI)",
+      "failureCoverage": "Partial (CLI tests verify project state isolation; Vitest ProjectContext suite unexecuted)",
+      "evidenceQuality": "CLI Node Execution + Static Source Inspection",
+      "remainingGap": "Vitest execution of ProjectContext.test.tsx and Playwright rapid switching E2E test.",
+      "closureCondition": "Execute ProjectContext.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "B7",
+      "title": "Worker versus synchronous fallback parity",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Worker layout engine and synchronous main-thread fallback engine must produce bit-for-bit identical coordinates.",
+      "sourcesInspected": [
+        "explorer/src/lib/graph-layout.ts",
+        "explorer/src/lib/workers/layout.worker.ts"
+      ],
+      "relevantTest": "scripts/test-worker-geometry-contract.cjs",
+      "testExecuted": "YES (CLI)",
+      "executionResult": "PASS (CLI)",
+      "failureCoverage": "High (CLI test verifies 100% FeatureRegion parity across worker and fallback engines; browser component fallback pending)",
+      "evidenceQuality": "CLI Node Execution + Static Source Inspection",
+      "remainingGap": "Live browser verification of worker failure fallback path.",
+      "closureCondition": "Execute Playwright browser worker failure fallback test."
+    },
+    {
+      "id": "B8",
+      "title": "Static/interactive layout switch position authority",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Switching between static and interactive modes must respect position authority policy without unwanted auto-layout.",
+      "sourcesInspected": [
+        "explorer/src/lib/position-policy.ts"
+      ],
+      "relevantTest": "explorer/src/lib/position-policy.test.ts",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of position-policy.test.ts.",
+      "closureCondition": "Execute position-policy.test.ts under Vitest with 0 failures."
+    },
+    {
+      "id": "C1",
+      "title": "Single-click side effects before double-click handling",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Single-click selection side effects must be debounced to prevent interfering with double-click expansion.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx and Playwright gesture validation.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "C2",
+      "title": "Duplicate activation from accessible-list keyboard handling",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Keyboard Enter and Space keydown events must not trigger duplicate selection callbacks on list items.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/Phase1G_B_DisclosureAccessibility.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of Phase1G_B_DisclosureAccessibility.test.tsx.",
+      "closureCondition": "Execute Phase1G_B_DisclosureAccessibility.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "C3",
+      "title": "Edge deselection incomplete in fallback path",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Deselecting a node or clicking empty canvas must clear selected edge highlights across all layout mode paths.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "C4",
+      "title": "Selection exclusivity & cross-view synchronization",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Selection state must remain synchronized across graph view, accessible node list, and side drawer without state duplication.",
+      "sourcesInspected": [
+        "explorer/src/context/SelectionContext.tsx",
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/context/SelectionContext.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of SelectionContext.test.tsx.",
+      "closureCondition": "Execute SelectionContext.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "C5",
+      "title": "Workspace lens/surface capability mismatch",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Workspace surfaces must declare capability flags matching supported layout modes.",
+      "sourcesInspected": [
+        "explorer/src/registry/workspace-registry.ts",
+        "explorer/src/components/workspace/WorkspaceShell.tsx"
+      ],
+      "relevantTest": "explorer/src/test/WorkspaceRegistry.test.ts",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of WorkspaceRegistry.test.ts.",
+      "closureCondition": "Execute WorkspaceRegistry.test.ts under Vitest with 0 failures."
+    },
+    {
+      "id": "C6",
+      "title": "Zoom/pan configuration API contract",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Cytoscape zoom and pan bounds must conform to minZoom (0.1) and maxZoom (3.0) configuration contract.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "C7",
+      "title": "Stale double-tap callback references",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Touch gesture double-tap handlers must capture current state references without stale closures.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "D1",
+      "title": "Accessible graph node list scalability",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Accessible node list must render bounded top-50 items to prevent DOM freezing on 500+ node graphs.",
+      "sourcesInspected": [
+        "explorer/src/components/workspace/WorkspaceShell.tsx"
+      ],
+      "relevantTest": "explorer/src/components/Phase1G_B_DisclosureAccessibility.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of Phase1G_B_DisclosureAccessibility.test.tsx.",
+      "closureCondition": "Execute Phase1G_B_DisclosureAccessibility.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "D2",
+      "title": "Drawer dependency list bounds",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Drawer dependency list must bound initial items and provide Show More expansion for dense components.",
+      "sourcesInspected": [
+        "explorer/src/components/InvestigationDrawer.tsx"
+      ],
+      "relevantTest": "explorer/src/components/InvestigationDrawer.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of InvestigationDrawer.test.tsx.",
+      "closureCondition": "Execute InvestigationDrawer.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "D3",
+      "title": "Accessible names, roles, selected/pressed states",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "All interactive controls must feature ARIA attributes (aria-selected, aria-pressed, aria-label) conforming to WCAG 2.1 AA.",
+      "sourcesInspected": [
+        "explorer/src/components/ViewModeSwitcher.tsx",
+        "explorer/src/components/GraphControls.tsx"
+      ],
+      "relevantTest": "explorer/src/components/Phase1C_Accessibility.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of Phase1C_Accessibility.test.tsx.",
+      "closureCondition": "Execute Phase1C_Accessibility.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "D4",
+      "title": "Capability-aware overlays & unsupported-mode states",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "FeatureOverlayCanvas must hide feature region rects when active mode does not support feature overlays.",
+      "sourcesInspected": [
+        "explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx"
+      ],
+      "relevantTest": "explorer/src/test/PhaseIntegrationVerification.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of PhaseIntegrationVerification.test.tsx.",
+      "closureCondition": "Execute PhaseIntegrationVerification.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "D5",
+      "title": "Animation-frame/event cleanup & long-session leaks",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "All window event listeners, requestAnimationFrame calls, and timers must be cleared on component unmount.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx",
+        "explorer/src/components/workspace/WorkspaceShell.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx and Playwright memory leak profiling.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "E6",
+      "title": "Graph update cost and unnecessary Cytoscape rebuilds",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Updating node positions must re-use existing Cytoscape elements via cy.batch() without tearing down DOM graph.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "F1",
+      "title": "Rules-of-Hooks / conditional render reachability",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "All React Hooks must be called unconditionally at top-level before any early return statements.",
+      "sourcesInspected": [
+        "explorer/src/components/workspace/WorkspaceShell.tsx"
+      ],
+      "relevantTest": "explorer/src/components/WorkspaceShell.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of WorkspaceShell.test.tsx.",
+      "closureCondition": "Execute WorkspaceShell.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "F2",
+      "title": "Stale focus-origin after disable/re-enable",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Re-enabling investigation mode must reset stale focus origin from previous investigation session.",
+      "sourcesInspected": [
+        "explorer/src/context/InvestigationContext.tsx"
+      ],
+      "relevantTest": "explorer/src/context/InvestigationContext.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of InvestigationContext.test.tsx.",
+      "closureCondition": "Execute InvestigationContext.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "F3",
+      "title": "Connection / Impact exit traps",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "Users must be able to exit connection or impact mode via Escape key binding or clear close UI button.",
+      "sourcesInspected": [
+        "explorer/src/components/workspace/WorkspaceShell.tsx",
+        "explorer/src/components/ConnectionControls.tsx"
+      ],
+      "relevantTest": "explorer/src/components/ConnectionControls.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of ConnectionControls.test.tsx.",
+      "closureCondition": "Execute ConnectionControls.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "F4",
+      "title": "Effect dependency omissions / stale graph state",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "All useEffect hooks in GraphView.tsx must include complete, accurate dependency arrays.",
+      "sourcesInspected": [
+        "explorer/src/components/GraphView.tsx"
+      ],
+      "relevantTest": "explorer/src/components/GraphView.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of GraphView.test.tsx.",
+      "closureCondition": "Execute GraphView.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "F5",
+      "title": "Loading / error / empty-state handling",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "App shell must render loading spinners during dataset fetches and error boundaries on render exceptions.",
+      "sourcesInspected": [
+        "explorer/src/components/workspace/WorkspaceShell.tsx",
+        "explorer/src/components/ErrorBoundary.tsx"
+      ],
+      "relevantTest": "explorer/src/components/ErrorBoundary.test.tsx",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (Vitest blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Vitest execution of ErrorBoundary.test.tsx.",
+      "closureCondition": "Execute ErrorBoundary.test.tsx under Vitest with 0 failures."
+    },
+    {
+      "id": "F6",
+      "title": "Type safety, depth parsing, loose types",
+      "previousStatus": "IMPLEMENTED_UNVERIFIED",
+      "recommendedStatus": "IMPLEMENTED_UNVERIFIED",
+      "acceptanceCriteria": "TypeScript compilation (tsc --noEmit) must pass with zero type errors across explorer/ codebase.",
+      "sourcesInspected": [
+        "explorer/src/types/explorer.ts"
+      ],
+      "relevantTest": "explorer/src/types/explorer.ts",
+      "testExecuted": "NO (Blocked)",
+      "executionResult": "BLOCKED",
+      "failureCoverage": "Unexecuted (TypeScript compiler blocked)",
+      "evidenceQuality": "Static Source Inspection",
+      "remainingGap": "Execution of npx tsc --noEmit in explorer/ directory post-npm ci.",
+      "closureCondition": "Execute npx tsc --noEmit in explorer/ with 0 type errors."
+    }
+  ],
+  "recommendedNextAction": {
+    "taskTitle": "Restore Explorer Environment Dependencies and Execute Vitest Verification Suite",
+    "targetIssues": [
+      "A1",
+      "A2",
+      "A3",
+      "B3",
+      "B5",
+      "B7",
+      "B8",
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "E6",
+      "F1",
+      "F2",
+      "F3",
+      "F4",
+      "F5",
+      "F6"
+    ],
+    "commandSequence": "npm --prefix explorer ci && cd explorer && npx vitest run && npx tsc --noEmit",
+    "advanceCondition": "All 26 IMPLEMENTED_UNVERIFIED items transition to VERIFIED_CLOSED with 0 Vitest failures and 0 tsc errors."
+  },
+  "overallVerdict": "INCOMPLETE (Dependencies uninstalled; 26 implementation fixes remain unverified until npm ci and Vitest/tsc execution)"
+}
