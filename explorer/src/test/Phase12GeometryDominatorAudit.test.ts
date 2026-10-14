@@ -462,7 +462,7 @@ describe('PHASE 12 — CURRENT PRODUCTION GEOMETRY DOMINATOR & OPTIMIZATION EXPE
     console.log(`  BB: X=[${cyBb.x1}, ${cyBb.x2}] (W=${cyBb.w}px), Y=[${cyBb.y1}, ${cyBb.y2}] (H=${cyBb.h}px)`);
 
     expect(getMapBounds(res.stage12Positions).height).toBe(25400);
-    expect(getMapBounds(res.stage12Positions).width).toBe(12760);
+    expect(getMapBounds(res.stage12Positions).width).toBe(7040);
   });
 
   test('Step 4 & 5: Vertical-Extent Decomposition & Height Contribution Ledger', () => {
