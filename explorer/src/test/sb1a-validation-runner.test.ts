@@ -31,7 +31,10 @@ const DATASETS: Dataset[] = [
 ];
 
 function loadDataset(dataset: Dataset): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
-  const fullPath = path.resolve(process.cwd(), dataset.file);
+  let fullPath = path.resolve(__dirname, '../../public/projects', dataset.key, 'explorer-data.json');
+  if (!fs.existsSync(fullPath)) {
+    fullPath = path.resolve(process.cwd(), dataset.file);
+  }
   const raw = fs.readFileSync(fullPath, 'utf8');
   const parsed = JSON.parse(raw);
   return {
