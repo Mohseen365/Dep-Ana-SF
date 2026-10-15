@@ -50,7 +50,7 @@ export function extractNodesAndEdgesFromCy(cy: cytoscape.Core): {
   const edges: ExplorerEdge[] = [];
 
   cy.nodes().forEach(cyNode => {
-    const data = cyNode.data();
+    const data = typeof cyNode.data === 'function' ? cyNode.data() : (cyNode?.data || {});
     nodes.push({
       id: data.id || cyNode.id(),
       displayName: data.label || data.displayName || cyNode.id(),
