@@ -207,6 +207,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Request generation ref for async worker layout cancellation
   const layoutRequestRef = useRef<number>(0);
 
+  // Initial mount ref to prevent duplicate element teardown / re-layout on mount
+  const isInitialMountRef = useRef<boolean>(true);
+
   // Track previous modes
   const prevLayoutModeRef = useRef<LayoutMode>(layoutMode);
   const prevArchitectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
@@ -550,11 +553,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     let hasAuth = false;
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const currentProvenance = graphLayoutRef.current?.layoutProvenance;
       const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-      if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
-        hasAuth = true;
-      } else if (!currentProvenance && storedArchMode === architectureMode) {
+      if (storedArchMode === architectureMode) {
         hasAuth = true;
       }
     }
@@ -611,7 +611,21 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    if (autoLayoutPolicy !== true) {
+    if (autoLayoutPolicy === true) {
+      cy.layout(layoutOptions).run();
+      const layoutRes = runLayoutWithMetadata(cy, {
+        ...effectiveLayoutOptionsRef.current,
+        nodes: nodesRef.current,
+        edges: edgesRef.current,
+        nodeCount: nodesRef.current.length,
+        animate: false,
+        architectureMode,
+        fit: true,
+      });
+      setFeatureRegions(layoutRes.featureRegions);
+      setOrbitGuides(layoutRes.orbitGuides);
+      captureAndPersistPositions();
+    } else {
       let newlyPlaced = false;
       cy.nodes().forEach((cyNode) => {
         const id = cyNode.id();
@@ -625,16 +639,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       });
       if (newlyPlaced) {
         captureAndPersistPositions();
-      }
-    } else {
-      if (typeof cy.one === 'function') {
-        cy.one('layoutstop', () => {
-          captureAndPersistPositions();
-        });
-      } else if (typeof cy.on === 'function') {
-        cy.on('layoutstop', () => {
-          captureAndPersistPositions();
-        });
       }
     }
 
@@ -860,8 +864,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     nodesRef.current = nodes;
     edgesRef.current = edges;
 
-    // Clear transient session drag positions on structural graph updates / project transitions
-    sessionPositionsRef.current.clear();
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      return;
+    }
 
     if (!cyRef.current) return;
     const cy = cyRef.current;
@@ -877,11 +883,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     let hasGenuinelyNewNodes = false;
 
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const currentProvenance = graphLayoutRef.current?.layoutProvenance;
       const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-      if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
-        hasAuthForUpdate = true;
-      } else if (!currentProvenance && storedArchMode === architectureMode) {
+      if (storedArchMode === architectureMode) {
         hasAuthForUpdate = true;
       }
     }
