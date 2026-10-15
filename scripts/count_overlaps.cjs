@@ -19,11 +19,11 @@ const fs = require('fs');
       const cy = window.__CY__;
       if (!cy) return null;
       let count = 0;
-      const nodes = cy.nodes();
-      for (let i = 0; i < nodes.length; i++) {
-        const a = nodes[i].renderedBoundingBox();
-        for (let j = i + 1; j < nodes.length; j++) {
-          const b = nodes[j].renderedBoundingBox();
+      const visibleNodes = cy.nodes().filter(n => n.visible());
+      for (let i = 0; i < visibleNodes.length; i++) {
+        const a = visibleNodes[i].renderedBoundingBox();
+        for (let j = i + 1; j < visibleNodes.length; j++) {
+          const b = visibleNodes[j].renderedBoundingBox();
           if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) count++;
         }
       }
