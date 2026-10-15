@@ -112,12 +112,21 @@ export interface CentralityOptions {
  * Internal module-level registry of allocated bridge positions within a layout run.
  */
 const activeBridgeAllocations = new Map<string, { x: number; y: number }>();
+const activeExhaustionRecords: BridgeExhaustionTelemetry[] = [];
 
 /**
  * Resets the active bridge allocations registry (called at the start of centrality analysis).
  */
 export function clearBridgeAllocations(): void {
   activeBridgeAllocations.clear();
+  activeExhaustionRecords.length = 0;
+}
+
+/**
+ * Returns active bridge corridor placement exhaustion telemetry records.
+ */
+export function getPlacementExhaustionRecords(): BridgeExhaustionTelemetry[] {
+  return [...activeExhaustionRecords];
 }
 
 /**
@@ -590,6 +599,7 @@ export function calculateBridgeCandidatePosition(
       primaryNodeCount,
       reason: 'FINITE_SEARCH_SPACE_EXHAUSTED',
     };
+    activeExhaustionRecords.push(exhaustionTelemetry);
 
     acceptedPos = {
       x: Math.round(X0 * 100) / 100,
