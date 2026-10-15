@@ -6,11 +6,8 @@
  * never pollutes or overwrites state for Project B (e.g., sidebar expanded, zoom 120%).
  */
 
-import {
-  ExplorerNodeType,
-  ALL_EXPLORER_NODE_TYPES,
-  ArchitectureLayoutMode,
-} from "../types/explorer";
+import { ALL_EXPLORER_NODE_TYPES } from "../types/explorer.ts";
+import type { ExplorerNodeType, ArchitectureLayoutMode } from "../types/explorer.ts";
 
 export interface SelectedComponentState {
   selectedNodeId: string | null;

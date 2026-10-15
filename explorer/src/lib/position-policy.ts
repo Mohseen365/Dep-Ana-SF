@@ -71,7 +71,7 @@ export function shouldAutoLayout(
       case 'mode-switch':
         return false;
       case 'new-nodes':
-        return 'place-new-only';
+        return hasAuth ? 'place-new-only' : true;
       default:
         return false;
     }
@@ -88,7 +88,7 @@ export function shouldAutoLayout(
       case 'mode-switch':
         return false;
       case 'new-nodes':
-        return 'place-new-only';
+        return hasAuth ? 'place-new-only' : true;
       default:
         return false;
     }

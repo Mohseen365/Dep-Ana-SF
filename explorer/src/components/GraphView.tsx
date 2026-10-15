@@ -554,18 +554,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
       if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
         hasAuth = true;
-      } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
-        hasAuth = true;
-      } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
-        hasAuth = true;
-      } else if (currentProvenance === 'automatic-orbit' && architectureMode === 'orbit') {
-        hasAuth = true;
-      } else if (currentProvenance === 'automatic-constellation' && architectureMode === 'constellation') {
-        hasAuth = true;
-      } else if (!currentProvenance) {
-        if (storedArchMode === architectureMode) {
-          hasAuth = true;
-        }
       }
     }
 
@@ -870,6 +858,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     nodesRef.current = nodes;
     edgesRef.current = edges;
 
+    // Clear transient session drag positions on structural graph updates / project transitions
+    sessionPositionsRef.current.clear();
+
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
@@ -887,14 +878,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const currentProvenance = graphLayoutRef.current?.layoutProvenance;
       const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
       if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
-        hasAuthForUpdate = true;
-      } else if (currentProvenance === 'automatic-hybrid' && architectureMode === 'hybrid') {
-        hasAuthForUpdate = true;
-      } else if (currentProvenance === 'automatic-hierarchical' && architectureMode === 'hierarchical') {
-        hasAuthForUpdate = true;
-      } else if (currentProvenance === 'automatic-orbit' && architectureMode === 'orbit') {
-        hasAuthForUpdate = true;
-      } else if (currentProvenance === 'automatic-constellation' && architectureMode === 'constellation') {
         hasAuthForUpdate = true;
       }
     }
