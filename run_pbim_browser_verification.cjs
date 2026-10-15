@@ -92,6 +92,57 @@ async function verifyPbimBrowser() {
       await page.screenshot({ path: path.join(screenshotDir, "03_orbit.png") });
     }
 
+// Scenario C: Hybrid Layout
+    const hybridBtn = await page.$('.graph-control-btn[title*="Hybrid"], .graph-control-btn[title*="hybrid"]');
+    if (hybridBtn) {
+      console.log("    Activating Hybrid Layout...");
+      await hybridBtn.click();
+      await page.waitForTimeout(1000);
+      await page.screenshot({ path: path.join(screenshotDir, "04_hybrid.png") });
+    }
+
+    // Scenario D: Constellation Layout
+    const constBtn = await page.$('.graph-control-btn[title*="Constellation"], .graph-control-btn[title*="constellation"]');
+    if (constBtn) {
+      console.log("    Activating Constellation Layout...");
+      await constBtn.click();
+      await page.waitForTimeout(1000);
+      await page.screenshot({ path: path.join(screenshotDir, "05_constellation.png") });
+    }
+
+    // Geometry overlap counting helper
+    async function countOverlaps() {
+      return await page.evaluate(() => {
+        const nodes = window.cy?.nodes();
+        if (!nodes) return 0;
+        let count = 0;
+        for (let i = 0; i < nodes.length; i++) {
+          const aBox = nodes[i].renderedBoundingBox();
+          for (let j = i + 1; j < nodes.length; j++) {
+            const bBox = nodes[j].renderedBoundingBox();
+            if (aBox.intersects(bBox)) count++;
+          }
+        }
+        return count;
+      });
+    }
+
+    // Log overlap counts for each layout
+    const layoutButtons = [
+      { name: "Hierarchical", btn: hierBtn },
+      { name: "Orbit", btn: orbitBtn },
+      { name: "Hybrid", btn: hybridBtn },
+      { name: "Constellation", btn: constBtn }
+    ];
+    for (const {name, btn} of layoutButtons) {
+      if (btn) {
+        await btn.click();
+        await page.waitForTimeout(1000);
+        const overlaps = await countOverlaps();
+        console.log(`    ${name} layout overlaps: ${overlaps}`);
+      }
+    }
+
     console.log("\n    Console Errors:", consoleErrors.length > 0 ? consoleErrors : "NONE");
   } finally {
     await browser.close();
