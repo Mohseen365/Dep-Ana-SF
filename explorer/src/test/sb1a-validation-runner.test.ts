@@ -164,7 +164,7 @@ describe('SB-1A Bounded-X Automated Adversarial Validation', () => {
       const stage8Width = stage8MaxX - stage8MinX;
 
       const exhaustionRecords = getPlacementExhaustionRecords();
-      const exhaustedCount = exhaustionRecords.filter(r => r.placementStatus === 'PLACEMENT_EXHAUSTED').length;
+      const exhaustedCount = exhaustionRecords.filter(r => r.reason === 'FINITE_SEARCH_SPACE_EXHAUSTED').length;
 
       // Full orchestrator run
       const resultWithMeta = computeArchitectureLayoutWithMetadata(nodes, edges, {
