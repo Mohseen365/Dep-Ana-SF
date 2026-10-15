@@ -1630,6 +1630,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
 
     it('Negative 4: New-node placement does NOT trigger repeated persistence loops', () => {
       const onNodePositionsChange = vi.fn();
+      const initialPositions = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
+      const graphLayout = { mode: 'static' as const, nodePositions: initialPositions, layoutProvenance: 'user-authored' as const };
 
       const { rerender } = render(
         <GraphView
@@ -1639,7 +1641,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={initialPositions}
+          graphLayout={graphLayout}
           onNodePositionsChange={onNodePositionsChange}
           layoutMode="static"
         />
@@ -1667,7 +1670,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={initialPositions}
+          graphLayout={graphLayout}
           onNodePositionsChange={onNodePositionsChange}
           layoutMode="static"
         />
