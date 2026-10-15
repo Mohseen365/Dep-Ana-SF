@@ -554,6 +554,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
       if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
         hasAuth = true;
+      } else if (!currentProvenance && storedArchMode === architectureMode) {
+        hasAuth = true;
       }
     }
 
@@ -878,6 +880,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const currentProvenance = graphLayoutRef.current?.layoutProvenance;
       const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
       if (currentProvenance === 'user-authored' && storedArchMode === architectureMode) {
+        hasAuthForUpdate = true;
+      } else if (!currentProvenance && storedArchMode === architectureMode) {
         hasAuthForUpdate = true;
       }
     }
