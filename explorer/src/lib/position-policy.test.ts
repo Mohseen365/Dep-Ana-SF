@@ -38,8 +38,9 @@ describe('Central Position Policy & Authority System', () => {
         expect(shouldAutoLayout(mode, 'mode-switch')).toBe(false);
       });
 
-      it('new-nodes trigger: returns place-new-only without moving existing nodes', () => {
-        expect(shouldAutoLayout(mode, 'new-nodes')).toBe('place-new-only');
+      it('new-nodes trigger: returns place-new-only when authoritative positions exist, true otherwise', () => {
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: true })).toBe('place-new-only');
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: false })).toBe(true);
       });
 
       it('reset-layout trigger: allows explicit layout reset', () => {
@@ -67,8 +68,9 @@ describe('Central Position Policy & Authority System', () => {
         expect(shouldAutoLayout(mode, 'mode-switch')).toBe(false);
       });
 
-      it('new-nodes trigger: returns place-new-only', () => {
-        expect(shouldAutoLayout(mode, 'new-nodes')).toBe('place-new-only');
+      it('new-nodes trigger: returns place-new-only when authoritative positions exist, true otherwise', () => {
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: true })).toBe('place-new-only');
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: false })).toBe(true);
       });
 
       it('reset-layout trigger: allows explicit layout reset', () => {
