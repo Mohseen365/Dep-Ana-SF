@@ -20,7 +20,7 @@ import {
 import type { ExplorerDataSchema } from '../types/explorer';
 
 // Load real PBIM dataset fixture
-const pbimPath = join(process.cwd(), 'explorer/public/projects/pbim/explorer-data.json');
+const pbimPath = join(__dirname, '../../../public/projects/pbim/explorer-data.json');
 const realPbimData: ExplorerDataSchema = JSON.parse(readFileSync(pbimPath, 'utf-8'));
 
 describe('Component Orbit Geometry & Focused Orbit Layout Suite', () => {
