@@ -5,7 +5,6 @@ import { ViewModeSwitcher } from './ViewModeSwitcher';
 import { GraphControls } from './GraphControls';
 import { InvestigationDrawer } from './InvestigationDrawer';
 import { WorkspaceHeader } from './workspace/WorkspaceHeader';
-import { WorkspaceRouterContext } from '../context/WorkspaceRouterContext';
 import type { ExplorerDataSchema, ExplorerNode } from '../types/explorer';
 
 const sampleNodes: ExplorerNode[] = [

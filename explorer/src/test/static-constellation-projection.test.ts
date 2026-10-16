@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import pbimData from '../../public/projects/pbim/explorer-data.json';
-import { runLayoutWithMetadata } from '../lib/graph-layout';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import { adaptComponentConstellation } from '../lib/adapters/component-constellation-adapter';
+import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 describe('Component Constellation Static Mode Projection Synchronization', () => {
   const nodes = pbimData.nodes as any[];
