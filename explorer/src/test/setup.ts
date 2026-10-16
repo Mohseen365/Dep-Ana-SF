@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+if (typeof window !== 'undefined') {
+  (window as any).__EXPOSE_CY__ = true;
+}
+
 // Mock matchMedia for jsdom
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
