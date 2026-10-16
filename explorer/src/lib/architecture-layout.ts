@@ -133,90 +133,6 @@ export function computeArchitectureLayoutWithMetadata(
     return { positions: { ...existingPositions } };
   }
 
-  // Check if Constellation mode is explicitly requested
-  if (architectureMode === 'constellation') {
-    const dummySummary = {
-      totalNodes: safeNodes.length,
-      totalEdges: safeEdges.length,
-      nodeCount: safeNodes.length,
-      edgeCount: safeEdges.length,
-      highRiskCount: 0,
-      unresolvedCount: 0,
-      cyclesCount: 0,
-    };
-    const schemaInput = {
-      summary: dummySummary,
-      nodes: safeNodes,
-      edges: safeEdges,
-      cycles: [],
-      unresolvedReferences: [],
-      impactSummaries: {},
-    };
-    const projection = adaptComponentConstellation(
-      schemaInput,
-      options.componentConstellationOptions
-    );
-    const constellationOutput = computeComponentConstellationLayout(projection, {
-      nodeWidth,
-      nodeHeight,
-    });
-
-    const constellationPositions: Record<string, { x: number; y: number }> = {};
-    for (const [nodeId, pos] of Object.entries(constellationOutput.positions)) {
-      constellationPositions[nodeId] = { x: pos.x, y: pos.y };
-    }
-
-    return {
-      positions: constellationPositions,
-      orbitGuides: constellationOutput.guides as any,
-      projectedNodeIds: new Set(Object.keys(projection.nodes)),
-    };
-  }
-
-  // Check if Architecture Orbit / Component Orbit mode is explicitly requested
-  const isOrbit = architectureMode === 'orbit';
-  if (isOrbit) {
-    const dummySummary = {
-      totalNodes: safeNodes.length,
-      totalEdges: safeEdges.length,
-      nodeCount: safeNodes.length,
-      edgeCount: safeEdges.length,
-      highRiskCount: 0,
-      unresolvedCount: 0,
-      cyclesCount: 0,
-    };
-    const schemaInput = {
-      summary: dummySummary,
-      nodes: safeNodes,
-      edges: safeEdges,
-      cycles: [],
-      unresolvedReferences: [],
-      impactSummaries: {},
-    };
-    const projection = adaptComponentOrbit(
-      schemaInput,
-      {
-        focalLwcId: options.focalLwcId,
-        ...options.componentOrbitOptions,
-      }
-    );
-    const orbitOutput = computeComponentOrbitLayout(projection, {
-      nodeWidth,
-      nodeHeight,
-    });
-
-    const orbitPositions: Record<string, { x: number; y: number }> = {};
-    for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
-      orbitPositions[nodeId] = { x: pos.x, y: pos.y };
-    }
-
-    return {
-      positions: orbitPositions,
-      orbitGuides: orbitOutput.guides as any,
-      projectedNodeIds: new Set(Object.keys(projection.nodes)),
-    };
-  }
-
   // Ensure all edge endpoints are present in safeNodes
   const knownNodeIds = new Set(safeNodes.map(n => n.id));
   safeEdges.forEach(e => {
@@ -282,6 +198,88 @@ export function computeArchitectureLayoutWithMetadata(
 
   if (safeNodes.length === 0) {
     return { positions: { ...existingPositions } };
+  }
+
+  // Construct complete summary input satisfying ExplorerSummary
+  const completeSummary = {
+    totalNodes: safeNodes.length,
+    totalEdges: safeEdges.length,
+    nodeCount: safeNodes.length,
+    edgeCount: safeEdges.length,
+    highRiskCount: safeNodes.filter(n => n.risk === 'HIGH').length,
+    mediumRiskCount: safeNodes.filter(n => n.risk === 'MEDIUM').length,
+    lowRiskCount: safeNodes.filter(n => n.risk === 'LOW').length,
+    cycleCount: 0,
+    cyclesCount: 0,
+    unresolvedCount: 0,
+    inventory: {
+      apexClasses: safeNodes.filter(n => n.type === 'ApexClass').length,
+      apexTriggers: safeNodes.filter(n => n.type === 'ApexTrigger').length,
+      lwcs: safeNodes.filter(n => n.type === 'LWC').length,
+      visualforcePages: safeNodes.filter(n => n.type === 'Visualforce').length,
+      flows: safeNodes.filter(n => n.type === 'Flow').length,
+      objects: safeNodes.filter(n => n.type === 'Object' || n.type === 'CustomObject').length,
+      fields: safeNodes.filter(n => n.type === 'Field' || n.type === 'CustomField').length,
+    },
+  };
+
+  const schemaInput = {
+    summary: completeSummary,
+    nodes: safeNodes,
+    edges: safeEdges,
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
+  };
+
+  // Check if Constellation mode is explicitly requested
+  if (architectureMode === 'constellation') {
+    const projection = adaptComponentConstellation(
+      schemaInput,
+      options.componentConstellationOptions
+    );
+    const constellationOutput = computeComponentConstellationLayout(projection, {
+      nodeWidth,
+      nodeHeight,
+    });
+
+    const constellationPositions: Record<string, { x: number; y: number }> = {};
+    for (const [nodeId, pos] of Object.entries(constellationOutput.positions)) {
+      constellationPositions[nodeId] = { x: pos.x, y: pos.y };
+    }
+
+    return {
+      positions: constellationPositions,
+      orbitGuides: constellationOutput.guides as any,
+      projectedNodeIds: new Set(Object.keys(projection.nodes)),
+    };
+  }
+
+  // Check if Architecture Orbit / Component Orbit mode is explicitly requested
+  const isOrbit = architectureMode === 'orbit';
+  if (isOrbit) {
+    const projection = adaptComponentOrbit(
+      schemaInput,
+      {
+        focalLwcId: options.focalLwcId,
+        ...options.componentOrbitOptions,
+      }
+    );
+    const orbitOutput = computeComponentOrbitLayout(projection, {
+      nodeWidth,
+      nodeHeight,
+    });
+
+    const orbitPositions: Record<string, { x: number; y: number }> = {};
+    for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
+      orbitPositions[nodeId] = { x: pos.x, y: pos.y };
+    }
+
+    return {
+      positions: orbitPositions,
+      orbitGuides: orbitOutput.guides as any,
+      projectedNodeIds: new Set(Object.keys(projection.nodes)),
+    };
   }
 
   // Construct LayoutGraphIndex immediately after Stage 0 normalization

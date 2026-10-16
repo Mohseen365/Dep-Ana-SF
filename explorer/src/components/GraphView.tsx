@@ -215,6 +215,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const prevArchitectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
   const prevFocalLwcIdRef = useRef<string | null | undefined>(effectiveLayoutOptions.focalLwcId);
 
+  const [cyInstance, setCyInstance] = useState<cytoscape.Core | null>(null);
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
@@ -282,8 +283,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       sessionPositionsRef.current.set(n.id(), rounded);
     });
 
-    const provenance: LayoutProvenance = overrideProvenance ||
-      (architectureMode === 'hybrid' ? 'automatic-hybrid' : 'automatic-hierarchical');
+    const provenance: LayoutProvenance = overrideProvenance || (
+      architectureMode === 'hybrid'        ? 'automatic-hybrid'        :
+      architectureMode === 'orbit'         ? 'automatic-orbit'         :
+      architectureMode === 'constellation' ? 'automatic-constellation' :
+                                             'automatic-hierarchical'
+    );
 
     if (onNodePositionsChangeRef.current) {
       (onNodePositionsChangeRef.current as any)(currentPositions, provenance);
@@ -339,6 +344,20 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         ? 'automatic-constellation'
         : 'automatic-hierarchical';
 
+    const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const hasAuth = Boolean(storedArchMode && storedArchMode === architectureMode);
+
+    const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'architecture-mode-switch', {
+      hasAuthoritativePositions: hasAuth,
+    });
+
+    if (autoLayoutPolicy === false) {
+      captureAndPersistPositions(targetProvenance);
+      return;
+    }
+
+    const existingPosMap = graphLayoutRef.current?.layoutPositions?.[architectureMode] ?? {};
+
     const requestId = ++layoutRequestRef.current;
     const startTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
@@ -379,6 +398,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         animate: false,
         architectureMode,
         enableFeatureLayout: architectureMode === 'hybrid',
+        existingPositions: existingPosMap,
         fit: true,
       }).then((layoutRes) => {
         if (requestId !== layoutRequestRef.current) return;
@@ -396,6 +416,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           animate: false,
           architectureMode,
           enableFeatureLayout: architectureMode === 'hybrid',
+          existingPositions: existingPosMap,
           fit: true,
         });
         setFeatureRegions(layoutRes.featureRegions);
@@ -412,6 +433,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         animate: false,
         architectureMode,
         enableFeatureLayout: architectureMode === 'hybrid',
+        existingPositions: existingPosMap,
         fit: true,
       });
       setFeatureRegions(layoutRes.featureRegions);
@@ -440,11 +462,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
   // Re-attach cytoscape navigator
   useEffect(() => {
-    if (isNavigatorVisible && cyRef.current && minimapRef.current) {
+    if (isNavigatorVisible && cyInstance && minimapRef.current) {
       destroyNavigator();
       try {
         const bodyEl = minimapRef.current.querySelector('.navigator-body') || minimapRef.current;
-        navRef.current = (cyRef.current as any).navigator({
+        navRef.current = (cyInstance as any).navigator({
           container: bodyEl,
           scale: 0.15
         });
@@ -455,7 +477,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     return () => {
       destroyNavigator();
     };
-  }, [isNavigatorVisible, destroyNavigator]);
+  }, [isNavigatorVisible, cyInstance, destroyNavigator]);
 
   // Reset Layout handler
   const executeResetLayout = useCallback(() => {
@@ -553,8 +575,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     let hasAuth = false;
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-      if (storedArchMode === architectureMode) {
+      const storedArchMode = graphLayoutRef.current?.architectureMode;
+      if (storedArchMode && storedArchMode === architectureMode) {
         hasAuth = true;
       }
     }
@@ -588,6 +610,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cyRef.current = cy;
+    setCyInstance(cy);
     if (typeof window !== 'undefined') {
       (window as any).__CY__ = cy;
       (window as any).__LAYOUT_MODULE__ = {
@@ -653,20 +676,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
       if (onNodeDragEndRef.current) {
         onNodeDragEndRef.current(nodeId, rounded);
-      }
-
-      if (onNodePositionsChangeRef.current) {
-        const currentStoredPositions =
-          graphLayoutRef.current?.nodePositions ||
-          nodePositionsRef.current ||
-          {};
-
-        const updatedPositions = {
-          ...currentStoredPositions,
-          [nodeId]: rounded,
-        };
-
-        (onNodePositionsChangeRef.current as any)(updatedPositions, 'user-authored');
       }
     });
 
@@ -855,6 +864,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         (window as any).__CY__ = null;
       }
       cy.destroy();
+      setCyInstance(null);
       cyRef.current = null;
     };
   }, []);
@@ -883,8 +893,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     let hasGenuinelyNewNodes = false;
 
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-      if (storedArchMode === architectureMode) {
+      const storedArchMode = graphLayoutRef.current?.architectureMode;
+      if (storedArchMode && storedArchMode === architectureMode) {
         hasAuthForUpdate = true;
       }
     }
@@ -1274,7 +1284,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
       {/* Feature Composition & Orbit Guide Overlay Canvas */}
       <FeatureOverlayCanvas
-        cy={cyRef.current}
+        cy={cyInstance}
         nodes={nodes}
         edges={edges}
         discoveryResult={discoveryResult}
