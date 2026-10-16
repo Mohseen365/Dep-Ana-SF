@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 import { WorkspaceViewMode } from '../lib/projectState';
 import {
   WorkspaceDomain,

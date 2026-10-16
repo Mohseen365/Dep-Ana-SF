@@ -8,7 +8,6 @@ import {
 import type {
   LayoutWorkerRequest,
   LayoutWorkerResponse,
-  FeatureRegionSummary,
 } from './layout-worker-types';
 
 export interface LayoutWorkerClientOptions {
