@@ -1,10 +1,36 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { projectOrbitSemantics, computeOrbitRingIndex, OrbitNodeMetadata } from './orbit-semantics';
-import { computeOrbitLayout, checkAABBOverlap, normalizeAngle, calculateRequiredSectorRadius } from './orbit-layout';
-import { classifyNodeLayerWithReason, isTestNode } from './layers';
-import { classifyFeatureRole } from './feature-roles';
+import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import { projectOrbitSemantics, type OrbitSemanticProjectionResult } from './orbit-semantics';
+import { computeOrbitLayout, checkAABBOverlap, type OrbitLayoutOutput, type OrbitDiagnostics } from './orbit-layout';
+import { classifyNodeLayerWithReason } from './layers';
+
+declare const __dirname: string;
+
+interface OrbitFixtureAuditResult {
+  nodeCount: number;
+  edgeCount: number;
+  nodeTypeHist: Record<string, number>;
+  layerHist: Record<string, number>;
+  orbitRingHist: Record<number, number>;
+  featureCount: number;
+  domainCount: number;
+  sectorCount: number;
+  maxSectorPop: number;
+  projectedN: number;
+  geometryN: number;
+  initialCollisions: number;
+  repairOps: number;
+  finalCollisions: number;
+  collisionPairs: Array<[string, string]>;
+  minDx: number;
+  minDy: number;
+  minEffSep: number;
+  diagnostics: OrbitDiagnostics;
+  semResult: OrbitSemanticProjectionResult;
+  geoResult: OrbitLayoutOutput;
+}
 
 describe('Adversarial Convergence & PBIM Truth Audit', () => {
   it('runs exhaustive audit across all fixtures', () => {
@@ -15,13 +41,13 @@ describe('Adversarial Convergence & PBIM Truth Audit', () => {
       { name: 'pbim', relPath: '../../../public/projects/pbim/explorer-data.json' },
     ];
 
-    const results: Record<string, any> = {};
+    const results: Record<string, OrbitFixtureAuditResult> = {};
 
     for (const fix of fixtures) {
       const fullPath = path.resolve(__dirname, fix.relPath);
       const raw = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
-      const rawNodes = raw.nodes || [];
-      const rawEdges = raw.edges || [];
+      const rawNodes: ExplorerNode[] = raw.nodes || [];
+      const rawEdges: ExplorerEdge[] = raw.edges || [];
 
       // 1. Run Workstream A Semantic Projection
       const semResult = projectOrbitSemantics(rawNodes, rawEdges);
