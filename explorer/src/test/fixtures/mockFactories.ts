@@ -38,8 +38,6 @@ export function createMockSummary(
 export function createMockGraphLayoutState(
   overrides?: Partial<GraphLayoutState>
 ): GraphLayoutState {
-  const hasOverrides = overrides !== undefined && Object.keys(overrides).length > 0;
-
   const baseDefaults: GraphLayoutState = {
     mode: 'interactive',
     architectureMode: 'hierarchical',
@@ -59,18 +57,16 @@ export function createMockGraphLayoutState(
     },
   };
 
-  if (!hasOverrides) {
-    return baseDefaults;
-  }
-
   return {
-    mode: overrides.mode ?? 'interactive',
-    ...(overrides.architectureMode !== undefined ? { architectureMode: overrides.architectureMode } : {}),
-    ...(overrides.layoutProvenance !== undefined ? { layoutProvenance: overrides.layoutProvenance } : {}),
-    ...(overrides.nodePositions !== undefined ? { nodePositions: overrides.nodePositions } : {}),
-    ...(overrides.layoutPositions !== undefined ? { layoutPositions: overrides.layoutPositions } : {}),
-    ...(overrides.layoutProvenances !== undefined ? { layoutProvenances: overrides.layoutProvenances } : {}),
-    ...(overrides.layoutName !== undefined ? { layoutName: overrides.layoutName } : {}),
-    ...(overrides.layoutVersion !== undefined ? { layoutVersion: overrides.layoutVersion } : {}),
-  } as GraphLayoutState;
+    ...baseDefaults,
+    ...overrides,
+  };
+}
+
+export function createMockGraphLayoutPatch(
+  overrides?: Partial<GraphLayoutState>
+): Partial<GraphLayoutState> {
+  return {
+    ...overrides,
+  };
 }
