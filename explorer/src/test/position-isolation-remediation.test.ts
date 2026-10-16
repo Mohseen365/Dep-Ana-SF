@@ -1,16 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import {
-  createDefaultProjectUIState,
   loadProjectState,
-  saveProjectState,
   updateProjectState,
   clearProjectState,
   mergeWithDefaultState,
   ProjectUIState,
 } from '../lib/projectState';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { LayoutWorkerClient } from '../lib/workers/layout-worker-client';
 import { resolveAuthoritativePosition } from '../lib/position-policy';
 
 describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite', () => {
@@ -161,7 +158,9 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
 
     const orbitState = updateProjectState(PROJECT_A, {
       graphLayout: {
+        mode: 'interactive',
         architectureMode: 'orbit',
+        nodePositions: {},
       },
     });
 
@@ -196,7 +195,9 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
 
     const constellationState = updateProjectState(PROJECT_A, {
       graphLayout: {
+        mode: 'interactive',
         architectureMode: 'constellation',
+        nodePositions: {},
       },
     });
 
@@ -229,7 +230,9 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
 
     const hierState = updateProjectState(PROJECT_A, {
       graphLayout: {
+        mode: 'interactive',
         architectureMode: 'hierarchical',
+        nodePositions: {},
       },
     });
 
@@ -320,7 +323,7 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
         mode: 'interactive',
         architectureMode: 'hierarchical',
         nodePositions: legacyFlatPositions,
-      } as any,
+      },
     };
 
     const merged = mergeWithDefaultState(PROJECT_A, legacyRawJson);
@@ -358,16 +361,17 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
 
     updateProjectState(PROJECT_A, {
       graphLayout: {
+          mode: 'interactive',
         architectureMode: 'hierarchical',
         nodePositions: userHierarchical,
         layoutProvenance: 'user-authored',
       },
     });
 
-    updateProjectState(PROJECT_A, { graphLayout: { architectureMode: 'orbit' } });
-    updateProjectState(PROJECT_A, { graphLayout: { architectureMode: 'constellation' } });
-    updateProjectState(PROJECT_A, { graphLayout: { architectureMode: 'hybrid' } });
-    const finalState = updateProjectState(PROJECT_A, { graphLayout: { architectureMode: 'hierarchical' } });
+      updateProjectState(PROJECT_A, { graphLayout: { mode: 'interactive', architectureMode: 'orbit', nodePositions: {} } });
+      updateProjectState(PROJECT_A, { graphLayout: { mode: 'interactive', architectureMode: 'constellation', nodePositions: {} } });
+      updateProjectState(PROJECT_A, { graphLayout: { mode: 'interactive', architectureMode: 'hybrid', nodePositions: {} } });
+      const finalState = updateProjectState(PROJECT_A, { graphLayout: { mode: 'interactive', architectureMode: 'hierarchical', nodePositions: userHierarchical } });
 
     expect(finalState.graphLayout.architectureMode).toBe('hierarchical');
     expect(finalState.graphLayout.nodePositions).toEqual(userHierarchical);
@@ -380,8 +384,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawLegacyState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'hierarchical',
+            mode: 'interactive' as const,
+            architectureMode: 'hierarchical' as const,
           nodePositions: { 'Node:a1': { x: 101, y: 102 } },
         },
       };
@@ -399,8 +403,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawScopedEmptyState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'orbit',
+            mode: 'interactive' as const,
+            architectureMode: 'orbit' as const,
           nodePositions: { 'Node:stale-flat': { x: 999, y: 999 } },
           layoutPositions: {
             orbit: {},
@@ -420,8 +424,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawTopEmptyState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'hierarchical',
+            mode: 'interactive' as const,
+            architectureMode: 'hierarchical' as const,
           nodePositions: { 'Node:legacy-flat': { x: 888, y: 888 } },
           layoutPositions: {},
         },
@@ -440,8 +444,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawOtherModeState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'orbit',
+            mode: 'interactive' as const,
+            architectureMode: 'orbit' as const,
           nodePositions: { 'Node:stale-flat': { x: 777, y: 777 } },
           layoutPositions: {
             hierarchical: { 'Node:h1': { x: 10, y: 20 } },
@@ -462,8 +466,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawPopulatedState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'orbit',
+            mode: 'interactive' as const,
+            architectureMode: 'orbit' as const,
           nodePositions: { 'Node:conflict': { x: 999, y: 999 } },
           layoutPositions: {
             orbit: { 'Node:orbit-1': { x: 42, y: 84 } },
@@ -482,8 +486,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawPartialState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'orbit',
+            mode: 'interactive' as const,
+            architectureMode: 'orbit' as const,
           nodePositions: { 'Node:stale-flat': { x: 555, y: 555 } },
           layoutPositions: {
             hierarchical: { 'Node:hier-1': { x: 200, y: 300 } },
@@ -504,8 +508,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawMalformedNullState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'hierarchical',
+            mode: 'interactive' as const,
+            architectureMode: 'hierarchical' as const,
           nodePositions: { 'Node:safe': { x: 444, y: 444 } },
           layoutPositions: null,
         },
@@ -519,8 +523,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawMalformedStringState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'hierarchical',
+            mode: 'interactive' as const,
+            architectureMode: 'hierarchical' as const,
           nodePositions: { 'Node:safe2': { x: 333, y: 333 } },
           layoutPositions: "invalid-string",
         },
@@ -536,8 +540,8 @@ describe('Position Isolation Remediation & Cross-Mode Stability Regression Suite
       const rawProvenanceMismatchState = {
         projectId: PROJECT_A,
         graphLayout: {
-          mode: 'interactive',
-          architectureMode: 'orbit',
+            mode: 'interactive' as const,
+            architectureMode: 'orbit' as const,
           nodePositions: { 'Node:o1': { x: 10, y: 20 } },
           layoutPositions: {
             orbit: { 'Node:o1': { x: 10, y: 20 } },

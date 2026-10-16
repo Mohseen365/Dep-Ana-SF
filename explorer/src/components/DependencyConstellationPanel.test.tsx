@@ -234,7 +234,7 @@ describe('DependencyConstellationPanel Component', () => {
       edges: [],
       availableNodes: [],
       summary: {
-        focalNodeId: null,
+        focalNodeId: '',
         totalNodes: 0,
         totalEdges: 0,
         ringCount: 0,

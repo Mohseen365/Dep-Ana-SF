@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { adaptComponentOrbit } from '../lib/adapters/component-orbit-adapter';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ExplorerDataSchema } from '../types/explorer';
 
 describe('Tier B — Silent Semantic Corruption Regression Suite', () => {
   test('B1: isChildLwc ignores LWC-to-LWC non-composition edges (e.g. lwc-import)', () => {
@@ -14,7 +14,7 @@ describe('Tier B — Silent Semantic Corruption Regression Suite', () => {
         lowRiskCount: 3,
         cycleCount: 0,
         unresolvedCount: 0,
-        inventory: { apexClasses: 1, apexTriggers: 0, lwcs: 2, visualforcePages: 0, flows: 0, objects: 0, fields: 0 },
+        inventory: { files: 3, apexClasses: 1, apexTriggers: 0, lwcJs: 2, lwcHtml: 0, visualforce: 0, flows: 0, objects: 0, fields: 0 },
       },
       nodes: [
         {
@@ -110,7 +110,7 @@ describe('Tier B — Silent Semantic Corruption Regression Suite', () => {
         lowRiskCount: 4,
         cycleCount: 0,
         unresolvedCount: 0,
-        inventory: { apexClasses: 1, apexTriggers: 0, lwcs: 3, visualforcePages: 0, flows: 0, objects: 0, fields: 0 },
+        inventory: { files: 4, apexClasses: 1, apexTriggers: 0, lwcJs: 3, lwcHtml: 0, visualforce: 0, flows: 0, objects: 0, fields: 0 },
       },
       nodes: [
         {

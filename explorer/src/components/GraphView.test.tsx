@@ -824,13 +824,23 @@ describe('GraphEngine Components & Integration', () => {
       it('triggers element synchronization when findings, architectureMode, layoutMode, or effectiveLayoutOptions change while nodes and edges remain unchanged (Fix E 1B5-05)', () => {
         const mockFinding = {
           id: 'find1',
-          ruleId: 'HIGH_COUPLING',
+          type: 'HIGH_COUPLING',
           severity: 'HIGH' as const,
-          category: 'MAINTAINABILITY' as const,
           title: 'High Coupling Detected',
           description: 'Component has high coupling',
           nodeIds: ['ApexClass:AccountController'],
           edgeIds: [],
+          evidence: [],
+          provenance: {
+            origin: 'DERIVED_RULE' as const,
+            source: 'test',
+            facts: {},
+          },
+          rule: {
+            ruleId: 'HIGH_COUPLING',
+            ruleVersion: '1.0.0',
+            name: 'High Coupling',
+          },
         };
 
         const { rerender } = render(
