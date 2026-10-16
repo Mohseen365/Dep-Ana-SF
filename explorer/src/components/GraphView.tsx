@@ -4,7 +4,7 @@ import fcose from 'cytoscape-fcose';
 import navigator from 'cytoscape-navigator';
 import 'cytoscape-navigator/cytoscape.js-navigator.css';
 
-import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
+import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode, ARCH_MODE_META } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
 import { getLayoutOptions, runLayoutWithMetadata, runLayoutWithMetadataAsync, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
@@ -13,12 +13,12 @@ import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
 import {
   shouldAutoLayout,
-  resolveAuthoritativePosition,
   calculateDeterministicNewNodePosition,
   LayoutMode,
   LayoutTrigger,
   Position,
 } from '../lib/position-policy';
+import { resolvePosition } from '../lib/layout/positions';
 import {
   bindGraphInteractions,
   fitToScreen,
@@ -39,13 +39,34 @@ import { GraphLegend } from './GraphLegend';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
 import { EdgeHoverCard } from './graph-internals/EdgeHoverCard';
 import { FeatureOverlayCanvas } from './graph-internals/FeatureOverlayCanvas';
+import { GraphErrorBoundary } from './graph-internals/GraphErrorBoundary';
 import { useInvestigationOptional } from '../context/InvestigationContext';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { useEvent } from '../hooks/useEvent';
 import './graph-internals/graph.css';
 
 cytoscape.use(fcose);
 cytoscape.use(navigator);
 
 const DEFAULT_EMPTY_ARRAY: string[] = [];
+
+function getHashModes(): { arch?: ArchitectureLayoutMode; layout?: LayoutMode } {
+  if (typeof window === 'undefined' || !window.location.hash) return {};
+  try {
+    const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+    const params = new URLSearchParams(raw);
+    const arch = params.get('arch') as ArchitectureLayoutMode | null;
+    const layout = params.get('layout') as LayoutMode | null;
+    const validArch: ArchitectureLayoutMode[] = ['hierarchical', 'hybrid', 'orbit', 'constellation'];
+    const validLayout: LayoutMode[] = ['static', 'interactive'];
+    return {
+      arch: arch && validArch.includes(arch) ? arch : undefined,
+      layout: layout && validLayout.includes(layout) ? layout : undefined,
+    };
+  } catch (e) {
+    return {};
+  }
+}
 
 export interface GraphViewProps {
   nodes: ExplorerNode[];
@@ -138,8 +159,75 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     layoutOptions,
   } = props;
 
-  const architectureMode: ArchitectureLayoutMode =
-    architectureModeProp || graphLayout?.architectureMode || 'hierarchical';
+  const hashModes = useMemo(() => getHashModes(), []);
+
+  const initialArchMode: ArchitectureLayoutMode = useMemo(() => {
+    if (hashModes.arch) return hashModes.arch;
+    if (architectureModeProp) return architectureModeProp;
+    if (graphLayout?.architectureMode) return graphLayout.architectureMode;
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('explorer:architectureMode') as ArchitectureLayoutMode | null;
+      if (stored && ['hierarchical', 'hybrid', 'orbit', 'constellation'].includes(stored)) {
+        return stored;
+      }
+    }
+    return 'hierarchical';
+  }, [hashModes.arch, architectureModeProp, graphLayout?.architectureMode]);
+
+  const initialLayoutMode: LayoutMode = useMemo(() => {
+    if (hashModes.layout) return hashModes.layout;
+    if (layoutModeProp) return layoutModeProp;
+    if (graphLayout?.mode) return graphLayout.mode;
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('explorer:layoutMode') as LayoutMode | null;
+      if (stored && ['static', 'interactive'].includes(stored)) {
+        return stored;
+      }
+    }
+    return 'interactive';
+  }, [hashModes.layout, layoutModeProp, graphLayout?.mode]);
+
+  const architectureMode: ArchitectureLayoutMode = architectureModeProp || initialArchMode;
+  const layoutMode: LayoutMode = layoutModeProp || initialLayoutMode;
+
+  // On mount, notify parent if hash or localStorage specified a different initial mode
+  useEffect(() => {
+    if (initialArchMode !== (architectureModeProp || graphLayout?.architectureMode) && onArchitectureModeChange) {
+      onArchitectureModeChange(initialArchMode);
+    }
+    if (initialLayoutMode !== (layoutModeProp || graphLayout?.mode) && onLayoutModeChange) {
+      onLayoutModeChange(initialLayoutMode);
+    }
+  }, []);
+
+  // Sync architectureMode & layoutMode to localStorage and location.hash
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      localStorage.setItem('explorer:architectureMode', architectureMode);
+      localStorage.setItem('explorer:layoutMode', layoutMode);
+    } catch (e) {}
+
+    try {
+      const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+      const params = new URLSearchParams(raw);
+      let changed = false;
+
+      if (params.get('arch') !== architectureMode) {
+        params.set('arch', architectureMode);
+        changed = true;
+      }
+      if (params.get('layout') !== layoutMode) {
+        params.set('layout', layoutMode);
+        changed = true;
+      }
+
+      if (changed) {
+        window.history.replaceState(null, '', `#${params.toString()}`);
+      }
+    } catch (e) {}
+  }, [architectureMode, layoutMode]);
 
   const enableFeatureLayout =
     enableFeatureLayoutProp ??
@@ -147,7 +235,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     (architectureMode === 'hybrid');
 
   const nodePositions = props.nodePositions || graphLayout?.nodePositions;
-  const layoutMode: LayoutMode = layoutModeProp || graphLayout?.mode || 'interactive';
   const onNodePositionsChange = onNodePositionsChangeProp || onNodePositionChange;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -199,6 +286,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // In-session explicit drag positions
   const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
 
+  // Duplicate-layout detector ref tracking { reason, at }
+  const lastRunRef = useRef<{ reason: string; at: number } | null>(null);
+
   // Pending layoutstop listener reference and layout running state
   const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
   const pendingModeSwitchCaptureRef = useRef<((evt?: any) => void) | null>(null);
@@ -206,6 +296,37 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
   // Request generation ref for async worker layout cancellation
   const layoutRequestRef = useRef<number>(0);
+
+  const DEBUG = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
+  const [, setLastLayoutCompletedTrigger] = useState<number>(0);
+
+  const guardLayoutRun = useCallback((reason: string) => {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (lastRunRef.current && now - lastRunRef.current.at < 150) {
+      console.warn(`[layout] duplicate run: ${lastRunRef.current.reason} -> ${reason} (${Math.round(now - lastRunRef.current.at)}ms)`);
+    }
+    lastRunRef.current = { reason, at: now };
+  }, []);
+
+  const markLayoutStart = useCallback((reason: string) => {
+    guardLayoutRun(reason);
+    if (typeof performance !== 'undefined' && performance.mark) {
+      performance.mark(`layout-${reason}-start`);
+    }
+  }, [guardLayoutRun]);
+
+  const markLayoutEnd = useCallback((reason: string, mode: string) => {
+    if (typeof performance !== 'undefined' && performance.mark) {
+      performance.mark(`layout-${reason}-end`);
+      if (performance.measure) {
+        try {
+          performance.measure(`layout:${mode}:${reason}`, `layout-${reason}-start`, `layout-${reason}-end`);
+        } catch (e) {
+          // Safe catch if mark missing
+        }
+      }
+    }
+  }, []);
 
   // Initial mount ref to prevent duplicate element teardown / re-layout on mount
   const isInitialMountRef = useRef<boolean>(true);
@@ -223,6 +344,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const [orbitGuides, setOrbitGuides] = useState<any | undefined>(undefined);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [layoutAnnouncement, setLayoutAnnouncement] = useState<string>('');
+
   // Derive Feature Discovery Result deterministically
   const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
     return discoverFeatures(nodes, edges);
@@ -237,6 +361,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
     return map;
   }, [architectureMode, discoveryResult]);
+
+  // Dev-only invariant check to detect Cytoscape vs data node count desync
+  useEffect(() => {
+    const isDev = (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') || (import.meta as any).env?.DEV;
+    if (!isDev || !cyInstance) return;
+    const cyCount = cyInstance.nodes().length;
+    if (cyCount !== nodes.length) {
+      console.error(`[graph] desync invariant failure: cy nodes count (${cyCount}) !== data nodes count (${nodes.length})`);
+    }
+  }, [nodes, cyInstance]);
 
   // Derive bounded accessible node list to prevent DOM inflation on large graphs
   const accessibleNodes = useMemo(() => {
@@ -312,7 +446,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           captureAndPersistPositions();
         };
         pendingModeSwitchCaptureRef.current = onStop;
-        cyRef.current.one('layoutstop', onStop);
+        if (typeof cyRef.current.one === 'function') {
+          cyRef.current.one('layoutstop', onStop);
+        } else {
+          cyRef.current.on('layoutstop', onStop);
+        }
       } else {
         captureAndPersistPositions();
       }
@@ -386,8 +524,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         };
         (window as any).__LAST_LAYOUT_COMPLETED__ = detail;
         window.dispatchEvent(new CustomEvent('app:layoutcomplete', { detail }));
+        setLayoutAnnouncement(`${architectureMode} layout applied, ${nodesRef.current.length} components`);
+        if (DEBUG) {
+          setLastLayoutCompletedTrigger((prev) => prev + 1);
+        }
       }
     };
+
+    markLayoutStart('architecture-mode-switch');
 
     if (nodesRef.current.length >= 20) {
       runLayoutWithMetadataAsync(cy, {
@@ -401,12 +545,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         existingPositions: existingPosMap,
         fit: true,
       }).then((layoutRes) => {
+        markLayoutEnd('architecture-mode-switch', architectureMode);
         if (requestId !== layoutRequestRef.current) return;
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions(targetProvenance);
         notifyComplete('complete', layoutRes.correlationToken || activeToken);
       }).catch(() => {
+        markLayoutEnd('architecture-mode-switch', architectureMode);
         if (requestId !== layoutRequestRef.current) return;
         const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
@@ -436,6 +582,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         existingPositions: existingPosMap,
         fit: true,
       });
+      markLayoutEnd('architecture-mode-switch', architectureMode);
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions(targetProvenance);
@@ -479,6 +626,43 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     };
   }, [isNavigatorVisible, cyInstance, destroyNavigator]);
 
+  const handleZoomIn = useEvent(() => {
+    if (cyRef.current) {
+      cyRef.current.zoom({
+        level: cyRef.current.zoom() * 1.2,
+        renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+      });
+    }
+  });
+
+  const handleZoomOut = useEvent(() => {
+    if (cyRef.current) {
+      cyRef.current.zoom({
+        level: cyRef.current.zoom() * 0.8,
+        renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+      });
+    }
+  });
+
+  const handleFitView = useEvent(() => {
+    if (cyRef.current) fitToScreen(cyRef.current, 50);
+  });
+
+  const handleCenterSelected = useEvent(() => {
+    if (cyRef.current && selectedNodeId) {
+      const ele = cyRef.current.getElementById(selectedNodeId);
+      if (ele.length > 0) {
+        if (prefersReducedMotion) {
+          cyRef.current.center(ele);
+        } else {
+          cyRef.current.animate({ center: { eles: ele } }, { duration: 200 });
+        }
+      }
+    }
+  });
+
+  const handleToggleNavigator = useEvent(() => setIsNavigatorVisible((prev) => !prev));
+
   // Reset Layout handler
   const executeResetLayout = useCallback(() => {
     if (!cyRef.current) return;
@@ -491,17 +675,25 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       pendingLayoutStopRef.current = null;
     }
 
-    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+    const requestId = ++layoutRequestRef.current;
     const nodeCount = nodesRef.current.length;
     const shouldAnimate = !prefersReducedMotion && nodeCount < 100;
+
+    markLayoutStart('reset');
 
     if (shouldAnimate) {
       const onStop = () => {
         pendingLayoutStopRef.current = null;
+        markLayoutEnd('reset', architectureMode);
+        if (requestId !== layoutRequestRef.current) return;
         captureAndPersistPositions();
       };
       pendingLayoutStopRef.current = onStop;
-      cy.one('layoutstop', onStop);
+      if (typeof cy.one === 'function') {
+        cy.one('layoutstop', onStop);
+      } else {
+        cy.on('layoutstop', onStop);
+      }
 
       const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
@@ -511,6 +703,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         animate: true,
         architectureMode,
       });
+      if (requestId !== layoutRequestRef.current) return;
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
     } else {
@@ -522,11 +715,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         animate: false,
         architectureMode,
       });
+      markLayoutEnd('reset', architectureMode);
+      if (requestId !== layoutRequestRef.current) return;
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions();
     }
-  }, [captureAndPersistPositions]);
+  }, [architectureMode, captureAndPersistPositions, markLayoutStart, markLayoutEnd]);
 
   // Expose imperative control methods
   useImperativeHandle(ref, () => ({
@@ -555,7 +750,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       if (cyRef.current && selectedNodeId) {
         const ele = cyRef.current.getElementById(selectedNodeId);
         if (ele.length > 0) {
-          cyRef.current.animate({ center: { eles: ele } }, { duration: 250 });
+          if (prefersReducedMotion) {
+            cyRef.current.center(ele);
+          } else {
+            cyRef.current.animate({ center: { eles: ele } }, { duration: 250 });
+          }
         }
       }
     },
@@ -573,19 +772,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       fontSize: 12
     });
 
-    let hasAuth = false;
-    if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-      if (storedArchMode === architectureMode) {
-        hasAuth = true;
-      }
-    }
+    const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const hasAuth =
+      !!nodePositionsRef.current &&
+      Object.keys(nodePositionsRef.current).length > 0 &&
+      (storedArchMode === undefined || storedArchMode === architectureMode);
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'initial', {
       hasAuthoritativePositions: hasAuth,
     });
 
-    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
     const layoutOptions = autoLayoutPolicy === true
       ? getLayoutOptions({
           ...effectiveLayoutOptionsRef.current,
@@ -622,10 +818,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const knownPosMap: Record<string, Position> = {};
     cy.nodes().forEach((cyNode) => {
       const id = cyNode.id();
-      const resolved = resolveAuthoritativePosition(id, {
-        sessionPositions: sessionPositionsRef.current,
-        persistedPositions: nodePositionsRef.current,
-        hasAuthoritativePositions: hasAuth,
+      const resolved = resolvePosition(id, {
+        session: sessionPositionsRef.current,
+        persisted: nodePositionsRef.current,
+        hasAuth,
+        mode: architectureMode,
       });
 
       if (resolved) {
@@ -634,7 +831,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
+    const requestId = ++layoutRequestRef.current;
+
     if (autoLayoutPolicy === true) {
+      markLayoutStart('initial');
       cy.layout(layoutOptions).run();
       const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
@@ -645,9 +845,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         architectureMode,
         fit: true,
       });
-      setFeatureRegions(layoutRes.featureRegions);
-      setOrbitGuides(layoutRes.orbitGuides);
-      captureAndPersistPositions();
+      markLayoutEnd('initial', architectureMode);
+      if (requestId === layoutRequestRef.current) {
+        setFeatureRegions(layoutRes.featureRegions);
+        setOrbitGuides(layoutRes.orbitGuides);
+        captureAndPersistPositions();
+      }
     } else {
       let newlyPlaced = false;
       cy.nodes().forEach((cyNode) => {
@@ -889,21 +1092,20 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cyPositionsBefore[n.id()] = posObj;
     });
 
-    let hasAuthForUpdate = false;
     let hasGenuinelyNewNodes = false;
-
-    if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-      if (storedArchMode === architectureMode) {
-        hasAuthForUpdate = true;
-      }
-    }
+    const storedArchModeSync = graphLayoutRef.current?.architectureMode;
+    const hasAuthForUpdate =
+      !!nodePositionsRef.current &&
+      Object.keys(nodePositionsRef.current).length > 0 &&
+      (storedArchModeSync === undefined || storedArchModeSync === architectureMode);
 
     for (const node of nodes) {
-      const resolved = resolveAuthoritativePosition(node.id, {
-        sessionPositions: sessionPositionsRef.current,
-        persistedPositions: nodePositionsRef.current,
-        cyNodePosition: cyPositionsBefore[node.id],
+      const resolved = resolvePosition(node.id, {
+        session: sessionPositionsRef.current,
+        persisted: nodePositionsRef.current,
+        cy: cyPositionsBefore[node.id],
+        hasAuth: hasAuthForUpdate,
+        mode: architectureMode,
       });
 
       if (!resolved) {
@@ -928,11 +1130,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     cy.nodes().forEach((node) => {
       const id = node.id();
-      const resolved = resolveAuthoritativePosition(id, {
-        sessionPositions: sessionPositionsRef.current,
-        persistedPositions: nodePositionsRef.current,
-        cyNodePosition: cyPositionsBefore[id],
-        hasAuthoritativePositions: hasAuthForUpdate,
+      const resolved = resolvePosition(id, {
+        session: sessionPositionsRef.current,
+        persisted: nodePositionsRef.current,
+        cy: cyPositionsBefore[id],
+        hasAuth: hasAuthForUpdate,
+        mode: architectureMode,
       });
 
       if (resolved) {
@@ -957,16 +1160,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       captureAndPersistPositions();
     }
 
-    if (autoLayoutPolicy === true || architectureMode === 'orbit' || architectureMode === 'constellation') {
-      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+    const requestId = ++layoutRequestRef.current;
+
+    if (autoLayoutPolicy === true) {
       const shouldAnimate = !prefersReducedMotion && nodes.length < 100 && architectureMode !== 'orbit';
 
       const fitInSyncEffect = architectureMode === 'orbit' ? false : undefined;
 
+      markLayoutStart('structural-sync');
+
       if (shouldAnimate) {
-        cy.one('layoutstop', () => {
+        const onStop = () => {
+          markLayoutEnd('structural-sync', architectureMode);
+          if (requestId !== layoutRequestRef.current) return;
           captureAndPersistPositions();
-        });
+        };
+        if (typeof cy.one === 'function') {
+          cy.one('layoutstop', onStop);
+        } else {
+          cy.on('layoutstop', onStop);
+        }
         const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
           nodes,
@@ -976,8 +1189,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           architectureMode,
           fit: fitInSyncEffect,
         });
-        setFeatureRegions(layoutRes.featureRegions);
-        setOrbitGuides(layoutRes.orbitGuides);
+        if (requestId === layoutRequestRef.current) {
+          setFeatureRegions(layoutRes.featureRegions);
+          setOrbitGuides(layoutRes.orbitGuides);
+        }
       } else {
         const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
@@ -988,35 +1203,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           architectureMode,
           fit: fitInSyncEffect,
         });
-        setFeatureRegions(layoutRes.featureRegions);
-        setOrbitGuides(layoutRes.orbitGuides);
-        captureAndPersistPositions();
+        markLayoutEnd('structural-sync', architectureMode);
+        if (requestId === layoutRequestRef.current) {
+          setFeatureRegions(layoutRes.featureRegions);
+          setOrbitGuides(layoutRes.orbitGuides);
+          captureAndPersistPositions();
+        }
       }
     }
-
-    // Apply simulation visual classes
-    cy.batch(() => {
-      cy.elements().removeClass('simulated-added simulated-removed simulated-affected');
-
-      if (simulatedNodeIds && simulatedNodeIds.length > 0) {
-        simulatedNodeIds.forEach(id => {
-          const ele = cy.getElementById(id);
-          if (ele.length > 0) ele.addClass('simulated-added');
-        });
-      }
-      if (simulatedRemovedNodeIds && simulatedRemovedNodeIds.length > 0) {
-        simulatedRemovedNodeIds.forEach(id => {
-          const ele = cy.getElementById(id);
-          if (ele.length > 0) ele.addClass('simulated-removed');
-        });
-      }
-      if (simulatedEdgeIds && simulatedEdgeIds.length > 0) {
-        simulatedEdgeIds.forEach(id => {
-          const ele = cy.getElementById(id);
-          if (ele.length > 0) ele.addClass('simulated-added');
-        });
-      }
-    });
 
     if (selectedNodeId) {
       selectNode(cy, selectedNodeId);
@@ -1061,18 +1255,61 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, effectiveLayoutOptions, captureAndPersistPositions, simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
+  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, effectiveLayoutOptions, captureAndPersistPositions]);
+
+  // Dedicated Effect for Simulation Visual Classes
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    cy.batch(() => {
+      cy.elements().removeClass('simulated-added simulated-removed simulated-affected');
+
+      if (simulatedNodeIds && simulatedNodeIds.length > 0) {
+        simulatedNodeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-added');
+        });
+      }
+      if (simulatedRemovedNodeIds && simulatedRemovedNodeIds.length > 0) {
+        simulatedRemovedNodeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-removed');
+        });
+      }
+      if (simulatedEdgeIds && simulatedEdgeIds.length > 0) {
+        simulatedEdgeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-added');
+        });
+      }
+    });
+  }, [simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
 
   // Position-Only Synchronization Effect (runs when nodePositions prop changes without structural graph change)
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
+    const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const hasAuth =
+      !!nodePositions &&
+      Object.keys(nodePositions).length > 0 &&
+      (storedArchMode === undefined || storedArchMode === architectureMode);
+
     cy.batch(() => {
       cy.nodes().forEach((cyNode) => {
         const id = cyNode.id();
-        const pos = sessionPositionsRef.current.get(id) || (nodePositions ? nodePositions[id] : undefined);
-        if (pos) {
+        const resolved = resolvePosition(id, {
+          session: sessionPositionsRef.current,
+          persisted: nodePositions,
+          cy: cyNode.position(),
+          mode: architectureMode,
+          hasAuth,
+        });
+
+        if (resolved) {
+          const pos = resolved.position;
           const curr = cyNode.position();
           if (curr.x !== pos.x || curr.y !== pos.y) {
             cyNode.position({ x: pos.x, y: pos.y });
@@ -1080,7 +1317,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         }
       });
     });
-  }, [nodePositions]);
+  }, [nodePositions, architectureMode]);
 
   // Handle selected node changes
   useEffect(() => {
@@ -1259,14 +1496,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [layoutMode, onLayoutModeChange, captureAndPersistPositions]);
 
   const handleToggleArchitectureModeInternal = useCallback(() => {
-    const nextMode: ArchitectureLayoutMode =
-      architectureMode === 'hierarchical'
-        ? 'hybrid'
-        : architectureMode === 'hybrid'
-        ? 'orbit'
-        : architectureMode === 'orbit'
-        ? 'constellation'
-        : 'hierarchical';
+    const nextMode = ARCH_MODE_META[architectureMode].next;
     if (onArchitectureModeChange) {
       onArchitectureModeChange(nextMode);
     }
@@ -1279,24 +1509,150 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       tabIndex={0}
       role="region"
       aria-label="Salesforce Architecture Dependency Graph"
+      data-architecture-mode={architectureMode}
+      data-layout-mode={layoutMode}
+      data-layout-running={isLayoutRunningRef.current}
+      data-node-count={nodes.length}
+      data-edge-count={edges.length}
     >
       <div ref={containerRef} className="cytoscape-view" />
 
-      {/* Feature Composition & Orbit Guide Overlay Canvas */}
-      <FeatureOverlayCanvas
-        cy={cyInstance}
-        nodes={nodes}
-        edges={edges}
-        discoveryResult={discoveryResult}
-        selectedNodeId={selectedNodeId}
-        hoveredNodeId={hoveredNodeId}
-        nodePositions={nodePositions}
-        findings={findings}
-        enableOverlay={true}
-        architectureMode={architectureMode}
-        featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
-        orbitGuides={architectureMode === 'orbit' ? orbitGuides : undefined}
-      />
+      {DEBUG && (
+        <div
+          className="graph-debug-panel"
+          data-testid="graph-debug-panel"
+          style={{
+            position: 'absolute',
+            bottom: '12px',
+            left: '12px',
+            zIndex: 1000,
+            padding: '8px 12px',
+            background: 'rgba(15, 23, 42, 0.9)',
+            border: '1px solid #334155',
+            borderRadius: '6px',
+            color: '#e2e8f0',
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            pointerEvents: 'none',
+          }}
+        >
+          <div><strong>Layout Debug</strong></div>
+          <div>arch: {architectureMode}</div>
+          <div>layout: {layoutMode}</div>
+          <div>running: {String(isLayoutRunningRef.current)}</div>
+          <div>reqId: {layoutRequestRef.current}</div>
+          <div>nodes: {nodes.length} (data) / {cyRef.current?.nodes().length ?? 0} (cy)</div>
+          <div>last: {typeof window !== 'undefined' && JSON.stringify((window as any).__LAST_LAYOUT_COMPLETED__)}</div>
+        </div>
+      )}
+
+      {/* Empty State Overlay */}
+      {nodes.length === 0 && (
+        <div
+          className="graph-empty-state"
+          data-testid="graph-empty-state"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '24px 32px',
+            backgroundColor: 'var(--surface-panel, rgba(17, 24, 39, 0.95))',
+            border: '1px solid var(--border-default, #334155)',
+            borderRadius: 'var(--radius-lg, 8px)',
+            color: 'var(--text-primary, #f8fafc)',
+            textAlign: 'center',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <span style={{ fontSize: '32px' }} aria-hidden="true">🔍</span>
+          <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-secondary, #cbd5e1)' }}>
+            No components match the current filters.
+          </p>
+          <button
+            type="button"
+            className="ui-btn ui-btn-secondary ui-btn-sm"
+            onClick={executeResetLayout}
+            style={{
+              padding: '6px 14px',
+              fontSize: '12px',
+              cursor: 'pointer',
+            }}
+          >
+            Reset view
+          </button>
+        </div>
+      )}
+
+      {/* Protected Overlays */}
+      <GraphErrorBoundary>
+        <FeatureOverlayCanvas
+          cy={cyInstance}
+          nodes={nodes}
+          edges={edges}
+          discoveryResult={discoveryResult}
+          selectedNodeId={selectedNodeId}
+          hoveredNodeId={hoveredNodeId}
+          nodePositions={nodePositions}
+          findings={findings}
+          enableOverlay={true}
+          architectureMode={architectureMode}
+          featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
+          orbitGuides={architectureMode === 'orbit' ? orbitGuides : undefined}
+        />
+
+        {/* Navigator Container */}
+        {isNavigatorVisible && (
+          <div
+            id="minimap"
+            ref={minimapRef}
+            className="minimap-container"
+            data-testid="minimap-container"
+          >
+            <div className="navigator-header">
+              <span className="navigator-title">Graph Navigator</span>
+              <button
+                className="navigator-close-btn"
+                onClick={() => setIsNavigatorVisible(false)}
+                title="Close navigator"
+                aria-label="Close navigator"
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+            <div className="navigator-body" />
+          </div>
+        )}
+
+        {/* Hover Cards */}
+        {hoverCard && hoverCard.type === 'node' && (
+          <NodeHoverCard
+            node={hoverCard.node}
+            x={hoverCard.x}
+            y={hoverCard.y}
+            findings={findings}
+          />
+        )}
+
+        {hoverCard && hoverCard.type === 'edge' && (
+          <EdgeHoverCard
+            edge={hoverCard.edge}
+            x={hoverCard.x}
+            y={hoverCard.y}
+          />
+        )}
+      </GraphErrorBoundary>
+
+      {/* Live Region for Screen Readers on Layout Completion */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {layoutAnnouncement}
+      </div>
 
       {/* Mode Indicator Overlay Badge */}
       <div
@@ -1306,30 +1662,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       >
         {layoutMode === 'static' ? '📌 Static Mode — Node positions preserved' : `🔀 Interactive Mode (${architectureMode === 'constellation' ? 'Constellation' : architectureMode === 'orbit' ? 'Orbit' : architectureMode === 'hybrid' ? 'Hybrid' : 'Hierarchical'})`}
       </div>
-
-      {/* Navigator Container */}
-      {isNavigatorVisible && (
-        <div
-          id="minimap"
-          ref={minimapRef}
-          className="minimap-container"
-          data-testid="minimap-container"
-        >
-          <div className="navigator-header">
-            <span className="navigator-title">Graph Navigator</span>
-            <button
-              className="navigator-close-btn"
-              onClick={() => setIsNavigatorVisible(false)}
-              title="Close navigator"
-              aria-label="Close navigator"
-              type="button"
-            >
-              ×
-            </button>
-          </div>
-          <div className="navigator-body" />
-        </div>
-      )}
 
       {/* Accessible Node List */}
       <ul role="list" className="sr-only" aria-label="Component Nodes">
@@ -1357,65 +1689,26 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         )}
       </ul>
 
-
-      {/* Hover Cards */}
-      {hoverCard && hoverCard.type === 'node' && (
-        <NodeHoverCard
-          node={hoverCard.node}
-          x={hoverCard.x}
-          y={hoverCard.y}
-          findings={findings}
-        />
-      )}
-
-      {hoverCard && hoverCard.type === 'edge' && (
-        <EdgeHoverCard
-          edge={hoverCard.edge}
-          x={hoverCard.x}
-          y={hoverCard.y}
-        />
-      )}
-
       {/* Floating Controls & Legend */}
       <GraphControls
-        onZoomIn={() => {
-          if (cyRef.current) {
-            cyRef.current.zoom({
-              level: cyRef.current.zoom() * 1.2,
-              renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
-            });
-          }
-        }}
-        onZoomOut={() => {
-          if (cyRef.current) {
-            cyRef.current.zoom({
-              level: cyRef.current.zoom() * 0.8,
-              renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
-            });
-          }
-        }}
-        onFitView={() => {
-          if (cyRef.current) fitToScreen(cyRef.current, 50);
-        }}
-        onCenterSelected={() => {
-          if (cyRef.current && selectedNodeId) {
-            const ele = cyRef.current.getElementById(selectedNodeId);
-            if (ele.length > 0) cyRef.current.animate({ center: { eles: ele } }, { duration: 200 });
-          }
-        }}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        onFitView={handleFitView}
+        onCenterSelected={handleCenterSelected}
         onResetLayout={executeResetLayout}
         hasSelectedNode={!!selectedNodeId}
         selectedNodeId={selectedNodeId}
         isFullscreen={isFullscreen}
         onToggleFullscreen={onToggleFullscreen}
         isNavigatorVisible={isNavigatorVisible}
-        onToggleNavigator={() => setIsNavigatorVisible((prev) => !prev)}
+        onToggleNavigator={handleToggleNavigator}
         focusState={focusState}
         onFocusChange={onFocusChange}
         layoutMode={layoutMode}
         onToggleLayoutMode={onLayoutModeChange ? handleToggleLayoutModeInternal : undefined}
         architectureMode={architectureMode}
         onToggleArchitectureMode={onArchitectureModeChange ? handleToggleArchitectureModeInternal : undefined}
+        nodeCount={nodes.length}
       />
       <GraphLegend nodes={nodes} />
     </div>

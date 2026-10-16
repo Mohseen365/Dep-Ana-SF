@@ -27,7 +27,7 @@ const SHAPE_GLYPHS: Record<string, string> = {
   star: '★'
 };
 
-export const GraphLegend: React.FC<GraphLegendProps> = ({ nodes }) => {
+export const GraphLegend: React.FC<GraphLegendProps> = React.memo(function GraphLegend({ nodes }) {
   // Compute legend entries based on nodes present
   const legendEntries: LegendEntry[] = [];
   const typesPresent = Array.from(new Set<ExplorerNodeType>(nodes.map((n) => n.type)));
@@ -110,6 +110,6 @@ export const GraphLegend: React.FC<GraphLegendProps> = ({ nodes }) => {
       </div>
     </div>
   );
-};
+});
 
 export default GraphLegend;
