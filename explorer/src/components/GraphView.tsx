@@ -344,8 +344,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         ? 'automatic-constellation'
         : 'automatic-hierarchical';
 
-    const storedArchMode = graphLayoutRef.current?.architectureMode;
-    const hasAuth = Boolean(storedArchMode && storedArchMode === architectureMode);
+    const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
+    const hasAuth = storedArchMode === architectureMode;
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'architecture-mode-switch', {
       hasAuthoritativePositions: hasAuth,
@@ -575,8 +575,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     let hasAuth = false;
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const storedArchMode = graphLayoutRef.current?.architectureMode;
-      if (storedArchMode && storedArchMode === architectureMode) {
+      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
+      if (storedArchMode === architectureMode) {
         hasAuth = true;
       }
     }
@@ -893,8 +893,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     let hasGenuinelyNewNodes = false;
 
     if (nodePositionsRef.current && Object.keys(nodePositionsRef.current).length > 0) {
-      const storedArchMode = graphLayoutRef.current?.architectureMode;
-      if (storedArchMode && storedArchMode === architectureMode) {
+      const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
+      if (storedArchMode === architectureMode) {
         hasAuthForUpdate = true;
       }
     }
