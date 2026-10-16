@@ -16,7 +16,7 @@ import { discoverFeatures } from '../lib/layout/features';
 import {
   computeGlobalFeatureLayout,
 } from '../lib/layout/global-layout';
-import type { ArchitectureLayer } from '../types/explorer';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import {
