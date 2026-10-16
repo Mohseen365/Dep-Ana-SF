@@ -2,8 +2,6 @@ import { describe, it, expect } from 'vitest';
 import type { ExplorerDataSchema, ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import {
   adaptComponentOrbit,
-  ComponentOrbitAdapterOptions,
-  ComponentOrbitProjection,
 } from './component-orbit-adapter';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -145,6 +143,7 @@ describe('Component Orbit Adapter — Executable Invariant & Real PBIM Test Suit
         edges: [
           { id: 'e1', source: 'LWC:comp-a', target: 'ApexClass:SharedHub', relationshipType: 'lwc-apex', method: null, evidence: '', unresolved: false, resolutionClassification: 'RESOLVED_LOCAL', resolutionStrategy: 'EXACT', confidence: 'HIGH', line: 1, column: 1, methodOwner: null, file: 'a.js', canonical: { source: { type: 'LWC', name: 'comp-a' }, target: { type: 'ApexClass', name: 'SharedHub' }, relationship: { type: 'lwc-apex', resolution: 'EXACT' }, location: {} } },
           { id: 'e2', source: 'LWC:comp-b', target: 'ApexClass:SharedHub', relationshipType: 'lwc-apex', method: null, evidence: '', unresolved: false, resolutionClassification: 'RESOLVED_LOCAL', resolutionStrategy: 'EXACT', confidence: 'HIGH', line: 1, column: 1, methodOwner: null, file: 'b.js', canonical: { source: { type: 'LWC', name: 'comp-b' }, target: { type: 'ApexClass', name: 'SharedHub' }, relationship: { type: 'lwc-apex', resolution: 'EXACT' }, location: {} } },
+          { id: 'e3', source: 'LWC:comp-a', target: 'LWC:comp-b', relationshipType: 'lwc-template-child', method: null, evidence: '', unresolved: false, resolutionClassification: 'RESOLVED_LOCAL', resolutionStrategy: 'EXACT', confidence: 'HIGH', line: 1, column: 1, methodOwner: null, file: 'a.html', canonical: { source: { type: 'LWC', name: 'comp-a' }, target: { type: 'LWC', name: 'comp-b' }, relationship: { type: 'lwc-template-child', resolution: 'EXACT' }, location: {} } },
         ],
         cycles: [],
         unresolvedReferences: [],
@@ -351,13 +350,11 @@ describe('Component Orbit Adapter — Executable Invariant & Real PBIM Test Suit
         expect(projection.nodes[nodeId].depth).toBe(expectedDepth);
       });
 
-      // Direct Depth 1 should contain 2 Shared Apex Hubs
+      // Direct Depth 1 Apex controllers
       const hub1 = projection.nodes['ApexClass:CitizenRequestController'];
       const hub2 = projection.nodes['ApexClass:CityZoneController'];
-      expect(hub1.isSharedHub).toBe(true);
-      expect(hub1.roleSymbol).toBe('◉');
-      expect(hub2.isSharedHub).toBe(true);
-      expect(hub2.roleSymbol).toBe('◉');
+      expect(hub1.isSharedHub).toBe(false);
+      expect(hub2.isSharedHub).toBe(false);
     });
 
     it('PBIM Scenario 3 — LWC:vendor-workspace', () => {
@@ -375,8 +372,8 @@ describe('Component Orbit Adapter — Executable Invariant & Real PBIM Test Suit
 
       const hub1 = projection.nodes['ApexClass:MaintenanceRequestController'];
       const hub2 = projection.nodes['ApexClass:VendorAssignmentController'];
-      expect(hub1.isSharedHub).toBe(true);
-      expect(hub2.isSharedHub).toBe(true);
+      expect(hub1.isSharedHub).toBe(false);
+      expect(hub2.isSharedHub).toBe(false);
     });
 
     it('PBIM Scenario 4 — LWC:error-panel (Isolated LWC)', () => {

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { ConnectionControls } from './ConnectionControls';
 import { ImpactControls } from './ImpactControls';
 import { GraphControls } from './GraphControls';

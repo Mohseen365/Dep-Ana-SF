@@ -1,56 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { ViewModeSwitcher } from './ViewModeSwitcher';
 import { GraphControls } from './GraphControls';
-import { InvestigationDrawer } from './InvestigationDrawer';
-import { WorkspaceHeader } from './workspace/WorkspaceHeader';
-import type { ExplorerDataSchema, ExplorerNode } from '../types/explorer';
-
-const sampleNodes: ExplorerNode[] = [
-  {
-    id: 'node-1',
-    displayName: 'OrderService',
-    type: 'ApexClass',
-    risk: 'HIGH',
-    layer: 'domain',
-    metrics: { score: 85, coupling: 12, fanIn: 5, fanOut: 4, complexity: 10, unresolved: 0 },
-  },
-  {
-    id: 'node-2',
-    displayName: 'OrderController',
-    type: 'ApexClass',
-    risk: 'MEDIUM',
-    layer: 'application',
-    metrics: { score: 60, coupling: 8, fanIn: 2, fanOut: 3, complexity: 6, unresolved: 0 },
-  },
-];
-
-const mockData: ExplorerDataSchema = {
-  project: { id: 'proj-1', name: 'Sample Project' },
-  nodes: sampleNodes,
-  edges: [{ id: 'edge-1', source: 'node-2', target: 'node-1', relationshipType: 'CALLS' }],
-  summary: {
-    nodeCount: 2,
-    edgeCount: 1,
-    highRiskCount: 1,
-    mediumRiskCount: 1,
-    lowRiskCount: 0,
-    cycleCount: 0,
-    unresolvedCount: 0,
-    inventory: {
-      files: 2,
-      apexClasses: 2,
-      apexTriggers: 0,
-      lwcJs: 0,
-      lwcHtml: 0,
-      visualforce: 0,
-      flows: 0,
-      objects: 0,
-      fields: 0,
-    },
-  },
-};
 
 describe('Phase 1G-A — Tablist & Toolbar Keyboard Accessibility Test Suite', () => {
   it('1. All interactive controls in GraphControls can be reached using keyboard navigation', () => {
@@ -149,13 +100,13 @@ describe('Phase 1G-A — Tablist & Toolbar Keyboard Accessibility Test Suite', (
       />
     );
 
-    const toolbar = screen.getByRole('toolbar', { name: 'Graph controls' });
     const focusBtn = screen.getByRole('button', { name: 'Focus: OFF' });
     expect(focusBtn).toBeDisabled();
 
     const zoomIn = screen.getByLabelText('Zoom In');
     zoomIn.focus();
 
+    const toolbar = screen.getByRole('toolbar', { name: 'Graph controls' });
     // ArrowLeft from ZoomIn should wrap to ResetLayout, skipping disabled Focus button
     fireEvent.keyDown(toolbar, { key: 'ArrowLeft' });
     expect(document.activeElement).not.toBe(focusBtn);
@@ -187,7 +138,6 @@ describe('Phase 1G-A — Tablist & Toolbar Keyboard Accessibility Test Suite', (
     dirSelect.focus();
     expect(document.activeElement).toBe(dirSelect);
 
-    const toolbar = screen.getByRole('toolbar', { name: 'Graph controls' });
     fireEvent.keyDown(dirSelect, { key: 'ArrowDown', target: dirSelect });
 
     // Focus remains on the select element, arrow key was not hijacked to move to another toolbar button
