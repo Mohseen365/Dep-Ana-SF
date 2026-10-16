@@ -6,8 +6,6 @@ import { computeOrbitLayout } from '../lib/orbit-layout';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
 
 describe('C6R FORENSIC RECONCILIATION SUITE', () => {
-  const pbimPath = path.resolve(__dirname, '../../public/projects/pbim/explorer-data.json');
-
   it('Issue 1, 3, 4: Measures exact Repair Passes vs Repair Operations across all scale tiers', () => {
     const fixtures = [
       { name: 'food-app', file: 'food-app/explorer-data.json' },

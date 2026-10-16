@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, renderHook, act } from '@testing-library/react';
-import React from 'react';
+import { renderHook, act } from '@testing-library/react';
 import { InvestigationProvider, useInvestigation } from '../context/InvestigationContext';
 import { WorkspaceRouterProvider, useWorkspaceRouter } from '../context/WorkspaceRouterContext';
-import { ProjectStateProvider, useProjectState } from '../context/ProjectStateContext';
-import { ProjectProvider, useProject } from '../context/ProjectContext';
 import { SelectionProvider, useSelection } from '../context/SelectionContext';
 import { useGraphSelection } from '../hooks/useGraphSelection';
 import { useViewState } from '../hooks/useViewState';
@@ -12,11 +9,8 @@ import {
   LENS_REGISTRY,
   SURFACE_REGISTRY,
   getAllWorkspaceModes,
-  getAllLenses,
-  getAllSurfaces,
-  getWorkspaceDefinition,
 } from '../registry/workspace-registry';
-import { WORKSPACE_DOMAINS, getDomainForViewMode, WorkspaceDomain } from '../lib/router/domain-mapping';
+import { getDomainForViewMode, WorkspaceDomain } from '../lib/router/domain-mapping';
 
 describe('Phase 2F-A Core Architecture, State & Navigation Hardening', () => {
   beforeEach(() => {

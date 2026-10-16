@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { tokenizeChunk } from './phase30a-softwrap-experiment.test';
 import { loadRealProjectData } from './phase28r-adaptive-capacity.test';
 

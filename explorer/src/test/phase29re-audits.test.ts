@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   loadRealProjectData,
-  getDisplayLabel,
   runCandidateP28Pipeline,
   type CandidateP28Config,
 } from './phase28r-adaptive-capacity.test';
@@ -11,9 +10,6 @@ import {
   runCandidateEA,
   runCandidateEB,
   runCandidateEC,
-  calculateRenderedLabelCollisions,
-  calculateShapeCollisions,
-  calculateFootprint,
 } from './phase29re-coupled-closure.test';
 import type { RenderedNodeInfo } from './phase29rd-clearance-experiment.test';
 

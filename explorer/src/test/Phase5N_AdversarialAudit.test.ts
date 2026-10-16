@@ -154,11 +154,11 @@ interface Stage8RunDetails {
 
 function runStage8Detailed(
   safeNodes: ExplorerNode[],
-  safeEdges: ExplorerEdge[],
+  _safeEdges: ExplorerEdge[],
   centralityMap: Map<string, any>,
   analysis: any,
   layerMap: Map<string, ArchitectureLayer>,
-  domainMap: Map<string, string>,
+  _domainMap: Map<string, string>,
   globalDomainResult: any,
   stage7PrimaryPositions: Record<string, { x: number; y: number }>,
   enableCandidateD: boolean

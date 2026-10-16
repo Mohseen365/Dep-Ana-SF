@@ -176,11 +176,11 @@ interface Stage8RunDetails {
 
 function runStage8Detailed(
   safeNodes: ExplorerNode[],
-  safeEdges: ExplorerEdge[],
+  _safeEdges: ExplorerEdge[],
   centralityMap: Map<string, any>,
   analysis: any,
   layerMap: Map<string, ArchitectureLayer>,
-  domainMap: Map<string, string>,
+  _domainMap: Map<string, string>,
   globalDomainResult: any,
   stage7PrimaryPositions: Record<string, { x: number; y: number }>,
   enableCandidateD: boolean
@@ -393,11 +393,11 @@ function runStage8Detailed(
 // Counterfactual Runners
 function runCounterfactualA(
   safeNodes: ExplorerNode[],
-  safeEdges: ExplorerEdge[],
+  _safeEdges: ExplorerEdge[],
   centralityMap: Map<string, any>,
   analysis: any,
   layerMap: Map<string, ArchitectureLayer>,
-  domainMap: Map<string, string>,
+  _domainMap: Map<string, string>,
   globalDomainResult: any,
   stage7PrimaryPositions: Record<string, { x: number; y: number }>,
   candDStage8Positions: Record<string, { x: number; y: number }>
@@ -569,11 +569,11 @@ function runCounterfactualA(
 
 function runCounterfactualB(
   safeNodes: ExplorerNode[],
-  safeEdges: ExplorerEdge[],
+  _safeEdges: ExplorerEdge[],
   centralityMap: Map<string, any>,
   analysis: any,
   layerMap: Map<string, ArchitectureLayer>,
-  domainMap: Map<string, string>,
+  _domainMap: Map<string, string>,
   globalDomainResult: any,
   stage7PrimaryPositions: Record<string, { x: number; y: number }>,
   h5aStage8Positions: Record<string, { x: number; y: number }>
@@ -793,7 +793,6 @@ describe('Phase 5O Forensic Audit Suite', () => {
       const primaryNodes = safeNodes.filter(n => !isTestNode(n) && !isFieldNode(n) && (!centralityMap.get(n.id)?.isBridge || centralityMap.get(n.id)?.isHub));
       const bridgeNodes = safeNodes.filter(n => !isTestNode(n) && !isFieldNode(n) && centralityMap.get(n.id)?.isBridge && !centralityMap.get(n.id)?.isHub);
 
-      const primaryIds = primaryNodes.map(p => p.id);
       const bridgeIds = bridgeNodes.map(b => b.id);
 
       const globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
@@ -863,7 +862,6 @@ describe('Phase 5O Forensic Audit Suite', () => {
         const candidateX0_H5A = stage8H5A.candidateX0Map.get(bId) || 0;
         const candidateX0_CandD = stage8CandD.candidateX0Map.get(bId) || 0;
 
-        const posStage8_SB1C = sb1cFull.positions[bId] || { x: 0, y: 0 }; // Approximate or full
         const posStage8_H5A = stage8H5A.positions[bId] || { x: 0, y: 0 };
         const posStage8_CandD = stage8CandD.positions[bId] || { x: 0, y: 0 };
 
