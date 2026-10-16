@@ -13,7 +13,7 @@ import { ArchitectureDNABarcode } from './ArchitectureDNABarcode';
 import { GraphView } from './GraphView';
 import type { ExplorerDataSchema } from '../types/explorer';
 import type { ConstellationData } from '../lib/adapters/constellation-adapter';
-import type { SubwayMapData } from '../lib/adapters/subway-adapter';
+import type { SubwayMapData, SubwayStation } from '../lib/adapters/subway-adapter';
 import type { FourDirectionData } from '../lib/adapters/four-direction-adapter';
 import { createMockSummary } from '../test/fixtures/mockFactories';
 
@@ -35,9 +35,6 @@ const sampleExplorerData: ExplorerDataSchema = {
       displayName: 'Service',
       type: 'ApexClass',
       file: 'Service.cls',
-      featureId: 'feature_core',
-      featureName: 'Core Feature',
-      layerName: 'domain',
       metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
       risk: 'LOW',
       riskReasons: [],
@@ -63,9 +60,6 @@ const sampleExplorerData: ExplorerDataSchema = {
       displayName: 'Util',
       type: 'ApexClass',
       file: 'Util.cls',
-      featureId: 'feature_core',
-      featureName: 'Core Feature',
-      layerName: 'application',
       metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 1 },
       risk: 'MEDIUM',
       riskReasons: [],
@@ -120,17 +114,13 @@ const sampleConstellationData: ConstellationData = {
   focalNode: {
     id: 'ApexClass:Service',
     displayName: 'Service',
-    nodeId: 'ApexClass:Service',
     type: 'ApexClass',
     file: 'Service.cls',
     featureId: 'feature_core',
     featureName: 'Core Feature',
     layerName: 'domain',
     risk: 'LOW',
-    hopDistance: 0,
-    metrics: { fanIn: 0, fanOut: 1, coupling: 1 },
-    incomingCount: 0,
-    outgoingCount: 1,
+    metrics: { fanIn: 0, fanOut: 1, coupling: 1, score: 1 },
   },
   rings: [
     {
@@ -148,7 +138,7 @@ const sampleConstellationData: ConstellationData = {
           featureName: 'Core Feature',
           layerName: 'application',
           hopDistance: 1,
-          metrics: { fanIn: 1, fanOut: 0, coupling: 1 },
+          metrics: { fanIn: 1, fanOut: 0, coupling: 1, score: 1 },
           incomingCount: 1,
           outgoingCount: 0,
         },
@@ -158,32 +148,30 @@ const sampleConstellationData: ConstellationData = {
   ],
   nodes: {
     'ApexClass:Service': {
-      id: 'ApexClass:Service',
-      displayName: 'Service',
       nodeId: 'ApexClass:Service',
+      displayName: 'Service',
       type: 'ApexClass',
       file: 'Service.cls',
+      risk: 'LOW',
       featureId: 'feature_core',
       featureName: 'Core Feature',
       layerName: 'domain',
-      risk: 'LOW',
       hopDistance: 0,
-      metrics: { fanIn: 0, fanOut: 1, coupling: 1 },
+      metrics: { fanIn: 0, fanOut: 1, coupling: 1, score: 1 },
       incomingCount: 0,
       outgoingCount: 1,
     },
     'ApexClass:Util': {
-      id: 'ApexClass:Util',
-      displayName: 'Util',
       nodeId: 'ApexClass:Util',
+      displayName: 'Util',
       type: 'ApexClass',
       file: 'Util.cls',
+      risk: 'MEDIUM',
       featureId: 'feature_core',
       featureName: 'Core Feature',
       layerName: 'application',
-      risk: 'MEDIUM',
       hopDistance: 1,
-      metrics: { fanIn: 1, fanOut: 0, coupling: 1 },
+      metrics: { fanIn: 1, fanOut: 0, coupling: 1, score: 1 },
       incomingCount: 1,
       outgoingCount: 0,
     },
@@ -194,36 +182,58 @@ const sampleConstellationData: ConstellationData = {
       source: 'ApexClass:Service',
       target: 'ApexClass:Util',
       relationshipType: 'method-call',
+      sourceHop: 0,
+      targetHop: 1,
+      isSameRing: false,
+      isCrossRing: true,
+      provenance: {
+        edgeId: 'edge_1',
+        sourceComponentName: 'Service',
+        targetComponentName: 'Util',
+        relationshipType: 'method-call',
+      },
     },
   ],
   availableNodes: [
-    { id: 'ApexClass:Service', displayName: 'Service', type: 'ApexClass' },
-    { id: 'ApexClass:Util', displayName: 'Util', type: 'ApexClass' },
+    { id: 'ApexClass:Service', displayName: 'Service', type: 'ApexClass', featureName: 'Core Feature', layerName: 'domain', coupling: 1 },
+    { id: 'ApexClass:Util', displayName: 'Util', type: 'ApexClass', featureName: 'Core Feature', layerName: 'application', coupling: 1 },
   ],
-  summary: { ringCount: 1, totalNodes: 2, totalEdges: 1 },
-  options: { maxDepth: 1, direction: 'both' },
+  summary: { focalNodeId: 'ApexClass:Service', ringCount: 1, totalNodes: 2, totalEdges: 1, maxHopDepth: 1 },
+  options: { focalNodeId: 'ApexClass:Service', maxDepth: 1, direction: 'both' },
+};
+
+const sampleSubwayStation: SubwayStation = {
+  nodeId: 'ApexClass:Service',
+  displayName: 'Service',
+  type: 'ApexClass',
+  file: 'Service.cls',
+  risk: 'LOW',
+  featureId: 'feature_core',
+  featureName: 'Core Feature',
+  layerName: 'domain',
+  x: 100,
+  y: 100,
+  lineIndex: 0,
+  stationIndex: 0,
+  isShared: false,
+  isTransfer: false,
+  fanIn: 0,
+  fanOut: 1,
+  connectedEdgeIds: ['edge_1'],
 };
 
 const sampleSubwayData: SubwayMapData = {
-  lines: [{ lineId: 'line_1', name: 'Core Feature', color: '#3b82f6', y: 100 }],
-  stations: [
-    {
-      nodeId: 'ApexClass:Service',
-      displayName: 'Service',
-      type: 'ApexClass',
-      featureId: 'feature_core',
-      featureName: 'Core Feature',
-      layerName: 'domain',
-      file: 'Service.cls',
-      fanIn: 0,
-      fanOut: 1,
-      isTransfer: false,
-      x: 100,
-      y: 100,
-      lineIndex: 0,
-    },
-  ],
+  lines: [{ lineId: 'line_1', name: 'Core Feature', color: '#3b82f6', y: 100, stations: [sampleSubwayStation], isShared: false }],
+  stations: [sampleSubwayStation],
+  stationsById: new Map([['ApexClass:Service', sampleSubwayStation]]),
   routes: [],
+  summary: {
+    totalLines: 1,
+    totalStations: 1,
+    totalRoutes: 0,
+    totalTransferHubs: 0,
+    sharedLineCount: 0,
+  },
   availableFeatures: [{ id: 'feature_core', name: 'Core Feature', color: '#3b82f6', count: 1 }],
 };
 
@@ -232,16 +242,16 @@ const sampleFourDirectionData: FourDirectionData = {
     nodeId: 'ApexClass:Service',
     displayName: 'Service',
     type: 'ApexClass',
-    featureId: 'feature_core',
-    featureName: 'Core Feature',
-    layerName: 'domain',
     file: 'Service.cls',
     risk: 'LOW',
-    metrics: { fanIn: 0, fanOut: 1, coupling: 1 },
+    featureName: 'Core Feature',
+    layerName: 'domain',
+    metrics: { fanIn: 0, fanOut: 1, coupling: 1, unresolved: 0, score: 1 },
   },
   quadrants: {
-    up: { title: 'Upstream Dependents', subtitle: 'Callers', items: [], totalCount: 0 },
+    up: { direction: 'up', title: 'Upstream Dependents', subtitle: 'Callers', items: [], totalCount: 0 },
     down: {
+      direction: 'down',
       title: 'Downstream Dependencies',
       subtitle: 'Callees',
       items: [
@@ -249,18 +259,23 @@ const sampleFourDirectionData: FourDirectionData = {
           nodeId: 'ApexClass:Util',
           displayName: 'Util',
           type: 'ApexClass',
+          file: 'Util.cls',
+          risk: 'MEDIUM',
+          direction: 'down',
+          directionLabel: 'Downstream Dependency',
+          edges: [{ edgeId: 'edge_1', source: 'ApexClass:Service', target: 'ApexClass:Util', relationshipType: 'method-call' }],
+          relationshipTypes: ['method-call'],
+          distance: 1,
           featureName: 'Core Feature',
           layerName: 'application',
-          risk: 'MEDIUM',
-          relationshipTypes: ['method-call'],
         },
       ],
       totalCount: 1,
     },
-    left: { title: 'Horizontal Peers', subtitle: 'Same Feature', items: [], totalCount: 0 },
-    right: { title: 'Cross-Feature Peers', subtitle: 'External Features', items: [], totalCount: 0 },
+    left: { direction: 'left', title: 'Horizontal Peers', subtitle: 'Same Feature', items: [], totalCount: 0 },
+    right: { direction: 'right', title: 'Cross-Feature Peers', subtitle: 'External Features', items: [], totalCount: 0 },
   },
-  summary: { totalNeighbors: 1, upstreamCount: 0, downstreamCount: 1, leftPeerCount: 0, rightCrossCount: 0 },
+  summary: { totalNeighbors: 1, upstreamCount: 0, downstreamCount: 1, leftPeerCount: 0, rightCrossCount: 0, selectedNodeId: 'ApexClass:Service' },
   availableNodes: [{ id: 'ApexClass:Service', displayName: 'Service', type: 'ApexClass' }],
 };
 
@@ -319,7 +334,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
     it('RadarPanel vertex points and table rows are focusable and keyboard activatable', () => {
       render(<RadarPanel data={sampleExplorerData} />);
       const axisGroup = screen.getByTestId('radar-axis-total_components');
-      expect(axisGroup.tabIndex).toBe(0);
+      expect(axisGroup.getAttribute('tabindex')).toBe('0');
       expect(axisGroup.getAttribute('role')).toBe('button');
       expect(axisGroup.getAttribute('aria-label')).toBeTruthy();
 
@@ -331,7 +346,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const onSelectNode = vi.fn();
       render(<DependencyConstellationPanel data={sampleConstellationData} onSelectNode={onSelectNode} />);
       const nodeEl = screen.getByTestId('constellation-node-ApexClass:Util');
-      expect(nodeEl.tabIndex).toBe(0);
+      expect(nodeEl.getAttribute('tabindex')).toBe('0');
       expect(nodeEl.getAttribute('role')).toBe('button');
       expect(nodeEl.getAttribute('aria-label')).toContain('Util');
 
@@ -343,12 +358,12 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const onSelectNode = vi.fn();
       render(<DependencyRiverPanel data={sampleExplorerData} onSelectNode={onSelectNode} />);
       const flowEl = screen.getByTestId(/sankey-flow-/);
-      expect(flowEl.tabIndex).toBe(0);
+      expect(flowEl.getAttribute('tabindex')).toBe('0');
       expect(flowEl.getAttribute('role')).toBe('button');
       expect(flowEl.getAttribute('aria-label')).toContain('Flow stream');
 
       const nodeEl = screen.getByTestId(/sankey-node-/);
-      expect(nodeEl.tabIndex).toBe(0);
+      expect(nodeEl.getAttribute('tabindex')).toBe('0');
       expect(nodeEl.getAttribute('role')).toBe('button');
 
       fireEvent.keyDown(nodeEl, { key: 'Enter' });
@@ -359,7 +374,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const onSelectNode = vi.fn();
       render(<SubwayPanel data={sampleSubwayData} onSelectNode={onSelectNode} />);
       const stationEl = screen.getByText('Service').parentElement!;
-      expect(stationEl.tabIndex).toBe(0);
+      expect(stationEl.getAttribute('tabindex')).toBe('0');
       expect(stationEl.getAttribute('role')).toBe('button');
       expect(stationEl.getAttribute('aria-label')).toContain('Station Service');
 
@@ -377,7 +392,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
 
       const treeNodeRows = screen.getAllByRole('treeitem');
       expect(treeNodeRows.length).toBeGreaterThan(0);
-      expect(treeNodeRows[0].tabIndex).toBe(0);
+      expect(treeNodeRows[0].getAttribute('tabindex')).toBe('0');
 
       const expandBtns = screen.getAllByTestId(/^expand-btn-/);
       expect(expandBtns[0].getAttribute('aria-label')).toMatch(/Collapse|Expand/);
@@ -388,7 +403,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const onSelectComponent = vi.fn();
       render(<ArchitectureTreemapPanel data={sampleExplorerData} onSelectComponent={onSelectComponent} />);
       const rootRect = screen.getByTestId('treemap-rect-root').querySelector('[role="button"]')!;
-      expect(rootRect.tabIndex).toBe(0);
+      expect(rootRect.getAttribute('tabindex')).toBe('0');
       expect(rootRect.getAttribute('aria-label')).toContain('Architecture Treemap');
 
       fireEvent.keyDown(rootRect, { key: 'Enter' });
@@ -398,7 +413,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const onSelectNode = vi.fn();
       render(<FourDirectionPanel data={sampleFourDirectionData} onSelectNode={onSelectNode} />);
       const itemEl = screen.getByTestId('item-ApexClass:Util');
-      expect(itemEl.tabIndex).toBe(0);
+      expect(itemEl.getAttribute('tabindex')).toBe('0');
       expect(itemEl.getAttribute('role')).toBe('button');
       expect(itemEl.getAttribute('aria-label')).toContain('Util');
 
@@ -411,7 +426,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const canvas = screen.getByTestId('coupling-heatmap-canvas');
       expect(canvas.getAttribute('role')).toBe('img');
       expect(canvas.getAttribute('aria-label')).toBe('Feature Coupling Heatmap Matrix');
-      expect(canvas.tabIndex).toBe(0);
+      expect(canvas.getAttribute('tabindex')).toBe('0');
 
       const describedBy = canvas.getAttribute('aria-describedby');
       expect(describedBy).toBeTruthy();
@@ -424,7 +439,7 @@ describe('Phase 1G-C Accessibility Tests', () => {
       const onSelectNode = vi.fn();
       render(<ArchitectureDNABarcode data={sampleExplorerData} onSelectNode={onSelectNode} />);
       const itemEl = screen.getByTestId('dna-item-ApexClass:Service');
-      expect(itemEl.tabIndex).toBe(0);
+      expect(itemEl.getAttribute('tabindex')).toBe('0');
       expect(itemEl.getAttribute('role')).toBe('button');
       expect(itemEl.getAttribute('aria-label')).toContain('Service');
 
