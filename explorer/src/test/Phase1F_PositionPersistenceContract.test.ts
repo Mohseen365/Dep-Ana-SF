@@ -5,11 +5,9 @@ import {
   saveProjectState,
   updateProjectState,
   clearProjectState,
-  ProjectUIState,
-  LayoutProvenance,
 } from '../lib/projectState';
 import { resolveAuthoritativePosition } from '../lib/position-policy';
-import { ArchitectureLayoutMode } from '../types/explorer';
+import { createMockGraphLayoutState } from './fixtures/mockFactories';
 
 describe('Phase 1F — Position Persistence and Provenance Contract Tests', () => {
   const TEST_PROJECT_ID = 'test-proj-phase1f';
@@ -30,11 +28,11 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
 
     // Update state simulating drag in Hierarchical mode
     const updated = updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: {
+      graphLayout: createMockGraphLayoutState({
         architectureMode: 'hierarchical',
         nodePositions: draggedPositions,
         layoutProvenance: 'user-authored',
-      },
+      }),
     });
 
     // Check in-memory update
@@ -61,19 +59,19 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
 
     // 1. Save dragged position in Hierarchical mode
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: {
+      graphLayout: createMockGraphLayoutState({
         architectureMode: 'hierarchical',
         nodePositions: hierPositions,
         layoutProvenance: 'user-authored',
-      },
+      }),
     });
 
     // 2. Switch to Orbit mode
     const orbitState = updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: {
+      graphLayout: createMockGraphLayoutState({
         architectureMode: 'orbit',
         layoutProvenance: 'automatic-orbit',
-      },
+      }),
     });
 
     // Verify top-level nodePositions is empty for Orbit (not blindly inheriting Hierarchical positions)
@@ -91,11 +89,11 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
     };
 
     const orbitUpdated = updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: {
+      graphLayout: createMockGraphLayoutState({
         architectureMode: 'orbit',
         nodePositions: orbitPositions,
         layoutProvenance: 'user-authored',
-      },
+      }),
     });
 
     expect(orbitUpdated.graphLayout.nodePositions).toEqual(orbitPositions);
@@ -114,35 +112,35 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
 
     // Set positions for all 4 layout modes
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: { architectureMode: 'hierarchical', nodePositions: posHier, layoutProvenance: 'user-authored' },
+      graphLayout: createMockGraphLayoutState({ architectureMode: 'hierarchical', nodePositions: posHier, layoutProvenance: 'user-authored' }),
     });
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: { architectureMode: 'hybrid', nodePositions: posHybrid, layoutProvenance: 'user-authored' },
+      graphLayout: createMockGraphLayoutState({ architectureMode: 'hybrid', nodePositions: posHybrid, layoutProvenance: 'user-authored' }),
     });
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: { architectureMode: 'orbit', nodePositions: posOrbit, layoutProvenance: 'user-authored' },
+      graphLayout: createMockGraphLayoutState({ architectureMode: 'orbit', nodePositions: posOrbit, layoutProvenance: 'user-authored' }),
     });
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: { architectureMode: 'constellation', nodePositions: posConstellation, layoutProvenance: 'user-authored' },
+      graphLayout: createMockGraphLayoutState({ architectureMode: 'constellation', nodePositions: posConstellation, layoutProvenance: 'user-authored' }),
     });
 
     // Round-trip 1: Switch back to Hierarchical
-    const sHier = updateProjectState(TEST_PROJECT_ID, { graphLayout: { architectureMode: 'hierarchical' } });
+    const sHier = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutState({ architectureMode: 'hierarchical' }) });
     expect(sHier.graphLayout.nodePositions).toEqual(posHier);
     expect(sHier.graphLayout.layoutProvenance).toBe('user-authored');
 
     // Round-trip 2: Switch back to Hybrid
-    const sHybrid = updateProjectState(TEST_PROJECT_ID, { graphLayout: { architectureMode: 'hybrid' } });
+    const sHybrid = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutState({ architectureMode: 'hybrid' }) });
     expect(sHybrid.graphLayout.nodePositions).toEqual(posHybrid);
     expect(sHybrid.graphLayout.layoutProvenance).toBe('user-authored');
 
     // Round-trip 3: Switch back to Orbit
-    const sOrbit = updateProjectState(TEST_PROJECT_ID, { graphLayout: { architectureMode: 'orbit' } });
+    const sOrbit = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutState({ architectureMode: 'orbit' }) });
     expect(sOrbit.graphLayout.nodePositions).toEqual(posOrbit);
     expect(sOrbit.graphLayout.layoutProvenance).toBe('user-authored');
 
     // Round-trip 4: Switch back to Constellation
-    const sConst = updateProjectState(TEST_PROJECT_ID, { graphLayout: { architectureMode: 'constellation' } });
+    const sConst = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutState({ architectureMode: 'constellation' }) });
     expect(sConst.graphLayout.nodePositions).toEqual(posConstellation);
     expect(sConst.graphLayout.layoutProvenance).toBe('user-authored');
   });
@@ -215,11 +213,11 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
     };
 
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: {
+      graphLayout: createMockGraphLayoutState({
         architectureMode: 'hierarchical',
         nodePositions: initialPositions,
         layoutProvenance: 'user-authored',
-      },
+      }),
     });
 
     // Simulating node deletion: resolving a deleted node returns null or fallback without throwing
@@ -241,11 +239,11 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
     const basePositions = { 'Node-1': { x: 150, y: 250 } };
 
     updateProjectState(TEST_PROJECT_ID, {
-      graphLayout: {
+      graphLayout: createMockGraphLayoutState({
         architectureMode: 'hierarchical',
         nodePositions: basePositions,
         layoutProvenance: 'user-authored',
-      },
+      }),
     });
 
     // Update transient zoom/pan state
