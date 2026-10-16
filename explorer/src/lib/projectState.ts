@@ -305,20 +305,20 @@ export function mergeWithDefaultState(
     },
     graphLayout: (() => {
       const gDefaults = defaults.graphLayout;
-      const gLoaded = loaded.graphLayout || {};
+      const gLoaded: Partial<GraphLayoutState> & { layoutMode?: string } =
+        loaded.graphLayout || {};
 
       const mode: GraphInteractionMode =
-        (gLoaded as any)?.mode === "static" ||
-        (gLoaded as any)?.layoutMode === "static"
+        gLoaded.mode === "static" || gLoaded.layoutMode === "static"
           ? "static"
           : "interactive";
 
       const activeArchMode: ArchitectureLayoutMode =
-        (gLoaded as any)?.architectureMode === "constellation"
+        gLoaded.architectureMode === "constellation"
           ? "constellation"
-          : (gLoaded as any)?.architectureMode === "orbit"
+          : gLoaded.architectureMode === "orbit"
           ? "orbit"
-          : (gLoaded as any)?.architectureMode === "hybrid"
+          : gLoaded.architectureMode === "hybrid"
           ? "hybrid"
           : "hierarchical";
 
