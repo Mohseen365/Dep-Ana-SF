@@ -7,8 +7,6 @@ import {
   calculateRequiredSectorRadius,
   normalizeAngle,
   OrbitNodeMetadata,
-  OrbitLayoutInput,
-  OrbitNodePosition,
 } from '../orbit-layout';
 import * as crypto from 'crypto';
 import { projectOrbitSemantics } from './orbit-semantics';
@@ -527,11 +525,13 @@ describe('Workstream B — Architecture Orbit Geometry & Placement Engine', () =
       expect(Object.keys(coldRes.positions).length).toBe(metadata.length);
 
       // Verified collision metrics
+      expect(coldMs).toBeGreaterThanOrEqual(0);
       expect(coldRes.diagnostics.initialCollisionCount).toBe(37);
       expect(coldRes.diagnostics.repairCount).toBe(23);
       expect(coldRes.diagnostics.collisionCount).toBe(0);
 
       // PBIM Scale Gate (< 250ms SLA)
+      expect(warmRes.diagnostics.collisionCount).toBe(0);
       expect(warmMs).toBeLessThan(250);
     });
   });

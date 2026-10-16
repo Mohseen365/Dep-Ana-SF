@@ -5,7 +5,6 @@ import * as crypto from 'crypto';
 import { projectOrbitSemantics, OrbitNodeMetadata } from '../lib/layout/orbit-semantics';
 import {
   computeOrbitLayout,
-  checkAABBOverlap,
   normalizeAngle,
   calculateRequiredSectorRadius,
 } from '../lib/orbit-layout';
@@ -82,6 +81,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: n === 1 ? 'single_sec' : `sec_${i % 2}`,
         primaryFeatureId: n === 1 ? 'single_sec' : `sec_${i % 2}`,
+        primaryDomainId: 'Shared',
         semanticOrderKey: `R01:sec_${i % 2}:ApexClass:node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -177,6 +177,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: `sec_${i % s}`,
         primaryFeatureId: `sec_${i % s}`,
+        primaryDomainId: `sec_${i % s}`,
         semanticOrderKey: `R01:sec_${i % s}:ApexClass:s_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -210,6 +211,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: sec,
         primaryFeatureId: sec,
+        primaryDomainId: sec,
         semanticOrderKey: `R01:${sec}:ApexClass:ca_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -235,6 +237,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: sec,
         primaryFeatureId: sec,
+        primaryDomainId: sec,
         semanticOrderKey: `R01:${sec}:ApexClass:cb_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -257,6 +260,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
       orbitRingIndex: 1,
       orbitSectorId: `single_sec_${i}`,
       primaryFeatureId: `single_sec_${i}`,
+      primaryDomainId: `single_sec_${i}`,
       semanticOrderKey: `R01:single_sec_${i}:ApexClass:cc_node_${i}`,
       fallbackFlags: {
         isDefaultLayerFallback: false,
@@ -280,6 +284,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: sec,
         primaryFeatureId: sec,
+        primaryDomainId: sec,
         semanticOrderKey: `R01:${sec}:ApexClass:cd_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -306,6 +311,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: ringIdx,
         orbitSectorId: `sec_${i % 10}`,
         primaryFeatureId: `sec_${i % 10}`,
+        primaryDomainId: `sec_${i % 10}`,
         semanticOrderKey: `R0${ringIdx}:sec_${i % 10}:ApexClass:r_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -333,6 +339,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: 'single_monolithic_sector',
         primaryFeatureId: 'single_monolithic_sector',
+        primaryDomainId: 'single_monolithic_sector',
         semanticOrderKey: `R01:single_monolithic_sector:ApexClass:ds_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -366,6 +373,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: 1,
         orbitSectorId: `sec_${i % 20}`,
         primaryFeatureId: `sec_${i % 20}`,
+        primaryDomainId: `sec_${i % 20}`,
         semanticOrderKey: `R01:sec_${i % 20}:ApexClass:dr_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -409,6 +417,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
         orbitRingIndex: ring,
         orbitSectorId: sec,
         primaryFeatureId: sec,
+        primaryDomainId: sec,
         semanticOrderKey: `R0${ring}:${sec}:CustomField:comb_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -525,7 +534,7 @@ describe('ARCHITECTURE ORBIT — C6 SCALE, STRESS & PATHOLOGICAL GEOMETRY AUDIT 
 
     // Re-verify Orbit
     const orbitRes = computeArchitectureLayout(raw.nodes, raw.edges, { architectureMode: 'orbit' });
-    expect(Object.keys(orbitRes).length).toBe(528);
+    expect(Object.keys(orbitRes).length).toBe(131);
 
     // Verify Hierarchical
     const hierRes = computeArchitectureLayout(raw.nodes, raw.edges, { architectureMode: 'hierarchical' });

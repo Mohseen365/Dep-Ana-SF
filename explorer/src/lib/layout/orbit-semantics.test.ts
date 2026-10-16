@@ -4,7 +4,6 @@ import path from 'path';
 import {
   computeOrbitRingIndex,
   projectOrbitSemantics,
-  type OrbitNodeMetadata,
 } from './orbit-semantics';
 import type { ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../../types/explorer';
 import { classifyNodeLayer } from './layers';
