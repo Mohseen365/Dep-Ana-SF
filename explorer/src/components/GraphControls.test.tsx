@@ -79,7 +79,7 @@ describe('GraphControls Component', () => {
     expect(onResetLayout).toHaveBeenCalledTimes(1);
   });
 
-  it('hides Center Selected button when no node is selected', () => {
+  it('disables Center Selected button when no node is selected', () => {
     render(
       <GraphControls
         onZoomIn={vi.fn()}
@@ -91,7 +91,9 @@ describe('GraphControls Component', () => {
       />
     );
 
-    expect(screen.queryByLabelText('Center Selected')).not.toBeInTheDocument();
+    const btn = screen.getByLabelText('Center Selected');
+    expect(btn).toBeInTheDocument();
+    expect(btn).toBeDisabled();
   });
 
   it('renders FocusControls in Analysis controls group when focusState and onFocusChange are provided', () => {

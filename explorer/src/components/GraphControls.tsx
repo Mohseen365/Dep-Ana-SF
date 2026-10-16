@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArchitectureLayoutMode } from '../types/explorer';
+import { ArchitectureLayoutMode, ARCH_MODE_META } from '../types/explorer';
 import { FocusState } from '../lib/focus-graph';
 import { FocusControls } from './FocusControls';
 
@@ -21,9 +21,10 @@ export interface GraphControlsProps {
   onToggleLayoutMode?: () => void;
   architectureMode?: ArchitectureLayoutMode;
   onToggleArchitectureMode?: () => void;
+  nodeCount?: number;
 }
 
-export const GraphControls: React.FC<GraphControlsProps> = ({
+export const GraphControls: React.FC<GraphControlsProps> = React.memo(function GraphControls({
   onZoomIn,
   onZoomOut,
   onFitView,
@@ -41,13 +42,14 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
   onToggleLayoutMode,
   architectureMode = 'hierarchical',
   onToggleArchitectureMode,
-}) => {
+  nodeCount,
+}) {
   const [activeControlIndex, setActiveControlIndex] = React.useState<number>(0);
 
   const getInteractiveElements = (container: HTMLElement): HTMLElement[] => {
     const selector = 'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
     return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter(
-      (el) => el.getAttribute('aria-hidden') !== 'true' && el.style.display !== 'none'
+      (el) => el.getAttribute('aria-hidden') !== 'true' && window.getComputedStyle(el).display !== 'none'
     );
   };
 
@@ -102,6 +104,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
       className="graph-controls-floating"
       role="toolbar"
       aria-label="Graph controls"
+      aria-orientation="horizontal"
       onKeyDown={handleToolbarKeyDown}
     >
       {/* Analysis Section */}
@@ -124,6 +127,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onZoomIn}
           title="Zoom In (+)"
           aria-label="Zoom In"
+          aria-keyshortcuts="+"
           type="button"
         >
           <span aria-hidden="true">➕</span>
@@ -133,6 +137,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onZoomOut}
           title="Zoom Out (-)"
           aria-label="Zoom Out"
+          aria-keyshortcuts="-"
           type="button"
         >
           <span aria-hidden="true">➖</span>
@@ -142,21 +147,21 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onFitView}
           title="Fit All to Screen"
           aria-label="Fit View"
+          aria-keyshortcuts="f 0"
           type="button"
         >
           <span aria-hidden="true">⛶</span>
         </button>
-        {hasSelectedNode && (
-          <button
-            className="graph-control-btn"
-            onClick={onCenterSelected}
-            title="Center Selected Component"
-            aria-label="Center Selected"
-            type="button"
-          >
-            <span aria-hidden="true">🎯</span>
-          </button>
-        )}
+        <button
+          className="graph-control-btn"
+          onClick={onCenterSelected}
+          disabled={!hasSelectedNode}
+          title={hasSelectedNode ? 'Center Selected Component' : 'Select a node first to center'}
+          aria-label="Center Selected"
+          type="button"
+        >
+          <span aria-hidden="true">🎯</span>
+        </button>
       </div>
 
       <div className="graph-control-divider" aria-hidden="true" />
@@ -167,29 +172,13 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           <button
             className={`graph-control-btn ${architectureMode !== 'hierarchical' ? 'active' : ''}`}
             onClick={onToggleArchitectureMode}
-            title={
-              architectureMode === 'constellation'
-                ? 'Component Constellation (Multi-Sun Macro View)'
-                : architectureMode === 'orbit'
-                ? 'Architecture Orbit (Radial Concentric Bands)'
-                : architectureMode === 'hybrid'
-                ? 'Hybrid Layout (Clustered Feature Regions)'
-                : 'Hierarchical Layout (Layered Flow)'
-            }
-            aria-label={
-              architectureMode === 'constellation'
-                ? 'Switch to Hierarchical Layout'
-                : architectureMode === 'orbit'
-                ? 'Switch to Component Constellation'
-                : architectureMode === 'hybrid'
-                ? 'Switch to Architecture Orbit'
-                : 'Switch to Hybrid Layout'
-            }
-            aria-pressed={architectureMode !== 'hierarchical'}
+            title={ARCH_MODE_META[architectureMode].description}
+            aria-label={`Architecture layout: ${ARCH_MODE_META[architectureMode].label}. Activate to switch to ${ARCH_MODE_META[ARCH_MODE_META[architectureMode].next].label}.`}
             data-testid="architecture-mode-toggle"
             type="button"
           >
-            <span aria-hidden="true">{architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}</span>
+            <span aria-hidden="true">{ARCH_MODE_META[architectureMode].icon}</span>
+            <span className="graph-control-btn-label" style={{ marginLeft: '4px' }}>{ARCH_MODE_META[architectureMode].label}</span>
           </button>
         )}
         {onToggleLayoutMode && (
@@ -208,7 +197,8 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         <button
           className="graph-control-btn"
           onClick={onResetLayout}
-          title="Rearrange / Reset Layout"
+          disabled={nodeCount === 0}
+          title={nodeCount === 0 ? 'No components in graph to arrange' : 'Rearrange / Reset Layout'}
           aria-label="Reset Layout"
           type="button"
         >
@@ -239,6 +229,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
                 onClick={onToggleFullscreen}
                 title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Toggle Fullscreen'}
                 aria-label={isFullscreen ? 'Exit Fullscreen' : 'Maximize Graph'}
+                aria-keyshortcuts="Escape"
                 aria-pressed={isFullscreen}
                 type="button"
               >
@@ -250,6 +241,6 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default GraphControls;

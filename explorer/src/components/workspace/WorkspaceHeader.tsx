@@ -35,39 +35,55 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
     'governance',
   ];
 
-  const handleTablistKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleNavKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
-    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
+    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(key)) {
       return;
     }
     const container = e.currentTarget;
-    const tabs = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
-    if (tabs.length === 0) return;
+    const items = Array.from(container.querySelectorAll<HTMLButtonElement>('.lens-switch-btn:not([disabled])'));
+    if (items.length === 0) return;
 
     const activeElement = document.activeElement as HTMLButtonElement;
-    let currentIndex = tabs.indexOf(activeElement);
+    let currentIndex = items.indexOf(activeElement);
     if (currentIndex === -1) {
-      currentIndex = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+      currentIndex = items.findIndex((t) => t.getAttribute('aria-current') === 'page');
       if (currentIndex === -1) currentIndex = 0;
     }
 
     let nextIndex = currentIndex;
-    if (key === 'ArrowRight' || key === 'ArrowDown') {
-      nextIndex = (currentIndex + 1) % tabs.length;
-    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
-      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    if (key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % items.length;
+    } else if (key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + items.length) % items.length;
     } else if (key === 'Home') {
       nextIndex = 0;
     } else if (key === 'End') {
-      nextIndex = tabs.length - 1;
+      nextIndex = items.length - 1;
     }
 
     e.preventDefault();
-    const targetTab = tabs[nextIndex];
+    const targetTab = items[nextIndex];
     if (targetTab) {
+      targetTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       targetTab.focus();
-      targetTab.click();
     }
+  };
+
+  const handleDomainClick = (domainKey: WorkspaceDomain, defaultMode: WorkspaceViewMode) => {
+    let lastLens: WorkspaceViewMode = defaultMode;
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem(`lens:${domainKey}`) as WorkspaceViewMode | null;
+      if (stored) lastLens = stored;
+    }
+    navigateToView(lastLens);
+  };
+
+  const handleLensClick = (mode: WorkspaceViewMode) => {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(`lens:${activeDomain}`, mode);
+    }
+    navigateToView(mode);
   };
 
   return (
@@ -119,7 +135,7 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
                 key={domainKey}
                 type="button"
                 className={`domain-tab-btn ${isDomainActive ? 'active' : ''}`}
-                onClick={() => navigateToView(dom.defaultViewMode)}
+                onClick={() => handleDomainClick(domainKey, dom.defaultViewMode)}
                 aria-current={isDomainActive ? 'page' : undefined}
                 data-testid={`domain-tab-${domainKey}`}
                 style={{
@@ -220,9 +236,9 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
       {/* Bottom Row: Domain-Specific Lenses Switcher */}
       <div
         className="domain-lenses-bar"
-        role="tablist"
+        role="navigation"
         aria-label={`${currentDomainDef.label} Lenses`}
-        onKeyDown={handleTablistKeyDown}
+        onKeyDown={handleNavKeyDown}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -236,17 +252,16 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
           if (!def) return null;
 
           const isActive = activeViewMode === mode;
+          const ariaLabel = `${def.label} view: ${def.title}${mode === 'findings' && findingsCount ? `, ${findingsCount} findings` : ''}`;
 
           return (
             <button
               key={mode}
               type="button"
-              role="tab"
-              aria-selected={isActive}
-              tabIndex={isActive ? 0 : -1}
-              aria-label={`${def.label} view: ${def.title}`}
+              aria-current={isActive ? 'page' : undefined}
+              aria-label={ariaLabel}
               className={`lens-switch-btn ${isActive ? 'active' : ''}`}
-              onClick={() => navigateToView(mode)}
+              onClick={() => handleLensClick(mode)}
               title={def.title}
               data-testid={`view-btn-${mode}`}
               style={{

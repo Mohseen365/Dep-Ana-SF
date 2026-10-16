@@ -7,7 +7,7 @@ export interface EdgeHoverCardProps {
   y: number;
 }
 
-export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = ({ edge, x, y }) => {
+export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function EdgeHoverCard({ edge, x, y }) {
   const left = Math.min(x + 12, window.innerWidth - 280);
   const top = Math.min(y + 12, window.innerHeight - 180);
 
@@ -48,6 +48,6 @@ export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = ({ edge, x, y }) => {
       )}
     </div>
   );
-};
+});
 
 export default EdgeHoverCard;

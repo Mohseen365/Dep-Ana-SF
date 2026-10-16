@@ -233,6 +233,40 @@ export interface ExplorerUnresolvedReference {
 
 export type ArchitectureLayoutMode = 'hierarchical' | 'hybrid' | 'orbit' | 'constellation';
 
+export interface ArchModeMetaItem {
+  icon: string;
+  label: string;
+  description: string;
+  next: ArchitectureLayoutMode;
+}
+
+export const ARCH_MODE_META: Record<ArchitectureLayoutMode, ArchModeMetaItem> = {
+  hierarchical: {
+    icon: '🏢',
+    label: 'Hierarchical',
+    description: 'Hierarchical Layout (Layered Flow)',
+    next: 'hybrid',
+  },
+  hybrid: {
+    icon: '🧩',
+    label: 'Hybrid',
+    description: 'Hybrid Layout (Clustered Feature Regions)',
+    next: 'orbit',
+  },
+  orbit: {
+    icon: '🪐',
+    label: 'Orbit',
+    description: 'Architecture Orbit (Radial Concentric Bands)',
+    next: 'constellation',
+  },
+  constellation: {
+    icon: '🌌',
+    label: 'Constellation',
+    description: 'Component Constellation (Multi-Sun Macro View)',
+    next: 'hierarchical',
+  },
+};
+
 export interface ExplorerComponentImpactSummary {
   id: string;
   directDependencies: string[];

@@ -9,7 +9,7 @@ export interface NodeHoverCardProps {
   findings?: ArchitectureFinding[];
 }
 
-export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y, findings }) => {
+export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function NodeHoverCard({ node, x, y, findings }) {
   const fanIn = node.metrics?.fanIn ?? 0;
   const fanOut = node.metrics?.fanOut ?? 0;
 
@@ -53,6 +53,6 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y, findin
       )}
     </div>
   );
-};
+});
 
 export default NodeHoverCard;

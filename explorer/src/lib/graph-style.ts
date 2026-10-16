@@ -98,7 +98,20 @@ export interface GraphStyleOptions {
   fontSize?: number;
 }
 
+let cachedStyleOptions: GraphStyleOptions | null = null;
+let cachedStyles: StylesheetStyle[] | null = null;
+
+function shallowEqualOptions(a: GraphStyleOptions, b: GraphStyleOptions): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.nodeWidth === b.nodeWidth && a.nodeHeight === b.nodeHeight && a.fontSize === b.fontSize;
+}
+
 export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle[] {
+  if (cachedStyles && cachedStyleOptions && shallowEqualOptions(cachedStyleOptions, options)) {
+    return cachedStyles;
+  }
+
   const {
     nodeWidth = 50,
     nodeHeight = 50,
@@ -504,6 +517,8 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
     }
   }
 
+  cachedStyleOptions = options;
+  cachedStyles = styles;
   return styles;
 }
 
