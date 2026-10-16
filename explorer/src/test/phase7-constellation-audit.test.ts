@@ -1,14 +1,10 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema, ArchitectureLayoutMode } from '../types/explorer';
-import { adaptConstellation, type ConstellationData } from '../lib/adapters/constellation-adapter';
-import { computeConstellationLayout, type ConstellationLayoutResult } from '../lib/layout/constellation-layout';
-import { computeArchitectureLayoutWithMetadata, type ArchitectureLayoutOptions } from '../lib/architecture-layout';
-import { projectOrbitSemantics } from '../lib/layout/orbit-semantics';
-import { computeOrbitLayout } from '../lib/orbit-layout';
-import { discoverFeatures } from '../lib/layout/features';
-import { classifyNodeLayer } from '../lib/layout/layers';
+import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema } from '../types/explorer';
+import { adaptConstellation } from '../lib/adapters/constellation-adapter';
+import { computeConstellationLayout } from '../lib/layout/constellation-layout';
+import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 
 interface DatasetSpec {
   key: string;
@@ -30,6 +26,36 @@ function loadDataset(ds: DatasetSpec): { nodes: ExplorerNode[]; edges: ExplorerE
   return {
     nodes: parsed.nodes || [],
     edges: parsed.edges || [],
+  };
+}
+
+function makeSchema(nodes: ExplorerNode[], edges: ExplorerEdge[]): ExplorerDataSchema {
+  return {
+    nodes,
+    edges,
+    summary: {
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+      highRiskCount: 0,
+      mediumRiskCount: 0,
+      lowRiskCount: 0,
+      cycleCount: 0,
+      unresolvedCount: 0,
+      inventory: {
+        files: 0,
+        apexClasses: 0,
+        apexTriggers: 0,
+        lwcJs: 0,
+        lwcHtml: 0,
+        visualforce: 0,
+        flows: 0,
+        objects: 0,
+        fields: 0,
+      },
+    },
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
   };
 }
 
@@ -72,40 +98,6 @@ function computeStats(arr: number[]): DistributionStats {
     p99: Number(getQuantile(0.99).toFixed(2)),
     max: Number(sorted[count - 1].toFixed(2)),
   };
-}
-
-function computeNearestNeighborDistances(
-  positions: Record<string, { x: number; y: number }>
-): DistributionStats {
-  const nodeIds = Object.keys(positions);
-  const nnDists: number[] = [];
-
-  for (let i = 0; i < nodeIds.length; i++) {
-    const idA = nodeIds[i];
-    const posA = positions[idA];
-    if (!posA) continue;
-    let minDist = Infinity;
-
-    for (let j = 0; j < nodeIds.length; j++) {
-      if (i === j) continue;
-      const idB = nodeIds[j];
-      const posB = positions[idB];
-      if (!posB) continue;
-
-      const dx = posA.x - posB.x;
-      const dy = posA.y - posB.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < minDist) {
-        minDist = dist;
-      }
-    }
-
-    if (minDist !== Infinity) {
-      nnDists.push(minDist);
-    }
-  }
-
-  return computeStats(nnDists);
 }
 
 function countAABBOverlaps(
@@ -165,7 +157,7 @@ describe('Phase 7 & Phase 7A — Constellation & Orbit Spatial-Density Observati
     DATASETS.forEach((ds) => {
       test(`Dataset: ${ds.key.toUpperCase()} - Constellation Lens Multi-Depth Population & Geometry`, () => {
         const { nodes, edges } = loadDataset(ds);
-        const schema: ExplorerDataSchema = { nodes, edges };
+        const schema: ExplorerDataSchema = makeSchema(nodes, edges);
 
         // 2-Hop Scenario
         const constData2 = adaptConstellation(schema, { maxDepth: 2, direction: 'both' });
@@ -253,7 +245,6 @@ describe('Phase 7 & Phase 7A — Constellation & Orbit Spatial-Density Observati
 
         const width = maxX - minX;
         const height = maxY - minY;
-        const area = width * height;
 
         const edgeDists: number[] = [];
         edges.forEach((e) => {
@@ -267,7 +258,6 @@ describe('Phase 7 & Phase 7A — Constellation & Orbit Spatial-Density Observati
         });
 
         const semStats = computeStats(edgeDists);
-        const nnStats = computeNearestNeighborDistances(posMap);
         const overlaps = countAABBOverlaps(posMap, 120, 60);
 
         canonicalMeasurementsArtifact.orbitScenarios[ds.key] = {
