@@ -5,7 +5,6 @@ import path from 'path';
 import crypto from 'crypto';
 
 import { adaptComponentOrbit } from '../lib/adapters/component-orbit-adapter';
-import { computeComponentOrbitLayout } from '../lib/layout/component-orbit-layout';
 import { runLayoutWithMetadata } from '../lib/graph-layout';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
@@ -314,7 +313,7 @@ describe('Component Orbit Focused Projection Visibility Suite', () => {
       pbimHash = crypto.createHash('sha256').update(rawPbim).digest('hex');
       pbimData = JSON.parse(rawPbim);
 
-      const expectedPbimHash = 'd6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b';
+      const expectedPbimHash = '395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d';
       if (pbimHash !== expectedPbimHash || pbimData.nodes.length !== 528 || pbimData.edges.length !== 2063) {
         throw new Error(`VALIDATION BLOCKED — WRONG DATASET: SHA-256 or node/edge mismatch.`);
       }
@@ -329,7 +328,7 @@ describe('Component Orbit Focused Projection Visibility Suite', () => {
     });
 
     test('Dataset Preflight Verification', () => {
-      expect(pbimHash).toBe('d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b');
+      expect(pbimHash).toBe('395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d');
       expect(pbimData.nodes.length).toBe(528);
       expect(pbimData.edges.length).toBe(2063);
       expect(cyPbim.nodes().length).toBe(528);

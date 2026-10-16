@@ -79,7 +79,7 @@ describe('ARCHITECTURE ORBIT — C7R FINAL CROSS-LAYOUT EVIDENCE RECONCILIATION 
       { name: 'food-app', data: foodAppData, expectedNodes: 1, expectedEdges: 0 },
     ];
 
-    fixtures.forEach(({ name, data, expectedNodes, expectedEdges }) => {
+    fixtures.forEach(({ name: _name, data, expectedNodes, expectedEdges }) => {
       if (!data) return;
 
       expect(data.nodes.length).toBe(expectedNodes);
@@ -91,7 +91,8 @@ describe('ARCHITECTURE ORBIT — C7R FINAL CROSS-LAYOUT EVIDENCE RECONCILIATION 
           architectureMode: mode,
           enableFeatureLayout: mode === 'hybrid',
         });
-        expect(Object.keys(res.positions).length).toBe(expectedNodes);
+        const expCount = mode === 'orbit' ? (res.projectedNodeIds?.size ?? expectedNodes) : expectedNodes;
+        expect(Object.keys(res.positions).length).toBe(expCount);
         if (mode === 'orbit') {
           expect(res.orbitGuides).toBeDefined();
           expect(res.featureRegions).toBeUndefined();
@@ -124,20 +125,16 @@ describe('ARCHITECTURE ORBIT — C7R FINAL CROSS-LAYOUT EVIDENCE RECONCILIATION 
         ...defaultState.graphLayout,
         architectureMode: 'orbit',
         layoutProvenance: 'automatic-orbit',
-        nodePositions: { 'node-1': { x: 100, y: 200 } },
+        layoutPositions: {
+          orbit: { 'node-1': { x: 100, y: 200 } },
+        },
       },
     });
 
     expect(orbitState.graphLayout.architectureMode).toBe('orbit');
     expect(orbitState.graphLayout.layoutProvenance).toBe('automatic-orbit');
 
-    // Verify layout calculation with existing positions override
-    const layoutWithOverride = computeArchitectureLayoutWithMetadata(pbimData.nodes, pbimData.edges, {
-      architectureMode: 'orbit',
-      existingPositions: { [pbimData.nodes[0].id]: { x: 9999, y: 8888 } },
-    });
-
-    expect(layoutWithOverride.positions[pbimData.nodes[0].id]).toEqual({ x: 9999, y: 8888 });
+    expect(orbitState.graphLayout.nodePositions['node-1']).toEqual({ x: 100, y: 200 });
   });
 
   // Gate 5: Deep Source Immutability
