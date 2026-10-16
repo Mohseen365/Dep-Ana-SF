@@ -364,6 +364,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         focusedNodeId="node-1"
         focusState={{ enabled: true, focusNodeId: 'node-1', direction: 'both', depth: 1 }}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -499,7 +500,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-2': { x: 220, y: 240 },
     };
 
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     // Render initial with node-1 and node-2
     const { rerender } = render(

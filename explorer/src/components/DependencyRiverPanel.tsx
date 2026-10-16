@@ -546,7 +546,7 @@ export const DependencyRiverPanel: React.FC<DependencyRiverPanelProps> = ({
 
               {activeNode.anchorNodeId && (
                 <button
-                  onClick={() => handleNodeClick(activeNode.nodeId, activeNode.anchorNodeId)}
+                  onClick={() => handleNodeClick(activeNode.id, activeNode.anchorNodeId)}
                   style={{
                     width: '100%',
                     padding: '6px',
