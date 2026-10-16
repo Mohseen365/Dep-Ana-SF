@@ -351,7 +351,7 @@ export function mergeWithDefaultState(
           ? gLoaded.nodePositions
           : {};
 
-      if ((!hasExplicitLayoutPositions || !loadedLayoutPositions[activeArchMode] || Object.keys(loadedLayoutPositions[activeArchMode]!).length === 0) && Object.keys(flatNodePositions).length > 0) {
+      if (!hasExplicitLayoutPositions && Object.keys(flatNodePositions).length > 0) {
         loadedLayoutPositions[activeArchMode] = { ...flatNodePositions };
       }
 
