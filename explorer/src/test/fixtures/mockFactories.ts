@@ -1,5 +1,5 @@
 import type { ExplorerSummary, ExplorerInventory } from '../../types/explorer';
-import type { GraphLayoutState } from '../../lib/projectState';
+import type { GraphLayoutState, LayoutProvenance } from '../../lib/projectState';
 
 export function createMockInventory(
   overrides?: Partial<ExplorerInventory>
@@ -38,27 +38,28 @@ export function createMockSummary(
 export function createMockGraphLayoutState(
   overrides?: Partial<GraphLayoutState>
 ): GraphLayoutState {
-  const baseDefaults: GraphLayoutState = {
-    mode: 'interactive',
-    architectureMode: 'hierarchical',
-    layoutProvenance: 'automatic-hierarchical',
-    nodePositions: {},
-    layoutPositions: {
-      hierarchical: {},
-      hybrid: {},
-      orbit: {},
-      constellation: {},
-    },
-    layoutProvenances: {
-      hierarchical: 'automatic-hierarchical',
-      hybrid: 'automatic-hybrid',
-      orbit: 'automatic-orbit',
-      constellation: 'automatic-constellation',
-    },
+  const mode = overrides?.mode ?? 'interactive';
+  const architectureMode = overrides?.architectureMode ?? 'hierarchical';
+  const layoutProvenance =
+    overrides?.layoutProvenance ??
+    (`automatic-${architectureMode}` as LayoutProvenance);
+  const nodePositions = overrides?.nodePositions ?? {};
+
+  const layoutPositions = overrides?.layoutPositions ?? {
+    [architectureMode]: nodePositions,
+  };
+
+  const layoutProvenances = overrides?.layoutProvenances ?? {
+    [architectureMode]: layoutProvenance,
   };
 
   return {
-    ...baseDefaults,
+    mode,
+    architectureMode,
+    layoutProvenance,
+    nodePositions,
+    layoutPositions,
+    layoutProvenances,
     ...overrides,
   };
 }
