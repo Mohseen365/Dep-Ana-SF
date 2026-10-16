@@ -311,13 +311,13 @@ export function adaptComponentOrbit(
     const isSun = nodeId === focalLwcId;
 
     // Child LWC classification: type LWC + reachable via lwc-template-child composition edge
-    const isChildLwc = !isSun && rawNode.type === 'LWC';
+    const isChildLwc = !isSun && rawNode.type === 'LWC' && childToParentLwcsMap.has(nodeId);
     if (isChildLwc) childLwcCount++;
 
-    // Shared Apex Hub classification: ApexClass + referenced by >= 2 distinct LWCs in global graph
+    // Shared Apex Hub classification: ApexClass + referenced by >= 2 distinct reachable LWCs in projection
     const dependentLwcs = nodeDependentLwcsMap.get(nodeId);
     const dependentLwcIds = dependentLwcs
-      ? Array.from(dependentLwcs).sort((a, b) => a.localeCompare(b))
+      ? Array.from(dependentLwcs).filter(l => reachableSet.has(l)).sort((a, b) => a.localeCompare(b))
       : [];
     const dependentLwcCount = dependentLwcIds.length;
 

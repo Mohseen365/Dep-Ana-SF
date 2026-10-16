@@ -60,6 +60,7 @@ export interface ComponentConstellationDiagnostics {
   minSharedNodeAabbClearancePx: number;
   displacedSharedNodeCount: number;
   executionTimeMs: number;
+  invariantViolations?: string[];
 }
 
 export interface ComponentConstellationLayoutOutput {
@@ -200,10 +201,9 @@ export function computeComponentConstellationLayout(
     });
   });
 
-  // 5. Place Shared Nodes using Centroid + Radial & Tangent Displacement Rules
-  // Deterministic sorting of shared nodes
+  // 5. Place Shared Nodes using General Deterministic Centroid + Radial & Tangential Clearance Resolver
   sharedNodesList.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-  let displacedSharedNodeCount = 0;
+  const sharedNodeStateMap = new Map<string, { x: number; y: number; rawX: number; rawY: number; isDisplaced: boolean }>();
 
   sharedNodesList.forEach((sNode) => {
     const suns = sNode.referencingSunIds;
@@ -224,65 +224,103 @@ export function computeComponentConstellationLayout(
     const rawX = sumX / validSunCount;
     const rawY = sumY / validSunCount;
 
-    let finalX = rawX;
-    let finalY = rawY;
-    let isDisplaced = false;
+    sharedNodeStateMap.set(sNode.nodeId, {
+      x: rawX,
+      y: rawY,
+      rawX,
+      rawY,
+      isDisplaced: false,
+    });
+  });
 
-    // Rule A: Radial displacement for Sun AABB clearance violation
-    // On canonical PBIM, ApexClass:MaintenanceRequestController is near vendor-workspace
-    if (sNode.nodeId === 'ApexClass:MaintenanceRequestController' || sNode.nodeId.includes('MaintenanceRequestController')) {
-      const targetSunPos = sunCoords['LWC:vendor-workspace'] || sunCoords['vendor-workspace'];
-      if (targetSunPos) {
-        const dx = rawX - targetSunPos.x;
-        const dy = rawY - targetSunPos.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 0) {
-          const targetDist = 245.62; // Contracted distance achieving 124.41px AABB gap >= 120px
-          const scale = targetDist / dist;
-          finalX = targetSunPos.x + dx * scale;
-          finalY = targetSunPos.y + dy * scale;
-          isDisplaced = true;
-        }
-      }
-    }
+  // Iterative repair pass for shared-node clearance & overlap resolution (max 20 passes)
+  const maxPasses = 20;
+  const nodeSize = { width: nodeWidth, height: nodeHeight };
 
-    // Rule B: Tangent displacement for co-located shared nodes
-    // On canonical PBIM, co-located nodes near (-675.0, -389.71) are CityZoneController, VendorAssignmentController, BudgetController
-    const isCoLocatedGroup = Math.abs(rawX - (-675.0)) < 1.0 && Math.abs(rawY - (-389.7114)) < 2.0;
+  for (let pass = 0; pass < maxPasses; pass++) {
+    let repairsAppliedInPass = 0;
 
-    if (isCoLocatedGroup) {
-      // Find index in co-located group sorted deterministically by ID
-      const groupNodes = sharedNodesList.filter((n) => {
-        let nSumX = 0, nSumY = 0;
-        n.referencingSunIds.forEach((sId) => {
-          if (sunCoords[sId]) {
-            nSumX += sunCoords[sId].x;
-            nSumY += sunCoords[sId].y;
+    sharedNodesList.forEach((sNode) => {
+      const state = sharedNodeStateMap.get(sNode.nodeId);
+      if (!state) return;
+
+      // Rule A: Radial clearance enforcement against all referencing Suns
+      sNode.referencingSunIds.forEach((sunId) => {
+        const sunPos = sunCoords[sunId];
+        if (!sunPos) return;
+
+        const gap = calcAABBGap(state, nodeSize, sunPos, nodeSize);
+        if (gap < minRequiredAabbClearance - 1e-3) {
+          let dx = state.x - sunPos.x;
+          let dy = state.y - sunPos.y;
+          let dist = Math.hypot(dx, dy);
+
+          if (dist < 1e-4) {
+            dx = 1.0;
+            dy = 0.0;
+            dist = 1.0;
           }
-        });
-        const nRawX = nSumX / n.referencingSunIds.length;
-        const nRawY = nSumY / n.referencingSunIds.length;
-        return Math.abs(nRawX - (-675.0)) < 1.0 && Math.abs(nRawY - (-389.7114)) < 2.0;
-      }).sort((a, b) => a.nodeId.localeCompare(b.nodeId));
 
-      const idxInGroup = groupNodes.findIndex((n) => n.nodeId === sNode.nodeId);
-      if (idxInGroup !== -1) {
-        const m = idxInGroup - 1; // -1, 0, +1
-        if (m !== 0) {
-          const tangentX = 0.5;
-          const tangentY = -0.8660254;
-          const step = 160.0;
-          finalX = rawX + m * step * tangentX;
-          finalY = rawY + m * step * tangentY;
-          isDisplaced = true;
+          const ux = dx / dist;
+          const uy = dy / dist;
+          const pushDist = minRequiredAabbClearance - gap + 1.0;
+
+          state.x += ux * pushDist;
+          state.y += uy * pushDist;
+          state.isDisplaced = true;
+          repairsAppliedInPass++;
         }
-      }
-    }
+      });
 
-    finalX = Math.round(finalX * 100) / 100;
-    finalY = Math.round(finalY * 100) / 100;
+      // Rule B: Tangential / collision clearance against other shared nodes
+      sharedNodesList.forEach((otherNode) => {
+        if (otherNode.nodeId === sNode.nodeId) return;
+        const otherState = sharedNodeStateMap.get(otherNode.nodeId);
+        if (!otherState) return;
 
-    if (isDisplaced) {
+        const gap = calcAABBGap(state, nodeSize, otherState, nodeSize);
+        if (gap < 40.0 - 1e-3) {
+          let dx = state.x - otherState.x;
+          let dy = state.y - otherState.y;
+          let dist = Math.hypot(dx, dy);
+
+          if (dist < 1e-4) {
+            // Stable directional displacement based on string comparison
+            const orderSign = sNode.nodeId < otherNode.nodeId ? -1 : 1;
+            dx = orderSign * 0.5;
+            dy = orderSign * -0.8660254;
+            dist = Math.hypot(dx, dy);
+          }
+
+          const ux = dx / dist;
+          const uy = dy / dist;
+          const pushDist = (40.0 - gap + 1.0) / 2.0;
+
+          state.x += ux * pushDist;
+          state.y += uy * pushDist;
+          otherState.x -= ux * pushDist;
+          otherState.y -= uy * pushDist;
+
+          state.isDisplaced = true;
+          otherState.isDisplaced = true;
+          repairsAppliedInPass++;
+        }
+      });
+    });
+
+    if (repairsAppliedInPass === 0) break;
+  }
+
+  // Populate positions for shared nodes from state map
+  let displacedSharedNodeCount = 0;
+  sharedNodesList.forEach((sNode) => {
+    const state = sharedNodeStateMap.get(sNode.nodeId);
+    if (!state) return;
+
+    const finalX = Math.round(state.x * 100) / 100;
+    const finalY = Math.round(state.y * 100) / 100;
+
+    if (state.isDisplaced || Math.hypot(finalX - state.rawX, finalY - state.rawY) > 1.0) {
       displacedSharedNodeCount++;
     }
 
@@ -341,6 +379,19 @@ export function computeComponentConstellationLayout(
   if (minSunEdgeClearancePx === Infinity) minSunEdgeClearancePx = 0;
   if (minSharedNodeAabbClearancePx === Infinity) minSharedNodeAabbClearancePx = 0;
 
+  // Check for any remaining invariant violations after repair pass limit
+  const invariantViolations: string[] = [];
+  sharedPositions.forEach((sharedPos) => {
+    placedSuns.forEach((sunPos) => {
+      const gap = calcAABBGap(sharedPos, nodeSize, sunPos, nodeSize);
+      if (gap < minRequiredAabbClearance - 1e-3) {
+        invariantViolations.push(
+          `Shared node ${sharedPos.nodeId} violates clearance with Sun ${sunPos.nodeId}: gap = ${gap.toFixed(2)}px < ${minRequiredAabbClearance}px`
+        );
+      }
+    });
+  });
+
   // Build Guide Metadata for Macro Rings
   const guides: ComponentConstellationGuideMetadata = {
     rings: [
@@ -379,6 +430,7 @@ export function computeComponentConstellationLayout(
       minSharedNodeAabbClearancePx: Math.round(minSharedNodeAabbClearancePx * 100) / 100,
       displacedSharedNodeCount,
       executionTimeMs: Math.round((endTime - startTime) * 100) / 100,
+      ...(invariantViolations.length > 0 ? { invariantViolations } : {}),
     },
   };
 }

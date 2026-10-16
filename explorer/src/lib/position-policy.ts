@@ -10,6 +10,7 @@ export type LayoutTrigger =
   | 'investigation'
   | 'new-nodes'
   | 'mode-switch'
+  | 'architecture-mode-switch'
   | 'reset-layout';
 
 export interface Position {
@@ -70,6 +71,8 @@ export function shouldAutoLayout(
       case 'investigation':
       case 'mode-switch':
         return false;
+      case 'architecture-mode-switch':
+        return true;
       case 'new-nodes':
         return hasAuth ? 'place-new-only' : true;
       default:
@@ -82,6 +85,8 @@ export function shouldAutoLayout(
         return !hasAuth;
       case 'graph-update':
         return !hasAuth;
+      case 'architecture-mode-switch':
+        return true;
       case 'filter-change':
       case 'focus-change':
       case 'investigation':
