@@ -16,7 +16,6 @@ import {
 import { placeSatellites } from './layout/satellites';
 import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLayout } from './layout/components';
 import { resolveSpacingAndCollisions } from './layout/spacing';
-import { projectOrbitSemantics } from './layout/orbit-semantics';
 import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
 import { adaptComponentOrbit, type ComponentOrbitAdapterOptions } from './adapters/component-orbit-adapter';
 import { computeComponentOrbitLayout } from './layout/component-orbit-layout';

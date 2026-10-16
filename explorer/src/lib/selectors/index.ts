@@ -1,8 +1,8 @@
-import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../../types/explorer';
+import { ExplorerDataSchema, ExplorerNodeType } from '../../types/explorer';
 import { discoverFeatures, FeatureCluster } from '../layout/features';
 import { discoverDomains } from '../layout/domains';
 import { classifyNodeLayer, ArchitectureLayer } from '../layout/layers';
-import { computeGraphCentralityAnalysis, GraphCentralityAnalysis } from '../layout/centrality';
+import { computeGraphCentralityAnalysis } from '../layout/centrality';
 import { getArchitecturalHotspots, CategorizedHotspots } from '../hotspots';
 import { filterGraphByNodeTypes, applyFilters, FilteredGraphData } from '../search-filter';
 import { SearchFilterState } from '../search-filter';
