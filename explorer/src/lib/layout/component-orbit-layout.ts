@@ -162,9 +162,7 @@ export function computeComponentOrbitLayout(
       return;
     }
 
-    // Invariants G4 & G5 — Sort nodes deterministically on ring
-    ringNodes.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-
+    // Preserve adapter's semantic intra-ring ordering (role symbol priority -> type -> coupling -> ID)
     const n = ringNodes.length;
     const baseRingRadius = innerRadius + (ringIndex - 1) * ringSpacing;
 
@@ -338,12 +336,26 @@ export function computeComponentOrbitLayout(
   if (minAABBSeparationPx === Infinity) minAABBSeparationPx = 0;
   if (minRadiusPx === Infinity) minRadiusPx = 0;
 
-  // Build Guide Metadata
+  // Calculate maximum placed radius per ring across all placed nodes (including multi-track & repair shifts)
+  const maxPlacedRadiusPerRing = new Map<number, number>();
+  finalPosList.forEach((pos) => {
+    if (pos.ring > 0) {
+      const curr = maxPlacedRadiusPerRing.get(pos.ring) ?? 0;
+      if (pos.radius > curr) {
+        maxPlacedRadiusPerRing.set(pos.ring, pos.radius);
+      }
+    }
+  });
+
+  // Build Guide Metadata reflecting post-repair maximum placed radius per ring
   const guideRings: ComponentOrbitGuideRing[] = projection.rings.map((ring) => {
     const rIdx = ring.ringIndex;
     let radiusPx = 0;
     if (rIdx > 0) {
-      radiusPx = innerRadius + (rIdx - 1) * ringSpacing;
+      const maxPlaced = maxPlacedRadiusPerRing.get(rIdx);
+      radiusPx = maxPlaced !== undefined
+        ? Math.round(maxPlaced * 1000) / 1000
+        : (innerRadius + (rIdx - 1) * ringSpacing);
     }
     return {
       ringIndex: rIdx,
