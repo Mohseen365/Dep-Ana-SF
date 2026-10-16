@@ -49,7 +49,7 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
   const getInteractiveElements = (container: HTMLElement): HTMLElement[] => {
     const selector = 'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
     return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter(
-      (el) => el.getAttribute('aria-hidden') !== 'true' && el.style.display !== 'none'
+      (el) => el.getAttribute('aria-hidden') !== 'true' && window.getComputedStyle(el).display !== 'none'
     );
   };
 
@@ -104,6 +104,7 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
       className="graph-controls-floating"
       role="toolbar"
       aria-label="Graph controls"
+      aria-orientation="horizontal"
       onKeyDown={handleToolbarKeyDown}
     >
       {/* Analysis Section */}

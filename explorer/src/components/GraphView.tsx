@@ -50,6 +50,34 @@ cytoscape.use(navigator);
 
 const DEFAULT_EMPTY_ARRAY: string[] = [];
 
+// Module singleton for correlation tokens
+let currentCorrelationToken: string | undefined = undefined;
+
+export const setCorrelationToken = (token: string | undefined) => {
+  currentCorrelationToken = token;
+};
+
+export const getCorrelationToken = (): string | undefined => {
+  const token = currentCorrelationToken;
+  currentCorrelationToken = undefined;
+  return token;
+};
+
+if (typeof window !== 'undefined') {
+  try {
+    Object.defineProperty(window, '__CURRENT_CORRELATION_TOKEN__', {
+      configurable: true,
+      enumerable: true,
+      get: () => currentCorrelationToken,
+      set: (val: string | undefined) => {
+        currentCorrelationToken = val;
+      },
+    });
+  } catch (e) {
+    // Fallback if property already defined or non-configurable
+  }
+}
+
 function getHashModes(): { arch?: ArchitectureLayoutMode; layout?: LayoutMode } {
   if (typeof window === 'undefined' || !window.location.hash) return {};
   try {
@@ -283,8 +311,17 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onNodeDoubleTapRef.current = onNodeDoubleTapProp;
   }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp]);
 
-  // In-session explicit drag positions
-  const sessionPositionsRef = useRef<Map<string, Position>>(new Map());
+  // In-session explicit drag positions scoped per architecture mode
+  const sessionPositionsRef = useRef<Map<ArchitectureLayoutMode, Map<string, Position>>>(new Map());
+
+  const getSessionPositionsForMode = useCallback((mode: ArchitectureLayoutMode): Map<string, Position> => {
+    let modeMap = sessionPositionsRef.current.get(mode);
+    if (!modeMap) {
+      modeMap = new Map<string, Position>();
+      sessionPositionsRef.current.set(mode, modeMap);
+    }
+    return modeMap;
+  }, []);
 
   // Duplicate-layout detector ref tracking { reason, at }
   const lastRunRef = useRef<{ reason: string; at: number } | null>(null);
@@ -293,6 +330,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const pendingLayoutStopRef = useRef<((evt?: any) => void) | null>(null);
   const pendingModeSwitchCaptureRef = useRef<((evt?: any) => void) | null>(null);
   const isLayoutRunningRef = useRef<boolean>(false);
+  const [isLayoutRunning, setIsLayoutRunning] = useState<boolean>(false);
 
   // Request generation ref for async worker layout cancellation
   const layoutRequestRef = useRef<number>(0);
@@ -410,11 +448,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const cy = cyRef.current;
     const currentPositions: Record<string, Position> = { ...(nodePositionsRef.current || {}) };
 
+    const modeSessionMap = getSessionPositionsForMode(architectureMode);
     cy.nodes().forEach((n) => {
       const pos = n.position();
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
       currentPositions[n.id()] = rounded;
-      sessionPositionsRef.current.set(n.id(), rounded);
+      modeSessionMap.set(n.id(), rounded);
     });
 
     const provenance: LayoutProvenance = overrideProvenance || (
@@ -467,9 +506,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     prevArchitectureModeRef.current = architectureMode;
     prevFocalLwcIdRef.current = effectiveLayoutOptions.focalLwcId;
 
-    // Clear transient drag positions from previous layout mode
-    sessionPositionsRef.current.clear();
-
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
@@ -482,8 +518,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         ? 'automatic-constellation'
         : 'automatic-hierarchical';
 
-    const storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode;
-    const hasAuth = storedArchMode === architectureMode;
+    const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const hasAuth =
+      !!nodePositionsRef.current &&
+      Object.keys(nodePositionsRef.current).length > 0 &&
+      storedArchMode === architectureMode;
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'architecture-mode-switch', {
       hasAuthoritativePositions: hasAuth,
@@ -501,11 +540,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     const activeToken =
       effectiveLayoutOptionsRef.current?.correlationToken ??
-      (typeof window !== 'undefined' ? (window as any).__CURRENT_CORRELATION_TOKEN__ : undefined);
-
-    if (typeof window !== 'undefined' && (window as any).__CURRENT_CORRELATION_TOKEN__) {
-      delete (window as any).__CURRENT_CORRELATION_TOKEN__;
-    }
+      getCorrelationToken();
 
     const notifyComplete = (outcome: 'complete' | 'fallback-complete', correlationToken?: string) => {
       if (typeof window !== 'undefined') {
@@ -545,15 +580,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         existingPositions: existingPosMap,
         fit: true,
       }).then((layoutRes) => {
-        markLayoutEnd('architecture-mode-switch', architectureMode);
         if (requestId !== layoutRequestRef.current) return;
+        markLayoutEnd('architecture-mode-switch', architectureMode);
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions(targetProvenance);
         notifyComplete('complete', layoutRes.correlationToken || activeToken);
       }).catch(() => {
-        markLayoutEnd('architecture-mode-switch', architectureMode);
         if (requestId !== layoutRequestRef.current) return;
+        markLayoutEnd('architecture-mode-switch', architectureMode);
         const layoutRes = runLayoutWithMetadata(cy, {
           ...effectiveLayoutOptionsRef.current,
           nodes: nodesRef.current,
@@ -668,7 +703,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
-    sessionPositionsRef.current.clear();
+    getSessionPositionsForMode(architectureMode).clear();
 
     if (pendingLayoutStopRef.current) {
       cy.off('layoutstop', pendingLayoutStopRef.current);
@@ -684,8 +719,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (shouldAnimate) {
       const onStop = () => {
         pendingLayoutStopRef.current = null;
-        markLayoutEnd('reset', architectureMode);
         if (requestId !== layoutRequestRef.current) return;
+        markLayoutEnd('reset', architectureMode);
         captureAndPersistPositions();
       };
       pendingLayoutStopRef.current = onStop;
@@ -721,7 +756,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions();
     }
-  }, [architectureMode, captureAndPersistPositions, markLayoutStart, markLayoutEnd]);
+  }, [architectureMode, captureAndPersistPositions, markLayoutStart, markLayoutEnd, prefersReducedMotion]);
 
   // Expose imperative control methods
   useImperativeHandle(ref, () => ({
@@ -759,7 +794,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     },
     resetLayout: executeResetLayout,
-  }), [selectedNodeId, executeResetLayout]);
+  }), [selectedNodeId, executeResetLayout, prefersReducedMotion]);
 
   // Cytoscape Initialization & Teardown
   useEffect(() => {
@@ -776,7 +811,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuth =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      (storedArchMode === undefined || storedArchMode === architectureMode);
+      storedArchMode === architectureMode;
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'initial', {
       hasAuthoritativePositions: hasAuth,
@@ -807,7 +842,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     cyRef.current = cy;
     setCyInstance(cy);
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && ((import.meta as any).env?.DEV || (window as any).__EXPOSE_CY__)) {
       (window as any).__CY__ = cy;
       (window as any).__LAYOUT_MODULE__ = {
         runLayoutWithMetadata,
@@ -816,10 +851,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
 
     const knownPosMap: Record<string, Position> = {};
+    const modeSessionMapOnMount = getSessionPositionsForMode(architectureMode);
     cy.nodes().forEach((cyNode) => {
       const id = cyNode.id();
       const resolved = resolvePosition(id, {
-        session: sessionPositionsRef.current,
+        session: modeSessionMapOnMount,
         persisted: nodePositionsRef.current,
         hasAuth,
         mode: architectureMode,
@@ -859,7 +895,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           const newPos = calculateDeterministicNewNodePosition(id, edgesRef.current, knownPosMap);
           cyNode.position(newPos);
           knownPosMap[id] = newPos;
-          sessionPositionsRef.current.set(id, newPos);
+          modeSessionMapOnMount.set(id, newPos);
           newlyPlaced = true;
         }
       });
@@ -874,7 +910,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const pos = node.position();
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
 
-      sessionPositionsRef.current.set(nodeId, rounded);
+      getSessionPositionsForMode(architectureMode).set(nodeId, rounded);
       captureAndPersistPositions('user-authored');
 
       if (onNodeDragEndRef.current) {
@@ -889,10 +925,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
                       : 0.4;
     cy.on('layoutstart', () => {
       isLayoutRunningRef.current = true;
+      setIsLayoutRunning(true);
     });
 
     cy.on('layoutstop', () => {
       isLayoutRunningRef.current = false;
+      setIsLayoutRunning(false);
     });
 
     cy.zoom(initialZoom);
@@ -1097,11 +1135,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuthForUpdate =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      (storedArchModeSync === undefined || storedArchModeSync === architectureMode);
+      storedArchModeSync === architectureMode;
+
+    const modeSessionMapInSync = getSessionPositionsForMode(architectureMode);
 
     for (const node of nodes) {
       const resolved = resolvePosition(node.id, {
-        session: sessionPositionsRef.current,
+        session: modeSessionMapInSync,
         persisted: nodePositionsRef.current,
         cy: cyPositionsBefore[node.id],
         hasAuth: hasAuthForUpdate,
@@ -1131,7 +1171,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     cy.nodes().forEach((node) => {
       const id = node.id();
       const resolved = resolvePosition(id, {
-        session: sessionPositionsRef.current,
+        session: modeSessionMapInSync,
         persisted: nodePositionsRef.current,
         cy: cyPositionsBefore[id],
         hasAuth: hasAuthForUpdate,
@@ -1151,7 +1191,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         const newPos = calculateDeterministicNewNodePosition(id, edges, knownPositionsMap);
         node.position(newPos);
         knownPositionsMap[id] = newPos;
-        sessionPositionsRef.current.set(id, newPos);
+        modeSessionMapInSync.set(id, newPos);
         newlyPlaced = true;
       }
     });
@@ -1171,8 +1211,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
       if (shouldAnimate) {
         const onStop = () => {
-          markLayoutEnd('structural-sync', architectureMode);
           if (requestId !== layoutRequestRef.current) return;
+          markLayoutEnd('structural-sync', architectureMode);
           captureAndPersistPositions();
         };
         if (typeof cy.one === 'function') {
@@ -1255,7 +1295,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     }
-  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, effectiveLayoutOptions, captureAndPersistPositions]);
+  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, captureAndPersistPositions]);
 
   // Dedicated Effect for Simulation Visual Classes
   useEffect(() => {
@@ -1295,13 +1335,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuth =
       !!nodePositions &&
       Object.keys(nodePositions).length > 0 &&
-      (storedArchMode === undefined || storedArchMode === architectureMode);
+      storedArchMode === architectureMode;
+
+    const modeSessionMapInPosSync = getSessionPositionsForMode(architectureMode);
 
     cy.batch(() => {
       cy.nodes().forEach((cyNode) => {
         const id = cyNode.id();
         const resolved = resolvePosition(id, {
-          session: sessionPositionsRef.current,
+          session: modeSessionMapInPosSync,
           persisted: nodePositions,
           cy: cyNode.position(),
           mode: architectureMode,
@@ -1511,7 +1553,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       aria-label="Salesforce Architecture Dependency Graph"
       data-architecture-mode={architectureMode}
       data-layout-mode={layoutMode}
-      data-layout-running={isLayoutRunningRef.current}
+      data-layout-running={isLayoutRunning}
       data-node-count={nodes.length}
       data-edge-count={edges.length}
     >
@@ -1539,7 +1581,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           <div><strong>Layout Debug</strong></div>
           <div>arch: {architectureMode}</div>
           <div>layout: {layoutMode}</div>
-          <div>running: {String(isLayoutRunningRef.current)}</div>
+          <div>running: {String(isLayoutRunning)}</div>
           <div>reqId: {layoutRequestRef.current}</div>
           <div>nodes: {nodes.length} (data) / {cyRef.current?.nodes().length ?? 0} (cy)</div>
           <div>last: {typeof window !== 'undefined' && JSON.stringify((window as any).__LAST_LAYOUT_COMPLETED__)}</div>
