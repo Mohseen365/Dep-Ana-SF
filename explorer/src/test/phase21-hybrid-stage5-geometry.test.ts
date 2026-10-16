@@ -15,9 +15,8 @@ import { discoverDomains } from '../lib/layout/domains';
 import { discoverFeatures } from '../lib/layout/features';
 import {
   computeGlobalFeatureLayout,
-  computeGlobalDomainLayout,
-  type ArchitectureLayer,
 } from '../lib/layout/global-layout';
+import type { ArchitectureLayer } from '../types/explorer';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import {
@@ -134,7 +133,7 @@ export interface MetricSummary {
 
 export function calculateMetrics(
   projectId: string,
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: Record<string, { x: number; y: number }>,
   featureMap?: Map<string, string>
@@ -534,7 +533,7 @@ export function runPhase21Stage5ExperimentPipeline(
   }
 
   const stage5Positions: Record<string, { x: number; y: number }> = {};
-  featureDiscovery.assignments.forEach((_, nodeId) => {
+  featureDiscovery.assignments.forEach((_assignment, nodeId) => {
     const fId = featureMap.get(nodeId) || 'Unassigned';
     const region = featureLayoutResult.domainRegions.get(fId);
     if (region) {

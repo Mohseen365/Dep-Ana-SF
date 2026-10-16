@@ -4,10 +4,8 @@ import * as path from 'path';
 import {
   loadRealProjectData,
   runCandidateP28Pipeline,
-  getDisplayLabel,
   getLabelDimensions,
   type CandidateP28Config,
-  type CandidateP28Result,
 } from './phase28r-adaptive-capacity.test';
 
 describe('Phase 29R-B Independent Analytical Reproduction', () => {
@@ -42,14 +40,13 @@ describe('Phase 29R-B Independent Analytical Reproduction', () => {
 
     const configR4: CandidateP28Config = { candidateId: 'R4_AdaptiveCapacity', useProjection: true, adaptiveHorizontal: true, adaptiveVertical: true, adaptiveCapacity: true, minHorizontalGap: 40, minVerticalGap: 40 };
 
-    function getCollisionPairs(nodes: any[], edges: any[], projId: string) {
+    function getCollisionPairs(nodes: any[], edges: any[], _projId: string) {
       const res = runCandidateP28Pipeline(nodes, edges, configR4);
       const positions = res.positions;
       const displayLabels = res.displayLabels;
       const nodeIds = Object.keys(positions);
 
       const nodeList = nodeIds.map(id => {
-        const rawNode = nodes.find(n => n.id === id)!;
         const label = displayLabels[id];
         const dim = getLabelDimensions(label);
         return {

@@ -1,13 +1,5 @@
-import React from 'react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import {
-  filterQuery,
-  focusQuery,
-  impactQuery,
-  findingsQuery,
-  connectionQuery,
-  investigationQuery,
-} from '../lib/url';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { filterQuery } from '../lib/url';
 import { getAllWorkspaceModes, getWorkspaceDefinition } from '../registry/workspace-registry';
 import { getDomainForViewMode } from '../lib/router/domain-mapping';
 import { WorkspaceViewMode } from '../lib/projectState';

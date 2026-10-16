@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
 import { render, screen, fireEvent, act, renderHook } from '@testing-library/react';
 import { GraphView } from '../components/GraphView';
 import { InvestigationDrawer } from '../components/InvestigationDrawer';

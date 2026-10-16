@@ -4,7 +4,6 @@ import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import {
   computeArchitectureLayoutWithMetadata,
-  type ArchitectureLayoutOptions,
 } from '../lib/architecture-layout';
 import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';

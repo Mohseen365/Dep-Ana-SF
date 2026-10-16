@@ -4,7 +4,6 @@ import * as path from 'path';
 import crypto from 'crypto';
 import {
   computeArchitectureLayoutWithMetadata,
-  type ArchitectureLayoutOptions,
 } from '../lib/architecture-layout';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
@@ -18,10 +17,6 @@ import { discoverDomains } from '../lib/layout/domains';
 import { discoverFeatures } from '../lib/layout/features';
 import {
   computeGlobalFeatureLayout,
-  computeGlobalDomainLayout,
-  computeFeatureLayerYMap,
-  type FeatureRegion,
-  type DomainRegion,
 } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
@@ -146,7 +141,7 @@ export interface MetricSummary {
 
 function calculateMetrics(
   projectId: string,
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: Record<string, { x: number; y: number }>,
   featureMap?: Map<string, string>
@@ -455,15 +450,18 @@ export function runCustomPipelineWithStageSnapshots(
   // Controlled Intervention A: Relax Layer Supremacy
   if (interventions.relaxLayerSupremacy && activeFeatureLayerYMap) {
     const flattened: Record<string, Record<string, number>> = {};
-    Object.keys(activeFeatureLayerYMap).forEach((featId) => {
-      const orig = activeFeatureLayerYMap[featId];
-      const baseY = orig.presentation;
-      flattened[featId] = {
-        presentation: baseY,
-        application: baseY,
-        domain: baseY,
-        schema: baseY,
-      };
+    const layerYMap = activeFeatureLayerYMap;
+    Object.keys(layerYMap).forEach((featId) => {
+      const orig = layerYMap[featId];
+      if (orig) {
+        const baseY = orig.presentation;
+        flattened[featId] = {
+          presentation: baseY,
+          application: baseY,
+          domain: baseY,
+          schema: baseY,
+        };
+      }
     });
     activeFeatureLayerYMap = flattened as any;
   }
@@ -471,15 +469,18 @@ export function runCustomPipelineWithStageSnapshots(
   // Controlled Intervention B: Relax Feature Band Stacking
   if (interventions.relaxFeatureBandStacking && activeFeatureLayerYMap) {
     const flattenedStacking: Record<string, Record<string, number>> = {};
-    Object.keys(activeFeatureLayerYMap).forEach((featId) => {
-      const orig = activeFeatureLayerYMap[featId];
-      const origBaseY = orig.presentation;
-      flattenedStacking[featId] = {
-        presentation: 100 + (orig.presentation - origBaseY),
-        application: 100 + (orig.application - origBaseY),
-        domain: 100 + (orig.domain - origBaseY),
-        schema: 100 + (orig.schema - origBaseY),
-      };
+    const layerYMap = activeFeatureLayerYMap;
+    Object.keys(layerYMap).forEach((featId) => {
+      const orig = layerYMap[featId];
+      if (orig) {
+        const origBaseY = orig.presentation;
+        flattenedStacking[featId] = {
+          presentation: 100 + (orig.presentation - origBaseY),
+          application: 100 + (orig.application - origBaseY),
+          domain: 100 + (orig.domain - origBaseY),
+          schema: 100 + (orig.schema - origBaseY),
+        };
+      }
     });
     activeFeatureLayerYMap = flattenedStacking as any;
   }
@@ -857,7 +858,7 @@ describe('PHASE 20R — Real-Project Hybrid Causal Attribution & Runtime Truth G
     const stages = ['Stage5', 'Stage6', 'Stage7', 'Stage8', 'Stage9', 'Stage10', 'Stage11', 'Stage12'];
 
     const traceEdgeStages = (
-      edge: ExplorerEdge,
+      edge: { source: string; target: string },
       snapshots: Record<string, Record<string, { x: number; y: number }>>
     ) => {
       const trace: any[] = [];

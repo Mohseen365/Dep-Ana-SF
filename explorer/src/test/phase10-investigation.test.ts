@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { adaptConstellation, ConstellationData } from '../lib/adapters/constellation-adapter';
-import { computeMultiTrackConstellationLayout, MultiTrackLayoutResult } from './phase9-constellation-multi-track-experiment.test';
+import { adaptConstellation } from '../lib/adapters/constellation-adapter';
+import { computeMultiTrackConstellationLayout } from './phase9-constellation-multi-track-experiment.test';
 
 function loadDS(file: string) {
   const p1 = path.resolve(process.cwd(), file);
@@ -39,7 +39,7 @@ describe('Phase 10 — Independent Measurement Integrity Verification Suite', ()
     console.log(`Cross-Track Overlaps: ${res.crossTrackOverlaps}`);
     console.log(`Focal Overlaps: ${res.focalOverlaps}`);
 
-    res.overlappingPairs.forEach((pair, idx) => {
+    (res.overlappingPairs as any[]).forEach((pair, idx) => {
       const posA = res.nodePositions[pair.nodeA];
       const posB = res.nodePositions[pair.nodeB];
 

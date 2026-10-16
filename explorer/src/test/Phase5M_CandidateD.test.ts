@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
+import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
@@ -78,36 +78,6 @@ function computeM1ForBridges(
   return computeQuantiles(distances);
 }
 
-function computeM2ForBridges(
-  bridgeIds: string[],
-  positions: Record<string, { x: number; y: number }>,
-  neighborMap: Map<string, string[]>
-): { median: number; p95: number; max: number } {
-  const distances: number[] = [];
-
-  for (const bId of bridgeIds) {
-    const pos = positions[bId];
-    if (!pos) continue;
-
-    const neighbors = neighborMap.get(bId) || [];
-    const nDists: number[] = [];
-    for (const nId of neighbors) {
-      const nPos = positions[nId];
-      if (nPos) {
-        const dx = pos.x - nPos.x;
-        const dy = pos.y - nPos.y;
-        nDists.push(Math.sqrt(dx * dx + dy * dy));
-      }
-    }
-
-    if (nDists.length > 0) {
-      const maxDist = Math.max(...nDists);
-      distances.push(maxDist);
-    }
-  }
-
-  return computeQuantiles(distances);
-}
 
 function calculateWidth(posMap: Record<string, { x: number; y: number }>): number {
   let minX = Infinity;
@@ -506,6 +476,7 @@ describe('Phase 5M Candidate D Processing-Order-Only Implementation & Validation
 
       const sb1cStage8M1 = computeM1ForBridges(bridgeIds, runStage8(false), neighborMap);
       const candDStage8M1 = computeM1ForBridges(bridgeIds, candDStage8Positions, neighborMap);
+      expect(sb1cStage8M1).toBeDefined();
 
       const sb1cFinalM1 = computeM1ForBridges(bridgeIds, sb1cFull.positions, neighborMap);
       const h5aFinalM1 = computeM1ForBridges(bridgeIds, h5aFull.positions, neighborMap);
