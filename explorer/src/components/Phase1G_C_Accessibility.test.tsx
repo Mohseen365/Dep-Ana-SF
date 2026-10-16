@@ -16,20 +16,20 @@ import type { ExplorerDataSchema } from '../types/explorer';
 import type { ConstellationData } from '../lib/adapters/constellation-adapter';
 import type { SubwayMapData } from '../lib/adapters/subway-adapter';
 import type { FourDirectionData } from '../lib/adapters/four-direction-adapter';
+import { createMockSummary } from '../test/fixtures/mockFactories';
 
 const sampleExplorerData: ExplorerDataSchema = {
-  version: '1.0',
-  timestamp: '2026-10-08T00:00:00.000Z',
-  projectName: 'Test Project',
-  summary: {
-    totalComponents: 2,
-    totalDependencies: 1,
-    highRiskComponents: 0,
-    mediumRiskComponents: 1,
-    architectureHealthScore: 85,
-    healthLevel: 'GOOD',
-    riskPercent: 15,
-  },
+  schemaVersion: '1.0',
+  generatedAt: '2026-10-08T00:00:00.000Z',
+  summary: createMockSummary({
+    nodeCount: 2,
+    edgeCount: 1,
+    highRiskCount: 0,
+    mediumRiskCount: 1,
+    lowRiskCount: 1,
+    cycleCount: 0,
+    unresolvedCount: 0,
+  }),
   nodes: [
     {
       id: 'ApexClass:Service',
@@ -93,9 +93,28 @@ const sampleExplorerData: ExplorerDataSchema = {
       id: 'edge_1',
       source: 'ApexClass:Service',
       target: 'ApexClass:Util',
-      relationshipType: 'calls',
+      relationshipType: 'method-call',
+      method: null,
+      evidence: '',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: 'Service.cls',
+      canonical: {
+        source: { type: 'ApexClass', name: 'Service' },
+        target: { type: 'ApexClass', name: 'Util' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
     },
   ],
+  cycles: [],
+  unresolvedReferences: [],
+  impactSummaries: {},
 };
 
 const sampleConstellationData: ConstellationData = {
@@ -175,7 +194,7 @@ const sampleConstellationData: ConstellationData = {
       edgeId: 'edge_1',
       source: 'ApexClass:Service',
       target: 'ApexClass:Util',
-      relationshipType: 'calls',
+      relationshipType: 'method-call',
     },
   ],
   availableNodes: [
@@ -234,7 +253,7 @@ const sampleFourDirectionData: FourDirectionData = {
           featureName: 'Core Feature',
           layerName: 'application',
           risk: 'MEDIUM',
-          relationshipTypes: ['calls'],
+          relationshipTypes: ['method-call'],
         },
       ],
       totalCount: 1,
