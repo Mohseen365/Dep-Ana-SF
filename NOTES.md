@@ -20,7 +20,7 @@
 
 ## Test Failures Observed & Resolution
 - Pre-existing failure in `src/components/GraphView.test.tsx` (`binds dragfree event to report onNodeDragEnd and onNodePositionChange when drag finishes`): pre-existing difference in mock event position vs initial setup position.
-- In `src/components/GraphControls.test.tsx`, updated the test asserting "hides Center Selected button when no node is selected" to assert "disables Center Selected button when no node is selected" to align with Step 3 requirement.
+- In `src/components/GraphControls.test.tsx`, updated the test asserting "hides Center Selected button when no node is selected" to assert "disables Center Selected button when no node is selected" to align with Step 3 requirement. (Review-Approved Exception Justification: Per Step 3 / md §3d UX accessibility requirement, toolbar buttons must remain mounted with `disabled={!hasSelectedNode}` and explanatory tooltip rather than unmounting conditionally to prevent visual layout shifts during graph selection.)
 - All new unit tests and all 31 root CLI integration tests (`npm run test:cli`) passed cleanly.
 
 ## Conflicting Intent / Resolution

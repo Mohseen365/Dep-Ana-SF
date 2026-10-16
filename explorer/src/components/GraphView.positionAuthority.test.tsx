@@ -247,7 +247,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 150, y: 250 },
       'node-2': { x: 350, y: 450 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     render(
       <GraphView
@@ -316,7 +316,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 100 },
       'node-2': { x: 200, y: 200 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { rerender } = render(
       <GraphView
@@ -364,6 +364,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         focusedNodeId="node-1"
         focusState={{ enabled: true, focusNodeId: 'node-1', direction: 'both', depth: 1 }}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -499,7 +500,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-2': { x: 220, y: 240 },
     };
 
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     // Render initial with node-1 and node-2
     const { rerender } = render(
@@ -556,7 +557,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 100 },
       'node-2': { x: 300, y: 300 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { rerender } = render(
       <GraphView
@@ -642,7 +643,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 500, y: 500 },
       'node-2': { x: 700, y: 700 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { unmount } = render(
       <GraphView
@@ -683,7 +684,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 200 },
       'node-2': { x: 300, y: 400 },
     };
-    const staticGraphLayout = { mode: 'static' as const, nodePositions: staticPositions, layoutProvenance: 'user-authored' as const };
+    const staticGraphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: staticPositions, layoutProvenance: 'user-authored' as const };
 
     it('1. selected node can still be investigated without changing node coordinates in Static mode', () => {
       const onSelectNode = vi.fn();
@@ -1123,7 +1124,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={initialPositions}
-          graphLayout={{ mode: 'static', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1146,7 +1147,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={updatedPositions}
-          graphLayout={{ mode: 'static', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1280,7 +1281,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1297,7 +1298,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1317,7 +1318,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1332,7 +1333,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1348,7 +1349,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1368,7 +1369,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p}
-          graphLayout={{ mode: 'static', nodePositions: p, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1428,7 +1429,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1447,7 +1448,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1484,7 +1485,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         'node-1': { x: 150, y: 150 },
         'node-2': { x: 350, y: 350 },
       };
-      const gl = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+      const gl = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
       const { rerender } = render(
         <GraphView
@@ -1537,7 +1538,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={initialPositions}
-          graphLayout={{ mode: 'static', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1555,7 +1556,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={updatedPositions}
-          graphLayout={{ mode: 'static', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1576,7 +1577,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1590,7 +1591,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1631,7 +1632,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
     it('Negative 4: New-node placement does NOT trigger repeated persistence loops', () => {
       const onNodePositionsChange = vi.fn();
       const initialPositions = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
-      const graphLayout = { mode: 'static' as const, nodePositions: initialPositions, layoutProvenance: 'user-authored' as const };
+      const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: initialPositions, layoutProvenance: 'user-authored' as const };
 
       const { rerender } = render(
         <GraphView
