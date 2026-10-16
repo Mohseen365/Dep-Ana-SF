@@ -19,7 +19,7 @@
  */
 
 import type { ComponentOrbitProjection, ComponentOrbitNode } from '../adapters/component-orbit-adapter';
-import { checkAABBOverlap, calculateRequiredSectorRadius, normalizeAngle } from './orbit-layout';
+import { checkAABBOverlap, normalizeAngle } from './orbit-layout';
 
 export interface ComponentOrbitLayoutOptions {
   center?: { x: number; y: number };

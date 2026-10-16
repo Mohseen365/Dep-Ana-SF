@@ -7,7 +7,6 @@ import {
 import {
   WORKSPACE_DOMAINS,
   WorkspaceDomain,
-  getDomainForViewMode,
 } from "../lib/router/domain-mapping";
 
 export type { WorkspaceViewMode };

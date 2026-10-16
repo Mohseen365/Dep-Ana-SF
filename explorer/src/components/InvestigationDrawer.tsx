@@ -85,12 +85,10 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [depsLimit, setDepsLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
   const [dependentsLimit, setDependentsLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
-  const [evidenceLimit, setEvidenceLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
 
   React.useEffect(() => {
     setDepsLimit(INITIAL_VISIBLE_COUNT);
     setDependentsLimit(INITIAL_VISIBLE_COUNT);
-    setEvidenceLimit(INITIAL_VISIBLE_COUNT);
   }, [node?.id]);
 
   const handleTablistKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {

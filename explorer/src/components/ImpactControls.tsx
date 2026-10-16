@@ -1,5 +1,5 @@
 import React, { useCallback, useId, useState } from 'react';
-import { ImpactState, ImpactDepth, ImpactAnalysisResult, isImpactActive } from '../lib/impact-analysis';
+import { ImpactState, ImpactDepth, ImpactAnalysisResult } from '../lib/impact-analysis';
 import { ExplorerNode } from '../types/explorer';
 
 interface ImpactControlsProps {

@@ -1,9 +1,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import React from 'react';
 import { SelectionProvider } from './context/SelectionContext';
 import { InvestigationProvider, useInvestigation } from './context/InvestigationContext';
 import { WorkspaceRouterProvider, useWorkspaceRouter } from './context/WorkspaceRouterContext';
-import { WorkspaceViewMode } from './components/ViewModeSwitcher';
 import { useProject } from './context/ProjectContext';
 import { useProjectState } from './context/ProjectStateContext';
 import { useExplorerData } from './hooks/useExplorerData';
@@ -14,8 +12,7 @@ import { WorkspaceShell } from './components/workspace/WorkspaceShell';
 import { createArchitectureContext } from './lib/intelligence/context';
 import { runAllRules } from './lib/intelligence/rules';
 import type { ArchitectureFinding } from './lib/intelligence';
-import { computeFocusedGraph, createEmptyFocusState } from './lib/focus-graph';
-import { createEmptyImpactState } from './lib/impact-analysis';
+import { computeFocusedGraph } from './lib/focus-graph';
 import { createEmptyFilterState, searchNodes, filterGraphByNodeTypes } from './lib/search-filter';
 import { loadProjectState, saveProjectState } from './lib/projectState';
 import { useCommandPalette } from './hooks/useCommandPalette';
@@ -37,10 +34,7 @@ import {
 
 import {
   ALL_EXPLORER_NODE_TYPES,
-  type ExplorerNode,
-  type ExplorerEdge,
   type ExplorerDataSchema,
-  type ArchitectureLayoutMode,
 } from './types/explorer';
 import './index.css';
 
