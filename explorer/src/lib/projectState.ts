@@ -138,6 +138,10 @@ export interface ProjectUIState {
   updatedAt: string;
 }
 
+export type ProjectUIStateUpdate = Partial<Omit<ProjectUIState, 'graphLayout'>> & {
+  graphLayout?: Partial<GraphLayoutState>;
+};
+
 const STORAGE_PREFIX = "explorer.projectState.";
 const inMemoryStateMap = new Map<string, string>();
 
@@ -457,11 +461,13 @@ export function saveProjectState(
  */
 export function updateProjectState(
   projectId: string,
-  update: Partial<ProjectUIState>,
+  update: ProjectUIStateUpdate,
 ): ProjectUIState {
   const current = loadProjectState(projectId);
 
   // If graphLayout update is provided, handle mode-scoped synchronization
+  let mergedGraphLayout: GraphLayoutState | undefined = undefined;
+
   if (update.graphLayout) {
     const curLayout = current.graphLayout;
     const updateLayout = update.graphLayout;
@@ -486,23 +492,27 @@ export function updateProjectState(
       layoutProvenances[newArchMode] = updateLayout.layoutProvenance;
     }
 
-    update = {
-      ...update,
-      graphLayout: {
-        ...curLayout,
-        ...updateLayout,
-        architectureMode: newArchMode,
-        layoutPositions,
-        layoutProvenances,
-        nodePositions: layoutPositions[newArchMode] || {},
-        layoutProvenance: layoutProvenances[newArchMode] || `automatic-${newArchMode}` as LayoutProvenance,
-      },
+    mergedGraphLayout = {
+      ...curLayout,
+      ...updateLayout,
+      architectureMode: newArchMode,
+      layoutPositions,
+      layoutProvenances,
+      nodePositions: layoutPositions[newArchMode] || {},
+      layoutProvenance: layoutProvenances[newArchMode] || (`automatic-${newArchMode}` as LayoutProvenance),
     };
   }
 
+  const { graphLayout: _layoutUpdate, ...restUpdate } = update;
+
+  const fullUpdate: Partial<ProjectUIState> = {
+    ...restUpdate,
+    ...(mergedGraphLayout ? { graphLayout: mergedGraphLayout } : {}),
+  };
+
   const updated = mergeWithDefaultState(projectId, {
     ...current,
-    ...update,
+    ...fullUpdate,
   });
   saveProjectState(projectId, updated);
   return updated;

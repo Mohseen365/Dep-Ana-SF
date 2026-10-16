@@ -125,22 +125,22 @@ describe('Phase 1F — Position Persistence and Provenance Contract Tests', () =
     });
 
     // Round-trip 1: Switch back to Hierarchical using patch
-    const sHier = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'hierarchical' }) as any });
+    const sHier = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'hierarchical' }) });
     expect(sHier.graphLayout.nodePositions).toEqual(posHier);
     expect(sHier.graphLayout.layoutProvenance).toBe('user-authored');
 
     // Round-trip 2: Switch back to Hybrid using patch
-    const sHybrid = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'hybrid' }) as any });
+    const sHybrid = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'hybrid' }) });
     expect(sHybrid.graphLayout.nodePositions).toEqual(posHybrid);
     expect(sHybrid.graphLayout.layoutProvenance).toBe('user-authored');
 
     // Round-trip 3: Switch back to Orbit using patch
-    const sOrbit = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'orbit' }) as any });
+    const sOrbit = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'orbit' }) });
     expect(sOrbit.graphLayout.nodePositions).toEqual(posOrbit);
     expect(sOrbit.graphLayout.layoutProvenance).toBe('user-authored');
 
     // Round-trip 4: Switch back to Constellation using patch
-    const sConst = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'constellation' }) as any });
+    const sConst = updateProjectState(TEST_PROJECT_ID, { graphLayout: createMockGraphLayoutPatch({ architectureMode: 'constellation' }) });
     expect(sConst.graphLayout.nodePositions).toEqual(posConstellation);
     expect(sConst.graphLayout.layoutProvenance).toBe('user-authored');
   });
