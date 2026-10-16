@@ -854,7 +854,7 @@ describe('Phase 20 - Hybrid Causal Attribution Audit', () => {
         source: cstMaxSource,
         target: cstMaxTarget,
         trace: traceEdgeStages(
-          { id: 'max-cst', source: cstMaxSource, target: cstMaxTarget },
+          { source: cstMaxSource, target: cstMaxTarget },
           cstRun.stageSnapshots
         ),
       },
@@ -896,7 +896,7 @@ describe('Phase 20 - Hybrid Causal Attribution Audit', () => {
         source: pbimMaxSource,
         target: pbimMaxTarget,
         trace: traceEdgeStages(
-          { id: 'max-pbim', source: pbimMaxSource, target: pbimMaxTarget },
+          { source: pbimMaxSource, target: pbimMaxTarget },
           pbimRun.stageSnapshots
         ),
       },

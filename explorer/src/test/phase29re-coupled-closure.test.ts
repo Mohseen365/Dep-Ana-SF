@@ -1,17 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import {
   loadRealProjectData,
   getDisplayLabel,
-  getLabelDimensions,
   type CandidateP28Config,
-  type CandidateP28Result,
 } from './phase28r-adaptive-capacity.test';
 import {
-  applyCandidateDA_PairSpecific,
-  applyCandidateDB_AffectedRowRepack,
-  applyCandidateDC_AffectedRowVertical,
   applyCandidateDD_Combined,
   type RenderedNodeInfo,
   type RenderedCollisionPair,
@@ -26,7 +22,7 @@ import {
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
 import { discoverFeatures } from '../lib/layout/features';
-import { computeGlobalFeatureLayout, type ArchitectureLayer } from '../lib/layout/global-layout';
+import { computeGlobalFeatureLayout } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computePhase28LocalNodeLayout } from './phase28r-adaptive-capacity.test';
 import {
@@ -40,8 +36,6 @@ import {
   type ComponentLocalLayout,
 } from '../lib/layout/components';
 import { resolveSpacingAndCollisions } from '../lib/layout/spacing';
-
-const LAYERS_IN_ORDER: ArchitectureLayer[] = ['presentation', 'application', 'domain', 'schema'];
 
 export interface RenderedModelCollision {
   nodeA: string;
@@ -301,7 +295,8 @@ export function runCandidateEA(
       nodeA: c.nodeA, nodeB: c.nodeB, labelA: c.labelA, labelB: c.labelB,
       centerA: c.centerA, centerB: c.centerB, modelWidthA: 120, modelHeightA: 60,
       modelWidthB: 120, modelHeightB: 60, overlapXRendered: c.overlapX, overlapYRendered: c.overlapY,
-      overlapXModel: c.overlapX, overlapYModel: c.overlapY, axisClass: c.axisClass,
+      overlapXModel: c.overlapX, overlapYModel: c.overlapY,
+      axisClass: c.axisClass === 'VERTICAL_ONLY' ? 'TRUE_2D' : c.axisClass,
     }));
 
     const clearedStage7Positions = applyCandidateDD_Combined(
@@ -664,7 +659,8 @@ export function runCandidateEB(
     nodeA: c.nodeA, nodeB: c.nodeB, labelA: c.labelA, labelB: c.labelB,
     centerA: c.centerA, centerB: c.centerB, modelWidthA: 120, modelHeightA: 60,
     modelWidthB: 120, modelHeightB: 60, overlapXRendered: c.overlapX, overlapYRendered: c.overlapY,
-    overlapXModel: c.overlapX, overlapYModel: c.overlapY, axisClass: c.axisClass,
+    overlapXModel: c.overlapX, overlapYModel: c.overlapY,
+    axisClass: c.axisClass === 'VERTICAL_ONLY' ? 'TRUE_2D' : c.axisClass,
   }));
 
   const preClearedPositions = applyCandidateDD_Combined(
@@ -817,7 +813,8 @@ export function runCandidateEC(
       nodeA: c.nodeA, nodeB: c.nodeB, labelA: c.labelA, labelB: c.labelB,
       centerA: c.centerA, centerB: c.centerB, modelWidthA: 120, modelHeightA: 60,
       modelWidthB: 120, modelHeightB: 60, overlapXRendered: c.overlapX, overlapYRendered: c.overlapY,
-      overlapXModel: c.overlapX, overlapYModel: c.overlapY, axisClass: c.axisClass,
+      overlapXModel: c.overlapX, overlapYModel: c.overlapY,
+      axisClass: c.axisClass === 'VERTICAL_ONLY' ? 'TRUE_2D' : c.axisClass,
     }));
 
     const clearedStage7Positions = applyCandidateDD_Combined(
@@ -961,7 +958,8 @@ export function runCandidateEC(
       nodeA: c.nodeA, nodeB: c.nodeB, labelA: c.labelA, labelB: c.labelB,
       centerA: c.centerA, centerB: c.centerB, modelWidthA: 120, modelHeightA: 60,
       modelWidthB: 120, modelHeightB: 60, overlapXRendered: c.overlapX, overlapYRendered: c.overlapY,
-      overlapXModel: c.overlapX, overlapYModel: c.overlapY, axisClass: c.axisClass,
+      overlapXModel: c.overlapX, overlapYModel: c.overlapY,
+      axisClass: c.axisClass === 'VERTICAL_ONLY' ? 'TRUE_2D' : c.axisClass,
     }));
 
     const residualCleared = applyCandidateDD_Combined(
