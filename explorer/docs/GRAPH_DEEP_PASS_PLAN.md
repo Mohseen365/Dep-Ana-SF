@@ -3,22 +3,23 @@
 ## Revision History
 - A1: Reassigned N21–N23 from ViewModeSwitcher.tsx to WorkspaceHeader.tsx after source verification.
 - A2: Merged N19 and T1-10 into single 4h item for toolbar roving tabindex implementation in GraphControls.tsx.
-- A3: Narrowed serialization point S2 to an intra-lane gate in Lane B blocking only N17/T0-6 and T1-1 on T0-1.
+- A3: Narrowed serialization point S2 to an intra-lane gate in Lane B blocking only N16, N17/T0-6, and T1-1 on T0-1.
 - A4: Dropped artificial serialization point S1 because ARCH_MODE_META is re-exported from types/explorer.ts.
-- A5: Added T0-9 (NOTES.md update) and T0-10 (E2E bootstrap expose-flag update) to Lane F.
+- A5: Added T0-9 (NOTES.md) and T0-10 (E2E test setup) to Lane F.
 - A6: Added per-item implementation clarifications for N16, T0-4, T0-7, N15, and N26.
 - A7: Added graph-builder.test.ts to Lane A acceptance command.
-- A8: Added wall-clock estimate to Summary section (5.25 days / 6 working days @ 8h/day).
-- A9: Expanded Escalations section with internal Lane B sequencing, E2E bootstrap, N14 re-analysis freshness, and effort deviations.
-- A10: Added intra_lane_serialization block to Lane B in machine-readable manifest.
+- A8: Added wall-clock estimate to Summary section.
+- A9: Expanded Escalations section.
+- A10: Added intra_lane_serialization block to Lane B manifest.
+- A11: Corrected E2E bootstrap path, Lane B effort arithmetic, S2 manifest blocked list, DAG node, Tier 0 count, and classification-table duplication.
 
 ---
 
 ## Summary
 - **Lane Count:** 6 parallel lanes (Lane A through Lane F)
-- **Total Planned Effort:** 106 hours
-- **Critical Path Effort:** 42 hours (Lane B position authority execution flow: `T0-1` [2h] -> `N16, N17, T1-1, T1-2, T1-5, T1-6, etc.` [40h])
-- **Estimated Wall Clock (1 agent per lane, 8h/day):** 5.25 days (6 working days)
+- **Total Planned Effort:** 108 hours
+- **Critical Path Effort:** 44 hours (Lane B position authority execution flow)
+- **Estimated Wall Clock (1 agent per lane, 8h/day):** 5.5 days
 - **Serialization Points Count:** 1 intra-lane serialization point (`S2` in Lane B)
 
 ---
@@ -41,11 +42,11 @@
 | N12 | Effect re-subscription ref/dep stabilization | Tier 0 | 2 | `explorer/src/App.tsx` | — | None | None | Open |
 | N13 | `isNotAnalyzed` status helper extraction | Tier 0 | 2 | `explorer/src/App.tsx` | — | None | None | Open |
 | N14 | `committedMutatedGraph` timestamp invalidation | Tier 0 | 2 | `explorer/src/App.tsx` | — | None | None | Open |
-| N15 | `FeatureOverlayCanvas` prop decoupling | Tier 0 | 2 | `explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx` | — | None | None | Open |
+| N15 | `FeatureOverlayCanvas` prop decoupling | Tier 0 | 2 | `explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx` | — | None | None | Open (Clarification: if verification shows no excess repaint, mark complete with no code change) |
 | N16 | `mode` parameter deletion in `positions.ts` | Tier 1 | 4 | `explorer/src/lib/layout/positions.ts` | — | S2 | None | Open (Clarification: delete `mode` parameter from `positions.ts` signature and callers) |
-| N17 | `resolvePosition` mandatory `hasAuth` parameter | Tier 0 | 2 | `explorer/src/lib/layout/positions.ts` | — | S2 | None | Contradicted by code (`hasAuth = true` default remains in `positions.ts`) |
+| N17/T0-6 | `resolvePosition` mandatory `hasAuth` parameter | Tier 0 | 2 | `explorer/src/lib/layout/positions.ts` | — | S2 | None | Contradicted by code (`hasAuth = true` default remains in `positions.ts`) |
 | N18 | `GraphControls` `focusState` memoization | Tier 1 | 4 | `explorer/src/components/GraphControls.tsx` | — | None | None | Open |
-| N19 | Toolbar roving `tabIndex` implementation | Tier 1 | 4 | `explorer/src/components/GraphControls.tsx` | — | None | None | Open (Merged with T1-10) |
+| N19 | Toolbar roving `tabIndex` implementation | Tier 1 | 4 | `explorer/src/components/GraphControls.tsx` | — | None | None | Open (Merged T1-10; 4h) |
 | N20 | Toolbar handler container focus containment guard | Tier 1 | 4 | `explorer/src/components/GraphControls.tsx` | — | None | None | Open |
 | N21 | `aria-current="page"` on lens buttons | Tier 1 | 2 | `explorer/src/components/workspace/WorkspaceHeader.tsx` | — | None | None | Open (Reassigned to `WorkspaceHeader.tsx`) |
 | N22 | Navigation landmark ARIA role consolidation | Tier 1 | 2 | `explorer/src/components/workspace/WorkspaceHeader.tsx` | — | None | None | Open (Reassigned to `WorkspaceHeader.tsx`) |
@@ -60,11 +61,10 @@
 | T0-3 | `markLayoutEnd` guard on stale async requests | Tier 0 | 2 | `explorer/src/components/GraphView.tsx` | — | None | None | Open |
 | T0-4 | `window.__CY__` dev environment gating | Tier 0 | 2 | `explorer/src/components/GraphView.tsx` | — | None | None | Open (Clarification: gate via `import.meta.env.DEV \|\| (window as any).__EXPOSE_CY__`) |
 | T0-5 | `prefersReducedMotion` dep array completeness | Tier 0 | 2 | `explorer/src/components/GraphView.tsx` | — | None | None | Open |
-| T0-6 | Mandatory `hasAuth` in `resolvePosition` options | Tier 0 | 2 | `explorer/src/lib/layout/positions.ts` | — | S2 | None | Open |
 | T0-7 | Container `data-layout-running` attribute | Tier 0 | 2 | `explorer/src/components/GraphView.tsx` | — | None | None | Open (Clarification: use React `useState` state mirror `isLayoutRunning`) |
 | T0-8 | `useImperativeHandle` selection ref decoupling | Tier 0 | 2 | `explorer/src/components/GraphView.tsx` | — | None | None | Open |
 | T0-9 | `NOTES.md` self-report documentation update | Tier 0 | 1 | `NOTES.md` | — | None | None | Open (Added in A5) |
-| T0-10 | E2E bootstrap expose-flag test setup update | Tier 0 | 1 | `explorer/src/main.tsx` | — | None | None | Open (Added in A5) |
+| T0-10 | E2E bootstrap expose-flag test setup update | Tier 0 | 1 | `explorer/src/test/setup.ts` | — | None | None | Open (Updated path in C1) |
 | T1-1 | Per-architecture-mode `sessionPositionsRef` scoping | Tier 1 | 4 | `explorer/src/components/GraphView.tsx` | — | S2 | None | Open |
 | T1-2 | `window.__CURRENT_CORRELATION_TOKEN__` singleton ref | Tier 1 | 4 | `explorer/src/components/GraphView.tsx` | — | None | None | Open |
 | T1-3 | Extract `useGraphElements` differential reconciliation | Tier 2 | 16 | `explorer/src/components/GraphView.tsx` | — | T0-2 | None | Deferred (Tier 2 refactor) |
@@ -121,7 +121,7 @@ Single squash commit. Revert commit cleanly if any Cytoscape style rule tests fa
 - `[T0-3]` `markLayoutEnd` guard on stale async requests — `explorer/src/components/GraphView.tsx` — 2h
 - `[T0-4]` `window.__CY__` dev environment gating — `explorer/src/components/GraphView.tsx` — 2h (Gated via `import.meta.env.DEV || (window as any).__EXPOSE_CY__`)
 - `[T0-5]` `prefersReducedMotion` dep array completeness — `explorer/src/components/GraphView.tsx` — 2h
-- `[T0-6 / N17]` `resolvePosition` mandatory `hasAuth` parameter — `explorer/src/lib/layout/positions.ts` — 2h (Gated internally on `T0-1`)
+- `[N17/T0-6]` `resolvePosition` mandatory `hasAuth` parameter — `explorer/src/lib/layout/positions.ts` — 2h (Gated internally on `T0-1`)
 - `[T0-7]` Container `data-layout-running` attribute — `explorer/src/components/GraphView.tsx` — 2h (Driven by React state `isLayoutRunning`)
 - `[T0-8]` `useImperativeHandle` selection ref decoupling — `explorer/src/components/GraphView.tsx` — 2h
 - `[N16]` `mode` parameter deletion in `positions.ts` — `explorer/src/lib/layout/positions.ts` — 4h (Gated internally on `T0-1`; delete parameter and update callers)
@@ -130,7 +130,7 @@ Single squash commit. Revert commit cleanly if any Cytoscape style rule tests fa
 - `[T1-5]` Static mode `cy.autolock(true)` enforcement — `explorer/src/components/GraphView.tsx` — 4h
 - `[T1-6]` Keyboard arrow key initial node selection — `explorer/src/components/GraphView.tsx` — 4h
 
-**Total Effort:** 42 hours
+**Total Effort:** 44 hours
 
 ### Context Digest
 `GraphView.tsx` is the central Cytoscape rendering engine component. It manages Cytoscape lifecycle, layout execution (`runLayoutWithMetadata`, `runLayoutWithMetadataAsync`), position authority (`resolvePosition`), mode switching, user drags (`dragfree`), and overlays. `positions.ts` exports `resolvePosition()` wrapping `resolveAuthoritativePosition()`. Currently `hasAuth` evaluation falls back to `storedArchMode = graphLayoutRef.current?.architectureMode || architectureMode`, which forces `hasAuth` to `true` when `graphLayout.architectureMode` is undefined.
@@ -188,7 +188,7 @@ Per-item commits. Revert search debouncing first if filter responsiveness issues
 
 ### Items
 - `[N18]` `GraphControls` `focusState` memoization — `explorer/src/components/GraphControls.tsx` — 4h
-- `[N19]` Toolbar roving `tabIndex` implementation — `explorer/src/components/GraphControls.tsx` — 4h (Merged with T1-10)
+- `[N19]` Toolbar roving `tabIndex` implementation — `explorer/src/components/GraphControls.tsx` — 4h (Merged T1-10; 4h)
 - `[N20]` Toolbar handler container focus containment guard — `explorer/src/components/GraphControls.tsx` — 4h
 - `[T1-8]` `getInteractiveElements` `getComputedStyle` filter — `explorer/src/components/GraphControls.tsx` — 2h
 - `[T1-9]` Toolbar `aria-orientation` attribute — `explorer/src/components/GraphControls.tsx` — 2h
@@ -218,7 +218,7 @@ Single squash commit. Revert if roving focus breaks accessibility tests.
 ## Lane E — View Mode & Overlay Polish
 
 ### Items
-- `[N15]` `FeatureOverlayCanvas` prop decoupling — `explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx` — 2h (Verification sub-step: verify canvas repaints on `selectedNodeId` before fix)
+- `[N15]` `FeatureOverlayCanvas` prop decoupling — `explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx` — 2h (Verification sub-step: if verification shows no excess repaint, mark N15 complete with no code change and add a Discovery)
 - `[N21]` `aria-current="page"` on lens buttons — `explorer/src/components/workspace/WorkspaceHeader.tsx` — 2h
 - `[N22]` Navigation landmark ARIA role consolidation — `explorer/src/components/workspace/WorkspaceHeader.tsx` — 2h
 - `[N23]` `handleDomainClick` localStorage memoization — `explorer/src/components/workspace/WorkspaceHeader.tsx` — 2h
@@ -254,7 +254,7 @@ Per-item commits. Revert individual component changes if view switching or error
 - `[N27]` Extract `ARCH_MODE_META` to `lib/layout/arch-mode.ts` — `explorer/src/types/explorer.ts` (+ `explorer/src/lib/layout/arch-mode.ts`) — 2h (Re-export `ARCH_MODE_META` from `types/explorer.ts` for backward compatibility)
 - `[N28]` Derive mode cycle from `ARCH_MODE_ORDER` array — `explorer/src/lib/layout/arch-mode.ts` — 2h
 - `[T0-9]` `NOTES.md` self-report documentation update — `NOTES.md` — 1h
-- `[T0-10]` E2E bootstrap expose-flag test setup update — `explorer/src/main.tsx` — 1h
+- `[T0-10]` E2E bootstrap expose-flag test setup update — `explorer/src/test/setup.ts` — 1h
 
 **Total Effort:** 6 hours
 
@@ -268,9 +268,10 @@ Per-item commits. Revert individual component changes if view switching or error
 ```bash
 cd explorer && npm run typecheck && npm run lint && npx vitest run src/types/__tests__/arch-mode-meta.test.ts
 ```
+*(Note: T0-9 edits NOTES.md; verified by diff review, not test.)*
 
 ### Regression Scope
-- **Files expected to edit:** `explorer/src/types/explorer.ts`, `explorer/src/lib/layout/arch-mode.ts`, `NOTES.md`, `explorer/src/main.tsx`, `explorer/src/types/__tests__/arch-mode-meta.test.ts`.
+- **Files expected to edit:** `explorer/src/types/explorer.ts`, `explorer/src/lib/layout/arch-mode.ts`, `NOTES.md`, `explorer/src/test/setup.ts`, `explorer/src/types/__tests__/arch-mode-meta.test.ts`.
 - **Files that must remain unchanged:** All files outside Lane F.
 
 ### Revert Plan
@@ -291,41 +292,44 @@ Single squash commit. Revert if type export or architecture mode cycle tests fai
 ```mermaid
 graph TD
     LaneA[Lane A — Style & Builder]
+    LaneB[Lane B — GraphView & Positions]
     LaneC[Lane C — App & Search]
     LaneD[Lane D — GraphControls]
     LaneE[Lane E — WorkspaceHeader & Overlays]
     LaneF[Lane F — Types & Mode Contracts]
 
-    subgraph Lane B — GraphView Engine & Positions
+    subgraph Lane B Internal Sequence
         T01[T0-1: hasAuth inversion fix] -->|S2 (Intra-lane)| PosAuth[N16, N17/T0-6, T1-1 Position Items]
         NonGated[N4, N8, N9, N10, T0-2, T0-3, T0-4, T0-5, T0-7, T0-8, T1-2, T1-5, T1-6]
     end
+
+    LaneB --> T01
 ```
 
 ---
 
 ## Critical Path
 
-1. `Lane B: T0-1` (`hasAuth` inversion fix) (2h)
-2. `Serialization Point S2 (Intra-lane)` (0h)
-3. `Lane B: N16, N17/T0-6, T1-1, T1-2, T1-5, T1-6, etc.` (40h)
+Each lane is assigned to a single dedicated execution agent, running independently in parallel. Lane B contains the single longest sequential workload across all lanes. Therefore, Lane B's sequential execution duration (44 hours) defines the critical path of the plan. Intra-lane serialization point S2 governs execution order within Lane B (`T0-1` [2h] -> `N16, N17/T0-6, T1-1` [10h]) but does not alter the total path length.
 
-**Total Critical Path Effort:** 42 hours
+1. `Lane B: Monolithic sequential execution flow` (44h)
+
+**Total Critical Path Effort:** 44 hours
 
 ---
 
 ## Escalations
 
 1. **Internal Lane B Sequencing (`S2`):**
-   - `S2` is an intra-lane serialization point inside Lane B. The orchestrator must NOT gate the start of Lane B on `S2`; Lane B can start immediately and execute non-gated items (N4, N8, N9, T0-2..T0-8) in parallel with `T0-1`, enforcing `S2` internally before `N16`, `N17`, and `T1-1`.
+   - `S2` is an intra-lane serialization point inside Lane B. The orchestrator must NOT gate the start of Lane B on `S2`; Lane B can start immediately and execute non-gated items (N4, N8, N9, T0-2..T0-8) in parallel with `T0-1`, enforcing `S2` internally before `N16`, `N17/T0-6`, and `T1-1`.
 
 2. **E2E Bootstrap Dependency (`T0-4` / `T0-10`):**
-   - `T0-4` in Lane B gates `window.__CY__` behind `import.meta.env.DEV || (window as any).__EXPOSE_CY__`. Lane F owns `T0-10` which sets `(window as any).__EXPOSE_CY__ = true;` in `explorer/src/main.tsx` (E2E test setup). Because `GraphView.tsx` also checks `import.meta.env.DEV`, dev builds remain unblocked regardless of load order.
+   - `T0-4` in Lane B gates `window.__CY__` behind `import.meta.env.DEV || (window as any).__EXPOSE_CY__`. Lane F owns `T0-10` which sets `(window as any).__EXPOSE_CY__ = true;` in `explorer/src/test/setup.ts` (E2E test setup). Because `GraphView.tsx` also checks `import.meta.env.DEV`, dev builds remain unblocked regardless of load order.
 
 3. **`committedMutatedGraph` Freshness Contract (`N14` in Lane C):**
    - In `App.tsx`, simulation mutations commit a shadow graph `committedMutatedGraph`. If re-analysis completes or source `data.generatedAt` updates, `committedMutatedGraph` must be cleared so the fresh source graph takes effect. This preserves data contract freshness.
 
-4. **Lane B Effort Sizing Deviation (42h vs ~18h target mean):**
+4. **Lane B Effort Sizing Deviation (44h vs ~18h target mean):**
    - Lane B exceeds the target effort mean (+25% threshold) due to owning `GraphView.tsx`, `positions.ts`, and `position-policy.ts`. Allowed under Guardrail Rule 7 exception justification because `GraphView.tsx` is a single monolithic engine component (900+ lines) that cannot be split across multiple lanes without causing file-level collisions.
 
 ---
@@ -350,20 +354,22 @@ graph TD
 2. **`positions.ts` Default `hasAuth=true` (`T0-6 / N17`):**
    - *Discovery:* `resolvePosition` in `explorer/src/lib/layout/positions.ts` sets `hasAuth = true` by default. This implicitly treats persisted positions as authoritative for caller sites that omit `hasAuth`, causing position leakage across mode switches.
 3. **WorkspaceHeader vs ViewModeSwitcher Asset Ownership (`N21–N23`):**
-   - *Discovery:* Source inspection confirmed `domain-lenses-bar`, `aria-current="page"`, `role="navigation"`, and per-click `localStorage` reads reside in `explorer/src/components/workspace/WorkspaceHeader.tsx`, NOT `ViewModeSwitcher.tsx`. Reassigned N21–N23 to `WorkspaceHeader.tsx`.
+   - *Discovery:* Source inspection confirmed `domain-lenses-bar`, `aria-current="page"`, `role="navigation"`, and per-click `localStorage` reads reside in `explorer/src/components/workspace/WorkspaceHeader.tsx`, NOT `ViewModeSwitcher.tsx`. Reassigned N21–N23 to `WorkspaceHeader.tsx`. ViewModeSwitcher.tsx was inspected; no equivalent defects present.
+4. **E2E Bootstrap Search (`T0-10`):**
+   - *Discovery:* Searching the repository for three-underscore terms `___CY__` and `___EXPOSE_CY__` returned zero results. Searching for two-underscore `__EXPOSE_CY__` identified `explorer/src/test/setup.ts` as the file setting `(window as any).__EXPOSE_CY__ = true;`. `T0-10` and Lane F ownership were updated to `explorer/src/test/setup.ts`.
 
 ---
 
 ## Self-check Results
 
-1. Every Tier 0 item is in exactly one lane or a serialization point: **PASS** (17 Tier 0 items mapped).
+1. Every Tier 0 item is in exactly one lane or a serialization point: **PASS** (25 Tier 0 items mapped).
 2. Every N-ID is either in a lane or in "Non-planned" with a reason: **PASS** (N1–N28 mapped).
 3. No file path appears in more than one lane's `owns` list: **PASS** (Strict 1:1 file-to-lane mapping verified).
 4. Every depends-on edge is intra-lane or covered by an S<n>: **PASS** (S2 intra-lane gate defined).
 5. The DAG is acyclic: **PASS** (Linear flow confirmed).
 6. Acceptance commands are copy-pasteable and match `package.json`: **PASS** (`npm run typecheck`, `npm run lint`, `vitest` scripts verified).
 7. Every lane has at most 6 total lanes, and effort is within ±25% of the mean or the deviation is justified: **PASS** (6 lanes total; Lane B effort deviation justified in Escalations).
-8. Revision History lists exactly 10 entries (A1–A10): **PASS**.
+8. Revision History lists exactly 11 entries (A1–A11): **PASS**.
 
 ---
 
@@ -404,25 +410,24 @@ lanes:
       - "N9"
       - "N10"
       - "N16"
-      - "N17"
+      - "N17/T0-6"
       - "T0-1"
       - "T0-2"
       - "T0-3"
       - "T0-4"
       - "T0-5"
-      - "T0-6"
       - "T0-7"
       - "T0-8"
       - "T1-1"
       - "T1-2"
       - "T1-5"
       - "T1-6"
-    effort_h: 42
+    effort_h: 44
     depends_on: []
     intra_lane_serialization:
       - gate: "T0-1"
         gated_items: ["N16", "N17", "T0-6", "T1-1"]
-        reason: "Position authority ordering: hasAuth inversion fix in GraphView.tsx must land before per-mode session scoping and mandatory hasAuth parameter in positions.ts."
+        reason: "Position authority ordering: hasAuth inversion fix in GraphView.tsx must land before per-mode session scoping and mandatory hasAuth in positions.ts."
   C:
     name: "Lane C — App Pipeline & Search Optimization"
     owns:
@@ -475,7 +480,7 @@ lanes:
       - "explorer/src/types/explorer.ts"
       - "explorer/src/lib/layout/arch-mode.ts"
       - "NOTES.md"
-      - "explorer/src/main.tsx"
+      - "explorer/src/test/setup.ts"
       - "explorer/src/types/__tests__/arch-mode-meta.test.ts"
     items:
       - "N27"
@@ -487,7 +492,7 @@ lanes:
 serialization:
   S2:
     blocking: "B:T0-1"
-    blocked: "B:N17"
+    blocked: ["B:N16", "B:N17", "B:T0-6", "B:T1-1"]
     files:
       - "explorer/src/components/GraphView.tsx"
       - "explorer/src/lib/layout/positions.ts"
