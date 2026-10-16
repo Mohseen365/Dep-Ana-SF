@@ -3,18 +3,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
+import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition, type NodeCentralityAnalysis } from '../lib/layout/centrality';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
-import { computeGlobalDomainLayout } from '../lib/layout/global-layout';
+import { computeGlobalDomainLayout, type GlobalLayoutResult } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import { placeSatellites } from '../lib/layout/satellites';
 import { resolveSpacingAndCollisions } from '../lib/layout/spacing';
 import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLayout } from '../lib/layout/components';
 import { calculateLayoutMetrics } from '../lib/layout/metrics';
+import type { ArchitectureLayer, ArchitectureGraphAnalysis } from '../lib/layout/types';
 
 interface Dataset {
   key: string;
@@ -79,20 +80,23 @@ function calcPercentiles(arr: number[]): {
   };
 }
 
-function getLayerY(layerYMap: any, layer: string): number {
+function getLayerY(
+  layerYMap: Record<ArchitectureLayer, number> | Map<ArchitectureLayer, number> | undefined,
+  layer: string
+): number {
   if (!layerYMap) return 0;
-  if (typeof layerYMap.get === 'function') return layerYMap.get(layer) || 0;
-  return layerYMap[layer] ?? 0;
+  if (layerYMap instanceof Map) return layerYMap.get(layer as ArchitectureLayer) || 0;
+  return (layerYMap as Record<string, number>)[layer] ?? 0;
 }
 
 // Unbounded 1D Stage 8 simulation for Pre-SB1C baseline
 function computePreSB1CStage8(
   safeNodes: ExplorerNode[],
-  centralityMap: Map<string, any>,
-  layerMap: Map<string, string>,
-  analysis: any,
+  centralityMap: Map<string, NodeCentralityAnalysis>,
+  layerMap: Map<string, ArchitectureLayer>,
+  _analysis: ArchitectureGraphAnalysis,
   domainXCenters: Record<string, number>,
-  globalDomainResult: any,
+  globalDomainResult: GlobalLayoutResult,
   primaryPositions: Record<string, { x: number; y: number }>
 ): Record<string, { x: number; y: number }> {
   const positions: Record<string, { x: number; y: number }> = { ...primaryPositions };
@@ -126,7 +130,7 @@ function computePreSB1CStage8(
         }
 
         let collision = false;
-        for (const [pId, pos] of Object.entries(positions)) {
+        for (const pos of Object.values(positions)) {
           if (Math.abs(pos.y - baseY) < 1e-3 && Math.abs(pos.x - trialX) < 160 - 1e-3) {
             collision = true;
             break;
@@ -147,7 +151,7 @@ function computePreSB1CStage8(
   return positions;
 }
 
-const allSummaries: Record<string, any> = {};
+const allSummaries: Record<string, unknown> = {};
 
 describe('Phase 4 — SB-1C Spatial Density Truth Audit Measurement Runner', () => {
   for (const ds of DATASETS) {
@@ -159,7 +163,7 @@ describe('Phase 4 — SB-1C Spatial Density Truth Audit Measurement Runner', () 
 
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map<string, string>();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(node => {
         layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
       });
@@ -690,10 +694,10 @@ describe('Phase 4 — SB-1C Spatial Density Truth Audit Measurement Runner', () 
         outliers: worstOutliersTracing,
         crossings: {
           preSB1C: {
-            total: preSB1CMetrics.crossings,
+            total: preSB1CMetrics.edgeCrossingCount,
           },
           sb1cFinal: {
-            total: sb1cMetrics.crossings,
+            total: sb1cMetrics.edgeCrossingCount,
             primaryPrimary: sb1cMetrics.detailedCrossings?.primaryPrimaryCrossings ?? 0,
             primaryBridge: sb1cMetrics.detailedCrossings?.primaryBridgeCrossings ?? 0,
             bridgeBridge: sb1cMetrics.detailedCrossings?.bridgeBridgeCrossings ?? 0,
