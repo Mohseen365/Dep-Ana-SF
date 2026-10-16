@@ -13,6 +13,7 @@ import { calculateLayoutMetrics } from '../lib/layout/metrics';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import { discoverDomains } from '../lib/layout/domains';
 import { computeGlobalDomainLayout } from '../lib/layout/global-layout';
 
@@ -22,13 +23,15 @@ interface Dataset {
 }
 
 const DATASETS: Dataset[] = [
-  { key: 'cst', file: 'explorer/public/projects/cst/explorer-data.json' },
-  { key: 'bqc', file: 'explorer/public/projects/bqc/explorer-data.json' },
-  { key: 'pbim', file: 'explorer/public/projects/pbim/explorer-data.json' },
+  { key: 'cst', file: 'public/projects/cst/explorer-data.json' },
+  { key: 'bqc', file: 'public/projects/bqc/explorer-data.json' },
+  { key: 'pbim', file: 'public/projects/pbim/explorer-data.json' },
 ];
 
 function loadDataset(dataset: Dataset): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
-  const fullPath = path.resolve(process.cwd(), dataset.file);
+  const p1 = path.resolve(process.cwd(), dataset.file);
+  const p2 = path.resolve(__dirname, '../../', dataset.file);
+  const fullPath = fs.existsSync(p1) ? p1 : p2;
   const raw = fs.readFileSync(fullPath, 'utf8');
   const parsed = JSON.parse(raw);
   return {
@@ -47,7 +50,7 @@ describe('SB-1B Bounded 2D Validation Runner', () => {
 
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(node => {
         layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
       });
@@ -142,13 +145,16 @@ describe('SB-1B Bounded 2D Validation Runner', () => {
 
           basePositions[node.id] = bridgeInfo.candidatePosition;
 
-          if (bridgeInfo.placementStatus === 'PLACEMENT_EXHAUSTED') {
+          if (bridgeInfo.isExhausted) {
             exhaustedCount++;
           }
 
-          if (bridgeInfo.selectedYLane === 'Y0') y0Count++;
-          else if (bridgeInfo.selectedYLane === 'Y0_MINUS_100') y0Minus100Count++;
-          else if (bridgeInfo.selectedYLane === 'Y0_PLUS_100') y0Plus100Count++;
+          const layer = layerMap.get(node.id) || 'application';
+          const baseY = (globalDomainResult.layerYMap as Record<ArchitectureLayer, number>)[layer] ?? 350;
+          const yDiff = bridgeInfo.candidatePosition.y - baseY;
+          if (Math.abs(yDiff) < 1e-3) y0Count++;
+          else if (yDiff < -1e-3) y0Minus100Count++;
+          else if (yDiff > 1e-3) y0Plus100Count++;
 
           const finalX = bridgeInfo.candidatePosition.x;
           const disp = finalX - candidateX;
@@ -234,7 +240,7 @@ describe('SB-1B Bounded 2D Validation Runner', () => {
       console.log(`    Y0: ${y0Count} (${((y0Count/Math.max(1,bridgeCount))*100).toFixed(1)}%)`);
       console.log(`    Y0-100: ${y0Minus100Count} (${((y0Minus100Count/Math.max(1,bridgeCount))*100).toFixed(1)}%)`);
       console.log(`    Y0+100: ${y0Plus100Count} (${((y0Plus100Count/Math.max(1,bridgeCount))*100).toFixed(1)}%)`);
-      console.log(`  Displacement: Median ${medianDisp.toFixed(2)}px | P75 ${p75Disp.toFixed(2)}px | P90 ${p90Disp.toFixed(2)}px | Max ${maxDisp.toFixed(2)}px`);
+      console.log(`  Displacement: Median ${medianDisp.toFixed(2)}px | P75 ${p75Disp.toFixed(2)}px | P90 ${p90Disp.toFixed(2)}px | P95 ${p95Disp.toFixed(2)}px | Max ${maxDisp.toFixed(2)}px`);
       console.log(`Correctness Metrics:`);
       console.log(`  Node Overlaps: ${metrics.nodeOverlapCount}`);
       console.log(`  Layer Violations: ${metrics.layerViolationCount}`);

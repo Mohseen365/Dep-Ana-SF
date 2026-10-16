@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import React from 'react';
+import { render, act } from '@testing-library/react';
 import { GraphView } from '../components/GraphView';
 import { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
@@ -39,26 +38,67 @@ describe('GraphView Layout Completion Event Signal Suite', () => {
   const dummyNodes: ExplorerNode[] = [
     {
       id: 'node1',
-      label: 'Node 1',
       displayName: 'Node 1',
       type: 'ApexClass',
+      file: 'src/node1.cls',
       risk: 'LOW',
-      metrics: { coupling: 1, fanIn: 1, fanOut: 0, cyclomaticComplexity: 1, linesOfCode: 10 },
-      refactoringReadiness: { hasCycles: false, hasUnresolved: false, readinessScore: 100 }
+      riskReasons: [],
+      metrics: { coupling: 1, fanIn: 1, fanOut: 0, unresolved: 0, score: 0 },
+      behavior: {
+        isTest: false,
+        publicContractsCount: 1,
+        asyncPatterns: [],
+        securitySignalsCount: 0,
+        queryCount: 0,
+        dmlCount: 0,
+        calloutCount: 0,
+      },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
     },
     {
       id: 'node2',
-      label: 'Node 2',
       displayName: 'Node 2',
       type: 'ApexClass',
+      file: 'src/node2.cls',
       risk: 'LOW',
-      metrics: { coupling: 1, fanIn: 0, fanOut: 1, cyclomaticComplexity: 1, linesOfCode: 10 },
-      refactoringReadiness: { hasCycles: false, hasUnresolved: false, readinessScore: 100 }
+      riskReasons: [],
+      metrics: { coupling: 1, fanIn: 0, fanOut: 1, unresolved: 0, score: 0 },
+      behavior: {
+        isTest: false,
+        publicContractsCount: 1,
+        asyncPatterns: [],
+        securitySignalsCount: 0,
+        queryCount: 0,
+        dmlCount: 0,
+        calloutCount: 0,
+      },
+      refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'COVERED' }
     },
   ];
 
   const dummyEdges: ExplorerEdge[] = [
-    { id: 'edge1', source: 'node1', target: 'node2', label: 'uses' },
+    {
+      id: 'edge1',
+      source: 'node1',
+      target: 'node2',
+      relationshipType: 'method-call',
+      method: null,
+      evidence: 'test',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      line: null,
+      column: null,
+      methodOwner: null,
+      file: '',
+      canonical: {
+        source: { type: 'ApexClass', name: 'node1' },
+        target: { type: 'ApexClass', name: 'node2' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: {},
+      },
+    },
   ];
 
   beforeEach(() => {

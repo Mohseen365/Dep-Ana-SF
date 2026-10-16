@@ -17,7 +17,6 @@ import {
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
 import type { ArchitectureLayer } from '../lib/layout/types';
-import { calculateLayoutMetrics } from '../lib/layout/metrics';
 import { computeGlobalDomainLayout } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
@@ -244,7 +243,6 @@ describe('Phase 6B — Candidate D Activation Wiring Integrity & Adversarial Aud
     });
 
     test('Hostile Multi-Step Stale Option Sequence', () => {
-      const bqcData = loadDataset({ key: 'bqc', file: 'public/projects/bqc/explorer-data.json' });
 
       // 1. Set layoutOptions.enableCandidateDOrdering = false
       // 2. Enter Hierarchical -> Must force Candidate D = true
@@ -427,7 +425,7 @@ describe('Phase 6B — Candidate D Activation Wiring Integrity & Adversarial Aud
               }
             );
 
-            if (bridgeInfo.placementStatus === 'PLACEMENT_EXHAUSTED') {
+          if (bridgeInfo.isExhausted) {
               exhaustedCount++;
             }
             basePositions[bNode.id] = bridgeInfo.candidatePosition;

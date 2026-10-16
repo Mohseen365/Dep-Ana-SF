@@ -3,10 +3,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import { computeGraphCentralityAnalysis, calculateBridgeCandidatePosition } from '../lib/layout/centrality';
+import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import { discoverDomains } from '../lib/layout/domains';
 import { computeGlobalDomainLayout } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
@@ -96,7 +97,7 @@ describe('Phase 5L-V Movement Semantics & Baseline Reconciliation Suite', () => 
 
       const index = createLayoutGraphIndex(safeNodes, safeEdges);
       let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-      const layerMap = new Map<string, any>();
+      const layerMap = new Map<string, ArchitectureLayer>();
       safeNodes.forEach(node => {
         layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
       });
@@ -200,7 +201,7 @@ describe('Phase 5L-V Movement Semantics & Baseline Reconciliation Suite', () => 
 
             const minDx = 160;
             const minDy = 100;
-            const layerYOffsets = globalDomainResult.layerYMap;
+            const layerYOffsets = globalDomainResult.layerYMap as Record<ArchitectureLayer, number>;
             const baseY = layerYOffsets[layer];
 
             const sortedConnectedDomains = [...centrality.connectedDomains].sort((a, b) => a.localeCompare(b));
