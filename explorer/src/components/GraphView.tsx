@@ -519,10 +519,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         : 'automatic-hierarchical';
 
     const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const currentProv = graphLayoutRef.current?.layoutProvenance;
     const hasAuth =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      storedArchMode === architectureMode;
+      (currentProv === 'user-authored' ||
+        (storedArchMode === architectureMode &&
+          (currentProv === undefined || currentProv === targetProvenance)));
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'architecture-mode-switch', {
       hasAuthoritativePositions: hasAuth,
@@ -808,10 +811,22 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const currentProv = graphLayoutRef.current?.layoutProvenance;
+    const expectedProvenance: LayoutProvenance =
+      architectureMode === 'hybrid'
+        ? 'automatic-hybrid'
+        : architectureMode === 'orbit'
+        ? 'automatic-orbit'
+        : architectureMode === 'constellation'
+        ? 'automatic-constellation'
+        : 'automatic-hierarchical';
+
     const hasAuth =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      storedArchMode === architectureMode;
+      (currentProv === 'user-authored' ||
+        (storedArchMode === architectureMode &&
+          (currentProv === undefined || currentProv === expectedProvenance)));
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'initial', {
       hasAuthoritativePositions: hasAuth,
@@ -1132,10 +1147,22 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     let hasGenuinelyNewNodes = false;
     const storedArchModeSync = graphLayoutRef.current?.architectureMode;
+    const currentProvSync = graphLayoutRef.current?.layoutProvenance;
+    const expectedProvenanceSync: LayoutProvenance =
+      architectureMode === 'hybrid'
+        ? 'automatic-hybrid'
+        : architectureMode === 'orbit'
+        ? 'automatic-orbit'
+        : architectureMode === 'constellation'
+        ? 'automatic-constellation'
+        : 'automatic-hierarchical';
+
     const hasAuthForUpdate =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      storedArchModeSync === architectureMode;
+      (currentProvSync === 'user-authored' ||
+        (storedArchModeSync === architectureMode &&
+          (currentProvSync === undefined || currentProvSync === expectedProvenanceSync)));
 
     const modeSessionMapInSync = getSessionPositionsForMode(architectureMode);
 
@@ -1332,10 +1359,22 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const cy = cyRef.current;
 
     const storedArchMode = graphLayoutRef.current?.architectureMode;
+    const currentProv = graphLayoutRef.current?.layoutProvenance;
+    const expectedProvenancePosSync: LayoutProvenance =
+      architectureMode === 'hybrid'
+        ? 'automatic-hybrid'
+        : architectureMode === 'orbit'
+        ? 'automatic-orbit'
+        : architectureMode === 'constellation'
+        ? 'automatic-constellation'
+        : 'automatic-hierarchical';
+
     const hasAuth =
       !!nodePositions &&
       Object.keys(nodePositions).length > 0 &&
-      storedArchMode === architectureMode;
+      (currentProv === 'user-authored' ||
+        (storedArchMode === architectureMode &&
+          (currentProv === undefined || currentProv === expectedProvenancePosSync)));
 
     const modeSessionMapInPosSync = getSessionPositionsForMode(architectureMode);
 
