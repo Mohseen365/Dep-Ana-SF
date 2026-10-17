@@ -44,15 +44,52 @@ export { GraphSlot } from './components/GraphSlot';
 function useProjectSafe() {
   try {
     return useProject();
-  } catch (_) {
+  } catch (err) {
+    if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+      console.warn('[App] useProjectSafe context resolution skipped:', err);
+    }
     return null;
   }
+}
+
+export interface CheckIsNotAnalyzedParams {
+  loading: boolean;
+  projectLoading?: boolean;
+  analysisStatus?: string;
+  error?: Error | null;
+  activeData?: unknown;
+  activeProjectId?: string;
+}
+
+export function checkIsNotAnalyzed({
+  loading,
+  projectLoading = false,
+  analysisStatus,
+  error = null,
+  activeData,
+  activeProjectId = 'default',
+}: CheckIsNotAnalyzedParams): boolean {
+  if (loading || projectLoading) {
+    return false;
+  }
+
+  const isNotAnalyzedStatus = analysisStatus === 'NOT_ANALYZED';
+  const isNotAnalyzedError = Boolean(error && error.message.startsWith('NOT_ANALYZED:'));
+  const isMissingNonDefaultData =
+    !activeData &&
+    activeProjectId !== 'default' &&
+    (!error || error.message.startsWith('NOT_ANALYZED:'));
+
+  return isNotAnalyzedStatus || isNotAnalyzedError || isMissingNonDefaultData;
 }
 
 function useProjectStateSafe() {
   try {
     return useProjectState();
-  } catch (_) {
+  } catch (err) {
+    if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+      console.warn('[App] useProjectStateSafe context resolution skipped:', err);
+    }
     return null;
   }
 }
@@ -198,12 +235,26 @@ function AppContent() {
   const [committedMutatedGraph, setCommittedMutatedGraph] = useState<ExplorerDataSchema | null>(null);
   const activeData = committedMutatedGraph || data;
 
-  const isNotAnalyzed =
-      !loading &&
-      !projectContext?.loading &&
-      (activeProject?.analysisStatus === 'NOT_ANALYZED' ||
-        (error && error.message.startsWith('NOT_ANALYZED:')) ||
-        (!activeData && activeProjectId !== 'default' && (!error || error.message.startsWith('NOT_ANALYZED:'))));
+  // Invalidate committed mutated graph when baseline data timestamp updates
+  const prevDataGeneratedAtRef = useRef<string | undefined>(data?.generatedAt);
+  useEffect(() => {
+    if (!data) return;
+    if (prevDataGeneratedAtRef.current !== data.generatedAt) {
+      prevDataGeneratedAtRef.current = data.generatedAt;
+      if (committedMutatedGraph) {
+        setCommittedMutatedGraph(null);
+      }
+    }
+  }, [data, committedMutatedGraph]);
+
+  const isNotAnalyzed = checkIsNotAnalyzed({
+    loading,
+    projectLoading: projectContext?.loading,
+    analysisStatus: activeProject?.analysisStatus,
+    error,
+    activeData,
+    activeProjectId,
+  });
 
   
   const selection = useGraphSelection();
@@ -211,6 +262,10 @@ function AppContent() {
   const view = useViewState();
   const compareState = useCompareState();
   const palette = useCommandPalette();
+
+  const { clear: clearSelection, selectNode, selectEdge, selectedNodeId } = selection;
+  const { resetInvestigationContext } = investigation;
+  const { setIsInvestigating, setFilterState, selectedNodeId: viewSelectedNodeId, urlNodeId: viewUrlNodeId } = view;
 
   const [selectedFinding, setSelectedFinding] = useState<ArchitectureFinding | null>(null);
   const [highlightedImpactNodeIds, setHighlightedImpactNodeIds] = useState<string[] | null>(null);
@@ -254,13 +309,13 @@ function AppContent() {
       setCommittedMutatedGraph(null);
       setActiveSimulationProposal(null);
       setSimulationStepIndex(0);
-      selection.clear();
-      investigation.resetInvestigationContext();
+      clearSelection();
+      resetInvestigationContext();
       setSelectedFinding(null);
       setHighlightedImpactNodeIds(null);
       setSelectedCycleId(null);
-      view.setIsInvestigating(false);
-      view.setFilterState({
+      setIsInvestigating(false);
+      setFilterState({
         ...createEmptyFilterState(),
         visibleNodeTypes: projState.filters?.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES,
       });
@@ -270,7 +325,7 @@ function AppContent() {
     return () => {
       window.removeEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     };
-  }, [activeProjectId, selection, view]);
+  }, [activeProjectId, clearSelection, resetInvestigationContext, setIsInvestigating, setFilterState]);
 
   // Sync visibleNodeTypes state persistence on filter change
   useEffect(() => {
@@ -294,32 +349,32 @@ function AppContent() {
   // Defensive validation: clear stale node selection
   useEffect(() => {
     if (!activeData) return;
-    if (selection.selectedNodeId) {
-      const selectedNode = activeData.nodes.find((n) => n.id === selection.selectedNodeId);
+    if (selectedNodeId) {
+      const selectedNode = activeData.nodes.find((n) => n.id === selectedNodeId);
       if (!selectedNode) {
-        selection.clear();
-        view.setIsInvestigating(false);
+        clearSelection();
+        setIsInvestigating(false);
         return;
       }
       const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
       if (!visibleTypes.includes(selectedNode.type)) {
-        selection.clear();
-        view.setIsInvestigating(false);
+        clearSelection();
+        setIsInvestigating(false);
       }
     }
-  }, [activeData, selection, view, view.filterState.visibleNodeTypes]);
+  }, [activeData, selectedNodeId, clearSelection, setIsInvestigating, view.filterState.visibleNodeTypes]);
 
   // Global Escape key listener to clear node selection across all views
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selection.selectedNodeId) {
-        selection.clear();
-        view.setIsInvestigating(false);
+      if (e.key === 'Escape' && selectedNodeId) {
+        clearSelection();
+        setIsInvestigating(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selection, view]);
+  }, [selectedNodeId, clearSelection, setIsInvestigating]);
 
   const handleTogglePin = useCallback(() => {
     investigation.setDrawerPinned(!isPinned);
@@ -346,15 +401,15 @@ function AppContent() {
     const channel = createChannel();
 
     const unsubscribe = onDetachedDrill(channel, (nodeId) => {
-      selection.selectNode(nodeId);
-      view.setIsInvestigating(true);
+      selectNode(nodeId);
+      setIsInvestigating(true);
     });
 
     return () => {
       unsubscribe();
       channel.close();
     };
-  }, [selection, view]);
+  }, [selectNode, setIsInvestigating]);
 
   const handleRequestHandoff = useCallback((nodeId: string) => {
     if (!activeData) return;
@@ -375,12 +430,12 @@ function AppContent() {
   useEffect(() => {
     if (compareState.focusedEntityId) {
       if (activeData?.nodes.some((n) => n.id === compareState.focusedEntityId)) {
-        selection.selectNode(compareState.focusedEntityId);
+        selectNode(compareState.focusedEntityId);
       } else if (activeData?.edges.some((e) => e.id === compareState.focusedEntityId)) {
-        selection.selectEdge(compareState.focusedEntityId);
+        selectEdge(compareState.focusedEntityId);
       }
     }
-  }, [compareState.focusedEntityId, activeData, selection]);
+  }, [compareState.focusedEntityId, activeData, selectNode, selectEdge]);
 
 
   // Compute architecture context and findings
@@ -398,23 +453,26 @@ function AppContent() {
   // Sync node selection from view state
   useEffect(() => {
     if (!activeData) return;
-    const urlNode = view.selectedNodeId || view.urlNodeId;
+    const urlNode = viewSelectedNodeId || viewUrlNodeId;
     if (urlNode) {
       const matchedNode = activeData.nodes.find(
         (n: any) => n.id === urlNode || n.name === urlNode || n.displayName === urlNode
       );
       const targetId = matchedNode ? matchedNode.id : urlNode;
-      if (selection.selectedNodeId !== targetId) {
-        selection.selectNode(targetId);
+      if (selectedNodeId !== targetId) {
+        selectNode(targetId);
       }
     }
-  }, [activeData, view.selectedNodeId, view.urlNodeId, selection]);
+  }, [activeData, viewSelectedNodeId, viewUrlNodeId, selectedNodeId, selectNode]);
 
-  // Derive effective focus state
+  // Derive effective focus state with primitive dependencies
+  const focusNodeId = selectedNodeId || view.focusState.focusNodeId;
   const effectiveFocusState = useMemo(() => ({
-    ...view.focusState,
-    focusNodeId: selection.selectedNodeId || view.focusState.focusNodeId,
-  }), [view.focusState, selection.selectedNodeId]);
+    enabled: view.focusState.enabled,
+    focusNodeId,
+    direction: view.focusState.direction,
+    depth: view.focusState.depth,
+  }), [view.focusState.enabled, focusNodeId, view.focusState.direction, view.focusState.depth]);
 
   // Compute focused sub-graph
   const focusedGraphData = useMemo(() => {
@@ -426,23 +484,24 @@ function AppContent() {
     return { nodes: res.nodes, edges: res.edges };
   }, [activeData, effectiveFocusState]);
 
+  // Stable visibleNodeTypes reference
+  const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+
   // Canonical visibility-filtered activeData for all layout lenses
   const visibleActiveData = useMemo(() => {
     if (!activeData) return null;
-    const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
     const { nodes, edges } = filterGraphByNodeTypes(activeData.nodes, activeData.edges, visibleTypes);
     return {
       ...activeData,
       nodes,
       edges,
     };
-  }, [activeData, view.filterState.visibleNodeTypes]);
+  }, [activeData, visibleTypes]);
 
   // Apply node-type visibility filter to focused graph data
   const visibleGraphData = useMemo(() => {
-    const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
     return filterGraphByNodeTypes(focusedGraphData.nodes, focusedGraphData.edges, visibleTypes);
-  }, [focusedGraphData, view.filterState.visibleNodeTypes]);
+  }, [focusedGraphData, visibleTypes]);
 
   // Compute simulated graph & temporary positions
   const { simulatedGraph, currentStepOps, stepImpact, effectivePositions } = useMemo(() => {
@@ -467,7 +526,6 @@ function AppContent() {
       ? { nodes: fullSimulatedData.nodes, edges: fullSimulatedData.edges }
       : computeFocusedGraph(fullSimulatedData.nodes, fullSimulatedData.edges, effectiveFocusState);
 
-    const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
     const finalSimulatedGraph = filterGraphByNodeTypes(focusedSim.nodes, focusedSim.edges, visibleTypes);
 
     const impact = computeStepImpact(
@@ -489,7 +547,7 @@ function AppContent() {
       stepImpact: impact,
       effectivePositions: tempPositions,
     };
-  }, [activeData, activeSimulationProposal, simulationStepIndex, visibleGraphData, effectiveFocusState, view.filterState.visibleNodeTypes, findings, nodePositions]);
+  }, [activeData, activeSimulationProposal, simulationStepIndex, visibleGraphData, effectiveFocusState, visibleTypes, findings, nodePositions]);
 
   // Simulated element highlight IDs
   const simulatedAddedNodeIds = useMemo(() => {
@@ -525,9 +583,9 @@ function AppContent() {
   }, [selectedFinding, highlightedImpactNodeIds]);
 
   const selectedNode = useMemo(() => {
-    if (!activeData || !selection.selectedNodeId) return null;
-    return activeData.nodes.find((n) => n.id === selection.selectedNodeId) ?? null;
-  }, [activeData, selection.selectedNodeId]);
+    if (!activeData || !selectedNodeId) return null;
+    return activeData.nodes.find((n) => n.id === selectedNodeId) ?? null;
+  }, [activeData, selectedNodeId]);
 
   const handleResetView = () => {
     selection.clear();
@@ -577,16 +635,23 @@ function AppContent() {
   const handleCommitSimulation = () => {
     if (!activeData || !activeSimulationProposal) return;
 
-    const validation = validateProposalCommit(activeSimulationProposal, activeProjectId, activeData);
-    if (!validation.valid) {
-      throw new Error(validation.reason || 'Cannot commit stale simulation proposal.');
-    }
+    try {
+      const validation = validateProposalCommit(activeSimulationProposal, activeProjectId, activeData);
+      if (!validation.valid) {
+        throw new Error(validation.reason || 'Cannot commit stale simulation proposal.');
+      }
 
-    const allOps = activeSimulationProposal.steps.flatMap(s => s.operations);
-    const mutated = applySimulationOperations(activeData, allOps);
-    setCommittedMutatedGraph(mutated);
-    setActiveSimulationProposal(null);
-    setSimulationStepIndex(0);
+      const allOps = activeSimulationProposal.steps.flatMap(s => s.operations);
+      const mutated = applySimulationOperations(activeData, allOps);
+      setCommittedMutatedGraph(mutated);
+      setActiveSimulationProposal(null);
+      setSimulationStepIndex(0);
+    } catch (err) {
+      if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+        console.error('[App] handleCommitSimulation failed:', err);
+      }
+      throw err;
+    }
   };
 
   if (loading) return <LoadingScreen />;
