@@ -302,7 +302,7 @@
           }
         }
       },
-      "runtimeMs": 2431.08
+      "runtimeMs": 1777.48
     },
     "CandidateJ1_RegionAwareClearance": {
       "projectId": "cloud-spend-tracker",
@@ -606,7 +606,7 @@
           }
         }
       },
-      "runtimeMs": 1983.51
+      "runtimeMs": 1485.57
     },
     "CandidateJ2_DemandDrivenSizing": {
       "projectId": "cloud-spend-tracker",
@@ -910,7 +910,7 @@
           }
         }
       },
-      "runtimeMs": 1779.35
+      "runtimeMs": 1333.78
     },
     "CandidateJ3_BoundedAdaptiveGap": {
       "projectId": "cloud-spend-tracker",
@@ -1214,7 +1214,7 @@
           }
         }
       },
-      "runtimeMs": 1787.12
+      "runtimeMs": 1405.35
     },
     "CandidateJ4_TwoPassFeedback": {
       "projectId": "cloud-spend-tracker",
@@ -1518,7 +1518,7 @@
           }
         }
       },
-      "runtimeMs": 1624.33
+      "runtimeMs": 1332.77
     },
     "CandidateJ5_ConstrainedCoupledCompaction": {
       "projectId": "cloud-spend-tracker",
@@ -1822,7 +1822,7 @@
           }
         }
       },
-      "runtimeMs": 1523.33
+      "runtimeMs": 1311.19
     }
   },
   "pbim": {
@@ -2560,7 +2560,7 @@
           }
         }
       },
-      "runtimeMs": 11735.69
+      "runtimeMs": 9995.85
     },
     "CandidateJ1_RegionAwareClearance": {
       "projectId": "pbim",
@@ -3296,7 +3296,7 @@
           }
         }
       },
-      "runtimeMs": 11586.08
+      "runtimeMs": 9764.21
     },
     "CandidateJ2_DemandDrivenSizing": {
       "projectId": "pbim",
@@ -4032,7 +4032,7 @@
           }
         }
       },
-      "runtimeMs": 12060.89
+      "runtimeMs": 9733.06
     },
     "CandidateJ3_BoundedAdaptiveGap": {
       "projectId": "pbim",
@@ -4768,7 +4768,7 @@
           }
         }
       },
-      "runtimeMs": 13154.56
+      "runtimeMs": 9855.84
     },
     "CandidateJ4_TwoPassFeedback": {
       "projectId": "pbim",
@@ -5504,7 +5504,7 @@
           }
         }
       },
-      "runtimeMs": 9800.19
+      "runtimeMs": 9778.14
     },
     "CandidateJ5_ConstrainedCoupledCompaction": {
       "projectId": "pbim",
@@ -6240,7 +6240,7 @@
           }
         }
       },
-      "runtimeMs": 9674.1
+      "runtimeMs": 9743.25
     }
   }
 }
