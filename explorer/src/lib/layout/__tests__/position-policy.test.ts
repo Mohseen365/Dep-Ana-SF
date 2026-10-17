@@ -126,6 +126,29 @@ describe('resolvePosition Precedence Table Test Suite', () => {
     expect(resolved).toBeNull();
   });
 
+  it('Enforces explicit hasAuth parameter requirement without default fallback', () => {
+    const sessionMap = new Map([['node-1', { x: 100, y: 100 }]]);
+    const persisted = { 'node-1': { x: 200, y: 200 } };
+
+    // Explicit hasAuth: true yields Level 1 session position
+    const resolvedAuthTrue = resolvePosition('node-1', {
+      session: sessionMap,
+      persisted,
+      hasAuth: true,
+    });
+    expect(resolvedAuthTrue).toEqual({
+      position: { x: 100, y: 100 },
+      level: 1,
+    });
+
+    // Explicit hasAuth: false ignores persisted position
+    const resolvedAuthFalse = resolvePosition('node-1', {
+      persisted,
+      hasAuth: false,
+    });
+    expect(resolvedAuthFalse).toBeNull();
+  });
+
   it('Returns null when no position sources contain valid coordinates for nodeId', () => {
     const resolved = resolvePosition('node-unknown', {
       persisted: { 'other-node': { x: 10, y: 20 } },

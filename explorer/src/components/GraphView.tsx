@@ -873,7 +873,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         session: modeSessionMapOnMount,
         persisted: nodePositionsRef.current,
         hasAuth,
-        mode: architectureMode,
       });
 
       if (resolved) {
@@ -1172,7 +1171,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         persisted: nodePositionsRef.current,
         cy: cyPositionsBefore[node.id],
         hasAuth: hasAuthForUpdate,
-        mode: architectureMode,
       });
 
       if (!resolved) {
@@ -1202,7 +1200,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         persisted: nodePositionsRef.current,
         cy: cyPositionsBefore[id],
         hasAuth: hasAuthForUpdate,
-        mode: architectureMode,
       });
 
       if (resolved) {
@@ -1385,7 +1382,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           session: modeSessionMapInPosSync,
           persisted: nodePositions,
           cy: cyNode.position(),
-          mode: architectureMode,
           hasAuth,
         });
 
