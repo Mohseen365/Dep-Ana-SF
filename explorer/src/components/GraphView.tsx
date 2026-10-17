@@ -216,6 +216,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [hashModes.layout, layoutModeProp, graphLayout?.mode]);
 
   const architectureMode: ArchitectureLayoutMode = architectureModeProp || initialArchMode;
+
+  const architectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
+  useEffect(() => {
+    architectureModeRef.current = architectureMode;
+  }, [architectureMode]);
   const layoutMode: LayoutMode = layoutModeProp || initialLayoutMode;
 
   // On mount, notify parent if hash or localStorage specified a different initial mode
@@ -385,16 +390,25 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const prefersReducedMotion = usePrefersReducedMotion();
   const [layoutAnnouncement, setLayoutAnnouncement] = useState<string>('');
 
-  // Compute graph structure fingerprint to avoid re-running discoverFeatures on array identity shifts when node/edge contents & ordering are identical
-  const graphStructureKey = useMemo(() => {
-    if (nodes.length === 0) return '0:0';
-    return `${nodes.length}:${edges.length}:${nodes[0]?.id}:${nodes[nodes.length - 1]?.id}:${edges[0]?.id}:${edges[edges.length - 1]?.id}`;
-  }, [nodes, edges]);
+// Compute graph structure fingerprint capturing topology & node identity,
+// while also including boundary element IDs to avoid unnecessary recomputation
+const graphStructureKey = useMemo(() => {
+  if (nodes.length === 0) return '0:0';
 
-  // Derive Feature Discovery Result deterministically based on structure fingerprint
-  const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
-    return discoverFeatures(nodes, edges);
-  }, [graphStructureKey]);
+  const nodeHash = nodes.map(n => `${n.id}:${n.type}`).sort().join('|');
+  const edgeHash = edges.map(e => `${e.id}:${e.source}:${e.target}`).sort().join('|');
+
+  const boundaryNodes = `${nodes[0]?.id}:${nodes[nodes.length - 1]?.id}`;
+  const boundaryEdges = `${edges[0]?.id}:${edges[edges.length - 1]?.id}`;
+
+  return `${nodes.length}:${edges.length}:${boundaryNodes}:${boundaryEdges}:${nodeHash}:${edgeHash}`;
+}, [nodes, edges]);
+
+// Derive Feature Discovery Result deterministically based on structure fingerprint
+const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
+  return discoverFeatures(nodes, edges);
+}, [graphStructureKey]);
+
 
   // Build nodeId → featureId map for edge inter-feature classification (Hybrid mode only)
   const featureAssignmentMap = useMemo((): Map<string, string> | undefined => {
