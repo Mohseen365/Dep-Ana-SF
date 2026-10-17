@@ -465,7 +465,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Compute graph structure fingerprint to avoid re-running discoverFeatures on array identity shifts when node/edge contents & ordering are identical
   const graphStructureKey = useMemo(() => {
     if (nodes.length === 0) return '0:0';
-    return `${nodes.length}:${edges.length}:${nodes[0]?.id}:${nodes[nodes.length - 1]?.id}:${edges[0]?.id}:${edges[edges.length - 1]?.id}`;
+    const firstNode = nodes[0];
+    const lastNode = nodes[nodes.length - 1];
+    const firstEdge = edges[0];
+    const lastEdge = edges[edges.length - 1];
+    return `${nodes.length}:${edges.length}:${firstNode?.id}:${firstNode?.type}:${firstNode?.layer}:${lastNode?.id}:${lastNode?.type}:${lastNode?.layer}:${firstEdge?.id}:${firstEdge?.relationshipType}:${lastEdge?.id}:${lastEdge?.relationshipType}`;
   }, [nodes, edges]);
 
   // Derive Feature Discovery Result deterministically based on structure fingerprint

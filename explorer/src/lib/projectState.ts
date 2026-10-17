@@ -145,6 +145,37 @@ export type ProjectUIStateUpdate = Partial<Omit<ProjectUIState, 'graphLayout'>> 
 const STORAGE_PREFIX = "explorer.projectState.";
 const inMemoryStateMap = new Map<string, string>();
 
+/**
+ * Validates whether a given value is a finite number.
+ */
+export function isValidCoordinate(val: any): val is number {
+  return typeof val === "number" && Number.isFinite(val);
+}
+
+/**
+ * Sanitizes a position object, rejecting non-finite coordinates.
+ */
+export function sanitizePosition(pos: any): Position | null {
+  if (!pos || typeof pos !== "object") return null;
+  if (!isValidCoordinate(pos.x) || !isValidCoordinate(pos.y)) return null;
+  return { x: pos.x, y: pos.y };
+}
+
+/**
+ * Sanitizes a position dictionary, filtering out invalid position records without mutating inputs.
+ */
+export function sanitizePositionMap(map: any): Record<string, Position> {
+  const result: Record<string, Position> = {};
+  if (!map || typeof map !== "object") return result;
+  for (const key of Object.keys(map)) {
+    const sanitized = sanitizePosition(map[key]);
+    if (sanitized) {
+      result[key] = sanitized;
+    }
+  }
+  return result;
+}
+
 function getStoredItem(key: string): string | null {
   try {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -350,13 +381,14 @@ export function mergeWithDefaultState(
 
       // Legacy fallback: If flat nodePositions exists AND layoutPositions was not explicitly provided in loaded state,
       // migrate nodePositions into activeArchMode.
-      const flatNodePositions =
+      const flatNodePositions = sanitizePositionMap(
         typeof gLoaded.nodePositions === "object" && gLoaded.nodePositions !== null
           ? gLoaded.nodePositions
-          : {};
+          : {}
+      );
 
       if (!hasExplicitLayoutPositions && Object.keys(flatNodePositions).length > 0) {
-        loadedLayoutPositions[activeArchMode] = { ...flatNodePositions };
+        loadedLayoutPositions[activeArchMode] = flatNodePositions;
       }
 
       // Legacy fallback for layoutProvenance
@@ -374,12 +406,12 @@ export function mergeWithDefaultState(
         loadedLayoutProvenances[activeArchMode] = flatProvenance;
       }
 
-      // Ensure defaults exist for all modes
+      // Ensure defaults exist for all modes and all position maps are sanitized
       const finalLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> = {
-        hierarchical: loadedLayoutPositions.hierarchical || {},
-        hybrid: loadedLayoutPositions.hybrid || {},
-        orbit: loadedLayoutPositions.orbit || {},
-        constellation: loadedLayoutPositions.constellation || {},
+        hierarchical: sanitizePositionMap(loadedLayoutPositions.hierarchical),
+        hybrid: sanitizePositionMap(loadedLayoutPositions.hybrid),
+        orbit: sanitizePositionMap(loadedLayoutPositions.orbit),
+        constellation: sanitizePositionMap(loadedLayoutPositions.constellation),
       };
 
       const finalLayoutProvenances: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>> = {
@@ -474,9 +506,17 @@ export function updateProjectState(
 
     const newArchMode = updateLayout.architectureMode || curLayout.architectureMode || 'hierarchical';
 
-    const layoutPositions = {
-      ...(curLayout.layoutPositions || {}),
-      ...(updateLayout.layoutPositions || {}),
+    const layoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> = {
+      hierarchical: sanitizePositionMap(curLayout.layoutPositions?.hierarchical),
+      hybrid: sanitizePositionMap(curLayout.layoutPositions?.hybrid),
+      orbit: sanitizePositionMap(curLayout.layoutPositions?.orbit),
+      constellation: sanitizePositionMap(curLayout.layoutPositions?.constellation),
+      ...(updateLayout.layoutPositions ? {
+        ...(updateLayout.layoutPositions.hierarchical ? { hierarchical: sanitizePositionMap(updateLayout.layoutPositions.hierarchical) } : {}),
+        ...(updateLayout.layoutPositions.hybrid ? { hybrid: sanitizePositionMap(updateLayout.layoutPositions.hybrid) } : {}),
+        ...(updateLayout.layoutPositions.orbit ? { orbit: sanitizePositionMap(updateLayout.layoutPositions.orbit) } : {}),
+        ...(updateLayout.layoutPositions.constellation ? { constellation: sanitizePositionMap(updateLayout.layoutPositions.constellation) } : {}),
+      } : {}),
     };
 
     const layoutProvenances = {
@@ -485,7 +525,7 @@ export function updateProjectState(
     };
 
     if (updateLayout.nodePositions !== undefined) {
-      layoutPositions[newArchMode] = updateLayout.nodePositions;
+      layoutPositions[newArchMode] = sanitizePositionMap(updateLayout.nodePositions);
     }
 
     if (updateLayout.layoutProvenance !== undefined) {
