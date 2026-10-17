@@ -78,7 +78,9 @@ In accordance with project directives to perform targeted verification without r
   - **Instance Creation**: On Cytoscape initialization in `useEffect`:
     ```typescript
     cyRef.current = cy;
-    cy.autolock(layoutMode === 'static');
+    if (typeof cy.autolock === 'function') {
+      cy.autolock(layoutMode === 'static');
+    }
     ```
   - **Mode Transitions**: In `layoutMode` switch effect:
     ```typescript

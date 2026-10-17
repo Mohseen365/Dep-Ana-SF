@@ -77,7 +77,9 @@ Source code inspection before editing confirmed:
   1. On mount / instance creation in `useEffect`:
      ```typescript
      cyRef.current = cy;
-     cy.autolock(layoutMode === 'static');
+     if (typeof cy.autolock === 'function') {
+       cy.autolock(layoutMode === 'static');
+     }
      ```
   2. On mode transition in `layoutMode` switch effect:
      ```typescript
