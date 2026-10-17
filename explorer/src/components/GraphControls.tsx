@@ -45,67 +45,136 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
   nodeCount,
 }) {
   const [activeControlIndex, setActiveControlIndex] = React.useState<number>(0);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const getInteractiveElements = (container: HTMLElement): HTMLElement[] => {
-    const selector = 'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
-    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter(
-      (el) => el.getAttribute('aria-hidden') !== 'true' && window.getComputedStyle(el).display !== 'none'
-    );
-  };
-
-  const handleToolbarKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const key = e.key;
-
-    // Protection for native controls (select, input, textarea, slider)
-    const target = e.target as HTMLElement;
-    const tagName = target.tagName.toLowerCase();
-    const role = target.getAttribute('role');
-    if (tagName === 'select' || tagName === 'input' || tagName === 'textarea' || role === 'slider') {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
-        return; // Do not hijack arrow, home, or end keys when inside inputs, selects, or textareas
+  const getInteractiveElements = React.useCallback((container: HTMLElement): HTMLElement[] => {
+    const selector =
+      'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => {
+      if (el.getAttribute('aria-hidden') === 'true') return false;
+      if (typeof window !== 'undefined' && window.getComputedStyle) {
+        try {
+          const computed = window.getComputedStyle(el);
+          if (computed && computed.display === 'none') return false;
+        } catch {
+          // Fallback if getComputedStyle fails in mock environment
+        }
       }
-    }
+      return true;
+    });
+  }, []);
 
-    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
-      return;
-    }
-
-    const container = e.currentTarget;
-    const controls = getInteractiveElements(container);
+  const updateTabIndexes = React.useCallback(() => {
+    if (!containerRef.current) return;
+    const controls = getInteractiveElements(containerRef.current);
     if (controls.length === 0) return;
 
-    const activeElement = document.activeElement as HTMLElement;
-    let currentIndex = controls.indexOf(activeElement);
-    if (currentIndex === -1) {
-      currentIndex = activeControlIndex < controls.length ? activeControlIndex : 0;
-    }
+    const validIndex = activeControlIndex >= controls.length ? 0 : activeControlIndex;
 
-    let nextIndex = currentIndex;
-    if (key === 'ArrowRight' || key === 'ArrowDown') {
-      nextIndex = (currentIndex + 1) % controls.length;
-    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
-      nextIndex = (currentIndex - 1 + controls.length) % controls.length;
-    } else if (key === 'Home') {
-      nextIndex = 0;
-    } else if (key === 'End') {
-      nextIndex = controls.length - 1;
-    }
+    controls.forEach((control, index) => {
+      if (index === validIndex) {
+        control.setAttribute('tabindex', '0');
+      } else {
+        control.setAttribute('tabindex', '-1');
+      }
+    });
+  }, [activeControlIndex, getInteractiveElements]);
 
-    e.preventDefault();
-    setActiveControlIndex(nextIndex);
-    const targetControl = controls[nextIndex];
-    if (targetControl) {
-      targetControl.focus();
-    }
-  };
+  React.useLayoutEffect(() => {
+    updateTabIndexes();
+  }, [
+    updateTabIndexes,
+    focusState,
+    hasSelectedNode,
+    isFullscreen,
+    isNavigatorVisible,
+    layoutMode,
+    architectureMode,
+    nodeCount,
+  ]);
+
+  const handleContainerFocus = React.useCallback(
+    (e: React.FocusEvent<HTMLDivElement>) => {
+      if (!containerRef.current) return;
+      const controls = getInteractiveElements(containerRef.current);
+      const target = e.target as HTMLElement;
+      const index = controls.indexOf(target);
+      if (index !== -1 && index !== activeControlIndex) {
+        setActiveControlIndex(index);
+      }
+    },
+    [activeControlIndex, getInteractiveElements]
+  );
+
+  const handleToolbarKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const key = e.key;
+
+      const container = containerRef.current || e.currentTarget;
+
+      // N20 Focus containment guard: ensure target & activeElement are within toolbar container
+      const activeElement = document.activeElement as HTMLElement;
+      if (!container.contains(activeElement) && !container.contains(e.target as Node)) {
+        return;
+      }
+
+      // Protection for native controls (select, input, textarea, slider)
+      const target = e.target as HTMLElement;
+      const tagName = target.tagName.toLowerCase();
+      const role = target.getAttribute('role');
+      if (tagName === 'select' || tagName === 'input' || tagName === 'textarea' || role === 'slider') {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
+          return; // Do not hijack arrow, home, or end keys when inside inputs, selects, or textareas
+        }
+      }
+
+      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
+        return;
+      }
+
+      const controls = getInteractiveElements(container);
+      if (controls.length === 0) return;
+
+      let currentIndex = controls.indexOf(activeElement);
+      if (currentIndex === -1) {
+        currentIndex = activeControlIndex < controls.length ? activeControlIndex : 0;
+      }
+
+      let nextIndex = currentIndex;
+      if (key === 'ArrowRight' || key === 'ArrowDown') {
+        nextIndex = (currentIndex + 1) % controls.length;
+      } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+        nextIndex = (currentIndex - 1 + controls.length) % controls.length;
+      } else if (key === 'Home') {
+        nextIndex = 0;
+      } else if (key === 'End') {
+        nextIndex = controls.length - 1;
+      }
+
+      e.preventDefault();
+      setActiveControlIndex(nextIndex);
+
+      controls.forEach((control, index) => {
+        control.setAttribute('tabindex', index === nextIndex ? '0' : '-1');
+      });
+
+      const targetControl = controls[nextIndex];
+      if (targetControl) {
+        targetControl.focus();
+      }
+    },
+    [activeControlIndex, getInteractiveElements]
+  );
 
   return (
     <div
+      ref={containerRef}
       className="graph-controls-floating"
       role="toolbar"
       aria-label="Graph controls"
       aria-orientation="horizontal"
       onKeyDown={handleToolbarKeyDown}
+      onFocus={handleContainerFocus}
     >
       {/* Analysis Section */}
       {focusState && onFocusChange && (
