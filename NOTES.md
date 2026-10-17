@@ -33,6 +33,16 @@
 ## Test Failures Observed & Resolution
 - All targeted Vitest test suites and root CLI integration test suites (`npm run test:cli`, 32/32 suites, 184 assertions) passed 100%.
 
+## Closure Polish (PR 1) — Completed Items & Observations
+1. **N4 — Dead `lod-*` CSS class removal**: Removed unused `lod-*` class strings from `.removeClass()` and `.addClass()` in `GraphView.tsx` `updateZoomClass()` while preserving standard zoom level classes (`zoom-far`, `zoom-mid`, `zoom-near`) and `computeCanvasLODLevel`.
+2. **N8 — `discoveryResult` recomputation optimization**: Introduced stable `graphStructureKey` string in `GraphView.tsx` memoizing node/edge ID lists and counts to avoid recomputing `discoverFeatures` on reference array churn.
+3. **N9 — Redundant hover state updates**: Added `hoveredNodeIdRef` in `GraphView.tsx` to guard `mouseover` and `mouseout` event handlers, returning early if hovering over the currently hovered node.
+4. **N10 — Scoped cursor mutations**: Updated `GraphView.tsx` and `graph-interactions.ts` to mutate local Cytoscape container cursor (`cy.container().style.cursor`) rather than setting global `document.body.style.cursor`.
+5. **T0-8 — Stabilized `useImperativeHandle`**: Introduced `selectedNodeIdRef` in `GraphView.tsx` so imperative methods (`centerSelected`) read the latest selection without recreating imperative handle method references on selection changes.
+6. **T1-6 — Keyboard first-node selection**: Added `else if (accessibleNodes.length > 0)` branch in `GraphView.tsx` `handleKeyDown` when arrow keys are pressed without a selected node, selecting the first accessible node while handling empty node lists safely.
+7. **High-Priority Observation 1 — Mode-Scoped `user-authored` Provenance**: Updated all four `hasAuth` sites in `GraphView.tsx` to strictly require `storedArchMode === architectureMode` for `user-authored` position authority, ensuring user drags in one mode do not incorrectly suppress the initial layout when switching architecture modes.
+8. **High-Priority Observation 2 — Structural-Sync Live-Region Announcements**: Added `setLayoutAnnouncement` calls upon structural-sync layout completion in `GraphView.tsx` guarded with `requestId` checks to announce updates to screen readers.
+
 ## Out-of-Scope Follow-ups for Next Pass
 - Splitting `GraphView` into dedicated custom hooks (`useGraphLayout`, `useCytoscape`, etc.)
 - Differential element reconciliation (element-level diffing)

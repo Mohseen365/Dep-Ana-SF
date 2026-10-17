@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { clearHighlights } from '../lib/graph-interactions';
 
-describe('Deep Bug Hunt & Graph Interactions Regression Suite', () => {
+describe('Deep Bug Hunt, Graph Interactions & Visual State Cleanup Regression Suite', () => {
   it('clearHighlights removes all highlight, dimmed, impact, finding, and focus classes', () => {
     const removeClassMock = vi.fn();
     const forEachMock = vi.fn();
