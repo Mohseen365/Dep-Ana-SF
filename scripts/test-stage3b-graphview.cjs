@@ -34,22 +34,28 @@ runTest('graphStructureKey invalidates when node or edge properties change', () 
 
   const computeGraphStructureKey = (nodes, edges) => {
     if (nodes.length === 0) return '0:0';
-    const firstNode = nodes[0];
-    const lastNode = nodes[nodes.length - 1];
-    const firstEdge = edges[0];
-    const lastEdge = edges[edges.length - 1];
-    return `${nodes.length}:${edges.length}:${firstNode?.id}:${firstNode?.type}:${firstNode?.layer}:${lastNode?.id}:${lastNode?.type}:${lastNode?.layer}:${firstEdge?.id}:${firstEdge?.relationshipType}:${lastEdge?.id}:${lastEdge?.relationshipType}`;
+    const nodeFP = nodes.map(n => `${n.id}:${n.type || ''}:${n.layer || ''}:${n.domain || ''}`).join('|');
+    const edgeFP = edges.map(e => `${e.id}:${e.source}:${e.target}:${e.relationshipType || ''}`).join('|');
+    return `${nodes.length}:${edges.length}#${nodeFP}#${edgeFP}`;
   };
 
-  const key1 = computeGraphStructureKey(nodes1, edges1);
-
-  // Property update on nodeA (layer changed from Core to Feature)
-  const nodes2 = [
-    { ...nodes1[0], layer: 'Feature' }
+  const multiNodes1 = [
+    { id: 'nodeA', displayName: 'A', type: 'ApexClass', file: 'A.cls', risk: 'LOW', layer: 'Core' },
+    { id: 'nodeB', displayName: 'B', type: 'ApexClass', file: 'B.cls', risk: 'LOW', layer: 'Core' },
+    { id: 'nodeC', displayName: 'C', type: 'ApexClass', file: 'C.cls', risk: 'LOW', layer: 'UI' },
   ];
-  const key2 = computeGraphStructureKey(nodes2, edges1);
 
-  assert.notStrictEqual(key1, key2, 'Key must invalidate when node layer changes');
+  const key1 = computeGraphStructureKey(multiNodes1, edges1);
+
+  // Interior property update on nodeB (layer changed from Core to Feature)
+  const multiNodes2 = [
+    multiNodes1[0],
+    { ...multiNodes1[1], layer: 'Feature' },
+    multiNodes1[2]
+  ];
+  const key2 = computeGraphStructureKey(multiNodes2, edges1);
+
+  assert.notStrictEqual(key1, key2, 'Key must invalidate when interior node layer changes');
 });
 
 // 2. Position Policy Auto-Layout Decisions
