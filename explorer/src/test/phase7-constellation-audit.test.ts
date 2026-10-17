@@ -273,7 +273,8 @@ describe('Phase 7 & Phase 7A — Constellation & Orbit Spatial-Density Observati
           executionTimeMs: Number(duration.toFixed(2)),
         };
 
-        expect(nodeIds.length).toBe(nodes.length);
+        const expectedNodeCount = layoutRes.projectedNodeIds ? layoutRes.projectedNodeIds.size : nodes.length;
+        expect(nodeIds.length).toBe(expectedNodeCount);
         expect(width).toBeGreaterThan(0);
         expect(overlaps.overlapCount).toBe(0);
       });

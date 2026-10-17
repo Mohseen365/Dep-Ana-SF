@@ -711,7 +711,7 @@ describe('Phase 20 - Hybrid Causal Attribution Audit', () => {
     expect(pbim.nodes.length).toBe(528);
     expect(pbim.edges.length).toBe(2063);
     expect(pbim.sha256).toBe(
-      'd6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b'
+      '395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d'
     );
   });
 

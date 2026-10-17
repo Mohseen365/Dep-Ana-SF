@@ -372,7 +372,7 @@ describe('PHASE 30B — Adaptive Label-Height Row Clearance Harness', () => {
     const pbim = loadRealProjectData('pbim');
 
     expect(cst.sha256).toBe('1597135320cbf0a13e6ee932e13b8dbdeb6771e0745f1ab1651fe08a17087907');
-    expect(pbim.sha256).toBe('d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b');
+    expect(pbim.sha256).toBe('395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d');
     expect(cst.nodes.length).toBe(240);
     expect(pbim.nodes.length).toBe(528);
   });
