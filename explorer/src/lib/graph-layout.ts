@@ -25,6 +25,14 @@ export type { ArchitectureLayoutOptions, ArchitectureLayoutResultWithMetadata, A
 
 export const globalWorkerClient = new LayoutWorkerClient();
 
+function emitCyEvent(cy: cytoscape.Core, eventName: string): void {
+  if (typeof (cy as any).emit === 'function') {
+    (cy as any).emit(eventName);
+  } else if (typeof (cy as any).trigger === 'function') {
+    (cy as any).trigger(eventName);
+  }
+}
+
 export interface GraphLayoutOptions extends ArchitectureLayoutOptions {
   nodeCount?: number;
   padding?: number;
@@ -247,7 +255,7 @@ export function runLayoutWithMetadata(
     const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
     const focusedSet = result.projectedNodeIds;
 
-    cy.emit('layoutstart');
+    emitCyEvent(cy, 'layoutstart');
 
     cy.batch(() => {
       if (isOrbitComponentFilter && focusedSet) {
@@ -332,7 +340,7 @@ export function runLayoutWithMetadata(
           cy.fit(cy.elements(), options?.padding ?? 50);
         }
       }
-      cy.emit('layoutstop');
+      emitCyEvent(cy, 'layoutstop');
     }
     return result;
   }
@@ -347,14 +355,14 @@ export function runLayoutWithMetadata(
     });
   }
 
-  cy.emit('layoutstart');
+  emitCyEvent(cy, 'layoutstart');
   const layout = createLayout(cy, options);
   layout.run();
 
   if (options?.fit !== false) {
     cy.fit(cy.elements(), options?.padding ?? 50);
   }
-  cy.emit('layoutstop');
+  emitCyEvent(cy, 'layoutstop');
 
   const currentPositions: Record<string, { x: number; y: number }> = {};
   cy.nodes().forEach(node => {
@@ -395,7 +403,7 @@ export async function runLayoutWithMetadataAsync(
     const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
     const focusedSet = result.projectedNodeIds;
 
-    cy.emit('layoutstart');
+    emitCyEvent(cy, 'layoutstart');
 
     cy.batch(() => {
       if (isOrbitComponentFilter && focusedSet) {
@@ -480,7 +488,7 @@ export async function runLayoutWithMetadataAsync(
           cy.fit(cy.elements(), options?.padding ?? 50);
         }
       }
-      cy.emit('layoutstop');
+      emitCyEvent(cy, 'layoutstop');
     }
     return result;
   }
@@ -497,14 +505,14 @@ export async function runLayoutWithMetadataAsync(
     });
   }
 
-  cy.emit('layoutstart');
+  emitCyEvent(cy, 'layoutstart');
   const layout = createLayout(cy, options);
   layout.run();
 
   if (options?.fit !== false) {
     cy.fit(cy.elements(), options?.padding ?? 50);
   }
-  cy.emit('layoutstop');
+  emitCyEvent(cy, 'layoutstop');
 
   const tEnd = typeof performance !== 'undefined' ? performance.now() : Date.now();
   const computeDurationMs = Math.max(0, tEnd - tStart);
