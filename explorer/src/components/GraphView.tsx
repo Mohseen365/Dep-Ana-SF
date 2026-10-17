@@ -72,7 +72,10 @@ if (typeof window !== 'undefined') {
       enumerable: true,
       get: () => currentCorrelationToken,
       set: (val: string | undefined) => {
-        currentCorrelationToken = val;
+        // Z39: Restrict direct external mutations; internal correlation token management uses module state
+        if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
+          currentCorrelationToken = val;
+        }
       },
     });
   } catch (e) {
@@ -650,7 +653,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           nodeCount: nodesRef.current.length,
           edgeCount: edgesRef.current.length,
         };
-        (window as any).__LAST_LAYOUT_COMPLETED__ = detail;
+        if (DEBUG || (import.meta as any).env?.DEV || process.env.NODE_ENV !== 'production') {
+          (window as any).__LAST_LAYOUT_COMPLETED__ = detail;
+        }
         window.dispatchEvent(new CustomEvent('app:layoutcomplete', { detail }));
         setLayoutAnnouncement(`${architectureMode} layout applied, ${nodesRef.current.length} components`);
         if (DEBUG) {
@@ -1225,8 +1230,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
 
       document.body.style.cursor = 'default';
-      if (typeof window !== 'undefined' && (window as any).__CY__ === cy) {
-        (window as any).__CY__ = null;
+      if (typeof window !== 'undefined') {
+        if ((window as any).__CY__ === cy) {
+          (window as any).__CY__ = null;
+        }
+        delete (window as any).__LAYOUT_MODULE__;
       }
       cy.destroy();
       setCyInstance(null);
@@ -1594,12 +1602,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       e.preventDefault();
       handleNavigateForward();
     } else if (e.key === 'f' || e.key === 'F' || e.key === '0') {
-      fitToScreen(cy, 50);
+      if (!isEditable) fitToScreen(cy, 50);
     } else if (e.key === '+' || e.key === '=') {
-      cy.zoom(cy.zoom() * 1.2);
+      if (!isEditable) cy.zoom(cy.zoom() * 1.2);
     } else if (e.key === '-' || e.key === '_') {
-      cy.zoom(cy.zoom() * 0.8);
+      if (!isEditable) cy.zoom(cy.zoom() * 0.8);
     } else if (e.key === 'Escape') {
+      if (isEditable) return;
       onSelectNode(null);
       onSelectEdge('');
       if (onFocusChangeRef.current) {

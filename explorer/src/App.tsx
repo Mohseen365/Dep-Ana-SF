@@ -367,6 +367,10 @@ function AppContent() {
   // Global Escape key listener to clear node selection across all views
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const tag = target?.tagName;
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tag) || target?.isContentEditable) return;
+
       if (e.key === 'Escape' && (selectedNodeId || selection.selectedEdgeId || view.focusState.enabled)) {
         clearSelection();
         setIsInvestigating(false);
@@ -386,6 +390,10 @@ function AppContent() {
   const handleDetach = useCallback(() => {
     if (!isDetached) {
       const win = openDetachedWindow();
+      if (!win) {
+        console.error('[App] Popup blocked while opening detached drawer.');
+        return;
+      }
       detachedWindowRef.current = win;
       investigation.setDrawerDetached(true);
     } else {
@@ -404,6 +412,7 @@ function AppContent() {
     const channel = createChannel();
 
     const unsubscribe = onDetachedDrill(channel, (nodeId) => {
+      if (!activeData?.nodes.some((n: any) => n.id === nodeId)) return;
       selectNode(nodeId);
       setIsInvestigating(true);
     });
@@ -412,7 +421,7 @@ function AppContent() {
       unsubscribe();
       channel.close();
     };
-  }, [selectNode, setIsInvestigating]);
+  }, [activeData, selectNode, setIsInvestigating]);
 
   const handleRequestHandoff = useCallback((nodeId: string) => {
     if (!activeData) return;
@@ -454,10 +463,12 @@ function AppContent() {
   }, [activeData, view.filterState.searchQuery]);
 
   // Sync node selection from view state
+  const consumedUrlRef = useRef<string | null>(null);
   useEffect(() => {
     if (!activeData) return;
     const urlNode = viewSelectedNodeId || viewUrlNodeId;
-    if (urlNode) {
+    if (urlNode && consumedUrlRef.current !== urlNode) {
+      consumedUrlRef.current = urlNode;
       const matchedNode = activeData.nodes.find(
         (n: any) => n.id === urlNode || n.name === urlNode || n.displayName === urlNode
       );
