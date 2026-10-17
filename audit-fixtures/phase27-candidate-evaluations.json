@@ -5422,7 +5422,7 @@
       "m18_medianHorizontalClearance": 320,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1924,
+      "m21_runtimeMs": 1784,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -10849,7 +10849,7 @@
       "m18_medianHorizontalClearance": 480,
       "m19_minHorizontalClearance": 40,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1447,
+      "m21_runtimeMs": 1399,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -16276,7 +16276,7 @@
       "m18_medianHorizontalClearance": 320,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1814,
+      "m21_runtimeMs": 1562,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -21703,7 +21703,7 @@
       "m18_medianHorizontalClearance": 428,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1311,
+      "m21_runtimeMs": 1277,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -27130,7 +27130,7 @@
       "m18_medianHorizontalClearance": 320,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1337,
+      "m21_runtimeMs": 1321,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -32557,7 +32557,7 @@
       "m18_medianHorizontalClearance": 428,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1276,
+      "m21_runtimeMs": 1228,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -37984,7 +37984,7 @@
       "m18_medianHorizontalClearance": 428,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1250,
+      "m21_runtimeMs": 1235,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -43411,7 +43411,7 @@
       "m18_medianHorizontalClearance": 320,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 1302,
+      "m21_runtimeMs": 1285,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 240,
       "edgesPreservedCount": 1024
@@ -54696,7 +54696,7 @@
       "m18_medianHorizontalClearance": 640,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 10522,
+      "m21_runtimeMs": 10189,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -65979,7 +65979,7 @@
       "m18_medianHorizontalClearance": 840,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 20,
-      "m21_runtimeMs": 10046,
+      "m21_runtimeMs": 9904,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -77262,7 +77262,7 @@
       "m18_medianHorizontalClearance": 640,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 10154,
+      "m21_runtimeMs": 10037,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -88545,7 +88545,7 @@
       "m18_medianHorizontalClearance": 749,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 9602,
+      "m21_runtimeMs": 10598,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -99828,7 +99828,7 @@
       "m18_medianHorizontalClearance": 640,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 10068,
+      "m21_runtimeMs": 9942,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -111111,7 +111111,7 @@
       "m18_medianHorizontalClearance": 749,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 9680,
+      "m21_runtimeMs": 9513,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -122394,7 +122394,7 @@
       "m18_medianHorizontalClearance": 749,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 9628,
+      "m21_runtimeMs": 9496,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063
@@ -133677,7 +133677,7 @@
       "m18_medianHorizontalClearance": 640,
       "m19_minHorizontalClearance": 160,
       "m20_minVerticalClearance": 50,
-      "m21_runtimeMs": 10242,
+      "m21_runtimeMs": 9958,
       "hasNaNOrInfinity": false,
       "nodesPreservedCount": 528,
       "edgesPreservedCount": 2063

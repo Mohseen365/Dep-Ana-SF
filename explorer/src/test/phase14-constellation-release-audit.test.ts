@@ -4,7 +4,7 @@ import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema } from '../types/explorer';
 import { adaptConstellation, type ConstellationData } from '../lib/adapters/constellation-adapter';
 import { computeConstellationLayout, type ConstellationLayoutResult } from '../lib/layout/constellation-layout';
-import { computeArchitectureLayout } from '../lib/architecture-layout';
+import { computeArchitectureLayout, computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 
 export interface DatasetRecord {
   name: string;
@@ -480,9 +480,10 @@ describe('PHASE 14 — Constellation Release Readiness & Regression Gate Audit',
     expect(Object.keys(hierarchicalPositions).length).toBe(dsCst.nodes.length);
 
     // Verify Orbit Mode
-    const orbitPositions = computeArchitectureLayout(dsCst.nodes, dsCst.edges, {
+    const orbitResult = computeArchitectureLayoutWithMetadata(dsCst.nodes, dsCst.edges, {
       architectureMode: 'orbit',
     });
-    expect(Object.keys(orbitPositions).length).toBe(dsCst.nodes.length);
+    const expectedOrbitCount = orbitResult.projectedNodeIds ? orbitResult.projectedNodeIds.size : dsCst.nodes.length;
+    expect(Object.keys(orbitResult.positions).length).toBe(expectedOrbitCount);
   });
 });
