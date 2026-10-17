@@ -1,8 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import crypto from 'crypto';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema } from '../types/explorer';
 import { adaptConstellation, type ConstellationData } from '../lib/adapters/constellation-adapter';
 import { computeConstellationLayout, type ConstellationLayoutResult } from '../lib/layout/constellation-layout';
 
@@ -26,6 +25,36 @@ function loadDataset(ds: DatasetSpec): { nodes: ExplorerNode[]; edges: ExplorerE
   return {
     nodes: parsed.nodes || [],
     edges: parsed.edges || [],
+  };
+}
+
+function makeSchema(nodes: ExplorerNode[], edges: ExplorerEdge[]): ExplorerDataSchema {
+  return {
+    nodes,
+    edges,
+    summary: {
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+      highRiskCount: 0,
+      mediumRiskCount: 0,
+      lowRiskCount: 0,
+      cycleCount: 0,
+      unresolvedCount: 0,
+      inventory: {
+        files: 0,
+        apexClasses: 0,
+        apexTriggers: 0,
+        lwcJs: 0,
+        lwcHtml: 0,
+        visualforce: 0,
+        flows: 0,
+        objects: 0,
+        fields: 0,
+      },
+    },
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
   };
 }
 
@@ -213,7 +242,7 @@ describe('PHASE 13 — Production Dependency Constellation Verification', () => 
       const { nodes, edges } = loadDataset(dsSpec);
 
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: scen.focalNodeId,
           maxDepth: scen.maxDepth,
@@ -238,7 +267,7 @@ describe('PHASE 13 — Production Dependency Constellation Verification', () => 
       const { nodes, edges } = loadDataset(dsSpec);
 
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: scen.focalNodeId,
           maxDepth: scen.maxDepth,
@@ -268,7 +297,7 @@ describe('PHASE 13 — Production Dependency Constellation Verification', () => 
 
     // Test BQC Ring 1 node count sparse threshold boundary
     const constData = adaptConstellation(
-      { nodes, edges },
+      makeSchema(nodes, edges),
       {
         focalNodeId: 'Object:Bouquet_Order__c',
         maxDepth: 3,
@@ -288,7 +317,7 @@ describe('PHASE 13 — Production Dependency Constellation Verification', () => 
     const { nodes, edges } = loadDataset(dsSpec);
 
     const constData1 = adaptConstellation(
-      { nodes, edges },
+      makeSchema(nodes, edges),
       {
         focalNodeId: 'Object:Maintenance_Request__c',
         maxDepth: 3,
@@ -310,7 +339,7 @@ describe('PHASE 13 — Production Dependency Constellation Verification', () => 
       const shuffledEdges = [...edges].sort(() => Math.random() - 0.5);
 
       const constDataShuffled = adaptConstellation(
-        { nodes: shuffledNodes, edges: shuffledEdges },
+        makeSchema(shuffledNodes, shuffledEdges),
         {
           focalNodeId: 'Object:Maintenance_Request__c',
           maxDepth: 3,
@@ -327,7 +356,7 @@ describe('PHASE 13 — Production Dependency Constellation Verification', () => 
     DATASETS.forEach((ds) => {
       const { nodes, edges } = loadDataset(ds);
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           maxDepth: 3,
           direction: 'both',

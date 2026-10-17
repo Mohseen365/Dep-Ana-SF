@@ -28,6 +28,36 @@ function loadDataset(ds: DatasetSpec): { nodes: ExplorerNode[]; edges: ExplorerE
   };
 }
 
+function makeSchema(nodes: ExplorerNode[], edges: ExplorerEdge[]): ExplorerDataSchema {
+  return {
+    nodes,
+    edges,
+    summary: {
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+      highRiskCount: 0,
+      mediumRiskCount: 0,
+      lowRiskCount: 0,
+      cycleCount: 0,
+      unresolvedCount: 0,
+      inventory: {
+        files: 0,
+        apexClasses: 0,
+        apexTriggers: 0,
+        lwcJs: 0,
+        lwcHtml: 0,
+        visualforce: 0,
+        flows: 0,
+        objects: 0,
+        fields: 0,
+      },
+    },
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
+  };
+}
+
 export type Strategy = 'STRATEGY_A' | 'STRATEGY_B'; // A: Sequential, B: Interleaved
 
 export interface NodePosition {
@@ -120,8 +150,6 @@ const ORBITAL_NODE_DIAMETER = 24; // 24px
 const FOCAL_NODE_DIAMETER = 36; // 36px
 const DEFAULT_VIEWBOX_WIDTH = 900;
 const DEFAULT_VIEWBOX_HEIGHT = 900;
-const DEFAULT_CX = 450;
-const DEFAULT_CY = 450;
 const DEFAULT_R1_BASE_RADIUS = 180;
 const DEFAULT_RING_STEP = 150;
 const DEFAULT_TRACK_SPACING = 40;
@@ -635,7 +663,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
       const dsSpec = DATASETS.find((d) => d.key === scen.datasetKey)!;
       const { nodes, edges } = loadDataset(dsSpec);
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: scen.focalNodeId,
           maxDepth: scen.maxDepth,
@@ -679,13 +707,12 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
       100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160,
     ];
     const sweepResultsPerScenario: Record<string, Record<number, any>> = {};
-    const empiricalMinSafeGapPerBoundary: Record<string, number> = {};
 
     CANONICAL_SCENARIOS.forEach((scen) => {
       const dsSpec = DATASETS.find((d) => d.key === scen.datasetKey)!;
       const { nodes, edges } = loadDataset(dsSpec);
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: scen.focalNodeId,
           maxDepth: scen.maxDepth,
@@ -727,7 +754,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
     const dsSpec = DATASETS.find((d) => d.key === 'bqc')!;
     const { nodes, edges } = loadDataset(dsSpec);
     const constData = adaptConstellation(
-      { nodes, edges },
+      makeSchema(nodes, edges),
       {
         focalNodeId: 'Object:Bouquet_Order__c',
         maxDepth: 3,
@@ -780,7 +807,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
       const dsSpec = DATASETS.find((d) => d.key === scen.datasetKey)!;
       const { nodes, edges } = loadDataset(dsSpec);
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: scen.focalNodeId,
           maxDepth: scen.maxDepth,
@@ -828,7 +855,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
       const dsSpec = DATASETS.find((d) => d.key === scen.datasetKey)!;
       const { nodes, edges } = loadDataset(dsSpec);
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: scen.focalNodeId,
           maxDepth: scen.maxDepth,
@@ -906,7 +933,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
     const dsSpec = DATASETS.find((d) => d.key === 'pbim')!;
     const { nodes, edges } = loadDataset(dsSpec);
     const constData = adaptConstellation(
-      { nodes, edges },
+      makeSchema(nodes, edges),
       {
         focalNodeId: 'Object:Maintenance_Request__c',
         maxDepth: 3,
@@ -943,7 +970,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
       const shuffledNodes = [...nodes].sort(() => Math.random() - 0.5);
       const shuffledEdges = [...edges].sort(() => Math.random() - 0.5);
       const curData = adaptConstellation(
-        { nodes: shuffledNodes, edges: shuffledEdges },
+        makeSchema(shuffledNodes, shuffledEdges),
         {
           focalNodeId: 'Object:Maintenance_Request__c',
           maxDepth: 3,
@@ -967,7 +994,7 @@ describe('PHASE 12 — Constellation Minimum-Safe-Spacing and Sparse-Collision R
     DATASETS.forEach((ds) => {
       const { nodes, edges } = loadDataset(ds);
       const constData = adaptConstellation(
-        { nodes, edges },
+        makeSchema(nodes, edges),
         {
           focalNodeId: nodes[0]?.id,
           maxDepth: 3,

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
-import type { ExplorerDataSchema } from '../../types/explorer';
+import type { ExplorerDataSchema } from '../types/explorer';
 
 describe('Component Constellation Integration — End-to-End Orchestration & Regression', () => {
   const pbimPath = path.join(__dirname, '../../public/projects/pbim/explorer-data.json');

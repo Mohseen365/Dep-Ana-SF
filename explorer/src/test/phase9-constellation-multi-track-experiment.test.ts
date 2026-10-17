@@ -28,6 +28,36 @@ function loadDataset(ds: DatasetSpec): { nodes: ExplorerNode[]; edges: ExplorerE
   };
 }
 
+function makeSchema(nodes: ExplorerNode[], edges: ExplorerEdge[]): ExplorerDataSchema {
+  return {
+    nodes,
+    edges,
+    summary: {
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+      highRiskCount: 0,
+      mediumRiskCount: 0,
+      lowRiskCount: 0,
+      cycleCount: 0,
+      unresolvedCount: 0,
+      inventory: {
+        files: 0,
+        apexClasses: 0,
+        apexTriggers: 0,
+        lwcJs: 0,
+        lwcHtml: 0,
+        visualforce: 0,
+        flows: 0,
+        objects: 0,
+        fields: 0,
+      },
+    },
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
+  };
+}
+
 export type Strategy = 'STRATEGY_A' | 'STRATEGY_B'; // A: Sequential, B: Interleaved
 
 export interface NodePosition {
@@ -97,8 +127,6 @@ const ORBITAL_NODE_DIAMETER = 24; // 24px
 const FOCAL_NODE_DIAMETER = 36; // 36px
 const DEFAULT_VIEWBOX_WIDTH = 900;
 const DEFAULT_VIEWBOX_HEIGHT = 900;
-const DEFAULT_CX = 450;
-const DEFAULT_CY = 450;
 const DEFAULT_BASE_RADIUS = 180;
 const DEFAULT_RING_STEP = 150;
 
@@ -434,7 +462,7 @@ describe('Phase 9 — Constellation Multi-Track Sub-Ring Capacity Controlled Exp
     test(`Scenario Population Reproduction & Multi-Track Suite: ${scen.label}`, () => {
       const dsSpec = DATASETS.find((d) => d.key === scen.datasetKey)!;
       const { nodes, edges } = loadDataset(dsSpec);
-      const schema: ExplorerDataSchema = { nodes, edges };
+      const schema: ExplorerDataSchema = makeSchema(nodes, edges);
 
       const constData = adaptConstellation(schema, {
         focalNodeId: scen.focalNodeId,
@@ -543,7 +571,7 @@ describe('Phase 9 — Constellation Multi-Track Sub-Ring Capacity Controlled Exp
   test('Determinism and Input-Order Invariance (10x Identical & 10x Shuffle)', () => {
     const dsSpec = DATASETS.find((d) => d.key === 'pbim')!;
     const { nodes, edges } = loadDataset(dsSpec);
-    const schema: ExplorerDataSchema = { nodes, edges };
+    const schema: ExplorerDataSchema = makeSchema(nodes, edges);
 
     const constData = adaptConstellation(schema, {
       focalNodeId: 'Object:Maintenance_Request__c',
@@ -574,7 +602,7 @@ describe('Phase 9 — Constellation Multi-Track Sub-Ring Capacity Controlled Exp
     for (let run = 0; run < 10; run++) {
       const shuffledNodes = [...nodes].sort(() => Math.random() - 0.5);
       const shuffledEdges = [...edges].sort(() => Math.random() - 0.5);
-      const shuffledSchema: ExplorerDataSchema = { nodes: shuffledNodes, edges: shuffledEdges };
+      const shuffledSchema: ExplorerDataSchema = makeSchema(shuffledNodes, shuffledEdges);
       const curData = adaptConstellation(shuffledSchema, {
         focalNodeId: 'Object:Maintenance_Request__c',
         maxDepth: 3,
