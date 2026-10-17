@@ -3,6 +3,7 @@ import type { ArchitectureLayer } from './types';
 import { classifyNodeLayer } from './layers';
 import { discoverDomains } from './domains';
 import type { PositionMap } from './metrics';
+import { stableCompareStrings } from './compare';
 
 export interface NodeOrderingInput {
   nodes: ExplorerNode[];
@@ -217,8 +218,8 @@ export function fastEdgeCrossingCount(
   segments.sort((a, b) => {
     if (Math.abs(a.minX - b.minX) > EPSILON) return a.minX - b.minX;
     if (Math.abs(a.maxX - b.maxX) > EPSILON) return a.maxX - b.maxX;
-    if (a.sourceId !== b.sourceId) return a.sourceId.localeCompare(b.sourceId);
-    return a.targetId.localeCompare(b.targetId);
+    if (a.sourceId !== b.sourceId) return stableCompareStrings(a.sourceId, b.sourceId);
+    return stableCompareStrings(a.targetId, b.targetId);
   });
 
   let crossings = 0;
@@ -332,8 +333,8 @@ export function reduceEdgeCrossings(input: NodeOrderingInput): NodeOrderingResul
   const edges = Array.isArray(input.edges) ? [...input.edges] : [];
   const maxIterations = input.maxIterations ?? 8;
 
-  nodes.sort((a, b) => a.id.localeCompare(b.id));
-  edges.sort((a, b) => a.id.localeCompare(b.id));
+  nodes.sort((a, b) => stableCompareStrings(a.id, b.id));
+  edges.sort((a, b) => stableCompareStrings(a.id, b.id));
 
   const layerMap = normalizeLayerMap(nodes, input.layerMap);
   const domainMap = normalizeDomainMap(nodes, edges, input.domainMap);

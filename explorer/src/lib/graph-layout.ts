@@ -1,5 +1,6 @@
 import type { LayoutOptions } from 'cytoscape';
 import type { ExplorerNode, ExplorerEdge, ExplorerNodeType, ExplorerRiskLevel } from '../types/explorer';
+import { toBool } from './boolean-utils';
 import {
   computeArchitectureLayout,
   computeArchitectureLayoutWithMetadata,
@@ -53,38 +54,41 @@ export function extractNodesAndEdgesFromCy(cy: cytoscape.Core): {
     const data = typeof cyNode.data === 'function' ? cyNode.data() : (cyNode?.data || {});
     nodes.push({
       id: data.id || cyNode.id(),
-      displayName: data.label || data.displayName || cyNode.id(),
+      displayName: data.displayName || data.label || cyNode.id(),
       type: (data.type as ExplorerNodeType) || 'ApexClass',
       file: data.file || '',
-      metrics: {
+      ...(data.layer ? { layer: data.layer } : {}),
+      ...(data.domain ? { domain: data.domain } : {}),
+      metrics: data.metrics || {
         fanIn: data.fanIn ?? 0,
         fanOut: data.fanOut ?? 0,
         coupling: data.coupling ?? 0,
-        unresolved: 0,
-        score: 0,
+        unresolved: data.unresolved ?? 0,
+        score: data.score ?? 0,
       },
       risk: (data.risk as ExplorerRiskLevel) || 'LOW',
-      riskReasons: [],
-      behavior: {
-        isTest: Boolean(data.isTest),
-        publicContractsCount: 0,
-        asyncPatterns: [],
-        securitySignalsCount: 0,
-        queryCount: 0,
-        dmlCount: 0,
-        calloutCount: 0,
+      riskReasons: Array.isArray(data.riskReasons) ? data.riskReasons : [],
+      behavior: data.behavior || {
+        isTest: toBool(data.isTest),
+        sharing: data.sharing ?? null,
+        publicContractsCount: data.publicContractsCount,
+        asyncPatterns: Array.isArray(data.asyncPatterns) ? data.asyncPatterns : [],
+        securitySignalsCount: data.securitySignalsCount,
+        queryCount: data.queryCount,
+        dmlCount: data.dmlCount,
+        calloutCount: data.calloutCount,
       },
-      refactoringReadiness: {
+      refactoringReadiness: data.refactoringReadiness || {
         isHighRisk: data.risk === 'HIGH',
-        hasCycles: Boolean(data.hasCycles),
-        hasUnresolved: Boolean(data.hasUnresolved),
-        testCoverageStatus: 'UNTESTED',
+        hasCycles: toBool(data.hasCycles),
+        hasUnresolved: toBool(data.hasUnresolved),
+        testCoverageStatus: data.testCoverageStatus || 'UNTESTED',
       },
     });
   });
 
   cy.edges().forEach(cyEdge => {
-    const data = cyEdge.data();
+    const data = typeof cyEdge.data === 'function' ? cyEdge.data() : (cyEdge?.data || {});
     edges.push({
       id: data.id || cyEdge.id(),
       source: data.source || cyEdge.source().id(),
@@ -92,19 +96,19 @@ export function extractNodesAndEdgesFromCy(cy: cytoscape.Core): {
       relationshipType: data.relationshipType || 'unknown',
       method: data.method || null,
       evidence: data.evidence || '',
-      unresolved: Boolean(data.unresolved),
-      resolutionClassification: 'RESOLVED_LOCAL',
-      resolutionStrategy: 'EXACT',
-      confidence: '1.0',
-      line: null,
-      column: null,
-      methodOwner: null,
-      file: '',
-      canonical: {
-        source: { type: 'ApexClass', name: data.source },
-        target: { type: 'ApexClass', name: data.target },
-        relationship: { type: 'unknown', resolution: 'EXACT' },
-        location: {},
+      unresolved: toBool(data.unresolved),
+      resolutionClassification: data.resolutionClassification || 'RESOLVED_LOCAL',
+      resolutionStrategy: data.resolutionStrategy || 'EXACT',
+      confidence: data.confidence !== undefined ? String(data.confidence) : '1.0',
+      line: data.line ?? null,
+      column: data.column ?? null,
+      methodOwner: data.methodOwner ?? null,
+      file: data.file || '',
+      canonical: data.canonical || {
+        source: { type: (data.sourceType as ExplorerNodeType) || 'ApexClass', name: data.source || cyEdge.source().id() },
+        target: { type: (data.targetType as ExplorerNodeType) || 'ApexClass', name: data.target || cyEdge.target().id() },
+        relationship: { type: data.relationshipType || 'unknown', resolution: 'EXACT' },
+        location: { line: data.line ?? null, column: data.column ?? null },
       },
     });
   });

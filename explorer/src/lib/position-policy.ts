@@ -1,4 +1,4 @@
-import type { ExplorerEdge } from '../types/explorer';
+import type { ExplorerEdge, Position } from '../types/explorer';
 
 export type LayoutMode = 'static' | 'interactive';
 
@@ -13,10 +13,7 @@ export type LayoutTrigger =
   | 'architecture-mode-switch'
   | 'reset-layout';
 
-export interface Position {
-  x: number;
-  y: number;
-}
+export type { Position };
 
 export type PositionAuthorityLevel = 1 | 2 | 3 | 4 | 5;
 
