@@ -73,11 +73,26 @@ const {
     width: vi.fn().mockReturnValue(800),
     height: vi.fn().mockReturnValue(600),
     resize: vi.fn(),
-    elements: vi.fn().mockReturnValue({
-      removeClass: vi.fn().mockReturnThis(),
-      addClass: vi.fn().mockReturnThis(),
-      unselect: vi.fn().mockReturnThis(),
-      remove: vi.fn(),
+    elements: vi.fn().mockImplementation(() => {
+      const arr = [...Object.values(mockNodeObjMap)];
+      const collection = {
+        length: arr.length,
+        forEach: (fn: any) => arr.forEach(fn),
+        removeClass: vi.fn().mockReturnThis(),
+        addClass: vi.fn().mockReturnThis(),
+        unselect: vi.fn().mockReturnThis(),
+        remove: vi.fn(),
+        filter: (fn: any) => {
+          const sub = arr.filter(fn);
+          return {
+            length: sub.length,
+            forEach: (sFn: any) => sub.forEach(sFn),
+            boundingBox: () => ({ x1: 0, y1: 0, x2: 100, y2: 100, w: 100, h: 100 }),
+          };
+        },
+        boundingBox: () => ({ x1: 0, y1: 0, x2: 100, y2: 100, w: 100, h: 100 }),
+      };
+      return collection;
     }),
     nodes: vi.fn().mockImplementation(() => {
       const arr = Object.values(mockNodeObjMap);
@@ -1748,6 +1763,182 @@ describe('GraphView Position Authority & Layout Policy', () => {
       );
 
       expect(mockLayoutRun).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('T0-1 Position Authority Fix Specific Regression Coverage', () => {
+    it('T0-1 Reg-1: Switch architecture mode with stale automatic provenance calculates new layout with metadata', () => {
+      const persistedPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const onNodePositionsChange = vi.fn();
+
+      // Initial render in hierarchical mode with automatic-hierarchical provenance
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Switch architecture mode to 'orbit' while graphLayout still carries automatic-hierarchical provenance
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="interactive"
+        />
+      );
+
+      // Switching architecture mode recalculates metadata layout and persists new positions with target provenance
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+    });
+
+    it('T0-1 Reg-2: Matching storedArchMode with stale automatic provenance calculates new layout for target mode', () => {
+      const persistedPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'orbit',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'orbit',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="interactive"
+        />
+      );
+
+      // Layout recalculation MUST execute and persist target provenance
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+    });
+
+    it('T0-1 Reg-3: User-authored layout provenance preserves authoritative positions across architecture mode switch', () => {
+      const persistedPositions = {
+        'node-1': { x: 888, y: 888 },
+        'node-2': { x: 999, y: 999 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Switch mode to orbit with user-authored provenance
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="interactive"
+        />
+      );
+
+      // User-authored positions are authoritative, so positions remain preserved in nodePositions
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 888, y: 888 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 999, y: 999 });
     });
   });
 });
