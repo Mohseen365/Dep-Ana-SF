@@ -158,7 +158,7 @@ export function adaptComponentConstellation(
 
   // Fallback if no contracted Suns exist in input (e.g., synthetic tests)
   if (activeSunIds.length === 0) {
-    const allLwcs = nodes.filter((n) => n.type === 'LWC');
+    const allLwcs = nodes.filter((n) => n.type === 'LWC' && !n.file?.includes('.test.') && !n.file?.includes('__tests__'));
     allLwcs.forEach((lwc, idx) => {
       activeSunIds.push(lwc.id);
       if (idx < 6) {
@@ -198,11 +198,46 @@ export function adaptComponentConstellation(
     });
   });
 
-  // Build projected nodes map
+  // Build projected nodes map - Ensure every active Sun is included unconditionally
   const projectedNodesDict: Record<string, ComponentConstellationNode> = {};
   const sharedNodeIdsSet = new Set<string>();
 
+  activeSunIds.forEach((sunId) => {
+    const rawNode = nodeMap.get(sunId);
+    if (!rawNode) return;
+
+    const sunRing = innerSunSet.has(sunId) ? 'inner' : 'outer';
+    const referencingSuns = nodeReferencingSunsMap.get(sunId);
+    const sunsList = referencingSuns ? Array.from(referencingSuns).sort((a, b) => a.localeCompare(b)) : [];
+
+    projectedNodesDict[sunId] = {
+      nodeId: rawNode.id,
+      displayName: rawNode.displayName || rawNode.id,
+      type: rawNode.type,
+      file: rawNode.file,
+      risk: rawNode.risk,
+      roleSymbol: '☉',
+      isSun: true,
+      sunRing,
+      isChildLwc: false,
+      isSharedNode: false,
+      referencingSunIds: sunsList,
+      metrics: {
+        fanIn: rawNode.metrics?.fanIn ?? 0,
+        fanOut: rawNode.metrics?.fanOut ?? 0,
+        coupling: rawNode.metrics?.coupling ?? 0,
+        score: rawNode.metrics?.score ?? 0,
+      },
+      provenance: {
+        sourceGraphNodeId: rawNode.id,
+        nodeType: rawNode.type,
+      },
+    };
+  });
+
   nodeReferencingSunsMap.forEach((sunsSet, nodeId) => {
+    if (projectedNodesDict[nodeId]) return; // Already populated as Sun
+
     const rawNode = nodeMap.get(nodeId);
     if (!rawNode) return;
 

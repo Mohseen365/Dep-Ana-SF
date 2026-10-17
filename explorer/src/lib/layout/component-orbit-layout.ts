@@ -102,15 +102,26 @@ export function computeComponentOrbitLayout(
 ): ComponentOrbitLayoutOutput {
   const startTime = performance.now();
 
-  const center = options.center || { x: 0, y: 0 };
-  const innerRadius = options.innerRadius ?? 280;
+  const maxNodesPerTrack = options.maxNodesPerTrack ?? 16;
   const ringSpacing = options.ringSpacingPx ?? 220;
   const trackSpacing = options.trackSpacingPx ?? 160;
+
+  if (maxNodesPerTrack <= 0) {
+    throw new Error(`Invalid maxNodesPerTrack: ${maxNodesPerTrack}. Must be > 0.`);
+  }
+  if (ringSpacing <= 0) {
+    throw new Error(`Invalid ringSpacingPx: ${ringSpacing}. Must be > 0.`);
+  }
+  if (trackSpacing <= 0) {
+    throw new Error(`Invalid trackSpacingPx: ${trackSpacing}. Must be > 0.`);
+  }
+
+  const center = options.center || { x: 0, y: 0 };
+  const innerRadius = Math.max(options.innerRadius ?? 280, 160);
   const baseNodeWidth = options.nodeWidth ?? 120;
   const baseNodeHeight = options.nodeHeight ?? 60;
   const horizontalGap = options.horizontalGap ?? 40;
   const verticalGap = options.verticalGap ?? 40;
-  const maxNodesPerTrack = options.maxNodesPerTrack ?? 16;
   const maxRepairPasses = options.maxRepairPasses ?? 20;
   const customDimensions = options.customNodeDimensions || {};
 
