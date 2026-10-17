@@ -139,15 +139,24 @@ export function bindGraphInteractions(
     }
   });
 
-  // Mouseover for nodes - cursor change
+  // Mouseover for nodes - cursor change on Cytoscape container
+  const container = typeof cy.container === 'function' ? cy.container() : null;
   cy.on('mouseover', 'node', (event) => {
     event.target.addClass('hovered');
-    document.body.style.cursor = 'pointer';
+    if (container) {
+      container.style.cursor = 'pointer';
+    } else {
+      document.body.style.cursor = 'pointer';
+    }
   });
 
   cy.on('mouseout', 'node', (event) => {
     event.target.removeClass('hovered');
-    document.body.style.cursor = 'default';
+    if (container) {
+      container.style.cursor = 'default';
+    } else {
+      document.body.style.cursor = 'default';
+    }
   });
 
   // Graph ready event

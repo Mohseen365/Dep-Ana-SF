@@ -304,12 +304,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onNodeDoubleTapRef = useRef(onNodeDoubleTapProp);
   const effectiveLayoutOptionsRef = useRef<GraphLayoutOptions>(effectiveLayoutOptions);
+  const selectedNodeIdRef = useRef<string | null>(selectedNodeId);
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
     onSelectEdgeRef.current = onSelectEdge;
     onNodeDoubleTapRef.current = onNodeDoubleTapProp;
-  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp]);
+    selectedNodeIdRef.current = selectedNodeId;
+  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp, selectedNodeId]);
 
   // In-session explicit drag positions scoped per architecture mode
   const sessionPositionsRef = useRef<Map<ArchitectureLayoutMode, Map<string, Position>>>(new Map());
@@ -377,6 +379,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const [cyInstance, setCyInstance] = useState<cytoscape.Core | null>(null);
   const [hoverCard, setHoverCard] = useState<HoverCardState>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const hoveredNodeIdRef = useRef<string | null>(null);
   const [isNavigatorVisible, setIsNavigatorVisible] = useState(true);
   const [featureRegions, setFeatureRegions] = useState<Map<string, FeatureRegion> | undefined>(undefined);
   const [orbitGuides, setOrbitGuides] = useState<any | undefined>(undefined);
@@ -385,10 +388,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const prefersReducedMotion = usePrefersReducedMotion();
   const [layoutAnnouncement, setLayoutAnnouncement] = useState<string>('');
 
-  // Derive Feature Discovery Result deterministically
+  // Derive Feature Discovery Result deterministically using stable node/edge identity signatures
+  const graphStructureKey = useMemo(() => {
+    const nodeIds = nodes.map((n) => n.id).join(',');
+    const edgeIds = edges.map((e) => e.id).join(',');
+    return `${nodes.length}:${nodeIds}|${edges.length}:${edgeIds}`;
+  }, [nodes, edges]);
+
   const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
     return discoverFeatures(nodes, edges);
-  }, [nodes, edges]);
+  }, [graphStructureKey]);
 
   // Build nodeId → featureId map for edge inter-feature classification (Hybrid mode only)
   const featureAssignmentMap = useMemo((): Map<string, string> | undefined => {
@@ -527,9 +536,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuth =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      (currentProv === 'user-authored' ||
-        (storedArchMode === architectureMode &&
-          (currentProv === undefined || currentProv === targetProvenance)));
+      storedArchMode === architectureMode &&
+      (currentProv === 'user-authored' || currentProv === undefined || currentProv === targetProvenance);
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'architecture-mode-switch', {
       hasAuthoritativePositions: hasAuth,
@@ -789,8 +797,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     },
     centerSelected: () => {
-      if (cyRef.current && selectedNodeId) {
-        const ele = cyRef.current.getElementById(selectedNodeId);
+      const currentSelectedId = selectedNodeIdRef.current;
+      if (cyRef.current && currentSelectedId) {
+        const ele = cyRef.current.getElementById(currentSelectedId);
         if (ele.length > 0) {
           if (prefersReducedMotion) {
             cyRef.current.center(ele);
@@ -801,7 +810,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     },
     resetLayout: executeResetLayout,
-  }), [selectedNodeId, executeResetLayout, prefersReducedMotion]);
+  }), [executeResetLayout, prefersReducedMotion]);
 
   // Cytoscape Initialization & Teardown
   useEffect(() => {
@@ -828,9 +837,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuth =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      (currentProv === 'user-authored' ||
-        (storedArchMode === architectureMode &&
-          (currentProv === undefined || currentProv === expectedProvenance)));
+      storedArchMode === architectureMode &&
+      (currentProv === 'user-authored' || currentProv === undefined || currentProv === expectedProvenance);
 
     const autoLayoutPolicy = shouldAutoLayout(layoutModeRef.current, 'initial', {
       hasAuthoritativePositions: hasAuth,
@@ -965,14 +973,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const lodConfig = computeCanvasLODLevel({ zoom: currentZoom, nodeCount, edgeCount });
 
       cy.batch(() => {
-        cy.elements().removeClass('zoom-far zoom-mid zoom-near lod-0 lod-1 lod-2 lod-3 lod-4');
+        cy.elements().removeClass('zoom-far zoom-mid zoom-near');
 
         if (lodConfig.lodLevel >= 2) {
-          cy.elements().addClass(`zoom-far lod-${lodConfig.lodLevel}`);
+          cy.elements().addClass('zoom-far');
         } else if (lodConfig.lodLevel === 1) {
-          cy.elements().addClass(`zoom-mid lod-${lodConfig.lodLevel}`);
+          cy.elements().addClass('zoom-mid');
         } else {
-          cy.elements().addClass(`zoom-near lod-${lodConfig.lodLevel}`);
+          cy.elements().addClass('zoom-near');
         }
       });
     };
@@ -989,10 +997,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
-      const pos = evt.renderedPosition || (typeof node.renderedPosition === 'function' ? node.renderedPosition() : { x: 0, y: 0 });
       const nodeId = node.id();
+      if (hoveredNodeIdRef.current === nodeId) return;
+
+      const pos = evt.renderedPosition || (typeof node.renderedPosition === 'function' ? node.renderedPosition() : { x: 0, y: 0 });
       const nodeObj = nodesRef.current.find(n => n.id === nodeId);
 
+      hoveredNodeIdRef.current = nodeId;
       setHoveredNodeId(nodeId);
 
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
@@ -1010,6 +1021,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cy.on('mouseout', 'node', () => {
+      if (hoveredNodeIdRef.current === null) return;
+      hoveredNodeIdRef.current = null;
       setHoveredNodeId(null);
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       setHoverCard(null);
@@ -1041,10 +1054,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cy.on('mouseleave', () => {
+      hoveredNodeIdRef.current = null;
       setHoveredNodeId(null);
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       setHoverCard(null);
-      document.body.style.cursor = 'default';
+      const container = typeof cy.container === 'function' ? cy.container() : null;
+      if (container) {
+        container.style.cursor = 'default';
+      } else {
+        document.body.style.cursor = 'default';
+      }
     });
 
     bindGraphInteractions(cy, {
@@ -1121,7 +1140,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         try { cyRef.current.off('render'); } catch (e) {}
       }
 
-      document.body.style.cursor = 'default';
+      const container = typeof cy.container === 'function' ? cy.container() : null;
+      if (container) {
+        container.style.cursor = 'default';
+      } else {
+        document.body.style.cursor = 'default';
+      }
       if (typeof window !== 'undefined' && (window as any).__CY__ === cy) {
         (window as any).__CY__ = null;
       }
@@ -1166,9 +1190,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuthForUpdate =
       !!nodePositionsRef.current &&
       Object.keys(nodePositionsRef.current).length > 0 &&
-      (currentProvSync === 'user-authored' ||
-        (storedArchModeSync === architectureMode &&
-          (currentProvSync === undefined || currentProvSync === expectedProvenanceSync)));
+      storedArchModeSync === architectureMode &&
+      (currentProvSync === 'user-authored' || currentProvSync === undefined || currentProvSync === expectedProvenanceSync);
 
     const modeSessionMapInSync = getSessionPositionsForMode(architectureMode);
 
@@ -1245,6 +1268,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           if (requestId !== layoutRequestRef.current) return;
           markLayoutEnd('structural-sync', architectureMode);
           captureAndPersistPositions();
+          setLayoutAnnouncement(`Graph updated, ${nodes.length} components`);
         };
         if (typeof cy.one === 'function') {
           cy.one('layoutstop', onStop);
@@ -1279,6 +1303,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           setFeatureRegions(layoutRes.featureRegions);
           setOrbitGuides(layoutRes.orbitGuides);
           captureAndPersistPositions();
+          setLayoutAnnouncement(`Graph updated, ${nodes.length} components`);
         }
       }
     }
@@ -1376,9 +1401,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const hasAuth =
       !!nodePositions &&
       Object.keys(nodePositions).length > 0 &&
-      (currentProv === 'user-authored' ||
-        (storedArchMode === architectureMode &&
-          (currentProv === undefined || currentProv === expectedProvenancePosSync)));
+      storedArchMode === architectureMode &&
+      (currentProv === 'user-authored' || currentProv === undefined || currentProv === expectedProvenancePosSync);
 
     const modeSessionMapInPosSync = getSessionPositionsForMode(architectureMode);
 
@@ -1565,6 +1589,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
             }
           }
         }
+      } else if (accessibleNodes.length > 0) {
+        onSelectNode(accessibleNodes[0]);
       }
     }
   };
