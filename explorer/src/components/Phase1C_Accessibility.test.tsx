@@ -227,4 +227,92 @@ describe('Phase 1C Accessibility Requirements (1B5-07 & 1B5-09)', () => {
       expect(fullBtn.querySelector('[aria-hidden="true"]')?.textContent).toBe('⛶');
     });
   });
+
+  describe('Lane E Overlay & WorkspaceHeader Accessibility Tasks (N21, N22, N24, N25, N26)', () => {
+    it('N21 & N22: WorkspaceHeader lens buttons use aria-current="true" and lens bar uses role="region"', () => {
+      const { WorkspaceHeader } = require('./workspace/WorkspaceHeader');
+      const { WorkspaceRouterContext } = require('../context/WorkspaceRouterContext');
+
+      const mockRouter = {
+        activeDomain: 'topological',
+        activeViewMode: 'architecture-graph',
+        navigateToView: vi.fn(),
+      };
+
+      const { container } = render(
+        <WorkspaceRouterContext.Provider value={mockRouter}>
+          <WorkspaceHeader />
+        </WorkspaceRouterContext.Provider>
+      );
+
+      const regionEl = container.querySelector('.domain-lenses-bar');
+      expect(regionEl?.getAttribute('role')).toBe('region');
+      expect(regionEl?.getAttribute('aria-label')).toContain('Lenses');
+
+      const activeBtn = container.querySelector('.lens-switch-btn.active');
+      expect(activeBtn).not.toBeNull();
+      expect(activeBtn?.getAttribute('aria-current')).toBe('true');
+    });
+
+    it('N24 & N25: GraphErrorBoundary resets on prop change and debounces retry recovery state', () => {
+      vi.useFakeTimers();
+
+      const ThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
+        if (shouldThrow) {
+          throw new Error('Test Overlay Failure');
+        }
+        return <div>Overlay Content</div>;
+      };
+
+      const { rerender } = render(
+        <GraphErrorBoundary resetKey="key1">
+          <ThrowingComponent shouldThrow={true} />
+        </GraphErrorBoundary>
+      );
+
+      const errorAlert = screen.getByTestId('graph-overlay-error');
+      expect(errorAlert.textContent).toContain('Graph overlay failed to render.');
+
+      // Click retry -> triggers debounced recovering state
+      const retryBtn = screen.getByRole('button', { name: 'Retry' });
+      fireEvent.click(retryBtn);
+
+      expect(retryBtn.getAttribute('disabled')).not.toBeNull();
+      expect(retryBtn.textContent).toBe('Recovering...');
+
+      // Fast forward 200ms
+      vi.advanceTimersByTime(200);
+
+      // Verify N24: Prop change (resetKey) resets error state
+      rerender(
+        <GraphErrorBoundary resetKey="key2">
+          <ThrowingComponent shouldThrow={false} />
+        </GraphErrorBoundary>
+      );
+
+      expect(screen.queryByTestId('graph-overlay-error')).toBeNull();
+      expect(screen.getByText('Overlay Content')).toBeDefined();
+
+      vi.useRealTimers();
+    });
+
+    it('N26: EdgeHoverCard container does not declare role="tooltip" when interactive links are present', () => {
+      const { EdgeHoverCard } = require('./graph-internals/EdgeHoverCard');
+      const edge = {
+        id: 'edge1',
+        source: 'A',
+        target: 'B',
+        relationshipType: 'lwc-apex',
+        file: 'force-app/main/default/classes/Service.cls',
+        line: 42,
+      };
+
+      const { container } = render(<EdgeHoverCard edge={edge} x={100} y={100} />);
+      const cardDiv = container.querySelector('.edge-hover-card');
+
+      expect(cardDiv).not.toBeNull();
+      expect(cardDiv?.getAttribute('role')).toBeNull();
+      expect(container.querySelector('a')?.getAttribute('href')).toContain('vscode://file/');
+    });
+  });
 });

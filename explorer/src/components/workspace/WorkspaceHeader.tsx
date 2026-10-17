@@ -47,7 +47,10 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
     const activeElement = document.activeElement as HTMLButtonElement;
     let currentIndex = items.indexOf(activeElement);
     if (currentIndex === -1) {
-      currentIndex = items.findIndex((t) => t.getAttribute('aria-current') === 'page');
+      currentIndex = items.findIndex((t) => {
+        const curr = t.getAttribute('aria-current');
+        return curr === 'true' || curr === 'page';
+      });
       if (currentIndex === -1) currentIndex = 0;
     }
 
@@ -70,21 +73,35 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
     }
   };
 
-  const handleDomainClick = (domainKey: WorkspaceDomain, defaultMode: WorkspaceViewMode) => {
-    let lastLens: WorkspaceViewMode = defaultMode;
-    if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem(`lens:${domainKey}`) as WorkspaceViewMode | null;
-      if (stored) lastLens = stored;
-    }
-    navigateToView(lastLens);
-  };
+  const handleDomainClick = React.useCallback(
+    (domainKey: WorkspaceDomain, defaultMode: WorkspaceViewMode) => {
+      let lastLens: WorkspaceViewMode = defaultMode;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          const stored = localStorage.getItem(`lens:${domainKey}`) as WorkspaceViewMode | null;
+          if (stored) lastLens = stored;
+        }
+      } catch (e) {
+        console.warn('Failed to read lens preference from localStorage:', e);
+      }
+      navigateToView(lastLens);
+    },
+    [navigateToView]
+  );
 
-  const handleLensClick = (mode: WorkspaceViewMode) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(`lens:${activeDomain}`, mode);
-    }
-    navigateToView(mode);
-  };
+  const handleLensClick = React.useCallback(
+    (mode: WorkspaceViewMode) => {
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(`lens:${activeDomain}`, mode);
+        }
+      } catch (e) {
+        console.warn('Failed to write lens preference to localStorage:', e);
+      }
+      navigateToView(mode);
+    },
+    [activeDomain, navigateToView]
+  );
 
   return (
     <div
@@ -236,7 +253,7 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
       {/* Bottom Row: Domain-Specific Lenses Switcher */}
       <div
         className="domain-lenses-bar"
-        role="navigation"
+        role="region"
         aria-label={`${currentDomainDef.label} Lenses`}
         onKeyDown={handleNavKeyDown}
         style={{
@@ -258,7 +275,7 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
             <button
               key={mode}
               type="button"
-              aria-current={isActive ? 'page' : undefined}
+              aria-current={isActive ? 'true' : undefined}
               aria-label={ariaLabel}
               className={`lens-switch-btn ${isActive ? 'active' : ''}`}
               onClick={() => handleLensClick(mode)}
