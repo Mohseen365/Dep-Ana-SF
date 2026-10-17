@@ -29,6 +29,8 @@ export interface CalculateLayoutAsyncParams {
   persistedPositions?: Record<string, { x: number; y: number }>;
   /** Level 3 existing canvas positions */
   existingCanvasPositions?: Record<string, { x: number; y: number }>;
+  /** Bounded timeout in milliseconds (defaults to 10000ms) */
+  timeoutMs?: number;
 }
 
 export interface CalculateLayoutAsyncResult extends ArchitectureLayoutResultWithMetadata {
@@ -140,6 +142,7 @@ export class LayoutWorkerClient {
       userDragPositions = {},
       persistedPositions = {},
       existingCanvasPositions = {},
+      timeoutMs = 10000,
     } = params;
 
     const tStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
@@ -150,7 +153,7 @@ export class LayoutWorkerClient {
 
     // 2. Combine Level 1-3 Position Authority inputs for options.existingPositions if needed
     const combinedExistingPositions: Record<string, { x: number; y: number }> = {
-      ...options.existingPositions,
+      ...(options.existingPositions || {}),
       ...existingCanvasPositions,
       ...persistedPositions,
       ...userDragPositions,
@@ -186,7 +189,7 @@ export class LayoutWorkerClient {
         positions: finalPositions,
         featureRegions: syncResult.featureRegions,
         orbitGuides: syncResult.orbitGuides,
-        projectedNodeIds: syncResult.projectedNodeIds,
+        projectedNodeIds: syncResult.projectedNodeIds ? new Set(syncResult.projectedNodeIds) : undefined,
         requestGeneration: requestGen,
         projectId,
         correlationToken,
@@ -206,6 +209,36 @@ export class LayoutWorkerClient {
 
     return new Promise<CalculateLayoutAsyncResult>((resolve, reject) => {
       this.activePendingPromiseReject = reject;
+      let timeoutId: any = null;
+
+      const cleanup = () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        if (worker) {
+          worker.removeEventListener('message', messageHandler as any);
+          worker.removeEventListener('error', errorHandler as any);
+        }
+        if (this.activePendingPromiseReject === reject) {
+          this.activePendingPromiseReject = null;
+        }
+      };
+
+      if (timeoutMs > 0) {
+        timeoutId = setTimeout(() => {
+          cleanup();
+          if (this.worker) {
+            try {
+              this.worker.terminate();
+            } catch (err) {
+              // Ignore
+            }
+            this.worker = null;
+          }
+          reject(new Error(`Worker layout calculation timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+      }
 
       const messageHandler = (event: MessageEvent<LayoutWorkerResponse>) => {
         const response = event.data;
@@ -227,10 +260,8 @@ export class LayoutWorkerClient {
           return;
         }
 
-        // Cleanup listener and active pending reject
-        worker.removeEventListener('message', messageHandler as any);
-        worker.removeEventListener('error', errorHandler as any);
-        this.activePendingPromiseReject = null;
+        // Cleanup listener, timer, and active pending reject
+        cleanup();
 
         const tEnd = typeof performance !== 'undefined' ? performance.now() : Date.now();
         const totalDurationMs = tEnd - tStart;
@@ -253,7 +284,7 @@ export class LayoutWorkerClient {
             positions: finalPositions,
             featureRegions: syncResult.featureRegions,
             orbitGuides: syncResult.orbitGuides,
-            projectedNodeIds: syncResult.projectedNodeIds,
+            projectedNodeIds: syncResult.projectedNodeIds ? new Set(syncResult.projectedNodeIds) : undefined,
             requestGeneration: requestGen,
             projectId,
             correlationToken: response.correlationToken ?? correlationToken,
@@ -321,9 +352,7 @@ export class LayoutWorkerClient {
       };
 
       const errorHandler = (err: ErrorEvent) => {
-        worker.removeEventListener('message', messageHandler as any);
-        worker.removeEventListener('error', errorHandler as any);
-        this.activePendingPromiseReject = null;
+        cleanup();
 
         if (this.logger) {
           this.logger(`Worker runtime error: ${err.message}. Invoking synchronous fallback.`);
@@ -346,7 +375,7 @@ export class LayoutWorkerClient {
           positions: finalPositions,
           featureRegions: syncResult.featureRegions,
           orbitGuides: syncResult.orbitGuides,
-          projectedNodeIds: syncResult.projectedNodeIds,
+          projectedNodeIds: syncResult.projectedNodeIds ? new Set(syncResult.projectedNodeIds) : undefined,
           requestGeneration: requestGen,
           projectId,
           correlationToken,
@@ -373,9 +402,7 @@ export class LayoutWorkerClient {
       try {
         worker.postMessage(requestPayload);
       } catch (postErr: any) {
-        worker.removeEventListener('message', messageHandler as any);
-        worker.removeEventListener('error', errorHandler as any);
-        this.activePendingPromiseReject = null;
+        cleanup();
 
         if (this.logger) {
           this.logger(`worker.postMessage failed: ${postErr}. Invoking synchronous fallback.`);
@@ -397,7 +424,7 @@ export class LayoutWorkerClient {
           positions: finalPositions,
           featureRegions: syncResult.featureRegions,
           orbitGuides: syncResult.orbitGuides,
-          projectedNodeIds: syncResult.projectedNodeIds,
+          projectedNodeIds: syncResult.projectedNodeIds ? new Set(syncResult.projectedNodeIds) : undefined,
           requestGeneration: requestGen,
           projectId,
           correlationToken,
@@ -439,22 +466,22 @@ export class LayoutWorkerClient {
     const allNodeIds = new Set<string>([
       ...nodeIds,
       ...Object.keys(calculatedPositions),
-      ...Object.keys(userDragPositions),
-      ...Object.keys(persistedPositions),
-      ...Object.keys(existingCanvasPositions),
+      ...Object.keys(userDragPositions || {}),
+      ...Object.keys(persistedPositions || {}),
+      ...Object.keys(existingCanvasPositions || {}),
     ]);
 
     for (const id of allNodeIds) {
-      if (userDragPositions[id]) {
+      if (userDragPositions && userDragPositions[id]) {
         // Level 1: User Drag
         result[id] = { ...userDragPositions[id] };
-      } else if (persistedPositions[id]) {
+      } else if (persistedPositions && persistedPositions[id]) {
         // Level 2: Persisted Position
         result[id] = { ...persistedPositions[id] };
-      } else if (existingCanvasPositions[id]) {
+      } else if (existingCanvasPositions && existingCanvasPositions[id]) {
         // Level 3: Existing Canvas Position
         result[id] = { ...existingCanvasPositions[id] };
-      } else if (calculatedPositions[id]) {
+      } else if (calculatedPositions && calculatedPositions[id]) {
         // Level 4: Calculated Layout
         result[id] = { ...calculatedPositions[id] };
       } else {
