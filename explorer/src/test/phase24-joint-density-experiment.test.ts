@@ -1,10 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import crypto from 'crypto';
-import {
-  computeArchitectureLayoutWithMetadata,
-} from '../lib/architecture-layout';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import {
@@ -21,7 +18,7 @@ import {
   type ArchitectureLayer,
 } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
-import { computeLocalNodeLayout, type LocalLayoutOptions } from '../lib/layout/local-layout';
+import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import {
   computeGraphCentralityAnalysis,
   calculateBridgeCandidatePosition,
@@ -145,7 +142,7 @@ export function computePhase24LocalNodeLayout(
   if (candidateConfig.maxColsPerRow || candidateConfig.demandDrivenWidth || candidateConfig.staggered2D) {
     const updatedPositions: Record<string, { x: number; y: number }> = { ...result.primaryNodePositions };
     
-    result.bucketLayouts.forEach((bucket, bucketKey) => {
+    result.bucketLayouts.forEach((bucket) => {
       const nodeIds = bucket.nodeIds;
       if (nodeIds.length === 0) return;
 

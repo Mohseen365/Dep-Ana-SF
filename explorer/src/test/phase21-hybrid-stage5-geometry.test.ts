@@ -518,7 +518,7 @@ export function runPhase21Stage5ExperimentPipeline(
       const orig = activeFeatureLayerYMap[featId];
       const featBaseY = orig.presentation;
       let featNodeCount = 0;
-      featureMap.forEach((f, nId) => {
+      featureMap.forEach((f) => {
         if (f === featId) featNodeCount++;
       });
       const adaptiveStep = Math.min(200, 50 + Math.ceil(featNodeCount / 2) * 20);

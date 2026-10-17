@@ -163,7 +163,7 @@ export function runPhase22JointExperimentPipeline(
   stageSnapshots: Record<string, Record<string, { x: number; y: number }>>;
   finalPositions: Record<string, { x: number; y: number }>;
   featureMap: Map<string, string>;
-  layerMap: Map<string, any>;
+  layerMap: Map<string, ArchitectureLayer>;
   couplingMetrics: CouplingMetrics;
 } {
   const candidateType = interventions.candidateType || 'Baseline';
@@ -235,9 +235,9 @@ export function runPhase22JointExperimentPipeline(
   let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
 
   // Stage 2: Layer Classification
-  const layerMap = new Map<string, any>();
+  const layerMap = new Map<string, ArchitectureLayer>();
   safeNodes.forEach((node) => {
-    layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
+    layerMap.set(node.id, classifyNodeLayerWithReason(node).layer as ArchitectureLayer);
   });
   analysis = applyLayerClassification(analysis, layerMap);
 
@@ -800,7 +800,7 @@ export function runPhase22JointExperimentPipeline(
 export function calculateMetrics(
   projectId: string,
   candidateType: CandidateType,
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: Record<string, { x: number; y: number }>,
   couplingMetrics: CouplingMetrics,

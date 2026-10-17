@@ -882,7 +882,7 @@ describe('PHASE 20R — Real-Project Hybrid Causal Attribution & Runtime Truth G
         source: cstMaxSource,
         target: cstMaxTarget,
         trace: traceEdgeStages(
-          { id: 'max-cst', source: cstMaxSource, target: cstMaxTarget },
+          { source: cstMaxSource, target: cstMaxTarget },
           cstRun.stageSnapshots
         ),
       },
@@ -924,7 +924,7 @@ describe('PHASE 20R — Real-Project Hybrid Causal Attribution & Runtime Truth G
         source: pbimMaxSource,
         target: pbimMaxTarget,
         trace: traceEdgeStages(
-          { id: 'max-pbim', source: pbimMaxSource, target: pbimMaxTarget },
+          { source: pbimMaxSource, target: pbimMaxTarget },
           pbimRun.stageSnapshots
         ),
       },
