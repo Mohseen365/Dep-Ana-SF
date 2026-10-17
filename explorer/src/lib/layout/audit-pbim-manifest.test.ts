@@ -1,10 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { projectOrbitSemantics, computeOrbitRingIndex } from './orbit-semantics';
-import { computeOrbitLayout, checkAABBOverlap, normalizeAngle, calculateRequiredSectorRadius } from './orbit-layout';
-import { classifyNodeLayerWithReason, isTestNode } from './layers';
-import { classifyFeatureRole } from './feature-roles';
+import { projectOrbitSemantics } from './orbit-semantics';
+import { computeOrbitLayout } from './orbit-layout';
 
 describe('Deep Technical Forensic Script for Orbit Convergence Audit', () => {
   it('generates PBIM node-level golden manifest and detailed metrics', () => {
@@ -80,7 +78,6 @@ describe('Deep Technical Forensic Script for Orbit Convergence Audit', () => {
     sortedSectorIds.forEach((secId) => {
       const rawSpan = sectorSpans.get(secId)!;
       const normalizedSpan = (rawSpan / sumSpans) * totalCircleRad;
-      const startAngle = currentAngle;
       const endAngle = currentAngle + normalizedSpan;
       const usableAngle = Math.max(0.001, normalizedSpan - 2 * sectorMargin);
 

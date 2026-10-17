@@ -11,13 +11,10 @@ import { join } from 'path';
 import {
   adaptComponentOrbit,
 } from '../adapters/component-orbit-adapter';
-import type {
-  ComponentOrbitProjection,
-} from '../adapters/component-orbit-adapter';
 import {
   computeComponentOrbitLayout,
 } from './component-orbit-layout';
-import type { ExplorerDataSchema } from '../types/explorer';
+import type { ExplorerDataSchema } from '../../types/explorer';
 
 // Load real PBIM dataset fixture
 const pbimPath = join(__dirname, '../../../public/projects/pbim/explorer-data.json');
@@ -104,11 +101,11 @@ describe('Component Orbit Geometry & Focused Orbit Layout Suite', () => {
     });
 
     it('G6 — Shared Apex Hub: Receives exactly 1 position on its semantic ring', () => {
-      const projection = adaptComponentOrbit(realPbimData, { focalLwcId: 'LWC:citizen-report-portal' });
+      const projection = adaptComponentOrbit(realPbimData, { focalLwcId: 'LWC:asset-dashboard-container' });
       const layout = computeComponentOrbitLayout(projection);
 
       // Shared Apex Controller
-      const sharedNodeId = 'ApexClass:CitizenRequestController';
+      const sharedNodeId = 'ApexClass:AssetDashboardController';
       expect(projection.nodes[sharedNodeId].isSharedHub).toBe(true);
 
       const positions = Object.values(layout.positions).filter((p) => p.nodeId === sharedNodeId);
@@ -120,8 +117,9 @@ describe('Component Orbit Geometry & Focused Orbit Layout Suite', () => {
       const projection = adaptComponentOrbit(realPbimData, { focalLwcId: 'LWC:vendor-workspace' });
       const layout = computeComponentOrbitLayout(projection);
 
-      expect(projection.focus.childLwcTargets.length).toBeGreaterThan(0);
-      const childLwcId = projection.focus.childLwcTargets[0];
+      expect(projection.focus).not.toBeNull();
+      expect(projection.focus!.childLwcTargets.length).toBeGreaterThan(0);
+      const childLwcId = projection.focus!.childLwcTargets[0];
       expect(projection.nodes[childLwcId].isChildLwc).toBe(true);
 
       const pos = layout.positions[childLwcId];
@@ -162,11 +160,12 @@ describe('Component Orbit Geometry & Focused Orbit Layout Suite', () => {
       }
 
       // Input Order Shuffle Invariance
-      const shuffledNodes = Object.values(projection.nodes).sort(() => Math.random() - 0.5);
-      const shuffledProjection: ComponentOrbitProjection = {
-        ...projection,
-        nodes: Object.fromEntries(shuffledNodes.map((n) => [n.nodeId, n])),
+      const shuffledGraph: ExplorerDataSchema = {
+        ...realPbimData,
+        nodes: [...realPbimData.nodes].sort(() => Math.random() - 0.5),
+        edges: [...realPbimData.edges].sort(() => Math.random() - 0.5),
       };
+      const shuffledProjection = adaptComponentOrbit(shuffledGraph, { focalLwcId: 'LWC:asset-dashboard-container' });
 
       const shuffledRun = computeComponentOrbitLayout(shuffledProjection);
       expect(shuffledRun.positions).toEqual(baseline.positions);

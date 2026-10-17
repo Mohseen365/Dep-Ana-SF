@@ -1,20 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { shouldAutoLayout, LayoutMode, LayoutTrigger } from '../../position-policy';
+import { shouldAutoLayout, LayoutTrigger } from '../../position-policy';
 import { resolvePosition } from '../positions';
 
 describe('shouldAutoLayout Table Test Suite', () => {
-  const triggers: LayoutTrigger[] = [
-    'initial',
-    'reset-layout',
-    'graph-update',
-    'filter-change',
-    'focus-change',
-    'investigation',
-    'mode-switch',
-    'architecture-mode-switch',
-    'new-nodes',
-  ];
-
   it('evaluates reset-layout as true in both static and interactive modes regardless of positions', () => {
     expect(shouldAutoLayout('static', 'reset-layout')).toBe(true);
     expect(shouldAutoLayout('interactive', 'reset-layout')).toBe(true);
