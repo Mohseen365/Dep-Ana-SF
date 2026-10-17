@@ -21,6 +21,7 @@ import { adaptComponentOrbit, type ComponentOrbitAdapterOptions } from './adapte
 import { computeComponentOrbitLayout } from './layout/component-orbit-layout';
 import { adaptComponentConstellation, type ComponentConstellationAdapterOptions } from './adapters/component-constellation-adapter';
 import { computeComponentConstellationLayout } from './layout/component-constellation-layout';
+import { stableCompareStrings } from './layout/compare';
 import type { ArchitectureLayoutMode } from '../types/explorer';
 
 export interface ArchitectureLayoutOptions {
@@ -104,16 +105,43 @@ export function computeArchitectureLayoutWithMetadata(
     layerSpacing = 250,
     domainSpacing = 380,
     componentGap = 100,
-    existingPositions = {},
+    existingPositions: rawExistingPositions = {},
     architectureMode,
-    enableFeatureLayout = options.enableFeatureLayout ?? (options.architectureMode === 'hybrid'),
+    enableFeatureLayout = options.enableFeatureLayout ?? (architectureMode === 'hybrid'),
     enableImmutablePrimaryPositions = true,
     enableCandidateDOrdering = false,
   } = options;
 
-  // Defensive deep clone of inputs to guarantee immutability
-  const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
-  const safeEdges = Array.isArray(edges) ? [...edges] : [];
+  // Defensive deep clone of inputs to guarantee immutability (A11, A20, A36)
+  const safeNodes: ExplorerNode[] = Array.isArray(nodes)
+    ? nodes.map(n => ({
+        ...n,
+        metrics: n.metrics ? { ...n.metrics } : { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        behavior: n.behavior ? { ...n.behavior, asyncPatterns: Array.isArray(n.behavior.asyncPatterns) ? [...n.behavior.asyncPatterns] : [] } : undefined,
+        refactoringReadiness: n.refactoringReadiness ? { ...n.refactoringReadiness } : undefined,
+        riskReasons: Array.isArray(n.riskReasons) ? [...n.riskReasons] : [],
+      }))
+    : [];
+
+  const safeEdges: ExplorerEdge[] = Array.isArray(edges)
+    ? edges.map(e => ({ ...e }))
+    : [];
+
+  // Filter and sanitize existingPositions (A8, A9, A20, X4)
+  const existingPositions: Record<string, { x: number; y: number }> = {};
+  if (rawExistingPositions && typeof rawExistingPositions === 'object') {
+    for (const [id, pos] of Object.entries(rawExistingPositions)) {
+      if (
+        pos &&
+        typeof pos.x === 'number' &&
+        typeof pos.y === 'number' &&
+        Number.isFinite(pos.x) &&
+        Number.isFinite(pos.y)
+      ) {
+        existingPositions[id] = { x: pos.x, y: pos.y };
+      }
+    }
+  }
 
   if (safeNodes.length === 0) {
     if (architectureMode === 'orbit') {
@@ -132,8 +160,18 @@ export function computeArchitectureLayoutWithMetadata(
     return { positions: { ...existingPositions } };
   }
 
-  // Ensure all edge endpoints are present in safeNodes
-  const knownNodeIds = new Set(safeNodes.map(n => n.id));
+  // Track real node IDs prior to phantom injection
+  const realNodeIds = new Set(safeNodes.map(n => n.id));
+  const knownNodeIds = new Set(realNodeIds);
+
+  // Filter existingPositions to only include nodes present in input graph (A9)
+  for (const id of Object.keys(existingPositions)) {
+    if (!knownNodeIds.has(id)) {
+      delete existingPositions[id];
+    }
+  }
+
+  // Phantom node fabrication (A1, A25, A31, A38, A39)
   safeEdges.forEach(e => {
     if (!knownNodeIds.has(e.source)) {
       knownNodeIds.add(e.source);
@@ -142,9 +180,9 @@ export function computeArchitectureLayoutWithMetadata(
         displayName: e.source.split(':').pop() || e.source,
         type: 'External',
         file: '',
-        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-        risk: 'LOW',
-        riskReasons: [],
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 1, score: 100 },
+        risk: 'HIGH',
+        riskReasons: ['Unresolved external dependency endpoint'],
         behavior: {
           isTest: false,
           publicContractsCount: 0,
@@ -155,9 +193,9 @@ export function computeArchitectureLayoutWithMetadata(
           calloutCount: 0,
         },
         refactoringReadiness: {
-          isHighRisk: false,
+          isHighRisk: true,
           hasCycles: false,
-          hasUnresolved: false,
+          hasUnresolved: true,
           testCoverageStatus: 'UNTESTED',
         },
       });
@@ -169,9 +207,9 @@ export function computeArchitectureLayoutWithMetadata(
         displayName: e.target.split(':').pop() || e.target,
         type: 'External',
         file: '',
-        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-        risk: 'LOW',
-        riskReasons: [],
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 1, score: 100 },
+        risk: 'HIGH',
+        riskReasons: ['Unresolved external dependency endpoint'],
         behavior: {
           isTest: false,
           publicContractsCount: 0,
@@ -182,24 +220,20 @@ export function computeArchitectureLayoutWithMetadata(
           calloutCount: 0,
         },
         refactoringReadiness: {
-          isHighRisk: false,
+          isHighRisk: true,
           hasCycles: false,
-          hasUnresolved: false,
+          hasUnresolved: true,
           testCoverageStatus: 'UNTESTED',
         },
       });
     }
   });
 
-  // Sort nodes & edges deterministically by ID
-  safeNodes.sort((a, b) => a.id.localeCompare(b.id));
-  safeEdges.sort((a, b) => a.id.localeCompare(b.id));
+  // Sort nodes & edges deterministically by ID using stableCompareStrings (A16, X3)
+  safeNodes.sort((a, b) => stableCompareStrings(a.id, b.id));
+  safeEdges.sort((a, b) => stableCompareStrings(a.id, b.id));
 
-  if (safeNodes.length === 0) {
-    return { positions: { ...existingPositions } };
-  }
-
-  // Construct complete summary input satisfying ExplorerSummary
+  // Construct complete summary input satisfying ExplorerSummary with real unresolved counts (A2)
   const completeSummary = {
     totalNodes: safeNodes.length,
     totalEdges: safeEdges.length,
@@ -210,7 +244,7 @@ export function computeArchitectureLayoutWithMetadata(
     lowRiskCount: safeNodes.filter(n => n.risk === 'LOW').length,
     cycleCount: 0,
     cyclesCount: 0,
-    unresolvedCount: 0,
+    unresolvedCount: safeEdges.filter(e => Boolean(e.unresolved) || e.relationshipType === 'unresolved').length,
     inventory: {
       files: safeNodes.length,
       apexClasses: safeNodes.filter(n => n.type === 'ApexClass').length,
@@ -423,7 +457,9 @@ export function computeArchitectureLayoutWithMetadata(
     domainBounds[domain] = { minX: region.xMin, maxX: region.xMax };
   });
 
+  // Exclude phantom nodes from stage 8 bridge candidate evaluation (A31)
   const stage8BridgeNodes = safeNodes.filter(node => {
+    if (!realNodeIds.has(node.id)) return false;
     if (isTestNode(node) || isFieldNode(node)) return false;
     const centrality = centralityMap.get(node.id);
     return centrality?.isBridge && !centrality.isHub;
@@ -454,7 +490,7 @@ export function computeArchitectureLayoutWithMetadata(
       if (lA !== lB) {
         return lA - lB;
       }
-      return a.id.localeCompare(b.id);
+      return stableCompareStrings(a.id, b.id);
     });
   }
 
@@ -509,8 +545,9 @@ export function computeArchitectureLayoutWithMetadata(
   );
 
   // Step 10: Disconnected Component Packing (Wave 2C)
-  // If there are multiple disconnected components, pack them using 2D shelf packing algorithm (FFDH)
+  // Merge satellite positions into componentShiftedPositions defensively
   let componentShiftedPositions: Record<string, { x: number; y: number }> = {
+    ...basePositions,
     ...satelliteResult.positions,
   };
 
@@ -522,15 +559,17 @@ export function computeArchitectureLayoutWithMetadata(
         let importance = 0;
 
         for (const nodeId of comp.nodeIds) {
-          const pos = satelliteResult.positions[nodeId];
+          const pos = componentShiftedPositions[nodeId];
           if (pos) {
             positions[nodeId] = pos;
-            if (!minNodeId || nodeId.localeCompare(minNodeId) < 0) {
+            if (!minNodeId || stableCompareStrings(nodeId, minNodeId) < 0) {
               minNodeId = nodeId;
             }
             const centrality = centralityMap.get(nodeId);
             if (centrality) {
-              importance += centrality.hubScore + centrality.bridgeScore;
+              const hScore = centrality.hubScore ?? 0;
+              const bScore = centrality.bridgeScore ?? 0;
+              importance += hScore + bScore;
             }
           }
         }
@@ -547,14 +586,15 @@ export function computeArchitectureLayoutWithMetadata(
       .filter(c => Object.keys(c.positions).length > 0);
 
     if (componentLayouts.length > 1) {
-      // Ensure targetWidth accommodates at least the two largest components side-by-side
+      // Avoid in-place mutation of component widths when computing minRowWidth (A15, A21, A23)
       const compWidths = componentLayouts.map(c => {
         const bounds = calculateLocalComponentBounds(c.positions, nodeWidth, nodeHeight);
         return bounds.width;
-      }).sort((a, b) => b - a);
+      });
+      const sortedWidths = [...compWidths].sort((a, b) => b - a);
 
-      const maxW = compWidths[0] || nodeWidth;
-      const secondMaxW = compWidths[1] || nodeWidth;
+      const maxW = sortedWidths[0] ?? nodeWidth;
+      const secondMaxW = sortedWidths[1] ?? nodeWidth;
       const minRowWidth = maxW + secondMaxW + componentGap;
 
       let totalCompArea = 0;
@@ -573,7 +613,12 @@ export function computeArchitectureLayoutWithMetadata(
         nodeWidth,
         nodeHeight,
       });
-      componentShiftedPositions = packed.positions;
+
+      // Merge packed positions so no un-packed nodes are dropped
+      componentShiftedPositions = {
+        ...componentShiftedPositions,
+        ...packed.positions,
+      };
     }
   }
 
@@ -602,10 +647,18 @@ export function computeArchitectureLayoutWithMetadata(
     ...calculatedPositions,
   };
 
+  const overriddenIds: string[] = [];
   for (const [id, pos] of Object.entries(existingPositions)) {
-    if (pos) {
+    if (pos && knownNodeIds.has(id)) {
+      if (resultPositions[id]) {
+        overriddenIds.push(id);
+      }
       resultPositions[id] = { x: pos.x, y: pos.y };
     }
+  }
+
+  if (overriddenIds.length > 0 && process.env.NODE_ENV !== 'production') {
+    console.debug(`[layout] Position authority restored for ${overriddenIds.length} nodes: ${overriddenIds.slice(0, 5).join(', ')}...`);
   }
 
   // A44: Dev-time assertion that layout outputs contain positions for every expected node
