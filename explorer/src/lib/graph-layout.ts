@@ -117,13 +117,14 @@ export function extractNodesAndEdgesFromCy(cy: cytoscape.Core): {
 }
 
 export function getLayoutOptions(options: GraphLayoutOptions = {}): LayoutOptions {
-  const { nodes, edges, animate = false, animationDuration = 500, padding = 50, ...rest } = options;
+  const { nodes, edges, animate = false, animationDuration = 500, padding = 50, useArchitectureLayout, ...rest } = options;
+  const useArch = useArchitectureLayout !== false;
 
-  if (nodes && nodes.length > 0) {
+  if (useArch && nodes && nodes.length > 0) {
     const posMap = computeArchitectureLayout(nodes, edges || [], options);
     return {
       name: 'preset',
-      positions: (node: any) => posMap[node.id()] || { x: 0, y: 0 },
+      positions: (node: any) => posMap[node.id()] || (typeof node.position === 'function' ? node.position() : { x: 0, y: 0 }),
       animate,
       animationDuration,
       padding,
@@ -132,7 +133,20 @@ export function getLayoutOptions(options: GraphLayoutOptions = {}): LayoutOption
     } as LayoutOptions;
   }
 
-  const nodeCount = options.nodeCount || 0;
+  if (options.existingPositions && Object.keys(options.existingPositions).length > 0) {
+    const posMap = options.existingPositions;
+    return {
+      name: 'preset',
+      positions: (node: any) => posMap[node.id()] || (typeof node.position === 'function' ? node.position() : { x: 0, y: 0 }),
+      animate,
+      animationDuration,
+      padding,
+      fit: options.fit ?? true,
+      ...rest,
+    } as LayoutOptions;
+  }
+
+  const nodeCount = options.nodeCount ?? (nodes ? nodes.length : 0);
   const density = Math.max(1, Math.sqrt(nodeCount / 20));
   return {
     name: 'fcose',
@@ -152,22 +166,30 @@ export const LAYOUT_PRESETS = {
     animate: false,
     numIter: 1000,
     initialTemp: 200,
+    nodeRepulsion: 8000,
+    idealEdgeLength: 120,
   },
   animated: {
     animate: true,
     animationDuration: 500,
     numIter: 1000,
     initialTemp: 200,
+    nodeRepulsion: 8000,
+    idealEdgeLength: 120,
   },
   fast: {
     animate: false,
     numIter: 250,
     initialTemp: 100,
+    nodeRepulsion: 4000,
+    idealEdgeLength: 80,
   },
   quality: {
     animate: false,
     numIter: 2500,
     initialTemp: 400,
+    nodeRepulsion: 12000,
+    idealEdgeLength: 150,
   },
 };
 
@@ -175,14 +197,17 @@ export function createLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): 
   const useArch = options?.useArchitectureLayout !== false;
 
   if (useArch) {
-    const nodes = options?.nodes || extractNodesAndEdgesFromCy(cy).nodes;
-    const edges = options?.edges || extractNodesAndEdgesFromCy(cy).edges;
+    const hasNodes = Array.isArray(options?.nodes) && options!.nodes!.length > 0;
+    const hasEdges = Array.isArray(options?.edges) && options!.edges!.length > 0;
+    const extracted = (!hasNodes || !hasEdges) ? extractNodesAndEdgesFromCy(cy) : { nodes: [], edges: [] };
+    const nodes = hasNodes ? options!.nodes! : extracted.nodes;
+    const edges = hasEdges ? options!.edges! : extracted.edges;
 
     if (nodes.length > 0) {
       const posMap = computeArchitectureLayout(nodes, edges, options);
       return cy.layout({
         name: 'preset',
-        positions: (node: any) => posMap[node.id()] || node.position(),
+        positions: (node: any) => posMap[node.id()] || (typeof node.position === 'function' ? node.position() : { x: 0, y: 0 }),
         animate: options?.animate ?? false,
         animationDuration: options?.animationDuration ?? 500,
         padding: options?.padding ?? 50,
@@ -191,7 +216,11 @@ export function createLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): 
     }
   }
 
-  const layoutOptions = getLayoutOptions(options);
+  const effectiveOptions: GraphLayoutOptions = {
+    nodeCount: options?.nodeCount ?? cy.nodes().length,
+    ...options,
+  };
+  const layoutOptions = getLayoutOptions(effectiveOptions);
   return cy.layout(layoutOptions);
 }
 
@@ -206,15 +235,19 @@ export function runLayoutWithMetadata(
   const useArch = options?.useArchitectureLayout !== false;
 
   if (useArch && cy.nodes().length > 0) {
-    const { nodes, edges } = extractNodesAndEdgesFromCy(cy);
-    const finalNodes = options?.nodes && options.nodes.length > 0 ? options.nodes : nodes;
-    const finalEdges = options?.edges && options.edges.length > 0 ? options.edges : edges;
+    const hasNodes = Array.isArray(options?.nodes) && options!.nodes!.length > 0;
+    const hasEdges = Array.isArray(options?.edges) && options!.edges!.length > 0;
+    const extracted = (!hasNodes || !hasEdges) ? extractNodesAndEdgesFromCy(cy) : { nodes: [], edges: [] };
+    const finalNodes = hasNodes ? options!.nodes! : extracted.nodes;
+    const finalEdges = hasEdges ? options!.edges! : extracted.edges;
 
     const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
     const posMap = result.positions;
 
     const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
     const focusedSet = result.projectedNodeIds;
+
+    cy.emit('layoutstart');
 
     cy.batch(() => {
       if (isOrbitComponentFilter && focusedSet) {
@@ -299,18 +332,40 @@ export function runLayoutWithMetadata(
           cy.fit(cy.elements(), options?.padding ?? 50);
         }
       }
+      cy.emit('layoutstop');
     }
     return result;
   }
 
+  // Non-arch branch
+  if (options?.existingPositions) {
+    cy.nodes().forEach(node => {
+      const pos = options.existingPositions![node.id()];
+      if (pos) {
+        node.position(pos);
+      }
+    });
+  }
+
+  cy.emit('layoutstart');
   const layout = createLayout(cy, options);
   layout.run();
+
+  if (options?.fit !== false) {
+    cy.fit(cy.elements(), options?.padding ?? 50);
+  }
+  cy.emit('layoutstop');
 
   const currentPositions: Record<string, { x: number; y: number }> = {};
   cy.nodes().forEach(node => {
     currentPositions[node.id()] = node.position();
   });
-  return { positions: currentPositions };
+  return {
+    positions: currentPositions,
+    featureRegions: undefined,
+    orbitGuides: undefined,
+    projectedNodeIds: undefined,
+  };
 }
 
 export async function runLayoutWithMetadataAsync(
@@ -320,9 +375,11 @@ export async function runLayoutWithMetadataAsync(
   const useArch = options?.useArchitectureLayout !== false;
 
   if (useArch && cy.nodes().length > 0) {
-    const { nodes, edges } = extractNodesAndEdgesFromCy(cy);
-    const finalNodes = options?.nodes && options.nodes.length > 0 ? options.nodes : nodes;
-    const finalEdges = options?.edges && options.edges.length > 0 ? options.edges : edges;
+    const hasNodes = Array.isArray(options?.nodes) && options!.nodes!.length > 0;
+    const hasEdges = Array.isArray(options?.edges) && options!.edges!.length > 0;
+    const extracted = (!hasNodes || !hasEdges) ? extractNodesAndEdgesFromCy(cy) : { nodes: [], edges: [] };
+    const finalNodes = hasNodes ? options!.nodes! : extracted.nodes;
+    const finalEdges = hasEdges ? options!.edges! : extracted.edges;
 
     const result = await globalWorkerClient.calculateLayoutAsync({
       projectId: options?.projectId || 'default',
@@ -338,6 +395,8 @@ export async function runLayoutWithMetadataAsync(
     const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
     const focusedSet = result.projectedNodeIds;
 
+    cy.emit('layoutstart');
+
     cy.batch(() => {
       if (isOrbitComponentFilter && focusedSet) {
         const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
@@ -421,12 +480,34 @@ export async function runLayoutWithMetadataAsync(
           cy.fit(cy.elements(), options?.padding ?? 50);
         }
       }
+      cy.emit('layoutstop');
     }
     return result;
   }
 
+  // Non-arch branch
+  const tStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
+
+  if (options?.existingPositions) {
+    cy.nodes().forEach(node => {
+      const pos = options.existingPositions![node.id()];
+      if (pos) {
+        node.position(pos);
+      }
+    });
+  }
+
+  cy.emit('layoutstart');
   const layout = createLayout(cy, options);
   layout.run();
+
+  if (options?.fit !== false) {
+    cy.fit(cy.elements(), options?.padding ?? 50);
+  }
+  cy.emit('layoutstop');
+
+  const tEnd = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  const computeDurationMs = Math.max(0, tEnd - tStart);
 
   const currentPositions: Record<string, { x: number; y: number }> = {};
   cy.nodes().forEach(node => {
@@ -434,11 +515,15 @@ export async function runLayoutWithMetadataAsync(
   });
   return {
     positions: currentPositions,
+    featureRegions: undefined,
+    orbitGuides: undefined,
+    projectedNodeIds: undefined,
     requestGeneration: 0,
     projectId: options?.projectId || 'default',
+    correlationToken: options?.correlationToken,
     isOffloaded: false,
-    computeDurationMs: 0,
+    computeDurationMs,
     ipcDurationMs: 0,
-    totalDurationMs: 0,
+    totalDurationMs: computeDurationMs,
   };
 }
