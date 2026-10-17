@@ -17,9 +17,23 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
     (f) => f.nodeIds && f.nodeIds.includes(node.id)
   );
 
+  const [copied, setCopied] = React.useState(false);
+
   // Clamp positioning to keep within screen viewport
   const left = Math.min(x + 12, window.innerWidth - 260);
   const top = Math.min(y + 12, window.innerHeight - 160);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!node.file) return;
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(node.file).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {});
+    }
+  };
 
   return (
     <div
@@ -42,8 +56,18 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
         <span className="label">Fan-Out:</span> <span className="value">{fanOut}</span>
       </div>
       {node.file && (
-        <div className="hover-card-detail file-path" title={node.file}>
-          {node.file}
+        <div className="hover-card-detail file-path" title={node.file} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.file}</span>
+          <button
+            type="button"
+            className="hover-card-copy-btn"
+            aria-label="Copy file path"
+            onClick={handleCopy}
+            title="Copy file path"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', fontSize: '12px', color: '#38bdf8' }}
+          >
+            {copied ? '✓' : '📋'}
+          </button>
         </div>
       )}
       {nodeFindings.length > 0 && (

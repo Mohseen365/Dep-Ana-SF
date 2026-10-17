@@ -36,6 +36,7 @@ import type { ArchitectureFinding } from '../lib/intelligence';
 import { computeCanvasLODLevel } from '../lib/canvas-lod';
 import { GraphControls } from './GraphControls';
 import { GraphLegend } from './GraphLegend';
+import { KeyboardShortcutsModal } from './KeyboardShortcutsModal';
 import { NodeHoverCard } from './graph-internals/NodeHoverCard';
 import { EdgeHoverCard } from './graph-internals/EdgeHoverCard';
 import { FeatureOverlayCanvas } from './graph-internals/FeatureOverlayCanvas';
@@ -43,6 +44,7 @@ import { GraphErrorBoundary } from './graph-internals/GraphErrorBoundary';
 import { useInvestigationOptional } from '../context/InvestigationContext';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useEvent } from '../hooks/useEvent';
+import { useNavigationHistory } from '../hooks/useNavigationHistory';
 import './graph-internals/graph.css';
 
 cytoscape.use(fcose);
@@ -78,18 +80,20 @@ if (typeof window !== 'undefined') {
   }
 }
 
-function getHashModes(): { arch?: ArchitectureLayoutMode; layout?: LayoutMode } {
+function getHashModes(): { arch?: ArchitectureLayoutMode; layout?: LayoutMode; node?: string } {
   if (typeof window === 'undefined' || !window.location.hash) return {};
   try {
     const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
     const params = new URLSearchParams(raw);
     const arch = params.get('arch') as ArchitectureLayoutMode | null;
     const layout = params.get('layout') as LayoutMode | null;
+    const node = params.get('node');
     const validArch: ArchitectureLayoutMode[] = ['hierarchical', 'hybrid', 'orbit', 'constellation'];
     const validLayout: LayoutMode[] = ['static', 'interactive'];
     return {
       arch: arch && validArch.includes(arch) ? arch : undefined,
       layout: layout && validLayout.includes(layout) ? layout : undefined,
+      node: node || undefined,
     };
   } catch (e) {
     return {};
@@ -216,11 +220,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [hashModes.layout, layoutModeProp, graphLayout?.mode]);
 
   const architectureMode: ArchitectureLayoutMode = architectureModeProp || initialArchMode;
-
-  const architectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
-  useEffect(() => {
-    architectureModeRef.current = architectureMode;
-  }, [architectureMode]);
   const layoutMode: LayoutMode = layoutModeProp || initialLayoutMode;
 
   // On mount, notify parent if hash or localStorage specified a different initial mode
@@ -233,7 +232,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, []);
 
-  // Sync architectureMode & layoutMode to localStorage and location.hash
+  // Sync architectureMode, layoutMode, & selectedNodeId to localStorage and location.hash
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -255,12 +254,24 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         params.set('layout', layoutMode);
         changed = true;
       }
+      if (selectedNodeId) {
+        if (params.get('node') !== selectedNodeId) {
+          params.set('node', selectedNodeId);
+          changed = true;
+        }
+      } else {
+        if (params.has('node')) {
+          params.delete('node');
+          changed = true;
+        }
+      }
 
       if (changed) {
         window.history.replaceState(null, '', `#${params.toString()}`);
       }
     } catch (e) {}
-  }, [architectureMode, layoutMode]);
+  }, [architectureMode, layoutMode, selectedNodeId]);
+
 
   const enableFeatureLayout =
     enableFeatureLayoutProp ??
@@ -308,13 +319,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const onSelectNodeRef = useRef(onSelectNode);
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onNodeDoubleTapRef = useRef(onNodeDoubleTapProp);
+  const onFocusChangeRef = useRef(onFocusChange);
   const effectiveLayoutOptionsRef = useRef<GraphLayoutOptions>(effectiveLayoutOptions);
 
   useEffect(() => {
     onSelectNodeRef.current = onSelectNode;
     onSelectEdgeRef.current = onSelectEdge;
     onNodeDoubleTapRef.current = onNodeDoubleTapProp;
-  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp]);
+    onFocusChangeRef.current = onFocusChange;
+  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp, onFocusChange]);
 
   // In-session explicit drag positions scoped per architecture mode
   const sessionPositionsRef = useRef<Map<ArchitectureLayoutMode, Map<string, Position>>>(new Map());
@@ -389,26 +402,73 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
   const prefersReducedMotion = usePrefersReducedMotion();
   const [layoutAnnouncement, setLayoutAnnouncement] = useState<string>('');
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
 
-// Compute graph structure fingerprint capturing topology & node identity,
-// while also including boundary element IDs to avoid unnecessary recomputation
-const graphStructureKey = useMemo(() => {
-  if (nodes.length === 0) return '0:0';
+  const navHistory = useNavigationHistory<string>();
+  const isNavigatingHistoryRef = useRef(false);
 
-  const nodeHash = nodes.map(n => `${n.id}:${n.type}`).sort().join('|');
-  const edgeHash = edges.map(e => `${e.id}:${e.source}:${e.target}`).sort().join('|');
+  useEffect(() => {
+    if (selectedNodeId && !isNavigatingHistoryRef.current) {
+      navHistory.push(selectedNodeId);
+    }
+    isNavigatingHistoryRef.current = false;
+  }, [selectedNodeId]);
 
-  const boundaryNodes = `${nodes[0]?.id}:${nodes[nodes.length - 1]?.id}`;
-  const boundaryEdges = `${edges[0]?.id}:${edges[edges.length - 1]?.id}`;
+  const handleNavigateBack = useCallback(() => {
+    const prevNodeId = navHistory.back();
+    if (prevNodeId) {
+      isNavigatingHistoryRef.current = true;
+      const matchedNode = nodes.find((n) => n.id === prevNodeId);
+      if (matchedNode) {
+        onSelectNode(matchedNode);
+      }
+    }
+  }, [navHistory, nodes, onSelectNode]);
 
-  return `${nodes.length}:${edges.length}:${boundaryNodes}:${boundaryEdges}:${nodeHash}:${edgeHash}`;
-}, [nodes, edges]);
+  const handleNavigateForward = useCallback(() => {
+    const nextNodeId = navHistory.forward();
+    if (nextNodeId) {
+      isNavigatingHistoryRef.current = true;
+      const matchedNode = nodes.find((n) => n.id === nextNodeId);
+      if (matchedNode) {
+        onSelectNode(matchedNode);
+      }
+    }
+  }, [navHistory, nodes, onSelectNode]);
 
-// Derive Feature Discovery Result deterministically based on structure fingerprint
-const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
-  return discoverFeatures(nodes, edges);
-}, [graphStructureKey]);
+  // Initial node restoration from URL hash
+  const restoredHashNodeRef = useRef(false);
+  useEffect(() => {
+    if (!cyInstance || nodes.length === 0 || restoredHashNodeRef.current) return;
 
+    const initialNodeId = hashModes.node;
+    if (initialNodeId && !selectedNodeId) {
+      restoredHashNodeRef.current = true;
+      const matchedNode = nodes.find(n => n.id === initialNodeId || n.displayName === initialNodeId);
+      if (matchedNode) {
+        onSelectNode(matchedNode);
+        const ele = cyInstance.getElementById(matchedNode.id);
+        if (ele.length > 0) {
+          if (prefersReducedMotion) {
+            cyInstance.center(ele);
+          } else {
+            cyInstance.animate({ center: { eles: ele }, zoom: 1.5 }, { duration: 400 });
+          }
+        }
+      }
+    }
+  }, [cyInstance, nodes, hashModes.node, selectedNodeId, onSelectNode, prefersReducedMotion]);
+
+  // Compute graph structure fingerprint to avoid re-running discoverFeatures on array identity shifts when node/edge contents & ordering are identical
+  const graphStructureKey = useMemo(() => {
+    if (nodes.length === 0) return '0:0';
+    return `${nodes.length}:${edges.length}:${nodes[0]?.id}:${nodes[nodes.length - 1]?.id}:${edges[0]?.id}:${edges[edges.length - 1]?.id}`;
+  }, [nodes, edges]);
+
+  // Derive Feature Discovery Result deterministically based on structure fingerprint
+  const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
+    return discoverFeatures(nodes, edges);
+  }, [graphStructureKey]);
 
   // Build nodeId → featureId map for edge inter-feature classification (Hybrid mode only)
   const featureAssignmentMap = useMemo((): Map<string, string> | undefined => {
@@ -1517,7 +1577,23 @@ const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
-    if (e.key === 'f' || e.key === 'F' || e.key === '0') {
+    const target = e.target as HTMLElement;
+    const tagName = target?.tagName?.toLowerCase();
+    const isEditable = tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target?.isContentEditable;
+
+    if (e.key === '?' && !isEditable) {
+      e.preventDefault();
+      setIsShortcutsModalOpen(true);
+      return;
+    }
+
+    if (e.altKey && e.key === 'ArrowLeft') {
+      e.preventDefault();
+      handleNavigateBack();
+    } else if (e.altKey && e.key === 'ArrowRight') {
+      e.preventDefault();
+      handleNavigateForward();
+    } else if (e.key === 'f' || e.key === 'F' || e.key === '0') {
       fitToScreen(cy, 50);
     } else if (e.key === '+' || e.key === '=') {
       cy.zoom(cy.zoom() * 1.2);
@@ -1794,6 +1870,15 @@ const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
         architectureMode={architectureMode}
         onToggleArchitectureMode={onArchitectureModeChange ? handleToggleArchitectureModeInternal : undefined}
         nodeCount={nodes.length}
+        canGoBack={navHistory.canGoBack}
+        onNavigateBack={handleNavigateBack}
+        canGoForward={navHistory.canGoForward}
+        onNavigateForward={handleNavigateForward}
+        onShowShortcutsHelp={() => setIsShortcutsModalOpen(true)}
+      />
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
       />
       <GraphLegend nodes={nodes} />
     </div>

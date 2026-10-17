@@ -22,6 +22,14 @@ export interface GraphControlsProps {
   architectureMode?: ArchitectureLayoutMode;
   onToggleArchitectureMode?: () => void;
   nodeCount?: number;
+  isPathModeActive?: boolean;
+  onTogglePathMode?: () => void;
+  canGoBack?: boolean;
+  onNavigateBack?: () => void;
+  canGoForward?: boolean;
+  onNavigateForward?: () => void;
+  onExportPNG?: () => void;
+  onShowShortcutsHelp?: () => void;
 }
 
 export const GraphControls: React.FC<GraphControlsProps> = React.memo(function GraphControls({
@@ -43,6 +51,14 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
   architectureMode = 'hierarchical',
   onToggleArchitectureMode,
   nodeCount,
+  isPathModeActive = false,
+  onTogglePathMode,
+  canGoBack = false,
+  onNavigateBack,
+  canGoForward = false,
+  onNavigateForward,
+  onExportPNG,
+  onShowShortcutsHelp,
 }) {
   const [activeControlIndex, setActiveControlIndex] = React.useState<number>(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -195,6 +211,32 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
 
       {/* Navigation Section */}
       <div className="graph-control-group navigation-group" role="group" aria-label="Navigation controls">
+        {(onNavigateBack || onNavigateForward) && (
+          <>
+            <button
+              className="graph-control-btn"
+              onClick={onNavigateBack}
+              disabled={!canGoBack}
+              title="Navigate Back (Alt+Left)"
+              aria-label="Navigate Back"
+              aria-keyshortcuts="Alt+ArrowLeft"
+              type="button"
+            >
+              <span aria-hidden="true">⬅️</span>
+            </button>
+            <button
+              className="graph-control-btn"
+              onClick={onNavigateForward}
+              disabled={!canGoForward}
+              title="Navigate Forward (Alt+Right)"
+              aria-label="Navigate Forward"
+              aria-keyshortcuts="Alt+ArrowRight"
+              type="button"
+            >
+              <span aria-hidden="true">➡️</span>
+            </button>
+          </>
+        )}
         <button
           className="graph-control-btn"
           onClick={onZoomIn}
@@ -235,6 +277,18 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
         >
           <span aria-hidden="true">🎯</span>
         </button>
+        {onTogglePathMode && (
+          <button
+            className={`graph-control-btn ${isPathModeActive ? 'active' : ''}`}
+            onClick={onTogglePathMode}
+            title={isPathModeActive ? 'Cancel Path Finder' : 'Find Path Between Two Nodes'}
+            aria-label={isPathModeActive ? 'Cancel Path Mode' : 'Find Shortest Path'}
+            aria-pressed={isPathModeActive}
+            type="button"
+          >
+            <span aria-hidden="true">🧭</span>
+          </button>
+        )}
       </div>
 
       <div className="graph-control-divider" aria-hidden="true" />
@@ -280,10 +334,33 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
       </div>
 
       {/* Workspace Section */}
-      {(onToggleNavigator || onToggleFullscreen) && (
+      {(onToggleNavigator || onToggleFullscreen || onExportPNG || onShowShortcutsHelp) && (
         <>
           <div className="graph-control-divider" aria-hidden="true" />
           <div className="graph-control-group workspace-group" role="group" aria-label="Workspace controls">
+            {onExportPNG && (
+              <button
+                className="graph-control-btn"
+                onClick={onExportPNG}
+                title="Export View as PNG"
+                aria-label="Export View as PNG"
+                type="button"
+              >
+                <span aria-hidden="true">📸</span>
+              </button>
+            )}
+            {onShowShortcutsHelp && (
+              <button
+                className="graph-control-btn"
+                onClick={onShowShortcutsHelp}
+                title="Keyboard Shortcuts (?)"
+                aria-label="Keyboard Shortcuts"
+                aria-keyshortcuts="?"
+                type="button"
+              >
+                <span aria-hidden="true">❓</span>
+              </button>
+            )}
             {onToggleNavigator && (
               <button
                 className={`graph-control-btn ${isNavigatorVisible ? 'active' : ''}`}

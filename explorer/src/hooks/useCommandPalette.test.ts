@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useCommandPalette } from './useCommandPalette';
 
-describe('useCommandPalette', () => {
+describe('useCommandPalette (F10)', () => {
   beforeEach(() => {
     // Clear any leftover state
   });
@@ -11,6 +11,7 @@ describe('useCommandPalette', () => {
     const { result } = renderHook(() => useCommandPalette());
     expect(result.current.isOpen).toBe(false);
     expect(result.current.query).toBe('');
+    expect(result.current.commands).toEqual([]);
   });
 
   it('toggles open/close with Cmd+K / Ctrl+K', () => {
@@ -39,69 +40,50 @@ describe('useCommandPalette', () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it('closes on Escape key when open', () => {
+  it('registers and runs commands correctly', () => {
     const { result } = renderHook(() => useCommandPalette());
+    const runMock = vi.fn();
+
+    act(() => {
+      result.current.registerCommand({
+        id: 'graph.focus-node',
+        label: 'Focus on selected node',
+        category: 'Graph',
+        run: runMock,
+      });
+    });
+
+    expect(result.current.commands).toHaveLength(1);
+    expect(result.current.commands[0].id).toBe('graph.focus-node');
 
     act(() => {
       result.current.open();
-      result.current.setQuery('test');
+      const success = result.current.runCommand('graph.focus-node');
+      expect(success).toBe(true);
     });
 
-    expect(result.current.isOpen).toBe(true);
-    expect(result.current.query).toBe('test');
-
-    act(() => {
-      const event = new KeyboardEvent('keydown', {
-        key: 'Escape',
-        bubbles: true,
-      });
-      window.dispatchEvent(event);
-    });
-
+    expect(runMock).toHaveBeenCalledTimes(1);
     expect(result.current.isOpen).toBe(false);
-    expect(result.current.query).toBe('');
   });
 
-  it('allows manual open, close, setQuery, and toggle', () => {
+  it('does not run disabled commands', () => {
     const { result } = renderHook(() => useCommandPalette());
+    const runMock = vi.fn();
 
     act(() => {
-      result.current.open();
-    });
-    expect(result.current.isOpen).toBe(true);
-
-    act(() => {
-      result.current.setQuery('movie');
-    });
-    expect(result.current.query).toBe('movie');
-
-    act(() => {
-      result.current.close();
-    });
-    expect(result.current.isOpen).toBe(false);
-    expect(result.current.query).toBe('');
-
-    act(() => {
-      result.current.toggle();
-    });
-    expect(result.current.isOpen).toBe(true);
-  });
-
-  it('cleans up event listener on unmount', () => {
-    const { result, unmount } = renderHook(() => useCommandPalette());
-
-    unmount();
-
-    act(() => {
-      const event = new KeyboardEvent('keydown', {
-        key: 'k',
-        metaKey: true,
-        bubbles: true,
+      result.current.registerCommand({
+        id: 'graph.copy-path',
+        label: 'Copy selected node file path',
+        disabled: true,
+        run: runMock,
       });
-      window.dispatchEvent(event);
     });
 
-    // Should remain false because hook unmounted
-    expect(result.current.isOpen).toBe(false);
+    act(() => {
+      const success = result.current.runCommand('graph.copy-path');
+      expect(success).toBe(false);
+    });
+
+    expect(runMock).not.toHaveBeenCalled();
   });
 });

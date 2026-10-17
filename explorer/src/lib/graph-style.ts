@@ -514,6 +514,72 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'target-arrow-color': '#f87171',
         'opacity': 1,
       }
+    },
+    // Path highlight rules
+    {
+      selector: 'node.path-highlighted',
+      style: {
+        'border-width': 5,
+        'border-color': '#22d3ee',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'edge.path-highlighted',
+      style: {
+        'width': 5,
+        'line-color': '#22d3ee',
+        'target-arrow-color': '#22d3ee',
+        'opacity': 1,
+        'line-style': 'solid',
+        'z-index': 999,
+      }
+    },
+    // Diff highlight rules
+    {
+      selector: 'node.diff-added',
+      style: {
+        'border-width': 4,
+        'border-color': '#22c55e',
+        'border-style': 'dashed',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'node.diff-removed',
+      style: {
+        'border-width': 4,
+        'border-color': '#ef4444',
+        'border-style': 'dashed',
+        'opacity': 0.5,
+      }
+    },
+    {
+      selector: 'node.diff-modified',
+      style: {
+        'border-width': 5,
+        'border-color': '#eab308',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'edge.diff-added',
+      style: {
+        'width': 4,
+        'line-color': '#22c55e',
+        'target-arrow-color': '#22c55e',
+        'line-style': 'dashed',
+      }
+    },
+    {
+      selector: 'edge.diff-removed',
+      style: {
+        'width': 3,
+        'line-color': '#ef4444',
+        'target-arrow-color': '#ef4444',
+        'line-style': 'dashed',
+        'opacity': 0.4,
+      }
     }
   ];
 

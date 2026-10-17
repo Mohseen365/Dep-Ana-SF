@@ -1,6 +1,7 @@
 import type cytoscape from 'cytoscape';
 import type { ExplorerNode } from '../types/explorer';
 import type { GraphNodeData } from './graph-builder';
+import { applyHighlightState } from './highlight-state';
 
 /**
  * Binds event handlers to the Cytoscape graph instance.
@@ -221,42 +222,14 @@ export function highlightNodeConnections(
   nodeId: string,
   _highlightColor: string = '#3b82f6'
 ): void {
-  const node = cy.getElementById(nodeId);
-  if (node.length === 0 || !node.isNode()) return;
-  
-  // Get connected edges and neighbor nodes safely
-  const connectedEdges = typeof node.connectedEdges === 'function' ? node.connectedEdges() : null;
-  const neighbors = typeof node.neighborhood === 'function' ? node.neighborhood('node') : null;
-  
-  // Dim everything first
-  if (typeof cy.elements === 'function') {
-    const eles = cy.elements();
-    if (typeof eles.addClass === 'function') eles.addClass('dimmed');
-  }
-  
-  // Remove dim from the selected node and its connections
-  if (typeof node.removeClass === 'function') node.removeClass('dimmed');
-  if (connectedEdges && typeof connectedEdges.removeClass === 'function') connectedEdges.removeClass('dimmed');
-  if (neighbors && typeof neighbors.removeClass === 'function') neighbors.removeClass('dimmed');
-  
-  // Apply highlight
-  if (typeof node.addClass === 'function') node.addClass('highlighted');
-  if (connectedEdges && typeof connectedEdges.addClass === 'function') connectedEdges.addClass('highlighted');
-  if (neighbors && typeof neighbors.addClass === 'function') neighbors.addClass('highlighted');
+  applyHighlightState(cy, { kind: 'selection', nodeId });
 }
 
 /**
  * Clear all highlights.
  */
 export function clearHighlights(cy: cytoscape.Core): void {
-  if (!cy || !cy.elements) return;
-  cy.elements().removeClass('dimmed highlighted impact-muted impact-origin impact-affected finding-highlighted focus-center focus-neighbor focus-dimmed');
-  cy.elements().forEach((ele) => {
-    if (typeof ele.classes === 'function') {
-      const cycleClasses = ele.classes().filter((c: string) => c.startsWith('cycle-')).join(' ');
-      if (cycleClasses) ele.removeClass(cycleClasses);
-    }
-  });
+  applyHighlightState(cy, { kind: 'none' });
 }
 
 /**
@@ -268,56 +241,15 @@ export function highlightCycle(
 ): void {
   if (!cy) return;
 
-  // Clear any existing highlights/dimming first
-  cy.elements().removeClass('dimmed highlighted');
-
   if (!cycleNodeIds || cycleNodeIds.length === 0) {
+    applyHighlightState(cy, { kind: 'none' });
     return;
   }
 
+  applyHighlightState(cy, { kind: 'cycle', cycleNodeIds });
+
   const cycleNodeSet = new Set(cycleNodeIds);
-
-  // Dim all elements by default
-  cy.elements().addClass('dimmed');
-
-  // Find cycle nodes
   const cycleNodes = cy.nodes().filter(node => cycleNodeSet.has(node.id()));
-
-  // Find cycle edges (edges connecting nodes in the cycle)
-  const cycleEdges = cy.edges().filter(edge => {
-    const src = edge.data('source');
-    const tgt = edge.data('target');
-    return cycleNodeSet.has(src) && cycleNodeSet.has(tgt);
-  });
-
-  // Remove dimmed and add highlighted to cycle elements
-  if (typeof cycleNodes.removeClass === 'function') {
-    cycleNodes.removeClass('dimmed').addClass('highlighted');
-  } else {
-    cy.batch(() => {
-      cy.nodes().forEach(node => {
-        if (cycleNodeSet.has(node.id())) {
-          node.removeClass('dimmed');
-          node.addClass('highlighted');
-        }
-      });
-    });
-  }
-
-  if (typeof cycleEdges.removeClass === 'function') {
-    cycleEdges.removeClass('dimmed').addClass('highlighted');
-  } else {
-    cy.batch(() => {
-      cy.edges().forEach(edge => {
-        const src = edge.data('source');
-        const tgt = edge.data('target');
-        if (cycleNodeSet.has(src) && cycleNodeSet.has(tgt)) {
-          edge.removeClass('dimmed');
-          edge.addClass('highlighted');
-        }
-      });
-    });
-  }
 
   // Center and fit viewport to cycle nodes if any exist
   if (cycleNodes.length > 0) {
@@ -337,8 +269,69 @@ export function highlightCycle(
  * Clear cycle highlight and restore normal appearance.
  */
 export function clearCycleHighlight(cy: cytoscape.Core): void {
-  if (!cy) return;
-  cy.elements().removeClass('dimmed highlighted');
+  applyHighlightState(cy, { kind: 'none' });
+}
+
+/**
+ * Finds the shortest dependency path between a source node and a target node using BFS.
+ */
+export function findShortestPath(
+  cy: cytoscape.Core,
+  sourceId: string,
+  targetId: string,
+  direction: 'forward' | 'reverse' | 'both' = 'forward'
+): cytoscape.NodeSingular[] | null {
+  if (!cy || typeof cy.getElementById !== 'function') return null;
+  const source = cy.getElementById(sourceId);
+  const target = cy.getElementById(targetId);
+  if (source.length === 0 || target.length === 0 || !source.isNode() || !target.isNode()) return null;
+  if (sourceId === targetId) return [source as cytoscape.NodeSingular];
+
+  const visited = new Set<string>([sourceId]);
+  const pred = new Map<string, cytoscape.NodeSingular>();
+  const queue: cytoscape.NodeSingular[] = [source as cytoscape.NodeSingular];
+
+  while (queue.length > 0) {
+    const curr = queue.shift()!;
+    if (curr.id() === targetId) {
+      const path: cytoscape.NodeSingular[] = [];
+      let node: cytoscape.NodeSingular | undefined = curr;
+      while (node) {
+        path.unshift(node);
+        node = pred.get(node.id());
+      }
+      return path;
+    }
+
+    let neighbors: cytoscape.NodeCollection;
+    if (direction === 'forward') {
+      neighbors = curr.outgoers('node');
+    } else if (direction === 'reverse') {
+      neighbors = curr.incomers('node');
+    } else {
+      neighbors = curr.openNeighborhood('node');
+    }
+
+    neighbors.forEach((neighbor) => {
+      const n = neighbor as cytoscape.NodeSingular;
+      if (!visited.has(n.id())) {
+        visited.add(n.id());
+        pred.set(n.id(), curr);
+        queue.push(n);
+      }
+    });
+  }
+
+  return null;
+}
+
+/**
+ * Highlights a dependency path on the graph using the authoritative highlight state.
+ */
+export function highlightPath(cy: cytoscape.Core, path: cytoscape.NodeSingular[]): void {
+  if (!cy || !path || path.length === 0) return;
+  const pathNodeIds = path.map((node) => node.id());
+  applyHighlightState(cy, { kind: 'path', pathNodeIds });
 }
 
 /**
@@ -454,11 +447,5 @@ export function focusOnNode(cy: cytoscape.Core, nodeId: string): void {
     );
   }
 
-  // Dim unrelated nodes and edges, keeping current node + direct neighbors highlighted
-  cy.batch(() => {
-    cy.elements().addClass('dimmed');
-    node.removeClass('dimmed');
-    node.connectedEdges().removeClass('dimmed');
-    neighbors.removeClass('dimmed');
-  });
+  applyHighlightState(cy, { kind: 'focus', nodeId, depth: 1, direction: 'both' });
 }
