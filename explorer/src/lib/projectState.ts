@@ -7,7 +7,7 @@
  */
 
 import { ALL_EXPLORER_NODE_TYPES } from "../types/explorer.ts";
-import type { ExplorerNodeType, ArchitectureLayoutMode } from "../types/explorer.ts";
+import type { ExplorerNodeType, ArchitectureLayoutMode, Position } from "../types/explorer.ts";
 
 export interface SelectedComponentState {
   selectedNodeId: string | null;
@@ -41,15 +41,15 @@ export interface GraphLayoutState {
   mode: GraphInteractionMode;
   architectureMode?: ArchitectureLayoutMode;
   layoutProvenance?: LayoutProvenance;
-  nodePositions: Record<string, { x: number; y: number }>;
-  layoutPositions?: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>>;
+  nodePositions: Record<string, Position>;
+  layoutPositions?: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>>;
   layoutProvenances?: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>>;
   layoutVersion?: string | number;
 }
 
 export interface ZoomPanState {
   zoom: number; // e.g. 0.8 (80%), 1.0 (100%), 1.2 (120%)
-  pan: { x: number; y: number };
+  pan: Position;
 }
 
 export interface SidebarUIState {
@@ -332,7 +332,7 @@ export function mergeWithDefaultState(
         typeof gLoaded.layoutPositions === "object" &&
         Object.keys(gLoaded.layoutPositions).length > 0;
 
-      const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> =
+      const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> =
         hasExplicitLayoutPositions
           ? { ...gLoaded.layoutPositions }
           : {};
@@ -375,7 +375,7 @@ export function mergeWithDefaultState(
       }
 
       // Ensure defaults exist for all modes
-      const finalLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> = {
+      const finalLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> = {
         hierarchical: loadedLayoutPositions.hierarchical || {},
         hybrid: loadedLayoutPositions.hybrid || {},
         orbit: loadedLayoutPositions.orbit || {},

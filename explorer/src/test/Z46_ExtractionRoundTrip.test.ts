@@ -3,7 +3,7 @@ import { extractNodesAndEdgesFromCy } from '../lib/graph-layout';
 import type { ExplorerNode } from '../types/explorer';
 
 describe('Z46 - extractNodesAndEdgesFromCy Round-Trip Contract', () => {
-  it.fails('extractNodesAndEdgesFromCy round-trips all node fields without fabrication', () => {
+  it('extractNodesAndEdgesFromCy round-trips all node fields without fabrication', () => {
     const originalNode: ExplorerNode = {
       id: 'ApexClass:AccountController',
       displayName: 'AccountController',
@@ -40,17 +40,8 @@ describe('Z46 - extractNodesAndEdgesFromCy Round-Trip Contract', () => {
     const mockCyNode = {
       id: () => originalNode.id,
       data: () => ({
-        id: originalNode.id,
+        ...originalNode,
         label: originalNode.displayName,
-        type: originalNode.type,
-        file: originalNode.file,
-        risk: originalNode.risk,
-        coupling: originalNode.metrics.coupling,
-        fanIn: originalNode.metrics.fanIn,
-        fanOut: originalNode.metrics.fanOut,
-        isTest: originalNode.behavior.isTest,
-        hasCycles: originalNode.refactoringReadiness.hasCycles,
-        hasUnresolved: originalNode.refactoringReadiness.hasUnresolved,
       }),
     };
 
