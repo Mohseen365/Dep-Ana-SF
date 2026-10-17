@@ -367,14 +367,17 @@ function AppContent() {
   // Global Escape key listener to clear node selection across all views
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedNodeId) {
+      if (e.key === 'Escape' && (selectedNodeId || selection.selectedEdgeId || view.focusState.enabled)) {
         clearSelection();
         setIsInvestigating(false);
+        if (view.focusState.enabled) {
+          view.setFocusState({ ...view.focusState, enabled: false, focusNodeId: null });
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedNodeId, clearSelection, setIsInvestigating]);
+  }, [selectedNodeId, selection.selectedEdgeId, view.focusState, clearSelection, setIsInvestigating, view.setFocusState]);
 
   const handleTogglePin = useCallback(() => {
     investigation.setDrawerPinned(!isPinned);
@@ -638,7 +641,8 @@ function AppContent() {
     try {
       const validation = validateProposalCommit(activeSimulationProposal, activeProjectId, activeData);
       if (!validation.valid) {
-        throw new Error(validation.reason || 'Cannot commit stale simulation proposal.');
+        console.warn('[App] Simulation commit rejected:', validation.reason);
+        return;
       }
 
       const allOps = activeSimulationProposal.steps.flatMap(s => s.operations);
@@ -647,10 +651,7 @@ function AppContent() {
       setActiveSimulationProposal(null);
       setSimulationStepIndex(0);
     } catch (err) {
-      if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
-        console.error('[App] handleCommitSimulation failed:', err);
-      }
-      throw err;
+      console.error('[App] handleCommitSimulation failed:', err);
     }
   };
 
