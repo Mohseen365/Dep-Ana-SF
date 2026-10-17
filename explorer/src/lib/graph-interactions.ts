@@ -139,24 +139,15 @@ export function bindGraphInteractions(
     }
   });
 
-  // Mouseover for nodes - cursor change on Cytoscape container
-  const container = typeof cy.container === 'function' ? cy.container() : null;
+  // Mouseover for nodes - cursor change
   cy.on('mouseover', 'node', (event) => {
     event.target.addClass('hovered');
-    if (container) {
-      container.style.cursor = 'pointer';
-    } else {
-      document.body.style.cursor = 'pointer';
-    }
+    document.body.style.cursor = 'pointer';
   });
 
   cy.on('mouseout', 'node', (event) => {
     event.target.removeClass('hovered');
-    if (container) {
-      container.style.cursor = 'default';
-    } else {
-      document.body.style.cursor = 'default';
-    }
+    document.body.style.cursor = 'default';
   });
 
   // Graph ready event
@@ -258,7 +249,14 @@ export function highlightNodeConnections(
  * Clear all highlights.
  */
 export function clearHighlights(cy: cytoscape.Core): void {
-  cy.elements().removeClass('dimmed highlighted');
+  if (!cy || !cy.elements) return;
+  cy.elements().removeClass('dimmed highlighted impact-muted impact-origin impact-affected finding-highlighted focus-center focus-neighbor focus-dimmed');
+  cy.elements().forEach((ele) => {
+    if (typeof ele.classes === 'function') {
+      const cycleClasses = ele.classes().filter((c: string) => c.startsWith('cycle-')).join(' ');
+      if (cycleClasses) ele.removeClass(cycleClasses);
+    }
+  });
 }
 
 /**

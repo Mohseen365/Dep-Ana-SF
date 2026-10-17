@@ -429,19 +429,19 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': ''
       }
     },
-    // FAR ZOOM — mute all edges; keep inter-feature edges lightly visible for orientation
+    // FAR ZOOM — keep edges perceptible at far zoom; keep inter-feature edges visible for orientation
     {
       selector: 'edge.zoom-far',
       style: {
         'label': '',
-        'opacity': 0.18,
+        'opacity': 0.35,
         'width': 1,
       }
     },
     {
       selector: 'edge[isInterFeature = "true"].zoom-far',
       style: {
-        'opacity': 0.55,
+        'opacity': 0.7,
         'width': 1.8,
       }
     },
@@ -494,6 +494,25 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'line-style': 'dashed',
         'line-dash-pattern': [6, 3],
         'opacity': 0.9,
+      }
+    },
+    // Finding highlight rules
+    {
+      selector: 'node.finding-highlighted',
+      style: {
+        'border-width': 5,
+        'border-color': '#f87171',
+        'border-style': 'solid',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'edge.finding-highlighted',
+      style: {
+        'width': 4,
+        'line-color': '#f87171',
+        'target-arrow-color': '#f87171',
+        'opacity': 1,
       }
     }
   ];
