@@ -608,6 +608,16 @@ export function computeArchitectureLayoutWithMetadata(
     }
   }
 
+  // A44: Dev-time assertion that layout outputs contain positions for every expected node
+  if (process.env.NODE_ENV !== 'production') {
+    const missing = safeNodes.filter((n) => !resultPositions[n.id]);
+    if (missing.length > 0) {
+      console.warn(
+        `[layout] ${missing.length} nodes missing from layout result: ${missing.slice(0, 5).map((n) => n.id).join(', ')}...`
+      );
+    }
+  }
+
   return {
     positions: resultPositions,
     featureRegions: (globalDomainResult as any)?.featureRegions,
