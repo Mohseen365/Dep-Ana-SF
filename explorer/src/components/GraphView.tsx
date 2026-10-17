@@ -216,6 +216,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [hashModes.layout, layoutModeProp, graphLayout?.mode]);
 
   const architectureMode: ArchitectureLayoutMode = architectureModeProp || initialArchMode;
+
+  const architectureModeRef = useRef<ArchitectureLayoutMode>(architectureMode);
+  useEffect(() => {
+    architectureModeRef.current = architectureMode;
+  }, [architectureMode]);
   const layoutMode: LayoutMode = layoutModeProp || initialLayoutMode;
 
   // On mount, notify parent if hash or localStorage specified a different initial mode
@@ -385,10 +390,18 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const prefersReducedMotion = usePrefersReducedMotion();
   const [layoutAnnouncement, setLayoutAnnouncement] = useState<string>('');
 
-  // Derive Feature Discovery Result deterministically
+  // Compute graph structure fingerprint capturing topology & node identity
+  const graphStructureKey = useMemo(() => {
+    if (nodes.length === 0) return '0:0';
+    const nodeHash = nodes.map(n => `${n.id}:${n.type}`).sort().join('|');
+    const edgeHash = edges.map(e => `${e.id}:${e.source}:${e.target}`).sort().join('|');
+    return `${nodes.length}:${edges.length}:${nodeHash}:${edgeHash}`;
+  }, [nodes, edges]);
+
+  // Derive Feature Discovery Result deterministically based on structure fingerprint
   const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
     return discoverFeatures(nodes, edges);
-  }, [nodes, edges]);
+  }, [graphStructureKey]);
 
   // Build nodeId → featureId map for edge inter-feature classification (Hybrid mode only)
   const featureAssignmentMap = useMemo((): Map<string, string> | undefined => {
@@ -448,7 +461,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const cy = cyRef.current;
     const currentPositions: Record<string, Position> = { ...(nodePositionsRef.current || {}) };
 
-    const modeSessionMap = getSessionPositionsForMode(architectureMode);
+    const currentMode = architectureModeRef.current;
+    const modeSessionMap = getSessionPositionsForMode(currentMode);
     cy.nodes().forEach((n) => {
       const pos = n.position();
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
@@ -457,16 +471,16 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     const provenance: LayoutProvenance = overrideProvenance || (
-      architectureMode === 'hybrid'        ? 'automatic-hybrid'        :
-      architectureMode === 'orbit'         ? 'automatic-orbit'         :
-      architectureMode === 'constellation' ? 'automatic-constellation' :
-                                             'automatic-hierarchical'
+      currentMode === 'hybrid'        ? 'automatic-hybrid'        :
+      currentMode === 'orbit'         ? 'automatic-orbit'         :
+      currentMode === 'constellation' ? 'automatic-constellation' :
+                                         'automatic-hierarchical'
     );
 
     if (onNodePositionsChangeRef.current) {
       (onNodePositionsChangeRef.current as any)(currentPositions, provenance);
     }
-  }, [architectureMode]);
+  }, []);
 
   // Handle Mode Switch
   useEffect(() => {
@@ -931,7 +945,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const pos = node.position();
       const rounded = { x: Math.round(pos.x), y: Math.round(pos.y) };
 
-      getSessionPositionsForMode(architectureMode).set(nodeId, rounded);
+      const currentMode = architectureModeRef.current;
+      getSessionPositionsForMode(currentMode).set(nodeId, rounded);
       captureAndPersistPositions('user-authored');
 
       if (onNodeDragEndRef.current) {
@@ -944,14 +959,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
                       : nodeCount < 50 ? 1.0
                       : nodeCount < 200 ? 0.7
                       : 0.4;
+    let layoutDepth = 0;
     cy.on('layoutstart', () => {
+      layoutDepth++;
       isLayoutRunningRef.current = true;
       setIsLayoutRunning(true);
     });
 
     cy.on('layoutstop', () => {
-      isLayoutRunningRef.current = false;
-      setIsLayoutRunning(false);
+      layoutDepth = Math.max(0, layoutDepth - 1);
+      if (layoutDepth === 0) {
+        isLayoutRunningRef.current = false;
+        setIsLayoutRunning(false);
+      }
     });
 
     cy.zoom(initialZoom);
@@ -987,6 +1007,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     updateZoomClass();
 
+    cy.on('grab', 'node', () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      setHoverCard(null);
+    });
+
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
       const pos = evt.renderedPosition || (typeof node.renderedPosition === 'function' ? node.renderedPosition() : { x: 0, y: 0 });
@@ -998,12 +1023,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
 
       if (nodeObj && pos) {
+        const rect = containerRef.current ? containerRef.current.getBoundingClientRect() : { left: 0, top: 0 };
+        const screenX = rect.left + pos.x;
+        const screenY = rect.top + pos.y;
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'node',
             node: nodeObj,
-            x: pos.x,
-            y: pos.y
+            x: screenX,
+            y: screenY
           });
         }, 250);
       }
@@ -1024,12 +1052,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
 
       if (edgeObj) {
+        const rect = containerRef.current ? containerRef.current.getBoundingClientRect() : { left: 0, top: 0 };
+        const screenX = rect.left + pos.x;
+        const screenY = rect.top + pos.y;
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'edge',
             edge: edgeObj,
-            x: pos.x,
-            y: pos.y
+            x: screenX,
+            y: screenY
           });
         }, 250);
       }
@@ -1283,50 +1314,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }
 
-    if (selectedNodeId) {
-      selectNode(cy, selectedNodeId);
-      highlightNodeConnections(cy, selectedNodeId);
-    } else if (selectedEdgeId) {
-      const edge = cy.getElementById(selectedEdgeId);
-      if (edge.length > 0 && edge.isEdge()) {
-        edge.select();
-      }
-    }
-
-    if (impactResult) {
-      const { originNodeId, affectedNodeIds, affectedEdgeIds } = impactResult;
-      cy.batch(() => {
-        cy.elements().removeClass('impact-origin impact-affected impact-muted');
-        cy.nodes().forEach(node => {
-          const id = node.id();
-          if (id === originNodeId) {
-            node.addClass('impact-origin');
-          } else if (affectedNodeIds.has(id)) {
-            node.addClass('impact-affected');
-          } else {
-            node.addClass('impact-muted');
-          }
-        });
-
-        cy.edges().forEach(edge => {
-          const id = edge.id();
-          if (affectedEdgeIds.has(id)) {
-            edge.addClass('impact-affected');
-          } else {
-            edge.addClass('impact-muted');
-          }
-        });
-      });
-    }
-
-    if (selectedCycleNodeIds && selectedCycleNodeIds.length > 0) {
-      highlightCycle(cy, selectedCycleNodeIds);
-    }
-
-    if (focusedNodeId) {
-      focusOnNode(cy, focusedNodeId);
-    }
-  }, [nodes, edges, findings, featureAssignmentMap, architectureMode, captureAndPersistPositions]);
+  }, [nodes, edges, findings, featureAssignmentMap, captureAndPersistPositions]);
 
   // Dedicated Effect for Simulation Visual Classes
   useEffect(() => {
@@ -1360,6 +1348,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Position-Only Synchronization Effect (runs when nodePositions prop changes without structural graph change)
   useEffect(() => {
     if (!cyRef.current) return;
+    if (isLayoutRunningRef.current) return;
     const cy = cyRef.current;
 
     const storedArchMode = graphLayoutRef.current?.architectureMode;
@@ -1403,34 +1392,30 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
   }, [nodePositions, architectureMode]);
 
-  // Handle selected node changes
+  // Handle selected node & edge changes
   useEffect(() => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
 
     cy.batch(() => {
       if (selectedNodeId) {
+        clearHighlights(cy);
+        deselectAll(cy);
         selectNode(cy, selectedNodeId);
         highlightNodeConnections(cy, selectedNodeId);
-      } else if (!selectedEdgeId) {
+      } else if (selectedEdgeId) {
+        clearHighlights(cy);
+        deselectAll(cy);
+        const edge = cy.getElementById(selectedEdgeId);
+        if (edge.length > 0 && edge.isEdge()) {
+          edge.select();
+        }
+      } else {
         deselectAll(cy);
         clearHighlights(cy);
       }
     });
   }, [selectedNodeId, selectedEdgeId]);
-
-  // Handle selected edge changes
-  useEffect(() => {
-    if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    if (selectedEdgeId) {
-      const edge = cy.getElementById(selectedEdgeId);
-      if (edge.length > 0 && edge.isEdge()) {
-        edge.select();
-      }
-    }
-  }, [selectedEdgeId]);
 
   // Handle Impact Mode highlighting
   useEffect(() => {
@@ -1508,6 +1493,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (focusedNodeId) {
       focusOnNode(cy, focusedNodeId);
     } else if (selectedNodeId) {
+      clearHighlights(cy);
       highlightNodeConnections(cy, selectedNodeId);
     } else {
       clearHighlights(cy);
@@ -1528,6 +1514,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     } else if (e.key === 'Escape') {
       onSelectNode(null);
       onSelectEdge('');
+      if (onFocusChangeRef.current) {
+        onFocusChangeRef.current({ enabled: false, focusNodeId: null });
+      }
     } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       e.preventDefault();
       if (selectedNodeId) {

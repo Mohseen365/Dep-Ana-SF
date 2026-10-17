@@ -249,7 +249,14 @@ export function highlightNodeConnections(
  * Clear all highlights.
  */
 export function clearHighlights(cy: cytoscape.Core): void {
-  cy.elements().removeClass('dimmed highlighted');
+  if (!cy || !cy.elements) return;
+  cy.elements().removeClass('dimmed highlighted impact-muted impact-origin impact-affected finding-highlighted focus-center focus-neighbor focus-dimmed');
+  cy.elements().forEach((ele) => {
+    if (typeof ele.classes === 'function') {
+      const cycleClasses = ele.classes().filter((c: string) => c.startsWith('cycle-')).join(' ');
+      if (cycleClasses) ele.removeClass(cycleClasses);
+    }
+  });
 }
 
 /**

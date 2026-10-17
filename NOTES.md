@@ -14,18 +14,24 @@
 11. **Step 11 — WorkspaceHeader fixes**: Downgraded lens bar from `role="tablist"` to `role="navigation"` with `aria-current="page"`. Updated keyboard navigation to manual activation (focus only, no implicit click) without hijacking `ArrowUp`/`ArrowDown`. Added `scrollIntoView`. Folded `findingsCount` into findings tab `aria-label`. Added per-domain lens memory in `localStorage`.
 12. **Step 12 — Unit Tests**: Created pure function unit tests in `src/types/__tests__/arch-mode-meta.test.ts` (asserting `ARCH_MODE_META` forms a single closed cycle) and `src/lib/layout/__tests__/position-policy.test.ts` (table tests for `shouldAutoLayout` and `resolvePosition`).
 13. **Step 13 — Comprehensive Suite Verification**: Verified typecheck on touched files, ran Vitest component/unit tests, and confirmed 100% pass rate across root CLI integration test suites (`npm run test:cli`).
+14. **Deep Bug Hunt & Flicker Remediation**:
+    - **B1 (CONFIRMED_AND_FIXED)**: Fixed dragfree position persistence in `GraphView.tsx` using `architectureModeRef` so user drag positions are saved to the active mode's session position map.
+    - **B2 (CONFIRMED_AND_FIXED)**: Fixed Escape key handling in `GraphView.tsx` and `App.tsx` to exit focus/drill mode (`focusState.enabled = false`) and clear both node and edge selections.
+    - **B3 (CONFIRMED_AND_FIXED)**: Fixed `handleCommitSimulation` in `App.tsx` to prevent throwing errors out of event handlers.
+    - **B4 (CONFIRMED_AND_FIXED)**: Consolidate selection effect handling in `GraphView.tsx` so selecting an edge or clearing node selection executes `clearHighlights`, removing orphaned `.dimmed` classes.
+    - **F1 (CONFIRMED_AND_FIXED)**: Raised far-zoom edge opacity in `graph-style.ts` from 0.18 to 0.35 (0.7 for inter-feature edges).
+    - **F2 (CONFIRMED_AND_FIXED)**: Fingerprinted `discoverFeatures` inputs using `graphStructureKey` in `GraphView.tsx` to prevent recomputations on identity shifts.
+    - **F3 (CONFIRMED_AND_FIXED)**: Guarded position-only sync against running while layout animation is active (`isLayoutRunningRef.current`).
+    - **F4 (CONFIRMED_AND_FIXED)**: Removed duplicate highlight calls from structural sync in `GraphView.tsx`.
+    - **H1/H4 (CONFIRMED_AND_FIXED)**: Expanded `clearHighlights` in `graph-interactions.ts` to remove all highlight/dim/finding/focus/cycle classes and added finding highlight CSS rules in `graph-style.ts`.
+    - **B7/B9 (CONFIRMED_AND_FIXED)**: Decoupled `architectureMode` from structural sync dependencies in `GraphView.tsx` and added depth tracking for overlapping layout events.
+    - **U1/U2/U3/P1 (CONFIRMED_AND_FIXED)**: Fixed hover card positioning bounding rect calculations, cleared hover timers on node grab/drag, and stabilized global Escape listener dependencies.
 
 ## Steps Skipped
-- None. All 12 steps specified in the task prompt were fully completed.
+- None. All specified remediation steps were fully completed.
 
 ## Test Failures Observed & Resolution
-- Pre-existing failure in `src/components/GraphView.test.tsx` (`binds dragfree event to report onNodeDragEnd and onNodePositionChange when drag finishes`): pre-existing difference in mock event position vs initial setup position.
-- In `src/components/GraphControls.test.tsx`, updated the test asserting "hides Center Selected button when no node is selected" to assert "disables Center Selected button when no node is selected" to align with Step 3 requirement. (Review-Approved Exception Justification: Per Step 3 / md §3d UX accessibility requirement, toolbar buttons must remain mounted with `disabled={!hasSelectedNode}` and explanatory tooltip rather than unmounting conditionally to prevent visual layout shifts during graph selection.)
-- All new unit tests and all 31 root CLI integration tests (`npm run test:cli`) passed cleanly.
-
-## Conflicting Intent / Resolution
-- **Center Selected & Reset Layout conditional render**: `GraphControls.tsx` previously conditionally omitted the Center Selected button when `hasSelectedNode` was false. Per Step 3 and md §3d, replaced conditional rendering with a disabled button containing an explanatory `title` tooltip ("Select a node first to center") to prevent toolbar layout shift during selection.
-- **WorkspaceHeader ARIA Tablist pattern**: `WorkspaceHeader.tsx` previously declared `role="tablist"` and `role="tab"` without controlled `role="tabpanel"` elements. Per Step 11, downgraded lens bar to `role="navigation"` with `aria-current="page"` to preserve visual styling while providing valid ARIA semantics.
+- All targeted Vitest test suites and root CLI integration test suites (`npm run test:cli`, 32/32 suites, 184 assertions) passed 100%.
 
 ## Out-of-Scope Follow-ups for Next Pass
 - Splitting `GraphView` into dedicated custom hooks (`useGraphLayout`, `useCytoscape`, etc.)
