@@ -20,7 +20,6 @@ export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function E
     <div
       className="graph-hover-card edge-hover-card"
       style={{ left: `${left}px`, top: `${top}px` }}
-      role="tooltip"
     >
       <div className="hover-card-header">
         <span className="hover-card-title">{edge.method || edge.relationshipType}</span>
