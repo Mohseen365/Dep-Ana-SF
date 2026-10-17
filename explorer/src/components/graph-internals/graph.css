@@ -99,6 +99,11 @@
   color: #ffffff;
 }
 
+.graph-control-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
 .graph-control-divider {
   width: 1px;
   height: 18px;
@@ -133,6 +138,11 @@
   background-color: rgba(255, 255, 255, 0.12);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+.focus-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
 }
 
 .focus-btn.active {
@@ -181,8 +191,11 @@
   outline: none;
 }
 
-.focus-select:focus {
+.focus-select:focus,
+.focus-select:focus-visible {
   border-color: #3b82f6;
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
 }
 
 .focus-hint {
