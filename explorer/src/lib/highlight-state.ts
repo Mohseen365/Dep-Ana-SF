@@ -331,16 +331,23 @@ export function applyHighlightState(cy: cytoscape.Core, state: HighlightState): 
       const targetClasses = wantedClasses.get(ele.id()) ?? new Set<string>();
 
       // 1. Remove owned visual classes that are NOT in targetClasses
-      const currentClasses = ele.classes();
+      const rawClasses = typeof ele.classes === 'function'
+        ? ele.classes()
+        : (Array.isArray((ele as any)?.classes) ? (ele as any).classes : (typeof (ele as any)?.classes === 'string' ? (ele as any).classes.split(/\s+/) : []));
+
+      const currentClasses = Array.isArray(rawClasses) ? rawClasses : [];
       currentClasses.forEach((cls) => {
         if (isOwnedVisualClass(cls) && !targetClasses.has(cls)) {
-          ele.removeClass(cls);
+          if (typeof ele.removeClass === 'function') {
+            ele.removeClass(cls);
+          }
         }
       });
 
       // 2. Add target classes that are missing
       targetClasses.forEach((cls) => {
-        if (!ele.hasClass(cls)) {
+        const hasCls = typeof ele.hasClass === 'function' ? ele.hasClass(cls) : false;
+        if (!hasCls && typeof ele.addClass === 'function') {
           ele.addClass(cls);
         }
       });
