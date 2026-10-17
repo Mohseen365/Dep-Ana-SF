@@ -69,7 +69,11 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
     const controls = getInteractiveElements(containerRef.current);
     if (controls.length === 0) return;
 
-    const validIndex = activeControlIndex >= controls.length ? 0 : activeControlIndex;
+    let validIndex = activeControlIndex;
+    if (validIndex >= controls.length) {
+      validIndex = 0;
+      setActiveControlIndex(0);
+    }
 
     controls.forEach((control, index) => {
       if (index === validIndex) {

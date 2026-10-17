@@ -475,6 +475,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     const oldMode = prevLayoutModeRef.current;
     prevLayoutModeRef.current = layoutMode;
 
+    if (cyRef.current && typeof cyRef.current.autolock === 'function') {
+      cyRef.current.autolock(layoutMode === 'static');
+    }
+
     if (oldMode === 'interactive' && layoutMode === 'static') {
       if (isLayoutRunningRef.current && cyRef.current) {
         if (pendingModeSwitchCaptureRef.current) {
@@ -856,6 +860,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cyRef.current = cy;
+    cy.autolock(layoutMode === 'static');
     setCyInstance(cy);
     if (typeof window !== 'undefined' && ((import.meta as any).env?.DEV || (window as any).__EXPOSE_CY__)) {
       (window as any).__CY__ = cy;
