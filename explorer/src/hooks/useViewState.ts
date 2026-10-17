@@ -493,9 +493,93 @@ export function useViewState() {
     isInvestigating,
   ]);
 
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const syncToUrlRef = useRef(syncToUrl);
+  syncToUrlRef.current = syncToUrl;
+
+  const prevSearchQueryRef = useRef(filterState.searchQuery);
+  const prevNonSearchStateRef = useRef({
+    activeViewMode,
+    selectedNodeId,
+    selectedFindingId,
+    selectedCycleId,
+    selectedUnresolvedEdgeId,
+    selectedInvestigationId,
+    isInvestigating,
+    diagnosticsTab,
+    focusState,
+    impactState,
+    connectionState,
+    typeFilter: filterState.typeFilter,
+    riskFilter: filterState.riskFilter,
+    hasCallouts: filterState.hasCallouts,
+    withoutSharing: filterState.withoutSharing,
+    hideTests: filterState.hideTests,
+    hasAsyncPatterns: filterState.hasAsyncPatterns,
+  });
+
   useEffect(() => {
-    syncToUrl();
-  }, [syncToUrl]);
+    const currentNonSearchState = {
+      activeViewMode,
+      selectedNodeId,
+      selectedFindingId,
+      selectedCycleId,
+      selectedUnresolvedEdgeId,
+      selectedInvestigationId,
+      isInvestigating,
+      diagnosticsTab,
+      focusState,
+      impactState,
+      connectionState,
+      typeFilter: filterState.typeFilter,
+      riskFilter: filterState.riskFilter,
+      hasCallouts: filterState.hasCallouts,
+      withoutSharing: filterState.withoutSharing,
+      hideTests: filterState.hideTests,
+      hasAsyncPatterns: filterState.hasAsyncPatterns,
+    };
+
+    const nonSearchChanged =
+      JSON.stringify(prevNonSearchStateRef.current) !== JSON.stringify(currentNonSearchState);
+    const searchQueryChanged = prevSearchQueryRef.current !== filterState.searchQuery;
+
+    prevNonSearchStateRef.current = currentNonSearchState;
+    prevSearchQueryRef.current = filterState.searchQuery;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
+    if (searchQueryChanged && !nonSearchChanged && filterState.searchQuery) {
+      debounceTimerRef.current = setTimeout(() => {
+        syncToUrlRef.current();
+      }, 150);
+    } else {
+      syncToUrl();
+    }
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+    };
+  }, [
+    syncToUrl,
+    activeViewMode,
+    selectedNodeId,
+    selectedFindingId,
+    selectedCycleId,
+    selectedUnresolvedEdgeId,
+    selectedInvestigationId,
+    isInvestigating,
+    diagnosticsTab,
+    focusState,
+    impactState,
+    connectionState,
+    filterState,
+  ]);
 
   return {
     viewMode: activeViewMode,
