@@ -1,13 +1,13 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
-import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
 import { computeArchitectureAnalysis, applyLayerClassification, applyDomainClassification, isFieldNode } from '../lib/layout/analysis';
 import { classifyNodeLayerWithReason, isTestNode } from '../lib/layout/layers';
 import { discoverDomains } from '../lib/layout/domains';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import { computeGlobalDomainLayout } from '../lib/layout/global-layout';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
@@ -65,7 +65,7 @@ describe('Phase 5L-W PBIM Stage 7 X-Centering Causal Proof', () => {
 
     const index = createLayoutGraphIndex(safeNodes, safeEdges);
     let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-    const layerMap = new Map<string, any>();
+    const layerMap = new Map<string, ArchitectureLayer>();
     safeNodes.forEach(node => layerMap.set(node.id, classifyNodeLayerWithReason(node).layer));
     analysis = applyLayerClassification(analysis, layerMap);
 
@@ -131,7 +131,7 @@ describe('Phase 5L-W PBIM Stage 7 X-Centering Causal Proof', () => {
           const nodeAnalysis = analysis.nodes.get(node.id);
           const layer = layerMap.get(node.id) || 'application';
           const minDx = 160; const minDy = 100;
-          const layerYOffsets = globalDomainResult.layerYMap;
+          const layerYOffsets = globalDomainResult.layerYMap as Record<ArchitectureLayer, number>;
           const baseY = layerYOffsets[layer];
 
           const sortedConnectedDomains = [...centrality.connectedDomains].sort((a, b) => a.localeCompare(b));

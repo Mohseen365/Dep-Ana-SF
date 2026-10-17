@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 import { computeGraphCentralityAnalysis } from '../lib/layout/centrality';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
@@ -166,7 +166,7 @@ describe('Phase 6A — Real UI Production Path Regression Suite', () => {
         });
 
         // Simulate GraphView effectiveLayoutOptions for Hierarchical
-        const architectureMode = 'hierarchical';
+        const architectureMode: ArchitectureLayoutMode = 'hierarchical';
         const effectiveLayoutOptions = {
           architectureMode,
           enableCandidateDOrdering: architectureMode === 'hierarchical',

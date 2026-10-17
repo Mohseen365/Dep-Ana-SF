@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateSyntheticSalesforceGraph } from './scalability-generator';
 import { adaptFeatureMatrix } from '../lib/adapters/matrix-adapter';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 describe('Phase 3E Discovery & Current-State Audit', () => {
   it('audits Matrix DOM growth complexity without virtualization', () => {
@@ -32,8 +31,31 @@ describe('Phase 3E Discovery & Current-State Audit', () => {
       const { nodes, edges } = generateSyntheticSalesforceGraph({ nodeCount: N, seed: 42 });
       const start = performance.now();
       const matrixData = adaptFeatureMatrix({
+        summary: {
+          nodeCount: nodes.length,
+          edgeCount: edges.length,
+          highRiskCount: 0,
+          mediumRiskCount: 0,
+          lowRiskCount: nodes.length,
+          cycleCount: 0,
+          unresolvedCount: 0,
+          inventory: {
+            files: nodes.length,
+            apexClasses: nodes.length,
+            apexTriggers: 0,
+            lwcJs: 0,
+            lwcHtml: 0,
+            visualforce: 0,
+            flows: 0,
+            objects: 0,
+            fields: 0,
+          },
+        },
         nodes,
         edges,
+        cycles: [],
+        unresolvedReferences: [],
+        impactSummaries: {},
         metadata: {
           projectId: 'test',
           projectName: 'Test',

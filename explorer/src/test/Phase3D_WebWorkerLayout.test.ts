@@ -105,12 +105,10 @@ function generateSyntheticGraph(nodeCount: number): { nodes: ExplorerNode[]; edg
   const edges: ExplorerEdge[] = [];
 
   const types = ['ApexClass', 'LWC', 'CustomObject', 'Flow'];
-  const layers = ['presentation', 'application', 'domain', 'schema'];
 
   for (let i = 0; i < nodeCount; i++) {
     const id = `Node_${i.toString().padStart(5, '0')}`;
     const type = types[i % types.length];
-    const layer = layers[i % layers.length];
     const domain = `Domain_${i % 10}`;
 
     nodes.push({
@@ -140,7 +138,7 @@ function generateSyntheticGraph(nodeCount: number): { nodes: ExplorerNode[]; edg
         isHighRisk: i % 10 === 0,
         hasCycles: false,
         hasUnresolved: false,
-        testCoverageStatus: 'OPTIMAL',
+        testCoverageStatus: 'COVERED',
       },
     });
 
@@ -150,7 +148,7 @@ function generateSyntheticGraph(nodeCount: number): { nodes: ExplorerNode[]; edg
         id: `Edge_${i}`,
         source: sourceId,
         target: id,
-        relationshipType: 'calls',
+        relationshipType: 'method-call',
         method: null,
         evidence: 'test',
         unresolved: false,
@@ -164,7 +162,7 @@ function generateSyntheticGraph(nodeCount: number): { nodes: ExplorerNode[]; edg
         canonical: {
           source: { type: 'ApexClass', name: sourceId },
           target: { type: 'ApexClass', name: id },
-          relationship: { type: 'calls', resolution: 'EXACT' },
+          relationship: { type: 'method-call', resolution: 'EXACT' },
           location: {},
         },
       });

@@ -1,7 +1,15 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { slugify, exportExplorerData } from '../../../scripts/export-explorer.cjs';
+
+interface ExporterScript {
+  slugify: (input: string) => string;
+  exportExplorerData: (inputPath: string, outputPath: string, options?: Record<string, any>) => any;
+}
+
+// Load CommonJS exporter script dynamically to resolve module import declaration
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { slugify, exportExplorerData }: ExporterScript = require('../../../scripts/export-explorer.cjs');
 
 const ROOT_DIR = path.resolve(__dirname, '../../../');
 const PUBLIC_DIR = path.resolve(ROOT_DIR, 'explorer/public');
