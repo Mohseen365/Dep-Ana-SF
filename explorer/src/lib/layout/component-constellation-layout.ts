@@ -100,9 +100,9 @@ export function computeComponentConstellationLayout(
   const positions: Record<string, ComponentConstellationNodePosition> = {};
   const sunCoords: Record<string, { x: number; y: number; angle: number; radius: number }> = {};
 
-  // 1. Calculate Macro Coordinates for Inner Suns (6 Suns at 60° increments starting at 0°)
+  // 1. Calculate Macro Coordinates for Inner Suns
   const innerSuns = [...projection.innerSuns].sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-  const innerAngleStep = (2 * Math.PI) / 6; // 60°
+  const innerAngleStep = innerSuns.length > 0 ? (2 * Math.PI) / innerSuns.length : 0;
 
   innerSuns.forEach((sunNode, idx) => {
     const angle = idx * innerAngleStep;
@@ -124,10 +124,10 @@ export function computeComponentConstellationLayout(
     };
   });
 
-  // 2. Calculate Macro Coordinates for Outer Suns (8 Suns at 45° increments with 22.5° interlacing offset)
+  // 2. Calculate Macro Coordinates for Outer Suns
   const outerSuns = [...projection.outerSuns].sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-  const outerAngleStep = (2 * Math.PI) / 8; // 45°
-  const outerInterlacingOffset = Math.PI / 8; // 22.5°
+  const outerAngleStep = outerSuns.length > 0 ? (2 * Math.PI) / outerSuns.length : 0;
+  const outerInterlacingOffset = outerSuns.length > 0 ? Math.PI / outerSuns.length : 0;
 
   outerSuns.forEach((sunNode, idx) => {
     const angle = outerInterlacingOffset + idx * outerAngleStep;

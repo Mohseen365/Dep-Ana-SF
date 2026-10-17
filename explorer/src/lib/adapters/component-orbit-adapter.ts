@@ -158,6 +158,14 @@ export function adaptComponentOrbit(
   const nodeMap = new Map<string, ExplorerNode>();
   nodes.forEach((n) => nodeMap.set(n.id, n));
 
+  const includeTestReferences = options.includeTestReferences ?? false;
+
+  // Edge type filter sets
+  const allowedEdgeTypes = new Set(DEFAULT_COMPONENT_ORBIT_EDGE_TYPES);
+  if (includeTestReferences) {
+    allowedEdgeTypes.add('test-reference');
+  }
+
   // Build global LWC composition and dependency maps across full graph
   const lwcNodes = nodes.filter((n) => n.type === 'LWC');
   const lwcSet = new Set<string>(lwcNodes.map((n) => n.id));
@@ -168,8 +176,15 @@ export function adaptComponentOrbit(
 
   // Apex -> dependent LWCs map (LWCs that directly invoke or reference this node)
   const nodeDependentLwcsMap = new Map<string, Set<string>>();
+  const outgoingEdgeCountMap = new Map<string, number>();
 
   edges.forEach((edge) => {
+    if (!allowedEdgeTypes.has(edge.relationshipType)) {
+      return;
+    }
+
+    outgoingEdgeCountMap.set(edge.source, (outgoingEdgeCountMap.get(edge.source) || 0) + 1);
+
     const sourceIsLwc = lwcSet.has(edge.source);
     const targetIsLwc = lwcSet.has(edge.target);
 
@@ -202,7 +217,7 @@ export function adaptComponentOrbit(
       const isRootLwc = !parents || parents.size === 0;
 
       // Count direct outgoing edges from this LWC
-      const outCount = edges.filter((e) => e.source === lwc.id).length;
+      const outCount = outgoingEdgeCountMap.get(lwc.id) || 0;
 
       return {
         id: lwc.id,
@@ -246,13 +261,6 @@ export function adaptComponentOrbit(
 
   const maxDepth = options.maxDepth ?? 7;
   const direction = options.direction ?? 'dependencies';
-  const includeTestReferences = options.includeTestReferences ?? false;
-
-  // Edge type filter sets
-  const allowedEdgeTypes = new Set(DEFAULT_COMPONENT_ORBIT_EDGE_TYPES);
-  if (includeTestReferences) {
-    allowedEdgeTypes.add('test-reference');
-  }
 
   // Handle empty graph or missing focal LWC
   if (!focalLwcId || !nodeMap.has(focalLwcId)) {
