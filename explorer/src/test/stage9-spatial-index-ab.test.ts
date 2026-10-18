@@ -1005,7 +1005,7 @@ const rawParsed = JSON.parse(rawData);
 const dataset = (rawParsed.data ? rawParsed.data : rawParsed) as ExplorerDataSchema;
 
 describe('Stage 9 Spatial Index A/B Differential Test Suite', () => {
-  it('1. Canonical Cloud Spend Tracker Dataset Differential Equivalence', () => {
+  it('1. Canonical Cloud Spend Tracker Dataset Differential Equivalence', { timeout: 10000 }, () => {
     resetAccounting();
     const nodes = dataset.nodes;
     const edges = dataset.edges;

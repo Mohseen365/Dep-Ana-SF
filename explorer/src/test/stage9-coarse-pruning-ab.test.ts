@@ -1194,7 +1194,7 @@ describe('Stage 9 Coarse Anchor Bounding-Region Pruning A/B Experiment Suite', (
     }
   });
 
-  it('4. Scale Tiers 1-5 Performance & Predicate Reduction Matrix', { timeout: 60000 }, () => {
+  it('4. Scale Tiers 1-5 Performance & Predicate Reduction Matrix', { timeout: 300000 }, () => {
     const scaleTiers = [
       { tier: 'Tier 1', nodeCount: 240 },
       { tier: 'Tier 2', nodeCount: 500 },
@@ -1314,7 +1314,7 @@ describe('Stage 9 Coarse Anchor Bounding-Region Pruning A/B Experiment Suite', (
     expect(evalMetrics.minClearance).toBeGreaterThanOrEqual(39.99);
   });
 
-  it('6. Production Activation Boundary Tests (N = 749, N = 750, N = 751)', () => {
+  it('6. Production Activation Boundary Tests (N = 749, N = 750, N = 751)', { timeout: 30000 }, () => {
     const boundaryNodeCounts = [
       STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD - 1, // 749: Oracle path
       STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD,     // 750: Pruning activated

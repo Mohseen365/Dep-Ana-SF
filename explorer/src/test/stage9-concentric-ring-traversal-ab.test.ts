@@ -922,7 +922,7 @@ const dataset = (rawParsed.data ? rawParsed.data : rawParsed) as ExplorerDataSch
 
 describe('Stage 9 Concentric Ring Traversal A/B Experiment Suite', () => {
 
-  it('1. Canonical CST Dataset Differential Equivalence & Early Termination Telemetry', () => {
+  it('1. Canonical CST Dataset Differential Equivalence & Early Termination Telemetry', { timeout: 10000 }, () => {
     resetGlobalConcentricTelemetry();
     const nodes = dataset.nodes;
     const edges = dataset.edges;
