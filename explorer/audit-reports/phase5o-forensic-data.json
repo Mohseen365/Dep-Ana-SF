@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-13T10:02:32.315Z",
+  "timestamp": "2026-10-18T05:09:55.559Z",
   "datasets": {
     "cst": {
       "bridgeCount": 56,
@@ -9060,14 +9060,14 @@
           },
           "Final_SB1C": {
             "x": 3320,
-            "y": 1150
+            "y": 1350
           },
           "Final_H5A": {
-            "x": 3320,
-            "y": 1250
+            "x": 3537.894736842105,
+            "y": 1350
           },
           "Final_CandD": {
-            "x": 3000,
+            "x": 3160,
             "y": 1350
           },
           "CounterfactualA_Stage8": {
@@ -9088,20 +9088,20 @@
           "layer": "schema",
           "Stage8_M1_H5A": 520,
           "Stage8_M1_CandD": 520,
-          "Final_M1_SB1C": 902.49,
-          "Final_M1_H5A": 1104.25,
-          "Final_M1_CandD": 1028.57,
+          "Final_M1_SB1C": 1028.57,
+          "Final_M1_H5A": 1304.28,
+          "Final_M1_CandD": 1127.55,
           "Stage8_M2_H5A": 520,
           "Stage8_M2_CandD": 520,
-          "Final_M2_SB1C": 1475.13,
-          "Final_M2_H5A": 1682.38,
-          "Final_M2_CandD": 1531.01,
+          "Final_M2_SB1C": 1531.01,
+          "Final_M2_H5A": 1920.71,
+          "Final_M2_CandD": 1682.38,
           "primaryRejections_H5A": 1,
           "primaryRejections_CandD": 0,
           "dynamicRejections_H5A": 0,
           "dynamicRejections_CandD": 1,
           "causalClass": "UNCHANGED_COORDINATE",
-          "displacementStage7Final_CandD": 1995.82
+          "displacementStage7Final_CandD": 2147.21
         },
         {
           "dataset": "pbim",
@@ -9123,14 +9123,14 @@
           },
           "Final_SB1C": {
             "x": 3320,
-            "y": 1350
+            "y": 1150
           },
           "Final_H5A": {
-            "x": 3537.894736842105,
-            "y": 1350
+            "x": 3320,
+            "y": 1250
           },
           "Final_CandD": {
-            "x": 3160,
+            "x": 3000,
             "y": 1350
           },
           "CounterfactualA_Stage8": {
@@ -9151,20 +9151,20 @@
           "layer": "schema",
           "Stage8_M1_H5A": 707.67,
           "Stage8_M1_CandD": 544.06,
-          "Final_M1_SB1C": 1028.57,
-          "Final_M1_H5A": 1304.28,
-          "Final_M1_CandD": 1127.55,
+          "Final_M1_SB1C": 902.49,
+          "Final_M1_H5A": 1104.25,
+          "Final_M1_CandD": 1028.57,
           "Stage8_M2_H5A": 707.67,
           "Stage8_M2_CandD": 544.06,
-          "Final_M2_SB1C": 1531.01,
-          "Final_M2_H5A": 1920.71,
-          "Final_M2_CandD": 1682.38,
+          "Final_M2_SB1C": 1475.13,
+          "Final_M2_H5A": 1682.38,
+          "Final_M2_CandD": 1531.01,
           "primaryRejections_H5A": 1,
           "primaryRejections_CandD": 0,
           "dynamicRejections_H5A": 15,
           "dynamicRejections_CandD": 4,
           "causalClass": "DYNAMIC_CASCADE_EFFECT",
-          "displacementStage7Final_CandD": 2147.21
+          "displacementStage7Final_CandD": 1995.82
         },
         {
           "dataset": "pbim",
@@ -10452,8 +10452,8 @@
             "y": 680
           },
           "Final_SB1C": {
-            "x": 6960,
-            "y": 1350
+            "x": 7120,
+            "y": 1150
           },
           "Final_H5A": {
             "x": 7280,
@@ -10482,12 +10482,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 1788.85,
           "Stage8_M1_CandD": 2436.47,
-          "Final_M1_SB1C": 3323.35,
+          "Final_M1_SB1C": 3462.52,
           "Final_M1_H5A": 3608.64,
           "Final_M1_CandD": 4247.03,
           "Stage8_M2_H5A": 1788.85,
           "Stage8_M2_CandD": 2436.47,
-          "Final_M2_SB1C": 5227.96,
+          "Final_M2_SB1C": 5410.84,
           "Final_M2_H5A": 5546.35,
           "Final_M2_CandD": 6175.69,
           "primaryRejections_H5A": 4,
@@ -10516,8 +10516,8 @@
             "y": 780
           },
           "Final_SB1C": {
-            "x": 7060,
-            "y": 1150
+            "x": 6900,
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7220,
@@ -10545,12 +10545,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 2505.67,
+          "Final_M1_SB1C": 2421.57,
           "Final_M1_H5A": 1531.01,
           "Final_M1_CandD": 1280.16,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 2505.67,
+          "Final_M2_SB1C": 2421.57,
           "Final_M2_H5A": 1531.01,
           "Final_M2_CandD": 1280.16,
           "primaryRejections_H5A": 4,
@@ -10579,8 +10579,8 @@
             "y": 580
           },
           "Final_SB1C": {
-            "x": 7100,
-            "y": 1250
+            "x": 7080,
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7400,
@@ -10608,12 +10608,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 420.48,
+          "Final_M1_SB1C": 520,
           "Final_M1_H5A": 610.57,
           "Final_M1_CandD": 320,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 420.48,
+          "Final_M2_SB1C": 520,
           "Final_M2_H5A": 610.57,
           "Final_M2_CandD": 320,
           "primaryRejections_H5A": 5,
@@ -10706,8 +10706,8 @@
             "y": 780
           },
           "Final_SB1C": {
-            "x": 7180,
-            "y": 1350
+            "x": 7020,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7500,
@@ -10736,12 +10736,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2241.01,
           "Stage8_M1_CandD": 2893.37,
-          "Final_M1_SB1C": 1944.14,
+          "Final_M1_SB1C": 1770.85,
           "Final_M1_H5A": 2241.01,
           "Final_M1_CandD": 2893.37,
           "Stage8_M2_H5A": 3260.55,
           "Stage8_M2_CandD": 3908.66,
-          "Final_M2_SB1C": 2951.47,
+          "Final_M2_SB1C": 2784.6,
           "Final_M2_H5A": 3260.55,
           "Final_M2_CandD": 3908.66,
           "primaryRejections_H5A": 5,
@@ -10834,7 +10834,7 @@
           },
           "Final_SB1C": {
             "x": 7280,
-            "y": 1250
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7600,
@@ -10863,12 +10863,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 3052.1,
           "Stage8_M1_CandD": 3523.88,
-          "Final_M1_SB1C": 2725.25,
+          "Final_M1_SB1C": 2733.83,
           "Final_M1_H5A": 3052.1,
           "Final_M1_CandD": 3523.88,
           "Stage8_M2_H5A": 3928.61,
           "Stage8_M2_CandD": 4402.91,
-          "Final_M2_SB1C": 3603.55,
+          "Final_M2_SB1C": 3609.38,
           "Final_M2_H5A": 3928.61,
           "Final_M2_CandD": 4402.91,
           "primaryRejections_H5A": 4,
@@ -11151,8 +11151,8 @@
             "y": 680
           },
           "Final_SB1C": {
-            "x": 7400,
-            "y": 1350
+            "x": 7240,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7720,
@@ -11180,12 +11180,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 1319.39,
           "Stage8_M1_CandD": 765.51,
-          "Final_M1_SB1C": 1091.79,
+          "Final_M1_SB1C": 903.55,
           "Final_M1_H5A": 1319.39,
           "Final_M1_CandD": 765.51,
           "Stage8_M2_H5A": 1319.39,
           "Stage8_M2_CandD": 765.51,
-          "Final_M2_SB1C": 1091.79,
+          "Final_M2_SB1C": 903.55,
           "Final_M2_H5A": 1319.39,
           "Final_M2_CandD": 765.51,
           "primaryRejections_H5A": 3,
@@ -11660,8 +11660,8 @@
             "y": 580
           },
           "Final_SB1C": {
-            "x": 7560,
-            "y": 1350
+            "x": 7400,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7880,
@@ -11689,12 +11689,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 1145.6,
+          "Final_M1_SB1C": 963.33,
           "Final_M1_H5A": 1196.16,
           "Final_M1_CandD": 637.81,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 1145.6,
+          "Final_M2_SB1C": 963.33,
           "Final_M2_H5A": 1196.16,
           "Final_M2_CandD": 637.81,
           "primaryRejections_H5A": 4,
@@ -11724,11 +11724,11 @@
           },
           "Final_SB1C": {
             "x": 840,
-            "y": 1150
+            "y": 1350
           },
           "Final_H5A": {
             "x": 840,
-            "y": 1250
+            "y": 1150
           },
           "Final_CandD": {
             "x": 3217.894736842105,
@@ -11752,13 +11752,13 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2603.25,
           "Stage8_M1_CandD": 569.29,
-          "Final_M1_SB1C": 2579.92,
-          "Final_M1_H5A": 2612.28,
+          "Final_M1_SB1C": 2612.28,
+          "Final_M1_H5A": 2594.22,
           "Final_M1_CandD": 537.97,
           "Stage8_M2_H5A": 2612.28,
           "Stage8_M2_CandD": 610.57,
-          "Final_M2_SB1C": 2579.92,
-          "Final_M2_H5A": 2612.28,
+          "Final_M2_SB1C": 2612.28,
+          "Final_M2_H5A": 2594.22,
           "Final_M2_CandD": 537.97,
           "primaryRejections_H5A": 5,
           "primaryRejections_CandD": 0,
@@ -11787,11 +11787,11 @@
           },
           "Final_SB1C": {
             "x": 840,
-            "y": 1350
+            "y": 1150
           },
           "Final_H5A": {
             "x": 840,
-            "y": 1150
+            "y": 1250
           },
           "Final_CandD": {
             "x": 1320,
@@ -11815,13 +11815,13 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2594.22,
           "Stage8_M1_CandD": 1809.42,
-          "Final_M1_SB1C": 2612.28,
-          "Final_M1_H5A": 2594.22,
+          "Final_M1_SB1C": 2579.92,
+          "Final_M1_H5A": 2612.28,
           "Final_M1_CandD": 1809.42,
           "Stage8_M2_H5A": 2594.22,
           "Stage8_M2_CandD": 1809.42,
-          "Final_M2_SB1C": 2612.28,
-          "Final_M2_H5A": 2594.22,
+          "Final_M2_SB1C": 2579.92,
+          "Final_M2_H5A": 2612.28,
           "Final_M2_CandD": 1809.42,
           "primaryRejections_H5A": 5,
           "primaryRejections_CandD": 1,
@@ -11850,7 +11850,7 @@
           },
           "Final_SB1C": {
             "x": 7520,
-            "y": 1250
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7840,
@@ -11878,12 +11878,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 3558.2,
           "Stage8_M1_CandD": 2897.72,
-          "Final_M1_SB1C": 3227.44,
+          "Final_M1_SB1C": 3241.97,
           "Final_M1_H5A": 3558.2,
           "Final_M1_CandD": 2897.72,
           "Stage8_M2_H5A": 3558.2,
           "Stage8_M2_CandD": 2897.72,
-          "Final_M2_SB1C": 3227.44,
+          "Final_M2_SB1C": 3241.97,
           "Final_M2_H5A": 3558.2,
           "Final_M2_CandD": 2897.72,
           "primaryRejections_H5A": 5,
@@ -11912,8 +11912,8 @@
             "y": 680
           },
           "Final_SB1C": {
-            "x": 7737.89,
-            "y": 1150
+            "x": 7577.89,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7897.89,
@@ -11941,12 +11941,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 1965.4,
           "Stage8_M1_CandD": 1347.14,
-          "Final_M1_SB1C": 1788.85,
+          "Final_M1_SB1C": 1654.2,
           "Final_M1_H5A": 1965.4,
           "Final_M1_CandD": 1347.14,
           "Stage8_M2_H5A": 1965.4,
           "Stage8_M2_CandD": 1347.14,
-          "Final_M2_SB1C": 1788.85,
+          "Final_M2_SB1C": 1654.2,
           "Final_M2_H5A": 1965.4,
           "Final_M2_CandD": 1347.14,
           "primaryRejections_H5A": 5,
@@ -12039,7 +12039,7 @@
           },
           "Final_SB1C": {
             "x": 7780,
-            "y": 1350
+            "y": 1150
           },
           "Final_H5A": {
             "x": 8100,
@@ -12067,12 +12067,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 1520.13,
+          "Final_M1_SB1C": 1422.25,
           "Final_M1_H5A": 2461.3,
           "Final_M1_CandD": 341.76,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 1520.13,
+          "Final_M2_SB1C": 1422.25,
           "Final_M2_H5A": 2461.3,
           "Final_M2_CandD": 341.76,
           "primaryRejections_H5A": 4,
@@ -12228,7 +12228,7 @@
           },
           "Final_SB1C": {
             "x": 7737.89,
-            "y": 1250
+            "y": 1350
           },
           "Final_H5A": {
             "x": 8057.89,
@@ -12257,12 +12257,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2144.01,
           "Stage8_M1_CandD": 2262.74,
-          "Final_M1_SB1C": 2674.58,
+          "Final_M1_SB1C": 2703.93,
           "Final_M1_H5A": 2917.94,
           "Final_M1_CandD": 3250.36,
           "Stage8_M2_H5A": 2144.01,
           "Stage8_M2_CandD": 2262.74,
-          "Final_M2_SB1C": 3539.75,
+          "Final_M2_SB1C": 3572.65,
           "Final_M2_H5A": 3691.88,
           "Final_M2_CandD": 4237.98,
           "primaryRejections_H5A": 5,
@@ -12354,8 +12354,8 @@
             "y": 780
           },
           "Final_SB1C": {
-            "x": 7960,
-            "y": 1150
+            "x": 7800,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 8120,
@@ -12383,12 +12383,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 3386.15,
           "Stage8_M1_CandD": 520,
-          "Final_M1_SB1C": 3363.69,
+          "Final_M1_SB1C": 3229.61,
           "Final_M1_H5A": 3540.02,
           "Final_M1_CandD": 825.69,
           "Stage8_M2_H5A": 3386.15,
           "Stage8_M2_CandD": 520,
-          "Final_M2_SB1C": 3511.41,
+          "Final_M2_SB1C": 3390.34,
           "Final_M2_H5A": 3693.89,
           "Final_M2_CandD": 1131.37,
           "primaryRejections_H5A": 5,
@@ -12417,8 +12417,8 @@
             "y": 780
           },
           "Final_SB1C": {
-            "x": 6940,
-            "y": 1250
+            "x": 8000,
+            "y": 1150
           },
           "Final_H5A": {
             "x": 8320,
@@ -12446,12 +12446,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2897.74,
           "Stage8_M1_CandD": 549.42,
-          "Final_M1_SB1C": 1519.86,
+          "Final_M1_SB1C": 2540.32,
           "Final_M1_H5A": 2858.03,
           "Final_M1_CandD": 577,
           "Stage8_M2_H5A": 2977.25,
           "Stage8_M2_CandD": 572.71,
-          "Final_M2_SB1C": 1673.56,
+          "Final_M2_SB1C": 2699.04,
           "Final_M2_H5A": 3017.02,
           "Final_M2_CandD": 632.46,
           "primaryRejections_H5A": 6,
@@ -14463,14 +14463,14 @@
         "finalM1": {
           "sb1c": {
             "count": 104,
-            "mean": 1309.07,
-            "median": 1009.69,
-            "p50": 1009.69,
-            "p75": 1954.08,
+            "mean": 1312.11,
+            "median": 998.89,
+            "p50": 998.89,
+            "p75": 1989.18,
             "p90": 2763.89,
             "p95": 3143.31,
-            "p99": 3323.35,
-            "max": 3363.69
+            "p99": 3241.97,
+            "max": 3462.52
           },
           "h5a": {
             "count": 104,
@@ -14498,7 +14498,7 @@
         "finalM1_pairLevel": {
           "h5a": {
             "count": 174,
-            "mean": 1520.52,
+            "mean": 1520.41,
             "median": 1220.95,
             "p50": 1220.95,
             "p75": 2403.42,
@@ -14546,14 +14546,14 @@
         "finalM2": {
           "sb1c": {
             "count": 104,
-            "mean": 1582.04,
+            "mean": 1585.75,
             "median": 1234.43,
             "p50": 1234.43,
-            "p75": 2562.27,
+            "p75": 2579.92,
             "p90": 3177.88,
-            "p95": 3539.75,
+            "p95": 3572.65,
             "p99": 4008.84,
-            "max": 5227.96
+            "max": 5410.84
           },
           "h5a": {
             "count": 104,
@@ -14582,7 +14582,7 @@
       "widths": {
         "stage8H5A": 8060,
         "stage8CandD": 8053.33,
-        "finalSB1C": 10740,
+        "finalSB1C": 10780,
         "finalH5A": 11100,
         "finalCandD": 10773.33
       },
@@ -15196,8 +15196,8 @@
             "y": 680
           },
           "Final_SB1C": {
-            "x": 6960,
-            "y": 1350
+            "x": 7120,
+            "y": 1150
           },
           "Final_H5A": {
             "x": 7280,
@@ -15226,12 +15226,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 1788.85,
           "Stage8_M1_CandD": 2436.47,
-          "Final_M1_SB1C": 3323.35,
+          "Final_M1_SB1C": 3462.52,
           "Final_M1_H5A": 3608.64,
           "Final_M1_CandD": 4247.03,
           "Stage8_M2_H5A": 1788.85,
           "Stage8_M2_CandD": 2436.47,
-          "Final_M2_SB1C": 5227.96,
+          "Final_M2_SB1C": 5410.84,
           "Final_M2_H5A": 5546.35,
           "Final_M2_CandD": 6175.69,
           "primaryRejections_H5A": 4,
@@ -15260,8 +15260,8 @@
             "y": 780
           },
           "Final_SB1C": {
-            "x": 7060,
-            "y": 1150
+            "x": 6900,
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7220,
@@ -15289,12 +15289,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 2505.67,
+          "Final_M1_SB1C": 2421.57,
           "Final_M1_H5A": 1531.01,
           "Final_M1_CandD": 1280.16,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 2505.67,
+          "Final_M2_SB1C": 2421.57,
           "Final_M2_H5A": 1531.01,
           "Final_M2_CandD": 1280.16,
           "primaryRejections_H5A": 4,
@@ -15323,8 +15323,8 @@
             "y": 580
           },
           "Final_SB1C": {
-            "x": 7100,
-            "y": 1250
+            "x": 7080,
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7400,
@@ -15352,12 +15352,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 420.48,
+          "Final_M1_SB1C": 520,
           "Final_M1_H5A": 610.57,
           "Final_M1_CandD": 320,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 420.48,
+          "Final_M2_SB1C": 520,
           "Final_M2_H5A": 610.57,
           "Final_M2_CandD": 320,
           "primaryRejections_H5A": 5,
@@ -15386,8 +15386,8 @@
             "y": 780
           },
           "Final_SB1C": {
-            "x": 7180,
-            "y": 1350
+            "x": 7020,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7500,
@@ -15416,12 +15416,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2241.01,
           "Stage8_M1_CandD": 2893.37,
-          "Final_M1_SB1C": 1944.14,
+          "Final_M1_SB1C": 1770.85,
           "Final_M1_H5A": 2241.01,
           "Final_M1_CandD": 2893.37,
           "Stage8_M2_H5A": 3260.55,
           "Stage8_M2_CandD": 3908.66,
-          "Final_M2_SB1C": 2951.47,
+          "Final_M2_SB1C": 2784.6,
           "Final_M2_H5A": 3260.55,
           "Final_M2_CandD": 3908.66,
           "primaryRejections_H5A": 5,
@@ -15514,7 +15514,7 @@
           },
           "Final_SB1C": {
             "x": 7280,
-            "y": 1250
+            "y": 1350
           },
           "Final_H5A": {
             "x": 7600,
@@ -15543,12 +15543,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 3052.1,
           "Stage8_M1_CandD": 3523.88,
-          "Final_M1_SB1C": 2725.25,
+          "Final_M1_SB1C": 2733.83,
           "Final_M1_H5A": 3052.1,
           "Final_M1_CandD": 3523.88,
           "Stage8_M2_H5A": 3928.61,
           "Stage8_M2_CandD": 4402.91,
-          "Final_M2_SB1C": 3603.55,
+          "Final_M2_SB1C": 3609.38,
           "Final_M2_H5A": 3928.61,
           "Final_M2_CandD": 4402.91,
           "primaryRejections_H5A": 4,
@@ -15577,8 +15577,8 @@
             "y": 680
           },
           "Final_SB1C": {
-            "x": 7400,
-            "y": 1350
+            "x": 7240,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7720,
@@ -15606,12 +15606,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 1319.39,
           "Stage8_M1_CandD": 765.51,
-          "Final_M1_SB1C": 1091.79,
+          "Final_M1_SB1C": 903.55,
           "Final_M1_H5A": 1319.39,
           "Final_M1_CandD": 765.51,
           "Stage8_M2_H5A": 1319.39,
           "Stage8_M2_CandD": 765.51,
-          "Final_M2_SB1C": 1091.79,
+          "Final_M2_SB1C": 903.55,
           "Final_M2_H5A": 1319.39,
           "Final_M2_CandD": 765.51,
           "primaryRejections_H5A": 3,
@@ -15705,8 +15705,8 @@
             "y": 580
           },
           "Final_SB1C": {
-            "x": 7560,
-            "y": 1350
+            "x": 7400,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7880,
@@ -15734,12 +15734,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 1145.6,
+          "Final_M1_SB1C": 963.33,
           "Final_M1_H5A": 1196.16,
           "Final_M1_CandD": 637.81,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 1145.6,
+          "Final_M2_SB1C": 963.33,
           "Final_M2_H5A": 1196.16,
           "Final_M2_CandD": 637.81,
           "primaryRejections_H5A": 4,
@@ -15768,8 +15768,8 @@
             "y": 680
           },
           "Final_SB1C": {
-            "x": 7737.89,
-            "y": 1150
+            "x": 7577.89,
+            "y": 1250
           },
           "Final_H5A": {
             "x": 7897.89,
@@ -15797,12 +15797,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 1965.4,
           "Stage8_M1_CandD": 1347.14,
-          "Final_M1_SB1C": 1788.85,
+          "Final_M1_SB1C": 1654.2,
           "Final_M1_H5A": 1965.4,
           "Final_M1_CandD": 1347.14,
           "Stage8_M2_H5A": 1965.4,
           "Stage8_M2_CandD": 1347.14,
-          "Final_M2_SB1C": 1788.85,
+          "Final_M2_SB1C": 1654.2,
           "Final_M2_H5A": 1965.4,
           "Final_M2_CandD": 1347.14,
           "primaryRejections_H5A": 5,
@@ -15832,7 +15832,7 @@
           },
           "Final_SB1C": {
             "x": 7780,
-            "y": 1350
+            "y": 1150
           },
           "Final_H5A": {
             "x": 8100,
@@ -15860,12 +15860,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 0,
           "Stage8_M1_CandD": 0,
-          "Final_M1_SB1C": 1520.13,
+          "Final_M1_SB1C": 1422.25,
           "Final_M1_H5A": 2461.3,
           "Final_M1_CandD": 341.76,
           "Stage8_M2_H5A": 0,
           "Stage8_M2_CandD": 0,
-          "Final_M2_SB1C": 1520.13,
+          "Final_M2_SB1C": 1422.25,
           "Final_M2_H5A": 2461.3,
           "Final_M2_CandD": 341.76,
           "primaryRejections_H5A": 4,
@@ -15895,7 +15895,7 @@
           },
           "Final_SB1C": {
             "x": 7737.89,
-            "y": 1250
+            "y": 1350
           },
           "Final_H5A": {
             "x": 8057.89,
@@ -15924,12 +15924,12 @@
           "layer": "schema",
           "Stage8_M1_H5A": 2144.01,
           "Stage8_M1_CandD": 2262.74,
-          "Final_M1_SB1C": 2674.58,
+          "Final_M1_SB1C": 2703.93,
           "Final_M1_H5A": 2917.94,
           "Final_M1_CandD": 3250.36,
           "Stage8_M2_H5A": 2144.01,
           "Stage8_M2_CandD": 2262.74,
-          "Final_M2_SB1C": 3539.75,
+          "Final_M2_SB1C": 3572.65,
           "Final_M2_H5A": 3691.88,
           "Final_M2_CandD": 4237.98,
           "primaryRejections_H5A": 5,
