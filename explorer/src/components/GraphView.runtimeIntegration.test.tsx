@@ -13,12 +13,11 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
   const createMockNode = (id: string, x = 100, y = 100) => {
     if (!mockNodeObjMap[id]) {
       let curPos = { x, y };
-      const mockCollection = {
-        length: 0,
-        forEach: vi.fn(),
-        removeClass: vi.fn().mockReturnThis(),
-        addClass: vi.fn().mockReturnThis(),
-      };
+      const mockCollection: any = [];
+      mockCollection.removeClass = vi.fn().mockReturnThis();
+      mockCollection.addClass = vi.fn().mockReturnThis();
+      mockCollection.toArray = () => mockCollection;
+      mockCollection.empty = () => true;
 
       const mockEles = {
         length: 1,
@@ -54,18 +53,30 @@ const { mockCy, mockCytoscapeFn, mockLayoutRun, listeners, mockNodeObjMap } = vi
     width: vi.fn().mockReturnValue(800),
     height: vi.fn().mockReturnValue(600),
     resize: vi.fn(),
-    elements: vi.fn().mockReturnValue({
-      removeClass: vi.fn().mockReturnThis(),
-      addClass: vi.fn().mockReturnThis(),
-      unselect: vi.fn().mockReturnThis(),
-      remove: vi.fn(),
+    elements: vi.fn().mockImplementation(() => {
+      const arr = Object.values(mockNodeObjMap);
+      (arr as any).forEach = Array.prototype.forEach.bind(arr);
+      (arr as any).removeClass = vi.fn().mockReturnThis();
+      (arr as any).addClass = vi.fn().mockReturnThis();
+      (arr as any).unselect = vi.fn().mockReturnThis();
+      (arr as any).remove = vi.fn();
+      (arr as any).toArray = () => arr;
+      (arr as any).empty = () => arr.length === 0;
+      return arr;
     }),
     nodes: vi.fn().mockImplementation(() => {
       const arr = Object.values(mockNodeObjMap);
       (arr as any).forEach = Array.prototype.forEach.bind(arr);
       return arr;
     }),
-    edges: vi.fn().mockReturnValue([]),
+    edges: vi.fn().mockImplementation(() => {
+      const arr: any[] = [];
+      arr.removeClass = vi.fn().mockReturnThis();
+      arr.addClass = vi.fn().mockReturnThis();
+      arr.toArray = () => arr;
+      arr.empty = () => true;
+      return arr;
+    }),
     add: vi.fn((els) => {
       if (Array.isArray(els)) {
         els.forEach((el) => {

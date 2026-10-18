@@ -50,6 +50,7 @@ export function deriveVisualClasses(
   if (!cy || typeof cy.elements !== 'function') return result;
 
   const elements = cy.elements();
+  if (!elements || typeof (elements as any).forEach !== 'function') return result;
   elements.forEach((ele) => {
     result.set(ele.id(), new Set<string>());
   });
