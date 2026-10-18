@@ -72,9 +72,9 @@
       "name": "movie",
       "description": "Salesforce DX Architecture Analysis",
       "sourcePath": "Movie-App/force-app/main/default",
-      "createdAt": "2026-10-18T12:02:05.865Z",
-      "updatedAt": "2026-10-18T12:02:05.865Z",
-      "lastAnalyzedAt": "2026-10-18T12:02:05.865Z",
+      "createdAt": "2026-10-18T15:18:39.542Z",
+      "updatedAt": "2026-10-18T15:18:39.542Z",
+      "lastAnalyzedAt": "2026-10-18T15:18:39.542Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 9,
       "dependencyCount": 16,
@@ -198,7 +198,7 @@
     "movie": {
       "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "sha256:74989f25ef720018b3f94edd539351fc6deb4ef52da6e8b258e4ff53698abee0",
+      "fileHash": "sha256:e5f53c63c6e7115d905553640b1b07480eb3d04e4a65e0763d807f257be08428",
       "nodeCount": 9,
       "edgeCount": 16
     },
