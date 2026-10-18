@@ -662,16 +662,19 @@
       }
     ],
     "crossings": {
-      "preSB1C": {},
+      "preSB1C": {
+        "total": 102045
+      },
       "sb1cFinal": {
+        "total": 101093,
         "primaryPrimary": 9896,
         "primaryBridge": 2473,
         "bridgeBridge": 180
       }
     },
     "performance": {
-      "stage8IsolatedTime": 145,
-      "fullPipelineTime": 1671
+      "stage8IsolatedTime": 102,
+      "fullPipelineTime": 1474
     }
   },
   "BQC": {
@@ -1339,16 +1342,19 @@
       }
     ],
     "crossings": {
-      "preSB1C": {},
+      "preSB1C": {
+        "total": 29066
+      },
       "sb1cFinal": {
+        "total": 28291,
         "primaryPrimary": 5832,
         "primaryBridge": 535,
         "bridgeBridge": 30
       }
     },
     "performance": {
-      "stage8IsolatedTime": 91,
-      "fullPipelineTime": 1121
+      "stage8IsolatedTime": 52,
+      "fullPipelineTime": 950
     }
   },
   "PBIM": {
@@ -1575,14 +1581,14 @@
       },
       "s8_final": {
         "min": 388.9730067755345,
-        "p25": 2238.9458242134738,
+        "p25": 2247.6405302720896,
         "median": 2249.644416346726,
         "p75": 2427.8591392418134,
         "p90": 2831.3098777030345,
         "p95": 3324.007919629708,
         "p99": 3654.3417731924424,
         "max": 3670.217977177923,
-        "mean": 2321.7151246015765
+        "mean": 2321.665896762455
       },
       "s7_final": {
         "min": 403.11288741492746,
@@ -1593,7 +1599,7 @@
         "p95": 6645.482551299941,
         "p99": 7331.588301834979,
         "max": 7348.375935463563,
-        "mean": 2830.6069875140383
+        "mean": 2831.0307824400193
       }
     },
     "localDensity": {
@@ -2015,16 +2021,19 @@
       }
     ],
     "crossings": {
-      "preSB1C": {},
+      "preSB1C": {
+        "total": 312209
+      },
       "sb1cFinal": {
-        "primaryPrimary": 31829,
+        "total": 315914,
+        "primaryPrimary": 31805,
         "primaryBridge": 13341,
         "bridgeBridge": 1801
       }
     },
     "performance": {
-      "stage8IsolatedTime": 454,
-      "fullPipelineTime": 10309
+      "stage8IsolatedTime": 254,
+      "fullPipelineTime": 16497
     }
   }
 }
