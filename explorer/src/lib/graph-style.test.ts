@@ -107,11 +107,12 @@ describe('graph-style', () => {
       expect(styles.length).toBeGreaterThan(0);
     });
 
-    it('includes base node selector', () => {
+    it('includes base node selector without min-zoomed-font-size conflict', () => {
       const styles = getGraphStyles();
       const nodeStyle = styles.find(s => s.selector === 'node');
       expect(nodeStyle).toBeDefined();
       expect((nodeStyle?.style as any)['label']).toBe('data(label)');
+      expect((nodeStyle?.style as any)['min-zoomed-font-size']).toBeUndefined();
     });
 
     it('includes selection style for nodes', () => {
@@ -206,7 +207,16 @@ describe('graph-style', () => {
 
     it('differentiates Object vs CustomObject and Field vs CustomField visually', () => {
       expect(NODE_COLORS.Object.background).not.toBe(NODE_COLORS.CustomObject.background);
+      expect(NODE_COLORS.Object.border).not.toBe(NODE_COLORS.CustomObject.border);
+      expect(NODE_SHAPE_BY_TYPE.Object).not.toBe(NODE_SHAPE_BY_TYPE.CustomObject);
+      expect(NODE_SHAPE_BY_TYPE.Object).toBe('diamond');
+      expect(NODE_SHAPE_BY_TYPE.CustomObject).toBe('octagon');
+
       expect(NODE_COLORS.Field.background).not.toBe(NODE_COLORS.CustomField.background);
+      expect(NODE_COLORS.Field.border).not.toBe(NODE_COLORS.CustomField.border);
+      expect(NODE_SHAPE_BY_TYPE.Field).not.toBe(NODE_SHAPE_BY_TYPE.CustomField);
+      expect(NODE_SHAPE_BY_TYPE.Field).toBe('rhomboid');
+      expect(NODE_SHAPE_BY_TYPE.CustomField).toBe('cut-rectangle');
     });
   });
 
