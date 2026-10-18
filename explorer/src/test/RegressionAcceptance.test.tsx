@@ -14,16 +14,34 @@ vi.mock('cytoscape', () => {
     width: vi.fn().mockReturnValue(800),
     height: vi.fn().mockReturnValue(600),
     resize: vi.fn(),
-    elements: vi.fn().mockReturnValue({
-      removeClass: vi.fn().mockReturnThis(),
-      addClass: vi.fn().mockReturnThis(),
-      unselect: vi.fn().mockReturnThis(),
-      remove: vi.fn().mockReturnThis(),
+    elements: vi.fn().mockImplementation(() => {
+      const arr: any[] = [];
+      arr.removeClass = vi.fn().mockReturnThis();
+      arr.addClass = vi.fn().mockReturnThis();
+      arr.unselect = vi.fn().mockReturnThis();
+      arr.remove = vi.fn().mockReturnThis();
+      arr.toArray = () => arr;
+      arr.empty = () => arr.length === 0;
+      return arr;
     }),
     add: vi.fn(),
     layout: vi.fn().mockReturnValue({ run: vi.fn() }),
-    nodes: vi.fn().mockReturnValue([]),
-    edges: vi.fn().mockReturnValue([]),
+    nodes: vi.fn().mockImplementation(() => {
+      const arr: any[] = [];
+      arr.removeClass = vi.fn().mockReturnThis();
+      arr.addClass = vi.fn().mockReturnThis();
+      arr.toArray = () => arr;
+      arr.empty = () => true;
+      return arr;
+    }),
+    edges: vi.fn().mockImplementation(() => {
+      const arr: any[] = [];
+      arr.removeClass = vi.fn().mockReturnThis();
+      arr.addClass = vi.fn().mockReturnThis();
+      arr.toArray = () => arr;
+      arr.empty = () => true;
+      return arr;
+    }),
     batch: vi.fn((fn: () => void) => fn()),
     on: vi.fn(),
     animate: vi.fn(),

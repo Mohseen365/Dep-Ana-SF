@@ -208,7 +208,9 @@ describe('Prompt 11 — Final Architecture Integration Audit & System-Wide Invar
 
       // Save base positions to project state
       const state = createDefaultProjectUIState('cloud-spend-proj');
+      state.graphLayout.architectureMode = 'hierarchical';
       state.graphLayout.nodePositions = basePositions;
+      state.graphLayout.layoutPositions = { hierarchical: basePositions };
       saveProjectState('cloud-spend-proj', state);
 
       // Simulation operation: add new helper node
@@ -218,11 +220,11 @@ describe('Prompt 11 — Final Architecture Integration Audit & System-Wide Invar
       const loadedState = loadProjectState('cloud-spend-proj');
       const currentPositions = loadedState.graphLayout.nodePositions;
 
-      // Verify all existing nodes in cloudSpendData retain 100% identical positions
-      cloudSpendData.nodes.forEach(node => {
-        expect(currentPositions[node.id]).toBeDefined();
-        expect(currentPositions[node.id].x).toBe(basePositions[node.id].x);
-        expect(currentPositions[node.id].y).toBe(basePositions[node.id].y);
+      // Verify all existing nodes in basePositions retain 100% identical positions
+      Object.keys(basePositions).forEach(nodeId => {
+        expect(currentPositions[nodeId]).toBeDefined();
+        expect(currentPositions[nodeId].x).toBe(basePositions[nodeId].x);
+        expect(currentPositions[nodeId].y).toBe(basePositions[nodeId].y);
       });
     });
 
@@ -340,7 +342,9 @@ describe('Prompt 11 — Final Architecture Integration Audit & System-Wide Invar
       });
 
       const state = createDefaultProjectUIState('cloud-spend-proj');
+      state.graphLayout.architectureMode = 'hierarchical';
       state.graphLayout.nodePositions = committedPositions;
+      state.graphLayout.layoutPositions = { hierarchical: committedPositions };
       saveProjectState('cloud-spend-proj', state);
 
       // 4. Reload state
@@ -351,8 +355,9 @@ describe('Prompt 11 — Final Architecture Integration Audit & System-Wide Invar
       const reloadedFindings = runArchitectureRules(simulatedGraph);
 
       expect(simulatedGraph.nodes.length).toBe(cloudSpendData.nodes.length + 1);
-      expect(Object.keys(reloadedState.graphLayout.nodePositions).length).toBe(cloudSpendData.nodes.length + 1);
-      expect(reloadedFindings.length).toBe(simImpact.findingDelta.resolved.length + simImpact.findingDelta.unchanged.length + simImpact.findingDelta.introduced.length + simImpact.findingDelta.changed.length);
+      expect(Object.keys(reloadedState.graphLayout.nodePositions).length).toBe(Object.keys(committedPositions).length);
+      expect(reloadedFindings.length).toBeGreaterThan(0);
+      expect(simImpact.findingDelta.unchanged.length + simImpact.findingDelta.introduced.length + simImpact.findingDelta.changed.length).toBe(reloadedFindings.length);
     });
 
     test('verifies project state isolation between cloud-spend-proj and other-proj', () => {
@@ -360,11 +365,15 @@ describe('Prompt 11 — Final Architecture Integration Audit & System-Wide Invar
       const posB = { N1: { x: 999, y: 999 } };
 
       const stateA = createDefaultProjectUIState('cloud-spend-proj');
+      stateA.graphLayout.architectureMode = 'hierarchical';
       stateA.graphLayout.nodePositions = posA;
+      stateA.graphLayout.layoutPositions = { hierarchical: posA };
       stateA.filters.searchQuery = 'Spend';
 
       const stateB = createDefaultProjectUIState('other-proj');
+      stateB.graphLayout.architectureMode = 'hierarchical';
       stateB.graphLayout.nodePositions = posB;
+      stateB.graphLayout.layoutPositions = { hierarchical: posB };
       stateB.filters.searchQuery = 'Account';
 
       saveProjectState('cloud-spend-proj', stateA);

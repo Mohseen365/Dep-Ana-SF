@@ -6,7 +6,7 @@ import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './la
 import { discoverDomains, extractDomainStem } from './layout/domains';
 import { classifyAllFeatureRoles, type FeatureRole, type FeatureRoleContext } from './layout/feature-roles';
 import { discoverFeatures, type FeatureDiscoveryResult } from './layout/features';
-import { computeGlobalDomainLayout, computeGlobalFeatureLayout, type FeatureRegion } from './layout/global-layout';
+import { computeGlobalDomainLayout, computeGlobalFeatureLayout, buildDomainGraph, type FeatureRegion } from './layout/global-layout';
 import { reduceEdgeCrossings } from './layout/ordering';
 import { computeLocalNodeLayout } from './layout/local-layout';
 import {
@@ -320,8 +320,15 @@ export function computeArchitectureLayoutWithMetadata(
   // Construct LayoutGraphIndex immediately after Stage 0 normalization
   const index = createLayoutGraphIndex(safeNodes, safeEdges);
 
-  // Step 1: Base Architecture Analysis (Wave 1A)
-  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
+  // Step 3: Domain Discovery (Wave 1C)
+  const domainDiscovery = discoverDomains(safeNodes, safeEdges);
+  const domainMap = new Map<string, string>();
+  domainDiscovery.assignments.forEach((assignment, nodeId) => {
+    domainMap.set(nodeId, assignment.primaryDomain);
+  });
+
+  // Step 1: Base Architecture Analysis (Wave 1A) with domainMap pre-supplied to avoid re-discovering domains
+  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index, domainMap });
 
   // Step 2: Layer Classification (Wave 1B)
   const layerMap = new Map<string, ArchitectureLayer>();
@@ -329,13 +336,6 @@ export function computeArchitectureLayoutWithMetadata(
     layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
   });
   analysis = applyLayerClassification(analysis, layerMap);
-
-  // Step 3: Domain Discovery (Wave 1C)
-  const domainDiscovery = discoverDomains(safeNodes, safeEdges);
-  const domainMap = new Map<string, string>();
-  domainDiscovery.assignments.forEach((assignment, nodeId) => {
-    domainMap.set(nodeId, assignment.primaryDomain);
-  });
   analysis = applyDomainClassification(analysis, domainMap);
 
   // Step 4: Centrality & Spatial Roles (Wave 3B)
@@ -378,6 +378,7 @@ export function computeArchitectureLayoutWithMetadata(
     if (typeof console !== 'undefined' && console.debug) {
       console.debug('[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called');
     }
+    const featureGraph = buildDomainGraph(safeNodes, safeEdges, domainDiscovery, index, featureMap);
     const featureLayoutResult = computeGlobalFeatureLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,
@@ -390,6 +391,7 @@ export function computeArchitectureLayoutWithMetadata(
       domainDiscovery,
       featureDiscovery,
       featureMap,
+      domainGraph: featureGraph,
       index,
     });
     globalDomainResult = featureLayoutResult;
@@ -398,6 +400,7 @@ export function computeArchitectureLayoutWithMetadata(
     if (typeof console !== 'undefined' && console.debug) {
       console.debug('[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called');
     }
+    const domainGraph = buildDomainGraph(safeNodes, safeEdges, domainDiscovery, index, domainMap);
     globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,
@@ -407,6 +410,7 @@ export function computeArchitectureLayoutWithMetadata(
       domainDiscovery,
       layerMap,
       domainMap,
+      domainGraph,
       index,
     });
     activeSpatialMap = domainMap;
