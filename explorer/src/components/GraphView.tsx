@@ -387,6 +387,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, []);
 
+  // Ref tracking for graphStructureKey and discoveryResult memoization
+  const prevStructureKeyRef = useRef<string>('');
+  const discoveryResultRef = useRef<FeatureDiscoveryResult | null>(null);
+
   // Initial mount ref to prevent duplicate element teardown / re-layout on mount
   const isInitialMountRef = useRef<boolean>(true);
 
@@ -472,8 +476,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
   // Derive Feature Discovery Result deterministically based on structure fingerprint
   const discoveryResult: FeatureDiscoveryResult = useMemo(() => {
-    return discoverFeatures(nodes, edges);
-  }, [graphStructureKey]);
+    if (!discoveryResultRef.current || prevStructureKeyRef.current !== graphStructureKey) {
+      discoveryResultRef.current = discoverFeatures(nodes, edges);
+      prevStructureKeyRef.current = graphStructureKey;
+    }
+    return discoveryResultRef.current;
+  }, [graphStructureKey, nodes, edges]);
 
   // Build nodeId → featureId map for edge inter-feature classification (Hybrid mode only)
   const featureAssignmentMap = useMemo((): Map<string, string> | undefined => {
@@ -850,13 +858,18 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         animate: false,
         architectureMode,
       });
-      markLayoutEnd('reset', architectureMode);
       if (requestId !== layoutRequestRef.current) return;
+      markLayoutEnd('reset', architectureMode);
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
       captureAndPersistPositions();
     }
   }, [architectureMode, captureAndPersistPositions, markLayoutStart, markLayoutEnd, prefersReducedMotion]);
+
+  const selectedNodeIdRef = useRef<string | null>(selectedNodeId);
+  useEffect(() => {
+    selectedNodeIdRef.current = selectedNodeId;
+  }, [selectedNodeId]);
 
   // Expose imperative control methods
   useImperativeHandle(ref, () => ({
@@ -882,8 +895,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     },
     centerSelected: () => {
-      if (cyRef.current && selectedNodeId) {
-        const ele = cyRef.current.getElementById(selectedNodeId);
+      if (cyRef.current && selectedNodeIdRef.current) {
+        const ele = cyRef.current.getElementById(selectedNodeIdRef.current);
         if (ele.length > 0) {
           if (prefersReducedMotion) {
             cyRef.current.center(ele);
@@ -894,7 +907,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     },
     resetLayout: executeResetLayout,
-  }), [selectedNodeId, executeResetLayout, prefersReducedMotion]);
+  }), [executeResetLayout, prefersReducedMotion]);
 
   // Cytoscape Initialization & Teardown
   useEffect(() => {
@@ -995,8 +1008,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         architectureMode,
         fit: true,
       });
-      markLayoutEnd('initial', architectureMode);
       if (requestId === layoutRequestRef.current) {
+        markLayoutEnd('initial', architectureMode);
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
         captureAndPersistPositions();
@@ -1064,14 +1077,14 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const lodConfig = computeCanvasLODLevel({ zoom: currentZoom, nodeCount, edgeCount });
 
       cy.batch(() => {
-        cy.elements().removeClass('zoom-far zoom-mid zoom-near lod-0 lod-1 lod-2 lod-3 lod-4');
+        cy.elements().removeClass('zoom-far zoom-mid zoom-near');
 
         if (lodConfig.lodLevel >= 2) {
-          cy.elements().addClass(`zoom-far lod-${lodConfig.lodLevel}`);
+          cy.elements().addClass('zoom-far');
         } else if (lodConfig.lodLevel === 1) {
-          cy.elements().addClass(`zoom-mid lod-${lodConfig.lodLevel}`);
+          cy.elements().addClass('zoom-mid');
         } else {
-          cy.elements().addClass(`zoom-near lod-${lodConfig.lodLevel}`);
+          cy.elements().addClass('zoom-near');
         }
       });
     };
@@ -1097,7 +1110,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       const nodeId = node.id();
       const nodeObj = nodesRef.current.find(n => n.id === nodeId);
 
-      setHoveredNodeId(nodeId);
+      setHoveredNodeId(prev => (prev === nodeId ? prev : nodeId));
 
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
 
@@ -1117,7 +1130,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cy.on('mouseout', 'node', () => {
-      setHoveredNodeId(null);
+      setHoveredNodeId(prev => (prev === null ? prev : null));
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       setHoverCard(null);
     });
@@ -1151,10 +1164,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     cy.on('mouseleave', () => {
-      setHoveredNodeId(null);
+      setHoveredNodeId(prev => (prev === null ? prev : null));
       if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       setHoverCard(null);
-      document.body.style.cursor = 'default';
+      if (containerRef.current) {
+        containerRef.current.style.cursor = 'default';
+      }
     });
 
     bindGraphInteractions(cy, {
@@ -1614,11 +1629,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       onSelectNode(null);
       onSelectEdge('');
       if (onFocusChangeRef.current) {
-        onFocusChangeRef.current({ enabled: false, focusNodeId: null });
+        onFocusChangeRef.current({ enabled: false, focusNodeId: null, direction: 'both', depth: 1 });
       }
     } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       e.preventDefault();
-      if (selectedNodeId) {
+      if (!selectedNodeId && nodes.length > 0) {
+        onSelectNode(nodes[0]);
+      } else if (selectedNodeId) {
         const currNode = cy.getElementById(selectedNodeId);
         if (currNode.length > 0) {
           const neighbors = currNode.neighborhood('node');
@@ -1683,7 +1700,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       aria-label="Salesforce Architecture Dependency Graph"
       data-architecture-mode={architectureMode}
       data-layout-mode={layoutMode}
-      data-layout-running={isLayoutRunning}
+      data-layout-running={isLayoutRunning ? 'true' : 'false'}
       data-node-count={nodes.length}
       data-edge-count={edges.length}
     >
