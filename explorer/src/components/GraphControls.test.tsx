@@ -333,14 +333,66 @@ describe('GraphControls Component', () => {
       />
     );
 
-    const toolbar = screen.getByRole('toolbar');
     const directionSelect = screen.getByRole('combobox', { name: 'Direction' });
 
     directionSelect.focus();
     expect(document.activeElement).toBe(directionSelect);
 
     // ArrowDown inside select should not hijack focus to next control
-    fireEvent.keyDown(toolbar, { key: 'ArrowDown', target: directionSelect });
+    fireEvent.keyDown(directionSelect, { key: 'ArrowDown' });
     expect(document.activeElement).toBe(directionSelect);
+  });
+
+  /* T1-9 — Orientation Prop Test */
+  it('supports vertical orientation when orientation prop is provided', () => {
+    render(
+      <GraphControls
+        onZoomIn={vi.fn()}
+        onZoomOut={vi.fn()}
+        onFitView={vi.fn()}
+        onCenterSelected={vi.fn()}
+        onResetLayout={vi.fn()}
+        hasSelectedNode={true}
+        orientation="vertical"
+      />
+    );
+
+    const toolbar = screen.getByRole('toolbar', { name: 'Graph controls' });
+    expect(toolbar).toHaveAttribute('aria-orientation', 'vertical');
+  });
+
+  /* T1-8 — getComputedStyle Filter Test */
+  it('excludes hidden or display:none elements from interactive focusable list', () => {
+    const { container } = render(
+      <GraphControls
+        onZoomIn={vi.fn()}
+        onZoomOut={vi.fn()}
+        onFitView={vi.fn()}
+        onCenterSelected={vi.fn()}
+        onResetLayout={vi.fn()}
+        hasSelectedNode={true}
+      />
+    );
+
+    const zoomOutBtn = screen.getByLabelText('Zoom Out');
+    // Simulate hidden styling
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element) => {
+      if (el === zoomOutBtn) {
+        return { display: 'none' } as CSSStyleDeclaration;
+      }
+      return { display: 'block' } as CSSStyleDeclaration;
+    });
+
+    const zoomInBtn = screen.getByLabelText('Zoom In');
+    const fitViewBtn = screen.getByLabelText('Fit View');
+
+    zoomInBtn.focus();
+    const toolbar = screen.getByRole('toolbar');
+
+    // ArrowRight should skip zoomOutBtn because display: 'none'
+    fireEvent.keyDown(toolbar, { key: 'ArrowRight' });
+    expect(fitViewBtn).toHaveAttribute('tabindex', '0');
+
+    vi.restoreAllMocks();
   });
 });

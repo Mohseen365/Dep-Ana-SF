@@ -30,6 +30,7 @@ export interface GraphControlsProps {
   onNavigateForward?: () => void;
   onExportPNG?: () => void;
   onShowShortcutsHelp?: () => void;
+  orientation?: 'horizontal' | 'vertical';
 }
 
 export const GraphControls: React.FC<GraphControlsProps> = React.memo(function GraphControls({
@@ -59,19 +60,41 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
   onNavigateForward,
   onExportPNG,
   onShowShortcutsHelp,
+  orientation = 'horizontal',
 }) {
   const [activeControlIndex, setActiveControlIndex] = React.useState<number>(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
+  // [N18] Memoize focus state to prevent unnecessary component re-renders
+  const memoizedFocusState = React.useMemo(() => {
+    if (!focusState) return undefined;
+    return {
+      enabled: focusState.enabled,
+      focusNodeId: focusState.focusNodeId,
+      direction: focusState.direction,
+      depth: focusState.depth,
+    };
+  }, [
+    focusState?.enabled,
+    focusState?.focusNodeId,
+    focusState?.direction,
+    focusState?.depth,
+  ]);
+
+  // [T1-8] getInteractiveElements filter using getComputedStyle (display, visibility, opacity)
   const getInteractiveElements = React.useCallback((container: HTMLElement): HTMLElement[] => {
     const selector =
-      'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+      'button:not([disabled]), select:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
     return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => {
       if (el.getAttribute('aria-hidden') === 'true') return false;
       if (typeof window !== 'undefined' && window.getComputedStyle) {
         try {
           const computed = window.getComputedStyle(el);
-          if (computed && computed.display === 'none') return false;
+          if (computed) {
+            if (computed.display === 'none') return false;
+            if (computed.visibility === 'hidden') return false;
+            if (computed.opacity === '0') return false;
+          }
         } catch {
           // Fallback if getComputedStyle fails in mock environment
         }
@@ -116,6 +139,7 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
   const handleContainerFocus = React.useCallback(
     (e: React.FocusEvent<HTMLDivElement>) => {
       if (!containerRef.current) return;
+      if (!containerRef.current.contains(e.target as Node)) return;
       const controls = getInteractiveElements(containerRef.current);
       const target = e.target as HTMLElement;
       const index = controls.indexOf(target);
@@ -132,9 +156,9 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
 
       const container = containerRef.current || e.currentTarget;
 
-      // N20 Focus containment guard: ensure target & activeElement are within toolbar container
+      // [N20] Focus containment guard: ensure both activeElement & target are within toolbar container
       const activeElement = document.activeElement as HTMLElement;
-      if (!container.contains(activeElement) && !container.contains(e.target as Node)) {
+      if (!container.contains(activeElement) || !container.contains(e.target as Node)) {
         return;
       }
 
@@ -192,15 +216,15 @@ export const GraphControls: React.FC<GraphControlsProps> = React.memo(function G
       className="graph-controls-floating"
       role="toolbar"
       aria-label="Graph controls"
-      aria-orientation="horizontal"
+      aria-orientation={orientation}
       onKeyDown={handleToolbarKeyDown}
       onFocus={handleContainerFocus}
     >
       {/* Analysis Section */}
-      {focusState && onFocusChange && (
+      {memoizedFocusState && onFocusChange && (
         <div className="graph-control-group analysis-group" role="group" aria-label="Analysis controls">
           <FocusControls
-            focusState={focusState}
+            focusState={memoizedFocusState}
             onFocusChange={onFocusChange}
             hasSelectedNode={hasSelectedNode}
             selectedNodeId={selectedNodeId}
