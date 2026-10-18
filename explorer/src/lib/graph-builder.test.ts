@@ -223,6 +223,7 @@ describe('graph-builder', () => {
       expect(node?.data.fanIn).toBe(2);
       expect(node?.data.fanOut).toBe(3);
       expect(node?.data.isTest).toBe(false);
+      expect(typeof node?.data.isTest).toBe('boolean');
       expect(node?.data.hasCycles).toBe(true);
       expect(node?.data.hasUnresolved).toBe(true);
 
@@ -231,6 +232,13 @@ describe('graph-builder', () => {
       );
       expect(testNode?.data.type).toBe('ApexClass');
       expect(testNode?.data.isTest).toBe(true);
+      expect(typeof testNode?.data.isTest).toBe('boolean');
+
+      const externalNode = elements.find(
+        el => 'data' in el && el.data.id === 'External:ExternalPaymentGateway'
+      );
+      expect(externalNode?.data.isTest).toBe(false);
+      expect(typeof externalNode?.data.isTest).toBe('boolean');
     });
 
     it('preserves node type classification for Object and CustomObject in node data', () => {

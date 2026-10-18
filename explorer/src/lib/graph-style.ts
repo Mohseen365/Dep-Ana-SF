@@ -125,7 +125,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       selector: 'node',
       style: {
         'label': 'data(label)',
-        'min-zoomed-font-size': 10,
         'background-color': '#3b82f6',
         'color': '#f8fafc',
         'font-size': `${fontSize}px`,
