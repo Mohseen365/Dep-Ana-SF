@@ -43,7 +43,11 @@ export { GraphSlot } from './components/GraphSlot';
 
 function useProjectSafe() {
   try {
-    return useProject();
+    const project = useProject();
+    if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && !project) {
+      console.warn('[App] useProjectSafe resolved uninitialized ProjectContext.');
+    }
+    return project;
   } catch (err) {
     if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
       console.warn('[App] useProjectSafe context resolution skipped:', err);
@@ -59,6 +63,16 @@ export interface CheckIsNotAnalyzedParams {
   error?: Error | null;
   activeData?: unknown;
   activeProjectId?: string;
+}
+
+export function isNotAnalyzed(
+  statusOrParams?: string | null | CheckIsNotAnalyzedParams
+): boolean {
+  if (!statusOrParams) return false;
+  if (typeof statusOrParams === 'string') {
+    return statusOrParams === 'NOT_ANALYZED';
+  }
+  return checkIsNotAnalyzed(statusOrParams);
 }
 
 export function checkIsNotAnalyzed({
@@ -85,7 +99,11 @@ export function checkIsNotAnalyzed({
 
 function useProjectStateSafe() {
   try {
-    return useProjectState();
+    const projectState = useProjectState();
+    if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && !projectState) {
+      console.warn('[App] useProjectStateSafe resolved uninitialized ProjectStateContext.');
+    }
+    return projectState;
   } catch (err) {
     if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
       console.warn('[App] useProjectStateSafe context resolution skipped:', err);
@@ -235,11 +253,13 @@ function AppContent() {
   const [committedMutatedGraph, setCommittedMutatedGraph] = useState<ExplorerDataSchema | null>(null);
   const activeData = committedMutatedGraph || data;
 
-  // Invalidate committed mutated graph when baseline data timestamp updates
+  // Invalidate committed mutated graph when fresh baseline data or re-analysis results arrive
+  const prevDataRef = useRef<ExplorerDataSchema | null>(data);
   const prevDataGeneratedAtRef = useRef<string | undefined>(data?.generatedAt);
   useEffect(() => {
     if (!data) return;
-    if (prevDataGeneratedAtRef.current !== data.generatedAt) {
+    if (prevDataRef.current !== data || prevDataGeneratedAtRef.current !== data.generatedAt) {
+      prevDataRef.current = data;
       prevDataGeneratedAtRef.current = data.generatedAt;
       if (committedMutatedGraph) {
         setCommittedMutatedGraph(null);
@@ -302,6 +322,16 @@ function AppContent() {
 
   const graphRef = useRef<GraphViewRef>(null);
 
+  // Stabilize callback refs for event listeners
+  const clearSelectionRef = useRef(clearSelection);
+  clearSelectionRef.current = clearSelection;
+  const resetInvestigationContextRef = useRef(resetInvestigationContext);
+  resetInvestigationContextRef.current = resetInvestigationContext;
+  const setIsInvestigatingRef = useRef(setIsInvestigating);
+  setIsInvestigatingRef.current = setIsInvestigating;
+  const setFilterStateRef = useRef(setFilterState);
+  setFilterStateRef.current = setFilterState;
+
   // Clear simulation and selection state on project switch
   useEffect(() => {
     const handleProjectChanged = () => {
@@ -309,13 +339,13 @@ function AppContent() {
       setCommittedMutatedGraph(null);
       setActiveSimulationProposal(null);
       setSimulationStepIndex(0);
-      clearSelection();
-      resetInvestigationContext();
+      clearSelectionRef.current();
+      resetInvestigationContextRef.current();
       setSelectedFinding(null);
       setHighlightedImpactNodeIds(null);
       setSelectedCycleId(null);
-      setIsInvestigating(false);
-      setFilterState({
+      setIsInvestigatingRef.current(false);
+      setFilterStateRef.current({
         ...createEmptyFilterState(),
         visibleNodeTypes: projState.filters?.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES,
       });
@@ -325,7 +355,7 @@ function AppContent() {
     return () => {
       window.removeEventListener('explorer:project-changed', handleProjectChanged as EventListener);
     };
-  }, [activeProjectId, clearSelection, resetInvestigationContext, setIsInvestigating, setFilterState]);
+  }, [activeProjectId]);
 
   // Sync visibleNodeTypes state persistence on filter change
   useEffect(() => {
@@ -364,6 +394,16 @@ function AppContent() {
     }
   }, [activeData, selectedNodeId, clearSelection, setIsInvestigating, view.filterState.visibleNodeTypes]);
 
+  // Ref stabilization for Escape key listener
+  const selectedNodeIdRef = useRef(selectedNodeId);
+  selectedNodeIdRef.current = selectedNodeId;
+  const selectedEdgeIdRef = useRef(selection.selectedEdgeId);
+  selectedEdgeIdRef.current = selection.selectedEdgeId;
+  const focusStateRef = useRef(view.focusState);
+  focusStateRef.current = view.focusState;
+  const setFocusStateRef = useRef(view.setFocusState);
+  setFocusStateRef.current = view.setFocusState;
+
   // Global Escape key listener to clear node selection across all views
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -371,17 +411,20 @@ function AppContent() {
       const tag = target?.tagName;
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tag) || target?.isContentEditable) return;
 
-      if (e.key === 'Escape' && (selectedNodeId || selection.selectedEdgeId || view.focusState.enabled)) {
-        clearSelection();
-        setIsInvestigating(false);
-        if (view.focusState.enabled) {
-          view.setFocusState({ ...view.focusState, enabled: false, focusNodeId: null });
+      if (
+        e.key === 'Escape' &&
+        (selectedNodeIdRef.current || selectedEdgeIdRef.current || focusStateRef.current.enabled)
+      ) {
+        clearSelectionRef.current();
+        setIsInvestigatingRef.current(false);
+        if (focusStateRef.current.enabled) {
+          setFocusStateRef.current({ ...focusStateRef.current, enabled: false, focusNodeId: null });
         }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedNodeId, selection.selectedEdgeId, view.focusState, clearSelection, setIsInvestigating, view.setFocusState]);
+  }, []);
 
   const handleTogglePin = useCallback(() => {
     investigation.setDrawerPinned(!isPinned);
@@ -499,7 +542,10 @@ function AppContent() {
   }, [activeData, effectiveFocusState]);
 
   // Stable visibleNodeTypes reference
-  const visibleTypes = view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES;
+  const visibleTypes = useMemo(
+    () => view.filterState.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES,
+    [view.filterState.visibleNodeTypes]
+  );
 
   // Canonical visibility-filtered activeData for all layout lenses
   const visibleActiveData = useMemo(() => {
@@ -601,7 +647,7 @@ function AppContent() {
     return activeData.nodes.find((n) => n.id === selectedNodeId) ?? null;
   }, [activeData, selectedNodeId]);
 
-  const handleResetView = () => {
+  const handleResetView = useCallback(() => {
     selection.clear();
     investigation.resetInvestigationContext();
     view.setFilterState(createEmptyFilterState());
@@ -611,42 +657,42 @@ function AppContent() {
     if (graphRef.current) {
       graphRef.current.fitView();
     }
-  };
+  }, [selection, investigation, view]);
 
-  const handleSelectFinding = (finding: ArchitectureFinding) => {
+  const handleSelectFinding = useCallback((finding: ArchitectureFinding) => {
     setSelectedFinding(finding);
     view.setSelectedFindingId(finding.id);
     if (finding.nodeIds && finding.nodeIds.length > 0) {
       selection.selectNode(finding.nodeIds[0]);
       view.setSelectedNodeId(finding.nodeIds[0]);
     }
-  };
+  }, [selection, view]);
 
-  const handleClearFinding = () => {
+  const handleClearFinding = useCallback(() => {
     setSelectedFinding(null);
     view.setSelectedFindingId(null);
-  };
+  }, [view]);
 
-  const handleDrill = (targetId: string) => {
+  const handleDrill = useCallback((targetId: string) => {
     investigation.drillIntoComponent(targetId);
     view.setIsInvestigating(true);
-  };
+  }, [investigation, view]);
 
-  const handleNavigateBreadcrumb = (targetId: string) => {
+  const handleNavigateBreadcrumb = useCallback((targetId: string) => {
     const idx = drillPath.indexOf(targetId);
     if (idx !== -1) {
       investigation.navigateBreadcrumb(idx);
     } else {
       investigation.selectNode(targetId);
     }
-  };
+  }, [drillPath, investigation]);
 
-  const handleSelectRecentNode = (targetId: string) => {
+  const handleSelectRecentNode = useCallback((targetId: string) => {
     investigation.selectNode(targetId);
     view.setIsInvestigating(true);
-  };
+  }, [investigation, view]);
 
-  const handleCommitSimulation = () => {
+  const handleCommitSimulation = useCallback(() => {
     if (!activeData || !activeSimulationProposal) return;
 
     try {
@@ -664,7 +710,7 @@ function AppContent() {
     } catch (err) {
       console.error('[App] handleCommitSimulation failed:', err);
     }
-  };
+  }, [activeData, activeSimulationProposal, activeProjectId]);
 
   if (loading) return <LoadingScreen />;
   if (error && !isNotAnalyzed) return <ErrorScreen error={error} onRetry={retry} />;

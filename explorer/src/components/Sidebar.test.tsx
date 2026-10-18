@@ -135,4 +135,38 @@ describe('Sidebar', () => {
 
     expect(handleSelectNode).toHaveBeenCalledWith(mockNodes[0]);
   });
+
+  it('debounces search query filter changes in search input', async () => {
+    vi.useFakeTimers();
+    const handleFilterChange = vi.fn();
+
+    render(
+      <Sidebar
+        nodes={mockNodes}
+        displayNodes={mockNodes}
+        filterState={createEmptyFilterState()}
+        selectedNodeId={null}
+        collapsed={false}
+        onToggleCollapse={vi.fn()}
+        onFilterChange={handleFilterChange}
+        onSelectNode={vi.fn()}
+      />
+    );
+
+    const input = screen.getByPlaceholderText('Search components...');
+    fireEvent.change(input, { target: { value: 'Serv' } });
+
+    // Should not have been called immediately before timer elapses
+    expect(handleFilterChange).not.toHaveBeenCalled();
+
+    // Fast forward timer by 150ms
+    vi.advanceTimersByTime(150);
+
+    expect(handleFilterChange).toHaveBeenCalledTimes(1);
+    expect(handleFilterChange).toHaveBeenCalledWith(
+      expect.objectContaining({ searchQuery: 'Serv' })
+    );
+
+    vi.useRealTimers();
+  });
 });
