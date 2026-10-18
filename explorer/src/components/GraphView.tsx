@@ -462,14 +462,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [cyInstance, nodes, hashModes.node, selectedNodeId, onSelectNode, prefersReducedMotion]);
 
-  // Compute graph structure fingerprint to avoid re-running discoverFeatures on array identity shifts when node/edge contents & ordering are identical
+  // Compute complete structural fingerprint to avoid re-running discoverFeatures or layouts on array reference shifts when node/edge contents & ordering are identical
   const graphStructureKey = useMemo(() => {
     if (nodes.length === 0) return '0:0';
-    const firstNode = nodes[0];
-    const lastNode = nodes[nodes.length - 1];
-    const firstEdge = edges[0];
-    const lastEdge = edges[edges.length - 1];
-    return `${nodes.length}:${edges.length}:${firstNode?.id}:${firstNode?.type}:${firstNode?.layer}:${lastNode?.id}:${lastNode?.type}:${lastNode?.layer}:${firstEdge?.id}:${firstEdge?.relationshipType}:${lastEdge?.id}:${lastEdge?.relationshipType}`;
+    const nodeFP = nodes.map(n => `${n.id}:${n.type || ''}:${n.layer || ''}:${(n as any).domain || ''}`).join('|');
+    const edgeFP = edges.map(e => `${e.id}:${e.source}:${e.target}:${e.relationshipType || ''}`).join('|');
+    return `${nodes.length}:${edges.length}#${nodeFP}#${edgeFP}`;
   }, [nodes, edges]);
 
   // Derive Feature Discovery Result deterministically based on structure fingerprint
