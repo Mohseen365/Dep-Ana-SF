@@ -489,21 +489,23 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [navHistory, nodes, onSelectNode]);
 
-  // Initial node restoration from URL hash
+  // Initial node restoration from URL hash with fallback for missing nodes
   useEffect(() => {
     if (!cyInstance || nodes.length === 0 || restoredHashNodeRef.current) return;
 
     const initialNodeId = hashModes.node;
     if (!initialNodeId || selectedNodeId) return;
 
-    restoreAttemptedRef.current = true;
-
     const matchedNode = nodes.find(n => n.id === initialNodeId || n.displayName === initialNodeId);
     if (!matchedNode) {
-      // Nodes are still arriving; retry on next nodes change.
-      return;
+      // Fallback: If node never arrives (e.g. invalid/deleted node ID in URL), mark restore attempted after timeout
+      const timer = setTimeout(() => {
+        restoreAttemptedRef.current = true;
+      }, 1500);
+      return () => clearTimeout(timer);
     }
 
+    restoreAttemptedRef.current = true;
     restoredHashNodeRef.current = true;
     onSelectNode(matchedNode);
     const ele = cyInstance.getElementById(matchedNode.id);
@@ -1434,6 +1436,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     focusedNodeId,
   ]);
 
+  const applyDecorationsRef = useRef(applyDecorations);
+  useEffect(() => {
+    applyDecorationsRef.current = applyDecorations;
+  }, [applyDecorations]);
+
   // Structural Element Synchronization Effect (runs ONLY when nodes, edges, or structural options change)
   useEffect(() => {
     nodesRef.current = nodes;
@@ -1533,7 +1540,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (newlyPlaced) {
       captureAndPersistPositions();
     }
-    applyDecorations(cy);
+      applyDecorationsRef.current(cy);
 
     const requestId = ++layoutRequestRef.current;
 
@@ -1587,7 +1594,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }
 
-  }, [structuralFingerprint, captureAndPersistPositions, applyDecorations]);
+  }, [structuralFingerprint, captureAndPersistPositions]);
 
   // Dedicated Effect for Simulation Visual Classes
   useEffect(() => {
@@ -1857,7 +1864,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       <GraphErrorBoundary
         resetKeys={[architectureMode, nodes.length, edges.length]}
         onError={(err) => {
-          console.error('[GraphErrorBoundary] overlay failed', err);
+          console.error('[GraphErrorBoundary] FeatureOverlayCanvas failed', err);
           if (typeof window !== 'undefined') {
             (window as any).__LAST_OVERLAY_ERROR__ = {
               message: err?.message,
@@ -1881,9 +1888,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
           orbitGuides={architectureMode === 'orbit' || architectureMode === 'constellation' ? orbitGuides : undefined}
         />
+      </GraphErrorBoundary>
 
-        {/* Navigator Container */}
-        {isNavigatorVisible && (
+      {/* Navigator Container */}
+      {isNavigatorVisible && (
+        <GraphErrorBoundary resetKeys={[architectureMode]}>
           <div
             id="minimap"
             ref={minimapRef}
@@ -1904,26 +1913,30 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
             </div>
             <div className="navigator-body" />
           </div>
-        )}
+        </GraphErrorBoundary>
+      )}
 
-        {/* Hover Cards */}
-        {hoverCard && hoverCard.type === 'node' && (
+      {/* Hover Cards */}
+      {hoverCard && hoverCard.type === 'node' && (
+        <GraphErrorBoundary resetKey={hoverCard.node.id}>
           <NodeHoverCard
             node={hoverCard.node}
             x={hoverCard.x}
             y={hoverCard.y}
             findings={findings}
           />
-        )}
+        </GraphErrorBoundary>
+      )}
 
-        {hoverCard && hoverCard.type === 'edge' && (
+      {hoverCard && hoverCard.type === 'edge' && (
+        <GraphErrorBoundary resetKey={hoverCard.edge.id}>
           <EdgeHoverCard
             edge={hoverCard.edge}
             x={hoverCard.x}
             y={hoverCard.y}
           />
-        )}
-      </GraphErrorBoundary>
+        </GraphErrorBoundary>
+      )}
 
       {/* Live Region for Screen Readers on Layout Completion */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
