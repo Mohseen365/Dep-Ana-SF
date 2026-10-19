@@ -18,6 +18,20 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
     (f) => f.nodeIds && f.nodeIds.includes(node.id)
   );
 
+  const maxSeverity = React.useMemo(() => {
+    if (nodeFindings.length === 0) return 'INFO';
+    const severityRank: Record<string, number> = {
+      CRITICAL: 5,
+      HIGH: 4,
+      MEDIUM: 3,
+      LOW: 2,
+      INFO: 1,
+    };
+    return nodeFindings.reduce((max, f) => {
+      return (severityRank[f.severity] ?? 0) > (severityRank[max] ?? 0) ? f.severity : max;
+    }, nodeFindings[0].severity);
+  }, [nodeFindings]);
+
   const [copied, setCopied] = React.useState(false);
   const viewport = useViewportSize();
 
@@ -74,7 +88,7 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
       )}
       {nodeFindings.length > 0 && (
         <div className="hover-card-detail findings-summary" style={{ marginTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', color: '#f87171' }}>
-          <span className="label">Findings:</span> <span className="value" style={{ fontWeight: 700 }}>⚠️ {nodeFindings.length} issue{nodeFindings.length > 1 ? 's' : ''} ({nodeFindings[0].severity})</span>
+          <span className="label">Findings:</span> <span className="value" style={{ fontWeight: 700 }}>⚠️ {nodeFindings.length} issue{nodeFindings.length > 1 ? 's' : ''} ({maxSeverity})</span>
         </div>
       )}
     </div>
