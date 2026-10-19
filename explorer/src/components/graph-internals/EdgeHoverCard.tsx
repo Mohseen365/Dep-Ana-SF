@@ -10,7 +10,17 @@ export interface EdgeHoverCardProps {
 
 export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function EdgeHoverCard({ edge, x, y }) {
   const [copied, setCopied] = React.useState(false);
+  const copyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewport = useViewportSize();
+
+  React.useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const left = Math.min(x + 12, viewport.width - 280);
   const top = Math.min(y + 12, viewport.height - 180);
@@ -30,7 +40,11 @@ export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function E
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(locationStr).then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => {
+          copyTimerRef.current = null;
+          setCopied(false);
+        }, 2000);
       }).catch(() => {});
     }
   };
@@ -39,6 +53,7 @@ export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function E
     <div
       className="graph-hover-card edge-hover-card"
       style={{ left: `${left}px`, top: `${top}px` }}
+      role="tooltip"
     >
       <div className="hover-card-header">
         <span className="hover-card-title">{edge.method || edge.relationshipType}</span>

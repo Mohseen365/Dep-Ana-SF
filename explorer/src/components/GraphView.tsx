@@ -135,6 +135,7 @@ export interface GraphViewProps {
   simulatedRemovedNodeIds?: string[];
   simulatedEdgeIds?: string[];
   enableFeatureLayout?: boolean;
+  enableFeatureOverlay?: boolean;
   layoutOptions?: GraphLayoutOptions;
 }
 
@@ -182,6 +183,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     simulatedRemovedNodeIds = DEFAULT_EMPTY_ARRAY,
     simulatedEdgeIds = DEFAULT_EMPTY_ARRAY,
     enableFeatureLayout: enableFeatureLayoutProp,
+    enableFeatureOverlay = true,
     layoutOptions,
   } = props;
 
@@ -404,7 +406,10 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Request generation ref for async worker layout cancellation
   const layoutRequestRef = useRef<number>(0);
 
-  const DEBUG = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
+  const DEBUG = useMemo(
+    () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'),
+    []
+  );
   const [, setLastLayoutCompletedTrigger] = useState<number>(0);
 
   const guardLayoutRun = useCallback((reason: string) => {
@@ -1896,7 +1901,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           hoveredNodeId={hoveredNodeId}
           nodePositions={nodePositions}
           findings={findings}
-          enableOverlay={true}
+          enableOverlay={enableFeatureOverlay}
           architectureMode={architectureMode}
           featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
           orbitGuides={architectureMode === 'orbit' || architectureMode === 'constellation' ? orbitGuides : undefined}
