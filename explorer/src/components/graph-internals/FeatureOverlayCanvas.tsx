@@ -95,7 +95,11 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   useEffect(() => {
     if (!cy) return;
 
-    const capturePositions = () => {
+    let posRafId: number | null = null;
+
+    const flushPositions = () => {
+      posRafId = null;
+      if (!cy) return;
       const posMap: Record<string, { x: number; y: number }> = {};
       cy.nodes().forEach((n) => {
         posMap[n.id()] = n.position();
@@ -103,15 +107,25 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       setModelPositions(posMap);
     };
 
-    capturePositions();
+    const scheduleCapture = () => {
+      if (posRafId !== null) return;
+      posRafId = requestAnimationFrame(flushPositions);
+    };
+
+    // Initial synchronous snapshot so the first paint has positions.
+    flushPositions();
 
     if (typeof cy.on === 'function') {
-      cy.on('position dragfree layoutstop', capturePositions);
+      cy.on('position dragfree layoutstop', scheduleCapture);
     }
 
     return () => {
+      if (posRafId !== null) {
+        cancelAnimationFrame(posRafId);
+        posRafId = null;
+      }
       if (typeof cy.off === 'function') {
-        cy.off('position dragfree layoutstop', capturePositions);
+        cy.off('position dragfree layoutstop', scheduleCapture);
       }
     };
   }, [cy]);
@@ -245,7 +259,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
               opacity={0.8}
             />
 
-            {/* 6 Concentric Architectural Rings */}
+            {/* Concentric Architectural Rings (6 rings in Orbit mode, 3 rings in Constellation mode) */}
             {orbitGuides?.rings?.map((ring) => (
               <g key={`orbit_ring_${ring.ringIndex}`}>
                 <circle

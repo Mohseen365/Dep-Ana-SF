@@ -20,6 +20,10 @@ import {
   ConnectionQueryState,
 } from "../lib/url";
 
+// Defensive shims for standalone useViewState without WorkspaceRouter/Investigation/Project
+// providers mounted. Assumption: each underlying hook throws *before* invoking any of its
+// own hooks when no provider is present (i.e. useContext on a null context). If a provider
+// ever throws after some of its own hooks have run, this pattern will violate Rules of Hooks.
 function useWorkspaceRouterSafe() {
   try {
     return useWorkspaceRouter();
@@ -105,12 +109,15 @@ export function useViewState() {
   >(null);
   const [isInvestigating, setIsInvestigating] = useState<boolean>(false);
   const [urlNodeId, setUrlNodeId] = useState<string | null>(null);
-  const [urlEdgeId, setUrlEdgeId] = useState<string | null>(null);
+  const [localSelectedEdgeId, setLocalSelectedEdgeId] = useState<string | null>(null);
 
   // Canonical investigation state derived directly from InvestigationContext when present
   const selectedNodeId = investigation
     ? investigation.state.selectedNodeId
     : localSelectedNodeId;
+  const selectedEdgeId = investigation
+    ? investigation.state.selectedEdgeId
+    : localSelectedEdgeId;
   const selectedFindingId = investigation
     ? investigation.state.selectedFindingId
     : localSelectedFindingId;
@@ -135,6 +142,14 @@ export function useViewState() {
       investigationRef.current.selectNode(nodeId);
     } else {
       setLocalSelectedNodeId(nodeId);
+    }
+  }, []);
+
+  const setSelectedEdgeId = useCallback((edgeId: string | null) => {
+    if (investigationRef.current) {
+      investigationRef.current.selectEdge(edgeId);
+    } else {
+      setLocalSelectedEdgeId(edgeId);
     }
   }, []);
 
@@ -177,14 +192,7 @@ export function useViewState() {
   const setFocusState = useCallback(
     (focus: Partial<FocusState> | ((prev: FocusState) => FocusState)) => {
       if (investigationRef.current) {
-        if (typeof focus === "function") {
-          const next = focus(investigationRef.current.state.focusState);
-          if (next.enabled === false) {
-            investigationRef.current.clearFocus();
-          } else {
-            investigationRef.current.setFocus(next);
-          }
-        } else if (focus.enabled === false) {
+        if (typeof focus === "object" && focus.enabled === false) {
           investigationRef.current.clearFocus();
         } else {
           investigationRef.current.setFocus(focus);
@@ -201,14 +209,7 @@ export function useViewState() {
   const setImpactState = useCallback(
     (impact: Partial<ImpactState> | ((prev: ImpactState) => ImpactState)) => {
       if (investigationRef.current) {
-        if (typeof impact === "function") {
-          const next = impact(investigationRef.current.state.impactState);
-          if (next.enabled === false) {
-            investigationRef.current.clearImpact();
-          } else {
-            investigationRef.current.setImpact(next);
-          }
-        } else if (impact.enabled === false) {
+        if (typeof impact === "object" && impact.enabled === false) {
           investigationRef.current.clearImpact();
         } else {
           investigationRef.current.setImpact(impact);
@@ -229,13 +230,7 @@ export function useViewState() {
         | ((prev: ConnectionQueryState) => ConnectionQueryState),
     ) => {
       if (investigationRef.current) {
-        if (typeof conn === "function") {
-          investigationRef.current.setConnection(
-            conn(investigationRef.current.state.connectionState),
-          );
-        } else {
-          investigationRef.current.setConnection(conn);
-        }
+        investigationRef.current.setConnection(conn);
       } else {
         setLocalConnectionState((prev) =>
           typeof conn === "function" ? conn(prev) : { ...prev, ...conn },
@@ -252,7 +247,17 @@ export function useViewState() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
 
-    const initialNode = params.get("node") || params.get("component");
+    let initialNode = params.get("node") || params.get("component");
+    if (!initialNode && typeof window !== "undefined" && window.location.hash) {
+      try {
+        const hashRaw = window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        const hashParams = new URLSearchParams(hashRaw);
+        initialNode = hashParams.get("node");
+      } catch { /* ignore */ }
+    }
+
     if (initialNode) {
       setUrlNodeId(initialNode);
       if (investigationRef.current) {
@@ -270,11 +275,7 @@ export function useViewState() {
     }
 
     const initialEdge = params.get("edge");
-    if (initialEdge) {
-      setUrlEdgeId(initialEdge);
-    } else {
-      setUrlEdgeId(null);
-    }
+    setSelectedEdgeId(initialEdge ?? null);
 
     const filterParsed = filterQuery.fromQuery(params);
     if (routerRef.current) {
@@ -374,7 +375,7 @@ export function useViewState() {
       setSelectedInvestigationId(null);
       setIsInvestigating(false);
       setUrlNodeId(null);
-      setUrlEdgeId(null);
+      setSelectedEdgeId(null);
       setFilterState(createEmptyFilterState());
       setDiagnosticsTab("none");
     };
@@ -405,7 +406,21 @@ export function useViewState() {
       existingProject ||
       (activeProject && activeProject !== "default" ? activeProject : null);
 
-    const params = new URLSearchParams();
+    // Start from the existing query so unknown params (debug, utm_*, feature flags)
+    // survive the rewrite.
+    const params = new URLSearchParams(currentParams);
+
+    // Delete only the keys this hook owns; they will be re-added below if active.
+    const OWNED_KEYS = [
+      "project", "node", "component", "edge", "investigate",
+      "focus", "focusNode", "depth", "direction",
+      "impact", "impactOrigin", "impactDepth",
+      "conn", "findings", "cycle", "unresolvedEdge", "finding", "tab",
+      "investigation",
+      "view", "search", "typeFilter", "riskFilter",
+      "hasCallouts", "withoutSharing", "hideTests", "hasAsyncPatterns",
+    ] as const;
+    for (const k of OWNED_KEYS) params.delete(k);
 
     if (projectToPreserve) {
       params.set("project", projectToPreserve);
@@ -415,6 +430,10 @@ export function useViewState() {
       selectedNodeId || focusState.focusNodeId || impactState.originNodeId;
     if (effectiveNode) {
       params.set("node", effectiveNode);
+    }
+
+    if (selectedEdgeId) {
+      params.set("edge", selectedEdgeId);
     }
 
     if (isInvestigating) {
@@ -489,6 +508,7 @@ export function useViewState() {
     selectedCycleId,
     selectedUnresolvedEdgeId,
     selectedNodeId,
+    selectedEdgeId,
     selectedFindingId,
     selectedInvestigationId,
     isInvestigating,
@@ -601,6 +621,8 @@ export function useViewState() {
     setSelectedUnresolvedEdgeId,
     selectedNodeId,
     setSelectedNodeId,
+    selectedEdgeId,
+    setSelectedEdgeId,
     selectedFindingId,
     setSelectedFindingId,
     selectedInvestigationId,
@@ -608,6 +630,6 @@ export function useViewState() {
     isInvestigating,
     setIsInvestigating,
     urlNodeId,
-    urlEdgeId,
+    urlEdgeId: selectedEdgeId,
   };
 }
