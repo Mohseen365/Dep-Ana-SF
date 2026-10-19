@@ -20,6 +20,10 @@ import {
   ConnectionQueryState,
 } from "../lib/url";
 
+// Defensive shims for standalone useViewState without WorkspaceRouter/Investigation/Project
+// providers mounted. Assumption: each underlying hook throws *before* invoking any of its
+// own hooks when no provider is present (i.e. useContext on a null context). If a provider
+// ever throws after some of its own hooks have run, this pattern will violate Rules of Hooks.
 function useWorkspaceRouterSafe() {
   try {
     return useWorkspaceRouter();
@@ -188,14 +192,7 @@ export function useViewState() {
   const setFocusState = useCallback(
     (focus: Partial<FocusState> | ((prev: FocusState) => FocusState)) => {
       if (investigationRef.current) {
-        if (typeof focus === "function") {
-          const next = focus(investigationRef.current.state.focusState);
-          if (next.enabled === false) {
-            investigationRef.current.clearFocus();
-          } else {
-            investigationRef.current.setFocus(next);
-          }
-        } else if (focus.enabled === false) {
+        if (typeof focus === "object" && focus.enabled === false) {
           investigationRef.current.clearFocus();
         } else {
           investigationRef.current.setFocus(focus);
@@ -212,14 +209,7 @@ export function useViewState() {
   const setImpactState = useCallback(
     (impact: Partial<ImpactState> | ((prev: ImpactState) => ImpactState)) => {
       if (investigationRef.current) {
-        if (typeof impact === "function") {
-          const next = impact(investigationRef.current.state.impactState);
-          if (next.enabled === false) {
-            investigationRef.current.clearImpact();
-          } else {
-            investigationRef.current.setImpact(next);
-          }
-        } else if (impact.enabled === false) {
+        if (typeof impact === "object" && impact.enabled === false) {
           investigationRef.current.clearImpact();
         } else {
           investigationRef.current.setImpact(impact);
@@ -240,13 +230,7 @@ export function useViewState() {
         | ((prev: ConnectionQueryState) => ConnectionQueryState),
     ) => {
       if (investigationRef.current) {
-        if (typeof conn === "function") {
-          investigationRef.current.setConnection(
-            conn(investigationRef.current.state.connectionState),
-          );
-        } else {
-          investigationRef.current.setConnection(conn);
-        }
+        investigationRef.current.setConnection(conn);
       } else {
         setLocalConnectionState((prev) =>
           typeof conn === "function" ? conn(prev) : { ...prev, ...conn },

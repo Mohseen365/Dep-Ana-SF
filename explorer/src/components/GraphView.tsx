@@ -59,6 +59,8 @@ export const setCorrelationToken = (token: string | undefined) => {
   currentCorrelationToken = token;
 };
 
+export const peekCorrelationToken = (): string | undefined => currentCorrelationToken;
+
 export const getCorrelationToken = (): string | undefined => {
   const token = currentCorrelationToken;
   currentCorrelationToken = undefined;
@@ -234,6 +236,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const layoutMode: LayoutMode = layoutModeProp || initialLayoutMode;
 
   const restoredHashNodeRef = useRef(false);
+  const restoreAttemptedRef = useRef(false);
 
   // On mount, notify parent if hash or localStorage specified a different initial mode
   useEffect(() => {
@@ -250,8 +253,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Wait for hashNode restore before writing URL, otherwise we clobber it.
-    if (!restoredHashNodeRef.current && hashModes.node && !selectedNodeId) {
+    // Wait for hashNode restore attempt before writing URL, otherwise we clobber it.
+    if (!restoreAttemptedRef.current && hashModes.node && !selectedNodeId) {
       return;
     }
 
@@ -491,19 +494,24 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (!cyInstance || nodes.length === 0 || restoredHashNodeRef.current) return;
 
     const initialNodeId = hashModes.node;
-    if (initialNodeId && !selectedNodeId) {
-      restoredHashNodeRef.current = true;
-      const matchedNode = nodes.find(n => n.id === initialNodeId || n.displayName === initialNodeId);
-      if (matchedNode) {
-        onSelectNode(matchedNode);
-        const ele = cyInstance.getElementById(matchedNode.id);
-        if (ele.length > 0) {
-          if (prefersReducedMotion) {
-            cyInstance.center(ele);
-          } else {
-            cyInstance.animate({ center: { eles: ele }, zoom: 1.5 }, { duration: 400 });
-          }
-        }
+    if (!initialNodeId || selectedNodeId) return;
+
+    restoreAttemptedRef.current = true;
+
+    const matchedNode = nodes.find(n => n.id === initialNodeId || n.displayName === initialNodeId);
+    if (!matchedNode) {
+      // Nodes are still arriving; retry on next nodes change.
+      return;
+    }
+
+    restoredHashNodeRef.current = true;
+    onSelectNode(matchedNode);
+    const ele = cyInstance.getElementById(matchedNode.id);
+    if (ele.length > 0) {
+      if (prefersReducedMotion) {
+        cyInstance.center(ele);
+      } else {
+        cyInstance.animate({ center: { eles: ele }, zoom: 1.5 }, { duration: 400 });
       }
     }
   }, [cyInstance, nodes, hashModes.node, selectedNodeId, onSelectNode, prefersReducedMotion]);
@@ -688,7 +696,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     const activeToken =
       effectiveLayoutOptionsRef.current?.correlationToken ??
-      getCorrelationToken();
+      peekCorrelationToken();
 
     const notifyComplete = (outcome: 'complete' | 'fallback-complete', correlationToken?: string) => {
       if (typeof window !== 'undefined') {
@@ -709,6 +717,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           (window as any).__LAST_LAYOUT_COMPLETED__ = detail;
         }
         window.dispatchEvent(new CustomEvent('app:layoutcomplete', { detail }));
+        if (peekCorrelationToken() === correlationToken) {
+          getCorrelationToken();
+        }
         setLayoutAnnouncement(`${architectureMode} layout applied, ${nodesRef.current.length} components`);
         if (DEBUG) {
           setLastLayoutCompletedTrigger((prev) => prev + 1);

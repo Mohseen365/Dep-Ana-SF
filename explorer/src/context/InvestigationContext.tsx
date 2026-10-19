@@ -37,11 +37,11 @@ export type InvestigationAction =
   | { type: 'SELECT_CYCLE'; payload: { cycleId: string | null; associatedNodeId?: string | null } }
   | { type: 'SELECT_UNRESOLVED_EDGE'; payload: { edgeId: string | null; associatedNodeId?: string | null } }
   | { type: 'CLEAR_SELECTION' }
-  | { type: 'SET_FOCUS'; payload: Partial<FocusState> }
+  | { type: 'SET_FOCUS'; payload: Partial<FocusState> | ((prev: FocusState) => FocusState) }
   | { type: 'CLEAR_FOCUS' }
-  | { type: 'SET_IMPACT'; payload: Partial<ImpactState> }
+  | { type: 'SET_IMPACT'; payload: Partial<ImpactState> | ((prev: ImpactState) => ImpactState) }
   | { type: 'CLEAR_IMPACT' }
-  | { type: 'SET_CONNECTION'; payload: Partial<ConnectionQueryState> }
+  | { type: 'SET_CONNECTION'; payload: Partial<ConnectionQueryState> | ((prev: ConnectionQueryState) => ConnectionQueryState) }
   | { type: 'CLEAR_CONNECTION' }
   | { type: 'OPEN_INVESTIGATION_DRAWER'; payload?: { tab?: DrawerTab } }
   | { type: 'CLOSE_INVESTIGATION_DRAWER' }
@@ -228,12 +228,13 @@ export function investigationReducer(
     }
 
     case 'SET_FOCUS': {
+      const focusUpdate = typeof action.payload === 'function' ? action.payload(state.focusState) : action.payload;
       return {
         ...state,
         focusState: {
           ...state.focusState,
-          ...action.payload,
-          enabled: true,
+          ...focusUpdate,
+          enabled: focusUpdate.enabled ?? true,
         },
       };
     }
@@ -246,12 +247,13 @@ export function investigationReducer(
     }
 
     case 'SET_IMPACT': {
+      const impactUpdate = typeof action.payload === 'function' ? action.payload(state.impactState) : action.payload;
       return {
         ...state,
         impactState: {
           ...state.impactState,
-          ...action.payload,
-          enabled: true,
+          ...impactUpdate,
+          enabled: impactUpdate.enabled ?? true,
         },
       };
     }
@@ -264,11 +266,12 @@ export function investigationReducer(
     }
 
     case 'SET_CONNECTION': {
+      const connectionUpdate = typeof action.payload === 'function' ? action.payload(state.connectionState) : action.payload;
       return {
         ...state,
         connectionState: {
           ...state.connectionState,
-          ...action.payload,
+          ...connectionUpdate,
         },
       };
     }
@@ -382,13 +385,13 @@ export interface InvestigationContextValue {
   selectUnresolvedEdge: (edgeId: string | null, associatedNodeId?: string | null) => void;
   clearSelection: () => void;
 
-  setFocus: (focus: Partial<FocusState>) => void;
+  setFocus: (focus: Partial<FocusState> | ((prev: FocusState) => FocusState)) => void;
   clearFocus: () => void;
 
-  setImpact: (impact: Partial<ImpactState>) => void;
+  setImpact: (impact: Partial<ImpactState> | ((prev: ImpactState) => ImpactState)) => void;
   clearImpact: () => void;
 
-  setConnection: (connection: Partial<ConnectionQueryState>) => void;
+  setConnection: (connection: Partial<ConnectionQueryState> | ((prev: ConnectionQueryState) => ConnectionQueryState)) => void;
   clearConnection: () => void;
 
   openDrawer: (tab?: DrawerTab) => void;
@@ -461,7 +464,7 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
     dispatch({ type: 'CLEAR_SELECTION' });
   }, []);
 
-  const setFocus = useCallback((focus: Partial<FocusState>) => {
+  const setFocus = useCallback((focus: Partial<FocusState> | ((prev: FocusState) => FocusState)) => {
     dispatch({ type: 'SET_FOCUS', payload: focus });
   }, []);
 
@@ -469,7 +472,7 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
     dispatch({ type: 'CLEAR_FOCUS' });
   }, []);
 
-  const setImpact = useCallback((impact: Partial<ImpactState>) => {
+  const setImpact = useCallback((impact: Partial<ImpactState> | ((prev: ImpactState) => ImpactState)) => {
     dispatch({ type: 'SET_IMPACT', payload: impact });
   }, []);
 
@@ -477,7 +480,7 @@ export function InvestigationProvider({ children, initialState }: InvestigationP
     dispatch({ type: 'CLEAR_IMPACT' });
   }, []);
 
-  const setConnection = useCallback((connection: Partial<ConnectionQueryState>) => {
+  const setConnection = useCallback((connection: Partial<ConnectionQueryState> | ((prev: ConnectionQueryState) => ConnectionQueryState)) => {
     dispatch({ type: 'SET_CONNECTION', payload: connection });
   }, []);
 
