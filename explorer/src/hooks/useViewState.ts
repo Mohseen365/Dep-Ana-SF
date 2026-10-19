@@ -105,12 +105,15 @@ export function useViewState() {
   >(null);
   const [isInvestigating, setIsInvestigating] = useState<boolean>(false);
   const [urlNodeId, setUrlNodeId] = useState<string | null>(null);
-  const [urlEdgeId, setUrlEdgeId] = useState<string | null>(null);
+  const [localSelectedEdgeId, setLocalSelectedEdgeId] = useState<string | null>(null);
 
   // Canonical investigation state derived directly from InvestigationContext when present
   const selectedNodeId = investigation
     ? investigation.state.selectedNodeId
     : localSelectedNodeId;
+  const selectedEdgeId = investigation
+    ? investigation.state.selectedEdgeId
+    : localSelectedEdgeId;
   const selectedFindingId = investigation
     ? investigation.state.selectedFindingId
     : localSelectedFindingId;
@@ -135,6 +138,14 @@ export function useViewState() {
       investigationRef.current.selectNode(nodeId);
     } else {
       setLocalSelectedNodeId(nodeId);
+    }
+  }, []);
+
+  const setSelectedEdgeId = useCallback((edgeId: string | null) => {
+    if (investigationRef.current) {
+      investigationRef.current.selectEdge(edgeId);
+    } else {
+      setLocalSelectedEdgeId(edgeId);
     }
   }, []);
 
@@ -252,7 +263,17 @@ export function useViewState() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
 
-    const initialNode = params.get("node") || params.get("component");
+    let initialNode = params.get("node") || params.get("component");
+    if (!initialNode && typeof window !== "undefined" && window.location.hash) {
+      try {
+        const hashRaw = window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        const hashParams = new URLSearchParams(hashRaw);
+        initialNode = hashParams.get("node");
+      } catch { /* ignore */ }
+    }
+
     if (initialNode) {
       setUrlNodeId(initialNode);
       if (investigationRef.current) {
@@ -270,11 +291,7 @@ export function useViewState() {
     }
 
     const initialEdge = params.get("edge");
-    if (initialEdge) {
-      setUrlEdgeId(initialEdge);
-    } else {
-      setUrlEdgeId(null);
-    }
+    setSelectedEdgeId(initialEdge ?? null);
 
     const filterParsed = filterQuery.fromQuery(params);
     if (routerRef.current) {
@@ -374,7 +391,7 @@ export function useViewState() {
       setSelectedInvestigationId(null);
       setIsInvestigating(false);
       setUrlNodeId(null);
-      setUrlEdgeId(null);
+      setSelectedEdgeId(null);
       setFilterState(createEmptyFilterState());
       setDiagnosticsTab("none");
     };
@@ -405,7 +422,21 @@ export function useViewState() {
       existingProject ||
       (activeProject && activeProject !== "default" ? activeProject : null);
 
-    const params = new URLSearchParams();
+    // Start from the existing query so unknown params (debug, utm_*, feature flags)
+    // survive the rewrite.
+    const params = new URLSearchParams(currentParams);
+
+    // Delete only the keys this hook owns; they will be re-added below if active.
+    const OWNED_KEYS = [
+      "project", "node", "component", "edge", "investigate",
+      "focus", "focusNode", "depth", "direction",
+      "impact", "impactOrigin", "impactDepth",
+      "conn", "findings", "cycle", "unresolvedEdge", "finding", "tab",
+      "investigation",
+      "view", "search", "typeFilter", "riskFilter",
+      "hasCallouts", "withoutSharing", "hideTests", "hasAsyncPatterns",
+    ] as const;
+    for (const k of OWNED_KEYS) params.delete(k);
 
     if (projectToPreserve) {
       params.set("project", projectToPreserve);
@@ -415,6 +446,10 @@ export function useViewState() {
       selectedNodeId || focusState.focusNodeId || impactState.originNodeId;
     if (effectiveNode) {
       params.set("node", effectiveNode);
+    }
+
+    if (selectedEdgeId) {
+      params.set("edge", selectedEdgeId);
     }
 
     if (isInvestigating) {
@@ -489,6 +524,7 @@ export function useViewState() {
     selectedCycleId,
     selectedUnresolvedEdgeId,
     selectedNodeId,
+    selectedEdgeId,
     selectedFindingId,
     selectedInvestigationId,
     isInvestigating,
@@ -601,6 +637,8 @@ export function useViewState() {
     setSelectedUnresolvedEdgeId,
     selectedNodeId,
     setSelectedNodeId,
+    selectedEdgeId,
+    setSelectedEdgeId,
     selectedFindingId,
     setSelectedFindingId,
     selectedInvestigationId,
@@ -608,6 +646,6 @@ export function useViewState() {
     isInvestigating,
     setIsInvestigating,
     urlNodeId,
-    urlEdgeId,
+    urlEdgeId: selectedEdgeId,
   };
 }
