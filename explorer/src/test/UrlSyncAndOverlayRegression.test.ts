@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
+import { computeArchitectureLayoutWithMetadata } from '../lib/graph-layout';
 import { discoverFeatures } from '../lib/layout/features';
 import { deriveFeatureCompositionGroups } from '../lib/layout/feature-composition';
 import { getSharedHighlightData } from '../lib/layout/shared-highlight';
@@ -119,14 +119,27 @@ describe('Issue A — Graph Overlay in Constellation Mode', () => {
 
 describe('Issue B — URL Search and Hash Parameter Convergence', () => {
   it('preserves query search string when constructing URL with location.hash', () => {
-    const searchString = '?project=bqc';
-    const currentHash = '#arch=hybrid&layout=static';
-    const newUrl = `/path${searchString}${currentHash}`;
+    const prev = 'https://example.test/?debug=1&utm_source=qa&project=bqc#arch=hybrid&layout=static';
+    const url = new URL(prev);
+    const params = new URLSearchParams(url.search);
+    const OWNED_KEYS = [
+      'project', 'node', 'component', 'edge', 'investigate',
+      'focus', 'focusNode', 'depth', 'direction',
+      'impact', 'impactOrigin', 'impactDepth',
+      'conn', 'findings', 'cycle', 'unresolvedEdge', 'finding', 'tab',
+      'investigation', 'view', 'search', 'typeFilter', 'riskFilter',
+      'hasCallouts', 'withoutSharing', 'hideTests', 'hasAsyncPatterns',
+    ];
+    for (const k of OWNED_KEYS) params.delete(k);
+    params.set('project', 'bqc');
+    params.set('node', 'AccountController');
 
-    expect(newUrl).toBe('/path?project=bqc#arch=hybrid&layout=static');
-    expect(newUrl).toContain('project=bqc');
-    expect(newUrl).toContain('arch=hybrid');
-    expect(newUrl).toContain('layout=static');
+    const result = `?${params.toString()}${url.hash}`;
+    expect(result).toContain('debug=1');
+    expect(result).toContain('utm_source=qa');
+    expect(result).toContain('project=bqc');
+    expect(result).toContain('node=AccountController');
+    expect(result).toContain('#arch=hybrid&layout=static');
   });
 
   it('preserves query hash string when constructing URL with location.search', () => {

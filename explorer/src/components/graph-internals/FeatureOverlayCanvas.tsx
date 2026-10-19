@@ -259,7 +259,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
               opacity={0.8}
             />
 
-            {/* 6 Concentric Architectural Rings */}
+            {/* Concentric Architectural Rings (6 rings in Orbit mode, 3 rings in Constellation mode) */}
             {orbitGuides?.rings?.map((ring) => (
               <g key={`orbit_ring_${ring.ringIndex}`}>
                 <circle
