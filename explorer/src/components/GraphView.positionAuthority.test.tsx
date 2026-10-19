@@ -899,6 +899,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedEdgeId={null}
           focusedNodeId="node-1"
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );

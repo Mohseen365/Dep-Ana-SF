@@ -233,6 +233,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const architectureMode: ArchitectureLayoutMode = architectureModeProp || initialArchMode;
   const layoutMode: LayoutMode = layoutModeProp || initialLayoutMode;
 
+  const restoredHashNodeRef = useRef(false);
+
   // On mount, notify parent if hash or localStorage specified a different initial mode
   useEffect(() => {
     if (initialArchMode !== (architectureModeProp || graphLayout?.architectureMode) && onArchitectureModeChange) {
@@ -243,13 +245,23 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, []);
 
-  // Sync architectureMode, layoutMode, & selectedNodeId to localStorage and location.hash
+  // Sync architectureMode & layoutMode to localStorage and location.hash.
+  // NOTE: selectedNodeId is owned by useViewState (query string), not this hash.
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Wait for hashNode restore before writing URL, otherwise we clobber it.
+    if (!restoredHashNodeRef.current && hashModes.node && !selectedNodeId) {
+      return;
+    }
+
     try {
-      localStorage.setItem('explorer:architectureMode', architectureMode);
-      localStorage.setItem('explorer:layoutMode', layoutMode);
+      if (localStorage.getItem('explorer:architectureMode') !== architectureMode) {
+        localStorage.setItem('explorer:architectureMode', architectureMode);
+      }
+      if (localStorage.getItem('explorer:layoutMode') !== layoutMode) {
+        localStorage.setItem('explorer:layoutMode', layoutMode);
+      }
     } catch (e) {}
 
     try {
@@ -265,23 +277,44 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         params.set('layout', layoutMode);
         changed = true;
       }
-      if (selectedNodeId) {
-        if (params.get('node') !== selectedNodeId) {
-          params.set('node', selectedNodeId);
-          changed = true;
-        }
-      } else {
-        if (params.has('node')) {
-          params.delete('node');
-          changed = true;
-        }
-      }
 
       if (changed) {
-        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${params.toString()}`);
+        const hash = params.toString();
+        const suffix = hash ? `#${hash}` : '';
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${suffix}`);
       }
     } catch (e) {}
   }, [architectureMode, layoutMode, selectedNodeId]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const readHashModes = () => {
+      try {
+        const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+        const params = new URLSearchParams(raw);
+        const arch = params.get('arch') as ArchitectureLayoutMode | null;
+        const layout = params.get('layout') as LayoutMode | null;
+        const validArch: ArchitectureLayoutMode[] = ['hierarchical', 'hybrid', 'orbit', 'constellation'];
+        const validLayout: LayoutMode[] = ['static', 'interactive'];
+        if (arch && validArch.includes(arch) && arch !== architectureMode && onArchitectureModeChange) {
+          onArchitectureModeChange(arch);
+        }
+        if (layout && validLayout.includes(layout) && layout !== layoutMode && onLayoutModeChange) {
+          onLayoutModeChange(layout);
+        }
+      } catch { /* ignore */ }
+    };
+
+    readHashModes();
+
+    window.addEventListener('popstate', readHashModes);
+    window.addEventListener('hashchange', readHashModes);
+    return () => {
+      window.removeEventListener('popstate', readHashModes);
+      window.removeEventListener('hashchange', readHashModes);
+    };
+  }, [architectureMode, layoutMode, onArchitectureModeChange, onLayoutModeChange]);
 
 
   const enableFeatureLayout =
@@ -454,7 +487,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [navHistory, nodes, onSelectNode]);
 
   // Initial node restoration from URL hash
-  const restoredHashNodeRef = useRef(false);
   useEffect(() => {
     if (!cyInstance || nodes.length === 0 || restoredHashNodeRef.current) return;
 
