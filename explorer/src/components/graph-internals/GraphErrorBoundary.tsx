@@ -3,6 +3,8 @@ import React from 'react';
 interface GraphErrorBoundaryProps {
   children: React.ReactNode;
   resetKey?: string | number | boolean | object;
+  resetKeys?: ReadonlyArray<unknown>;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
 interface GraphErrorBoundaryState {
@@ -29,11 +31,19 @@ export class GraphErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('[GraphErrorBoundary] Overlay element threw an error:', error, errorInfo);
+    this.props.onError?.(error, errorInfo);
   }
 
   componentDidUpdate(prevProps: GraphErrorBoundaryProps) {
     if (this.state.hasError) {
+      const prevKeys = prevProps.resetKeys ?? [];
+      const nextKeys = this.props.resetKeys ?? [];
+      const keysChanged =
+        prevKeys.length !== nextKeys.length ||
+        prevKeys.some((val, idx) => val !== nextKeys[idx]);
+
       if (
+        keysChanged ||
         prevProps.resetKey !== this.props.resetKey ||
         prevProps.children !== this.props.children
       ) {
