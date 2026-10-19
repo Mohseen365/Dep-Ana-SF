@@ -270,7 +270,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
 
       if (changed) {
-        window.history.replaceState(null, '', `#${params.toString()}`);
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${params.toString()}`);
       }
     } catch (e) {}
   }, [architectureMode, layoutMode, selectedNodeId]);
