@@ -7,7 +7,7 @@ import 'cytoscape-navigator/cytoscape.js-navigator.css';
 import { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode, ARCH_MODE_META } from '../types/explorer';
 import { buildGraphElements } from '../lib/graph-builder';
 import { getGraphStyles } from '../lib/graph-style';
-import { getLayoutOptions, runLayoutWithMetadata, runLayoutWithMetadataAsync, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
+import { runLayoutWithMetadata, runLayoutWithMetadataAsync, computeArchitectureLayoutWithMetadata, GraphLayoutOptions, type FeatureRegion } from '../lib/graph-layout';
 import { ImpactAnalysisResult } from '../lib/impact-analysis';
 import { FocusState } from '../lib/focus-graph';
 import { GraphLayoutState, LayoutProvenance } from '../lib/projectState';
@@ -200,11 +200,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (hashModes.arch) return hashModes.arch;
     if (architectureModeProp) return architectureModeProp;
     if (graphLayout?.architectureMode) return graphLayout.architectureMode;
-    if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('explorer:architectureMode') as ArchitectureLayoutMode | null;
-      if (stored && ['hierarchical', 'hybrid', 'orbit', 'constellation'].includes(stored)) {
-        return stored;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('explorer:architectureMode') as ArchitectureLayoutMode | null;
+        if (stored && ['hierarchical', 'hybrid', 'orbit', 'constellation'].includes(stored)) {
+          return stored;
+        }
       }
+    } catch {
+      /* storage unavailable */
     }
     return 'hierarchical';
   }, [hashModes.arch, architectureModeProp, graphLayout?.architectureMode]);
@@ -213,11 +217,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (hashModes.layout) return hashModes.layout;
     if (layoutModeProp) return layoutModeProp;
     if (graphLayout?.mode) return graphLayout.mode;
-    if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('explorer:layoutMode') as LayoutMode | null;
-      if (stored && ['static', 'interactive'].includes(stored)) {
-        return stored;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('explorer:layoutMode') as LayoutMode | null;
+        if (stored && ['static', 'interactive'].includes(stored)) {
+          return stored;
+        }
       }
+    } catch {
+      /* storage unavailable */
     }
     return 'interactive';
   }, [hashModes.layout, layoutModeProp, graphLayout?.mode]);
@@ -323,6 +331,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   const onSelectEdgeRef = useRef(onSelectEdge);
   const onNodeDoubleTapRef = useRef(onNodeDoubleTapProp);
   const onFocusChangeRef = useRef(onFocusChange);
+  const investigationRef = useRef(investigation);
   const effectiveLayoutOptionsRef = useRef<GraphLayoutOptions>(effectiveLayoutOptions);
 
   useEffect(() => {
@@ -330,7 +339,8 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     onSelectEdgeRef.current = onSelectEdge;
     onNodeDoubleTapRef.current = onNodeDoubleTapProp;
     onFocusChangeRef.current = onFocusChange;
-  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp, onFocusChange]);
+    investigationRef.current = investigation;
+  }, [onSelectNode, onSelectEdge, onNodeDoubleTapProp, onFocusChange, investigation]);
 
   // In-session explicit drag positions scoped per architecture mode
   const sessionPositionsRef = useRef<Map<ArchitectureLayoutMode, Map<string, Position>>>(new Map());
@@ -942,22 +952,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       hasAuthoritativePositions: hasAuth,
     });
 
-    const layoutOptions = autoLayoutPolicy === true
-      ? getLayoutOptions({
-          ...effectiveLayoutOptionsRef.current,
-          nodes: nodesRef.current,
-          edges: edgesRef.current,
-          nodeCount: nodesRef.current.length,
-          padding: 50,
-          animate: !prefersReducedMotion && nodesRef.current.length < 100
-        })
-      : { name: 'preset' };
-
     const cy = cytoscape({
       container: containerRef.current,
       elements: elements,
       style: styles,
-      layout: layoutOptions,
+      // Layout is applied explicitly below so we can capture metadata + fit together.
+      layout: { name: 'preset' },
       minZoom: 0.1,
       maxZoom: 5,
       wheelSensitivity: 0.2,
@@ -998,7 +998,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     if (autoLayoutPolicy === true) {
       markLayoutStart('initial');
-      cy.layout(layoutOptions).run();
       const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
         nodes: nodesRef.current,
@@ -1066,8 +1065,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    cy.zoom(initialZoom);
-    cy.center();
+    // Only apply a manual zoom fallback when the layout did not fit.
+    if (autoLayoutPolicy !== true) {
+      cy.zoom(initialZoom);
+      cy.center();
+    }
 
     let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
     const updateZoomClass = () => {
@@ -1175,8 +1177,9 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     bindGraphInteractions(cy, {
       onNodeSelect: (selectedNode) => {
         const fullNode = selectedNode ? (nodesRef.current.find(n => n.id === selectedNode.id) || selectedNode) : null;
-        if (investigation) {
-          investigation.selectNode(fullNode ? fullNode.id : null);
+        const inv = investigationRef.current;
+        if (inv) {
+          inv.selectNode(fullNode ? fullNode.id : null);
         }
         onSelectNodeRef.current(fullNode);
       },
@@ -1188,15 +1191,17 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       },
       onEdgeSelect: (edgeId) => {
         if (edgeId) {
-          if (investigation) {
-            investigation.selectEdge(edgeId);
+          const inv = investigationRef.current;
+          if (inv) {
+            inv.selectEdge(edgeId);
           }
           onSelectEdgeRef.current(edgeId);
         }
       },
       onBackgroundTap: () => {
-        if (investigation) {
-          investigation.clearSelection();
+        const inv = investigationRef.current;
+        if (inv) {
+          inv.clearSelection();
         }
         onSelectNodeRef.current(null);
       }
@@ -1258,6 +1263,133 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       cyRef.current = null;
     };
   }, []);
+
+  const findingFP = useMemo(() => {
+    if (!findings || findings.length === 0) return '';
+    return findings
+      .map(f => `${f.id}:${f.severity}:${(f.nodeIds ?? []).join(',')}`)
+      .sort()
+      .join('|');
+  }, [findings]);
+
+  const featureAssignmentFP = useMemo(() => {
+    if (!featureAssignmentMap || featureAssignmentMap.size === 0) return '';
+    return Array.from(featureAssignmentMap.entries())
+      .map(([nId, fId]) => `${nId}->${fId}`)
+      .sort()
+      .join('|');
+  }, [featureAssignmentMap]);
+
+  const structuralFingerprint = useMemo(() => {
+    const nodeFP = nodes.map(n => `${n.id}:${n.type ?? ''}:${n.layer ?? ''}`).join('|');
+    const edgeFP = edges.map(e => `${e.id}:${e.source}:${e.target}:${e.relationshipType ?? ''}`).join('|');
+    return `${nodes.length}:${edges.length}#${nodeFP}#${edgeFP}#${findingFP}#${architectureMode}#${featureAssignmentFP}`;
+  }, [nodes, edges, findingFP, architectureMode, featureAssignmentFP]);
+
+  const applyDecorations = useCallback((cy: cytoscape.Core) => {
+    if (!cy) return;
+    cy.batch(() => {
+      // selection
+      clearHighlights(cy);
+      if (selectedNodeIdRef.current) {
+        deselectAll(cy);
+        selectNode(cy, selectedNodeIdRef.current);
+        highlightNodeConnections(cy, selectedNodeIdRef.current);
+      } else if (selectedEdgeId) {
+        deselectAll(cy);
+        const edge = cy.getElementById(selectedEdgeId);
+        if (edge.length > 0 && edge.isEdge()) edge.select();
+      } else {
+        deselectAll(cy);
+      }
+
+      // impact
+      cy.elements().removeClass('impact-origin impact-affected impact-muted');
+      if (impactResult) {
+        const { originNodeId, affectedNodeIds, affectedEdgeIds } = impactResult;
+        cy.nodes().forEach(node => {
+          const id = node.id();
+          if (id === originNodeId) {
+            node.addClass('impact-origin');
+          } else if (affectedNodeIds.has(id)) {
+            node.addClass('impact-affected');
+          } else {
+            node.addClass('impact-muted');
+          }
+        });
+
+        cy.edges().forEach(edge => {
+          const id = edge.id();
+          if (affectedEdgeIds.has(id)) {
+            edge.addClass('impact-affected');
+          } else {
+            edge.addClass('impact-muted');
+          }
+        });
+      }
+
+      // finding highlight
+      cy.elements().removeClass('finding-highlighted');
+      if (selectedFinding) {
+        if (selectedFinding.nodeIds && selectedFinding.nodeIds.length > 0) {
+          selectedFinding.nodeIds.forEach((nodeId) => {
+            const ele = cy.getElementById(nodeId);
+            if (ele.length > 0) ele.addClass('finding-highlighted');
+          });
+        }
+        if (selectedFinding.edgeIds && selectedFinding.edgeIds.length > 0) {
+          selectedFinding.edgeIds.forEach((edgeId) => {
+            const ele = cy.getElementById(edgeId);
+            if (ele.length > 0) ele.addClass('finding-highlighted');
+          });
+        }
+      }
+
+      // cycle
+      if (selectedCycleNodeIds && selectedCycleNodeIds.length > 0) {
+        highlightCycle(cy, selectedCycleNodeIds);
+      } else {
+        clearCycleHighlight(cy);
+      }
+
+      // simulation
+      cy.elements().removeClass('simulated-added simulated-removed simulated-affected');
+      if (simulatedNodeIds && simulatedNodeIds.length > 0) {
+        simulatedNodeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-added');
+        });
+      }
+      if (simulatedRemovedNodeIds && simulatedRemovedNodeIds.length > 0) {
+        simulatedRemovedNodeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-removed');
+        });
+      }
+      if (simulatedEdgeIds && simulatedEdgeIds.length > 0) {
+        simulatedEdgeIds.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length > 0) ele.addClass('simulated-added');
+        });
+      }
+
+      // focusedNode
+      if (focusedNodeId) {
+        focusOnNode(cy, focusedNodeId);
+      } else if (selectedNodeIdRef.current) {
+        highlightNodeConnections(cy, selectedNodeIdRef.current);
+      }
+    });
+  }, [
+    selectedEdgeId,
+    impactResult,
+    selectedFinding,
+    selectedCycleNodeIds,
+    simulatedNodeIds,
+    simulatedRemovedNodeIds,
+    simulatedEdgeIds,
+    focusedNodeId,
+  ]);
 
   // Structural Element Synchronization Effect (runs ONLY when nodes, edges, or structural options change)
   useEffect(() => {
@@ -1358,6 +1490,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (newlyPlaced) {
       captureAndPersistPositions();
     }
+    applyDecorations(cy);
 
     const requestId = ++layoutRequestRef.current;
 
@@ -1411,36 +1544,13 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }
 
-  }, [nodes, edges, findings, featureAssignmentMap, captureAndPersistPositions]);
+  }, [structuralFingerprint, captureAndPersistPositions, applyDecorations]);
 
   // Dedicated Effect for Simulation Visual Classes
   useEffect(() => {
     if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    cy.batch(() => {
-      cy.elements().removeClass('simulated-added simulated-removed simulated-affected');
-
-      if (simulatedNodeIds && simulatedNodeIds.length > 0) {
-        simulatedNodeIds.forEach(id => {
-          const ele = cy.getElementById(id);
-          if (ele.length > 0) ele.addClass('simulated-added');
-        });
-      }
-      if (simulatedRemovedNodeIds && simulatedRemovedNodeIds.length > 0) {
-        simulatedRemovedNodeIds.forEach(id => {
-          const ele = cy.getElementById(id);
-          if (ele.length > 0) ele.addClass('simulated-removed');
-        });
-      }
-      if (simulatedEdgeIds && simulatedEdgeIds.length > 0) {
-        simulatedEdgeIds.forEach(id => {
-          const ele = cy.getElementById(id);
-          if (ele.length > 0) ele.addClass('simulated-added');
-        });
-      }
-    });
-  }, [simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds]);
+    applyDecorations(cyRef.current);
+  }, [simulatedNodeIds, simulatedRemovedNodeIds, simulatedEdgeIds, applyDecorations]);
 
   // Position-Only Synchronization Effect (runs when nodePositions prop changes without structural graph change)
   useEffect(() => {
@@ -1492,110 +1602,32 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   // Handle selected node & edge changes
   useEffect(() => {
     if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    cy.batch(() => {
-      if (selectedNodeId) {
-        clearHighlights(cy);
-        deselectAll(cy);
-        selectNode(cy, selectedNodeId);
-        highlightNodeConnections(cy, selectedNodeId);
-      } else if (selectedEdgeId) {
-        clearHighlights(cy);
-        deselectAll(cy);
-        const edge = cy.getElementById(selectedEdgeId);
-        if (edge.length > 0 && edge.isEdge()) {
-          edge.select();
-        }
-      } else {
-        deselectAll(cy);
-        clearHighlights(cy);
-      }
-    });
-  }, [selectedNodeId, selectedEdgeId]);
+    applyDecorations(cyRef.current);
+  }, [selectedNodeId, selectedEdgeId, applyDecorations]);
 
   // Handle Impact Mode highlighting
   useEffect(() => {
     if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    cy.batch(() => {
-      cy.elements().removeClass('impact-origin impact-affected impact-muted');
-      if (impactResult) {
-        const { originNodeId, affectedNodeIds, affectedEdgeIds } = impactResult;
-        cy.nodes().forEach(node => {
-          const id = node.id();
-          if (id === originNodeId) {
-            node.addClass('impact-origin');
-          } else if (affectedNodeIds.has(id)) {
-            node.addClass('impact-affected');
-          } else {
-            node.addClass('impact-muted');
-          }
-        });
-
-        cy.edges().forEach(edge => {
-          const id = edge.id();
-          if (affectedEdgeIds.has(id)) {
-            edge.addClass('impact-affected');
-          } else {
-            edge.addClass('impact-muted');
-          }
-        });
-      }
-    });
-  }, [impactResult]);
+    applyDecorations(cyRef.current);
+  }, [impactResult, applyDecorations]);
 
   // Handle Cycle Mode highlighting
   useEffect(() => {
     if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    if (selectedCycleNodeIds && selectedCycleNodeIds.length > 0) {
-      highlightCycle(cy, selectedCycleNodeIds);
-    } else {
-      clearCycleHighlight(cy);
-    }
-  }, [selectedCycleNodeIds]);
+    applyDecorations(cyRef.current);
+  }, [selectedCycleNodeIds, applyDecorations]);
 
   // Handle selectedFinding element highlighting
   useEffect(() => {
     if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    cy.batch(() => {
-      cy.elements().removeClass('finding-highlighted');
-      if (selectedFinding) {
-        if (selectedFinding.nodeIds && selectedFinding.nodeIds.length > 0) {
-          selectedFinding.nodeIds.forEach((nodeId) => {
-            const ele = cy.getElementById(nodeId);
-            if (ele.length > 0) ele.addClass('finding-highlighted');
-          });
-        }
-        if (selectedFinding.edgeIds && selectedFinding.edgeIds.length > 0) {
-          selectedFinding.edgeIds.forEach((edgeId) => {
-            const ele = cy.getElementById(edgeId);
-            if (ele.length > 0) ele.addClass('finding-highlighted');
-          });
-        }
-      }
-    });
-  }, [selectedFinding]);
+    applyDecorations(cyRef.current);
+  }, [selectedFinding, applyDecorations]);
 
   // Handle focusedNodeId for progressive drilling
   useEffect(() => {
     if (!cyRef.current) return;
-    const cy = cyRef.current;
-
-    if (focusedNodeId) {
-      focusOnNode(cy, focusedNodeId);
-    } else if (selectedNodeId) {
-      clearHighlights(cy);
-      highlightNodeConnections(cy, selectedNodeId);
-    } else {
-      clearHighlights(cy);
-    }
-  }, [focusedNodeId, selectedNodeId]);
+    applyDecorations(cyRef.current);
+  }, [focusedNodeId, selectedNodeId, applyDecorations]);
 
   // Keyboard Navigation Handler
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -1779,7 +1811,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       )}
 
       {/* Protected Overlays */}
-      <GraphErrorBoundary>
+      <GraphErrorBoundary
+        resetKeys={[architectureMode, nodes.length, edges.length]}
+        onError={(err) => {
+          console.error('[GraphErrorBoundary] overlay failed', err);
+          if (typeof window !== 'undefined') {
+            (window as any).__LAST_OVERLAY_ERROR__ = {
+              message: err?.message,
+              stack: err?.stack,
+              at: Date.now(),
+            };
+          }
+        }}
+      >
         <FeatureOverlayCanvas
           cy={cyInstance}
           nodes={nodes}
@@ -1792,7 +1836,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           enableOverlay={true}
           architectureMode={architectureMode}
           featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
-          orbitGuides={architectureMode === 'orbit' ? orbitGuides : undefined}
+          orbitGuides={architectureMode === 'orbit' || architectureMode === 'constellation' ? orbitGuides : undefined}
         />
 
         {/* Navigator Container */}

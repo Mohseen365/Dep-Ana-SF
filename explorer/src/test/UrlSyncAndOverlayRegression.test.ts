@@ -38,6 +38,13 @@ describe('Issue A — Graph Overlay in Constellation Mode', () => {
       sectors.map(() => mappedSectors++);
     }
     expect(mappedSectors).toBe(0);
+
+    // Regression guard: overlay must render rings when given constellation's orbitGuides.
+    // The component gate is `(architectureMode === 'orbit' || architectureMode === 'constellation')`,
+    // and the producer supplies rings but not sectors.
+    const ringsForOverlay = layoutRes.orbitGuides?.rings;
+    expect(ringsForOverlay?.length).toBeGreaterThan(0);
+    expect(layoutRes.orbitGuides?.sectors).toBeUndefined();
   });
 
   it('evaluates LOD levels and FeatureOverlayCanvas data contracts cleanly for PBIM Constellation layout', () => {
