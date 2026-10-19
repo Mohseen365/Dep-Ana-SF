@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-13T10:54:01.724Z",
+  "timestamp": "2026-10-18T18:45:33.406Z",
   "fixtureSha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
@@ -16,16 +16,16 @@
       "domainCohesion": 0.9562040933182331
     },
     "candidateB_currentHybrid": {
-      "primaryCrossings": 7839,
+      "primaryCrossings": 7834,
       "primarySatelliteCrossings": 38372,
       "satelliteSatelliteCrossings": 37474,
-      "totalCrossings": 86203,
-      "averageEdgeLength": 3521.194355705154,
+      "totalCrossings": 86198,
+      "averageEdgeLength": 3521.915339261838,
       "maxEdgeLength": 10221.960105835324,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0,
       "layerViolations": 0,
-      "domainCohesion": 0.8378515602284387,
+      "domainCohesion": 0.8372414949460214,
       "medianIntraDistance": 4220,
       "medianInterDistance": 6101.457088130675,
       "intraToInterRatio": 0.6916380692423908
@@ -199,7 +199,7 @@
       "unauthorizedRelayoutsZero": true
     },
     "primaryGate": {
-      "c_pp": 7839,
+      "c_pp": 7834,
       "target": 9335,
       "passed": true
     },

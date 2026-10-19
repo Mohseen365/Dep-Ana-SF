@@ -1150,6 +1150,31 @@ export function calculateDetailedEdgeCrossings(
       }
 
       if (intersected) {
+  // Optional debugging: record crossing classification when CROSS_DEBUG=1
+  if (process.env.CROSS_DEBUG === '1') {
+    const fs = require('fs');
+    const debugPath = 'cross_debug.json';
+    const debugEntry = {
+      edgeA: { sourceId: s1.sourceId, targetId: s1.targetId },
+      edgeB: { sourceId: s2.sourceId, targetId: s2.targetId },
+      classification: s1.isSatellite || s2.isSatellite
+        ? s1.isSatellite && s2.isSatellite
+          ? 'satellite-satellite'
+          : 'primary-satellite'
+        : s1.isBridge || s2.isBridge
+        ? s1.isBridge && s2.isBridge
+          ? 'bridge-bridge'
+          : 'primary-bridge'
+        : 'primary-primary',
+    };
+    try {
+      const existing = fs.existsSync(debugPath) ? JSON.parse(fs.readFileSync(debugPath, 'utf-8')) : [];
+      existing.push(debugEntry);
+      fs.writeFileSync(debugPath, JSON.stringify(existing, null, 2));
+    } catch (e) {
+      // ignore write errors in debug mode
+    }
+  }
         if (s1.isSatellite || s2.isSatellite) {
           if (s1.isSatellite && s2.isSatellite) {
             satelliteSatelliteCrossings++;

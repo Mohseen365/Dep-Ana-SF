@@ -673,8 +673,8 @@
       }
     },
     "performance": {
-      "stage8IsolatedTime": 102,
-      "fullPipelineTime": 1474
+      "stage8IsolatedTime": 105,
+      "fullPipelineTime": 1386
     }
   },
   "BQC": {
@@ -1353,8 +1353,8 @@
       }
     },
     "performance": {
-      "stage8IsolatedTime": 52,
-      "fullPipelineTime": 950
+      "stage8IsolatedTime": 57,
+      "fullPipelineTime": 811
     }
   },
   "PBIM": {
@@ -2032,8 +2032,8 @@
       }
     },
     "performance": {
-      "stage8IsolatedTime": 254,
-      "fullPipelineTime": 16497
+      "stage8IsolatedTime": 140,
+      "fullPipelineTime": 10200
     }
   }
 }
