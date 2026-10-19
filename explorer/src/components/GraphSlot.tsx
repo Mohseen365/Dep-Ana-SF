@@ -10,7 +10,7 @@ export function GraphSlot(props: {
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   onSelectNode: (node: ExplorerNode | null) => void;
-  onSelectEdge: (edgeId: string) => void;
+  onSelectEdge: (edgeId: string | null) => void;
   impactResult?: any;
   selectedCycleNodeIds?: string[] | null;
   findings?: ArchitectureFinding[];

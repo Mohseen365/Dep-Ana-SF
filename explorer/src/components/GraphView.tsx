@@ -109,7 +109,7 @@ export interface GraphViewProps {
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   onSelectNode: (node: ExplorerNode | null) => void;
-  onSelectEdge: (edgeId: string) => void;
+  onSelectEdge: (edgeId: string | null) => void;
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   impactResult?: ImpactAnalysisResult | null;
@@ -146,21 +146,10 @@ export interface GraphViewRef {
   resetLayout: () => void;
 }
 
-interface NodeHoverCardData {
-  type: 'node';
-  node: ExplorerNode;
-  x: number;
-  y: number;
-}
-
-interface EdgeHoverCardData {
-  type: 'edge';
-  edge: ExplorerEdge;
-  x: number;
-  y: number;
-}
-
-type HoverCardState = NodeHoverCardData | EdgeHoverCardData | null;
+type HoverCardState =
+  | { type: 'node'; id: string; x: number; y: number }
+  | { type: 'edge'; id: string; x: number; y: number }
+  | null;
 
 export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) => {
   const investigation = useInvestigationOptional();
@@ -1168,7 +1157,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'node',
-            node: nodeObj,
+            id: nodeId,
             x: screenX,
             y: screenY
           });
@@ -1197,7 +1186,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'edge',
-            edge: edgeObj,
+            id: edgeId,
             x: screenX,
             y: screenY
           });
@@ -1709,7 +1698,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     } else if (e.key === 'Escape') {
       if (isEditable) return;
       onSelectNode(null);
-      onSelectEdge('');
+      onSelectEdge(null);
       if (onFocusChangeRef.current) {
         onFocusChangeRef.current({ enabled: false, focusNodeId: null, direction: 'both', depth: 1 });
       }
@@ -1917,26 +1906,37 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       )}
 
       {/* Hover Cards */}
-      {hoverCard && hoverCard.type === 'node' && (
-        <GraphErrorBoundary resetKey={hoverCard.node.id}>
-          <NodeHoverCard
-            node={hoverCard.node}
-            x={hoverCard.x}
-            y={hoverCard.y}
-            findings={findings}
-          />
-        </GraphErrorBoundary>
-      )}
-
-      {hoverCard && hoverCard.type === 'edge' && (
-        <GraphErrorBoundary resetKey={hoverCard.edge.id}>
-          <EdgeHoverCard
-            edge={hoverCard.edge}
-            x={hoverCard.x}
-            y={hoverCard.y}
-          />
-        </GraphErrorBoundary>
-      )}
+      {(() => {
+        if (!hoverCard) return null;
+        if (hoverCard.type === 'node') {
+          const liveNode = nodes.find((n) => n.id === hoverCard.id);
+          if (!liveNode) return null;
+          return (
+            <GraphErrorBoundary resetKey={liveNode.id}>
+              <NodeHoverCard
+                node={liveNode}
+                x={hoverCard.x}
+                y={hoverCard.y}
+                findings={findings}
+              />
+            </GraphErrorBoundary>
+          );
+        }
+        if (hoverCard.type === 'edge') {
+          const liveEdge = edges.find((e) => e.id === hoverCard.id);
+          if (!liveEdge) return null;
+          return (
+            <GraphErrorBoundary resetKey={liveEdge.id}>
+              <EdgeHoverCard
+                edge={liveEdge}
+                x={hoverCard.x}
+                y={hoverCard.y}
+              />
+            </GraphErrorBoundary>
+          );
+        }
+        return null;
+      })()}
 
       {/* Live Region for Screen Readers on Layout Completion */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">

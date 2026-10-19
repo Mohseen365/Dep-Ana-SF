@@ -715,6 +715,10 @@ export const ProjectProvider: React.FC<{
   );
 };
 
+export function useProjectOptional(): ProjectContextValue | null {
+  return useContext(ProjectContext);
+}
+
 export function useProject(): ProjectContextValue {
   const context = useContext(ProjectContext);
   if (!context) {

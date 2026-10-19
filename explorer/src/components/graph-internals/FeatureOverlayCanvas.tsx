@@ -7,6 +7,7 @@ import type { OrbitGuideMetadata } from '../../lib/orbit-layout';
 import type { ArchitectureLayoutMode } from '../../types/explorer';
 import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '../../lib/layout/feature-composition';
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
 import { createLayoutGraphIndex } from '../../lib/layout/graph-index';
 import { computeCanvasLODLevel } from '../../lib/canvas-lod';
@@ -168,8 +169,11 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     return allGroups;
   }, [enableOverlay, discoveryResult, lodConfig.showCompositionGroups, nodes, edges, currentPositions, graphIndex]);
 
-  // Derive Shared Infrastructure highlight connections
-  const activeHighlightNodeId = hoveredNodeId || selectedNodeId || null;
+  // Debounce hover changes so rapid mouse movements don't continuously recompute getSharedHighlightData
+  const debouncedHoveredNodeId = useDebouncedValue(hoveredNodeId, 150);
+
+  // Selection highlighting is immediate; hover highlighting is debounced
+  const activeHighlightNodeId = debouncedHoveredNodeId || selectedNodeId || null;
   const sharedHighlight: SharedHighlightResult = useMemo(() => {
     if (!enableOverlay || !discoveryResult || !activeHighlightNodeId) {
       return {
