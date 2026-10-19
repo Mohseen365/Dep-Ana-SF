@@ -1,6 +1,8 @@
+import * as fs from 'node:fs';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { discoverFeatures, type FeatureDiscoveryResult } from './features';
 import { classifyNodeLayer } from './layers';
+import { isTestNode, isFieldNode } from './analysis';
 
 /**
  * Node position map mapping node ID to (x, y) coordinates.
@@ -331,12 +333,7 @@ export function nodeOverlapCount(
 }
 
 function isSecondaryNode(node: ExplorerNode): boolean {
-  const isTest =
-    node.behavior?.isTest ||
-    (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
-    /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
-  const isField = node.type === 'Field' || node.type === 'CustomField';
-  return isTest || isField;
+  return isTestNode(node) || isFieldNode(node);
 }
 
 /**
@@ -444,7 +441,6 @@ export function minimumNodeClearance(
     }
   }
 
-  if (minClearance === Infinity) return 0;
   // Apply spacing-aligned epsilon tolerance (1e-3, matching spacing.ts EPSILON) for sub-pixel arithmetic noise
   const SPACING_EPSILON = 1e-3;
   if (minClearance < 40.0 && 40.0 - minClearance <= SPACING_EPSILON) {
@@ -453,27 +449,16 @@ export function minimumNodeClearance(
   return minClearance;
 }
 
+const LAYER_ORDER: Record<string, number> = {
+  presentation: 0,
+  application: 1,
+  domain: 2,
+  schema: 3,
+};
+
 function getLayerRank(node: ExplorerNode): number {
-  const type = node.type;
-  if (type === 'LWC' || type === 'Visualforce') return 0; // presentation
-  if (type === 'ApexTrigger' || type === 'Flow') return 1; // application
-  if (
-    /(?:selector|repository|repo|dao|domain|dto|vo|model)$/i.test(
-      node.displayName || node.id
-    )
-  ) {
-    return 2; // domain
-  }
-  if (
-    type === 'Object' ||
-    type === 'CustomObject' ||
-    type === 'Field' ||
-    type === 'CustomField' ||
-    type === 'External'
-  ) {
-    return 3; // schema
-  }
-  return 1; // application default
+  const layer = classifyNodeLayer(node);
+  return LAYER_ORDER[layer] ?? 1;
 }
 
 /**
@@ -1046,13 +1031,7 @@ export function calculateDetailedEdgeCrossings(
 
   function isSecondary(nodeId: string): boolean {
     const node = nodeMap.get(nodeId);
-    if (!node) return false;
-    const isTest =
-      node.behavior?.isTest ||
-      (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
-      /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
-    const isField = node.type === 'Field' || node.type === 'CustomField';
-    return isTest || isField;
+    return node ? isSecondaryNode(node) : false;
   }
 
   interface InternalSegment {
@@ -1098,6 +1077,12 @@ export function calculateDetailedEdgeCrossings(
   let bridgeBridgeCrossings = 0;
   let primarySatelliteCrossings = 0;
   let satelliteSatelliteCrossings = 0;
+
+  const debugEntries: Array<{
+    edgeA: { sourceId: string; targetId: string };
+    edgeB: { sourceId: string; targetId: string };
+    classification: string;
+  }> = [];
 
   for (let i = 0; i < segments.length; i++) {
     const s1 = segments[i];
@@ -1150,31 +1135,25 @@ export function calculateDetailedEdgeCrossings(
       }
 
       if (intersected) {
-  // Optional debugging: record crossing classification when CROSS_DEBUG=1
-  if (process.env.CROSS_DEBUG === '1') {
-    const fs = require('fs');
-    const debugPath = 'cross_debug.json';
-    const debugEntry = {
-      edgeA: { sourceId: s1.sourceId, targetId: s1.targetId },
-      edgeB: { sourceId: s2.sourceId, targetId: s2.targetId },
-      classification: s1.isSatellite || s2.isSatellite
-        ? s1.isSatellite && s2.isSatellite
-          ? 'satellite-satellite'
-          : 'primary-satellite'
-        : s1.isBridge || s2.isBridge
-        ? s1.isBridge && s2.isBridge
-          ? 'bridge-bridge'
-          : 'primary-bridge'
-        : 'primary-primary',
-    };
-    try {
-      const existing = fs.existsSync(debugPath) ? JSON.parse(fs.readFileSync(debugPath, 'utf-8')) : [];
-      existing.push(debugEntry);
-      fs.writeFileSync(debugPath, JSON.stringify(existing, null, 2));
-    } catch (e) {
-      // ignore write errors in debug mode
-    }
-  }
+        if (process.env.CROSS_DEBUG === '1') {
+          debugEntries.push({
+            edgeA: { sourceId: s1.sourceId, targetId: s1.targetId },
+            edgeB: { sourceId: s2.sourceId, targetId: s2.targetId },
+            classification: s1.isSatellite || s2.isSatellite
+              ? s1.isSatellite && s2.isSatellite
+                ? 'satellite-satellite'
+                : 'primary-satellite'
+              : s1.isBridge || s2.isBridge
+              ? s1.isBridge && s2.isBridge
+                ? 'bridge-bridge'
+                : 'primary-bridge'
+              : 'primary-primary',
+          });
+        }
+
+        // Note: Satellite classification takes precedence over bridge classification.
+        // Any crossing involving at least one satellite edge (whether crossing a primary, bridge, or satellite)
+        // is bucketed into primarySatelliteCrossings or satelliteSatelliteCrossings.
         if (s1.isSatellite || s2.isSatellite) {
           if (s1.isSatellite && s2.isSatellite) {
             satelliteSatelliteCrossings++;
@@ -1191,6 +1170,14 @@ export function calculateDetailedEdgeCrossings(
           primaryPrimaryCrossings++;
         }
       }
+    }
+  }
+
+  if (process.env.CROSS_DEBUG === '1' && debugEntries.length > 0) {
+    try {
+      fs.writeFileSync('cross_debug.json', JSON.stringify(debugEntries, null, 2));
+    } catch (e) {
+      // ignore write errors in debug mode
     }
   }
 
