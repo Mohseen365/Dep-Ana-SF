@@ -229,101 +229,133 @@ export function useViewState() {
 
   const readStateFromUrl = useCallback(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
+    try {
+      const params = new URLSearchParams(window.location.search);
 
-    let initialNode = params.get("node") || params.get("component");
-    if (!initialNode && typeof window !== "undefined" && window.location.hash) {
+      let initialNode = params.get("node") || params.get("component");
+      if (!initialNode && typeof window !== "undefined" && window.location.hash) {
+        try {
+          const hashRaw = window.location.hash.startsWith("#")
+            ? window.location.hash.slice(1)
+            : window.location.hash;
+          const hashParams = new URLSearchParams(hashRaw);
+          initialNode = hashParams.get("node");
+        } catch { /* ignore */ }
+      }
+
+      if (initialNode) {
+        setUrlNodeId(initialNode);
+        if (investigationRef.current) {
+          investigationRef.current.selectNode(initialNode);
+        } else {
+          setLocalSelectedNodeId(initialNode);
+        }
+      } else {
+        setUrlNodeId(null);
+        if (investigationRef.current) {
+          investigationRef.current.selectNode(null);
+        } else {
+          setLocalSelectedNodeId(null);
+        }
+      }
+
+      const initialEdge = params.get("edge");
+      setSelectedEdgeId(initialEdge ?? null);
+
       try {
-        const hashRaw = window.location.hash.startsWith("#")
-          ? window.location.hash.slice(1)
-          : window.location.hash;
-        const hashParams = new URLSearchParams(hashRaw);
-        initialNode = hashParams.get("node");
-      } catch { /* ignore */ }
-    }
-
-    if (initialNode) {
-      setUrlNodeId(initialNode);
-      if (investigationRef.current) {
-        investigationRef.current.selectNode(initialNode);
-      } else {
-        setLocalSelectedNodeId(initialNode);
+        const filterParsed = filterQuery.fromQuery(params);
+        if (routerRef.current) {
+          routerRef.current.setViewMode(filterParsed.viewMode);
+        } else {
+          setLocalViewMode(filterParsed.viewMode);
+        }
+        setFilterState(filterParsed.filterState);
+      } catch (e) {
+        console.warn('[useViewState] failed to parse filter params:', e);
       }
-    } else {
-      setUrlNodeId(null);
-      if (investigationRef.current) {
-        investigationRef.current.selectNode(null);
-      } else {
-        setLocalSelectedNodeId(null);
+
+      try {
+        const focusParsed = focusQuery.fromQuery(params, initialNode);
+        if (investigationRef.current) {
+          if (focusParsed.enabled) {
+            investigationRef.current.setFocus(focusParsed);
+          } else {
+            investigationRef.current.clearFocus();
+          }
+        } else {
+          setLocalFocusState(focusParsed);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse focus params:', e);
       }
-    }
 
-    const initialEdge = params.get("edge");
-    setSelectedEdgeId(initialEdge ?? null);
-
-    const filterParsed = filterQuery.fromQuery(params);
-    if (routerRef.current) {
-      routerRef.current.setViewMode(filterParsed.viewMode);
-    } else {
-      setLocalViewMode(filterParsed.viewMode);
-    }
-    setFilterState(filterParsed.filterState);
-
-    const focusParsed = focusQuery.fromQuery(params, initialNode);
-    if (investigationRef.current) {
-      if (focusParsed.enabled) {
-        investigationRef.current.setFocus(focusParsed);
-      } else {
-        investigationRef.current.clearFocus();
+      try {
+        const impactParsed = impactQuery.fromQuery(params, initialNode);
+        if (investigationRef.current) {
+          if (impactParsed.enabled) {
+            investigationRef.current.setImpact(impactParsed);
+          } else {
+            investigationRef.current.clearImpact();
+          }
+        } else {
+          setLocalImpactState(impactParsed);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse impact params:', e);
       }
-    } else {
-      setLocalFocusState(focusParsed);
-    }
 
-    const impactParsed = impactQuery.fromQuery(params, initialNode);
-    if (investigationRef.current) {
-      if (impactParsed.enabled) {
-        investigationRef.current.setImpact(impactParsed);
-      } else {
-        investigationRef.current.clearImpact();
+      try {
+        const connParsed = connectionQuery.fromQuery(params);
+        if (investigationRef.current) {
+          investigationRef.current.setConnection(connParsed);
+        } else {
+          setLocalConnectionState(connParsed);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse connection params:', e);
       }
-    } else {
-      setLocalImpactState(impactParsed);
-    }
 
-    const connParsed = connectionQuery.fromQuery(params);
-    if (investigationRef.current) {
-      investigationRef.current.setConnection(connParsed);
-    } else {
-      setLocalConnectionState(connParsed);
-    }
-
-    const findingsParsed = findingsQuery.fromQuery(params);
-    setDiagnosticsTab(findingsParsed.diagnosticsTab);
-    if (investigationRef.current) {
-      if (findingsParsed.selectedCycleId) {
-        investigationRef.current.selectCycle(findingsParsed.selectedCycleId);
+      try {
+        const findingsParsed = findingsQuery.fromQuery(params);
+        setDiagnosticsTab(findingsParsed.diagnosticsTab);
+        if (investigationRef.current) {
+          if (findingsParsed.selectedCycleId) {
+            investigationRef.current.selectCycle(findingsParsed.selectedCycleId);
+          }
+          if (findingsParsed.selectedUnresolvedEdgeId) {
+            investigationRef.current.selectUnresolvedEdge(
+              findingsParsed.selectedUnresolvedEdgeId,
+            );
+          }
+          if (findingsParsed.selectedFindingId) {
+            investigationRef.current.selectFinding(
+              findingsParsed.selectedFindingId,
+            );
+          }
+        } else {
+          setLocalSelectedCycleId(findingsParsed.selectedCycleId);
+          setLocalSelectedUnresolvedEdgeId(findingsParsed.selectedUnresolvedEdgeId);
+          setLocalSelectedFindingId(findingsParsed.selectedFindingId);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse findings params:', e);
       }
-      if (findingsParsed.selectedUnresolvedEdgeId) {
-        investigationRef.current.selectUnresolvedEdge(
-          findingsParsed.selectedUnresolvedEdgeId,
-        );
+
+      try {
+        const invParsed = investigationQuery.fromQuery(params);
+        setSelectedInvestigationId(invParsed.selectedInvestigationId);
+      } catch (e) {
+        console.warn('[useViewState] failed to parse investigation params:', e);
       }
-      if (findingsParsed.selectedFindingId) {
-        investigationRef.current.selectFinding(
-          findingsParsed.selectedFindingId,
-        );
+
+      try {
+        setIsInvestigating(params.get("investigate") === "true");
+      } catch (e) {
+        console.warn('[useViewState] failed to parse investigate param:', e);
       }
-    } else {
-      setLocalSelectedCycleId(findingsParsed.selectedCycleId);
-      setLocalSelectedUnresolvedEdgeId(findingsParsed.selectedUnresolvedEdgeId);
-      setLocalSelectedFindingId(findingsParsed.selectedFindingId);
+    } catch (err) {
+      console.warn('[useViewState] failed to parse URL state:', err);
     }
-
-    const invParsed = investigationQuery.fromQuery(params);
-    setSelectedInvestigationId(invParsed.selectedInvestigationId);
-
-    setIsInvestigating(params.get("investigate") === "true");
   }, []);
 
   // Read initial values from URL on mount and popstate
@@ -502,53 +534,44 @@ export function useViewState() {
   const syncToUrlRef = useRef(syncToUrl);
   syncToUrlRef.current = syncToUrl;
 
-  const prevSearchQueryRef = useRef(filterState.searchQuery);
-  const prevNonSearchStateRef = useRef({
+  const nonSearchKey = [
     activeViewMode,
-    selectedNodeId,
-    selectedFindingId,
-    selectedCycleId,
-    selectedUnresolvedEdgeId,
-    selectedInvestigationId,
-    isInvestigating,
+    selectedNodeId ?? '',
+    selectedFindingId ?? '',
+    selectedCycleId ?? '',
+    selectedUnresolvedEdgeId ?? '',
+    selectedInvestigationId ?? '',
+    isInvestigating ? '1' : '0',
     diagnosticsTab,
-    focusState,
-    impactState,
-    connectionState,
-    typeFilter: filterState.typeFilter,
-    riskFilter: filterState.riskFilter,
-    hasCallouts: filterState.hasCallouts,
-    withoutSharing: filterState.withoutSharing,
-    hideTests: filterState.hideTests,
-    hasAsyncPatterns: filterState.hasAsyncPatterns,
-  });
+    // focus
+    focusState.enabled ? '1' : '0',
+    focusState.focusNodeId ?? '',
+    focusState.direction,
+    focusState.depth,
+    // impact
+    impactState.enabled ? '1' : '0',
+    impactState.originNodeId ?? '',
+    impactState.depth,
+    // connection
+    connectionState.direction,
+    connectionState.depth,
+    // filters
+    filterState.typeFilter,
+    filterState.riskFilter,
+    filterState.hasCallouts ? '1' : '0',
+    filterState.withoutSharing ? '1' : '0',
+    filterState.hideTests ? '1' : '0',
+    filterState.hasAsyncPatterns ? '1' : '0',
+  ].join('|');
+
+  const prevSearchQueryRef = useRef(filterState.searchQuery);
+  const prevNonSearchKeyRef = useRef(nonSearchKey);
 
   useEffect(() => {
-    const currentNonSearchState = {
-      activeViewMode,
-      selectedNodeId,
-      selectedFindingId,
-      selectedCycleId,
-      selectedUnresolvedEdgeId,
-      selectedInvestigationId,
-      isInvestigating,
-      diagnosticsTab,
-      focusState,
-      impactState,
-      connectionState,
-      typeFilter: filterState.typeFilter,
-      riskFilter: filterState.riskFilter,
-      hasCallouts: filterState.hasCallouts,
-      withoutSharing: filterState.withoutSharing,
-      hideTests: filterState.hideTests,
-      hasAsyncPatterns: filterState.hasAsyncPatterns,
-    };
-
-    const nonSearchChanged =
-      JSON.stringify(prevNonSearchStateRef.current) !== JSON.stringify(currentNonSearchState);
+    const nonSearchChanged = prevNonSearchKeyRef.current !== nonSearchKey;
     const searchQueryChanged = prevSearchQueryRef.current !== filterState.searchQuery;
 
-    prevNonSearchStateRef.current = currentNonSearchState;
+    prevNonSearchKeyRef.current = nonSearchKey;
     prevSearchQueryRef.current = filterState.searchQuery;
 
     if (debounceTimerRef.current) {
@@ -572,18 +595,8 @@ export function useViewState() {
     };
   }, [
     syncToUrl,
-    activeViewMode,
-    selectedNodeId,
-    selectedFindingId,
-    selectedCycleId,
-    selectedUnresolvedEdgeId,
-    selectedInvestigationId,
-    isInvestigating,
-    diagnosticsTab,
-    focusState,
-    impactState,
-    connectionState,
-    filterState,
+    nonSearchKey,
+    filterState.searchQuery,
   ]);
 
   return {
