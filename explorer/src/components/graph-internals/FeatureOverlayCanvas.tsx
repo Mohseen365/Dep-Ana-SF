@@ -270,7 +270,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
             ))}
 
             {/* 65 Semantic Sector Wedges & Guide Lines */}
-            {orbitGuides?.sectors?.map((sector) => {
+            {orbitGuides?.sectors && orbitGuides.sectors.map((sector) => {
               const maxR = 2600;
               const startX = Math.round(maxR * Math.cos(sector.startAngleRad) * 100) / 100;
               const startY = Math.round(maxR * Math.sin(sector.startAngleRad) * 100) / 100;

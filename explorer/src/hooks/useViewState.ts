@@ -469,7 +469,8 @@ export function useViewState() {
     }
 
     const searchString = params.toString() ? `?${params.toString()}` : "";
-    const newUrl = `${window.location.pathname}${searchString}`;
+    const currentHash = typeof window !== "undefined" ? window.location.hash : "";
+    const newUrl = `${window.location.pathname}${searchString}${currentHash}`;
     if (window.location.search !== searchString) {
       if (prevViewModeRef.current !== activeViewMode) {
         window.history.pushState(null, "", newUrl);
