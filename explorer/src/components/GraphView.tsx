@@ -200,11 +200,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (hashModes.arch) return hashModes.arch;
     if (architectureModeProp) return architectureModeProp;
     if (graphLayout?.architectureMode) return graphLayout.architectureMode;
-    if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('explorer:architectureMode') as ArchitectureLayoutMode | null;
-      if (stored && ['hierarchical', 'hybrid', 'orbit', 'constellation'].includes(stored)) {
-        return stored;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('explorer:architectureMode') as ArchitectureLayoutMode | null;
+        if (stored && ['hierarchical', 'hybrid', 'orbit', 'constellation'].includes(stored)) {
+          return stored;
+        }
       }
+    } catch {
+      /* storage unavailable */
     }
     return 'hierarchical';
   }, [hashModes.arch, architectureModeProp, graphLayout?.architectureMode]);
@@ -213,11 +217,15 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (hashModes.layout) return hashModes.layout;
     if (layoutModeProp) return layoutModeProp;
     if (graphLayout?.mode) return graphLayout.mode;
-    if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('explorer:layoutMode') as LayoutMode | null;
-      if (stored && ['static', 'interactive'].includes(stored)) {
-        return stored;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('explorer:layoutMode') as LayoutMode | null;
+        if (stored && ['static', 'interactive'].includes(stored)) {
+          return stored;
+        }
       }
+    } catch {
+      /* storage unavailable */
     }
     return 'interactive';
   }, [hashModes.layout, layoutModeProp, graphLayout?.mode]);
@@ -942,22 +950,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       hasAuthoritativePositions: hasAuth,
     });
 
-    const layoutOptions = autoLayoutPolicy === true
-      ? getLayoutOptions({
-          ...effectiveLayoutOptionsRef.current,
-          nodes: nodesRef.current,
-          edges: edgesRef.current,
-          nodeCount: nodesRef.current.length,
-          padding: 50,
-          animate: !prefersReducedMotion && nodesRef.current.length < 100
-        })
-      : { name: 'preset' };
-
     const cy = cytoscape({
       container: containerRef.current,
       elements: elements,
       style: styles,
-      layout: layoutOptions,
+      // Layout is applied explicitly below so we can capture metadata + fit together.
+      layout: { name: 'preset' },
       minZoom: 0.1,
       maxZoom: 5,
       wheelSensitivity: 0.2,
@@ -998,7 +996,6 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
 
     if (autoLayoutPolicy === true) {
       markLayoutStart('initial');
-      cy.layout(layoutOptions).run();
       const layoutRes = runLayoutWithMetadata(cy, {
         ...effectiveLayoutOptionsRef.current,
         nodes: nodesRef.current,
@@ -1066,8 +1063,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    cy.zoom(initialZoom);
-    cy.center();
+    // Only apply a manual zoom fallback when the layout did not fit.
+    if (autoLayoutPolicy !== true) {
+      cy.zoom(initialZoom);
+      cy.center();
+    }
 
     let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
     const updateZoomClass = () => {
@@ -1779,7 +1779,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       )}
 
       {/* Protected Overlays */}
-      <GraphErrorBoundary>
+      <GraphErrorBoundary
+        resetKeys={[architectureMode, nodes.length, edges.length]}
+        onError={(err) => {
+          console.error('[GraphErrorBoundary] overlay failed', err);
+          if (typeof window !== 'undefined') {
+            (window as any).__LAST_OVERLAY_ERROR__ = {
+              message: err?.message,
+              stack: err?.stack,
+              at: Date.now(),
+            };
+          }
+        }}
+      >
         <FeatureOverlayCanvas
           cy={cyInstance}
           nodes={nodes}
