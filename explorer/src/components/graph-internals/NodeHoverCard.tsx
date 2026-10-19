@@ -14,8 +14,9 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
   const fanIn = node.metrics?.fanIn ?? 0;
   const fanOut = node.metrics?.fanOut ?? 0;
 
-  const nodeFindings = (findings || []).filter(
-    (f) => f.nodeIds && f.nodeIds.includes(node.id)
+  const nodeFindings = React.useMemo(
+    () => (findings || []).filter((f) => f.nodeIds && f.nodeIds.includes(node.id)),
+    [findings, node.id]
   );
 
   const maxSeverity = React.useMemo(() => {
@@ -33,7 +34,17 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
   }, [nodeFindings]);
 
   const [copied, setCopied] = React.useState(false);
+  const copyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewport = useViewportSize();
+
+  React.useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
 
   // Clamp positioning to keep within screen viewport
   const left = Math.min(x + 12, viewport.width - 260);
@@ -46,7 +57,11 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(node.file).then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => {
+          copyTimerRef.current = null;
+          setCopied(false);
+        }, 2000);
       }).catch(() => {});
     }
   };

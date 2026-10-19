@@ -288,14 +288,20 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
             ))}
 
             {/* 65 Semantic Sector Wedges & Guide Lines */}
-            {orbitGuides?.sectors && orbitGuides.sectors.map((sector) => {
-              const maxR = 2600;
-              const startX = Math.round(maxR * Math.cos(sector.startAngleRad) * 100) / 100;
-              const startY = Math.round(maxR * Math.sin(sector.startAngleRad) * 100) / 100;
-              const midAngle = (sector.startAngleRad + sector.endAngleRad) / 2;
-              const labelR = 2400;
-              const labelX = Math.round(labelR * Math.cos(midAngle) * 100) / 100;
-              const labelY = Math.round(labelR * Math.sin(midAngle) * 100) / 100;
+            {(() => {
+              const maxRingRadius = orbitGuides?.rings?.reduce(
+                (max, ring) => (ring.radiusPx > max ? ring.radiusPx : max),
+                0
+              ) ?? 0;
+              const guideRadius = maxRingRadius > 0 ? maxRingRadius * 1.08 : 2600;
+              const labelRadius = maxRingRadius > 0 ? maxRingRadius * 1.0 : 2400;
+
+              return orbitGuides?.sectors && orbitGuides.sectors.map((sector) => {
+                const startX = Math.round(guideRadius * Math.cos(sector.startAngleRad) * 100) / 100;
+                const startY = Math.round(guideRadius * Math.sin(sector.startAngleRad) * 100) / 100;
+                const midAngle = (sector.startAngleRad + sector.endAngleRad) / 2;
+                const labelX = Math.round(labelRadius * Math.cos(midAngle) * 100) / 100;
+                const labelY = Math.round(labelRadius * Math.sin(midAngle) * 100) / 100;
 
               return (
                 <g key={`orbit_sector_${sector.sectorId}`}>
@@ -323,7 +329,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   )}
                 </g>
               );
-            })}
+            });
+            })()}
           </g>
         )}
 
@@ -502,7 +509,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
 
             const { count, maxSeverity } = findingData;
             const countText = count > 9 ? '10+' : `${count}`;
-            const badgeWidth = countText === '10+' ? 32 : 26;
+            const badgeWidth = (countText === '10+' ? 32 : 26) + 12;
 
             const strokeColor =
               maxSeverity === 'CRITICAL'
@@ -532,8 +539,12 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   stroke={strokeColor}
                   strokeWidth={1.5}
                 />
+                <path
+                  d="M 6 12 L 10 4 L 14 12 Z"
+                  fill={strokeColor}
+                />
                 <text
-                  x={badgeWidth / 2}
+                  x={(badgeWidth + 12) / 2}
                   y={11}
                   fill="#f8fafc"
                   fontSize={9}
@@ -541,7 +552,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   textAnchor="middle"
                   fontFamily="system-ui, -apple-system, sans-serif"
                 >
-                  ⚠️ {countText}
+                  {countText}
                 </text>
               </g>
             );
