@@ -518,8 +518,10 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                 key={`finding_badge_${node.id}`}
                 className="finding-badge-overlay"
                 data-testid={`finding-badge-${node.id}`}
+                data-max-severity={maxSeverity}
                 transform={`translate(${pos.x + 14}, ${pos.y - 28})`}
               >
+                <title>{`${count} issue${count > 1 ? 's' : ''} (${maxSeverity})`}</title>
                 <rect
                   x={0}
                   y={0}
