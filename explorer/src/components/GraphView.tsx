@@ -109,7 +109,7 @@ export interface GraphViewProps {
   nodes: ExplorerNode[];
   edges: ExplorerEdge[];
   onSelectNode: (node: ExplorerNode | null) => void;
-  onSelectEdge: (edgeId: string) => void;
+  onSelectEdge: (edgeId: string | null) => void;
   selectedNodeId: string | null;
   selectedEdgeId: string | null;
   impactResult?: ImpactAnalysisResult | null;
@@ -146,21 +146,10 @@ export interface GraphViewRef {
   resetLayout: () => void;
 }
 
-interface NodeHoverCardData {
-  type: 'node';
-  node: ExplorerNode;
-  x: number;
-  y: number;
-}
-
-interface EdgeHoverCardData {
-  type: 'edge';
-  edge: ExplorerEdge;
-  x: number;
-  y: number;
-}
-
-type HoverCardState = NodeHoverCardData | EdgeHoverCardData | null;
+type HoverCardState =
+  | { type: 'node'; id: string; x: number; y: number }
+  | { type: 'edge'; id: string; x: number; y: number }
+  | null;
 
 export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) => {
   const investigation = useInvestigationOptional();
@@ -489,21 +478,23 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     }
   }, [navHistory, nodes, onSelectNode]);
 
-  // Initial node restoration from URL hash
+  // Initial node restoration from URL hash with fallback for missing nodes
   useEffect(() => {
     if (!cyInstance || nodes.length === 0 || restoredHashNodeRef.current) return;
 
     const initialNodeId = hashModes.node;
     if (!initialNodeId || selectedNodeId) return;
 
-    restoreAttemptedRef.current = true;
-
     const matchedNode = nodes.find(n => n.id === initialNodeId || n.displayName === initialNodeId);
     if (!matchedNode) {
-      // Nodes are still arriving; retry on next nodes change.
-      return;
+      // Fallback: If node never arrives (e.g. invalid/deleted node ID in URL), mark restore attempted after timeout
+      const timer = setTimeout(() => {
+        restoreAttemptedRef.current = true;
+      }, 1500);
+      return () => clearTimeout(timer);
     }
 
+    restoreAttemptedRef.current = true;
     restoredHashNodeRef.current = true;
     onSelectNode(matchedNode);
     const ele = cyInstance.getElementById(matchedNode.id);
@@ -1166,7 +1157,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'node',
-            node: nodeObj,
+            id: nodeId,
             x: screenX,
             y: screenY
           });
@@ -1195,7 +1186,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         hoverTimerRef.current = setTimeout(() => {
           setHoverCard({
             type: 'edge',
-            edge: edgeObj,
+            id: edgeId,
             x: screenX,
             y: screenY
           });
@@ -1434,6 +1425,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     focusedNodeId,
   ]);
 
+  const applyDecorationsRef = useRef(applyDecorations);
+  useEffect(() => {
+    applyDecorationsRef.current = applyDecorations;
+  }, [applyDecorations]);
+
   // Structural Element Synchronization Effect (runs ONLY when nodes, edges, or structural options change)
   useEffect(() => {
     nodesRef.current = nodes;
@@ -1533,7 +1529,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (newlyPlaced) {
       captureAndPersistPositions();
     }
-    applyDecorations(cy);
+      applyDecorationsRef.current(cy);
 
     const requestId = ++layoutRequestRef.current;
 
@@ -1587,7 +1583,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     }
 
-  }, [structuralFingerprint, captureAndPersistPositions, applyDecorations]);
+  }, [structuralFingerprint, captureAndPersistPositions]);
 
   // Dedicated Effect for Simulation Visual Classes
   useEffect(() => {
@@ -1702,7 +1698,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     } else if (e.key === 'Escape') {
       if (isEditable) return;
       onSelectNode(null);
-      onSelectEdge('');
+      onSelectEdge(null);
       if (onFocusChangeRef.current) {
         onFocusChangeRef.current({ enabled: false, focusNodeId: null, direction: 'both', depth: 1 });
       }
@@ -1857,7 +1853,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       <GraphErrorBoundary
         resetKeys={[architectureMode, nodes.length, edges.length]}
         onError={(err) => {
-          console.error('[GraphErrorBoundary] overlay failed', err);
+          console.error('[GraphErrorBoundary] FeatureOverlayCanvas failed', err);
           if (typeof window !== 'undefined') {
             (window as any).__LAST_OVERLAY_ERROR__ = {
               message: err?.message,
@@ -1881,9 +1877,11 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
           featureRegions={architectureMode === 'hybrid' ? featureRegions : undefined}
           orbitGuides={architectureMode === 'orbit' || architectureMode === 'constellation' ? orbitGuides : undefined}
         />
+      </GraphErrorBoundary>
 
-        {/* Navigator Container */}
-        {isNavigatorVisible && (
+      {/* Navigator Container */}
+      {isNavigatorVisible && (
+        <GraphErrorBoundary resetKeys={[architectureMode]}>
           <div
             id="minimap"
             ref={minimapRef}
@@ -1904,26 +1902,41 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
             </div>
             <div className="navigator-body" />
           </div>
-        )}
+        </GraphErrorBoundary>
+      )}
 
-        {/* Hover Cards */}
-        {hoverCard && hoverCard.type === 'node' && (
-          <NodeHoverCard
-            node={hoverCard.node}
-            x={hoverCard.x}
-            y={hoverCard.y}
-            findings={findings}
-          />
-        )}
-
-        {hoverCard && hoverCard.type === 'edge' && (
-          <EdgeHoverCard
-            edge={hoverCard.edge}
-            x={hoverCard.x}
-            y={hoverCard.y}
-          />
-        )}
-      </GraphErrorBoundary>
+      {/* Hover Cards */}
+      {(() => {
+        if (!hoverCard) return null;
+        if (hoverCard.type === 'node') {
+          const liveNode = nodes.find((n) => n.id === hoverCard.id);
+          if (!liveNode) return null;
+          return (
+            <GraphErrorBoundary resetKey={liveNode.id}>
+              <NodeHoverCard
+                node={liveNode}
+                x={hoverCard.x}
+                y={hoverCard.y}
+                findings={findings}
+              />
+            </GraphErrorBoundary>
+          );
+        }
+        if (hoverCard.type === 'edge') {
+          const liveEdge = edges.find((e) => e.id === hoverCard.id);
+          if (!liveEdge) return null;
+          return (
+            <GraphErrorBoundary resetKey={liveEdge.id}>
+              <EdgeHoverCard
+                edge={liveEdge}
+                x={hoverCard.x}
+                y={hoverCard.y}
+              />
+            </GraphErrorBoundary>
+          );
+        }
+        return null;
+      })()}
 
       {/* Live Region for Screen Readers on Layout Completion */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">

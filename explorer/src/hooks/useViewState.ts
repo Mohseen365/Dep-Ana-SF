@@ -5,9 +5,9 @@ import {
 } from "../lib/search-filter";
 import { FocusState, createEmptyFocusState } from "../lib/focus-graph";
 import { ImpactState, createEmptyImpactState } from "../lib/impact-analysis";
-import { useWorkspaceRouter } from "../context/WorkspaceRouterContext";
-import { useInvestigation } from "../context/InvestigationContext";
-import { useProject } from "../context/ProjectContext";
+import { useWorkspaceRouterOptional } from "../context/WorkspaceRouterContext";
+import { useInvestigationOptional } from "../context/InvestigationContext";
+import { useProjectOptional } from "../context/ProjectContext";
 
 import { WorkspaceViewMode } from "../lib/projectState";
 import {
@@ -20,32 +20,16 @@ import {
   ConnectionQueryState,
 } from "../lib/url";
 
-// Defensive shims for standalone useViewState without WorkspaceRouter/Investigation/Project
-// providers mounted. Assumption: each underlying hook throws *before* invoking any of its
-// own hooks when no provider is present (i.e. useContext on a null context). If a provider
-// ever throws after some of its own hooks have run, this pattern will violate Rules of Hooks.
 function useWorkspaceRouterSafe() {
-  try {
-    return useWorkspaceRouter();
-  } catch (_) {
-    return null;
-  }
+  return useWorkspaceRouterOptional();
 }
 
 function useInvestigationSafe() {
-  try {
-    return useInvestigation();
-  } catch (_) {
-    return null;
-  }
+  return useInvestigationOptional();
 }
 
 function useProjectSafe() {
-  try {
-    return useProject();
-  } catch (_) {
-    return null;
-  }
+  return useProjectOptional();
 }
 export function useViewState() {
   const router = useWorkspaceRouterSafe();

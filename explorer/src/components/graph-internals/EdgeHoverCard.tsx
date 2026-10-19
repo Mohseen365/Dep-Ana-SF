@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExplorerEdge } from '../../types/explorer';
+import { useViewportSize } from '../../hooks/useViewportSize';
 
 export interface EdgeHoverCardProps {
   edge: ExplorerEdge;
@@ -9,15 +10,18 @@ export interface EdgeHoverCardProps {
 
 export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function EdgeHoverCard({ edge, x, y }) {
   const [copied, setCopied] = React.useState(false);
+  const viewport = useViewportSize();
 
-  const left = Math.min(x + 12, window.innerWidth - 280);
-  const top = Math.min(y + 12, window.innerHeight - 180);
+  const left = Math.min(x + 12, viewport.width - 280);
+  const top = Math.min(y + 12, viewport.height - 180);
 
   const line = edge.line;
   const file = edge.file || '';
   const locationStr = file ? (line ? `${file}:${line}` : file) : null;
   const fileWithLine = locationStr || 'N/A';
-  const vscodeUrl = file ? `vscode://file/${file}:${line ?? 1}` : null;
+  const vscodeUrl = file
+    ? `vscode://file/${encodeURIComponent(file).replace(/%2F/gi, '/')}:${line ?? 1}`
+    : null;
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();

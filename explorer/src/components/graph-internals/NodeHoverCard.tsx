@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExplorerNode } from '../../types/explorer';
 import type { ArchitectureFinding } from '../../lib/intelligence';
+import { useViewportSize } from '../../hooks/useViewportSize';
 
 export interface NodeHoverCardProps {
   node: ExplorerNode;
@@ -18,10 +19,11 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function N
   );
 
   const [copied, setCopied] = React.useState(false);
+  const viewport = useViewportSize();
 
   // Clamp positioning to keep within screen viewport
-  const left = Math.min(x + 12, window.innerWidth - 260);
-  const top = Math.min(y + 12, window.innerHeight - 160);
+  const left = Math.min(x + 12, viewport.width - 260);
+  const top = Math.min(y + 12, viewport.height - 160);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -292,7 +292,7 @@ describe('GraphEngine Components & Integration', () => {
       // Press Escape to deselect
       fireEvent.keyDown(region, { key: 'Escape' });
       expect(onSelectNode).toHaveBeenCalledWith(null);
-      expect(onSelectEdge).toHaveBeenCalledWith('');
+      expect(onSelectEdge).toHaveBeenCalledWith(null);
     });
 
     it('allows closing and toggling the navigator overlay without affecting graph state', () => {

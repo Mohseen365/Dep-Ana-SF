@@ -44,8 +44,7 @@ export class GraphErrorBoundary extends React.Component<
 
       if (
         keysChanged ||
-        prevProps.resetKey !== this.props.resetKey ||
-        prevProps.children !== this.props.children
+        prevProps.resetKey !== this.props.resetKey
       ) {
         this.setState({ hasError: false, error: null, isRecovering: false });
       }

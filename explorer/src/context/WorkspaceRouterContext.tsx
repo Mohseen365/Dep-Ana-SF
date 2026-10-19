@@ -88,6 +88,10 @@ export function WorkspaceRouterProvider({
   );
 }
 
+export function useWorkspaceRouterOptional(): WorkspaceRouterContextValue | null {
+  return useContext(WorkspaceRouterContext);
+}
+
 export function useWorkspaceRouter(): WorkspaceRouterContextValue {
   const context = useContext(WorkspaceRouterContext);
   if (!context) {
