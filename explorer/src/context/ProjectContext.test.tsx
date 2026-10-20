@@ -240,7 +240,7 @@ describe('ProjectContext & Provider', () => {
     expect(result.current.getProjectDataUrl('default')).toBe('/explorer-data.json');
   });
 
-  it('resolves PBIM project manifest path correctly to pub-infra-mang dataset', async () => {
+  it('resolves PBIM project manifest path correctly to /projects/pbim/explorer-data.json dataset', async () => {
     const mockManifest = {
       manifestVersion: '1.0.0',
       activeProjectId: 'movie',
@@ -249,14 +249,14 @@ describe('ProjectContext & Provider', () => {
           id: 'pbim',
           name: 'pbim',
           description: 'Salesforce DX Architecture Analysis',
-          sourcePath: 'Pub-Infra-Mang/force-app/main/default',
+          sourcePath: 'projects/pbim',
           createdAt: '2026-09-25T04:55:57.331Z',
           updatedAt: '2026-09-25T04:55:57.331Z',
           lastAnalyzedAt: '2026-09-25T04:55:57.331Z',
           analysisStatus: 'COMPLETE',
           componentCount: 528,
           dependencyCount: 2063,
-          analysisPath: '/projects/pub-infra-mang/explorer-data.json',
+          analysisPath: '/projects/pbim/explorer-data.json',
         },
       ],
     };
@@ -278,10 +278,168 @@ describe('ProjectContext & Provider', () => {
 
     const pbimProject = result.current.projects.find((p) => p.id === 'pbim');
     expect(pbimProject).toBeDefined();
-    expect(pbimProject?.analysisPath).toBe('/projects/pub-infra-mang/explorer-data.json');
+    expect(pbimProject?.analysisPath).toBe('/projects/pbim/explorer-data.json');
     expect(pbimProject?.componentCount).toBe(528);
     expect(pbimProject?.dependencyCount).toBe(2063);
-    expect(result.current.getProjectDataUrl('pbim')).toBe('/projects/pub-infra-mang/explorer-data.json');
+    expect(result.current.getProjectDataUrl('pbim')).toBe('/projects/pbim/explorer-data.json');
+  });
+
+  it('selects manifest active project when URL and saved selection are empty', async () => {
+    const mockManifest = {
+      manifestVersion: '1.0.0',
+      activeProjectId: 'cloud-spend-tracker',
+      projects: [
+        DEFAULT_PROJECT,
+        {
+          id: 'cloud-spend-tracker',
+          name: 'Cloud Spend Tracker',
+          sourcePath: 'projects/cloud-spend-tracker',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          analysisStatus: 'COMPLETE',
+          componentCount: 240,
+          dependencyCount: 1024,
+          analysisPath: '/projects/cloud-spend-tracker/explorer-data.json',
+        },
+      ],
+    };
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return {
+        ok: true,
+        json: async () => mockManifest,
+      } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.activeProjectId).toBe('cloud-spend-tracker');
+    expect(result.current.activeProject?.name).toBe('Cloud Spend Tracker');
+  });
+
+  it('valid URL selection takes precedence over manifest active project', async () => {
+    window.history.pushState({}, '', '/?project=bqc');
+
+    const mockManifest = {
+      manifestVersion: '1.0.0',
+      activeProjectId: 'cloud-spend-tracker',
+      projects: [
+        DEFAULT_PROJECT,
+        {
+          id: 'bqc',
+          name: 'BQC',
+          sourcePath: 'projects/bqc',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          analysisStatus: 'COMPLETE',
+          componentCount: 274,
+          dependencyCount: 603,
+          analysisPath: '/projects/bqc/explorer-data.json',
+        },
+        {
+          id: 'cloud-spend-tracker',
+          name: 'Cloud Spend Tracker',
+          sourcePath: 'projects/cloud-spend-tracker',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          analysisStatus: 'COMPLETE',
+          componentCount: 240,
+          dependencyCount: 1024,
+          analysisPath: '/projects/cloud-spend-tracker/explorer-data.json',
+        },
+      ],
+    };
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return {
+        ok: true,
+        json: async () => mockManifest,
+      } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.activeProjectId).toBe('bqc');
+    expect(result.current.activeProject?.name).toBe('BQC');
+  });
+
+  it('falls back correctly when saved or URL project is invalid', async () => {
+    localStorage.setItem('explorer.activeProjectId', 'invalid-nonexistent-id');
+
+    const mockManifest = {
+      manifestVersion: '1.0.0',
+      activeProjectId: 'food-app',
+      projects: [
+        DEFAULT_PROJECT,
+        {
+          id: 'food-app',
+          name: 'Food App',
+          sourcePath: 'projects/food-app',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          analysisStatus: 'COMPLETE',
+          componentCount: 1,
+          dependencyCount: 0,
+          analysisPath: '/projects/food-app/explorer-data.json',
+        },
+      ],
+    };
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return {
+        ok: true,
+        json: async () => mockManifest,
+      } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.activeProjectId).toBe('food-app');
+    expect(result.current.activeProject?.name).toBe('Food App');
+  });
+
+  it('falls back to default project if manifest activeProjectId is missing or invalid', async () => {
+    const mockManifest = {
+      manifestVersion: '1.0.0',
+      activeProjectId: 'unknown-manifest-project',
+      projects: [DEFAULT_PROJECT],
+    };
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      return {
+        ok: true,
+        json: async () => mockManifest,
+      } as Response;
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ProjectProvider>{children}</ProjectProvider>
+    );
+
+    const { result } = renderHook(() => useProject(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.activeProjectId).toBe('default');
+    expect(result.current.activeProject).toEqual(DEFAULT_PROJECT);
   });
 
   it('browser reload with custom project in URL restores that project as active', async () => {
