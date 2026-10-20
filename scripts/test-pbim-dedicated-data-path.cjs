@@ -20,16 +20,16 @@ function runTests() {
   assert.strictEqual(slugify('PBIM'), 'pbim');
   console.log('  ✓ Test 1 PASSED: Project ID slugification verified');
 
-  // Test 2: PBIM dedicated artifact existence at explorer/public/pbim/explorer-data.json
-  const pbimPublicPath = path.join(PUBLIC_DIR, 'pbim', 'explorer-data.json');
-  assert.ok(fs.existsSync(pbimPublicPath), 'explorer/public/pbim/explorer-data.json must exist');
+  // Test 2: PBIM dedicated artifact existence at explorer/public/projects/pbim/explorer-data.json
+  const pbimPublicPath = path.join(PUBLIC_DIR, 'projects', 'pbim', 'explorer-data.json');
+  assert.ok(fs.existsSync(pbimPublicPath), 'explorer/public/projects/pbim/explorer-data.json must exist');
 
   const pbimData = JSON.parse(fs.readFileSync(pbimPublicPath, 'utf8'));
   assert.strictEqual(pbimData.project.id, 'pbim');
-  assert.strictEqual(pbimData.project.analysisPath, '/pbim/explorer-data.json');
+  assert.strictEqual(pbimData.project.analysisPath, '/projects/pbim/explorer-data.json');
   assert.strictEqual(pbimData.summary.nodeCount, 528);
   assert.strictEqual(pbimData.summary.edgeCount, 2063);
-  console.log('  ✓ Test 2 PASSED: PBIM dedicated artifact at explorer/public/pbim/explorer-data.json verified (528N / 2063E)');
+  console.log('  ✓ Test 2 PASSED: PBIM dedicated artifact at explorer/public/projects/pbim/explorer-data.json verified (528N / 2063E)');
 
   // Test 3: project-manifest.json registration
   const manifestPath = path.join(PUBLIC_DIR, 'project-manifest.json');
@@ -38,7 +38,7 @@ function runTests() {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   const pbimProj = manifest.projects.find((p) => p.id === 'pbim');
   assert.ok(pbimProj, 'pbim must be registered in project-manifest.json');
-  assert.strictEqual(pbimProj.analysisPath, '/pbim/explorer-data.json');
+  assert.strictEqual(pbimProj.analysisPath, '/projects/pbim/explorer-data.json');
 
   const defaultProj = manifest.projects.find((p) => p.id === 'default');
   assert.ok(defaultProj, 'default project must be registered');
@@ -57,9 +57,9 @@ function runTests() {
     });
 
     assert.strictEqual(res.projectMetadata.id, 'pbim');
-    assert.strictEqual(res.projectMetadata.analysisPath, '/pbim/explorer-data.json');
+    assert.strictEqual(res.projectMetadata.analysisPath, '/projects/pbim/explorer-data.json');
     assert.strictEqual(res.explorerData.summary.nodeCount, 528);
-    console.log('  ✓ Test 4 PASSED: Exporter output path and analysisPath contract agree on /pbim/explorer-data.json');
+    console.log('  ✓ Test 4 PASSED: Exporter output path and analysisPath contract agree on /projects/pbim/explorer-data.json');
   } finally {
     const tempParent = path.dirname(tempOutputDir);
     if (fs.existsSync(tempParent)) {
