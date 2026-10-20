@@ -36,6 +36,22 @@ function createMockEdge(id: string, source: string, target: string, overrides: P
     source,
     target,
     relationshipType: 'method-call',
+    method: null,
+    evidence: 'calls target',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: 'HIGH',
+    line: 1,
+    column: 1,
+    methodOwner: source,
+    file: '',
+    canonical: {
+      source: { type: 'ApexClass', name: source },
+      target: { type: 'ApexClass', name: target },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
     ...overrides,
   };
 }
