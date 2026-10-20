@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { FeatureOverlayCanvas } from './FeatureOverlayCanvas';
+import type { OrbitGuideMetadata } from '../../lib/orbit-layout';
 
 describe('Fix #19 — Derive orbit guide radii from orbitGuides.rings', () => {
   it('derives sector line endpoints and label positions from maxRingRadius', () => {
@@ -12,7 +13,7 @@ describe('Fix #19 — Derive orbit guide radii from orbitGuides.rings', () => {
       nodes: () => [],
     } as any;
 
-    const mockOrbitGuides = {
+    const mockOrbitGuides: OrbitGuideMetadata = {
       rings: [
         { ringIndex: 0, radiusPx: 500, label: 'Core' },
         { ringIndex: 1, radiusPx: 1000, label: 'Outer' },
@@ -68,7 +69,7 @@ describe('Fix #19 — Derive orbit guide radii from orbitGuides.rings', () => {
       nodes: () => [],
     } as any;
 
-    const mockOrbitGuides = {
+    const mockOrbitGuides: OrbitGuideMetadata = {
       rings: [],
       sectors: [
         {
@@ -77,6 +78,11 @@ describe('Fix #19 — Derive orbit guide radii from orbitGuides.rings', () => {
           nodeCount: 5,
           startAngleRad: 0,
           endAngleRad: Math.PI / 2,
+          sectorBodyAngleRad: Math.PI / 2,
+          sectorMarginAngleRad: 0.05,
+          usableStartAngleRad: 0.05,
+          usableEndAngleRad: Math.PI / 2 - 0.05,
+          usableAngleRad: Math.PI / 2 - 0.1,
         },
       ],
     };

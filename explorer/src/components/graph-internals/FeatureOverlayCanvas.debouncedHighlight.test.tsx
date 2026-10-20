@@ -3,7 +3,7 @@ import { render, act } from '@testing-library/react';
 import { FeatureOverlayCanvas } from './FeatureOverlayCanvas';
 import * as sharedHighlightModule from '../../lib/layout/shared-highlight';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
-import type { FeatureDiscoveryResult } from '../../lib/layout/features';
+import type { FeatureCluster, FeatureAssignment, FeatureDiscoveryResult } from '../../lib/layout/features';
 
 describe('FeatureOverlayCanvas Debounced Shared Highlight', () => {
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('FeatureOverlayCanvas Debounced Shared Highlight', () => {
 
   const edges: ExplorerEdge[] = [];
 
-  const feature1Cluster = {
+  const feature1Cluster: FeatureCluster = {
     id: 'feature-1',
     name: 'Feature 1',
     anchorNodeId: 'node-1',
