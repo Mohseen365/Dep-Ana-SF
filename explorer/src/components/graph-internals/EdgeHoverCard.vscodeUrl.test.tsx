@@ -9,7 +9,7 @@ describe('EdgeHoverCard vscodeUrl encoding', () => {
       id: 'e1',
       source: 'n1',
       target: 'n2',
-      relationshipType: 'calls',
+      relationshipType: 'method-call',
       file: 'C:/Users/My Name/Project/src#1/app.ts',
       line: 42,
     };

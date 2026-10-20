@@ -252,7 +252,7 @@ describe('graph-builder', () => {
           risk: 'LOW',
           riskReasons: [],
           behavior: { isTest: false, sharing: null, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
-          refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'NOT_COVERED' }
+          refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' }
         },
         {
           id: 'CustomObject:Invoice__c',
@@ -263,7 +263,7 @@ describe('graph-builder', () => {
           risk: 'LOW',
           riskReasons: [],
           behavior: { isTest: false, sharing: null, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
-          refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'NOT_COVERED' }
+          refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' }
         }
       ];
 
