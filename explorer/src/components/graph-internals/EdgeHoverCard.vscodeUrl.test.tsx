@@ -12,6 +12,20 @@ describe('EdgeHoverCard vscodeUrl encoding', () => {
       relationshipType: 'method-call',
       file: 'C:/Users/My Name/Project/src#1/app.ts',
       line: 42,
+      column: 1,
+      method: null,
+      evidence: 'Call site evidence',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      methodOwner: null,
+      canonical: {
+        source: { type: 'ApexClass', name: 'n1', method: null },
+        target: { type: 'ApexClass', name: 'n2', method: null },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: { line: 42, column: 1 },
+      },
     };
 
     render(<EdgeHoverCard edge={edgeWithSpaces} x={100} y={100} />);

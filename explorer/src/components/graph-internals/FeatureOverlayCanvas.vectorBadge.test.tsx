@@ -15,16 +15,44 @@ describe('Fix #20 — Replace emoji inside SVG <text> with vector glyph path', (
     } as any;
 
     const nodes: ExplorerNode[] = [
-      { id: 'n1', displayName: 'Node 1', type: 'ApexClass' },
+      {
+        id: 'n1',
+        displayName: 'Node 1',
+        type: 'ApexClass',
+        file: 'src/n1.ts',
+        risk: 'LOW',
+        riskReasons: [],
+        metrics: { fanIn: 1, fanOut: 0, coupling: 1, unresolved: 0, score: 1 },
+        behavior: { isTest: false },
+        refactoringReadiness: {
+          isHighRisk: false,
+          hasCycles: false,
+          hasUnresolved: false,
+          testCoverageStatus: 'COVERED',
+        },
+      },
     ];
 
     const findings: ArchitectureFinding[] = [
       {
         id: 'f1',
+        type: 'HIGH_RISK_RULE',
         title: 'Finding 1',
         description: 'Desc',
         severity: 'HIGH',
         nodeIds: ['n1'],
+        edgeIds: [],
+        evidence: [],
+        provenance: {
+          origin: 'ANALYZER_FACT',
+          source: 'RuleEngine',
+          facts: {},
+        },
+        rule: {
+          ruleId: 'r1',
+          ruleVersion: '1.0',
+          name: 'Rule 1',
+        },
       },
     ];
 

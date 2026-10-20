@@ -28,8 +28,17 @@ describe('NodeHoverCard Viewport Resize Repositioning', () => {
     id: 'node-1',
     displayName: 'Hovered Node',
     type: 'ApexClass',
+    file: 'src/Node1.cls',
     risk: 'LOW',
+    riskReasons: [],
     metrics: { fanIn: 1, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
+    behavior: { isTest: false },
+    refactoringReadiness: {
+      isHighRisk: false,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
   };
 
   it('repositions hover card when window is resized', () => {

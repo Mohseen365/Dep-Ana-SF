@@ -29,8 +29,17 @@ describe('FeatureOverlayCanvas Finding Max Severity Badge (Fix #11)', () => {
       id: 'node-1',
       displayName: 'Node 1',
       type: 'ApexClass',
+      file: 'src/Node1.cls',
       risk: 'LOW',
+      riskReasons: [],
       metrics: { fanIn: 1, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
+      behavior: { isTest: false },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
     },
   ];
 
@@ -38,16 +47,44 @@ describe('FeatureOverlayCanvas Finding Max Severity Badge (Fix #11)', () => {
     const findings: ArchitectureFinding[] = [
       {
         id: 'finding-1',
-        title: 'Low severity finding',
+        type: 'LOW_SEVERITY_ISSUE',
         severity: 'LOW',
+        title: 'Low severity finding',
+        description: 'Low severity description',
         nodeIds: ['node-1'],
-      } as ArchitectureFinding,
+        edgeIds: [],
+        evidence: [],
+        provenance: {
+          origin: 'ANALYZER_FACT',
+          source: 'RuleEngine',
+          facts: {},
+        },
+        rule: {
+          ruleId: 'low-sev-1',
+          ruleVersion: '1.0',
+          name: 'Low Severity Rule',
+        },
+      },
       {
         id: 'finding-2',
-        title: 'Critical severity finding',
+        type: 'CRITICAL_SEVERITY_ISSUE',
         severity: 'CRITICAL',
+        title: 'Critical severity finding',
+        description: 'Critical severity description',
         nodeIds: ['node-1'],
-      } as ArchitectureFinding,
+        edgeIds: [],
+        evidence: [],
+        provenance: {
+          origin: 'ANALYZER_FACT',
+          source: 'RuleEngine',
+          facts: {},
+        },
+        rule: {
+          ruleId: 'crit-sev-1',
+          ruleVersion: '1.0',
+          name: 'Critical Severity Rule',
+        },
+      },
     ];
 
     const { container } = render(
