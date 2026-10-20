@@ -133,7 +133,7 @@ export function classifyNodeLayerWithReason(
 
     if (node.behavior.queryCount > 0 || node.behavior.dmlCount > 0) {
       // Exclude controllers and application orchestrators which drive UI/flows but run queries
-      if (!/(?:Controller|Controllerextension|Service|Services)$/i.test(name)) {
+      if (!/(?:Controller|Controllerextension|Service|Services|Handler)$/i.test(name)) {
         return {
           layer: 'domain',
           reason: `Data operation behavior (queries: ${node.behavior.queryCount}, dml: ${node.behavior.dmlCount}) maps to domain layer`,

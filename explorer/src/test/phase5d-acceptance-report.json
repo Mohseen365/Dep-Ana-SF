@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-18T18:45:33.406Z",
+  "timestamp": "2026-10-19T17:41:11.250Z",
   "fixtureSha256": "feeb68f363d91fa0a234cb20b5975d6d6d69695fc9cdead4363806a7ca828295",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
@@ -12,7 +12,7 @@
       "maxEdgeLength": 4658.969843216417,
       "primaryOverlaps": 16,
       "satelliteOverlaps": 2,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "domainCohesion": 0.9562040933182331
     },
     "candidateB_currentHybrid": {
@@ -24,7 +24,7 @@
       "maxEdgeLength": 10221.960105835324,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "domainCohesion": 0.8372414949460214,
       "medianIntraDistance": 4220,
       "medianInterDistance": 6101.457088130675,
@@ -100,7 +100,7 @@
       "primarySatelliteCrossings": 11549,
       "satelliteSatelliteCrossings": 8388,
       "cohesion": 0.8384702138792838,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 7969,
       "satelliteOverlaps": 14070
     },
@@ -112,7 +112,7 @@
       "primarySatelliteCrossings": 11549,
       "satelliteSatelliteCrossings": 8388,
       "cohesion": 0.8384702138792838,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 7969,
       "satelliteOverlaps": 14070
     },
@@ -124,7 +124,7 @@
       "primarySatelliteCrossings": 0,
       "satelliteSatelliteCrossings": 0,
       "cohesion": 0.6672710617670061,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
     },
@@ -136,7 +136,7 @@
       "primarySatelliteCrossings": 0,
       "satelliteSatelliteCrossings": 0,
       "cohesion": 0.6592396795605383,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
     },
@@ -148,7 +148,7 @@
       "primarySatelliteCrossings": 38372,
       "satelliteSatelliteCrossings": 37474,
       "cohesion": 0.8339768357757553,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
     },
@@ -160,7 +160,7 @@
       "primarySatelliteCrossings": 38372,
       "satelliteSatelliteCrossings": 37474,
       "cohesion": 0.8378518585052406,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
     },
@@ -172,7 +172,7 @@
       "primarySatelliteCrossings": 38372,
       "satelliteSatelliteCrossings": 37474,
       "cohesion": 0.8378515602284387,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
     },
@@ -184,14 +184,14 @@
       "primarySatelliteCrossings": 38372,
       "satelliteSatelliteCrossings": 37474,
       "cohesion": 0.8378515602284387,
-      "layerViolations": 0,
+      "layerViolations": 132,
       "primaryOverlaps": 0,
       "satelliteOverlaps": 0
     }
   ],
   "gateResults": {
     "hardGates": {
-      "layerViolationsZero": true,
+      "layerViolationsZero": false,
       "primaryOverlapsZero": true,
       "satelliteOverlapsZero": true,
       "deterministicDriftZero": true,

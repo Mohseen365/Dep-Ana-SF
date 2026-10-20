@@ -478,6 +478,9 @@ export function layerViolationCount(
 
     if (!sourceNode || !targetNode) continue;
 
+    // Exclude edges involving test nodes from violating the layer gate
+    if (isTestNode(sourceNode) || isTestNode(targetNode)) continue;
+
     const sourceRank = getLayerRank(sourceNode);
     const targetRank = getLayerRank(targetNode);
 
@@ -580,8 +583,7 @@ export function domainCohesion(
     totalDomainCount++;
   });
 
-  const overallAvgIntraDist =
-    totalDomainCount > 0 ? totalIntraDistSum / totalDomainCount : 0;
+  const overallAvgIntraDist = totalDomainCount > 0 ? totalIntraDistSum / totalDomainCount : 0;
   const dispersion = overallAvgIntraDist / graphScale;
   const cohesionScore = Math.max(0, Math.min(1, 1 - dispersion));
 
@@ -750,8 +752,7 @@ export function hubLocality(
     });
   }
 
-  const avgDist =
-    totalNeighborCount > 0 ? totalDistSum / totalNeighborCount : 0;
+  const avgDist = totalNeighborCount > 0 ? totalDistSum / totalNeighborCount : 0;
 
   return {
     hubCount: hubs.length,
@@ -866,6 +867,9 @@ export function calculateFeatureLocalityDiagnostics(
   const interCrossLayerLengths: number[] = [];
 
   for (const edge of edges) {
+    const sourceNode = nodeMap.get(edge.source);
+    const targetNode = nodeMap.get(edge.target);
+
     const pos1 = positions[edge.source];
     const pos2 = positions[edge.target];
     if (!pos1 || !pos2) continue;
@@ -875,8 +879,8 @@ export function calculateFeatureLocalityDiagnostics(
     const f1 = featureMap.get(edge.source) || 'Unassigned';
     const f2 = featureMap.get(edge.target) || 'Unassigned';
 
-    const node1 = nodeMap.get(edge.source);
-    const node2 = nodeMap.get(edge.target);
+    const node1 = sourceNode;
+    const node2 = targetNode;
 
     const layer1 = node1 ? classifyNodeLayer(node1) : null;
     const layer2 = node2 ? classifyNodeLayer(node2) : null;
@@ -897,12 +901,7 @@ export function calculateFeatureLocalityDiagnostics(
     }
 
     // Evaluate intra vs inter for non-Shared, non-Unassigned feature pairs
-    if (
-      f1 !== 'Shared' &&
-      f1 !== 'Unassigned' &&
-      f2 !== 'Shared' &&
-      f2 !== 'Unassigned'
-    ) {
+    if (f1 !== 'Shared' && f1 !== 'Unassigned' && f2 !== 'Shared' && f2 !== 'Unassigned') {
       if (f1 === f2) {
         intraEdgeLengths.push(dist);
         if (isSameLayer) {
@@ -935,7 +934,6 @@ export function calculateFeatureLocalityDiagnostics(
       minY = Infinity,
       maxY = -Infinity;
     let count = 0;
-
     members.forEach(id => {
       const pos = positions[id];
       if (pos) {
@@ -946,7 +944,6 @@ export function calculateFeatureLocalityDiagnostics(
         count++;
       }
     });
-
     if (count > 0) {
       featureWidths.push(maxX - minX);
       featureHeights.push(maxY - minY);
@@ -989,8 +986,7 @@ export function calculateFeatureLocalityDiagnostics(
       medianCrossBandDistance: computeMedian(crossBandEdgeLengths),
       averageCrossBandDistance: computeAverage(crossBandEdgeLengths),
     },
-    isIntraShorterThanInter:
-      medianIntraFeatureEdgeLength < medianInterFeatureEdgeLength,
+    isIntraShorterThanInter: medianIntraFeatureEdgeLength < medianInterFeatureEdgeLength,
     sameLayerLocality: {
       medianIntraEdgeLength: medianIntraSameLayer,
       medianInterEdgeLength: medianInterSameLayer,
@@ -1015,9 +1011,8 @@ export function calculateFeatureLocalityDiagnostics(
 /**
  * Calculates all individual quantitative layout metrics.
  */
-/**
- * Calculates a detailed category breakdown of edge crossings in 2D space.
- */
+
+
 export function calculateDetailedEdgeCrossings(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],

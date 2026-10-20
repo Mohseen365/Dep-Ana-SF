@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-18T18:29:10.843Z",
+  "timestamp": "2026-10-19T17:27:48.547Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
@@ -10,7 +10,7 @@
     "maxEdgeLength": 4658.969843216417,
     "nodeOverlapCount": 18,
     "primaryOverlapCount": 16,
-    "layerViolationCount": 0,
+    "layerViolationCount": 132,
     "domainCohesionScore": 0.9562040933182331
   },
   "pathB_featureEnabled": {
@@ -20,7 +20,7 @@
     "maxEdgeLength": 10221.960105835324,
     "nodeOverlapCount": 0,
     "primaryOverlapCount": 0,
-    "layerViolationCount": 0,
+    "layerViolationCount": 132,
     "domainCohesionScore": 0.8372414949460214
   },
   "targetThresholds": {
@@ -33,7 +33,7 @@
   "evaluation": {
     "productionPathActive": false,
     "featureRegionGeometryValid": true,
-    "hierarchyPreserved": true,
+    "hierarchyPreserved": false,
     "determinismPassed": true,
     "positionAuthorityPassed": true,
     "viewportSafetyPassed": true,
