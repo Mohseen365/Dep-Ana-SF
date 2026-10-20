@@ -1,16 +1,11 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { GraphView } from './GraphView';
+import { createMockNode } from '../test/mock-factories';
 
 describe('Fix #25 — Thread enableFeatureOverlay prop through GraphViewProps', () => {
   it('suppresses FeatureOverlayCanvas when enableFeatureOverlay is false', () => {
-    const node = {
-      id: 'n1',
-      displayName: 'Node 1',
-      type: 'ApexClass',
-      metrics: { fanIn: 1, fanOut: 1, coupling: 0.5, instability: 0.5, cyclomaticComplexity: 1 },
-      refactoringReadiness: { hasCycles: false, hasUnresolved: false, readinessScore: 100 },
-    };
+    const node = createMockNode('n1', 'Node 1', 'ApexClass');
 
     const { container } = render(
       <GraphView
@@ -29,13 +24,7 @@ describe('Fix #25 — Thread enableFeatureOverlay prop through GraphViewProps', 
   });
 
   it('renders FeatureOverlayCanvas when enableFeatureOverlay is true or omitted', () => {
-    const node = {
-      id: 'n1',
-      displayName: 'Node 1',
-      type: 'ApexClass',
-      metrics: { fanIn: 1, fanOut: 1, coupling: 0.5, instability: 0.5, cyclomaticComplexity: 1 },
-      refactoringReadiness: { hasCycles: false, hasUnresolved: false, readinessScore: 100 },
-    };
+    const node = createMockNode('n1', 'Node 1', 'ApexClass');
 
     const { container } = render(
       <GraphView
