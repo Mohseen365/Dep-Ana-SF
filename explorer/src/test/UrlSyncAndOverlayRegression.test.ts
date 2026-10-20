@@ -33,11 +33,10 @@ function TestHarness() {
       riskReasons: [],
       behavior: { asyncPatterns: [], isTest: false },
       refactoringReadiness: {
-        score: 10,
-        status: 'READY',
-        blockers: [],
-        warnings: [],
-        effortEstimate: 'LOW',
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
       },
     },
   ];
