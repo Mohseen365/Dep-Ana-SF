@@ -62,7 +62,7 @@ describe('graph-layout dispatcher fixes', () => {
       id: 'edge1',
       source: 'node1',
       target: 'node2',
-      relationshipType: 'dependency',
+      relationshipType: 'method-call',
       method: null,
       evidence: '',
       unresolved: false,
@@ -76,7 +76,7 @@ describe('graph-layout dispatcher fixes', () => {
       canonical: {
         source: { type: 'ApexClass', name: 'node1' },
         target: { type: 'ApexClass', name: 'node2' },
-        relationship: { type: 'dependency', resolution: 'EXACT' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
         location: { line: null, column: null },
       },
     },

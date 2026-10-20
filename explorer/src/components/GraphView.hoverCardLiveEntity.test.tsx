@@ -89,7 +89,7 @@ describe('GraphView Hover Card Live Entity Lookup', () => {
     id: 'edge-1',
     source: 'node-1',
     target: 'node-2',
-    relationshipType: 'calls',
+    relationshipType: 'method-call',
   };
 
   it('updates node hover card when nodes or findings prop changes, and hides card if node is removed', () => {

@@ -9,7 +9,7 @@ describe('Fix #24 — Add role="tooltip" to EdgeHoverCard', () => {
       id: 'e1',
       source: 'n1',
       target: 'n2',
-      relationshipType: 'calls',
+      relationshipType: 'method-call',
     };
 
     const { container } = render(

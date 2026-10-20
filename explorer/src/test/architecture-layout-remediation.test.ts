@@ -35,7 +35,7 @@ function createMockEdge(id: string, source: string, target: string, overrides: P
     id,
     source,
     target,
-    relationshipType: 'calls',
+    relationshipType: 'method-call',
     ...overrides,
   };
 }
