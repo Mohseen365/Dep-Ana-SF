@@ -1,13 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
 import { GraphErrorBoundary } from './GraphErrorBoundary';
-
-const ProblemChild: React.FC<{ shouldThrow?: boolean }> = ({ shouldThrow = true }) => {
-  if (shouldThrow) {
-    throw new Error('Overlay Test Error');
-  }
-  return <div>Overlay Normal Child</div>;
-};
 
 describe('GraphErrorBoundary Component', () => {
   it('renders children normally when no error is thrown', () => {

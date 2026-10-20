@@ -1397,7 +1397,7 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
 
     console.log('\n=================== STAGE 7 A/B SCALE BENCHMARKS & WORK ELIMINATED ===================');
 
-    scaleTiers.forEach(({ tier, nodeCount, edgeCount, data }) => {
+    scaleTiers.forEach(({ tier, data }) => {
       const safeNodes = [...data.nodes].sort((a, b) => a.id.localeCompare(b.id));
       const safeEdges = [...data.edges].sort((a, b) => (a.id ?? `${a.source}->${a.target}`).localeCompare(b.id ?? `${b.source}->${b.target}`));
 

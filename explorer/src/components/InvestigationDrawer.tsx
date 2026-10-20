@@ -405,7 +405,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
               {node.behavior.sharing && <span className="ui-badge">{node.behavior.sharing}</span>}
               <span className="ui-badge">SOQL Queries: {node.behavior.queryCount}</span>
               <span className="ui-badge">DML Statements: {node.behavior.dmlCount}</span>
-              {node.behavior.calloutCount > 0 && <span className="ui-badge ui-badge-high">Callouts: {node.behavior.calloutCount}</span>}
+              {(node.behavior.calloutCount ?? 0) > 0 && <span className="ui-badge ui-badge-high">Callouts: {node.behavior.calloutCount}</span>}
             </div>
           </div>
         )}

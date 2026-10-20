@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
-import React from 'react';
 import { GraphView } from './GraphView';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
 // Mock cytoscape and plugins
-const { mockElementsRemove, mockCy, mockCytoscapeFn } = vi.hoisted(() => {
+const { mockElementsRemove, mockCytoscapeFn } = vi.hoisted(() => {
   const mockElementsRemove = vi.fn();
   const mockElementsCollection = {
     removeClass: vi.fn().mockReturnThis(),

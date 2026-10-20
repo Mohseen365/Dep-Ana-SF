@@ -117,8 +117,15 @@ export function computeArchitectureLayoutWithMetadata(
     ? nodes.map(n => ({
         ...n,
         metrics: n.metrics ? { ...n.metrics } : { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-        behavior: n.behavior ? { ...n.behavior, asyncPatterns: Array.isArray(n.behavior.asyncPatterns) ? [...n.behavior.asyncPatterns] : [] } : undefined,
-        refactoringReadiness: n.refactoringReadiness ? { ...n.refactoringReadiness } : undefined,
+        behavior: n.behavior ? { ...n.behavior, asyncPatterns: Array.isArray(n.behavior.asyncPatterns) ? [...n.behavior.asyncPatterns] : [] } : { isTest: false },
+        refactoringReadiness: n.refactoringReadiness
+          ? { ...n.refactoringReadiness }
+          : {
+              isHighRisk: false,
+              hasCycles: false,
+              hasUnresolved: false,
+              testCoverageStatus: 'UNTESTED',
+            },
         riskReasons: Array.isArray(n.riskReasons) ? [...n.riskReasons] : [],
       }))
     : [];
@@ -244,7 +251,7 @@ export function computeArchitectureLayoutWithMetadata(
     lowRiskCount: safeNodes.filter(n => n.risk === 'LOW').length,
     cycleCount: 0,
     cyclesCount: 0,
-    unresolvedCount: safeEdges.filter(e => Boolean(e.unresolved) || e.relationshipType === 'unresolved').length,
+    unresolvedCount: safeEdges.filter(e => Boolean(e.unresolved) || e.unresolved).length,
     inventory: {
       files: safeNodes.length,
       apexClasses: safeNodes.filter(n => n.type === 'ApexClass').length,

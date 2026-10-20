@@ -1,3 +1,6 @@
+import type { ArchitectureLayer } from "../lib/layout/types";
+
+
 export interface Position {
   x: number;
   y: number;

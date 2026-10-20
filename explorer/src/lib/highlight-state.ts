@@ -277,7 +277,7 @@ export function deriveVisualClasses(
     const addedEdgeSet = new Set(state.addedEdgeIds ?? []);
     const removedEdgeSet = new Set(state.removedEdgeIds ?? []);
 
-    elements.forEach((ele) => {
+    elements.forEach((ele: cytoscape.SingularElementArgument) => {
       const classes = result.get(ele.id())!;
       const id = ele.id();
       if (ele.isNode()) {
@@ -300,7 +300,7 @@ export function deriveVisualClasses(
     const addedEdgeSet = new Set(state.addedEdgeIds ?? []);
     const removedEdgeSet = new Set(state.removedEdgeIds ?? []);
 
-    elements.forEach((ele) => {
+    elements.forEach((ele: cytoscape.SingularElementArgument) => {
       const classes = result.get(ele.id())!;
       const id = ele.id();
       if (ele.isNode()) {

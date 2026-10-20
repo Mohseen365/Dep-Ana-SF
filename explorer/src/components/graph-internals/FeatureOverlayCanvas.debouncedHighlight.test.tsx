@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act } from '@testing-library/react';
-import React from 'react';
 import { FeatureOverlayCanvas } from './FeatureOverlayCanvas';
 import * as sharedHighlightModule from '../../lib/layout/shared-highlight';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';

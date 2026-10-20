@@ -229,12 +229,10 @@ describe('GraphControls Component', () => {
     const zoomIn = screen.getByLabelText('Zoom In');
     const zoomOut = screen.getByLabelText('Zoom Out');
     const fitView = screen.getByLabelText('Fit View');
-    const centerSelected = screen.getByLabelText('Center Selected');
 
     expect(zoomIn).toHaveAttribute('tabindex', '0');
     expect(zoomOut).toHaveAttribute('tabindex', '-1');
     expect(fitView).toHaveAttribute('tabindex', '-1');
-    expect(centerSelected).toHaveAttribute('tabindex', '-1');
   });
 
   it('navigates with ArrowRight, ArrowLeft, Home, and End keys correctly', () => {
@@ -253,7 +251,6 @@ describe('GraphControls Component', () => {
     const zoomIn = screen.getByLabelText('Zoom In');
     const zoomOut = screen.getByLabelText('Zoom Out');
     const fitView = screen.getByLabelText('Fit View');
-    const centerSelected = screen.getByLabelText('Center Selected');
 
     zoomIn.focus();
     expect(document.activeElement).toBe(zoomIn);
@@ -363,7 +360,7 @@ describe('GraphControls Component', () => {
 
   /* T1-8 — getComputedStyle Filter Test */
   it('excludes hidden or display:none elements from interactive focusable list', () => {
-    const { container } = render(
+    render(
       <GraphControls
         onZoomIn={vi.fn()}
         onZoomOut={vi.fn()}

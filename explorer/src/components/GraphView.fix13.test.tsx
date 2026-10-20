@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
-import React from 'react';
 import { GraphView } from './GraphView';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ExplorerNode } from '../types/explorer';
 
 // Mock cytoscape and plugins
-const { mockElementsRemove, mockCy, mockCytoscapeFn, layoutStartListeners, layoutStopListeners } = vi.hoisted(() => {
+const { mockCy, mockCytoscapeFn, layoutStartListeners } = vi.hoisted(() => {
   const layoutStartListeners: Function[] = [];
   const layoutStopListeners: Function[] = [];
   const mockElementsRemove = vi.fn();

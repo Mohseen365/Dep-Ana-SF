@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render } from '@testing-library/react';
-import React from 'react';
 import { FeatureOverlayCanvas } from './FeatureOverlayCanvas';
 import type { ExplorerNode } from '../../types/explorer';
 import type { ArchitectureFinding } from '../../lib/intelligence';

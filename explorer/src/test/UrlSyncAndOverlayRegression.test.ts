@@ -12,8 +12,6 @@ import React from 'react';
 import { render, act } from '@testing-library/react';
 import { computeArchitectureLayoutWithMetadata } from '../lib/graph-layout';
 import { discoverFeatures } from '../lib/layout/features';
-import { deriveFeatureCompositionGroups } from '../lib/layout/feature-composition';
-import { getSharedHighlightData } from '../lib/layout/shared-highlight';
 import { computeCanvasLODLevel } from '../lib/canvas-lod';
 import { GraphView } from '../components/GraphView';
 import { useViewState } from '../hooks/useViewState';
