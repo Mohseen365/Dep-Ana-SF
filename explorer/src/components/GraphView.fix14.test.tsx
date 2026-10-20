@@ -82,7 +82,7 @@ const mockNodes: ExplorerNode[] = Array.from({ length: 250 }, (_, i) => ({
     hasCycles: false,
     hasUnresolved: false,
     isHighRisk: false,
-    testCoverageStatus: 'UNCOVERED',
+    testCoverageStatus: 'UNTESTED',
   },
 }));
 

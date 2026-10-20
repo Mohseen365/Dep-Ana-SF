@@ -73,7 +73,7 @@ const mockNodes: ExplorerNode[] = [
       hasCycles: false,
       hasUnresolved: false,
       isHighRisk: false,
-      testCoverageStatus: 'UNCOVERED',
+      testCoverageStatus: 'UNTESTED',
     },
   },
 ];
