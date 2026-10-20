@@ -24,6 +24,11 @@ describe('Fix #19 — Derive orbit guide radii from orbitGuides.rings', () => {
           nodeCount: 5,
           startAngleRad: 0,
           endAngleRad: Math.PI / 2,
+          sectorBodyAngleRad: Math.PI / 2,
+          sectorMarginAngleRad: 0.05,
+          usableStartAngleRad: 0.05,
+          usableEndAngleRad: Math.PI / 2 - 0.05,
+          usableAngleRad: Math.PI / 2 - 0.1,
         },
       ],
     };

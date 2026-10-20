@@ -22,7 +22,22 @@ describe('Fix #21 — Clear copy timers on unmount in hover cards', () => {
   });
 
   it('clears copy timeout when NodeHoverCard unmounts', async () => {
-    const node: ExplorerNode = { id: 'n1', displayName: 'N1', type: 'ApexClass', file: 'src/N1.cls' };
+    const node: ExplorerNode = {
+      id: 'n1',
+      displayName: 'N1',
+      type: 'ApexClass',
+      file: 'src/N1.cls',
+      risk: 'LOW',
+      riskReasons: [],
+      metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+      behavior: { isTest: false },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
+    };
     const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
 
     const { getByTitle, unmount } = render(
@@ -42,7 +57,28 @@ describe('Fix #21 — Clear copy timers on unmount in hover cards', () => {
   });
 
   it('clears copy timeout when EdgeHoverCard unmounts', async () => {
-    const edge: ExplorerEdge = { id: 'e1', source: 'n1', target: 'n2', relationshipType: 'method-call', file: 'src/E1.cls', line: 12 };
+    const edge: ExplorerEdge = {
+      id: 'e1',
+      source: 'n1',
+      target: 'n2',
+      relationshipType: 'method-call',
+      file: 'src/E1.cls',
+      line: 12,
+      column: 1,
+      method: null,
+      evidence: 'Call site evidence',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: '1.0',
+      methodOwner: null,
+      canonical: {
+        source: { type: 'ApexClass', name: 'n1', method: null },
+        target: { type: 'ApexClass', name: 'n2', method: null },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: { line: 12, column: 1 },
+      },
+    };
     const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
 
     const { getByTitle, unmount } = render(

@@ -19,41 +19,81 @@ describe('FeatureOverlayCanvas Debounced Shared Highlight', () => {
       id: 'node-1',
       displayName: 'Node 1',
       type: 'ApexClass',
+      file: 'src/Node1.cls',
       risk: 'LOW',
+      riskReasons: [],
       metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+      behavior: { isTest: false },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
     },
     {
       id: 'node-2',
       displayName: 'Node 2',
       type: 'ApexClass',
+      file: 'src/Node2.cls',
       risk: 'LOW',
+      riskReasons: [],
       metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+      behavior: { isTest: false },
+      refactoringReadiness: {
+        isHighRisk: false,
+        hasCycles: false,
+        hasUnresolved: false,
+        testCoverageStatus: 'COVERED',
+      },
     },
   ];
 
   const edges: ExplorerEdge[] = [];
 
+  const feature1Cluster = {
+    id: 'feature-1',
+    name: 'Feature 1',
+    anchorNodeId: 'node-1',
+    primaryNodeIds: ['node-1'],
+    secondaryNodeIds: ['node-2'],
+    roleDistribution: {
+      FeatureAnchor: 1,
+      FeatureCore: 0,
+      FeatureData: 0,
+      FeatureBridge: 0,
+      FeatureTest: 0,
+      SharedInfrastructure: 1,
+    },
+    domains: ['Core'],
+    connectedFeatureIds: [],
+  };
+
   const discoveryResult: FeatureDiscoveryResult = {
-    features: new Map([
+    features: new Map([['feature-1', feature1Cluster]]),
+    assignments: new Map([
       [
-        'feature-1',
+        'node-1',
         {
-          id: 'feature-1',
-          name: 'Feature 1',
-          primaryNodeIds: new Set(['node-1']),
-          supportingNodeIds: new Set(['node-2']),
-          sharedNodeIds: new Set(['node-2']),
+          nodeId: 'node-1',
+          primaryFeatureId: 'feature-1',
+          secondaryFeatureIds: [],
+          featureRole: 'FeatureAnchor',
+          isShared: false,
+        },
+      ],
+      [
+        'node-2',
+        {
+          nodeId: 'node-2',
+          primaryFeatureId: 'feature-1',
+          secondaryFeatureIds: ['feature-1'],
+          featureRole: 'SharedInfrastructure',
+          isShared: true,
         },
       ],
     ]),
-    sharedNodes: new Map([
-      ['node-2', { nodeId: 'node-2', featureIds: new Set(['feature-1']), centralityScore: 1 }],
-    ]),
-    assignments: new Map([
-      ['node-1', { featureId: 'feature-1', isPrimary: true, confidence: 1 }],
-      ['node-2', { featureId: 'feature-1', isPrimary: false, confidence: 1 }],
-    ]),
-    unassignedNodeIds: new Set(),
+    featureList: [feature1Cluster],
   };
 
   it('debounces hover changes before calling getSharedHighlightData, while selection is immediate', () => {
