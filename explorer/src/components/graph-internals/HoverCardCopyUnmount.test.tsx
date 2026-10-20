@@ -42,7 +42,7 @@ describe('Fix #21 — Clear copy timers on unmount in hover cards', () => {
   });
 
   it('clears copy timeout when EdgeHoverCard unmounts', async () => {
-    const edge: ExplorerEdge = { id: 'e1', source: 'n1', target: 'n2', relationshipType: 'calls', file: 'src/E1.cls', line: 12 };
+    const edge: ExplorerEdge = { id: 'e1', source: 'n1', target: 'n2', relationshipType: 'method-call', file: 'src/E1.cls', line: 12 };
     const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
 
     const { getByTitle, unmount } = render(
