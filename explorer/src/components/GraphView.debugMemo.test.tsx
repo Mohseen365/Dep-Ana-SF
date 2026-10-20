@@ -25,7 +25,7 @@ describe('Fix #23 — Memoize DEBUG flag in GraphView', () => {
       displayName: 'Node 1',
       type: 'ApexClass',
       metrics: { fanIn: 1, fanOut: 1, coupling: 0.5, instability: 0.5, cyclomaticComplexity: 1 },
-      refactoringReadiness: { hasCycles: false, hasUnresolved: false, readinessScore: 100 },
+      refactoringReadiness: { hasCycles: false, hasUnresolved: false },
     };
 
     const { rerender } = render(

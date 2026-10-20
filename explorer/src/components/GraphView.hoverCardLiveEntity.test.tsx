@@ -130,7 +130,7 @@ describe('GraphView Hover Card Live Entity Lookup', () => {
         id: 'f1',
         title: 'High Coupling',
         severity: 'HIGH',
-        category: 'coupling',
+        type: 'HIGH_COUPLING',
         nodeIds: ['node-1'],
         description: 'High coupling detected',
       },
