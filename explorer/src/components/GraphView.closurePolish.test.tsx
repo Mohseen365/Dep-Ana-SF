@@ -363,13 +363,13 @@ describe('GraphView Closure Polish Regression Suite (PR 1)', () => {
     );
 
     // Update nodes (trigger structural sync)
-    const updatedNodes = [...mockNodes, {
+    const updatedNodes: ExplorerNode[] = [...mockNodes, {
       id: 'ApexClass:AccountHelper',
       displayName: 'AccountHelper',
-      type: 'ApexClass' as const,
+      type: 'ApexClass',
       file: 'classes/AccountHelper.cls',
       metrics: { fanIn: 1, fanOut: 1, coupling: 0.1, unresolved: 0, score: 70 },
-      risk: 'LOW' as const,
+      risk: 'LOW',
       riskReasons: [],
       behavior: {
         isTest: false,
@@ -385,7 +385,7 @@ describe('GraphView Closure Polish Regression Suite (PR 1)', () => {
         isHighRisk: false,
         hasCycles: false,
         hasUnresolved: false,
-        testCoverageStatus: 'COVERED' as const
+        testCoverageStatus: 'COVERED'
       }
     }];
 

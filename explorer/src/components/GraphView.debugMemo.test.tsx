@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { GraphView } from './GraphView';
+import { createMockNode } from '../test/mock-factories';
 
 describe('Fix #23 — Memoize DEBUG flag in GraphView', () => {
   it('memoizes DEBUG evaluation across re-renders', () => {
@@ -20,13 +21,7 @@ describe('Fix #23 — Memoize DEBUG flag in GraphView', () => {
       }),
     });
 
-    const node = {
-      id: 'n1',
-      displayName: 'Node 1',
-      type: 'ApexClass',
-      metrics: { fanIn: 1, fanOut: 1, coupling: 0.5, instability: 0.5, cyclomaticComplexity: 1 },
-      refactoringReadiness: { hasCycles: false, hasUnresolved: false },
-    };
+    const node = createMockNode('n1', 'Node 1', 'ApexClass');
 
     const { rerender } = render(
       <GraphView

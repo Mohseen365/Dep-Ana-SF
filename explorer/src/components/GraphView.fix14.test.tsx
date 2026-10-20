@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { GraphView } from './GraphView';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import { createMockNode, createMockEdge } from '../test/mock-factories';
 
 // Mock cytoscape and plugins
 const { mockCytoscapeFn, mouseoverNodeListeners, mouseoverEdgeListeners } = vi.hoisted(() => {
@@ -72,26 +73,13 @@ vi.mock('cytoscape-navigator', () => ({ default: vi.fn() }));
   disconnect() {}
 };
 
-const mockNodes: ExplorerNode[] = Array.from({ length: 250 }, (_, i) => ({
-  id: `Node_${i}`,
-  displayName: `Node ${i}`,
-  type: 'ApexClass',
-  risk: 'LOW',
-  metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-  refactoringReadiness: {
-    hasCycles: false,
-    hasUnresolved: false,
-    isHighRisk: false,
-    testCoverageStatus: 'UNTESTED',
-  },
-}));
+const mockNodes: ExplorerNode[] = Array.from({ length: 250 }, (_, i) =>
+  createMockNode(`Node_${i}`, `Node ${i}`, 'ApexClass', 'LOW')
+);
 
-const mockEdges: ExplorerEdge[] = Array.from({ length: 250 }, (_, i) => ({
-  id: `Edge_${i}`,
-  source: `Node_${i}`,
-  target: `Node_${(i + 1) % 250}`,
-  relationshipType: 'method-call',
-}));
+const mockEdges: ExplorerEdge[] = Array.from({ length: 250 }, (_, i) =>
+  createMockEdge(`Edge_${i}`, `Node_${i}`, `Node_${(i + 1) % 250}`, 'method-call')
+);
 
 describe('Fix #14 — O(1) node and edge lookup in hover handlers', () => {
   beforeEach(() => {

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { GraphView } from './GraphView';
 import type { ExplorerNode } from '../types/explorer';
+import { createMockNode } from '../test/mock-factories';
 
 // Mock cytoscape and plugins
 const { mockCy, mockCytoscapeFn } = vi.hoisted(() => {
@@ -63,32 +64,8 @@ vi.mock('cytoscape-navigator', () => ({ default: vi.fn() }));
 };
 
 const mockNodes: ExplorerNode[] = [
-  {
-    id: 'NodeA',
-    displayName: 'Node A',
-    type: 'ApexClass',
-    risk: 'LOW',
-    metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-    refactoringReadiness: {
-      hasCycles: false,
-      hasUnresolved: false,
-      isHighRisk: false,
-      testCoverageStatus: 'UNTESTED',
-    },
-  },
-  {
-    id: 'NodeB',
-    displayName: 'Node B',
-    type: 'ApexClass',
-    risk: 'LOW',
-    metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-    refactoringReadiness: {
-      hasCycles: false,
-      hasUnresolved: false,
-      isHighRisk: false,
-      testCoverageStatus: 'UNTESTED',
-    },
-  },
+  createMockNode('NodeA', 'Node A', 'ApexClass', 'LOW'),
+  createMockNode('NodeB', 'Node B', 'ApexClass', 'LOW'),
 ];
 
 describe('Fix #17 — Consolidate applyDecorations effects', () => {

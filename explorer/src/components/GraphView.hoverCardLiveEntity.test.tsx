@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act } from '@testing-library/react';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import type { ArchitectureFinding } from '../lib/intelligence';
+import { createMockNode, createMockEdge } from '../test/mock-factories';
 
 let mockListeners: Record<string, Function[]> = {};
 
@@ -57,40 +58,11 @@ describe('GraphView Hover Card Live Entity Lookup', () => {
     vi.useRealTimers();
   });
 
-  const node1: ExplorerNode = {
-    id: 'node-1',
-    displayName: 'Node 1 Initial',
-    type: 'ApexClass',
-    risk: 'LOW',
-    metrics: { fanIn: 1, fanOut: 2, coupling: 0, unresolved: 0, score: 0 },
-    refactoringReadiness: {
-      isHighRisk: false,
-      hasCycles: false,
-      hasUnresolved: false,
-      testCoverageStatus: 'COVERED',
-    },
-  };
+  const node1: ExplorerNode = createMockNode('node-1', 'Node 1 Initial', 'ApexClass', 'LOW');
 
-  const node2: ExplorerNode = {
-    id: 'node-2',
-    displayName: 'Node 2 Initial',
-    type: 'ApexClass',
-    risk: 'LOW',
-    metrics: { fanIn: 2, fanOut: 1, coupling: 0, unresolved: 0, score: 0 },
-    refactoringReadiness: {
-      isHighRisk: false,
-      hasCycles: false,
-      hasUnresolved: false,
-      testCoverageStatus: 'COVERED',
-    },
-  };
+  const node2: ExplorerNode = createMockNode('node-2', 'Node 2 Initial', 'ApexClass', 'LOW');
 
-  const edge1: ExplorerEdge = {
-    id: 'edge-1',
-    source: 'node-1',
-    target: 'node-2',
-    relationshipType: 'method-call',
-  };
+  const edge1: ExplorerEdge = createMockEdge('edge-1', 'node-1', 'node-2', 'method-call');
 
   it('updates node hover card when nodes or findings prop changes, and hides card if node is removed', () => {
     const { rerender, container } = render(
@@ -131,8 +103,20 @@ describe('GraphView Hover Card Live Entity Lookup', () => {
         title: 'High Coupling',
         severity: 'HIGH',
         type: 'HIGH_COUPLING',
-        nodeIds: ['node-1'],
         description: 'High coupling detected',
+        nodeIds: ['node-1'],
+        edgeIds: [],
+        evidence: [],
+        provenance: {
+          origin: 'DERIVED_RULE',
+          source: 'CouplingRule',
+          facts: {},
+        },
+        rule: {
+          ruleId: 'HIGH_COUPLING',
+          ruleVersion: '1.0.0',
+          name: 'High Coupling',
+        },
       },
     ];
 
