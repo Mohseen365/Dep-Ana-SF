@@ -89,7 +89,7 @@ const mockNodes: ExplorerNode[] = [
     riskReasons: ['High coupling'],
     behavior: {
       isTest: false,
-      sharing: 'with sharing',
+      sharing: 'with sharing' as const,
       publicContractsCount: 2,
       asyncPatterns: [],
       securitySignalsCount: 1,
@@ -114,7 +114,7 @@ const mockNodes: ExplorerNode[] = [
     riskReasons: [],
     behavior: {
       isTest: false,
-      sharing: 'with sharing',
+      sharing: 'with sharing' as const,
       publicContractsCount: 5,
       asyncPatterns: [],
       securitySignalsCount: 0,
@@ -373,7 +373,7 @@ describe('GraphView Closure Polish Regression Suite (PR 1)', () => {
       riskReasons: [],
       behavior: {
         isTest: false,
-        sharing: 'with sharing',
+        sharing: 'with sharing' as const,
         publicContractsCount: 1,
         asyncPatterns: [],
         securitySignalsCount: 0,
