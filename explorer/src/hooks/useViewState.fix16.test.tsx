@@ -3,19 +3,17 @@ import { renderHook, act } from '@testing-library/react';
 import { useViewState } from './useViewState';
 
 describe('Fix #16 — Replace JSON.stringify deep comparison in useViewState', () => {
-  const originalLocation = window.location;
-
   beforeEach(() => {
     vi.clearAllMocks();
+    window.history.replaceState(null, '', '/');
   });
 
   afterEach(() => {
-    window.location = originalLocation;
+    window.history.replaceState(null, '', '/');
   });
 
   it('does not invoke JSON.stringify during state updates in URL-sync effect', () => {
-    delete (window as any).location;
-    window.location = new URL('http://localhost/') as any;
+    window.history.replaceState(null, '', '/');
 
     const stringifySpy = vi.spyOn(JSON, 'stringify');
 

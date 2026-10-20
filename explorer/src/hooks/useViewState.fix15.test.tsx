@@ -4,14 +4,13 @@ import { useViewState } from './useViewState';
 import { focusQuery } from '../lib/url';
 
 describe('Fix #15 — Defensive readStateFromUrl', () => {
-  const originalLocation = window.location;
-
   beforeEach(() => {
     vi.clearAllMocks();
+    window.history.replaceState(null, '', '/');
   });
 
   afterEach(() => {
-    window.location = originalLocation;
+    window.history.replaceState(null, '', '/');
   });
 
   it('mounts safely when a query parser throws on garbage parameters, logging a warning and parsing other valid params', () => {
@@ -26,8 +25,7 @@ describe('Fix #15 — Defensive readStateFromUrl', () => {
       return originalFocusFromQuery(params, fallback);
     });
 
-    delete (window as any).location;
-    window.location = new URL('http://localhost/?focus=throw_error&node=ApexClass:TestNode') as any;
+    window.history.replaceState(null, '', '/?focus=throw_error&node=ApexClass:TestNode');
 
     let hookResult: any;
     expect(() => {
