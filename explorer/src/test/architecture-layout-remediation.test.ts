@@ -31,12 +31,13 @@ function createMockNode(id: string, overrides: Partial<ExplorerNode> = {}): Expl
 }
 
 function createMockEdge(id: string, source: string, target: string, overrides: Partial<ExplorerEdge> = {}): ExplorerEdge {
+  const { method, ...restOverrides } = overrides;
   return {
     id,
     source,
     target,
     relationshipType: 'method-call',
-    method: null,
+    method: method ?? null,
     evidence: 'calls target',
     unresolved: false,
     resolutionClassification: 'RESOLVED_LOCAL',
@@ -52,7 +53,7 @@ function createMockEdge(id: string, source: string, target: string, overrides: P
       relationship: { type: 'method-call', resolution: 'EXACT' },
       location: {},
     },
-    ...overrides,
+    ...restOverrides,
   };
 }
 

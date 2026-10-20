@@ -27,14 +27,14 @@ describe('Fix #15 — Defensive readStateFromUrl', () => {
 
     window.history.replaceState(null, '', '/?focus=throw_error&node=ApexClass:TestNode');
 
-    let hookResult: any;
+    let hookResult: { current: ReturnType<typeof useViewState> } | undefined;
     expect(() => {
       const { result } = renderHook(() => useViewState());
       hookResult = result;
     }).not.toThrow();
 
     // Valid node parameter should still be parsed and set
-    expect(hookResult.current.selectedNodeId).toBe('ApexClass:TestNode');
+    expect(hookResult?.current.selectedNodeId).toBe('ApexClass:TestNode');
 
     // Console warning should have been logged for the focus parsing error
     expect(warnSpy).toHaveBeenCalledWith(
