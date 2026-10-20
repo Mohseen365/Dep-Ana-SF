@@ -456,7 +456,7 @@ const LAYER_ORDER: Record<string, number> = {
   schema: 3,
 };
 
-function getLayerRank(node: ExplorerNode): number {
+export function getLayerRank(node: ExplorerNode): number {
   const layer = classifyNodeLayer(node);
   return LAYER_ORDER[layer] ?? 1;
 }

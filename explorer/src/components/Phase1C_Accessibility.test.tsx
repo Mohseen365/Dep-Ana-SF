@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ConnectionControls } from './ConnectionControls';
 import { ImpactControls } from './ImpactControls';
 import { GraphControls } from './GraphControls';
+import { GraphErrorBoundary } from './graph-internals/GraphErrorBoundary';
 import { ImpactState, ImpactAnalysisResult } from '../lib/impact-analysis';
 import { ExplorerNode } from '../types/explorer';
 

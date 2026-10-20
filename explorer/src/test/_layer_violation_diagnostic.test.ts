@@ -2,7 +2,7 @@
 import { test, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
+import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { layerViolationCount } from '../lib/layout/metrics';
 import { classifyNodeLayer } from '../lib/layout/layers';
 import { isTestNode } from '../lib/layout/analysis';
