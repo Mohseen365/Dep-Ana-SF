@@ -1,3 +1,4 @@
+// explorer/src/lib/graph-layout.ts
 import type { LayoutOptions } from 'cytoscape';
 import type { ExplorerNode, ExplorerEdge, ExplorerNodeType, ExplorerRiskLevel } from '../types/explorer';
 import { toBool } from './boolean-utils';
@@ -31,6 +32,19 @@ function emitCyEvent(cy: cytoscape.Core, eventName: string): void {
   } else if (typeof (cy as any).trigger === 'function') {
     (cy as any).trigger(eventName);
   }
+}
+
+/** --------------------------------------------------------------------
+ *  DEV‑ONLY layout logger
+ *  ----------------------------------------------------------------- */
+function recordLayout(entry: Record<string, unknown>) {
+  // Guard against being executed in a Node environment (e.g. unit tests)
+  if (typeof window === 'undefined') return;
+  const w = window as any;
+  (w.__layoutLog ||= []).push({
+    t: performance.now(),
+    ...entry,
+  });
 }
 
 export interface GraphLayoutOptions extends ArchitectureLayoutOptions {
@@ -236,147 +250,48 @@ export function runLayout(cy: cytoscape.Core, options?: GraphLayoutOptions): voi
   runLayoutWithMetadata(cy, options);
 }
 
-export function runLayoutWithMetadata(
+/** --------------------------------------------------------------------
+ *  Async layout – wrapper + inner implementation
+ *  ----------------------------------------------------------------- */
+export async function runLayoutWithMetadataAsync(
   cy: cytoscape.Core,
   options?: GraphLayoutOptions
-): ArchitectureLayoutResultWithMetadata {
-  const useArch = options?.useArchitectureLayout !== false;
-
-  if (useArch && cy.nodes().length > 0) {
-    const hasNodes = Array.isArray(options?.nodes) && options!.nodes!.length > 0;
-    const hasEdges = Array.isArray(options?.edges) && options!.edges!.length > 0;
-    const extracted = (!hasNodes || !hasEdges) ? extractNodesAndEdgesFromCy(cy) : { nodes: [], edges: [] };
-    const finalNodes = hasNodes ? options!.nodes! : extracted.nodes;
-    const finalEdges = hasEdges ? options!.edges! : extracted.edges;
-
-    const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
-    const posMap = result.positions;
-
-    const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
-    const focusedSet = result.projectedNodeIds;
-
-    emitCyEvent(cy, 'layoutstart');
-
-    cy.batch(() => {
-      if (isOrbitComponentFilter && focusedSet) {
-        const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
-        const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
-
-        if (typeof (toShowNodes as any).show === 'function') {
-          (toShowNodes as any).show();
-        } else if (typeof (toShowNodes as any).style === 'function') {
-          toShowNodes.style('display', 'element');
-        }
-        if (typeof (toHideNodes as any).hide === 'function') {
-          (toHideNodes as any).hide();
-        } else if (typeof (toHideNodes as any).style === 'function') {
-          toHideNodes.style('display', 'none');
-        }
-
-        toShowNodes.forEach(node => {
-          const id = node.id();
-          if (posMap[id]) {
-            node.position(posMap[id]);
-          }
-        });
-
-        const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
-        const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
-
-        if (typeof (toShowEdges as any).show === 'function') {
-          (toShowEdges as any).show();
-        } else if (typeof (toShowEdges as any).style === 'function') {
-          toShowEdges.style('display', 'element');
-        }
-        if (typeof (toHideEdges as any).hide === 'function') {
-          (toHideEdges as any).hide();
-        } else if (typeof (toHideEdges as any).style === 'function') {
-          toHideEdges.style('display', 'none');
-        }
-      } else {
-        const allNodes = cy.nodes();
-        const allEdges = cy.edges();
-        if (typeof (allNodes as any).show === 'function') {
-          (allNodes as any).show();
-        } else if (typeof (allNodes as any).style === 'function') {
-          allNodes.style('display', 'element');
-        }
-        if (typeof (allEdges as any).show === 'function') {
-          (allEdges as any).show();
-        } else if (typeof (allEdges as any).style === 'function') {
-          allEdges.style('display', 'element');
-        }
-        allNodes.forEach(node => {
-          const id = node.id();
-          if (posMap[id]) {
-            node.position(posMap[id]);
-          }
-        });
-      }
-    });
-
-    if (options?.animate) {
-      cy.layout({
-        name: 'preset',
-        positions: (node: any) => posMap[node.id()] || node.position(),
-        animate: true,
-        animationDuration: options?.animationDuration ?? 500,
-        padding: options?.padding ?? 50,
-        fit: options?.fit ?? true,
-      } as any).run();
-    } else {
-      if (options?.fit !== false) {
-        if (isOrbitComponentFilter && focusedSet) {
-          const visibleEles = cy.elements().filter(e => {
-            if (e.isNode()) return focusedSet.has(e.id());
-            return focusedSet.has(e.data('source')) && focusedSet.has(e.data('target'));
-          });
-          if (visibleEles.length > 0) {
-            cy.fit(visibleEles, options?.padding ?? 50);
-          } else {
-            cy.fit(cy.elements(), options?.padding ?? 50);
-          }
-        } else {
-          cy.fit(cy.elements(), options?.padding ?? 50);
-        }
-      }
-      emitCyEvent(cy, 'layoutstop');
-    }
-    return result;
-  }
-
-  // Non-arch branch
-  if (options?.existingPositions) {
-    cy.nodes().forEach(node => {
-      const pos = options.existingPositions![node.id()];
-      if (pos) {
-        node.position(pos);
-      }
-    });
-  }
-
-  emitCyEvent(cy, 'layoutstart');
-  const layout = createLayout(cy, options);
-  layout.run();
-
-  if (options?.fit !== false) {
-    cy.fit(cy.elements(), options?.padding ?? 50);
-  }
-  emitCyEvent(cy, 'layoutstop');
-
-  const currentPositions: Record<string, { x: number; y: number }> = {};
-  cy.nodes().forEach(node => {
-    currentPositions[node.id()] = node.position();
-  });
-  return {
-    positions: currentPositions,
-    featureRegions: undefined,
-    orbitGuides: undefined,
-    projectedNodeIds: undefined,
+): Promise<CalculateLayoutAsyncResult> {
+  // ---- 1️⃣  Record start -------------------------------------------------
+  const startEntry = {
+    type: 'start' as const,
+    reason: (options as any)?.layoutReason ?? 'unknown',
+    requestId: (options as any)?.requestId ?? 'none',
+    correlationToken: options?.correlationToken ?? 'none',
+    projectId: options?.projectId ?? 'none',
+    nodeCount: cy?.nodes?.().length ?? 0,
+    edgeCount: cy?.edges?.().length ?? 0,
+    existingPositions: Object.keys(options?.existingPositions ?? {}).length,
   };
+  recordLayout(startEntry);
+
+  // ---- 2️⃣  Call the original implementation (now renamed) ---------------
+  const result = await runLayoutWithMetadataAsyncInner(cy, options);
+
+  // ---- 3️⃣  Record end ---------------------------------------------------
+  const posEntries = Object.entries(result?.positions ?? {});
+  const endEntry = {
+    type: 'end' as const,
+    reason: startEntry.reason,
+    requestId: startEntry.requestId,
+    posCount: posEntries.length,
+    sample: posEntries[0] ?? null,
+    isOffloaded: (result as any).isOffloaded ?? false,
+  };
+  recordLayout(endEntry);
+
+  return result;
 }
 
-export async function runLayoutWithMetadataAsync(
+/** --------------------------------------------------------------------
+ *  Async layout – original implementation (renamed)
+ *  ----------------------------------------------------------------- */
+export async function runLayoutWithMetadataAsyncInner(
   cy: cytoscape.Core,
   options?: GraphLayoutOptions
 ): Promise<CalculateLayoutAsyncResult> {
@@ -493,7 +408,7 @@ export async function runLayoutWithMetadataAsync(
     return result;
   }
 
-  // Non-arch branch
+  // Non‑arch branch
   const tStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
   if (options?.existingPositions) {
@@ -533,5 +448,183 @@ export async function runLayoutWithMetadataAsync(
     computeDurationMs,
     ipcDurationMs: 0,
     totalDurationMs: computeDurationMs,
+  };
+}
+
+/** --------------------------------------------------------------------
+ *  Synchronous layout – wrapper + inner implementation
+ *  ----------------------------------------------------------------- */
+export function runLayoutWithMetadata(
+  cy: cytoscape.Core,
+  options?: GraphLayoutOptions,
+): ArchitectureLayoutResultWithMetadata {
+  // ---- 1️⃣  Record start -------------------------------------------------
+  recordLayout({
+    type: 'start' as const,
+    reason: (options as any)?.layoutReason ?? 'unknown',
+    requestId: (options as any)?.requestId ?? 'none',
+    correlationToken: options?.correlationToken ?? 'none',
+    projectId: options?.projectId ?? 'none',
+    nodeCount: cy?.nodes?.().length ?? 0,
+    edgeCount: cy?.edges?.().length ?? 0,
+    existingPositions: Object.keys(options?.existingPositions ?? {}).length,
+  });
+
+  // ---- 2️⃣  Call the original implementation (renamed) -------------------
+  const result = runLayoutWithMetadataInner(cy, options);
+
+  // ---- 3️⃣  Record end ---------------------------------------------------
+  const posEntries = Object.entries(result?.positions ?? {});
+  recordLayout({
+    type: 'end' as const,
+    reason: (options as any)?.layoutReason ?? 'unknown',
+    requestId: (options as any)?.requestId ?? 'none',
+    posCount: posEntries.length,
+    sample: posEntries[0] ?? null,
+  });
+
+  return result;
+}
+
+/** --------------------------------------------------------------------
+ *  Synchronous layout – original implementation (renamed)
+ *  ----------------------------------------------------------------- */
+export function runLayoutWithMetadataInner(
+  cy: cytoscape.Core,
+  options?: GraphLayoutOptions,
+): ArchitectureLayoutResultWithMetadata {
+  const useArch = options?.useArchitectureLayout !== false;
+
+  if (useArch && cy.nodes().length > 0) {
+    const hasNodes = Array.isArray(options?.nodes) && options!.nodes!.length > 0;
+    const hasEdges = Array.isArray(options?.edges) && options!.edges!.length > 0;
+    const extracted = (!hasNodes || !hasEdges) ? extractNodesAndEdgesFromCy(cy) : { nodes: [], edges: [] };
+    const finalNodes = hasNodes ? options!.nodes! : extracted.nodes;
+    const finalEdges = hasEdges ? options!.edges! : extracted.edges;
+
+    const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
+    const posMap = result.positions;
+
+    const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
+    const focusedSet = result.projectedNodeIds;
+
+    emitCyEvent(cy, 'layoutstart');
+
+    cy.batch(() => {
+      if (isOrbitComponentFilter && focusedSet) {
+        const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
+        const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
+
+        if (typeof (toShowNodes as any).show === 'function') {
+          (toShowNodes as any).show();
+        } else if (typeof (toShowNodes as any).style === 'function') {
+          toShowNodes.style('display', 'element');
+        }
+        if (typeof (toHideNodes as any).hide === 'function') {
+          (toHideNodes as any).hide();
+        } else if (typeof (toHideNodes as any).style === 'function') {
+          toHideNodes.style('display', 'none');
+        }
+
+        toShowNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+
+        const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
+        const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
+
+        if (typeof (toShowEdges as any).show === 'function') {
+          (toShowEdges as any).show();
+        } else if (typeof (toShowEdges as any).style === 'function') {
+          toShowEdges.style('display', 'element');
+        }
+        if (typeof (toHideEdges as any).hide === 'function') {
+          (toHideEdges as any).hide();
+        } else if (typeof (toHideEdges as any).style === 'function') {
+          toHideEdges.style('display', 'none');
+        }
+      } else {
+        const allNodes = cy.nodes();
+        const allEdges = cy.edges();
+        if (typeof (allNodes as any).show === 'function') {
+          (allNodes as any).show();
+        } else if (typeof (allNodes as any).style === 'function') {
+          allNodes.style('display', 'element');
+        }
+        if (typeof (allEdges as any).show === 'function') {
+          (allEdges as any).show();
+        } else if (typeof (allEdges as any).style === 'function') {
+          allEdges.style('display', 'element');
+        }
+        allNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+      }
+    });
+
+    if (options?.animate) {
+      cy.layout({
+        name: 'preset',
+        positions: (node: any) => posMap[node.id()] || node.position(),
+        animate: true,
+        animationDuration: options?.animationDuration ?? 500,
+        padding: options?.padding ?? 50,
+        fit: options?.fit ?? true,
+      } as any).run();
+    } else {
+      if (options?.fit !== false) {
+        if (isOrbitComponentFilter && focusedSet) {
+          const visibleEles = cy.elements().filter(e => {
+            if (e.isNode()) return focusedSet.has(e.id());
+            return focusedSet.has(e.data('source')) && focusedSet.has(e.data('target'));
+          });
+          if (visibleEles.length > 0) {
+            cy.fit(visibleEles, options?.padding ?? 50);
+          } else {
+            cy.fit(cy.elements(), options?.padding ?? 50);
+          }
+        } else {
+          cy.fit(cy.elements(), options?.padding ?? 50);
+        }
+      }
+      emitCyEvent(cy, 'layoutstop');
+    }
+    return result;
+  }
+
+  // Non‑arch branch
+  if (options?.existingPositions) {
+    cy.nodes().forEach(node => {
+      const pos = options.existingPositions![node.id()];
+      if (pos) {
+        node.position(pos);
+      }
+    });
+  }
+
+  emitCyEvent(cy, 'layoutstart');
+  const layout = createLayout(cy, options);
+  layout.run();
+
+  if (options?.fit !== false) {
+    cy.fit(cy.elements(), options?.padding ?? 50);
+  }
+  emitCyEvent(cy, 'layoutstop');
+
+  const currentPositions: Record<string, { x: number; y: number }> = {};
+  cy.nodes().forEach(node => {
+    currentPositions[node.id()] = node.position();
+  });
+  return {
+    positions: currentPositions,
+    featureRegions: undefined,
+    orbitGuides: undefined,
+    projectedNodeIds: undefined,
   };
 }
