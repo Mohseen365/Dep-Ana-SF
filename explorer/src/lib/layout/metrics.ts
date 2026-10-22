@@ -1130,7 +1130,7 @@ export function calculateDetailedEdgeCrossings(
       }
 
       if (intersected) {
-        if (typeof process !== 'undefined' && process.env?.CROSS_DEBUG === '1') {
+        if (import.meta.env?.VITE_CROSS_DEBUG === '1') {
           debugEntries.push({
             edgeA: { sourceId: s1.sourceId, targetId: s1.targetId },
             edgeB: { sourceId: s2.sourceId, targetId: s2.targetId },
@@ -1168,7 +1168,7 @@ export function calculateDetailedEdgeCrossings(
     }
   }
 
-  if (typeof process !== 'undefined' && process.env?.CROSS_DEBUG === '1' && debugEntries.length > 0) {
+  if (import.meta.env?.VITE_CROSS_DEBUG === '1' && debugEntries.length > 0) {
     try {
       fs.writeFileSync('cross_debug.json', JSON.stringify(debugEntries, null, 2));
     } catch (e) {

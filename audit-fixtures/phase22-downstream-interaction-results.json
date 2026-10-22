@@ -2,29 +2,29 @@
   "CandJ2_FullPipeline": {
     "projectId": "pbim",
     "candidateType": "CandidateJ2_DemandDrivenSizing",
-    "m1_occupiedWidth": 7000,
-    "m2_occupiedHeight": 25520,
-    "m3_occupiedArea": 178640000,
-    "m4_emptySpaceRatio": 0.9787,
+    "m1_occupiedWidth": 6360,
+    "m2_occupiedHeight": 23760,
+    "m3_occupiedArea": 151113600,
+    "m4_emptySpaceRatio": 0.9748,
     "m5_connectedDist": {
       "p0": 100,
-      "p50": 2878,
-      "p75": 10804,
-      "p95": 18001,
-      "p99": 21080,
-      "p100": 24375
+      "p50": 2560,
+      "p75": 9547,
+      "p95": 16541,
+      "p99": 19720,
+      "p100": 22816
     },
     "m6_semanticDist": {
-      "p50": 10026,
-      "p95": 22436,
-      "p100": 25785
+      "p50": 9040,
+      "p95": 20912,
+      "p100": 23937
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 180,
-      "p100": 530
+      "p95": 189,
+      "p100": 653
     },
-    "aabbCollisions": 2,
+    "aabbCollisions": 3,
     "nodeCount": 528,
     "edgeCount": 2063,
     "coupling": {
@@ -737,29 +737,29 @@
   "CandJ2_BypassStage8": {
     "projectId": "pbim",
     "candidateType": "CandidateJ2_DemandDrivenSizing",
-    "m1_occupiedWidth": 7100,
-    "m2_occupiedHeight": 25420,
-    "m3_occupiedArea": 180475482,
-    "m4_emptySpaceRatio": 0.9789,
+    "m1_occupiedWidth": 6800,
+    "m2_occupiedHeight": 23760,
+    "m3_occupiedArea": 161561908,
+    "m4_emptySpaceRatio": 0.9765,
     "m5_connectedDist": {
       "p0": 100,
-      "p50": 2565,
-      "p75": 10697,
-      "p95": 14412,
-      "p99": 18722,
-      "p100": 23975
+      "p50": 2197,
+      "p75": 9470,
+      "p95": 12683,
+      "p99": 17176,
+      "p100": 22417
     },
     "m6_semanticDist": {
-      "p50": 4172,
-      "p95": 19883,
-      "p100": 25645
+      "p50": 3973,
+      "p95": 18248,
+      "p100": 23958
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 200,
-      "p100": 525
+      "p95": 197,
+      "p100": 480
     },
-    "aabbCollisions": 29,
+    "aabbCollisions": 39,
     "nodeCount": 528,
     "edgeCount": 2063,
     "coupling": {
@@ -1472,29 +1472,29 @@
   "CandJ2_BypassStage9": {
     "projectId": "pbim",
     "candidateType": "CandidateJ2_DemandDrivenSizing",
-    "m1_occupiedWidth": 6200,
-    "m2_occupiedHeight": 24500,
-    "m3_occupiedArea": 151900000,
-    "m4_emptySpaceRatio": 0.9873,
+    "m1_occupiedWidth": 6040,
+    "m2_occupiedHeight": 23040,
+    "m3_occupiedArea": 139161600,
+    "m4_emptySpaceRatio": 0.9862,
     "m5_connectedDist": {
       "p0": 100,
-      "p50": 5627,
-      "p75": 10784,
-      "p95": 19101,
-      "p99": 21280,
-      "p100": 23680
+      "p50": 4760,
+      "p75": 9522,
+      "p95": 17726,
+      "p99": 19842,
+      "p100": 22320
     },
     "m6_semanticDist": {
-      "p50": 3720,
-      "p95": 22133,
-      "p100": 24716
+      "p50": 3663,
+      "p95": 20637,
+      "p100": 23273
     },
     "m7_nearestDist": {
       "p50": 102,
-      "p95": 204,
+      "p95": 200,
       "p100": 412
     },
-    "aabbCollisions": 2,
+    "aabbCollisions": 3,
     "nodeCount": 267,
     "edgeCount": 2063,
     "coupling": {
@@ -2207,22 +2207,22 @@
   "CandJ2_BypassStage8_and_9": {
     "projectId": "pbim",
     "candidateType": "CandidateJ2_DemandDrivenSizing",
-    "m1_occupiedWidth": 3780,
-    "m2_occupiedHeight": 24500,
-    "m3_occupiedArea": 92603718,
-    "m4_emptySpaceRatio": 0.9792,
+    "m1_occupiedWidth": 3800,
+    "m2_occupiedHeight": 22940,
+    "m3_occupiedArea": 87166118,
+    "m4_emptySpaceRatio": 0.9779,
     "m5_connectedDist": {
       "p0": 100,
-      "p50": 3164,
-      "p75": 10600,
-      "p95": 13441,
-      "p99": 14041,
-      "p100": 19815
+      "p50": 2860,
+      "p75": 9340,
+      "p95": 11882,
+      "p99": 12481,
+      "p100": 18357
     },
     "m6_semanticDist": {
-      "p50": 1402,
-      "p95": 4347,
-      "p100": 24701
+      "p50": 1381,
+      "p95": 4247,
+      "p100": 23161
     },
     "m7_nearestDist": {
       "p50": 100,
@@ -2942,27 +2942,27 @@
   "CandJ4_FullPipeline": {
     "projectId": "pbim",
     "candidateType": "CandidateJ4_TwoPassFeedback",
-    "m1_occupiedWidth": 7000,
-    "m2_occupiedHeight": 25520,
-    "m3_occupiedArea": 178640000,
-    "m4_emptySpaceRatio": 0.9787,
+    "m1_occupiedWidth": 6360,
+    "m2_occupiedHeight": 23880,
+    "m3_occupiedArea": 151876800,
+    "m4_emptySpaceRatio": 0.975,
     "m5_connectedDist": {
       "p0": 100,
-      "p50": 2798,
-      "p75": 10840,
-      "p95": 18061,
-      "p99": 21125,
-      "p100": 24377
+      "p50": 2428,
+      "p75": 9640,
+      "p95": 16601,
+      "p99": 19780,
+      "p100": 22936
     },
     "m6_semanticDist": {
-      "p50": 10058,
-      "p95": 22411,
-      "p100": 25785
+      "p50": 9084,
+      "p95": 20996,
+      "p100": 24056
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 180,
-      "p100": 600
+      "p95": 171,
+      "p100": 653
     },
     "aabbCollisions": 0,
     "nodeCount": 528,
@@ -3298,11 +3298,11 @@
               "required": 0
             },
             "application": {
-              "allocated": 20,
+              "allocated": 120,
               "required": 60
             },
             "domain": {
-              "allocated": 120,
+              "allocated": 20,
               "required": 60
             },
             "schema": {
@@ -3677,22 +3677,22 @@
   "CandJ4_BypassStage8": {
     "projectId": "pbim",
     "candidateType": "CandidateJ4_TwoPassFeedback",
-    "m1_occupiedWidth": 7100,
-    "m2_occupiedHeight": 25280,
-    "m3_occupiedArea": 179481518,
-    "m4_emptySpaceRatio": 0.9788,
+    "m1_occupiedWidth": 6800,
+    "m2_occupiedHeight": 23720,
+    "m3_occupiedArea": 161289918,
+    "m4_emptySpaceRatio": 0.9764,
     "m5_connectedDist": {
       "p0": 100,
-      "p50": 2521,
-      "p75": 10700,
-      "p95": 14408,
-      "p99": 18702,
-      "p100": 23895
+      "p50": 2106,
+      "p75": 9510,
+      "p95": 12796,
+      "p99": 17256,
+      "p100": 22436
     },
     "m6_semanticDist": {
-      "p50": 4093,
-      "p95": 19946,
-      "p100": 25625
+      "p50": 3993,
+      "p95": 18302,
+      "p100": 24037
     },
     "m7_nearestDist": {
       "p50": 100,
@@ -4033,11 +4033,11 @@
               "required": 0
             },
             "application": {
-              "allocated": 20,
+              "allocated": 120,
               "required": 60
             },
             "domain": {
-              "allocated": 120,
+              "allocated": 20,
               "required": 60
             },
             "schema": {

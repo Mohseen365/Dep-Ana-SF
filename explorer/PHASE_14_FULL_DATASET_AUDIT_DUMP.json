@@ -25,7 +25,7 @@
       "nodeDensity": 0.00009245562130177515,
       "medianLocality": 258.9344788335056,
       "p95Locality": 430.5588620264188,
-      "maxLocality": 600
+      "maxLocality": 472.7587501230495
     }
   },
   "bqc_depth_2": {
@@ -53,8 +53,8 @@
       "occupiedArea": 1218816,
       "nodeCount": 134,
       "nodeDensity": 0.00010994276412518378,
-      "medianLocality": 363.91984445998344,
-      "p95Locality": 719.9387991785688,
+      "medianLocality": 366.2864250839831,
+      "p95Locality": 719.4861008449262,
       "maxLocality": 833.402644414846
     }
   },
@@ -555,7 +555,7 @@
       "nodeCount": 70,
       "nodeDensity": 0.00018200514414823456,
       "medianLocality": 260,
-      "p95Locality": 500.92231191932484,
+      "p95Locality": 501.60841627225903,
       "maxLocality": 557.6233527666222
     }
   },
@@ -584,8 +584,8 @@
       "occupiedArea": 1216798.7832699986,
       "nodeCount": 287,
       "nodeDensity": 0.0002358647986388698,
-      "medianLocality": 454.4574915677546,
-      "p95Locality": 755.33988425855,
+      "medianLocality": 454.138286662702,
+      "p95Locality": 753.5589878749638,
       "maxLocality": 973.2197571528596
     }
   },
@@ -735,7 +735,7 @@
       "nodeCount": 70,
       "nodeDensity": 0.00018200514414823456,
       "medianLocality": 260,
-      "p95Locality": 500.92231191932484,
+      "p95Locality": 501.60841627225903,
       "maxLocality": 557.6233527666222
     }
   },
@@ -764,8 +764,8 @@
       "occupiedArea": 1216798.7832699986,
       "nodeCount": 287,
       "nodeDensity": 0.0002358647986388698,
-      "medianLocality": 454.4574915677546,
-      "p95Locality": 755.33988425855,
+      "medianLocality": 454.138286662702,
+      "p95Locality": 753.5589878749638,
       "maxLocality": 973.2197571528596
     }
   },

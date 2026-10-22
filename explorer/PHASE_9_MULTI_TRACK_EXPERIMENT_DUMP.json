@@ -8033,7 +8033,7 @@
         "totalOverlaps": 54,
         "occupiedWidth": 764,
         "occupiedHeight": 764,
-        "medianEdgeLocality": 299.35,
+        "medianEdgeLocality": 300.45,
         "p95EdgeLocality": 554.03,
         "maxEdgeLocality": 699.21,
         "crossTrackMinSep": {
@@ -8088,7 +8088,7 @@
         "totalOverlaps": 32,
         "occupiedWidth": 784,
         "occupiedHeight": 784,
-        "medianEdgeLocality": 300.45,
+        "medianEdgeLocality": 302.74,
         "p95EdgeLocality": 558.17,
         "maxEdgeLocality": 709.2,
         "crossTrackMinSep": {
@@ -8143,8 +8143,8 @@
         "totalOverlaps": 10,
         "occupiedWidth": 804,
         "occupiedHeight": 804,
-        "medianEdgeLocality": 301.44,
-        "p95EdgeLocality": 564.97,
+        "medianEdgeLocality": 307.4,
+        "p95EdgeLocality": 565.73,
         "maxEdgeLocality": 719.18,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -8198,8 +8198,8 @@
         "totalOverlaps": 2,
         "occupiedWidth": 844,
         "occupiedHeight": 844,
-        "medianEdgeLocality": 302.42,
-        "p95EdgeLocality": 584.89,
+        "medianEdgeLocality": 316.87,
+        "p95EdgeLocality": 585.66,
         "maxEdgeLocality": 739.16,
         "crossTrackMinSep": {
           "minDeltaR": 40,
@@ -8253,8 +8253,8 @@
         "totalOverlaps": 2,
         "occupiedWidth": 884,
         "occupiedHeight": 884,
-        "medianEdgeLocality": 307.21,
-        "p95EdgeLocality": 604.82,
+        "medianEdgeLocality": 317.68,
+        "p95EdgeLocality": 605.6,
         "maxEdgeLocality": 759.14,
         "crossTrackMinSep": {
           "minDeltaR": 50,
@@ -8308,7 +8308,7 @@
         "totalOverlaps": 60,
         "occupiedWidth": 804,
         "occupiedHeight": 804,
-        "medianEdgeLocality": 302.07,
+        "medianEdgeLocality": 300.45,
         "p95EdgeLocality": 634.61,
         "maxEdgeLocality": 719.37,
         "crossTrackMinSep": {
@@ -8371,7 +8371,7 @@
         "totalOverlaps": 34,
         "occupiedWidth": 834,
         "occupiedHeight": 834,
-        "medianEdgeLocality": 305.38,
+        "medianEdgeLocality": 300.45,
         "p95EdgeLocality": 647.87,
         "maxEdgeLocality": 734.36,
         "crossTrackMinSep": {
@@ -8434,7 +8434,7 @@
         "totalOverlaps": 12,
         "occupiedWidth": 864,
         "occupiedHeight": 864,
-        "medianEdgeLocality": 307.76,
+        "medianEdgeLocality": 304.83,
         "p95EdgeLocality": 648.31,
         "maxEdgeLocality": 749.34,
         "crossTrackMinSep": {
@@ -8497,7 +8497,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 924,
         "occupiedHeight": 924,
-        "medianEdgeLocality": 321.11,
+        "medianEdgeLocality": 319.39,
         "p95EdgeLocality": 648.31,
         "maxEdgeLocality": 779.32,
         "crossTrackMinSep": {
@@ -8561,7 +8561,7 @@
         "occupiedWidth": 984,
         "occupiedHeight": 984,
         "medianEdgeLocality": 328.17,
-        "p95EdgeLocality": 655,
+        "p95EdgeLocality": 651.94,
         "maxEdgeLocality": 809.29,
         "crossTrackMinSep": {
           "minDeltaR": 50,
@@ -8765,7 +8765,7 @@
         "totalOverlaps": 6,
         "occupiedWidth": 920.93,
         "occupiedHeight": 917.86,
-        "medianEdgeLocality": 391.48,
+        "medianEdgeLocality": 390.64,
         "p95EdgeLocality": 614.06,
         "maxEdgeLocality": 770.4,
         "crossTrackMinSep": {
@@ -8836,7 +8836,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 1000.65,
         "occupiedHeight": 997.32,
-        "medianEdgeLocality": 406.8,
+        "medianEdgeLocality": 402.02,
         "p95EdgeLocality": 652.16,
         "maxEdgeLocality": 809.9,
         "crossTrackMinSep": {
@@ -8907,7 +8907,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 1080.38,
         "occupiedHeight": 1076.77,
-        "medianEdgeLocality": 419.88,
+        "medianEdgeLocality": 419.28,
         "p95EdgeLocality": 677.16,
         "maxEdgeLocality": 849.41,
         "crossTrackMinSep": {
@@ -8978,7 +8978,7 @@
         "totalOverlaps": 70,
         "occupiedWidth": 884,
         "occupiedHeight": 884,
-        "medianEdgeLocality": 300.45,
+        "medianEdgeLocality": 299.67,
         "p95EdgeLocality": 595.34,
         "maxEdgeLocality": 780,
         "crossTrackMinSep": {
@@ -9294,7 +9294,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 1184,
         "occupiedHeight": 1184,
-        "medianEdgeLocality": 355.37,
+        "medianEdgeLocality": 350.97,
         "p95EdgeLocality": 706.99,
         "maxEdgeLocality": 960,
         "crossTrackMinSep": {
@@ -9569,7 +9569,7 @@
         "occupiedWidth": 723.64,
         "occupiedHeight": 723.28,
         "medianEdgeLocality": 261.44,
-        "p95EdgeLocality": 508.38,
+        "p95EdgeLocality": 508.63,
         "maxEdgeLocality": 529.91,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -9805,7 +9805,7 @@
         "occupiedHeight": 764,
         "medianEdgeLocality": 264.54,
         "p95EdgeLocality": 521.56,
-        "maxEdgeLocality": 546.32,
+        "maxEdgeLocality": 549.73,
         "crossTrackMinSep": {
           "minDeltaR": 20,
           "minDx": 0,
@@ -9858,9 +9858,9 @@
         "totalOverlaps": 32,
         "occupiedWidth": 784,
         "occupiedHeight": 784,
-        "medianEdgeLocality": 269.06,
+        "medianEdgeLocality": 270.02,
         "p95EdgeLocality": 530.86,
-        "maxEdgeLocality": 556.29,
+        "maxEdgeLocality": 559.72,
         "crossTrackMinSep": {
           "minDeltaR": 25,
           "minDx": 0,
@@ -9913,9 +9913,9 @@
         "totalOverlaps": 10,
         "occupiedWidth": 804,
         "occupiedHeight": 804,
-        "medianEdgeLocality": 273.42,
+        "medianEdgeLocality": 274.11,
         "p95EdgeLocality": 537.37,
-        "maxEdgeLocality": 566.25,
+        "maxEdgeLocality": 569.72,
         "crossTrackMinSep": {
           "minDeltaR": 30,
           "minDx": 0,
@@ -9968,9 +9968,9 @@
         "totalOverlaps": 2,
         "occupiedWidth": 844,
         "occupiedHeight": 844,
-        "medianEdgeLocality": 282.48,
+        "medianEdgeLocality": 282.76,
         "p95EdgeLocality": 548.44,
-        "maxEdgeLocality": 586.2,
+        "maxEdgeLocality": 589.72,
         "crossTrackMinSep": {
           "minDeltaR": 40,
           "minDx": 0,
@@ -10023,9 +10023,9 @@
         "totalOverlaps": 2,
         "occupiedWidth": 884,
         "occupiedHeight": 884,
-        "medianEdgeLocality": 290.54,
+        "medianEdgeLocality": 290.58,
         "p95EdgeLocality": 558.43,
-        "maxEdgeLocality": 608.11,
+        "maxEdgeLocality": 609.71,
         "crossTrackMinSep": {
           "minDeltaR": 50,
           "minDx": 0,
@@ -10142,7 +10142,7 @@
         "occupiedWidth": 834,
         "occupiedHeight": 834,
         "medianEdgeLocality": 280.05,
-        "p95EdgeLocality": 552.16,
+        "p95EdgeLocality": 554.27,
         "maxEdgeLocality": 585,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -10205,7 +10205,7 @@
         "occupiedWidth": 864,
         "occupiedHeight": 864,
         "medianEdgeLocality": 286.34,
-        "p95EdgeLocality": 564.22,
+        "p95EdgeLocality": 564.68,
         "maxEdgeLocality": 600,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -10268,7 +10268,7 @@
         "occupiedWidth": 924,
         "occupiedHeight": 924,
         "medianEdgeLocality": 300.45,
-        "p95EdgeLocality": 584.13,
+        "p95EdgeLocality": 586.2,
         "maxEdgeLocality": 636.4,
         "crossTrackMinSep": {
           "minDeltaR": 40,
@@ -10330,8 +10330,8 @@
         "totalOverlaps": 2,
         "occupiedWidth": 984,
         "occupiedHeight": 984,
-        "medianEdgeLocality": 316.43,
-        "p95EdgeLocality": 606.14,
+        "medianEdgeLocality": 317.12,
+        "p95EdgeLocality": 606.59,
         "maxEdgeLocality": 678.82,
         "crossTrackMinSep": {
           "minDeltaR": 50,
@@ -10464,7 +10464,7 @@
         "totalOverlaps": 48,
         "occupiedWidth": 881.06,
         "occupiedHeight": 878.14,
-        "medianEdgeLocality": 295.89,
+        "medianEdgeLocality": 294.61,
         "p95EdgeLocality": 552.16,
         "maxEdgeLocality": 632.72,
         "crossTrackMinSep": {
@@ -10677,7 +10677,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 1080.38,
         "occupiedHeight": 1076.77,
-        "medianEdgeLocality": 333.39,
+        "medianEdgeLocality": 332.15,
         "p95EdgeLocality": 613.62,
         "maxEdgeLocality": 779.87,
         "crossTrackMinSep": {
@@ -10749,7 +10749,7 @@
         "occupiedWidth": 884,
         "occupiedHeight": 884,
         "medianEdgeLocality": 296.19,
-        "p95EdgeLocality": 538.47,
+        "p95EdgeLocality": 537.7,
         "maxEdgeLocality": 589.72,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -10827,7 +10827,7 @@
         "totalOverlaps": 50,
         "occupiedWidth": 934,
         "occupiedHeight": 934,
-        "medianEdgeLocality": 306.97,
+        "medianEdgeLocality": 304.94,
         "p95EdgeLocality": 548.37,
         "maxEdgeLocality": 609.71,
         "crossTrackMinSep": {
@@ -10985,7 +10985,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 1084,
         "occupiedHeight": 1084,
-        "medianEdgeLocality": 348.25,
+        "medianEdgeLocality": 345.7,
         "p95EdgeLocality": 579.83,
         "maxEdgeLocality": 669.7,
         "crossTrackMinSep": {
@@ -11064,7 +11064,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 1184,
         "occupiedHeight": 1184,
-        "medianEdgeLocality": 360.3,
+        "medianEdgeLocality": 356.74,
         "p95EdgeLocality": 610.13,
         "maxEdgeLocality": 709.7,
         "crossTrackMinSep": {
@@ -11610,7 +11610,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 332.31,
+        "medianEdgeLocality": 331.03,
         "p95EdgeLocality": 758.41,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -11665,7 +11665,7 @@
         "totalOverlaps": 54,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 319.27,
+        "medianEdgeLocality": 330.97,
         "p95EdgeLocality": 673.08,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -11728,7 +11728,7 @@
         "totalOverlaps": 32,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 323.58,
+        "medianEdgeLocality": 330.97,
         "p95EdgeLocality": 678.04,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -11791,7 +11791,7 @@
         "totalOverlaps": 10,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 327.91,
+        "medianEdgeLocality": 330.97,
         "p95EdgeLocality": 682.99,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -11854,7 +11854,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 332.7,
+        "medianEdgeLocality": 334.72,
         "p95EdgeLocality": 692.9,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -11917,7 +11917,7 @@
         "totalOverlaps": 2,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 341.48,
+        "medianEdgeLocality": 343.65,
         "p95EdgeLocality": 702.81,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -12193,7 +12193,7 @@
         "totalOverlaps": 4,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 351.59,
+        "medianEdgeLocality": 350.97,
         "p95EdgeLocality": 738.54,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -12335,7 +12335,7 @@
         "totalOverlaps": 66,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 411.46,
+        "medianEdgeLocality": 409.63,
         "p95EdgeLocality": 805.08,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -12414,7 +12414,7 @@
         "totalOverlaps": 48,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 415.82,
+        "medianEdgeLocality": 412.37,
         "p95EdgeLocality": 805.6,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -12572,7 +12572,7 @@
         "totalOverlaps": 13,
         "occupiedWidth": 1000.65,
         "occupiedHeight": 997.32,
-        "medianEdgeLocality": 432.75,
+        "medianEdgeLocality": 432.64,
         "p95EdgeLocality": 810.84,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -12651,7 +12651,7 @@
         "totalOverlaps": 15,
         "occupiedWidth": 1080.38,
         "occupiedHeight": 1076.77,
-        "medianEdgeLocality": 449.11,
+        "medianEdgeLocality": 448.58,
         "p95EdgeLocality": 829.43,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -14345,7 +14345,7 @@
         "totalOverlaps": 66,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 299.63,
+        "medianEdgeLocality": 291.91,
         "p95EdgeLocality": 631.78,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -14503,7 +14503,7 @@
         "totalOverlaps": 8,
         "occupiedWidth": 983.03,
         "occupiedHeight": 982.07,
-        "medianEdgeLocality": 310.84,
+        "medianEdgeLocality": 309.08,
         "p95EdgeLocality": 649.39,
         "maxEdgeLocality": 959.03,
         "crossTrackMinSep": {
@@ -14661,7 +14661,7 @@
         "totalOverlaps": 15,
         "occupiedWidth": 1080.38,
         "occupiedHeight": 1076.77,
-        "medianEdgeLocality": 342.7,
+        "medianEdgeLocality": 339.78,
         "p95EdgeLocality": 709.34,
         "maxEdgeLocality": 1006.94,
         "crossTrackMinSep": {
@@ -15187,7 +15187,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -15226,7 +15226,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -15265,7 +15265,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -15304,7 +15304,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -15343,7 +15343,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -15492,7 +15492,7 @@
         "totalOverlaps": 241,
         "occupiedWidth": 744,
         "occupiedHeight": 744,
-        "medianEdgeLocality": 335.88,
+        "medianEdgeLocality": 337.74,
         "p95EdgeLocality": 605.75,
         "maxEdgeLocality": 689.99,
         "crossTrackMinSep": {
@@ -15547,7 +15547,7 @@
         "totalOverlaps": 219,
         "occupiedWidth": 764,
         "occupiedHeight": 764,
-        "medianEdgeLocality": 339.41,
+        "medianEdgeLocality": 341.58,
         "p95EdgeLocality": 610.67,
         "maxEdgeLocality": 699.99,
         "crossTrackMinSep": {
@@ -15602,7 +15602,7 @@
         "totalOverlaps": 219,
         "occupiedWidth": 784,
         "occupiedHeight": 784,
-        "medianEdgeLocality": 342.38,
+        "medianEdgeLocality": 343.2,
         "p95EdgeLocality": 610.67,
         "maxEdgeLocality": 709.99,
         "crossTrackMinSep": {
@@ -15799,7 +15799,7 @@
         "totalOverlaps": 58,
         "occupiedWidth": 804,
         "occupiedHeight": 804,
-        "medianEdgeLocality": 348.49,
+        "medianEdgeLocality": 347.94,
         "p95EdgeLocality": 634.35,
         "maxEdgeLocality": 719.75,
         "crossTrackMinSep": {
@@ -15870,7 +15870,7 @@
         "totalOverlaps": 28,
         "occupiedWidth": 844,
         "occupiedHeight": 844,
-        "medianEdgeLocality": 353.23,
+        "medianEdgeLocality": 352.87,
         "p95EdgeLocality": 640.86,
         "maxEdgeLocality": 739.75,
         "crossTrackMinSep": {
@@ -16012,8 +16012,8 @@
         "totalOverlaps": 200,
         "occupiedWidth": 802.68,
         "occupiedHeight": 804,
-        "medianEdgeLocality": 377.33,
-        "p95EdgeLocality": 589.55,
+        "medianEdgeLocality": 374.27,
+        "p95EdgeLocality": 589.44,
         "maxEdgeLocality": 705.61,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -16099,8 +16099,8 @@
         "totalOverlaps": 118,
         "occupiedWidth": 832.63,
         "occupiedHeight": 834,
-        "medianEdgeLocality": 384.49,
-        "p95EdgeLocality": 607.47,
+        "medianEdgeLocality": 380.46,
+        "p95EdgeLocality": 607.37,
         "maxEdgeLocality": 720.36,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -16186,8 +16186,8 @@
         "totalOverlaps": 30,
         "occupiedWidth": 862.58,
         "occupiedHeight": 864,
-        "medianEdgeLocality": 387.94,
-        "p95EdgeLocality": 627.05,
+        "medianEdgeLocality": 386.28,
+        "p95EdgeLocality": 623.54,
         "maxEdgeLocality": 735.12,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -16273,8 +16273,8 @@
         "totalOverlaps": 0,
         "occupiedWidth": 922.48,
         "occupiedHeight": 924,
-        "medianEdgeLocality": 399.47,
-        "p95EdgeLocality": 652.66,
+        "medianEdgeLocality": 399.03,
+        "p95EdgeLocality": 652.45,
         "maxEdgeLocality": 764.68,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -16360,8 +16360,8 @@
         "totalOverlaps": 25,
         "occupiedWidth": 982.38,
         "occupiedHeight": 984,
-        "medianEdgeLocality": 412.61,
-        "p95EdgeLocality": 663.5,
+        "medianEdgeLocality": 411.78,
+        "p95EdgeLocality": 660,
         "maxEdgeLocality": 804.4,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -16447,7 +16447,7 @@
         "totalOverlaps": 206,
         "occupiedWidth": 843.45,
         "occupiedHeight": 842.91,
-        "medianEdgeLocality": 389.97,
+        "medianEdgeLocality": 390.9,
         "p95EdgeLocality": 594.94,
         "maxEdgeLocality": 759.95,
         "crossTrackMinSep": {
@@ -16550,8 +16550,8 @@
         "totalOverlaps": 128,
         "occupiedWidth": 883.43,
         "occupiedHeight": 882.85,
-        "medianEdgeLocality": 396.97,
-        "p95EdgeLocality": 616.74,
+        "medianEdgeLocality": 400.52,
+        "p95EdgeLocality": 610.62,
         "maxEdgeLocality": 784.95,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -16653,8 +16653,8 @@
         "totalOverlaps": 40,
         "occupiedWidth": 923.4,
         "occupiedHeight": 922.8,
-        "medianEdgeLocality": 405.76,
-        "p95EdgeLocality": 631.93,
+        "medianEdgeLocality": 409.01,
+        "p95EdgeLocality": 631.46,
         "maxEdgeLocality": 809.95,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -16756,7 +16756,7 @@
         "totalOverlaps": 15,
         "occupiedWidth": 1003.35,
         "occupiedHeight": 1002.69,
-        "medianEdgeLocality": 424.32,
+        "medianEdgeLocality": 426.59,
         "p95EdgeLocality": 669.69,
         "maxEdgeLocality": 859.94,
         "crossTrackMinSep": {
@@ -16859,8 +16859,8 @@
         "totalOverlaps": 27,
         "occupiedWidth": 1083.29,
         "occupiedHeight": 1082.59,
-        "medianEdgeLocality": 442.24,
-        "p95EdgeLocality": 707.83,
+        "medianEdgeLocality": 445.83,
+        "p95EdgeLocality": 705.93,
         "maxEdgeLocality": 909.94,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -16962,7 +16962,7 @@
         "totalOverlaps": 216,
         "occupiedWidth": 884,
         "occupiedHeight": 884,
-        "medianEdgeLocality": 367.78,
+        "medianEdgeLocality": 369.58,
         "p95EdgeLocality": 643.82,
         "maxEdgeLocality": 777.06,
         "crossTrackMinSep": {
@@ -17082,7 +17082,7 @@
         "occupiedWidth": 934,
         "occupiedHeight": 934,
         "medianEdgeLocality": 377.9,
-        "p95EdgeLocality": 659.51,
+        "p95EdgeLocality": 659.81,
         "maxEdgeLocality": 806.96,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -17200,8 +17200,8 @@
         "totalOverlaps": 51,
         "occupiedWidth": 984,
         "occupiedHeight": 984,
-        "medianEdgeLocality": 390,
-        "p95EdgeLocality": 686.46,
+        "medianEdgeLocality": 390.13,
+        "p95EdgeLocality": 687.78,
         "maxEdgeLocality": 836.87,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -17319,7 +17319,7 @@
         "totalOverlaps": 18,
         "occupiedWidth": 1084,
         "occupiedHeight": 1084,
-        "medianEdgeLocality": 411.46,
+        "medianEdgeLocality": 413.63,
         "p95EdgeLocality": 737.18,
         "maxEdgeLocality": 896.68,
         "crossTrackMinSep": {
@@ -17438,7 +17438,7 @@
         "totalOverlaps": 29,
         "occupiedWidth": 1184,
         "occupiedHeight": 1184,
-        "medianEdgeLocality": 431.1,
+        "medianEdgeLocality": 431.82,
         "p95EdgeLocality": 785.72,
         "maxEdgeLocality": 956.51,
         "crossTrackMinSep": {
@@ -17557,7 +17557,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -17596,7 +17596,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -17635,7 +17635,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -17674,7 +17674,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -17713,7 +17713,7 @@
         "totalOverlaps": 565,
         "occupiedWidth": 683.98,
         "occupiedHeight": 683.97,
-        "medianEdgeLocality": 320.3,
+        "medianEdgeLocality": 318.73,
         "p95EdgeLocality": 507.33,
         "maxEdgeLocality": 657.91,
         "crossTrackMinSep": {
@@ -17752,8 +17752,8 @@
         "totalOverlaps": 457,
         "occupiedWidth": 724,
         "occupiedHeight": 724,
-        "medianEdgeLocality": 332.93,
-        "p95EdgeLocality": 529.17,
+        "medianEdgeLocality": 332.22,
+        "p95EdgeLocality": 529.5,
         "maxEdgeLocality": 689.37,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -17807,8 +17807,8 @@
         "totalOverlaps": 321,
         "occupiedWidth": 734,
         "occupiedHeight": 734,
-        "medianEdgeLocality": 336.97,
-        "p95EdgeLocality": 534.43,
+        "medianEdgeLocality": 334.54,
+        "p95EdgeLocality": 534.72,
         "maxEdgeLocality": 699.21,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -17862,8 +17862,8 @@
         "totalOverlaps": 241,
         "occupiedWidth": 744,
         "occupiedHeight": 744,
-        "medianEdgeLocality": 339.93,
-        "p95EdgeLocality": 539.48,
+        "medianEdgeLocality": 338.25,
+        "p95EdgeLocality": 539.72,
         "maxEdgeLocality": 709.06,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -17917,8 +17917,8 @@
         "totalOverlaps": 219,
         "occupiedWidth": 764,
         "occupiedHeight": 764,
-        "medianEdgeLocality": 343.63,
-        "p95EdgeLocality": 549.99,
+        "medianEdgeLocality": 345.59,
+        "p95EdgeLocality": 550.41,
         "maxEdgeLocality": 728.76,
         "crossTrackMinSep": {
           "minDeltaR": 40,
@@ -17972,8 +17972,8 @@
         "totalOverlaps": 219,
         "occupiedWidth": 784,
         "occupiedHeight": 784,
-        "medianEdgeLocality": 347.84,
-        "p95EdgeLocality": 560.12,
+        "medianEdgeLocality": 350.97,
+        "p95EdgeLocality": 568.88,
         "maxEdgeLocality": 748.45,
         "crossTrackMinSep": {
           "minDeltaR": 50,
@@ -18027,8 +18027,8 @@
         "totalOverlaps": 245,
         "occupiedWidth": 764,
         "occupiedHeight": 764,
-        "medianEdgeLocality": 351.1,
-        "p95EdgeLocality": 551.34,
+        "medianEdgeLocality": 350,
+        "p95EdgeLocality": 551.71,
         "maxEdgeLocality": 717.26,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -18098,8 +18098,8 @@
         "totalOverlaps": 140,
         "occupiedWidth": 784,
         "occupiedHeight": 784,
-        "medianEdgeLocality": 354.8,
-        "p95EdgeLocality": 565.44,
+        "medianEdgeLocality": 352.47,
+        "p95EdgeLocality": 566.54,
         "maxEdgeLocality": 732.21,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -18170,7 +18170,7 @@
         "occupiedWidth": 804,
         "occupiedHeight": 804,
         "medianEdgeLocality": 360.16,
-        "p95EdgeLocality": 576.25,
+        "p95EdgeLocality": 580.93,
         "maxEdgeLocality": 747.15,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -18240,8 +18240,8 @@
         "totalOverlaps": 28,
         "occupiedWidth": 844,
         "occupiedHeight": 844,
-        "medianEdgeLocality": 377.14,
-        "p95EdgeLocality": 607.16,
+        "medianEdgeLocality": 374.02,
+        "p95EdgeLocality": 609.79,
         "maxEdgeLocality": 777.04,
         "crossTrackMinSep": {
           "minDeltaR": 40,
@@ -18311,8 +18311,8 @@
         "totalOverlaps": 20,
         "occupiedWidth": 884,
         "occupiedHeight": 884,
-        "medianEdgeLocality": 384.28,
-        "p95EdgeLocality": 631.63,
+        "medianEdgeLocality": 382.2,
+        "p95EdgeLocality": 638.66,
         "maxEdgeLocality": 806.93,
         "crossTrackMinSep": {
           "minDeltaR": 50,
@@ -18382,8 +18382,8 @@
         "totalOverlaps": 200,
         "occupiedWidth": 802.68,
         "occupiedHeight": 804,
-        "medianEdgeLocality": 355.86,
-        "p95EdgeLocality": 579.1,
+        "medianEdgeLocality": 354.53,
+        "p95EdgeLocality": 578.44,
         "maxEdgeLocality": 720.11,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -18470,7 +18470,7 @@
         "occupiedWidth": 832.63,
         "occupiedHeight": 834,
         "medianEdgeLocality": 360.15,
-        "p95EdgeLocality": 597.94,
+        "p95EdgeLocality": 596.8,
         "maxEdgeLocality": 739.6,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -18556,7 +18556,7 @@
         "totalOverlaps": 30,
         "occupiedWidth": 862.58,
         "occupiedHeight": 864,
-        "medianEdgeLocality": 368.05,
+        "medianEdgeLocality": 367.68,
         "p95EdgeLocality": 617.47,
         "maxEdgeLocality": 759.1,
         "crossTrackMinSep": {
@@ -18643,8 +18643,8 @@
         "totalOverlaps": 0,
         "occupiedWidth": 922.48,
         "occupiedHeight": 924,
-        "medianEdgeLocality": 384.31,
-        "p95EdgeLocality": 661.08,
+        "medianEdgeLocality": 383.17,
+        "p95EdgeLocality": 660.71,
         "maxEdgeLocality": 804.27,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -18730,8 +18730,8 @@
         "totalOverlaps": 25,
         "occupiedWidth": 982.38,
         "occupiedHeight": 984,
-        "medianEdgeLocality": 397.72,
-        "p95EdgeLocality": 700.49,
+        "medianEdgeLocality": 397.15,
+        "p95EdgeLocality": 700.19,
         "maxEdgeLocality": 857.89,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -18817,8 +18817,8 @@
         "totalOverlaps": 206,
         "occupiedWidth": 843.45,
         "occupiedHeight": 842.91,
-        "medianEdgeLocality": 368.73,
-        "p95EdgeLocality": 609.07,
+        "medianEdgeLocality": 367,
+        "p95EdgeLocality": 605.58,
         "maxEdgeLocality": 756.62,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -18921,7 +18921,7 @@
         "occupiedWidth": 883.43,
         "occupiedHeight": 882.85,
         "medianEdgeLocality": 378.25,
-        "p95EdgeLocality": 634.93,
+        "p95EdgeLocality": 632.69,
         "maxEdgeLocality": 781.52,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -19024,7 +19024,7 @@
         "occupiedWidth": 923.4,
         "occupiedHeight": 922.8,
         "medianEdgeLocality": 390,
-        "p95EdgeLocality": 662.88,
+        "p95EdgeLocality": 658.99,
         "maxEdgeLocality": 806.42,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -19126,8 +19126,8 @@
         "totalOverlaps": 15,
         "occupiedWidth": 1003.35,
         "occupiedHeight": 1002.69,
-        "medianEdgeLocality": 411.9,
-        "p95EdgeLocality": 717.41,
+        "medianEdgeLocality": 411.92,
+        "p95EdgeLocality": 710.21,
         "maxEdgeLocality": 856.23,
         "crossTrackMinSep": {
           "minDeltaR": 10,
@@ -19229,9 +19229,9 @@
         "totalOverlaps": 27,
         "occupiedWidth": 1083.29,
         "occupiedHeight": 1082.59,
-        "medianEdgeLocality": 438.77,
-        "p95EdgeLocality": 777.72,
-        "maxEdgeLocality": 909.83,
+        "medianEdgeLocality": 439.06,
+        "p95EdgeLocality": 767.09,
+        "maxEdgeLocality": 908.74,
         "crossTrackMinSep": {
           "minDeltaR": 0,
           "minDx": 0,
@@ -19332,8 +19332,8 @@
         "totalOverlaps": 216,
         "occupiedWidth": 884,
         "occupiedHeight": 884,
-        "medianEdgeLocality": 378.1,
-        "p95EdgeLocality": 628.49,
+        "medianEdgeLocality": 377.79,
+        "p95EdgeLocality": 627.92,
         "maxEdgeLocality": 836.81,
         "crossTrackMinSep": {
           "minDeltaR": 20,
@@ -19451,8 +19451,8 @@
         "totalOverlaps": 138,
         "occupiedWidth": 934,
         "occupiedHeight": 934,
-        "medianEdgeLocality": 392.71,
-        "p95EdgeLocality": 664.22,
+        "medianEdgeLocality": 392.02,
+        "p95EdgeLocality": 659.92,
         "maxEdgeLocality": 881.64,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -19571,7 +19571,7 @@
         "occupiedWidth": 984,
         "occupiedHeight": 984,
         "medianEdgeLocality": 405.71,
-        "p95EdgeLocality": 698.24,
+        "p95EdgeLocality": 689.91,
         "maxEdgeLocality": 926.46,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -19689,8 +19689,8 @@
         "totalOverlaps": 18,
         "occupiedWidth": 1084,
         "occupiedHeight": 1084,
-        "medianEdgeLocality": 425.14,
-        "p95EdgeLocality": 762.13,
+        "medianEdgeLocality": 425.09,
+        "p95EdgeLocality": 754.43,
         "maxEdgeLocality": 1016.12,
         "crossTrackMinSep": {
           "minDeltaR": 10,
@@ -19808,8 +19808,8 @@
         "totalOverlaps": 29,
         "occupiedWidth": 1184,
         "occupiedHeight": 1184,
-        "medianEdgeLocality": 454.73,
-        "p95EdgeLocality": 834.32,
+        "medianEdgeLocality": 453.9,
+        "p95EdgeLocality": 821.22,
         "maxEdgeLocality": 1105.78,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -20174,7 +20174,7 @@
         "totalOverlaps": 521,
         "occupiedWidth": 1024,
         "occupiedHeight": 1024,
-        "medianEdgeLocality": 372.41,
+        "medianEdgeLocality": 372.99,
         "p95EdgeLocality": 790.58,
         "maxEdgeLocality": 978.82,
         "crossTrackMinSep": {
@@ -20245,7 +20245,7 @@
         "totalOverlaps": 365,
         "occupiedWidth": 1034,
         "occupiedHeight": 1034,
-        "medianEdgeLocality": 373.46,
+        "medianEdgeLocality": 374.49,
         "p95EdgeLocality": 790.58,
         "maxEdgeLocality": 983.81,
         "crossTrackMinSep": {
@@ -20316,7 +20316,7 @@
         "totalOverlaps": 253,
         "occupiedWidth": 1044,
         "occupiedHeight": 1044,
-        "medianEdgeLocality": 375.63,
+        "medianEdgeLocality": 376.06,
         "p95EdgeLocality": 790.58,
         "maxEdgeLocality": 988.81,
         "crossTrackMinSep": {
@@ -20387,7 +20387,7 @@
         "totalOverlaps": 219,
         "occupiedWidth": 1064,
         "occupiedHeight": 1064,
-        "medianEdgeLocality": 383.18,
+        "medianEdgeLocality": 384.8,
         "p95EdgeLocality": 796.64,
         "maxEdgeLocality": 998.8,
         "crossTrackMinSep": {
@@ -20529,7 +20529,7 @@
         "totalOverlaps": 311,
         "occupiedWidth": 1061.09,
         "occupiedHeight": 1064,
-        "medianEdgeLocality": 379.12,
+        "medianEdgeLocality": 380.16,
         "p95EdgeLocality": 810.38,
         "maxEdgeLocality": 999.33,
         "crossTrackMinSep": {
@@ -20624,7 +20624,7 @@
         "totalOverlaps": 178,
         "occupiedWidth": 1081.04,
         "occupiedHeight": 1084,
-        "medianEdgeLocality": 383.41,
+        "medianEdgeLocality": 384.11,
         "p95EdgeLocality": 815.3,
         "maxEdgeLocality": 1009.33,
         "crossTrackMinSep": {
@@ -20719,7 +20719,7 @@
         "totalOverlaps": 68,
         "occupiedWidth": 1100.98,
         "occupiedHeight": 1104,
-        "medianEdgeLocality": 389.1,
+        "medianEdgeLocality": 389.25,
         "p95EdgeLocality": 820.22,
         "maxEdgeLocality": 1019.32,
         "crossTrackMinSep": {
@@ -20909,7 +20909,7 @@
         "totalOverlaps": 20,
         "occupiedWidth": 1180.76,
         "occupiedHeight": 1184,
-        "medianEdgeLocality": 406.43,
+        "medianEdgeLocality": 407.63,
         "p95EdgeLocality": 840.28,
         "maxEdgeLocality": 1059.29,
         "crossTrackMinSep": {
@@ -21004,7 +21004,7 @@
         "totalOverlaps": 296,
         "occupiedWidth": 1104,
         "occupiedHeight": 1104,
-        "medianEdgeLocality": 402.77,
+        "medianEdgeLocality": 400.54,
         "p95EdgeLocality": 756.77,
         "maxEdgeLocality": 1015.09,
         "crossTrackMinSep": {
@@ -21123,7 +21123,7 @@
         "totalOverlaps": 178,
         "occupiedWidth": 1134,
         "occupiedHeight": 1134,
-        "medianEdgeLocality": 410.73,
+        "medianEdgeLocality": 408.12,
         "p95EdgeLocality": 765.49,
         "maxEdgeLocality": 1030.02,
         "crossTrackMinSep": {
@@ -21242,7 +21242,7 @@
         "totalOverlaps": 42,
         "occupiedWidth": 1164,
         "occupiedHeight": 1164,
-        "medianEdgeLocality": 418.23,
+        "medianEdgeLocality": 414.43,
         "p95EdgeLocality": 776.78,
         "maxEdgeLocality": 1044.95,
         "crossTrackMinSep": {
@@ -21361,8 +21361,8 @@
         "totalOverlaps": 4,
         "occupiedWidth": 1224,
         "occupiedHeight": 1224,
-        "medianEdgeLocality": 435.85,
-        "p95EdgeLocality": 788.51,
+        "medianEdgeLocality": 431.26,
+        "p95EdgeLocality": 792.1,
         "maxEdgeLocality": 1074.81,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -21480,7 +21480,7 @@
         "totalOverlaps": 55,
         "occupiedWidth": 1284,
         "occupiedHeight": 1284,
-        "medianEdgeLocality": 446.68,
+        "medianEdgeLocality": 446.48,
         "p95EdgeLocality": 804.4,
         "maxEdgeLocality": 1104.67,
         "crossTrackMinSep": {
@@ -21742,7 +21742,7 @@
         "totalOverlaps": 180,
         "occupiedWidth": 1181.71,
         "occupiedHeight": 1179.43,
-        "medianEdgeLocality": 421.29,
+        "medianEdgeLocality": 422.71,
         "p95EdgeLocality": 792.1,
         "maxEdgeLocality": 1010,
         "crossTrackMinSep": {
@@ -21885,7 +21885,7 @@
         "totalOverlaps": 54,
         "occupiedWidth": 1221.63,
         "occupiedHeight": 1219.27,
-        "medianEdgeLocality": 431.51,
+        "medianEdgeLocality": 432.68,
         "p95EdgeLocality": 803.14,
         "maxEdgeLocality": 1020,
         "crossTrackMinSep": {
@@ -22028,7 +22028,7 @@
         "totalOverlaps": 34,
         "occupiedWidth": 1301.47,
         "occupiedHeight": 1298.95,
-        "medianEdgeLocality": 447.74,
+        "medianEdgeLocality": 450.37,
         "p95EdgeLocality": 819.45,
         "maxEdgeLocality": 1040,
         "crossTrackMinSep": {
@@ -22171,8 +22171,8 @@
         "totalOverlaps": 65,
         "occupiedWidth": 1381.32,
         "occupiedHeight": 1378.64,
-        "medianEdgeLocality": 466.46,
-        "p95EdgeLocality": 837.97,
+        "medianEdgeLocality": 466.48,
+        "p95EdgeLocality": 837.53,
         "maxEdgeLocality": 1060,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -22314,7 +22314,7 @@
         "totalOverlaps": 306,
         "occupiedWidth": 1180.76,
         "occupiedHeight": 1177.52,
-        "medianEdgeLocality": 407.37,
+        "medianEdgeLocality": 410.59,
         "p95EdgeLocality": 804.06,
         "maxEdgeLocality": 1038.53,
         "crossTrackMinSep": {
@@ -22481,7 +22481,7 @@
         "totalOverlaps": 202,
         "occupiedWidth": 1230.62,
         "occupiedHeight": 1227.24,
-        "medianEdgeLocality": 416.94,
+        "medianEdgeLocality": 420.92,
         "p95EdgeLocality": 812.02,
         "maxEdgeLocality": 1067.49,
         "crossTrackMinSep": {
@@ -22648,7 +22648,7 @@
         "totalOverlaps": 81,
         "occupiedWidth": 1280.48,
         "occupiedHeight": 1276.96,
-        "medianEdgeLocality": 429.26,
+        "medianEdgeLocality": 429.54,
         "p95EdgeLocality": 827.5,
         "maxEdgeLocality": 1096.48,
         "crossTrackMinSep": {
@@ -22815,7 +22815,7 @@
         "totalOverlaps": 48,
         "occupiedWidth": 1380.2,
         "occupiedHeight": 1376.4,
-        "medianEdgeLocality": 453.65,
+        "medianEdgeLocality": 453.21,
         "p95EdgeLocality": 849.58,
         "maxEdgeLocality": 1154.5,
         "crossTrackMinSep": {
@@ -22982,7 +22982,7 @@
         "totalOverlaps": 68,
         "occupiedWidth": 1479.92,
         "occupiedHeight": 1475.85,
-        "medianEdgeLocality": 478.08,
+        "medianEdgeLocality": 476.73,
         "p95EdgeLocality": 879.81,
         "maxEdgeLocality": 1212.6,
         "crossTrackMinSep": {
@@ -23384,7 +23384,7 @@
         "totalOverlaps": 521,
         "occupiedWidth": 1024,
         "occupiedHeight": 1024,
-        "medianEdgeLocality": 359.6,
+        "medianEdgeLocality": 356.62,
         "p95EdgeLocality": 645.3,
         "maxEdgeLocality": 849.86,
         "crossTrackMinSep": {
@@ -23455,7 +23455,7 @@
         "totalOverlaps": 365,
         "occupiedWidth": 1034,
         "occupiedHeight": 1034,
-        "medianEdgeLocality": 359.73,
+        "medianEdgeLocality": 357.26,
         "p95EdgeLocality": 645.3,
         "maxEdgeLocality": 859.86,
         "crossTrackMinSep": {
@@ -23526,7 +23526,7 @@
         "totalOverlaps": 253,
         "occupiedWidth": 1044,
         "occupiedHeight": 1044,
-        "medianEdgeLocality": 360.94,
+        "medianEdgeLocality": 360,
         "p95EdgeLocality": 647.65,
         "maxEdgeLocality": 869.86,
         "crossTrackMinSep": {
@@ -23597,7 +23597,7 @@
         "totalOverlaps": 219,
         "occupiedWidth": 1064,
         "occupiedHeight": 1064,
-        "medianEdgeLocality": 369.61,
+        "medianEdgeLocality": 366.6,
         "p95EdgeLocality": 659.74,
         "maxEdgeLocality": 889.86,
         "crossTrackMinSep": {
@@ -23668,7 +23668,7 @@
         "totalOverlaps": 219,
         "occupiedWidth": 1084,
         "occupiedHeight": 1084,
-        "medianEdgeLocality": 375.52,
+        "medianEdgeLocality": 371.43,
         "p95EdgeLocality": 671.55,
         "maxEdgeLocality": 909.85,
         "crossTrackMinSep": {
@@ -23739,7 +23739,7 @@
         "totalOverlaps": 311,
         "occupiedWidth": 1061.09,
         "occupiedHeight": 1064,
-        "medianEdgeLocality": 370,
+        "medianEdgeLocality": 370.83,
         "p95EdgeLocality": 647.66,
         "maxEdgeLocality": 889.85,
         "crossTrackMinSep": {
@@ -23834,7 +23834,7 @@
         "totalOverlaps": 178,
         "occupiedWidth": 1081.04,
         "occupiedHeight": 1084,
-        "medianEdgeLocality": 374.15,
+        "medianEdgeLocality": 375.81,
         "p95EdgeLocality": 652.06,
         "maxEdgeLocality": 909.85,
         "crossTrackMinSep": {
@@ -23929,7 +23929,7 @@
         "totalOverlaps": 68,
         "occupiedWidth": 1100.98,
         "occupiedHeight": 1104,
-        "medianEdgeLocality": 377.12,
+        "medianEdgeLocality": 382.93,
         "p95EdgeLocality": 657.22,
         "maxEdgeLocality": 929.84,
         "crossTrackMinSep": {
@@ -24024,7 +24024,7 @@
         "totalOverlaps": 28,
         "occupiedWidth": 1140.87,
         "occupiedHeight": 1144,
-        "medianEdgeLocality": 391.67,
+        "medianEdgeLocality": 392.4,
         "p95EdgeLocality": 670.67,
         "maxEdgeLocality": 969.83,
         "crossTrackMinSep": {
@@ -24119,7 +24119,7 @@
         "totalOverlaps": 20,
         "occupiedWidth": 1180.76,
         "occupiedHeight": 1184,
-        "medianEdgeLocality": 407.31,
+        "medianEdgeLocality": 407.83,
         "p95EdgeLocality": 704.31,
         "maxEdgeLocality": 1009.83,
         "crossTrackMinSep": {
@@ -24214,7 +24214,7 @@
         "totalOverlaps": 296,
         "occupiedWidth": 1104,
         "occupiedHeight": 1104,
-        "medianEdgeLocality": 376.07,
+        "medianEdgeLocality": 373.86,
         "p95EdgeLocality": 672.63,
         "maxEdgeLocality": 928.83,
         "crossTrackMinSep": {
@@ -24333,7 +24333,7 @@
         "totalOverlaps": 178,
         "occupiedWidth": 1134,
         "occupiedHeight": 1134,
-        "medianEdgeLocality": 382.64,
+        "medianEdgeLocality": 382.43,
         "p95EdgeLocality": 688.59,
         "maxEdgeLocality": 958.79,
         "crossTrackMinSep": {
@@ -24452,7 +24452,7 @@
         "totalOverlaps": 42,
         "occupiedWidth": 1164,
         "occupiedHeight": 1164,
-        "medianEdgeLocality": 389.83,
+        "medianEdgeLocality": 388.76,
         "p95EdgeLocality": 693.53,
         "maxEdgeLocality": 988.75,
         "crossTrackMinSep": {
@@ -24571,8 +24571,8 @@
         "totalOverlaps": 4,
         "occupiedWidth": 1224,
         "occupiedHeight": 1224,
-        "medianEdgeLocality": 406.56,
-        "p95EdgeLocality": 728.69,
+        "medianEdgeLocality": 406.47,
+        "p95EdgeLocality": 721.17,
         "maxEdgeLocality": 1048.67,
         "crossTrackMinSep": {
           "minDeltaR": 30,
@@ -24690,7 +24690,7 @@
         "totalOverlaps": 55,
         "occupiedWidth": 1284,
         "occupiedHeight": 1284,
-        "medianEdgeLocality": 423.64,
+        "medianEdgeLocality": 421.3,
         "p95EdgeLocality": 758,
         "maxEdgeLocality": 1108.59,
         "crossTrackMinSep": {
@@ -24809,7 +24809,7 @@
         "totalOverlaps": 288,
         "occupiedWidth": 1141.79,
         "occupiedHeight": 1139.58,
-        "medianEdgeLocality": 389.09,
+        "medianEdgeLocality": 389.53,
         "p95EdgeLocality": 681.4,
         "maxEdgeLocality": 955.73,
         "crossTrackMinSep": {
@@ -24952,8 +24952,8 @@
         "totalOverlaps": 180,
         "occupiedWidth": 1181.71,
         "occupiedHeight": 1179.43,
-        "medianEdgeLocality": 399.61,
-        "p95EdgeLocality": 709.03,
+        "medianEdgeLocality": 399.27,
+        "p95EdgeLocality": 700.16,
         "maxEdgeLocality": 995.11,
         "crossTrackMinSep": {
           "minDeltaR": 25,
@@ -25095,7 +25095,7 @@
         "totalOverlaps": 54,
         "occupiedWidth": 1221.63,
         "occupiedHeight": 1219.27,
-        "medianEdgeLocality": 409.21,
+        "medianEdgeLocality": 408.79,
         "p95EdgeLocality": 729.48,
         "maxEdgeLocality": 1034.49,
         "crossTrackMinSep": {
@@ -25238,8 +25238,8 @@
         "totalOverlaps": 34,
         "occupiedWidth": 1301.47,
         "occupiedHeight": 1298.95,
-        "medianEdgeLocality": 432.69,
-        "p95EdgeLocality": 788.9,
+        "medianEdgeLocality": 429.89,
+        "p95EdgeLocality": 785.95,
         "maxEdgeLocality": 1113.26,
         "crossTrackMinSep": {
           "minDeltaR": 10,
@@ -25381,8 +25381,8 @@
         "totalOverlaps": 65,
         "occupiedWidth": 1381.32,
         "occupiedHeight": 1378.64,
-        "medianEdgeLocality": 450.5,
-        "p95EdgeLocality": 853.23,
+        "medianEdgeLocality": 449.41,
+        "p95EdgeLocality": 847.41,
         "maxEdgeLocality": 1192.04,
         "crossTrackMinSep": {
           "minDeltaR": 0,
@@ -25524,7 +25524,7 @@
         "totalOverlaps": 306,
         "occupiedWidth": 1180.76,
         "occupiedHeight": 1177.52,
-        "medianEdgeLocality": 397.69,
+        "medianEdgeLocality": 396.92,
         "p95EdgeLocality": 708.27,
         "maxEdgeLocality": 1006.24,
         "crossTrackMinSep": {
@@ -25691,7 +25691,7 @@
         "totalOverlaps": 202,
         "occupiedWidth": 1230.62,
         "occupiedHeight": 1227.24,
-        "medianEdgeLocality": 413.9,
+        "medianEdgeLocality": 413.33,
         "p95EdgeLocality": 731.3,
         "maxEdgeLocality": 1056.05,
         "crossTrackMinSep": {
@@ -25858,7 +25858,7 @@
         "totalOverlaps": 81,
         "occupiedWidth": 1280.48,
         "occupiedHeight": 1276.96,
-        "medianEdgeLocality": 427.41,
+        "medianEdgeLocality": 426.85,
         "p95EdgeLocality": 762.6,
         "maxEdgeLocality": 1105.85,
         "crossTrackMinSep": {
@@ -26025,7 +26025,7 @@
         "totalOverlaps": 48,
         "occupiedWidth": 1380.2,
         "occupiedHeight": 1376.4,
-        "medianEdgeLocality": 450.46,
+        "medianEdgeLocality": 450.08,
         "p95EdgeLocality": 835.33,
         "maxEdgeLocality": 1205.47,
         "crossTrackMinSep": {
@@ -26192,7 +26192,7 @@
         "totalOverlaps": 68,
         "occupiedWidth": 1479.92,
         "occupiedHeight": 1475.85,
-        "medianEdgeLocality": 474.72,
+        "medianEdgeLocality": 473.18,
         "p95EdgeLocality": 892.22,
         "maxEdgeLocality": 1305.08,
         "crossTrackMinSep": {

@@ -1,36 +1,36 @@
 {
-  "timestamp": "2026-10-19T17:27:05.521Z",
+  "timestamp": "2026-10-20T19:20:05.817Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
-    "primaryCrossings": 9896,
-    "totalCrossings": 101093,
-    "averageEdgeLength": 1382.1448209623418,
-    "maxEdgeLength": 4658.969843216417,
+    "primaryCrossings": 7481,
+    "totalCrossings": 100065,
+    "averageEdgeLength": 1700.4263316914657,
+    "maxEdgeLength": 4963.405862913087,
     "primaryOverlapCount": 16,
-    "satelliteOverlapCount": 2,
-    "layerViolationCount": 132,
-    "domainCohesionScore": 0.9562040933182331
+    "satelliteOverlapCount": 4,
+    "layerViolationCount": 0,
+    "domainCohesionScore": 0.9368969245931278
   },
   "pathB_currentHybrid": {
-    "primaryCrossings": 7834,
-    "primarySatelliteCrossings": 38372,
-    "satelliteSatelliteCrossings": 37474,
-    "totalCrossings": 86198,
-    "averageEdgeLength": 3521.915339261838,
-    "maxEdgeLength": 10221.960105835324,
-    "primaryOverlapCount": 0,
+    "primaryCrossings": 9023,
+    "primarySatelliteCrossings": 39287,
+    "satelliteSatelliteCrossings": 37409,
+    "totalCrossings": 88491,
+    "averageEdgeLength": 3522.597765954832,
+    "maxEdgeLength": 10048.768093660074,
+    "primaryOverlapCount": 1,
     "satelliteOverlapCount": 0,
-    "layerViolationCount": 132,
-    "domainCohesionScore": 0.8372414949460214,
+    "layerViolationCount": 0,
+    "domainCohesionScore": 0.8350998895301838,
     "medianIntraFeatureDistance": 4220,
-    "medianInterFeatureDistance": 6101.457088130675,
-    "intraToInterRatio": 0.6916380692423908
+    "medianInterFeatureDistance": 6300.000000001023,
+    "intraToInterRatio": 0.6698412698411611
   },
   "mandatoryHardGates": {
-    "layerViolationsZero": false,
-    "primaryOverlapsZero": true,
+    "layerViolationsZero": true,
+    "primaryOverlapsZero": false,
     "satelliteOverlapsZero": true,
     "repeatabilityDriftZero": true,
     "shuffledDriftZero": true
@@ -38,7 +38,7 @@
   "qualityGates": {
     "localityGatePassed": true,
     "primaryQualityGatePassed": true,
-    "prefPrimaryCrossingsPassed": true,
+    "prefPrimaryCrossingsPassed": false,
     "prefTotalCrossingsPassed": true,
     "prefCohesionPassed": false
   }

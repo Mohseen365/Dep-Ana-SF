@@ -1,27 +1,27 @@
 {
-  "timestamp": "2026-10-19T17:27:48.547Z",
+  "timestamp": "2026-10-20T19:20:57.663Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
-    "primaryCrossings": 9896,
-    "totalCrossings": 101093,
-    "averageEdgeLength": 1382.1448209623418,
-    "maxEdgeLength": 4658.969843216417,
-    "nodeOverlapCount": 18,
+    "primaryCrossings": 7481,
+    "totalCrossings": 100065,
+    "averageEdgeLength": 1700.4263316914657,
+    "maxEdgeLength": 4963.405862913087,
+    "nodeOverlapCount": 20,
     "primaryOverlapCount": 16,
-    "layerViolationCount": 132,
-    "domainCohesionScore": 0.9562040933182331
+    "layerViolationCount": 0,
+    "domainCohesionScore": 0.9368969245931278
   },
   "pathB_featureEnabled": {
-    "primaryCrossings": 7834,
-    "totalCrossings": 86198,
-    "averageEdgeLength": 3521.915339261838,
-    "maxEdgeLength": 10221.960105835324,
-    "nodeOverlapCount": 0,
-    "primaryOverlapCount": 0,
-    "layerViolationCount": 132,
-    "domainCohesionScore": 0.8372414949460214
+    "primaryCrossings": 9023,
+    "totalCrossings": 88491,
+    "averageEdgeLength": 3522.597765954832,
+    "maxEdgeLength": 10048.768093660074,
+    "nodeOverlapCount": 1,
+    "primaryOverlapCount": 1,
+    "layerViolationCount": 0,
+    "domainCohesionScore": 0.8350998895301838
   },
   "targetThresholds": {
     "primaryCrossings": 8500,
@@ -33,7 +33,7 @@
   "evaluation": {
     "productionPathActive": false,
     "featureRegionGeometryValid": true,
-    "hierarchyPreserved": false,
+    "hierarchyPreserved": true,
     "determinismPassed": true,
     "positionAuthorityPassed": true,
     "viewportSafetyPassed": true,

@@ -62,8 +62,8 @@
     "totalAabbOverlaps": 0,
     "bboxWidth": 1104,
     "bboxHeight": 1104,
-    "medianLocality": 363.91984445998344,
-    "p95Locality": 719.9387991785688,
+    "medianLocality": 366.2864250839831,
+    "p95Locality": 719.4861008449262,
     "maxLocality": 833.402644414846,
     "ringBaseRadii": [
       180,
@@ -110,8 +110,8 @@
     "totalAabbOverlaps": 0,
     "bboxWidth": 1102.1728109329697,
     "bboxHeight": 1104,
-    "medianLocality": 454.4574915677546,
-    "p95Locality": 755.33988425855,
+    "medianLocality": 454.138286662702,
+    "p95Locality": 753.5589878749638,
     "maxLocality": 973.2197571528596,
     "ringBaseRadii": [
       180,
