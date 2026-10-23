@@ -106,11 +106,11 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     if (!filterText) return true;
     const q = filterText.toLowerCase();
     return (
-      node.displayName.toLowerCase().includes(q) ||
-      node.nodeId.toLowerCase().includes(q) ||
-      node.type.toLowerCase().includes(q) ||
-      node.featureName.toLowerCase().includes(q) ||
-      node.layerName.toLowerCase().includes(q)
+      (node.displayName || '').toLowerCase().includes(q) ||
+      (node.nodeId || '').toLowerCase().includes(q) ||
+      (node.type || '').toLowerCase().includes(q) ||
+      (node.featureName || '').toLowerCase().includes(q) ||
+      (node.layerName || '').toLowerCase().includes(q)
     );
   };
 
