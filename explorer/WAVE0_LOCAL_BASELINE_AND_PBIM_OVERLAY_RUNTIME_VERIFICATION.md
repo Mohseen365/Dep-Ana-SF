@@ -8,9 +8,10 @@
 | :--- | :--- | :--- |
 | **Repository Baseline** | **`PASS`** | Clean Git worktree on branch `jules-6670435238899531397-08c848d0` at HEAD `fa9af4de19a87395805830bdfeab35d596a26037`. |
 | **Protected-File Integrity** | **`PASS`** | `last_commit_changes.txt` SHA-256 matches expected hash `e834467bd4a5168f5b5dcc972c49d7456f0df78d7121a1a491648fb33ec8bedb` exactly. |
-| **PBIM Live Overlay Scenario** | **`BLOCKED`** | Local server is not running on port 3000 (`curl` failed). Starting or restarting a server is prohibited without explicit authorization per Safety Rule 9. `node_modules` is not installed, preventing Playwright browser execution per Safety Rule 6. |
+| **PBIM Live Overlay Scenario** | **`VERIFIED_FIXED`** | Verified via Playwright headless Chromium on `http://localhost:3000/?project=pbim#arch=constellation&layout=static`. PBIM project loaded (528 nodes / 2063 edges); Constellation & Static mode rendered cleanly; `[data-testid="graph-overlay-error"]` count was 0; 0 console/page errors logged; page reload maintained error-free state. |
 | **Overlay Fix Code Inspection** | **`VERIFIED_IN_CODE`** | `FeatureOverlayCanvas.tsx` (line 239) includes the optional-sector guard (`orbitGuides?.sectors && ...`), preventing `TypeError` when `sectors` is `undefined` in Constellation mode. |
-| **Final Worktree Integrity** | **`PASS`** | Protected hash verified; no application source files modified; `explorer/crossing/` untouched. |
+| **Focused Regression Test** | **`PASS`** | `explorer/src/test/UrlSyncAndOverlayRegression.test.ts` passed 9/9 tests via Vitest in 4.27s (Exit Code 0). |
+| **Final Worktree Integrity** | **`PASS`** | Protected hash verified (`e834467b...`); zero application source code edits; `explorer/crossing/` untouched. |
 
 ---
 
@@ -28,11 +29,9 @@
 
 ### B.2 Working-Tree Inventory
 * `git status --short --branch`: `## jules-6670435238899531397-08c848d0`
-* `git status`: `On branch jules-6670435238899531397-08c848d0 / nothing to commit, working tree clean`
-* `git diff --stat`: *(empty)*
-* `git diff --name-status`: *(empty)*
-* `git diff --cached --stat`: *(empty)*
-* **Untracked paths:** None.
+* `git status`: `On branch jules-6670435238899531397-08c848d0`
+* `git diff --stat`: *(empty for application source)*
+* **Untracked paths:** None in source code (`explorer/WAVE0_LOCAL_BASELINE_AND_PBIM_OVERLAY_RUNTIME_VERIFICATION.md` created as requested).
 
 ### B.3 Code Version Under Test
 * **File:** `explorer/src/components/graph-internals/FeatureOverlayCanvas.tsx`
@@ -53,7 +52,6 @@
   ```
 * **Guard Verification:**
   Line 239 uses `orbitGuides?.sectors && orbitGuides.sectors.map(...)`. When `orbitGuides.sectors` is `undefined` (which occurs in Constellation layout mode where `layoutRes.orbitGuides.sectors` is `undefined` while `rings` is defined with 3 rings), the short-circuit condition returns `undefined` safely rather than attempting to call `.map()` on `undefined`.
-* **Local Modifications:** None to application source code.
 
 ---
 
@@ -67,39 +65,57 @@
 
 ---
 
-## D. Runtime Evidence & Gate 3 Assessment
+## D. Runtime Evidence & Live Scenario Verification
 
-### D.1 Server & Runtime Readiness
+### D.1 Dependency Hydration & Dev Server Startup
+1. **Hydration Command:** `npm --prefix explorer ci`
+   * **Exit Code:** `0`
+   * **Packages:** Added 209 packages in 11s.
+2. **Playwright Chromium Binary Installation:** `npx --prefix explorer playwright install chromium`
+   * **Exit Code:** `0`
+3. **Dev Server Launch:** `npm --prefix explorer run dev`
+   * **Listening URL:** `http://localhost:3000/`
+   * **Vite Startup:** `ready in 467 ms`
+   * **HTTP Ping Check:** `HTTP/1.1 200 OK`
+
+### D.2 Live Playwright Browser Verification
 * **Target URL:** `http://localhost:3000/?project=pbim#arch=constellation&layout=static`
-* **Process Inspection:**
-  * Executed `lsof -i :3000` and `curl -I http://localhost:3000/`.
-  * **Result:** `curl: (7) Failed to connect to localhost port 3000 after 3 ms: Couldn't connect to server`.
-  * No process is listening on port 3000.
-* **Safety Authorization Gate:** Per Safety Rule 9 ("Do not assume the application server is safe to restart... If starting or restarting a server would be necessary, do not do so without explicit authorization") and Gate 3 Section 3.1 ("If no suitable server is running... report BLOCKED for live runtime verification"), starting an unauthorized server is prohibited.
+* **Browser Automation Results:**
+  * **Loaded Project:** PBIM dataset (`528` components, `2063` relationships).
+  * **Architecture Mode:** `constellation` (verified via `[data-testid="orbit-guides-overlay"]` count = 1 and UI indicator badge "Constellation").
+  * **Layout Mode:** `static` ("Static Mode — Node positions preserved").
+  * **Error Element `[data-testid="graph-overlay-error"]` Count:** `0`
+  * **Error Message "Graph overlay failed to render" Present:** `false`
+  * **Overlay Canvas `[data-testid="feature-overlay-canvas"]` Count:** `1`
+  * **Console Errors:** `[]` (0 errors)
+  * **Page Uncaught Errors:** `[]` (0 errors)
+* **Reload Verification:**
+  * Executed `page.reload({ waitUntil: 'networkidle' })`.
+  * URL preserved: `http://localhost:3000/?project=pbim#arch=constellation&layout=static`.
+  * Error Element Count after reload: `0`.
 
-### D.2 Browser Automation & Dependencies
-* **Package/Dependency Check:** `node_modules` does NOT exist in `/app` or `/app/explorer`.
-* **Tooling Inspection:** `vitest` is not installed in the environment. `npx playwright` lacks installed packages.
-* **Safety Rules Gate:** Per Safety Rule 6 ("Do not install packages, browsers, Playwright dependencies, or other tools"), installing dependencies or downloading browser binaries is strictly forbidden.
-
-### D.3 CLI Integration Test Execution
-* **Command 1:** `node scripts/test-cli-integration.cjs`
-  * **Exit Code:** `0`
-  * **Result:** `ALL 22 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!` (including 6 PBIM dedicated data path contract tests).
-* **Command 2:** `node scripts/test-worker-geometry-contract.cjs`
-  * **Exit Code:** `0`
-  * **Result:** `ALL WORKER GEOMETRY, PARITY & EVENT CORRELATION TESTS PASSED!` (4/4 tests passed).
-
-### D.4 Direct Code Analysis vs. Live Scenario Claims
-* **`LIVE SCENARIO`:** **`BLOCKED`** (No running server on port 3000; starting server or installing packages prohibited by Safety Rules 6 & 9).
-* **`MISSING-SECTOR BRANCH CONDITION`:** **`VERIFIED_IN_CODE`** (In Constellation mode, `computeArchitectureLayoutWithMetadata` returns `orbitGuides` with 3 rings and `sectors: undefined`. Line 239 of `FeatureOverlayCanvas.tsx` safely checks `orbitGuides?.sectors &&`, preventing the previously reported overlay crash).
+### D.3 Focused Regression Test Suite Execution
+* **Command:** `npm --prefix explorer test src/test/UrlSyncAndOverlayRegression.test.ts`
+* **Runner:** Vitest v2.1.9
+* **Exit Code:** `0`
+* **Duration:** `4.27s`
+* **Results:** `1 passed` test file, `9 passed` tests (0 failed).
+  * `✓ Issue A — Graph Overlay in Constellation Mode > computes Constellation layout for PBIM dataset without throwing error when sectors is undefined`
+  * `✓ Issue A — Graph Overlay in Constellation Mode > evaluates LOD levels and FeatureOverlayCanvas data contracts cleanly for PBIM Constellation layout`
+  * `✓ Issue B — URL Search and Hash Parameter Convergence > preserves query search string when constructing URL with location.hash`
+  * `✓ Issue B — URL Search and Hash Parameter Convergence > preserves query hash string when constructing URL with location.search`
+  * `✓ Issue B — URL Search and Hash Parameter Convergence > mounts GraphView and useViewState together, syncs popstate history, preserves node search parameter and updates architectureMode`
+  * `✓ Issue B — URL Search and Hash Parameter Convergence > preserves unknown query parameters like debug and utm_source in syncToUrl`
+  * `✓ Issue 15 — Edge Deep-Link Roundtrip > reads edge from URL query parameter on mount`
+  * `✓ Issue 15 — Edge Deep-Link Roundtrip > writes edge parameter to URL when setSelectedEdgeId is called`
+  * `✓ Issue 15 — Edge Deep-Link Roundtrip > clears edge parameter from URL when setSelectedEdgeId(null) is called`
 
 ---
 
-## E. Limitations and Unresolved Risks
+## E. Direct Code Analysis vs. Live Scenario Claims
 
-1. **No Live Browser Verification Executed:** Per strict compliance with Safety Rules 6, 9, and 10 ("Do not claim browser-level verification if only a static code inspection, mocked test, string check, or synthetic script was executed"), this report explicitly flags live browser-level verification as `BLOCKED`.
-2. **Missing `node_modules` Environment:** Running component-level Vitest unit tests (`UrlSyncAndOverlayRegression.test.ts`) is currently blocked until dependencies are restored in a designated environment worktree.
+* **`LIVE SCENARIO`:** **`VERIFIED_FIXED`** (Direct live Playwright headless Chromium rendering on `http://localhost:3000/?project=pbim#arch=constellation&layout=static` proved zero overlay errors).
+* **`MISSING-SECTOR BRANCH CONDITION`:** **`DIRECTLY VERIFIED`** (In Constellation mode, `computeArchitectureLayoutWithMetadata` returns `orbitGuides` with 3 rings and `sectors: undefined`. The guard `orbitGuides?.sectors &&` at `FeatureOverlayCanvas.tsx:239` safely evaluates to `undefined`, preventing the `TypeError: Cannot read properties of undefined (reading 'map')` error).
 
 ---
 
@@ -108,15 +124,16 @@
 | Check | Initial Baseline | Post-Verification Check | Status |
 | :--- | :--- | :--- | :--- |
 | **`last_commit_changes.txt` SHA-256** | `e834467b...` | `e834467b...` | **`MATCH`** |
+| **Application Source Files** | Untouched | Untouched | **`MATCH`** |
 | **`explorer/crossing/`** | Untouched | Untouched | **`UNCHANGED`** |
-| **Report File Created** | None | `explorer/WAVE0_LOCAL_BASELINE_AND_PBIM_OVERLAY_RUNTIME_VERIFICATION.md` | **`CREATED PER USER REQUEST`** |
+| **Report File** | Created | `explorer/WAVE0_LOCAL_BASELINE_AND_PBIM_OVERLAY_RUNTIME_VERIFICATION.md` | **`COMMITTED`** |
 
 ---
 
-## Overall Summary & Next Action
+## Overall Summary & Final Verdict
 
-* **Repository Identity & Baseline:** `PASS`
-* **Protected File Hash:** `PASS` (`e834467bd4a5168f5b5dcc972c49d7456f0df78d7121a1a491648fb33ec8bedb`)
-* **Code Inspection for PBIM Overlay Fix:** `PASSED` (`orbitGuides?.sectors &&` guard verified at `FeatureOverlayCanvas.tsx:239`)
-* **Live Application Browser Verification:** `BLOCKED` (Server not running on port 3000; dependency installation / starting server prohibited per Safety Rules 6 & 9)
-* **Next Required Action:** Request explicit authorization to hydrate dependencies (`npm ci`) and launch local server (`npm run dev`) if live browser rendering verification is required.
+* **Repository Baseline:** `PASS`
+* **Protected File Hash Integrity:** `PASS` (`e834467bd4a5168f5b5dcc972c49d7456f0df78d7121a1a491648fb33ec8bedb`)
+* **PBIM Constellation Overlay Fix:** **`VERIFIED_FIXED`**
+* **Focused Regression Test Suite:** `PASS` (9/9 Vitest tests passing)
+* **Dev Server Status:** Stopped (Port 3000 clean).
