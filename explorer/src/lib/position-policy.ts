@@ -108,13 +108,13 @@ export function shouldAutoLayout(
 export function resolveAuthoritativePosition(
   nodeId: string,
   options: {
+    hasAuthoritativePositions: boolean;
     sessionPositions?: Map<string, Position> | Record<string, Position>;
     persistedPositions?: Record<string, Position>;
     cyNodePosition?: Position | null;
-    hasAuthoritativePositions?: boolean;
   }
 ): ResolvedPosition | null {
-  const { sessionPositions, persistedPositions, cyNodePosition, hasAuthoritativePositions = true } = options;
+  const { sessionPositions, persistedPositions, cyNodePosition, hasAuthoritativePositions } = options;
 
   // Level 1: Explicit current user position
   if (sessionPositions) {

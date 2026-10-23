@@ -609,12 +609,12 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
   }, [architectureMode]);
 
   // Capture all current canvas node positions with explicit provenance tracking
-  const captureAndPersistPositions = useCallback((overrideProvenance?: LayoutProvenance) => {
+  const captureAndPersistPositions = useCallback((overrideProvenance?: LayoutProvenance, targetArchMode?: ArchitectureLayoutMode) => {
     if (!cyRef.current) return;
     const cy = cyRef.current;
     const currentPositions: Record<string, Position> = { ...(nodePositionsRef.current || {}) };
 
-    const currentMode = architectureModeRef.current;
+    const currentMode = targetArchMode || architectureModeRef.current;
     const modeSessionMap = getSessionPositionsForMode(currentMode);
     cy.nodes().forEach((n) => {
       const pos = n.position();
@@ -633,7 +633,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     if (onNodePositionsChangeRef.current) {
       (onNodePositionsChangeRef.current as any)(currentPositions, provenance);
     }
-  }, []);
+  }, [getSessionPositionsForMode]);
 
   // Handle Mode Switch
   useEffect(() => {
@@ -703,7 +703,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
     });
 
     if (autoLayoutPolicy === false) {
-      captureAndPersistPositions(targetProvenance);
+      captureAndPersistPositions(targetProvenance, architectureMode);
       return;
     }
 
@@ -763,7 +763,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         markLayoutEnd('architecture-mode-switch', architectureMode);
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
-        captureAndPersistPositions(targetProvenance);
+        captureAndPersistPositions(targetProvenance, architectureMode);
         notifyComplete('complete', layoutRes.correlationToken || activeToken);
       }).catch(() => {
         if (requestId !== layoutRequestRef.current) return;
@@ -781,7 +781,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
         });
         setFeatureRegions(layoutRes.featureRegions);
         setOrbitGuides(layoutRes.orbitGuides);
-        captureAndPersistPositions(targetProvenance);
+        captureAndPersistPositions(targetProvenance, architectureMode);
         notifyComplete('fallback-complete', activeToken);
       });
     } else {
@@ -799,7 +799,7 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       markLayoutEnd('architecture-mode-switch', architectureMode);
       setFeatureRegions(layoutRes.featureRegions);
       setOrbitGuides(layoutRes.orbitGuides);
-      captureAndPersistPositions(targetProvenance);
+      captureAndPersistPositions(targetProvenance, architectureMode);
       notifyComplete('complete', activeToken);
     }
   }, [architectureMode, effectiveLayoutOptions.focalLwcId, captureAndPersistPositions]);
