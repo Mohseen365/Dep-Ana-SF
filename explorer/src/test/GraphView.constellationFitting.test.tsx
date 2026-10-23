@@ -1,8 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
+import cytoscape from 'cytoscape';
 import { GraphView } from '../components/GraphView';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+
+const mockFit = vi.fn();
+const mockZoom = vi.fn().mockReturnValue(1);
+const mockCenter = vi.fn();
 
 vi.mock('cytoscape', () => {
   const mockCy = {
@@ -11,17 +16,18 @@ vi.mock('cytoscape', () => {
     nodes: vi.fn().mockReturnValue([]),
     edges: vi.fn().mockReturnValue([]),
     elements: vi.fn().mockReturnValue({
-      filter: vi.fn().mockReturnValue([]),
+      filter: vi.fn().mockReturnValue([{ id: () => 'LWC:test-comp-1', visible: () => true }]),
       removeClass: vi.fn(),
       addClass: vi.fn(),
     }),
     on: vi.fn(),
     off: vi.fn(),
-    zoom: vi.fn().mockReturnValue(1),
-    center: vi.fn(),
-    fit: vi.fn(),
+    zoom: mockZoom,
+    center: mockCenter,
+    fit: mockFit,
     batch: vi.fn((cb) => cb()),
     destroy: vi.fn(),
+    destroyed: vi.fn().mockReturnValue(false),
   };
   const cytoscape = vi.fn().mockReturnValue(mockCy);
   (cytoscape as any).use = vi.fn();
@@ -29,6 +35,10 @@ vi.mock('cytoscape', () => {
 });
 
 describe('GraphView Constellation & Orbit Viewport Fitting', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const dummyNodes: ExplorerNode[] = [
     {
       id: 'LWC:test-comp-1',
@@ -45,7 +55,7 @@ describe('GraphView Constellation & Orbit Viewport Fitting', () => {
 
   const dummyEdges: ExplorerEdge[] = [];
 
-  it('invokes cy.fit for constellation architecture mode', () => {
+  it('invokes cy.fit with padding 50 for constellation architecture mode when autoLayoutPolicy is false', () => {
     const onSelectNode = vi.fn();
     const onSelectEdge = vi.fn();
 
@@ -54,6 +64,13 @@ describe('GraphView Constellation & Orbit Viewport Fitting', () => {
         nodes={dummyNodes}
         edges={dummyEdges}
         architectureMode="constellation"
+        layoutMode="static"
+        graphLayout={{
+          mode: 'static',
+          architectureMode: 'constellation',
+          layoutProvenance: 'user-authored',
+          nodePositions: { 'LWC:test-comp-1': { x: 100, y: 100 } },
+        }}
         onSelectNode={onSelectNode}
         onSelectEdge={onSelectEdge}
         selectedNodeId={null}
@@ -61,7 +78,60 @@ describe('GraphView Constellation & Orbit Viewport Fitting', () => {
       />
     );
 
-    // Verify component renders without crashing
-    expect(true).toBe(true);
+    expect(mockFit).toHaveBeenCalledWith(expect.anything(), 50);
+  });
+
+  it('invokes cy.fit with padding 50 for orbit architecture mode when autoLayoutPolicy is false', () => {
+    const onSelectNode = vi.fn();
+    const onSelectEdge = vi.fn();
+
+    render(
+      <GraphView
+        nodes={dummyNodes}
+        edges={dummyEdges}
+        architectureMode="orbit"
+        layoutMode="static"
+        graphLayout={{
+          mode: 'static',
+          architectureMode: 'orbit',
+          layoutProvenance: 'user-authored',
+          nodePositions: { 'LWC:test-comp-1': { x: 100, y: 100 } },
+        }}
+        onSelectNode={onSelectNode}
+        onSelectEdge={onSelectEdge}
+        selectedNodeId={null}
+        selectedEdgeId={null}
+      />
+    );
+
+    expect(mockFit).toHaveBeenCalledWith(expect.anything(), 50);
+  });
+
+  it('invokes cy.zoom and cy.center instead of cy.fit for hierarchical architecture mode when autoLayoutPolicy is false', () => {
+    const onSelectNode = vi.fn();
+    const onSelectEdge = vi.fn();
+
+    render(
+      <GraphView
+        nodes={dummyNodes}
+        edges={dummyEdges}
+        architectureMode="hierarchical"
+        layoutMode="static"
+        graphLayout={{
+          mode: 'static',
+          architectureMode: 'hierarchical',
+          layoutProvenance: 'user-authored',
+          nodePositions: { 'LWC:test-comp-1': { x: 100, y: 100 } },
+        }}
+        onSelectNode={onSelectNode}
+        onSelectEdge={onSelectEdge}
+        selectedNodeId={null}
+        selectedEdgeId={null}
+      />
+    );
+
+    expect(mockFit).not.toHaveBeenCalled();
+    expect(mockZoom).toHaveBeenCalledWith(1.4);
+    expect(mockCenter).toHaveBeenCalled();
   });
 });
