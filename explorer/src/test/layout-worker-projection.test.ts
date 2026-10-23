@@ -117,4 +117,28 @@ describe('Tier A1 — Async Worker Projection & Metadata Contract', () => {
     expect(result.projectedNodeIds!.size).toBeLessThanOrEqual(nodes.length);
     expect(result.projectedNodeIds!.has('LWC:focal-comp')).toBe(true);
   });
+
+  test('Constellation mode worker projection parity and mode transition reconciliation', async () => {
+    const elements = buildGraphElements(nodes, edges);
+    const cy = cytoscape({
+      elements,
+      headless: true,
+    });
+
+    // 1. Constellation mode
+    const constRes = await runLayoutWithMetadataAsync(cy, {
+      architectureMode: 'constellation',
+      nodes,
+      edges,
+    });
+    expect(constRes.projectedNodeIds).toBeInstanceOf(Set);
+
+    // 2. Transition back to hierarchical mode — all nodes restored to visible
+    const hierRes = await runLayoutWithMetadataAsync(cy, {
+      architectureMode: 'hierarchical',
+      nodes,
+      edges,
+    });
+    expect(hierRes.projectedNodeIds).toBeUndefined();
+  });
 });

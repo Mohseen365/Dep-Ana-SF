@@ -349,6 +349,11 @@ function AppContent() {
         ...createEmptyFilterState(),
         visibleNodeTypes: projState.filters?.visibleNodeTypes ?? ALL_EXPLORER_NODE_TYPES,
       });
+      setConstellationOptions({
+        focalNodeId: undefined,
+        maxDepth: 2,
+        direction: 'both',
+      });
     };
 
     window.addEventListener('explorer:project-changed', handleProjectChanged as EventListener);

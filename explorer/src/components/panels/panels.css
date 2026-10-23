@@ -400,6 +400,14 @@
   border: 1px solid var(--border-default, #334155);
 }
 
+.dependency-constellation-panel svg g[tabindex]:focus-visible circle,
+.dependency-constellation-panel svg g[role="button"]:focus-visible circle {
+  stroke: #38bdf8 !important;
+  stroke-width: 3.5px !important;
+  outline: 2px solid #38bdf8 !important;
+  outline-offset: 3px !important;
+}
+
 /* DependencyConstellationPanel Scoped Styles */
 .dependency-constellation-panel {
   background-color: var(--surface-panel, #111827);
