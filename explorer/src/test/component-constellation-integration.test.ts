@@ -2,9 +2,14 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
+import { adaptConstellation } from '../lib/adapters/constellation-adapter';
 import type { ExplorerDataSchema } from '../types/explorer';
 
 describe('Component Constellation Integration — Option C Dual Experience & E2E Orchestration', () => {
+  const pbimPath = path.join(__dirname, '../../public/projects/pbim/explorer-data.json');
+  const pbimRaw = fs.readFileSync(pbimPath, 'utf8');
+  const pbimData: ExplorerDataSchema = JSON.parse(pbimRaw);
+
   it('1. Verifies Option C dual experience contract (Macro Cytoscape mode & Standalone Focal SVG Lens)', () => {
     // 1a. Macro Cytoscape constellation mode metadata
     const macroResult = computeArchitectureLayoutWithMetadata(
@@ -17,19 +22,17 @@ describe('Component Constellation Integration — Option C Dual Experience & E2E
     expect(macroResult.projectedNodeIds?.size).toBe(42);
 
     // 1b. Focal orbital SVG lens adapter contract
-    const { adaptConstellation } = require('../lib/adapters/constellation-adapter');
     const focalResult = adaptConstellation(pbimData, {
       focalNodeId: 'LWC:asset-dashboard-container',
       maxDepth: 2,
       direction: 'both',
     });
     expect(focalResult.focalNode).toBeDefined();
-    expect(focalResult.focalNode.displayName).toContain('asset-dashboard-container');
+    expect(focalResult.focalNode?.displayName).toContain('asset-dashboard-container');
     expect(focalResult.summary.ringCount).toBeGreaterThan(0);
   });
 
   it('2. CC-003 Project Isolation: Resets or falls back when focal ID is invalid for dataset', () => {
-    const { adaptConstellation } = require('../lib/adapters/constellation-adapter');
     const invalidFocalResult = adaptConstellation(pbimData, {
       focalNodeId: 'INVALID_PROJECT_A_NODE_ID',
       maxDepth: 2,
@@ -40,11 +43,7 @@ describe('Component Constellation Integration — Option C Dual Experience & E2E
     expect(invalidFocalResult.focalNode?.id).toBe(invalidFocalResult.availableNodes[0].id);
   });
 
-  const pbimPath = path.join(__dirname, '../../public/projects/pbim/explorer-data.json');
-  const pbimRaw = fs.readFileSync(pbimPath, 'utf8');
-  const pbimData: ExplorerDataSchema = JSON.parse(pbimRaw);
-
-  it('1. Reaches constellation layout path and calculates positions for PBIM', () => {
+  it('3. Reaches constellation layout path and calculates positions for PBIM', () => {
     const result = computeArchitectureLayoutWithMetadata(
       pbimData.nodes,
       pbimData.edges,
@@ -58,7 +57,7 @@ describe('Component Constellation Integration — Option C Dual Experience & E2E
     expect(result.orbitGuides).toBeDefined();
   });
 
-  it('2. Preserves non-regression of existing architecture modes (hierarchical, hybrid, orbit)', { timeout: 60000 }, () => {
+  it('4. Preserves non-regression of existing architecture modes (hierarchical, hybrid, orbit)', { timeout: 60000 }, () => {
     const hierarchicalRes = computeArchitectureLayoutWithMetadata(
       pbimData.nodes,
       pbimData.edges,

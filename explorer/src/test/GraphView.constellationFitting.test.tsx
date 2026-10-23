@@ -1,31 +1,44 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
-import React from 'react';
-import cytoscape from 'cytoscape';
 import { GraphView } from '../components/GraphView';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
-const mockFit = vi.fn();
-const mockZoom = vi.fn().mockReturnValue(1);
-const mockCenter = vi.fn();
+const { mockFit, mockZoom, mockCenter } = vi.hoisted(() => ({
+  mockFit: vi.fn(),
+  mockZoom: vi.fn().mockReturnValue(1),
+  mockCenter: vi.fn(),
+}));
 
 vi.mock('cytoscape', () => {
+  const elementsMock = [
+    {
+      id: () => 'LWC:test-comp-1',
+      visible: () => true,
+      data: () => ({ id: 'LWC:test-comp-1' }),
+      removeClass: vi.fn(),
+      addClass: vi.fn(),
+      unselect: vi.fn(),
+      select: vi.fn(),
+    },
+  ];
+  (elementsMock as any).filter = vi.fn().mockReturnValue(elementsMock);
+  (elementsMock as any).removeClass = vi.fn();
+  (elementsMock as any).addClass = vi.fn();
+  (elementsMock as any).unselect = vi.fn();
+  (elementsMock as any).select = vi.fn();
+
   const mockCy = {
     use: vi.fn(),
     autolock: vi.fn(),
     nodes: vi.fn().mockReturnValue([]),
     edges: vi.fn().mockReturnValue([]),
-    elements: vi.fn().mockReturnValue({
-      filter: vi.fn().mockReturnValue([{ id: () => 'LWC:test-comp-1', visible: () => true }]),
-      removeClass: vi.fn(),
-      addClass: vi.fn(),
-    }),
+    elements: vi.fn().mockReturnValue(elementsMock),
     on: vi.fn(),
     off: vi.fn(),
     zoom: mockZoom,
     center: mockCenter,
     fit: mockFit,
-    batch: vi.fn((cb) => cb()),
+    batch: vi.fn((cb: () => void) => cb()),
     destroy: vi.fn(),
     destroyed: vi.fn().mockReturnValue(false),
   };
@@ -47,7 +60,7 @@ describe('GraphView Constellation & Orbit Viewport Fitting', () => {
       file: 'test-comp-1.js',
       risk: 'LOW',
       riskReasons: [],
-      metrics: { fanIn: 1, fanOut: 1, coupling: 2, score: 0 },
+      metrics: { fanIn: 1, fanOut: 1, coupling: 2, score: 0, unresolved: 0 },
       behavior: { isTest: false, asyncPatterns: [] },
       refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' },
     },

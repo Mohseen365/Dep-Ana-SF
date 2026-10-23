@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { adaptConstellation } from '../adapters/constellation-adapter';
 import { computeConstellationLayout } from './constellation-layout';
-import type { ExplorerDataSchema } from '../../types/explorer';
+import type { ExplorerDataSchema, ExplorerRelationshipType } from '../../types/explorer';
 import { createMockNode, createMockEdge, createMockDataSchema } from '../../test/mock-factories';
 
 describe('Constellation Layout Generator', () => {
@@ -74,7 +74,7 @@ describe('Constellation Layout Generator', () => {
         createMockNode(`ApexClass:RingNode_${i}`, `RingNode_${i}`, 'ApexClass', 'LOW', `RingNode_${i}.cls`)
       );
       const ringEdges = ringNodes.map((rn, i) =>
-        createMockEdge(`edge_${i}`, 'ApexClass:Focal', rn.id, 'dependency')
+        createMockEdge(`edge_${i}`, 'ApexClass:Focal', rn.id, 'unknown' as ExplorerRelationshipType)
       );
 
       const schema = createMockDataSchema([focal, ...ringNodes], ringEdges);
