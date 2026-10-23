@@ -41,7 +41,7 @@ const ARCH_MODE_INFO: Record<ArchitectureLayoutMode, Omit<ArchModeMetaItem, 'nex
   constellation: {
     icon: '🌌',
     label: 'Constellation',
-    description: 'Component Constellation (Multi-Sun Macro View)',
+    description: 'Component Constellation (Macro Component Canvas)',
   },
 };
 

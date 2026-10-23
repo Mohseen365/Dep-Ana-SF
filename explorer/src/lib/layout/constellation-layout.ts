@@ -140,17 +140,29 @@ export function computeConstellationLayout(
     const items = ring.items;
     const itemCount = items.length;
 
-    // Determine effective track count T for this ring
+    // Calculate adaptive radius to guarantee minimum node clearance on dense rings
+    // For N nodes on track t, chord length d = 2*R*sin(pi / trackCount). We need d >= nodeDiameter + minClearance (24 + 10 = 34px).
+    // Thus R_min = 34 / (2 * sin(pi / trackCount)).
     const effectiveT = itemCount <= sparseThreshold ? 1 : maxTrackCount;
+    const maxTrackNodes = Math.ceil(itemCount / effectiveT);
+    let requiredMinRadius = currentBaseRadius;
+    if (maxTrackNodes > 1) {
+      const minChord = 34; // 24px diameter + 10px minimum clearance gap
+      const sinVal = Math.sin(Math.PI / maxTrackNodes);
+      if (sinVal > 0) {
+        requiredMinRadius = Math.max(currentBaseRadius, Math.ceil(minChord / (2 * sinVal)));
+      }
+    }
+    currentBaseRadius = requiredMinRadius;
 
     if (ringIdx === 0) {
-      currentBaseRadius = baseRadius;
+      currentBaseRadius = Math.max(baseRadius, requiredMinRadius);
     } else {
       const prevRing = data.rings[ringIdx - 1];
       const prevCount = prevRing.items.length;
       const prevT = prevCount <= sparseThreshold ? 1 : maxTrackCount;
       const prevOuterRadius = currentBaseRadius + (prevT - 1) * trackSpacing;
-      currentBaseRadius = prevOuterRadius + interRingGap;
+      currentBaseRadius = Math.max(prevOuterRadius + interRingGap, requiredMinRadius);
     }
 
     // Register geometries for each sub-track in the ring

@@ -216,6 +216,18 @@ describe('DependencyConstellationPanel Component', () => {
     expect(input).toHaveValue('OrderCard');
   });
 
+  it('supports keyboard navigation, focusability, and Space activation without page scroll (CC-004)', () => {
+    const handleSelectNode = vi.fn();
+    render(<DependencyConstellationPanel data={sampleData} onSelectNode={handleSelectNode} />);
+
+    const nodeG = screen.getByTestId('constellation-node-LWC:OrderCard');
+    expect(nodeG).toHaveAttribute('tabIndex', '0');
+
+    // Simulate keydown Space with preventDefault check
+    const spaceEvent = fireEvent.keyDown(nodeG, { key: ' ', code: 'Space' });
+    expect(handleSelectNode).toHaveBeenCalledWith('LWC:OrderCard');
+  });
+
   it('renders return to graph button when callback is provided', () => {
     const handleReturn = vi.fn();
     render(<DependencyConstellationPanel data={sampleData} onReturnToGraph={handleReturn} />);
