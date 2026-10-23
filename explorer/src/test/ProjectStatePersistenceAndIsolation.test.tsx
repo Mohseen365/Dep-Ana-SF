@@ -62,6 +62,7 @@ describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Accepta
 
       // Level 1: Session drag
       const resLevel1 = resolveAuthoritativePosition(nodeId, {
+        hasAuthoritativePositions: true,
         sessionPositions: new Map([[nodeId, sessionPos]]),
         persistedPositions: { [nodeId]: persistedPos },
       });
@@ -70,6 +71,7 @@ describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Accepta
 
       // Level 2: Persisted position when session position is absent
       const resLevel2 = resolveAuthoritativePosition(nodeId, {
+        hasAuthoritativePositions: true,
         sessionPositions: new Map(),
         persistedPositions: { [nodeId]: persistedPos },
       });
@@ -305,6 +307,7 @@ describe('PROMPT 6D: Project State, Persistence, Restoration & Isolation Accepta
 
       // Invalid position fallback in position policy
       const resolvedInvalid = resolveAuthoritativePosition('invalidNode', {
+        hasAuthoritativePositions: true,
         persistedPositions: loaded.graphLayout.nodePositions,
       });
       expect(resolvedInvalid).toBeNull();

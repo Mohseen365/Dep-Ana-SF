@@ -190,15 +190,15 @@ describe('Prompt 11 — Final Architecture Integration Audit & System-Wide Invar
       const persistedPos = { x: 20, y: 20 };
       const cyPos = { x: 30, y: 30 };
 
-      const l1 = resolveAuthoritativePosition('N1', { sessionPositions: { N1: sessionPos }, persistedPositions: { N1: persistedPos }, cyNodePosition: cyPos });
+      const l1 = resolveAuthoritativePosition('N1', { hasAuthoritativePositions: true, sessionPositions: { N1: sessionPos }, persistedPositions: { N1: persistedPos }, cyNodePosition: cyPos });
       expect(l1?.level).toBe(1);
       expect(l1?.position).toEqual(sessionPos);
 
-      const l2 = resolveAuthoritativePosition('N1', { persistedPositions: { N1: persistedPos }, cyNodePosition: cyPos });
+      const l2 = resolveAuthoritativePosition('N1', { hasAuthoritativePositions: true, persistedPositions: { N1: persistedPos }, cyNodePosition: cyPos });
       expect(l2?.level).toBe(2);
       expect(l2?.position).toEqual(persistedPos);
 
-      const l3 = resolveAuthoritativePosition('N1', { cyNodePosition: cyPos });
+      const l3 = resolveAuthoritativePosition('N1', { hasAuthoritativePositions: true, cyNodePosition: cyPos });
       expect(l3?.level).toBe(3);
       expect(l3?.position).toEqual(cyPos);
     });

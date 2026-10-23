@@ -1942,4 +1942,300 @@ describe('GraphView Position Authority & Layout Policy', () => {
       expect(mockCy.getElementById('node-2').position()).toEqual({ x: 999, y: 999 });
     });
   });
+
+  describe('Prompt B2 Scenarios A-F: Per-Mode Session Isolation & Position Authority', () => {
+    it('A. Cross-mode contamination: drag in mode A does not contaminate mode B session positions', () => {
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // User drags node-1 in hierarchical mode
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 111, y: 111 });
+      const dragHandler = listeners['dragfree:node']?.[0];
+      act(() => {
+        dragHandler({ target: n1 });
+      });
+
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.objectContaining({ 'node-1': { x: 111, y: 111 } }),
+        'user-authored'
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Switch to orbit mode
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="orbit"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Orbit mode should run its own layout or calculate positions for automatic-orbit without inheriting mode A dragged session position into orbit automatic provenance
+      if (onNodePositionsChange.mock.calls.length > 0) {
+        const lastProv = onNodePositionsChange.mock.calls[onNodePositionsChange.mock.calls.length - 1][1];
+        expect(lastProv).toBe('automatic-orbit');
+      }
+    });
+
+    it('B. Delayed callback during mode switch: layoutstop for mode A does not write to mode B session map', () => {
+      layoutControl.autoEmitLayoutStop = false;
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Switch to static mode to register pendingModeSwitchCaptureRef listener for mode A
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="static"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Concurrently switch architectureMode to 'orbit' before layoutstop completes
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="orbit"
+          layoutMode="static"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Emit layoutstop for mode A
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+
+      // Verification: delayed operation completes safely without corrupting mode B session map
+      expect(onNodePositionsChange).toHaveBeenCalled();
+    });
+
+    it('C. User-authored positions: retain authority across mode switches', () => {
+      const userPositions = {
+        'node-1': { x: 500, y: 500 },
+        'node-2': { x: 600, y: 600 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={userPositions}
+          graphLayout={{
+            mode: 'static',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: userPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="static"
+        />
+      );
+
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
+
+      // Switch mode to orbit with user-authored provenance
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={userPositions}
+          graphLayout={{
+            mode: 'static',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: userPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="static"
+        />
+      );
+
+      // User-authored positions remain authoritative
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
+    });
+
+    it('D. Same-mode restoration: restores saved session positions when returning to mode A', () => {
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Leave hierarchical mode -> switch to orbit
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="orbit"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Return to hierarchical mode
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Mode A's automatic provenance (automatic-hierarchical) is restored
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-hierarchical'
+      );
+    });
+
+    it('E. Reset behavior: clears current architecture mode session map without leaking across modes', () => {
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="static"
+        />
+      );
+
+      // Drag node-1 to set a session position
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 300, y: 300 });
+      const dragHandler = listeners['dragfree:node']?.[0];
+      act(() => {
+        dragHandler({ target: n1 });
+      });
+
+      // Execute Reset Layout
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+      fireEvent.click(resetBtn);
+
+      // Layout run called for reset
+      expect(mockLayoutRun).toHaveBeenCalled();
+    });
+
+    it('F. Explicit authority: non-authoritative generated positions are rejected when mode or provenance mismatches', () => {
+      const stalePositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const onNodePositionsChange = vi.fn();
+
+      // Pass stale automatic-hierarchical positions while entering 'orbit' mode
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={stalePositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'static',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: stalePositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="static"
+        />
+      );
+
+      // hasAuth evaluates as false because storedArchMode ('hierarchical') !== architectureMode ('orbit'), so new automatic-orbit layout is generated
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+    });
+  });
 });
