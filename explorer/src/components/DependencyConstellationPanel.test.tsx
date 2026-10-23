@@ -244,10 +244,10 @@ describe('DependencyConstellationPanel Component', () => {
     render(<DependencyConstellationPanel data={sampleData} onSelectNode={handleSelectNode} />);
 
     const nodeG = screen.getByTestId('constellation-node-LWC:OrderCard');
-    expect(nodeG).toHaveAttribute('tabIndex', '0');
+    expect(nodeG).toHaveAttribute('tabindex', '0');
 
-    // Simulate keydown Space with preventDefault check
-    const spaceEvent = fireEvent.keyDown(nodeG, { key: ' ', code: 'Space' });
+    // Simulate keydown Space
+    fireEvent.keyDown(nodeG, { key: ' ', code: 'Space' });
     expect(handleSelectNode).toHaveBeenCalledWith('LWC:OrderCard');
   });
 
