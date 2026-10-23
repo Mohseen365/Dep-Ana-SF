@@ -114,7 +114,10 @@ async function runConstellationBrowserAudit() {
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || '/opt/google/chrome/chrome',
+    headless: true,
+  });
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
   const consoleErrors = [];

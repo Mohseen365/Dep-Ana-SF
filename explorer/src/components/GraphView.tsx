@@ -1151,10 +1151,19 @@ export const GraphView = forwardRef<GraphViewRef, GraphViewProps>((props, ref) =
       }
     });
 
-    // Only apply a manual zoom fallback when the layout did not fit.
+    // Ensure radial modes (constellation & orbit) fit visible projected elements rather than unscaled zoom level
     if (autoLayoutPolicy !== true) {
-      cy.zoom(initialZoom);
-      cy.center();
+      if (architectureMode === 'constellation' || architectureMode === 'orbit') {
+        const visEles = cy.elements().filter((e) => e.visible());
+        if (visEles.length > 0) {
+          cy.fit(visEles, 50);
+        } else {
+          cy.fit(cy.elements(), 50);
+        }
+      } else {
+        cy.zoom(initialZoom);
+        cy.center();
+      }
     }
 
     let zoomTimeout: ReturnType<typeof setTimeout> | null = null;
