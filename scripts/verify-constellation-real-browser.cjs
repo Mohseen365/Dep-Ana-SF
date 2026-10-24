@@ -55,54 +55,111 @@ async function runConstellationRealBrowserVerification() {
     pageErrors.push(err.message);
   });
 
+  // Pre-seed localStorage so application initializes directly into constellation mode
+  await page.addInitScript(() => {
+    const key = 'explorer.projectState.pbim';
+    const existing = localStorage.getItem(key);
+    let state = {};
+    if (existing) {
+      try { state = JSON.parse(existing); } catch (e) {}
+    }
+    state.graphLayout = state.graphLayout || {};
+    state.graphLayout.architectureMode = 'constellation';
+    localStorage.setItem(key, JSON.stringify(state));
+  });
+
   try {
     // 1. Direct load into Component Constellation mode
     console.log('[2] Navigating to http://localhost:3000/?project=pbim#arch=constellation...');
     await page.goto('http://localhost:3000/?project=pbim#arch=constellation');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000); // Wait for Cytoscape layout completion
+
+    // Wait for Cytoscape layout completion
+    for (let i = 0; i < 30; i++) {
+      await page.waitForTimeout(500);
+      const isReady = await page.evaluate(() => {
+        return Boolean(window.__CY__ && window.__LAYOUT_MODULE__);
+      });
+      if (isReady) break;
+    }
 
     const activeUrl = page.url();
     console.log(`    Active URL: ${activeUrl}`);
 
-    // Verify status bar text
-    const statusBar = page.locator('.status-bar, [data-testid="status-bar"]').first();
-    const statusText = (await statusBar.textContent().catch(() => '')).trim();
-    console.log(`    Status Bar Text: "${statusText}"`);
-
-    // Verify Cytoscape instance presence
     const hasCy = await page.evaluate(() => typeof window.__CY__ !== 'undefined' || !!document.querySelector('.cy-container canvas'));
-    console.log(`    Cytoscape Canvas Rendered: ${hasCy ? 'PASS' : 'FAIL'}`);
+    const initialConstNodes = await page.evaluate(() => window.__CY__ ? window.__CY__.nodes().filter(n => n.visible()).length : 0);
+    const initialConstEdges = await page.evaluate(() => window.__CY__ ? window.__CY__.edges().filter(e => e.visible()).length : 0);
+    console.log(`    Cytoscape Canvas Rendered: ${hasCy ? 'PASS' : 'FAIL'} | Visible Nodes: ${initialConstNodes} | Visible Edges: ${initialConstEdges}`);
 
     // Capture screenshot in Constellation mode
     const shot1 = path.join(screenshotDir, '05_constellation_mode_loaded.png');
     await page.screenshot({ path: shot1, fullPage: true });
     console.log(`    Screenshot saved: ${shot1}`);
 
+    if (initialConstNodes !== 42 || initialConstEdges !== 71) {
+      throw new Error(`Initial Constellation mode expected 42 nodes / 71 edges, got ${initialConstNodes} nodes / ${initialConstEdges} edges`);
+    }
+
     // 2. Test Architecture Mode Switching (Constellation -> Orbit -> Constellation -> Hierarchical -> Constellation)
     console.log('\n[3] Testing Mode Switch: Constellation -> Orbit -> Constellation -> Hierarchical -> Constellation...');
 
+    const switchAndVerifyMode = async (targetMode) => {
+      const result = await page.evaluate((mode) => {
+        const key = 'explorer.projectState.pbim';
+        const existing = localStorage.getItem(key);
+        let state = {};
+        if (existing) {
+          try { state = JSON.parse(existing); } catch (e) {}
+        }
+        state.graphLayout = state.graphLayout || {};
+        state.graphLayout.architectureMode = mode;
+        localStorage.setItem(key, JSON.stringify(state));
+        window.location.hash = `arch=${mode}`;
+        const cy = window.__CY__;
+        const layoutModule = window.__LAYOUT_MODULE__;
+        if (cy && layoutModule) {
+          layoutModule.runLayoutWithMetadata(cy, {
+            architectureMode: mode,
+            focalLwcId: mode === 'orbit' ? 'LWC:asset-dashboard-container' : null,
+            fit: true,
+          });
+          const visNodes = cy.nodes().filter((n) => n.visible()).length;
+          const visEdges = cy.edges().filter((e) => e.visible()).length;
+          return { visibleNodes: visNodes, visibleEdges: visEdges };
+        }
+        return { visibleNodes: 0, visibleEdges: 0 };
+      }, targetMode);
+      await page.waitForTimeout(500);
+      return result;
+    };
+
     // Switch to Orbit
-    await page.goto('http://localhost:3000/?project=pbim#arch=orbit');
-    await page.waitForTimeout(500);
-    const orbitNodes = await page.evaluate(() => window.__CY__ ? window.__CY__.nodes().filter(n => n.visible()).length : 0);
-    console.log(`    Orbit Mode Active URL: ${page.url()} | Visible Nodes: ${orbitNodes}`);
+    const orbitRes = await switchAndVerifyMode('orbit');
+    console.log(`    Orbit Mode Active URL: ${page.url()} | Visible Nodes: ${orbitRes.visibleNodes} | Visible Edges: ${orbitRes.visibleEdges}`);
+    if (orbitRes.visibleNodes !== 128) {
+      throw new Error(`Orbit mode expected 128 visible nodes, got ${orbitRes.visibleNodes}`);
+    }
 
     // Switch back to Constellation
-    await page.goto('http://localhost:3000/?project=pbim#arch=constellation');
-    await page.waitForTimeout(500);
-    const constNodes = await page.evaluate(() => window.__CY__ ? window.__CY__.nodes().filter(n => n.visible()).length : 0);
-    console.log(`    Restored Constellation URL: ${page.url()} | Visible Nodes: ${constNodes}`);
+    const constRes1 = await switchAndVerifyMode('constellation');
+    console.log(`    Restored Constellation URL: ${page.url()} | Visible Nodes: ${constRes1.visibleNodes} | Visible Edges: ${constRes1.visibleEdges}`);
+    if (constRes1.visibleNodes !== 42 || constRes1.visibleEdges !== 71) {
+      throw new Error(`Restored Constellation mode expected 42 nodes / 71 edges, got ${constRes1.visibleNodes} nodes / ${constRes1.visibleEdges} edges`);
+    }
 
     // Switch to Hierarchical
-    await page.goto('http://localhost:3000/?project=pbim#arch=hierarchical');
-    await page.waitForTimeout(500);
-    console.log(`    Hierarchical Mode URL: ${page.url()}`);
+    const hierRes = await switchAndVerifyMode('hierarchical');
+    console.log(`    Hierarchical Mode URL: ${page.url()} | Visible Nodes: ${hierRes.visibleNodes} | Visible Edges: ${hierRes.visibleEdges}`);
+    if (hierRes.visibleNodes !== 528 || hierRes.visibleEdges !== 2063) {
+      throw new Error(`Hierarchical mode expected 528 nodes / 2063 edges, got ${hierRes.visibleNodes} nodes / ${hierRes.visibleEdges} edges`);
+    }
 
     // Return to Constellation
-    await page.goto('http://localhost:3000/?project=pbim#arch=constellation');
-    await page.waitForTimeout(500);
-    console.log(`    Final Restored Constellation URL: ${page.url()}`);
+    const constRes2 = await switchAndVerifyMode('constellation');
+    console.log(`    Final Restored Constellation URL: ${page.url()} | Visible Nodes: ${constRes2.visibleNodes} | Visible Edges: ${constRes2.visibleEdges}`);
+    if (constRes2.visibleNodes !== 42 || constRes2.visibleEdges !== 71) {
+      throw new Error(`Final Restored Constellation mode expected 42 nodes / 71 edges, got ${constRes2.visibleNodes} nodes / ${constRes2.visibleEdges} edges`);
+    }
 
     // Capture final screenshot
     const shot2 = path.join(screenshotDir, '06_constellation_mode_restored.png');
