@@ -569,10 +569,48 @@ async function runConstellationBrowserAudit() {
           sunCount++;
         }
       });
-      const rawCentroidX = sunCount > 0 ? sumX / sunCount : -121.56;
-      const rawCentroidY = sunCount > 0 ? sumY / sunCount : -176.74;
-      const distFromRawCentroid = mrcPos ? Math.hypot(mrcPos.x - rawCentroidX, mrcPos.y - rawCentroidY) : 0;
-      const mrcDisplacedFromRawCentroid = distFromRawCentroid >= 30.0;
+      if (mrcEle.length === 0 || !mrcPos || !Number.isFinite(mrcPos.x) || !Number.isFinite(mrcPos.y)) {
+        return {
+          minSharedSunAabbGap,
+          minSharedSunCenterDist,
+          minPairwiseSharedDist,
+          collisions,
+          mrcPos: null,
+          mrcDisplacedFromRawCentroid: false,
+          error: 'ApexClass:MaintenanceRequestController absent or has invalid position',
+        };
+      }
+
+      if (sunCount === 0) {
+        return {
+          minSharedSunAabbGap,
+          minSharedSunCenterDist,
+          minPairwiseSharedDist,
+          collisions,
+          mrcPos,
+          mrcDisplacedFromRawCentroid: false,
+          error: 'No connected visible LWC: Suns found to compute centroid',
+        };
+      }
+
+      const rawCentroidX = sumX / sunCount;
+      const rawCentroidY = sumY / sunCount;
+
+      if (!Number.isFinite(rawCentroidX) || !Number.isFinite(rawCentroidY)) {
+        return {
+          minSharedSunAabbGap,
+          minSharedSunCenterDist,
+          minPairwiseSharedDist,
+          collisions,
+          mrcPos,
+          mrcDisplacedFromRawCentroid: false,
+          error: 'Calculated raw centroid coordinates are non-finite',
+        };
+      }
+
+      const distFromRawCentroid = Math.hypot(mrcPos.x - rawCentroidX, mrcPos.y - rawCentroidY);
+      const isDistFinite = Number.isFinite(distFromRawCentroid);
+      const mrcDisplacedFromRawCentroid = isDistFinite && distFromRawCentroid >= 30.0;
 
       return {
         minSharedSunAabbGap,
