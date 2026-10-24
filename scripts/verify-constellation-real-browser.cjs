@@ -79,23 +79,30 @@ async function runConstellationRealBrowserVerification() {
     await page.screenshot({ path: shot1, fullPage: true });
     console.log(`    Screenshot saved: ${shot1}`);
 
-    // 2. Test Architecture Mode Switching (Constellation -> Orbit -> Constellation)
-    console.log('\n[3] Testing Mode Switch: Constellation -> Orbit -> Constellation...');
-    const modeBtn = page.locator('.graph-control-btn[aria-label*="Architecture layout"]').first();
-    if (await modeBtn.isVisible()) {
-      const initialModeLabel = await modeBtn.getAttribute('aria-label');
-      console.log(`    Current Layout Button: ${initialModeLabel}`);
+    // 2. Test Architecture Mode Switching (Constellation -> Orbit -> Constellation -> Hierarchical -> Constellation)
+    console.log('\n[3] Testing Mode Switch: Constellation -> Orbit -> Constellation -> Hierarchical -> Constellation...');
 
-      // Click to switch mode
-      await modeBtn.click();
-      await page.waitForTimeout(500);
-      console.log(`    Post-click URL: ${page.url()}`);
+    // Switch to Orbit
+    await page.goto('http://localhost:3000/?project=pbim#arch=orbit');
+    await page.waitForTimeout(500);
+    const orbitNodes = await page.evaluate(() => window.__CY__ ? window.__CY__.nodes().filter(n => n.visible()).length : 0);
+    console.log(`    Orbit Mode Active URL: ${page.url()} | Visible Nodes: ${orbitNodes}`);
 
-      // Switch back to Constellation
-      await page.goto('http://localhost:3000/?project=pbim#arch=constellation');
-      await page.waitForTimeout(500);
-      console.log(`    Restored Constellation URL: ${page.url()}`);
-    }
+    // Switch back to Constellation
+    await page.goto('http://localhost:3000/?project=pbim#arch=constellation');
+    await page.waitForTimeout(500);
+    const constNodes = await page.evaluate(() => window.__CY__ ? window.__CY__.nodes().filter(n => n.visible()).length : 0);
+    console.log(`    Restored Constellation URL: ${page.url()} | Visible Nodes: ${constNodes}`);
+
+    // Switch to Hierarchical
+    await page.goto('http://localhost:3000/?project=pbim#arch=hierarchical');
+    await page.waitForTimeout(500);
+    console.log(`    Hierarchical Mode URL: ${page.url()}`);
+
+    // Return to Constellation
+    await page.goto('http://localhost:3000/?project=pbim#arch=constellation');
+    await page.waitForTimeout(500);
+    console.log(`    Final Restored Constellation URL: ${page.url()}`);
 
     // Capture final screenshot
     const shot2 = path.join(screenshotDir, '06_constellation_mode_restored.png');

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T19:46:27.095Z",
+  "generatedAt": "2026-10-24T06:31:29.250Z",
   "constellationScenarios": {
     "cst": {
       "dataset": "cst",
@@ -1499,7 +1499,7 @@
       "semanticLocalityMedian": 1092.38,
       "semanticLocalityP95": 2858.1,
       "overlaps": 0,
-      "executionTimeMs": 45.78
+      "executionTimeMs": 41.16
     },
     "bqc": {
       "dataset": "bqc",
@@ -1511,7 +1511,7 @@
       "semanticLocalityMedian": 629.66,
       "semanticLocalityP95": 1247.08,
       "overlaps": 0,
-      "executionTimeMs": 4.78
+      "executionTimeMs": 3.88
     },
     "pbim": {
       "dataset": "pbim",
@@ -1523,7 +1523,7 @@
       "semanticLocalityMedian": 919.44,
       "semanticLocalityP95": 2123.66,
       "overlaps": 0,
-      "executionTimeMs": 29.57
+      "executionTimeMs": 29.17
     }
   }
 }
