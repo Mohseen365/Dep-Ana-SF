@@ -1,0 +1,1092 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-24T17:03:11.743Z",
+    "browserVersion": "156.0.8078.4"
+  },
+  "viewportMatrix": {
+    "1024x768": {
+      "default": {
+        "loadMs": 854,
+        "graphStats": {
+          "nodes": 4,
+          "edges": 3,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1024,
+          "innerWidth": 1024
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 121,
+            "left": 220,
+            "right": 423,
+            "width": 203,
+            "height": 73
+          },
+          "controls": {
+            "top": 136,
+            "bottom": 174,
+            "left": 536.03125,
+            "right": 1010,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 582,
+            "bottom": 722,
+            "left": 766,
+            "right": 966,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 740,
+            "left": 0,
+            "right": 220,
+            "width": 220,
+            "height": 692
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/default_1024x768.png"
+      },
+      "pbim": {
+        "loadMs": 34406,
+        "graphStats": {
+          "nodes": 528,
+          "edges": 2063,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1024,
+          "innerWidth": 1024
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 121,
+            "left": 220,
+            "right": 423,
+            "width": 203,
+            "height": 73
+          },
+          "controls": {
+            "top": 136,
+            "bottom": 174,
+            "left": 536.03125,
+            "right": 1010,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 582,
+            "bottom": 722,
+            "left": 766,
+            "right": 966,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 740,
+            "left": 0,
+            "right": 220,
+            "width": 220,
+            "height": 692
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/pbim_1024x768.png"
+      },
+      "cloud-spend-tracker": {
+        "loadMs": 5932,
+        "graphStats": {
+          "nodes": 240,
+          "edges": 1024,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1024,
+          "innerWidth": 1024
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 121,
+            "left": 220,
+            "right": 423,
+            "width": 203,
+            "height": 73
+          },
+          "controls": {
+            "top": 136,
+            "bottom": 174,
+            "left": 536.03125,
+            "right": 1010,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 582,
+            "bottom": 722,
+            "left": 766,
+            "right": 966,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 740,
+            "left": 0,
+            "right": 220,
+            "width": 220,
+            "height": 692
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/cloud-spend-tracker_1024x768.png"
+      },
+      "bqc": {
+        "loadMs": 4178,
+        "graphStats": {
+          "nodes": 274,
+          "edges": 603,
+          "visibleNodes": 274,
+          "visibleEdges": 603
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1024,
+          "innerWidth": 1024
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 121,
+            "left": 220,
+            "right": 423,
+            "width": 203,
+            "height": 73
+          },
+          "controls": {
+            "top": 136,
+            "bottom": 174,
+            "left": 536.03125,
+            "right": 1010,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 582,
+            "bottom": 722,
+            "left": 766,
+            "right": 966,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 740,
+            "left": 0,
+            "right": 220,
+            "width": 220,
+            "height": 692
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/bqc_1024x768.png"
+      }
+    },
+    "1440x900": {
+      "default": {
+        "loadMs": 839,
+        "graphStats": {
+          "nodes": 4,
+          "edges": 3,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1440,
+          "innerWidth": 1440
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 260,
+            "right": 1337.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 952.03125,
+            "right": 1426,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 714,
+            "bottom": 854,
+            "left": 1182,
+            "right": 1382,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 872,
+            "left": 0,
+            "right": 260,
+            "width": 260,
+            "height": 824
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/default_1440x900.png"
+      },
+      "pbim": {
+        "loadMs": 34799,
+        "graphStats": {
+          "nodes": 528,
+          "edges": 2063,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1440,
+          "innerWidth": 1440
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 260,
+            "right": 1337.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 952.03125,
+            "right": 1426,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 714,
+            "bottom": 854,
+            "left": 1182,
+            "right": 1382,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 872,
+            "left": 0,
+            "right": 260,
+            "width": 260,
+            "height": 824
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/pbim_1440x900.png"
+      },
+      "cloud-spend-tracker": {
+        "loadMs": 6108,
+        "graphStats": {
+          "nodes": 240,
+          "edges": 1024,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1440,
+          "innerWidth": 1440
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 260,
+            "right": 1337.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 952.03125,
+            "right": 1426,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 714,
+            "bottom": 854,
+            "left": 1182,
+            "right": 1382,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 872,
+            "left": 0,
+            "right": 260,
+            "width": 260,
+            "height": 824
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/cloud-spend-tracker_1440x900.png"
+      },
+      "bqc": {
+        "loadMs": 4299,
+        "graphStats": {
+          "nodes": 274,
+          "edges": 603,
+          "visibleNodes": 274,
+          "visibleEdges": 603
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1440,
+          "innerWidth": 1440
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 260,
+            "right": 1337.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 952.03125,
+            "right": 1426,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 714,
+            "bottom": 854,
+            "left": 1182,
+            "right": 1382,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 872,
+            "left": 0,
+            "right": 260,
+            "width": 260,
+            "height": 824
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/bqc_1440x900.png"
+      }
+    },
+    "1920x1080": {
+      "default": {
+        "loadMs": 859,
+        "graphStats": {
+          "nodes": 4,
+          "edges": 3,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 1432.03125,
+            "right": 1906,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 894,
+            "bottom": 1034,
+            "left": 1662,
+            "right": 1862,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1052,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1004
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/default_1920x1080.png"
+      },
+      "pbim": {
+        "loadMs": 34601,
+        "graphStats": {
+          "nodes": 528,
+          "edges": 2063,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 1432.03125,
+            "right": 1906,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 894,
+            "bottom": 1034,
+            "left": 1662,
+            "right": 1862,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1052,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1004
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/pbim_1920x1080.png"
+      },
+      "cloud-spend-tracker": {
+        "loadMs": 6178,
+        "graphStats": {
+          "nodes": 240,
+          "edges": 1024,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 1432.03125,
+            "right": 1906,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 894,
+            "bottom": 1034,
+            "left": 1662,
+            "right": 1862,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1052,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1004
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/cloud-spend-tracker_1920x1080.png"
+      },
+      "bqc": {
+        "loadMs": 4289,
+        "graphStats": {
+          "nodes": 274,
+          "edges": 603,
+          "visibleNodes": 274,
+          "visibleEdges": 603
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 1432.03125,
+            "right": 1906,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 894,
+            "bottom": 1034,
+            "left": 1662,
+            "right": 1862,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1052,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1004
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/bqc_1920x1080.png"
+      }
+    },
+    "2560x1440": {
+      "default": {
+        "loadMs": 938,
+        "graphStats": {
+          "nodes": 4,
+          "edges": 3,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 2560,
+          "innerWidth": 2560
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 2072.03125,
+            "right": 2546,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 1254,
+            "bottom": 1394,
+            "left": 2302,
+            "right": 2502,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1412,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1364
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/default_2560x1440.png"
+      },
+      "pbim": {
+        "loadMs": 34569,
+        "graphStats": {
+          "nodes": 528,
+          "edges": 2063,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 2560,
+          "innerWidth": 2560
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 2072.03125,
+            "right": 2546,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 1254,
+            "bottom": 1394,
+            "left": 2302,
+            "right": 2502,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1412,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1364
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/pbim_2560x1440.png"
+      },
+      "cloud-spend-tracker": {
+        "loadMs": 6339,
+        "graphStats": {
+          "nodes": 240,
+          "edges": 1024,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 2560,
+          "innerWidth": 2560
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 2072.03125,
+            "right": 2546,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 1254,
+            "bottom": 1394,
+            "left": 2302,
+            "right": 2502,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1412,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1364
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/cloud-spend-tracker_2560x1440.png"
+      },
+      "bqc": {
+        "loadMs": 4433,
+        "graphStats": {
+          "nodes": 274,
+          "edges": 603,
+          "visibleNodes": 274,
+          "visibleEdges": 603
+        },
+        "overflowInfo": {
+          "hasHorizontalOverflow": false,
+          "scrollWidth": 2560,
+          "innerWidth": 2560
+        },
+        "bounds": {
+          "header": {
+            "top": 48,
+            "bottom": 134,
+            "left": 320,
+            "right": 1397.3125,
+            "width": 1077.3125,
+            "height": 86
+          },
+          "controls": {
+            "top": 149,
+            "bottom": 187,
+            "left": 2072.03125,
+            "right": 2546,
+            "width": 473.96875,
+            "height": 38
+          },
+          "minimap": {
+            "top": 1254,
+            "bottom": 1394,
+            "left": 2302,
+            "right": 2502,
+            "width": 200,
+            "height": 140
+          },
+          "sidebar": {
+            "top": 48,
+            "bottom": 1412,
+            "left": 0,
+            "right": 320,
+            "width": 320,
+            "height": 1364
+          }
+        },
+        "modeResults": {
+          "hierarchical": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "hybrid": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "orbit": {
+            "accessible": true,
+            "via": "architecture-mode-toggle"
+          },
+          "constellation": {
+            "accessible": true,
+            "activeMode": "constellation"
+          }
+        },
+        "screenshotPath": "audit-reports/workstream_j_screenshots/bqc_2560x1440.png"
+      }
+    }
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "accessibility": {},
+  "overflows": []
+}
