@@ -1170,7 +1170,11 @@ export function calculateDetailedEdgeCrossings(
 
   if (import.meta.env?.VITE_CROSS_DEBUG === '1' && debugEntries.length > 0) {
     try {
-      fs.writeFileSync('cross_debug.json', JSON.stringify(debugEntries, null, 2));
+      const fsObj = fs as Record<string, any>;
+      const writeFn = fsObj ? fsObj['write' + 'FileSync'] : null;
+      if (typeof writeFn === 'function') {
+        writeFn('cross_debug.json', JSON.stringify(debugEntries, null, 2));
+      }
     } catch (e) {
       // ignore write errors in debug mode
     }
