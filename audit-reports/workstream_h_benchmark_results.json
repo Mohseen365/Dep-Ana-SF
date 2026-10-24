@@ -1,0 +1,585 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-24T14:22:06.838Z",
+    "viewport": "1440x900",
+    "headless": true,
+    "repetitionsPerTransition": 3,
+    "browserVersion": "156.0.8078.4"
+  },
+  "projects": {
+    "default": {
+      "id": "default",
+      "name": "Default (Small)",
+      "initialLoadMs": 870,
+      "sourceMetrics": {
+        "nodes": 4,
+        "edges": 3,
+        "lwcCount": 1,
+        "visibleNodes": 4,
+        "visibleEdges": 3
+      },
+      "modeTransitions": {
+        "hybrid": {
+          "samples": [
+            {
+              "e2eMs": 17,
+              "ackMs": 1,
+              "durationMs": 7,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3
+            },
+            {
+              "e2eMs": 9,
+              "ackMs": 1,
+              "durationMs": 3,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3
+            },
+            {
+              "e2eMs": 9,
+              "ackMs": 1,
+              "durationMs": 4,
+              "outcome": "complete",
+              "architectureMode": "hybrid",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3
+            }
+          ],
+          "layoutStats": {
+            "min": 3,
+            "max": 7,
+            "median": 4,
+            "mean": 4.67,
+            "range": 4,
+            "p90": 7
+          },
+          "e2eStats": {
+            "min": 9,
+            "max": 17,
+            "median": 9,
+            "mean": 11.67,
+            "range": 8,
+            "p90": 17
+          }
+        },
+        "orbit": {
+          "samples": [
+            {
+              "e2eMs": 14,
+              "ackMs": 1,
+              "durationMs": 5,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2
+            },
+            {
+              "e2eMs": 8,
+              "ackMs": 1,
+              "durationMs": 2,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2
+            },
+            {
+              "e2eMs": 8,
+              "ackMs": 1,
+              "durationMs": 2,
+              "outcome": "complete",
+              "architectureMode": "orbit",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 3,
+              "visibleEdges": 2
+            }
+          ],
+          "layoutStats": {
+            "min": 2,
+            "max": 5,
+            "median": 2,
+            "mean": 3,
+            "range": 3,
+            "p90": 5
+          },
+          "e2eStats": {
+            "min": 8,
+            "max": 14,
+            "median": 8,
+            "mean": 10,
+            "range": 6,
+            "p90": 14
+          }
+        },
+        "constellation": {
+          "samples": [
+            {
+              "e2eMs": 9,
+              "ackMs": 1,
+              "durationMs": 3,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1
+            },
+            {
+              "e2eMs": 7,
+              "ackMs": 1,
+              "durationMs": 2,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1
+            },
+            {
+              "e2eMs": 8,
+              "ackMs": 1,
+              "durationMs": 2,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 2,
+              "visibleEdges": 1
+            }
+          ],
+          "layoutStats": {
+            "min": 2,
+            "max": 3,
+            "median": 2,
+            "mean": 2.33,
+            "range": 1,
+            "p90": 3
+          },
+          "e2eStats": {
+            "min": 7,
+            "max": 9,
+            "median": 8,
+            "mean": 8,
+            "range": 2,
+            "p90": 9
+          }
+        },
+        "hierarchical": {
+          "samples": [
+            {
+              "e2eMs": 10,
+              "ackMs": 1,
+              "durationMs": 4,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3
+            },
+            {
+              "e2eMs": 10,
+              "ackMs": 0,
+              "durationMs": 4,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3
+            },
+            {
+              "e2eMs": 8,
+              "ackMs": 1,
+              "durationMs": 3,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 4,
+              "edgeCount": 3,
+              "visibleNodes": 4,
+              "visibleEdges": 3
+            }
+          ],
+          "layoutStats": {
+            "min": 3,
+            "max": 4,
+            "median": 4,
+            "mean": 3.67,
+            "range": 1,
+            "p90": 4
+          },
+          "e2eStats": {
+            "min": 8,
+            "max": 10,
+            "median": 10,
+            "mean": 9.33,
+            "range": 2,
+            "p90": 10
+          }
+        }
+      },
+      "searchFiltering": {
+        "Service": {
+          "query": "Service",
+          "latencyMs": 106,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        },
+        "Account": {
+          "query": "Account",
+          "latencyMs": 100,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        },
+        "Test": {
+          "query": "Test",
+          "latencyMs": 100,
+          "visibleNodes": 4,
+          "visibleEdges": 3
+        }
+      },
+      "memoryInfo": {
+        "usedJSHeapSizeMb": "33.47",
+        "totalJSHeapSizeMb": "42.63"
+      }
+    },
+    "cloud-spend-tracker": {
+      "id": "cloud-spend-tracker",
+      "name": "Cloud Spend Tracker (Medium)",
+      "initialLoadMs": 6577,
+      "sourceMetrics": {
+        "nodes": 240,
+        "edges": 1024,
+        "lwcCount": 26,
+        "visibleNodes": 240,
+        "visibleEdges": 1024
+      },
+      "modeTransitions": {
+        "hybrid": {
+          "samples": [],
+          "layoutStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          },
+          "e2eStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          }
+        },
+        "orbit": {
+          "samples": [],
+          "layoutStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          },
+          "e2eStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          }
+        },
+        "constellation": {
+          "samples": [
+            {
+              "e2eMs": 98,
+              "ackMs": 1,
+              "durationMs": 65,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0
+            },
+            {
+              "e2eMs": 142,
+              "ackMs": 1,
+              "durationMs": 109,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0
+            },
+            {
+              "e2eMs": 142,
+              "ackMs": 1,
+              "durationMs": 109,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 1,
+              "visibleEdges": 0
+            }
+          ],
+          "layoutStats": {
+            "min": 65,
+            "max": 109,
+            "median": 109,
+            "mean": 94.33,
+            "range": 44,
+            "p90": 109
+          },
+          "e2eStats": {
+            "min": 98,
+            "max": 142,
+            "median": 142,
+            "mean": 127.33,
+            "range": 44,
+            "p90": 142
+          }
+        },
+        "hierarchical": {
+          "samples": [
+            {
+              "e2eMs": 1529,
+              "ackMs": 1,
+              "durationMs": 1500,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024
+            },
+            {
+              "e2eMs": 1393,
+              "ackMs": 1,
+              "durationMs": 1317,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024
+            },
+            {
+              "e2eMs": 1431,
+              "ackMs": 0,
+              "durationMs": 1361,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 240,
+              "edgeCount": 1024,
+              "visibleNodes": 240,
+              "visibleEdges": 1024
+            }
+          ],
+          "layoutStats": {
+            "min": 1317,
+            "max": 1500,
+            "median": 1361,
+            "mean": 1392.67,
+            "range": 183,
+            "p90": 1500
+          },
+          "e2eStats": {
+            "min": 1393,
+            "max": 1529,
+            "median": 1431,
+            "mean": 1451,
+            "range": 136,
+            "p90": 1529
+          }
+        }
+      },
+      "searchFiltering": {
+        "Service": {
+          "query": "Service",
+          "latencyMs": 244,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        },
+        "Account": {
+          "query": "Account",
+          "latencyMs": 100,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        },
+        "Test": {
+          "query": "Test",
+          "latencyMs": 100,
+          "visibleNodes": 240,
+          "visibleEdges": 1024
+        }
+      },
+      "memoryInfo": {
+        "usedJSHeapSizeMb": "51.02",
+        "totalJSHeapSizeMb": "92.89"
+      }
+    },
+    "pbim": {
+      "id": "pbim",
+      "name": "PBIM (Large)",
+      "initialLoadMs": 14210,
+      "sourceMetrics": {
+        "nodes": 528,
+        "edges": 2063,
+        "lwcCount": 30,
+        "visibleNodes": 528,
+        "visibleEdges": 2063
+      },
+      "modeTransitions": {
+        "hybrid": {
+          "samples": [],
+          "layoutStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          },
+          "e2eStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          },
+          "notes": "Worker IPC timeout in Vite unbundled dev mode due to deserialization overhead."
+        },
+        "orbit": {
+          "samples": [],
+          "layoutStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          },
+          "e2eStats": {
+            "min": 0,
+            "max": 0,
+            "median": 0,
+            "mean": 0,
+            "range": 0,
+            "p90": 0
+          },
+          "notes": "Worker IPC timeout in Vite unbundled dev mode due to deserialization overhead."
+        },
+        "constellation": {
+          "samples": [
+            {
+              "e2eMs": 210,
+              "ackMs": 1,
+              "durationMs": 159,
+              "outcome": "complete",
+              "architectureMode": "constellation",
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 1,
+              "visibleEdges": 0
+            }
+          ],
+          "layoutStats": {
+            "min": 159,
+            "max": 159,
+            "median": 159,
+            "mean": 159,
+            "range": 0,
+            "p90": 159
+          },
+          "e2eStats": {
+            "min": 210,
+            "max": 210,
+            "median": 210,
+            "mean": 210,
+            "range": 0,
+            "p90": 210
+          }
+        },
+        "hierarchical": {
+          "samples": [
+            {
+              "e2eMs": 7240,
+              "ackMs": 1,
+              "durationMs": 7198,
+              "outcome": "complete",
+              "architectureMode": "hierarchical",
+              "nodeCount": 528,
+              "edgeCount": 2063,
+              "visibleNodes": 528,
+              "visibleEdges": 2063
+            }
+          ],
+          "layoutStats": {
+            "min": 7198,
+            "max": 7198,
+            "median": 7198,
+            "mean": 7198,
+            "range": 0,
+            "p90": 7198
+          },
+          "e2eStats": {
+            "min": 7240,
+            "max": 7240,
+            "median": 7240,
+            "mean": 7240,
+            "range": 0,
+            "p90": 7240
+          }
+        }
+      },
+      "searchFiltering": {
+        "Service": {
+          "query": "Service",
+          "latencyMs": 101,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        },
+        "Account": {
+          "query": "Account",
+          "latencyMs": 100,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        },
+        "Test": {
+          "query": "Test",
+          "latencyMs": 100,
+          "visibleNodes": 528,
+          "visibleEdges": 2063
+        }
+      },
+      "memoryInfo": {
+        "usedJSHeapSizeMb": "103.95",
+        "totalJSHeapSizeMb": "159.26"
+      }
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": []
+}
