@@ -361,7 +361,9 @@ export function mergeWithDefaultState(
       const hasExplicitLayoutPositions =
         gLoaded.layoutPositions &&
         typeof gLoaded.layoutPositions === "object" &&
-        Object.keys(gLoaded.layoutPositions).length > 0;
+        Object.values(gLoaded.layoutPositions).some(
+          (map) => map && typeof map === "object" && Object.keys(map).length > 0
+        );
 
       const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> =
         hasExplicitLayoutPositions
