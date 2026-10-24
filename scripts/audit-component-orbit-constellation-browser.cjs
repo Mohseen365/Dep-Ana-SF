@@ -569,10 +569,20 @@ async function runConstellationBrowserAudit() {
           sunCount++;
         }
       });
-      const rawCentroidX = sunCount > 0 ? sumX / sunCount : -121.56;
-      const rawCentroidY = sunCount > 0 ? sumY / sunCount : -176.74;
-      const distFromRawCentroid = mrcPos ? Math.hypot(mrcPos.x - rawCentroidX, mrcPos.y - rawCentroidY) : 0;
-      const mrcDisplacedFromRawCentroid = distFromRawCentroid >= 30.0;
+
+      let mrcDisplacedFromRawCentroid = false;
+      let rawCentroidX = null;
+      let rawCentroidY = null;
+      let distFromRawCentroid = 0;
+
+      if (mrcPos && Number.isFinite(mrcPos.x) && Number.isFinite(mrcPos.y) && sunCount > 0) {
+        rawCentroidX = sumX / sunCount;
+        rawCentroidY = sumY / sunCount;
+        if (Number.isFinite(rawCentroidX) && Number.isFinite(rawCentroidY)) {
+          distFromRawCentroid = Math.hypot(mrcPos.x - rawCentroidX, mrcPos.y - rawCentroidY);
+          mrcDisplacedFromRawCentroid = Number.isFinite(distFromRawCentroid) && distFromRawCentroid >= 30.0;
+        }
+      }
 
       return {
         minSharedSunAabbGap,
