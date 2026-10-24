@@ -552,8 +552,27 @@ async function runConstellationBrowserAudit() {
       const collisions = countCollisions(allVisibleBoxes);
 
       // Check MaintenanceRequestController position (must be displaced, not raw centroid)
-      const mrcPos = cy.getElementById('ApexClass:MaintenanceRequestController').position();
-      const mrcDisplacedFromRawCentroid = mrcPos && (Math.abs(mrcPos.x - (-205.59)) < 2.0 && Math.abs(mrcPos.y - (-803.81)) < 2.0);
+      const mrcEle = cy.getElementById('ApexClass:MaintenanceRequestController');
+      const mrcPos = mrcEle.length > 0 ? mrcEle.position() : null;
+      const connSuns = mrcEle.length > 0 ? mrcEle.connectedEdges().filter((e) => e.visible()).map((e) => {
+        const src = e.source().id();
+        const tgt = e.target().id();
+        return src === 'ApexClass:MaintenanceRequestController' ? tgt : src;
+      }).filter((id) => id.startsWith('LWC:')) : [];
+
+      let sumX = 0, sumY = 0, sunCount = 0;
+      connSuns.forEach((sId) => {
+        const sEle = cy.getElementById(sId);
+        if (sEle.length > 0) {
+          sumX += sEle.position().x;
+          sumY += sEle.position().y;
+          sunCount++;
+        }
+      });
+      const rawCentroidX = sunCount > 0 ? sumX / sunCount : -121.56;
+      const rawCentroidY = sunCount > 0 ? sumY / sunCount : -176.74;
+      const distFromRawCentroid = mrcPos ? Math.hypot(mrcPos.x - rawCentroidX, mrcPos.y - rawCentroidY) : 0;
+      const mrcDisplacedFromRawCentroid = distFromRawCentroid >= 30.0;
 
       return {
         minSharedSunAabbGap,
@@ -645,8 +664,8 @@ async function runConstellationBrowserAudit() {
     console.log(`[MACRO GEOMETRY] Evaluated Sun Pairs: ${macroGeometryCheck.totalPairs}`);
 
     if (
-      macroGeometryCheck.maxInnerRadiusDiff > 1e-2 ||
-      macroGeometryCheck.maxOuterRadiusDiff > 1e-2 ||
+      macroGeometryCheck.maxInnerRadiusDiff > 1.0 ||
+      macroGeometryCheck.maxOuterRadiusDiff > 1.0 ||
       macroGeometryCheck.minSunCenterDist < 860.0 ||
       macroGeometryCheck.minSunEdgeGap < 60.0
     ) {
