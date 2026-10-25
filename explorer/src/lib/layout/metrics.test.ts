@@ -404,19 +404,19 @@ describe('Quantitative Layout Metrics Library', () => {
     it('calculates same-layer and cross-layer feature locality metrics cleanly', () => {
       const nodes = [
         makeNode('Page', 'LWC', 'OrderView'),
-        makeNode('Comp', 'LWC', 'OrderCard'),
         makeNode('Service', 'ApexClass', 'OrderService'),
+        makeNode('ServiceHelper', 'ApexClass', 'OrderServiceHelper'),
         makeNode('Repo', 'ApexClass', 'OrderRepository'),
       ];
       const edges: ExplorerEdge[] = [
-        createEdge('Page', 'Comp'),      // intra-feature, same layer (presentation-presentation)
-        createEdge('Page', 'Service'),   // intra-feature, cross layer (presentation-application)
-        createEdge('Service', 'Repo'),   // intra-feature, cross layer (application-domain)
+        createEdge('Service', 'ServiceHelper'), // intra-feature, same layer (application-application)
+        createEdge('Page', 'Service'),          // intra-feature, cross layer (presentation-application)
+        createEdge('Service', 'Repo'),          // intra-feature, cross layer (application-domain)
       ];
       const positions = {
         Page: { x: 0, y: 0 },
-        Comp: { x: 100, y: 0 },
         Service: { x: 0, y: 350 },
+        ServiceHelper: { x: 100, y: 350 },
         Repo: { x: 0, y: 600 },
       };
 
