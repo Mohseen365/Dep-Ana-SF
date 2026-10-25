@@ -315,11 +315,11 @@ function runTests() {
   // Test 11: Full analyzer integration regression check
   // -------------------------------------------------------------
   console.log("Test 11: Full analyzer integration regression check...");
-  const fixtureDir = path.resolve(
-    __dirname,
-    "../../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default"
-  );
-  if (fs.existsSync(fixtureDir)) {
+  const externalFixturesDir = path.resolve(__dirname, "../../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default");
+  const localFixturesDir = path.resolve(__dirname, "../audit-fixtures/force-app/main/default");
+  const fixtureDir = fs.existsSync(localFixturesDir) ? localFixturesDir : (fs.existsSync(externalFixturesDir) ? externalFixturesDir : null);
+
+  if (fixtureDir) {
     const analysis = analyze(fixtureDir, { quiet: true }, false);
     assert.ok(analysis.registry);
     assert.ok(analysis.graph);
