@@ -236,9 +236,11 @@ console.log("=================================================================="
 // -----------------------------------------------------------------------------
 {
   console.log("Test 10: Full analyzer regression...");
-  const fixturesDir = path.resolve(__dirname, "../../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default");
+  const externalFixturesDir = path.resolve(__dirname, "../../refactor-litellm/tests/fixtures/dependency-scope/force-app/main/default");
+  const localFixturesDir = path.resolve(__dirname, "../audit-fixtures/force-app/main/default");
+  const fixturesDir = fs.existsSync(localFixturesDir) ? localFixturesDir : (fs.existsSync(externalFixturesDir) ? externalFixturesDir : null);
 
-  if (fs.existsSync(fixturesDir)) {
+  if (fixturesDir) {
     const result = analyze(fixturesDir, {}, false);
     const symbolBoundaries = analyzeAllSecurityBoundaries(result.registry, result.graph);
     assert.ok(symbolBoundaries.symbolBoundaries instanceof Map, "Test 10: symbolBoundaries is a Map");
