@@ -5,6 +5,7 @@
 **Authorized Root Directory:** `analyze/projects` (`/app/analyze/projects`)
 **Server Endpoint Tested:** `http://localhost:3000` (Vite Dev Server)
 **Execution Date:** October 25, 2026
+**Environment:** Linux 6.6 / Node.js v22.22.1 / npm v11.11.0 / Vite v5.4.21
 **Final Status:** **PASS (100% Path Containment Verified)**
 
 ---
@@ -25,7 +26,7 @@ The `/projects` route handler in `explorer/vite.config.ts` serves static JSON pr
 
 ## 2. Live HTTP Request Test Matrix
 
-Executed via Node.js HTTP raw request runner (`scripts/test-security-middleware-live.cjs`) against a live Vite dev server process.
+Executed via Node.js HTTP raw request runner (`scripts/test-security-middleware-live.cjs`) against a live Vite dev server process on `http://localhost:3000`.
 
 | Test ID | Scenario Description | HTTP Request Path | Observed HTTP Status | Security Outcome | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -95,7 +96,14 @@ function analyzeProjectsPlugin() {
         }
       });
     },
-    ...
+    closeBundle() {
+      if (existsSync(ANALYZE_PROJECTS_DIR)) {
+        mkdirSync(PROJECTS_OUTPUT_DIR, { recursive: true });
+        cpSync(ANALYZE_PROJECTS_DIR, PROJECTS_OUTPUT_DIR, { recursive: true });
+      }
+    },
+  };
+}
 ```
 
 ---
