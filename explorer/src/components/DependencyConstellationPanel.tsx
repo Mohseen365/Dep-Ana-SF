@@ -42,38 +42,24 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
   };
   const [filterText, setFilterText] = useState('');
 
-  const { focalNode, nodes, edges, availableNodes, summary, options } = data;
+  const { focalNode, nodes = {}, edges = [], availableNodes = [], summary = { ringCount: 0, totalNodes: 0, totalEdges: 0 }, options = { maxDepth: 1, direction: 'both' as FocusDirection } } = data;
 
   // Compute local polar layout geometry
   const layout = useMemo(() => {
     return computeConstellationLayout(data, {
       width: 900,
       height: 900,
+      cx: 450,
+      cy: 450,
       baseRadius: 180,
-      ringStepRadius: 150,
+      interRingGap: 120,
+      trackSpacing: 40,
+      sparseThreshold: 30,
     });
   }, [data]);
 
-  if (!focalNode) {
-    return (
-      <div className={`dependency-constellation-panel empty ${className}`} data-testid="dependency-constellation-panel">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: '#0f172a', borderBottom: '1px solid #1e293b' }}>
-          <h2 style={{ color: '#f8fafc', margin: 0, fontSize: '18px' }}>🌌 Dependency Constellation / Polar View</h2>
-          {onReturnToGraph && (
-            <button className="return-graph-btn" onClick={onReturnToGraph} data-testid="return-graph-btn" style={{ padding: '6px 12px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              ← Return to Graph Canvas
-            </button>
-          )}
-        </div>
-        <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
-          No focal component or graph data available in active dataset.
-        </div>
-      </div>
-    );
-  }
-
-  const activeInspectId = hoveredNodeId || canonicalSelectedId || focalNode.id;
-  const activeInspectNode: ConstellationNode | null = nodes[activeInspectId] || null;
+  const activeInspectId = hoveredNodeId || canonicalSelectedId || (focalNode ? focalNode.id : null);
+  const activeInspectNode: ConstellationNode | null = activeInspectId ? (nodes[activeInspectId] || null) : null;
 
   // Compute highlighted edge IDs when node is hovered/selected
   const highlightedEdgeIds = useMemo(() => {
@@ -97,6 +83,24 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     });
     return set;
   }, [activeInspectId, edges]);
+
+  if (!focalNode) {
+    return (
+      <div className={`dependency-constellation-panel empty ${className}`} data-testid="dependency-constellation-panel">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: '#0f172a', borderBottom: '1px solid #1e293b' }}>
+          <h2 style={{ color: '#f8fafc', margin: 0, fontSize: '18px' }}>🌌 Dependency Constellation / Polar View</h2>
+          {onReturnToGraph && (
+            <button className="return-graph-btn" onClick={onReturnToGraph} data-testid="return-graph-btn" style={{ padding: '6px 12px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              ← Return to Graph Canvas
+            </button>
+          )}
+        </div>
+        <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+          No focal component or graph data available in active dataset.
+        </div>
+      </div>
+    );
+  }
 
   const matchesFilter = (node: ConstellationNode) => {
     if (!filterText) return true;
@@ -167,7 +171,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
             onChange={(e) => {
               const val = e.target.value;
               if (onOptionChange) onOptionChange({ focalNodeId: val });
-              if (onSelectNode) onSelectNode(val);
+              if (onSelectNode) handleSelectNode(val);
             }}
             style={{
               background: '#1e293b',
@@ -307,6 +311,8 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
         >
           <svg
             data-testid="constellation-svg"
+            role="img"
+            aria-label="Dependency Constellation Orbital View"
             width={layout.viewport.width}
             height={layout.viewport.height}
             viewBox={`0 0 ${layout.viewport.width} ${layout.viewport.height}`}
@@ -339,7 +345,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
 
             {/* Render Orbital Rings */}
             {layout.ringGeometries.map((ring) => (
-              <g key={`ring_${ring.ringIndex}`}>
+              <g key={`ring_${ring.ringIndex}_track_${ring.trackIndex}`}>
                 <circle
                   cx={ring.cx}
                   cy={ring.cy}
@@ -349,16 +355,18 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   strokeDasharray="4 4"
                   strokeWidth="1.5"
                 />
-                <text
-                  x={ring.cx}
-                  y={ring.cy - ring.radius - 6}
-                  fill="#64748b"
-                  fontSize="10"
-                  textAnchor="middle"
-                  fontWeight="600"
-                >
-                  {ring.label}
-                </text>
+                {ring.label && (
+                  <text
+                    x={ring.cx}
+                    y={ring.cy - ring.radius - 6}
+                    fill="#64748b"
+                    fontSize="10"
+                    textAnchor="middle"
+                    fontWeight="600"
+                  >
+                    {ring.label}
+                  </text>
+                )}
               </g>
             ))}
 
@@ -412,15 +420,21 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   data-testid={`constellation-node-${pos.nodeId}`}
                   transform={`translate(${pos.x}, ${pos.y})`}
                   style={{ cursor: 'pointer', opacity, transition: 'opacity 0.2s ease' }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${pos.label}${isFocal ? ' (Focal Center)' : ''}, ${nodeData?.type || 'Component'}`}
                   onMouseEnter={() => setHoveredNodeId(pos.nodeId)}
                   onMouseLeave={() => setHoveredNodeId(null)}
-                  onClick={() => {
-                    setSelectedNodeId(pos.nodeId);
-                    if (onSelectNode) onSelectNode(pos.nodeId);
-                  }}
+                  onClick={() => handleSelectNode(pos.nodeId)}
                   onDoubleClick={() => {
                     if (onOptionChange) onOptionChange({ focalNodeId: pos.nodeId });
-                    if (onSelectNode) onSelectNode(pos.nodeId);
+                    handleSelectNode(pos.nodeId);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelectNode(pos.nodeId);
+                    }
                   }}
                 >
                   <circle
@@ -529,7 +543,7 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
                   className="make-focal-btn"
                   onClick={() => {
                     if (onOptionChange) onOptionChange({ focalNodeId: activeInspectNode.nodeId });
-                    if (onSelectNode) onSelectNode(activeInspectNode.nodeId);
+                    handleSelectNode(activeInspectNode.nodeId);
                   }}
                   style={{
                     marginTop: '12px',

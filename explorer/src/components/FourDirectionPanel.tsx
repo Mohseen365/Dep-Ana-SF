@@ -115,11 +115,21 @@ export const FourDirectionPanel: React.FC<FourDirectionPanelProps> = ({
                   key={item.nodeId}
                   className={`quadrant-item ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`}
                   data-testid={`item-${item.nodeId}`}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${item.displayName}, ${item.type}, ${item.featureName}, ${item.layerName}`}
                   onClick={() => {
                     setSelectedItemNodeId(item.nodeId);
                     handleSelectNode(item.nodeId);
                   }}
                   onDoubleClick={() => handleSelectNode(item.nodeId)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedItemNodeId(item.nodeId);
+                      handleSelectNode(item.nodeId);
+                    }
+                  }}
                   style={{
                     background: isSelected ? '#1e293b' : '#1e293b80',
                     borderLeft: `3px solid ${riskColor}`,

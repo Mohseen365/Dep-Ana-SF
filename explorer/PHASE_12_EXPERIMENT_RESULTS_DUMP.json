@@ -1,0 +1,1526 @@
+{
+  "experimentA_fineSweep": {
+    "CST AccountController 2-hop": {
+      "100": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 824,
+        "occupiedHeight": 824,
+        "medianLocality": 456.84475625519156,
+        "p95Locality": 702.3152803276643,
+        "maxLocality": 760
+      },
+      "105": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 834,
+        "occupiedHeight": 834,
+        "medianLocality": 463.80667230231427,
+        "p95Locality": 711.5519094611459,
+        "maxLocality": 770
+      },
+      "110": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 844,
+        "occupiedHeight": 844,
+        "medianLocality": 471.1667366123414,
+        "p95Locality": 720.7885941189681,
+        "maxLocality": 780
+      },
+      "115": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 854,
+        "occupiedHeight": 854,
+        "medianLocality": 478.526981224908,
+        "p95Locality": 730.0253321935567,
+        "maxLocality": 790
+      },
+      "120": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 485.88739771207634,
+        "p95Locality": 739.2621216826585,
+        "maxLocality": 800
+      },
+      "125": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 874,
+        "occupiedHeight": 874,
+        "medianLocality": 493.2479781627712,
+        "p95Locality": 748.4989606828441,
+        "maxLocality": 810
+      },
+      "130": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 884,
+        "occupiedHeight": 884,
+        "medianLocality": 499.8264310342024,
+        "p95Locality": 757.7358473834848,
+        "maxLocality": 820
+      },
+      "135": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 894,
+        "occupiedHeight": 894,
+        "medianLocality": 505.7408886260392,
+        "p95Locality": 766.9727800611682,
+        "maxLocality": 830
+      },
+      "140": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 904,
+        "occupiedHeight": 904,
+        "medianLocality": 511.65764387080594,
+        "p95Locality": 776.2097570745067,
+        "maxLocality": 840
+      },
+      "145": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 914,
+        "occupiedHeight": 914,
+        "medianLocality": 517.5766335131827,
+        "p95Locality": 785.4467768593178,
+        "maxLocality": 850
+      },
+      "150": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 924,
+        "occupiedHeight": 924,
+        "medianLocality": 523.4977965424926,
+        "p95Locality": 794.6838379241369,
+        "maxLocality": 860
+      },
+      "155": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 934,
+        "occupiedHeight": 934,
+        "medianLocality": 530.3300858899106,
+        "p95Locality": 803.9209388460408,
+        "maxLocality": 870
+      },
+      "160": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 944,
+        "occupiedHeight": 944,
+        "medianLocality": 537.4011537017761,
+        "p95Locality": 813.1580782667548,
+        "maxLocality": 880
+      }
+    },
+    "CST Org_Hierarchy 3-hop": {
+      "100": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1254.9590038815868,
+        "occupiedHeight": 1245.9839268041524,
+        "medianLocality": 334.431619134045,
+        "p95Locality": 703.9172428876626,
+        "maxLocality": 1092.2457132438196
+      },
+      "105": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1274.8131813635482,
+        "occupiedHeight": 1265.6933449784128,
+        "medianLocality": 337.6321822137088,
+        "p95Locality": 713.9639036221437,
+        "maxLocality": 1111.7385459333927
+      },
+      "110": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1294.6673588455092,
+        "occupiedHeight": 1285.4027631526733,
+        "medianLocality": 341.8727691687871,
+        "p95Locality": 724.0106719913778,
+        "maxLocality": 1131.231575971892
+      },
+      "115": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1314.5215363274701,
+        "occupiedHeight": 1305.1121813269338,
+        "medianLocality": 346.7932988525592,
+        "p95Locality": 736.1240243374136,
+        "maxLocality": 1150.724793330172
+      },
+      "120": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656,
+        "maxLocality": 1170.2181886472474
+      },
+      "125": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1354.2298912913923,
+        "occupiedHeight": 1344.531017675455,
+        "medianLocality": 354.7132501012132,
+        "p95Locality": 760.7696902484959,
+        "maxLocality": 1189.7117531755678
+      },
+      "130": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1374.0840687733535,
+        "occupiedHeight": 1364.2404358497156,
+        "medianLocality": 358.5898765943637,
+        "p95Locality": 773.1324868064179,
+        "maxLocality": 1209.2054787315853
+      },
+      "135": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1393.9382462553144,
+        "occupiedHeight": 1383.949854023976,
+        "medianLocality": 362.49504223975293,
+        "p95Locality": 785.4955987025364,
+        "maxLocality": 1228.6993576510256
+      },
+      "140": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1413.7924237372754,
+        "occupiedHeight": 1403.6592721982365,
+        "medianLocality": 366.8747187379937,
+        "p95Locality": 797.8590112416263,
+        "maxLocality": 1248.193382748348
+      },
+      "145": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1433.6466012192368,
+        "occupiedHeight": 1423.368690372497,
+        "medianLocality": 371.5171597651985,
+        "p95Locality": 810.2227106274985,
+        "maxLocality": 1267.6875472799466
+      },
+      "150": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1453.5007787011978,
+        "occupiedHeight": 1443.0781085467574,
+        "medianLocality": 376.43060449437434,
+        "p95Locality": 821.3180570531599,
+        "maxLocality": 1287.181844910691
+      },
+      "155": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1473.3549561831587,
+        "occupiedHeight": 1462.787526721018,
+        "medianLocality": 380.86807268899304,
+        "p95Locality": 830.68935761823,
+        "maxLocality": 1306.6762696834646
+      },
+      "160": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1493.2091336651201,
+        "occupiedHeight": 1482.4969448952786,
+        "medianLocality": 385.28170035257546,
+        "p95Locality": 840.0606741328838,
+        "maxLocality": 1326.1708159913862
+      }
+    },
+    "BQC Bouquet_Order__c 2-hop": {
+      "100": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1064,
+        "occupiedHeight": 1064,
+        "medianLocality": 349.7564002966732,
+        "p95Locality": 700.0026159559034,
+        "maxLocality": 813.4917687365923
+      },
+      "105": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1074,
+        "occupiedHeight": 1074,
+        "medianLocality": 353.6829894669196,
+        "p95Locality": 704.9863266961652,
+        "maxLocality": 818.4690802229835
+      },
+      "110": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1084,
+        "occupiedHeight": 1084,
+        "medianLocality": 356.3917725112301,
+        "p95Locality": 709.9702638900669,
+        "maxLocality": 823.4466666153455
+      },
+      "115": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1094,
+        "occupiedHeight": 1094,
+        "medianLocality": 360.140770189571,
+        "p95Locality": 714.9544228912838,
+        "maxLocality": 828.4245229583629
+      },
+      "120": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1104,
+        "occupiedHeight": 1104,
+        "medianLocality": 363.91984445998344,
+        "p95Locality": 719.9387991785688,
+        "maxLocality": 833.402644414846
+      },
+      "125": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1114,
+        "occupiedHeight": 1114,
+        "medianLocality": 367.7280680486867,
+        "p95Locality": 724.9233883516113,
+        "maxLocality": 838.3810262622393
+      },
+      "130": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1124,
+        "occupiedHeight": 1124,
+        "medianLocality": 371.56454468888796,
+        "p95Locality": 729.9081861270566,
+        "maxLocality": 843.3596638892524
+      },
+      "135": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1134,
+        "occupiedHeight": 1134,
+        "medianLocality": 375.4646395133416,
+        "p95Locality": 734.8931883346825,
+        "maxLocality": 848.3385527926099
+      },
+      "140": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1144,
+        "occupiedHeight": 1144,
+        "medianLocality": 379.7660352365599,
+        "p95Locality": 739.8783909137197,
+        "maxLocality": 853.3176885739139
+      },
+      "145": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1154,
+        "occupiedHeight": 1154,
+        "medianLocality": 384.29304019499097,
+        "p95Locality": 744.9773815342129,
+        "maxLocality": 858.2970669366139
+      },
+      "150": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1164,
+        "occupiedHeight": 1164,
+        "medianLocality": 389.07372044190726,
+        "p95Locality": 751.7071117225614,
+        "maxLocality": 863.2766836830829
+      },
+      "155": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1174,
+        "occupiedHeight": 1174,
+        "medianLocality": 393.3961754992083,
+        "p95Locality": 757.136822112342,
+        "maxLocality": 868.2565347117917
+      },
+      "160": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1184,
+        "occupiedHeight": 1184,
+        "medianLocality": 395.50407777595956,
+        "p95Locality": 762.3702012376491,
+        "maxLocality": 873.2366160145805
+      }
+    },
+    "BQC Bouquet_Order__c 3-hop": {
+      "100": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1504,
+        "occupiedHeight": 1504,
+        "medianLocality": 373.87522553627053,
+        "p95Locality": 842.1042992837554,
+        "maxLocality": 1480
+      },
+      "105": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1524,
+        "occupiedHeight": 1524,
+        "medianLocality": 378.0031268736246,
+        "p95Locality": 853.3822347381437,
+        "maxLocality": 1500
+      },
+      "110": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1544,
+        "occupiedHeight": 1544,
+        "medianLocality": 382.15185932123615,
+        "p95Locality": 864.663571707365,
+        "maxLocality": 1520
+      },
+      "115": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1564,
+        "occupiedHeight": 1564,
+        "medianLocality": 386.32075175832614,
+        "p95Locality": 875.948178711557,
+        "maxLocality": 1540
+      },
+      "120": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 390.5091585296798,
+        "p95Locality": 887.2359309261141,
+        "maxLocality": 1560
+      },
+      "125": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1604,
+        "occupiedHeight": 1604,
+        "medianLocality": 393.98433416348416,
+        "p95Locality": 898.5267097679955,
+        "maxLocality": 1580
+      },
+      "130": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1624,
+        "occupiedHeight": 1624,
+        "medianLocality": 394.2728219986047,
+        "p95Locality": 909.820402512358,
+        "maxLocality": 1600
+      },
+      "135": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1644,
+        "occupiedHeight": 1644,
+        "medianLocality": 399.18003976912155,
+        "p95Locality": 921.1169019369604,
+        "maxLocality": 1620
+      },
+      "140": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1664,
+        "occupiedHeight": 1664,
+        "medianLocality": 404.0895323234832,
+        "p95Locality": 932.4161059920352,
+        "maxLocality": 1640
+      },
+      "145": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1684,
+        "occupiedHeight": 1684,
+        "medianLocality": 409.0012177448197,
+        "p95Locality": 943.7179174935347,
+        "maxLocality": 1660
+      },
+      "150": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1704,
+        "occupiedHeight": 1704,
+        "medianLocality": 413.91501796876065,
+        "p95Locality": 955.0222438378505,
+        "maxLocality": 1680
+      },
+      "155": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1724,
+        "occupiedHeight": 1724,
+        "medianLocality": 418.83085856156004,
+        "p95Locality": 966.3289967362825,
+        "maxLocality": 1700
+      },
+      "160": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1744,
+        "occupiedHeight": 1744,
+        "medianLocality": 423.7486685132445,
+        "p95Locality": 977.6380919676869,
+        "maxLocality": 1720
+      }
+    },
+    "PBIM Maintenance_Request__c 2-hop": {
+      "100": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1062.2404846021188,
+        "occupiedHeight": 1064,
+        "medianLocality": 436.73816920072943,
+        "p95Locality": 734.3460547414179,
+        "maxLocality": 934.305247877798
+      },
+      "105": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1072.2235661848315,
+        "occupiedHeight": 1074,
+        "medianLocality": 441.16623627253375,
+        "p95Locality": 739.3202300088783,
+        "maxLocality": 944.033818881037
+      },
+      "110": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1082.2066477675442,
+        "occupiedHeight": 1084,
+        "medianLocality": 445.5955023984992,
+        "p95Locality": 745.0324412535738,
+        "maxLocality": 953.7624281938703
+      },
+      "115": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1092.189729350257,
+        "occupiedHeight": 1094,
+        "medianLocality": 450.0259321744675,
+        "p95Locality": 750.3578203656002,
+        "maxLocality": 963.4910746558338
+      },
+      "120": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855,
+        "maxLocality": 973.2197571528596
+      },
+      "125": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1112.1558925156824,
+        "occupiedHeight": 1114,
+        "medianLocality": 459.54469483725796,
+        "p95Locality": 760.3221836571756,
+        "maxLocality": 982.9484746149828
+      },
+      "130": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1122.138974098395,
+        "occupiedHeight": 1124,
+        "medianLocality": 464.951103011814,
+        "p95Locality": 765.3047139619276,
+        "maxLocality": 992.6772260141784
+      },
+      "135": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1132.1220556811077,
+        "occupiedHeight": 1134,
+        "medianLocality": 466.84876780608715,
+        "p95Locality": 770.2874706920376,
+        "maxLocality": 1002.4060103623277
+      },
+      "140": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1142.1051372638203,
+        "occupiedHeight": 1144,
+        "medianLocality": 470.61313363980656,
+        "p95Locality": 775.2704494817159,
+        "maxLocality": 1012.1348267093009
+      },
+      "145": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1152.088218846533,
+        "occupiedHeight": 1154,
+        "medianLocality": 475.23712045972366,
+        "p95Locality": 780.2536460764936,
+        "maxLocality": 1021.8636741411478
+      },
+      "150": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1162.0713004292456,
+        "occupiedHeight": 1164,
+        "medianLocality": 479.8686484564513,
+        "p95Locality": 785.2370563297034,
+        "maxLocality": 1031.592551778394
+      },
+      "155": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1172.0543820119583,
+        "occupiedHeight": 1174,
+        "medianLocality": 484.50750136607024,
+        "p95Locality": 790.2206761990919,
+        "maxLocality": 1041.3214587744278
+      },
+      "160": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1182.037463594671,
+        "occupiedHeight": 1184,
+        "medianLocality": 489.1534707927196,
+        "p95Locality": 795.7963440111712,
+        "maxLocality": 1051.050394313983
+      }
+    },
+    "PBIM Maintenance_Request__c 3-hop": {
+      "100": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1504,
+        "occupiedHeight": 1504,
+        "medianLocality": 467.64323658992305,
+        "p95Locality": 876.9555383932329,
+        "maxLocality": 1258.4175847025608
+      },
+      "105": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1524,
+        "occupiedHeight": 1524,
+        "medianLocality": 473.83985882723994,
+        "p95Locality": 888.9420187177848,
+        "maxLocality": 1273.3998298975564
+      },
+      "110": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1544,
+        "occupiedHeight": 1544,
+        "medianLocality": 479.2138683480315,
+        "p95Locality": 900.2954116714163,
+        "maxLocality": 1288.3820863498856
+      },
+      "115": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1564,
+        "occupiedHeight": 1564,
+        "medianLocality": 484.5842260036671,
+        "p95Locality": 910.8262266654174,
+        "maxLocality": 1303.3643536713369
+      },
+      "120": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613,
+        "maxLocality": 1318.3466314913458
+      },
+      "125": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1604,
+        "occupiedHeight": 1604,
+        "medianLocality": 495.3693837261049,
+        "p95Locality": 931.8485586258757,
+        "maxLocality": 1333.3289194560034
+      },
+      "130": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1624,
+        "occupiedHeight": 1624,
+        "medianLocality": 499.8862311579064,
+        "p95Locality": 942.3551933910371,
+        "maxLocality": 1348.3112172271315
+      },
+      "135": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1644,
+        "occupiedHeight": 1644,
+        "medianLocality": 503.38561865674336,
+        "p95Locality": 952.6964714027941,
+        "maxLocality": 1363.2935244814169
+      },
+      "140": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1664,
+        "occupiedHeight": 1664,
+        "medianLocality": 508.11282651985596,
+        "p95Locality": 961.9854714822651,
+        "maxLocality": 1378.275840909604
+      },
+      "145": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1684,
+        "occupiedHeight": 1684,
+        "medianLocality": 513.3268127658603,
+        "p95Locality": 970.930022976585,
+        "maxLocality": 1393.258166215741
+      },
+      "150": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1704,
+        "occupiedHeight": 1704,
+        "medianLocality": 517.53950357392,
+        "p95Locality": 979.8746263426915,
+        "maxLocality": 1408.2405001164686
+      },
+      "155": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1724,
+        "occupiedHeight": 1724,
+        "medianLocality": 521.2358482754832,
+        "p95Locality": 988.8504389959085,
+        "maxLocality": 1423.2228423403594
+      },
+      "160": {
+        "totalOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "occupiedWidth": 1744,
+        "occupiedHeight": 1744,
+        "medianLocality": 526.0842479494046,
+        "p95Locality": 998.7690458455304,
+        "maxLocality": 1438.2051926272977
+      }
+    }
+  },
+  "bqcRing1Audit": {
+    "1": {
+      "T1": 1,
+      "totalOverlaps": 2,
+      "sameTrackOverlaps": 2,
+      "crossTrackOverlaps": 0,
+      "crossRingOverlaps": 0,
+      "focalOverlaps": 0,
+      "overlappingPairs": [
+        {
+          "nodeA": "ApexClass:BouquetPersistenceHandler",
+          "nodeB": "ApexClass:BouquetOrderListController",
+          "distance": 32.27015120523603,
+          "dx": 22.300696175097073,
+          "dy": 23.32469954607791,
+          "type": "SAME_TRACK"
+        },
+        {
+          "nodeA": "ApexClass:BouquetOrderDomainTest",
+          "nodeB": "ApexClass:BouquetTriggerTestDataFactory",
+          "distance": 32.27015120523607,
+          "dx": 22.300696175097073,
+          "dy": 23.324699546077966,
+          "type": "SAME_TRACK"
+        }
+      ],
+      "occupiedWidth": 1344,
+      "occupiedHeight": 1344,
+      "occupiedArea": 1806336,
+      "medianLocality": 293.54179934162875,
+      "p95Locality": 716.1300597339074,
+      "maxLocality": 1320
+    },
+    "2": {
+      "T1": 2,
+      "totalOverlaps": 0,
+      "sameTrackOverlaps": 0,
+      "crossTrackOverlaps": 0,
+      "crossRingOverlaps": 0,
+      "focalOverlaps": 0,
+      "overlappingPairs": [],
+      "occupiedWidth": 1424,
+      "occupiedHeight": 1424,
+      "occupiedArea": 2027776,
+      "medianLocality": 326.0313556532366,
+      "p95Locality": 773.0233657295596,
+      "maxLocality": 1400
+    },
+    "3": {
+      "T1": 3,
+      "totalOverlaps": 0,
+      "sameTrackOverlaps": 0,
+      "crossTrackOverlaps": 0,
+      "crossRingOverlaps": 0,
+      "focalOverlaps": 0,
+      "overlappingPairs": [],
+      "occupiedWidth": 1504,
+      "occupiedHeight": 1504,
+      "occupiedArea": 2262016,
+      "medianLocality": 356.23463761334006,
+      "p95Locality": 830.0683590491512,
+      "maxLocality": 1480
+    },
+    "4": {
+      "T1": 4,
+      "totalOverlaps": 0,
+      "sameTrackOverlaps": 0,
+      "crossTrackOverlaps": 0,
+      "crossRingOverlaps": 0,
+      "focalOverlaps": 0,
+      "overlappingPairs": [],
+      "occupiedWidth": 1584,
+      "occupiedHeight": 1584,
+      "occupiedArea": 2509056,
+      "medianLocality": 390.5091585296798,
+      "p95Locality": 887.2359309261141,
+      "maxLocality": 1560
+    }
+  },
+  "sparseThresholdSweep": {
+    "CST AccountController 2-hop": {
+      "20": {
+        "sparseThreshold": 20,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 485.88739771207634,
+        "p95Locality": 739.2621216826585
+      },
+      "25": {
+        "sparseThreshold": 25,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 485.88739771207634,
+        "p95Locality": 739.2621216826585
+      },
+      "30": {
+        "sparseThreshold": 30,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 485.88739771207634,
+        "p95Locality": 739.2621216826585
+      },
+      "35": {
+        "sparseThreshold": 35,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 623.3204035098047,
+        "occupiedHeight": 622.6415767719254,
+        "medianLocality": 429.72992471787427,
+        "p95Locality": 583.0869409941251
+      },
+      "40": {
+        "sparseThreshold": 40,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 623.3204035098047,
+        "occupiedHeight": 622.6415767719254,
+        "medianLocality": 429.72992471787427,
+        "p95Locality": 583.0869409941251
+      },
+      "45": {
+        "sparseThreshold": 45,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 623.3204035098047,
+        "occupiedHeight": 622.6415767719254,
+        "medianLocality": 429.72992471787427,
+        "p95Locality": 583.0869409941251
+      },
+      "50": {
+        "sparseThreshold": 50,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 623.3204035098047,
+        "occupiedHeight": 622.6415767719254,
+        "medianLocality": 429.72992471787427,
+        "p95Locality": 583.0869409941251
+      }
+    },
+    "CST Org_Hierarchy 3-hop": {
+      "20": {
+        "sparseThreshold": 20,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1572.6258435929642,
+        "occupiedHeight": 1561.3346175923207,
+        "medianLocality": 439.120468358637,
+        "p95Locality": 976.4601072842783
+      },
+      "25": {
+        "sparseThreshold": 25,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1572.6258435929642,
+        "occupiedHeight": 1561.3346175923207,
+        "medianLocality": 439.120468358637,
+        "p95Locality": 976.4601072842783
+      },
+      "30": {
+        "sparseThreshold": 30,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656
+      },
+      "35": {
+        "sparseThreshold": 35,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656
+      },
+      "40": {
+        "sparseThreshold": 40,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656
+      },
+      "45": {
+        "sparseThreshold": 45,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656
+      },
+      "50": {
+        "sparseThreshold": 50,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656
+      }
+    },
+    "BQC Bouquet_Order__c 2-hop": {
+      "20": {
+        "sparseThreshold": 20,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1104,
+        "occupiedHeight": 1104,
+        "medianLocality": 363.91984445998344,
+        "p95Locality": 719.9387991785688
+      },
+      "25": {
+        "sparseThreshold": 25,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1104,
+        "occupiedHeight": 1104,
+        "medianLocality": 363.91984445998344,
+        "p95Locality": 719.9387991785688
+      },
+      "30": {
+        "sparseThreshold": 30,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1104,
+        "occupiedHeight": 1104,
+        "medianLocality": 363.91984445998344,
+        "p95Locality": 719.9387991785688
+      },
+      "35": {
+        "sparseThreshold": 35,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 281.0394569958389,
+        "p95Locality": 554.2716789089766
+      },
+      "40": {
+        "sparseThreshold": 40,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 281.0394569958389,
+        "p95Locality": 554.2716789089766
+      },
+      "45": {
+        "sparseThreshold": 45,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 281.0394569958389,
+        "p95Locality": 554.2716789089766
+      },
+      "50": {
+        "sparseThreshold": 50,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "medianLocality": 281.0394569958389,
+        "p95Locality": 554.2716789089766
+      }
+    },
+    "BQC Bouquet_Order__c 3-hop": {
+      "20": {
+        "sparseThreshold": 20,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 390.5091585296798,
+        "p95Locality": 887.2359309261141
+      },
+      "25": {
+        "sparseThreshold": 25,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 390.5091585296798,
+        "p95Locality": 887.2359309261141
+      },
+      "30": {
+        "sparseThreshold": 30,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 390.5091585296798,
+        "p95Locality": 887.2359309261141
+      },
+      "35": {
+        "sparseThreshold": 35,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.9125118646198,
+        "occupiedHeight": 1101.826118757429,
+        "medianLocality": 289.69967764919977,
+        "p95Locality": 706.8876383634224
+      },
+      "40": {
+        "sparseThreshold": 40,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.9125118646198,
+        "occupiedHeight": 1101.826118757429,
+        "medianLocality": 289.69967764919977,
+        "p95Locality": 706.8876383634224
+      },
+      "45": {
+        "sparseThreshold": 45,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.9125118646198,
+        "occupiedHeight": 1101.826118757429,
+        "medianLocality": 289.69967764919977,
+        "p95Locality": 706.8876383634224
+      },
+      "50": {
+        "sparseThreshold": 50,
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.9125118646198,
+        "occupiedHeight": 1101.826118757429,
+        "medianLocality": 289.69967764919977,
+        "p95Locality": 706.8876383634224
+      }
+    },
+    "PBIM Maintenance_Request__c 2-hop": {
+      "20": {
+        "sparseThreshold": 20,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      },
+      "25": {
+        "sparseThreshold": 25,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      },
+      "30": {
+        "sparseThreshold": 30,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      },
+      "35": {
+        "sparseThreshold": 35,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      },
+      "40": {
+        "sparseThreshold": 40,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      },
+      "45": {
+        "sparseThreshold": 45,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      },
+      "50": {
+        "sparseThreshold": 50,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855
+      }
+    },
+    "PBIM Maintenance_Request__c 3-hop": {
+      "20": {
+        "sparseThreshold": 20,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      },
+      "25": {
+        "sparseThreshold": 25,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      },
+      "30": {
+        "sparseThreshold": 30,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      },
+      "35": {
+        "sparseThreshold": 35,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      },
+      "40": {
+        "sparseThreshold": 40,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      },
+      "45": {
+        "sparseThreshold": 45,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      },
+      "50": {
+        "sparseThreshold": 50,
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613
+      }
+    }
+  },
+  "candidateComparison": {
+    "CST AccountController 2-hop": {
+      "cand1_Phase11": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 683.2524438607852,
+        "occupiedHeight": 682.5057344491179,
+        "occupiedArea": 466323.7110113599,
+        "medianLocality": 461.7653093847017,
+        "p95Locality": 641.3956350935375,
+        "maxLocality": 659.2524438607852
+      },
+      "cand2_MinGap120_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 864,
+        "occupiedHeight": 864,
+        "occupiedArea": 746496,
+        "medianLocality": 485.88739771207634,
+        "p95Locality": 739.2621216826585,
+        "maxLocality": 800
+      },
+      "cand3_MinGap100_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 824,
+        "occupiedHeight": 824,
+        "occupiedArea": 678976,
+        "medianLocality": 456.84475625519156,
+        "p95Locality": 702.3152803276643,
+        "maxLocality": 760
+      }
+    },
+    "CST Org_Hierarchy 3-hop": {
+      "cand1_Phase11": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1453.5007787011978,
+        "occupiedHeight": 1443.0781085467574,
+        "occupiedArea": 2097515.1544993636,
+        "medianLocality": 376.43060449437434,
+        "p95Locality": 821.3180570531599,
+        "maxLocality": 1287.181844910691
+      },
+      "cand2_MinGap120_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1334.3757138094315,
+        "occupiedHeight": 1324.8215995011944,
+        "occupiedArea": 1767809.7675045591,
+        "medianLocality": 350.414026495262,
+        "p95Locality": 748.4072246974656,
+        "maxLocality": 1170.2181886472474
+      },
+      "cand3_MinGap100_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1274.8131813635482,
+        "occupiedHeight": 1265.6933449784128,
+        "occupiedArea": 1613522.5597426014,
+        "medianLocality": 334.431619134045,
+        "p95Locality": 711.090538024677,
+        "maxLocality": 1111.7385459333927
+      }
+    },
+    "BQC Bouquet_Order__c 2-hop": {
+      "cand1_Phase11": {
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 924,
+        "occupiedHeight": 924,
+        "occupiedArea": 853776,
+        "medianLocality": 300.4463713396689,
+        "p95Locality": 584.1345567694143,
+        "maxLocality": 636.3961030678928
+      },
+      "cand2_MinGap120_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1104,
+        "occupiedHeight": 1104,
+        "occupiedArea": 1218816,
+        "medianLocality": 363.91984445998344,
+        "p95Locality": 719.9387991785688,
+        "maxLocality": 833.402644414846
+      },
+      "cand3_MinGap100_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1064,
+        "occupiedHeight": 1064,
+        "occupiedArea": 1132096,
+        "medianLocality": 349.7564002966732,
+        "p95Locality": 700.0026159559034,
+        "maxLocality": 813.4917687365923
+      }
+    },
+    "BQC Bouquet_Order__c 3-hop": {
+      "cand1_Phase11": {
+        "totalOverlaps": 2,
+        "sameTrackOverlaps": 2,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1222.7916798495776,
+        "occupiedHeight": 1221.5845763971433,
+        "occupiedArea": 1493743.4562509975,
+        "medianLocality": 316.8476580564845,
+        "p95Locality": 774.7438878620576,
+        "maxLocality": 1198.7916798495778
+      },
+      "cand2_MinGap120_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "occupiedArea": 2509056,
+        "medianLocality": 390.5091585296798,
+        "p95Locality": 887.2359309261141,
+        "maxLocality": 1560
+      },
+      "cand3_MinGap100_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1524,
+        "occupiedHeight": 1524,
+        "occupiedArea": 2322576,
+        "medianLocality": 373.87522553627053,
+        "p95Locality": 850.3526938998873,
+        "maxLocality": 1500
+      }
+    },
+    "PBIM Maintenance_Request__c 2-hop": {
+      "cand1_Phase11": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1162.0713004292456,
+        "occupiedHeight": 1164,
+        "occupiedArea": 1352650.993699642,
+        "medianLocality": 479.8686484564513,
+        "p95Locality": 785.2370563297034,
+        "maxLocality": 1031.592551778394
+      },
+      "cand2_MinGap120_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1102.1728109329697,
+        "occupiedHeight": 1104,
+        "occupiedArea": 1216798.7832699986,
+        "medianLocality": 454.4574915677546,
+        "p95Locality": 755.33988425855,
+        "maxLocality": 973.2197571528596
+      },
+      "cand3_MinGap100_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1062.2404846021188,
+        "occupiedHeight": 1064,
+        "occupiedArea": 1130223.8756166545,
+        "medianLocality": 436.73816920072943,
+        "p95Locality": 734.3460547414179,
+        "maxLocality": 934.305247877798
+      }
+    },
+    "PBIM Maintenance_Request__c 3-hop": {
+      "cand1_Phase11": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1704,
+        "occupiedHeight": 1704,
+        "occupiedArea": 2903616,
+        "medianLocality": 517.53950357392,
+        "p95Locality": 979.8746263426915,
+        "maxLocality": 1408.2405001164686
+      },
+      "cand2_MinGap120_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1584,
+        "occupiedHeight": 1584,
+        "occupiedArea": 2509056,
+        "medianLocality": 490.0107279566094,
+        "p95Locality": 921.3370374719613,
+        "maxLocality": 1318.3466314913458
+      },
+      "cand3_MinGap100_Thresh30": {
+        "totalOverlaps": 0,
+        "sameTrackOverlaps": 0,
+        "crossRingOverlaps": 0,
+        "occupiedWidth": 1524,
+        "occupiedHeight": 1524,
+        "occupiedArea": 2322576,
+        "medianLocality": 470.1032090902883,
+        "p95Locality": 883.2323744345526,
+        "maxLocality": 1268.4088314383914
+      }
+    }
+  },
+  "harnessPerformance": {
+    "cst": 1.5912576599999921,
+    "bqc": 0.9512082999999985,
+    "pbim": 2.4734501199999976
+  }
+}

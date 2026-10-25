@@ -141,4 +141,34 @@ describe('ImpactControls component', () => {
       depth: 2
     });
   });
+
+  it('allows exiting active impact mode even when neither origin nor selected node exists (Fix C 1B5-10)', () => {
+    const onExitImpact = vi.fn();
+    const onShowImpact = vi.fn();
+
+    // Active impact state with null originNodeId, null impactResult, and null selectedNode
+    const activeDisconnectedState: ImpactState = {
+      enabled: true,
+      originNodeId: null,
+      depth: 'ALL',
+    };
+
+    render(
+      <ImpactControls
+        impactState={activeDisconnectedState}
+        impactResult={null}
+        onImpactChange={vi.fn()}
+        onExitImpact={onExitImpact}
+        selectedNode={null}
+        onShowImpact={onShowImpact}
+      />
+    );
+
+    const toggleBtn = screen.getByRole('button', { name: /Exit Impact/i });
+    expect(toggleBtn.hasAttribute('disabled')).toBe(false);
+
+    fireEvent.click(toggleBtn);
+    expect(onExitImpact).toHaveBeenCalledTimes(1);
+    expect(onShowImpact).not.toHaveBeenCalled();
+  });
 });

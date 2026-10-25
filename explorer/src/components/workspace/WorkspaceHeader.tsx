@@ -35,6 +35,41 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
     'governance',
   ];
 
+  const handleTablistKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const key = e.key;
+    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
+      return;
+    }
+    const container = e.currentTarget;
+    const tabs = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
+    if (tabs.length === 0) return;
+
+    const activeElement = document.activeElement as HTMLButtonElement;
+    let currentIndex = tabs.indexOf(activeElement);
+    if (currentIndex === -1) {
+      currentIndex = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+      if (currentIndex === -1) currentIndex = 0;
+    }
+
+    let nextIndex = currentIndex;
+    if (key === 'ArrowRight' || key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (key === 'Home') {
+      nextIndex = 0;
+    } else if (key === 'End') {
+      nextIndex = tabs.length - 1;
+    }
+
+    e.preventDefault();
+    const targetTab = tabs[nextIndex];
+    if (targetTab) {
+      targetTab.focus();
+      targetTab.click();
+    }
+  };
+
   return (
     <div
       className={`workspace-header-panel ${className}`}
@@ -163,9 +198,13 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
 
           {isSidebarCollapsed && onExpandSidebar && (
             <button
+              type="button"
               className="ui-btn ui-btn-secondary ui-btn-sm"
               onClick={onExpandSidebar}
               title="Expand Component Inventory Sidebar"
+              aria-label="Expand Component Inventory Sidebar"
+              aria-expanded="false"
+              aria-controls="component-sidebar-panel"
               data-testid="expand-sidebar-btn"
               style={{
                 fontSize: '11px',
@@ -183,6 +222,7 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
         className="domain-lenses-bar"
         role="tablist"
         aria-label={`${currentDomainDef.label} Lenses`}
+        onKeyDown={handleTablistKeyDown}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -203,6 +243,7 @@ export const WorkspaceHeader: React.FC<WorkspaceHeaderProps> = ({
               type="button"
               role="tab"
               aria-selected={isActive}
+              tabIndex={isActive ? 0 : -1}
               aria-label={`${def.label} view: ${def.title}`}
               className={`lens-switch-btn ${isActive ? 'active' : ''}`}
               onClick={() => navigateToView(mode)}

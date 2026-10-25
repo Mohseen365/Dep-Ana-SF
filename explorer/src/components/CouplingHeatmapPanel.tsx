@@ -511,11 +511,24 @@ export const CouplingHeatmapPanel: React.FC<CouplingHeatmapPanelProps> = ({
           <canvas
             ref={canvasRef}
             data-testid="coupling-heatmap-canvas"
+            role="img"
+            aria-label="Feature Coupling Heatmap Matrix"
+            aria-describedby="heatmap-matrix-description"
+            tabIndex={0}
             onMouseMove={handleCanvasMouseMove}
             onMouseLeave={() => setHoveredCellInfo(null)}
             onClick={handleCanvasClick}
+            onKeyDown={(e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && hoveredCellInfo) {
+                e.preventDefault();
+                handleCanvasClick();
+              }
+            }}
             style={{ cursor: hoveredCellInfo ? 'pointer' : 'default', display: 'block' }}
           />
+          <div id="heatmap-matrix-description" className="sr-only" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0 }}>
+            Interactive feature coupling heatmap matrix displaying inter-feature coupling weights across {features.length} features. Active metric: {metricLabels[metricMode].title}. Max metric value: {maxMetricWeight}.
+          </div>
         </div>
 
         {/* Side Inspector Pane */}

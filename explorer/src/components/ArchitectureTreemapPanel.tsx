@@ -144,12 +144,25 @@ export const ArchitectureTreemapPanel: React.FC<ArchitectureTreemapPanelProps> =
         }}
       >
         <div
+          tabIndex={0}
+          role="button"
+          aria-label={`${node.displayName}, ${isComponent ? 'component' : 'group'}, ${metricMode}: ${node.value}`}
           onClick={(e) => {
             e.stopPropagation();
             if (isComponent && node.sourceNodeId) {
               handleSelectComponent(node.sourceNodeId);
             } else if (!isComponent && node.childIds.length > 0) {
               setActiveSubtreeId(node.id);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (isComponent && node.sourceNodeId) {
+                handleSelectComponent(node.sourceNodeId);
+              } else if (!isComponent && node.childIds.length > 0) {
+                setActiveSubtreeId(node.id);
+              }
             }
           }}
           onMouseEnter={() => setHoveredNode(node)}

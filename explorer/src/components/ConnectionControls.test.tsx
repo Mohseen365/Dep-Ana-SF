@@ -126,4 +126,79 @@ describe('ConnectionControls component', () => {
       depth: 'ALL',
     });
   });
+
+  it('allows exiting active connection mode even when neither origin nor selected node exists (Fix C 1B5-10)', () => {
+    const onExitConnection = vi.fn();
+    const onShowConnection = vi.fn();
+
+    // Active connection state with null originNodeId and null selectedNode
+    const activeDisconnectedState = {
+      enabled: true,
+      originNodeId: null,
+      direction: 'both' as const,
+      depth: 2 as const,
+    };
+
+    render(
+      <ConnectionControls
+        connectionState={activeDisconnectedState}
+        connectionResult={null}
+        onConnectionChange={vi.fn()}
+        onExitConnection={onExitConnection}
+        selectedNode={null}
+        onShowConnection={onShowConnection}
+      />
+    );
+
+    const toggleBtn = screen.getByTestId('connection-toggle-btn');
+    expect(toggleBtn).not.toBeDisabled();
+    expect(toggleBtn).toHaveTextContent('Exit Connections');
+
+    fireEvent.click(toggleBtn);
+    expect(onExitConnection).toHaveBeenCalledTimes(1);
+    expect(onShowConnection).not.toHaveBeenCalled();
+  });
+
+  it('handles normal entry and exit state transitions correctly', () => {
+    const onShowConnection = vi.fn();
+    const onExitConnection = vi.fn();
+
+    // 1. Inactive with selected node -> Entry available
+    const { rerender } = render(
+      <ConnectionControls
+        connectionState={{ enabled: false, originNodeId: null, direction: 'both', depth: 2 }}
+        connectionResult={null}
+        onConnectionChange={vi.fn()}
+        onExitConnection={onExitConnection}
+        selectedNode={sampleNode}
+        onShowConnection={onShowConnection}
+      />
+    );
+
+    const entryBtn = screen.getByTestId('connection-toggle-btn');
+    expect(entryBtn).not.toBeDisabled();
+    expect(entryBtn).toHaveTextContent('Analyze Connections');
+
+    fireEvent.click(entryBtn);
+    expect(onShowConnection).toHaveBeenCalledWith('ApexClass:Service');
+
+    // 2. Active with valid origin -> Exit available
+    rerender(
+      <ConnectionControls
+        connectionState={defaultConnectionState}
+        connectionResult={null}
+        onConnectionChange={vi.fn()}
+        onExitConnection={onExitConnection}
+        selectedNode={sampleNode}
+        onShowConnection={onShowConnection}
+      />
+    );
+
+    const exitBtn = screen.getByTestId('connection-toggle-btn');
+    expect(exitBtn).not.toBeDisabled();
+    expect(exitBtn).toHaveTextContent('Exit Connections');
+
+    fireEvent.click(exitBtn);
+    expect(onExitConnection).toHaveBeenCalledTimes(1);
+  });
 });

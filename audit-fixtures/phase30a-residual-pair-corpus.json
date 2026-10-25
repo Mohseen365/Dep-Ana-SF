@@ -1,0 +1,910 @@
+{
+  "pbim": {
+    "R4_Baseline": {
+      "counts": {
+        "total": 15,
+        "sameRow": 15,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:CommissionerTriggerTest",
+            "nodeB": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "labelA": "CommissionerTriggerTest",
+            "labelB": "ContractorAssignmentTriggerHandlerTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 4,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "nodeB": "Field:Contractor_Assignment__c.Maintenance_Request__c",
+            "labelA": "ContractorAssignmentTriggerHandlerTest",
+            "labelB": "Maintenance_Request__c",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 3.949999999999932,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementDashboardControllerTest",
+            "nodeB": "ApexClass:ManagementDashboardController",
+            "labelA": "ManagementDashboardControllerTest",
+            "labelB": "ManagementDashboardController",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 5.199999999999932,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementApprovalServiceTest",
+            "nodeB": "ApexClass:EngineerAssignmentHelper",
+            "labelA": "ManagementApprovalServiceTest",
+            "labelB": "EngineerAssignmentHelper",
+            "dxCenterModel": 176,
+            "dyCenterModel": 0,
+            "overlapX": 0.5,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementEscalationServiceTest",
+            "nodeB": "ApexClass:ManagementEscalationService",
+            "labelA": "ManagementEscalationServiceTest",
+            "labelB": "ManagementEscalationService",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 3.4500000000000455,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": []
+      }
+    },
+    "30A-Underscore": {
+      "counts": {
+        "total": 119,
+        "sameRow": 15,
+        "adjacentRow": 104,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:CommissionerTriggerTest",
+            "nodeB": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "labelA": "CommissionerTriggerTest",
+            "labelB": "ContractorAssignmentTriggerHandlerTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 4,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "nodeB": "Field:Contractor_Assignment__c.Maintenance_Request__c",
+            "labelA": "ContractorAssignmentTriggerHandlerTest",
+            "labelB": "Maintenance_\nRequest_\n_\nc",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 0.599999999999909,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementDashboardControllerTest",
+            "nodeB": "ApexClass:ManagementDashboardController",
+            "labelA": "ManagementDashboardControllerTest",
+            "labelB": "ManagementDashboardController",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 5.2000000000000455,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementApprovalServiceTest",
+            "nodeB": "ApexClass:EngineerAssignmentHelper",
+            "labelA": "ManagementApprovalServiceTest",
+            "labelB": "EngineerAssignmentHelper",
+            "dxCenterModel": 176,
+            "dyCenterModel": 0,
+            "overlapX": 0.5,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementEscalationServiceTest",
+            "nodeB": "ApexClass:ManagementEscalationService",
+            "labelA": "ManagementEscalationServiceTest",
+            "labelB": "ManagementEscalationService",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 3.449999999999932,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": [
+          {
+            "nodeA": "Field:Maintenance_Approval__c.Maintenance_Request__c",
+            "nodeB": "Field:Maintenance_Approval__c.Approval_Level__c",
+            "labelA": "Maintenance_\nRequest_\n_\nc",
+            "labelB": "Approval_\nLevel_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.5,
+            "overlapY": 1.1000000000000227,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Object:Maintenance_Approval__c",
+            "nodeB": "Field:Maintenance_Approval__c.Decision_Date__c",
+            "labelA": "Maintenance_\nApproval_\n_\nc",
+            "labelB": "Decision_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.2999999999999545,
+            "overlapY": 1.1000000000000227,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Infrastructure_Asset__c",
+            "nodeB": "Field:Maintenance_Request__c.Due_Date__c",
+            "labelA": "Infrastructure_\nAsset_\n_\nc",
+            "labelB": "Due_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Infrastructure_Asset__c",
+            "nodeB": "Field:Maintenance_Request__c.SLA_Status__c",
+            "labelA": "Infrastructure_\nAsset_\n_\nc",
+            "labelB": "SLA_\nStatus_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Estimated_Repair_Cost__c",
+            "nodeB": "Field:Maintenance_Request__c.Due_Date__c",
+            "labelA": "Estimated_\nRepair_\nCost_\n_\nc",
+            "labelB": "Due_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          }
+        ]
+      }
+    },
+    "30A-Dot": {
+      "counts": {
+        "total": 15,
+        "sameRow": 15,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:CommissionerTriggerTest",
+            "nodeB": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "labelA": "CommissionerTriggerTest",
+            "labelB": "ContractorAssignmentTriggerHandlerTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 4,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "nodeB": "Field:Contractor_Assignment__c.Maintenance_Request__c",
+            "labelA": "ContractorAssignmentTriggerHandlerTest",
+            "labelB": "Maintenance_Request__c",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 3.949999999999932,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementDashboardControllerTest",
+            "nodeB": "ApexClass:ManagementDashboardController",
+            "labelA": "ManagementDashboardControllerTest",
+            "labelB": "ManagementDashboardController",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 5.199999999999932,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementApprovalServiceTest",
+            "nodeB": "ApexClass:EngineerAssignmentHelper",
+            "labelA": "ManagementApprovalServiceTest",
+            "labelB": "EngineerAssignmentHelper",
+            "dxCenterModel": 176,
+            "dyCenterModel": 0,
+            "overlapX": 0.5,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementEscalationServiceTest",
+            "nodeB": "ApexClass:ManagementEscalationService",
+            "labelA": "ManagementEscalationServiceTest",
+            "labelB": "ManagementEscalationService",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 3.4500000000000455,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": []
+      }
+    },
+    "30A-Both": {
+      "counts": {
+        "total": 119,
+        "sameRow": 15,
+        "adjacentRow": 104,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:CommissionerTriggerTest",
+            "nodeB": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "labelA": "CommissionerTriggerTest",
+            "labelB": "ContractorAssignmentTriggerHandlerTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 4,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ContractorAssignmentTriggerHandlerTest",
+            "nodeB": "Field:Contractor_Assignment__c.Maintenance_Request__c",
+            "labelA": "ContractorAssignmentTriggerHandlerTest",
+            "labelB": "Maintenance_\nRequest_\n_\nc",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 0.599999999999909,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementDashboardControllerTest",
+            "nodeB": "ApexClass:ManagementDashboardController",
+            "labelA": "ManagementDashboardControllerTest",
+            "labelB": "ManagementDashboardController",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 5.2000000000000455,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementApprovalServiceTest",
+            "nodeB": "ApexClass:EngineerAssignmentHelper",
+            "labelA": "ManagementApprovalServiceTest",
+            "labelB": "EngineerAssignmentHelper",
+            "dxCenterModel": 176,
+            "dyCenterModel": 0,
+            "overlapX": 0.5,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:ManagementEscalationServiceTest",
+            "nodeB": "ApexClass:ManagementEscalationService",
+            "labelA": "ManagementEscalationServiceTest",
+            "labelB": "ManagementEscalationService",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 3.449999999999932,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": [
+          {
+            "nodeA": "Field:Maintenance_Approval__c.Maintenance_Request__c",
+            "nodeB": "Field:Maintenance_Approval__c.Approval_Level__c",
+            "labelA": "Maintenance_\nRequest_\n_\nc",
+            "labelB": "Approval_\nLevel_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.5,
+            "overlapY": 1.1000000000000227,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Object:Maintenance_Approval__c",
+            "nodeB": "Field:Maintenance_Approval__c.Decision_Date__c",
+            "labelA": "Maintenance_\nApproval_\n_\nc",
+            "labelB": "Decision_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.2999999999999545,
+            "overlapY": 1.1000000000000227,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Infrastructure_Asset__c",
+            "nodeB": "Field:Maintenance_Request__c.Due_Date__c",
+            "labelA": "Infrastructure_\nAsset_\n_\nc",
+            "labelB": "Due_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Infrastructure_Asset__c",
+            "nodeB": "Field:Maintenance_Request__c.SLA_Status__c",
+            "labelA": "Infrastructure_\nAsset_\n_\nc",
+            "labelB": "SLA_\nStatus_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Estimated_Repair_Cost__c",
+            "nodeB": "Field:Maintenance_Request__c.Due_Date__c",
+            "labelA": "Estimated_\nRepair_\nCost_\n_\nc",
+            "labelB": "Due_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          }
+        ]
+      }
+    },
+    "30A-Chunk": {
+      "counts": {
+        "total": 118,
+        "sameRow": 0,
+        "adjacentRow": 118,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [],
+        "adjacentRow": [
+          {
+            "nodeA": "Field:Maintenance_Approval__c.Maintenance_Request__c",
+            "nodeB": "Field:Maintenance_Approval__c.Approval_Level__c",
+            "labelA": "Maintenance_\nRequest_\n_\nc",
+            "labelB": "Approval_\nLevel_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.5,
+            "overlapY": 1.1000000000000227,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Object:Maintenance_Approval__c",
+            "nodeB": "Field:Maintenance_Approval__c.Decision_Date__c",
+            "labelA": "Maintenance_\nApproval_\n_\nc",
+            "labelB": "Decision_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.2999999999999545,
+            "overlapY": 1.1000000000000227,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Infrastructure_Asset__c",
+            "nodeB": "Field:Maintenance_Request__c.Due_Date__c",
+            "labelA": "Infrastructu\nre_\nAsset_\n_\nc",
+            "labelB": "Due_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 2.300000000000182,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Infrastructure_Asset__c",
+            "nodeB": "Field:Maintenance_Request__c.SLA_Status__c",
+            "labelA": "Infrastructu\nre_\nAsset_\n_\nc",
+            "labelB": "SLA_\nStatus_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Maintenance_Request__c.Estimated_Repair_Cost__c",
+            "nodeB": "Field:Maintenance_Request__c.Due_Date__c",
+            "labelA": "Estimated_\nRepair_\nCost_\n_\nc",
+            "labelB": "Due_\nDate_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.400000000000091,
+            "overlapY": 1.1000000000001364,
+            "axisClass": "ADJACENT_ROW_2D"
+          }
+        ]
+      }
+    }
+  },
+  "cloud-spend-tracker": {
+    "R4_Baseline": {
+      "counts": {
+        "total": 7,
+        "sameRow": 7,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:SpendAnalyticsService",
+            "nodeB": "ApexClass:CsvParser",
+            "labelA": "SpendAnalyticsService",
+            "labelB": "CsvParser",
+            "dxCenterModel": 71.09000000000003,
+            "dyCenterModel": 0,
+            "overlapX": 3.1410000000000764,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:UserContactMappingServiceTest",
+            "nodeB": "ApexClass:SpendTrackerAccessContext",
+            "labelA": "UserContactMappingServiceTest",
+            "labelB": "SpendTrackerAccessContext",
+            "dxCenterModel": 159.9999999999999,
+            "dyCenterModel": 0,
+            "overlapX": 2.3500000000000227,
+            "overlapY": 7.550000000000068,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "Trigger:UserOrganizationRoleTrigger",
+            "nodeB": "ApexClass:CloudSpendTriggerHandlerTest",
+            "labelA": "UserOrganizationRoleTrigger",
+            "labelB": "CloudSpendTriggerHandlerTest",
+            "dxCenterModel": 176.5,
+            "dyCenterModel": 0,
+            "overlapX": 0.3000000000000682,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "Field:Contact.Is_Primary_Cloud_Contact__c",
+            "nodeB": "External:PermissionSetAssignment",
+            "labelA": "Is_Primary_Cloud_Contact__c",
+            "labelB": "PermissionSetAssignment",
+            "dxCenterModel": 167.5,
+            "dyCenterModel": 0,
+            "overlapX": 0.20000000000004547,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "External:PermissionSetAssignment",
+            "nodeB": "Field:Cloud_Service__c.Monthly_Cost_Estimate__c",
+            "labelA": "PermissionSetAssignment",
+            "labelB": "Monthly_Cost_Estimate__c",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 0.10000000000002274,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": []
+      }
+    },
+    "30A-Underscore": {
+      "counts": {
+        "total": 34,
+        "sameRow": 5,
+        "adjacentRow": 29,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:SpendAnalyticsService",
+            "nodeB": "ApexClass:CsvParser",
+            "labelA": "SpendAnalyticsService",
+            "labelB": "CsvParser",
+            "dxCenterModel": 71.09000000000003,
+            "dyCenterModel": 0,
+            "overlapX": 3.1410000000000764,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:UserContactMappingServiceTest",
+            "nodeB": "ApexClass:SpendTrackerAccessContext",
+            "labelA": "UserContactMappingServiceTest",
+            "labelB": "SpendTrackerAccessContext",
+            "dxCenterModel": 159.9999999999999,
+            "dyCenterModel": 0,
+            "overlapX": 2.3500000000000227,
+            "overlapY": 7.550000000000068,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "Trigger:UserOrganizationRoleTrigger",
+            "nodeB": "ApexClass:CloudSpendTriggerHandlerTest",
+            "labelA": "UserOrganizationRoleTrigger",
+            "labelB": "CloudSpendTriggerHandlerTest",
+            "dxCenterModel": 176.5,
+            "dyCenterModel": 0,
+            "overlapX": 0.3000000000000682,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:SpendTrackerAuthorizationService",
+            "nodeB": "ApexClass:UserOrganizationRoleTriggerTest",
+            "labelA": "SpendTrackerAuthorizationService",
+            "labelB": "UserOrganizationRoleTriggerTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 4.149999999999977,
+            "overlapY": 7.600000000000023,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:AdminHealthController",
+            "nodeB": "ApexClass:CloudSpendOrganizationRefactorTest",
+            "labelA": "AdminHealthController",
+            "labelB": "CloudSpendOrganizationRefactorTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 2.050000000000068,
+            "overlapY": 7.550000000000068,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": [
+          {
+            "nodeA": "Field:Account.Organization_Hierarchy_Root__c",
+            "nodeB": "ApexClass:create_usersTest",
+            "labelA": "Organization_\nHierarchy_\nRoot_\n_\nc",
+            "labelB": "create_\nusersTest",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.199999999999932,
+            "overlapY": 2.400000000000091,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Cloud_Account__c.Organization__c",
+            "nodeB": "Field:Cloud_Account__c.Owner_Email__c",
+            "labelA": "Organization_\n_\nc",
+            "labelB": "Owner_\nEmail_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.399999999999977,
+            "overlapY": 1.0999999999999943,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Account.Account_Status__c",
+            "nodeB": "Field:Account.Domain__c",
+            "labelA": "Account_\nStatus_\n_\nc",
+            "labelB": "Domain_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.699999999999932,
+            "overlapY": 1.099999999999909,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "External:BudgetAlertWrapper",
+            "nodeB": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
+            "labelA": "BudgetAlertWrapper",
+            "labelB": "Start_\nDate_\n_\nc",
+            "dxCenterModel": 41,
+            "dyCenterModel": 100,
+            "overlapX": 4.7999999999999545,
+            "overlapY": 1.1832644064063516,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "External:BusinessDataProvisioningQueueable",
+            "nodeB": "Field:Account.Tax_ID__c",
+            "labelA": "BusinessDataProvisioningQueueable",
+            "labelB": "Tax_\nID_\n_\nc",
+            "dxCenterModel": 7.5,
+            "dyCenterModel": 100,
+            "overlapX": 5.399999999999977,
+            "overlapY": 1.1832644064063516,
+            "axisClass": "ADJACENT_ROW_2D"
+          }
+        ]
+      }
+    },
+    "30A-Dot": {
+      "counts": {
+        "total": 7,
+        "sameRow": 7,
+        "adjacentRow": 0,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:SpendAnalyticsService",
+            "nodeB": "ApexClass:CsvParser",
+            "labelA": "SpendAnalyticsService",
+            "labelB": "CsvParser",
+            "dxCenterModel": 71.09000000000003,
+            "dyCenterModel": 0,
+            "overlapX": 3.1410000000000764,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:UserContactMappingServiceTest",
+            "nodeB": "ApexClass:SpendTrackerAccessContext",
+            "labelA": "UserContactMappingServiceTest",
+            "labelB": "SpendTrackerAccessContext",
+            "dxCenterModel": 159.9999999999999,
+            "dyCenterModel": 0,
+            "overlapX": 2.3500000000000227,
+            "overlapY": 7.550000000000068,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "Trigger:UserOrganizationRoleTrigger",
+            "nodeB": "ApexClass:CloudSpendTriggerHandlerTest",
+            "labelA": "UserOrganizationRoleTrigger",
+            "labelB": "CloudSpendTriggerHandlerTest",
+            "dxCenterModel": 176.5,
+            "dyCenterModel": 0,
+            "overlapX": 0.3000000000000682,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "Field:Contact.Is_Primary_Cloud_Contact__c",
+            "nodeB": "External:PermissionSetAssignment",
+            "labelA": "Is_Primary_Cloud_Contact__c",
+            "labelB": "PermissionSetAssignment",
+            "dxCenterModel": 167.5,
+            "dyCenterModel": 0,
+            "overlapX": 0.20000000000004547,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "External:PermissionSetAssignment",
+            "nodeB": "Field:Cloud_Service__c.Monthly_Cost_Estimate__c",
+            "labelA": "PermissionSetAssignment",
+            "labelB": "Monthly_Cost_Estimate__c",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 0.10000000000002274,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": []
+      }
+    },
+    "30A-Both": {
+      "counts": {
+        "total": 34,
+        "sameRow": 5,
+        "adjacentRow": 29,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [
+          {
+            "nodeA": "ApexClass:SpendAnalyticsService",
+            "nodeB": "ApexClass:CsvParser",
+            "labelA": "SpendAnalyticsService",
+            "labelB": "CsvParser",
+            "dxCenterModel": 71.09000000000003,
+            "dyCenterModel": 0,
+            "overlapX": 3.1410000000000764,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:UserContactMappingServiceTest",
+            "nodeB": "ApexClass:SpendTrackerAccessContext",
+            "labelA": "UserContactMappingServiceTest",
+            "labelB": "SpendTrackerAccessContext",
+            "dxCenterModel": 159.9999999999999,
+            "dyCenterModel": 0,
+            "overlapX": 2.3500000000000227,
+            "overlapY": 7.550000000000068,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "Trigger:UserOrganizationRoleTrigger",
+            "nodeB": "ApexClass:CloudSpendTriggerHandlerTest",
+            "labelA": "UserOrganizationRoleTrigger",
+            "labelB": "CloudSpendTriggerHandlerTest",
+            "dxCenterModel": 176.5,
+            "dyCenterModel": 0,
+            "overlapX": 0.3000000000000682,
+            "overlapY": 7.5,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:SpendTrackerAuthorizationService",
+            "nodeB": "ApexClass:UserOrganizationRoleTriggerTest",
+            "labelA": "SpendTrackerAuthorizationService",
+            "labelB": "UserOrganizationRoleTriggerTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 4.149999999999977,
+            "overlapY": 7.600000000000023,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          },
+          {
+            "nodeA": "ApexClass:AdminHealthController",
+            "nodeB": "ApexClass:CloudSpendOrganizationRefactorTest",
+            "labelA": "AdminHealthController",
+            "labelB": "CloudSpendOrganizationRefactorTest",
+            "dxCenterModel": 160,
+            "dyCenterModel": 0,
+            "overlapX": 2.050000000000068,
+            "overlapY": 7.550000000000068,
+            "axisClass": "SAME_ROW_HORIZONTAL_PRIMARY"
+          }
+        ],
+        "adjacentRow": [
+          {
+            "nodeA": "Field:Account.Organization_Hierarchy_Root__c",
+            "nodeB": "ApexClass:create_usersTest",
+            "labelA": "Organization_\nHierarchy_\nRoot_\n_\nc",
+            "labelB": "create_\nusersTest",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.199999999999932,
+            "overlapY": 2.400000000000091,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Cloud_Account__c.Organization__c",
+            "nodeB": "Field:Cloud_Account__c.Owner_Email__c",
+            "labelA": "Organization_\n_\nc",
+            "labelB": "Owner_\nEmail_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.399999999999977,
+            "overlapY": 1.0999999999999943,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Account.Account_Status__c",
+            "nodeB": "Field:Account.Domain__c",
+            "labelA": "Account_\nStatus_\n_\nc",
+            "labelB": "Domain_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.699999999999932,
+            "overlapY": 1.099999999999909,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "External:BudgetAlertWrapper",
+            "nodeB": "Field:Fiscal_Period_Mapping__mdt.Start_Date__c",
+            "labelA": "BudgetAlertWrapper",
+            "labelB": "Start_\nDate_\n_\nc",
+            "dxCenterModel": 41,
+            "dyCenterModel": 100,
+            "overlapX": 4.7999999999999545,
+            "overlapY": 1.1832644064063516,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "External:BusinessDataProvisioningQueueable",
+            "nodeB": "Field:Account.Tax_ID__c",
+            "labelA": "BusinessDataProvisioningQueueable",
+            "labelB": "Tax_\nID_\n_\nc",
+            "dxCenterModel": 7.5,
+            "dyCenterModel": 100,
+            "overlapX": 5.399999999999977,
+            "overlapY": 1.1832644064063516,
+            "axisClass": "ADJACENT_ROW_2D"
+          }
+        ]
+      }
+    },
+    "30A-Chunk": {
+      "counts": {
+        "total": 35,
+        "sameRow": 0,
+        "adjacentRow": 35,
+        "true2D": 0
+      },
+      "samples": {
+        "sameRow": [],
+        "adjacentRow": [
+          {
+            "nodeA": "Field:Account.Organization_Hierarchy_Root__c",
+            "nodeB": "ApexClass:create_usersTest",
+            "labelA": "Organization\n_\nHierarchy_\nRoot_\n_\nc",
+            "labelB": "create_\nusersTest",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 6.199999999999932,
+            "overlapY": 3.600000000000364,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Cloud_Account__c.Organization__c",
+            "nodeB": "Field:Cloud_Account__c.Owner_Email__c",
+            "labelA": "Organization\n_\n_\nc",
+            "labelB": "Owner_\nEmail_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.399999999999977,
+            "overlapY": 1.0999999999999943,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Field:Account.Account_Status__c",
+            "nodeB": "Field:Account.Domain__c",
+            "labelA": "Account_\nStatus_\n_\nc",
+            "labelB": "Domain_\n_\nc",
+            "dxCenterModel": 0,
+            "dyCenterModel": 100,
+            "overlapX": 5.699999999999932,
+            "overlapY": 1.099999999999909,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "Trigger:OrganizationTrigger",
+            "nodeB": "Trigger:UserOrganizationRoleTrigger",
+            "labelA": "Organization\nTrigger",
+            "labelB": "User\nOrganization\nRoleTrigger",
+            "dxCenterModel": 61.5,
+            "dyCenterModel": 100,
+            "overlapX": 1.849999999999909,
+            "overlapY": 0.023606797749948782,
+            "axisClass": "ADJACENT_ROW_2D"
+          },
+          {
+            "nodeA": "External:Object:PermissionSetAssignment",
+            "nodeB": "External:Assert",
+            "labelA": "Object:Permission\nSet\nAssignment",
+            "labelB": "Assert",
+            "dxCenterModel": 24.5,
+            "dyCenterModel": 100,
+            "overlapX": 5.854246193626523,
+            "overlapY": 0.16652881281243026,
+            "axisClass": "ADJACENT_ROW_2D"
+          }
+        ]
+      }
+    }
+  }
+}

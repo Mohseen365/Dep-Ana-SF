@@ -1,0 +1,206 @@
+{
+  "cloud-spend-tracker": {
+    "1024x768": {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "zoom": 0.1,
+      "pan": {
+        "x": -13.4,
+        "y": 223
+      },
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 118,
+      "maxVisibleEdgeDist": 476,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_cloud-spend-tracker_1024x768.png",
+      "status": "VERIFIED"
+    },
+    "1280x800": {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "zoom": 0.116,
+      "pan": {
+        "x": 49.7,
+        "y": 225.5
+      },
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 137,
+      "maxVisibleEdgeDist": 550,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_cloud-spend-tracker_1280x800.png",
+      "status": "VERIFIED"
+    },
+    "1440x900": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "zoom": 1.901,
+      "pan": {
+        "x": -58.9,
+        "y": -88.8
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 304,
+      "maxVisibleEdgeDist": 494,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_cloud-spend-tracker_1440x900.png",
+      "status": "VERIFIED"
+    },
+    "1920x1080": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "zoom": 0.181,
+      "pan": {
+        "x": 49.5,
+        "y": 303
+      },
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 213,
+      "maxVisibleEdgeDist": 859,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_cloud-spend-tracker_1920x1080.png",
+      "status": "VERIFIED"
+    },
+    "2560x1440": {
+      "viewport": {
+        "width": 2560,
+        "height": 1440
+      },
+      "zoom": 0.258,
+      "pan": {
+        "x": 49.2,
+        "y": 416.7
+      },
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 304,
+      "maxVisibleEdgeDist": 1226,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_cloud-spend-tracker_2560x1440.png",
+      "status": "VERIFIED"
+    }
+  },
+  "pbim": {
+    "1024x768": {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "zoom": 1.546,
+      "pan": {
+        "x": -125.7,
+        "y": -62.9
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 247,
+      "maxVisibleEdgeDist": 402,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_pbim_1024x768.png",
+      "status": "VERIFIED"
+    },
+    "1280x800": {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "zoom": 1.642,
+      "pan": {
+        "x": -30.3,
+        "y": -69.9
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 263,
+      "maxVisibleEdgeDist": 427,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_pbim_1280x800.png",
+      "status": "VERIFIED"
+    },
+    "1440x900": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "zoom": 1.901,
+      "pan": {
+        "x": -58.9,
+        "y": -88.8
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 304,
+      "maxVisibleEdgeDist": 494,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_pbim_1440x900.png",
+      "status": "VERIFIED"
+    },
+    "1920x1080": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "zoom": 2.439,
+      "pan": {
+        "x": -32.2,
+        "y": -128
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 390,
+      "maxVisibleEdgeDist": 634,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_pbim_1920x1080.png",
+      "status": "VERIFIED"
+    },
+    "2560x1440": {
+      "viewport": {
+        "width": 2560,
+        "height": 1440
+      },
+      "zoom": 3.513,
+      "pan": {
+        "x": -79,
+        "y": -206.5
+      },
+      "nodeCount": 4,
+      "edgeCount": 3,
+      "adapterRuntimeDrift": 0,
+      "domRuntimeDrift": 0,
+      "medianVisibleEdgeDist": 562,
+      "maxVisibleEdgeDist": 913,
+      "logErrorsCount": 0,
+      "screenshotPath": "/app/verification_b_screenshots/phase20_hybrid_pbim_2560x1440.png",
+      "status": "VERIFIED"
+    }
+  }
+}

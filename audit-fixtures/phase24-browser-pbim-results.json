@@ -1,0 +1,44 @@
+{
+  "J4_Baseline": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-A_DemandDrivenWidth": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-B_DOMAwareClearance": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-C_Max2NodesPerRow": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-C_Max1NodePerRow": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-D_2DStaggeredPacking": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-E_JointDemandExpanded": {
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  }
+}

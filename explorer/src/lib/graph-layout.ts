@@ -208,6 +208,67 @@ export function runLayoutWithMetadata(
     const result = computeArchitectureLayoutWithMetadata(finalNodes, finalEdges, options);
     const posMap = result.positions;
 
+    const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
+    const focusedSet = result.projectedNodeIds;
+
+    cy.batch(() => {
+      if (isOrbitComponentFilter && focusedSet) {
+        const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
+        const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
+
+        if (typeof (toShowNodes as any).show === 'function') {
+          (toShowNodes as any).show();
+        } else if (typeof (toShowNodes as any).style === 'function') {
+          toShowNodes.style('display', 'element');
+        }
+        if (typeof (toHideNodes as any).hide === 'function') {
+          (toHideNodes as any).hide();
+        } else if (typeof (toHideNodes as any).style === 'function') {
+          toHideNodes.style('display', 'none');
+        }
+
+        toShowNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+
+        const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
+        const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
+
+        if (typeof (toShowEdges as any).show === 'function') {
+          (toShowEdges as any).show();
+        } else if (typeof (toShowEdges as any).style === 'function') {
+          toShowEdges.style('display', 'element');
+        }
+        if (typeof (toHideEdges as any).hide === 'function') {
+          (toHideEdges as any).hide();
+        } else if (typeof (toHideEdges as any).style === 'function') {
+          toHideEdges.style('display', 'none');
+        }
+      } else {
+        const allNodes = cy.nodes();
+        const allEdges = cy.edges();
+        if (typeof (allNodes as any).show === 'function') {
+          (allNodes as any).show();
+        } else if (typeof (allNodes as any).style === 'function') {
+          allNodes.style('display', 'element');
+        }
+        if (typeof (allEdges as any).show === 'function') {
+          (allEdges as any).show();
+        } else if (typeof (allEdges as any).style === 'function') {
+          allEdges.style('display', 'element');
+        }
+        allNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+      }
+    });
+
     if (options?.animate) {
       cy.layout({
         name: 'preset',
@@ -218,16 +279,20 @@ export function runLayoutWithMetadata(
         fit: options?.fit ?? true,
       } as any).run();
     } else {
-      cy.batch(() => {
-        cy.nodes().forEach(node => {
-          const id = node.id();
-          if (posMap[id]) {
-            node.position(posMap[id]);
-          }
-        });
-      });
       if (options?.fit !== false) {
-        cy.fit(cy.elements(), options?.padding ?? 50);
+        if (isOrbitComponentFilter && focusedSet) {
+          const visibleEles = cy.elements().filter(e => {
+            if (e.isNode()) return focusedSet.has(e.id());
+            return focusedSet.has(e.data('source')) && focusedSet.has(e.data('target'));
+          });
+          if (visibleEles.length > 0) {
+            cy.fit(visibleEles, options?.padding ?? 50);
+          } else {
+            cy.fit(cy.elements(), options?.padding ?? 50);
+          }
+        } else {
+          cy.fit(cy.elements(), options?.padding ?? 50);
+        }
       }
     }
     return result;
@@ -264,6 +329,67 @@ export async function runLayoutWithMetadataAsync(
 
     const posMap = result.positions;
 
+    const isOrbitComponentFilter = (options?.architectureMode === 'orbit' || options?.architectureMode === 'constellation') && result.projectedNodeIds;
+    const focusedSet = result.projectedNodeIds;
+
+    cy.batch(() => {
+      if (isOrbitComponentFilter && focusedSet) {
+        const toShowNodes = cy.nodes().filter(n => focusedSet.has(n.id()));
+        const toHideNodes = cy.nodes().filter(n => !focusedSet.has(n.id()));
+
+        if (typeof (toShowNodes as any).show === 'function') {
+          (toShowNodes as any).show();
+        } else if (typeof (toShowNodes as any).style === 'function') {
+          toShowNodes.style('display', 'element');
+        }
+        if (typeof (toHideNodes as any).hide === 'function') {
+          (toHideNodes as any).hide();
+        } else if (typeof (toHideNodes as any).style === 'function') {
+          toHideNodes.style('display', 'none');
+        }
+
+        toShowNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+
+        const toShowEdges = cy.edges().filter(e => focusedSet.has(e.data('source')) && focusedSet.has(e.data('target')));
+        const toHideEdges = cy.edges().filter(e => !focusedSet.has(e.data('source')) || !focusedSet.has(e.data('target')));
+
+        if (typeof (toShowEdges as any).show === 'function') {
+          (toShowEdges as any).show();
+        } else if (typeof (toShowEdges as any).style === 'function') {
+          toShowEdges.style('display', 'element');
+        }
+        if (typeof (toHideEdges as any).hide === 'function') {
+          (toHideEdges as any).hide();
+        } else if (typeof (toHideEdges as any).style === 'function') {
+          toHideEdges.style('display', 'none');
+        }
+      } else {
+        const allNodes = cy.nodes();
+        const allEdges = cy.edges();
+        if (typeof (allNodes as any).show === 'function') {
+          (allNodes as any).show();
+        } else if (typeof (allNodes as any).style === 'function') {
+          allNodes.style('display', 'element');
+        }
+        if (typeof (allEdges as any).show === 'function') {
+          (allEdges as any).show();
+        } else if (typeof (allEdges as any).style === 'function') {
+          allEdges.style('display', 'element');
+        }
+        allNodes.forEach(node => {
+          const id = node.id();
+          if (posMap[id]) {
+            node.position(posMap[id]);
+          }
+        });
+      }
+    });
+
     if (options?.animate) {
       cy.layout({
         name: 'preset',
@@ -274,16 +400,20 @@ export async function runLayoutWithMetadataAsync(
         fit: options?.fit ?? true,
       } as any).run();
     } else {
-      cy.batch(() => {
-        cy.nodes().forEach(node => {
-          const id = node.id();
-          if (posMap[id]) {
-            node.position(posMap[id]);
-          }
-        });
-      });
       if (options?.fit !== false) {
-        cy.fit(cy.elements(), options?.padding ?? 50);
+        if (isOrbitComponentFilter && focusedSet) {
+          const visibleEles = cy.elements().filter(e => {
+            if (e.isNode()) return focusedSet.has(e.id());
+            return focusedSet.has(e.data('source')) && focusedSet.has(e.data('target'));
+          });
+          if (visibleEles.length > 0) {
+            cy.fit(visibleEles, options?.padding ?? 50);
+          } else {
+            cy.fit(cy.elements(), options?.padding ?? 50);
+          }
+        } else {
+          cy.fit(cy.elements(), options?.padding ?? 50);
+        }
       }
     }
     return result;

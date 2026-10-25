@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useId, useState } from 'react';
 import { ImpactState, ImpactDepth, ImpactAnalysisResult, isImpactActive } from '../lib/impact-analysis';
 import { ExplorerNode } from '../types/explorer';
 
@@ -19,7 +19,8 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
   selectedNode,
   onShowImpact
 }) => {
-  const active = isImpactActive(impactState) && impactResult !== null;
+  const controlId = useId();
+  const active = Boolean(impactState.enabled);
   const [showAffectedList, setShowAffectedList] = useState<boolean>(false);
 
   const handleDepthChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -67,7 +68,7 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
               : 'Select a component to show impact'
           }
         >
-          <span className="impact-icon">💥</span>
+          <span className="impact-icon" aria-hidden="true">💥</span>
           {active ? 'Exit Impact' : 'Show Impact'}
         </button>
 
@@ -85,14 +86,15 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
       {active && impactResult && (
         <>
           <div className="impact-options">
-            <div className="impact-option">
-              <label>Impact Direction:</label>
+            <div className="impact-option" role="group" aria-labelledby={`${controlId}-impact-direction-label`}>
+              <span id={`${controlId}-impact-direction-label`} className="impact-direction-label">Impact Direction:</span>
               <span className="impact-direction-badge">← Dependents (Affected)</span>
             </div>
 
             <div className="impact-option">
-              <label>Depth:</label>
+              <label htmlFor={`${controlId}-depth`}>Depth:</label>
               <select
+                id={`${controlId}-depth`}
                 value={impactState.depth === 'ALL' ? 'ALL' : String(impactState.depth)}
                 onChange={handleDepthChange}
                 className="impact-select"
@@ -147,7 +149,7 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
               onClick={() => setShowAffectedList(!showAffectedList)}
             >
               <span className="breakdown-title">
-                🔍 Affected Dependents & Test Breakdown ({impactResult.affectedNodeIds.size - 1})
+                <span aria-hidden="true">🔍</span> Affected Dependents & Test Breakdown ({impactResult.affectedNodeIds.size - 1})
               </span>
               <button className="breakdown-toggle-btn">
                 {showAffectedList ? '▲ Hide' : '▼ Details'}
@@ -179,7 +181,7 @@ export const ImpactControls: React.FC<ImpactControlsProps> = ({
                     ) : (
                       impactResult.impactedTestNodeIds.map(id => (
                         <span key={id} className="pill test-pill">
-                          🧪 {id.split(':')[1] || id}
+                          <span aria-hidden="true">🧪</span> {id.split(':')[1] || id}
                         </span>
                       ))
                     )}

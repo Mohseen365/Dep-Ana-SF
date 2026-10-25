@@ -207,7 +207,16 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
                     key={prof.id}
                     data-testid={`dna-item-${prof.id}`}
                     className={`dna-item ${isDimmed ? 'dimmed' : ''}`}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${prof.displayName}, ${prof.entityType}, risk ${prof.riskLevel}, DNA Index ${(prof.overallDnaIndex * 100).toFixed(1)}%`}
                     onClick={() => handleSelectNode(prof.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSelectNode(prof.id);
+                      }
+                    }}
                     style={{
                       padding: '8px',
                       borderRadius: '4px',
@@ -368,6 +377,8 @@ export const ArchitectureDNABarcode: React.FC<ArchitectureDNABarcodeProps> = ({
                 {/* SVG / CSS Barcode Visual Strips */}
                 <div
                   data-testid="dna-barcode-visual-strips"
+                  role="img"
+                  aria-label="7-Band Architectural DNA Barcode Strips"
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(7, 1fr)',

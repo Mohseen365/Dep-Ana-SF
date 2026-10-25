@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useId, useRef } from 'react';
 import { ExplorerSummary, ExplorerRiskLevel, ExplorerDataSchema } from '../types/explorer';
 import { calculateArchitectureHealth } from '../lib/health';
 import { HealthSummary } from './HealthSummary';
@@ -26,6 +26,18 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
 }) => {
   const [showHealthModal, setShowHealthModal] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const summaryContentId = useId();
+  const toggleBtnRef = useRef<HTMLButtonElement>(null);
+  const summaryContentRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleCollapse = () => {
+    if (!collapsed) {
+      if (summaryContentRef.current && summaryContentRef.current.contains(document.activeElement)) {
+        toggleBtnRef.current?.focus();
+      }
+    }
+    setCollapsed((prev) => !prev);
+  };
 
   const health = useMemo(() => {
     return calculateArchitectureHealth(data);
@@ -68,15 +80,18 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({
     <>
       <div className={`summary-bar-container ${collapsed ? 'collapsed' : ''} ${!sidebarCollapsed ? 'sidebar-open' : ''}`}>
         <button
+          ref={toggleBtnRef}
           className="summary-collapse-toggle"
-          onClick={() => setCollapsed(prev => !prev)}
+          onClick={handleToggleCollapse}
           title={collapsed ? "Expand Summary" : "Collapse Summary"}
-          aria-label="Toggle Summary View"
+          aria-label={collapsed ? "Expand Summary" : "Collapse Summary"}
+          aria-expanded={!collapsed}
+          aria-controls={!collapsed ? summaryContentId : undefined}
         >
           ▾ {collapsed && <span className="summary-chip-label">Summary ({summary.nodeCount} nodes)</span>}
         </button>
         {!collapsed && (
-          <div className="summary-bar">
+          <div id={summaryContentId} ref={summaryContentRef} className="summary-bar">
         <div
           className="summary-item health-summary-trigger summary-clickable"
           onClick={() => setShowHealthModal(true)}

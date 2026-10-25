@@ -3,6 +3,8 @@ import type cytoscape from 'cytoscape';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { FeatureDiscoveryResult } from '../../lib/layout/features';
 import type { FeatureRegion } from '../../lib/layout/global-layout';
+import type { OrbitGuideMetadata } from '../../lib/orbit-layout';
+import type { ArchitectureLayoutMode } from '../../types/explorer';
 import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '../../lib/layout/feature-composition';
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
 import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
@@ -15,6 +17,8 @@ export interface FeatureOverlayCanvasProps {
   edges: ExplorerEdge[];
   discoveryResult?: FeatureDiscoveryResult | null;
   featureRegions?: Map<string, FeatureRegion> | null;
+  orbitGuides?: OrbitGuideMetadata | null;
+  architectureMode?: ArchitectureLayoutMode;
   selectedNodeId?: string | null;
   hoveredNodeId?: string | null;
   nodePositions?: Record<string, { x: number; y: number }>;
@@ -28,6 +32,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   edges,
   discoveryResult,
   featureRegions,
+  orbitGuides,
+  architectureMode = 'hierarchical',
   selectedNodeId,
   hoveredNodeId,
   nodePositions,
@@ -50,14 +56,22 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     });
   }, [transform.zoom, nodes.length, edges.length]);
 
-  // Track Cytoscape pan and zoom transform (viewport only)
+  const rafIdRef = React.useRef<number | null>(null);
+
+  // Track Cytoscape pan and zoom transform with requestAnimationFrame coalescing
   useEffect(() => {
     if (!cy) return;
 
     const updateTransform = () => {
-      const pan = typeof cy.pan === 'function' ? cy.pan() : { x: 0, y: 0 };
-      const zoom = typeof cy.zoom === 'function' ? cy.zoom() : 1;
-      setTransform({ pan, zoom });
+      if (rafIdRef.current !== null) return;
+
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = null;
+        if (!cy) return;
+        const pan = typeof cy.pan === 'function' ? cy.pan() : { x: 0, y: 0 };
+        const zoom = typeof cy.zoom === 'function' ? cy.zoom() : 1;
+        setTransform({ pan, zoom });
+      });
     };
 
     updateTransform();
@@ -67,6 +81,10 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     }
 
     return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
       if (typeof cy.off === 'function') {
         cy.off('pan zoom', updateTransform);
       }
@@ -192,6 +210,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   return (
     <svg
       className="feature-overlay-canvas"
+      aria-hidden="true"
       style={{
         position: 'absolute',
         top: 0,
@@ -205,6 +224,91 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       data-testid="feature-overlay-canvas"
     >
       <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+        {/* Render Architecture Orbit & Constellation Visual Guides (Rings, Sectors, Core) */}
+        {(architectureMode === 'orbit' || architectureMode === 'constellation') && (
+          <g className="orbit-guides-overlay" data-testid="orbit-guides-overlay">
+            {/* Central Architectural Core Circle */}
+            <circle
+              cx={0}
+              cy={0}
+              r={200}
+              fill="rgba(56, 189, 248, 0.03)"
+              stroke="rgba(56, 189, 248, 0.4)"
+              strokeWidth={2}
+              strokeDasharray="4 4"
+            />
+            <circle
+              cx={0}
+              cy={0}
+              r={12}
+              fill="#38bdf8"
+              opacity={0.8}
+            />
+
+            {/* 6 Concentric Architectural Rings */}
+            {orbitGuides?.rings?.map((ring) => (
+              <g key={`orbit_ring_${ring.ringIndex}`}>
+                <circle
+                  cx={0}
+                  cy={0}
+                  r={ring.radiusPx}
+                  fill="none"
+                  stroke="rgba(148, 163, 184, 0.18)"
+                  strokeWidth={1.5}
+                />
+                <text
+                  x={ring.radiusPx + 10}
+                  y={-10}
+                  fill="#94a3b8"
+                  fontSize={11}
+                  fontWeight={600}
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >
+                  {ring.label} (R{ring.ringIndex})
+                </text>
+              </g>
+            ))}
+
+            {/* 65 Semantic Sector Wedges & Guide Lines */}
+            {orbitGuides?.sectors?.map((sector) => {
+              const maxR = 2600;
+              const startX = Math.round(maxR * Math.cos(sector.startAngleRad) * 100) / 100;
+              const startY = Math.round(maxR * Math.sin(sector.startAngleRad) * 100) / 100;
+              const midAngle = (sector.startAngleRad + sector.endAngleRad) / 2;
+              const labelR = 2400;
+              const labelX = Math.round(labelR * Math.cos(midAngle) * 100) / 100;
+              const labelY = Math.round(labelR * Math.sin(midAngle) * 100) / 100;
+
+              return (
+                <g key={`orbit_sector_${sector.sectorId}`}>
+                  <line
+                    x1={0}
+                    y1={0}
+                    x2={startX}
+                    y2={startY}
+                    stroke="rgba(148, 163, 184, 0.12)"
+                    strokeWidth={1}
+                    strokeDasharray="2 4"
+                  />
+                  {sector.nodeCount > 0 && (
+                    <text
+                      x={labelX}
+                      y={labelY}
+                      fill="#cbd5e1"
+                      fontSize={10}
+                      fontWeight={500}
+                      textAnchor="middle"
+                      fontFamily="system-ui, -apple-system, sans-serif"
+                    >
+                      {sector.label.replace(/^feature_/, '').replace(/__c$/i, '')} ({sector.nodeCount})
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </g>
+        )}
+
         {/* Render Outer Semantic Feature Region Enclosure Boxes */}
         {featureRegionsList.map((region) => {
           const { featureId, xMin, yMin, width, height } = region;

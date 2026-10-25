@@ -83,10 +83,22 @@ export function bindGraphInteractions(
     }
   });
 
+  let lastDblTapTime = 0;
+  let lastDblTapNodeId = '';
+
   // Node double tap / double click event
   cy.on('dbltap dblclick', 'node', (event) => {
     const node = event.target;
-    const nodeId = node.id();
+    const nodeId = typeof node?.id === 'function' ? node.id() : node?.id;
+    if (!nodeId) return;
+
+    const now = Date.now();
+    // Suppress duplicate event dispatches (e.g., Cytoscape emitting both dbltap and dblclick for the same gesture)
+    if (nodeId === lastDblTapNodeId && now - lastDblTapTime < 50) {
+      return;
+    }
+    lastDblTapTime = now;
+    lastDblTapNodeId = nodeId;
 
     let explorerNode: ExplorerNode | null = null;
     if (originalNodes) {
@@ -371,20 +383,25 @@ export function zoomOut(cy: cytoscape.Core): void {
 }
 
 /**
- * Enable/disable mouse wheel zoom.
- * Note: Cytoscape 3.x uses wheelSensitivity on initialization, not as runtime method.
+ * Enable/disable mouse wheel / user zooming at runtime.
  */
-export function setMouseWheelZoom(_cy: cytoscape.Core, _enabled: boolean): void {
-  // wheelSensitivity is set at initialization time
-  // Runtime changes would require re-initialization
+export function setMouseWheelZoom(cy: cytoscape.Core, enabled: boolean): void {
+  if (!cy) return;
+  if (typeof cy.userZoomingEnabled === 'function') {
+    cy.userZoomingEnabled(Boolean(enabled));
+  }
 }
 
 /**
- * Enable/disable panning.
- * Note: Panning cannot be toggled at runtime in Cytoscape 3.x.
+ * Enable/disable user panning at runtime.
  */
-export function setPanning(_cy: cytoscape.Core, _enabled: boolean): void {
-  // Panning is configured at initialization time via boxSelectionEnabled
+export function setPanning(cy: cytoscape.Core, enabled: boolean): void {
+  if (!cy) return;
+  if (typeof cy.userPanningEnabled === 'function') {
+    cy.userPanningEnabled(Boolean(enabled));
+  } else if (typeof cy.panningEnabled === 'function') {
+    cy.panningEnabled(Boolean(enabled));
+  }
 }
 
 /**

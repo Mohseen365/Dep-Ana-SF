@@ -235,12 +235,12 @@ describe('GraphEngine Components & Integration', () => {
       // Verify minimap
       expect(region.querySelector('#minimap')).toBeInTheDocument();
 
-      // Verify accessible tree
-      const tree = screen.getByRole('tree', { name: /component nodes/i });
-      expect(tree).toBeInTheDocument();
-      const treeItems = screen.getAllByRole('treeitem');
-      expect(treeItems).toHaveLength(2);
-      expect(treeItems[0]).toHaveTextContent('AccountController');
+      // Verify accessible component list
+      const list = screen.getByRole('list', { name: /component nodes/i });
+      expect(list).toBeInTheDocument();
+      const listItems = screen.getAllByRole('listitem');
+      expect(listItems).toHaveLength(2);
+      expect(listItems[0]).toHaveTextContent('AccountController');
 
       // Verify floating toolbar controls
       expect(screen.getByRole('toolbar', { name: /graph controls/i })).toBeInTheDocument();
@@ -768,6 +768,124 @@ describe('GraphEngine Components & Integration', () => {
         // Trigger tap callback again and verify updated handler is invoked with latest node
         tapCallback({ target: { id: () => 'ApexClass:AccountService', data: () => ({ id: 'ApexClass:AccountService', label: 'AccountService' }) } });
         expect(updatedHandler).toHaveBeenCalledWith(expect.objectContaining({ id: 'ApexClass:AccountService' }));
+      });
+
+      it('refreshes onNodeDoubleTap callback reference on rerenders so latest callback is executed without listener duplication (Fix D 1B5-04)', () => {
+        const doubleTapCallbackA = vi.fn();
+        const doubleTapCallbackB = vi.fn();
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            onNodeDoubleTap={doubleTapCallbackA}
+          />
+        );
+
+        const dblTapCall = mockCy.on.mock.calls.find((call: any[]) => call[0] === 'dbltap dblclick' && call[1] === 'node');
+        expect(dblTapCall).toBeDefined();
+
+        const initialListenerCount = mockCy.on.mock.calls.filter((call: any[]) => call[0] === 'dbltap dblclick' && call[1] === 'node').length;
+
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            onNodeDoubleTap={doubleTapCallbackB}
+          />
+        );
+
+        const secondListenerCount = mockCy.on.mock.calls.filter((call: any[]) => call[0] === 'dbltap dblclick' && call[1] === 'node').length;
+        expect(secondListenerCount).toEqual(initialListenerCount);
+
+        const dblTapCallback = dblTapCall![2];
+        const eventData = {
+          target: {
+            id: () => 'ApexClass:AccountController',
+            data: () => ({ id: 'ApexClass:AccountController', displayName: 'AccountController' }),
+          },
+        };
+
+        dblTapCallback(eventData);
+
+        expect(doubleTapCallbackA).not.toHaveBeenCalled();
+        expect(doubleTapCallbackB).toHaveBeenCalledTimes(1);
+        expect(doubleTapCallbackB).toHaveBeenCalledWith('ApexClass:AccountController', expect.objectContaining({ id: 'ApexClass:AccountController' }));
+      });
+
+      it('triggers element synchronization when findings, architectureMode, layoutMode, or effectiveLayoutOptions change while nodes and edges remain unchanged (Fix E 1B5-05)', () => {
+        const mockFinding = {
+          id: 'find1',
+          ruleId: 'HIGH_COUPLING',
+          severity: 'HIGH' as const,
+          category: 'MAINTAINABILITY' as const,
+          title: 'High Coupling Detected',
+          description: 'Component has high coupling',
+          nodeIds: ['ApexClass:AccountController'],
+          edgeIds: [],
+        };
+
+        const { rerender } = render(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            findings={[]}
+            architectureMode="hierarchical"
+            layoutMode="interactive"
+          />
+        );
+
+        mockCy.add.mockClear();
+        mockElementsRemove.mockClear();
+
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            findings={[mockFinding]}
+            architectureMode="hierarchical"
+            layoutMode="interactive"
+          />
+        );
+
+        expect(mockElementsRemove).toHaveBeenCalled();
+        expect(mockCy.add).toHaveBeenCalled();
+
+        mockCy.add.mockClear();
+        mockElementsRemove.mockClear();
+
+        rerender(
+          <GraphView
+            nodes={mockNodes}
+            edges={mockEdges}
+            onSelectNode={vi.fn()}
+            onSelectEdge={vi.fn()}
+            selectedNodeId={null}
+            selectedEdgeId={null}
+            findings={[mockFinding]}
+            architectureMode="hybrid"
+            layoutMode="interactive"
+          />
+        );
+
+        expect(mockElementsRemove).toHaveBeenCalled();
+        expect(mockCy.add).toHaveBeenCalled();
       });
 
       it('preserves node coordinates (node.position()) unchanged before and after ordinary selection in Interactive and Static modes', () => {

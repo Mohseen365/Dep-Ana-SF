@@ -44,6 +44,8 @@ ctx.addEventListener('message', (event: MessageEvent<LayoutWorkerRequest>) => {
       requestGeneration,
       positions: result.positions,
       featureRegionsSummary,
+      orbitGuides: result.orbitGuides,
+      projectedNodeIds: result.projectedNodeIds ? Array.from(result.projectedNodeIds) : undefined,
       computeDurationMs,
     };
 

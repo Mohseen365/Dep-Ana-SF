@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useId } from "react";
 import type { ArchitectureFinding, FindingSeverity } from "../lib/intelligence";
 import {
   formatFindingReviewItem,
@@ -47,6 +47,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
     new Set(SEVERITY_ORDER)
   );
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("UNRESOLVED");
+  const instanceId = useId();
   const [expandedFindingIds, setExpandedFindingIds] = useState<Set<string>>(new Set());
   const [refreshCounter, setRefreshCounter] = useState(0);
 
@@ -68,10 +69,12 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
 
   const toggleExpand = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
+    const btnTarget = e.currentTarget as HTMLElement;
     setExpandedFindingIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
+        btnTarget.focus();
       } else {
         next.add(id);
       }
@@ -232,6 +235,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                   {groupItems.map(({ finding, review }) => {
                     const isSelected = finding.id === selectedFindingId;
                     const isExpanded = expandedFindingIds.has(finding.id);
+                    const evidenceRegionId = `finding-evidence-${instanceId.replace(/:/g, '_')}-${finding.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
 
                     return (
                       <div
@@ -255,9 +259,13 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                               📄 Evidence: {finding.evidence.length}
                             </span>
                             <button
+                              type="button"
                               className="expand-btn"
                               onClick={e => toggleExpand(e, finding.id)}
                               title={isExpanded ? "Collapse Evidence" : "Expand Evidence"}
+                              aria-label={isExpanded ? `Collapse Evidence for ${finding.title}` : `Expand Evidence for ${finding.title}`}
+                              aria-expanded={isExpanded}
+                              aria-controls={isExpanded && finding.evidence.length > 0 ? evidenceRegionId : undefined}
                             >
                               {isExpanded ? "▲" : "▼"}
                             </button>
@@ -323,7 +331,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
                         </div>
 
                         {isExpanded && finding.evidence.length > 0 && (
-                          <div className="finding-evidence-box">
+                          <div id={evidenceRegionId} className="finding-evidence-box">
                             <h5>Evidence & Source Locations:</h5>
                             <ul className="evidence-list">
                               {finding.evidence.map((item, idx) => {

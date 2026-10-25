@@ -1,0 +1,203 @@
+{
+  "J4_Baseline": {
+    "1024x768": {
+      "viewport": "1024x768",
+      "zoom": 0.1,
+      "isZoomFar": true,
+      "labelsVisible": false,
+      "collisionCount": 0,
+      "sameRow": 0,
+      "adjacentRow": 0,
+      "crossRow": 0,
+      "horizontalOnly": 0,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1280x720": {
+      "viewport": "1280x720",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1440x900": {
+      "viewport": "1440x900",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1920x1080": {
+      "viewport": "1920x1080",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "2560x1440": {
+      "viewport": "2560x1440",
+      "zoom": 0.22,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 10,
+      "verticalOnly": 107,
+      "twoD": 38
+    }
+  },
+  "P25-A": {
+    "1024x768": {
+      "viewport": "1024x768",
+      "zoom": 0.1,
+      "isZoomFar": true,
+      "labelsVisible": false,
+      "collisionCount": 0,
+      "sameRow": 0,
+      "adjacentRow": 0,
+      "crossRow": 0,
+      "horizontalOnly": 0,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1280x720": {
+      "viewport": "1280x720",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1440x900": {
+      "viewport": "1440x900",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1920x1080": {
+      "viewport": "1920x1080",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "2560x1440": {
+      "viewport": "2560x1440",
+      "zoom": 0.22,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 10,
+      "verticalOnly": 107,
+      "twoD": 38
+    }
+  },
+  "P25-C": {
+    "1024x768": {
+      "viewport": "1024x768",
+      "zoom": 0.1,
+      "isZoomFar": true,
+      "labelsVisible": false,
+      "collisionCount": 0,
+      "sameRow": 0,
+      "adjacentRow": 0,
+      "crossRow": 0,
+      "horizontalOnly": 0,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1280x720": {
+      "viewport": "1280x720",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1440x900": {
+      "viewport": "1440x900",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "1920x1080": {
+      "viewport": "1920x1080",
+      "zoom": 0.15,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 155,
+      "verticalOnly": 0,
+      "twoD": 0
+    },
+    "2560x1440": {
+      "viewport": "2560x1440",
+      "zoom": 0.22,
+      "isZoomFar": false,
+      "labelsVisible": true,
+      "collisionCount": 155,
+      "sameRow": 145,
+      "adjacentRow": 10,
+      "crossRow": 0,
+      "horizontalOnly": 10,
+      "verticalOnly": 107,
+      "twoD": 38
+    }
+  }
+}

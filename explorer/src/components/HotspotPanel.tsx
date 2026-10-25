@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useId, useRef } from "react";
 import {
   ExplorerNode,
   ExplorerCycleGroup,
@@ -44,6 +44,20 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
   const [hideHighCautionDependents, setHideHighCautionDependents] =
     useState<boolean>(false);
   const [expandedHotspotId, setExpandedHotspotId] = useState<string | null>(null);
+
+  const instanceId = useId();
+  const panelBodyId = useId();
+  const collapseBtnRef = useRef<HTMLButtonElement>(null);
+  const panelBodyRef = useRef<HTMLDivElement>(null);
+
+  const togglePanelCollapse = () => {
+    if (!isCollapsed) {
+      if (panelBodyRef.current && panelBodyRef.current.contains(document.activeElement)) {
+        collapseBtnRef.current?.focus();
+      }
+    }
+    setIsCollapsed((prev) => !prev);
+  };
 
   const hotspots: CategorizedHotspots = useMemo(() => {
     return getArchitecturalHotspots(nodes, cycles, impactSummaries);
@@ -99,7 +113,15 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
 
   const toggleExpand = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    setExpandedHotspotId((prev) => (prev === id ? null : id));
+    const btnTarget = e.currentTarget as HTMLElement;
+    setExpandedHotspotId((prev) => {
+      const isCurrentlyExpanded = prev === id;
+      if (isCurrentlyExpanded) {
+        // preserve focus on button
+        btnTarget.focus();
+      }
+      return isCurrentlyExpanded ? null : id;
+    });
   };
 
   return (
@@ -115,7 +137,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
 
       <div
         className="hotspot-header"
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={togglePanelCollapse}
       >
         <div className="hotspot-header-title">
           <span className="hotspot-icon">🔥</span>
@@ -123,15 +145,24 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
           <span className="hotspot-badge">{totalHotspots}</span>
         </div>
         <button
+          ref={collapseBtnRef}
+          type="button"
           className="collapse-toggle"
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePanelCollapse();
+          }}
           title={isCollapsed ? "Expand Hotspots" : "Collapse Hotspots"}
+          aria-label={isCollapsed ? "Expand Hotspots" : "Collapse Hotspots"}
+          aria-expanded={!isCollapsed}
+          aria-controls={!isCollapsed ? panelBodyId : undefined}
         >
           {isCollapsed ? "▲" : "▼"}
         </button>
       </div>
 
       {!isCollapsed && (
-        <div className="hotspot-body">
+        <div id={panelBodyId} ref={panelBodyRef} className="hotspot-body">
           <div className="hotspot-tabs">
             <button
               className={`hotspot-tab ${activeTab === "ranked" ? "active" : ""}`}
@@ -268,6 +299,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
               ) : (
                 hotspots.topRanked.map((item, idx) => {
                   const isExpanded = expandedHotspotId === item.node.id;
+                  const itemMetricsId = `hotspot-metrics-${instanceId.replace(/:/g, '_')}-${item.node.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
                   return (
                     <div
                       key={item.node.id}
@@ -281,9 +313,13 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
                           {item.node.risk}
                         </span>
                         <button
+                          type="button"
                           className="hotspot-expand-btn"
                           onClick={(e) => toggleExpand(e, item.node.id)}
-                          title="Toggle Detailed Metrics"
+                          title={isExpanded ? `Collapse metrics for ${item.node.displayName}` : `Expand metrics for ${item.node.displayName}`}
+                          aria-label={isExpanded ? `Collapse metrics for ${item.node.displayName}` : `Expand metrics for ${item.node.displayName}`}
+                          aria-expanded={isExpanded}
+                          aria-controls={isExpanded ? itemMetricsId : undefined}
                         >
                           {isExpanded ? "▲" : "▼"}
                         </button>
@@ -292,7 +328,7 @@ export const HotspotPanel: React.FC<HotspotPanelProps> = ({
                       <div className="hotspot-item-details">{item.details}</div>
 
                       {isExpanded && (
-                        <div className="hotspot-expanded-metrics">
+                        <div id={itemMetricsId} className="hotspot-expanded-metrics">
                           <div className="metrics-grid">
                             <div className="metric-cell">
                               <span className="metric-lbl">Fan-In:</span>

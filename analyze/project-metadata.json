@@ -1,0 +1,13 @@
+{
+  "id": "default",
+  "name": "Default Salesforce Project",
+  "description": "Salesforce DX Architecture Analysis",
+  "sourcePath": "scripts/temp-snapshot-test-fixture",
+  "createdAt": "2026-10-10T04:59:52.849Z",
+  "updatedAt": "2026-10-10T04:59:52.849Z",
+  "lastAnalyzedAt": "2026-10-10T04:59:52.849Z",
+  "analysisStatus": "COMPLETE",
+  "componentCount": 2,
+  "dependencyCount": 2,
+  "analysisPath": "/explorer-data.json"
+}

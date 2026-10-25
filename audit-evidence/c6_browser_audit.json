@@ -1,0 +1,79 @@
+{
+  "gate16": {
+    "pbimNodes": 528,
+    "pbimEdges": 2063,
+    "loadTimeMs": 48607,
+    "orbitSwitchTimeMs": 73946,
+    "hoverLatencyMs": 742,
+    "selectLatencyMs": 163,
+    "consoleErrorsCount": 0,
+    "reactWarningsCount": 0,
+    "heapMetrics": {
+      "totalJSHeapSize": 239000000,
+      "usedJSHeapSize": 177000000,
+      "jsHeapSizeLimit": 3760000000
+    }
+  },
+  "gate17": [
+    {
+      "tier": "Far Overview (0.04)",
+      "zoom": 0.1,
+      "domNodes": 5246,
+      "svgPrimitives": 73,
+      "svgTextLabels": 71
+    },
+    {
+      "tier": "Medium Sector View (0.25)",
+      "zoom": 0.25,
+      "domNodes": 5246,
+      "svgPrimitives": 73,
+      "svgTextLabels": 71
+    },
+    {
+      "tier": "Close Node View (0.80)",
+      "zoom": 0.1,
+      "domNodes": 5618,
+      "svgPrimitives": 73,
+      "svgTextLabels": 71
+    }
+  ],
+  "gate18": {
+    "orbitGuideCounts": {
+      "circles": 8,
+      "lines": 65,
+      "texts": 71
+    },
+    "constellationGuideCounts": {
+      "overlayPresent": false,
+      "circles": 0
+    },
+    "leakageObserved": false
+  },
+  "gate19": {
+    "heapSnapshots": [
+      {
+        "cycle": 1,
+        "usedHeapBytes": 177000000
+      },
+      {
+        "cycle": 2,
+        "usedHeapBytes": 177000000
+      },
+      {
+        "cycle": 3,
+        "usedHeapBytes": 177000000
+      },
+      {
+        "cycle": 4,
+        "usedHeapBytes": 177000000
+      },
+      {
+        "cycle": 5,
+        "usedHeapBytes": 177000000
+      }
+    ],
+    "initialHeapBytes": 177000000,
+    "finalHeapBytes": 177000000,
+    "leakObserved": false
+  }
+}

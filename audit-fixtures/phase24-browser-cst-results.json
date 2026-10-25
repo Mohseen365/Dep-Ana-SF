@@ -1,0 +1,156 @@
+{
+  "J4_Baseline": {
+    "1024x768": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "2560x1440": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-A_DemandDrivenWidth": {
+    "1024x768": {
+      "zoom": 0.107,
+      "domCollisions": 0
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "2560x1440": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-B_DOMAwareClearance": {
+    "1024x768": {
+      "zoom": 0.1,
+      "domCollisions": 54
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 54
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 54
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 54
+    },
+    "2560x1440": {
+      "zoom": 0.107,
+      "domCollisions": 54
+    }
+  },
+  "P24-C_Max2NodesPerRow": {
+    "1024x768": {
+      "zoom": 0.107,
+      "domCollisions": 0
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "2560x1440": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-C_Max1NodePerRow": {
+    "1024x768": {
+      "zoom": 0.107,
+      "domCollisions": 0
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "2560x1440": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-D_2DStaggeredPacking": {
+    "1024x768": {
+      "zoom": 0.107,
+      "domCollisions": 0
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "2560x1440": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  },
+  "P24-E_JointDemandExpanded": {
+    "1024x768": {
+      "zoom": 0.107,
+      "domCollisions": 0
+    },
+    "1280x720": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1440x900": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "1920x1080": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    },
+    "2560x1440": {
+      "zoom": 0.1,
+      "domCollisions": 0
+    }
+  }
+}

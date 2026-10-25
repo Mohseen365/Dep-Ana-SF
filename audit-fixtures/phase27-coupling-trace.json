@@ -1,0 +1,980 @@
+[
+  {
+    "pairName": "Pair 1 (Phase26 same-row)",
+    "nodeA": "Field:Maintenance_Approval__c.Approval_Level__c",
+    "nodeB": "Field:Maintenance_Approval__c.Approver__c",
+    "stages": {
+      "stage5": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage7": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage8": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage9": {
+        "posA": {
+          "x": -1877.5,
+          "y": 2180
+        },
+        "posB": {
+          "x": -1717.5,
+          "y": 2080
+        },
+        "dxCenter": 160,
+        "dyCenter": 100,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage10": {
+        "posA": {
+          "x": 220,
+          "y": 2360
+        },
+        "posB": {
+          "x": 380,
+          "y": 2260
+        },
+        "dxCenter": 160,
+        "dyCenter": 100,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage11": {
+        "posA": {
+          "x": 220,
+          "y": 2360
+        },
+        "posB": {
+          "x": 380,
+          "y": 2260
+        },
+        "dxCenter": 160,
+        "dyCenter": 100,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      }
+    }
+  },
+  {
+    "pairName": "Pair 2 (Field-field same-row)",
+    "nodeA": "Field:Contractor_Assignment__c.Maintenance_Request__c",
+    "nodeB": "Field:Contractor_Assignment__c.Assigned_To__c",
+    "stages": {
+      "stage5": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 201,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 22
+        },
+        "labelDimB": {
+          "width": 135,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 14
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage7": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 201,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 22
+        },
+        "labelDimB": {
+          "width": 135,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 14
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage8": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 201,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 22
+        },
+        "labelDimB": {
+          "width": 135,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 14
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage9": {
+        "posA": {
+          "x": 200,
+          "y": 11200
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 200,
+        "dyCenter": 11200,
+        "labelDimA": {
+          "width": 201,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 22
+        },
+        "labelDimB": {
+          "width": 135,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 14
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage10": {
+        "posA": {
+          "x": 2297.5,
+          "y": 11380
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 2297.5,
+        "dyCenter": 11380,
+        "labelDimA": {
+          "width": 201,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 22
+        },
+        "labelDimB": {
+          "width": 135,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 14
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage11": {
+        "posA": {
+          "x": 2297.5,
+          "y": 11380
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 2297.5,
+        "dyCenter": 11380,
+        "labelDimA": {
+          "width": 201,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 22
+        },
+        "labelDimB": {
+          "width": 135,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 14
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      }
+    }
+  },
+  {
+    "pairName": "Pair 3 (Field-CustomObject)",
+    "nodeA": "Field:Maintenance_Request__c.Status__c",
+    "nodeB": "CustomObject:Maintenance_Request__c",
+    "stages": {
+      "stage5": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 9
+        },
+        "labelDimB": {
+          "width": 307,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 35
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage7": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 9
+        },
+        "labelDimB": {
+          "width": 307,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 35
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage8": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 9
+        },
+        "labelDimB": {
+          "width": 307,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 35
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage9": {
+        "posA": {
+          "x": -260,
+          "y": 10800
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 260,
+        "dyCenter": 10800,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 9
+        },
+        "labelDimB": {
+          "width": 307,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 35
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage10": {
+        "posA": {
+          "x": 1837.5,
+          "y": 10980
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 1837.5,
+        "dyCenter": 10980,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 9
+        },
+        "labelDimB": {
+          "width": 307,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 35
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage11": {
+        "posA": {
+          "x": 1837.5,
+          "y": 10980
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 1837.5,
+        "dyCenter": 10980,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 9
+        },
+        "labelDimB": {
+          "width": 307,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 35
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      }
+    }
+  },
+  {
+    "pairName": "Pair 4 (ApexClass-ApexClass)",
+    "nodeA": "ApexClass:ApprovalFlowController",
+    "nodeB": "ApexClass:AssetDashboardController",
+    "stages": {
+      "stage5": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 283,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 32
+        },
+        "labelDimB": {
+          "width": 299,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 34
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage7": {
+        "posA": {
+          "x": 460,
+          "y": 10250
+        },
+        "posB": {
+          "x": 226,
+          "y": 20300
+        },
+        "dxCenter": 234,
+        "dyCenter": 10050,
+        "labelDimA": {
+          "width": 283,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 32
+        },
+        "labelDimB": {
+          "width": 299,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 34
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage8": {
+        "posA": {
+          "x": 460,
+          "y": 10250
+        },
+        "posB": {
+          "x": 226,
+          "y": 20300
+        },
+        "dxCenter": 234,
+        "dyCenter": 10050,
+        "labelDimA": {
+          "width": 283,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 32
+        },
+        "labelDimB": {
+          "width": 299,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 34
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage9": {
+        "posA": {
+          "x": 460,
+          "y": 10250
+        },
+        "posB": {
+          "x": 226,
+          "y": 20300
+        },
+        "dxCenter": 234,
+        "dyCenter": 10050,
+        "labelDimA": {
+          "width": 283,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 32
+        },
+        "labelDimB": {
+          "width": 299,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 34
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage10": {
+        "posA": {
+          "x": 2557.5,
+          "y": 10430
+        },
+        "posB": {
+          "x": 2323.5,
+          "y": 20480
+        },
+        "dxCenter": 234,
+        "dyCenter": 10050,
+        "labelDimA": {
+          "width": 283,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 32
+        },
+        "labelDimB": {
+          "width": 299,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 34
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage11": {
+        "posA": {
+          "x": 2557.5,
+          "y": 10430
+        },
+        "posB": {
+          "x": 2323.5,
+          "y": 20480
+        },
+        "dxCenter": 234,
+        "dyCenter": 10050,
+        "labelDimA": {
+          "width": 283,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 32
+        },
+        "labelDimB": {
+          "width": 299,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 34
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      }
+    }
+  },
+  {
+    "pairName": "Pair 5 (Adjacent-row fields)",
+    "nodeA": "Field:Equipment_Maintenance_Item__c.Equipment__c",
+    "nodeB": "Field:Equipment_Maintenance_Item__c.Quantity__c",
+    "stages": {
+      "stage5": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 12
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage7": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 12
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage8": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 12
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage9": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 12
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage10": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 12
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage11": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 12
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 11
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      }
+    }
+  },
+  {
+    "pairName": "Pair 6 (Long vs short label)",
+    "nodeA": "Field:Maintenance_Approval__c.Approval_Level__c",
+    "nodeB": "Field:Case.Status",
+    "stages": {
+      "stage5": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 6
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage7": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 6
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage8": {
+        "posA": {
+          "x": 0,
+          "y": 0
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 0,
+        "dyCenter": 0,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 6
+        },
+        "shapeCollision": true,
+        "labelCollision": true
+      },
+      "stage9": {
+        "posA": {
+          "x": -1877.5,
+          "y": 2180
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 1877.5,
+        "dyCenter": 2180,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 6
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage10": {
+        "posA": {
+          "x": 220,
+          "y": 2360
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 220,
+        "dyCenter": 2360,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 6
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      },
+      "stage11": {
+        "posA": {
+          "x": 220,
+          "y": 2360
+        },
+        "posB": {
+          "x": 0,
+          "y": 0
+        },
+        "dxCenter": 220,
+        "dyCenter": 2360,
+        "labelDimA": {
+          "width": 160,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 17
+        },
+        "labelDimB": {
+          "width": 120,
+          "height": 60,
+          "lines": 1,
+          "maxTokenLen": 6
+        },
+        "shapeCollision": false,
+        "labelCollision": false
+      }
+    }
+  }
+]

@@ -93,7 +93,25 @@ function runTests() {
   console.log("Running Hardened CLI Integration Boundary Test Suite (DA-2.1)...");
   console.log("=============================================================");
 
+  // Capture snapshots of canonical manifest state before test execution (exact bytes or null if absent)
+  const canonicalManifests = [
+    path.join(ROOT_DIR, "project-manifest.json"),
+    path.join(ROOT_DIR, "analyze", "project-manifest.json"),
+    path.join(ROOT_DIR, "explorer", "public", "project-manifest.json")
+  ];
+
+  const manifestSnapshots = new Map();
+  for (const mPath of canonicalManifests) {
+    if (fs.existsSync(mPath)) {
+      manifestSnapshots.set(mPath, fs.readFileSync(mPath));
+    } else {
+      manifestSnapshots.set(mPath, null);
+    }
+  }
+
   setupFixture();
+
+  let testError = null;
 
   try {
     // -------------------------------------------------------------
@@ -430,10 +448,50 @@ function runTests() {
     }
     console.log("  ✓ Upstream project-scoped artifact pipeline verified for food-app-style analysis");
 
-    console.log("\nALL 21 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!");
+    // -------------------------------------------------------------
+    // Test 22: Dedicated PBIM Data Path Verification
+    // -------------------------------------------------------------
+    console.log("Test 22: Dedicated PBIM Data Path Suite Verification");
+    const pbimSuite = require("./test-pbim-dedicated-data-path.cjs");
+    pbimSuite.runTests();
+    console.log("  ✓ Dedicated PBIM data path contract verified during master CLI suite");
 
+    console.log("\nALL 22 CLI INTEGRATION BOUNDARY CONTRACT TESTS PASSED SUCCESSFULLY!");
+
+  } catch (err) {
+    testError = err;
   } finally {
+    // Teardown: ensure manifest snapshots are reliably restored if mutated
+    const cleanupErrors = [];
+    for (const [mPath, originalBytes] of manifestSnapshots.entries()) {
+      try {
+        if (originalBytes === null) {
+          if (fs.existsSync(mPath)) {
+            fs.unlinkSync(mPath);
+          }
+        } else {
+          const currentBytes = fs.existsSync(mPath) ? fs.readFileSync(mPath) : null;
+          if (!currentBytes || !currentBytes.equals(originalBytes)) {
+            fs.writeFileSync(mPath, originalBytes);
+          }
+        }
+      } catch (e) {
+        cleanupErrors.push(`Failed to restore manifest snapshot for ${mPath}: ${e.message}`);
+      }
+    }
     cleanup();
+
+    if (cleanupErrors.length > 0) {
+      const cleanupMsg = `Manifest restoration failed:\n  ${cleanupErrors.join("\n  ")}`;
+      if (testError) {
+        throw new Error(`${testError.message}\nAdditionally, ${cleanupMsg}`);
+      }
+      throw new Error(cleanupMsg);
+    }
+
+    if (testError) {
+      throw testError;
+    }
   }
 }
 

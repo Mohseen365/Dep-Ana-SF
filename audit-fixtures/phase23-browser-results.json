@@ -1,0 +1,218 @@
+{
+  "cloud-spend-tracker": {
+    "exportSucceeded": true,
+    "runtimeFilesGenerated": true,
+    "baselineViewports": {
+      "1024x768": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "1280x720": {
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "1440x900": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "1920x1080": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "2560x1440": {
+        "viewport": {
+          "width": 2560,
+          "height": 1440
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      }
+    },
+    "candidateJ4Viewports": {
+      "1024x768": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "zoom": 0.107,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "1280x720": {
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "1440x900": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "1920x1080": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      },
+      "2560x1440": {
+        "viewport": {
+          "width": 2560,
+          "height": 1440
+        },
+        "zoom": 0.1,
+        "domCollisions": 0,
+        "pathologicalEdgeDist": 10222,
+        "status": "VERIFIED"
+      }
+    }
+  },
+  "pbim": {
+    "exportSucceeded": true,
+    "runtimeFilesGenerated": true,
+    "baselineViewports": {
+      "1024x768": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "zoom": 0.1,
+        "domCollisions": 27,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "1280x720": {
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "zoom": 0.1,
+        "domCollisions": 27,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "1440x900": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "zoom": 0.103,
+        "domCollisions": 27,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "1920x1080": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "zoom": 0.144,
+        "domCollisions": 27,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "2560x1440": {
+        "viewport": {
+          "width": 2560,
+          "height": 1440
+        },
+        "zoom": 0.197,
+        "domCollisions": 27,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      }
+    },
+    "candidateJ4Viewports": {
+      "1024x768": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "zoom": 0.197,
+        "domCollisions": 214,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "1280x720": {
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "zoom": 0.1,
+        "domCollisions": 214,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "1440x900": {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "zoom": 0.103,
+        "domCollisions": 214,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "1920x1080": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "zoom": 0.144,
+        "domCollisions": 214,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      },
+      "2560x1440": {
+        "viewport": {
+          "width": 2560,
+          "height": 1440
+        },
+        "zoom": 0.197,
+        "domCollisions": 214,
+        "pathologicalEdgeDist": 4571,
+        "status": "VERIFIED"
+      }
+    }
+  }
+}

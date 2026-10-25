@@ -1,0 +1,198 @@
+{
+  "cloud-spend-tracker": {
+    "maxEdge": {
+      "source": "ApexClass:SelectorsTest",
+      "target": "Object:Forecast__c",
+      "trace": [
+        {
+          "stage": "Stage5",
+          "sourcePos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "targetPos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage6",
+          "sourcePos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "targetPos": {
+            "x": 999.7,
+            "y": 8090
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage7",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 759.7,
+            "y": 9660
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage8",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 759.7,
+            "y": 9660
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage9",
+          "sourcePos": {
+            "x": 959.9,
+            "y": -560
+          },
+          "targetPos": {
+            "x": 759.7,
+            "y": 9660
+          },
+          "distance": 10221.96
+        },
+        {
+          "stage": "Stage10",
+          "sourcePos": {
+            "x": 1019.9,
+            "y": 150
+          },
+          "targetPos": {
+            "x": 819.7,
+            "y": 10370
+          },
+          "distance": 10221.96
+        },
+        {
+          "stage": "Stage11",
+          "sourcePos": {
+            "x": 1019.9,
+            "y": 150
+          },
+          "targetPos": {
+            "x": 819.7,
+            "y": 10370
+          },
+          "distance": 10221.96
+        },
+        {
+          "stage": "Stage12",
+          "sourcePos": {
+            "x": 1019.9,
+            "y": 150
+          },
+          "targetPos": {
+            "x": 819.7,
+            "y": 10370
+          },
+          "distance": 10221.96
+        }
+      ]
+    }
+  },
+  "pbim": {
+    "maxEdge": {
+      "source": "ApexClass:TimelineControllerTest",
+      "target": "External:Profile",
+      "trace": [
+        {
+          "stage": "Stage5",
+          "sourcePos": {
+            "x": 920,
+            "y": 5370
+          },
+          "targetPos": {
+            "x": 420,
+            "y": 22290
+          },
+          "distance": 16927.39
+        },
+        {
+          "stage": "Stage6",
+          "sourcePos": {
+            "x": 920,
+            "y": 5370
+          },
+          "targetPos": {
+            "x": 420,
+            "y": 22290
+          },
+          "distance": 16927.39
+        },
+        {
+          "stage": "Stage7",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 180,
+            "y": 24160
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage8",
+          "sourcePos": null,
+          "targetPos": {
+            "x": 180,
+            "y": 24160
+          },
+          "distance": 0
+        },
+        {
+          "stage": "Stage9",
+          "sourcePos": {
+            "x": 1080,
+            "y": -140
+          },
+          "targetPos": {
+            "x": 180,
+            "y": 24160
+          },
+          "distance": 24316.66
+        },
+        {
+          "stage": "Stage10",
+          "sourcePos": {
+            "x": 3200,
+            "y": 30
+          },
+          "targetPos": {
+            "x": 2300,
+            "y": 24330
+          },
+          "distance": 24316.66
+        },
+        {
+          "stage": "Stage11",
+          "sourcePos": {
+            "x": 3200,
+            "y": 30
+          },
+          "targetPos": {
+            "x": 2300,
+            "y": 24330
+          },
+          "distance": 24316.66
+        },
+        {
+          "stage": "Stage12",
+          "sourcePos": {
+            "x": 3200,
+            "y": 30
+          },
+          "targetPos": {
+            "x": 2300,
+            "y": 24330
+          },
+          "distance": 24316.66
+        }
+      ]
+    }
+  }
+}

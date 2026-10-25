@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useId } from 'react';
 import { ConnectionQueryState, ConnectionDirection, ConnectionDepth } from '../lib/url/connectionQuery';
 import { ConnectionAnalysis } from '../lib/connection-analysis';
 import { ExplorerNode } from '../types/explorer';
@@ -25,7 +25,8 @@ export const ConnectionControls: React.FC<ConnectionControlsProps> = ({
   selectedNode,
   onShowConnection
 }) => {
-  const active = Boolean(connectionState.enabled && (connectionState.originNodeId || selectedNode));
+  const controlId = useId();
+  const active = Boolean(connectionState.enabled);
 
   const handleDirectionChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     onConnectionChange({
@@ -69,7 +70,7 @@ export const ConnectionControls: React.FC<ConnectionControlsProps> = ({
           }
           data-testid="connection-toggle-btn"
         >
-          <span className="connection-icon">🔗</span>
+          <span className="connection-icon" aria-hidden="true">🔗</span>
           {active ? 'Exit Connections' : 'Analyze Connections'}
         </button>
 
@@ -84,8 +85,9 @@ export const ConnectionControls: React.FC<ConnectionControlsProps> = ({
       {active && (
         <div className="connection-options" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '8px', flexWrap: 'wrap' }}>
           <div className="connection-option" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Direction:</label>
+            <label htmlFor={`${controlId}-direction`} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Direction:</label>
             <select
+              id={`${controlId}-direction`}
               value={connectionState.direction}
               onChange={handleDirectionChange}
               className="connection-select ui-input"
@@ -99,8 +101,9 @@ export const ConnectionControls: React.FC<ConnectionControlsProps> = ({
           </div>
 
           <div className="connection-option" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Depth:</label>
+            <label htmlFor={`${controlId}-depth`} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted, #94a3b8)' }}>Depth:</label>
             <select
+              id={`${controlId}-depth`}
               value={connectionState.depth === 'ALL' ? 'ALL' : String(connectionState.depth)}
               onChange={handleDepthChange}
               className="connection-select ui-input"

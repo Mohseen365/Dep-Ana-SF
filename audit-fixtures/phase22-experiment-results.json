@@ -1,0 +1,6246 @@
+{
+  "cloud-spend-tracker": {
+    "Baseline": {
+      "projectId": "cloud-spend-tracker",
+      "candidateType": "Baseline",
+      "m1_occupiedWidth": 3640,
+      "m2_occupiedHeight": 11080,
+      "m3_occupiedArea": 40329266,
+      "m4_emptySpaceRatio": 0.9572,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1967,
+        "p75": 6600,
+        "p95": 9144,
+        "p99": 9824,
+        "p100": 10121
+      },
+      "m6_semanticDist": {
+        "p50": 2791,
+        "p95": 9721,
+        "p100": 11032
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 171,
+        "p100": 1138
+      },
+      "aabbCollisions": 1,
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 1920,
+        "stage7RequiredHeightTotal": 840,
+        "demandToAllocationRatio": 0.4375,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.4375,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_admin-filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudAccountController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_DateUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CsvParser": {
+            "allocatedHeight": 320,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.5625,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CloudAccountService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudSpendService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_ErrorResponse": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_SpendAnalyticsService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CurrencyUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 1309.19
+    },
+    "CandidateJ1_RegionAwareClearance": {
+      "projectId": "cloud-spend-tracker",
+      "candidateType": "CandidateJ1_RegionAwareClearance",
+      "m1_occupiedWidth": 3640,
+      "m2_occupiedHeight": 10401,
+      "m3_occupiedArea": 37859385,
+      "m4_emptySpaceRatio": 0.9544,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1464,
+        "p75": 6600,
+        "p95": 8807,
+        "p99": 9187,
+        "p100": 9378
+      },
+      "m6_semanticDist": {
+        "p50": 2429,
+        "p95": 9121,
+        "p100": 10348
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 1138
+      },
+      "aabbCollisions": 36,
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 1920,
+        "stage7RequiredHeightTotal": 840,
+        "demandToAllocationRatio": 0.4375,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.4375,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_admin-filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudAccountController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_DateUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CsvParser": {
+            "allocatedHeight": 320,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.5625,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CloudAccountService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudSpendService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_ErrorResponse": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_SpendAnalyticsService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CurrencyUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 1093.63
+    },
+    "CandidateJ2_DemandDrivenSizing": {
+      "projectId": "cloud-spend-tracker",
+      "candidateType": "CandidateJ2_DemandDrivenSizing",
+      "m1_occupiedWidth": 3160,
+      "m2_occupiedHeight": 11080,
+      "m3_occupiedArea": 35010866,
+      "m4_emptySpaceRatio": 0.9506,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1873,
+        "p75": 6606,
+        "p95": 9324,
+        "p99": 9858,
+        "p100": 10249
+      },
+      "m6_semanticDist": {
+        "p50": 2760,
+        "p95": 9670,
+        "p100": 11020
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 179,
+        "p100": 1081
+      },
+      "aabbCollisions": 0,
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 1820,
+        "stage7RequiredHeightTotal": 840,
+        "demandToAllocationRatio": 0.46153846153846156,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.46153846153846156,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_admin-filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudAccountController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_DateUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CsvParser": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CloudAccountService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudSpendService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_ErrorResponse": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_SpendAnalyticsService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CurrencyUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 958.43
+    },
+    "CandidateJ3_BoundedAdaptiveGap": {
+      "projectId": "cloud-spend-tracker",
+      "candidateType": "CandidateJ3_BoundedAdaptiveGap",
+      "m1_occupiedWidth": 3240,
+      "m2_occupiedHeight": 10930,
+      "m3_occupiedArea": 35410358,
+      "m4_emptySpaceRatio": 0.9512,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1799,
+        "p75": 6616,
+        "p95": 9090,
+        "p99": 9771,
+        "p100": 10231
+      },
+      "m6_semanticDist": {
+        "p50": 2681,
+        "p95": 9577,
+        "p100": 10874
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 162,
+        "p100": 1138
+      },
+      "aabbCollisions": 0,
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 1100,
+        "stage7RequiredHeightTotal": 840,
+        "demandToAllocationRatio": 0.7636363636363637,
+        "regionOverflowTotal": 720,
+        "regionUtilization": 0.7636363636363637,
+        "clearanceViolationsCount": 12,
+        "perFeatureMetrics": {
+          "feature_admin-filter-panel": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementController": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudAccountController": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_DateUtils": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CsvParser": {
+            "allocatedHeight": 100,
+            "requiredHeight": 180,
+            "overflow": 120,
+            "utilization": 1.8,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CloudAccountService": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudSpendService": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_ErrorResponse": {
+            "allocatedHeight": 100,
+            "requiredHeight": 120,
+            "overflow": 60,
+            "utilization": 1.2,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_SpendAnalyticsService": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementService": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CurrencyUtils": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 964.42
+    },
+    "CandidateJ4_TwoPassFeedback": {
+      "projectId": "cloud-spend-tracker",
+      "candidateType": "CandidateJ4_TwoPassFeedback",
+      "m1_occupiedWidth": 3160,
+      "m2_occupiedHeight": 11060,
+      "m3_occupiedArea": 34947670,
+      "m4_emptySpaceRatio": 0.9506,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 1892,
+        "p75": 6546,
+        "p95": 9304,
+        "p99": 9878,
+        "p100": 10269
+      },
+      "m6_semanticDist": {
+        "p50": 2762,
+        "p95": 9639,
+        "p100": 11000
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 189,
+        "p100": 1081
+      },
+      "aabbCollisions": 0,
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 1440,
+        "stage7RequiredHeightTotal": 840,
+        "demandToAllocationRatio": 0.5833333333333334,
+        "regionOverflowTotal": 440,
+        "regionUtilization": 0.5833333333333334,
+        "clearanceViolationsCount": 11,
+        "perFeatureMetrics": {
+          "feature_admin-filter-panel": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementController": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudAccountController": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_DateUtils": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CsvParser": {
+            "allocatedHeight": 240,
+            "requiredHeight": 180,
+            "overflow": 40,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 120,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CloudAccountService": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudSpendService": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_ErrorResponse": {
+            "allocatedHeight": 120,
+            "requiredHeight": 120,
+            "overflow": 40,
+            "utilization": 1,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_SpendAnalyticsService": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementService": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CurrencyUtils": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 968.55
+    },
+    "CandidateJ5_ConstrainedCoupledCompaction": {
+      "projectId": "cloud-spend-tracker",
+      "candidateType": "CandidateJ5_ConstrainedCoupledCompaction",
+      "m1_occupiedWidth": 3030,
+      "m2_occupiedHeight": 11020,
+      "m3_occupiedArea": 33388176,
+      "m4_emptySpaceRatio": 0.9482,
+      "m5_connectedDist": {
+        "p0": 112,
+        "p50": 1887,
+        "p75": 6501,
+        "p95": 9264,
+        "p99": 9760,
+        "p100": 10090
+      },
+      "m6_semanticDist": {
+        "p50": 2760,
+        "p95": 9579,
+        "p100": 10960
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 922
+      },
+      "aabbCollisions": 2,
+      "nodeCount": 240,
+      "edgeCount": 1024,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 1820,
+        "stage7RequiredHeightTotal": 840,
+        "demandToAllocationRatio": 0.46153846153846156,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.46153846153846156,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_admin-filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudAccountController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_DateUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CsvParser": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CloudAccountService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CloudSpendService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_ErrorResponse": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_SpendAnalyticsService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_UserManagementService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CurrencyUtils": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 964.81
+    }
+  },
+  "pbim": {
+    "Baseline": {
+      "projectId": "pbim",
+      "candidateType": "Baseline",
+      "m1_occupiedWidth": 7000,
+      "m2_occupiedHeight": 25640,
+      "m3_occupiedArea": 179480000,
+      "m4_emptySpaceRatio": 0.9788,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2878,
+        "p75": 10880,
+        "p95": 18101,
+        "p99": 21180,
+        "p100": 24497
+      },
+      "m6_semanticDist": {
+        "p50": 10038,
+        "p95": 22529,
+        "p100": 25903
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 600
+      },
+      "aabbCollisions": 0,
+      "nodeCount": 528,
+      "edgeCount": 2063,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 5800,
+        "stage7RequiredHeightTotal": 2560,
+        "demandToAllocationRatio": 0.4413793103448276,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.4413793103448276,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_approval-flow": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_budget-utilization-summary": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_dynamic-inspection-form": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-request-kanban": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-charts": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-list": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-map": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_kpi-cards": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-timeline": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_sla-countdown-timer": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_notification-center": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_error-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_InspectionTrigger": {
+            "allocatedHeight": 320,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 160,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_TimelineController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_BudgetTrigger": {
+            "allocatedHeight": 260,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.46153846153846156,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_NotificationSecurityTrigger": {
+            "allocatedHeight": 320,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_NotificationSharingTrigger": {
+            "allocatedHeight": 320,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.5625,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestSharingService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CitizenRequestHelper": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_HealthScoreCalculator": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_VendorPerformanceHelper": {
+            "allocatedHeight": 420,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.42857142857142855,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 160,
+                "required": 60
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_fflib_SObjectUnitOfWork": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CitizenRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_QueueableDuplicateSignature": {
+            "allocatedHeight": 260,
+            "requiredHeight": 220,
+            "overflow": 0,
+            "utilization": 0.8461538461538461,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 160
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_TimelineSortHelper": {
+            "allocatedHeight": 260,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.46153846153846156,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 9967.6
+    },
+    "CandidateJ1_RegionAwareClearance": {
+      "projectId": "pbim",
+      "candidateType": "CandidateJ1_RegionAwareClearance",
+      "m1_occupiedWidth": 7960,
+      "m2_occupiedHeight": 23954,
+      "m3_occupiedArea": 190673840,
+      "m4_emptySpaceRatio": 0.9801,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2184,
+        "p75": 10880,
+        "p95": 17274,
+        "p99": 21009,
+        "p100": 22914
+      },
+      "m6_semanticDist": {
+        "p50": 10030,
+        "p95": 21393,
+        "p100": 24387
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 400
+      },
+      "aabbCollisions": 52,
+      "nodeCount": 528,
+      "edgeCount": 2063,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 5800,
+        "stage7RequiredHeightTotal": 2560,
+        "demandToAllocationRatio": 0.4413793103448276,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.4413793103448276,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_approval-flow": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_budget-utilization-summary": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_dynamic-inspection-form": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-request-kanban": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-charts": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-list": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-map": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_kpi-cards": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-timeline": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_sla-countdown-timer": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_notification-center": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_error-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_InspectionTrigger": {
+            "allocatedHeight": 320,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 160,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_TimelineController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_BudgetTrigger": {
+            "allocatedHeight": 260,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.46153846153846156,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_NotificationSecurityTrigger": {
+            "allocatedHeight": 320,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_NotificationSharingTrigger": {
+            "allocatedHeight": 320,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.5625,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestSharingService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CitizenRequestHelper": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_HealthScoreCalculator": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_VendorPerformanceHelper": {
+            "allocatedHeight": 420,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.42857142857142855,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 160,
+                "required": 60
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_fflib_SObjectUnitOfWork": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CitizenRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_QueueableDuplicateSignature": {
+            "allocatedHeight": 260,
+            "requiredHeight": 220,
+            "overflow": 0,
+            "utilization": 0.8461538461538461,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 160
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_TimelineSortHelper": {
+            "allocatedHeight": 260,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.46153846153846156,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 9747.33
+    },
+    "CandidateJ2_DemandDrivenSizing": {
+      "projectId": "pbim",
+      "candidateType": "CandidateJ2_DemandDrivenSizing",
+      "m1_occupiedWidth": 7000,
+      "m2_occupiedHeight": 25520,
+      "m3_occupiedArea": 178640000,
+      "m4_emptySpaceRatio": 0.9787,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2878,
+        "p75": 10804,
+        "p95": 18001,
+        "p99": 21080,
+        "p100": 24375
+      },
+      "m6_semanticDist": {
+        "p50": 10026,
+        "p95": 22436,
+        "p100": 25785
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 530
+      },
+      "aabbCollisions": 2,
+      "nodeCount": 528,
+      "edgeCount": 2063,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 5100,
+        "stage7RequiredHeightTotal": 2560,
+        "demandToAllocationRatio": 0.5019607843137255,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.5019607843137255,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_approval-flow": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_budget-utilization-summary": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_dynamic-inspection-form": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-request-kanban": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-charts": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-list": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-map": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_kpi-cards": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-timeline": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_sla-countdown-timer": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_notification-center": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_error-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_InspectionTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_TimelineController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_BudgetTrigger": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_NotificationSecurityTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_NotificationSharingTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestSharingService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CitizenRequestHelper": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_HealthScoreCalculator": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_VendorPerformanceHelper": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_fflib_SObjectUnitOfWork": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CitizenRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_QueueableDuplicateSignature": {
+            "allocatedHeight": 260,
+            "requiredHeight": 220,
+            "overflow": 0,
+            "utilization": 0.8461538461538461,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 160
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_TimelineSortHelper": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 9740.73
+    },
+    "CandidateJ3_BoundedAdaptiveGap": {
+      "projectId": "pbim",
+      "candidateType": "CandidateJ3_BoundedAdaptiveGap",
+      "m1_occupiedWidth": 7000,
+      "m2_occupiedHeight": 25405,
+      "m3_occupiedArea": 177835000,
+      "m4_emptySpaceRatio": 0.9786,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2669,
+        "p75": 10924,
+        "p95": 17971,
+        "p99": 20975,
+        "p100": 24260
+      },
+      "m6_semanticDist": {
+        "p50": 10041,
+        "p95": 22283,
+        "p100": 25671
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 184,
+        "p100": 530
+      },
+      "aabbCollisions": 2,
+      "nodeCount": 528,
+      "edgeCount": 2063,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 3035,
+        "stage7RequiredHeightTotal": 2560,
+        "demandToAllocationRatio": 0.8434925864909391,
+        "regionOverflowTotal": 2065,
+        "regionUtilization": 0.8434925864909391,
+        "clearanceViolationsCount": 35,
+        "perFeatureMetrics": {
+          "feature_approval-flow": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_budget-utilization-summary": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_dynamic-inspection-form": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-request-kanban": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-charts": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-list": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-map": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_filter-panel": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_kpi-cards": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-timeline": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_sla-countdown-timer": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_notification-center": {
+            "allocatedHeight": 100,
+            "requiredHeight": 120,
+            "overflow": 120,
+            "utilization": 1.2,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_error-panel": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_InspectionTrigger": {
+            "allocatedHeight": 100,
+            "requiredHeight": 120,
+            "overflow": 120,
+            "utilization": 1.2,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_TimelineController": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_BudgetTrigger": {
+            "allocatedHeight": 100,
+            "requiredHeight": 120,
+            "overflow": 60,
+            "utilization": 1.2,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_NotificationSecurityTrigger": {
+            "allocatedHeight": 100,
+            "requiredHeight": 120,
+            "overflow": 120,
+            "utilization": 1.2,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_NotificationSharingTrigger": {
+            "allocatedHeight": 100,
+            "requiredHeight": 180,
+            "overflow": 120,
+            "utilization": 1.8,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestSharingService": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CitizenRequestHelper": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_HealthScoreCalculator": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_VendorPerformanceHelper": {
+            "allocatedHeight": 130,
+            "requiredHeight": 180,
+            "overflow": 90,
+            "utilization": 1.3846153846153846,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 15,
+                "required": 60
+              },
+              "application": {
+                "allocated": 15,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_fflib_SObjectUnitOfWork": {
+            "allocatedHeight": 100,
+            "requiredHeight": 180,
+            "overflow": 120,
+            "utilization": 1.8,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CitizenRequestDomain": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_QueueableDuplicateSignature": {
+            "allocatedHeight": 205,
+            "requiredHeight": 220,
+            "overflow": 55,
+            "utilization": 1.0731707317073171,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 105,
+                "required": 160
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_TimelineSortHelper": {
+            "allocatedHeight": 100,
+            "requiredHeight": 120,
+            "overflow": 60,
+            "utilization": 1.2,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestDomain": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectDomain": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectService": {
+            "allocatedHeight": 100,
+            "requiredHeight": 60,
+            "overflow": 60,
+            "utilization": 0.6,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 9707.6
+    },
+    "CandidateJ4_TwoPassFeedback": {
+      "projectId": "pbim",
+      "candidateType": "CandidateJ4_TwoPassFeedback",
+      "m1_occupiedWidth": 7000,
+      "m2_occupiedHeight": 25520,
+      "m3_occupiedArea": 178640000,
+      "m4_emptySpaceRatio": 0.9787,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2798,
+        "p75": 10840,
+        "p95": 18061,
+        "p99": 21125,
+        "p100": 24377
+      },
+      "m6_semanticDist": {
+        "p50": 10058,
+        "p95": 22411,
+        "p100": 25785
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 180,
+        "p100": 600
+      },
+      "aabbCollisions": 0,
+      "nodeCount": 528,
+      "edgeCount": 2063,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 4400,
+        "stage7RequiredHeightTotal": 2560,
+        "demandToAllocationRatio": 0.5818181818181818,
+        "regionOverflowTotal": 1120,
+        "regionUtilization": 0.5818181818181818,
+        "clearanceViolationsCount": 28,
+        "perFeatureMetrics": {
+          "feature_approval-flow": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_budget-utilization-summary": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_dynamic-inspection-form": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-request-kanban": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-charts": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-list": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-map": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_filter-panel": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_kpi-cards": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-timeline": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_sla-countdown-timer": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_notification-center": {
+            "allocatedHeight": 140,
+            "requiredHeight": 120,
+            "overflow": 80,
+            "utilization": 0.8571428571428571,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_error-panel": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 20,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_InspectionTrigger": {
+            "allocatedHeight": 240,
+            "requiredHeight": 120,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 120,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_TimelineController": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_BudgetTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 120,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_NotificationSecurityTrigger": {
+            "allocatedHeight": 240,
+            "requiredHeight": 120,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 120,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_NotificationSharingTrigger": {
+            "allocatedHeight": 240,
+            "requiredHeight": 180,
+            "overflow": 40,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 120,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestSharingService": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CitizenRequestHelper": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_HealthScoreCalculator": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_VendorPerformanceHelper": {
+            "allocatedHeight": 340,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.5294117647058824,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 120,
+                "required": 60
+              },
+              "application": {
+                "allocated": 120,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_fflib_SObjectUnitOfWork": {
+            "allocatedHeight": 140,
+            "requiredHeight": 180,
+            "overflow": 80,
+            "utilization": 1.2857142857142858,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CitizenRequestDomain": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_QueueableDuplicateSignature": {
+            "allocatedHeight": 220,
+            "requiredHeight": 220,
+            "overflow": 40,
+            "utilization": 1,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 120,
+                "required": 160
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_TimelineSortHelper": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 120,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestDomain": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectDomain": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 20,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectService": {
+            "allocatedHeight": 120,
+            "requiredHeight": 60,
+            "overflow": 40,
+            "utilization": 0.5,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 20,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 9758.21
+    },
+    "CandidateJ5_ConstrainedCoupledCompaction": {
+      "projectId": "pbim",
+      "candidateType": "CandidateJ5_ConstrainedCoupledCompaction",
+      "m1_occupiedWidth": 7620,
+      "m2_occupiedHeight": 20880,
+      "m3_occupiedArea": 159105600,
+      "m4_emptySpaceRatio": 0.9761,
+      "m5_connectedDist": {
+        "p0": 100,
+        "p50": 2523,
+        "p75": 10848,
+        "p95": 14725,
+        "p99": 16640,
+        "p100": 20124
+      },
+      "m6_semanticDist": {
+        "p50": 6884,
+        "p95": 17907,
+        "p100": 21576
+      },
+      "m7_nearestDist": {
+        "p50": 100,
+        "p95": 200,
+        "p100": 914
+      },
+      "aabbCollisions": 2,
+      "nodeCount": 528,
+      "edgeCount": 2063,
+      "coupling": {
+        "stage5AllocatedHeightTotal": 5100,
+        "stage7RequiredHeightTotal": 2560,
+        "demandToAllocationRatio": 0.5019607843137255,
+        "regionOverflowTotal": 0,
+        "regionUtilization": 0.5019607843137255,
+        "clearanceViolationsCount": 0,
+        "perFeatureMetrics": {
+          "feature_approval-flow": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_budget-utilization-summary": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_dynamic-inspection-form": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-request-kanban": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-charts": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-list": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_asset-map": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_filter-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_kpi-cards": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_maintenance-timeline": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_sla-countdown-timer": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_notification-center": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_error-panel": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_InspectionTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_TimelineController": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_BudgetTrigger": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_NotificationSecurityTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.5454545454545454,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_NotificationSharingTrigger": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestSharingService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_CitizenRequestHelper": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_HealthScoreCalculator": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_VendorPerformanceHelper": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 60,
+                "required": 60
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_fflib_SObjectUnitOfWork": {
+            "allocatedHeight": 220,
+            "requiredHeight": 180,
+            "overflow": 0,
+            "utilization": 0.8181818181818182,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_CitizenRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_QueueableDuplicateSignature": {
+            "allocatedHeight": 260,
+            "requiredHeight": 220,
+            "overflow": 0,
+            "utilization": 0.8461538461538461,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 160,
+                "required": 160
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_TimelineSortHelper": {
+            "allocatedHeight": 160,
+            "requiredHeight": 120,
+            "overflow": 0,
+            "utilization": 0.75,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 60
+              }
+            }
+          },
+          "feature_MaintenanceRequestDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectDomain": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 0,
+                "required": 0
+              },
+              "domain": {
+                "allocated": 60,
+                "required": 60
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          },
+          "feature_fflib_SObjectService": {
+            "allocatedHeight": 160,
+            "requiredHeight": 60,
+            "overflow": 0,
+            "utilization": 0.375,
+            "layerDemand": {
+              "presentation": {
+                "allocated": 0,
+                "required": 0
+              },
+              "application": {
+                "allocated": 60,
+                "required": 60
+              },
+              "domain": {
+                "allocated": 0,
+                "required": 0
+              },
+              "schema": {
+                "allocated": 100,
+                "required": 0
+              }
+            }
+          }
+        }
+      },
+      "runtimeMs": 9708.33
+    }
+  }
+}

@@ -16,8 +16,23 @@ import {
 import { placeSatellites } from './layout/satellites';
 import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLayout } from './layout/components';
 import { resolveSpacingAndCollisions } from './layout/spacing';
+import { projectOrbitSemantics } from './layout/orbit-semantics';
+import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
+import { adaptComponentOrbit, type ComponentOrbitAdapterOptions } from './adapters/component-orbit-adapter';
+import { computeComponentOrbitLayout } from './layout/component-orbit-layout';
+import { adaptComponentConstellation, type ComponentConstellationAdapterOptions } from './adapters/component-constellation-adapter';
+import { computeComponentConstellationLayout } from './layout/component-constellation-layout';
+import type { ArchitectureLayoutMode } from '../types/explorer';
 
 export interface ArchitectureLayoutOptions {
+  /** Architecture Layout Mode: 'hierarchical' | 'hybrid' | 'orbit' | 'constellation' */
+  architectureMode?: ArchitectureLayoutMode;
+  /** Focal LWC node ID for Component Orbit layout */
+  focalLwcId?: string | null;
+  /** Component Orbit adapter options */
+  componentOrbitOptions?: ComponentOrbitAdapterOptions;
+  /** Component Constellation adapter options */
+  componentConstellationOptions?: ComponentConstellationAdapterOptions;
   /** Width of nodes used for collision avoidance (default: 120) */
   nodeWidth?: number;
   /** Height of nodes used for collision avoidance (default: 60) */
@@ -36,11 +51,17 @@ export interface ArchitectureLayoutOptions {
   enableFeatureLayout?: boolean;
   /** Maximum iterations for layer ordering passes */
   maxIterations?: number;
+  /** Enables Stage 7 immutable primary occupancy checking in Stage 8 bridge placement (default: true for H5A, false for SB1C) */
+  enableImmutablePrimaryPositions?: boolean;
+  /** Enables Candidate D processing-order-only pre-sorting for Stage 8 bridge candidate evaluation (default: false) */
+  enableCandidateDOrdering?: boolean;
 }
 
 export interface ArchitectureLayoutResultWithMetadata {
   positions: Record<string, { x: number; y: number }>;
   featureRegions?: Map<string, FeatureRegion>;
+  orbitGuides?: OrbitGuideMetadata;
+  projectedNodeIds?: Set<string>;
 }
 
 export { classifyNodeLayer, extractDomainStem, isTestNode, classifyAllFeatureRoles, discoverFeatures };
@@ -85,7 +106,10 @@ export function computeArchitectureLayoutWithMetadata(
     domainSpacing = 380,
     componentGap = 100,
     existingPositions = {},
-    enableFeatureLayout = false,
+    architectureMode,
+    enableFeatureLayout = options.enableFeatureLayout ?? (options.architectureMode === 'hybrid'),
+    enableImmutablePrimaryPositions = true,
+    enableCandidateDOrdering = false,
   } = options;
 
   // Defensive deep clone of inputs to guarantee immutability
@@ -93,7 +117,104 @@ export function computeArchitectureLayoutWithMetadata(
   const safeEdges = Array.isArray(edges) ? [...edges] : [];
 
   if (safeNodes.length === 0) {
+    if (architectureMode === 'orbit') {
+      const orbitOutput = computeOrbitLayout({
+        nodes: [],
+        options: {
+          nodeWidth,
+          nodeHeight,
+        },
+      });
+      return {
+        positions: { ...existingPositions },
+        orbitGuides: orbitOutput.guides,
+      };
+    }
     return { positions: { ...existingPositions } };
+  }
+
+  // Check if Constellation mode is explicitly requested
+  if (architectureMode === 'constellation') {
+    const dummySummary = {
+      totalNodes: safeNodes.length,
+      totalEdges: safeEdges.length,
+      nodeCount: safeNodes.length,
+      edgeCount: safeEdges.length,
+      highRiskCount: 0,
+      unresolvedCount: 0,
+      cyclesCount: 0,
+    };
+    const schemaInput = {
+      summary: dummySummary,
+      nodes: safeNodes,
+      edges: safeEdges,
+      cycles: [],
+      unresolvedReferences: [],
+      impactSummaries: {},
+    };
+    const projection = adaptComponentConstellation(
+      schemaInput,
+      options.componentConstellationOptions
+    );
+    const constellationOutput = computeComponentConstellationLayout(projection, {
+      nodeWidth,
+      nodeHeight,
+    });
+
+    const constellationPositions: Record<string, { x: number; y: number }> = {};
+    for (const [nodeId, pos] of Object.entries(constellationOutput.positions)) {
+      constellationPositions[nodeId] = { x: pos.x, y: pos.y };
+    }
+
+    return {
+      positions: constellationPositions,
+      orbitGuides: constellationOutput.guides as any,
+      projectedNodeIds: new Set(Object.keys(projection.nodes)),
+    };
+  }
+
+  // Check if Architecture Orbit / Component Orbit mode is explicitly requested
+  const isOrbit = architectureMode === 'orbit';
+  if (isOrbit) {
+    const dummySummary = {
+      totalNodes: safeNodes.length,
+      totalEdges: safeEdges.length,
+      nodeCount: safeNodes.length,
+      edgeCount: safeEdges.length,
+      highRiskCount: 0,
+      unresolvedCount: 0,
+      cyclesCount: 0,
+    };
+    const schemaInput = {
+      summary: dummySummary,
+      nodes: safeNodes,
+      edges: safeEdges,
+      cycles: [],
+      unresolvedReferences: [],
+      impactSummaries: {},
+    };
+    const projection = adaptComponentOrbit(
+      schemaInput,
+      {
+        focalLwcId: options.focalLwcId,
+        ...options.componentOrbitOptions,
+      }
+    );
+    const orbitOutput = computeComponentOrbitLayout(projection, {
+      nodeWidth,
+      nodeHeight,
+    });
+
+    const orbitPositions: Record<string, { x: number; y: number }> = {};
+    for (const [nodeId, pos] of Object.entries(orbitOutput.positions)) {
+      orbitPositions[nodeId] = { x: pos.x, y: pos.y };
+    }
+
+    return {
+      positions: orbitPositions,
+      orbitGuides: orbitOutput.guides as any,
+      projectedNodeIds: new Set(Object.keys(projection.nodes)),
+    };
   }
 
   // Ensure all edge endpoints are present in safeNodes
@@ -290,6 +411,10 @@ export function computeArchitectureLayoutWithMetadata(
     ...localResult.primaryNodePositions,
   };
 
+  const immutableStage7PrimaryPositions: Record<string, { x: number; y: number }> = Object.freeze({
+    ...localResult.primaryNodePositions,
+  });
+
   // Step 8: Hub & Bridge Spatial Refinement (Wave 3B)
   const domainXCenters: Record<string, number> = {};
   const domainBounds: Record<string, { minX: number; maxX: number }> = {};
@@ -299,33 +424,71 @@ export function computeArchitectureLayoutWithMetadata(
     domainBounds[domain] = { minX: region.xMin, maxX: region.xMax };
   });
 
-  safeNodes.forEach(node => {
-    // Secondary satellite nodes (tests, fields) are placed exclusively in Step 9
-    if (isTestNode(node) || isFieldNode(node)) return;
-
+  const stage8BridgeNodes = safeNodes.filter(node => {
+    if (isTestNode(node) || isFieldNode(node)) return false;
     const centrality = centralityMap.get(node.id);
-    if (centrality?.isBridge && !centrality.isHub) {
-      const neighborPositions: Record<string, { x: number; y: number }> = {};
-      const nodeAnalysis = analysis.nodes.get(node.id);
+    return centrality?.isBridge && !centrality.isHub;
+  });
 
-      nodeAnalysis?.neighborIds.forEach(nId => {
-        if (basePositions[nId]) {
-          neighborPositions[nId] = basePositions[nId];
-        }
-      });
+  if (enableCandidateDOrdering) {
+    const layerOrderMap: Record<ArchitectureLayer, number> = {
+      presentation: 0,
+      application: 1,
+      domain: 2,
+      schema: 3,
+    };
+    stage8BridgeNodes.sort((a, b) => {
+      const cA = centralityMap.get(a.id);
+      const cB = centralityMap.get(b.id);
+      const spanA = cA?.connectedDomains.length || 0;
+      const spanB = cB?.connectedDomains.length || 0;
+      if (spanA !== spanB) {
+        return spanA - spanB;
+      }
+      const nA = analysis.nodes.get(a.id)?.neighborIds.length || 0;
+      const nB = analysis.nodes.get(b.id)?.neighborIds.length || 0;
+      if (nB !== nA) {
+        return nB - nA;
+      }
+      const lA = layerOrderMap[layerMap.get(a.id) || 'application'];
+      const lB = layerOrderMap[layerMap.get(b.id) || 'application'];
+      if (lA !== lB) {
+        return lA - lB;
+      }
+      return a.id.localeCompare(b.id);
+    });
+  }
 
-      const bridgeInfo = calculateBridgeCandidatePosition(
-        node.id,
-        layerMap.get(node.id) || 'application',
-        centrality.connectedDomains,
-        domainXCenters,
-        domainBounds,
-        neighborPositions,
-        { layerSpacing, nodeWidth, nodeHeight, layerYOffsets: globalDomainResult.layerYMap, index, allocatedPositions: basePositions }
-      );
+  stage8BridgeNodes.forEach(node => {
+    const centrality = centralityMap.get(node.id)!;
+    const neighborPositions: Record<string, { x: number; y: number }> = {};
+    const nodeAnalysis = analysis.nodes.get(node.id);
 
-      basePositions[node.id] = bridgeInfo.candidatePosition;
-    }
+    nodeAnalysis?.neighborIds.forEach(nId => {
+      if (basePositions[nId]) {
+        neighborPositions[nId] = basePositions[nId];
+      }
+    });
+
+    const bridgeInfo = calculateBridgeCandidatePosition(
+      node.id,
+      layerMap.get(node.id) || 'application',
+      centrality.connectedDomains,
+      domainXCenters,
+      domainBounds,
+      neighborPositions,
+      {
+        layerSpacing,
+        nodeWidth,
+        nodeHeight,
+        layerYOffsets: globalDomainResult.layerYMap,
+        index,
+        allocatedPositions: basePositions,
+        immutablePrimaryPositions: enableImmutablePrimaryPositions ? immutableStage7PrimaryPositions : undefined,
+      }
+    );
+
+    basePositions[node.id] = bridgeInfo.candidatePosition;
   });
 
   // Step 9: Secondary Satellite Placement (Tests, Fields, Trigger/Handlers) (Wave 3C)

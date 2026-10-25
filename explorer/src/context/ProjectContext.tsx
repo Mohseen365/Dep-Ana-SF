@@ -164,9 +164,11 @@ export const ProjectProvider: React.FC<{
         id: pId,
         analysisPath:
           p.analysisPath ||
-          (pId !== "default"
-            ? `/projects/${pId}/explorer-data.json`
-            : "/explorer-data.json"),
+          (pId === "pbim"
+            ? "/pbim/explorer-data.json"
+            : pId !== "default"
+              ? `/projects/${pId}/explorer-data.json`
+              : "/explorer-data.json"),
       });
     });
 
@@ -177,19 +179,50 @@ export const ProjectProvider: React.FC<{
         id: pId,
         analysisPath:
           p.analysisPath ||
-          (pId !== "default"
-            ? `/projects/${pId}/explorer-data.json`
-            : "/explorer-data.json"),
+          (pId === "pbim"
+            ? "/pbim/explorer-data.json"
+            : pId !== "default"
+              ? `/projects/${pId}/explorer-data.json`
+              : "/explorer-data.json"),
       });
     });
 
     const allProjects = Array.from(mergedMap.values());
     setProjects(allProjects);
 
-    // Determine target active project
+    // Determine target active project safely
     const currentId = initialProjectId
       ? slugify(initialProjectId)
       : getInitialProjectId();
+
+    // If currentId is in mergedMap, use it.
+    // If currentId is unmanifested/custom, create a pending/placeholder project entry in mergedMap
+    // so activeProject metadata matches activeProjectId cleanly rather than silently returning DEFAULT_PROJECT.
+    if (!mergedMap.has(currentId) && currentId) {
+      const customProject: ProjectMetadata = {
+        id: currentId,
+        name: currentId === "pbim" ? "PBIM" : currentId.toUpperCase(),
+        description: `Requested project (${currentId})`,
+        sourcePath: `projects/${currentId}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastAnalyzedAt: null,
+        analysisStatus: "NOT_ANALYZED",
+        componentCount: 0,
+        dependencyCount: 0,
+        analysisPath:
+          currentId === "pbim"
+            ? "/pbim/explorer-data.json"
+            : currentId !== "default"
+              ? `/projects/${currentId}/explorer-data.json`
+              : "/explorer-data.json",
+      };
+      mergedMap.set(currentId, customProject);
+    }
+
+    const updatedAllProjects = Array.from(mergedMap.values());
+    setProjects(updatedAllProjects);
+
     const validId = mergedMap.has(currentId)
       ? currentId
       : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
