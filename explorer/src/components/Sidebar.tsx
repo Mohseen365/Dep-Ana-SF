@@ -61,6 +61,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const listContainerRef = useRef<HTMLDivElement>(null);
   const router = useWorkspaceRouterSafe();
 
+  const filterChangeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (filterChangeTimerRef.current) {
+        clearTimeout(filterChangeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleFilterChange = useCallback(
+    (newFilterState: SearchFilterState) => {
+      if (filterChangeTimerRef.current) {
+        clearTimeout(filterChangeTimerRef.current);
+        filterChangeTimerRef.current = null;
+      }
+
+      const searchQueryChanged = newFilterState.searchQuery !== filterState.searchQuery;
+      const isSearchClearing = !newFilterState.searchQuery && Boolean(filterState.searchQuery);
+
+      if (!searchQueryChanged || isSearchClearing) {
+        onFilterChange(newFilterState);
+      } else {
+        filterChangeTimerRef.current = setTimeout(() => {
+          onFilterChange(newFilterState);
+        }, 150);
+      }
+    },
+    [filterState.searchQuery, onFilterChange]
+  );
+
   // Closed state: return null to ensure zero background, border, padding, or phantom hitbox remain
   if (collapsed) {
     return null;
@@ -449,7 +480,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             filterState={filterState}
             quickFilter={quickFilter}
             sortOption={sortOption}
-            onFilterChange={onFilterChange}
+            onFilterChange={handleFilterChange}
             onQuickFilterChange={setQuickFilter}
             onSortOptionChange={setSortOption}
             onSelectResult={onSelectNode}

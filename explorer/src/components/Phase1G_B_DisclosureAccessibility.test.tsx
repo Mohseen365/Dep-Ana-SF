@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SummaryBar } from './SummaryBar';
 import { HotspotPanel } from './HotspotPanel';
@@ -11,8 +10,9 @@ import { WorkspaceRouterProvider } from '../context/WorkspaceRouterContext';
 import type { ExplorerNode, ExplorerSummary, ExplorerDataSchema } from '../types/explorer';
 import type { ArchitectureFinding } from '../lib/intelligence';
 import { createEmptyFilterState } from '../lib/search-filter';
+import { createMockSummary } from '../test/fixtures/mockFactories';
 
-const mockSummary: ExplorerSummary = {
+const mockSummary: ExplorerSummary = createMockSummary({
   nodeCount: 12,
   edgeCount: 15,
   highRiskCount: 2,
@@ -20,48 +20,80 @@ const mockSummary: ExplorerSummary = {
   lowRiskCount: 7,
   cycleCount: 1,
   unresolvedCount: 0,
-};
+});
 
 const mockNodes: ExplorerNode[] = [
   {
     id: 'ApexClass:TestClass',
     displayName: 'TestClass',
     type: 'ApexClass',
+    file: 'classes/TestClass.cls',
     risk: 'HIGH',
-    layer: 'domain',
-    domain: 'Sales',
+    riskReasons: ['High fan-in'],
     metrics: { fanIn: 5, fanOut: 2, coupling: 7, score: 85, unresolved: 0 },
+    behavior: {
+      isTest: false,
+      publicContractsCount: 1,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 0,
+      dmlCount: 0,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: true,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
   },
   {
     id: 'ApexClass:UtilClass',
     displayName: 'UtilClass',
     type: 'ApexClass',
+    file: 'classes/UtilClass.cls',
     risk: 'LOW',
-    layer: 'application',
-    domain: 'Sales',
+    riskReasons: [],
     metrics: { fanIn: 1, fanOut: 0, coupling: 1, score: 20, unresolved: 0 },
+    behavior: {
+      isTest: false,
+      publicContractsCount: 1,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 0,
+      dmlCount: 0,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: false,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
   },
 ];
 
 const mockExplorerData: ExplorerDataSchema = {
-  version: '1.0',
+  schemaVersion: '1.0',
   generatedAt: new Date().toISOString(),
   summary: mockSummary,
   nodes: mockNodes,
   edges: [],
   cycles: [],
   unresolvedReferences: [],
+  impactSummaries: {},
   entryPoints: [],
 };
 
 const mockFindings: ArchitectureFinding[] = [
   {
     id: 'finding-1',
-    ruleId: 'high-fan-in',
+    type: 'HIGH_FAN_IN_HUB',
     severity: 'HIGH',
     title: 'High Fan-In Hub Class',
     description: 'TestClass is imported by 5 components.',
     nodeIds: ['ApexClass:TestClass'],
+    edgeIds: [],
     evidence: [
       {
         file: 'classes/TestClass.cls',
@@ -70,6 +102,16 @@ const mockFindings: ArchitectureFinding[] = [
         description: 'Main declaration',
       },
     ],
+    provenance: {
+      origin: 'DERIVED_RULE',
+      source: 'Phase1G_B test',
+      facts: {},
+    },
+    rule: {
+      ruleId: 'high-fan-in',
+      ruleVersion: '1.0.0',
+      name: 'High Fan-In Hub',
+    },
   },
 ];
 

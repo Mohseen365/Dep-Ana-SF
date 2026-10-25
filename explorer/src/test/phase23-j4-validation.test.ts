@@ -4,7 +4,6 @@ import * as path from 'path';
 import crypto from 'crypto';
 import {
   computeArchitectureLayoutWithMetadata,
-  type ArchitectureLayoutOptions,
 } from '../lib/architecture-layout';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import { createLayoutGraphIndex } from '../lib/layout/graph-index';
@@ -41,7 +40,6 @@ import { resolveSpacingAndCollisions } from '../lib/layout/spacing';
 const NODE_WIDTH = 120;
 const NODE_HEIGHT = 60;
 const VERTICAL_GAP = 40;
-const HORIZONTAL_GAP = 40;
 
 function ensureDirExists(dirPath: string) {
   if (!fs.existsSync(dirPath)) {
@@ -139,7 +137,7 @@ export interface MetricSummary {
 
 export function calculateMetrics(
   projectId: string,
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: Record<string, { x: number; y: number }>,
   featureMap?: Map<string, string>
@@ -837,7 +835,7 @@ describe('PHASE 23 — J4 Runtime Truth, Coupling Contract, and Validation Suite
     const pbim = loadRealProjectData('pbim');
     expect(pbim.nodes.length).toBe(528);
     expect(pbim.edges.length).toBe(2063);
-    expect(pbim.sha256).toBe('d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b');
+    expect(pbim.sha256).toBe('395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d');
 
     // Default project contamination check
     const defaultDataPath = path.join(rootDir, 'explorer/public/explorer-data.json');
@@ -984,7 +982,6 @@ describe('PHASE 23 — J4 Runtime Truth, Coupling Contract, and Validation Suite
 
   it('Step 4: Measures 10 warm runs performance timing for Baseline vs Candidate J4', () => {
     const cstData = loadRealProjectData('cloud-spend-tracker');
-    const pbimData = loadRealProjectData('pbim');
 
     const warmRuns = 10;
     const cstBaselineTimes: number[] = [];

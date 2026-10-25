@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExplorerNode } from '../../types/explorer';
 import type { ArchitectureFinding } from '../../lib/intelligence';
+import { useViewportSize } from '../../hooks/useViewportSize';
 
 export interface NodeHoverCardProps {
   node: ExplorerNode;
@@ -9,17 +10,61 @@ export interface NodeHoverCardProps {
   findings?: ArchitectureFinding[];
 }
 
-export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y, findings }) => {
+export const NodeHoverCard: React.FC<NodeHoverCardProps> = React.memo(function NodeHoverCard({ node, x, y, findings }) {
   const fanIn = node.metrics?.fanIn ?? 0;
   const fanOut = node.metrics?.fanOut ?? 0;
 
-  const nodeFindings = (findings || []).filter(
-    (f) => f.nodeIds && f.nodeIds.includes(node.id)
+  const nodeFindings = React.useMemo(
+    () => (findings || []).filter((f) => f.nodeIds && f.nodeIds.includes(node.id)),
+    [findings, node.id]
   );
 
+  const maxSeverity = React.useMemo(() => {
+    if (nodeFindings.length === 0) return 'INFO';
+    const severityRank: Record<string, number> = {
+      CRITICAL: 5,
+      HIGH: 4,
+      MEDIUM: 3,
+      LOW: 2,
+      INFO: 1,
+    };
+    return nodeFindings.reduce((max, f) => {
+      return (severityRank[f.severity] ?? 0) > (severityRank[max] ?? 0) ? f.severity : max;
+    }, nodeFindings[0].severity);
+  }, [nodeFindings]);
+
+  const [copied, setCopied] = React.useState(false);
+  const copyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const viewport = useViewportSize();
+
+  React.useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Clamp positioning to keep within screen viewport
-  const left = Math.min(x + 12, window.innerWidth - 260);
-  const top = Math.min(y + 12, window.innerHeight - 160);
+  const left = Math.min(x + 12, viewport.width - 260);
+  const top = Math.min(y + 12, viewport.height - 160);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!node.file) return;
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(node.file).then(() => {
+        setCopied(true);
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => {
+          copyTimerRef.current = null;
+          setCopied(false);
+        }, 2000);
+      }).catch(() => {});
+    }
+  };
 
   return (
     <div
@@ -42,17 +87,27 @@ export const NodeHoverCard: React.FC<NodeHoverCardProps> = ({ node, x, y, findin
         <span className="label">Fan-Out:</span> <span className="value">{fanOut}</span>
       </div>
       {node.file && (
-        <div className="hover-card-detail file-path" title={node.file}>
-          {node.file}
+        <div className="hover-card-detail file-path" title={node.file} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.file}</span>
+          <button
+            type="button"
+            className="hover-card-copy-btn"
+            aria-label="Copy file path"
+            onClick={handleCopy}
+            title="Copy file path"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', fontSize: '12px', color: '#38bdf8' }}
+          >
+            {copied ? '✓' : '📋'}
+          </button>
         </div>
       )}
       {nodeFindings.length > 0 && (
         <div className="hover-card-detail findings-summary" style={{ marginTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', color: '#f87171' }}>
-          <span className="label">Findings:</span> <span className="value" style={{ fontWeight: 700 }}>⚠️ {nodeFindings.length} issue{nodeFindings.length > 1 ? 's' : ''} ({nodeFindings[0].severity})</span>
+          <span className="label">Findings:</span> <span className="value" style={{ fontWeight: 700 }}>⚠️ {nodeFindings.length} issue{nodeFindings.length > 1 ? 's' : ''} ({maxSeverity})</span>
         </div>
       )}
     </div>
   );
-};
+});
 
 export default NodeHoverCard;

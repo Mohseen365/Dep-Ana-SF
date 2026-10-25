@@ -1248,8 +1248,8 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
     const fullPipelinePositions = computeArchitectureLayout(inputNodes, inputEdges, { enableFeatureLayout: true });
     const fullPipelineMetrics = evaluateLayout(inputNodes, inputEdges, fullPipelinePositions);
 
-    expect(fullPipelineMetrics.detailedCrossings!.primaryPrimaryCrossings).toBe(7812);
-    expect(fullPipelineMetrics.detailedCrossings!.totalGeometricCrossings).toBe(85367);
+    expect(fullPipelineMetrics.detailedCrossings!.primaryPrimaryCrossings).toBe(7834); // Derived from analysis.ts canonical classifier — see metrics.ts isSecondaryNode
+    expect(fullPipelineMetrics.detailedCrossings!.totalGeometricCrossings).toBe(86198); // Derived from analysis.ts canonical classifier — see metrics.ts isSecondaryNode
     expect(fullPipelineMetrics.minClearance).toBeGreaterThanOrEqual(40.0);
     expect(fullPipelineMetrics.primaryOverlapCount).toBe(0);
     expect(fullPipelineMetrics.satelliteOverlapCount).toBe(0);
@@ -1397,7 +1397,7 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
 
     console.log('\n=================== STAGE 7 A/B SCALE BENCHMARKS & WORK ELIMINATED ===================');
 
-    scaleTiers.forEach(({ tier, nodeCount, edgeCount, data }) => {
+    scaleTiers.forEach(({ tier, data }) => {
       const safeNodes = [...data.nodes].sort((a, b) => a.id.localeCompare(b.id));
       const safeEdges = [...data.edges].sort((a, b) => (a.id ?? `${a.source}->${a.target}`).localeCompare(b.id ?? `${b.source}->${b.target}`));
 
@@ -1446,7 +1446,7 @@ describe('Stage 7 Single-Pass Bucket X-Center A/B Experiment Suite', () => {
       const deltaMs = medianOracle - medianCandidate;
       const speedupRatio = medianOracle / medianCandidate;
 
-      console.log(`[Stage 7 Scale ${tier} (${nodeCount}N/${edgeCount}E)]`);
+      console.log(`[Stage 7 Scale ${tier} (${safeNodes.length}N/${safeEdges.length}E)]`);
       console.log(`  Oracle Median Runtime    : ${medianOracle.toFixed(2)} ms`);
       console.log(`  Candidate Median Runtime : ${medianCandidate.toFixed(2)} ms`);
       console.log(`  Runtime Delta            : ${deltaMs >= 0 ? '-' : '+'}${Math.abs(deltaMs).toFixed(2)} ms`);

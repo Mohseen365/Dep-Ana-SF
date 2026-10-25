@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FeatureMatrixPanel } from '../components/FeatureMatrixPanel';
@@ -57,7 +56,7 @@ describe('Phase 3E Matrix Virtualization & Scale Test Suite', () => {
 
   it('2. supports keyboard arrow navigation and focus management', () => {
     const schema = createMockSchema(240);
-    const { container } = render(<FeatureMatrixPanel data={schema} />);
+    render(<FeatureMatrixPanel data={schema} />);
 
     const grid = screen.getByRole('grid');
     expect(grid).toBeInTheDocument();

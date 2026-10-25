@@ -66,7 +66,6 @@ describe('Phase 2F-C Performance, Scale & Density Hardening Regression Suite', (
     const projectData = createMockDataSchema(nodes, edges);
 
     // Cold invocation
-    const t0 = performance.now();
     const features1 = selectDiscoveredFeatures(projectData);
     const layers1 = selectNodeLayers(projectData);
     const centrality1 = selectCentralityScores(projectData);
@@ -109,6 +108,13 @@ describe('Phase 2F-C Performance, Scale & Density Hardening Regression Suite', (
     const subway1 = adaptSubwayMap(projectData);
     const constellation1 = adaptConstellation(projectData);
     const treemap1 = adaptTreemap(projectData);
+
+    expect(fourDir1).toBeDefined();
+    expect(sankey1).toBeDefined();
+    expect(dna1).toBeDefined();
+    expect(subway1).toBeDefined();
+    expect(constellation1).toBeDefined();
+    expect(treemap1).toBeDefined();
 
     // Verify inputs remain 100% unmutated
     expect(JSON.stringify(projectData)).toBe(rawDataCopy);

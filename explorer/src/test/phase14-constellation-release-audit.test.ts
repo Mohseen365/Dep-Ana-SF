@@ -1,11 +1,10 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import crypto from 'crypto';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ExplorerDataSchema } from '../types/explorer';
 import { adaptConstellation, type ConstellationData } from '../lib/adapters/constellation-adapter';
 import { computeConstellationLayout, type ConstellationLayoutResult } from '../lib/layout/constellation-layout';
-import { computeArchitectureLayout } from '../lib/architecture-layout';
+import { computeArchitectureLayout, computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
 
 export interface DatasetRecord {
   name: string;
@@ -138,6 +137,88 @@ function loadProjectData(sourcePath: string): { nodes: ExplorerNode[]; edges: Ex
   return {
     nodes: parsed.nodes || [],
     edges: parsed.edges || [],
+  };
+}
+
+function makeSchema(nodes: ExplorerNode[], edges: ExplorerEdge[]): ExplorerDataSchema {
+  return {
+    nodes,
+    edges,
+    summary: {
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+      highRiskCount: 0,
+      mediumRiskCount: 0,
+      lowRiskCount: 0,
+      cycleCount: 0,
+      unresolvedCount: 0,
+      inventory: {
+        files: 0,
+        apexClasses: 0,
+        apexTriggers: 0,
+        lwcJs: 0,
+        lwcHtml: 0,
+        visualforce: 0,
+        flows: 0,
+        objects: 0,
+        fields: 0,
+      },
+    },
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
+  };
+}
+
+function makeSyntheticNode(id: string, displayName: string): ExplorerNode {
+  return {
+    id,
+    displayName,
+    type: 'ApexClass',
+    file: `src/${displayName}.cls`,
+    metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+    risk: 'LOW',
+    riskReasons: [],
+    behavior: {
+      isTest: false,
+      publicContractsCount: 0,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 0,
+      dmlCount: 0,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: false,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
+  };
+}
+
+function makeSyntheticEdge(id: string, source: string, target: string): ExplorerEdge {
+  return {
+    id,
+    source,
+    target,
+    relationshipType: 'method-call',
+    method: null,
+    evidence: '',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL',
+    resolutionStrategy: 'EXACT',
+    confidence: '1.0',
+    line: null,
+    column: null,
+    methodOwner: null,
+    file: '',
+    canonical: {
+      source: { type: 'ApexClass', name: source },
+      target: { type: 'ApexClass', name: target },
+      relationship: { type: 'method-call', resolution: 'EXACT' },
+      location: {},
+    },
   };
 }
 
@@ -290,7 +371,7 @@ describe('PHASE 14 — Constellation Release Readiness & Regression Gate Audit',
 
       [1, 2, 3].forEach((depth) => {
         const constData = adaptConstellation(
-          { nodes, edges },
+          makeSchema(nodes, edges),
           {
             focalNodeId: focalNode ? focalNode.id : undefined,
             maxDepth: depth,
@@ -326,17 +407,17 @@ describe('PHASE 14 — Constellation Release Readiness & Regression Gate Audit',
     const testCounts = [29, 30, 31, 34, 35, 36, 40];
 
     testCounts.forEach((n) => {
-      const syntheticNodes: ExplorerNode[] = [{ id: 'focal', name: 'focal', type: 'ApexClass' }];
+      const syntheticNodes: ExplorerNode[] = [makeSyntheticNode('focal', 'focal')];
       const syntheticEdges: ExplorerEdge[] = [];
 
       for (let i = 1; i <= n; i++) {
         const id = `node_${i}`;
-        syntheticNodes.push({ id, name: id, type: 'ApexClass' });
-        syntheticEdges.push({ id: `e_${i}`, source: 'focal', target: id, type: 'calls' });
+        syntheticNodes.push(makeSyntheticNode(id, id));
+        syntheticEdges.push(makeSyntheticEdge(`e_${i}`, 'focal', id));
       }
 
       const constData = adaptConstellation(
-        { nodes: syntheticNodes, edges: syntheticEdges },
+        makeSchema(syntheticNodes, syntheticEdges),
         { focalNodeId: 'focal', maxDepth: 1, direction: 'both' }
       );
 
@@ -356,17 +437,17 @@ describe('PHASE 14 — Constellation Release Readiness & Regression Gate Audit',
     const broaderAuditDump: Record<number, any> = {};
 
     testCounts.forEach((n) => {
-      const syntheticNodes: ExplorerNode[] = [{ id: 'focal', name: 'focal', type: 'ApexClass' }];
+      const syntheticNodes: ExplorerNode[] = [makeSyntheticNode('focal', 'focal')];
       const syntheticEdges: ExplorerEdge[] = [];
 
       for (let i = 1; i <= n; i++) {
         const id = `node_${i}`;
-        syntheticNodes.push({ id, name: id, type: 'ApexClass' });
-        syntheticEdges.push({ id: `e_${i}`, source: 'focal', target: id, type: 'calls' });
+        syntheticNodes.push(makeSyntheticNode(id, id));
+        syntheticEdges.push(makeSyntheticEdge(`e_${i}`, 'focal', id));
       }
 
       const constData = adaptConstellation(
-        { nodes: syntheticNodes, edges: syntheticEdges },
+        makeSchema(syntheticNodes, syntheticEdges),
         { focalNodeId: 'focal', maxDepth: 1, direction: 'both' }
       );
 
@@ -399,9 +480,10 @@ describe('PHASE 14 — Constellation Release Readiness & Regression Gate Audit',
     expect(Object.keys(hierarchicalPositions).length).toBe(dsCst.nodes.length);
 
     // Verify Orbit Mode
-    const orbitPositions = computeArchitectureLayout(dsCst.nodes, dsCst.edges, {
+    const orbitResult = computeArchitectureLayoutWithMetadata(dsCst.nodes, dsCst.edges, {
       architectureMode: 'orbit',
     });
-    expect(Object.keys(orbitPositions).length).toBe(dsCst.nodes.length);
+    const expectedOrbitCount = orbitResult.projectedNodeIds ? orbitResult.projectedNodeIds.size : dsCst.nodes.length;
+    expect(Object.keys(orbitResult.positions).length).toBe(expectedOrbitCount);
   });
 });

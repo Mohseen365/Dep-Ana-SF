@@ -293,7 +293,7 @@ export function runStage4Experiment(
 
   // --- Measure Oracle Stage 4 ---
   const oracleStart = performance.now();
-  for (const [parentId, fields] of eligibleGroupEntries) {
+  for (const [_parentId, fields] of eligibleGroupEntries) {
     const fieldIds = fields.map(f => f.nodeId);
     const slots = fieldIds.map(id => oraclePositions[id]);
 
@@ -508,6 +508,7 @@ describe('STAGE 9 — CAND-9B CONTROLLED A/B EXPERIMENT', () => {
       expect(repRes.allShiftsMatch).toBe(true);
       expect(repRes.maxCoordinateDriftPx).toBe(0);
     }
+    expect(baseline).toBeDefined();
 
     // 5x Input-Order Shuffles
     for (let seed = 1; seed <= 5; seed++) {

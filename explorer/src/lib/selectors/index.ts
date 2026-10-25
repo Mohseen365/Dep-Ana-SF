@@ -1,7 +1,8 @@
-import { ExplorerDataSchema, ExplorerNode, ExplorerEdge, ExplorerNodeType } from '../../types/explorer';
+import { ExplorerDataSchema, ExplorerNodeType } from '../../types/explorer';
 import { discoverFeatures, FeatureCluster } from '../layout/features';
+import { discoverDomains } from '../layout/domains';
 import { classifyNodeLayer, ArchitectureLayer } from '../layout/layers';
-import { computeGraphCentralityAnalysis, GraphCentralityAnalysis } from '../layout/centrality';
+import { computeGraphCentralityAnalysis } from '../layout/centrality';
 import { getArchitecturalHotspots, CategorizedHotspots } from '../hotspots';
 import { filterGraphByNodeTypes, applyFilters, FilteredGraphData } from '../search-filter';
 import { SearchFilterState } from '../search-filter';
@@ -130,10 +131,14 @@ export const selectCentralityScores = createMemoizedSelector(
     if (!data || !data.nodes) {
       return new Map();
     }
+    const domainDiscovery = discoverDomains(data.nodes, data.edges || []);
     const domainMap = new Map<string, string>();
+    domainDiscovery.assignments.forEach((assignment, nodeId) => {
+      domainMap.set(nodeId, assignment.primaryDomain);
+    });
+
     const layerMap = new Map<string, ArchitectureLayer>();
     for (const node of data.nodes) {
-      if (node.domain) domainMap.set(node.id, node.domain);
       layerMap.set(node.id, classifyNodeLayer(node));
     }
     return computeGraphCentralityAnalysis(data.nodes, data.edges || [], domainMap, layerMap);
@@ -186,8 +191,8 @@ export const selectDiffModel = createMemoizedSelector(
     if (!baseData || !compareData) return null;
     const emptyDiffResult = {
       diffSchemaVersion: 1,
-      snapshotBeforeIdentity: baseData.projectId || null,
-      snapshotAfterIdentity: compareData.projectId || null,
+      snapshotBeforeIdentity: baseData.project?.id || null,
+      snapshotAfterIdentity: compareData.project?.id || null,
       hasChanges: false,
       summary: {
         addedNodesCount: 0,

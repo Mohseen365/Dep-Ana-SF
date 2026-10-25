@@ -8,32 +8,32 @@
           "stage": "Stage5",
           "sourcePos": {
             "x": 999.7,
-            "y": 7960
+            "y": 8060
           },
           "targetPos": {
             "x": 999.7,
             "y": 8440
           },
-          "distance": 480
+          "distance": 380
         },
         {
           "stage": "Stage6",
           "sourcePos": {
             "x": 999.7,
-            "y": 7960
+            "y": 8060
           },
           "targetPos": {
             "x": 999.7,
             "y": 8440
           },
-          "distance": 480
+          "distance": 380
         },
         {
           "stage": "Stage7",
           "sourcePos": null,
           "targetPos": {
-            "x": 759.7,
-            "y": 9840
+            "x": 1079.7,
+            "y": 9740
           },
           "distance": "UNAVAILABLE"
         },
@@ -41,58 +41,58 @@
           "stage": "Stage8",
           "sourcePos": null,
           "targetPos": {
-            "x": 759.7,
-            "y": 9840
+            "x": 1079.7,
+            "y": 9740
           },
           "distance": "UNAVAILABLE"
         },
         {
           "stage": "Stage9",
           "sourcePos": {
-            "x": 479.9,
-            "y": -100
+            "x": 639.9,
+            "y": -400
           },
           "targetPos": {
-            "x": 759.7,
-            "y": 9840
+            "x": 1079.7,
+            "y": 9740
           },
-          "distance": 9943.94
+          "distance": 10149.53
         },
         {
           "stage": "Stage10",
           "sourcePos": {
-            "x": 940,
-            "y": 510
+            "x": 970,
+            "y": 210
           },
           "targetPos": {
-            "x": 1219.8,
-            "y": 10450
+            "x": 1409.8,
+            "y": 10350
           },
-          "distance": 9943.94
+          "distance": 10149.53
         },
         {
           "stage": "Stage11",
           "sourcePos": {
-            "x": 940,
-            "y": 510
+            "x": 970,
+            "y": 210
           },
           "targetPos": {
-            "x": 1219.8,
-            "y": 10450
+            "x": 1409.8,
+            "y": 10350
           },
-          "distance": 9943.94
+          "distance": 10149.53
         },
         {
           "stage": "Stage12",
           "sourcePos": {
-            "x": 940,
-            "y": 510
+            "x": 970,
+            "y": 210
           },
           "targetPos": {
-            "x": 1219.8,
-            "y": 10450
+            "x": 1409.8,
+            "y": 10350
           },
-          "distance": 9943.94
+          "distance": 10149.53
         }
       ]
     }
@@ -110,9 +110,9 @@
           },
           "targetPos": {
             "x": 420,
-            "y": 22140
+            "y": 20680
           },
-          "distance": 16647.51
+          "distance": 15188.23
         },
         {
           "stage": "Stage6",
@@ -122,16 +122,16 @@
           },
           "targetPos": {
             "x": 420,
-            "y": 22140
+            "y": 20680
           },
-          "distance": 16647.51
+          "distance": 15188.23
         },
         {
           "stage": "Stage7",
           "sourcePos": null,
           "targetPos": {
-            "x": 180,
-            "y": 24340
+            "x": 500,
+            "y": 22780
           },
           "distance": "UNAVAILABLE"
         },
@@ -139,8 +139,8 @@
           "stage": "Stage8",
           "sourcePos": null,
           "targetPos": {
-            "x": 180,
-            "y": 24340
+            "x": 500,
+            "y": 22780
           },
           "distance": "UNAVAILABLE"
         },
@@ -148,49 +148,49 @@
           "stage": "Stage9",
           "sourcePos": {
             "x": 1080,
-            "y": -140
+            "y": 360
           },
           "targetPos": {
-            "x": 180,
-            "y": 24340
+            "x": 500,
+            "y": 22780
           },
-          "distance": 24496.54
+          "distance": 22427.5
         },
         {
           "stage": "Stage10",
           "sourcePos": {
-            "x": 3200,
-            "y": 30
+            "x": 2960,
+            "y": 510
           },
           "targetPos": {
-            "x": 2300,
-            "y": 24510
+            "x": 2380,
+            "y": 22930
           },
-          "distance": 24496.54
+          "distance": 22427.5
         },
         {
           "stage": "Stage11",
           "sourcePos": {
-            "x": 3200,
-            "y": 30
+            "x": 2960,
+            "y": 510
           },
           "targetPos": {
-            "x": 2300,
-            "y": 24510
+            "x": 2380,
+            "y": 22930
           },
-          "distance": 24496.54
+          "distance": 22427.5
         },
         {
           "stage": "Stage12",
           "sourcePos": {
-            "x": 3200,
-            "y": 30
+            "x": 2960,
+            "y": 510
           },
           "targetPos": {
-            "x": 2300,
-            "y": 24510
+            "x": 2380,
+            "y": 22930
           },
-          "distance": 24496.54
+          "distance": 22427.5
         }
       ]
     }

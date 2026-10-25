@@ -19,7 +19,7 @@
  */
 
 import type { ComponentOrbitProjection, ComponentOrbitNode } from '../adapters/component-orbit-adapter';
-import { checkAABBOverlap, calculateRequiredSectorRadius, normalizeAngle } from './orbit-layout';
+import { checkAABBOverlap, normalizeAngle } from './orbit-layout';
 
 export interface ComponentOrbitLayoutOptions {
   center?: { x: number; y: number };
@@ -102,15 +102,26 @@ export function computeComponentOrbitLayout(
 ): ComponentOrbitLayoutOutput {
   const startTime = performance.now();
 
-  const center = options.center || { x: 0, y: 0 };
-  const innerRadius = options.innerRadius ?? 280;
+  const maxNodesPerTrack = options.maxNodesPerTrack ?? 16;
   const ringSpacing = options.ringSpacingPx ?? 220;
   const trackSpacing = options.trackSpacingPx ?? 160;
+
+  if (maxNodesPerTrack <= 0) {
+    throw new Error(`Invalid maxNodesPerTrack: ${maxNodesPerTrack}. Must be > 0.`);
+  }
+  if (ringSpacing <= 0) {
+    throw new Error(`Invalid ringSpacingPx: ${ringSpacing}. Must be > 0.`);
+  }
+  if (trackSpacing <= 0) {
+    throw new Error(`Invalid trackSpacingPx: ${trackSpacing}. Must be > 0.`);
+  }
+
+  const center = options.center || { x: 0, y: 0 };
+  const innerRadius = Math.max(options.innerRadius ?? 280, 160);
   const baseNodeWidth = options.nodeWidth ?? 120;
   const baseNodeHeight = options.nodeHeight ?? 60;
   const horizontalGap = options.horizontalGap ?? 40;
   const verticalGap = options.verticalGap ?? 40;
-  const maxNodesPerTrack = options.maxNodesPerTrack ?? 16;
   const maxRepairPasses = options.maxRepairPasses ?? 20;
   const customDimensions = options.customNodeDimensions || {};
 
@@ -162,9 +173,7 @@ export function computeComponentOrbitLayout(
       return;
     }
 
-    // Invariants G4 & G5 — Sort nodes deterministically on ring
-    ringNodes.sort((a, b) => a.nodeId.localeCompare(b.nodeId));
-
+    // Preserve adapter's semantic intra-ring ordering (role symbol priority -> type -> coupling -> ID)
     const n = ringNodes.length;
     const baseRingRadius = innerRadius + (ringIndex - 1) * ringSpacing;
 
@@ -338,12 +347,26 @@ export function computeComponentOrbitLayout(
   if (minAABBSeparationPx === Infinity) minAABBSeparationPx = 0;
   if (minRadiusPx === Infinity) minRadiusPx = 0;
 
-  // Build Guide Metadata
+  // Calculate maximum placed radius per ring across all placed nodes (including multi-track & repair shifts)
+  const maxPlacedRadiusPerRing = new Map<number, number>();
+  finalPosList.forEach((pos) => {
+    if (pos.ring > 0) {
+      const curr = maxPlacedRadiusPerRing.get(pos.ring) ?? 0;
+      if (pos.radius > curr) {
+        maxPlacedRadiusPerRing.set(pos.ring, pos.radius);
+      }
+    }
+  });
+
+  // Build Guide Metadata reflecting post-repair maximum placed radius per ring
   const guideRings: ComponentOrbitGuideRing[] = projection.rings.map((ring) => {
     const rIdx = ring.ringIndex;
     let radiusPx = 0;
     if (rIdx > 0) {
-      radiusPx = innerRadius + (rIdx - 1) * ringSpacing;
+      const maxPlaced = maxPlacedRadiusPerRing.get(rIdx);
+      radiusPx = maxPlaced !== undefined
+        ? Math.round(maxPlaced * 1000) / 1000
+        : (innerRadius + (rIdx - 1) * ringSpacing);
     }
     return {
       ringIndex: rIdx,

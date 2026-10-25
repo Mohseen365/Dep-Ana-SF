@@ -1,11 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import {
-  loadRealProjectData,
-  runCandidateP28Pipeline,
-  type CandidateP28Config,
-} from './phase28r-adaptive-capacity.test';
 
 export interface RenderedNodeInfo {
   id: string;
@@ -85,7 +80,7 @@ export function applyCandidateDA_PairSpecific(
   });
 
   // Repack each colliding cluster in each row
-  rowsMap.forEach((rowNodeIds, rowY) => {
+  rowsMap.forEach((rowNodeIds, _rowY) => {
     // Sort nodes in row horizontally by original X position
     rowNodeIds.sort((a, b) => newPositions[a].x - newPositions[b].x);
 

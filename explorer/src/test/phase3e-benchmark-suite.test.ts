@@ -56,8 +56,31 @@ describe('Phase 3E Extreme-Scale Performance, Memory & Isolation Benchmark Suite
     const projectB = generateSyntheticSalesforceGraph({ nodeCount: 500, seed: 202 });
 
     const matrixA = adaptFeatureMatrix({
+      summary: {
+        nodeCount: projectA.nodes.length,
+        edgeCount: projectA.edges.length,
+        highRiskCount: 0,
+        mediumRiskCount: 0,
+        lowRiskCount: projectA.nodes.length,
+        cycleCount: 0,
+        unresolvedCount: 0,
+        inventory: {
+          files: projectA.nodes.length,
+          apexClasses: projectA.nodes.length,
+          apexTriggers: 0,
+          lwcJs: 0,
+          lwcHtml: 0,
+          visualforce: 0,
+          flows: 0,
+          objects: 0,
+          fields: 0,
+        },
+      },
       nodes: projectA.nodes,
       edges: projectA.edges,
+      cycles: [],
+      unresolvedReferences: [],
+      impactSummaries: {},
       metadata: {
         projectId: 'ProjectA',
         projectName: 'Project A',
@@ -69,8 +92,31 @@ describe('Phase 3E Extreme-Scale Performance, Memory & Isolation Benchmark Suite
     });
 
     const matrixB = adaptFeatureMatrix({
+      summary: {
+        nodeCount: projectB.nodes.length,
+        edgeCount: projectB.edges.length,
+        highRiskCount: 0,
+        mediumRiskCount: 0,
+        lowRiskCount: projectB.nodes.length,
+        cycleCount: 0,
+        unresolvedCount: 0,
+        inventory: {
+          files: projectB.nodes.length,
+          apexClasses: projectB.nodes.length,
+          apexTriggers: 0,
+          lwcJs: 0,
+          lwcHtml: 0,
+          visualforce: 0,
+          flows: 0,
+          objects: 0,
+          fields: 0,
+        },
+      },
       nodes: projectB.nodes,
       edges: projectB.edges,
+      cycles: [],
+      unresolvedReferences: [],
+      impactSummaries: {},
       metadata: {
         projectId: 'ProjectB',
         projectName: 'Project B',

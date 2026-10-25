@@ -5,9 +5,9 @@ import {
 } from "../lib/search-filter";
 import { FocusState, createEmptyFocusState } from "../lib/focus-graph";
 import { ImpactState, createEmptyImpactState } from "../lib/impact-analysis";
-import { useWorkspaceRouter } from "../context/WorkspaceRouterContext";
-import { useInvestigation } from "../context/InvestigationContext";
-import { useProject } from "../context/ProjectContext";
+import { useWorkspaceRouterOptional } from "../context/WorkspaceRouterContext";
+import { useInvestigationOptional } from "../context/InvestigationContext";
+import { useProjectOptional } from "../context/ProjectContext";
 
 import { WorkspaceViewMode } from "../lib/projectState";
 import {
@@ -21,27 +21,15 @@ import {
 } from "../lib/url";
 
 function useWorkspaceRouterSafe() {
-  try {
-    return useWorkspaceRouter();
-  } catch (_) {
-    return null;
-  }
+  return useWorkspaceRouterOptional();
 }
 
 function useInvestigationSafe() {
-  try {
-    return useInvestigation();
-  } catch (_) {
-    return null;
-  }
+  return useInvestigationOptional();
 }
 
 function useProjectSafe() {
-  try {
-    return useProject();
-  } catch (_) {
-    return null;
-  }
+  return useProjectOptional();
 }
 export function useViewState() {
   const router = useWorkspaceRouterSafe();
@@ -105,12 +93,15 @@ export function useViewState() {
   >(null);
   const [isInvestigating, setIsInvestigating] = useState<boolean>(false);
   const [urlNodeId, setUrlNodeId] = useState<string | null>(null);
-  const [urlEdgeId, setUrlEdgeId] = useState<string | null>(null);
+  const [localSelectedEdgeId, setLocalSelectedEdgeId] = useState<string | null>(null);
 
   // Canonical investigation state derived directly from InvestigationContext when present
   const selectedNodeId = investigation
     ? investigation.state.selectedNodeId
     : localSelectedNodeId;
+  const selectedEdgeId = investigation
+    ? investigation.state.selectedEdgeId
+    : localSelectedEdgeId;
   const selectedFindingId = investigation
     ? investigation.state.selectedFindingId
     : localSelectedFindingId;
@@ -135,6 +126,14 @@ export function useViewState() {
       investigationRef.current.selectNode(nodeId);
     } else {
       setLocalSelectedNodeId(nodeId);
+    }
+  }, []);
+
+  const setSelectedEdgeId = useCallback((edgeId: string | null) => {
+    if (investigationRef.current) {
+      investigationRef.current.selectEdge(edgeId);
+    } else {
+      setLocalSelectedEdgeId(edgeId);
     }
   }, []);
 
@@ -177,14 +176,7 @@ export function useViewState() {
   const setFocusState = useCallback(
     (focus: Partial<FocusState> | ((prev: FocusState) => FocusState)) => {
       if (investigationRef.current) {
-        if (typeof focus === "function") {
-          const next = focus(investigationRef.current.state.focusState);
-          if (next.enabled === false) {
-            investigationRef.current.clearFocus();
-          } else {
-            investigationRef.current.setFocus(next);
-          }
-        } else if (focus.enabled === false) {
+        if (typeof focus === "object" && focus.enabled === false) {
           investigationRef.current.clearFocus();
         } else {
           investigationRef.current.setFocus(focus);
@@ -201,14 +193,7 @@ export function useViewState() {
   const setImpactState = useCallback(
     (impact: Partial<ImpactState> | ((prev: ImpactState) => ImpactState)) => {
       if (investigationRef.current) {
-        if (typeof impact === "function") {
-          const next = impact(investigationRef.current.state.impactState);
-          if (next.enabled === false) {
-            investigationRef.current.clearImpact();
-          } else {
-            investigationRef.current.setImpact(next);
-          }
-        } else if (impact.enabled === false) {
+        if (typeof impact === "object" && impact.enabled === false) {
           investigationRef.current.clearImpact();
         } else {
           investigationRef.current.setImpact(impact);
@@ -229,13 +214,7 @@ export function useViewState() {
         | ((prev: ConnectionQueryState) => ConnectionQueryState),
     ) => {
       if (investigationRef.current) {
-        if (typeof conn === "function") {
-          investigationRef.current.setConnection(
-            conn(investigationRef.current.state.connectionState),
-          );
-        } else {
-          investigationRef.current.setConnection(conn);
-        }
+        investigationRef.current.setConnection(conn);
       } else {
         setLocalConnectionState((prev) =>
           typeof conn === "function" ? conn(prev) : { ...prev, ...conn },
@@ -250,95 +229,133 @@ export function useViewState() {
 
   const readStateFromUrl = useCallback(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
+    try {
+      const params = new URLSearchParams(window.location.search);
 
-    const initialNode = params.get("node") || params.get("component");
-    if (initialNode) {
-      setUrlNodeId(initialNode);
-      if (investigationRef.current) {
-        investigationRef.current.selectNode(initialNode);
+      let initialNode = params.get("node") || params.get("component");
+      if (!initialNode && typeof window !== "undefined" && window.location.hash) {
+        try {
+          const hashRaw = window.location.hash.startsWith("#")
+            ? window.location.hash.slice(1)
+            : window.location.hash;
+          const hashParams = new URLSearchParams(hashRaw);
+          initialNode = hashParams.get("node");
+        } catch { /* ignore */ }
+      }
+
+      if (initialNode) {
+        setUrlNodeId(initialNode);
+        if (investigationRef.current) {
+          investigationRef.current.selectNode(initialNode);
+        } else {
+          setLocalSelectedNodeId(initialNode);
+        }
       } else {
-        setLocalSelectedNodeId(initialNode);
+        setUrlNodeId(null);
+        if (investigationRef.current) {
+          investigationRef.current.selectNode(null);
+        } else {
+          setLocalSelectedNodeId(null);
+        }
       }
-    } else {
-      setUrlNodeId(null);
-      if (investigationRef.current) {
-        investigationRef.current.selectNode(null);
-      } else {
-        setLocalSelectedNodeId(null);
+
+      const initialEdge = params.get("edge");
+      setSelectedEdgeId(initialEdge ?? null);
+
+      try {
+        const filterParsed = filterQuery.fromQuery(params);
+        if (routerRef.current) {
+          routerRef.current.setViewMode(filterParsed.viewMode);
+        } else {
+          setLocalViewMode(filterParsed.viewMode);
+        }
+        setFilterState(filterParsed.filterState);
+      } catch (e) {
+        console.warn('[useViewState] failed to parse filter params:', e);
       }
-    }
 
-    const initialEdge = params.get("edge");
-    if (initialEdge) {
-      setUrlEdgeId(initialEdge);
-    } else {
-      setUrlEdgeId(null);
-    }
-
-    const filterParsed = filterQuery.fromQuery(params);
-    if (routerRef.current) {
-      routerRef.current.setViewMode(filterParsed.viewMode);
-    } else {
-      setLocalViewMode(filterParsed.viewMode);
-    }
-    setFilterState(filterParsed.filterState);
-
-    const focusParsed = focusQuery.fromQuery(params, initialNode);
-    if (investigationRef.current) {
-      if (focusParsed.enabled) {
-        investigationRef.current.setFocus(focusParsed);
-      } else {
-        investigationRef.current.clearFocus();
+      try {
+        const focusParsed = focusQuery.fromQuery(params, initialNode);
+        if (investigationRef.current) {
+          if (focusParsed.enabled) {
+            investigationRef.current.setFocus(focusParsed);
+          } else {
+            investigationRef.current.clearFocus();
+          }
+        } else {
+          setLocalFocusState(focusParsed);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse focus params:', e);
       }
-    } else {
-      setLocalFocusState(focusParsed);
-    }
 
-    const impactParsed = impactQuery.fromQuery(params, initialNode);
-    if (investigationRef.current) {
-      if (impactParsed.enabled) {
-        investigationRef.current.setImpact(impactParsed);
-      } else {
-        investigationRef.current.clearImpact();
+      try {
+        const impactParsed = impactQuery.fromQuery(params, initialNode);
+        if (investigationRef.current) {
+          if (impactParsed.enabled) {
+            investigationRef.current.setImpact(impactParsed);
+          } else {
+            investigationRef.current.clearImpact();
+          }
+        } else {
+          setLocalImpactState(impactParsed);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse impact params:', e);
       }
-    } else {
-      setLocalImpactState(impactParsed);
-    }
 
-    const connParsed = connectionQuery.fromQuery(params);
-    if (investigationRef.current) {
-      investigationRef.current.setConnection(connParsed);
-    } else {
-      setLocalConnectionState(connParsed);
-    }
-
-    const findingsParsed = findingsQuery.fromQuery(params);
-    setDiagnosticsTab(findingsParsed.diagnosticsTab);
-    if (investigationRef.current) {
-      if (findingsParsed.selectedCycleId) {
-        investigationRef.current.selectCycle(findingsParsed.selectedCycleId);
+      try {
+        const connParsed = connectionQuery.fromQuery(params);
+        if (investigationRef.current) {
+          investigationRef.current.setConnection(connParsed);
+        } else {
+          setLocalConnectionState(connParsed);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse connection params:', e);
       }
-      if (findingsParsed.selectedUnresolvedEdgeId) {
-        investigationRef.current.selectUnresolvedEdge(
-          findingsParsed.selectedUnresolvedEdgeId,
-        );
+
+      try {
+        const findingsParsed = findingsQuery.fromQuery(params);
+        setDiagnosticsTab(findingsParsed.diagnosticsTab);
+        if (investigationRef.current) {
+          if (findingsParsed.selectedCycleId) {
+            investigationRef.current.selectCycle(findingsParsed.selectedCycleId);
+          }
+          if (findingsParsed.selectedUnresolvedEdgeId) {
+            investigationRef.current.selectUnresolvedEdge(
+              findingsParsed.selectedUnresolvedEdgeId,
+            );
+          }
+          if (findingsParsed.selectedFindingId) {
+            investigationRef.current.selectFinding(
+              findingsParsed.selectedFindingId,
+            );
+          }
+        } else {
+          setLocalSelectedCycleId(findingsParsed.selectedCycleId);
+          setLocalSelectedUnresolvedEdgeId(findingsParsed.selectedUnresolvedEdgeId);
+          setLocalSelectedFindingId(findingsParsed.selectedFindingId);
+        }
+      } catch (e) {
+        console.warn('[useViewState] failed to parse findings params:', e);
       }
-      if (findingsParsed.selectedFindingId) {
-        investigationRef.current.selectFinding(
-          findingsParsed.selectedFindingId,
-        );
+
+      try {
+        const invParsed = investigationQuery.fromQuery(params);
+        setSelectedInvestigationId(invParsed.selectedInvestigationId);
+      } catch (e) {
+        console.warn('[useViewState] failed to parse investigation params:', e);
       }
-    } else {
-      setLocalSelectedCycleId(findingsParsed.selectedCycleId);
-      setLocalSelectedUnresolvedEdgeId(findingsParsed.selectedUnresolvedEdgeId);
-      setLocalSelectedFindingId(findingsParsed.selectedFindingId);
+
+      try {
+        setIsInvestigating(params.get("investigate") === "true");
+      } catch (e) {
+        console.warn('[useViewState] failed to parse investigate param:', e);
+      }
+    } catch (err) {
+      console.warn('[useViewState] failed to parse URL state:', err);
     }
-
-    const invParsed = investigationQuery.fromQuery(params);
-    setSelectedInvestigationId(invParsed.selectedInvestigationId);
-
-    setIsInvestigating(params.get("investigate") === "true");
   }, []);
 
   // Read initial values from URL on mount and popstate
@@ -374,7 +391,7 @@ export function useViewState() {
       setSelectedInvestigationId(null);
       setIsInvestigating(false);
       setUrlNodeId(null);
-      setUrlEdgeId(null);
+      setSelectedEdgeId(null);
       setFilterState(createEmptyFilterState());
       setDiagnosticsTab("none");
     };
@@ -405,7 +422,21 @@ export function useViewState() {
       existingProject ||
       (activeProject && activeProject !== "default" ? activeProject : null);
 
-    const params = new URLSearchParams();
+    // Start from the existing query so unknown params (debug, utm_*, feature flags)
+    // survive the rewrite.
+    const params = new URLSearchParams(currentParams);
+
+    // Delete only the keys this hook owns; they will be re-added below if active.
+    const OWNED_KEYS = [
+      "project", "node", "component", "edge", "investigate",
+      "focus", "focusNode", "depth", "direction",
+      "impact", "impactOrigin", "impactDepth",
+      "conn", "findings", "cycle", "unresolvedEdge", "finding", "tab",
+      "investigation",
+      "view", "search", "typeFilter", "riskFilter",
+      "hasCallouts", "withoutSharing", "hideTests", "hasAsyncPatterns",
+    ] as const;
+    for (const k of OWNED_KEYS) params.delete(k);
 
     if (projectToPreserve) {
       params.set("project", projectToPreserve);
@@ -415,6 +446,10 @@ export function useViewState() {
       selectedNodeId || focusState.focusNodeId || impactState.originNodeId;
     if (effectiveNode) {
       params.set("node", effectiveNode);
+    }
+
+    if (selectedEdgeId) {
+      params.set("edge", selectedEdgeId);
     }
 
     if (isInvestigating) {
@@ -469,7 +504,8 @@ export function useViewState() {
     }
 
     const searchString = params.toString() ? `?${params.toString()}` : "";
-    const newUrl = `${window.location.pathname}${searchString}`;
+    const currentHash = typeof window !== "undefined" ? window.location.hash : "";
+    const newUrl = `${window.location.pathname}${searchString}${currentHash}`;
     if (window.location.search !== searchString) {
       if (prevViewModeRef.current !== activeViewMode) {
         window.history.pushState(null, "", newUrl);
@@ -488,14 +524,80 @@ export function useViewState() {
     selectedCycleId,
     selectedUnresolvedEdgeId,
     selectedNodeId,
+    selectedEdgeId,
     selectedFindingId,
     selectedInvestigationId,
     isInvestigating,
   ]);
 
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const syncToUrlRef = useRef(syncToUrl);
+  syncToUrlRef.current = syncToUrl;
+
+  const nonSearchKey = [
+    activeViewMode,
+    selectedNodeId ?? '',
+    selectedFindingId ?? '',
+    selectedCycleId ?? '',
+    selectedUnresolvedEdgeId ?? '',
+    selectedInvestigationId ?? '',
+    isInvestigating ? '1' : '0',
+    diagnosticsTab,
+    // focus
+    focusState.enabled ? '1' : '0',
+    focusState.focusNodeId ?? '',
+    focusState.direction,
+    focusState.depth,
+    // impact
+    impactState.enabled ? '1' : '0',
+    impactState.originNodeId ?? '',
+    impactState.depth,
+    // connection
+    connectionState.direction,
+    connectionState.depth,
+    // filters
+    filterState.typeFilter,
+    filterState.riskFilter,
+    filterState.hasCallouts ? '1' : '0',
+    filterState.withoutSharing ? '1' : '0',
+    filterState.hideTests ? '1' : '0',
+    filterState.hasAsyncPatterns ? '1' : '0',
+  ].join('|');
+
+  const prevSearchQueryRef = useRef(filterState.searchQuery);
+  const prevNonSearchKeyRef = useRef(nonSearchKey);
+
   useEffect(() => {
-    syncToUrl();
-  }, [syncToUrl]);
+    const nonSearchChanged = prevNonSearchKeyRef.current !== nonSearchKey;
+    const searchQueryChanged = prevSearchQueryRef.current !== filterState.searchQuery;
+
+    prevNonSearchKeyRef.current = nonSearchKey;
+    prevSearchQueryRef.current = filterState.searchQuery;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
+    if (searchQueryChanged && !nonSearchChanged && filterState.searchQuery) {
+      debounceTimerRef.current = setTimeout(() => {
+        syncToUrlRef.current();
+      }, 150);
+    } else {
+      syncToUrl();
+    }
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+    };
+  }, [
+    syncToUrl,
+    nonSearchKey,
+    filterState.searchQuery,
+  ]);
 
   return {
     viewMode: activeViewMode,
@@ -516,6 +618,8 @@ export function useViewState() {
     setSelectedUnresolvedEdgeId,
     selectedNodeId,
     setSelectedNodeId,
+    selectedEdgeId,
+    setSelectedEdgeId,
     selectedFindingId,
     setSelectedFindingId,
     selectedInvestigationId,
@@ -523,6 +627,6 @@ export function useViewState() {
     isInvestigating,
     setIsInvestigating,
     urlNodeId,
-    urlEdgeId,
+    urlEdgeId: selectedEdgeId,
   };
 }

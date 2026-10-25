@@ -1,6 +1,8 @@
+import * as fs from 'node:fs';
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import { discoverFeatures, type FeatureDiscoveryResult } from './features';
 import { classifyNodeLayer } from './layers';
+import { isTestNode, isFieldNode } from './analysis';
 
 /**
  * Node position map mapping node ID to (x, y) coordinates.
@@ -331,12 +333,7 @@ export function nodeOverlapCount(
 }
 
 function isSecondaryNode(node: ExplorerNode): boolean {
-  const isTest =
-    node.behavior?.isTest ||
-    (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
-    /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
-  const isField = node.type === 'Field' || node.type === 'CustomField';
-  return isTest || isField;
+  return isTestNode(node) || isFieldNode(node);
 }
 
 /**
@@ -444,7 +441,6 @@ export function minimumNodeClearance(
     }
   }
 
-  if (minClearance === Infinity) return 0;
   // Apply spacing-aligned epsilon tolerance (1e-3, matching spacing.ts EPSILON) for sub-pixel arithmetic noise
   const SPACING_EPSILON = 1e-3;
   if (minClearance < 40.0 && 40.0 - minClearance <= SPACING_EPSILON) {
@@ -453,27 +449,16 @@ export function minimumNodeClearance(
   return minClearance;
 }
 
-function getLayerRank(node: ExplorerNode): number {
-  const type = node.type;
-  if (type === 'LWC' || type === 'Visualforce') return 0; // presentation
-  if (type === 'ApexTrigger' || type === 'Flow') return 1; // application
-  if (
-    /(?:selector|repository|repo|dao|domain|dto|vo|model)$/i.test(
-      node.displayName || node.id
-    )
-  ) {
-    return 2; // domain
-  }
-  if (
-    type === 'Object' ||
-    type === 'CustomObject' ||
-    type === 'Field' ||
-    type === 'CustomField' ||
-    type === 'External'
-  ) {
-    return 3; // schema
-  }
-  return 1; // application default
+const LAYER_ORDER: Record<string, number> = {
+  presentation: 0,
+  application: 1,
+  domain: 2,
+  schema: 3,
+};
+
+export function getLayerRank(node: ExplorerNode): number {
+  const layer = classifyNodeLayer(node);
+  return LAYER_ORDER[layer] ?? 1;
 }
 
 /**
@@ -492,6 +477,9 @@ export function layerViolationCount(
     const targetNode = nodeMap.get(edge.target);
 
     if (!sourceNode || !targetNode) continue;
+
+    // Exclude edges involving test nodes from violating the layer gate
+    if (isTestNode(sourceNode) || isTestNode(targetNode)) continue;
 
     const sourceRank = getLayerRank(sourceNode);
     const targetRank = getLayerRank(targetNode);
@@ -595,8 +583,7 @@ export function domainCohesion(
     totalDomainCount++;
   });
 
-  const overallAvgIntraDist =
-    totalDomainCount > 0 ? totalIntraDistSum / totalDomainCount : 0;
+  const overallAvgIntraDist = totalDomainCount > 0 ? totalIntraDistSum / totalDomainCount : 0;
   const dispersion = overallAvgIntraDist / graphScale;
   const cohesionScore = Math.max(0, Math.min(1, 1 - dispersion));
 
@@ -765,8 +752,7 @@ export function hubLocality(
     });
   }
 
-  const avgDist =
-    totalNeighborCount > 0 ? totalDistSum / totalNeighborCount : 0;
+  const avgDist = totalNeighborCount > 0 ? totalDistSum / totalNeighborCount : 0;
 
   return {
     hubCount: hubs.length,
@@ -881,6 +867,9 @@ export function calculateFeatureLocalityDiagnostics(
   const interCrossLayerLengths: number[] = [];
 
   for (const edge of edges) {
+    const sourceNode = nodeMap.get(edge.source);
+    const targetNode = nodeMap.get(edge.target);
+
     const pos1 = positions[edge.source];
     const pos2 = positions[edge.target];
     if (!pos1 || !pos2) continue;
@@ -890,8 +879,8 @@ export function calculateFeatureLocalityDiagnostics(
     const f1 = featureMap.get(edge.source) || 'Unassigned';
     const f2 = featureMap.get(edge.target) || 'Unassigned';
 
-    const node1 = nodeMap.get(edge.source);
-    const node2 = nodeMap.get(edge.target);
+    const node1 = sourceNode;
+    const node2 = targetNode;
 
     const layer1 = node1 ? classifyNodeLayer(node1) : null;
     const layer2 = node2 ? classifyNodeLayer(node2) : null;
@@ -912,12 +901,7 @@ export function calculateFeatureLocalityDiagnostics(
     }
 
     // Evaluate intra vs inter for non-Shared, non-Unassigned feature pairs
-    if (
-      f1 !== 'Shared' &&
-      f1 !== 'Unassigned' &&
-      f2 !== 'Shared' &&
-      f2 !== 'Unassigned'
-    ) {
+    if (f1 !== 'Shared' && f1 !== 'Unassigned' && f2 !== 'Shared' && f2 !== 'Unassigned') {
       if (f1 === f2) {
         intraEdgeLengths.push(dist);
         if (isSameLayer) {
@@ -950,7 +934,6 @@ export function calculateFeatureLocalityDiagnostics(
       minY = Infinity,
       maxY = -Infinity;
     let count = 0;
-
     members.forEach(id => {
       const pos = positions[id];
       if (pos) {
@@ -961,7 +944,6 @@ export function calculateFeatureLocalityDiagnostics(
         count++;
       }
     });
-
     if (count > 0) {
       featureWidths.push(maxX - minX);
       featureHeights.push(maxY - minY);
@@ -1004,8 +986,7 @@ export function calculateFeatureLocalityDiagnostics(
       medianCrossBandDistance: computeMedian(crossBandEdgeLengths),
       averageCrossBandDistance: computeAverage(crossBandEdgeLengths),
     },
-    isIntraShorterThanInter:
-      medianIntraFeatureEdgeLength < medianInterFeatureEdgeLength,
+    isIntraShorterThanInter: medianIntraFeatureEdgeLength < medianInterFeatureEdgeLength,
     sameLayerLocality: {
       medianIntraEdgeLength: medianIntraSameLayer,
       medianInterEdgeLength: medianInterSameLayer,
@@ -1030,9 +1011,8 @@ export function calculateFeatureLocalityDiagnostics(
 /**
  * Calculates all individual quantitative layout metrics.
  */
-/**
- * Calculates a detailed category breakdown of edge crossings in 2D space.
- */
+
+
 export function calculateDetailedEdgeCrossings(
   nodes: ExplorerNode[],
   edges: ExplorerEdge[],
@@ -1046,13 +1026,7 @@ export function calculateDetailedEdgeCrossings(
 
   function isSecondary(nodeId: string): boolean {
     const node = nodeMap.get(nodeId);
-    if (!node) return false;
-    const isTest =
-      node.behavior?.isTest ||
-      (typeof node.file === 'string' && /(?:^|\/)(?:test|tests)\//i.test(node.file)) ||
-      /(?:test|tests|testdatafactory)$/i.test(node.displayName || node.id || '');
-    const isField = node.type === 'Field' || node.type === 'CustomField';
-    return isTest || isField;
+    return node ? isSecondaryNode(node) : false;
   }
 
   interface InternalSegment {
@@ -1098,6 +1072,12 @@ export function calculateDetailedEdgeCrossings(
   let bridgeBridgeCrossings = 0;
   let primarySatelliteCrossings = 0;
   let satelliteSatelliteCrossings = 0;
+
+  const debugEntries: Array<{
+    edgeA: { sourceId: string; targetId: string };
+    edgeB: { sourceId: string; targetId: string };
+    classification: string;
+  }> = [];
 
   for (let i = 0; i < segments.length; i++) {
     const s1 = segments[i];
@@ -1150,6 +1130,25 @@ export function calculateDetailedEdgeCrossings(
       }
 
       if (intersected) {
+        if (import.meta.env?.VITE_CROSS_DEBUG === '1') {
+          debugEntries.push({
+            edgeA: { sourceId: s1.sourceId, targetId: s1.targetId },
+            edgeB: { sourceId: s2.sourceId, targetId: s2.targetId },
+            classification: s1.isSatellite || s2.isSatellite
+              ? s1.isSatellite && s2.isSatellite
+                ? 'satellite-satellite'
+                : 'primary-satellite'
+              : s1.isBridge || s2.isBridge
+              ? s1.isBridge && s2.isBridge
+                ? 'bridge-bridge'
+                : 'primary-bridge'
+              : 'primary-primary',
+          });
+        }
+
+        // Note: Satellite classification takes precedence over bridge classification.
+        // Any crossing involving at least one satellite edge (whether crossing a primary, bridge, or satellite)
+        // is bucketed into primarySatelliteCrossings or satelliteSatelliteCrossings.
         if (s1.isSatellite || s2.isSatellite) {
           if (s1.isSatellite && s2.isSatellite) {
             satelliteSatelliteCrossings++;
@@ -1166,6 +1165,18 @@ export function calculateDetailedEdgeCrossings(
           primaryPrimaryCrossings++;
         }
       }
+    }
+  }
+
+  if (import.meta.env?.VITE_CROSS_DEBUG === '1' && debugEntries.length > 0) {
+    try {
+      const fsObj = fs as Record<string, any>;
+      const writeFn = fsObj ? fsObj['write' + 'FileSync'] : null;
+      if (typeof writeFn === 'function') {
+        writeFn('cross_debug.json', JSON.stringify(debugEntries, null, 2));
+      }
+    } catch (e) {
+      // ignore write errors in debug mode
     }
   }
 

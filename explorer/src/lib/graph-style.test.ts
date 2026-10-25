@@ -107,11 +107,12 @@ describe('graph-style', () => {
       expect(styles.length).toBeGreaterThan(0);
     });
 
-    it('includes base node selector', () => {
+    it('includes base node selector without min-zoomed-font-size conflict', () => {
       const styles = getGraphStyles();
       const nodeStyle = styles.find(s => s.selector === 'node');
       expect(nodeStyle).toBeDefined();
       expect((nodeStyle?.style as any)['label']).toBe('data(label)');
+      expect((nodeStyle?.style as any)['min-zoomed-font-size']).toBeUndefined();
     });
 
     it('includes selection style for nodes', () => {
@@ -121,17 +122,20 @@ describe('graph-style', () => {
       expect((selectedStyle?.style as any)['border-width']).toBe(4);
     });
 
-    it('includes risk-based styles', () => {
+    it('includes risk-based styles positioned after type-specific styles for precedence', () => {
       const styles = getGraphStyles();
       
-      const highRiskStyle = styles.find(s => s.selector === 'node[risk = "HIGH"]');
-      expect(highRiskStyle).toBeDefined();
+      const highRiskIndex = styles.findIndex(s => s.selector === 'node[risk = "HIGH"]');
+      const apexClassIndex = styles.findIndex(s => s.selector === 'node[type = "ApexClass"]');
+      const externalIndex = styles.findIndex(s => s.selector === 'node[type = "External"]');
       
-      const mediumRiskStyle = styles.find(s => s.selector === 'node[risk = "MEDIUM"]');
-      expect(mediumRiskStyle).toBeDefined();
+      expect(highRiskIndex).toBeGreaterThan(-1);
+      expect(apexClassIndex).toBeGreaterThan(-1);
+      expect(externalIndex).toBeGreaterThan(-1);
       
-      const lowRiskStyle = styles.find(s => s.selector === 'node[risk = "LOW"]');
-      expect(lowRiskStyle).toBeDefined();
+      // Ensure risk rules appear AFTER type rules so Cytoscape cascade gives risk borders precedence
+      expect(highRiskIndex).toBeGreaterThan(apexClassIndex);
+      expect(highRiskIndex).toBeGreaterThan(externalIndex);
     });
 
     it('includes node type styles with shapes and colors', () => {
@@ -149,6 +153,11 @@ describe('graph-style', () => {
       const apexTestStyle = styles.find(s => s.selector === 'node[type = "ApexClass"][?isTest]');
       expect(apexTestStyle).toBeDefined();
       expect((apexTestStyle?.style as any)['shape']).toBe(APEX_TEST_CLASS_SHAPE);
+
+      // Verify generic test class boolean attribute selector style
+      const genericTestStyle = styles.find(s => s.selector === 'node[?isTest]');
+      expect(genericTestStyle).toBeDefined();
+      expect((genericTestStyle?.style as any)['border-style']).toBe('dashed');
     });
 
     it('includes edge styles', () => {
@@ -157,6 +166,14 @@ describe('graph-style', () => {
       const edgeStyle = styles.find(s => s.selector === 'edge');
       expect(edgeStyle).toBeDefined();
       expect((edgeStyle?.style as any)['curve-style']).toBe('bezier');
+    });
+
+    it('cleans up zoom-far rules while preserving label hiding behavior', () => {
+      const styles = getGraphStyles();
+      const zoomFarClassStyles = styles.filter(s => s.selector === '.zoom-far' || s.selector === 'node.zoom-far');
+      expect(zoomFarClassStyles).toHaveLength(1);
+      expect(zoomFarClassStyles[0].selector).toBe('.zoom-far');
+      expect((zoomFarClassStyles[0].style as any)['label']).toBe('');
     });
 
     it('includes unresolved edge style', () => {
@@ -187,6 +204,20 @@ describe('graph-style', () => {
       expect(NODE_COLORS.ApexClass.background).toBeDefined();
       expect(NODE_COLORS.ApexClass.border).toBeDefined();
     });
+
+    it('differentiates Object vs CustomObject and Field vs CustomField visually', () => {
+      expect(NODE_COLORS.Object.background).not.toBe(NODE_COLORS.CustomObject.background);
+      expect(NODE_COLORS.Object.border).not.toBe(NODE_COLORS.CustomObject.border);
+      expect(NODE_SHAPE_BY_TYPE.Object).not.toBe(NODE_SHAPE_BY_TYPE.CustomObject);
+      expect(NODE_SHAPE_BY_TYPE.Object).toBe('diamond');
+      expect(NODE_SHAPE_BY_TYPE.CustomObject).toBe('octagon');
+
+      expect(NODE_COLORS.Field.background).not.toBe(NODE_COLORS.CustomField.background);
+      expect(NODE_COLORS.Field.border).not.toBe(NODE_COLORS.CustomField.border);
+      expect(NODE_SHAPE_BY_TYPE.Field).not.toBe(NODE_SHAPE_BY_TYPE.CustomField);
+      expect(NODE_SHAPE_BY_TYPE.Field).toBe('rhomboid');
+      expect(NODE_SHAPE_BY_TYPE.CustomField).toBe('cut-rectangle');
+    });
   });
 
   describe('RISK_BORDER_COLORS', () => {
@@ -202,6 +233,17 @@ describe('graph-style', () => {
       expect(EDGE_COLORS['method-call']).toBeDefined();
       expect(EDGE_COLORS['instantiation']).toBeDefined();
       expect(EDGE_COLORS['SOQL']).toBeDefined();
+      expect(EDGE_COLORS['lwc-apex']).toBe('#f97316');
+      expect(EDGE_COLORS['lwc-apic']).toBeUndefined();
+      expect(EDGE_COLORS['event-publisher']).toBe('#8b5cf6');
+    });
+
+    it('generates style rules for event-publisher relationship type', () => {
+      const styles = getGraphStyles();
+      const eventPublisherStyle = styles.find(s => s.selector === 'edge[relationshipType = "event-publisher"]');
+      expect(eventPublisherStyle).toBeDefined();
+      expect((eventPublisherStyle?.style as any)['line-color']).toBe('#8b5cf6');
+      expect((eventPublisherStyle?.style as any)['target-arrow-color']).toBe('#8b5cf6');
     });
   });
 });

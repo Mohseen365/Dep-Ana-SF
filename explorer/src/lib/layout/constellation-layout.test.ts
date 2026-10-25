@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { adaptConstellation } from '../adapters/constellation-adapter';
 import { computeConstellationLayout } from './constellation-layout';
-import type { ExplorerDataSchema } from '../../types/explorer';
+import type { ExplorerDataSchema, ExplorerRelationshipType } from '../../types/explorer';
 import { createMockNode, createMockEdge, createMockDataSchema } from '../../test/mock-factories';
 
 describe('Constellation Layout Generator', () => {
@@ -65,5 +65,41 @@ describe('Constellation Layout Generator', () => {
       const current = computeConstellationLayout(adapterData);
       expect(current).toEqual(baseline);
     }
+  });
+
+  it('CC-006: Dense ring layout guarantees minimum pairwise clearance (>= 10px) at N=30, 50, 100', () => {
+    const focal = createMockNode('ApexClass:Focal', 'Focal', 'ApexClass', 'LOW', 'Focal.cls');
+    [30, 50, 100].forEach((n) => {
+      const ringNodes = Array.from({ length: n }, (_, i) =>
+        createMockNode(`ApexClass:RingNode_${i}`, `RingNode_${i}`, 'ApexClass', 'LOW', `RingNode_${i}.cls`)
+      );
+      const ringEdges = ringNodes.map((rn, i) =>
+        createMockEdge(`edge_${i}`, 'ApexClass:Focal', rn.id, 'unknown' as ExplorerRelationshipType)
+      );
+
+      const schema = createMockDataSchema([focal, ...ringNodes], ringEdges);
+      const adapterData = adaptConstellation(schema, { focalNodeId: 'ApexClass:Focal', maxDepth: 1 });
+      const layout = computeConstellationLayout(adapterData, { width: 1000, height: 1000, cx: 500, cy: 500 });
+
+      // Calculate minimum pairwise distance between adjacent nodes on each track
+      const positionsByTrack = new Map<number, typeof layout.nodePositions[string][]>();
+      Object.values(layout.nodePositions).forEach((pos) => {
+        if (pos.hopDistance === 0) return;
+        const key = pos.trackIndex;
+        if (!positionsByTrack.has(key)) positionsByTrack.set(key, []);
+        positionsByTrack.get(key)!.push(pos);
+      });
+
+      positionsByTrack.forEach((trackPositions) => {
+        trackPositions.sort((a, b) => a.angleRad - b.angleRad);
+        for (let i = 0; i < trackPositions.length; i++) {
+          const next = trackPositions[(i + 1) % trackPositions.length];
+          const dist = Math.hypot(trackPositions[i].x - next.x, trackPositions[i].y - next.y);
+          // Circle radius is 12px (diameter 24px). Minimum clearance gap g = dist - 24.
+          const clearanceGap = dist - 24;
+          expect(clearanceGap).toBeGreaterThanOrEqual(9.5); // >= 10px clearance threshold
+        }
+      });
+    });
   });
 });

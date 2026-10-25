@@ -223,6 +223,7 @@ describe('graph-builder', () => {
       expect(node?.data.fanIn).toBe(2);
       expect(node?.data.fanOut).toBe(3);
       expect(node?.data.isTest).toBe(false);
+      expect(typeof node?.data.isTest).toBe('boolean');
       expect(node?.data.hasCycles).toBe(true);
       expect(node?.data.hasUnresolved).toBe(true);
 
@@ -231,6 +232,47 @@ describe('graph-builder', () => {
       );
       expect(testNode?.data.type).toBe('ApexClass');
       expect(testNode?.data.isTest).toBe(true);
+      expect(typeof testNode?.data.isTest).toBe('boolean');
+
+      const externalNode = elements.find(
+        el => 'data' in el && el.data.id === 'External:ExternalPaymentGateway'
+      );
+      expect(externalNode?.data.isTest).toBe(false);
+      expect(typeof externalNode?.data.isTest).toBe('boolean');
+    });
+
+    it('preserves node type classification for Object and CustomObject in node data', () => {
+      const schemaNodes: ExplorerNode[] = [
+        {
+          id: 'Object:Account',
+          displayName: 'Account',
+          type: 'Object',
+          file: '',
+          metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+          risk: 'LOW',
+          riskReasons: [],
+          behavior: { isTest: false, sharing: null, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+          refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' }
+        },
+        {
+          id: 'CustomObject:Invoice__c',
+          displayName: 'Invoice__c',
+          type: 'CustomObject',
+          file: '',
+          metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+          risk: 'LOW',
+          riskReasons: [],
+          behavior: { isTest: false, sharing: null, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+          refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' }
+        }
+      ];
+
+      const elements = buildGraphElements(schemaNodes, []);
+      const standardObj = elements.find(e => e.data.id === 'Object:Account');
+      const customObj = elements.find(e => e.data.id === 'CustomObject:Invoice__c');
+
+      expect(standardObj?.data.type).toBe('Object');
+      expect(customObj?.data.type).toBe('CustomObject');
     });
 
     it('handles empty nodes and edges', () => {

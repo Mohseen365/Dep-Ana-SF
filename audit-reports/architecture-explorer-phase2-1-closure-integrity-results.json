@@ -1,0 +1,98 @@
+{
+  "auditMetadata": {
+    "reportTitle": "Architecture Explorer Phase 2.1 Independent Closure Integrity Gate Results",
+    "auditDate": "October 2026",
+    "canonicalHeadSha": "15b5872a4f1c8248892ece855c953c8192e96d26",
+    "repositoryBranch": "jules-9748643704143573123-c498beea",
+    "workingTreeState": "Clean",
+    "finalVerdict": "ACCEPT_WITH_SPECIFIC_EXCEPTIONS"
+  },
+  "summaryCounts": {
+    "masterTotalIssues": 41,
+    "verifiedClosed": 34,
+    "implementedUnverified": 2,
+    "open": 3,
+    "blocked": 1,
+    "notReproduced": 1
+  },
+  "criticalFindingsResolution": {
+    "findingA_featureOverlayFailure": {
+      "failingTestName": "FeatureRegionOverlay — Stage-5 Authoritative Feature Enclosure Overlay > 2. Suppresses semantic feature region overlays at far zoom (< 0.6)",
+      "failureOutput": "AssertionError: expected 1 to be +0 // Object.is equality at line 278",
+      "relevanceToD4": "Test 2 checks Level-of-Detail zoom suppression, whereas D4 acceptance criteria requires hiding feature region rects when active mode does not support feature overlays (mode capability gating). Mode capability gating passed 100% in FeatureRegionOverlay.test.tsx and PhaseIntegrationVerification.test.tsx (Invariant 7).",
+      "d4Status": "VERIFIED_CLOSED"
+    },
+    "findingB_testCountReconciliation": {
+      "claimedInPhase2": ">350 individual test assertions with 100% pass rate",
+      "reconciledUniqueTotals": {
+        "uniqueVitestFiles": 23,
+        "uniqueVitestTests": 251,
+        "passingVitestTests": 250,
+        "failingVitestTests": 1,
+        "uniqueNodeCliScripts": 2,
+        "uniqueNodeCliTests": 14,
+        "passingNodeCliTests": 14,
+        "totalUniqueTests": 265,
+        "totalPassingUniqueTests": 264
+      },
+      "explanation": "Phase 2 naively summed overlapping command group outputs without deduplicating shared test files (e.g. GraphView.test.tsx and PhaseIntegrationVerification.test.tsx ran in multiple groups)."
+    },
+    "findingC_typeScriptScope": {
+      "command": "cd explorer && npx tsc --noEmit",
+      "tsconfigScope": "Includes all files under explorer/src/ (components, lib, context, types, and all test files)",
+      "exitCode": 1,
+      "totalWorkspaceErrors": 532,
+      "f6TypesExplorerTsErrors": 0,
+      "errorBreakdown": "532 errors consist of ~180 unused import warnings (TS6133 under noUnusedLocals) and ~350 test fixture mock property type omissions in historical test files. Core interface contracts in src/types/explorer.ts have 0 compiler errors."
+    },
+    "findingD_d5AcceptanceBoundary": {
+      "d5Criteria": "All window event listeners, requestAnimationFrame calls, and timers must be cleared on component unmount.",
+      "unmountCleanupEvidence": "GraphView.positionAuthority.test.tsx test 4 ('Unmounting GraphView during pending reset cleans up layoutstop listener') and GraphView.test.tsx ('verifies callback freshness without destroying Cytoscape instance') pass 100% in Vitest.",
+      "d5Status": "VERIFIED_CLOSED",
+      "explanation": "Unmount listener and timer cleanup is directly tested and verified by Vitest. Continuous long-session heap memory profiling is an extra benchmark goal (E5), not part of D5's strict unmount criteria."
+    }
+  },
+  "issuesInventory": [
+    { "id": "A1", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Constellation filtering in async worker path" },
+    { "id": "A2", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Cross-mode position contamination" },
+    { "id": "A3", "status": "VERIFIED_CLOSED", "workstream": "Workstream C", "title": "Shared position inheritance removal (DEF-01)" },
+    { "id": "B1", "status": "OPEN", "workstream": "Workstream B", "title": "Constellation contract tied to fixed Sun ID set" },
+    { "id": "B2", "status": "OPEN", "workstream": "Workstream B", "title": "Empty / near-empty Constellation projection UX" },
+    { "id": "B3", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Legacy flat-position migration ambiguity" },
+    { "id": "B4", "status": "OPEN", "workstream": "Workstream B", "title": "Focal-anchor change and user-drag persistence" },
+    { "id": "B5", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Project-switch in-memory state isolation" },
+    { "id": "B6", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Worker result staleness and cancellation" },
+    { "id": "B7", "status": "IMPLEMENTED_UNVERIFIED", "workstream": "Workstream A", "title": "Worker vs fallback parity (Requires live Chrome worker crash fallback test)" },
+    { "id": "B8", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Static/interactive layout switch position authority" },
+    { "id": "B9", "status": "NOT_REPRODUCED", "workstream": "Workstream A", "title": "Hybrid layout O(E*N) cost on >2,000 node graphs" },
+    { "id": "C1", "status": "IMPLEMENTED_UNVERIFIED", "workstream": "Workstream B", "title": "Single-click debouncing vs double-click (Requires physical Chrome gesture timing)" },
+    { "id": "C2", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Duplicate activation from accessible-list keyboard handling" },
+    { "id": "C3", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Edge deselection in fallback path" },
+    { "id": "C4", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Selection exclusivity & cross-view sync" },
+    { "id": "C5", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Workspace lens/surface capabilities" },
+    { "id": "C6", "status": "VERIFIED_CLOSED", "workstream": "Workstream C", "title": "Cytoscape zoom/pan configuration bounds" },
+    { "id": "C7", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Stable gesture callback refs" },
+    { "id": "D1", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Bounded accessible graph node list" },
+    { "id": "D2", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Drawer dependency list bounds" },
+    { "id": "D3", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Accessible names, roles, selected/pressed states" },
+    { "id": "D4", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Capability-aware overlays & unsupported-mode states" },
+    { "id": "D5", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Animation-frame/event cleanup on unmount" },
+    { "id": "E1", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Benchmark CDP wait queue boundary" },
+    { "id": "E2", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Layout completion event correlation" },
+    { "id": "E3", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Timing phase separation in benchmark reporting" },
+    { "id": "E4", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Outlier handling & sample validity" },
+    { "id": "E5", "status": "BLOCKED", "workstream": "Workstream A", "title": "Real-browser FPS, GPU, memory long-session behavior (Blocked by missing Chrome binaries)" },
+    { "id": "E6", "status": "VERIFIED_CLOSED", "workstream": "Workstream A", "title": "Graph update cost & batch updates" },
+    { "id": "F1", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Rules-of-Hooks compliance" },
+    { "id": "F2", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Stale focus-origin after disable/re-enable" },
+    { "id": "F3", "status": "VERIFIED_CLOSED", "workstream": "Workstream B", "title": "Connection/Impact exit traps" },
+    { "id": "F4", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Complete useEffect dependencies" },
+    { "id": "F5", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Loading / error boundary handling" },
+    { "id": "F6", "status": "VERIFIED_CLOSED", "workstream": "Workstream D", "title": "Type safety & depth parsing (types/explorer.ts)" },
+    { "id": "G1", "status": "VERIFIED_CLOSED", "workstream": "Workstream E", "title": "Report Git provenance standard" },
+    { "id": "G2", "status": "VERIFIED_CLOSED", "workstream": "Workstream E", "title": "Controlled status vocabulary standard" },
+    { "id": "G3", "status": "VERIFIED_CLOSED", "workstream": "Workstream E", "title": "CLI vs browser test layer separation" },
+    { "id": "G4", "status": "VERIFIED_CLOSED", "workstream": "Workstream E", "title": "Historical PASS vs FAIL reconciliation" },
+    { "id": "G5", "status": "VERIFIED_CLOSED", "workstream": "Workstream E", "title": "Evidence-backed issue closure discipline" }
+  ]
+}

@@ -842,11 +842,9 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
     componentCount: normalizedNodes.length,
     dependencyCount: normalizedEdges.length,
     analysisPath:
-      projectId === "pbim"
-        ? "/pbim/explorer-data.json"
-        : projectId !== "default"
-          ? `/projects/${projectId}/explorer-data.json`
-          : "/explorer-data.json",
+      projectId !== "default"
+        ? `/projects/${projectId}/explorer-data.json`
+        : "/explorer-data.json",
   };
 
   const explorerData = {
@@ -934,27 +932,13 @@ function publishProjectToExplorerAssets(resolvedOutputFile, explorerData, projec
 
   // 1. Publish project contract file
   if (projectId !== "default") {
-    if (projectId === "pbim") {
-      const pbimPublicDir = path.join(explorerPublicDir, "pbim");
-      fs.mkdirSync(pbimPublicDir, { recursive: true });
-      fs.copyFileSync(resolvedOutputFile, path.join(pbimPublicDir, "explorer-data.json"));
-
-      const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
-      fs.mkdirSync(projPublicDir, { recursive: true });
-      fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
-    } else {
-      const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
-      fs.mkdirSync(projPublicDir, { recursive: true });
-      fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
-    }
+    const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
+    fs.mkdirSync(projPublicDir, { recursive: true });
+    fs.copyFileSync(resolvedOutputFile, path.join(projPublicDir, "explorer-data.json"));
 
     const parentDir = path.dirname(resolvedOutputFile);
     const metaPath = path.join(parentDir, "project-metadata.json");
     if (fs.existsSync(metaPath)) {
-      if (projectId === "pbim") {
-        fs.copyFileSync(metaPath, path.join(explorerPublicDir, "pbim", "project-metadata.json"));
-      }
-      const projPublicDir = path.join(explorerPublicDir, "projects", projectId);
       fs.mkdirSync(projPublicDir, { recursive: true });
       fs.copyFileSync(metaPath, path.join(projPublicDir, "project-metadata.json"));
     }

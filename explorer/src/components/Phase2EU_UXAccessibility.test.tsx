@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { ViewModeSwitcher } from './ViewModeSwitcher';
 import { InvestigationDrawer } from './InvestigationDrawer';
@@ -13,25 +12,87 @@ const sampleNodes: ExplorerNode[] = [
     id: 'node-1',
     displayName: 'OrderService',
     type: 'ApexClass',
+    file: 'classes/OrderService.cls',
     risk: 'HIGH',
-    layer: 'domain',
-    metrics: { score: 85, coupling: 12, fanIn: 5, fanOut: 4, complexity: 10, unresolved: 0 },
+    riskReasons: ['High risk'],
+    metrics: { score: 85, coupling: 12, fanIn: 5, fanOut: 4, unresolved: 0 },
+    behavior: {
+      isTest: false,
+      publicContractsCount: 1,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 0,
+      dmlCount: 0,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: true,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
   },
   {
     id: 'node-2',
     displayName: 'OrderController',
     type: 'ApexClass',
+    file: 'classes/OrderController.cls',
     risk: 'MEDIUM',
-    layer: 'application',
-    metrics: { score: 60, coupling: 8, fanIn: 2, fanOut: 3, complexity: 6, unresolved: 0 },
+    riskReasons: [],
+    metrics: { score: 60, coupling: 8, fanIn: 2, fanOut: 3, unresolved: 0 },
+    behavior: {
+      isTest: false,
+      publicContractsCount: 1,
+      asyncPatterns: [],
+      securitySignalsCount: 0,
+      queryCount: 0,
+      dmlCount: 0,
+      calloutCount: 0,
+    },
+    refactoringReadiness: {
+      isHighRisk: false,
+      hasCycles: false,
+      hasUnresolved: false,
+      testCoverageStatus: 'COVERED',
+    },
   },
 ];
 
 const mockData: ExplorerDataSchema = {
-  project: { id: 'proj-1', name: 'Sample Project' },
+  project: {
+    id: 'proj-1',
+    name: 'Sample Project',
+    sourcePath: 'force-app',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    analysisStatus: 'COMPLETE',
+    componentCount: 2,
+    dependencyCount: 1,
+  },
   nodes: sampleNodes,
   edges: [
-    { id: 'edge-1', source: 'node-2', target: 'node-1', relationshipType: 'CALLS' },
+    {
+      id: 'edge-1',
+      source: 'node-2',
+      target: 'node-1',
+      relationshipType: 'method-call',
+      method: 'processOrder',
+      evidence: 'OrderService.processOrder()',
+      unresolved: false,
+      resolutionClassification: 'RESOLVED_LOCAL',
+      resolutionStrategy: 'EXACT',
+      confidence: 'HIGH',
+      line: 10,
+      column: 5,
+      methodOwner: 'OrderService',
+      file: 'classes/OrderController.cls',
+      canonical: {
+        source: { type: 'ApexClass', name: 'OrderController' },
+        target: { type: 'ApexClass', name: 'OrderService' },
+        relationship: { type: 'method-call', resolution: 'EXACT' },
+        location: { line: 10, column: 5 },
+      },
+    },
   ],
   summary: {
     nodeCount: 2,
@@ -53,6 +114,9 @@ const mockData: ExplorerDataSchema = {
       fields: 0,
     },
   },
+  cycles: [],
+  unresolvedReferences: [],
+  impactSummaries: {},
 };
 
 describe('Phase 2E-U — UX & Accessibility Hardening Tests', () => {

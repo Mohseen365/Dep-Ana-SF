@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { App } from './App';
+import { App, checkIsNotAnalyzed } from './App';
 import { ProjectProvider } from './context/ProjectContext';
 
 const validData = {
@@ -60,6 +60,47 @@ const validData = {
   unresolvedReferences: [],
   impactSummaries: {},
 };
+
+describe('checkIsNotAnalyzed helper', () => {
+  it('returns false when loading or projectLoading is true', () => {
+    expect(checkIsNotAnalyzed({ loading: true, analysisStatus: 'NOT_ANALYZED' })).toBe(false);
+    expect(checkIsNotAnalyzed({ loading: false, projectLoading: true, analysisStatus: 'NOT_ANALYZED' })).toBe(false);
+  });
+
+  it('returns true when analysisStatus is NOT_ANALYZED', () => {
+    expect(checkIsNotAnalyzed({ loading: false, analysisStatus: 'NOT_ANALYZED' })).toBe(true);
+  });
+
+  it('returns true when error message starts with NOT_ANALYZED:', () => {
+    expect(
+      checkIsNotAnalyzed({
+        loading: false,
+        error: new Error('NOT_ANALYZED: Project analysis data not found (HTTP 404)'),
+      })
+    ).toBe(true);
+  });
+
+  it('returns true when activeData is missing for non-default activeProjectId without contradicting error', () => {
+    expect(
+      checkIsNotAnalyzed({
+        loading: false,
+        activeData: null,
+        activeProjectId: 'custom-proj',
+      })
+    ).toBe(true);
+  });
+
+  it('returns false when activeData exists and analysisStatus is COMPLETE', () => {
+    expect(
+      checkIsNotAnalyzed({
+        loading: false,
+        analysisStatus: 'COMPLETE',
+        activeData: { nodes: [], edges: [] },
+        activeProjectId: 'default',
+      })
+    ).toBe(false);
+  });
+});
 
 describe('App composed shell', () => {
   beforeEach(() => {

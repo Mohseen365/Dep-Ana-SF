@@ -1,0 +1,41 @@
+{
+  "baselineMetadata": {
+    "commitSha": "91046a9f0d9d8226b2f7f9a8caab94ed1dd1436b",
+    "targetBaselineSha": "8427f8f7b51703ba0b5975a5239a918c3f207b12",
+    "timestamp": "2026-10-14T16:28:00+05:30",
+    "environment": {
+      "os": "Windows (win32 x64)",
+      "node": "v22.17.0",
+      "npm": "11.4.2",
+      "playwright": "1.64.0",
+      "chromium": "156.0.8078.4"
+    }
+  },
+  "commandExecutions": [
+    {
+      "id": "CMD-INSTALL-CHROMIUM",
+      "command": "npx playwright install chromium",
+      "workingDirectory": "C:\\Users\\User\\Downloads\\dependency-analyzer",
+      "status": "PASS",
+      "exitCode": 0,
+      "startTime": "2026-10-14T16:27:09.5760284+05:30",
+      "endTime": "2026-10-14T16:27:12.5394486+05:30",
+      "stdoutLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/chromium-install.stdout.log",
+      "stderrLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/chromium-install.stderr.log",
+      "summary": "Targeted Playwright Chromium installation succeeded. Verified launch using chromium.launch() returning version 156.0.8078.4."
+    },
+    {
+      "id": "CMD-FORMAL-BENCHMARK-RUN",
+      "command": "node scripts/run-formal-performance-baseline.cjs all",
+      "workingDirectory": "C:\\Users\\User\\Downloads\\dependency-analyzer",
+      "status": "BLOCKED_ENVIRONMENT",
+      "exitCode": 1,
+      "startTime": "2026-10-14T16:27:48.2936381+05:30",
+      "endTime": "2026-10-14T16:27:51.3928508+05:30",
+      "stdoutLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/formal-browser-baseline.stdout.log",
+      "stderrLog": "audit-evidence/baseline-8427f8f7b51703ba0b5975a5239a918c3f207b12/formal-browser-baseline.stderr.log",
+      "datasetAttempted": "Default (Small) (default)",
+      "summary": "Chromium launched successfully in headless mode, but page.goto encountered net::ERR_CONNECTION_REFUSED at http://localhost:3000/?project=default because Vite dev server was not active on port 3000."
+    }
+  ]
+}

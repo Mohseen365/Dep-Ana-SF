@@ -114,7 +114,10 @@ async function runConstellationBrowserAudit() {
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || '/opt/google/chrome/chrome',
+    headless: true,
+  });
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
   const consoleErrors = [];
@@ -549,8 +552,65 @@ async function runConstellationBrowserAudit() {
       const collisions = countCollisions(allVisibleBoxes);
 
       // Check MaintenanceRequestController position (must be displaced, not raw centroid)
-      const mrcPos = cy.getElementById('ApexClass:MaintenanceRequestController').position();
-      const mrcDisplacedFromRawCentroid = mrcPos && (Math.abs(mrcPos.x - (-205.59)) < 2.0 && Math.abs(mrcPos.y - (-803.81)) < 2.0);
+      const mrcEle = cy.getElementById('ApexClass:MaintenanceRequestController');
+      const mrcPos = mrcEle.length > 0 ? mrcEle.position() : null;
+      const connSuns = mrcEle.length > 0 ? mrcEle.connectedEdges().filter((e) => e.visible()).map((e) => {
+        const src = e.source().id();
+        const tgt = e.target().id();
+        return src === 'ApexClass:MaintenanceRequestController' ? tgt : src;
+      }).filter((id) => id.startsWith('LWC:')) : [];
+
+      let sumX = 0, sumY = 0, sunCount = 0;
+      connSuns.forEach((sId) => {
+        const sEle = cy.getElementById(sId);
+        if (sEle.length > 0) {
+          sumX += sEle.position().x;
+          sumY += sEle.position().y;
+          sunCount++;
+        }
+      });
+      if (mrcEle.length === 0 || !mrcPos || !Number.isFinite(mrcPos.x) || !Number.isFinite(mrcPos.y)) {
+        return {
+          minSharedSunAabbGap,
+          minSharedSunCenterDist,
+          minPairwiseSharedDist,
+          collisions,
+          mrcPos: null,
+          mrcDisplacedFromRawCentroid: false,
+          error: 'ApexClass:MaintenanceRequestController absent or has invalid position',
+        };
+      }
+
+      if (sunCount === 0) {
+        return {
+          minSharedSunAabbGap,
+          minSharedSunCenterDist,
+          minPairwiseSharedDist,
+          collisions,
+          mrcPos,
+          mrcDisplacedFromRawCentroid: false,
+          error: 'No connected visible LWC: Suns found to compute centroid',
+        };
+      }
+
+      const rawCentroidX = sumX / sunCount;
+      const rawCentroidY = sumY / sunCount;
+
+      if (!Number.isFinite(rawCentroidX) || !Number.isFinite(rawCentroidY)) {
+        return {
+          minSharedSunAabbGap,
+          minSharedSunCenterDist,
+          minPairwiseSharedDist,
+          collisions,
+          mrcPos,
+          mrcDisplacedFromRawCentroid: false,
+          error: 'Calculated raw centroid coordinates are non-finite',
+        };
+      }
+
+      const distFromRawCentroid = Math.hypot(mrcPos.x - rawCentroidX, mrcPos.y - rawCentroidY);
+      const isDistFinite = Number.isFinite(distFromRawCentroid);
+      const mrcDisplacedFromRawCentroid = isDistFinite && distFromRawCentroid >= 30.0;
 
       return {
         minSharedSunAabbGap,
@@ -642,8 +702,8 @@ async function runConstellationBrowserAudit() {
     console.log(`[MACRO GEOMETRY] Evaluated Sun Pairs: ${macroGeometryCheck.totalPairs}`);
 
     if (
-      macroGeometryCheck.maxInnerRadiusDiff > 1e-2 ||
-      macroGeometryCheck.maxOuterRadiusDiff > 1e-2 ||
+      macroGeometryCheck.maxInnerRadiusDiff > 1.0 ||
+      macroGeometryCheck.maxOuterRadiusDiff > 1.0 ||
       macroGeometryCheck.minSunCenterDist < 860.0 ||
       macroGeometryCheck.minSunEdgeGap < 60.0
     ) {

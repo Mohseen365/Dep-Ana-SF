@@ -346,4 +346,37 @@ describe('useViewState', () => {
     expect(search).toContain('diag.cycle=cycle-7');
     expect(search).toContain('investigation=inv-999');
   });
+
+  it('debounces rapid search query updates to URL and syncs immediately when cleared', () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() => useViewState());
+
+    // Type 'A'
+    act(() => {
+      result.current.setFilterState((prev) => ({ ...prev, searchQuery: 'A' }));
+    });
+    // Immediately, URL is not updated yet due to 150ms debounce
+    expect(window.location.search).not.toContain('filter.q=A');
+
+    // Advance 50ms (before 150ms threshold) and type 'AB'
+    act(() => {
+      vi.advanceTimersByTime(50);
+      result.current.setFilterState((prev) => ({ ...prev, searchQuery: 'AB' }));
+    });
+    expect(window.location.search).not.toContain('filter.q=AB');
+
+    // Advance full 150ms after second update
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
+    expect(window.location.search).toContain('filter.q=AB');
+
+    // Clearing the search query syncs immediately without timer delay
+    act(() => {
+      result.current.setFilterState((prev) => ({ ...prev, searchQuery: '' }));
+    });
+    expect(window.location.search).not.toContain('filter.q=');
+
+    vi.useRealTimers();
+  });
 });

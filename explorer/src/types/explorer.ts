@@ -1,3 +1,11 @@
+import type { ArchitectureLayer } from "../lib/layout/types";
+
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
 export type ProjectAnalysisStatus = 'NOT_ANALYZED' | 'ANALYZING' | 'COMPLETE' | 'FAILED';
 
 export interface ProjectMetadata {
@@ -126,12 +134,12 @@ export interface ExplorerNodeMetrics {
 export interface ExplorerNodeBehavior {
   isTest: boolean;
   sharing?: "with sharing" | "without sharing" | "inherited sharing" | null;
-  publicContractsCount: number;
-  asyncPatterns: string[];
-  securitySignalsCount: number;
-  queryCount: number;
-  dmlCount: number;
-  calloutCount: number;
+  publicContractsCount?: number;
+  asyncPatterns?: string[];
+  securitySignalsCount?: number;
+  queryCount?: number;
+  dmlCount?: number;
+  calloutCount?: number;
 }
 
 export interface ExplorerNode {
@@ -139,6 +147,8 @@ export interface ExplorerNode {
   displayName: string;
   type: ExplorerNodeType;
   file: string;
+  layer?: ArchitectureLayer;
+  domain?: string;
   metrics: ExplorerNodeMetrics;
   risk: ExplorerRiskLevel;
   riskReasons: string[];
@@ -147,7 +157,7 @@ export interface ExplorerNode {
     isHighRisk: boolean;
     hasCycles: boolean;
     hasUnresolved: boolean;
-    testCoverageStatus: "COVERED" | "NO_TESTS" | "UNTESTED" | "AMBIGUOUS";
+    testCoverageStatus: "COVERED" | "NO_TESTS" | "UNTESTED" | "AMBIGUOUS" | "FULL_COVERAGE" | "PARTIAL_COVERAGE";
   };
 }
 
@@ -232,6 +242,13 @@ export interface ExplorerUnresolvedReference {
 }
 
 export type ArchitectureLayoutMode = 'hierarchical' | 'hybrid' | 'orbit' | 'constellation';
+
+export {
+  ARCH_MODE_ORDER,
+  getNextArchMode,
+  ARCH_MODE_META,
+} from '../lib/layout/arch-mode';
+export type { ArchModeMetaItem } from '../lib/layout/arch-mode';
 
 export interface ExplorerComponentImpactSummary {
   id: string;

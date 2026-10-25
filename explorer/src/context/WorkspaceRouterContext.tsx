@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 import { WorkspaceViewMode } from '../lib/projectState';
 import {
   WorkspaceDomain,
@@ -86,6 +86,10 @@ export function WorkspaceRouterProvider({
       {children}
     </WorkspaceRouterContext.Provider>
   );
+}
+
+export function useWorkspaceRouterOptional(): WorkspaceRouterContextValue | null {
+  return useContext(WorkspaceRouterContext);
 }
 
 export function useWorkspaceRouter(): WorkspaceRouterContextValue {

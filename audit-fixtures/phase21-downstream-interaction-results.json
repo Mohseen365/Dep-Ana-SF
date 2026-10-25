@@ -1,169 +1,169 @@
 {
   "CandA_FullPipeline": {
     "projectId": "pbim",
-    "m1_occupiedWidth": 8900,
-    "m2_occupiedHeight": 9566,
-    "m3_occupiedArea": 85137400,
-    "m4_emptySpaceRatio": 0.9553,
+    "m1_occupiedWidth": 8660,
+    "m2_occupiedHeight": 8995,
+    "m3_occupiedArea": 77896700,
+    "m4_emptySpaceRatio": 0.9512,
     "m5_connectedDist": {
       "p0": 0,
-      "p50": 2008,
-      "p75": 4337,
-      "p95": 6978,
-      "p99": 7762,
-      "p100": 8405
+      "p50": 1906,
+      "p75": 3890,
+      "p95": 6406,
+      "p99": 7052,
+      "p100": 7894
     },
     "m6_semanticDist": {
-      "p50": 4065,
-      "p95": 7751,
-      "p100": 11490
+      "p50": 3800,
+      "p95": 7320,
+      "p100": 10970
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 220,
-      "p100": 540
+      "p95": 200,
+      "p100": 439
     },
-    "aabbCollisions": 71,
+    "aabbCollisions": 59,
     "nodeCount": 528,
     "edgeCount": 2063
   },
   "CandA_BypassStage8": {
     "projectId": "pbim",
-    "m1_occupiedWidth": 8020,
-    "m2_occupiedHeight": 9806,
-    "m3_occupiedArea": 78644120,
-    "m4_emptySpaceRatio": 0.9517,
+    "m1_occupiedWidth": 8580,
+    "m2_occupiedHeight": 9235,
+    "m3_occupiedArea": 79236300,
+    "m4_emptySpaceRatio": 0.952,
     "m5_connectedDist": {
       "p0": 0,
-      "p50": 1742,
-      "p75": 4447,
-      "p95": 6965,
-      "p99": 7789,
-      "p100": 8405
+      "p50": 1842,
+      "p75": 4039,
+      "p95": 6459,
+      "p99": 7188,
+      "p100": 7994
     },
     "m6_semanticDist": {
-      "p50": 2989,
-      "p95": 8187,
-      "p100": 11713
+      "p50": 3019,
+      "p95": 7755,
+      "p100": 11368
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 189,
-      "p100": 770
+      "p95": 200,
+      "p100": 680
     },
-    "aabbCollisions": 123,
+    "aabbCollisions": 132,
     "nodeCount": 528,
     "edgeCount": 2063
   },
   "CandA_BypassStage9": {
     "projectId": "pbim",
-    "m1_occupiedWidth": 6700,
-    "m2_occupiedHeight": 9006,
-    "m3_occupiedArea": 60340200,
-    "m4_emptySpaceRatio": 0.9681,
+    "m1_occupiedWidth": 6780,
+    "m2_occupiedHeight": 8655,
+    "m3_occupiedArea": 58680900,
+    "m4_emptySpaceRatio": 0.9672,
     "m5_connectedDist": {
       "p0": 0,
-      "p50": 1871,
-      "p75": 4267,
-      "p95": 5626,
-      "p99": 6473,
-      "p100": 8046
+      "p50": 1779,
+      "p75": 3708,
+      "p95": 5088,
+      "p99": 6188,
+      "p100": 7742
     },
     "m6_semanticDist": {
-      "p50": 3428,
-      "p95": 7146,
-      "p100": 10117
+      "p50": 3096,
+      "p95": 6714,
+      "p100": 9928
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 228,
-      "p100": 760
+      "p95": 220,
+      "p100": 400
     },
-    "aabbCollisions": 65,
+    "aabbCollisions": 56,
     "nodeCount": 267,
     "edgeCount": 2063
   },
   "CandA_BypassStage8_and_9": {
     "projectId": "pbim",
     "m1_occupiedWidth": 5020,
-    "m2_occupiedHeight": 9006,
-    "m3_occupiedArea": 45207811,
-    "m4_emptySpaceRatio": 0.9575,
+    "m2_occupiedHeight": 8495,
+    "m3_occupiedArea": 42642722,
+    "m4_emptySpaceRatio": 0.9549,
     "m5_connectedDist": {
       "p0": 0,
-      "p50": 1870,
-      "p75": 4148,
-      "p95": 5938,
-      "p99": 6303,
-      "p100": 6473
+      "p50": 1823,
+      "p75": 3653,
+      "p95": 5458,
+      "p99": 5816,
+      "p100": 5983
     },
     "m6_semanticDist": {
-      "p50": 1028,
+      "p50": 1035,
       "p95": 3255,
-      "p100": 10127
+      "p100": 9680
     },
     "m7_nearestDist": {
       "p50": 100,
       "p95": 220,
       "p100": 480
     },
-    "aabbCollisions": 50,
+    "aabbCollisions": 52,
     "nodeCount": 267,
     "edgeCount": 2063
   },
   "Combo_A_plus_B_FullPipeline": {
     "projectId": "pbim",
-    "m1_occupiedWidth": 8660,
-    "m2_occupiedHeight": 8816,
-    "m3_occupiedArea": 76346560,
-    "m4_emptySpaceRatio": 0.9502,
+    "m1_occupiedWidth": 9080,
+    "m2_occupiedHeight": 8465,
+    "m3_occupiedArea": 76862200,
+    "m4_emptySpaceRatio": 0.9505,
     "m5_connectedDist": {
       "p0": 0,
-      "p50": 1976,
-      "p75": 4009,
-      "p95": 6024,
-      "p99": 6946,
-      "p100": 8005
+      "p50": 1816,
+      "p75": 3635,
+      "p95": 5743,
+      "p99": 6372,
+      "p100": 7495
     },
     "m6_semanticDist": {
-      "p50": 3971,
-      "p95": 7146,
-      "p100": 10777
+      "p50": 3777,
+      "p95": 6874,
+      "p100": 10809
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 210,
-      "p100": 431
+      "p95": 215,
+      "p100": 1471
     },
-    "aabbCollisions": 157,
+    "aabbCollisions": 143,
     "nodeCount": 528,
     "edgeCount": 2063
   },
   "Combo_A_plus_B_BypassStage8": {
     "projectId": "pbim",
-    "m1_occupiedWidth": 8100,
-    "m2_occupiedHeight": 8896,
-    "m3_occupiedArea": 72057600,
-    "m4_emptySpaceRatio": 0.9472,
+    "m1_occupiedWidth": 8180,
+    "m2_occupiedHeight": 8405,
+    "m3_occupiedArea": 68752900,
+    "m4_emptySpaceRatio": 0.9447,
     "m5_connectedDist": {
       "p0": 0,
-      "p50": 1514,
-      "p75": 4089,
-      "p95": 6115,
-      "p99": 6951,
-      "p100": 7658
+      "p50": 1469,
+      "p75": 3653,
+      "p95": 5833,
+      "p99": 6787,
+      "p100": 7216
     },
     "m6_semanticDist": {
-      "p50": 2529,
-      "p95": 7623,
-      "p100": 11047
+      "p50": 2565,
+      "p95": 7099,
+      "p100": 10809
     },
     "m7_nearestDist": {
       "p50": 100,
-      "p95": 197,
-      "p100": 620
+      "p95": 220,
+      "p100": 800
     },
-    "aabbCollisions": 354,
+    "aabbCollisions": 388,
     "nodeCount": 528,
     "edgeCount": 2063
   }

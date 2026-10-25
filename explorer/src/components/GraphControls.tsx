@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArchitectureLayoutMode } from '../types/explorer';
+import { ArchitectureLayoutMode, ARCH_MODE_META } from '../types/explorer';
 import { FocusState } from '../lib/focus-graph';
 import { FocusControls } from './FocusControls';
 
@@ -21,9 +21,19 @@ export interface GraphControlsProps {
   onToggleLayoutMode?: () => void;
   architectureMode?: ArchitectureLayoutMode;
   onToggleArchitectureMode?: () => void;
+  nodeCount?: number;
+  isPathModeActive?: boolean;
+  onTogglePathMode?: () => void;
+  canGoBack?: boolean;
+  onNavigateBack?: () => void;
+  canGoForward?: boolean;
+  onNavigateForward?: () => void;
+  onExportPNG?: () => void;
+  onShowShortcutsHelp?: () => void;
+  orientation?: 'horizontal' | 'vertical';
 }
 
-export const GraphControls: React.FC<GraphControlsProps> = ({
+export const GraphControls: React.FC<GraphControlsProps> = React.memo(function GraphControls({
   onZoomIn,
   onZoomOut,
   onFitView,
@@ -41,74 +51,180 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
   onToggleLayoutMode,
   architectureMode = 'hierarchical',
   onToggleArchitectureMode,
-}) => {
+  nodeCount,
+  isPathModeActive = false,
+  onTogglePathMode,
+  canGoBack = false,
+  onNavigateBack,
+  canGoForward = false,
+  onNavigateForward,
+  onExportPNG,
+  onShowShortcutsHelp,
+  orientation = 'horizontal',
+}) {
   const [activeControlIndex, setActiveControlIndex] = React.useState<number>(0);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const getInteractiveElements = (container: HTMLElement): HTMLElement[] => {
-    const selector = 'button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
-    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter(
-      (el) => el.getAttribute('aria-hidden') !== 'true' && el.style.display !== 'none'
-    );
-  };
+  // [N18] Memoize focus state to prevent unnecessary component re-renders
+  const memoizedFocusState = React.useMemo(() => {
+    if (!focusState) return undefined;
+    return {
+      enabled: focusState.enabled,
+      focusNodeId: focusState.focusNodeId,
+      direction: focusState.direction,
+      depth: focusState.depth,
+    };
+  }, [
+    focusState?.enabled,
+    focusState?.focusNodeId,
+    focusState?.direction,
+    focusState?.depth,
+  ]);
 
-  const handleToolbarKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const key = e.key;
-
-    // Protection for native controls (select, input, textarea, slider)
-    const target = e.target as HTMLElement;
-    const tagName = target.tagName.toLowerCase();
-    const role = target.getAttribute('role');
-    if (tagName === 'select' || tagName === 'input' || tagName === 'textarea' || role === 'slider') {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
-        return; // Do not hijack arrow, home, or end keys when inside inputs, selects, or textareas
+  // [T1-8] getInteractiveElements filter using getComputedStyle (display, visibility, opacity)
+  const getInteractiveElements = React.useCallback((container: HTMLElement): HTMLElement[] => {
+    const selector =
+      'button:not([disabled]), select:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => {
+      if (el.getAttribute('aria-hidden') === 'true') return false;
+      if (typeof window !== 'undefined' && window.getComputedStyle) {
+        try {
+          const computed = window.getComputedStyle(el);
+          if (computed) {
+            if (computed.display === 'none') return false;
+            if (computed.visibility === 'hidden') return false;
+            if (computed.opacity === '0') return false;
+          }
+        } catch {
+          // Fallback if getComputedStyle fails in mock environment
+        }
       }
-    }
+      return true;
+    });
+  }, []);
 
-    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
-      return;
-    }
-
-    const container = e.currentTarget;
-    const controls = getInteractiveElements(container);
+  const updateTabIndexes = React.useCallback(() => {
+    if (!containerRef.current) return;
+    const controls = getInteractiveElements(containerRef.current);
     if (controls.length === 0) return;
 
-    const activeElement = document.activeElement as HTMLElement;
-    let currentIndex = controls.indexOf(activeElement);
-    if (currentIndex === -1) {
-      currentIndex = activeControlIndex < controls.length ? activeControlIndex : 0;
+    let validIndex = activeControlIndex;
+    if (validIndex >= controls.length) {
+      validIndex = 0;
+      setActiveControlIndex(0);
     }
 
-    let nextIndex = currentIndex;
-    if (key === 'ArrowRight' || key === 'ArrowDown') {
-      nextIndex = (currentIndex + 1) % controls.length;
-    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
-      nextIndex = (currentIndex - 1 + controls.length) % controls.length;
-    } else if (key === 'Home') {
-      nextIndex = 0;
-    } else if (key === 'End') {
-      nextIndex = controls.length - 1;
-    }
+    controls.forEach((control, index) => {
+      if (index === validIndex) {
+        control.setAttribute('tabindex', '0');
+      } else {
+        control.setAttribute('tabindex', '-1');
+      }
+    });
+  }, [activeControlIndex, getInteractiveElements]);
 
-    e.preventDefault();
-    setActiveControlIndex(nextIndex);
-    const targetControl = controls[nextIndex];
-    if (targetControl) {
-      targetControl.focus();
-    }
-  };
+  React.useLayoutEffect(() => {
+    updateTabIndexes();
+  }, [
+    updateTabIndexes,
+    focusState,
+    hasSelectedNode,
+    isFullscreen,
+    isNavigatorVisible,
+    layoutMode,
+    architectureMode,
+    nodeCount,
+  ]);
+
+  const handleContainerFocus = React.useCallback(
+    (e: React.FocusEvent<HTMLDivElement>) => {
+      if (!containerRef.current) return;
+      if (!containerRef.current.contains(e.target as Node)) return;
+      const controls = getInteractiveElements(containerRef.current);
+      const target = e.target as HTMLElement;
+      const index = controls.indexOf(target);
+      if (index !== -1 && index !== activeControlIndex) {
+        setActiveControlIndex(index);
+      }
+    },
+    [activeControlIndex, getInteractiveElements]
+  );
+
+  const handleToolbarKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const key = e.key;
+
+      const container = containerRef.current || e.currentTarget;
+
+      // [N20] Focus containment guard: ensure both activeElement & target are within toolbar container
+      const activeElement = document.activeElement as HTMLElement;
+      if (!container.contains(activeElement) || !container.contains(e.target as Node)) {
+        return;
+      }
+
+      // Protection for native controls (select, input, textarea, slider)
+      const target = e.target as HTMLElement;
+      const tagName = target.tagName.toLowerCase();
+      const role = target.getAttribute('role');
+      if (tagName === 'select' || tagName === 'input' || tagName === 'textarea' || role === 'slider') {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
+          return; // Do not hijack arrow, home, or end keys when inside inputs, selects, or textareas
+        }
+      }
+
+      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) {
+        return;
+      }
+
+      const controls = getInteractiveElements(container);
+      if (controls.length === 0) return;
+
+      let currentIndex = controls.indexOf(activeElement);
+      if (currentIndex === -1) {
+        currentIndex = activeControlIndex < controls.length ? activeControlIndex : 0;
+      }
+
+      let nextIndex = currentIndex;
+      if (key === 'ArrowRight' || key === 'ArrowDown') {
+        nextIndex = (currentIndex + 1) % controls.length;
+      } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+        nextIndex = (currentIndex - 1 + controls.length) % controls.length;
+      } else if (key === 'Home') {
+        nextIndex = 0;
+      } else if (key === 'End') {
+        nextIndex = controls.length - 1;
+      }
+
+      e.preventDefault();
+      setActiveControlIndex(nextIndex);
+
+      controls.forEach((control, index) => {
+        control.setAttribute('tabindex', index === nextIndex ? '0' : '-1');
+      });
+
+      const targetControl = controls[nextIndex];
+      if (targetControl) {
+        targetControl.focus();
+      }
+    },
+    [activeControlIndex, getInteractiveElements]
+  );
 
   return (
     <div
+      ref={containerRef}
       className="graph-controls-floating"
       role="toolbar"
       aria-label="Graph controls"
+      aria-orientation={orientation}
       onKeyDown={handleToolbarKeyDown}
+      onFocus={handleContainerFocus}
     >
       {/* Analysis Section */}
-      {focusState && onFocusChange && (
+      {memoizedFocusState && onFocusChange && (
         <div className="graph-control-group analysis-group" role="group" aria-label="Analysis controls">
           <FocusControls
-            focusState={focusState}
+            focusState={memoizedFocusState}
             onFocusChange={onFocusChange}
             hasSelectedNode={hasSelectedNode}
             selectedNodeId={selectedNodeId}
@@ -119,11 +235,38 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
 
       {/* Navigation Section */}
       <div className="graph-control-group navigation-group" role="group" aria-label="Navigation controls">
+        {(onNavigateBack || onNavigateForward) && (
+          <>
+            <button
+              className="graph-control-btn"
+              onClick={onNavigateBack}
+              disabled={!canGoBack}
+              title="Navigate Back (Alt+Left)"
+              aria-label="Navigate Back"
+              aria-keyshortcuts="Alt+ArrowLeft"
+              type="button"
+            >
+              <span aria-hidden="true">⬅️</span>
+            </button>
+            <button
+              className="graph-control-btn"
+              onClick={onNavigateForward}
+              disabled={!canGoForward}
+              title="Navigate Forward (Alt+Right)"
+              aria-label="Navigate Forward"
+              aria-keyshortcuts="Alt+ArrowRight"
+              type="button"
+            >
+              <span aria-hidden="true">➡️</span>
+            </button>
+          </>
+        )}
         <button
           className="graph-control-btn"
           onClick={onZoomIn}
           title="Zoom In (+)"
           aria-label="Zoom In"
+          aria-keyshortcuts="+"
           type="button"
         >
           <span aria-hidden="true">➕</span>
@@ -133,6 +276,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onZoomOut}
           title="Zoom Out (-)"
           aria-label="Zoom Out"
+          aria-keyshortcuts="-"
           type="button"
         >
           <span aria-hidden="true">➖</span>
@@ -142,19 +286,31 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           onClick={onFitView}
           title="Fit All to Screen"
           aria-label="Fit View"
+          aria-keyshortcuts="f 0"
           type="button"
         >
           <span aria-hidden="true">⛶</span>
         </button>
-        {hasSelectedNode && (
+        <button
+          className="graph-control-btn"
+          onClick={onCenterSelected}
+          disabled={!hasSelectedNode}
+          title={hasSelectedNode ? 'Center Selected Component' : 'Select a node first to center'}
+          aria-label="Center Selected"
+          type="button"
+        >
+          <span aria-hidden="true">🎯</span>
+        </button>
+        {onTogglePathMode && (
           <button
-            className="graph-control-btn"
-            onClick={onCenterSelected}
-            title="Center Selected Component"
-            aria-label="Center Selected"
+            className={`graph-control-btn ${isPathModeActive ? 'active' : ''}`}
+            onClick={onTogglePathMode}
+            title={isPathModeActive ? 'Cancel Path Finder' : 'Find Path Between Two Nodes'}
+            aria-label={isPathModeActive ? 'Cancel Path Mode' : 'Find Shortest Path'}
+            aria-pressed={isPathModeActive}
             type="button"
           >
-            <span aria-hidden="true">🎯</span>
+            <span aria-hidden="true">🧭</span>
           </button>
         )}
       </div>
@@ -167,29 +323,13 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           <button
             className={`graph-control-btn ${architectureMode !== 'hierarchical' ? 'active' : ''}`}
             onClick={onToggleArchitectureMode}
-            title={
-              architectureMode === 'constellation'
-                ? 'Component Constellation (Multi-Sun Macro View)'
-                : architectureMode === 'orbit'
-                ? 'Architecture Orbit (Radial Concentric Bands)'
-                : architectureMode === 'hybrid'
-                ? 'Hybrid Layout (Clustered Feature Regions)'
-                : 'Hierarchical Layout (Layered Flow)'
-            }
-            aria-label={
-              architectureMode === 'constellation'
-                ? 'Switch to Hierarchical Layout'
-                : architectureMode === 'orbit'
-                ? 'Switch to Component Constellation'
-                : architectureMode === 'hybrid'
-                ? 'Switch to Architecture Orbit'
-                : 'Switch to Hybrid Layout'
-            }
-            aria-pressed={architectureMode !== 'hierarchical'}
+            title={ARCH_MODE_META[architectureMode].description}
+            aria-label={`Architecture layout: ${ARCH_MODE_META[architectureMode].label}. Activate to switch to ${ARCH_MODE_META[ARCH_MODE_META[architectureMode].next].label}.`}
             data-testid="architecture-mode-toggle"
             type="button"
           >
-            <span aria-hidden="true">{architectureMode === 'constellation' ? '🌌' : architectureMode === 'orbit' ? '🪐' : architectureMode === 'hybrid' ? '🧩' : '🏢'}</span>
+            <span aria-hidden="true">{ARCH_MODE_META[architectureMode].icon}</span>
+            <span className="graph-control-btn-label" style={{ marginLeft: '4px' }}>{ARCH_MODE_META[architectureMode].label}</span>
           </button>
         )}
         {onToggleLayoutMode && (
@@ -208,7 +348,8 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
         <button
           className="graph-control-btn"
           onClick={onResetLayout}
-          title="Rearrange / Reset Layout"
+          disabled={nodeCount === 0}
+          title={nodeCount === 0 ? 'No components in graph to arrange' : 'Rearrange / Reset Layout'}
           aria-label="Reset Layout"
           type="button"
         >
@@ -217,10 +358,33 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
       </div>
 
       {/* Workspace Section */}
-      {(onToggleNavigator || onToggleFullscreen) && (
+      {(onToggleNavigator || onToggleFullscreen || onExportPNG || onShowShortcutsHelp) && (
         <>
           <div className="graph-control-divider" aria-hidden="true" />
           <div className="graph-control-group workspace-group" role="group" aria-label="Workspace controls">
+            {onExportPNG && (
+              <button
+                className="graph-control-btn"
+                onClick={onExportPNG}
+                title="Export View as PNG"
+                aria-label="Export View as PNG"
+                type="button"
+              >
+                <span aria-hidden="true">📸</span>
+              </button>
+            )}
+            {onShowShortcutsHelp && (
+              <button
+                className="graph-control-btn"
+                onClick={onShowShortcutsHelp}
+                title="Keyboard Shortcuts (?)"
+                aria-label="Keyboard Shortcuts"
+                aria-keyshortcuts="?"
+                type="button"
+              >
+                <span aria-hidden="true">❓</span>
+              </button>
+            )}
             {onToggleNavigator && (
               <button
                 className={`graph-control-btn ${isNavigatorVisible ? 'active' : ''}`}
@@ -239,6 +403,7 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
                 onClick={onToggleFullscreen}
                 title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Toggle Fullscreen'}
                 aria-label={isFullscreen ? 'Exit Fullscreen' : 'Maximize Graph'}
+                aria-keyshortcuts="Escape"
                 aria-pressed={isFullscreen}
                 type="button"
               >
@@ -250,6 +415,6 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default GraphControls;

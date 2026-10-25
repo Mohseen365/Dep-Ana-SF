@@ -1,7 +1,7 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
+import type { ExplorerNode, ExplorerEdge, ArchitectureLayoutMode } from '../types/explorer';
 import {
   computeArchitectureLayoutWithMetadata,
   type ArchitectureLayoutOptions,
@@ -11,12 +11,6 @@ interface DatasetSpec {
   key: string;
   file: string;
 }
-
-const DATASETS: DatasetSpec[] = [
-  { key: 'cst', file: 'public/projects/cst/explorer-data.json' },
-  { key: 'bqc', file: 'public/projects/bqc/explorer-data.json' },
-  { key: 'pbim', file: 'public/projects/pbim/explorer-data.json' },
-];
 
 function loadDataset(ds: DatasetSpec): { nodes: ExplorerNode[]; edges: ExplorerEdge[] } {
   const p1 = path.resolve(process.cwd(), ds.file);
@@ -34,10 +28,15 @@ describe('Phase 6A — Production Activation & Constellation Isolation Suite', (
   test('Hierarchical Mode Activates Candidate D', () => {
     const { nodes, edges } = loadDataset({ key: 'cst', file: 'public/projects/cst/explorer-data.json' });
 
+    function isCandidateDMode(mode: ArchitectureLayoutMode): boolean {
+      return mode === 'hierarchical';
+    }
+
     // Simulate effectiveLayoutOptions for Hierarchical
+    const modeHierarchical: ArchitectureLayoutMode = 'hierarchical';
     const optionsHierarchical: ArchitectureLayoutOptions = {
-      architectureMode: 'hierarchical',
-      enableCandidateDOrdering: 'hierarchical' === 'hierarchical',
+      architectureMode: modeHierarchical,
+      enableCandidateDOrdering: isCandidateDMode(modeHierarchical),
     };
 
     expect(optionsHierarchical.enableCandidateDOrdering).toBe(true);
@@ -47,17 +46,24 @@ describe('Phase 6A — Production Activation & Constellation Isolation Suite', (
   });
 
   test('Constellation / Orbit Negative Control Disables Candidate D', () => {
+    function isCandidateDMode(mode: ArchitectureLayoutMode): boolean {
+      return mode === 'hierarchical';
+    }
+
     const { nodes, edges } = loadDataset({ key: 'cst', file: 'public/projects/cst/explorer-data.json' });
 
     // Simulate effectiveLayoutOptions for Orbit/Constellation
+    const modeOrbit: ArchitectureLayoutMode = 'orbit';
+    const modeHybrid: ArchitectureLayoutMode = 'hybrid';
+
     const optionsOrbit: ArchitectureLayoutOptions = {
-      architectureMode: 'orbit',
-      enableCandidateDOrdering: 'orbit' === 'hierarchical',
+      architectureMode: modeOrbit,
+      enableCandidateDOrdering: isCandidateDMode(modeOrbit),
     };
 
     const optionsHybrid: ArchitectureLayoutOptions = {
-      architectureMode: 'hybrid',
-      enableCandidateDOrdering: 'hybrid' === 'hierarchical',
+      architectureMode: modeHybrid,
+      enableCandidateDOrdering: isCandidateDMode(modeHybrid),
     };
 
     expect(optionsOrbit.enableCandidateDOrdering).toBe(false);
@@ -77,10 +83,10 @@ describe('Phase 6A — Production Activation & Constellation Isolation Suite', (
     }).positions;
 
     // 2. Constellation / Orbit Run (Candidate D OFF)
-    const runOrbit = computeArchitectureLayoutWithMetadata(pbimData.nodes, pbimData.edges, {
+    computeArchitectureLayoutWithMetadata(pbimData.nodes, pbimData.edges, {
       architectureMode: 'orbit',
       enableCandidateDOrdering: false,
-    }).positions;
+    });
 
     // 3. Second Hierarchical Run (Candidate D ON)
     const run2 = computeArchitectureLayoutWithMetadata(pbimData.nodes, pbimData.edges, {

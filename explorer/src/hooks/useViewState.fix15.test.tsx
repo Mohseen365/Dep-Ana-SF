@@ -1,0 +1,47 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { renderHook } from '@testing-library/react';
+import { useViewState } from './useViewState';
+import { focusQuery } from '../lib/url';
+
+describe('Fix #15 — Defensive readStateFromUrl', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    window.history.replaceState(null, '', '/');
+  });
+
+  afterEach(() => {
+    window.history.replaceState(null, '', '/');
+  });
+
+  it('mounts safely when a query parser throws on garbage parameters, logging a warning and parsing other valid params', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    // Spy on focusQuery.fromQuery to throw on garbage param
+    const originalFocusFromQuery = focusQuery.fromQuery;
+    vi.spyOn(focusQuery, 'fromQuery').mockImplementation((params, fallback) => {
+      if (params.get('focus') === 'throw_error') {
+        throw new Error('Corrupted focus parameter');
+      }
+      return originalFocusFromQuery(params, fallback);
+    });
+
+    window.history.replaceState(null, '', '/?focus=throw_error&node=ApexClass:TestNode');
+
+    let hookResult: { current: ReturnType<typeof useViewState> } | undefined;
+    expect(() => {
+      const { result } = renderHook(() => useViewState());
+      hookResult = result;
+    }).not.toThrow();
+
+    // Valid node parameter should still be parsed and set
+    expect(hookResult?.current.selectedNodeId).toBe('ApexClass:TestNode');
+
+    // Console warning should have been logged for the focus parsing error
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[useViewState] failed to parse focus params:',
+      expect.any(Error)
+    );
+
+    warnSpy.mockRestore();
+  });
+});

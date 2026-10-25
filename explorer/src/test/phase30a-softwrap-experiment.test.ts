@@ -1,6 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import * as fs from 'fs';
-import * as path from 'path';
 
 /**
  * Phase 30A Deterministic Tokenizers for Display-Label Soft-Wrapping.
@@ -122,7 +120,7 @@ describe('PHASE 30A — Display-Label Soft-Wrap Tokenizer Unit Tests', () => {
       'Database.AllowsCallouts'
     ];
 
-    for (const [candId, tokenizerFn] of Object.entries(TOKENIZERS)) {
+    for (const [_candId, tokenizerFn] of Object.entries(TOKENIZERS)) {
       for (const label of sampleLabels) {
         const base = tokenizerFn(label);
         for (let run = 0; run < 10; run++) {
@@ -143,7 +141,7 @@ describe('PHASE 30A — Display-Label Soft-Wrap Tokenizer Unit Tests', () => {
       'Database.AllowsCallouts'
     ];
 
-    for (const [candId, tokenizerFn] of Object.entries(TOKENIZERS)) {
+    for (const [_candId, tokenizerFn] of Object.entries(TOKENIZERS)) {
       const baseMap = new Map(sampleLabels.map(l => [l, tokenizerFn(l)]));
 
       for (let run = 0; run < 10; run++) {

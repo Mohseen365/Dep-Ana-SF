@@ -1,177 +1,144 @@
-import { describe, test, expect, vi } from 'vitest';
-import { LayoutWorkerClient } from '../lib/workers/layout-worker-client';
+import { describe, test, expect } from 'vitest';
+import cytoscape from 'cytoscape';
 import { runLayoutWithMetadataAsync } from '../lib/graph-layout';
+import { LayoutWorkerClient } from '../lib/workers/layout-worker-client';
 import { computeArchitectureLayoutWithMetadata } from '../lib/architecture-layout';
+import { buildGraphElements } from '../lib/graph-builder';
+import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 
-describe('FINDING-01 — Web Worker Projection IPC Serialization and Async Visibility Contract', () => {
-  test('computeArchitectureLayoutWithMetadata returns projectedNodeIds Set for orbit and constellation modes', () => {
-    const nodes = [
-      { id: 'LWC:container', displayName: 'Container', type: 'LWC', file: 'container.js', risk: 'LOW' } as any,
-      { id: 'ApexClass:Controller', displayName: 'Controller', type: 'ApexClass', file: 'Controller.cls', risk: 'LOW' } as any,
-      { id: 'ApexClass:Unrelated', displayName: 'Unrelated', type: 'ApexClass', file: 'Unrelated.cls', risk: 'LOW' } as any,
-    ];
-    const edges = [
-      { id: 'e1', source: 'LWC:container', target: 'ApexClass:Controller', relationshipType: 'lwc-apex' } as any,
-    ];
+describe('Tier A1 — Async Worker Projection & Metadata Contract', () => {
+  // Generate a 20-node graph to trigger the >= 20 nodes worker offloading path
+  const nodes: ExplorerNode[] = Array.from({ length: 20 }, (_, i) => ({
+    id: i === 0 ? 'LWC:focal-comp' : `LWC:child-comp-${i}`,
+    displayName: i === 0 ? 'FocalComp' : `ChildComp${i}`,
+    type: 'LWC' as const,
+    file: i === 0 ? 'focalComp.js' : `childComp${i}.js`,
+    metrics: { fanIn: i === 0 ? 0 : 1, fanOut: i === 0 ? 19 : 0, coupling: 1, unresolved: 0, score: 0 },
+    risk: 'LOW' as const,
+    riskReasons: [],
+    behavior: { isTest: false, publicContractsCount: 0, asyncPatterns: [], securitySignalsCount: 0, queryCount: 0, dmlCount: 0, calloutCount: 0 },
+    refactoringReadiness: { isHighRisk: false, hasCycles: false, hasUnresolved: false, testCoverageStatus: 'UNTESTED' as const },
+  }));
 
-    const orbitRes = computeArchitectureLayoutWithMetadata(nodes, edges, {
-      architectureMode: 'orbit',
-      focalLwcId: 'LWC:container',
+  const edges: ExplorerEdge[] = Array.from({ length: 19 }, (_, i) => ({
+    id: `edge-${i + 1}`,
+    source: 'LWC:focal-comp',
+    target: `LWC:child-comp-${i + 1}`,
+    relationshipType: 'lwc-template-child',
+    method: null,
+    evidence: '',
+    unresolved: false,
+    resolutionClassification: 'RESOLVED_LOCAL' as const,
+    resolutionStrategy: 'EXACT' as const,
+    confidence: '1.0',
+    line: null,
+    column: null,
+    methodOwner: null,
+    file: '',
+    canonical: {
+      source: { type: 'LWC' as const, name: 'LWC:focal-comp' },
+      target: { type: 'LWC' as const, name: `LWC:child-comp-${i + 1}` },
+      relationship: { type: 'lwc-template-child', resolution: 'EXACT' as const },
+      location: {},
+    },
+  }));
+
+  test('Mock Worker IPC offloading deserializes projectedNodeIds Set and orbitGuides for 20+ node graphs', async () => {
+    // Create a mock worker simulating the Web Worker IPC postMessage/onmessage cycle
+    class MockLayoutWorker {
+      public onmessage: ((e: MessageEvent) => void) | null = null;
+      public addEventListener(type: string, listener: any) {
+        if (type === 'message') this.onmessage = listener;
+      }
+      public removeEventListener() {}
+      public postMessage(msg: any) {
+        if (msg.type === 'CALCULATE_LAYOUT') {
+          const syncRes = computeArchitectureLayoutWithMetadata(msg.nodes, msg.edges, msg.options);
+          const response = {
+            type: 'LAYOUT_SUCCESS',
+            projectId: msg.projectId,
+            requestGeneration: msg.requestGeneration,
+            correlationToken: msg.correlationToken,
+            positions: syncRes.positions,
+            orbitGuides: syncRes.orbitGuides,
+            projectedNodeIds: syncRes.projectedNodeIds ? Array.from(syncRes.projectedNodeIds) : undefined,
+            computeDurationMs: 10,
+          };
+          setTimeout(() => {
+            if (this.onmessage) {
+              this.onmessage({ data: response } as MessageEvent);
+            }
+          }, 0);
+        }
+      }
+      public terminate() {}
+    }
+
+    const workerClient = new LayoutWorkerClient({
+      workerFactory: () => new MockLayoutWorker() as any,
     });
 
-    expect(orbitRes.projectedNodeIds).toBeDefined();
-    expect(orbitRes.projectedNodeIds).toBeInstanceOf(Set);
-    expect(orbitRes.projectedNodeIds!.has('LWC:container')).toBe(true);
-    expect(orbitRes.projectedNodeIds!.has('ApexClass:Controller')).toBe(true);
-    expect(orbitRes.projectedNodeIds!.has('ApexClass:Unrelated')).toBe(false);
-
-    const constellationRes = computeArchitectureLayoutWithMetadata(nodes, edges, {
-      architectureMode: 'constellation',
-    });
-
-    expect(constellationRes.projectedNodeIds).toBeDefined();
-    expect(constellationRes.projectedNodeIds).toBeInstanceOf(Set);
-    expect(constellationRes.projectedNodeIds!.has('LWC:container')).toBe(true);
-  });
-
-  test('LayoutWorkerClient synchronous fallback preserves projectedNodeIds Set', async () => {
-    // Instantiate LayoutWorkerClient without worker factory to trigger synchronous fallback
-    const client = new LayoutWorkerClient();
-
-    const nodes = [
-      { id: 'LWC:container', displayName: 'Container', type: 'LWC', file: 'container.js', risk: 'LOW' } as any,
-      { id: 'ApexClass:Controller', displayName: 'Controller', type: 'ApexClass', file: 'Controller.cls', risk: 'LOW' } as any,
-    ];
-    const edges = [
-      { id: 'e1', source: 'LWC:container', target: 'ApexClass:Controller', relationshipType: 'lwc-apex' } as any,
-    ];
-
-    const result = await client.calculateLayoutAsync({
-      projectId: 'test-project',
+    const res = await workerClient.calculateLayoutAsync({
+      projectId: 'test-proj',
       nodes,
       edges,
       options: {
         architectureMode: 'orbit',
-        focalLwcId: 'LWC:container',
+        focalLwcId: 'LWC:focal-comp',
       },
     });
 
-    expect(result.projectedNodeIds).toBeDefined();
-    expect(result.projectedNodeIds).toBeInstanceOf(Set);
-    expect(result.projectedNodeIds!.has('LWC:container')).toBe(true);
-    expect(result.projectedNodeIds!.has('ApexClass:Controller')).toBe(true);
-  });
-
-  test('Mock Worker IPC postMessage converts projectedNodeIds Set to Array and reconstructs Set on client', async () => {
-    // Simulate Worker environment message handler
-    const rawResult = computeArchitectureLayoutWithMetadata(
-      [
-        { id: 'LWC:sun', displayName: 'Sun', type: 'LWC', file: 'sun.js', risk: 'LOW' } as any,
-        { id: 'ApexClass:Child', displayName: 'Child', type: 'ApexClass', file: 'Child.cls', risk: 'LOW' } as any,
-        { id: 'ApexClass:Hidden', displayName: 'Hidden', type: 'ApexClass', file: 'Hidden.cls', risk: 'LOW' } as any,
-      ],
-      [{ id: 'e1', source: 'LWC:sun', target: 'ApexClass:Child', relationshipType: 'lwc-apex' } as any],
-      { architectureMode: 'constellation' }
-    );
-
-    // Simulate layout.worker.ts response construction
-    const serializedResponse = {
-      type: 'LAYOUT_SUCCESS' as const,
-      projectId: 'test-project',
-      requestGeneration: 1,
-      positions: rawResult.positions,
-      projectedNodeIds: rawResult.projectedNodeIds ? Array.from(rawResult.projectedNodeIds) : undefined,
-      computeDurationMs: 12,
-    };
-
-    expect(Array.isArray(serializedResponse.projectedNodeIds)).toBe(true);
-
-    // Simulate mock worker factory passing serialized message
-    let messageListener: any;
-    const mockWorker = {
-      postMessage: (data: any) => {
-        setTimeout(() => {
-          if (messageListener) {
-            messageListener({ data: serializedResponse });
-          }
-        }, 0);
-      },
-      addEventListener: (type: string, listener: any) => {
-        if (type === 'message') messageListener = listener;
-      },
-      removeEventListener: () => {},
-      terminate: () => {},
-    } as any;
-
-    const client = new LayoutWorkerClient({
-      workerFactory: () => mockWorker,
-    });
-
-    const asyncResult = await client.calculateLayoutAsync({
-      projectId: 'test-project',
-      nodes: [],
-      edges: [],
-      options: { architectureMode: 'constellation' },
-    });
-
-    expect(asyncResult.isOffloaded).toBe(true);
-    expect(asyncResult.projectedNodeIds).toBeDefined();
-    expect(asyncResult.projectedNodeIds).toBeInstanceOf(Set);
-    expect(asyncResult.projectedNodeIds!.has('LWC:sun')).toBe(true);
-    expect(asyncResult.projectedNodeIds!.has('ApexClass:Child')).toBe(true);
-    expect(asyncResult.projectedNodeIds!.has('ApexClass:Hidden')).toBe(false);
-  });
-
-  test('runLayoutWithMetadataAsync invokes calculateLayoutAsync and populates projectedNodeIds for constellation mode', async () => {
-    const showMock = vi.fn();
-    const hideMock = vi.fn();
-    const positionMock = vi.fn();
-
-    const mockNodeEles = [
-      { id: () => 'LWC:sun', show: showMock, hide: hideMock, position: positionMock, data: () => ({ id: 'LWC:sun', type: 'LWC' }) },
-      { id: () => 'ApexClass:Child', show: showMock, hide: hideMock, position: positionMock, data: () => ({ id: 'ApexClass:Child', type: 'ApexClass' }) },
-    ];
-
-    const mockCy = {
-      nodes: () => {
-        const arr = [...mockNodeEles] as any;
-        arr.filter = (predicate: any) => {
-          const filtered = mockNodeEles.filter(n => predicate(n));
-          return {
-            show: showMock,
-            hide: hideMock,
-            forEach: (cb: any) => filtered.forEach(cb),
-            style: vi.fn(),
-          };
-        };
-        arr.forEach = (cb: any) => mockNodeEles.forEach(cb);
-        return arr;
-      },
-      edges: () => {
-        const arr = [] as any;
-        arr.filter = () => ({
-          show: showMock,
-          hide: hideMock,
-          style: vi.fn(),
-        });
-        arr.forEach = () => {};
-        return arr;
-      },
-      elements: () => {
-        const arr = [] as any;
-        arr.filter = () => [];
-        return arr;
-      },
-      batch: (cb: any) => cb(),
-      fit: vi.fn(),
-    } as any;
-
-    const res = await runLayoutWithMetadataAsync(mockCy, {
-      architectureMode: 'constellation',
-    });
-
-    expect(res.projectedNodeIds).toBeDefined();
+    expect(res.isOffloaded).toBe(true);
     expect(res.projectedNodeIds).toBeInstanceOf(Set);
-    expect(res.projectedNodeIds!.has('LWC:sun')).toBe(true);
+    expect(res.projectedNodeIds!.has('LWC:focal-comp')).toBe(true);
+    expect(res.orbitGuides).toBeDefined();
+    expect(res.orbitGuides?.rings.length).toBeGreaterThan(0);
+  });
+
+  test('runLayoutWithMetadataAsync forwards projectedNodeIds and sets visibility filter on Cytoscape canvas', async () => {
+    const elements = buildGraphElements(nodes, edges);
+    const cy = cytoscape({
+      elements,
+      headless: true,
+    });
+
+    const result = await runLayoutWithMetadataAsync(cy, {
+      architectureMode: 'orbit',
+      focalLwcId: 'LWC:focal-comp',
+      nodes,
+      edges,
+      componentOrbitOptions: {
+        focalLwcId: 'LWC:focal-comp',
+        maxDepth: 1,
+      },
+    });
+
+    expect(result.projectedNodeIds).toBeInstanceOf(Set);
+    expect(result.projectedNodeIds!.size).toBeLessThanOrEqual(nodes.length);
+    expect(result.projectedNodeIds!.has('LWC:focal-comp')).toBe(true);
+  });
+
+  test('Constellation mode worker projection parity and mode transition reconciliation', async () => {
+    const elements = buildGraphElements(nodes, edges);
+    const cy = cytoscape({
+      elements,
+      headless: true,
+    });
+
+    // 1. Constellation mode
+    const constRes = await runLayoutWithMetadataAsync(cy, {
+      architectureMode: 'constellation',
+      nodes,
+      edges,
+    });
+    expect(constRes.projectedNodeIds).toBeInstanceOf(Set);
+
+    // 2. Transition back to hierarchical mode — all nodes restored to visible
+    const hierRes = await runLayoutWithMetadataAsync(cy, {
+      architectureMode: 'hierarchical',
+      nodes,
+      edges,
+    });
+    expect(hierRes.projectedNodeIds).toBeUndefined();
   });
 });

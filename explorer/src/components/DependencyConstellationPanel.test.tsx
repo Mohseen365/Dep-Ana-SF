@@ -207,13 +207,48 @@ describe('DependencyConstellationPanel Component', () => {
     expect(handleOptionChange).toHaveBeenCalledWith({ maxDepth: 1 });
   });
 
-  it('filters orbital nodes by search query', () => {
-    render(<DependencyConstellationPanel data={sampleData} />);
+  it('filters orbital nodes by search query and handles missing string fields without throwing', () => {
+    const dataWithPartialFields: ConstellationData = {
+      ...sampleData,
+      nodes: {
+        ...sampleData.nodes,
+        'LWC:PartialNode': {
+          nodeId: 'LWC:PartialNode',
+          displayName: 'PartialNode',
+          type: 'LWC',
+          file: 'partial.js',
+          risk: 'LOW',
+          featureId: 'f1',
+          featureName: undefined as any,
+          layerName: undefined as any,
+          hopDistance: 1,
+          metrics: { fanIn: 0, fanOut: 0, coupling: 0, score: 0 },
+          incomingCount: 0,
+          outgoingCount: 0,
+        },
+      },
+    };
+
+    render(<DependencyConstellationPanel data={dataWithPartialFields} />);
 
     const input = screen.getByTestId('constellation-filter-input');
-    fireEvent.change(input, { target: { value: 'OrderCard' } });
+    expect(() => {
+      fireEvent.change(input, { target: { value: 'Partial' } });
+    }).not.toThrow();
 
-    expect(input).toHaveValue('OrderCard');
+    expect(input).toHaveValue('Partial');
+  });
+
+  it('supports keyboard navigation, focusability, and Space activation without page scroll (CC-004)', () => {
+    const handleSelectNode = vi.fn();
+    render(<DependencyConstellationPanel data={sampleData} onSelectNode={handleSelectNode} />);
+
+    const nodeG = screen.getByTestId('constellation-node-LWC:OrderCard');
+    expect(nodeG).toHaveAttribute('tabindex', '0');
+
+    // Simulate keydown Space
+    fireEvent.keyDown(nodeG, { key: ' ', code: 'Space' });
+    expect(handleSelectNode).toHaveBeenCalledWith('LWC:OrderCard');
   });
 
   it('renders return to graph button when callback is provided', () => {
@@ -234,7 +269,7 @@ describe('DependencyConstellationPanel Component', () => {
       edges: [],
       availableNodes: [],
       summary: {
-        focalNodeId: null,
+        focalNodeId: '',
         totalNodes: 0,
         totalEdges: 0,
         ringCount: 0,

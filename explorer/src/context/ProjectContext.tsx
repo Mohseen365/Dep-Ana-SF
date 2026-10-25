@@ -65,6 +65,14 @@ function getInitialProjectId(): string {
   }
   return DEFAULT_PROJECT.id;
 }
+
+function resolveAnalysisPath(pId: string, rawAnalysisPath?: string): string {
+  if (pId === "default") return "/explorer-data.json";
+  if (rawAnalysisPath && rawAnalysisPath !== "/pbim/explorer-data.json") {
+    return rawAnalysisPath;
+  }
+  return `/projects/${pId}/explorer-data.json`;
+}
 const ProjectContext = createContext<ProjectContextValue | null>(null);
 
 const ACTIVE_PROJECT_KEY = "explorer.activeProjectId";
@@ -162,13 +170,7 @@ export const ProjectProvider: React.FC<{
       mergedMap.set(pId, {
         ...p,
         id: pId,
-        analysisPath:
-          p.analysisPath ||
-          (pId === "pbim"
-            ? "/pbim/explorer-data.json"
-            : pId !== "default"
-              ? `/projects/${pId}/explorer-data.json`
-              : "/explorer-data.json"),
+        analysisPath: resolveAnalysisPath(pId, p.analysisPath),
       });
     });
 
@@ -177,57 +179,47 @@ export const ProjectProvider: React.FC<{
       mergedMap.set(pId, {
         ...p,
         id: pId,
-        analysisPath:
-          p.analysisPath ||
-          (pId === "pbim"
-            ? "/pbim/explorer-data.json"
-            : pId !== "default"
-              ? `/projects/${pId}/explorer-data.json`
-              : "/explorer-data.json"),
+        analysisPath: resolveAnalysisPath(pId, p.analysisPath),
       });
     });
-
-    const allProjects = Array.from(mergedMap.values());
-    setProjects(allProjects);
-
-    // Determine target active project safely
-    const currentId = initialProjectId
-      ? slugify(initialProjectId)
-      : getInitialProjectId();
-
-    // If currentId is in mergedMap, use it.
-    // If currentId is unmanifested/custom, create a pending/placeholder project entry in mergedMap
-    // so activeProject metadata matches activeProjectId cleanly rather than silently returning DEFAULT_PROJECT.
-    if (!mergedMap.has(currentId) && currentId) {
-      const customProject: ProjectMetadata = {
-        id: currentId,
-        name: currentId === "pbim" ? "PBIM" : currentId.toUpperCase(),
-        description: `Requested project (${currentId})`,
-        sourcePath: `projects/${currentId}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        lastAnalyzedAt: null,
-        analysisStatus: "NOT_ANALYZED",
-        componentCount: 0,
-        dependencyCount: 0,
-        analysisPath:
-          currentId === "pbim"
-            ? "/pbim/explorer-data.json"
-            : currentId !== "default"
-              ? `/projects/${currentId}/explorer-data.json`
-              : "/explorer-data.json",
-      };
-      mergedMap.set(currentId, customProject);
-    }
 
     const updatedAllProjects = Array.from(mergedMap.values());
     setProjects(updatedAllProjects);
 
-    const validId = mergedMap.has(currentId)
-      ? currentId
-      : activeIdFromManifest && mergedMap.has(activeIdFromManifest)
-        ? activeIdFromManifest
-        : DEFAULT_PROJECT.id;
+    // Explicit selection precedence policy:
+    // 1. Explicit project ID from prop or URL query parameter (if valid in registry)
+    // 2. Valid saved project selection in localStorage
+    // 3. Valid activeProjectId declared in manifest
+    // 4. DEFAULT_PROJECT.id ("default")
+    let urlId: string | null = null;
+    if (initialProjectId) {
+      urlId = slugify(initialProjectId) || null;
+    } else if (typeof window !== "undefined") {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const p = urlParams.get("project");
+        if (p) urlId = slugify(p) || null;
+      } catch (_) {}
+    }
+
+    let savedId: string | null = null;
+    if (typeof window !== "undefined") {
+      try {
+        const s = localStorage.getItem(ACTIVE_PROJECT_KEY);
+        if (s) savedId = slugify(s) || null;
+      } catch (_) {}
+    }
+
+    let validId: string;
+    if (urlId && mergedMap.has(urlId)) {
+      validId = urlId;
+    } else if (savedId && mergedMap.has(savedId)) {
+      validId = savedId;
+    } else if (activeIdFromManifest && mergedMap.has(activeIdFromManifest)) {
+      validId = activeIdFromManifest;
+    } else {
+      validId = DEFAULT_PROJECT.id;
+    }
 
     setActiveProjectId(validId);
     setLoading(false);
@@ -239,31 +231,30 @@ export const ProjectProvider: React.FC<{
 
   const selectProject = useCallback((projectId: string) => {
     const targetId = slugify(projectId) || DEFAULT_PROJECT.id;
-    setActiveProjectId(targetId);
+    const exists = projects.some((p) => p.id === targetId);
+    const validId = exists ? targetId : DEFAULT_PROJECT.id;
+
+    setActiveProjectId(validId);
 
     try {
-      localStorage.setItem(ACTIVE_PROJECT_KEY, targetId);
-
+      localStorage.setItem(ACTIVE_PROJECT_KEY, validId);
       // Update recent IDs
       setRecentIds((prev) => {
         const updated = [
-          targetId,
-          ...prev.filter((id) => id !== targetId),
+          validId,
+          ...prev.filter((id) => id !== validId),
         ].slice(0, 5);
         try {
           localStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(updated));
-        } catch (_) {
-          // Ignore
-        }
+        } catch (_) {}
         return updated;
       });
 
       // Update URL query parameter
       if (typeof window !== "undefined" && window.history) {
         const url = new URL(window.location.href);
-        if (url.searchParams.get("project") !== targetId) {
-          url.searchParams.set("project", targetId);
-          // Clear single-project component selection on project switch for isolation
+        if (url.searchParams.get("project") !== validId) {
+          url.searchParams.set("project", validId);
           url.searchParams.delete("node");
           url.searchParams.delete("finding");
           window.history.pushState(
@@ -274,16 +265,13 @@ export const ProjectProvider: React.FC<{
         }
       }
 
-      // Notify app of project change
       window.dispatchEvent(
         new CustomEvent("explorer:project-changed", {
-          detail: { projectId: targetId },
+          detail: { projectId: validId },
         }),
       );
-    } catch (_) {
-      // Storage / history failure
-    }
-  }, []);
+    } catch (_) {}
+  }, [projects]);
 
   const createProject = useCallback(
     async (input: {
@@ -378,7 +366,7 @@ export const ProjectProvider: React.FC<{
         return "/explorer-data.json";
       }
       const proj = projects.find((p) => p.id === targetId);
-      if (proj && proj.analysisPath) {
+      if (proj && proj.analysisPath && proj.analysisPath !== "/pbim/explorer-data.json") {
         return proj.analysisPath;
       }
       return `/projects/${targetId}/explorer-data.json`;
@@ -655,7 +643,10 @@ export const ProjectProvider: React.FC<{
   );
 
   const activeProject = useMemo(() => {
-    return projects.find((p) => p.id === activeProjectId) || DEFAULT_PROJECT;
+    const found = projects.find((p) => p.id === activeProjectId);
+    if (found) return found;
+    if (activeProjectId === DEFAULT_PROJECT.id) return DEFAULT_PROJECT;
+    return null;
   }, [projects, activeProjectId]);
 
   const recentProjects = useMemo(() => {
@@ -714,6 +705,10 @@ export const ProjectProvider: React.FC<{
     <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
   );
 };
+
+export function useProjectOptional(): ProjectContextValue | null {
+  return useContext(ProjectContext);
+}
 
 export function useProject(): ProjectContextValue {
   const context = useContext(ProjectContext);

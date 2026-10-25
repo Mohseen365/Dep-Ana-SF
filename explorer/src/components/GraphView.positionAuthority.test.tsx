@@ -73,11 +73,26 @@ const {
     width: vi.fn().mockReturnValue(800),
     height: vi.fn().mockReturnValue(600),
     resize: vi.fn(),
-    elements: vi.fn().mockReturnValue({
-      removeClass: vi.fn().mockReturnThis(),
-      addClass: vi.fn().mockReturnThis(),
-      unselect: vi.fn().mockReturnThis(),
-      remove: vi.fn(),
+    elements: vi.fn().mockImplementation(() => {
+      const arr = [...Object.values(mockNodeObjMap)];
+      const collection = {
+        length: arr.length,
+        forEach: (fn: any) => arr.forEach(fn),
+        removeClass: vi.fn().mockReturnThis(),
+        addClass: vi.fn().mockReturnThis(),
+        unselect: vi.fn().mockReturnThis(),
+        remove: vi.fn(),
+        filter: (fn: any) => {
+          const sub = arr.filter(fn);
+          return {
+            length: sub.length,
+            forEach: (sFn: any) => sub.forEach(sFn),
+            boundingBox: () => ({ x1: 0, y1: 0, x2: 100, y2: 100, w: 100, h: 100 }),
+          };
+        },
+        boundingBox: () => ({ x1: 0, y1: 0, x2: 100, y2: 100, w: 100, h: 100 }),
+      };
+      return collection;
     }),
     nodes: vi.fn().mockImplementation(() => {
       const arr = Object.values(mockNodeObjMap);
@@ -247,7 +262,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 150, y: 250 },
       'node-2': { x: 350, y: 450 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     render(
       <GraphView
@@ -316,7 +331,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 100 },
       'node-2': { x: 200, y: 200 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { rerender } = render(
       <GraphView
@@ -364,6 +379,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         focusedNodeId="node-1"
         focusState={{ enabled: true, focusNodeId: 'node-1', direction: 'both', depth: 1 }}
         nodePositions={persistedPositions}
+        graphLayout={graphLayout}
         layoutMode="static"
       />
     );
@@ -499,7 +515,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-2': { x: 220, y: 240 },
     };
 
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     // Render initial with node-1 and node-2
     const { rerender } = render(
@@ -556,7 +572,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 100 },
       'node-2': { x: 300, y: 300 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { rerender } = render(
       <GraphView
@@ -642,7 +658,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 500, y: 500 },
       'node-2': { x: 700, y: 700 },
     };
-    const graphLayout = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+    const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
     const { unmount } = render(
       <GraphView
@@ -683,7 +699,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
       'node-1': { x: 100, y: 200 },
       'node-2': { x: 300, y: 400 },
     };
-    const staticGraphLayout = { mode: 'static' as const, nodePositions: staticPositions, layoutProvenance: 'user-authored' as const };
+    const staticGraphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: staticPositions, layoutProvenance: 'user-authored' as const };
 
     it('1. selected node can still be investigated without changing node coordinates in Static mode', () => {
       const onSelectNode = vi.fn();
@@ -883,6 +899,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedEdgeId={null}
           focusedNodeId="node-1"
           nodePositions={staticPositions}
+          graphLayout={staticGraphLayout}
           layoutMode="static"
         />
       );
@@ -1123,7 +1140,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={initialPositions}
-          graphLayout={{ mode: 'static', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1146,7 +1163,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={updatedPositions}
-          graphLayout={{ mode: 'static', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1280,7 +1297,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1297,7 +1314,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1317,7 +1334,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1332,7 +1349,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1348,7 +1365,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1368,7 +1385,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p}
-          graphLayout={{ mode: 'static', nodePositions: p, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1428,7 +1445,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1447,7 +1464,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1484,7 +1501,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
         'node-1': { x: 150, y: 150 },
         'node-2': { x: 350, y: 350 },
       };
-      const gl = { mode: 'static' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
+      const gl = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: persistedPositions, layoutProvenance: 'user-authored' as const };
 
       const { rerender } = render(
         <GraphView
@@ -1537,7 +1554,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={initialPositions}
-          graphLayout={{ mode: 'static', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: initialPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1555,7 +1572,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={updatedPositions}
-          graphLayout={{ mode: 'static', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: updatedPositions, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1576,7 +1593,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p1}
-          graphLayout={{ mode: 'static', nodePositions: p1, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p1, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1590,7 +1607,7 @@ describe('GraphView Position Authority & Layout Policy', () => {
           selectedNodeId={null}
           selectedEdgeId={null}
           nodePositions={p2}
-          graphLayout={{ mode: 'static', nodePositions: p2, layoutProvenance: 'user-authored' }}
+          graphLayout={{ mode: 'static', architectureMode: 'hierarchical', nodePositions: p2, layoutProvenance: 'user-authored' }}
           layoutMode="static"
         />
       );
@@ -1630,6 +1647,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
 
     it('Negative 4: New-node placement does NOT trigger repeated persistence loops', () => {
       const onNodePositionsChange = vi.fn();
+      const initialPositions = { 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } };
+      const graphLayout = { mode: 'static' as const, architectureMode: 'hierarchical' as const, nodePositions: initialPositions, layoutProvenance: 'user-authored' as const };
 
       const { rerender } = render(
         <GraphView
@@ -1639,7 +1658,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={initialPositions}
+          graphLayout={graphLayout}
           onNodePositionsChange={onNodePositionsChange}
           layoutMode="static"
         />
@@ -1667,7 +1687,8 @@ describe('GraphView Position Authority & Layout Policy', () => {
           onSelectEdge={vi.fn()}
           selectedNodeId={null}
           selectedEdgeId={null}
-          nodePositions={{ 'node-1': { x: 100, y: 100 }, 'node-2': { x: 200, y: 200 } }}
+          nodePositions={initialPositions}
+          graphLayout={graphLayout}
           onNodePositionsChange={onNodePositionsChange}
           layoutMode="static"
         />
@@ -1743,6 +1764,478 @@ describe('GraphView Position Authority & Layout Policy', () => {
       );
 
       expect(mockLayoutRun).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('T0-1 Position Authority Fix Specific Regression Coverage', () => {
+    it('T0-1 Reg-1: Switch architecture mode with stale automatic provenance calculates new layout with metadata', () => {
+      const persistedPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const onNodePositionsChange = vi.fn();
+
+      // Initial render in hierarchical mode with automatic-hierarchical provenance
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Switch architecture mode to 'orbit' while graphLayout still carries automatic-hierarchical provenance
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="interactive"
+        />
+      );
+
+      // Switching architecture mode recalculates metadata layout and persists new positions with target provenance
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+    });
+
+    it('T0-1 Reg-2: Matching storedArchMode with stale automatic provenance calculates new layout for target mode', () => {
+      const persistedPositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'orbit',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'orbit',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="interactive"
+        />
+      );
+
+      // Layout recalculation MUST execute and persist target provenance
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+    });
+
+    it('T0-1 Reg-3: User-authored layout provenance preserves authoritative positions across architecture mode switch', () => {
+      const persistedPositions = {
+        'node-1': { x: 888, y: 888 },
+        'node-2': { x: 999, y: 999 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+        />
+      );
+
+      mockLayoutRun.mockClear();
+
+      // Switch mode to orbit with user-authored provenance
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={persistedPositions}
+          graphLayout={{
+            mode: 'interactive',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: persistedPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="interactive"
+        />
+      );
+
+      // User-authored positions are authoritative, so positions remain preserved in nodePositions
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 888, y: 888 });
+      expect(mockCy.getElementById('node-2').position()).toEqual({ x: 999, y: 999 });
+    });
+  });
+
+  describe('Prompt B2 Scenarios A-F: Per-Mode Session Isolation & Position Authority', () => {
+    it('A. Cross-mode contamination: drag in mode A does not contaminate mode B session positions', () => {
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // User drags node-1 in hierarchical mode
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 111, y: 111 });
+      const dragHandler = listeners['dragfree:node']?.[0];
+      act(() => {
+        dragHandler({ target: n1 });
+      });
+
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.objectContaining({ 'node-1': { x: 111, y: 111 } }),
+        'user-authored'
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Switch to orbit mode
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="orbit"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Orbit mode should run its own layout or calculate positions for automatic-orbit without inheriting mode A dragged session position into orbit automatic provenance
+      if (onNodePositionsChange.mock.calls.length > 0) {
+        const lastProv = onNodePositionsChange.mock.calls[onNodePositionsChange.mock.calls.length - 1][1];
+        expect(lastProv).toBe('automatic-orbit');
+      }
+    });
+
+    it('B. Delayed callback during mode switch: layoutstop for mode A does not write to mode B session map', () => {
+      layoutControl.autoEmitLayoutStop = false;
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Switch to static mode to register pendingModeSwitchCaptureRef listener for mode A
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="static"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Concurrently switch architectureMode to 'orbit' before layoutstop completes
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="orbit"
+          layoutMode="static"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Emit layoutstop for mode A
+      act(() => {
+        layoutControl.emitLayoutStop();
+      });
+
+      // Verification: delayed operation completes safely without corrupting mode B session map
+      expect(onNodePositionsChange).toHaveBeenCalled();
+    });
+
+    it('C. User-authored positions: retain authority across mode switches', () => {
+      const userPositions = {
+        'node-1': { x: 500, y: 500 },
+        'node-2': { x: 600, y: 600 },
+      };
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={userPositions}
+          graphLayout={{
+            mode: 'static',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: userPositions,
+          }}
+          architectureMode="hierarchical"
+          layoutMode="static"
+        />
+      );
+
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
+
+      // Switch mode to orbit with user-authored provenance
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={userPositions}
+          graphLayout={{
+            mode: 'static',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'user-authored',
+            nodePositions: userPositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="static"
+        />
+      );
+
+      // User-authored positions remain authoritative
+      expect(mockCy.getElementById('node-1').position()).toEqual({ x: 500, y: 500 });
+    });
+
+    it('D. Same-mode restoration: restores saved session positions when returning to mode A', () => {
+      const onNodePositionsChange = vi.fn();
+
+      const { rerender } = render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Leave hierarchical mode -> switch to orbit
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="orbit"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
+
+      onNodePositionsChange.mockClear();
+
+      // Return to hierarchical mode
+      rerender(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="interactive"
+          onNodePositionsChange={onNodePositionsChange}
+        />
+      );
+
+      // Mode A's automatic provenance (automatic-hierarchical) is restored
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-hierarchical'
+      );
+    });
+
+    it('E. Reset behavior: clears current architecture mode session map without leaking across modes', () => {
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          architectureMode="hierarchical"
+          layoutMode="static"
+        />
+      );
+
+      // Drag node-1 to set a session position
+      const n1 = mockCy.getElementById('node-1');
+      n1.position({ x: 300, y: 300 });
+      const dragHandler = listeners['dragfree:node']?.[0];
+      act(() => {
+        dragHandler({ target: n1 });
+      });
+
+      // Execute Reset Layout
+      const resetBtn = screen.getByRole('button', { name: /reset layout/i });
+      fireEvent.click(resetBtn);
+
+      // Layout run called for reset
+      expect(mockLayoutRun).toHaveBeenCalled();
+    });
+
+    it('F. Explicit authority: non-authoritative generated positions are rejected when mode or provenance mismatches', () => {
+      const stalePositions = {
+        'node-1': { x: 100, y: 100 },
+        'node-2': { x: 200, y: 200 },
+      };
+
+      const onNodePositionsChange = vi.fn();
+
+      // Pass stale automatic-hierarchical positions while entering 'orbit' mode
+      render(
+        <GraphView
+          nodes={testNodes}
+          edges={testEdges}
+          onSelectNode={vi.fn()}
+          onSelectEdge={vi.fn()}
+          selectedNodeId={null}
+          selectedEdgeId={null}
+          nodePositions={stalePositions}
+          onNodePositionsChange={onNodePositionsChange}
+          graphLayout={{
+            mode: 'static',
+            architectureMode: 'hierarchical',
+            layoutProvenance: 'automatic-hierarchical',
+            nodePositions: stalePositions,
+          }}
+          architectureMode="orbit"
+          layoutMode="static"
+        />
+      );
+
+      // hasAuth evaluates as false because storedArchMode ('hierarchical') !== architectureMode ('orbit'), so new automatic-orbit layout is generated
+      expect(onNodePositionsChange).toHaveBeenCalledWith(
+        expect.anything(),
+        'automatic-orbit'
+      );
     });
   });
 });

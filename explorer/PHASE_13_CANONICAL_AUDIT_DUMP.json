@@ -62,8 +62,8 @@
     "totalAabbOverlaps": 0,
     "bboxWidth": 1104,
     "bboxHeight": 1104,
-    "medianLocality": 363.91984445998344,
-    "p95Locality": 719.9387991785688,
+    "medianLocality": 366.2864250839831,
+    "p95Locality": 719.4861008449262,
     "maxLocality": 833.402644414846,
     "ringBaseRadii": [
       180,
@@ -108,14 +108,14 @@
     "crossRingOverlaps": 0,
     "focalOverlaps": 0,
     "totalAabbOverlaps": 0,
-    "bboxWidth": 1102.1728109329697,
-    "bboxHeight": 1104,
-    "medianLocality": 454.4574915677546,
-    "p95Locality": 755.33988425855,
-    "maxLocality": 973.2197571528596,
+    "bboxWidth": 1337.773536284989,
+    "bboxHeight": 1340,
+    "medianLocality": 548.5082613277976,
+    "p95Locality": 874.7795620607922,
+    "maxLocality": 1202.8249584194382,
     "ringBaseRadii": [
       180,
-      420
+      538
     ]
   },
   "PBIM Maintenance_Request__c 3-hop": {
@@ -132,15 +132,15 @@
     "crossRingOverlaps": 0,
     "focalOverlaps": 0,
     "totalAabbOverlaps": 0,
-    "bboxWidth": 1584,
-    "bboxHeight": 1584,
-    "medianLocality": 490.0107279566094,
-    "p95Locality": 921.3370374719613,
-    "maxLocality": 1318.3466314913458,
+    "bboxWidth": 1820,
+    "bboxHeight": 1820,
+    "medianLocality": 581.7295195822231,
+    "p95Locality": 1110.9655106356315,
+    "maxLocality": 1554.0323380934858,
     "ringBaseRadii": [
       180,
-      420,
-      660
+      538,
+      778
     ]
   }
 }

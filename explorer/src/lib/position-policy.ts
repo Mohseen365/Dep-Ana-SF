@@ -1,4 +1,4 @@
-import type { ExplorerEdge } from '../types/explorer';
+import type { ExplorerEdge, Position } from '../types/explorer';
 
 export type LayoutMode = 'static' | 'interactive';
 
@@ -10,12 +10,10 @@ export type LayoutTrigger =
   | 'investigation'
   | 'new-nodes'
   | 'mode-switch'
+  | 'architecture-mode-switch'
   | 'reset-layout';
 
-export interface Position {
-  x: number;
-  y: number;
-}
+export type { Position };
 
 export type PositionAuthorityLevel = 1 | 2 | 3 | 4 | 5;
 
@@ -70,8 +68,10 @@ export function shouldAutoLayout(
       case 'investigation':
       case 'mode-switch':
         return false;
+      case 'architecture-mode-switch':
+        return true;
       case 'new-nodes':
-        return 'place-new-only';
+        return hasAuth ? 'place-new-only' : true;
       default:
         return false;
     }
@@ -82,13 +82,15 @@ export function shouldAutoLayout(
         return !hasAuth;
       case 'graph-update':
         return !hasAuth;
+      case 'architecture-mode-switch':
+        return true;
       case 'filter-change':
       case 'focus-change':
       case 'investigation':
       case 'mode-switch':
         return false;
       case 'new-nodes':
-        return 'place-new-only';
+        return hasAuth ? 'place-new-only' : true;
       default:
         return false;
     }
@@ -106,13 +108,13 @@ export function shouldAutoLayout(
 export function resolveAuthoritativePosition(
   nodeId: string,
   options: {
+    hasAuthoritativePositions: boolean;
     sessionPositions?: Map<string, Position> | Record<string, Position>;
     persistedPositions?: Record<string, Position>;
     cyNodePosition?: Position | null;
-    hasAuthoritativePositions?: boolean;
   }
 ): ResolvedPosition | null {
-  const { sessionPositions, persistedPositions, cyNodePosition, hasAuthoritativePositions = true } = options;
+  const { sessionPositions, persistedPositions, cyNodePosition, hasAuthoritativePositions } = options;
 
   // Level 1: Explicit current user position
   if (sessionPositions) {
@@ -122,7 +124,7 @@ export function resolveAuthoritativePosition(
     } else {
       sessionPos = sessionPositions[nodeId];
     }
-    if (sessionPos && typeof sessionPos.x === 'number' && typeof sessionPos.y === 'number' && !isNaN(sessionPos.x) && !isNaN(sessionPos.y)) {
+    if (sessionPos && typeof sessionPos.x === 'number' && typeof sessionPos.y === 'number' && Number.isFinite(sessionPos.x) && Number.isFinite(sessionPos.y)) {
       return { position: { x: sessionPos.x, y: sessionPos.y }, level: 1 };
     }
   }
@@ -130,13 +132,13 @@ export function resolveAuthoritativePosition(
   // Level 2: Persisted project position (only if authoritative for active layout mode)
   if (hasAuthoritativePositions && persistedPositions && persistedPositions[nodeId]) {
     const pPos = persistedPositions[nodeId];
-    if (pPos && typeof pPos.x === 'number' && typeof pPos.y === 'number' && !isNaN(pPos.x) && !isNaN(pPos.y)) {
+    if (pPos && typeof pPos.x === 'number' && typeof pPos.y === 'number' && Number.isFinite(pPos.x) && Number.isFinite(pPos.y)) {
       return { position: { x: pPos.x, y: pPos.y }, level: 2 };
     }
   }
 
   // Level 3: Existing Cytoscape position during incremental update (only if authoritative for active layout mode)
-  if (hasAuthoritativePositions && cyNodePosition && typeof cyNodePosition.x === 'number' && typeof cyNodePosition.y === 'number' && !isNaN(cyNodePosition.x) && !isNaN(cyNodePosition.y)) {
+  if (hasAuthoritativePositions && cyNodePosition && typeof cyNodePosition.x === 'number' && typeof cyNodePosition.y === 'number' && Number.isFinite(cyNodePosition.x) && Number.isFinite(cyNodePosition.y)) {
     return { position: { x: cyNodePosition.x, y: cyNodePosition.y }, level: 3 };
   }
 

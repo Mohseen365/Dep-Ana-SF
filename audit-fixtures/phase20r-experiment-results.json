@@ -2,263 +2,263 @@
   "cloud-spend-tracker": {
     "Baseline": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 3300,
-      "m2_occupiedHeight": 11000,
-      "m3_occupiedArea": 36297140,
-      "m4_emptySpaceRatio": 0.9524,
+      "m1_occupiedWidth": 3570,
+      "m2_occupiedHeight": 10800,
+      "m3_occupiedArea": 38553624,
+      "m4_emptySpaceRatio": 0.9552,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 1863,
-        "p75": 6568,
-        "p95": 9151,
-        "p99": 9820,
-        "p100": 10222
+        "p50": 1947,
+        "p75": 6563,
+        "p95": 8944,
+        "p99": 9842,
+        "p100": 10049
       },
       "m6_semanticDist": {
-        "p50": 2734,
-        "p95": 9600,
-        "p100": 10940
+        "p50": 2622,
+        "p95": 9500,
+        "p100": 10740
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 171,
+        "p95": 200,
         "p100": 1141
       },
-      "aabbCollisions": 0
+      "aabbCollisions": 1
     },
     "MechanismA_LayerSupremacy": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 3540,
-      "m2_occupiedHeight": 9040,
-      "m3_occupiedArea": 32000022,
-      "m4_emptySpaceRatio": 0.946,
+      "m1_occupiedWidth": 3730,
+      "m2_occupiedHeight": 8940,
+      "m3_occupiedArea": 33344233,
+      "m4_emptySpaceRatio": 0.9482,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 1020,
-        "p75": 6181,
-        "p95": 7189,
-        "p99": 7881,
-        "p100": 8282
+        "p50": 1000,
+        "p75": 6281,
+        "p95": 7380,
+        "p99": 7981,
+        "p100": 8281
       },
       "m6_semanticDist": {
-        "p50": 2302,
-        "p95": 7909,
-        "p100": 8981
+        "p50": 2346,
+        "p95": 7888,
+        "p100": 8895
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 180,
-        "p100": 1141
+        "p95": 189,
+        "p100": 1240
       },
-      "aabbCollisions": 46
+      "aabbCollisions": 67
     },
     "MechanismB_FeatureBandStacking": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 4370,
-      "m2_occupiedHeight": 4820,
-      "m3_occupiedArea": 21062340,
-      "m4_emptySpaceRatio": 0.918,
+      "m1_occupiedWidth": 4210,
+      "m2_occupiedHeight": 4620,
+      "m3_occupiedArea": 19449184,
+      "m4_emptySpaceRatio": 0.9112,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 1219,
-        "p75": 1927,
-        "p95": 2843,
-        "p99": 3362,
-        "p100": 3642
+        "p50": 1223,
+        "p75": 1966,
+        "p95": 2824,
+        "p99": 3542,
+        "p100": 3865
       },
       "m6_semanticDist": {
-        "p50": 1504,
-        "p95": 3425,
-        "p100": 4788
+        "p50": 1487,
+        "p95": 3375,
+        "p100": 4590
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 187,
+        "p95": 197,
         "p100": 1240
       },
-      "aabbCollisions": 15
+      "aabbCollisions": 5
     },
     "MechanismC_Stage8Bridge": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 2020,
-      "m2_occupiedHeight": 10880,
-      "m3_occupiedArea": 21977600,
-      "m4_emptySpaceRatio": 0.9214,
+      "m1_occupiedWidth": 2160,
+      "m2_occupiedHeight": 10560,
+      "m3_occupiedArea": 22806892,
+      "m4_emptySpaceRatio": 0.9242,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 1742,
-        "p75": 6563,
-        "p95": 8744,
-        "p99": 9521,
-        "p100": 10121
+        "p50": 1902,
+        "p75": 6463,
+        "p95": 8651,
+        "p99": 9244,
+        "p100": 9630
       },
       "m6_semanticDist": {
-        "p50": 1740,
-        "p95": 9340,
-        "p100": 10824
+        "p50": 1688,
+        "p95": 9255,
+        "p100": 10513
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 165,
+        "p95": 160,
         "p100": 738
       },
       "aabbCollisions": 0
     },
     "MechanismD_Stage9Satellite": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 3300,
+      "m1_occupiedWidth": 3570,
       "m2_occupiedHeight": 9720,
-      "m3_occupiedArea": 32073473,
-      "m4_emptySpaceRatio": 0.965,
+      "m3_occupiedArea": 34698262,
+      "m4_emptySpaceRatio": 0.9676,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 1986,
-        "p75": 6260,
-        "p95": 7620,
-        "p99": 8441,
-        "p100": 8641
+        "p50": 2065,
+        "p75": 6360,
+        "p95": 7621,
+        "p99": 8541,
+        "p100": 8841
       },
       "m6_semanticDist": {
         "p50": 2345,
         "p95": 8860,
-        "p100": 9693
+        "p100": 9681
       },
       "m7_nearestDist": {
         "p50": 100,
         "p95": 220,
         "p100": 1141
       },
-      "aabbCollisions": 0
+      "aabbCollisions": 1
     },
     "MechanismE_Stage10Packing": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 2000,
-      "m2_occupiedHeight": 11000,
-      "m3_occupiedArea": 22000000,
-      "m4_emptySpaceRatio": 0.9215,
+      "m1_occupiedWidth": 2270,
+      "m2_occupiedHeight": 10800,
+      "m3_occupiedArea": 24516432,
+      "m4_emptySpaceRatio": 0.9295,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 1863,
-        "p75": 6566,
-        "p95": 9151,
-        "p99": 9820,
-        "p100": 10222
+        "p50": 1947,
+        "p75": 6563,
+        "p95": 8944,
+        "p99": 9842,
+        "p100": 10049
       },
       "m6_semanticDist": {
-        "p50": 2734,
-        "p95": 9600,
-        "p100": 10940
+        "p50": 2622,
+        "p95": 9500,
+        "p100": 10740
       },
       "m7_nearestDist": {
         "p50": 100,
         "p95": 160,
         "p100": 376
       },
-      "aabbCollisions": 1
+      "aabbCollisions": 0
     },
     "MechanismF_Stage11Collision": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 3300,
-      "m2_occupiedHeight": 11000,
-      "m3_occupiedArea": 36297140,
-      "m4_emptySpaceRatio": 0.9524,
+      "m1_occupiedWidth": 3570,
+      "m2_occupiedHeight": 10800,
+      "m3_occupiedArea": 38553624,
+      "m4_emptySpaceRatio": 0.9552,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 1863,
-        "p75": 6568,
-        "p95": 9151,
-        "p99": 9820,
-        "p100": 10222
+        "p50": 1947,
+        "p75": 6563,
+        "p95": 8944,
+        "p99": 9842,
+        "p100": 10049
       },
       "m6_semanticDist": {
-        "p50": 2734,
-        "p95": 9600,
-        "p100": 10940
+        "p50": 2622,
+        "p95": 9500,
+        "p100": 10740
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 171,
+        "p95": 200,
         "p100": 1141
       },
       "aabbCollisions": 0
     },
     "Combo_A_plus_B": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 3540,
-      "m2_occupiedHeight": 3760,
-      "m3_occupiedArea": 13309744,
-      "m4_emptySpaceRatio": 0.8702,
+      "m1_occupiedWidth": 3450,
+      "m2_occupiedHeight": 3560,
+      "m3_occupiedArea": 12281217,
+      "m4_emptySpaceRatio": 0.8593,
       "m5_connectedDist": {
-        "p0": 60,
-        "p50": 738,
-        "p75": 1126,
-        "p95": 2005,
-        "p99": 2359,
-        "p100": 2888
+        "p0": 65,
+        "p50": 621,
+        "p75": 929,
+        "p95": 1723,
+        "p99": 2281,
+        "p100": 2716
       },
       "m6_semanticDist": {
-        "p50": 1082,
-        "p95": 2487,
+        "p50": 1031,
+        "p95": 2467,
         "p100": 3905
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 197,
-        "p100": 710
+        "p95": 191,
+        "p100": 734
       },
-      "aabbCollisions": 86
+      "aabbCollisions": 102
     },
     "Combo_A_plus_C": {
       "projectId": "cloud-spend-tracker",
       "m1_occupiedWidth": 2580,
-      "m2_occupiedHeight": 9240,
-      "m3_occupiedArea": 23837621,
-      "m4_emptySpaceRatio": 0.9275,
+      "m2_occupiedHeight": 9040,
+      "m3_occupiedArea": 23321655,
+      "m4_emptySpaceRatio": 0.9259,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 816,
-        "p75": 6093,
-        "p95": 7006,
-        "p99": 7582,
-        "p100": 7883
+        "p50": 854,
+        "p75": 6081,
+        "p95": 7086,
+        "p99": 7504,
+        "p100": 7792
       },
       "m6_semanticDist": {
-        "p50": 862,
-        "p95": 7636,
-        "p100": 9253
+        "p50": 860,
+        "p95": 7589,
+        "p100": 9076
       },
       "m7_nearestDist": {
         "p50": 100,
         "p95": 165,
         "p100": 738
       },
-      "aabbCollisions": 210
+      "aabbCollisions": 171
     },
     "Combo_B_plus_C": {
       "projectId": "cloud-spend-tracker",
-      "m1_occupiedWidth": 2820,
+      "m1_occupiedWidth": 2740,
       "m2_occupiedHeight": 4720,
-      "m3_occupiedArea": 13309593,
-      "m4_emptySpaceRatio": 0.8702,
+      "m3_occupiedArea": 12931993,
+      "m4_emptySpaceRatio": 0.8664,
       "m5_connectedDist": {
-        "p0": 40,
-        "p50": 1168,
-        "p75": 1947,
-        "p95": 2795,
-        "p99": 3342,
-        "p100": 3642
+        "p0": 100,
+        "p50": 1165,
+        "p75": 2043,
+        "p95": 2845,
+        "p99": 3301,
+        "p100": 3765
       },
       "m6_semanticDist": {
-        "p50": 1398,
-        "p95": 3377,
-        "p100": 4660
+        "p50": 1339,
+        "p95": 3275,
+        "p100": 4689
       },
       "m7_nearestDist": {
         "p50": 100,
         "p95": 160,
-        "p100": 240
+        "p100": 349
       },
-      "aabbCollisions": 23
+      "aabbCollisions": 24
     },
     "Combo_A_plus_B_plus_C": {
       "projectId": "cloud-spend-tracker",
@@ -268,122 +268,122 @@
       "m4_emptySpaceRatio": 0.7811,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 605,
-        "p75": 877,
-        "p95": 1508,
-        "p99": 1831,
-        "p100": 2223
+        "p50": 565,
+        "p75": 844,
+        "p95": 1400,
+        "p99": 1655,
+        "p100": 1960
       },
       "m6_semanticDist": {
-        "p50": 728,
-        "p95": 1756,
-        "p100": 3115
+        "p50": 724,
+        "p95": 1769,
+        "p100": 3277
       },
       "m7_nearestDist": {
         "p50": 60,
-        "p95": 172,
-        "p100": 260
+        "p95": 160,
+        "p100": 256
       },
-      "aabbCollisions": 253
+      "aabbCollisions": 228
     }
   },
   "pbim": {
     "Baseline": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 7160,
-      "m2_occupiedHeight": 25460,
-      "m3_occupiedArea": 182293600,
-      "m4_emptySpaceRatio": 0.9791,
+      "m1_occupiedWidth": 6520,
+      "m2_occupiedHeight": 23840,
+      "m3_occupiedArea": 155436800,
+      "m4_emptySpaceRatio": 0.9755,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 2759,
-        "p75": 10824,
-        "p95": 18041,
-        "p99": 21085,
-        "p100": 24317
+        "p50": 2389,
+        "p75": 9642,
+        "p95": 16581,
+        "p99": 19760,
+        "p100": 22896
       },
       "m6_semanticDist": {
-        "p50": 10058,
-        "p95": 22359,
-        "p100": 25745
+        "p50": 9067,
+        "p95": 20940,
+        "p100": 24033
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 180,
-        "p100": 618
+        "p95": 189,
+        "p100": 589
       },
       "aabbCollisions": 0
     },
     "MechanismA_LayerSupremacy": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 7320,
-      "m2_occupiedHeight": 23360,
-      "m3_occupiedArea": 170995200,
-      "m4_emptySpaceRatio": 0.9778,
+      "m1_occupiedWidth": 6840,
+      "m2_occupiedHeight": 21800,
+      "m3_occupiedArea": 149112000,
+      "m4_emptySpaceRatio": 0.9745,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 2249,
-        "p75": 10483,
-        "p95": 16890,
-        "p99": 20224,
-        "p100": 22207
+        "p50": 2160,
+        "p75": 9340,
+        "p95": 15538,
+        "p99": 18648,
+        "p100": 20747
       },
       "m6_semanticDist": {
-        "p50": 9881,
-        "p95": 20540,
-        "p100": 23606
+        "p50": 8942,
+        "p95": 19094,
+        "p100": 21971
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 202,
-        "p100": 700
+        "p95": 207,
+        "p100": 705
       },
-      "aabbCollisions": 143
+      "aabbCollisions": 120
     },
     "MechanismB_FeatureBandStacking": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 7520,
-      "m2_occupiedHeight": 6180,
-      "m3_occupiedArea": 46473600,
-      "m4_emptySpaceRatio": 0.9182,
+      "m1_occupiedWidth": 7320,
+      "m2_occupiedHeight": 6020,
+      "m3_occupiedArea": 44066400,
+      "m4_emptySpaceRatio": 0.9137,
       "m5_connectedDist": {
-        "p0": 0,
-        "p50": 2076,
-        "p75": 2973,
-        "p95": 4252,
-        "p99": 4759,
-        "p100": 5121
+        "p0": 20,
+        "p50": 1942,
+        "p75": 2908,
+        "p95": 4218,
+        "p99": 4682,
+        "p100": 5161
       },
       "m6_semanticDist": {
-        "p50": 2203,
-        "p95": 4872,
-        "p100": 8015
+        "p50": 2168,
+        "p95": 4769,
+        "p100": 7429
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 160,
-        "p100": 707
+        "p95": 189,
+        "p100": 323
       },
-      "aabbCollisions": 55
+      "aabbCollisions": 49
     },
     "MechanismC_Stage8Bridge": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 7260,
-      "m2_occupiedHeight": 25220,
-      "m3_occupiedArea": 183090733,
-      "m4_emptySpaceRatio": 0.9792,
+      "m1_occupiedWidth": 6960,
+      "m2_occupiedHeight": 23660,
+      "m3_occupiedArea": 164667533,
+      "m4_emptySpaceRatio": 0.9769,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 2452,
-        "p75": 10720,
-        "p95": 14290,
-        "p99": 18642,
-        "p100": 23856
+        "p50": 2102,
+        "p75": 9513,
+        "p95": 12749,
+        "p99": 17196,
+        "p100": 22397
       },
       "m6_semanticDist": {
-        "p50": 4053,
-        "p95": 19940,
-        "p100": 25588
+        "p50": 3953,
+        "p95": 18291,
+        "p100": 23999
       },
       "m7_nearestDist": {
         "p50": 100,
@@ -394,22 +394,22 @@
     },
     "MechanismD_Stage9Satellite": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 6360,
-      "m2_occupiedHeight": 24420,
-      "m3_occupiedArea": 155311200,
-      "m4_emptySpaceRatio": 0.9876,
+      "m1_occupiedWidth": 6200,
+      "m2_occupiedHeight": 23060,
+      "m3_occupiedArea": 142972000,
+      "m4_emptySpaceRatio": 0.9866,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 5569,
-        "p75": 10804,
-        "p95": 19141,
-        "p99": 21320,
-        "p100": 23600
+        "p50": 4760,
+        "p75": 9561,
+        "p95": 17765,
+        "p99": 19960,
+        "p100": 22340
       },
       "m6_semanticDist": {
-        "p50": 3660,
-        "p95": 22061,
-        "p100": 24661
+        "p50": 3668,
+        "p95": 20656,
+        "p100": 23318
       },
       "m7_nearestDist": {
         "p50": 102,
@@ -420,159 +420,159 @@
     },
     "MechanismE_Stage10Packing": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 4920,
-      "m2_occupiedHeight": 25460,
-      "m3_occupiedArea": 125263200,
-      "m4_emptySpaceRatio": 0.9697,
+      "m1_occupiedWidth": 4600,
+      "m2_occupiedHeight": 23840,
+      "m3_occupiedArea": 109664000,
+      "m4_emptySpaceRatio": 0.9653,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 2759,
-        "p75": 10824,
-        "p95": 18041,
-        "p99": 21085,
-        "p100": 24317
+        "p50": 2389,
+        "p75": 9642,
+        "p95": 16581,
+        "p99": 19760,
+        "p100": 22896
       },
       "m6_semanticDist": {
-        "p50": 9685,
-        "p95": 21952,
-        "p100": 25263
+        "p50": 8840,
+        "p95": 20548,
+        "p100": 23609
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 172,
-        "p100": 780
+        "p95": 160,
+        "p100": 589
       },
       "aabbCollisions": 0
     },
     "MechanismF_Stage11Collision": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 7160,
-      "m2_occupiedHeight": 25460,
-      "m3_occupiedArea": 182293600,
-      "m4_emptySpaceRatio": 0.9791,
+      "m1_occupiedWidth": 6520,
+      "m2_occupiedHeight": 23840,
+      "m3_occupiedArea": 155436800,
+      "m4_emptySpaceRatio": 0.9755,
       "m5_connectedDist": {
         "p0": 100,
-        "p50": 2759,
-        "p75": 10824,
-        "p95": 18041,
-        "p99": 21085,
-        "p100": 24317
+        "p50": 2389,
+        "p75": 9642,
+        "p95": 16581,
+        "p99": 19760,
+        "p100": 22896
       },
       "m6_semanticDist": {
-        "p50": 10058,
-        "p95": 22359,
-        "p100": 25745
+        "p50": 9067,
+        "p95": 20940,
+        "p100": 24033
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 180,
-        "p100": 618
+        "p95": 189,
+        "p100": 589
       },
       "aabbCollisions": 0
     },
     "Combo_A_plus_B": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 6540,
-      "m2_occupiedHeight": 5620,
-      "m3_occupiedArea": 36754800,
-      "m4_emptySpaceRatio": 0.8966,
+      "m1_occupiedWidth": 6380,
+      "m2_occupiedHeight": 5520,
+      "m3_occupiedArea": 35217600,
+      "m4_emptySpaceRatio": 0.8921,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 1718,
-        "p75": 2552,
-        "p95": 3453,
-        "p99": 4259,
-        "p100": 5121
+        "p50": 1785,
+        "p75": 2500,
+        "p95": 3276,
+        "p99": 4196,
+        "p100": 5199
       },
       "m6_semanticDist": {
-        "p50": 2154,
-        "p95": 4100,
-        "p100": 8024
+        "p50": 2145,
+        "p95": 4039,
+        "p100": 8075
       },
       "m7_nearestDist": {
         "p50": 100,
         "p95": 189,
-        "p100": 540
+        "p100": 618
       },
-      "aabbCollisions": 187
+      "aabbCollisions": 237
     },
     "Combo_A_plus_C": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 6140,
-      "m2_occupiedHeight": 23260,
-      "m3_occupiedArea": 142810436,
-      "m4_emptySpaceRatio": 0.9734,
+      "m1_occupiedWidth": 6160,
+      "m2_occupiedHeight": 21700,
+      "m3_occupiedArea": 133666436,
+      "m4_emptySpaceRatio": 0.9716,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 1746,
-        "p75": 10412,
-        "p95": 12405,
-        "p99": 16582,
-        "p100": 22017
+        "p50": 2040,
+        "p75": 9063,
+        "p95": 10944,
+        "p99": 15138,
+        "p100": 20558
       },
       "m6_semanticDist": {
-        "p50": 2810,
-        "p95": 19588,
-        "p100": 23420
+        "p50": 2904,
+        "p95": 18144,
+        "p100": 21832
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 215,
+        "p95": 220,
         "p100": 740
       },
-      "aabbCollisions": 352
+      "aabbCollisions": 404
     },
     "Combo_B_plus_C": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 6660,
+      "m1_occupiedWidth": 6440,
       "m2_occupiedHeight": 6280,
-      "m3_occupiedArea": 41823190,
-      "m4_emptySpaceRatio": 0.9091,
+      "m3_occupiedArea": 40443200,
+      "m4_emptySpaceRatio": 0.906,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 1588,
-        "p75": 2494,
-        "p95": 4168,
-        "p99": 4674,
-        "p100": 4996
+        "p50": 1376,
+        "p75": 2396,
+        "p95": 4076,
+        "p99": 4575,
+        "p100": 5584
       },
       "m6_semanticDist": {
-        "p50": 2065,
-        "p95": 4870,
-        "p100": 7720
+        "p50": 1939,
+        "p95": 4782,
+        "p100": 7632
       },
       "m7_nearestDist": {
         "p50": 100,
-        "p95": 161,
-        "p100": 291
+        "p95": 160,
+        "p100": 312
       },
-      "aabbCollisions": 165
+      "aabbCollisions": 172
     },
     "Combo_A_plus_B_plus_C": {
       "projectId": "pbim",
-      "m1_occupiedWidth": 5640,
+      "m1_occupiedWidth": 5960,
       "m2_occupiedHeight": 5920,
-      "m3_occupiedArea": 33387282,
-      "m4_emptySpaceRatio": 0.8861,
+      "m3_occupiedArea": 35281682,
+      "m4_emptySpaceRatio": 0.8923,
       "m5_connectedDist": {
         "p0": 0,
-        "p50": 1159,
-        "p75": 1800,
-        "p95": 2552,
-        "p99": 3002,
-        "p100": 3619
+        "p50": 1335,
+        "p75": 2040,
+        "p95": 2736,
+        "p99": 3236,
+        "p100": 4188
       },
       "m6_semanticDist": {
-        "p50": 1709,
-        "p95": 3679,
-        "p100": 7473
+        "p50": 1822,
+        "p95": 3619,
+        "p100": 7978
       },
       "m7_nearestDist": {
         "p50": 100,
         "p95": 189,
-        "p100": 621
+        "p100": 1063
       },
-      "aabbCollisions": 489
+      "aabbCollisions": 497
     }
   }
 }

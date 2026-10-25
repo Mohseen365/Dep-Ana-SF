@@ -163,7 +163,7 @@ export function runPhase22JointExperimentPipeline(
   stageSnapshots: Record<string, Record<string, { x: number; y: number }>>;
   finalPositions: Record<string, { x: number; y: number }>;
   featureMap: Map<string, string>;
-  layerMap: Map<string, any>;
+  layerMap: Map<string, ArchitectureLayer>;
   couplingMetrics: CouplingMetrics;
 } {
   const candidateType = interventions.candidateType || 'Baseline';
@@ -235,9 +235,9 @@ export function runPhase22JointExperimentPipeline(
   let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
 
   // Stage 2: Layer Classification
-  const layerMap = new Map<string, any>();
+  const layerMap = new Map<string, ArchitectureLayer>();
   safeNodes.forEach((node) => {
-    layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
+    layerMap.set(node.id, classifyNodeLayerWithReason(node).layer as ArchitectureLayer);
   });
   analysis = applyLayerClassification(analysis, layerMap);
 
@@ -800,7 +800,7 @@ export function runPhase22JointExperimentPipeline(
 export function calculateMetrics(
   projectId: string,
   candidateType: CandidateType,
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: Record<string, { x: number; y: number }>,
   couplingMetrics: CouplingMetrics,
@@ -974,7 +974,7 @@ describe('PHASE 22 — Joint Stage 5 + Stage 7 Coupled Hybrid Layout Experiment 
     const pbim = loadRealProjectData('pbim');
     expect(pbim.nodes.length).toBe(528);
     expect(pbim.edges.length).toBe(2063);
-    expect(pbim.sha256).toBe('d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b');
+    expect(pbim.sha256).toBe('395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d');
   });
 
   it('measures baseline and candidates J1–J5 on CST and PBIM datasets', () => {

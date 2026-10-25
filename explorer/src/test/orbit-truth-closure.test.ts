@@ -5,9 +5,6 @@ import * as crypto from 'crypto';
 import { projectOrbitSemantics, OrbitNodeMetadata } from '../lib/layout/orbit-semantics';
 import {
   computeOrbitLayout,
-  checkAABBOverlap,
-  normalizeAngle,
-  calculateRequiredSectorRadius,
 } from '../lib/layout/orbit-layout';
 
 describe('ARCHITECTURE ORBIT — FINAL GEOMETRY TRUTH ADVERSARIAL CLOSURE SUITE', () => {
@@ -130,6 +127,7 @@ describe('ARCHITECTURE ORBIT — FINAL GEOMETRY TRUTH ADVERSARIAL CLOSURE SUITE'
     }
 
     expect(minPairMargin).toBeGreaterThanOrEqual(0);
+    expect(worstPair).not.toBeNull();
   });
 
   it('Section 11: Validates Singleton Track and Small Node Counts', () => {
@@ -141,6 +139,7 @@ describe('ARCHITECTURE ORBIT — FINAL GEOMETRY TRUTH ADVERSARIAL CLOSURE SUITE'
         orbitRingIndex: 1,
         orbitSectorId: 'sec_single',
         primaryFeatureId: 'sec_single',
+        primaryDomainId: 'Shared',
         semanticOrderKey: `single_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,
@@ -175,6 +174,7 @@ describe('ARCHITECTURE ORBIT — FINAL GEOMETRY TRUTH ADVERSARIAL CLOSURE SUITE'
         orbitRingIndex: 1,
         orbitSectorId: `sec_${i}`,
         primaryFeatureId: `sec_${i}`,
+        primaryDomainId: `sec_${i}`,
         semanticOrderKey: `sec_node_${i}`,
         fallbackFlags: {
           isDefaultLayerFallback: false,

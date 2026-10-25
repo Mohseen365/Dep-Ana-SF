@@ -122,9 +122,9 @@ function evaluateAABBCollisions(
   const entries = Object.entries(positions);
   let collisions = 0;
   for (let i = 0; i < entries.length; i++) {
-    const [idA, posA] = entries[i];
+    const [, posA] = entries[i];
     for (let j = i + 1; j < entries.length; j++) {
-      const [idB, posB] = entries[j];
+      const [, posB] = entries[j];
       const dx = Math.abs(posA.x - posB.x);
       const dy = Math.abs(posA.y - posB.y);
       if (dx < nodeWidth && dy < nodeHeight) {

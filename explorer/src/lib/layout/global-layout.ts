@@ -1,6 +1,7 @@
 import type { ExplorerNode, ExplorerEdge } from '../../types/explorer';
 import type { LayoutGraphIndex } from './graph-index';
 import type { ArchitectureLayer, ArchitectureGraphAnalysis } from './types';
+export type { ArchitectureLayer };
 import { classifyNodeLayer } from './layers';
 import { discoverDomains, classifyNodeDomain, type DomainDiscoveryResult } from './domains';
 import { discoverFeatures, type FeatureDiscoveryResult } from './features';
@@ -36,6 +37,7 @@ export interface DomainNode {
 export interface FeatureRegion extends DomainRegion {
   featureId: string;
   domainId?: string;
+  id?: string;
 }
 
 export interface GlobalFeatureLayoutOptions extends GlobalLayoutOptions {

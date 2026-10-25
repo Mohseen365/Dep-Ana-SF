@@ -6,11 +6,8 @@
  * never pollutes or overwrites state for Project B (e.g., sidebar expanded, zoom 120%).
  */
 
-import {
-  ExplorerNodeType,
-  ALL_EXPLORER_NODE_TYPES,
-  ArchitectureLayoutMode,
-} from "../types/explorer";
+import { ALL_EXPLORER_NODE_TYPES } from "../types/explorer.ts";
+import type { ExplorerNodeType, ArchitectureLayoutMode, Position } from "../types/explorer.ts";
 
 export interface SelectedComponentState {
   selectedNodeId: string | null;
@@ -44,15 +41,15 @@ export interface GraphLayoutState {
   mode: GraphInteractionMode;
   architectureMode?: ArchitectureLayoutMode;
   layoutProvenance?: LayoutProvenance;
-  nodePositions: Record<string, { x: number; y: number }>;
-  layoutPositions?: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>>;
+  nodePositions: Record<string, Position>;
+  layoutPositions?: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>>;
   layoutProvenances?: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>>;
   layoutVersion?: string | number;
 }
 
 export interface ZoomPanState {
   zoom: number; // e.g. 0.8 (80%), 1.0 (100%), 1.2 (120%)
-  pan: { x: number; y: number };
+  pan: Position;
 }
 
 export interface SidebarUIState {
@@ -141,8 +138,43 @@ export interface ProjectUIState {
   updatedAt: string;
 }
 
+export type ProjectUIStateUpdate = Partial<Omit<ProjectUIState, 'graphLayout'>> & {
+  graphLayout?: Partial<GraphLayoutState>;
+};
+
 const STORAGE_PREFIX = "explorer.projectState.";
 const inMemoryStateMap = new Map<string, string>();
+
+/**
+ * Validates whether a given value is a finite number.
+ */
+export function isValidCoordinate(val: any): val is number {
+  return typeof val === "number" && Number.isFinite(val);
+}
+
+/**
+ * Sanitizes a position object, rejecting non-finite coordinates.
+ */
+export function sanitizePosition(pos: any): Position | null {
+  if (!pos || typeof pos !== "object") return null;
+  if (!isValidCoordinate(pos.x) || !isValidCoordinate(pos.y)) return null;
+  return { x: pos.x, y: pos.y };
+}
+
+/**
+ * Sanitizes a position dictionary, filtering out invalid position records without mutating inputs.
+ */
+export function sanitizePositionMap(map: any): Record<string, Position> {
+  const result: Record<string, Position> = {};
+  if (!map || typeof map !== "object") return result;
+  for (const key of Object.keys(map)) {
+    const sanitized = sanitizePosition(map[key]);
+    if (sanitized) {
+      result[key] = sanitized;
+    }
+  }
+  return result;
+}
 
 function getStoredItem(key: string): string | null {
   try {
@@ -308,43 +340,57 @@ export function mergeWithDefaultState(
     },
     graphLayout: (() => {
       const gDefaults = defaults.graphLayout;
-      const gLoaded = loaded.graphLayout || {};
+      const gLoaded: Partial<GraphLayoutState> & { layoutMode?: string } =
+        loaded.graphLayout || {};
 
       const mode: GraphInteractionMode =
-        (gLoaded as any)?.mode === "static" ||
-        (gLoaded as any)?.layoutMode === "static"
+        gLoaded.mode === "static" || gLoaded.layoutMode === "static"
           ? "static"
           : "interactive";
 
       const activeArchMode: ArchitectureLayoutMode =
-        (gLoaded as any)?.architectureMode === "constellation"
+        gLoaded.architectureMode === "constellation"
           ? "constellation"
-          : (gLoaded as any)?.architectureMode === "orbit"
+          : gLoaded.architectureMode === "orbit"
           ? "orbit"
-          : (gLoaded as any)?.architectureMode === "hybrid"
+          : gLoaded.architectureMode === "hybrid"
           ? "hybrid"
           : "hierarchical";
 
       // Reconstruct or initialize layoutPositions map
-      const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> =
-        gLoaded.layoutPositions && typeof gLoaded.layoutPositions === "object"
+      const hasExplicitLayoutPositions =
+        gLoaded.layoutPositions &&
+        typeof gLoaded.layoutPositions === "object" &&
+        Object.values(gLoaded.layoutPositions).some(
+          (map) => map && typeof map === "object" && Object.keys(map).length > 0
+        );
+
+      const loadedLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> =
+        hasExplicitLayoutPositions
           ? { ...gLoaded.layoutPositions }
           : {};
 
       // Reconstruct or initialize layoutProvenances map
+      const hasExplicitLayoutProvenances =
+        gLoaded.layoutProvenances &&
+        typeof gLoaded.layoutProvenances === "object" &&
+        Object.keys(gLoaded.layoutProvenances).length > 0;
+
       const loadedLayoutProvenances: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>> =
-        gLoaded.layoutProvenances && typeof gLoaded.layoutProvenances === "object"
+        hasExplicitLayoutProvenances
           ? { ...gLoaded.layoutProvenances }
           : {};
 
-      // Legacy fallback: If flat nodePositions exists, migrate it into activeArchMode if activeArchMode is not yet set in layoutPositions
-      const flatNodePositions =
+      // Legacy fallback: If flat nodePositions exists AND layoutPositions was not explicitly provided in loaded state,
+      // migrate nodePositions into activeArchMode.
+      const flatNodePositions = sanitizePositionMap(
         typeof gLoaded.nodePositions === "object" && gLoaded.nodePositions !== null
           ? gLoaded.nodePositions
-          : {};
+          : {}
+      );
 
-      if (!loadedLayoutPositions[activeArchMode] && Object.keys(flatNodePositions).length > 0) {
-        loadedLayoutPositions[activeArchMode] = { ...flatNodePositions };
+      if (!hasExplicitLayoutPositions && Object.keys(flatNodePositions).length > 0) {
+        loadedLayoutPositions[activeArchMode] = flatNodePositions;
       }
 
       // Legacy fallback for layoutProvenance
@@ -362,12 +408,12 @@ export function mergeWithDefaultState(
         loadedLayoutProvenances[activeArchMode] = flatProvenance;
       }
 
-      // Ensure defaults exist for all modes
-      const finalLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, { x: number; y: number }>>> = {
-        hierarchical: loadedLayoutPositions.hierarchical || {},
-        hybrid: loadedLayoutPositions.hybrid || {},
-        orbit: loadedLayoutPositions.orbit || {},
-        constellation: loadedLayoutPositions.constellation || {},
+      // Ensure defaults exist for all modes and all position maps are sanitized
+      const finalLayoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> = {
+        hierarchical: sanitizePositionMap(loadedLayoutPositions.hierarchical),
+        hybrid: sanitizePositionMap(loadedLayoutPositions.hybrid),
+        orbit: sanitizePositionMap(loadedLayoutPositions.orbit),
+        constellation: sanitizePositionMap(loadedLayoutPositions.constellation),
       };
 
       const finalLayoutProvenances: Partial<Record<ArchitectureLayoutMode, LayoutProvenance>> = {
@@ -449,20 +495,30 @@ export function saveProjectState(
  */
 export function updateProjectState(
   projectId: string,
-  update: Partial<ProjectUIState>,
+  update: ProjectUIStateUpdate,
 ): ProjectUIState {
   const current = loadProjectState(projectId);
 
   // If graphLayout update is provided, handle mode-scoped synchronization
+  let mergedGraphLayout: GraphLayoutState | undefined = undefined;
+
   if (update.graphLayout) {
     const curLayout = current.graphLayout;
     const updateLayout = update.graphLayout;
 
     const newArchMode = updateLayout.architectureMode || curLayout.architectureMode || 'hierarchical';
 
-    const layoutPositions = {
-      ...(curLayout.layoutPositions || {}),
-      ...(updateLayout.layoutPositions || {}),
+    const layoutPositions: Partial<Record<ArchitectureLayoutMode, Record<string, Position>>> = {
+      hierarchical: sanitizePositionMap(curLayout.layoutPositions?.hierarchical),
+      hybrid: sanitizePositionMap(curLayout.layoutPositions?.hybrid),
+      orbit: sanitizePositionMap(curLayout.layoutPositions?.orbit),
+      constellation: sanitizePositionMap(curLayout.layoutPositions?.constellation),
+      ...(updateLayout.layoutPositions ? {
+        ...(updateLayout.layoutPositions.hierarchical ? { hierarchical: sanitizePositionMap(updateLayout.layoutPositions.hierarchical) } : {}),
+        ...(updateLayout.layoutPositions.hybrid ? { hybrid: sanitizePositionMap(updateLayout.layoutPositions.hybrid) } : {}),
+        ...(updateLayout.layoutPositions.orbit ? { orbit: sanitizePositionMap(updateLayout.layoutPositions.orbit) } : {}),
+        ...(updateLayout.layoutPositions.constellation ? { constellation: sanitizePositionMap(updateLayout.layoutPositions.constellation) } : {}),
+      } : {}),
     };
 
     const layoutProvenances = {
@@ -471,30 +527,34 @@ export function updateProjectState(
     };
 
     if (updateLayout.nodePositions !== undefined) {
-      layoutPositions[newArchMode] = updateLayout.nodePositions;
+      layoutPositions[newArchMode] = sanitizePositionMap(updateLayout.nodePositions);
     }
 
     if (updateLayout.layoutProvenance !== undefined) {
       layoutProvenances[newArchMode] = updateLayout.layoutProvenance;
     }
 
-    update = {
-      ...update,
-      graphLayout: {
-        ...curLayout,
-        ...updateLayout,
-        architectureMode: newArchMode,
-        layoutPositions,
-        layoutProvenances,
-        nodePositions: layoutPositions[newArchMode] || {},
-        layoutProvenance: layoutProvenances[newArchMode] || `automatic-${newArchMode}` as LayoutProvenance,
-      },
+    mergedGraphLayout = {
+      ...curLayout,
+      ...updateLayout,
+      architectureMode: newArchMode,
+      layoutPositions,
+      layoutProvenances,
+      nodePositions: layoutPositions[newArchMode] || {},
+      layoutProvenance: layoutProvenances[newArchMode] || (`automatic-${newArchMode}` as LayoutProvenance),
     };
   }
 
+  const { graphLayout: _layoutUpdate, ...restUpdate } = update;
+
+  const fullUpdate: Partial<ProjectUIState> = {
+    ...restUpdate,
+    ...(mergedGraphLayout ? { graphLayout: mergedGraphLayout } : {}),
+  };
+
   const updated = mergeWithDefaultState(projectId, {
     ...current,
-    ...update,
+    ...fullUpdate,
   });
   saveProjectState(projectId, updated);
   return updated;

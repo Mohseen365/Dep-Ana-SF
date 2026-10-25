@@ -481,8 +481,8 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
                         setSelectedFeatureId(prev => (prev === rowFeat.id ? null : rowFeat.id));
                         if (rowFeat.anchorNodeId && onSelectFeatureAnchor) {
                           onSelectFeatureAnchor(rowFeat.anchorNodeId);
-                        } else if (rowFeat.anchorNodeId && onSelectNode) {
-                          onSelectNode(rowFeat.anchorNodeId);
+                        } else if (rowFeat.anchorNodeId) {
+                          handleSelectNode(rowFeat.anchorNodeId);
                         }
                       }}
                     >
@@ -579,8 +579,8 @@ export const FeatureMatrixPanel: React.FC<FeatureMatrixPanelProps> = ({
                             setFocusedCellIndex({ row: rowIdx, col: colIdx });
                             if (rowFeat.anchorNodeId && onSelectFeatureAnchor) {
                               onSelectFeatureAnchor(rowFeat.anchorNodeId);
-                            } else if (rowFeat.anchorNodeId && onSelectNode) {
-                              onSelectNode(rowFeat.anchorNodeId);
+                            } else if (rowFeat.anchorNodeId) {
+                              handleSelectNode(rowFeat.anchorNodeId);
                             }
                           }}
                         >

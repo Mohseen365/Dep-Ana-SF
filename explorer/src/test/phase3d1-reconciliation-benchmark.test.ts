@@ -178,7 +178,6 @@ describe('Phase 3D-1 — Web Worker Evidence & Benchmark Reconciliation Suite', 
 
       const options: ArchitectureLayoutOptions = {
         enableFeatureLayout: false,
-        enableCoarsePruning: true,
       };
 
       // 1. Measure Synchronous Baseline

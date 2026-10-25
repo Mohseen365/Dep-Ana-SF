@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { adaptConstellation, ConstellationData } from '../lib/adapters/constellation-adapter';
-import { computeMultiTrackConstellationLayout, MultiTrackLayoutResult } from './phase9-constellation-multi-track-experiment.test';
+import { adaptConstellation } from '../lib/adapters/constellation-adapter';
+import { computeMultiTrackConstellationLayout } from './phase9-constellation-multi-track-experiment.test';
 
 function loadDS(file: string) {
   const p1 = path.resolve(process.cwd(), file);
@@ -39,7 +39,7 @@ describe('Phase 10 — Independent Measurement Integrity Verification Suite', ()
     console.log(`Cross-Track Overlaps: ${res.crossTrackOverlaps}`);
     console.log(`Focal Overlaps: ${res.focalOverlaps}`);
 
-    res.overlappingPairs.forEach((pair, idx) => {
+    (res.overlappingPairs as Array<{ nodeA: string; nodeB: string; distance: number; type: 'SAME_TRACK' | 'CROSS_TRACK' | 'FOCAL' }>).forEach((pair, idx) => {
       const posA = res.nodePositions[pair.nodeA];
       const posB = res.nodePositions[pair.nodeB];
 
@@ -154,7 +154,7 @@ describe('Phase 10 — Independent Measurement Integrity Verification Suite', ()
     let minEuclidean = Infinity;
     let minRadialSep = Infinity;
 
-    let minEuclidPair: { nodeA: string; nodeB: string; dx: number; dy: number; dist: number } | null = null;
+    let minEuclidPair = null as { nodeA: string; nodeB: string; dx: number; dy: number; dist: number } | null;
     let aabbCollisionCount = 0;
 
     r2t3Nodes.forEach((nodeA) => {

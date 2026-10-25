@@ -56,10 +56,10 @@ const NODE_COLORS: Record<string, { background: string; border: string }> = {
   LWC: { background: '#f59e0b', border: '#d97706' },             // Amber
   Visualforce: { background: '#ec4899', border: '#db2777' },     // Pink
   Flow: { background: '#14b8a6', border: '#0d9488' },            // Teal
-  Object: { background: '#22c55e', border: '#16a34a' },          // Green
-  CustomObject: { background: '#22c55e', border: '#16a34a' },    // Green (same as Object)
-  Field: { background: '#84cc16', border: '#65a30d' },           // Lime
-  CustomField: { background: '#84cc16', border: '#65a30d' },     // Lime (same as Field)
+  Object: { background: '#22c55e', border: '#16a34a' },          // Standard Object (Green)
+  CustomObject: { background: '#15803d', border: '#166534' },    // Custom Object (Forest Green)
+  Field: { background: '#84cc16', border: '#65a30d' },           // Standard Field (Lime)
+  CustomField: { background: '#4d7c0f', border: '#3f6212' },     // Custom Field (Olive Lime)
   External: { background: '#64748b', border: '#475569' }         // Slate (external deps)
 };
 
@@ -82,12 +82,13 @@ const EDGE_COLORS: Record<string, string> = {
   'soql-field': '#eab308',
   'DML': '#ef4444',
   'aura-enabled': '#ec4899',
-  'lwc-apic': '#f97316',
+  'lwc-apex': '#f97316',
   'lwc-template-child': '#f97316',
   'field-reference': '#84cc16',
   'trigger-handler': '#8b5cf6',
   'trigger-object': '#8b5cf6',
   'visualforce-controller': '#ec4899',
+  'event-publisher': '#8b5cf6',
   'test-reference': '#22c55e',
   'unknown': '#94a3b8'
 };
@@ -98,7 +99,20 @@ export interface GraphStyleOptions {
   fontSize?: number;
 }
 
+let cachedStyleOptions: GraphStyleOptions | null = null;
+let cachedStyles: StylesheetStyle[] | null = null;
+
+function shallowEqualOptions(a: GraphStyleOptions, b: GraphStyleOptions): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.nodeWidth === b.nodeWidth && a.nodeHeight === b.nodeHeight && a.fontSize === b.fontSize;
+}
+
 export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle[] {
+  if (cachedStyles && cachedStyleOptions && shallowEqualOptions(cachedStyleOptions, options)) {
+    return cachedStyles;
+  }
+
   const {
     nodeWidth = 50,
     nodeHeight = 50,
@@ -111,7 +125,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       selector: 'node',
       style: {
         'label': 'data(label)',
-        'min-zoomed-font-size': 10,
         'background-color': '#3b82f6',
         'color': '#f8fafc',
         'font-size': `${fontSize}px`,
@@ -133,30 +146,6 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
       style: {
         'border-width': 4,
         'border-color': '#3b82f6'
-      }
-    },
-    // High risk indicator - thicker border with red tint
-    {
-      selector: 'node[risk = "HIGH"]',
-      style: {
-        'border-width': 4,
-        'border-color': RISK_BORDER_COLORS.HIGH
-      }
-    },
-    // Medium risk indicator
-    {
-      selector: 'node[risk = "MEDIUM"]',
-      style: {
-        'border-width': 3,
-        'border-color': RISK_BORDER_COLORS.MEDIUM
-      }
-    },
-    // Low risk indicator - standard border
-    {
-      selector: 'node[risk = "LOW"]',
-      style: {
-        'border-width': 2,
-        'border-color': RISK_BORDER_COLORS.LOW
       }
     },
     // Refactoring Simulation Styles
@@ -292,9 +281,31 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'shape': NODE_SHAPE_BY_TYPE.External
       }
     },
-    // Test classes
+    // Risk level border colors - positioned after type styles so risk overrides default type borders
     {
-      selector: 'node[isTest = "true"]',
+      selector: 'node[risk = "HIGH"]',
+      style: {
+        'border-width': 4,
+        'border-color': RISK_BORDER_COLORS.HIGH
+      }
+    },
+    {
+      selector: 'node[risk = "MEDIUM"]',
+      style: {
+        'border-width': 3,
+        'border-color': RISK_BORDER_COLORS.MEDIUM
+      }
+    },
+    {
+      selector: 'node[risk = "LOW"]',
+      style: {
+        'border-width': 2,
+        'border-color': RISK_BORDER_COLORS.LOW
+      }
+    },
+    // Test classes - boolean attribute selector for isTest data property
+    {
+      selector: 'node[?isTest]',
       style: {
         'border-style': 'dashed'
       }
@@ -417,25 +428,19 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'label': ''
       }
     },
-    {
-      selector: 'node.zoom-far',
-      style: {
-        'label': ''
-      }
-    },
-    // FAR ZOOM — mute all edges; keep inter-feature edges lightly visible for orientation
+    // FAR ZOOM — keep edges perceptible at far zoom; keep inter-feature edges visible for orientation
     {
       selector: 'edge.zoom-far',
       style: {
         'label': '',
-        'opacity': 0.18,
+        'opacity': 0.35,
         'width': 1,
       }
     },
     {
       selector: 'edge[isInterFeature = "true"].zoom-far',
       style: {
-        'opacity': 0.55,
+        'opacity': 0.7,
         'width': 1.8,
       }
     },
@@ -489,6 +494,91 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
         'line-dash-pattern': [6, 3],
         'opacity': 0.9,
       }
+    },
+    // Finding highlight rules
+    {
+      selector: 'node.finding-highlighted',
+      style: {
+        'border-width': 5,
+        'border-color': '#f87171',
+        'border-style': 'solid',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'edge.finding-highlighted',
+      style: {
+        'width': 4,
+        'line-color': '#f87171',
+        'target-arrow-color': '#f87171',
+        'opacity': 1,
+      }
+    },
+    // Path highlight rules
+    {
+      selector: 'node.path-highlighted',
+      style: {
+        'border-width': 5,
+        'border-color': '#22d3ee',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'edge.path-highlighted',
+      style: {
+        'width': 5,
+        'line-color': '#22d3ee',
+        'target-arrow-color': '#22d3ee',
+        'opacity': 1,
+        'line-style': 'solid',
+        'z-index': 999,
+      }
+    },
+    // Diff highlight rules
+    {
+      selector: 'node.diff-added',
+      style: {
+        'border-width': 4,
+        'border-color': '#22c55e',
+        'border-style': 'dashed',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'node.diff-removed',
+      style: {
+        'border-width': 4,
+        'border-color': '#ef4444',
+        'border-style': 'dashed',
+        'opacity': 0.5,
+      }
+    },
+    {
+      selector: 'node.diff-modified',
+      style: {
+        'border-width': 5,
+        'border-color': '#eab308',
+        'opacity': 1,
+      }
+    },
+    {
+      selector: 'edge.diff-added',
+      style: {
+        'width': 4,
+        'line-color': '#22c55e',
+        'target-arrow-color': '#22c55e',
+        'line-style': 'dashed',
+      }
+    },
+    {
+      selector: 'edge.diff-removed',
+      style: {
+        'width': 3,
+        'line-color': '#ef4444',
+        'target-arrow-color': '#ef4444',
+        'line-style': 'dashed',
+        'opacity': 0.4,
+      }
     }
   ];
 
@@ -504,6 +594,8 @@ export function getGraphStyles(options: GraphStyleOptions = {}): StylesheetStyle
     }
   }
 
+  cachedStyleOptions = options;
+  cachedStyles = styles;
   return styles;
 }
 

@@ -14,7 +14,7 @@
     "analysisStatus": "COMPLETE",
     "componentCount": 528,
     "dependencyCount": 2063,
-    "analysisPath": "/pbim/explorer-data.json"
+    "analysisPath": "/projects/pbim/explorer-data.json"
   },
   "summary": {
     "nodeCount": 528,

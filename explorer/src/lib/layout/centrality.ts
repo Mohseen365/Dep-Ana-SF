@@ -112,12 +112,21 @@ export interface CentralityOptions {
  * Internal module-level registry of allocated bridge positions within a layout run.
  */
 const activeBridgeAllocations = new Map<string, { x: number; y: number }>();
+const activeExhaustionRecords: BridgeExhaustionTelemetry[] = [];
 
 /**
  * Resets the active bridge allocations registry (called at the start of centrality analysis).
  */
 export function clearBridgeAllocations(): void {
   activeBridgeAllocations.clear();
+  activeExhaustionRecords.length = 0;
+}
+
+/**
+ * Returns active bridge corridor placement exhaustion telemetry records as defensive snapshots.
+ */
+export function getPlacementExhaustionRecords(): BridgeExhaustionTelemetry[] {
+  return activeExhaustionRecords.map(r => ({ ...r }));
 }
 
 /**
@@ -342,8 +351,8 @@ export function calculateBridgeCandidatePosition(
   nodeId: string,
   nodeLayer: ArchitectureLayer | null,
   connectedDomains: string[],
-  domainXCenters: Record<string, number>,
-  domainBounds: Record<string, { minX: number; maxX: number }>,
+  domainXCenters: Record<string, number | { x: number; y?: number; xCenter?: number }>,
+  domainBounds: Record<string, { minX?: number; maxX?: number; xMin?: number; xMax?: number }>,
   neighborPositions: Record<string, { x: number; y: number }>,
   options: CentralityOptions = {}
 ): BridgePlacementInfo {
@@ -364,46 +373,68 @@ export function calculateBridgeCandidatePosition(
   };
 
   const layer = nodeLayer || 'application';
-  const baseY = layerYOffsets[layer];
+  const baseY = layerYOffsets[layer] ?? (100 + layerSpacing);
 
   const connectedDomainCenters: Record<string, { x: number; y: number }> = {};
   const connectedNodePositions: Record<string, { x: number; y: number }> = {};
   const connectedLayersSet = new Set<ArchitectureLayer>();
 
+  function getDomainXCenter(domain: string): number | undefined {
+    const val = domainXCenters?.[domain] as any;
+    if (typeof val === 'number' && Number.isFinite(val)) return val;
+    if (val && typeof val.x === 'number' && Number.isFinite(val.x)) return val.x;
+    if (val && typeof val.xCenter === 'number' && Number.isFinite(val.xCenter)) return val.xCenter;
+    return undefined;
+  }
+
+  function getDomainBounds(domain: string): { minX: number; maxX: number } | undefined {
+    const b = domainBounds?.[domain] as any;
+    if (!b) return undefined;
+    const minX = typeof b.minX === 'number' ? b.minX : typeof b.xMin === 'number' ? b.xMin : undefined;
+    const maxX = typeof b.maxX === 'number' ? b.maxX : typeof b.xMax === 'number' ? b.xMax : undefined;
+    if (minX !== undefined && maxX !== undefined && Number.isFinite(minX) && Number.isFinite(maxX)) {
+      return { minX, maxX };
+    }
+    return undefined;
+  }
+
   let sumX = 0;
   let domainCount = 0;
 
-  const sortedConnectedDomains = [...connectedDomains].sort((a, b) => a.localeCompare(b));
+  const sortedConnectedDomains = Array.isArray(connectedDomains)
+    ? [...connectedDomains].sort((a, b) => a.localeCompare(b))
+    : [];
 
   for (const domain of sortedConnectedDomains) {
-    if (domainXCenters[domain] !== undefined) {
-      const x = domainXCenters[domain];
+    const x = getDomainXCenter(domain);
+    if (x !== undefined) {
       connectedDomainCenters[domain] = { x, y: baseY };
       sumX += x;
       domainCount++;
     }
   }
 
-  const neighborKeys = Object.keys(neighborPositions).sort((a, b) => a.localeCompare(b));
+  const neighborKeys = neighborPositions ? Object.keys(neighborPositions).sort((a, b) => a.localeCompare(b)) : [];
   let neighborSumX = 0;
-  let neighborSumY = 0;
   let neighborCount = 0;
 
   for (const key of neighborKeys) {
     const pos = neighborPositions[key];
-    if (pos) {
+    if (pos && typeof pos.x === 'number' && Number.isFinite(pos.x)) {
       connectedNodePositions[key] = { ...pos };
       neighborSumX += pos.x;
-      neighborSumY += pos.y;
       neighborCount++;
     }
   }
 
   let semanticCandidateX = 0;
-  if (neighborCount > 0) {
+  if (neighborCount > 0 && Number.isFinite(neighborSumX / neighborCount)) {
     semanticCandidateX = neighborSumX / neighborCount;
-  } else if (domainCount > 0) {
+  } else if (domainCount > 0 && Number.isFinite(sumX / domainCount)) {
     semanticCandidateX = sumX / domainCount;
+  }
+  if (!Number.isFinite(semanticCandidateX)) {
+    semanticCandidateX = 0;
   }
 
   // Intermediate domain trap detection
@@ -411,12 +442,12 @@ export function calculateBridgeCandidatePosition(
   let trapDomainId: string | undefined = undefined;
 
   const connectedDomainSet = new Set(sortedConnectedDomains);
-  const allDomainIds = Object.keys(domainBounds).sort((a, b) => a.localeCompare(b));
+  const allDomainIds = domainBounds ? Object.keys(domainBounds).sort((a, b) => a.localeCompare(b)) : [];
 
   for (const domainId of allDomainIds) {
     if (connectedDomainSet.has(domainId) || domainId === 'Shared') continue;
 
-    const bounds = domainBounds[domainId];
+    const bounds = getDomainBounds(domainId);
     if (!bounds) continue;
 
     const margin = nodeWidth * 0.5;
@@ -431,18 +462,19 @@ export function calculateBridgeCandidatePosition(
   let minConnectedX = Infinity;
   let maxConnectedX = -Infinity;
   for (const domain of sortedConnectedDomains) {
-    const bounds = domainBounds[domain];
+    const bounds = getDomainBounds(domain);
+    const xc = getDomainXCenter(domain);
+
     if (bounds) {
       if (bounds.minX < minConnectedX) minConnectedX = bounds.minX;
       if (bounds.maxX > maxConnectedX) maxConnectedX = bounds.maxX;
-    } else if (domainXCenters[domain] !== undefined) {
-      const xc = domainXCenters[domain];
+    } else if (xc !== undefined) {
       if (xc < minConnectedX) minConnectedX = xc;
       if (xc > maxConnectedX) maxConnectedX = xc;
     }
   }
 
-  if (!Number.isFinite(minConnectedX)) {
+  if (!Number.isFinite(minConnectedX) || !Number.isFinite(maxConnectedX)) {
     minConnectedX = semanticCandidateX;
     maxConnectedX = semanticCandidateX;
   }
@@ -460,6 +492,10 @@ export function calculateBridgeCandidatePosition(
   };
 
   const immutablePrimary = options.immutablePrimaryPositions;
+
+  // Pre-extract entry lists to avoid repeated allocations during candidate collision evaluation
+  const occupancyEntries = Object.entries(activeOccupancy);
+  const immutableEntries = immutablePrimary ? Object.entries(immutablePrimary) : [];
 
   // Strictly three legal Y lanes: Y0, Y0 - 100, Y0 + 100 (if trapped/multi-domain, prefer off-center Y0-100 first)
   const legalYLanes = (hasIntermediateTrap || sortedConnectedDomains.length >= 2)
@@ -506,10 +542,14 @@ export function calculateBridgeCandidatePosition(
         }
       }
 
-      if (!addedAny && (X0 + stepIndex * minDx > currentMaxX + 1e-2) && (X0 - stepIndex * minDx < currentMinX - 1e-2)) {
+      const outOfBoundsRight = X0 + stepIndex * minDx > currentMaxX + 1e-2;
+      const outOfBoundsLeft = X0 - stepIndex * minDx < currentMinX - 1e-2;
+
+      if (!addedAny && outOfBoundsRight && outOfBoundsLeft) {
         break;
       }
       stepIndex++;
+      if (stepIndex > maxExpansionSteps + 1000) break;
     }
 
     for (const testX of xSteps) {
@@ -521,7 +561,8 @@ export function calculateBridgeCandidatePosition(
         candidateCount++;
         let collides = false;
 
-        for (const [otherId, otherPos] of Object.entries(activeOccupancy)) {
+        for (let i = 0; i < occupancyEntries.length; i++) {
+          const [otherId, otherPos] = occupancyEntries[i];
           if (otherId === nodeId) continue;
           collisionChecks++;
           if (
@@ -533,8 +574,9 @@ export function calculateBridgeCandidatePosition(
           }
         }
 
-        if (!collides && immutablePrimary) {
-          for (const [otherId, otherPos] of Object.entries(immutablePrimary)) {
+        if (!collides && immutableEntries.length > 0) {
+          for (let i = 0; i < immutableEntries.length; i++) {
+            const [otherId, otherPos] = immutableEntries[i];
             if (otherId === nodeId) continue;
             collisionChecks++;
             if (
@@ -590,6 +632,13 @@ export function calculateBridgeCandidatePosition(
       primaryNodeCount,
       reason: 'FINITE_SEARCH_SPACE_EXHAUSTED',
     };
+
+    const existingIndex = activeExhaustionRecords.findIndex(r => r.bridgeId === nodeId);
+    if (existingIndex >= 0) {
+      activeExhaustionRecords[existingIndex] = exhaustionTelemetry;
+    } else {
+      activeExhaustionRecords.push(exhaustionTelemetry);
+    }
 
     acceptedPos = {
       x: Math.round(X0 * 100) / 100,

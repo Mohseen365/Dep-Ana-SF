@@ -1,36 +1,36 @@
 {
-  "timestamp": "2026-09-30T08:23:38.051Z",
+  "timestamp": "2026-10-20T19:20:05.817Z",
   "dataset": "cloud-spend-tracker",
   "nodeCount": 240,
   "edgeCount": 1024,
   "pathA_legacy": {
-    "primaryCrossings": 9562,
-    "totalCrossings": 103654,
-    "averageEdgeLength": 1473.2382489223667,
-    "maxEdgeLength": 6727.39722626812,
-    "primaryOverlapCount": 11,
+    "primaryCrossings": 7481,
+    "totalCrossings": 100065,
+    "averageEdgeLength": 1700.4263316914657,
+    "maxEdgeLength": 4963.405862913087,
+    "primaryOverlapCount": 16,
     "satelliteOverlapCount": 4,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.9558128789281555
+    "domainCohesionScore": 0.9368969245931278
   },
   "pathB_currentHybrid": {
-    "primaryCrossings": 7812,
-    "primarySatelliteCrossings": 38706,
-    "satelliteSatelliteCrossings": 36381,
-    "totalCrossings": 85367,
-    "averageEdgeLength": 3512.615489540768,
-    "maxEdgeLength": 10121.979470700824,
-    "primaryOverlapCount": 0,
+    "primaryCrossings": 9023,
+    "primarySatelliteCrossings": 39287,
+    "satelliteSatelliteCrossings": 37409,
+    "totalCrossings": 88491,
+    "averageEdgeLength": 3522.597765954832,
+    "maxEdgeLength": 10048.768093660074,
+    "primaryOverlapCount": 1,
     "satelliteOverlapCount": 0,
     "layerViolationCount": 0,
-    "domainCohesionScore": 0.8508280601692482,
-    "medianIntraFeatureDistance": 4361.754234250252,
-    "medianInterFeatureDistance": 6585.401238352522,
-    "intraToInterRatio": 0.6623368989041946
+    "domainCohesionScore": 0.8350998895301838,
+    "medianIntraFeatureDistance": 4220,
+    "medianInterFeatureDistance": 6300.000000001023,
+    "intraToInterRatio": 0.6698412698411611
   },
   "mandatoryHardGates": {
     "layerViolationsZero": true,
-    "primaryOverlapsZero": true,
+    "primaryOverlapsZero": false,
     "satelliteOverlapsZero": true,
     "repeatabilityDriftZero": true,
     "shuffledDriftZero": true
@@ -38,7 +38,7 @@
   "qualityGates": {
     "localityGatePassed": true,
     "primaryQualityGatePassed": true,
-    "prefPrimaryCrossingsPassed": true,
+    "prefPrimaryCrossingsPassed": false,
     "prefTotalCrossingsPassed": true,
     "prefCohesionPassed": false
   }

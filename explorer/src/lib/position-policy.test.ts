@@ -38,8 +38,9 @@ describe('Central Position Policy & Authority System', () => {
         expect(shouldAutoLayout(mode, 'mode-switch')).toBe(false);
       });
 
-      it('new-nodes trigger: returns place-new-only without moving existing nodes', () => {
-        expect(shouldAutoLayout(mode, 'new-nodes')).toBe('place-new-only');
+      it('new-nodes trigger: returns place-new-only when authoritative positions exist, true otherwise', () => {
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: true })).toBe('place-new-only');
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: false })).toBe(true);
       });
 
       it('reset-layout trigger: allows explicit layout reset', () => {
@@ -67,8 +68,9 @@ describe('Central Position Policy & Authority System', () => {
         expect(shouldAutoLayout(mode, 'mode-switch')).toBe(false);
       });
 
-      it('new-nodes trigger: returns place-new-only', () => {
-        expect(shouldAutoLayout(mode, 'new-nodes')).toBe('place-new-only');
+      it('new-nodes trigger: returns place-new-only when authoritative positions exist, true otherwise', () => {
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: true })).toBe('place-new-only');
+        expect(shouldAutoLayout(mode, 'new-nodes', { hasAuthoritativePositions: false })).toBe(true);
       });
 
       it('reset-layout trigger: allows explicit layout reset', () => {
@@ -84,6 +86,7 @@ describe('Central Position Policy & Authority System', () => {
 
     it('Level 1: prefers explicit current user session drag position', () => {
       const res = resolveAuthoritativePosition('n1', {
+        hasAuthoritativePositions: true,
         sessionPositions,
         persistedPositions,
         cyNodePosition,
@@ -95,6 +98,7 @@ describe('Central Position Policy & Authority System', () => {
 
     it('Level 2: falls back to persisted project position when session position missing', () => {
       const res = resolveAuthoritativePosition('n2', {
+        hasAuthoritativePositions: true,
         sessionPositions,
         persistedPositions,
         cyNodePosition,
@@ -106,6 +110,7 @@ describe('Central Position Policy & Authority System', () => {
 
     it('Level 3: falls back to existing Cytoscape rendered position when session & persisted missing', () => {
       const res = resolveAuthoritativePosition('n3', {
+        hasAuthoritativePositions: true,
         sessionPositions,
         persistedPositions,
         cyNodePosition,
@@ -117,6 +122,7 @@ describe('Central Position Policy & Authority System', () => {
 
     it('returns null when no position authority exists', () => {
       const res = resolveAuthoritativePosition('n4', {
+        hasAuthoritativePositions: false,
         sessionPositions: new Map(),
         persistedPositions: {},
         cyNodePosition: null,

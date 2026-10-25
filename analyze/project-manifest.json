@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1.0.0",
-  "activeProjectId": "default",
+  "activeProjectId": "cloud-spend-tracker",
   "projects": [
     {
       "id": "default",
@@ -30,12 +30,12 @@
     },
     {
       "id": "cloud-spend-tracker",
-      "name": "CLOUD-SPEND-TRACKER",
-      "description": "Salesforce DX Analysis for cloud-spend-tracker",
-      "sourcePath": "projects/cloud-spend-tracker",
-      "createdAt": "2026-10-06T10:43:07.552Z",
-      "updatedAt": "2026-10-06T10:43:07.552Z",
-      "lastAnalyzedAt": "2026-10-06T10:43:07.552Z",
+      "name": "cloud-spend-tracker",
+      "description": "Salesforce DX Architecture Analysis",
+      "sourcePath": "Cloud-Spend-Tracker/force-app/main/default",
+      "createdAt": "2026-09-17T06:20:55.547Z",
+      "updatedAt": "2026-09-17T06:20:55.547Z",
+      "lastAnalyzedAt": "2026-09-17T06:20:55.547Z",
       "analysisStatus": "COMPLETE",
       "componentCount": 240,
       "dependencyCount": 1024,
@@ -104,7 +104,7 @@
       "analysisStatus": "COMPLETE",
       "componentCount": 528,
       "dependencyCount": 2063,
-      "analysisPath": "/pbim/explorer-data.json"
+      "analysisPath": "/projects/pbim/explorer-data.json"
     },
     {
       "id": "project-b",
@@ -175,9 +175,9 @@
       "edgeCount": 603
     },
     "cloud-spend-tracker": {
-      "path": "projects/cloud-spend-tracker/explorer-data.json",
+      "path": "explorer-data.json",
       "schemaVersion": "1.0.0",
-      "fileHash": "",
+      "fileHash": "sha256:1597135320cbf0a13e6ee932e13b8dbdeb6771e0745f1ab1651fe08a17087907",
       "nodeCount": 240,
       "edgeCount": 1024
     },

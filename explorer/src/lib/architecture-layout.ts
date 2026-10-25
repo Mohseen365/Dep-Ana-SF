@@ -6,7 +6,7 @@ import { classifyNodeLayer, classifyNodeLayerWithReason, isTestNode } from './la
 import { discoverDomains, extractDomainStem } from './layout/domains';
 import { classifyAllFeatureRoles, type FeatureRole, type FeatureRoleContext } from './layout/feature-roles';
 import { discoverFeatures, type FeatureDiscoveryResult } from './layout/features';
-import { computeGlobalDomainLayout, computeGlobalFeatureLayout, type FeatureRegion } from './layout/global-layout';
+import { computeGlobalDomainLayout, computeGlobalFeatureLayout, buildDomainGraph, type FeatureRegion } from './layout/global-layout';
 import { reduceEdgeCrossings } from './layout/ordering';
 import { computeLocalNodeLayout } from './layout/local-layout';
 import {
@@ -16,12 +16,12 @@ import {
 import { placeSatellites } from './layout/satellites';
 import { packComponentPositions, calculateLocalComponentBounds, ComponentLocalLayout } from './layout/components';
 import { resolveSpacingAndCollisions } from './layout/spacing';
-import { projectOrbitSemantics } from './layout/orbit-semantics';
 import { computeOrbitLayout, type OrbitGuideMetadata } from './orbit-layout';
 import { adaptComponentOrbit, type ComponentOrbitAdapterOptions } from './adapters/component-orbit-adapter';
 import { computeComponentOrbitLayout } from './layout/component-orbit-layout';
 import { adaptComponentConstellation, type ComponentConstellationAdapterOptions } from './adapters/component-constellation-adapter';
 import { computeComponentConstellationLayout } from './layout/component-constellation-layout';
+import { stableCompareStrings } from './layout/compare';
 import type { ArchitectureLayoutMode } from '../types/explorer';
 
 export interface ArchitectureLayoutOptions {
@@ -105,16 +105,50 @@ export function computeArchitectureLayoutWithMetadata(
     layerSpacing = 250,
     domainSpacing = 380,
     componentGap = 100,
-    existingPositions = {},
+    existingPositions: rawExistingPositions = {},
     architectureMode,
-    enableFeatureLayout = options.enableFeatureLayout ?? (options.architectureMode === 'hybrid'),
+    enableFeatureLayout = options.enableFeatureLayout ?? (architectureMode === 'hybrid'),
     enableImmutablePrimaryPositions = true,
     enableCandidateDOrdering = false,
   } = options;
 
-  // Defensive deep clone of inputs to guarantee immutability
-  const safeNodes = Array.isArray(nodes) ? [...nodes] : [];
-  const safeEdges = Array.isArray(edges) ? [...edges] : [];
+  // Defensive deep clone of inputs to guarantee immutability (A11, A20, A36)
+  const safeNodes: ExplorerNode[] = Array.isArray(nodes)
+    ? nodes.map(n => ({
+        ...n,
+        metrics: n.metrics ? { ...n.metrics } : { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
+        behavior: n.behavior ? { ...n.behavior, asyncPatterns: Array.isArray(n.behavior.asyncPatterns) ? [...n.behavior.asyncPatterns] : [] } : { isTest: false },
+        refactoringReadiness: n.refactoringReadiness
+          ? { ...n.refactoringReadiness }
+          : {
+              isHighRisk: false,
+              hasCycles: false,
+              hasUnresolved: false,
+              testCoverageStatus: 'UNTESTED',
+            },
+        riskReasons: Array.isArray(n.riskReasons) ? [...n.riskReasons] : [],
+      }))
+    : [];
+
+  const safeEdges: ExplorerEdge[] = Array.isArray(edges)
+    ? edges.map(e => ({ ...e }))
+    : [];
+
+  // Filter and sanitize existingPositions (A8, A9, A20, X4)
+  const existingPositions: Record<string, { x: number; y: number }> = {};
+  if (rawExistingPositions && typeof rawExistingPositions === 'object') {
+    for (const [id, pos] of Object.entries(rawExistingPositions)) {
+      if (
+        pos &&
+        typeof pos.x === 'number' &&
+        typeof pos.y === 'number' &&
+        Number.isFinite(pos.x) &&
+        Number.isFinite(pos.y)
+      ) {
+        existingPositions[id] = { x: pos.x, y: pos.y };
+      }
+    }
+  }
 
   if (safeNodes.length === 0) {
     if (architectureMode === 'orbit') {
@@ -133,25 +167,115 @@ export function computeArchitectureLayoutWithMetadata(
     return { positions: { ...existingPositions } };
   }
 
+  // Track real node IDs prior to phantom injection
+  const realNodeIds = new Set(safeNodes.map(n => n.id));
+  const knownNodeIds = new Set(realNodeIds);
+
+  // Filter existingPositions to only include nodes present in input graph (A9)
+  for (const id of Object.keys(existingPositions)) {
+    if (!knownNodeIds.has(id)) {
+      delete existingPositions[id];
+    }
+  }
+
+  // Phantom node fabrication (A1, A25, A31, A38, A39)
+  safeEdges.forEach(e => {
+    if (!knownNodeIds.has(e.source)) {
+      knownNodeIds.add(e.source);
+      safeNodes.push({
+        id: e.source,
+        displayName: e.source.split(':').pop() || e.source,
+        type: 'External',
+        file: '',
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 1, score: 100 },
+        risk: 'HIGH',
+        riskReasons: ['Unresolved external dependency endpoint'],
+        behavior: {
+          isTest: false,
+          publicContractsCount: 0,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
+          dmlCount: 0,
+          calloutCount: 0,
+        },
+        refactoringReadiness: {
+          isHighRisk: true,
+          hasCycles: false,
+          hasUnresolved: true,
+          testCoverageStatus: 'UNTESTED',
+        },
+      });
+    }
+    if (!knownNodeIds.has(e.target)) {
+      knownNodeIds.add(e.target);
+      safeNodes.push({
+        id: e.target,
+        displayName: e.target.split(':').pop() || e.target,
+        type: 'External',
+        file: '',
+        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 1, score: 100 },
+        risk: 'HIGH',
+        riskReasons: ['Unresolved external dependency endpoint'],
+        behavior: {
+          isTest: false,
+          publicContractsCount: 0,
+          asyncPatterns: [],
+          securitySignalsCount: 0,
+          queryCount: 0,
+          dmlCount: 0,
+          calloutCount: 0,
+        },
+        refactoringReadiness: {
+          isHighRisk: true,
+          hasCycles: false,
+          hasUnresolved: true,
+          testCoverageStatus: 'UNTESTED',
+        },
+      });
+    }
+  });
+
+  // Sort nodes & edges deterministically by ID using stableCompareStrings (A16, X3)
+  safeNodes.sort((a, b) => stableCompareStrings(a.id, b.id));
+  safeEdges.sort((a, b) => stableCompareStrings(a.id, b.id));
+
+  // Construct complete summary input satisfying ExplorerSummary with real unresolved counts (A2)
+  const completeSummary = {
+    totalNodes: safeNodes.length,
+    totalEdges: safeEdges.length,
+    nodeCount: safeNodes.length,
+    edgeCount: safeEdges.length,
+    highRiskCount: safeNodes.filter(n => n.risk === 'HIGH').length,
+    mediumRiskCount: safeNodes.filter(n => n.risk === 'MEDIUM').length,
+    lowRiskCount: safeNodes.filter(n => n.risk === 'LOW').length,
+    cycleCount: 0,
+    cyclesCount: 0,
+    unresolvedCount: safeEdges.filter(e => Boolean(e.unresolved) || e.unresolved).length,
+    inventory: {
+      files: safeNodes.length,
+      apexClasses: safeNodes.filter(n => n.type === 'ApexClass').length,
+      apexTriggers: safeNodes.filter(n => n.type === 'ApexTrigger').length,
+      lwcJs: safeNodes.filter(n => n.type === 'LWC').length,
+      lwcHtml: 0,
+      visualforce: safeNodes.filter(n => n.type === 'Visualforce').length,
+      flows: safeNodes.filter(n => n.type === 'Flow').length,
+      objects: safeNodes.filter(n => n.type === 'Object' || n.type === 'CustomObject').length,
+      fields: safeNodes.filter(n => n.type === 'Field' || n.type === 'CustomField').length,
+    },
+  };
+
+  const schemaInput = {
+    summary: completeSummary,
+    nodes: safeNodes,
+    edges: safeEdges,
+    cycles: [],
+    unresolvedReferences: [],
+    impactSummaries: {},
+  };
+
   // Check if Constellation mode is explicitly requested
   if (architectureMode === 'constellation') {
-    const dummySummary = {
-      totalNodes: safeNodes.length,
-      totalEdges: safeEdges.length,
-      nodeCount: safeNodes.length,
-      edgeCount: safeEdges.length,
-      highRiskCount: 0,
-      unresolvedCount: 0,
-      cyclesCount: 0,
-    };
-    const schemaInput = {
-      summary: dummySummary,
-      nodes: safeNodes,
-      edges: safeEdges,
-      cycles: [],
-      unresolvedReferences: [],
-      impactSummaries: {},
-    };
     const projection = adaptComponentConstellation(
       schemaInput,
       options.componentConstellationOptions
@@ -176,23 +300,6 @@ export function computeArchitectureLayoutWithMetadata(
   // Check if Architecture Orbit / Component Orbit mode is explicitly requested
   const isOrbit = architectureMode === 'orbit';
   if (isOrbit) {
-    const dummySummary = {
-      totalNodes: safeNodes.length,
-      totalEdges: safeEdges.length,
-      nodeCount: safeNodes.length,
-      edgeCount: safeEdges.length,
-      highRiskCount: 0,
-      unresolvedCount: 0,
-      cyclesCount: 0,
-    };
-    const schemaInput = {
-      summary: dummySummary,
-      nodes: safeNodes,
-      edges: safeEdges,
-      cycles: [],
-      unresolvedReferences: [],
-      impactSummaries: {},
-    };
     const projection = adaptComponentOrbit(
       schemaInput,
       {
@@ -217,85 +324,8 @@ export function computeArchitectureLayoutWithMetadata(
     };
   }
 
-  // Ensure all edge endpoints are present in safeNodes
-  const knownNodeIds = new Set(safeNodes.map(n => n.id));
-  safeEdges.forEach(e => {
-    if (!knownNodeIds.has(e.source)) {
-      knownNodeIds.add(e.source);
-      safeNodes.push({
-        id: e.source,
-        displayName: e.source.split(':').pop() || e.source,
-        type: 'External',
-        file: '',
-        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-        risk: 'LOW',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 0,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 0,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'UNTESTED',
-        },
-      });
-    }
-    if (!knownNodeIds.has(e.target)) {
-      knownNodeIds.add(e.target);
-      safeNodes.push({
-        id: e.target,
-        displayName: e.target.split(':').pop() || e.target,
-        type: 'External',
-        file: '',
-        metrics: { fanIn: 0, fanOut: 0, coupling: 0, unresolved: 0, score: 0 },
-        risk: 'LOW',
-        riskReasons: [],
-        behavior: {
-          isTest: false,
-          publicContractsCount: 0,
-          asyncPatterns: [],
-          securitySignalsCount: 0,
-          queryCount: 0,
-          dmlCount: 0,
-          calloutCount: 0,
-        },
-        refactoringReadiness: {
-          isHighRisk: false,
-          hasCycles: false,
-          hasUnresolved: false,
-          testCoverageStatus: 'UNTESTED',
-        },
-      });
-    }
-  });
-
-  // Sort nodes & edges deterministically by ID
-  safeNodes.sort((a, b) => a.id.localeCompare(b.id));
-  safeEdges.sort((a, b) => a.id.localeCompare(b.id));
-
-  if (safeNodes.length === 0) {
-    return { positions: { ...existingPositions } };
-  }
-
   // Construct LayoutGraphIndex immediately after Stage 0 normalization
   const index = createLayoutGraphIndex(safeNodes, safeEdges);
-
-  // Step 1: Base Architecture Analysis (Wave 1A)
-  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index });
-
-  // Step 2: Layer Classification (Wave 1B)
-  const layerMap = new Map<string, ArchitectureLayer>();
-  safeNodes.forEach(node => {
-    layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
-  });
-  analysis = applyLayerClassification(analysis, layerMap);
 
   // Step 3: Domain Discovery (Wave 1C)
   const domainDiscovery = discoverDomains(safeNodes, safeEdges);
@@ -303,6 +333,16 @@ export function computeArchitectureLayoutWithMetadata(
   domainDiscovery.assignments.forEach((assignment, nodeId) => {
     domainMap.set(nodeId, assignment.primaryDomain);
   });
+
+  // Step 1: Base Architecture Analysis (Wave 1A) with domainMap pre-supplied to avoid re-discovering domains
+  let analysis = computeArchitectureAnalysis(safeNodes, safeEdges, { index, domainMap });
+
+  // Step 2: Layer Classification (Wave 1B)
+  const layerMap = new Map<string, ArchitectureLayer>();
+  safeNodes.forEach(node => {
+    layerMap.set(node.id, classifyNodeLayerWithReason(node).layer);
+  });
+  analysis = applyLayerClassification(analysis, layerMap);
   analysis = applyDomainClassification(analysis, domainMap);
 
   // Step 4: Centrality & Spatial Roles (Wave 3B)
@@ -345,6 +385,7 @@ export function computeArchitectureLayoutWithMetadata(
     if (typeof console !== 'undefined' && console.debug) {
       console.debug('[HYBRID_DIAGNOSTICS] computeGlobalFeatureLayout() called');
     }
+    const featureGraph = buildDomainGraph(safeNodes, safeEdges, domainDiscovery, index, featureMap);
     const featureLayoutResult = computeGlobalFeatureLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,
@@ -357,6 +398,7 @@ export function computeArchitectureLayoutWithMetadata(
       domainDiscovery,
       featureDiscovery,
       featureMap,
+      domainGraph: featureGraph,
       index,
     });
     globalDomainResult = featureLayoutResult;
@@ -365,6 +407,7 @@ export function computeArchitectureLayoutWithMetadata(
     if (typeof console !== 'undefined' && console.debug) {
       console.debug('[HYBRID_DIAGNOSTICS] computeGlobalDomainLayout() called');
     }
+    const domainGraph = buildDomainGraph(safeNodes, safeEdges, domainDiscovery, index, domainMap);
     globalDomainResult = computeGlobalDomainLayout(safeNodes, safeEdges, {
       domainSpacing,
       layerSpacing,
@@ -374,6 +417,7 @@ export function computeArchitectureLayoutWithMetadata(
       domainDiscovery,
       layerMap,
       domainMap,
+      domainGraph,
       index,
     });
     activeSpatialMap = domainMap;
@@ -424,7 +468,9 @@ export function computeArchitectureLayoutWithMetadata(
     domainBounds[domain] = { minX: region.xMin, maxX: region.xMax };
   });
 
+  // Exclude phantom nodes from stage 8 bridge candidate evaluation (A31)
   const stage8BridgeNodes = safeNodes.filter(node => {
+    if (!realNodeIds.has(node.id)) return false;
     if (isTestNode(node) || isFieldNode(node)) return false;
     const centrality = centralityMap.get(node.id);
     return centrality?.isBridge && !centrality.isHub;
@@ -455,7 +501,7 @@ export function computeArchitectureLayoutWithMetadata(
       if (lA !== lB) {
         return lA - lB;
       }
-      return a.id.localeCompare(b.id);
+      return stableCompareStrings(a.id, b.id);
     });
   }
 
@@ -510,8 +556,9 @@ export function computeArchitectureLayoutWithMetadata(
   );
 
   // Step 10: Disconnected Component Packing (Wave 2C)
-  // If there are multiple disconnected components, pack them using 2D shelf packing algorithm (FFDH)
+  // Merge satellite positions into componentShiftedPositions defensively
   let componentShiftedPositions: Record<string, { x: number; y: number }> = {
+    ...basePositions,
     ...satelliteResult.positions,
   };
 
@@ -523,15 +570,17 @@ export function computeArchitectureLayoutWithMetadata(
         let importance = 0;
 
         for (const nodeId of comp.nodeIds) {
-          const pos = satelliteResult.positions[nodeId];
+          const pos = componentShiftedPositions[nodeId];
           if (pos) {
             positions[nodeId] = pos;
-            if (!minNodeId || nodeId.localeCompare(minNodeId) < 0) {
+            if (!minNodeId || stableCompareStrings(nodeId, minNodeId) < 0) {
               minNodeId = nodeId;
             }
             const centrality = centralityMap.get(nodeId);
             if (centrality) {
-              importance += centrality.hubScore + centrality.bridgeScore;
+              const hScore = centrality.hubScore ?? 0;
+              const bScore = centrality.bridgeScore ?? 0;
+              importance += hScore + bScore;
             }
           }
         }
@@ -548,14 +597,15 @@ export function computeArchitectureLayoutWithMetadata(
       .filter(c => Object.keys(c.positions).length > 0);
 
     if (componentLayouts.length > 1) {
-      // Ensure targetWidth accommodates at least the two largest components side-by-side
+      // Avoid in-place mutation of component widths when computing minRowWidth (A15, A21, A23)
       const compWidths = componentLayouts.map(c => {
         const bounds = calculateLocalComponentBounds(c.positions, nodeWidth, nodeHeight);
         return bounds.width;
-      }).sort((a, b) => b - a);
+      });
+      const sortedWidths = [...compWidths].sort((a, b) => b - a);
 
-      const maxW = compWidths[0] || nodeWidth;
-      const secondMaxW = compWidths[1] || nodeWidth;
+      const maxW = sortedWidths[0] ?? nodeWidth;
+      const secondMaxW = sortedWidths[1] ?? nodeWidth;
       const minRowWidth = maxW + secondMaxW + componentGap;
 
       let totalCompArea = 0;
@@ -574,7 +624,12 @@ export function computeArchitectureLayoutWithMetadata(
         nodeWidth,
         nodeHeight,
       });
-      componentShiftedPositions = packed.positions;
+
+      // Merge packed positions so no un-packed nodes are dropped
+      componentShiftedPositions = {
+        ...componentShiftedPositions,
+        ...packed.positions,
+      };
     }
   }
 
@@ -603,9 +658,27 @@ export function computeArchitectureLayoutWithMetadata(
     ...calculatedPositions,
   };
 
+  const overriddenIds: string[] = [];
   for (const [id, pos] of Object.entries(existingPositions)) {
-    if (pos) {
+    if (pos && knownNodeIds.has(id)) {
+      if (resultPositions[id]) {
+        overriddenIds.push(id);
+      }
       resultPositions[id] = { x: pos.x, y: pos.y };
+    }
+  }
+
+  if (overriddenIds.length > 0 && process.env.NODE_ENV !== 'production') {
+    console.debug(`[layout] Position authority restored for ${overriddenIds.length} nodes: ${overriddenIds.slice(0, 5).join(', ')}...`);
+  }
+
+  // A44: Dev-time assertion that layout outputs contain positions for every expected node
+  if (process.env.NODE_ENV !== 'production') {
+    const missing = safeNodes.filter((n) => !resultPositions[n.id]);
+    if (missing.length > 0) {
+      console.warn(
+        `[layout] ${missing.length} nodes missing from layout result: ${missing.slice(0, 5).map((n) => n.id).join(', ')}...`
+      );
     }
   }
 

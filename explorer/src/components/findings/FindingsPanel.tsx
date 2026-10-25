@@ -129,14 +129,6 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
     forceRefresh();
   };
 
-  const handleInvestigate = (e: React.MouseEvent, finding: ArchitectureFinding) => {
-    e.stopPropagation();
-    onSelectFinding(finding);
-    if (onInvestigateNode && finding.nodeIds.length > 0) {
-      onInvestigateNode(finding.nodeIds[0]);
-    }
-  };
-
   // Map each finding with its review item
   const findingsWithReview = useMemo(() => {
     return findings.map(f => ({

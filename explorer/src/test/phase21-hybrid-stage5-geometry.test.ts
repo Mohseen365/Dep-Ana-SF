@@ -15,9 +15,8 @@ import { discoverDomains } from '../lib/layout/domains';
 import { discoverFeatures } from '../lib/layout/features';
 import {
   computeGlobalFeatureLayout,
-  computeGlobalDomainLayout,
-  type ArchitectureLayer,
 } from '../lib/layout/global-layout';
+import type { ArchitectureLayer } from '../lib/layout/types';
 import { reduceEdgeCrossings } from '../lib/layout/ordering';
 import { computeLocalNodeLayout } from '../lib/layout/local-layout';
 import {
@@ -134,7 +133,7 @@ export interface MetricSummary {
 
 export function calculateMetrics(
   projectId: string,
-  nodes: ExplorerNode[],
+  _nodes: ExplorerNode[],
   edges: ExplorerEdge[],
   positions: Record<string, { x: number; y: number }>,
   featureMap?: Map<string, string>
@@ -519,7 +518,7 @@ export function runPhase21Stage5ExperimentPipeline(
       const orig = activeFeatureLayerYMap[featId];
       const featBaseY = orig.presentation;
       let featNodeCount = 0;
-      featureMap.forEach((f, nId) => {
+      featureMap.forEach((f) => {
         if (f === featId) featNodeCount++;
       });
       const adaptiveStep = Math.min(200, 50 + Math.ceil(featNodeCount / 2) * 20);
@@ -534,7 +533,7 @@ export function runPhase21Stage5ExperimentPipeline(
   }
 
   const stage5Positions: Record<string, { x: number; y: number }> = {};
-  featureDiscovery.assignments.forEach((_, nodeId) => {
+  featureDiscovery.assignments.forEach((_assignment, nodeId) => {
     const fId = featureMap.get(nodeId) || 'Unassigned';
     const region = featureLayoutResult.domainRegions.get(fId);
     if (region) {
@@ -785,7 +784,7 @@ describe('PHASE 21 — Controlled Hybrid Stage 5 Geometry Design Experiment Test
     const pbim = loadRealProjectData('pbim');
     expect(pbim.nodes.length).toBe(528);
     expect(pbim.edges.length).toBe(2063);
-    expect(pbim.sha256).toBe('d6dee0d04e5e296c5f0dc0b2dbbf85e4a79722469b81b008a7fc0855b4e66d7b');
+    expect(pbim.sha256).toBe('395c23bd4b1dcd7bca6747010987f234083a3e83ab7f457fb9c41cdf042b013d');
   });
 
   it('measures baseline and candidate geometry interventions (A, B, C, combinations) on CST and PBIM', () => {

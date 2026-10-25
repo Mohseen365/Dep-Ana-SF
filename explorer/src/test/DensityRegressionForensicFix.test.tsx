@@ -166,6 +166,7 @@ describe('Forensic Fix — Graph Node Density & Position Authority Regression Te
     // Existing nodes maintain 100% position authority
     fixture.nodes.forEach(n => {
       const resolved = resolveAuthoritativePosition(n.id, {
+        hasAuthoritativePositions: true,
         sessionPositions: initialPositions,
       });
       expect(resolved?.position).toEqual(initialPositions[n.id]);

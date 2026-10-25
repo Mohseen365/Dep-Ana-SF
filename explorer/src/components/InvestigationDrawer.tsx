@@ -85,12 +85,10 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [depsLimit, setDepsLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
   const [dependentsLimit, setDependentsLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
-  const [evidenceLimit, setEvidenceLimit] = useState<number>(INITIAL_VISIBLE_COUNT);
 
   React.useEffect(() => {
     setDepsLimit(INITIAL_VISIBLE_COUNT);
     setDependentsLimit(INITIAL_VISIBLE_COUNT);
-    setEvidenceLimit(INITIAL_VISIBLE_COUNT);
   }, [node?.id]);
 
   const handleTablistKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -407,7 +405,7 @@ export const InvestigationDrawer: React.FC<InvestigationDrawerProps> = ({
               {node.behavior.sharing && <span className="ui-badge">{node.behavior.sharing}</span>}
               <span className="ui-badge">SOQL Queries: {node.behavior.queryCount}</span>
               <span className="ui-badge">DML Statements: {node.behavior.dmlCount}</span>
-              {node.behavior.calloutCount > 0 && <span className="ui-badge ui-badge-high">Callouts: {node.behavior.calloutCount}</span>}
+              {(node.behavior.calloutCount ?? 0) > 0 && <span className="ui-badge ui-badge-high">Callouts: {node.behavior.calloutCount}</span>}
             </div>
           </div>
         )}

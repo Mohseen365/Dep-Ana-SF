@@ -98,7 +98,7 @@ export function filterPrimarySegmentsCoarse(
   nodeHeight: number,
   horizontalGap: number,
   verticalGap: number,
-  maxDistance: number,
+  _maxDistance: number,
   primarySegments: Segment[],
   incidentEndpoints?: Point[]
 ): Segment[] {

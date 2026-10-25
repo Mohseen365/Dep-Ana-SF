@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExplorerEdge } from '../../types/explorer';
+import { useViewportSize } from '../../hooks/useViewportSize';
 
 export interface EdgeHoverCardProps {
   edge: ExplorerEdge;
@@ -7,14 +8,46 @@ export interface EdgeHoverCardProps {
   y: number;
 }
 
-export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = ({ edge, x, y }) => {
-  const left = Math.min(x + 12, window.innerWidth - 280);
-  const top = Math.min(y + 12, window.innerHeight - 180);
+export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = React.memo(function EdgeHoverCard({ edge, x, y }) {
+  const [copied, setCopied] = React.useState(false);
+  const copyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const viewport = useViewportSize();
 
-  const line = edge.line ?? 1;
+  React.useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const left = Math.min(x + 12, viewport.width - 280);
+  const top = Math.min(y + 12, viewport.height - 180);
+
+  const line = edge.line;
   const file = edge.file || '';
-  const fileWithLine = file ? `${file}:${line}` : 'N/A';
-  const vscodeUrl = file ? `vscode://file/${file}:${line}` : null;
+  const locationStr = file ? (line ? `${file}:${line}` : file) : null;
+  const fileWithLine = locationStr || 'N/A';
+  const vscodeUrl = file
+    ? `vscode://file/${encodeURIComponent(file).replace(/%2F/gi, '/')}:${line ?? 1}`
+    : null;
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!locationStr) return;
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(locationStr).then(() => {
+        setCopied(true);
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => {
+          copyTimerRef.current = null;
+          setCopied(false);
+        }, 2000);
+      }).catch(() => {});
+    }
+  };
 
   return (
     <div
@@ -31,8 +64,22 @@ export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = ({ edge, x, y }) => {
           <span className="label">Evidence:</span> <span className="value">{edge.evidence}</span>
         </div>
       )}
-      <div className="hover-card-detail">
-        <span className="label">Location:</span> <span className="value">{fileWithLine}</span>
+      <div className="hover-card-detail" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <div>
+          <span className="label">Location:</span> <span className="value">{fileWithLine}</span>
+        </div>
+        {locationStr && (
+          <button
+            type="button"
+            className="hover-card-copy-btn"
+            aria-label="Copy source location"
+            onClick={handleCopy}
+            title="Copy source location"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', fontSize: '12px', color: '#38bdf8' }}
+          >
+            {copied ? '✓' : '📋'}
+          </button>
+        )}
       </div>
       {vscodeUrl && (
         <div className="hover-card-action">
@@ -48,6 +95,6 @@ export const EdgeHoverCard: React.FC<EdgeHoverCardProps> = ({ edge, x, y }) => {
       )}
     </div>
   );
-};
+});
 
 export default EdgeHoverCard;

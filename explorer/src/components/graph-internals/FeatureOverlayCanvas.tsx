@@ -7,6 +7,7 @@ import type { OrbitGuideMetadata } from '../../lib/orbit-layout';
 import type { ArchitectureLayoutMode } from '../../types/explorer';
 import { deriveFeatureCompositionGroups, type FeatureCompositionGroup } from '../../lib/layout/feature-composition';
 import { getSharedHighlightData, type SharedHighlightResult } from '../../lib/layout/shared-highlight';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import type { ArchitectureFinding, FindingSeverity } from '../../lib/intelligence';
 import { createLayoutGraphIndex } from '../../lib/layout/graph-index';
 import { computeCanvasLODLevel } from '../../lib/canvas-lod';
@@ -95,7 +96,11 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
   useEffect(() => {
     if (!cy) return;
 
-    const capturePositions = () => {
+    let posRafId: number | null = null;
+
+    const flushPositions = () => {
+      posRafId = null;
+      if (!cy) return;
       const posMap: Record<string, { x: number; y: number }> = {};
       cy.nodes().forEach((n) => {
         posMap[n.id()] = n.position();
@@ -103,15 +108,25 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
       setModelPositions(posMap);
     };
 
-    capturePositions();
+    const scheduleCapture = () => {
+      if (posRafId !== null) return;
+      posRafId = requestAnimationFrame(flushPositions);
+    };
+
+    // Initial synchronous snapshot so the first paint has positions.
+    flushPositions();
 
     if (typeof cy.on === 'function') {
-      cy.on('position dragfree layoutstop', capturePositions);
+      cy.on('position dragfree layoutstop', scheduleCapture);
     }
 
     return () => {
+      if (posRafId !== null) {
+        cancelAnimationFrame(posRafId);
+        posRafId = null;
+      }
       if (typeof cy.off === 'function') {
-        cy.off('position dragfree layoutstop', capturePositions);
+        cy.off('position dragfree layoutstop', scheduleCapture);
       }
     };
   }, [cy]);
@@ -154,8 +169,11 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
     return allGroups;
   }, [enableOverlay, discoveryResult, lodConfig.showCompositionGroups, nodes, edges, currentPositions, graphIndex]);
 
-  // Derive Shared Infrastructure highlight connections
-  const activeHighlightNodeId = hoveredNodeId || selectedNodeId || null;
+  // Debounce hover changes so rapid mouse movements don't continuously recompute getSharedHighlightData
+  const debouncedHoveredNodeId = useDebouncedValue(hoveredNodeId, 150);
+
+  // Selection highlighting is immediate; hover highlighting is debounced
+  const activeHighlightNodeId = debouncedHoveredNodeId || selectedNodeId || null;
   const sharedHighlight: SharedHighlightResult = useMemo(() => {
     if (!enableOverlay || !discoveryResult || !activeHighlightNodeId) {
       return {
@@ -245,7 +263,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
               opacity={0.8}
             />
 
-            {/* 6 Concentric Architectural Rings */}
+            {/* Concentric Architectural Rings (6 rings in Orbit mode, 3 rings in Constellation mode) */}
             {orbitGuides?.rings?.map((ring) => (
               <g key={`orbit_ring_${ring.ringIndex}`}>
                 <circle
@@ -270,14 +288,20 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
             ))}
 
             {/* 65 Semantic Sector Wedges & Guide Lines */}
-            {orbitGuides?.sectors?.map((sector) => {
-              const maxR = 2600;
-              const startX = Math.round(maxR * Math.cos(sector.startAngleRad) * 100) / 100;
-              const startY = Math.round(maxR * Math.sin(sector.startAngleRad) * 100) / 100;
-              const midAngle = (sector.startAngleRad + sector.endAngleRad) / 2;
-              const labelR = 2400;
-              const labelX = Math.round(labelR * Math.cos(midAngle) * 100) / 100;
-              const labelY = Math.round(labelR * Math.sin(midAngle) * 100) / 100;
+            {(() => {
+              const maxRingRadius = orbitGuides?.rings?.reduce(
+                (max, ring) => (ring.radiusPx > max ? ring.radiusPx : max),
+                0
+              ) ?? 0;
+              const guideRadius = maxRingRadius > 0 ? maxRingRadius * 1.08 : 2600;
+              const labelRadius = maxRingRadius > 0 ? maxRingRadius * 1.0 : 2400;
+
+              return orbitGuides?.sectors && orbitGuides.sectors.map((sector) => {
+                const startX = Math.round(guideRadius * Math.cos(sector.startAngleRad) * 100) / 100;
+                const startY = Math.round(guideRadius * Math.sin(sector.startAngleRad) * 100) / 100;
+                const midAngle = (sector.startAngleRad + sector.endAngleRad) / 2;
+                const labelX = Math.round(labelRadius * Math.cos(midAngle) * 100) / 100;
+                const labelY = Math.round(labelRadius * Math.sin(midAngle) * 100) / 100;
 
               return (
                 <g key={`orbit_sector_${sector.sectorId}`}>
@@ -305,7 +329,8 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   )}
                 </g>
               );
-            })}
+            });
+            })()}
           </g>
         )}
 
@@ -484,7 +509,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
 
             const { count, maxSeverity } = findingData;
             const countText = count > 9 ? '10+' : `${count}`;
-            const badgeWidth = countText === '10+' ? 32 : 26;
+            const badgeWidth = (countText === '10+' ? 32 : 26) + 12;
 
             const strokeColor =
               maxSeverity === 'CRITICAL'
@@ -500,8 +525,10 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                 key={`finding_badge_${node.id}`}
                 className="finding-badge-overlay"
                 data-testid={`finding-badge-${node.id}`}
+                data-max-severity={maxSeverity}
                 transform={`translate(${pos.x + 14}, ${pos.y - 28})`}
               >
+                <title>{`${count} issue${count > 1 ? 's' : ''} (${maxSeverity})`}</title>
                 <rect
                   x={0}
                   y={0}
@@ -512,8 +539,12 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   stroke={strokeColor}
                   strokeWidth={1.5}
                 />
+                <path
+                  d="M 6 12 L 10 4 L 14 12 Z"
+                  fill={strokeColor}
+                />
                 <text
-                  x={badgeWidth / 2}
+                  x={(badgeWidth + 12) / 2}
                   y={11}
                   fill="#f8fafc"
                   fontSize={9}
@@ -521,7 +552,7 @@ export const FeatureOverlayCanvas: React.FC<FeatureOverlayCanvasProps> = ({
                   textAnchor="middle"
                   fontFamily="system-ui, -apple-system, sans-serif"
                 >
-                  ⚠️ {countText}
+                  {countText}
                 </text>
               </g>
             );

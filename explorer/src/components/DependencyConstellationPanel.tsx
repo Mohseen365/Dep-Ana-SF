@@ -106,11 +106,11 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
     if (!filterText) return true;
     const q = filterText.toLowerCase();
     return (
-      node.displayName.toLowerCase().includes(q) ||
-      node.nodeId.toLowerCase().includes(q) ||
-      node.type.toLowerCase().includes(q) ||
-      node.featureName.toLowerCase().includes(q) ||
-      node.layerName.toLowerCase().includes(q)
+      (node.displayName || '').toLowerCase().includes(q) ||
+      (node.nodeId || '').toLowerCase().includes(q) ||
+      (node.type || '').toLowerCase().includes(q) ||
+      (node.featureName || '').toLowerCase().includes(q) ||
+      (node.layerName || '').toLowerCase().includes(q)
     );
   };
 
@@ -156,10 +156,10 @@ export const DependencyConstellationPanel: React.FC<DependencyConstellationPanel
       >
         <div>
           <h2 style={{ margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>🌌</span> Dependency Constellation
+            <span>🌌</span> Dependency Constellation (Focal Orbital Explorer)
           </h2>
           <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-            Focal-Centric Orbital Distance & Radial Dependency Influence Lens
+            Focal-Centric Orbital Lens — Select a focal component to inspect 1–3 hop rings, filter direction & depth, or return to Macro Canvas
           </span>
         </div>
 

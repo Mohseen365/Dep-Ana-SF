@@ -3,9 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { ExplorerNode, ExplorerEdge } from '../types/explorer';
 import {
-  computeArchitectureLayoutWithMetadata,
-} from '../lib/architecture-layout';
-import {
   computeGraphCentralityAnalysis,
   calculateBridgeCandidatePosition,
 } from '../lib/layout/centrality';
@@ -372,7 +369,7 @@ describe('SB-1C Capacity Forensic Audit Runner', () => {
         let primaryNodesInCorridor = 0;
         const primaryXPositions: number[] = [];
 
-        Object.entries(localResult.primaryNodePositions).forEach(([pId, pPos]) => {
+        Object.entries(localResult.primaryNodePositions).forEach(([, pPos]) => {
           if (Math.abs(pPos.y - layerOrderY) < 125) { // within same layer band
             if (pPos.x >= minLegalX - 60 && pPos.x <= maxLegalX + 60) {
               primaryNodesInCorridor++;

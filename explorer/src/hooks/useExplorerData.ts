@@ -20,9 +20,6 @@ function resolveDataUrl(projectIdOrUrl?: string): string {
         if (urlProject && urlProject !== "default") {
           const slugProject = slugify(urlProject);
           if (slugProject && slugProject !== "default") {
-            if (slugProject === "pbim") {
-              return "/pbim/explorer-data.json";
-            }
             return `/projects/${slugProject}/explorer-data.json`;
           }
         }
@@ -30,9 +27,6 @@ function resolveDataUrl(projectIdOrUrl?: string): string {
         if (savedProject && savedProject !== "default") {
           const slugProject = slugify(savedProject);
           if (slugProject && slugProject !== "default") {
-            if (slugProject === "pbim") {
-              return "/pbim/explorer-data.json";
-            }
             return `/projects/${slugProject}/explorer-data.json`;
           }
         }
@@ -55,10 +49,6 @@ function resolveDataUrl(projectIdOrUrl?: string): string {
 
   if (slugId === "default" || !slugId) {
     return "/explorer-data.json";
-  }
-
-  if (slugId === "pbim") {
-    return "/pbim/explorer-data.json";
   }
 
   return `/projects/${slugId}/explorer-data.json`;
