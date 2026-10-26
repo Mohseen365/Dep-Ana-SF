@@ -96,7 +96,9 @@ public with sharing class DAGraphController {
             throw new AuraHandledException('Invalid or unauthorized Run ID.');
         }
 
-        Integer maxIndex = startIndex + maxChunks - 1;
+        // Guard against integer overflow on high startIndex values
+        Long calcMaxIndex = (Long) startIndex + (Long) maxChunks - 1;
+        Integer maxIndex = (calcMaxIndex > 2147483647L) ? 2147483647 : (Integer) calcMaxIndex;
 
         return [
             SELECT Chunk_Index__c, Payload_Data__c

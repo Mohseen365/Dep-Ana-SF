@@ -11,6 +11,8 @@ public with sharing class DAGraphChunkService {
 
         if (maxChunkSize == null || maxChunkSize <= 0) {
             maxChunkSize = 100000; // Default 100KB per chunk
+        } else if (maxChunkSize > 131072) {
+            maxChunkSize = 131072; // Cap at Payload_Data__c LongTextArea field length limit
         }
 
         Integer length = rawJson.length();

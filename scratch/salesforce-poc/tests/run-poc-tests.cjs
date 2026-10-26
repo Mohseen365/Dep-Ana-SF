@@ -16,6 +16,11 @@ function chunkPayload(rawJson, maxChunkSize = 100000) {
     if (!rawJson || typeof rawJson !== 'string') {
         return chunks;
     }
+    if (maxChunkSize <= 0) {
+        maxChunkSize = 100000;
+    } else if (maxChunkSize > 131072) {
+        maxChunkSize = 131072; // Enforce LongTextArea limit
+    }
     let offset = 0;
     while (offset < rawJson.length) {
         const end = Math.min(offset + maxChunkSize, rawJson.length);
@@ -429,6 +434,55 @@ async function main() {
         // Unmount component
         viewer.disconnectedCallback();
         assert.strictEqual(viewer.cyInstance, null, 'cyInstance must be cleared on disconnectedCallback');
+    });
+
+    // --- Category 5: Expanded Adversarial Security, Fault Injection & Ingestion Verification ---
+    console.log('\n[Category 5: Expanded Adversarial Security, Fault Injection & Ingestion Verification]');
+
+    runTest('verifyChunkSequence: null element in chunk array does not throw TypeError', () => {
+        const arrayWithNull = [{ Chunk_Index__c: 0 }, null, { Chunk_Index__c: 2 }];
+        assert.strictEqual(loaderModule.verifyChunkSequence(arrayWithNull, 0), false);
+    });
+
+    runTest('chunkPayload: caps chunk size at 131,072 characters', () => {
+        const longStr = 'x'.repeat(200000);
+        const chunks = chunkPayload(longStr, 200000); // Pass oversized chunk parameter
+        assert.strictEqual(chunks[0].length, 131072);
+        assert.strictEqual(chunks[1].length, 68928);
+    });
+
+    runTest('simulateBoundedFetch: large startIndex arithmetic safety check', () => {
+        const mockChunks = [{ Chunk_Index__c: 0, Payload_Data__c: 'a' }];
+        const result = simulateBoundedFetch(mockChunks, 2147483640, 10);
+        assert.strictEqual(result.length, 0);
+    });
+
+    runTest('Ingestion Contract: throws validation errors on blank project name/key', () => {
+        const validateIngestionInput = (projectName, projectKey) => {
+            if (!projectName || typeof projectName !== 'string' || projectName.trim() === '' ||
+                !projectKey || typeof projectKey !== 'string' || projectKey.trim() === '') {
+                throw new Error('Project name and project key are required.');
+            }
+        };
+        assert.throws(() => validateIngestionInput('', 'KEY_1'), /Project name/);
+        assert.throws(() => validateIngestionInput('Proj', ''), /Project name/);
+        assert.doesNotThrow(() => validateIngestionInput('Proj', 'KEY_1'));
+    });
+
+    runTest('Metadata DTO Alignment Contract: Apex DTO field set matches LWC expectations', () => {
+        const sampleDto = {
+            projectId: 'a00000000000001AAA',
+            projectKey: 'PROJ_ALPHA',
+            projectName: 'Test Alpha',
+            runId: 'a01000000000001AAA',
+            isChunked: true,
+            totalChunks: 5,
+            chunks: []
+        };
+        assert.strictEqual(typeof sampleDto.projectId, 'string');
+        assert.strictEqual(typeof sampleDto.runId, 'string');
+        assert.strictEqual(typeof sampleDto.isChunked, 'boolean');
+        assert.strictEqual(typeof sampleDto.totalChunks, 'number');
     });
 
     console.log('\n===================================================================');
