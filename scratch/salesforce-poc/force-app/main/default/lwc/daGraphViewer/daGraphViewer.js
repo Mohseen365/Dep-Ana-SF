@@ -2,7 +2,7 @@ import { LightningElement, api, track } from 'lwc';
 import { loadScript } from 'lightning/platformResourceLoader';
 import cytoscapeUrl from '@salesforce/resourceUrl/cytoscape';
 import getLatestGraphForProject from '@salesforce/apex/DAGraphController.getLatestGraphForProject';
-import { reassembleChunks } from 'c/daGraphPayloadLoader';
+import { reassembleChunks, validatePayloadIntegrity } from 'c/daGraphPayloadLoader';
 
 export default class DaGraphViewer extends LightningElement {
     @api recordId;
@@ -45,6 +45,12 @@ export default class DaGraphViewer extends LightningElement {
 
                 if (!jsonString) {
                     this.error = 'No graph payload data found for this project.';
+                    this.isLoading = false;
+                    return;
+                }
+
+                if (!validatePayloadIntegrity(jsonString)) {
+                    this.error = 'Invalid graph payload structure or corrupted JSON data.';
                     this.isLoading = false;
                     return;
                 }
@@ -94,6 +100,13 @@ export default class DaGraphViewer extends LightningElement {
         } catch (err) {
             this.error = 'Error initializing Cytoscape graph: ' + err.message;
             this.isLoading = false;
+        }
+    }
+
+    disconnectedCallback() {
+        if (this.cyInstance) {
+            this.cyInstance.destroy();
+            this.cyInstance = null;
         }
     }
 }

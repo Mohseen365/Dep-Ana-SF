@@ -1,5 +1,5 @@
 /**
- * @description Service handling payload chunking and ordering verification for large graphs
+ * @description Service handling payload chunking, ordering verification, and reassembly for large graphs
  */
 public with sharing class DAGraphChunkService {
 
@@ -30,5 +30,19 @@ public with sharing class DAGraphChunkService {
             return '';
         }
         return String.join(chunks, '');
+    }
+
+    public static Boolean verifyChunkSequence(List<DA_Graph_Chunk__c> chunks) {
+        if (chunks == null || chunks.isEmpty()) {
+            return false;
+        }
+
+        for (Integer i = 0; i < chunks.size(); i++) {
+            if (chunks[i].Chunk_Index__c == null || chunks[i].Chunk_Index__c != i) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
