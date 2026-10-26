@@ -30,7 +30,7 @@ export function verifyChunkSequence(chunks, expectedStartIndex = 0) {
     }
     for (let i = 0; i < chunks.length; i++) {
         const expectedIndex = startIdx + i;
-        if (chunks[i].Chunk_Index__c === undefined || chunks[i].Chunk_Index__c === null || Number(chunks[i].Chunk_Index__c) !== expectedIndex) {
+        if (!chunks[i] || chunks[i].Chunk_Index__c === undefined || chunks[i].Chunk_Index__c === null || Number(chunks[i].Chunk_Index__c) !== expectedIndex) {
             return false;
         }
     }
