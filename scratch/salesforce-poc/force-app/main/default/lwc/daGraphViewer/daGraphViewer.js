@@ -4,11 +4,13 @@ import cytoscapeUrl from '@salesforce/resourceUrl/cytoscape';
 import getLatestGraphMetadataForProject from '@salesforce/apex/DAGraphController.getLatestGraphMetadataForProject';
 import getGraphChunks from '@salesforce/apex/DAGraphController.getGraphChunks';
 import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 'c/daGraphPayloadLoader';
+import { computeArchitectureLayout } from 'c/daLayoutEngine';
 
 export default class DaGraphViewer extends LightningElement {
     @api recordId;
     @track isLoading = true;
     @track error;
+    @track selectedNodeId = null;
     cyInitialized = false;
     cyInstance = null;
     pageSize = 5;
@@ -124,10 +126,33 @@ export default class DaGraphViewer extends LightningElement {
                 this.cyInstance = null;
             }
             const container = this.template.querySelector('.cy-container');
+
+            const nodes = graphData.nodes || [];
+            const edges = graphData.edges || [];
+
+            // Compute deterministic architecture layout positions
+            const layoutResult = computeArchitectureLayout(nodes, edges);
+            const computedPositions = layoutResult.positions || {};
+
+            const elements = [];
+            nodes.forEach(n => {
+                const pos = computedPositions[n.id] || { x: 0, y: 0 };
+                elements.push({
+                    data: { id: n.id, label: n.displayName || n.name || n.id, layer: n.layer },
+                    position: pos
+                });
+            });
+
+            edges.forEach(e => {
+                elements.push({
+                    data: { id: e.id || `${e.source}-${e.target}`, source: e.source, target: e.target }
+                });
+            });
+
             /* global cytoscape */
             this.cyInstance = cytoscape({
                 container: container,
-                elements: graphData.elements || graphData,
+                elements: elements.length > 0 ? elements : (graphData.elements || graphData),
                 style: [
                     {
                         selector: 'node',
@@ -135,6 +160,14 @@ export default class DaGraphViewer extends LightningElement {
                             'label': 'data(label)',
                             'background-color': '#0070d2',
                             'color': '#ffffff'
+                        }
+                    },
+                    {
+                        selector: 'node:selected',
+                        style: {
+                            'background-color': '#f2cf5b',
+                            'border-width': 3,
+                            'border-color': '#005fb2'
                         }
                     },
                     {
@@ -149,10 +182,20 @@ export default class DaGraphViewer extends LightningElement {
                     }
                 ],
                 layout: {
-                    name: 'cose',
+                    name: elements.length > 0 ? 'preset' : 'cose',
                     animate: false
                 }
             });
+
+            // Maintain invariant: SELECTION != NAVIGATION
+            // Node tap/click updates selection state only, without triggering URL navigation or re-render
+            this.cyInstance.on('tap', 'node', (evt) => {
+                const node = evt.target;
+                this.selectedNodeId = node.id();
+                // Dispatch custom event for selection change if needed without navigating
+                this.dispatchEvent(new CustomEvent('nodeselect', { detail: { nodeId: node.id() } }));
+            });
+
             this.isLoading = false;
         } catch (err) {
             this.error = 'Error initializing Cytoscape graph: ' + err.message;
