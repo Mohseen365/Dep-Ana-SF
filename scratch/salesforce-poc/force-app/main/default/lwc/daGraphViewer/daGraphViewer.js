@@ -1,8 +1,9 @@
 import { LightningElement, api, track } from 'lwc';
 import { loadScript } from 'lightning/platformResourceLoader';
 import cytoscapeUrl from '@salesforce/resourceUrl/cytoscape';
-import getLatestGraphForProject from '@salesforce/apex/DAGraphController.getLatestGraphForProject';
-import { reassembleChunks, validatePayloadIntegrity } from 'c/daGraphPayloadLoader';
+import getLatestGraphMetadataForProject from '@salesforce/apex/DAGraphController.getLatestGraphMetadataForProject';
+import getGraphChunks from '@salesforce/apex/DAGraphController.getGraphChunks';
+import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 'c/daGraphPayloadLoader';
 
 export default class DaGraphViewer extends LightningElement {
     @api recordId;
@@ -10,6 +11,7 @@ export default class DaGraphViewer extends LightningElement {
     @track error;
     cyInitialized = false;
     cyInstance = null;
+    pageSize = 5;
 
     renderedCallback() {
         if (this.cyInitialized) {
@@ -27,41 +29,73 @@ export default class DaGraphViewer extends LightningElement {
         });
     }
 
-    fetchGraphData() {
+    async fetchGraphData() {
         if (!this.recordId) {
             this.error = 'No Project ID provided.';
             this.isLoading = false;
             return;
         }
 
-        getLatestGraphForProject({ projectId: this.recordId })
-            .then(dto => {
-                let jsonString = '';
-                if (dto.isChunked && dto.chunks && dto.chunks.length > 0) {
-                    jsonString = reassembleChunks(dto.chunks);
-                } else {
-                    jsonString = dto.rawPayload;
-                }
+        try {
+            const dto = await getLatestGraphMetadataForProject({ projectId: this.recordId });
 
-                if (!jsonString) {
-                    this.error = 'No graph payload data found for this project.';
-                    this.isLoading = false;
-                    return;
-                }
-
-                if (!validatePayloadIntegrity(jsonString)) {
-                    this.error = 'Invalid graph payload structure or corrupted JSON data.';
-                    this.isLoading = false;
-                    return;
-                }
-
-                const graphData = JSON.parse(jsonString);
-                this.renderGraph(graphData);
-            })
-            .catch(err => {
-                this.error = 'Error fetching graph data: ' + (err.body ? err.body.message : err.message || err);
+            if (!dto || !dto.runId) {
+                this.error = 'No graph payload metadata found for this project.';
                 this.isLoading = false;
-            });
+                return;
+            }
+
+            let jsonString = '';
+
+            if (dto.isChunked && dto.totalChunks > 0) {
+                const fetchedChunkStrings = [];
+                let nextIndex = 0;
+
+                while (nextIndex < dto.totalChunks) {
+                    const chunkBatch = await getGraphChunks({
+                        runId: dto.runId,
+                        startIndex: nextIndex,
+                        maxChunks: this.pageSize
+                    });
+
+                    if (!chunkBatch || chunkBatch.length === 0) {
+                        throw new Error(`Failed to retrieve chunk batch starting at index ${nextIndex}`);
+                    }
+
+                    if (!verifyChunkSequence(chunkBatch, nextIndex)) {
+                        throw new Error(`Sequence error detected in chunk batch starting at index ${nextIndex}`);
+                    }
+
+                    for (const c of chunkBatch) {
+                        fetchedChunkStrings.push(c.Payload_Data__c);
+                    }
+
+                    nextIndex += chunkBatch.length;
+                }
+
+                jsonString = reassembleChunks(fetchedChunkStrings);
+            } else if (dto.rawPayload) {
+                jsonString = dto.rawPayload;
+            }
+
+            if (!jsonString) {
+                this.error = 'No graph payload data found for this project.';
+                this.isLoading = false;
+                return;
+            }
+
+            if (!validatePayloadIntegrity(jsonString)) {
+                this.error = 'Invalid graph payload structure or corrupted JSON data.';
+                this.isLoading = false;
+                return;
+            }
+
+            const graphData = JSON.parse(jsonString);
+            this.renderGraph(graphData);
+        } catch (err) {
+            this.error = 'Error fetching graph data: ' + (err.body ? err.body.message : err.message || err);
+            this.isLoading = false;
+        }
     }
 
     renderGraph(graphData) {

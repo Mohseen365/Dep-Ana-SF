@@ -1,5 +1,5 @@
 /**
- * @description Unit tests for DAGraphController
+ * @description Unit tests for DAGraphController including bounded chunk retrieval and sequence validation
  */
 @IsTest
 private class DAGraphControllerTest {
@@ -18,13 +18,16 @@ private class DAGraphControllerTest {
         );
         insert run;
 
-        DA_Graph_Chunk__c chunk = new DA_Graph_Chunk__c(
-            DA_Analysis_Run__c = run.Id,
-            Name = 'Chunk 0',
-            Chunk_Index__c = 0,
-            Payload_Data__c = '{"nodes":[],"edges":[]}'
-        );
-        insert chunk;
+        List<DA_Graph_Chunk__c> chunks = new List<DA_Graph_Chunk__c>();
+        for (Integer i = 0; i < 7; i++) {
+            chunks.add(new DA_Graph_Chunk__c(
+                DA_Analysis_Run__c = run.Id,
+                Name = 'Chunk ' + i,
+                Chunk_Index__c = i,
+                Payload_Data__c = '{"chunk":' + i + '}'
+            ));
+        }
+        insert chunks;
     }
 
     @IsTest
@@ -38,7 +41,54 @@ private class DAGraphControllerTest {
     }
 
     @IsTest
-    static void testGetLatestGraphForProject() {
+    static void testGetLatestGraphMetadataForProject() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
+
+        Test.startTest();
+        DAGraphDTO dto = DAGraphController.getLatestGraphMetadataForProject(proj.Id);
+        Test.stopTest();
+
+        Assert.areEqual(proj.Id, dto.projectId);
+        Assert.areEqual(true, dto.isChunked);
+        Assert.areEqual(7, dto.totalChunks);
+        Assert.areEqual(0, dto.chunks.size(), 'Metadata endpoint must not populate chunk payloads directly');
+    }
+
+    @IsTest
+    static void testGetGraphChunksBoundedRetrieval() {
+        DA_Analysis_Run__c run = [SELECT Id FROM DA_Analysis_Run__c LIMIT 1];
+
+        Test.startTest();
+        List<DA_Graph_Chunk__c> batch1 = DAGraphController.getGraphChunks(run.Id, 0, 5);
+        List<DA_Graph_Chunk__c> batch2 = DAGraphController.getGraphChunks(run.Id, 5, 5);
+        Test.stopTest();
+
+        Assert.areEqual(5, batch1.size(), 'Batch 1 should contain 5 chunks');
+        Assert.areEqual(0, batch1[0].Chunk_Index__c);
+        Assert.areEqual(4, batch1[4].Chunk_Index__c);
+
+        Assert.areEqual(2, batch2.size(), 'Batch 2 should contain remaining 2 chunks');
+        Assert.areEqual(5, batch2[0].Chunk_Index__c);
+        Assert.areEqual(6, batch2[1].Chunk_Index__c);
+
+        Assert.isTrue(DAGraphChunkService.verifyBoundedChunkSequence(batch1, 0));
+        Assert.isTrue(DAGraphChunkService.verifyBoundedChunkSequence(batch2, 5));
+    }
+
+    @IsTest
+    static void testGetGraphChunksInvalidRunId() {
+        try {
+            Test.startTest();
+            DAGraphController.getGraphChunks('001000000000000AAA', 0, 5);
+            Test.stopTest();
+            Assert.fail('Should have thrown AuraHandledException for invalid Run ID');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
+        }
+    }
+
+    @IsTest
+    static void testGetLatestGraphForProjectLegacy() {
         DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
 
         Test.startTest();
@@ -47,8 +97,8 @@ private class DAGraphControllerTest {
 
         Assert.areEqual(proj.Id, dto.projectId);
         Assert.areEqual(true, dto.isChunked);
-        Assert.areEqual(1, dto.totalChunks);
-        Assert.areEqual('{"nodes":[],"edges":[]}', dto.chunks[0]);
+        Assert.areEqual(7, dto.totalChunks);
+        Assert.areEqual(7, dto.chunks.size());
     }
 
     @IsTest
