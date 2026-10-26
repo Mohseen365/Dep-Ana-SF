@@ -1,0 +1,15 @@
+<template>
+    <lightning-card title="Dependency Analyzer Graph Viewer" icon-name="custom:custom19">
+        <div class="slds-m-around_medium">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading graph..." size="medium"></lightning-spinner>
+            </template>
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <h2>{error}</h2>
+                </div>
+            </template>
+            <div class="cy-container" lwc:dom="manual"></div>
+        </div>
+    </lightning-card>
+</template>
