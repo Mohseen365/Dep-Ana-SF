@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DA_Project__c</fullName>
+    <label>Dependency Analyzer Project</label>
+    <type>MasterDetail</type>
+    <referenceTo>DA_Project__c</referenceTo>
+    <relationshipName>Analysis_Runs</relationshipName>
+    <relationshipLabel>Analysis Runs</relationshipLabel>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+</CustomField>

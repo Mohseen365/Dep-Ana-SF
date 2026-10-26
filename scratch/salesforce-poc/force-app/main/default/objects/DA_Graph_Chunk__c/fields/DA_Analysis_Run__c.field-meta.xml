@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DA_Analysis_Run__c</fullName>
+    <label>Analysis Run</label>
+    <type>MasterDetail</type>
+    <referenceTo>DA_Analysis_Run__c</referenceTo>
+    <relationshipName>Graph_Chunks</relationshipName>
+    <relationshipLabel>Graph Chunks</relationshipLabel>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+</CustomField>
