@@ -23,7 +23,7 @@ public with sharing class DAGraphController {
         List<DA_Analysis_Run__c> runs = [
             SELECT Id, Name, DA_Project__c, DA_Project__r.Name, DA_Project__r.Project_Key__c
             FROM DA_Analysis_Run__c
-            WHERE DA_Project__c = :projectId
+            WHERE DA_Project__c = :projectId OR DA_Project__r.Project_Key__c = :projectId
             WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT 1
@@ -51,6 +51,9 @@ public with sharing class DAGraphController {
         ];
 
         if (!chunks.isEmpty()) {
+            if (!DAGraphChunkService.verifyChunkSequence(chunks)) {
+                throw new AuraHandledException('Corrupted or missing payload chunks detected.');
+            }
             dto.isChunked = true;
             dto.totalChunks = chunks.size();
             for (DA_Graph_Chunk__c chunk : chunks) {

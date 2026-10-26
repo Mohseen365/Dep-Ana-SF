@@ -4,6 +4,10 @@
 public with sharing class DAGraphIngestionService {
 
     public static String createProject(String projectName, String projectKey) {
+        if (String.isBlank(projectName) || String.isBlank(projectKey)) {
+            throw new IllegalArgumentException('Project name and project key are required.');
+        }
+
         DA_Project__c proj = new DA_Project__c(
             Name = projectName,
             Project_Key__c = projectKey
@@ -13,6 +17,10 @@ public with sharing class DAGraphIngestionService {
     }
 
     public static String createAnalysisRun(String projectId, String runName) {
+        if (String.isBlank(projectId) || String.isBlank(runName)) {
+            throw new IllegalArgumentException('Project ID and run name are required.');
+        }
+
         DA_Analysis_Run__c run = new DA_Analysis_Run__c(
             DA_Project__c = projectId,
             Name = runName
