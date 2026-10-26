@@ -1,5 +1,5 @@
 /**
- * @description LWC Utility module for reassembling chunked Base64/JSON strings
+ * @description LWC Utility module for reassembling chunked Base64/JSON strings and validating payload integrity
  */
 export function reassembleChunks(chunks) {
     if (!Array.isArray(chunks) || chunks.length === 0) {
@@ -18,4 +18,17 @@ export function validatePayloadIntegrity(rawJson) {
     } catch (e) {
         return false;
     }
+}
+
+export function verifyChunkSequence(chunks, expectedStartIndex = 0) {
+    if (!Array.isArray(chunks) || chunks.length === 0) {
+        return false;
+    }
+    for (let i = 0; i < chunks.length; i++) {
+        const expectedIndex = expectedStartIndex + i;
+        if (chunks[i].Chunk_Index__c === undefined || chunks[i].Chunk_Index__c === null || Number(chunks[i].Chunk_Index__c) !== expectedIndex) {
+            return false;
+        }
+    }
+    return true;
 }

@@ -45,4 +45,22 @@ public with sharing class DAGraphChunkService {
 
         return true;
     }
+
+    /**
+     * @description Verifies that a retrieved list of chunks contains contiguous expected chunk indices starting from expectedStartIndex.
+     */
+    public static Boolean verifyBoundedChunkSequence(List<DA_Graph_Chunk__c> chunks, Integer expectedStartIndex) {
+        if (chunks == null || chunks.isEmpty() || expectedStartIndex == null || expectedStartIndex < 0) {
+            return false;
+        }
+
+        for (Integer i = 0; i < chunks.size(); i++) {
+            Integer expectedIndex = expectedStartIndex + i;
+            if (chunks[i].Chunk_Index__c == null || chunks[i].Chunk_Index__c != expectedIndex) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

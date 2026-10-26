@@ -14,14 +14,17 @@ public with sharing class DAGraphController {
         ];
     }
 
+    /**
+     * @description Fetches metadata only for the latest graph run for a project (no full chunk aggregation).
+     */
     @AuraEnabled(cacheable=true)
-    public static DAGraphDTO getLatestGraphForProject(String projectId) {
+    public static DAGraphDTO getLatestGraphMetadataForProject(String projectId) {
         if (String.isBlank(projectId)) {
             throw new AuraHandledException('Project ID is required.');
         }
 
         List<DA_Analysis_Run__c> runs = [
-            SELECT Id, Name, DA_Project__c, DA_Project__r.Name, DA_Project__r.Project_Key__c
+            SELECT Id, Name, DA_Project__c, DA_Project__r.Name, DA_Project__r.Project_Key__c, CreatedDate
             FROM DA_Analysis_Run__c
             WHERE DA_Project__c = :projectId OR DA_Project__r.Project_Key__c = :projectId
             WITH USER_MODE
@@ -42,25 +45,94 @@ public with sharing class DAGraphController {
         dto.projectKey = run.DA_Project__r.Project_Key__c;
         dto.runId = run.Id;
 
-        List<DA_Graph_Chunk__c> chunks = [
-            SELECT Chunk_Index__c, Payload_Data__c
+        AggregateResult[] agg = [
+            SELECT COUNT(Id) totalCount
             FROM DA_Graph_Chunk__c
             WHERE DA_Analysis_Run__c = :run.Id
             WITH USER_MODE
-            ORDER BY Chunk_Index__c ASC
         ];
 
-        if (!chunks.isEmpty()) {
-            if (!DAGraphChunkService.verifyChunkSequence(chunks)) {
-                throw new AuraHandledException('Corrupted or missing payload chunks detected.');
-            }
-            dto.isChunked = true;
-            dto.totalChunks = chunks.size();
-            for (DA_Graph_Chunk__c chunk : chunks) {
-                dto.chunks.add(chunk.Payload_Data__c);
-            }
+        Integer totalCount = 0;
+        if (!agg.isEmpty() && agg[0].get('totalCount') != null) {
+            totalCount = (Integer) agg[0].get('totalCount');
         }
 
+        dto.isChunked = totalCount > 0;
+        dto.totalChunks = totalCount;
+
+        return dto;
+    }
+
+    /**
+     * @description Fetches a bounded range of chunks for a given run ID with scope & permission validation.
+     * @param runId The ID of the DA_Analysis_Run__c
+     * @param startIndex Zero-based starting chunk index (inclusive)
+     * @param maxChunks Maximum number of chunks to return (capped at 10 per call)
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<DA_Graph_Chunk__c> getGraphChunks(String runId, Integer startIndex, Integer maxChunks) {
+        if (String.isBlank(runId)) {
+            throw new AuraHandledException('Run ID is required.');
+        }
+        if (startIndex == null || startIndex < 0) {
+            startIndex = 0;
+        }
+        if (maxChunks == null || maxChunks <= 0) {
+            maxChunks = 5;
+        } else if (maxChunks > 10) {
+            maxChunks = 10;
+        }
+
+        // Validate run existence and ownership access via USER_MODE
+        List<DA_Analysis_Run__c> runs = [
+            SELECT Id
+            FROM DA_Analysis_Run__c
+            WHERE Id = :runId
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (runs.isEmpty()) {
+            throw new AuraHandledException('Invalid or unauthorized Run ID.');
+        }
+
+        Integer maxIndex = startIndex + maxChunks - 1;
+
+        return [
+            SELECT Chunk_Index__c, Payload_Data__c
+            FROM DA_Graph_Chunk__c
+            WHERE DA_Analysis_Run__c = :runId
+              AND Chunk_Index__c >= :startIndex
+              AND Chunk_Index__c <= :maxIndex
+            WITH USER_MODE
+            ORDER BY Chunk_Index__c ASC
+        ];
+    }
+
+    /**
+     * @deprecated Preserved for backward compatibility. Use getLatestGraphMetadataForProject and getGraphChunks.
+     */
+    @AuraEnabled(cacheable=true)
+    public static DAGraphDTO getLatestGraphForProject(String projectId) {
+        DAGraphDTO dto = getLatestGraphMetadataForProject(projectId);
+        if (dto.runId != null && dto.totalChunks > 0) {
+            List<DA_Graph_Chunk__c> chunks = [
+                SELECT Chunk_Index__c, Payload_Data__c
+                FROM DA_Graph_Chunk__c
+                WHERE DA_Analysis_Run__c = :dto.runId
+                WITH USER_MODE
+                ORDER BY Chunk_Index__c ASC
+            ];
+
+            if (!chunks.isEmpty()) {
+                if (!DAGraphChunkService.verifyChunkSequence(chunks)) {
+                    throw new AuraHandledException('Corrupted or missing payload chunks detected.');
+                }
+                for (DA_Graph_Chunk__c chunk : chunks) {
+                    dto.chunks.add(chunk.Payload_Data__c);
+                }
+            }
+        }
         return dto;
     }
 }
