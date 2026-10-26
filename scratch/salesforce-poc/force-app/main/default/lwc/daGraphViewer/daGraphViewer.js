@@ -12,6 +12,7 @@ export default class DaGraphViewer extends LightningElement {
     cyInitialized = false;
     cyInstance = null;
     pageSize = 5;
+    currentRequestId = 0;
 
     renderedCallback() {
         if (this.cyInitialized) {
@@ -36,8 +37,16 @@ export default class DaGraphViewer extends LightningElement {
             return;
         }
 
+        const requestId = ++this.currentRequestId;
+        this.isLoading = true;
+        this.error = null;
+
         try {
             const dto = await getLatestGraphMetadataForProject({ projectId: this.recordId });
+
+            if (requestId !== this.currentRequestId) {
+                return; // Stale request, active project changed
+            }
 
             if (!dto || !dto.runId) {
                 this.error = 'No graph payload metadata found for this project.';
@@ -57,6 +66,10 @@ export default class DaGraphViewer extends LightningElement {
                         startIndex: nextIndex,
                         maxChunks: this.pageSize
                     });
+
+                    if (requestId !== this.currentRequestId) {
+                        return; // Stale request interrupted during batch retrieval
+                    }
 
                     if (!chunkBatch || chunkBatch.length === 0) {
                         throw new Error(`Failed to retrieve chunk batch starting at index ${nextIndex}`);
@@ -90,16 +103,26 @@ export default class DaGraphViewer extends LightningElement {
                 return;
             }
 
+            if (requestId !== this.currentRequestId) {
+                return; // Final stale check before rendering
+            }
+
             const graphData = JSON.parse(jsonString);
             this.renderGraph(graphData);
         } catch (err) {
-            this.error = 'Error fetching graph data: ' + (err.body ? err.body.message : err.message || err);
-            this.isLoading = false;
+            if (requestId === this.currentRequestId) {
+                this.error = 'Error fetching graph data: ' + (err.body ? err.body.message : err.message || err);
+                this.isLoading = false;
+            }
         }
     }
 
     renderGraph(graphData) {
         try {
+            if (this.cyInstance) {
+                this.cyInstance.destroy();
+                this.cyInstance = null;
+            }
             const container = this.template.querySelector('.cy-container');
             /* global cytoscape */
             this.cyInstance = cytoscape({

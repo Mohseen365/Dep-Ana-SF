@@ -24,8 +24,12 @@ export function verifyChunkSequence(chunks, expectedStartIndex = 0) {
     if (!Array.isArray(chunks) || chunks.length === 0) {
         return false;
     }
+    const startIdx = Number(expectedStartIndex);
+    if (isNaN(startIdx) || startIdx < 0) {
+        return false;
+    }
     for (let i = 0; i < chunks.length; i++) {
-        const expectedIndex = expectedStartIndex + i;
+        const expectedIndex = startIdx + i;
         if (chunks[i].Chunk_Index__c === undefined || chunks[i].Chunk_Index__c === null || Number(chunks[i].Chunk_Index__c) !== expectedIndex) {
             return false;
         }
