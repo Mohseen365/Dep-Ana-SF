@@ -60,7 +60,7 @@ This document defines the authoritative, phased migration roadmap for transition
   - `FEAT-ADV-03` (Detached Feature Overlay & Slide-out Drawers)
   - `FEAT-DATA-03` (User Preferences Storage)
 - **Status:** `PLANNED`
-- **Workstream Owners:** Workstream A, Workstream E
+- **Workstream Owners:** Workstream A, Workstream E, Workstream C
 
 ### Wave 4: Advanced Visualizations & Specialized Layouts
 - **Objective:** Port remaining specialized React visualization views to LWC.
@@ -99,7 +99,7 @@ To prevent concurrent agent collisions during implementation, files are assigned
 |---|---|---|
 | **Workstream A** | `scratch/salesforce-poc/.../lwc/daAppShell/`<br>`scratch/salesforce-poc/.../lwc/daProjectSelector/` | Owns top-level app wrapper and tab routing. Must not edit Cytoscape canvas core. |
 | **Workstream B** | `analyze/`, `scripts/`, `explorer-contract.ts` | Owns external Node.js AST parsing and CLI tools. Immutable external boundary. |
-| **Workstream C** | `scratch/salesforce-poc/.../classes/`<br>`scratch/salesforce-poc/.../objects/` | Owns Apex controllers (`DAGraphController`, `DAGraphChunkService`, `DAGraphIngestionService`) and Custom Objects. |
+| **Workstream C** | `scratch/salesforce-poc/.../classes/`<br>`scratch/salesforce-poc/.../objects/` | Owns Apex controllers (`DAUserPreferenceController`, `DAAnnotationController`) and Custom Objects. |
 | **Workstream D** | `scratch/salesforce-poc/.../lwc/daGraphViewer/`<br>`scratch/salesforce-poc/.../lwc/daLayoutEngine/` | Owns Cytoscape canvas and `daLayoutEngine.js`. Enforces SELECTION ≠ NAVIGATION invariant. |
 | **Workstream E** | `scratch/salesforce-poc/.../lwc/daFeatureMatrixPanel/`<br>`scratch/salesforce-poc/.../lwc/daHotspotPanel/` etc. | Owns individual LWC panel components. Independent module boundaries. |
 | **Workstream F** | `scratch/salesforce-poc/.../lwc/daSnapshotCompare/` | Owns graph diff algorithms and file export utilities. |

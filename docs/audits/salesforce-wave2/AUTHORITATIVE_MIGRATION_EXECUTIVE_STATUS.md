@@ -2,10 +2,10 @@
 
 ## 1. Repository Provenance & Baseline Environment
 
-- **Current Branch Name:** `jules-1088166752097762498-9c238bc7`
-- **Current HEAD Commit SHA:** `f5985ac74aa54b20ad9da86897f86e71ec2828d1`
+- **Current Branch Name:** `jules-9228185154357185032-192dcf9b`
+- **Current HEAD Commit SHA:** `a8642050965e69efd2be5ddb8a9261a8f9a2ceeb`
 - **Working Tree Status:** Clean
-- **Merge History / Previous Snapshot:** Merged PR #24 from `jules-11339711741377216113-184e2b07` (HEAD `cc1469d23f28193686488f7c2d21cd8eb464b421`).
+- **Merge History:** Merged PR #25 from `jules-1088166752097762498-9c238bc7` (HEAD `f5985ac74aa54b20ad9da86897f86e71ec2828d1`).
 - **Environment:** Node.js `v22.22.1`, npm `11.11.0`, Linux Sandbox environment.
 - **Audit Date:** October 2026
 
@@ -13,27 +13,27 @@
 
 ## 2. Reconciled Feature Inventory Status Summary
 
-**Authoritative Feature Count:** **32 Canonical Capabilities** across 8 core domain groups (reconciled from historical textual claims of 42).
+**Authoritative Feature Count:** **32 Canonical Capabilities** across 8 core domain groups.
 
 ### A. Implementation Status Breakdown (32 Total)
 ```
-[10] IMPLEMENTED               (31.3%) ▓▓▓▓▓▓▓▓
-[03] APPROVED_EXTERNAL_SERVICE (09.4%) ▓▓
-[05] PARTIALLY_IMPLEMENTED     (15.6%) ▓▓▓▓
-[05] SCAFFOLD_ONLY             (15.6%) ▓▓▓▓
-[09] NOT_STARTED               (28.1%) ▓▓▓▓▓▓▓
+[10] IMPLEMENTED               (31.25%) ▓▓▓▓▓▓▓▓
+[03] APPROVED_EXTERNAL_SERVICE (09.38%) ▓▓
+[05] PARTIALLY_IMPLEMENTED     (15.63%) ▓▓▓▓
+[04] SCAFFOLD_ONLY             (12.50%) ▓▓▓
+[10] NOT_STARTED               (31.25%) ▓▓▓▓▓▓▓▓
 ```
 
-- **`IMPLEMENTED` (10 capabilities):** Core graph viewer LWC, layout algorithms in `daLayoutEngine.js`, Apex authorization, payload chunking, ingestion service, selection invariant, focus state.
-- **`APPROVED_EXTERNAL_SERVICE` (3 capabilities):** Node.js AST parsing (`analyze/`), canonical graph export (`explorer-contract.ts`), client export handler (`export-graph.ts`).
-- **`PARTIALLY_IMPLEMENTED` (5 capabilities):** Workspace navigation tabs, header banner, project selector LWC wrapper, error boundary, detached drawers.
-- **`SCAFFOLD_ONLY` (5 capabilities):** Findings panel datatable, user annotations service, user preferences service, finding object schema, analysis run metadata object.
-- **`NOT_STARTED` (9 capabilities):** Command palette, feature matrix, DNA barcode, treemap, river panel, subway map, coupling/hotspot panel, radar panel, refactoring simulator, snapshot compare.
+- **`IMPLEMENTED` (10 capabilities):** `FEAT-STATE-01` (Selection Invariant), `FEAT-STATE-03` (Highlighting), `FEAT-APEX-01` (Authorization), `FEAT-APEX-02` (Chunking), `FEAT-APEX-03` (Ingestion), `FEAT-GRAPH-01` (Cytoscape Canvas), `FEAT-GRAPH-02` (Global Architecture Layout), `FEAT-GRAPH-03` (Orbit Layout), `FEAT-GRAPH-04` (Constellation Layout), `FEAT-GRAPH-05` (Sankey Flow Layout).
+- **`APPROVED_EXTERNAL_SERVICE` (3 capabilities):** `FEAT-ANALYSIS-01` (Node.js AST Parsing), `FEAT-ANALYSIS-02` (Canonical Graph Adapter), `FEAT-DATA-01` (Data Export PNG/CSV/JSON).
+- **`PARTIALLY_IMPLEMENTED` (5 capabilities):** `FEAT-SHELL-01` (Tab Navigation), `FEAT-SHELL-02` (Header Banner), `FEAT-SHELL-03` (Project Selector), `FEAT-SHELL-05` (Error Boundary), `FEAT-ADV-03` (Investigation Drawers).
+- **`SCAFFOLD_ONLY` (4 capabilities):** `FEAT-STATE-02` (ViewState/Position Persistence), `FEAT-PANEL-08` (Findings Panel), `FEAT-DATA-02` (Annotations Service), `FEAT-DATA-03` (User Preferences Storage).
+- **`NOT_STARTED` (10 capabilities):** `FEAT-SHELL-04` (Command Palette), `FEAT-PANEL-01` (Feature Matrix), `FEAT-PANEL-02` (DNA Barcode), `FEAT-PANEL-03` (Treemap), `FEAT-PANEL-04` (Dependency River), `FEAT-PANEL-05` (Subway Map), `FEAT-PANEL-06` (Coupling Hotspots), `FEAT-PANEL-07` (Radar Panel), `FEAT-ADV-01` (Refactoring Simulator), `FEAT-ADV-02` (Snapshot Compare).
 
 ### B. Verification Status Breakdown (32 Total)
-- **`OFFLINE_TESTED` (22 capabilities):** Verified via `run-poc-tests.cjs` (30/30 passed), `test:cli` (16/16 passed, 360 assertions), `test-export-explorer.cjs` (12/12 passed + A-F passed), and Vitest library tests.
+- **`OFFLINE_TESTED` (21 capabilities):** Verified via `run-poc-tests.cjs` (30/30 passed), `test:cli` (16/16 passed, 360 assertions), `test-export-explorer.cjs` (12/12 passed + A-F passed), and Vitest library tests.
 - **`STATICALLY_INSPECTED` (1 capability):** Detached drawers (`FEAT-ADV-03`) verified via static component code inspection.
-- **`NOT_TESTED` (9 capabilities):** Unimplemented features awaiting Wave 3+ dispatch.
+- **`NOT_TESTED` (10 capabilities):** Unimplemented features awaiting Wave 3+ dispatch.
 - **`ORG_VERIFIED` (0 capabilities):** Live Salesforce org access remains explicitly deferred.
 
 ---
@@ -44,40 +44,38 @@ All test commands were directly executed in this session and produced verified 1
 
 1. **Root CLI Suite (`npm run test:cli`):**
    - **`16/16 PASSED`** (360 total passed assertions, 0 failed).
-   - Reconciled discrepancy: "34" referred to script files in directory; "16" is the registered test runner suite count.
 2. **Salesforce POC Offline Suite (`node scratch/salesforce-poc/tests/run-poc-tests.cjs`):**
    - **`30/30 PASSED`** across 6 categories (0 failed).
-   - Verifies LWC chunk reassembly, UTF-16 surrogate safety, 10MB payload cap, Apex DTO contracts, and `daLayoutEngine.js` layout determinism.
 3. **Explorer Exporter Suite (`node scripts/test-export-explorer.cjs`):**
    - **`12/12 Invariants PASSED`** + Regression Tests A through F Passed.
-4. **Explorer Vitest Core Library (`cd explorer && npx vitest run <file>`):**
-   - Local dependencies installed via `npm ci --prefix explorer`.
-   - Targeted unit tests pass 100% (e.g. `annotations.test.ts` 7/7 passed).
+4. **Explorer Vitest Core Library (`cd explorer && npx vitest run src/lib/annotations.test.ts`):**
+   - Targeted unit tests pass 100% (7/7 passed).
 
 ---
 
 ## 4. Wave 2 Readiness Decision: READY FOR USER AUTHORIZATION
 
 The proposed Wave 2 tranche is declared **`READY FOR USER AUTHORIZATION`**:
-- **Tranche Scope:** `FEAT-SHELL-01` (App Shell Tabs), `FEAT-SHELL-03` (Project Selector LWC), `FEAT-STATE-02` (ViewState Persistence - `DA_User_Preference__c`), `FEAT-DATA-02` (Annotations Service - `DA_Annotation__c`).
-- **Verified Prerequisites:** All required Custom Objects, Apex Controllers, LWC Payload Loaders, and test harnesses exist in the repository and pass offline validation.
+- **Tranche Scope (5 capabilities):** `FEAT-SHELL-01` (App Shell Tabs), `FEAT-SHELL-02` (Header & Status Banner), `FEAT-SHELL-03` (Project Selector), `FEAT-STATE-02` (ViewState Persistence), `FEAT-DATA-02` (Annotations Service).
+- **Verified Prerequisites:** Custom Object Schemas, Apex Controllers, LWC Payload Loaders, and test harnesses exist in the repository and pass offline validation.
 - **Wave 1 Code Freeze:** Strictly preserved. Zero Wave 2 implementation code has been written during this task.
 
 ---
 
 ## 5. Index of Deliverables Generated in This Task
 
-All seven authoritative deliverables have been generated and cross-verified:
+All authoritative deliverables have been updated and cross-verified:
 
-1. `docs/audits/salesforce-wave2/MIGRATION_PLAN_RECONCILIATION_REPORT.md` — Full technical reconciliation report.
-2. `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_PARITY_MATRIX.csv` — Exhaustive 32-row CSV mapping.
-3. `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_WAVE_PLAN.md` — Multi-wave roadmap (Wave 0 through Wave 6).
-4. `docs/audits/salesforce-wave2/WAVE_2_READINESS_DECISION.md` — Formal readiness decision & behavioral criteria.
-5. `docs/audits/salesforce-wave2/MIGRATION_TEST_BASELINE.md` — Verified test command and assertion baselines.
-6. `docs/audits/salesforce-wave2/MIGRATION_PLAN_CHANGELOG.md` — Detailed changelog of reconciliation corrections.
-7. `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_EXECUTIVE_STATUS.md` — Executive status summary (this document).
-
-*(Root mirrors of key summary files are also updated).*
+1. `docs/audits/salesforce-wave2/WAVE_2_FINAL_SCOPE_RECONCILIATION_REPORT.md` — Technical reconciliation report.
+2. `docs/audits/salesforce-wave2/WAVE_2_AUTHORITATIVE_FEATURE_MANIFEST.csv` — Wave 2 manifest.
+3. `docs/audits/salesforce-wave2/WAVE_2_FILE_OWNERSHIP_AND_DISPATCH_MATRIX.md` — Conflict-free file ownership.
+4. `docs/audits/salesforce-wave2/WAVE_2_ACCEPTANCE_AND_TEST_GATE.md` — Acceptance & test gate.
+5. `docs/audits/salesforce-wave2/WAVE_2_FINAL_READINESS_DECISION.md` — Formal decision & authorization boundary.
+6. `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_PARITY_MATRIX.csv` — Exhaustive 32-row CSV mapping with fixed quoting.
+7. `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_WAVE_PLAN.md` — Roadmap (Wave 0 through Wave 6).
+8. `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_EXECUTIVE_STATUS.md` — Executive status summary (this document).
+9. `docs/audits/salesforce-wave2/WAVE_2_SCOPE_CHANGELOG.md` — Reconciliation changelog.
+10. `docs/audits/salesforce-wave2/WAVE_2_FINAL_TEST_EVIDENCE.md` — Test evidence log.
 
 ---
 
