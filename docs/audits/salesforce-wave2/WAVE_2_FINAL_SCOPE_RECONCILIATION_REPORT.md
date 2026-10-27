@@ -41,17 +41,17 @@ Exhaustive programmatic parsing of the canonical parity matrix resolved historic
 - **Implementation Status:**
   - `IMPLEMENTED` [10 capabilities / 31.25%]
   - `APPROVED_EXTERNAL_SERVICE` [3 capabilities / 9.375%]
-  - `PARTIALLY_IMPLEMENTED` [5 capabilities / 15.625%]
-  - `SCAFFOLD_ONLY` [4 capabilities / 12.50%]
-  - `NOT_STARTED` [10 capabilities / 31.25%]
-  - **Sum:** 10 + 3 + 5 + 4 + 10 = **32 capabilities**
+  - `PARTIALLY_IMPLEMENTED` [4 capabilities / 12.50%] (FEAT-SHELL-01, FEAT-SHELL-03, FEAT-SHELL-05, FEAT-ADV-03)
+  - `SCAFFOLD_ONLY` [4 capabilities / 12.50%] (FEAT-STATE-02, FEAT-PANEL-08, FEAT-DATA-02, FEAT-DATA-03)
+  - `NOT_STARTED` [11 capabilities / 34.375%] (FEAT-SHELL-02, FEAT-SHELL-04, FEAT-PANEL-01 through 07, FEAT-ADV-01, FEAT-ADV-02)
+  - **Sum:** 10 + 3 + 4 + 4 + 11 = **32 capabilities**
 
 - **Verification Status:**
-  - `OFFLINE_TESTED` [21 capabilities / 65.625%]
+  - `OFFLINE_TESTED` [18 capabilities / 56.25%]
   - `STATICALLY_INSPECTED` [1 capability / 3.125%]
-  - `NOT_TESTED` [10 capabilities / 31.25%]
+  - `NOT_TESTED` [13 capabilities / 40.625%]
   - `ORG_VERIFIED` [0 capabilities / 0.00%] (Live Salesforce org verification deferred)
-  - **Sum:** 21 + 1 + 10 = **32 capabilities**
+  - **Sum:** 18 + 1 + 13 = **32 capabilities**
 
 ### C. CSV Formatting Correction
 `FEAT-DATA-01` ("Data Export (JSON, PNG, CSV)") previously lacked double quotes around its comma-containing title, causing naive CSV parsers to shift columns and misread status counts. Double quoting has been applied across all CSV deliverables.
@@ -68,7 +68,7 @@ The proposed Wave 2 implementation tranche consists of **5 core capabilities**:
    - *Owner:* Workstream A
 
 2. **`FEAT-SHELL-02` — Header & Status Banner**
-   - *In-Scope:* Displays project key, analysis run date, ingestion status badge, and action triggers. Reconciled into Wave 2 to complete top-level LWC application shell.
+   - *In-Scope:* Displays project key, analysis run date, ingestion status badge, and action triggers. Reconciled into Wave 2 to complete top-level LWC application shell in `daAppShell`.
    - *Owner:* Workstream A
 
 3. **`FEAT-SHELL-03` — Project Selector & Multi-Project Isolation (`daProjectSelector`)**

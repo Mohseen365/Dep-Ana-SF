@@ -26,6 +26,21 @@ To prevent file collision and agent overlap during parallel Wave 2 execution:
 
 ---
 
+## 2.1 Apex Test Handoff Sequence (Workstream C -> Workstream G)
+
+To ensure Apex controllers are fully tested without reporting tests for nonexistent classes:
+1. **Workstream C Task:** Implement custom fields on `DA_User_Preference__c` and `DA_Annotation__c`, followed by `DAUserPreferenceController.cls` and `DAAnnotationController.cls`.
+2. **Workstream C Handoff Artifacts:**
+   - `DAUserPreferenceController.cls`
+   - `DAAnnotationController.cls`
+   - Custom field XML files under `fields/`
+3. **Workstream G Task:** Upon receiving Workstream C's handoff, Workstream G authors and executes unit tests:
+   - `DAUserPreferenceControllerTest.cls`
+   - `DAAnnotationControllerTest.cls`
+4. **Acceptance Gate Rule:** Wave 2 cannot close while required Apex unit tests are absent, unexecuted, or failing.
+
+---
+
 ## 3. Prohibited Edits Across Workstreams
 
 - **Workstream A is PROHIBITED from editing:**
