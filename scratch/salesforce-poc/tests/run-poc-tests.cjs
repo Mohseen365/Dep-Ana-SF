@@ -13,6 +13,9 @@ let layoutModule;
 
 // Apex DAGraphChunkService & DAGraphController offline simulation helpers
 function chunkPayload(rawJson, maxChunkSize = 100000) {
+    if (loaderModule && typeof loaderModule.chunkPayload === 'function') {
+        return loaderModule.chunkPayload(rawJson, maxChunkSize);
+    }
     const chunks = [];
     if (!rawJson || typeof rawJson !== 'string') {
         return chunks;
@@ -24,7 +27,13 @@ function chunkPayload(rawJson, maxChunkSize = 100000) {
     }
     let offset = 0;
     while (offset < rawJson.length) {
-        const end = Math.min(offset + maxChunkSize, rawJson.length);
+        let end = Math.min(offset + maxChunkSize, rawJson.length);
+        if (end < rawJson.length && end > offset + 1) {
+            const lastCode = rawJson.charCodeAt(end - 1);
+            if (lastCode >= 0xD800 && lastCode <= 0xDBFF) {
+                end--; // Surrogate pair boundary protection
+            }
+        }
         chunks.push(rawJson.substring(offset, end));
         offset = end;
     }
@@ -222,12 +231,17 @@ async function main() {
         assert.strictEqual(loaderModule.reassembleChunks(chunks), '{"nodes":[{"id":"1"}],"edges":[]}');
     });
 
-    runTest('validatePayloadIntegrity: returns true for valid JSON objects and arrays', () => {
-        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"a": 1}'), true);
-        assert.strictEqual(loaderModule.validatePayloadIntegrity('[1, 2, 3]'), true);
+    runTest('validatePayloadIntegrity: accepts valid graph structures (nodes/edges, stages/flows, focal/rings)', () => {
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"nodes":[{"id":"1"}],"edges":[]}'), true);
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"nodes":[{"id":"1"},{"id":"2"}],"edges":[{"source":"1","target":"2"}]}'), true);
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"stages":[],"flows":[]}'), true);
     });
 
-    runTest('validatePayloadIntegrity: returns false for invalid JSON, non-strings, primitives, and truncated JSON', () => {
+    runTest('validatePayloadIntegrity: rejects parseable JSON without expected schema, invalid root types, and dangling edges', () => {
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"invalid": true}'), false, 'Rejects generic objects missing graph schema');
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('[1, 2, 3]'), false, 'Rejects arrays as root structure');
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"nodes": "invalid", "edges": []}'), false, 'Rejects non-array nodes');
+        assert.strictEqual(loaderModule.validatePayloadIntegrity('{"nodes":[{"id":"1"}],"edges":[{"source":"1","target":"2"}]}'), false, 'Rejects dangling edge to missing node');
         assert.strictEqual(loaderModule.validatePayloadIntegrity('{"a": 1'), false);
         assert.strictEqual(loaderModule.validatePayloadIntegrity(null), false);
         assert.strictEqual(loaderModule.validatePayloadIntegrity(''), false);
@@ -354,6 +368,33 @@ async function main() {
 
         const parsed = JSON.parse(reassembled);
         assert.strictEqual(parsed.nodes[0].label, 'Salesforce 日本語 ノード 🚀');
+    });
+
+    runTest('Surrogate Pair Boundary Safety: prevents splitting UTF-16 surrogate pairs at, before, and after chunk boundaries', () => {
+        // Construct valid JSON payload where emoji 🚀 (\uD83D\uDE80) straddles chunk boundary at index 26 (chunk size 27)
+        const prefix = '{"nodes":[{"id":"N1","x":"'; // 26 chars
+        const payloadStraddle = prefix + '🚀' + '"}],"edges":[]}';
+
+        const chunksStraddle = loaderModule.chunkPayload(payloadStraddle, 27);
+        assert.strictEqual(chunksStraddle[0].length, 26, 'Chunk 0 boundary must move back by 1 to avoid splitting surrogate pair');
+        assert.strictEqual(chunksStraddle[0].endsWith('\uD83D'), false, 'Chunk 0 must not end with unpaired high surrogate');
+        assert.strictEqual(chunksStraddle[1].startsWith('🚀'), true, 'Chunk 1 must start with intact emoji');
+
+        const reassembledStraddle = loaderModule.reassembleChunks(chunksStraddle);
+        assert.strictEqual(reassembledStraddle, payloadStraddle);
+        assert.strictEqual(loaderModule.validatePayloadIntegrity(reassembledStraddle), true);
+
+        // Test supplementary character before boundary
+        const payloadBefore = '{"nodes":[{"id":"N1","x":"🔥"}],"edges":[]}';
+        const chunksBefore = loaderModule.chunkPayload(payloadBefore, 25);
+        assert.strictEqual(loaderModule.reassembleChunks(chunksBefore), payloadBefore);
+        assert.strictEqual(loaderModule.validatePayloadIntegrity(payloadBefore), true);
+
+        // Test supplementary character after boundary
+        const payloadAfter = '{"nodes":[{"id":"N1","x":"a⚡"}],"edges":[]}';
+        const chunksAfter = loaderModule.chunkPayload(payloadAfter, 27);
+        assert.strictEqual(loaderModule.reassembleChunks(chunksAfter), payloadAfter);
+        assert.strictEqual(loaderModule.validatePayloadIntegrity(payloadAfter), true);
     });
 
     runTest('Oversized Synthetic Payload (10 MB / 100 Chunks)', () => {

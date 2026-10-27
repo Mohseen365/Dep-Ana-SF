@@ -66,7 +66,8 @@ export default class DaGraphViewer extends LightningElement {
                     const chunkBatch = await getGraphChunks({
                         runId: dto.runId,
                         startIndex: nextIndex,
-                        maxChunks: this.pageSize
+                        maxChunks: this.pageSize,
+                        projectId: this.recordId
                     });
 
                     if (requestId !== this.currentRequestId) {
