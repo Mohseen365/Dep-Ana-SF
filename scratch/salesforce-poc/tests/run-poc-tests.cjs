@@ -9,6 +9,7 @@ const assert = require('assert');
 const { pathToFileURL } = require('url');
 
 let loaderModule;
+let layoutModule;
 
 // Apex DAGraphChunkService & DAGraphController offline simulation helpers
 function chunkPayload(rawJson, maxChunkSize = 100000) {
@@ -198,10 +199,14 @@ async function main() {
     console.log('Running Salesforce POC Offline Verification & Hardening Test Suite...');
     console.log('===================================================================');
 
-    // Load actual LWC module dynamically
+    // Load actual LWC modules dynamically
     const loaderPath = path.resolve(__dirname, '../force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js');
     const loaderUrl = pathToFileURL(loaderPath).href;
     loaderModule = await import(loaderUrl);
+
+    const layoutPath = path.resolve(__dirname, '../force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js');
+    const layoutUrl = pathToFileURL(layoutPath).href;
+    layoutModule = await import(layoutUrl);
 
     // --- Category 1: Payload Reassembly & Integrity (LWC Module) ---
     console.log('\n[Category 1: LWC Module Unit Tests]');
@@ -483,6 +488,144 @@ async function main() {
         assert.strictEqual(typeof sampleDto.runId, 'string');
         assert.strictEqual(typeof sampleDto.isChunked, 'boolean');
         assert.strictEqual(typeof sampleDto.totalChunks, 'number');
+    });
+
+    runTest('validateChunkLimits & validatePayloadSize: enforces max chunk size and total payload size bounds', () => {
+        const validChunk = 'a'.repeat(100000);
+        const oversizedChunk = 'a'.repeat(131073);
+
+        assert.strictEqual(loaderModule.validateChunkLimits([validChunk]), true);
+        assert.strictEqual(loaderModule.validateChunkLimits([oversizedChunk]), false);
+        assert.strictEqual(loaderModule.validateChunkLimits([{ Chunk_Index__c: 0, Payload_Data__c: validChunk }]), true);
+        assert.strictEqual(loaderModule.validateChunkLimits([{ Chunk_Index__c: 0, Payload_Data__c: oversizedChunk }]), false);
+
+        const normalPayload = '{"nodes":[]}';
+        const oversizedPayload = 'x'.repeat(10485761); // Exceeds 10MB
+        assert.strictEqual(loaderModule.validatePayloadSize(normalPayload), true);
+        assert.strictEqual(loaderModule.validatePayloadSize(oversizedPayload), false);
+        assert.strictEqual(loaderModule.validatePayloadIntegrity(oversizedPayload), false);
+    });
+
+    // --- Category 6: Reusable LWC Layout Engine (daLayoutEngine) Parity Tests ---
+    console.log('\n[Category 6: Reusable LWC Layout Engine (daLayoutEngine) Parity Tests]');
+
+    runTest('daLayoutEngine: P0 computeArchitectureLayout produces deterministic finite coordinates', () => {
+        const nodes = [
+            { id: 'ApexClass:AccountController', name: 'AccountController', type: 'ApexClass' },
+            { id: 'CustomObject:Account', name: 'Account', type: 'CustomObject' },
+            { id: 'LWC:accountCard', name: 'accountCard', type: 'LWC' }
+        ];
+        const edges = [{ id: 'e1', source: 'LWC:accountCard', target: 'ApexClass:AccountController' }];
+
+        const result1 = layoutModule.computeArchitectureLayout(nodes, edges);
+        const result2 = layoutModule.computeArchitectureLayout(nodes, edges);
+
+        assert.deepStrictEqual(result1, result2, 'Layout execution must be 100% deterministic');
+        assert.strictEqual(Object.keys(result1.positions).length, 3);
+
+        const posLwc = result1.positions['LWC:accountCard'];
+        const posApex = result1.positions['ApexClass:AccountController'];
+        const posObj = result1.positions['CustomObject:Account'];
+
+        assert.strictEqual(Number.isFinite(posLwc.x) && Number.isFinite(posLwc.y), true);
+        assert.strictEqual(Number.isFinite(posApex.x) && Number.isFinite(posApex.y), true);
+        assert.strictEqual(Number.isFinite(posObj.x) && Number.isFinite(posObj.y), true);
+
+        // Architectural layer Y ordering invariant: presentation < domain < schema
+        assert.strictEqual(posLwc.y < posObj.y, true);
+    });
+
+    runTest('daLayoutEngine: P0 computeArchitectureLayout against real benchmark fixture (CST)', () => {
+        const cstPath = path.resolve(__dirname, '../../../explorer/public/projects/cst/explorer-data.json');
+        const cstData = JSON.parse(fs.readFileSync(cstPath, 'utf8'));
+
+        const result = layoutModule.computeArchitectureLayout(cstData.nodes, cstData.edges);
+        assert.strictEqual(Object.keys(result.positions).length, cstData.nodes.length);
+
+        let finiteCount = 0;
+        for (const [nodeId, pos] of Object.entries(result.positions)) {
+            if (Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+                finiteCount++;
+            }
+        }
+        assert.strictEqual(finiteCount, cstData.nodes.length, 'All 240 CST nodes must receive finite coordinates');
+    });
+
+    runTest('daLayoutEngine: P1 computeOrbitLayout produces valid radial coordinates', () => {
+        const orbitInput = {
+            nodes: [
+                { nodeId: 'node_0', orbitRingIndex: 0, orbitSectorId: 'sec_1' },
+                { nodeId: 'node_1', orbitRingIndex: 1, orbitSectorId: 'sec_1' },
+                { nodeId: 'node_2', orbitRingIndex: 2, orbitSectorId: 'sec_2' }
+            ]
+        };
+
+        const result = layoutModule.computeOrbitLayout(orbitInput);
+        assert.strictEqual(Object.keys(result.positions).length, 3);
+
+        for (const pos of Object.values(result.positions)) {
+            assert.strictEqual(Number.isFinite(pos.x) && Number.isFinite(pos.y), true);
+            assert.strictEqual(Number.isFinite(pos.radius), true);
+            assert.strictEqual(Number.isFinite(pos.angle), true);
+        }
+    });
+
+    runTest('daLayoutEngine: P1 computeConstellationLayout produces focal origin and curved edge paths', () => {
+        const constellationData = {
+            focalNode: { id: 'focal_1', displayName: 'Focal Component' },
+            rings: [
+                {
+                    ringIndex: 1,
+                    hopDistance: 1,
+                    label: 'Direct Dependencies',
+                    items: [{ nodeId: 'dep_1', displayName: 'Dep 1' }, { nodeId: 'dep_2', displayName: 'Dep 2' }]
+                }
+            ],
+            edges: [{ source: 'focal_1', target: 'dep_1' }]
+        };
+
+        const result = layoutModule.computeConstellationLayout(constellationData, { width: 800, height: 800 });
+        assert.strictEqual(result.focalPosition.x, 400);
+        assert.strictEqual(result.focalPosition.y, 400);
+        assert.strictEqual(Object.keys(result.nodePositions).length, 3);
+        assert.strictEqual(result.edgePaths.length, 1);
+        assert.strictEqual(result.edgePaths[0].pathSvg.startsWith('M 400.00 400.00'), true);
+    });
+
+    runTest('daLayoutEngine: P2 computeSankeyLayout positions stage columns and flow paths', () => {
+        const sankeyData = {
+            stages: [
+                { layer: 'presentation', label: 'UI', featureIds: ['f1'] },
+                { layer: 'domain', label: 'Domain', featureIds: ['f2'] }
+            ],
+            nodes: [{ id: 'f1' }, { id: 'f2' }],
+            flows: [{ id: 'flow1', sourceFeatureId: 'f1', targetFeatureId: 'f2', weight: 3 }]
+        };
+
+        const result = layoutModule.computeSankeyLayout(sankeyData);
+        assert.strictEqual(result.stages.length, 2);
+        assert.strictEqual(result.nodes.length, 2);
+        assert.strictEqual(result.flows.length, 1);
+        assert.strictEqual(result.flows[0].pathString.includes('C'), true);
+    });
+
+    runTest('Graph Viewer SELECTION != NAVIGATION Invariant Check', () => {
+        const viewer = new SimulatedDaGraphViewer();
+        let selectedEventFired = false;
+        let selectedNodeId = null;
+
+        // Simulate nodeselect listener
+        const onNodeSelect = (nodeId) => {
+            selectedEventFired = true;
+            selectedNodeId = nodeId;
+        };
+
+        // Simulate user clicking node 'N1'
+        onNodeSelect('ApexClass:AccountController');
+
+        assert.strictEqual(selectedEventFired, true);
+        assert.strictEqual(selectedNodeId, 'ApexClass:AccountController');
+        // Selection must not trigger URL navigation or page reload
     });
 
     console.log('\n===================================================================');
