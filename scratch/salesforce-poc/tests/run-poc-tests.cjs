@@ -547,6 +547,48 @@ async function main() {
         assert.strictEqual(loaderModule.validatePayloadIntegrity(oversizedPayload), false);
     });
 
+    runTest('Ingestion Bounded Batching & Idempotency Simulation Contract', () => {
+        const mockStore = new Map();
+
+        const simulateSaveGraphChunks = (runId, chunks, startIndex = 0, projectId = null, maxBatch = 10) => {
+            if (!runId || !chunks || chunks.length === 0) return 0;
+            if (chunks.length > maxBatch) {
+                throw new Error(`Batch chunk count (${chunks.length}) exceeds maximum permitted limit of ${maxBatch} chunks per call.`);
+            }
+            if (!mockStore.has(runId)) mockStore.set(runId, new Map());
+            const runStore = mockStore.get(runId);
+
+            let affected = 0;
+            for (let i = 0; i < chunks.length; i++) {
+                const targetIdx = startIndex + i;
+                const chunkStr = chunks[i];
+                if (chunkStr.length > 131072) {
+                    throw new Error(`Chunk at index ${targetIdx} exceeds maximum allowed size of 131072 characters.`);
+                }
+                runStore.set(targetIdx, chunkStr);
+                affected++;
+            }
+            return affected;
+        };
+
+        // Batch 1 (0..4)
+        const batch1 = ['c0', 'c1', 'c2', 'c3', 'c4'];
+        assert.strictEqual(simulateSaveGraphChunks('run_1', batch1, 0, 'PROJ_1'), 5);
+
+        // Duplicate Batch 1 submission (Idempotent update)
+        assert.strictEqual(simulateSaveGraphChunks('run_1', batch1, 0, 'PROJ_1'), 5);
+        assert.strictEqual(mockStore.get('run_1').size, 5);
+
+        // Batch 2 (5..6)
+        const batch2 = ['c5', 'c6'];
+        assert.strictEqual(simulateSaveGraphChunks('run_1', batch2, 5, 'PROJ_1'), 2);
+        assert.strictEqual(mockStore.get('run_1').size, 7);
+
+        // Reject oversized batch (>10 chunks)
+        const oversizedBatch = Array.from({ length: 11 }, (_, i) => `c${i}`);
+        assert.throws(() => simulateSaveGraphChunks('run_1', oversizedBatch, 0, 'PROJ_1'), /exceeds maximum permitted limit/);
+    });
+
     // --- Category 6: Reusable LWC Layout Engine (daLayoutEngine) Parity Tests ---
     console.log('\n[Category 6: Reusable LWC Layout Engine (daLayoutEngine) Parity Tests]');
 

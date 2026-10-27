@@ -97,12 +97,31 @@ private class DAGraphSecurityTest {
         List<DA_Graph_Chunk__c> validChunks = DAGraphController.getGraphChunks(runB.Id, 0, 5, projB.Id);
         Assert.areEqual(1, validChunks.size(), 'Matching project ID must successfully return chunks');
 
+        // Legacy/Derived retrieval without explicit projectId argument (server derives projB.Id)
+        List<DA_Graph_Chunk__c> derivedChunks = DAGraphController.getGraphChunks(runB.Id, 0, 5);
+        Assert.areEqual(1, derivedChunks.size(), '3-argument overload must derive authorized project context');
+
         // Mismatched cross-project retrieval attempt
         try {
             DAGraphController.getGraphChunks(runB.Id, 0, 5, projA.Id);
             Assert.fail('Should reject attempt to fetch Project B run chunks using Project A ID');
         } catch (AuraHandledException e) {
             Assert.isTrue(true, 'AuraHandledException expected for mismatched project context');
+        }
+
+        // Blank / Malformed / Nonexistent Run ID or Project ID tests
+        try {
+            DAGraphController.getGraphChunks(null, 0, 5, projB.Id);
+            Assert.fail('Should reject null run ID');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
+        }
+
+        try {
+            DAGraphController.getGraphChunks(runB.Id, 0, 5, 'INVALID_PROJ_KEY');
+            Assert.fail('Should reject nonexistent project key');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
         }
         Test.stopTest();
     }
