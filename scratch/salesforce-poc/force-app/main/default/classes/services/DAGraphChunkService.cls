@@ -20,6 +20,13 @@ public with sharing class DAGraphChunkService {
 
         while (offset < length) {
             Integer endIdx = Math.min(offset + maxChunkSize, length);
+            if (endIdx < length && endIdx > offset + 1) {
+                Integer lastCode = rawJson.charAt(endIdx - 1);
+                // Check if last character is a UTF-16 High Surrogate (0xD800 - 0xDBFF / 55296 - 56319)
+                if (lastCode >= 55296 && lastCode <= 56319) {
+                    endIdx--; // Adjust boundary backward so high surrogate stays with low surrogate in next chunk
+                }
+            }
             chunks.add(rawJson.substring(offset, endIdx));
             offset = endIdx;
         }

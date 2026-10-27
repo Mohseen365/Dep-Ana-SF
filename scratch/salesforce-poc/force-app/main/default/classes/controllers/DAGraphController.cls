@@ -71,6 +71,18 @@ public with sharing class DAGraphController {
      */
     @AuraEnabled(cacheable=true)
     public static List<DA_Graph_Chunk__c> getGraphChunks(String runId, Integer startIndex, Integer maxChunks) {
+        return getGraphChunks(runId, startIndex, maxChunks, null);
+    }
+
+    /**
+     * @description Fetches a bounded range of chunks for a given run ID with project ownership validation.
+     * @param runId The ID of the DA_Analysis_Run__c
+     * @param startIndex Zero-based starting chunk index (inclusive)
+     * @param maxChunks Maximum number of chunks to return (capped at 10 per call)
+     * @param projectId Optional project ID or key to enforce strict project-run ownership scoping
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<DA_Graph_Chunk__c> getGraphChunks(String runId, Integer startIndex, Integer maxChunks, String projectId) {
         if (String.isBlank(runId)) {
             throw new AuraHandledException('Run ID is required.');
         }
@@ -83,17 +95,30 @@ public with sharing class DAGraphController {
             maxChunks = 10;
         }
 
-        // Validate run existence and ownership access via USER_MODE
-        List<DA_Analysis_Run__c> runs = [
-            SELECT Id
-            FROM DA_Analysis_Run__c
-            WHERE Id = :runId
-            WITH USER_MODE
-            LIMIT 1
-        ];
+        // Validate run existence and strict project-run ownership access via USER_MODE
+        List<DA_Analysis_Run__c> runs;
+        if (String.isNotBlank(projectId)) {
+            runs = [
+                SELECT Id, DA_Project__c
+                FROM DA_Analysis_Run__c
+                WHERE Id = :runId
+                  AND (DA_Project__c = :projectId OR DA_Project__r.Project_Key__c = :projectId)
+                WITH USER_MODE
+                LIMIT 1
+            ];
+        } else {
+            runs = [
+                SELECT Id, DA_Project__c
+                FROM DA_Analysis_Run__c
+                WHERE Id = :runId
+                  AND DA_Project__c != null
+                WITH USER_MODE
+                LIMIT 1
+            ];
+        }
 
         if (runs.isEmpty()) {
-            throw new AuraHandledException('Invalid or unauthorized Run ID.');
+            throw new AuraHandledException('Invalid, unauthorized, or project-mismatched Run ID.');
         }
 
         // Guard against integer overflow on high startIndex values

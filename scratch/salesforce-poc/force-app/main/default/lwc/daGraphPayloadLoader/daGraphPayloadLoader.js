@@ -6,6 +6,38 @@ export const MAX_CHUNK_SIZE = 131072; // Salesforce LongTextArea field limit (12
 export const MAX_TOTAL_PAYLOAD_SIZE = 10485760; // 10 MB application-level payload limit
 
 /**
+ * Chunks a raw JSON string into surrogate-pair safe chunks.
+ * Ensures no UTF-16 surrogate pair is split across chunk boundaries.
+ */
+export function chunkPayload(rawJson, maxChunkSize = MAX_CHUNK_SIZE) {
+    const chunks = [];
+    if (!rawJson || typeof rawJson !== 'string' || rawJson.length === 0) {
+        return chunks;
+    }
+    let limit = Number(maxChunkSize);
+    if (isNaN(limit) || limit <= 0) {
+        limit = 100000;
+    } else if (limit > MAX_CHUNK_SIZE) {
+        limit = MAX_CHUNK_SIZE;
+    }
+
+    let offset = 0;
+    const len = rawJson.length;
+    while (offset < len) {
+        let end = Math.min(offset + limit, len);
+        if (end < len && end > offset + 1) {
+            const lastCode = rawJson.charCodeAt(end - 1);
+            if (lastCode >= 0xD800 && lastCode <= 0xDBFF) {
+                end--; // Prevent splitting UTF-16 surrogate pair across chunk boundaries
+            }
+        }
+        chunks.push(rawJson.substring(offset, end));
+        offset = end;
+    }
+    return chunks;
+}
+
+/**
  * Reassembles an array of string chunks into a single concatenated JSON string.
  * Guarded against null, non-array, and non-string elements.
  */
@@ -24,8 +56,9 @@ export function reassembleChunks(chunks) {
 }
 
 /**
- * Validates payload structure and JSON parseability.
- * Confirms that the JSON parses into an object or array and contains non-empty structure.
+ * Validates payload structure, JSON parseability, and graph schema invariants.
+ * Checks that rawJson parses into a valid graph envelope (object) containing required
+ * node and edge arrays, valid node/edge records, and valid edge endpoints.
  */
 export function validatePayloadIntegrity(rawJson) {
     if (!rawJson || typeof rawJson !== 'string' || rawJson.trim() === '') {
@@ -36,7 +69,58 @@ export function validatePayloadIntegrity(rawJson) {
     }
     try {
         const parsed = JSON.parse(rawJson);
-        return typeof parsed === 'object' && parsed !== null;
+        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+            return false;
+        }
+
+        // Validate canonical graph schema envelope (nodes & optional edges)
+        if (Array.isArray(parsed.nodes) && (parsed.edges === undefined || Array.isArray(parsed.edges))) {
+            const nodeIds = new Set();
+            for (let i = 0; i < parsed.nodes.length; i++) {
+                const node = parsed.nodes[i];
+                if (!node || typeof node !== 'object' || typeof node.id !== 'string' || node.id.trim() === '') {
+                    return false;
+                }
+                nodeIds.add(node.id);
+            }
+
+            const edgesList = Array.isArray(parsed.edges) ? parsed.edges : [];
+            for (let i = 0; i < edgesList.length; i++) {
+                const edge = edgesList[i];
+                if (!edge || typeof edge !== 'object') {
+                    return false;
+                }
+                const source = edge.source || edge.sourceFeatureId;
+                const target = edge.target || edge.targetFeatureId;
+                if (typeof source !== 'string' || typeof target !== 'string' || source.trim() === '' || target.trim() === '') {
+                    return false;
+                }
+                // Enforce edge endpoint validity when nodes are present
+                if (nodeIds.size > 0) {
+                    if (!nodeIds.has(source) || !nodeIds.has(target)) {
+                        return false; // Edge references non-existent node
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Validate Cytoscape elements structure
+        if (Array.isArray(parsed.elements)) {
+            return true;
+        }
+
+        // Validate Sankey structure (stages & flows)
+        if (Array.isArray(parsed.stages) && Array.isArray(parsed.flows)) {
+            return true;
+        }
+
+        // Validate Constellation structure (focalNode & rings)
+        if (parsed.focalNode && typeof parsed.focalNode === 'object' && Array.isArray(parsed.rings)) {
+            return true;
+        }
+
+        return false;
     } catch (e) {
         return false;
     }

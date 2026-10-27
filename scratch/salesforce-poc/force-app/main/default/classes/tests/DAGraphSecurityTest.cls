@@ -76,4 +76,34 @@ private class DAGraphSecurityTest {
         }
         Test.stopTest();
     }
+
+    @IsTest
+    static void testCrossProjectChunkRetrievalRejection() {
+        DA_Project__c projA = new DA_Project__c(Name = 'Project A', Project_Key__c = 'PROJ_A');
+        DA_Project__c projB = new DA_Project__c(Name = 'Project B', Project_Key__c = 'PROJ_B');
+        insert new List<DA_Project__c>{ projA, projB };
+
+        DA_Analysis_Run__c runB = new DA_Analysis_Run__c(DA_Project__c = projB.Id, Name = 'Run B');
+        insert runB;
+
+        insert new DA_Graph_Chunk__c(
+            DA_Analysis_Run__c = runB.Id,
+            Chunk_Index__c = 0,
+            Payload_Data__c = '{"nodes":[{"id":"B"}]}'
+        );
+
+        Test.startTest();
+        // Authorized retrieval with matching project and run
+        List<DA_Graph_Chunk__c> validChunks = DAGraphController.getGraphChunks(runB.Id, 0, 5, projB.Id);
+        Assert.areEqual(1, validChunks.size(), 'Matching project ID must successfully return chunks');
+
+        // Mismatched cross-project retrieval attempt
+        try {
+            DAGraphController.getGraphChunks(runB.Id, 0, 5, projA.Id);
+            Assert.fail('Should reject attempt to fetch Project B run chunks using Project A ID');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true, 'AuraHandledException expected for mismatched project context');
+        }
+        Test.stopTest();
+    }
 }
