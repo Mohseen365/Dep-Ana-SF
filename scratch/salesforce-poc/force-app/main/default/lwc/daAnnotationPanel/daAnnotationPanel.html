@@ -1,0 +1,81 @@
+<template>
+    <div class="slds-card slds-p-around_medium">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-note" title="Annotations">
+                        <lightning-icon icon-name="standard:note" size="small"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span class="slds-text-heading_small">Node Annotations & Notes</span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+            <template if:true={selectedNodeId}>
+                <div class="slds-m-bottom_small">
+                    <span class="slds-badge slds-theme_info">Node: {selectedNodeId}</span>
+                </div>
+
+                <template if:true={isLoading}>
+                    <lightning-spinner alternative-text="Loading annotations" size="small"></lightning-spinner>
+                </template>
+
+                <template if:true={error}>
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                        <h2>{error}</h2>
+                    </div>
+                </template>
+
+                <!-- Create Annotation Form -->
+                <div class="slds-box slds-m-bottom_medium">
+                    <lightning-input label="Note Title" value={newTitle} onchange={handleTitleChange}></lightning-input>
+                    <lightning-textarea label="Annotation Text" value={newText} onchange={handleTextChange} required></lightning-textarea>
+                    <div class="slds-m-top_small slds-text-align_right">
+                        <lightning-button label="Add Annotation" variant="brand" onclick={handleCreateAnnotation} disabled={isSubmitDisabled}></lightning-button>
+                    </div>
+                </div>
+
+                <!-- Annotation List -->
+                <template if:true={hasAnnotations}>
+                    <div class="annotation-list">
+                        <template for:each={annotations} for:item="ann">
+                            <div key={ann.Id} class="slds-box slds-m-bottom_small slds-theme_default">
+                                <div class="slds-grid slds-grid_align-spread">
+                                    <h3 class="slds-text-heading_label">{ann.Name}</h3>
+                                    <span class="slds-badge">{ann.Status__c}</span>
+                                </div>
+                                <p class="slds-m-vertical_x-small">{ann.Text__c}</p>
+                                <div class="slds-text-color_weak slds-text-body_small slds-grid slds-grid_align-spread">
+                                    <span>By: {ann.Author__c}</span>
+                                    <div>
+                                        <template if:true={isOpenStatus}>
+                                            <lightning-button-icon icon-name="utility:check" variant="border-filled" alternative-text="Resolve" title="Resolve" data-id={ann.Id} onclick={handleResolveAnnotation}></lightning-button-icon>
+                                        </template>
+                                        <lightning-button-icon icon-name="utility:delete" variant="border-filled" alternative-text="Delete" title="Delete" data-id={ann.Id} onclick={handleDeleteAnnotation} class="slds-m-left_xx-small"></lightning-button-icon>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <template if:false={hasAnnotations}>
+                    <div class="slds-text-color_weak slds-text-align_center slds-p-around_medium">
+                        No annotations found for this node.
+                    </div>
+                </template>
+            </template>
+
+            <template if:false={selectedNodeId}>
+                <div class="slds-text-color_weak slds-text-align_center slds-p-around_large">
+                    Select a node in the graph to view or create annotations.
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

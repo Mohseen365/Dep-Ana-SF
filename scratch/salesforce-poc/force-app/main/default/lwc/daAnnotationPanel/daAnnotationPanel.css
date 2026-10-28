@@ -1,0 +1,4 @@
+.annotation-list {
+    max-height: 350px;
+    overflow-y: auto;
+}
