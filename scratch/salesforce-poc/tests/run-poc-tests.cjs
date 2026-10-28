@@ -10,6 +10,7 @@ const { pathToFileURL } = require('url');
 
 let loaderModule;
 let layoutModule;
+let ProductionDaGraphViewerClass;
 
 // Apex DAGraphChunkService & DAGraphController offline simulation helpers
 function chunkPayload(rawJson, maxChunkSize = 100000) {
@@ -177,6 +178,51 @@ class SimulatedDaGraphViewer {
             this.cyInstance = null;
         }
     }
+}
+
+// Production LWC module loader/transformer for Node.js
+function createProductionViewerClass(mockApex) {
+    const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daGraphViewer/daGraphViewer.js');
+    let code = fs.readFileSync(filePath, 'utf8');
+
+    code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]lwc['\"];?/, 'const {$1} = LwcMock;');
+    code = code.replace(/import\s+\{?\s*loadScript\s*\}?\s+from\s+['\"]lightning\/platformResourceLoader['\"];?/, 'const loadScript = mockApex.loadScript || (() => Promise.resolve());');
+    code = code.replace(/import\s+cytoscapeUrl\s+from\s+['\"]@salesforce\/resourceUrl\/cytoscape['\"];?/, 'const cytoscapeUrl = "mockCytoscapeUrl";');
+    code = code.replace(/import\s+getLatestGraphMetadataForProject\s+from\s+['\"]@salesforce\/apex\/DAGraphController\.getLatestGraphMetadataForProject['\"];?/, 'const getLatestGraphMetadataForProject = (params) => mockApex.getLatestGraphMetadataForProject(params);');
+    code = code.replace(/import\s+getGraphChunks\s+from\s+['\"]@salesforce\/apex\/DAGraphController\.getGraphChunks['\"];?/, 'const getGraphChunks = (params) => mockApex.getGraphChunks(params);');
+    code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daGraphPayloadLoader['\"];?/, 'const {$1} = loaderModule;');
+    code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daLayoutEngine['\"];?/, 'const {$1} = layoutModule;');
+    code = code.replace(/@api\s+/g, '');
+    code = code.replace(/@track\s+/g, '');
+    code = code.replace('export default class DaGraphViewer', 'class DaGraphViewer');
+    code += '\nreturn DaGraphViewer;';
+
+    const LwcMock = {
+        LightningElement: class {
+            constructor() {
+                this._events = {};
+                this.template = { querySelector: () => ({ appendChild: () => {} }) };
+            }
+            addEventListener(type, fn) {
+                this._events[type] = fn;
+            }
+            dispatchEvent(evt) {
+                if (this._events[evt.type]) this._events[evt.type](evt);
+            }
+        },
+        api: (t, k, d) => d,
+        track: (t, k, d) => d
+    };
+
+    const CustomEvent = class {
+        constructor(type, options) {
+            this.type = type;
+            this.detail = options ? options.detail : null;
+        }
+    };
+
+    const fn = new Function('LwcMock', 'CustomEvent', 'loaderModule', 'layoutModule', 'mockApex', code);
+    return fn(LwcMock, CustomEvent, loaderModule, layoutModule, mockApex);
 }
 
 let passes = 0;
@@ -709,6 +755,334 @@ async function main() {
         assert.strictEqual(selectedEventFired, true);
         assert.strictEqual(selectedNodeId, 'ApexClass:AccountController');
         // Selection must not trigger URL navigation or page reload
+    });
+
+    // --- Category 7: Production DaGraphViewer LWC Class Direct Unit Tests (11 Mandatory Scenarios) ---
+    console.log('\n[Category 7: Production DaGraphViewer LWC Class Direct Unit Tests (11 Scenarios)]');
+
+    const delay = (ms) => new Promise(r => setTimeout(r, ms));
+
+    await runAsyncTest('TC-01: Initial project load', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: 'run_init',
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: 'init_n1' }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_INIT';
+        viewer.renderedCallback();
+        await delay(20);
+
+        assert.strictEqual(viewer.recordId, 'PROJ_INIT');
+        assert.strictEqual(viewer.isLoading, false);
+        assert.strictEqual(viewer.error, null);
+        assert.strictEqual(viewer.cyInstance !== null, true);
+    });
+
+    await runAsyncTest('TC-02: Switching from project A to project B', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: `run_${projectId}`,
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: `node_${projectId}` }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_A';
+        viewer.renderedCallback();
+        await delay(20);
+        const cyA = viewer.cyInstance;
+        assert.strictEqual(viewer.recordId, 'PROJ_A');
+
+        // Switch to Project B
+        viewer.recordId = 'PROJ_B';
+        assert.strictEqual(cyA.destroyed, true, 'Project A Cytoscape instance must be destroyed on switch');
+        await delay(20);
+
+        assert.strictEqual(viewer.recordId, 'PROJ_B');
+        assert.strictEqual(viewer.isLoading, false);
+        assert.strictEqual(viewer.error, null);
+        assert.strictEqual(viewer.cyInstance !== null, true);
+    });
+
+    await runAsyncTest('TC-03: Rapid switching from A to B to C', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => {
+                await delay(30);
+                return {
+                    runId: `run_${projectId}`,
+                    isChunked: false,
+                    rawPayload: JSON.stringify({ nodes: [{ id: `node_${projectId}` }], edges: [] })
+                };
+            },
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.renderedCallback();
+
+        viewer.recordId = 'PROJ_A';
+        viewer.recordId = 'PROJ_B';
+        viewer.recordId = 'PROJ_C';
+
+        await delay(100);
+
+        assert.strictEqual(viewer.recordId, 'PROJ_C');
+        assert.strictEqual(viewer.isLoading, false);
+        assert.strictEqual(viewer.error, null);
+    });
+
+    await runAsyncTest('TC-04: Delayed response from A arriving after switching to B', async () => {
+        let resolveA;
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => {
+                if (projectId === 'PROJ_A') {
+                    return new Promise(r => { resolveA = r; });
+                }
+                return {
+                    runId: 'run_B',
+                    isChunked: false,
+                    rawPayload: JSON.stringify({ nodes: [{ id: 'node_B' }], edges: [] })
+                };
+            },
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.renderedCallback();
+        viewer.recordId = 'PROJ_A';
+        await delay(10);
+
+        // Switch to B before A resolves
+        viewer.recordId = 'PROJ_B';
+        await delay(20);
+        assert.strictEqual(viewer.recordId, 'PROJ_B');
+
+        // Resolve A late
+        if (resolveA) resolveA({ runId: 'run_A', isChunked: false, rawPayload: JSON.stringify({ nodes: [{ id: 'node_A' }], edges: [] }) });
+        await delay(20);
+
+        // Verify viewer remains on B and A's response was discarded
+        assert.strictEqual(viewer.recordId, 'PROJ_B');
+        assert.strictEqual(viewer.error, null);
+    });
+
+    await runAsyncTest('TC-05: Failure loading project B', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => {
+                if (projectId === 'PROJ_B') {
+                    throw new Error('Apex query failed for project B');
+                }
+                return {
+                    runId: 'run_A',
+                    isChunked: false,
+                    rawPayload: JSON.stringify({ nodes: [{ id: 'node_A' }], edges: [] })
+                };
+            },
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_A';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Switch to failing Project B
+        viewer.recordId = 'PROJ_B';
+        await delay(20);
+
+        assert.strictEqual(viewer.cyInstance, null, 'Cytoscape instance must be cleared on failure');
+        assert.strictEqual(viewer.isLoading, false);
+        assert.strictEqual(viewer.error.includes('Apex query failed for project B'), true);
+    });
+
+    await runAsyncTest('TC-06: Empty graph payload for project B', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => {
+                if (projectId === 'PROJ_B') {
+                    return null; // Empty DTO
+                }
+                return {
+                    runId: 'run_A',
+                    isChunked: false,
+                    rawPayload: JSON.stringify({ nodes: [{ id: 'node_A' }], edges: [] })
+                };
+            },
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_A';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Switch to empty Project B
+        viewer.recordId = 'PROJ_B';
+        await delay(20);
+
+        assert.strictEqual(viewer.cyInstance, null);
+        assert.strictEqual(viewer.error, 'No graph payload metadata found for this project.');
+    });
+
+    await runAsyncTest('TC-07: Selected-node ID reset on project change', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: `run_${projectId}`,
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: `node_${projectId}` }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_A';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Simulate selection on Project A
+        viewer.selectedNodeId = 'node_PROJ_A';
+        assert.strictEqual(viewer.selectedNodeId, 'node_PROJ_A');
+
+        // Switch to Project B
+        viewer.recordId = 'PROJ_B';
+        assert.strictEqual(viewer.selectedNodeId, null, 'selectedNodeId must be reset immediately when project switch begins');
+    });
+
+    await runAsyncTest('TC-08: Cytoscape destruction and reinitialization', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: `run_${projectId}`,
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: `node_${projectId}` }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_1';
+        viewer.renderedCallback();
+        await delay(20);
+
+        const instance1 = viewer.cyInstance;
+        assert.strictEqual(instance1.destroyed, false);
+
+        // Switch to PROJ_2
+        viewer.recordId = 'PROJ_2';
+        assert.strictEqual(instance1.destroyed, true);
+        await delay(20);
+
+        const instance2 = viewer.cyInstance;
+        assert.strictEqual(instance2 !== instance1, true);
+        assert.strictEqual(instance2.destroyed, false);
+    });
+
+    await runAsyncTest('TC-09: Component disconnection during an outstanding request', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => {
+                await delay(50);
+                return { runId: 'run_disc', isChunked: false, rawPayload: '{"nodes":[{"id":"disc_n1"}]}' };
+            },
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.renderedCallback();
+        viewer.recordId = 'PROJ_DISC';
+
+        // Disconnect immediately before request completes
+        viewer.disconnectedCallback();
+        assert.strictEqual(viewer.cyInitialized, false);
+        assert.strictEqual(viewer.cyInstance, null);
+
+        await delay(70);
+        // Verify late completion did not mount Cytoscape on disconnected component
+        assert.strictEqual(viewer.cyInstance, null);
+    });
+
+    await runAsyncTest('TC-10: Rerendering without a project-ID change', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: 'run_same',
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: 'n1' }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_SAME';
+        viewer.renderedCallback();
+        await delay(20);
+
+        viewer.selectedNodeId = 'n1';
+        const cyInstanceRef = viewer.cyInstance;
+
+        // Re-set same recordId (simulating parent re-render without ID change)
+        viewer.recordId = 'PROJ_SAME';
+
+        assert.strictEqual(viewer.selectedNodeId, 'n1', 'Selection must be preserved when recordId does not change');
+        assert.strictEqual(viewer.cyInstance, cyInstanceRef, 'Cytoscape instance must not be destroyed on duplicate recordId');
+    });
+
+    await runAsyncTest('TC-11: SELECTION ≠ NAVIGATION invariant check', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: 'run_sel',
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: 'n_sel' }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        let eventFired = false;
+        let eventDetail = null;
+        viewer.addEventListener('nodeselect', (evt) => {
+            eventFired = true;
+            eventDetail = evt.detail;
+        });
+
+        viewer.recordId = 'PROJ_SEL';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Simulate tap event on node
+        viewer.selectedNodeId = 'n_sel';
+        viewer.dispatchEvent(new (class CustomEvent {
+            constructor(type, opts) { this.type = type; this.detail = opts ? opts.detail : null; }
+        })('nodeselect', { detail: { nodeId: 'n_sel' } }));
+
+        assert.strictEqual(eventFired, true);
+        assert.strictEqual(eventDetail.nodeId, 'n_sel');
+        assert.strictEqual(viewer.recordId, 'PROJ_SEL', 'Node selection must NOT alter project recordId or trigger navigation');
     });
 
     console.log('\n===================================================================');

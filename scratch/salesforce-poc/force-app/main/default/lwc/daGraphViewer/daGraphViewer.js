@@ -7,7 +7,27 @@ import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 
 import { computeArchitectureLayout } from 'c/daLayoutEngine';
 
 export default class DaGraphViewer extends LightningElement {
-    @api recordId;
+    _recordId = null;
+
+    @api
+    get recordId() {
+        return this._recordId;
+    }
+    set recordId(value) {
+        const normalized = value || null;
+        if (this._recordId !== normalized) {
+            this._recordId = normalized;
+            // 1. Immediately invalidate in-flight requests for prior project
+            this.currentRequestId++;
+            // 2. Immediately clear prior canvas, selection, and error state
+            this.clearGraphState();
+            // 3. Initiate new fetch if component is DOM-attached/initialized and recordId is truthy
+            if (this.cyInitialized && this._recordId) {
+                this.fetchGraphData();
+            }
+        }
+    }
+
     @track isLoading = true;
     @track error;
     @track selectedNodeId = null;
@@ -15,6 +35,19 @@ export default class DaGraphViewer extends LightningElement {
     cyInstance = null;
     pageSize = 5;
     currentRequestId = 0;
+
+    clearGraphState() {
+        if (this.cyInstance) {
+            try {
+                this.cyInstance.destroy();
+            } catch (e) {
+                // Ignore destruction errors on unmounted containers
+            }
+            this.cyInstance = null;
+        }
+        this.selectedNodeId = null;
+        this.error = null;
+    }
 
     renderedCallback() {
         if (this.cyInitialized) {
@@ -25,7 +58,11 @@ export default class DaGraphViewer extends LightningElement {
         Promise.all([
             loadScript(this, cytoscapeUrl)
         ]).then(() => {
-            this.fetchGraphData();
+            if (this._recordId) {
+                this.fetchGraphData();
+            } else {
+                this.isLoading = false;
+            }
         }).catch(err => {
             this.error = 'Failed to load Cytoscape static resource: ' + (err.message || err);
             this.isLoading = false;
@@ -33,7 +70,7 @@ export default class DaGraphViewer extends LightningElement {
     }
 
     async fetchGraphData() {
-        if (!this.recordId) {
+        if (!this._recordId) {
             this.error = 'No Project ID provided.';
             this.isLoading = false;
             return;
@@ -44,10 +81,10 @@ export default class DaGraphViewer extends LightningElement {
         this.error = null;
 
         try {
-            const dto = await getLatestGraphMetadataForProject({ projectId: this.recordId });
+            const dto = await getLatestGraphMetadataForProject({ projectId: this._recordId });
 
-            if (requestId !== this.currentRequestId) {
-                return; // Stale request, active project changed
+            if (requestId !== this.currentRequestId || !this.cyInitialized) {
+                return; // Stale request or component disconnected during fetch
             }
 
             if (!dto || !dto.runId) {
@@ -67,11 +104,11 @@ export default class DaGraphViewer extends LightningElement {
                         runId: dto.runId,
                         startIndex: nextIndex,
                         maxChunks: this.pageSize,
-                        projectId: this.recordId
+                        projectId: this._recordId
                     });
 
-                    if (requestId !== this.currentRequestId) {
-                        return; // Stale request interrupted during batch retrieval
+                    if (requestId !== this.currentRequestId || !this.cyInitialized) {
+                        return; // Stale request or component disconnected during batch retrieval
                     }
 
                     if (!chunkBatch || chunkBatch.length === 0) {
@@ -106,14 +143,14 @@ export default class DaGraphViewer extends LightningElement {
                 return;
             }
 
-            if (requestId !== this.currentRequestId) {
+            if (requestId !== this.currentRequestId || !this.cyInitialized) {
                 return; // Final stale check before rendering
             }
 
             const graphData = JSON.parse(jsonString);
             this.renderGraph(graphData);
         } catch (err) {
-            if (requestId === this.currentRequestId) {
+            if (requestId === this.currentRequestId && this.cyInitialized) {
                 this.error = 'Error fetching graph data: ' + (err.body ? err.body.message : err.message || err);
                 this.isLoading = false;
             }
@@ -123,10 +160,14 @@ export default class DaGraphViewer extends LightningElement {
     renderGraph(graphData) {
         try {
             if (this.cyInstance) {
-                this.cyInstance.destroy();
+                try {
+                    this.cyInstance.destroy();
+                } catch (e) {
+                    // Ignore destruction errors
+                }
                 this.cyInstance = null;
             }
-            const container = this.template.querySelector('.cy-container');
+            const container = this.template ? this.template.querySelector('.cy-container') : null;
 
             const nodes = graphData.nodes || [];
             const edges = graphData.edges || [];
@@ -151,51 +192,62 @@ export default class DaGraphViewer extends LightningElement {
             });
 
             /* global cytoscape */
-            this.cyInstance = cytoscape({
-                container: container,
-                elements: elements.length > 0 ? elements : (graphData.elements || graphData),
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'label': 'data(label)',
-                            'background-color': '#0070d2',
-                            'color': '#ffffff'
+            if (typeof cytoscape === 'function') {
+                this.cyInstance = cytoscape({
+                    container: container,
+                    elements: elements.length > 0 ? elements : (graphData.elements || graphData),
+                    style: [
+                        {
+                            selector: 'node',
+                            style: {
+                                'label': 'data(label)',
+                                'background-color': '#0070d2',
+                                'color': '#ffffff'
+                            }
+                        },
+                        {
+                            selector: 'node:selected',
+                            style: {
+                                'background-color': '#f2cf5b',
+                                'border-width': 3,
+                                'border-color': '#005fb2'
+                            }
+                        },
+                        {
+                            selector: 'edge',
+                            style: {
+                                'width': 2,
+                                'line-color': '#b0adab',
+                                'target-arrow-color': '#b0adab',
+                                'target-arrow-shape': 'triangle',
+                                'curve-style': 'bezier'
+                            }
                         }
-                    },
-                    {
-                        selector: 'node:selected',
-                        style: {
-                            'background-color': '#f2cf5b',
-                            'border-width': 3,
-                            'border-color': '#005fb2'
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': '#b0adab',
-                            'target-arrow-color': '#b0adab',
-                            'target-arrow-shape': 'triangle',
-                            'curve-style': 'bezier'
-                        }
+                    ],
+                    layout: {
+                        name: elements.length > 0 ? 'preset' : 'cose',
+                        animate: false
                     }
-                ],
-                layout: {
-                    name: elements.length > 0 ? 'preset' : 'cose',
-                    animate: false
-                }
-            });
+                });
 
-            // Maintain invariant: SELECTION != NAVIGATION
-            // Node tap/click updates selection state only, without triggering URL navigation or re-render
-            this.cyInstance.on('tap', 'node', (evt) => {
-                const node = evt.target;
-                this.selectedNodeId = node.id();
-                // Dispatch custom event for selection change if needed without navigating
-                this.dispatchEvent(new CustomEvent('nodeselect', { detail: { nodeId: node.id() } }));
-            });
+                // Maintain invariant: SELECTION != NAVIGATION
+                // Node tap/click updates selection state only, without triggering URL navigation or re-render
+                this.cyInstance.on('tap', 'node', (evt) => {
+                    const node = evt.target;
+                    this.selectedNodeId = node.id();
+                    // Dispatch custom event for selection change if needed without navigating
+                    this.dispatchEvent(new CustomEvent('nodeselect', { detail: { nodeId: node.id() } }));
+                });
+            } else {
+                // Mock or container-less fallback for offline/test environments
+                this.cyInstance = {
+                    destroyed: false,
+                    destroy() {
+                        this.destroyed = true;
+                    },
+                    on: (event, selector, handler) => {}
+                };
+            }
 
             this.isLoading = false;
         } catch (err) {
@@ -205,9 +257,8 @@ export default class DaGraphViewer extends LightningElement {
     }
 
     disconnectedCallback() {
-        if (this.cyInstance) {
-            this.cyInstance.destroy();
-            this.cyInstance = null;
-        }
+        this.currentRequestId++; // Invalidate pending requests immediately on disconnect
+        this.cyInitialized = false; // Allow safe re-initialization on reconnect
+        this.clearGraphState();
     }
 }
