@@ -14,8 +14,8 @@ This document defines the behavior-level acceptance criteria, offline test verif
 - **Deferred Org Gate:** Lightning Experience App Page rendering and tab state persistence across Salesforce page reloads.
 
 ### FEAT-SHELL-02 (Header & Status Banner)
-- **Acceptance Criteria:** Header displays project key, analysis run timestamp, and ingestion status badge in standard SLDS style.
-- **Offline Test Gate:** Component template inspection and category 6 LWC layout tests.
+- **Acceptance Criteria:** Header displays project key, analysis run timestamp, and ingestion status badge in standard SLDS style within `daAppShell`.
+- **Offline Test Gate:** `daAppShell` LWC unit tests.
 - **Deferred Org Gate:** Live org SLDS header icon rendering and reactive status updates.
 
 ### FEAT-SHELL-03 (Project Selector & Multi-Project Isolation)
@@ -25,13 +25,23 @@ This document defines the behavior-level acceptance criteria, offline test verif
 
 ### FEAT-STATE-02 (ViewState & Position Persistence)
 - **Acceptance Criteria:** User-dragged node coordinates persist across page refreshes per user and project using `DA_User_Preference__c`.
-- **Offline Test Gate:** Apex unit tests for `DAUserPreferenceController` and position-policy mock tests.
+- **Offline Test Gate:** `DAUserPreferenceControllerTest.cls` Apex unit tests (executed by Workstream G after Workstream C handoff).
 - **Deferred Org Gate:** Live org DML upsert for `DA_User_Preference__c` under `WITH USER_MODE`.
 
 ### FEAT-DATA-02 (User Annotations & Notes)
 - **Acceptance Criteria:** User can create, edit, view, and delete text annotations attached to specific graph nodes.
-- **Offline Test Gate:** `npx vitest run src/lib/annotations.test.ts` in `explorer/` (7/7 passed).
+- **Offline Test Gate:** `DAAnnotationControllerTest.cls` Apex unit tests (executed by Workstream G) + `npx vitest run src/lib/annotations.test.ts` in `explorer/` (7/7 passed).
 - **Deferred Org Gate:** Live org CRUD and FLS security enforcement for `DA_Annotation__c`.
+
+---
+
+## 2.1 Project Switching & Frozen Graph Viewer Integration Contract
+
+Because `daGraphViewer` core logic is frozen (Wave 1 baseline), multi-project switching and header rendering MUST interface through existing public component APIs:
+1. `daProjectSelector` fires a custom event `projectchange` with `{ detail: { projectId, projectKey } }`.
+2. `daAppShell` captures `projectchange`, updates its internal state (`activeProjectId`, `activeProjectKey`), and passes `activeProjectId` into `daGraphViewer` via `@api recordId`.
+3. `daGraphViewer` detects the `@api recordId` update, increments `currentRequestId` (canceling in-flight chunk fetches for prior project), clears prior Cytoscape instance on re-render, and initiates new chunk retrieval.
+4. `daAppShell` retains active project context (`activeProjectId`) and node selection (`selectedNodeId`) when users switch tabs (e.g. between Graph Viewer, Matrix, and Findings).
 
 ---
 
