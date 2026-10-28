@@ -1,0 +1,153 @@
+<template>
+    <div class="slds-brand-band slds-brand-band_narrow shell-container">
+        <!-- Application Shell Header & Status Banner (FEAT-SHELL-02) -->
+        <header class="slds-page-header slds-page-header_record-home shell-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-dashboard" title="Dependency Analyzer">
+                                <span class="header-icon-symbol">⚡</span>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title="Dependency Analyzer">
+                                            Dependency Analyzer
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                            <p class="slds-page-header__name-meta">
+                                Dynamic Architecture & Context Matrix Analysis
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shared Controls & Project Selector (FEAT-SHELL-03) -->
+                <div class="slds-page-header__col-controls">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <c-da-project-selector
+                                label="Active Project"
+                                selected-project-id={activeProjectId}
+                                onprojectchange={handleProjectChange}>
+                            </c-da-project-selector>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Banner & Context Indicators -->
+            <div class="slds-page-header__row slds-page-header__row_gutters header-status-row">
+                <div class="slds-page-header__col-details">
+                    <ul class="slds-page-header__detail-row">
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Active Project Key">Project Key</div>
+                            <div class="slds-truncate slds-text-heading_small status-value" title={activeProjectKey}>
+                                {displayProjectKey}
+                            </div>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Active View">Active View</div>
+                            <div class="slds-truncate slds-text-body_regular status-value">
+                                {activeViewLabel}
+                            </div>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Node Selection">Selected Node</div>
+                            <div class="slds-truncate slds-text-body_regular status-value" title={selectedNodeId}>
+                                {displaySelectedNode}
+                            </div>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <div class="slds-text-title slds-truncate" title="Status">Status</div>
+                            <div>
+                                <span class={statusBadgeClass}>{statusText}</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- View Navigation Tab Bar (FEAT-SHELL-01) -->
+        <div class="slds-tabs_default shell-tabs">
+            <ul class="slds-tabs_default__nav" role="tablist">
+                <li class={graphTabClass} title="Graph Viewer" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={graphTabIndex} aria-selected={isGraphView} id="tab-graph__item" onclick={selectGraphView}>
+                        Graph Viewer
+                    </a>
+                </li>
+                <li class={matrixTabClass} title="Dependency Matrix" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={matrixTabIndex} aria-selected={isMatrixView} id="tab-matrix__item" onclick={selectMatrixView}>
+                        Dependency Matrix
+                    </a>
+                </li>
+                <li class={findingsTabClass} title="Findings & Alerts" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={findingsTabIndex} aria-selected={isFindingsView} id="tab-findings__item" onclick={selectFindingsView}>
+                        Findings & Alerts
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Active View Container -->
+            <div class="shell-content-container slds-p-around_medium">
+                <!-- Graph View -->
+                <template if:true={isGraphView}>
+                    <div id="tab-graph" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-graph__item">
+                        <template if:true={activeProjectId}>
+                            <c-da-graph-viewer
+                                record-id={activeProjectId}
+                                onnodeselect={handleNodeSelect}>
+                            </c-da-graph-viewer>
+                        </template>
+                        <template if:false={activeProjectId}>
+                            <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                <div class="slds-text-longform">
+                                    <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                    <p class="slds-text-body_regular">Please select a project from the dropdown header to display its dependency graph.</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Matrix View -->
+                <template if:true={isMatrixView}>
+                    <div id="tab-matrix" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-matrix__item">
+                        <div class="slds-box slds-theme_default">
+                            <h2 class="slds-text-heading_medium slds-m-bottom_small">Dependency Matrix View</h2>
+                            <template if:true={activeProjectId}>
+                                <p class="slds-text-body_regular">Matrix view active for project: <strong>{displayProjectKey}</strong> ({activeProjectId}).</p>
+                                <p class="slds-text-color_weak slds-m-top_x-small">Structured relationship matrix projection enabled.</p>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <p class="slds-text-color_weak">No active project selected for Matrix View.</p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Findings View -->
+                <template if:true={isFindingsView}>
+                    <div id="tab-findings" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-findings__item">
+                        <div class="slds-box slds-theme_default">
+                            <h2 class="slds-text-heading_medium slds-m-bottom_small">Findings & Architectural Alerts</h2>
+                            <template if:true={activeProjectId}>
+                                <p class="slds-text-body_regular">Analysis findings for project: <strong>{displayProjectKey}</strong> ({activeProjectId}).</p>
+                                <p class="slds-text-color_weak slds-m-top_x-small">Architectural smells, cycle detections, and criticality flags.</p>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <p class="slds-text-color_weak">No active project selected for Findings View.</p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>
