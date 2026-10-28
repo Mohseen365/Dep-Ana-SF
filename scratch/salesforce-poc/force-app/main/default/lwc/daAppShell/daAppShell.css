@@ -1,0 +1,44 @@
+.shell-container {
+    background-color: #f3f3f3;
+    min-height: 100vh;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.shell-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddbda;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-icon-symbol {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.header-status-row {
+    background-color: #fafaf9;
+    border-top: 1px solid #f3f2f2;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+}
+
+.status-value {
+    font-weight: 600;
+    color: #180800;
+}
+
+.shell-tabs {
+    background-color: #ffffff;
+    border-top: 1px solid #dddbda;
+}
+
+.shell-content-container {
+    min-height: 500px;
+    background-color: #ffffff;
+}
+
+.empty-state-padding {
+    padding: 3rem 1rem;
+    text-align: center;
+}

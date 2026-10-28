@@ -1,0 +1,41 @@
+<template>
+    <div class="slds-form-element project-selector-container">
+        <label if:true={label} class="slds-form-element__label" for="da-project-select">{label}</label>
+        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+            <template if:true={isLoading}>
+                <div class="slds-p-around_x-small slds-text-color_weak flex-center">
+                    <span class="spinner-dot"></span> Loading projects...
+                </div>
+            </template>
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_x-small" role="alert">
+                    <span class="slds-assistive-text">Error</span>
+                    <span class="error-text">{error}</span>
+                </div>
+            </template>
+            <template if:true={isEmpty}>
+                <div class="slds-text-color_weak slds-p-around_x-small empty-notice">No projects available</div>
+            </template>
+            <template if:false={isEmpty}>
+                <select
+                    id="da-project-select"
+                    class="slds-select"
+                    disabled={disabled}
+                    onchange={handleSelectChange}
+                    aria-label={label}>
+                    <template if:false={selectedProjectId}>
+                        <option value="">-- Select a Project --</option>
+                    </template>
+                    <template for:each={formattedProjects} for:item="proj">
+                        <option
+                            key={proj.value}
+                            value={proj.value}
+                            selected={proj.isSelected}>
+                            {proj.label}
+                        </option>
+                    </template>
+                </select>
+            </template>
+        </div>
+    </div>
+</template>
