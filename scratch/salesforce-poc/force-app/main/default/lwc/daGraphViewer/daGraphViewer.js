@@ -3,6 +3,8 @@ import { loadScript } from 'lightning/platformResourceLoader';
 import cytoscapeUrl from '@salesforce/resourceUrl/cytoscape';
 import getLatestGraphMetadataForProject from '@salesforce/apex/DAGraphController.getLatestGraphMetadataForProject';
 import getGraphChunks from '@salesforce/apex/DAGraphController.getGraphChunks';
+import getUserPreference from '@salesforce/apex/DAUserPreferenceController.getUserPreference';
+import saveUserPreference from '@salesforce/apex/DAUserPreferenceController.saveUserPreference';
 import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 'c/daGraphPayloadLoader';
 import { computeArchitectureLayout } from 'c/daLayoutEngine';
 
@@ -35,8 +37,14 @@ export default class DaGraphViewer extends LightningElement {
     cyInstance = null;
     pageSize = 5;
     currentRequestId = 0;
+    saveTimeout = null;
+    isRestoringState = false;
 
     clearGraphState() {
+        if (this.saveTimeout) {
+            clearTimeout(this.saveTimeout);
+            this.saveTimeout = null;
+        }
         if (this.cyInstance) {
             try {
                 this.cyInstance.destroy();
@@ -147,8 +155,20 @@ export default class DaGraphViewer extends LightningElement {
                 return; // Final stale check before rendering
             }
 
+            // Load saved user preference for active project (non-blocking)
+            let userPref = null;
+            try {
+                userPref = await getUserPreference({ projectId: this._recordId });
+            } catch (prefErr) {
+                // Non-blocking fallback to default computed layout
+            }
+
+            if (requestId !== this.currentRequestId || !this.cyInitialized) {
+                return; // Stale check post user preference retrieval
+            }
+
             const graphData = JSON.parse(jsonString);
-            this.renderGraph(graphData);
+            this.renderGraph(graphData, userPref);
         } catch (err) {
             if (requestId === this.currentRequestId && this.cyInitialized) {
                 this.error = 'Error fetching graph data: ' + (err.body ? err.body.message : err.message || err);
@@ -157,7 +177,7 @@ export default class DaGraphViewer extends LightningElement {
         }
     }
 
-    renderGraph(graphData) {
+    renderGraph(graphData, userPref = null) {
         try {
             if (this.cyInstance) {
                 try {
@@ -172,13 +192,42 @@ export default class DaGraphViewer extends LightningElement {
             const nodes = graphData.nodes || [];
             const edges = graphData.edges || [];
 
+            // Parse saved node positions if present
+            let savedPositions = null;
+            if (userPref && userPref.Positions_JSON__c) {
+                try {
+                    savedPositions = JSON.parse(userPref.Positions_JSON__c);
+                } catch (e) {
+                    savedPositions = null;
+                }
+            }
+
+            // Parse saved zoom / pan if present
+            let savedZoomPan = null;
+            if (userPref && userPref.Zoom_Pan_JSON__c) {
+                try {
+                    savedZoomPan = JSON.parse(userPref.Zoom_Pan_JSON__c);
+                } catch (e) {
+                    savedZoomPan = null;
+                }
+            }
+
             // Compute deterministic architecture layout positions
             const layoutResult = computeArchitectureLayout(nodes, edges);
             const computedPositions = layoutResult.positions || {};
 
+            this.isRestoringState = true;
+
             const elements = [];
             nodes.forEach(n => {
-                const pos = computedPositions[n.id] || { x: 0, y: 0 };
+                let pos = computedPositions[n.id] || { x: 0, y: 0 };
+                if (savedPositions && savedPositions[n.id]) {
+                    const savedPos = savedPositions[n.id];
+                    if (typeof savedPos.x === 'number' && Number.isFinite(savedPos.x) &&
+                        typeof savedPos.y === 'number' && Number.isFinite(savedPos.y)) {
+                        pos = { x: savedPos.x, y: savedPos.y };
+                    }
+                }
                 elements.push({
                     data: { id: n.id, label: n.displayName || n.name || n.id, layer: n.layer },
                     position: pos
@@ -230,6 +279,16 @@ export default class DaGraphViewer extends LightningElement {
                     }
                 });
 
+                // Restore saved viewport zoom and pan if present
+                if (savedZoomPan) {
+                    if (typeof savedZoomPan.zoom === 'number' && Number.isFinite(savedZoomPan.zoom) && typeof this.cyInstance.zoom === 'function') {
+                        this.cyInstance.zoom(savedZoomPan.zoom);
+                    }
+                    if (savedZoomPan.pan && Number.isFinite(savedZoomPan.pan.x) && Number.isFinite(savedZoomPan.pan.y) && typeof this.cyInstance.pan === 'function') {
+                        this.cyInstance.pan({ x: savedZoomPan.pan.x, y: savedZoomPan.pan.y });
+                    }
+                }
+
                 // Maintain invariant: SELECTION != NAVIGATION
                 // Node tap/click updates selection state only, without triggering URL navigation or re-render
                 this.cyInstance.on('tap', 'node', (evt) => {
@@ -237,6 +296,16 @@ export default class DaGraphViewer extends LightningElement {
                     this.selectedNodeId = node.id();
                     // Dispatch custom event for selection change if needed without navigating
                     this.dispatchEvent(new CustomEvent('nodeselect', { detail: { nodeId: node.id() } }));
+                });
+
+                // Persist user-dragged node coordinates on dragfree
+                this.cyInstance.on('dragfree', 'node', () => {
+                    this.scheduleSaveState();
+                });
+
+                // Persist viewport changes on zoom/pan
+                this.cyInstance.on('viewport', () => {
+                    this.scheduleSaveState();
                 });
             } else {
                 // Mock or container-less fallback for offline/test environments
@@ -249,11 +318,76 @@ export default class DaGraphViewer extends LightningElement {
                 };
             }
 
+            this.isRestoringState = false;
             this.isLoading = false;
         } catch (err) {
             this.error = 'Error initializing Cytoscape graph: ' + err.message;
             this.isLoading = false;
         }
+    }
+
+    scheduleSaveState() {
+        if (this.isRestoringState || !this._recordId || !this.cyInstance || this.cyInstance.destroyed) {
+            return;
+        }
+
+        if (this.saveTimeout) {
+            clearTimeout(this.saveTimeout);
+        }
+
+        const saveProjId = this._recordId;
+        const currentReq = this.currentRequestId;
+
+        this.saveTimeout = setTimeout(async () => {
+            this.saveTimeout = null;
+
+            if (currentReq !== this.currentRequestId || !this.cyInitialized || !this.cyInstance || saveProjId !== this._recordId) {
+                return; // Stale request or project switched
+            }
+
+            try {
+                const positions = {};
+                if (typeof this.cyInstance.nodes === 'function') {
+                    const cyNodes = this.cyInstance.nodes();
+                    cyNodes.forEach(node => {
+                        const id = node.id ? node.id() : null;
+                        const pos = node.position ? node.position() : null;
+                        if (id && pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+                            positions[id] = { x: pos.x, y: pos.y };
+                        }
+                    });
+                }
+
+                const positionsJson = Object.keys(positions).length > 0 ? JSON.stringify(positions) : null;
+
+                let zoomPanJson = null;
+                if (typeof this.cyInstance.zoom === 'function' && typeof this.cyInstance.pan === 'function') {
+                    const z = this.cyInstance.zoom();
+                    const p = this.cyInstance.pan();
+                    if (Number.isFinite(z) && p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+                        zoomPanJson = JSON.stringify({ zoom: z, pan: { x: p.x, y: p.y } });
+                    }
+                }
+
+                if (positionsJson && positionsJson.length > 131072) {
+                    return;
+                }
+                if (zoomPanJson && zoomPanJson.length > 131072) {
+                    return;
+                }
+
+                await saveUserPreference({
+                    projectId: saveProjId,
+                    viewMode: 'graph',
+                    layoutMode: 'hierarchical',
+                    positionsJson: positionsJson,
+                    filtersJson: null,
+                    zoomPanJson: zoomPanJson
+                });
+            } catch (err) {
+                // Non-fatal background save error
+            }
+        }, 800);
     }
 
     disconnectedCallback() {
