@@ -341,6 +341,16 @@ async function main() {
         assert.strictEqual(shell.findingsTabIndex, -1);
     });
 
+    // 13. daAppShell HTML template incorporates c-da-annotation-panel component
+    runTest('13. daAppShell HTML template integrates c-da-annotation-panel with active project and node bindings', () => {
+        const htmlPath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daAppShell.html');
+        const html = fs.readFileSync(htmlPath, 'utf8');
+
+        assert.strictEqual(html.includes('<c-da-annotation-panel'), true, 'daAppShell.html must embed c-da-annotation-panel');
+        assert.strictEqual(html.includes('project-id={activeProjectId}'), true, 'c-da-annotation-panel must bind project-id');
+        assert.strictEqual(html.includes('selected-node-id={selectedNodeId}'), true, 'c-da-annotation-panel must bind selected-node-id');
+    });
+
     console.log('\n================================================================================');
     console.log(`Summary: ${passes} PASSED, ${fails} FAILED`);
 

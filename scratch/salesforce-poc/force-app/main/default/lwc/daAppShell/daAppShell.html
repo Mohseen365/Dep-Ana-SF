@@ -100,10 +100,20 @@
                 <template if:true={isGraphView}>
                     <div id="tab-graph" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-graph__item">
                         <template if:true={activeProjectId}>
-                            <c-da-graph-viewer
-                                record-id={activeProjectId}
-                                onnodeselect={handleNodeSelect}>
-                            </c-da-graph-viewer>
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_2-of-3">
+                                    <c-da-graph-viewer
+                                        record-id={activeProjectId}
+                                        onnodeselect={handleNodeSelect}>
+                                    </c-da-graph-viewer>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <c-da-annotation-panel
+                                        project-id={activeProjectId}
+                                        selected-node-id={selectedNodeId}>
+                                    </c-da-annotation-panel>
+                                </div>
+                            </div>
                         </template>
                         <template if:false={activeProjectId}>
                             <div class="slds-illustration slds-illustration_small empty-state-padding">

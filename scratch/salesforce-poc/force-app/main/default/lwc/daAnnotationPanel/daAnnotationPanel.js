@@ -36,6 +36,7 @@ export default class DaAnnotationPanel extends LightningElement {
 
     @track newTitle = '';
     @track newText = '';
+    currentRequestId = 0;
 
     get hasAnnotations() {
         return this.annotations && this.annotations.length > 0;
@@ -59,6 +60,7 @@ export default class DaAnnotationPanel extends LightningElement {
             return;
         }
 
+        const requestId = ++this.currentRequestId;
         this.isLoading = true;
         this.error = null;
 
@@ -67,12 +69,21 @@ export default class DaAnnotationPanel extends LightningElement {
                 projectId: this._projectId,
                 nodeId: this._selectedNodeId
             });
+
+            if (requestId !== this.currentRequestId) {
+                return; // Ignore stale request responses
+            }
+
             this.annotations = result || [];
         } catch (err) {
-            this.error = 'Failed to load annotations: ' + (err.body ? err.body.message : err.message || err);
-            this.annotations = [];
+            if (requestId === this.currentRequestId) {
+                this.error = 'Failed to load annotations: ' + (err.body ? err.body.message : err.message || err);
+                this.annotations = [];
+            }
         } finally {
-            this.isLoading = false;
+            if (requestId === this.currentRequestId) {
+                this.isLoading = false;
+            }
         }
     }
 

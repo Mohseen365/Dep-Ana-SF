@@ -533,6 +533,48 @@ async function main() {
         assert.strictEqual(panel.annotations[0].Text__c, 'Testing LWC note creation');
     });
 
+    await runAsyncTest('16. daAnnotationPanel: stale request response rejection on rapid node change', async () => {
+        db.reset();
+        annService.createAnnotation('001_proj_alpha', 'NodeA', 'TitleA', 'TextA', 'OPEN', null);
+        annService.createAnnotation('001_proj_alpha', 'NodeB', 'TitleB', 'TextB', 'OPEN', null);
+
+        let resolveA;
+        const mockApex = {
+            getAnnotations: async (p) => {
+                if (p.nodeId === 'NodeA') {
+                    return new Promise(resolve => { resolveA = () => resolve(annService.getAnnotations(p.projectId, p.nodeId)); });
+                }
+                return annService.getAnnotations(p.projectId, p.nodeId);
+            },
+            createAnnotation: async (p) => annService.createAnnotation(p.projectId, p.nodeId, p.title, p.text, p.status, p.findingId),
+            updateAnnotation: async (p) => annService.updateAnnotation(p.annotationId, p.title, p.text, p.status),
+            deleteAnnotation: async (p) => annService.deleteAnnotation(p.annotationId)
+        };
+
+        const DaAnnotationPanel = createAnnotationPanelClass(mockApex);
+        const panel = new DaAnnotationPanel();
+
+        // Node A fetch initiated
+        panel.projectId = '001_proj_alpha';
+        panel.selectedNodeId = 'NodeA';
+
+        // Rapidly switch to Node B before Node A fetch completes
+        panel.selectedNodeId = 'NodeB';
+        const delay = (ms) => new Promise(r => setTimeout(r, ms));
+        await delay(20);
+
+        assert.strictEqual(panel.annotations.length, 1);
+        assert.strictEqual(panel.annotations[0].Node_Id__c, 'NodeB');
+
+        // Resolve Node A late
+        if (resolveA) resolveA();
+        await delay(20);
+
+        // Verify Node A response was discarded and Node B annotations remain active
+        assert.strictEqual(panel.annotations.length, 1);
+        assert.strictEqual(panel.annotations[0].Node_Id__c, 'NodeB');
+    });
+
     console.log('\n[Category 4: Production Apex Class Source Code Contract Verification]');
 
     runTest('15. Production Apex Source Contracts: DAUserPreferenceController.cls & DAAnnotationController.cls', () => {

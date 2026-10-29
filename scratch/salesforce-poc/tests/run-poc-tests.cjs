@@ -190,6 +190,8 @@ function createProductionViewerClass(mockApex) {
     code = code.replace(/import\s+cytoscapeUrl\s+from\s+['\"]@salesforce\/resourceUrl\/cytoscape['\"];?/, 'const cytoscapeUrl = "mockCytoscapeUrl";');
     code = code.replace(/import\s+getLatestGraphMetadataForProject\s+from\s+['\"]@salesforce\/apex\/DAGraphController\.getLatestGraphMetadataForProject['\"];?/, 'const getLatestGraphMetadataForProject = (params) => mockApex.getLatestGraphMetadataForProject(params);');
     code = code.replace(/import\s+getGraphChunks\s+from\s+['\"]@salesforce\/apex\/DAGraphController\.getGraphChunks['\"];?/, 'const getGraphChunks = (params) => mockApex.getGraphChunks(params);');
+    code = code.replace(/import\s+getUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.getUserPreference['\"];?/, 'const getUserPreference = (params) => (mockApex.getUserPreference ? mockApex.getUserPreference(params) : Promise.resolve(null));');
+    code = code.replace(/import\s+saveUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.saveUserPreference['\"];?/, 'const saveUserPreference = (params) => (mockApex.saveUserPreference ? mockApex.saveUserPreference(params) : Promise.resolve(null));');
     code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daGraphPayloadLoader['\"];?/, 'const {$1} = loaderModule;');
     code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daLayoutEngine['\"];?/, 'const {$1} = layoutModule;');
     code = code.replace(/@api\s+/g, '');
@@ -1083,6 +1085,71 @@ async function main() {
         assert.strictEqual(eventFired, true);
         assert.strictEqual(eventDetail.nodeId, 'n_sel');
         assert.strictEqual(viewer.recordId, 'PROJ_SEL', 'Node selection must NOT alter project recordId or trigger navigation');
+    });
+
+    await runAsyncTest('TC-12: FEAT-STATE-02 ViewState loading and restoration', async () => {
+        let prefCalledWith = null;
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: 'run_state',
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: 'node_state_1' }], edges: [] })
+            }),
+            getGraphChunks: async () => [],
+            getUserPreference: async ({ projectId }) => {
+                prefCalledWith = projectId;
+                return {
+                    Positions_JSON__c: JSON.stringify({ 'node_state_1': { x: 500, y: 600 } }),
+                    Zoom_Pan_JSON__c: JSON.stringify({ zoom: 1.2, pan: { x: 15, y: 25 } })
+                };
+            }
+        };
+
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_STATE';
+        viewer.renderedCallback();
+        await delay(20);
+
+        assert.strictEqual(prefCalledWith, 'PROJ_STATE');
+        assert.strictEqual(viewer.isLoading, false);
+        assert.strictEqual(viewer.error, null);
+    });
+
+    await runAsyncTest('TC-13: FEAT-STATE-02 ViewState debounced saving on drag/viewport change', async () => {
+        let saveCalledWith = null;
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async ({ projectId }) => ({
+                runId: 'run_save',
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: 'node_save_1' }], edges: [] })
+            }),
+            getGraphChunks: async () => [],
+            getUserPreference: async () => null,
+            saveUserPreference: async (params) => {
+                saveCalledWith = params;
+                return params;
+            }
+        };
+
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_SAVE';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Schedule state save manually
+        viewer.scheduleSaveState();
+        assert.strictEqual(saveCalledWith, null, 'Save must be debounced and not execute immediately');
+
+        await delay(900); // Wait for debounce timer (800ms)
+        assert.notStrictEqual(saveCalledWith, null);
+        assert.strictEqual(saveCalledWith.projectId, 'PROJ_SAVE');
+        assert.strictEqual(saveCalledWith.viewMode, 'graph');
     });
 
     console.log('\n===================================================================');
