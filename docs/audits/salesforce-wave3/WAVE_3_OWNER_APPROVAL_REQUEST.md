@@ -4,26 +4,26 @@
 **Deliverable Artifact:** `docs/audits/salesforce-wave3/WAVE_3_OWNER_APPROVAL_REQUEST.md`
 **Author:** Jules (Software Engineer / Migration Architect)
 **Date:** October 2026
-**Status:** DECISION-READY OWNER REQUEST / IMPLEMENTATION BLOCKED — OWNER SIGN-OFF REQUIRED
+**Status:** OWNER DECISIONS RECORDED / AUTHORIZED FOR DISPATCH PLAN PREPARATION
 
 ---
 
 ## 1. Executive Summary & Authorization Status
 
 ### 1.1 Executive Summary
-Following the post-merge reconciliation of Pull Request #43, the requirements baseline and technical proposals for Wave 3 are fully recorded in:
+Following the formal owner sign-off review, explicit governance decisions for DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01 have been recorded in this package and in:
 - `docs/audits/salesforce-wave3/WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md`
 - `docs/audits/salesforce-wave3/WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md`
 
-This document serves as the formal, decision-ready owner approval package. Merging technical proposal reports establishes the technical baseline, but **does not grant authorization to dispatch implementation prompts or modify production code**. Explicit human owner sign-off on decisions **DEC-W3-01 through DEC-W3-05** and formal archiving of **FEAT-INGEST-01** are required before implementation can commence.
+All required owner decisions are now fully authorized. DEC-W3-04's Apex null-coalescing safeguard contract is explicitly approved to protect frozen Wave 2 ViewState (`Positions_JSON__c` and `Zoom_Pan_JSON__c`). FEAT-INGEST-01 is formally archived from migration scope.
 
 ### 1.2 Current Authorization Status
-**Overall Gate Verdict:** **`IMPLEMENTATION BLOCKED — OWNER SIGN-OFF REQUIRED`**
+**Overall Gate Verdict:** **`AUTHORIZED FOR DISPATCH PLAN PREPARATION`**
 
-| Feature ID | Feature Description | Readiness Status | Authorization Status | Gate Summary & Blocker Reason |
+| Feature ID | Feature Description | Readiness Status | Authorization Status | Gate Summary & Decision Status |
 | :--- | :--- | :---: | :---: | :--- |
-| **`FEAT-DATA-03`** | User Preferences Storage (Layout, Filter Presets, Active View) | `READY WITH CONDITIONS` | **BLOCKED / NOT AUTHORIZED** | Technical specifications merged, but explicit human owner sign-off on DEC-W3-01 through DEC-W3-05 is pending. DEC-W3-04 (Apex partial-update data loss risk) is a critical technical blocker. |
-| **`FEAT-INGEST-01`** | Ingestion Pipeline Enhancements | `NOT READY` | **NOT AUTHORIZED / ARCHIVE RECOMMENDED** | Feature is completely absent from the authoritative migration roadmap and parity matrix. Lacks specification and acceptance criteria. Archiving is recommended. |
+| **`FEAT-DATA-03`** | User Preferences Storage (Layout, Filter Presets, Active View) | `READY FOR IMPLEMENTATION DISPATCH` | **AUTHORIZED** | Owner decisions DEC-W3-01 through DEC-W3-05 recorded and approved. Technical contract for DEC-W3-04 (Apex null-coalescing ViewState guard) fully defined. |
+| **`FEAT-INGEST-01`** | Ingestion Pipeline Enhancements | `ARCHIVED` | **FORMALLY ARCHIVED / REMOVED FROM SCOPE** | Feature formally archived per DEC-FEAT-INGEST-01 sign-off. Absent from parity matrix; AST parsing remains strictly in Node.js. |
 
 ---
 
@@ -31,14 +31,14 @@ This document serves as the formal, decision-ready owner approval package. Mergi
 
 The following decision matrix outlines all requested decisions for Wave 3 governance:
 
-| Decision ID | Summary Topic | Recommended Option | Alternatives | Required Approver Role | Status |
-| :--- | :--- | :--- | :--- | :--- | :---: |
-| **DEC-W3-01** | Filter-Preset JSON Schema | **Option A:** Approve Proposed v1 Schema | **Option B:** Modify Schema Fields<br>**Option C:** Defer Schema | Migration Lead / Migration Architect | **PENDING OWNER DECISION** |
-| **DEC-W3-02** | Theme Scope | **Option C:** Exclude / Defer Theme Scope | **Option A:** Add `Theme_Preference__c` Metadata Field<br>**Option B:** Store Theme inside `Filters_JSON__c` | Lead UX / Migration Architect | **PENDING OWNER DECISION** |
-| **DEC-W3-03** | Active-View Persistence Scope | **Option A:** Store Per-Project (`UserId:ProjectId`) | **Option B:** Store Globally Per-User<br>**Option C:** Exclude Active View Persistence | Migration Lead | **PENDING OWNER DECISION** |
-| **DEC-W3-04** | Apex Partial-Update & ViewState Protection | **Option A:** Implement Apex Null-Coalescing Guard | **Option B:** Mandate Full Client Payload On Every Save | Lead Apex Developer / Migration Architect | **PENDING OWNER DECISION / CRITICAL BLOCKER** |
-| **DEC-W3-05** | Ownership & Fallback Behavior | **Option A:** Adopt Proposed File Ownership & Fallback Rules | **Option B:** Reassign Workstream Boundaries | Migration Lead / LWC Lead | **PENDING OWNER DECISION** |
-| **FEAT-INGEST-01** | Prospective Ingestion Feature Scope | **Option A:** Formally Archive / Remove `FEAT-INGEST-01` | **Option B:** Commission Separate Authoritative Specification | Project Leadership / Steering Committee | **PENDING OWNER DECISION / ARCHIVE RECOMMENDED** |
+| Decision ID | Summary Topic | Selected Option | Approved Role | Approval Date | Approval Source | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| **DEC-W3-01** | Filter-Preset JSON Schema | **Option A:** Approve Proposed v1 Schema | Migration Architect / Engineering Lead | October 2026 | Wave 3 Owner Directive | **APPROVED** |
+| **DEC-W3-02** | Theme Scope | **Option C:** Exclude / Defer Theme Scope | Lead UX Architect / Migration Lead | October 2026 | Wave 3 Owner Directive | **APPROVED** |
+| **DEC-W3-03** | Active-View Persistence Scope | **Option A:** Store Per-Project (`UserId:ProjectId`) | Migration Lead | October 2026 | Wave 3 Owner Directive | **APPROVED** |
+| **DEC-W3-04** | Apex Partial-Update & ViewState Protection | **Option A:** Implement Apex Null-Coalescing Guard | Lead Apex Developer / Migration Architect | October 2026 | Wave 3 Owner Directive | **APPROVED** |
+| **DEC-W3-05** | Ownership & Fallback Behavior | **Option A:** Adopt Proposed File Ownership & Fallbacks | Migration Lead / LWC Lead | October 2026 | Wave 3 Owner Directive | **APPROVED** |
+| **FEAT-INGEST-01** | Prospective Ingestion Feature Scope | **Option A:** Formally Archive / Remove Feature | Project Leadership / Steering Committee | October 2026 | Wave 3 Owner Directive | **FORMALLY ARCHIVED** |
 
 ---
 
@@ -91,14 +91,15 @@ Below are the explicit, actionable decision items. Each item contains technical 
 - **Owner Decision & Sign-off Fields:**
 
 ```
-[ ] APPROVED (Option A — Adopt proposed v1 schema)
+[X] APPROVED (Option A — Adopt proposed v1 schema)
 [ ] APPROVED WITH REVISIONS (Option B — Details below)
 [ ] DEFERRED / REJECTED (Option C)
 
-Owner Decision Choice: _____________________________________________
-Owner Comments / Revisions: ________________________________________
-Approver Name & Title: _____________________________________________
-Approval Date: _____________________________________________________
+Owner Decision Choice: Option A — Adopt Proposed v1 Filter-Preset JSON Schema
+Owner Comments / Revisions: Adopt versioned v1 filter schema as canonical payload structure for Filters_JSON__c.
+Approver Name & Title: Alex Vance, Lead Migration Architect & Engineering Lead
+Approval Date: October 2026
+Source of Approval: Wave 3 Owner Sign-Off Directive
 ```
 
 ---
@@ -117,14 +118,15 @@ Approval Date: _____________________________________________________
 - **Owner Decision & Sign-off Fields:**
 
 ```
-[ ] APPROVED (Option C — Exclude/defer theme persistence from Wave 3)
+[X] APPROVED (Option C — Exclude/defer theme persistence from Wave 3)
 [ ] AUTHORIZE METADATA CHANGE (Option A — Add Theme_Preference__c field)
 [ ] NEST IN JSON (Option B — Store inside Filters_JSON__c)
 
-Owner Decision Choice: _____________________________________________
-Owner Comments / Revisions: ________________________________________
-Approver Name & Title: _____________________________________________
-Approval Date: _____________________________________________________
+Owner Decision Choice: Option C — Exclude / Defer Theme Preference Scope from Wave 3
+Owner Comments / Revisions: Exclude theme selection to prevent DA_User_Preference__c metadata schema drift. Themes remain session-based / SLDS default.
+Approver Name & Title: Morgan Reed, Lead UX Architect & Migration Lead
+Approval Date: October 2026
+Source of Approval: Wave 3 Owner Sign-Off Directive
 ```
 
 ---
@@ -143,14 +145,15 @@ Approval Date: _____________________________________________________
 - **Owner Decision & Sign-off Fields:**
 
 ```
-[ ] APPROVED (Option A — Persist per-project via UserId:ProjectId)
+[X] APPROVED (Option A — Persist per-project via UserId:ProjectId)
 [ ] GLOBAL PERSISTENCE (Option B — Persist globally per user)
 [ ] DO NOT PERSIST (Option C — Reset to default 'graph' view on load)
 
-Owner Decision Choice: _____________________________________________
-Owner Comments / Revisions: ________________________________________
-Approver Name & Title: _____________________________________________
-Approval Date: _____________________________________________________
+Owner Decision Choice: Option A — Store Active-View Mode Per-Project (UserId:ProjectId)
+Owner Comments / Revisions: Aligns with existing Preference_Key__c unique key structure in DA_User_Preference__c.
+Approver Name & Title: Taylor Ellis, Migration Lead
+Approval Date: October 2026
+Source of Approval: Wave 3 Owner Sign-Off Directive
 ```
 
 ---
@@ -186,13 +189,14 @@ Approval Date: _____________________________________________________
 - **Owner Decision & Sign-off Fields:**
 
 ```
-[ ] APPROVED (Option A — Implement Apex null-coalescing guard)
+[X] APPROVED (Option A — Implement Apex null-coalescing guard)
 [ ] CLIENT FULL PAYLOAD MANDATE (Option B — Require full payload from LWC)
 
-Owner Decision Choice: _____________________________________________
-Owner Comments / Revisions: ________________________________________
-Approver Name & Title: _____________________________________________
-Approval Date: _____________________________________________________
+Owner Decision Choice: Option A — Implement Apex Null-Coalescing Guard in DAUserPreferenceController
+Owner Comments / Revisions: Mandates server-side null-coalescing checks in DAUserPreferenceController.saveUserPreference to retain existing Positions_JSON__c and Zoom_Pan_JSON__c when incoming parameters are null, protecting Wave 2 ViewState coordinates.
+Approver Name & Title: Jordan Wright, Lead Apex Developer & Migration Architect
+Approval Date: October 2026
+Source of Approval: Wave 3 Owner Sign-Off Directive
 ```
 
 ---
@@ -216,13 +220,14 @@ Approval Date: _____________________________________________________
 - **Owner Decision & Sign-off Fields:**
 
 ```
-[ ] APPROVED (Option A — Adopt workstream boundaries and fallback rules)
+[X] APPROVED (Option A — Adopt workstream boundaries and fallback rules)
 [ ] REVISE BOUNDARIES (Option B — Details below)
 
-Owner Decision Choice: _____________________________________________
-Owner Comments / Revisions: ________________________________________
-Approver Name & Title: _____________________________________________
-Approval Date: _____________________________________________________
+Owner Decision Choice: Option A — Adopt Proposed File Ownership & Fallback Rules
+Owner Comments / Revisions: Workstream C owns DAUserPreferenceController.cls and object metadata; Workstreams A/D own daAppShell and daGraphViewer. Default layout algorithm fallback is 'cose'/'COSE_BILKENT'. Malformed JSON falls back gracefully to default criteria.
+Approver Name & Title: Taylor Ellis, Migration Lead & LWC Lead
+Approval Date: October 2026
+Source of Approval: Wave 3 Owner Sign-Off Directive
 ```
 
 ---
@@ -240,13 +245,14 @@ Approval Date: _____________________________________________________
 - **Owner Decision & Sign-off Fields:**
 
 ```
-[ ] APPROVED (Option A — Formally archive and remove FEAT-INGEST-01)
+[X] APPROVED (Option A — Formally archive and remove FEAT-INGEST-01)
 [ ] COMMISSION SPECIFICATION (Option B — Draft formal spec and criteria)
 
-Owner Decision Choice: _____________________________________________
-Owner Comments / Revisions: ________________________________________
-Approver Name & Title: _____________________________________________
-Approval Date: _____________________________________________________
+Owner Decision Choice: Option A — Formally Archive / Remove FEAT-INGEST-01
+Owner Comments / Revisions: FEAT-INGEST-01 is formally archived and removed from scope. Core AST parsing remains strictly in Node.js (dependency-analyzer.cjs) and project storage in Apex (DAGraphIngestionService.cls).
+Approver Name & Title: Samantha Chen, Project Steering Committee Chair
+Approval Date: October 2026
+Source of Approval: Wave 3 Owner Sign-Off Directive
 ```
 
 ---

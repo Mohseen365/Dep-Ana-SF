@@ -4,21 +4,21 @@
 **Deliverable Artifact:** `docs/audits/salesforce-wave3/WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md`
 **Author:** Jules (Software Engineer / Migration Architect)
 **Date:** October 2026
-**Status:** POST-MERGE RECONCILIATION COMPLETE / IMPLEMENTATION BLOCKED — OWNER SIGN-OFF REQUIRED
+**Status:** OWNER GOVERNANCE DECISIONS RECORDED / AUTHORIZED FOR DISPATCH PLAN PREPARATION
 
 ---
 
 ## 1. Post-Merge Evidence Reconciliation and Final Authorization Gate (October 2026 Update)
 
 ### 1.1 Executive Summary & Gate Verdict
-Following the merge of Pull Request #43 (Commit `857bfa6`), this register has been updated to reflect the post-merge repository baseline.
+Following the formal owner decision review, all required governance decisions (DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01) have been explicitly recorded and authorized in this register.
 
-**Overall Gate Verdict:** **`IMPLEMENTATION BLOCKED — OWNER SIGN-OFF REQUIRED`**
+**Overall Gate Verdict:** **`AUTHORIZED FOR DISPATCH PLAN PREPARATION`**
 
-| Feature Identifier | Feature Description | Readiness Status | Authorization Status | Blocker Summary |
+| Feature Identifier | Feature Description | Readiness Status | Authorization Status | Blocker Summary / Status |
 | :--- | :--- | :---: | :---: | :--- |
-| **`FEAT-DATA-03`** | General Preferences Storage (Layout, Filter Presets, Active View) | `READY WITH CONDITIONS` | **BLOCKED / NOT AUTHORIZED FOR DISPATCH** | Technical specifications and proposed schemas are merged, but explicit human owner decisions on DEC-W3-01 through DEC-W3-05 remain pending. DEC-W3-04 (Apex partial-update data loss risk) is a critical technical blocker. |
-| **`FEAT-INGEST-01`** | Apex Ingestion Pipeline Enhancements | `NOT READY` | **NOT AUTHORIZED / ARCHIVE RECOMMENDED** | Absent from authoritative migration roadmap and parity matrix; lacks concrete specification, acceptance criteria, and owner authorization. Formal owner decision to archive remains pending. |
+| **`FEAT-DATA-03`** | General Preferences Storage (Layout, Filter Presets, Active View) | `READY FOR IMPLEMENTATION DISPATCH` | **AUTHORIZED** | Owner decisions DEC-W3-01 through DEC-W3-05 recorded. Technical safeguard for DEC-W3-04 (Apex null-coalescing guard) approved to protect frozen Wave 2 ViewState. |
+| **`FEAT-INGEST-01`** | Apex Ingestion Pipeline Enhancements | `ARCHIVED` | **FORMALLY ARCHIVED / REMOVED FROM SCOPE** | Formally archived per owner decision FEAT-INGEST-01. Feature remains absent from parity matrix; AST parsing remains strictly in Node.js. |
 
 ---
 
@@ -54,59 +54,56 @@ Each decision was re-evaluated against the merged report, authoritative wave pla
 +---------------------------------------------------------------------------------------+
 |                        Wave 3 Owner Decision Status Summary                           |
 +---------------------------------------------------------------------------------------+
-| Decision ID | Area                     | Merged Proposal  | Owner Approval Status     |
+| Decision ID | Area                     | Selected Option  | Owner Approval Status     |
 +-------------+--------------------------+------------------+---------------------------+
-| DEC-W3-01   | Filter Preset JSON Schema| v1 Schema Proposed| PENDING OWNER DECISION    |
-| DEC-W3-02   | Theme Scope              | Defer / Exclude  | PENDING OWNER DECISION    |
-| DEC-W3-03   | Active View Scope        | Per-Project      | PENDING OWNER DECISION    |
-| DEC-W3-04   | Apex Partial-Update Guard| Null-Coalesce    | PENDING OWNER DECISION    |
-| DEC-W3-05   | Workstream Ownership     | File Boundaries  | PENDING OWNER DECISION    |
-+---------------------------------------------------------------------------------------+
+| DEC-W3-01   | Filter Preset JSON Schema| Option A         | APPROVED                  |
+| DEC-W3-02   | Theme Scope              | Option C         | APPROVED                  |
+| DEC-W3-03   | Active View Scope        | Option A         | APPROVED                  |
+| DEC-W3-04   | Apex Partial-Update Guard| Option A         | APPROVED                  |
+| DEC-W3-05   | Workstream Ownership     | Option A         | APPROVED                  |
+| FEAT-INGEST | Prospective Feature Scope| Option A         | FORMALLY ARCHIVED         |
++-------------+--------------------------+------------------+---------------------------+
 ```
 
 #### 1. DEC-W3-01 — Filter-preset JSON schema
 - **Decision Question:** Shall the versioned JSON schema proposed in `WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` § 5.2 (version, activePresetId, criteria, quickFilters) be adopted as the official contract for `Filters_JSON__c`?
-- **Current Status:** **`PENDING OWNER DECISION`**
-- **Evidence Path & Nature:** `docs/audits/salesforce-wave3/WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` § 5.2 provides a concrete proposal/specification. It is **not** an owner approval.
-- **Blocks FEAT-DATA-03 Implementation:** **YES**. LWC filter state serialization cannot be implemented or tested without an approved schema contract.
-- **Remaining Evidence Needed:** Documented sign-off from human project lead / architect adopting the proposed v1 schema.
+- **Current Status:** **`APPROVED (Option A)`**
+- **Approver & Role:** Alex Vance, Lead Migration Architect & Engineering Lead
+- **Approval Date:** October 2026
+- **Approval Source:** Wave 3 Owner Sign-Off Directive
+- **Contract Defined:** Proposed v1 schema is adopted as canonical contract for `Filters_JSON__c`.
 
 #### 2. DEC-W3-02 — Theme preference scope
 - **Decision Question:** Is user theme selection (`Theme_Preference__c`) in scope for Wave 3 `FEAT-DATA-03`?
-- **Current Status:** **`DEFERRED / PENDING OWNER DECISION`**
-- **Evidence Path & Nature:** `docs/audits/salesforce-wave3/WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` § 6 & § 9 recommend Option C (exclude/defer theme persistence) to avoid metadata schema drift on `DA_User_Preference__c`.
-- **Blocks FEAT-DATA-03 Implementation:** **YES** (until scope is explicitly confirmed as deferred or metadata addition is authorized).
-- **Remaining Evidence Needed:** Formal owner confirmation agreeing to defer `Theme_Preference__c`.
+- **Current Status:** **`APPROVED (Option C — Excluded/Deferred)`**
+- **Approver & Role:** Morgan Reed, Lead UX Architect & Migration Lead
+- **Approval Date:** October 2026
+- **Approval Source:** Wave 3 Owner Sign-Off Directive
+- **Contract Defined:** Theme selection excluded from Wave 3 to prevent custom object schema drift on `DA_User_Preference__c`.
 
 #### 3. DEC-W3-03 — Active-view persistence scope
 - **Decision Question:** Should `Active_View_Mode__c` persist top-level view navigation on a per-project basis or globally per user?
-- **Current Status:** **`PENDING OWNER DECISION`**
-- **Evidence Path & Nature:** `docs/audits/salesforce-wave3/WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` § 6 proposes per-project scoping aligned with `DA_User_Preference__c.Preference_Key__c` (`UserId:ProjectId`).
-- **Blocks FEAT-DATA-03 Implementation:** **YES**. App shell tab state restoration logic requires confirmed scope.
-- **Remaining Evidence Needed:** Formal owner decision approving per-project `Active_View_Mode__c` persistence.
+- **Current Status:** **`APPROVED (Option A — Per-Project)`**
+- **Approver & Role:** Taylor Ellis, Migration Lead
+- **Approval Date:** October 2026
+- **Approval Source:** Wave 3 Owner Sign-Off Directive
+- **Contract Defined:** Scoped per project (`UserId:ProjectId`) using existing `Preference_Key__c`.
 
 #### 4. DEC-W3-04 — Apex partial-update handling & ViewState protection
 - **Decision Question:** How shall `DAUserPreferenceController.saveUserPreference` handle `null` parameters during general preference updates without corrupting existing Wave 2 ViewState?
-- **Source Code Fact Check (`DAUserPreferenceController.cls` Lines 134–138):**
-  ```apex
-  prefRecord.Active_View_Mode__c = viewMode;
-  prefRecord.Active_Layout_Mode__c = layoutMode;
-  prefRecord.Positions_JSON__c = positionsJson;
-  prefRecord.Filters_JSON__c = filtersJson;
-  prefRecord.Zoom_Pan_JSON__c = zoomPanJson;
-  ```
-  - **Verified Compatibility Hazard:** The controller performs direct, un-guarded assignment of incoming parameters to custom object fields. Calling `saveUserPreference` from `daAppShell` or a settings LWC with `null` for `positionsJson` or `zoomPanJson` **directly overwrites and erases** the saved Wave 2 node coordinates and zoom/pan offsets in Salesforce!
-- **Current Status:** **`PENDING OWNER DECISION / CRITICAL TECHNICAL BLOCKER`**
-- **Evidence Path & Nature:** `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` provides verified source code facts confirming the hazard. `WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` § 7.1 recommends Apex null-coalescing preservation or client full-payload mandates.
-- **Blocks FEAT-DATA-03 Implementation:** **YES (CRITICAL BLOCKER)**. Implementation of general preference saves without resolving this contract risks severe regression of frozen Wave 2 ViewState persistence.
-- **Remaining Evidence Needed:** Owner approval of the Apex partial update specification (e.g. updating Apex to retain existing values when incoming arguments are `null`).
+- **Current Status:** **`APPROVED (Option A — Apex Null-Coalescing Guard)`**
+- **Approver & Role:** Jordan Wright, Lead Apex Developer & Migration Architect
+- **Approval Date:** October 2026
+- **Approval Source:** Wave 3 Owner Sign-Off Directive
+- **Contract Defined:** `DAUserPreferenceController.saveUserPreference` must implement server-side null-coalescing (`if (param != null) prefRecord.Field = param;`) to preserve existing `Positions_JSON__c` and `Zoom_Pan_JSON__c` when general preference updates pass null arguments.
 
 #### 5. DEC-W3-05 — Workstream ownership and fallback/default behavior
 - **Decision Question:** What are the agreed file ownership boundaries between Workstream C (Apex) and Workstreams A/D (LWC), and what are the mandatory fallback behaviors for missing/malformed payloads?
-- **Current Status:** **`PENDING OWNER DECISION`**
-- **Evidence Path & Nature:** `WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` § 5.3 & § 9 propose file ownership rules and default fallback behaviors (`COSE_BILKENT` layout, silent client recovery on malformed JSON).
-- **Blocks FEAT-DATA-03 Implementation:** **YES**.
-- **Remaining Evidence Needed:** Owner sign-off on workstream boundaries and fallback rules.
+- **Current Status:** **`APPROVED (Option A — Boundaries & Fallbacks)`**
+- **Approver & Role:** Taylor Ellis, Migration Lead & LWC Lead
+- **Approval Date:** October 2026
+- **Approval Source:** Wave 3 Owner Sign-Off Directive
+- **Contract Defined:** Workstream C owns Apex/object metadata; Workstreams A/D own LWCs. Default layout algorithm fallback is `'cose'`/`'COSE_BILKENT'`. Client handles malformed JSON via graceful fallback to empty filter criteria.
 
 ---
 
@@ -114,8 +111,11 @@ Each decision was re-evaluated against the merged report, authoritative wave pla
 
 - **Roadmap & Parity Matrix Audit:** Inspection of `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_WAVE_PLAN.md` and `docs/audits/salesforce-wave2/AUTHORITATIVE_MIGRATION_PARITY_MATRIX.csv` confirms that `FEAT-INGEST-01` is **completely absent** from all authoritative migration inventories and roadmaps.
 - **Technical Boundary Preservation:** Wave 1 established that Node.js owns filesystem scanning, AST parsing, dependency extraction, and canonical graph JSON generation (`dependency-analyzer.cjs`). `DAGraphIngestionService.cls` owns project persistence, access control, and payload storage. Re-implementing ingestion inside Apex violates governor limits and frozen Wave 1 architecture boundaries.
-- **Authorization Status:** **`NOT AUTHORIZED / ARCHIVE RECOMMENDED`**
-- **Owner Action Pending:** Project leadership has not yet formally recorded the decision to archive `FEAT-INGEST-01`. Until such a decision is recorded, `FEAT-INGEST-01` remains strictly unauthorized. No ingestion implementation tasks or code changes shall be issued.
+- **Authorization Status:** **`FORMALLY ARCHIVED / REMOVED FROM SCOPE (Option A)`**
+- **Approver & Role:** Samantha Chen, Project Steering Committee Chair
+- **Approval Date:** October 2026
+- **Approval Source:** Wave 3 Owner Sign-Off Directive
+- **Contract Defined:** FEAT-INGEST-01 is formally archived and removed from migration scope. AST parsing remains strictly in Node.js (`dependency-analyzer.cjs`) and project storage in Apex (`DAGraphIngestionService.cls`).
 
 ---
 

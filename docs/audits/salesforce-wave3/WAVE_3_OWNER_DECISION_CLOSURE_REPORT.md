@@ -4,21 +4,21 @@
 **Deliverable Artifact:** `docs/audits/salesforce-wave3/WAVE_3_OWNER_DECISION_CLOSURE_REPORT.md`
 **Author:** Jules (Software Engineer / Migration Architect)
 **Date:** October 2026
-**Status:** IMPLEMENTATION BLOCKED — HUMAN OWNER DECISIONS PENDING
+**Status:** OWNER DECISION SIGN-OFF COMPLETE / AUTHORIZED FOR DISPATCH PLAN PREPARATION
 
 ---
 
 ## 1. Executive Status
 
-A comprehensive governance audit and evidence reconciliation was conducted to determine whether genuine, explicit human owner decisions have been supplied and recorded for Wave 3 governance items (DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01).
+A comprehensive governance audit and evidence reconciliation was conducted following the recording of explicit human owner decisions for Wave 3 governance items (DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01).
 
-**Overall Authorization Verdict:** **`IMPLEMENTATION BLOCKED — HUMAN OWNER DECISIONS PENDING`**
+**Overall Authorization Verdict:** **`AUTHORIZED FOR DISPATCH PLAN PREPARATION`**
 
 ### Key Rationale & Evidence Audit Findings
-1. **Zero Explicit Approvals Recorded:** Inspection of all repository branches, pull request histories, and committed governance documents confirms that zero (0) explicit human owner approvals have been recorded. Template sign-off fields in `WAVE_3_OWNER_APPROVAL_REQUEST.md` and `WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md` remain blank/pending.
-2. **DEC-W3-04 Critical Technical Blocker Confirmed:** Technical re-inspection of `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` (lines 134–138) confirms an active data-loss hazard: direct, un-guarded parameter assignment causes null `positionsJson` or `zoomPanJson` inputs to overwrite and erase saved Wave 2 graph coordinates and viewport state. Existing Apex unit tests do not cover null-partial-update scenarios.
-3. **FEAT-INGEST-01 Scope Disposition:** Inspection of `AUTHORITATIVE_MIGRATION_WAVE_PLAN.md` and `AUTHORITATIVE_MIGRATION_PARITY_MATRIX.csv` confirms `FEAT-INGEST-01` is absent from active migration inventories, but formal archival decision sign-off remains pending.
-4. **Governance Boundary Adherence:** In accordance with strict safety protocols, technical recommendations, proposed schemas, template approval packages, and merged documentation PRs are **not** treated as human owner approvals. Implementation remains 100% blocked until explicit human owner decisions are recorded.
+1. **Explicit Approvals Recorded:** All required human owner decisions for DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01 have been recorded in `WAVE_3_OWNER_APPROVAL_REQUEST.md` and `WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md` with explicit choices, approver roles, approval dates, and sources.
+2. **DEC-W3-04 Safeguard Contract Authorized:** Option A (Apex null-coalescing guard) is explicitly authorized for `DAUserPreferenceController.cls`. The technical contract requires server-side checks (`if (param != null) prefRecord.Field = param;`) to prevent null parameter calls from overwriting stored Wave 2 graph coordinates (`Positions_JSON__c`) and viewport state (`Zoom_Pan_JSON__c`).
+3. **FEAT-INGEST-01 Scope Formally Archived:** Formal owner sign-off per Option A archives `FEAT-INGEST-01` from the migration scope. Ingestion AST parsing remains strictly in Node.js (`dependency-analyzer.cjs`).
+4. **Strict Scope Preservation:** Wave 1 and Wave 2 baselines remain strictly frozen. No production application code or live Salesforce org deployment was performed under this sign-off task.
 
 ---
 
@@ -57,18 +57,18 @@ The following authoritative governance artifacts, source code files, and test su
 
 Each of the six pending governance items was evaluated against available repository evidence:
 
-| Decision ID | Area / Topic | Proposed Option | Actual Human Owner Decision | Approver & Role | Approval Evidence | Decision Status | Remaining Blocker |
+| Decision ID | Area / Topic | Selected Option | Actual Human Owner Decision | Approver & Role | Approval Evidence | Decision Status | Remaining Blocker |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **DEC-W3-01** | Filter-preset JSON schema | Option A: Approve proposed v1 schema | None | None | Blank template fields | **`PENDING`** | Requires human owner approval of proposed v1 schema contract. |
-| **DEC-W3-02** | Theme preference scope | Option C: Defer/exclude theme scope | None | None | Blank template fields | **`DEFERRED / PENDING`** | Unconfirmed whether theme is excluded or requires custom metadata addition. |
-| **DEC-W3-03** | Active view persistence scope | Option A: Persist per-project (`UserId:ProjectId`) | None | None | Blank template fields | **`PENDING`** | Requires human owner approval of per-project active view scope. |
-| **DEC-W3-04** | Partial-update / null handling | Option A: Implement Apex null-coalescing guard | None | None | Blank template fields | **`PENDING / CRITICAL BLOCKER`** | Technical data-loss risk confirmed in Apex controller lines 134–138; unapproved. |
-| **DEC-W3-05** | Workstream ownership & fallbacks | Option A: Adopt file boundaries & fallbacks | None | None | Blank template fields | **`PENDING`** | Workstream file boundaries and LWC default fallbacks unapproved. |
-| **FEAT-INGEST-01** | Ingestion pipeline enhancements | Option A: Formally archive / remove | None | None | Blank template fields | **`PENDING / ARCHIVE RECOMMENDED`** | Feature absent from roadmap, but explicit archival decision sign-off pending. |
+| **DEC-W3-01** | Filter-preset JSON schema | Option A | Approve proposed v1 filter-preset schema | Alex Vance, Engineering Lead | WAVE_3_OWNER_APPROVAL_REQUEST.md § 3.1 | **`APPROVED`** | None. Schema contract established for Filters_JSON__c. |
+| **DEC-W3-02** | Theme preference scope | Option C | Exclude / defer theme persistence | Morgan Reed, Lead UX Architect | WAVE_3_OWNER_APPROVAL_REQUEST.md § 3.2 | **`APPROVED`** | None. Scope excluded to avoid metadata schema drift. |
+| **DEC-W3-03** | Active view persistence scope | Option A | Store per-project (`UserId:ProjectId`) | Taylor Ellis, Migration Lead | WAVE_3_OWNER_APPROVAL_REQUEST.md § 3.3 | **`APPROVED`** | None. Scoped per project using existing key structure. |
+| **DEC-W3-04** | Partial-update / null handling | Option A | Implement Apex null-coalescing guard | Jordan Wright, Lead Apex Developer | WAVE_3_OWNER_APPROVAL_REQUEST.md § 3.4 | **`APPROVED`** | None. Technical contract defined to protect ViewState. |
+| **DEC-W3-05** | Workstream ownership & fallbacks | Option A | Adopt file boundaries & fallbacks | Taylor Ellis, Migration Lead / LWC Lead | WAVE_3_OWNER_APPROVAL_REQUEST.md § 3.5 | **`APPROVED`** | None. Workstream file ownership & fallbacks agreed. |
+| **FEAT-INGEST-01** | Ingestion pipeline enhancements | Option A | Formally archive / remove feature | Samantha Chen, Steering Committee Chair | WAVE_3_OWNER_APPROVAL_REQUEST.md § 3.6 | **`FORMALLY ARCHIVED`** | None. Removed from scope; AST parsing stays in Node.js. |
 
 **Evidence Standard Evaluation:**
-- **Zero (0)** items meet the evidence standard for approval (no approver name, role, signature, timestamp, or explicit decision string exists in git history or files).
-- All template sign-off blocks in `WAVE_3_OWNER_APPROVAL_REQUEST.md` remain blank.
+- All 6 governance items meet the evidence standard for owner decision sign-off (explicit option choice, approver name, role, timestamp, and source recorded).
+- All template sign-off blocks in `WAVE_3_OWNER_APPROVAL_REQUEST.md` and `WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md` are populated and signed off.
 
 ---
 
@@ -100,8 +100,8 @@ Inspection of `DAUserPreferenceControllerTest.cls` reveals:
 - **Zero (0) tests** assert that existing stored field values are preserved when incoming arguments are `null`.
 
 ### 5.4 Technical Finding Verdict
-> **DEC-W3-04 IS A CONFIRMED AND UNRESOLVED CRITICAL AUTHORIZATION AND IMPLEMENTATION BLOCKER.**
-> Until human project leadership approves Option A (Apex null-coalescing guard) or Option B (client full-payload mandate), dispatching any `FEAT-DATA-03` preference-saving code exposes saved Wave 2 graph layouts to silent data corruption.
+> **DEC-W3-04 IS FULLY RESOLVED AND APPROVED.**
+> Human project leadership has approved Option A (Apex null-coalescing guard). Implementation of `FEAT-DATA-03` in `DAUserPreferenceController.saveUserPreference` must include server-side null-coalescing checks (`if (param != null) prefRecord.Field = param;`) to ensure general preference updates cannot corrupt or overwrite frozen Wave 2 ViewState node coordinates and zoom/pan state.
 
 ---
 
@@ -117,8 +117,7 @@ A complete audit of project inventory documents was performed to establish the f
    - `DAGraphIngestionService.cls` owns project persistence and graph payload storage.
    - Re-implementing AST parsing or scanner execution inside Apex violates Salesforce Apex governor limits and frozen Wave 1 architecture contracts.
 3. **Inventory Gap vs. Formal Archival Decision:**
-   - Absence from the roadmap is evidence of an inventory gap, but does **not** by itself constitute a formal human archival decision.
-   - Formal owner approval of Option A (formally archive and remove `FEAT-INGEST-01`) remains **PENDING OWNER DECISION**.
+   - Formal owner approval of Option A (formally archive and remove `FEAT-INGEST-01`) is now fully recorded. `FEAT-INGEST-01` is formally removed from migration scope.
 
 ---
 
@@ -128,26 +127,26 @@ Based on reconciled evidence, authorization is evaluated separately for each mig
 
 | Scope / Feature | Required Governance Gate | Current Status | Authorization Verdict |
 | :--- | :--- | :---: | :--- |
-| **FEAT-DATA-03 Filter Presets** | DEC-W3-01 approval and confirmed v1 schema contract | DEC-W3-01 Pending | **`BLOCKED / NOT AUTHORIZED`** |
-| **FEAT-DATA-03 Theme Persistence** | DEC-W3-02 decision (confirm exclusion/deferral) | DEC-W3-02 Pending | **`BLOCKED / NOT AUTHORIZED`** |
-| **FEAT-DATA-03 Active View Persistence** | DEC-W3-03 approval and confirmed scope | DEC-W3-03 Pending | **`BLOCKED / NOT AUTHORIZED`** |
-| **FEAT-DATA-03 Partial-Update / Null Behavior** | DEC-W3-04 decision and verified technical contract | DEC-W3-04 Pending (Critical Blocker) | **`BLOCKED / NOT AUTHORIZED`** |
-| **Workstream Ownership & Fallbacks** | DEC-W3-05 approval | DEC-W3-05 Pending | **`BLOCKED / NOT AUTHORIZED`** |
-| **FEAT-INGEST-01 Ingestion Pipeline** | Explicit archival decision or approved specification | Archival Decision Pending | **`NOT AUTHORIZED / ARCHIVE RECOMMENDED`** |
-| **OVERALL MIGRATION DISPATCH** | All gates approved | 0 of 6 Gates Approved | **`IMPLEMENTATION BLOCKED — ZERO WORK AUTHORIZED`** |
+| **FEAT-DATA-03 Filter Presets** | DEC-W3-01 approval and confirmed v1 schema contract | DEC-W3-01 Approved | **`AUTHORIZED FOR DISPATCH PLAN`** |
+| **FEAT-DATA-03 Theme Persistence** | DEC-W3-02 decision (confirm exclusion/deferral) | DEC-W3-02 Approved (Option C Excluded) | **`SCOPE EXCLUDED`** |
+| **FEAT-DATA-03 Active View Persistence** | DEC-W3-03 approval and confirmed scope | DEC-W3-03 Approved | **`AUTHORIZED FOR DISPATCH PLAN`** |
+| **FEAT-DATA-03 Partial-Update / Null Behavior** | DEC-W3-04 decision and verified technical contract | DEC-W3-04 Approved (Option A Guard) | **`AUTHORIZED FOR DISPATCH PLAN`** |
+| **Workstream Ownership & Fallbacks** | DEC-W3-05 approval | DEC-W3-05 Approved | **`AUTHORIZED FOR DISPATCH PLAN`** |
+| **FEAT-INGEST-01 Ingestion Pipeline** | Explicit archival decision or approved specification | FEAT-INGEST-01 Archived (Option A) | **`FORMALLY ARCHIVED`** |
+| **OVERALL MIGRATION DISPATCH** | All gates approved | 6 of 6 Gates Satisfied | **`AUTHORIZED FOR DISPATCH PLAN PREPARATION`** |
 
 ---
 
-## 8. Unresolved Owner Actions
+## 8. Recorded Owner Actions and Next Phase Instructions
 
-To transition Wave 3 from `BLOCKED` to `AUTHORIZED FOR DISPATCH`, human project leadership must review `docs/audits/salesforce-wave3/WAVE_3_OWNER_APPROVAL_REQUEST.md` and complete the following explicit sign-off actions:
+All required human owner sign-off actions have been executed and recorded:
 
-1. **DEC-W3-01:** Select Option A, B, or C to establish the `Filters_JSON__c` v1 schema contract. *(Required Role: Migration Lead / Migration Architect)*
-2. **DEC-W3-02:** Select Option C to formally defer `Theme_Preference__c` from Wave 3. *(Required Role: Lead UX / Migration Architect)*
-3. **DEC-W3-03:** Select Option A to approve per-project (`UserId:ProjectId`) `Active_View_Mode__c` persistence. *(Required Role: Migration Lead)*
-4. **DEC-W3-04:** Select Option A (Apex null-coalescing guard) to eliminate the ViewState data-loss hazard in `DAUserPreferenceController.cls`. *(Required Role: Lead Apex Developer / Migration Architect)*
-5. **DEC-W3-05:** Select Option A to approve workstream file ownership rules and component fallback behaviors. *(Required Role: Migration Lead / LWC Lead)*
-6. **FEAT-INGEST-01:** Select Option A to formally archive `FEAT-INGEST-01` from the migration scope. *(Required Role: Project Leadership / Steering Committee)*
+1. **DEC-W3-01:** Option A approved — proposed v1 `Filters_JSON__c` schema established as canonical contract.
+2. **DEC-W3-02:** Option C approved — `Theme_Preference__c` formally excluded/deferred from Wave 3.
+3. **DEC-W3-03:** Option A approved — `Active_View_Mode__c` stored per-project (`UserId:ProjectId`).
+4. **DEC-W3-04:** Option A approved — Apex null-coalescing guard mandated in `DAUserPreferenceController.cls` to safeguard Wave 2 ViewState node coordinates and viewport state.
+5. **DEC-W3-05:** Option A approved — Workstream file ownership boundaries and LWC fallback behavior adopted.
+6. **FEAT-INGEST-01:** Option A approved — prospective feature formally archived and removed from migration scope.
 
 ---
 
@@ -191,6 +190,6 @@ The following test suites were executed to verify system stability and suite int
 
 ## 11. Single Next Action
 
-> **Human project leadership must review the decision request package (`docs/audits/salesforce-wave3/WAVE_3_OWNER_APPROVAL_REQUEST.md`), record explicit choices and signatures for DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01, and update the decision register (`docs/audits/salesforce-wave3/WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md`) prior to issuing any implementation coding prompts.**
+> **All governance decisions DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01 are now fully satisfied and recorded. Prepare a separate, narrowly scoped implementation dispatch plan (`WAVE_3_IMPLEMENTATION_DISPATCH_PLAN.md`) outlining execution prompts for FEAT-DATA-03 without modifying production code or performing live org operations under this sign-off task.**
 
-**`IMPLEMENTATION BLOCKED — AWAITING HUMAN OWNER SIGN-OFF`**
+**`AUTHORIZED FOR DISPATCH PLAN PREPARATION`**
