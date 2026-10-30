@@ -1,0 +1,123 @@
+# Wave 4 (`FEAT-STATE-03`): Final Human Authorization Gate Request
+
+| Governance Attribute | Value |
+|---|---|
+| **Document Type** | Final Human Authorization Request & Decision Gate Package |
+| **Target Feature** | Wave 4 — Proposed Remediations R1–R4 & Decisions `DEC-W4-01`..`04` |
+| **Repository Root** | `/app` |
+| **Current Branch** | `jules-11542301699362109650-b5a0782a` |
+| **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
+| **Audit Date** | March 2025 |
+| **Status** | **PENDING HUMAN REVIEW & SIGN-OFF** |
+
+---
+
+## To: Product Owner & Lead Architect
+
+This document presents a structured, human-reviewable authorization gate package for Wave 4 (`FEAT-STATE-03`).
+
+You may grant an **Independent Limited Exception** to execute technical remediations R1 through R4 while maintaining the full feature implementation hold, or you may authorize full feature dispatch by approving decisions `DEC-W4-01` through `DEC-W4-04`.
+
+**All approval signature blocks below remain intentionally blank pending your explicit decision.**
+
+---
+
+## PART 1 — Limited Technical Remediation Authorization Requests (R1–R4)
+
+### Request R1: Apex Backward Compatibility & Data Protection Fix
+- **Permitted Scope:** Modify `DAUserPreferenceController.cls`, `DAUserPreferenceControllerTest.cls`, and `run-workstream-c-tests.cjs`.
+- **Target Files:**
+  - `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls`
+  - `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`
+  - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`
+- **Required Decision-Makers:** Lead Architect.
+- **Required Approval Evidence:** Signed R1 authorization block below.
+- **Prohibited Actions:** Modification of LWC components, live org deployments, or lifting hold on Lanes A, C, D, E, F.
+- **Completion Conditions:** 100% pass on `run-workstream-c-tests.cjs` confirming v2 presets preserved during v1 saves.
+- **Independent Verification:** Re-run Workstream C offline test suite.
+
+**Decision R1:**
+[ ] **APPROVED (Grant Limited Exception for R1)**
+[ ] **REJECTED**
+
+*Approver Name / Role:* ___________________________  *Signature & Date:* _______________________
+
+---
+
+### Request R2: Coverage Normalization Exporter Fix
+- **Permitted Scope:** Modify `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`.
+- **Target Files:**
+  - `scripts/export-explorer.cjs`
+  - `scripts/test-export-explorer.cjs`
+- **Required Decision-Makers:** Lead Architect & Product Owner.
+- **Required Approval Evidence:** Signed R2 authorization block below.
+- **Prohibited Actions:** Modification of UI components or Apex controllers.
+- **Completion Conditions:** Missing-value status (`null`/`undefined`/`""`) normalizes to `"UNKNOWN"`.
+- **Independent Verification:** Run `node scripts/test-export-explorer.cjs`.
+
+**Decision R2:**
+[ ] **APPROVED (Grant Limited Exception for R2)**
+[ ] **REJECTED**
+
+*Approver Name / Role:* ___________________________  *Signature & Date:* _______________________
+
+---
+
+### Request R3: Governance Inventory Alignment
+- **Permitted Scope:** Reconcile all governance records to the verified 44-file inventory.
+- **Target Files:** Governance reports 1 through 7 in repository root.
+- **Required Decision-Makers:** Migration Auditor & Lead Architect.
+- **Required Approval Evidence:** Signed R3 authorization block below.
+- **Completion Conditions:** Zero mathematical or path discrepancies across governance documents.
+
+**Decision R3:**
+[ ] **APPROVED**
+[ ] **REJECTED**
+
+*Approver Name / Role:* ___________________________  *Signature & Date:* _______________________
+
+---
+
+### Request R4: Payload Boundary Executable Verification
+- **Permitted Scope:** Modify `run-workstream-c-tests.cjs` and `DAUserPreferenceControllerTest.cls`.
+- **Target Files:**
+  - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`
+  - `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`
+- **Required Decision-Makers:** Lead Architect.
+- **Required Approval Evidence:** Signed R4 authorization block below.
+- **Prohibited Actions:** Changes to field metadata or Apex controller logic.
+- **Completion Conditions:** Test 6 in `run-workstream-c-tests.cjs` tests `Filters_JSON__c` explicitly at 131,073 characters.
+
+**Decision R4:**
+[ ] **APPROVED (Grant Limited Exception for R4)**
+[ ] **REJECTED**
+
+*Approver Name / Role:* ___________________________  *Signature & Date:* _______________________
+
+---
+
+## PART 2 — Main Feature Parallel Dispatch Gates (`DEC-W4-01` .. `DEC-W4-04`)
+
+*(Approving these gates authorizes parallel LWC feature dispatch across Lanes A through F).*
+
+| Decision ID | Target Subject | Required Approver | Current Recorded Status | Human Decision |
+|---|---|---|---|---|
+| `DEC-W4-01` | Filter Preset Storage Architecture | Product Owner | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-02` | Cross-View Filter Semantics | Lead Architect | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-03` | Preset Ownership Scope | Product Owner | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-04` | Matrix / Findings Product Scope | Product Owner | **PENDING** | [ ] APPROVE  [ ] REJECT |
+
+**Full Feature Dispatch Authorization Block:**
+
+*Product Owner Approval:* ___________________________  *Signature & Date:* _______________________
+
+*Lead Architect Approval:* ___________________________  *Signature & Date:* _______________________
+
+---
+
+## PART 3 — Governance Classification & Provenance Note
+
+All decision records in repository maintain the governance classification:
+`APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`
+
+Until explicit human signatures are provided above, the Wave 4 implementation hold remains **ACTIVE**.
