@@ -7,7 +7,7 @@
 | **Repository Root** | `/app` |
 | **Current Branch** | `jules-11542301699362109650-b5a0782a` |
 | **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
-| **Audit Date** | March 2025 |
+| Audit Date | March 2026 |
 | **Status** | **GOVERNANCE RECONCILIATION COMPLETE — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
@@ -50,7 +50,24 @@ To ensure zero ambiguity, this specification establishes four distinct governanc
 
 ---
 
-## 4. Remediation Exception vs. Full Feature Dispatch
+## 4. Authoritative Approval Ownership Matrix
+
+To resolve prior cross-document discrepancies regarding approver roles, the following authoritative matrix defines required decision-makers for both technical remediations (R1–R4) and feature architecture decisions (`DEC-W4-01`..`04`):
+
+| Scope / Item | Description | Required Approver Role(s) | Required Approval Evidence | Scope of Authorization | Implementation Hold Effect |
+|---|---|---|---|---|---|
+| **R1** | V2 Schema Merge Repair | Lead Architect | Signed R1 block in Authorization Gate | Authorizes Apex merge defect fix in `DAUserPreferenceController.cls` | Lifted for R1 files only |
+| **R2** | Coverage Normalization Exporter Fix | Lead Architect + Product Owner | Signed R2 block in Authorization Gate | Authorizes exporter fix in `scripts/export-explorer.cjs` | Lifted for R2 files only |
+| **R3** | Remediation File Ownership Matrix Reconciliation | Migration Auditor + Lead Architect | Signed R3 block in Authorization Gate | Authorizes governance inventory alignment | Governance alignment only |
+| **R4** | Field Boundary Parameter Test Verification | Lead Architect | Signed R4 block in Authorization Gate | Authorizes test parameter correction in `run-workstream-c-tests.cjs` | Lifted for R4 test file only |
+| **DEC-W4-01** | Multi-preset storage architecture | Lead Architect + Product Owner | Signed DEC-W4-01 block in decision package | Authorizes multi-preset storage schema & LWC preset components | Feature hold lifted for Lane A, C |
+| **DEC-W4-02** | Cross-view filter propagation semantics | Lead Architect + Product Owner | Signed DEC-W4-02 block in decision package | Authorizes cross-view filter state synchronization | Feature hold lifted for Lane D |
+| **DEC-W4-03** | Project-scoped vs global preset ownership | Lead Architect + Product Owner | Signed DEC-W4-03 block in decision package | Authorizes project-scoped preset isolation | Feature hold lifted for Lane B, C |
+| **DEC-W4-04** | Matrix & Findings product scope | Lead Architect + Product Owner | Signed DEC-W4-04 block in decision package | Authorizes Matrix and Findings LWC views | Feature hold lifted for Lane E, F |
+
+---
+
+## 5. Remediation Exception vs. Full Feature Dispatch
 
 The proposed remediations R1 through R4 constitute **technical defect repairs** (preventing data corruption, correcting normalization defects, and fixing boundary test parameters).
 
