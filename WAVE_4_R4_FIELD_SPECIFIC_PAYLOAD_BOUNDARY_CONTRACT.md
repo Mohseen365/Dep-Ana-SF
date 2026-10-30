@@ -7,8 +7,8 @@
 | **Repository Root** | `/app` |
 | **Current Branch** | `jules-11542301699362109650-b5a0782a` |
 | **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
-| **Audit Date** | March 2025 |
-| **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW** |
+| Audit Date | March 2026 |
+| **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
 
@@ -113,6 +113,16 @@ DAUserPreferenceController.saveUserPreference(
 
 ---
 
-## 5. Non-Implementation Confirmation
+## 5. Unverified Enforcement Behavior Inventory
+
+The following field boundary enforcement behaviors are documented as currently unverified or pending test execution:
+
+1. **Client-Side Soft Limit Enforcement for Positions & Zoom/Pan:** LWC component source (`daAppShell.js`) enforces soft limit checks specifically on `Filters_JSON__c`. Client-side soft ceiling enforcement for `Positions_JSON__c` and `Zoom_Pan_JSON__c` is not implemented in LWC.
+2. **Offline Parameter Binding Defect in `run-workstream-c-tests.cjs`:** The offline node mock runner currently supplies `oversizedJson` at position 4 (`positionsJson`). While Apex `DAUserPreferenceController.cls` enforces the 131,072 character limit on all three fields independently, offline test suite execution for `Filters_JSON__c` (position 5) and `Zoom_Pan_JSON__c` (position 6) remains unverified until Remediation R4 updates `run-workstream-c-tests.cjs`.
+3. **Salesforce LongTextArea Metadata Alignment:** Custom field metadata for `Filters_JSON__c`, `Positions_JSON__c`, and `Zoom_Pan_JSON__c` defines physical length 131,072.
+
+---
+
+## 6. Non-Implementation Confirmation
 
 This document specifies the boundary contracts and test corrections. No test runners or Apex files were edited during this dispatch.

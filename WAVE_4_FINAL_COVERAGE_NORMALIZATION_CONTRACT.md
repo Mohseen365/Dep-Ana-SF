@@ -7,8 +7,8 @@
 | **Repository Root** | `/app` |
 | **Current Branch** | `jules-11542301699362109650-b5a0782a` |
 | **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
-| **Audit Date** | March 2025 |
-| **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW** |
+| Audit Date | March 2026 |
+| **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
 
@@ -44,10 +44,10 @@ The table below provides the authoritative normalization contract mapping every 
 | `""` (Empty String) | Blank status string in raw payload | **`UNKNOWN`** | Preserves mandatory missing-value invariant | High | No (Defect Fix) |
 | Absent Property | Node missing `testCoverageStatus` key | **`UNKNOWN`** | Preserves mandatory missing-value invariant | High | No (Defect Fix) |
 | `covered` / `passed` | Confirmed test execution pass under coverage profiling | **`COVERED`** | Confirmed runtime test coverage evidence | High | No |
-| `likely-covered` / `likely_covered` | Static AST call-graph reference found in test class | **`COVERED`** | Static call-graph reference indicates test dependency | High | **YES (Policy Approval Required)** |
-| `untested` / `failed` | Verified zero test coverage or execution failure | **`UNTESTED`** | Confirmed zero coverage or test run failure | High | No |
-| `no-tests` / `no-test-evidence` | AST verified zero incoming test references | **`UNTESTED`** | Confirmed absence of test references | High | No |
-| `known-coverage-failure` | Test execution completed but failed coverage threshold | **`UNTESTED`** | Coverage threshold breach is a deterministic zero-pass result | High | No |
+| `likely-covered` / `likely_covered` | Static AST call-graph reference found in test class | **`COVERED`** (Proposed) | Static call-graph reference indicates static dependency, not executed runtime coverage | Medium | **YES (Lead Architect + PO Approval Required)** |
+| `untested` | Component analyzed, confirmed zero test references/execution | **`UNTESTED`** | Confirmed zero test coverage | High | No |
+| `failed` / `known-coverage-failure` | Test execution attempted but failed or breached coverage threshold | **`UNTESTED`** | Execution failure indicates unverified/failed coverage, distinct from missing data | High | No |
+| `no-tests` / `no-test-evidence` | Zero static test references discovered in AST | **`UNTESTED`** | Confirmed absence of test references | High | No |
 | `ambiguous-test` / `ambiguous` | Dynamic or indirect test reference (e.g., `Type.forName()`) | **`AMBIGUOUS`** | Indeterminate test association requires user inspection | High | No |
 | Any Unrecognized String | Malformed or unexpected status value | **`UNKNOWN`** | Safe fallback prevents invalid UI state | High | No |
 
@@ -84,6 +84,19 @@ function normalizeTestCoverageStatus(status) {
 
 ---
 
-## 5. Non-Implementation Confirmation
+## 5. Current Exporter Source Defect Verification
+
+Verification of `scripts/export-explorer.cjs` line 331 confirms that the actual repository source currently contains:
+```javascript
+function normalizeTestCoverageStatus(status) {
+  if (!status) return "UNTESTED";
+  ...
+}
+```
+This is an **outstanding implementation defect** in source. Under the active implementation hold, this source file has **NOT** been modified. When Remediation R2 is human-authorized, the script must be updated as specified in Section 4 and verified via `node scripts/test-export-explorer.cjs`.
+
+---
+
+## 6. Non-Implementation Confirmation
 
 This document specifies the normalization contract and R2 code correction. No exporter scripts (`scripts/export-explorer.cjs`) or test suites were modified during this dispatch.

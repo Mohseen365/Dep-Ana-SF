@@ -7,8 +7,8 @@
 | **Repository Root** | `/app` |
 | **Current Branch** | `jules-11542301699362109650-b5a0782a` |
 | **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
-| **Audit Date** | March 2025 |
-| **Status** | **PENDING HUMAN REVIEW & SIGN-OFF** |
+| Audit Date | March 2026 |
+| **Status** | **PENDING HUMAN REVIEW & SIGN-OFF — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
 
@@ -64,8 +64,15 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 ---
 
 ### Request R3: Governance Inventory Alignment
-- **Permitted Scope:** Reconcile all governance records to the verified 44-file inventory.
-- **Target Files:** Governance reports 1 through 7 in repository root.
+- **Permitted Scope:** Reconcile all governance records to the verified 46-file inventory.
+- **Target Files:** Reconciled governance audit reports:
+  1. `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md`
+  2. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md`
+  3. `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md`
+  4. `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md`
+  5. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`
+  6. `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md`
+  7. `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md`
 - **Required Decision-Makers:** Migration Auditor & Lead Architect.
 - **Required Approval Evidence:** Signed R3 authorization block below.
 - **Completion Conditions:** Zero mathematical or path discrepancies across governance documents.
@@ -79,14 +86,14 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 ---
 
 ### Request R4: Payload Boundary Executable Verification
-- **Permitted Scope:** Modify `run-workstream-c-tests.cjs` and `DAUserPreferenceControllerTest.cls`.
+- **Permitted Scope:** Modify `run-workstream-c-tests.cjs` and `DAUserPreferenceControllerTest.cls` across all three governed payload fields (`Filters_JSON__c`, `Positions_JSON__c`, `Zoom_Pan_JSON__c`).
 - **Target Files:**
   - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`
   - `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`
 - **Required Decision-Makers:** Lead Architect.
 - **Required Approval Evidence:** Signed R4 authorization block below.
 - **Prohibited Actions:** Changes to field metadata or Apex controller logic.
-- **Completion Conditions:** Test 6 in `run-workstream-c-tests.cjs` tests `Filters_JSON__c` explicitly at 131,073 characters.
+- **Completion Conditions:** Test 6 in `run-workstream-c-tests.cjs` tests `Filters_JSON__c`, `Positions_JSON__c`, and `Zoom_Pan_JSON__c` explicitly at 131,073 characters.
 
 **Decision R4:**
 [ ] **APPROVED (Grant Limited Exception for R4)**
