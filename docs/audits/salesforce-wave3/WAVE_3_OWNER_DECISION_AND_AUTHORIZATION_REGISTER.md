@@ -155,18 +155,21 @@ In accordance with strict task instructions and project governance (`NoDefaultEn
 
 ---
 
-## 3. Required Human Owner Decisions and Single Next Action
+## 3. Human Owner Decisions Sign-Off Completion and Single Next Action
 
-To transition `FEAT-DATA-03` from `BLOCKED` to `AUTHORIZED FOR DISPATCH`, human project leadership must review `WAVE_3_FINAL_REQUIREMENTS_AND_DISPATCH_GATE.md` and explicitly grant approval for the following:
+All required human owner decisions DEC-W3-01 through DEC-W3-05 and FEAT-INGEST-01 have been formally signed off and recorded as documented in:
+- `docs/audits/salesforce-wave3/WAVE_3_OWNER_APPROVAL_REQUEST.md`
+- `docs/audits/salesforce-wave3/WAVE_3_OWNER_DECISION_CLOSURE_REPORT.md` (Merged in PR #47)
+- `docs/audits/salesforce-wave3/WAVE_3_IMPLEMENTATION_DISPATCH_PLAN.md`
 
-1. **Sign-off on DEC-W3-01:** Approval of the proposed versioned `Filters_JSON__c` schema (Section 5.2 of dispatch gate report).
-2. **Sign-off on DEC-W3-02:** Confirmation to defer `Theme_Preference__c` from Wave 3 scope.
-3. **Sign-off on DEC-W3-03:** Approval of per-project `Active_View_Mode__c` persistence.
-4. **Sign-off on DEC-W3-04:** Approval of Apex partial-update null-preservation guard in `DAUserPreferenceController.cls` to safeguard Wave 2 node coordinates.
-5. **Sign-off on DEC-W3-05:** Approval of workstream file ownership boundaries and LWC fallback behavior.
-6. **Sign-off on FEAT-INGEST-01 Archiving:** Formal owner decision to archive `FEAT-INGEST-01`.
+1. **Sign-off on DEC-W3-01:** APPROVED (Option A — Versioned v1 Filter-Preset JSON Schema).
+2. **Sign-off on DEC-W3-02:** APPROVED (Option C — Defer Theme Preference Scope).
+3. **Sign-off on DEC-W3-03:** APPROVED (Option A — Store Active-View Mode Per-Project).
+4. **Sign-off on DEC-W3-04:** APPROVED (Option A — Implement Apex Null-Coalescing Guard in DAUserPreferenceController).
+5. **Sign-off on DEC-W3-05:** APPROVED (Option A — Adopt Workstream File Boundaries & Fallbacks).
+6. **Sign-off on FEAT-INGEST-01 Archiving:** APPROVED (Option A — Formally Archive / Remove FEAT-INGEST-01).
 
 ### Single Next Action
-> **Submit this reconciled decision register (`WAVE_3_OWNER_DECISION_AND_AUTHORIZATION_REGISTER.md`) to human project leadership to obtain explicit sign-off on DEC-W3-01 through DEC-W3-05 and formal archiving of FEAT-INGEST-01 prior to issuing implementation coding prompts.**
+> **Execute implementation dispatch starting with Prompt 3A (`FEAT-DATA-03` Apex partial-update null-coalescing safeguard and regression test suite in `DAUserPreferenceController.cls` and `DAUserPreferenceControllerTest.cls`).**
 
-**`IMPLEMENTATION BLOCKED — OWNER SIGN-OFF REQUIRED`**
+**`OWNER GOVERNANCE SIGN-OFF COMPLETE — AUTHORIZED FOR IMPLEMENTATION DISPATCH`**

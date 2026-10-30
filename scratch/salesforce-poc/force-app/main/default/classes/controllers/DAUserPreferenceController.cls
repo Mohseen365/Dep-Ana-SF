@@ -117,7 +117,9 @@ public with sharing class DAUserPreferenceController {
             String prefKey = String.valueOf(currentUserId) + ':' + String.valueOf(targetProject.Id);
 
             List<DA_User_Preference__c> existingPrefs = [
-                SELECT Id, User__c, Project__c, Preference_Key__c
+                SELECT Id, User__c, Project__c, Preference_Key__c,
+                       Active_View_Mode__c, Active_Layout_Mode__c,
+                       Positions_JSON__c, Filters_JSON__c, Zoom_Pan_JSON__c
                 FROM DA_User_Preference__c
                 WHERE Preference_Key__c = :prefKey
                 WITH USER_MODE
@@ -134,11 +136,21 @@ public with sharing class DAUserPreferenceController {
                 prefRecord.Preference_Key__c = prefKey;
             }
 
-            prefRecord.Active_View_Mode__c = viewMode;
-            prefRecord.Active_Layout_Mode__c = layoutMode;
-            prefRecord.Positions_JSON__c = positionsJson;
-            prefRecord.Filters_JSON__c = filtersJson;
-            prefRecord.Zoom_Pan_JSON__c = zoomPanJson;
+            if (viewMode != null) {
+                prefRecord.Active_View_Mode__c = viewMode;
+            }
+            if (layoutMode != null) {
+                prefRecord.Active_Layout_Mode__c = layoutMode;
+            }
+            if (positionsJson != null) {
+                prefRecord.Positions_JSON__c = positionsJson;
+            }
+            if (filtersJson != null) {
+                prefRecord.Filters_JSON__c = filtersJson;
+            }
+            if (zoomPanJson != null) {
+                prefRecord.Zoom_Pan_JSON__c = zoomPanJson;
+            }
 
             upsert as user prefRecord Preference_Key__c;
 

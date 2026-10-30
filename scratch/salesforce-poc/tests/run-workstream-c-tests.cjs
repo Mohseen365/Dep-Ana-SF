@@ -98,11 +98,21 @@ class DAUserPreferenceControllerSimulator {
             this.db.userPreferences.push(record);
         }
 
-        record.Active_View_Mode__c = viewMode;
-        record.Active_Layout_Mode__c = layoutMode;
-        record.Positions_JSON__c = positionsJson;
-        record.Filters_JSON__c = filtersJson;
-        record.Zoom_Pan_JSON__c = zoomPanJson;
+        if (viewMode !== undefined && viewMode !== null) {
+            record.Active_View_Mode__c = viewMode;
+        }
+        if (layoutMode !== undefined && layoutMode !== null) {
+            record.Active_Layout_Mode__c = layoutMode;
+        }
+        if (positionsJson !== undefined && positionsJson !== null) {
+            record.Positions_JSON__c = positionsJson;
+        }
+        if (filtersJson !== undefined && filtersJson !== null) {
+            record.Filters_JSON__c = filtersJson;
+        }
+        if (zoomPanJson !== undefined && zoomPanJson !== null) {
+            record.Zoom_Pan_JSON__c = zoomPanJson;
+        }
         record.LastModifiedDate = new Date().toISOString();
 
         return JSON.parse(JSON.stringify(record));
@@ -396,6 +406,34 @@ async function main() {
         assert.throws(() => {
             prefService.saveUserPreference('   ', 'graph', 'orbit', null, null, null);
         }, /Project ID parameter cannot be null or blank/);
+    });
+
+    runTest('7a. Null arguments preserve existing saved preference values (Null-Coalescing Guard)', () => {
+        db.reset();
+        const initialPos = JSON.stringify({ node1: { x: 10, y: 20 } });
+        const initialFilters = JSON.stringify({ search: 'Account' });
+        const initialZoom = JSON.stringify({ zoom: 2.0 });
+
+        prefService.saveUserPreference('001_proj_alpha', 'graph', 'hierarchical', initialPos, initialFilters, initialZoom);
+
+        const updated = prefService.saveUserPreference('001_proj_alpha', 'matrix', null, null, JSON.stringify({ search: 'Contact' }), null);
+
+        assert.strictEqual(updated.Active_View_Mode__c, 'matrix');
+        assert.strictEqual(updated.Active_Layout_Mode__c, 'hierarchical');
+        assert.strictEqual(updated.Positions_JSON__c, initialPos);
+        assert.strictEqual(updated.Filters_JSON__c, JSON.stringify({ search: 'Contact' }));
+        assert.strictEqual(updated.Zoom_Pan_JSON__c, initialZoom);
+    });
+
+    runTest('7b. Empty string parameter updates field value and is not treated as null', () => {
+        db.reset();
+        prefService.saveUserPreference('001_proj_alpha', 'graph', 'hierarchical', '{"a":1}', '{"b":2}', '{"c":3}');
+
+        const updated = prefService.saveUserPreference('001_proj_alpha', 'graph', 'hierarchical', '', null, null);
+
+        assert.strictEqual(updated.Positions_JSON__c, '');
+        assert.strictEqual(updated.Filters_JSON__c, '{"b":2}');
+        assert.strictEqual(updated.Zoom_Pan_JSON__c, '{"c":3}');
     });
 
     console.log('\n[Category 2: FEAT-DATA-02 User Annotations & Notes Tests]');

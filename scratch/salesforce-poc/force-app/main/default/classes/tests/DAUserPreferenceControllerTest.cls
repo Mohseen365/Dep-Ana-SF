@@ -146,6 +146,76 @@ private class DAUserPreferenceControllerTest {
     }
 
     @IsTest
+    static void testSaveUserPreference_NullArgumentsPreserveExistingValues() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c WHERE Project_Key__c = 'PROJ_ALPHA' LIMIT 1];
+
+        String initialPositions = '{"node1":{"x":100,"y":200}}';
+        String initialFilters = '{"search":"Account"}';
+        String initialZoomPan = '{"zoom":1.5,"pan":{"x":10,"y":20}}';
+
+        Test.startTest();
+        DAUserPreferenceController.saveUserPreference(
+            proj.Id,
+            'GRAPH_VIEW',
+            'COSE_LAYOUT',
+            initialPositions,
+            initialFilters,
+            initialZoomPan
+        );
+
+        DAUserPreferenceController.saveUserPreference(
+            proj.Id,
+            'MATRIX_VIEW',
+            null,
+            null,
+            '{"search":"Contact"}',
+            null
+        );
+
+        DA_User_Preference__c fetched = DAUserPreferenceController.getUserPreference(proj.Id);
+        Test.stopTest();
+
+        Assert.isNotNull(fetched, 'Fetched preference record should not be null');
+        Assert.areEqual('MATRIX_VIEW', fetched.Active_View_Mode__c, 'Active view mode should be updated');
+        Assert.areEqual('COSE_LAYOUT', fetched.Active_Layout_Mode__c, 'Layout mode should remain preserved when null passed');
+        Assert.areEqual(initialPositions, fetched.Positions_JSON__c, 'Positions JSON should remain preserved when null passed');
+        Assert.areEqual('{"search":"Contact"}', fetched.Filters_JSON__c, 'Filters JSON should be updated when non-null passed');
+        Assert.areEqual(initialZoomPan, fetched.Zoom_Pan_JSON__c, 'Zoom Pan JSON should remain preserved when null passed');
+    }
+
+    @IsTest
+    static void testSaveUserPreference_EmptyStringHandling() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c WHERE Project_Key__c = 'PROJ_ALPHA' LIMIT 1];
+
+        Test.startTest();
+        DAUserPreferenceController.saveUserPreference(
+            proj.Id,
+            'GRAPH_VIEW',
+            'COSE_LAYOUT',
+            '{"node1":{"x":100,"y":200}}',
+            '{"search":"Account"}',
+            '{"zoom":1.0}'
+        );
+
+        DAUserPreferenceController.saveUserPreference(
+            proj.Id,
+            'GRAPH_VIEW',
+            'COSE_LAYOUT',
+            '',
+            null,
+            null
+        );
+
+        DA_User_Preference__c fetched = DAUserPreferenceController.getUserPreference(proj.Id);
+        Test.stopTest();
+
+        Assert.isNotNull(fetched, 'Fetched preference record should not be null');
+        Assert.areEqual('', fetched.Positions_JSON__c, 'Empty string should not be treated as null and should update field value');
+        Assert.areEqual('{"search":"Account"}', fetched.Filters_JSON__c, 'Filters JSON should remain preserved when null passed');
+        Assert.areEqual('{"zoom":1.0}', fetched.Zoom_Pan_JSON__c, 'Zoom Pan JSON should remain preserved when null passed');
+    }
+
+    @IsTest
     static void testInputValidation_BlankProjectId() {
         try {
             Test.startTest();
