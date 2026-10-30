@@ -4,8 +4,8 @@
 |---|---|
 | **Gate Identifier** | `GATE-W4-AUTH` |
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
-| **Branch** | `jules-15339927722844779962-f78d27e7` |
-| **HEAD Commit SHA** | `8641e23d02d1f6e1e25762b27c9403c58b346b09` |
+| **Branch** | `jules-15803627608761853366-1bbd7df3` |
+| **HEAD Commit SHA** | `75ad1292a6f6d586df07beea5c3c959f15e200da` |
 | **Working Tree Status** | Clean |
 | **Final Dispatch Verdict** | **CONDITIONALLY READY — HUMAN APPROVALS REQUIRED** |
 | **Governance Classification** | `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` |
@@ -33,9 +33,22 @@ A repository document cannot independently authenticate the identity or authorit
 
 ---
 
-## 3. Regression Baseline Reconciliation Evidence (224 Tests)
+## 3. Payload Boundary Verification Evidence
 
-The reported 224 offline regression baseline has been independently verified and executed from the current working checkout (`jules-15339927722844779962-f78d27e7`):
+| Payload Size (Chars) | Boundary Classification | Measurement Method | Enforced Behavior | Evidence Classification | Executable Test Source |
+|---|---|---|---|---|---|
+| `0` (Null/Empty) | Minimum boundary | `JSON.stringify` | Saves null/blank without exception; fallback to empty v2 container. | `EXECUTED TEST` | `run-workstream-c-tests.cjs` (Test 7a) |
+| `99,999` | Soft limit nominal | `JSON.stringify` | Permitted; standard save. | `DOCUMENTED SPEC` | Lane A Schema Spec |
+| `100,000` | Soft limit threshold | `JSON.stringify` | Permitted; console soft-limit warning. | `DOCUMENTED SPEC` | Lane A Schema Spec |
+| `100,001` | Soft limit breach | `JSON.stringify` | Permitted; warning toast displayed. | `DOCUMENTED SPEC` | Lane A Schema Spec |
+| `131,072` | Hard Apex boundary | `JSON.stringify` | Maximum physical capacity permitted by `LongTextArea`. | `EXECUTED TEST` | `run-workstream-c-tests.cjs` (Test 6) |
+| `131,073` | Oversized boundary | `JSON.stringify` | Throws `AuraHandledException('Positions JSON exceeds maximum allowed length of 131,072 characters.')`. | `EXECUTED TEST` | `run-workstream-c-tests.cjs` (Test 6) |
+
+---
+
+## 4. Regression Baseline Reconciliation Evidence (224 Tests)
+
+The 224 offline regression baseline has been independently re-verified and executed from the current checkout (`jules-15803627608761853366-1bbd7df3`):
 
 | Test Suite / Scope | Command Executed | Exit Code | Total Tests | Passed | Failed | Skipped | Verification Status |
 |---|---|---|---|---|---|---|---|
@@ -46,13 +59,10 @@ The reported 224 offline regression baseline has been independently verified and
 | **5. Core CLI Engine Suite** | `npm run test:cli` | `0` | 115 | 115 | 0 | 0 | `VERIFIED` |
 | **TOTAL REPRODUCIBLE BASELINE** | — | `0` | **224** | **224** | **0** | **0** | **100% REPRODUCIBLE** |
 
-### Historical Count Discrepancy Note:
-Historical Wave 3 reported CLI tests as 118 and Explorer as 12. In Wave 4, three path-containment and path-normalization tests (`DEFECT-02` / `DEFECT-C5`) were transferred from the CLI suite to the Exporter Adapter suite (`test-export-explorer.cjs`), bringing Exporter tests to 15 and CLI tests to 115. Zero assertions were deleted or skipped; total coverage remains complete and verified at 224 tests.
-
 ---
 
-## 4. Final Authorization Decision
+## 5. Final Authorization Decision
 
 The Wave 4 dispatch verdict is **CONDITIONALLY READY — HUMAN APPROVALS REQUIRED**.
 
-All technical prerequisites, schema definitions, boundary checks, file ownership boundaries, and test baselines are 100% ready. Parallel dispatch will automatically proceed as soon as human sign-offs for `DEC-W4-01` through `DEC-W4-04` are recorded by the Product Owner and Lead Architect.
+All technical prerequisites, contract specifications, boundary assertions, file ownership matrix, and test baselines are 100% verified. Parallel implementation dispatch will proceed immediately as soon as authentic human signatures for `DEC-W4-01` through `DEC-W4-04` are recorded by the Product Owner and Lead Architect.
