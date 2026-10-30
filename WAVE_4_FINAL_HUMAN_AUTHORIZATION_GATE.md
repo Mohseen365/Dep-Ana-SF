@@ -5,9 +5,9 @@
 | **Document Type** | Final Human Authorization Request & Decision Gate Package |
 | **Target Feature** | Wave 4 — Proposed Remediations R1–R4 & Decisions `DEC-W4-01`..`04` |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-11542301699362109650-b5a0782a` |
-| **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
-| Audit Date | March 2026 |
+| **Current Branch** | `jules-5014689980934327006-a6a229d3` |
+| **HEAD Commit SHA** | `8ff54cae850a4f569da5f8ee602e142b74a110bc` |
+| **Audit Date** | March 2026 (Execution Date) / October 2026 Roadmap |
 | **Status** | **PENDING HUMAN REVIEW & SIGN-OFF — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
@@ -33,8 +33,7 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 - **Required Decision-Makers:** Lead Architect.
 - **Required Approval Evidence:** Signed R1 authorization block below.
 - **Prohibited Actions:** Modification of LWC components, live org deployments, or lifting hold on Lanes A, C, D, E, F.
-- **Completion Conditions:** 100% pass on `run-workstream-c-tests.cjs` confirming v2 presets preserved during v1 saves.
-- **Independent Verification:** Re-run Workstream C offline test suite.
+- **Completion Conditions:** 100% pass on `run-workstream-c-tests.cjs` offline suite confirming V2 presets preserved during V1 saves.
 
 **Decision R1:**
 [ ] **APPROVED (Grant Limited Exception for R1)**
@@ -53,7 +52,7 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 - **Required Approval Evidence:** Signed R2 authorization block below.
 - **Prohibited Actions:** Modification of UI components or Apex controllers.
 - **Completion Conditions:** Missing-value status (`null`/`undefined`/`""`) normalizes to `"UNKNOWN"`.
-- **Independent Verification:** Run `node scripts/test-export-explorer.cjs`.
+- **Completion Verification:** Run `node scripts/test-export-explorer.cjs`.
 
 **Decision R2:**
 [ ] **APPROVED (Grant Limited Exception for R2)**
@@ -65,7 +64,7 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 
 ### Request R3: Governance Inventory Alignment
 - **Permitted Scope:** Reconcile all governance records to the verified 46-file inventory.
-- **Target Files:** Reconciled governance audit reports:
+- **Target Files:** Reconciled governance specification audit reports:
   1. `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md`
   2. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md`
   3. `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md`
@@ -93,7 +92,7 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 - **Required Decision-Makers:** Lead Architect.
 - **Required Approval Evidence:** Signed R4 authorization block below.
 - **Prohibited Actions:** Changes to field metadata or Apex controller logic.
-- **Completion Conditions:** Test 6 in `run-workstream-c-tests.cjs` tests `Filters_JSON__c`, `Positions_JSON__c`, and `Zoom_Pan_JSON__c` explicitly at 131,073 characters.
+- **Completion Conditions:** Test 6 in `run-workstream-c-tests.cjs` tests `Filters_JSON__c` (param 5), `Positions_JSON__c` (param 4), and `Zoom_Pan_JSON__c` (param 6) explicitly at 131,073 characters.
 
 **Decision R4:**
 [ ] **APPROVED (Grant Limited Exception for R4)**
@@ -109,10 +108,10 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 
 | Decision ID | Target Subject | Required Approver | Current Recorded Status | Human Decision |
 |---|---|---|---|---|
-| `DEC-W4-01` | Filter Preset Storage Architecture | Product Owner | **PENDING** | [ ] APPROVE  [ ] REJECT |
-| `DEC-W4-02` | Cross-View Filter Semantics | Lead Architect | **PENDING** | [ ] APPROVE  [ ] REJECT |
-| `DEC-W4-03` | Preset Ownership Scope | Product Owner | **PENDING** | [ ] APPROVE  [ ] REJECT |
-| `DEC-W4-04` | Matrix / Findings Product Scope | Product Owner | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-01` | Filter Preset Storage Architecture | **Product Owner** | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-02` | Cross-View Filter Semantics | **Lead Architect** | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-03` | Preset Ownership Scope | **Product Owner** | **PENDING** | [ ] APPROVE  [ ] REJECT |
+| `DEC-W4-04` | Matrix / Findings Product Scope | **Product Owner** | **PENDING** | [ ] APPROVE  [ ] REJECT |
 
 **Full Feature Dispatch Authorization Block:**
 
@@ -127,4 +126,4 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 All decision records in repository maintain the governance classification:
 `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`
 
-Until explicit human signatures are provided above, the Wave 4 implementation hold remains **ACTIVE**.
+Until explicit human signatures are provided above, the Wave 4 implementation hold remains **ACTIVE**. All test evidence cited in this package represents offline Node.js test suite runs, with live Salesforce org validation deferred until Phase 7.
