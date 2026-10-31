@@ -5,87 +5,73 @@
 | **Document Type** | Payload Boundary Specification & Test Suite Verification Contract |
 | **Target Feature** | Wave 4 — Remediation R4 & Preference Fields Boundary Verification |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-5014689980934327006-a6a229d3` |
-| **HEAD Commit SHA** | `8ff54cae850a4f569da5f8ee602e142b74a110bc` |
-| **Audit Date** | March 2026 (Execution Date) / October 2026 Roadmap |
+| **Current Branch** | `jules-8629279200045229050-798dadd2` |
+| **HEAD Commit SHA** | `d8b3b273bf5d31736ad82fc244760fd5b85e3b91` |
+| **Audit Date** | October 31, 2026 |
 | **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
 
 ## 1. Context & Evidence-Based Boundary Analysis
 
-This contract establishes the exact field-specific payload boundary specifications across all three governed `DA_User_Preference__c` long text fields:
+This contract establishes the field-specific payload boundary specifications across all three governed `DA_User_Preference__c` long text fields:
 1. `Filters_JSON__c`
 2. `Positions_JSON__c`
 3. `Zoom_Pan_JSON__c`
 
-### 1.1 Resolution of Prior Specification Contradictions
-Prior specification drafts claimed that an application "soft limit" of 100,000 characters was enforced client-side for `Filters_JSON__c`, while also claiming client-side rejections occurred for `Positions_JSON__c` and `Zoom_Pan_JSON__c` at 131,073 characters.
+### 1.1 Resolution of Prior Boundary Misconceptions
+Prior specification drafts claimed that an application "soft limit" of 100,000 characters was enforced client-side for `Filters_JSON__c`, while also asserting that client-side rejections occurred for `Positions_JSON__c` and `Zoom_Pan_JSON__c` at 131,073 characters.
 
 An inspection of actual repository source files clarifies:
-- **`daAppShell.js` (Lines 8 & 236):** Enforces a client-side hard limit check against `MAX_PAYLOAD_SIZE = 131072` specifically for `filtersJson`. No 100,000 character soft limit exists in `daAppShell.js`.
-- **`daAppShell.js` Client Limitation:** Does **NOT** handle or validate `Positions_JSON__c` or `Zoom_Pan_JSON__c` client-side (passes `null` for both when issuing save requests).
+- **`daAppShell.js` (Lines 8 & 254):** Enforces a client-side hard limit check against `MAX_PAYLOAD_SIZE = 131072` specifically for `filtersJson`. No 100,000 character soft limit exists in `daAppShell.js`.
+- **`daAppShell.js` Client Limitation:** Does **NOT** inspect, handle, or validate `Positions_JSON__c` or `Zoom_Pan_JSON__c` client-side (passes `null` for both when dispatching save requests from the shell).
 - **`DAUserPreferenceController.cls` (Lines 61–69):** Independently validates length for all three parameters against hard limit 131,072 and throws `AuraHandledException` if exceeded.
 - **Salesforce Custom Field Metadata (`*.field-meta.xml`):** All three fields define `<type>LongTextArea</type>` with `<length>131072</length>`.
 
 ---
 
-## 2. Authoritative Field Boundary Summary Matrix
+## 2. Four-Layer Boundary Evidence Architecture
 
-| Field Name | Client-Side Soft Limit | Client-Side Hard Limit | Apex Hard Guard | Metadata Capacity | Source Evidence |
-|---|---|---|---|---|---|
-| **`Filters_JSON__c`** | None (Unenforced) | **131,072 chars** | **131,072 chars** | **131,072 chars** | `daAppShell.js` line 236 & `DAUserPreferenceController.cls` line 64 |
-| **`Positions_JSON__c`** | None | None (Unchecked in LWC) | **131,072 chars** | **131,072 chars** | `DAUserPreferenceController.cls` line 61 & `Positions_JSON__c.field-meta.xml` |
-| **`Zoom_Pan_JSON__c`** | None | None (Unchecked in LWC) | **131,072 chars** | **131,072 chars** | `DAUserPreferenceController.cls` line 67 & `Zoom_Pan_JSON__c.field-meta.xml` |
+To prevent conflating static capacity or code inspection with demonstrated persistence, every boundary expectation is evaluated across four distinct evidence layers:
 
----
-
-## 3. Detailed Field Boundary Behavior Tables
-
-### 3.1 `Filters_JSON__c` Boundary Validation Matrix
-
-| Input Length (Chars) | Boundary Concept | Expected Client Behavior (`daAppShell.js`) | Expected Apex Behavior (`DAUserPreferenceController.cls`) | Expected Salesforce Metadata Behavior | Expected Outcome / Exception Message |
-|---|---|---|---|---|---|
-| `null` | Unset Field | Permitted | Permitted | Permitted | Preserves existing saved field value |
-| `0` | Empty String | Permitted | Permitted | Permitted | Field cleared / updated to `""` |
-| `1` | Minimal JSON | Permitted | Permitted | Permitted | Success |
-| `99,999` | Typical Large Filter | Permitted | Permitted | Permitted | Success |
-| `100,000` | Standard Boundary | Permitted | Permitted | Permitted | Success |
-| `100,001` | Large Payload | Permitted | Permitted | Permitted | Success |
-| `131,071` | Near Hard Limit | Permitted | Permitted | Permitted | Success |
-| `131,072` | Exact Capacity | Permitted | Permitted | Permitted | Success (Max physical capacity) |
-| `131,073` | Above Capacity | **REJECTED CLIENT-SIDE** | **REJECTED APEX** | Rejected DB | `AuraHandledException: Filters JSON exceeds maximum allowed length of 131,072 characters.` |
+1. **Layer 1: Client-Side Acceptance or Rejection:** Executed in the browser / LWC JavaScript layer (`daAppShell.js`). Only `filtersJson` is guarded here.
+2. **Layer 2: Apex Guard Behavior:** Enforced on the Salesforce server by `DAUserPreferenceController.cls` length guards (all three fields guarded).
+3. **Layer 3: Salesforce Metadata Physical Capacity:** Configured in `LongTextArea` field metadata definitions (131,072 characters maximum storage capacity per field).
+4. **Layer 4: Actual End-to-End Persistence:** Verified database insertion, commit, and retrieval in a live Salesforce database. Source guards and metadata capacity do NOT constitute proof of end-to-end database persistence.
 
 ---
 
-### 3.2 `Positions_JSON__c` Boundary Validation Matrix
+## 3. Authoritative Field Boundary Summary & Evidence Layer Matrix
 
-| Input Length (Chars) | Boundary Concept | Expected Client Behavior (`daAppShell.js`) | Expected Apex Behavior (`DAUserPreferenceController.cls`) | Expected Salesforce Metadata Behavior | Expected Outcome / Exception Message |
-|---|---|---|---|---|---|
-| `null` | Unset Field | Passed as `null` | Permitted | Permitted | Preserves existing saved positions |
-| `0` | Empty String | Unhandled | Permitted | Permitted | Field cleared |
-| `100,000` | Standard Graph Layout | Unhandled | Permitted | Permitted | Success |
-| `131,072` | Exact Capacity | Unhandled | Permitted | Permitted | Success |
-| `131,073` | Above Capacity | Unhandled (Not checked in LWC) | **REJECTED APEX** | Rejected DB | `AuraHandledException: Positions JSON exceeds maximum allowed length of 131,072 characters.` |
+| Field Name | Client-Side Check (Layer 1) | Apex Hard Guard (Layer 2) | Metadata Physical Capacity (Layer 3) | Actual Persistence Evidence (Layer 4) |
+|---|---|---|---|---|
+| **`Filters_JSON__c`** | **131,072 chars** (`daAppShell.js` line 254) | **131,072 chars** (`DAUserPreferenceController.cls` line 64) | **131,072 chars** (`Filters_JSON__c.field-meta.xml`) | **Deferred to Phase 7 Live Org** (No live persistence test) |
+| **`Positions_JSON__c`** | None (Unchecked in LWC) | **131,072 chars** (`DAUserPreferenceController.cls` line 61) | **131,072 chars** (`Positions_JSON__c.field-meta.xml`) | **Deferred to Phase 7 Live Org** (Offline mock only) |
+| **`Zoom_Pan_JSON__c`** | None (Unchecked in LWC) | **131,072 chars** (`DAUserPreferenceController.cls` line 67) | **131,072 chars** (`Zoom_Pan_JSON__c.field-meta.xml`) | **Deferred to Phase 7 Live Org** (No live persistence test) |
 
 ---
 
-### 3.3 `Zoom_Pan_JSON__c` Boundary Validation Matrix
+## 4. Boundary Execution Evidence vs. Expected Behavior Audit
 
-| Input Length (Chars) | Boundary Concept | Expected Client Behavior (`daAppShell.js`) | Expected Apex Behavior (`DAUserPreferenceController.cls`) | Expected Salesforce Metadata Behavior | Expected Outcome / Exception Message |
-|---|---|---|---|---|---|
-| `null` | Unset Field | Passed as `null` | Permitted | Permitted | Preserves existing saved zoom/pan |
-| `0` | Empty String | Unhandled | Permitted | Permitted | Field cleared |
-| `1,000` | Typical Viewport | Unhandled | Permitted | Permitted | Success |
-| `131,072` | Exact Capacity | Unhandled | Permitted | Permitted | Success |
-| `131,073` | Above Capacity | Unhandled (Not checked in LWC) | **REJECTED APEX** | Rejected DB | `AuraHandledException: Zoom Pan JSON exceeds maximum allowed length of 131,072 characters.` |
+The contract specifies that payloads up to 131,072 characters are accepted and payloads of 131,073 characters are rejected. The table below audits whether exact boundary execution evidence exists in the repository for each field:
+
+| Field | Input Size (Chars) | Test Case / Inspection Reference | Expected Result | Actual Observed Result | Evidence Classification | Proven Layer |
+|---|---|---|---|---|---|---|
+| `Positions_JSON__c` | `131,072` | `run-workstream-c-tests.cjs` Test 6 inspection | Accepted | Not directly executed at exact boundary in baseline | **Expected Behavior** (from source/metadata inspection) | Apex & Metadata capacity |
+| `Positions_JSON__c` | `131,073` | `run-workstream-c-tests.cjs` Test 6 (param 4) | Rejected with `AuraHandledException` | **PASSED (Throws exception as expected)** | **EXECUTED OFFLINE TEST** | Apex guard (mock environment) |
+| `Filters_JSON__c` | `131,072` | `Filters_JSON__c.field-meta.xml` & `daAppShell.js` line 254 | Accepted | Not directly executed at exact boundary in baseline | **Expected Behavior** (from source/metadata inspection) | Client guard & Metadata capacity |
+| `Filters_JSON__c` | `131,073` | `daAppShell.js` line 254 & Apex line 64 | Rejected | Not executed in baseline suite due to Test 6 parameter defect | **Expected Behavior** (from source/metadata inspection) | Client & Apex guard (unexecuted) |
+| `Zoom_Pan_JSON__c` | `131,072` | `Zoom_Pan_JSON__c.field-meta.xml` & Apex line 67 | Accepted | Not directly executed at exact boundary in baseline | **Expected Behavior** (from source/metadata inspection) | Apex guard & Metadata capacity |
+| `Zoom_Pan_JSON__c` | `131,073` | Apex line 67 (`DAUserPreferenceController.cls`) | Rejected | Not executed in baseline suite due to Test 6 parameter defect | **Expected Behavior** (from source/metadata inspection) | Apex guard (unexecuted) |
+
+*Important Evidence Distinction:* Exact boundary execution evidence (>131,072 characters rejected) exists in the repository **ONLY for `Positions_JSON__c`** via `run-workstream-c-tests.cjs` Test 6. The boundary results for `Filters_JSON__c` and `Zoom_Pan_JSON__c` are **expected behaviors derived from source code and metadata inspection**, NOT demonstrated execution or persistence.
 
 ---
 
-## 4. Parameter Binding Mapping & Test Suite Defect Analysis
+## 5. Parameter Binding Mapping & Test Suite Defect Analysis
 
-### 4.1 Method Parameter Binding
-The Apex controller method signature in `DAUserPreferenceController.cls` is:
+### 5.1 Controller Method Signature
+The Apex controller method signature in `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` is:
 
 ```apex
 public static DA_User_Preference__c saveUserPreference(
@@ -98,31 +84,32 @@ public static DA_User_Preference__c saveUserPreference(
 )
 ```
 
-### 4.2 Analysis of Test 6 Parameter Binding Defect
+### 5.2 Verification of Test 6 Parameter Defect
 In the baseline test runner `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` (Test 6):
 ```javascript
-// Current Baseline Test 6 Execution:
+// Baseline Test 6 Execution:
 const oversized = 'a'.repeat(131073);
 prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', oversized, null, null);
 ```
-- **Defect Identified:** `oversized` was passed in parameter position 4 (`positionsJson`). Consequently, Test 6 tested `Positions_JSON__c` length validation, NOT `Filters_JSON__c` (parameter position 5) or `Zoom_Pan_JSON__c` (parameter position 6).
+- **Factual Finding:** `oversized` is passed as Parameter 4 (`positionsJson`).
+- **Defect Disclosed:** Test 6 tests only `Positions_JSON__c` validation. `Filters_JSON__c` (Parameter 5) and `Zoom_Pan_JSON__c` (Parameter 6) are passed as `null` and therefore remain unexercised at the oversized boundary in the existing offline test runner.
 
-### 4.3 Target Test Specification for Remediation R4
-When Remediation R4 is human-authorized, `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` Test 6 must be updated to test all three fields independently:
+### 5.3 Target Specification for Remediation R4 Test Update
+When Remediation R4 is authorized, `run-workstream-c-tests.cjs` Test 6 must be expanded into three explicit sub-tests:
 
 ```javascript
 // Target R4 Specification:
-// Test 6a: Positions_JSON__c Hard Limit (Param 4)
+// Test 6a: Positions_JSON__c Hard Limit (Parameter 4)
 assert.throws(() => {
     prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', oversized, null, null);
 }, /Positions JSON exceeds maximum allowed length/);
 
-// Test 6b: Filters_JSON__c Hard Limit (Param 5)
+// Test 6b: Filters_JSON__c Hard Limit (Parameter 5)
 assert.throws(() => {
     prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, oversized, null);
 }, /Filters JSON exceeds maximum allowed length/);
 
-// Test 6c: Zoom_Pan_JSON__c Hard Limit (Param 6)
+// Test 6c: Zoom_Pan_JSON__c Hard Limit (Parameter 6)
 assert.throws(() => {
     prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, null, oversized);
 }, /Zoom Pan JSON exceeds maximum allowed length/);
@@ -130,6 +117,6 @@ assert.throws(() => {
 
 ---
 
-## 5. Non-Implementation Confirmation
+## 6. Non-Implementation Confirmation
 
-This document specifies the field boundary contracts and test parameter corrections. No Apex controllers (`DAUserPreferenceController.cls`), LWC components, or test scripts (`run-workstream-c-tests.cjs`) were modified during this dispatch.
+This document specifies the boundary contracts and documents the Test 6 parameter correction. No Apex controllers (`DAUserPreferenceController.cls`), LWC components, or test scripts (`run-workstream-c-tests.cjs`) were modified during this dispatch. The implementation hold remains **ACTIVE**.
