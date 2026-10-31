@@ -2,134 +2,118 @@
 
 | Governance Attribute | Value |
 |---|---|
-| **Document Type** | Comprehensive Contract Consistency & Executive Audit Report |
+| **Document Type** | Comprehensive Contract Consistency & Independent Re-Audit Report |
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-11542301699362109650-b5a0782a` |
-| **HEAD Commit SHA** | `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c` |
-| Audit Date | March 2026 |
-| **Working Tree Status** | Clean / Documentation Updated |
-| **Baseline Verification** | Target SHA `cdf29710863566d548fa3b3be6f526d265a78496` **DOES NOT EXIST** in git history |
-| **Executive Verdict** | `SPECIFICATION READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE` |
+| **Current Branch** | `jules-5014689980934327006-a6a229d3` |
+| **HEAD Commit SHA** | `8ff54cae850a4f569da5f8ee602e142b74a110bc` |
+| **Audit Date** | March 2026 (Execution Date) / October 2026 Roadmap |
+| **Working Tree Status** | Clean / Documentation Specification Updated |
+| **Executive Verdict** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
 
 ## 1. Executive Summary & Final Decision Rule
 
-This report presents the final, strictly read-only consistency audit for the Salesforce Migration — Wave 4 (`FEAT-STATE-03`).
+This report presents the final, independent specification re-audit for the Salesforce Migration — Wave 4 (`FEAT-STATE-03`).
 
 ### Executive Verdict:
-# `SPECIFICATION READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE`
+# `SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE`
 
 ### Justification:
-1. **Technical Specifications Reconciled:** All technical contract contradictions across R1 (Canonical V2 Schema & Apex Merge Algorithm), R2 (Coverage Normalization & Missing-Value Invariants), R3 (File Ownership Inventory), and R4 (Field-Specific Payload Boundaries) have been fully resolved into internally consistent, deterministic specifications.
-2. **Governance Status Reconciled:** The governance status misclassification in prior reconciliation packages (which claimed `DEC-W4-01` through `DEC-W4-04` were `APPROVED`) has been corrected. The underlying decision records in `docs/audits/salesforce-wave4/decision-package/` explicitly hold a status of `PENDING`.
-3. **Implementation Hold Active:** No source code, Apex controllers, LWC components, test scripts, or metadata files were modified during this dispatch. Full feature implementation remains strictly **ON HOLD** under authorization gate `GATE-W4-AUTH` until explicit human authorization is granted.
+1. **Technical Specifications Fully Reconciled (R1–R4):**
+   - **R1 (Apex Merge Contract):** Established one authoritative fail-closed merge algorithm with incoming JSON syntax validation. Classified older algorithm as `SUPERSEDED` in appendix. Defined exact schema recognition rules for all 10 container conditions.
+   - **R2 (Coverage Normalization):** Fixed missing-value invariant (`null`/`undefined`/`""`/`"   "` → `UNKNOWN`). Separated static inferred AST references (`likely-covered`) from confirmed runtime coverage. Documented information loss when mapping 6 underlying evidence concepts into the canonical 4-state UI model (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`).
+   - **R3 (Ownership Inventory):** Reconciled narrative totals with itemized table rows: exactly **46 unique files** (24 existing baseline files, 22 proposed new files [15 feature/test + 7 governance reports], 33 modifications/creations, 13 unmodified reference files, 34 hold prohibited).
+   - **R4 (Payload Boundaries):** Corrected client limit claims based on source code (`daAppShell.js` enforces 131,072 hard check for `Filters_JSON__c` with no 100,000 soft limit). Corrected parameter binding defect in `run-workstream-c-tests.cjs` Test 6 (`positionsJson` param 4 vs `filtersJson` param 5 vs `zoomPanJson` param 6).
+2. **Governance Provenance Reconciled:** Reconciled approver requirements matching original decision documents: `DEC-W4-01` (Product Owner), `DEC-W4-02` (Lead Architect), `DEC-W4-03` (Product Owner), `DEC-W4-04` (Product Owner). Preserved exact classification: `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` and `PENDING` status.
+3. **Implementation Hold Active:** Zero application source code, Apex controllers, LWCs, test runners, or metadata files were modified. Full feature implementation remains strictly **ON HOLD** pending human authorization.
 
 ---
 
-## 2. Actual Repository Baseline & Historical SHA Reconciliation
+## 2. Actual Repository Baseline & Test Qualification
 
 - **Repository Root:** `/app`
-- **Active Branch:** `jules-11542301699362109650-b5a0782a`
-- **HEAD Commit SHA:** `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c`
-- **Working Tree Status:** Clean (`git status` reports zero untracked or modified files prior to report creation).
-- **Baseline Verification:**
-  - Prompt requested verification of target baseline SHA `cdf29710863566d548fa3b3be6f526d265a78496`.
-  - Verification check via `git cat-file -e cdf29710863566d548fa3b3be6f526d265a78496` confirms: **DOES NOT EXIST** in the repository object database.
-  - The actual, verified commit HEAD for this audit is **`8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c`**.
+- **Active Branch:** `jules-5014689980934327006-a6a229d3`
+- **HEAD Commit SHA:** `8ff54cae850a4f569da5f8ee602e142b74a110bc`
+- **Working Tree Status:** Clean prior to report creation.
+- **Test Evidence Qualification:** All test execution results cited in this package represent **offline Node.js test runner executions** in local mock environments (`run-workstream-c-tests.cjs` 18/18, `run-poc-tests.cjs` 43/43, `run-workstream-a-tests.cjs` 33/33, `test-export-explorer.cjs` 15/15, `npm run test:cli` 115/115). Live Salesforce org deployment and validation remain deferred to Phase 7.
 
 ---
 
-## 3. Cross-Document Contradiction & Resolution Matrix
+## 3. Cross-Document Defect Correction Matrix
 
-| Issue ID | Area / Subject | Previous Specification / Contradiction | Final Reconciled Specification | Document Source & Resolution |
+| Issue ID | Area / Subject | Prior Residual Defect / Contradiction | Final Corrected Specification | Authoritative Specification Document |
 |---|---|---|---|---|
-| **C-01** | **R1 Schema Contract** | Proposal replaced established schema with `{ "version": "v2", "activePresetId": "default", "presets": [], "activeFilter": {} }`. | Reverted to canonical v2 schema contract: `{ "schemaVersion": 2, "presets": [], "activePresetId": "...", "activeFilter": {}, "testCoverageStatus": [] }`. | `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` |
-| **C-02** | **R1 Merge Destructiveness** | Draft algorithm returned `incomingV1Json` on parse error, wiping existing v2 presets on corrupted data. | Algorithm made strictly fail-closed: on any JSON parse/merge error, catches exception and returns `existingV2Json` intact. | `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` |
-| **C-03** | **Governance Classification** | Prior authorization package reported `DEC-W4-01`..`04` as `APPROVED` while retaining `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`. | Separated `RECORDED STATUS` (`PENDING`), `HUMAN APPROVAL EVIDENCE` (`None`), `PROVENANCE VERIFICATION STATUS` (`Unverified`), and `IMPLEMENTATION AUTHORIZATION STATUS` (`On Hold`). | `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md` |
-| **C-04** | **R4 Payload Boundaries** | Confused 100,000 application soft limit with 131,072 Salesforce field limit across all fields. `run-workstream-c-tests.cjs` Test 6 tested `Positions_JSON__c` instead of `Filters_JSON__c`. | Formulated separate validation matrices for `Filters_JSON__c`, `Positions_JSON__c`, and `Zoom_Pan_JSON__c`. Corrected test suite parameter specification. | `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md` |
-| **C-05** | **R2 Coverage Normalization** | `scripts/export-explorer.cjs` line 331 mapped missing/empty status (`null`, `undefined`, `""`) to `"UNTESTED"`. Mapped `LIKELY_COVERED` to `"COVERED"`. | Standardized missing-value invariant: `null`/`undefined`/`""` -> `"UNKNOWN"`. Preserved raw `LIKELY_COVERED` static AST mapping while identifying required Lead Architect / PO policy decision. | `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` |
-| **C-06** | **File Inventory Arithmetic** | Prior reports claimed 30 existing + 2 omitted + 4 reports = 32 files, but listed only 28 existing files in table. | Rebuilt complete inventory across full Wave 4 scope: **46 total unique files** (26 existing, 20 proposed new). | `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` |
-| **C-07** | **Historical Test Baseline** | Claimed test passes without distinguishing historical runs from live execution. | Executed all 224 tests live on HEAD `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c`. Verified 224/224 pass. | `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md` (Section 5) |
+| **R1-01** | **Duplicate Algorithms** | Document contained two competing merge algorithms (new syntax-validating vs old property-checking). | Retained exactly one authoritative proposed algorithm. Moved old algorithm to appendix as `SUPERSEDED — NOT AN IMPLEMENTATION CONTRACT`. | `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` |
+| **R1-02** | **Schema Recognition** | Silently upgraded containers with `presets` key without validating schema version or structure. | Formulated 10-row recognition matrix. Requires explicit `schemaVersion: 2`, `presets` array, and `activeFilter` object. | `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` |
+| **R1-03** | **Failure Behavior** | Algorithm caught parsing errors and returned `existingV2Json`, creating false success. | Fail-closed: invalid incoming payloads or merge failures throw `AuraHandledException`. DB transaction rolls back. | `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` |
+| **R1-04** | **Concurrency** | Claimed SOQL `FOR UPDATE` locking existed in Apex source. | Corrected: inspected `DAUserPreferenceController.cls` line 21 & 80—no `FOR UPDATE` exists. Documented last-write-wins and noted row locking as future enhancement. | `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` |
+| **R2-01** | **Missing Value Invariant** | Mapped `null`/`undefined`/`""` to `"UNTESTED"`. | Strict missing-value invariant: `null`/`undefined`/`""`/`"   "`/unrecognized → `"UNKNOWN"`. | `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` |
+| **R2-02** | **Static Inference vs Runtime** | Conflated AST naming matches (`likely-covered`) with confirmed runtime coverage (`COVERED`). | Separated static AST inference from runtime execution. Documented UI mapping policy requirements for Lead Arch + PO. | `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` |
+| **R2-03** | **Failed Execution vs Untested** | Mapped test failures (`known-coverage-failure`) to `UNTESTED`. | Separated test execution failures from zero-test components. Documented 4-state UI model information loss. | `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` |
+| **R3-01** | **Inventory Arithmetic** | Summary text claimed 26 existing + 20 proposed = 46, but itemized table had 24 existing + 22 proposed. | Reconciled arithmetic: 24 existing baseline files + 22 proposed new files (15 code/test + 7 reports) = 46 unique files. | `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` |
+| **R3-02** | **Hold Counts** | Claimed 36 files prohibited by hold without clear arithmetic breakdown. | Clarified hold count: 34 files prohibited from modification/creation + 5 reference-only reports + 7 governance reports = 46 total. | `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` |
+| **R4-01** | **Client Limit Misclaims** | Claimed client soft limit of 100,000 characters existed for `Filters_JSON__c`, `Positions_JSON__c`, and `Zoom_Pan_JSON__c`. | Corrected: source inspection of `daAppShell.js` line 8 & 236 shows 131,072 hard check specifically for `Filters_JSON__c`. No 100,000 soft limit exists in source. | `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md` |
+| **R4-02** | **Parameter Binding Defect** | `run-workstream-c-tests.cjs` Test 6 passed oversized string in param position 4 (`positionsJson`) instead of param 5 (`filtersJson`). | Mapped method signature `saveUserPreference(projId, view, layout, pos, filters, zoom)`. Formulated R4 test specs for param 4, 5, and 6. | `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md` |
+| **GOV-01** | **Decision Approver Alignment** | Governance report listed Lead Arch + PO for all four decisions, contradicting original decision records. | Reconciled approvers: DEC-W4-01 (PO), DEC-W4-02 (Lead Arch), DEC-W4-03 (PO), DEC-W4-04 (PO). | `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md` |
 
 ---
 
-## 4. Key Summary of Technical Specifications
+## 4. Key Summary of Corrected Technical Contracts
 
-### 4.1 R1 — Canonical V2 Schema & Apex Merge
-- **Canonical Object:** `schemaVersion: 2` (integer), `presets: []` (array), `activePresetId: string|null`, `activeFilter: {}` (object), `testCoverageStatus: []` (array/optional).
-- **Merge Behavior:** Private Apex method parses existing `Filters_JSON__c`. If it contains a v2 container, incoming flat v1 filter JSON is merged into `activeFilter` without touching `presets`. If deserialization fails, `existingV2Json` is returned untouched (fail-closed).
+### 4.1 R1 — Authoritative Fail-Closed Apex Merge
+- **Single Algorithm:** Validates incoming JSON syntax before inspecting existing data.
+- **Fail-Closed Guarantee:** Invalid syntax or merge error throws `AuraHandledException`. No silent fallback or false successful save.
+- **V1-to-V2 Conversion:** Updates `activeFilter`, sets `activePresetId` = `null`, preserves `presets[]`, `schemaVersion: 2`, `testCoverageStatus`, and unknown extensions.
+- **Concurrency:** Acknowledges last-write-wins behavior in current Apex source due to absence of SOQL `FOR UPDATE`.
 
 ### 4.2 R2 — Coverage Normalization Contract
-- **Missing-Value Invariant:** `null`, `undefined`, `""`, missing property → `"UNKNOWN"`.
-- **4-State UI Filter Contract:** `COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`.
-- **Static AST Inference:** `LIKELY_COVERED` represents static call-graph references. Identified as an open policy decision for Lead Architect and Product Owner sign-off.
+- **Missing-Value Invariant:** `null`, `undefined`, `""`, `"   "`, unrecognized → `"UNKNOWN"`.
+- **6 Concepts to 4 UI States:**
+  1. Runtime pass → `COVERED`
+  2. Static AST inference (`likely-covered`) → `COVERED` (Pending Lead Arch/PO policy decision)
+  3. Ambiguous reference → `AMBIGUOUS`
+  4. Explicitly untested / zero tests → `UNTESTED`
+  5. Failed test run → `UNTESTED` (Information loss documented)
+  6. Missing / unanalyzed evidence → `UNKNOWN`
 
-### 4.3 R3 — Governance & Ownership Inventory
-- **Exact Total:** 46 unique files in Wave 4 scope.
-- **Existing Files:** 26 (17 source/metadata, 3 tests, 6 governance reports).
-- **Proposed New Files:** 20 (12 source, 1 test, 7 new audit reports).
-- **Files Requiring Modification:** 33.
-- **Hold Status:** 36 files currently prohibited from modification under active hold.
+### 4.3 R3 — File Ownership Inventory (46 Files)
+- **Total Unique Files:** 46
+- **Existing Files Prior to Spec Batch:** 24 (all present on disk)
+- **Proposed New Files:** 22 (13 source/component, 2 test runners, 7 governance specification reports)
+- **Present on Disk Currently:** 31 files (24 baseline + 7 governance reports)
+- **Uncreated Pending Authorization:** 15 files
+- **Total Proposed Modifications / Creations:** 33 files
+- **Unmodified / Reference Files:** 13 files
 
-### 4.4 R4 — Field-Specific Payload Boundaries
-- **Physical Hard Capacity:** 131,072 characters (enforced in Apex via length check throwing `AuraHandledException`).
-- **Application Soft Limit:** 100,000 characters (enforced client-side in LWC before save).
-- **Fields Governed:** `Filters_JSON__c`, `Positions_JSON__c`, `Zoom_Pan_JSON__c`.
-
----
-
-## 5. Audit Chronology & Timestamp Disambiguation
-
-To prevent audit timeline confusion, this specification explicitly distinguishes five temporal dimensions:
-
-1. **Report Creation & Audit Execution Date:** March 2026 (The current execution date for this final specification defect correction and authorization gate reconciliation task).
-2. **Project Target Roadmap Timeline:** October 2026 (Reflected in canonical test fixtures, sample JSON payloads, and deployment roadmap milestones).
-3. **Repository HEAD Commit Date:** October 2024 (Corresponding to git commit `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c`).
-4. **Source File Modification Date:** Current filesystem timestamps (No source files modified during this dispatch).
-5. **Sample Payload ISO Timestamps:** Sample JSON presets use future timestamp `2026-10-30T10:00:00Z` for schema structure illustration.
+### 4.4 R4 — Field Payload Boundaries
+- **Physical Field Capacity:** 131,072 characters across all 3 long text fields (`Filters_JSON__c`, `Positions_JSON__c`, `Zoom_Pan_JSON__c`).
+- **Apex Validation:** `DAUserPreferenceController.cls` line 61–69 enforces 131,072 hard check on all 3 fields.
+- **Client Validation:** `daAppShell.js` line 236 checks `filtersJson.length > 131072`. Positions and Zoom/Pan are unchecked in LWC.
+- **Parameter Mapping:** `saveUserPreference` param 4 = `positionsJson`, param 5 = `filtersJson`, param 6 = `zoomPanJson`.
 
 ---
 
-## 6. Live Test Verification Baseline
+## 5. Summary of Delivered Governance Reports (Rows 40–46)
 
-All 224 offline regression tests were executed live during this dispatch on HEAD `8d9dc237611e0111122c3f3c1b0b0d16aae6ca2c`.
-
-| Test Suite / Runner | Execution Command | Historical Count | Current Executed Count | Current Result | Status |
-|---|---|---|---|---|---|
-| **Salesforce POC Core Suite** | `node scratch/salesforce-poc/tests/run-poc-tests.cjs` | 43 | 43 | 43 / 43 PASSED | **VERIFIED** |
-| **Workstream A Suite** | `node scratch/salesforce-poc/tests/run-workstream-a-tests.cjs` | 33 | 33 | 33 / 33 PASSED | **VERIFIED** |
-| **Workstream C Suite** | `node scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` | 18 | 18 | 18 / 18 PASSED | **VERIFIED** |
-| **Exporter Adapter Suite** | `node scripts/test-export-explorer.cjs` | 15 | 15 | 15 / 15 PASSED | **VERIFIED** |
-| **Root CLI Test Suite** | `npm run test:cli` | 115 | 115 | 115 / 115 PASSED | **VERIFIED** |
-| **TOTAL** | | **224** | **224** | **224 / 224 PASSED** | **100% PASS** |
+1. `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md` (This master report)
+2. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` (R1 specification)
+3. `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md` (Governance reconciliation)
+4. `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md` (R4 specification)
+5. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` (R2 specification)
+6. `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` (R3 ownership matrix)
+7. `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md` (Authorization gate package)
 
 ---
 
-## 7. Seven Delivered Audit Reports
+## 6. Confirmation of Absolute Implementation Hold
 
-This dispatch produces the following seven comprehensive, internally consistent audit reports in the repository root:
-
-1. `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md` (This report)
-2. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md`
-3. `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md`
-4. `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md`
-5. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`
-6. `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md`
-7. `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md`
-
----
-
-## 8. Confirmation of Zero Code & State Modifications
-
-The following categories of files remain **100% UNCHANGED**:
-- Source code (Apex, JavaScript, HTML, CSS)
-- Unit and integration tests
+The following repository assets remain **100% UNCHANGED**:
+- Source code (Apex classes, JavaScript, HTML, CSS)
+- Unit and integration test scripts
 - Test fixtures and mock payloads
-- Salesforce custom object and field metadata
-- Pre-existing governance reports in `docs/audits/salesforce-wave4/`
+- Salesforce object and field metadata
 - Package manifests (`package.json`, `package-lock.json`)
-- Git working-tree state for all source files
 
 The Wave 4 implementation hold remains active and fully enforced.
