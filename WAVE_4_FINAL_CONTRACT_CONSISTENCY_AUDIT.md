@@ -1,70 +1,98 @@
-# Wave 4 (`FEAT-STATE-03`): Final Contract Consistency Audit Report
+# Wave 4 (`FEAT-STATE-03`): Final Contract Consistency & Fail-Closed Authorization Audit
 
 | Governance Attribute | Value |
 |---|---|
-| **Document Type** | Comprehensive Contract Consistency & Independent Re-Audit Report |
-| **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
+| **Document Type** | Comprehensive Independent Cross-Document Audit Report & Readiness Assessment |
+| **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters & Presets Persistence (Remediations R1–R4) |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-8629279200045229050-798dadd2` |
-| **HEAD Commit SHA** | `d8b3b273bf5d31736ad82fc244760fd5b85e3b91` |
+| **Current Branch** | `jules-6560910067307031898-522ac079` |
+| **HEAD Commit SHA** | `e5f3b66cd15496756c5a179d31a740275ff1925e` |
 | **Audit Date** | October 31, 2026 |
-| **Working Tree Status** | Documentation Specification Re-Audit in Progress |
-| **Executive Verdict** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
+| **Implementation Hold Status** | **IMPLEMENTATION HOLD — ACTIVE** |
+| **Dispatch Authorization** | **DOCUMENTATION ONLY — NO IMPLEMENTATION AUTHORIZED** |
+| **Final Audit Verdict** | **SPECIFICATION INTERNALLY CONSISTENT — READY FOR HUMAN REVIEW** |
 
 ---
 
-## 1. Executive Summary & Verdict
+## 1. Executive Summary & Audit Baseline
 
-This report presents an independent second-pass specification consistency audit for the Salesforce Migration — Wave 4 (`FEAT-STATE-03`). Every correction across the authoritative seven-document specification package has been independently verified against the actual repository codebase, test suites, and metadata.
+This independent audit report represents the authoritative, second-pass cross-document consistency assessment for Wave 4 (`FEAT-STATE-03`). Following the identification of five critical documentation blockers in prior drafts, this audit verifies the final documentation-only corrections across the seven authoritative Wave 4 deliverables:
 
-### Executive Verdict:
-# `SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE`
-
-### Key Audit Findings & Remediations:
-1. **R1 Canonical V2 Schema & Recognition:**
-   - Unified schema requirements: both `presets` (array) and `activeFilter` (object) are required. Missing either property or passing incorrect types is classified as invalid V2 and fails closed. Edge cases claiming silent repair or update of containers missing `activeFilter` have been eliminated.
-   - Removed automatic V2 recognition for payloads lacking `schemaVersion` but containing `presets`. Such containers are classified as ambiguous and blocked pending architectural decision.
-   - Removed unapproved unilateral incoming V2 replacement from authoritative pseudocode. Incoming V2 write semantics (replacement vs. merge) are marked unresolved pending explicit Product Owner and Lead Architect approval.
-   - Defined 6 explicit validation layers and verified last-write-wins concurrency model (no SOQL `FOR UPDATE` in source).
-2. **R2 Coverage Normalization:**
-   - Preserved mandatory missing-value invariant (`null`, `undefined`, `""`, whitespace, unrecognized -> `UNKNOWN`) as an approved deterministic defect correction.
-   - Removed unapproved policy mappings (`likely-covered` -> `COVERED`, `failed`/`known-coverage-failure` -> `UNTESTED`) from the authoritative contract, structuring them with explicit unresolved policy gates requiring Lead Architect & Product Owner sign-off.
-   - Separated 7 distinct evidence layers, distinguishing confirmed runtime pass from static AST inference and failed test runs. Confirmed line 331 of `scripts/export-explorer.cjs` retains the defect under the hold.
-3. **R3 Inventory & Implementation-Hold Arithmetic:**
-   - Rebuilt inventory with four mutually exclusive categories:
-     - Category A: Existing Baseline — Proposed Modification (11 files)
-     - Category B: Existing Baseline — Reference Only (13 files)
-     - Category C: Proposed New File — Feature / Test (15 files)
-     - Category D: Governance Report — Documentation Deliverable (7 files)
-     - Total: Exactly 46 unique files.
-   - Resolved double-counting: exactly 26 implementation files are prohibited under the hold (11 existing modifications + 15 new creations). The 7 governance reports are authorized documentation deliverables.
-4. **R4 Field Payload Boundaries & Evidence Layers:**
-   - Enforced four distinct evidence layers: Client-side guard (`daAppShell.js`), Apex hard guard (`DAUserPreferenceController.cls`), Salesforce metadata physical capacity (`131,072`), and actual live database persistence.
-   - Disclosed that exact boundary execution evidence exists in the repository only for `positionsJson` (Test 6 param 4 defect), while 131,072 acceptance / 131,073 rejection for `filtersJson` and `zoomPanJson` is expected behavior from source/metadata inspection, not demonstrated persistence.
-   - Documented controller parameter mapping (param 4 `positionsJson`, param 5 `filtersJson`, param 6 `zoomPanJson`) and preserved Test 6 remediation specifications.
-5. **Governance Scope & R1/R4 Shared-File Independence:**
-   - Resolved shared-file overlap between R1 and R4 (`run-workstream-c-tests.cjs`, `DAUserPreferenceControllerTest.cls`): established change-by-change authorization breakdown.
-   - Enforced the rule: **Approval for R1 does not authorize R4 changes, and approval for R4 does not authorize R1 changes.**
-   - Verified that R2 approver requirements uniformly designate both Lead Architect and Product Owner across all documents.
-   - Preserved all four feature decisions (`DEC-W4-01`..`04`) as `PENDING` with governance classification:
-     `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`.
+1. **R1 Blank-Existing Validation Bypass Eliminated:** The proposed Apex merge algorithm (`mergeV1IntoV2Container`) was restructured into a strict 10-step processing sequence. It performs incoming JSON syntax, object type, schema classification, required V2 properties, and unresolved write gates *before* inspecting existing persisted data or permitting an initial save. The unresolved incoming V2 write gate blocks universally, regardless of whether existing data is blank, null, V1, or V2.
+2. **R1 Six Validation Layers & Nested Rules Formalized:** An explicit six-layer validation matrix was created, distinguishing verified source implementations from contracts and deferred live persistence. Deep nested V2 validation rules (preset object schema, ID formatting, filter criteria enum domains, isDefault rules, timestamps) were inspected and explicitly marked as incomplete and implementation-blocking.
+3. **R2 Output Safety & Canonical Vocabulary Enforcement:** The canonical coverage vocabulary was strictly bounded to exactly four authorized states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Noncanonical policy return strings were eliminated. A fail-closed pipeline contract (`UnresolvedCoveragePolicyError` / quarantine) was specified to ensure unapproved policy inputs never leak into generated output.
+4. **R3 Exporter Test Runner Approver Reconciliation:** The ownership matrix, governance reconciliation, and human authorization gate were harmonized to uniformly require **both Lead Architect and Product Owner** for both `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`.
+5. **R3 Governance Artifact Disambiguation:** The distinction between the two Category A existing governance reports (`WAVE_4_FINAL_EVIDENCE_CLOSURE_REPORT.md` and `WAVE_4_FINAL_EVIDENCE_CLOSURE_EXECUTIVE_SUMMARY.md`) and the seven Category D deliverables was fully documented based on ownership boundaries (Migration Auditor vs. Governance Auditor) and task authorization scope.
+6. **Invariant Arithmetic Reconciled:** Mutually exclusive 46-file inventory confirmed: 24 baseline files (11 Category A + 13 Category B), 22 proposed new files (15 Category C + 7 Category D), with exactly 26 implementation targets prohibited under the hold.
 
 ---
 
-## 2. Repository Baseline & Git Evidence
+## 2. Repository Baseline & Final Git State
 
 - **Repository Root:** `/app`
-- **Active Branch:** `jules-8629279200045229050-798dadd2`
-- **Baseline HEAD Commit SHA:** `d8b3b273bf5d31736ad82fc244760fd5b85e3b91`
-- **Baseline Working Tree:** Clean (0 uncommitted changes prior to documentation audit).
-- **Working Tree State After Dispatch:** Only the 7 authorized governance documentation deliverables in the repo root were updated. Zero source, metadata, or test files were modified.
-- **Audit Date:** October 31, 2026.
+- **Active Branch:** `jules-6560910067307031898-522ac079`
+- **Baseline HEAD Commit SHA:** `e5f3b66cd15496756c5a179d31a740275ff1925e`
+- **Baseline Working Tree Status:** Clean (0 uncommitted changes prior to dispatch).
+- **Final Working Tree Status:** Only authorized Category D governance documents modified in-place; working tree contains uncommitted documentation changes awaiting user submission.
+- **Source & Test Files Inspected (NOT Modified):**
+  - `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` (Lines 61–69 inspected)
+  - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` (Lines 50–110 inspected)
+  - `scripts/export-explorer.cjs` (Line 331 inspected; defect confirmed present under hold)
+  - `scripts/test-export-explorer.cjs` (Inspected; 15 test assertions confirmed)
+  - Field metadata files in `scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/`
 
 ---
 
-## 3. Test Evidence Qualification & Verification
+## 3. Detailed Blocker-by-Blocker Resolution
 
-The 224 regression baseline was independently executed and reproduced in full during this dispatch:
+### 3.1 Blocker 1 & 2: R1 Incoming Validation Order & Six Validation Layers
+- **Defect Identified:** Prior draft algorithm returned incoming data immediately if existing data was blank (`if (String.isBlank(existingV2Json)) return incomingFilterJson;`), bypassing schema recognition and the incoming V2 decision gate.
+- **Resolution Applied:** The algorithm was rewritten in `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` Section 5.3 to validate and classify incoming payloads in Steps 1–7. Incoming V2 payloads throw an unresolved decision exception before any blank existing check.
+- **Edge-Case Matrix Reconciliation:** Expanded from 15 to 22 explicit rows covering all combinations of blank existing data with valid V1, valid V2, invalid V2, unsupported schema versions, ambiguous unversioned presets, malformed JSON, and JSON arrays.
+- **Six-Layer Status Matrix:** Layer 1 (Syntax) verified in source; Layer 2 (Object type) specified but not implemented; Layer 3 (Version recognition) specified but not implemented; Layer 4 (V2 structural) specified but not implemented; Layer 5 (Field-specific nested) incomplete and marked implementation-blocking; Layer 6 (Persistence) Apex length guard verified, live persistence deferred.
+
+### 3.2 Blocker 3: R2 Canonical Output Safety
+- **Defect Identified:** Prior normalizer contract returned noncanonical strings (`UNRESOLVED_STATIC_INFERENCE_POLICY`, `UNRESOLVED_FAILED_EXECUTION_POLICY`).
+- **Resolution Applied:** Normalizer contract rewritten to enforce strict 4-state vocabulary (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Unresolved branches throw `UnresolvedCoveragePolicyError`, causing exporter execution to fail closed and halt or quarantine unmapped nodes. Missing values deterministically map to `UNKNOWN`.
+
+### 3.3 Blocker 4: R3 Dual Approver Ownership for Exporter Files
+- **Defect Identified:** Row 5 (`scripts/test-export-explorer.cjs`) listed only Lead Architect, while Row 4 (`scripts/export-explorer.cjs`) listed Lead Architect & Product Owner.
+- **Resolution Applied:** Row 5 was updated to require **both Lead Architect & Product Owner**, achieving complete alignment across the Ownership Matrix, Authorization Gate, and Governance Reconciliation.
+
+### 3.4 Blocker 5: R3 Disambiguation of Governance Artifacts
+- **Defect Identified:** Category A contained two markdown files (`WAVE_4_FINAL_EVIDENCE_CLOSURE_REPORT.md` and executive summary) classified as prohibited under the hold, while 7 root markdown reports were authorized Category D deliverables.
+- **Resolution Applied:** Section 4 of `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` was expanded to provide the full rationale. The two Category A reports belong to the Integration Coordinator / Migration Auditor role for past milestone closure, outside the scope of this Governance Auditor documentation dispatch. They are labeled `EXISTING GOVERNANCE ARTIFACT — NOT AUTHORIZED FOR MODIFICATION IN THIS DISPATCH`.
+
+---
+
+## 4. R1 Six-Layer Validation Status Matrix
+
+| Layer | Required Validation | Defined Rules | Algorithm Coverage | Source Implementation Evidence | Status |
+|---|---|---|---|---|---|
+| **Layer 1: JSON Syntax Validation** | Input string must be well-formed JSON | Must parse via parser without syntax errors | Fully covered in proposed algorithm (try/catch around `JSON.deserializeUntyped`) | Implemented in `DAUserPreferenceController.validateJsonString()` | **Source Implementation Verified** |
+| **Layer 2: Top-Level Object Validation** | Root structure must be a JSON object (`Map<String, Object>`) | Reject arrays `[]`, primitives, null/scalar root | Fully covered in proposed algorithm (`instanceof Map<String, Object>`) | Not implemented in controller (controller only runs `validateJsonString` without type check) | **Partially Specified Contract / Not Implemented** |
+| **Layer 3: Schema-Version Recognition** | Version classification and discrimination | Version must be integer `2`; unversioned legacy is V1; unversioned + presets is Ambiguous; other versions unsupported | Fully covered in proposed algorithm (explicit classification gates) | Not implemented in controller | **Fully Specified Contract / Not Implemented** |
+| **Layer 4: Complete V2 Structural Validation** | Required top-level V2 properties and collection types | `schemaVersion` (Integer = 2), `presets` (List), `activeFilter` (Map) required; missing or wrong type rejected | Fully covered in proposed algorithm (type checks and presence gates) | Not implemented in controller | **Fully Specified Contract / Not Implemented** |
+| **Layer 5: Field-Specific Value Validation** | Deep nested validation of presets and active filter criteria | Nested preset structure, preset ID format, filter criteria enum domains, default flag rules, timestamps | Partially covered in algorithm (checks `presets` is List, `activeFilter` is Map; does NOT validate inner fields) | Not implemented in controller | **Incomplete Specification — Implementation Blocking** |
+| **Layer 6: Persistence Validation** | Capacity constraints, field limits, and transactional safety | Character length <= 131,072 chars, atomic rollback on exception | Fully covered in contract & controller length check; offline mock passes | Implemented in controller lines 61–69 (`.length() > 131072`); live database persistence deferred | **Apex Guard Verified / Live Persistence Deferred** |
+
+---
+
+## 5. R3 46-File Inventory Arithmetic & Classification Summary
+
+| Primary Classification Category | Description & Inclusion Criteria | Total Unique Files | On-Disk Prior | Doc Dispatch Deliverables | Uncreated Feature / Tests | Current Hold Status |
+|---|---|---|---|---|---|---|
+| **Category A** | Existing Baseline — Proposed Modification | **11** | 11 | 0 | 0 | **Prohibited by Hold** |
+| **Category B** | Existing Baseline — Reference Only | **13** | 13 | 0 | 0 | Reference Only (No action) |
+| **Category C** | Proposed New File — Feature / Test Creation | **15** | 0 | 0 | 15 | **Prohibited by Hold** |
+| **Category D** | Governance Report — Documentation Deliverable | **7** | 0 | 7 | 0 | **Authorized Documentation Scope** |
+| **TOTALS** | Sum of Mutually Exclusive Categories | **46** | **24** | **7** | **15** | **Hold Active on A & C (26 files)** |
+
+---
+
+## 6. Test Evidence Actually Reproduced
+
+During this dispatch, all 224 baseline regression tests were independently executed and verified in the local environment:
 
 | Test Suite / Command | Execution Status | Tests Executed | Passed | Failed | Skipped | Evidence Category |
 |---|---|---|---|---|---|---|
@@ -85,76 +113,37 @@ All 224 tests execute in offline Node.js simulation environments. The following 
 
 ---
 
-## 4. Re-Audit Checklist (Exhaustive 15-Point Cross-Check)
+## 7. Stale Contradiction Search & Dispositions
 
-An independent cross-check across all seven authoritative documents confirms full compliance:
+A systematic grep search across all documentation files was performed:
 
-1. **R1 Canonical Schema Required Properties:**
-   - Schema defines `schemaVersion`, `presets`, and `activeFilter` as required.
-   - Recognition matrix, proposed algorithm, and edge-case table all enforce fail-closed rejection when `presets` or `activeFilter` is missing or has the wrong type.
-   - Status: **VERIFIED CONCURRENT & CONSISTENT**.
-2. **R1 Incoming V2 Replacement vs. Merge:**
-   - Marked unresolved in contract, edge cases, and algorithm. Pseudocode throws explicit exception requiring Product Owner & Lead Architect sign-off rather than unilaterally accepting incoming V2.
-   - Status: **VERIFIED UNRESOLVED & BLOCKED**.
-3. **R1 Failure Behavior:**
-   - Single failure contract enforced: invalid syntax or merge failure throws `AuraHandledException` causing transaction rollback; no silent fallback or false successful save.
-   - Status: **VERIFIED CONSISTENT**.
-4. **R2 Missing-Value Semantics:**
-   - `null`, `undefined`, `""`, `"   "`, and unrecognized values consistently map to `UNKNOWN`.
-   - Identified as an approved deterministic bug fix.
-   - Status: **VERIFIED CONSISTENT**.
-5. **R2 Static Inference & Failed Test Mappings:**
-   - `likely-covered` -> `COVERED` and `failed` -> `UNTESTED` are removed from authoritative mappings and isolated into gated policy branches requiring Lead Architect & Product Owner sign-off.
-   - Status: **VERIFIED UNRESOLVED & GATED**.
-6. **R3 Mutually Exclusive Inventory Classifications:**
-   - Every file row in the 46-file matrix has exactly one primary classification (Cat A = 11, Cat B = 13, Cat C = 15, Cat D = 7).
-   - Status: **VERIFIED MUTUALLY EXCLUSIVE**.
-7. **R3 Inventory Totals Reconciliation:**
-   - Total Unique Files = 46. Prohibited implementation targets = 26 (11 Cat A + 15 Cat C). Reference-only files = 13. Governance reports = 7. Double-counting eliminated.
-   - Status: **VERIFIED RECONCILED**.
-8. **R4 Four Evidence Layers:**
-   - Client guard, Apex guard, metadata physical capacity, and live persistence are explicitly separated for all three fields.
-   - Status: **VERIFIED SEPARATED**.
-9. **R4 Three Field Mappings & Boundaries:**
-   - Capacity (131,072) and Apex guards verified across `Filters_JSON__c`, `Positions_JSON__c`, and `Zoom_Pan_JSON__c`. Execution evidence documented as existing only for `positionsJson` via Test 6.
-   - Status: **VERIFIED CONSISTENT**.
-10. **R1/R4 Shared-File Authorization Scopes:**
-    - Shared files (`run-workstream-c-tests.cjs`, `DAUserPreferenceControllerTest.cls`) itemized change-by-change. Independent approver rules prevent cross-authorization.
-    - Status: **VERIFIED INDEPENDENT & UNAMBIGUOUS**.
-11. **R2 Approver Consistency:**
-    - Dual approver requirement (Lead Architect & Product Owner) consistently designated in Authorization Gate, Matrix, and Governance reports.
-    - Status: **VERIFIED CONSISTENT**.
-12. **Pending Feature Decisions & Provenance:**
-    - `DEC-W4-01` through `DEC-W4-04` remain `PENDING`. Provenance classification preserved.
-    - Status: **VERIFIED PRESERVED**.
-13. **Test Execution Evidence Qualification:**
-    - Offline test suites executed and documented; live org execution explicitly deferred.
-    - Status: **VERIFIED QUALIFIED**.
-14. **Active Implementation Hold:**
-    - Maintained active across all deliverables.
-    - Status: **VERIFIED ACTIVE**.
-15. **Documentation Scope Strictness:**
-    - Clear disclaimers throughout: documentation-only dispatch does not constitute implementation authorization.
-    - Status: **VERIFIED STRICT**.
+| Search Term | Target / Scope | Findings | Disposition |
+|---|---|---|---|
+| `Handle blank existing data: initial save` | All Markdown files | Found in prior version of `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` line 149 | Replaced with Step 1–7 incoming validation before existing data evaluation |
+| `UNRESOLVED_STATIC_INFERENCE_POLICY` | All Markdown files | Found in prior version of `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` | Replaced with strict 4-state vocabulary and `UnresolvedCoveragePolicyError` fail-closed throw |
+| `UNRESOLVED_FAILED_EXECUTION_POLICY` | All Markdown files | Found in prior version of `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` | Replaced with strict 4-state vocabulary and `UnresolvedCoveragePolicyError` fail-closed throw |
+| `scripts/test-export-explorer.cjs` approvers | All Markdown files | Found single-approver in `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` row 5 | Corrected to `Lead Architect & Product Owner` |
+| `March 2026` | Authoritative Wave 4 documents | None found in active document bodies | Corrected in prior dispatch |
+| `APPROVAL RECORDED IN REPOSITORY` | Decision registers | Verified present for all four feature decisions | Preserved unchanged; decisions remain `PENDING` |
 
 ---
 
-## 5. Repository Stale Contradiction Search & Dispositions
+## 8. Outstanding Human Decisions & Implementation Blockers
 
-Following corrections, a thorough audit of all documentation files was conducted:
+The following items remain strictly pending human review and prevent lifting the implementation hold:
 
-| Search Term | Findings in Scope | Disposition |
-|---|---|---|
-| `March 2026` | Found in historical headers of older reports prior to dispatch | Corrected to `October 31, 2026` across all 7 authoritative documents |
-| `34 files prohibited` / `36 files prohibited` | Old double-counted hold totals | Reconciled to exactly `26 files prohibited` across R3 matrix and audit |
-| `Structurally Repaired` (missing `activeFilter`) | Contradicted schema requirement | Eliminated: missing `activeFilter` now fails closed as invalid V2 |
-| `automatic V2 upgrade` | Unapproved assumption for unversioned presets payloads | Eliminated: unversioned presets payloads now throw ambiguous payload exception |
-| `likely-covered` -> `COVERED` | Unapproved policy mapping presented as contract | Gated behind pending policy decision branch in R2 contract |
-| `SOQL FOR UPDATE` | Erroneous claim of row-level database locking | Clarified: inspected source, confirmed absent; documented last-write-wins |
+1. **`DEC-W4-01` (Preset Storage Architecture):** Multi-preset storage model vs. single filter persistence. Required Approver: **Product Owner**. Status: **PENDING**.
+2. **`DEC-W4-02` (Cross-View Filter Semantics):** Filter criteria propagation across graph, matrix, and findings views. Required Approver: **Lead Architect**. Status: **PENDING**.
+3. **`DEC-W4-03` (Preset Ownership Scope):** User-private vs. project-shared presets. Required Approver: **Product Owner**. Status: **PENDING**.
+4. **`DEC-W4-04` (Matrix & Findings Product Scope):** Scope of matrix and findings viewers in Wave 4. Required Approver: **Product Owner**. Status: **PENDING**.
+5. **R1 Incoming V2 Write Semantics:** Full replacement vs. partial merge when client submits a V2 payload. Required Approvers: **Lead Architect & Product Owner**. Status: **PENDING**.
+6. **R2 Coverage Policy Decision A:** Mapping static AST inference (`likely-covered`) to `COVERED` vs. `AMBIGUOUS`. Required Approvers: **Lead Architect & Product Owner**. Status: **PENDING**.
+7. **R2 Coverage Policy Decision B:** Mapping failed test executions to `UNTESTED` vs. dedicated failure state. Required Approvers: **Lead Architect & Product Owner**. Status: **PENDING**.
+8. **R1 Layer 5 Nested Validation Specification:** Finalizing criteria enum domains, preset schema rules, and length bounds. Required Approver: **Lead Architect**. Status: **PENDING**.
 
 ---
 
-## 6. Authoritative Document Manifest (The 7 Deliverables)
+## 9. Final Authoritative Manifest (The 7 Deliverables)
 
 1. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` (R1 Specification)
 2. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` (R2 Specification)
@@ -166,8 +155,21 @@ Following corrections, a thorough audit of all documentation files was conducted
 
 ---
 
-## 7. Final Confirmation of Implementation Hold
+## 10. Final Authoritative Verdict
 
-`IMPLEMENTATION HOLD — ACTIVE`
+### **VERDICT: SPECIFICATION INTERNALLY CONSISTENT — READY FOR HUMAN REVIEW**
 
-No application code, Apex logic, LWC component, test assertion, or metadata file was altered. The specification package is now internally consistent, factually grounded, and ready for human review.
+All five identified blockers have been resolved:
+- R1 incoming validation order enforces all checks and decision gates before inspecting existing data.
+- R1 six validation layers and nested schema rules are thoroughly documented with implementation-blocking flags.
+- R2 strictly enforces the 4-state canonical vocabulary and fails closed on unresolved evidence without noncanonical leakage.
+- R2 dual-approver requirements are reconciled across all governance deliverables.
+- R3 inventory and authorization boundaries are mathematically reconciled and conceptually disambiguated.
+
+### Mandatory Operational Statuses
+
+```
+IMPLEMENTATION HOLD — ACTIVE
+FULL WAVE 4 FEATURE DISPATCH — NOT AUTHORIZED
+LIVE SALESFORCE ACCEPTANCE — DEFERRED
+```
