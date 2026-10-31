@@ -185,6 +185,9 @@ function createProductionViewerClass(mockApex) {
     const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daGraphViewer/daGraphViewer.js');
     let code = fs.readFileSync(filePath, 'utf8');
 
+    const filterSchemaPath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daFilterSchema.js');
+    const filterSchemaModule = require(filterSchemaPath);
+
     code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]lwc['\"];?/, 'const {$1} = LwcMock;');
     code = code.replace(/import\s+\{?\s*loadScript\s*\}?\s+from\s+['\"]lightning\/platformResourceLoader['\"];?/, 'const loadScript = mockApex.loadScript || (() => Promise.resolve());');
     code = code.replace(/import\s+cytoscapeUrl\s+from\s+['\"]@salesforce\/resourceUrl\/cytoscape['\"];?/, 'const cytoscapeUrl = "mockCytoscapeUrl";');
@@ -194,6 +197,7 @@ function createProductionViewerClass(mockApex) {
     code = code.replace(/import\s+saveUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.saveUserPreference['\"];?/, 'const saveUserPreference = (params) => (mockApex.saveUserPreference ? mockApex.saveUserPreference(params) : Promise.resolve(null));');
     code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daGraphPayloadLoader['\"];?/, 'const {$1} = loaderModule;');
     code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daLayoutEngine['\"];?/, 'const {$1} = layoutModule;');
+    code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]c\/daFilterSchema['\"];?/, 'const {$1} = filterSchemaModule;');
     code = code.replace(/@api\s+/g, '');
     code = code.replace(/@track\s+/g, '');
     code = code.replace('export default class DaGraphViewer', 'class DaGraphViewer');
@@ -223,8 +227,8 @@ function createProductionViewerClass(mockApex) {
         }
     };
 
-    const fn = new Function('LwcMock', 'CustomEvent', 'loaderModule', 'layoutModule', 'mockApex', code);
-    return fn(LwcMock, CustomEvent, loaderModule, layoutModule, mockApex);
+    const fn = new Function('LwcMock', 'CustomEvent', 'loaderModule', 'layoutModule', 'filterSchemaModule', 'mockApex', code);
+    return fn(LwcMock, CustomEvent, loaderModule, layoutModule, filterSchemaModule, mockApex);
 }
 
 let passes = 0;

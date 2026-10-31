@@ -1,0 +1,19 @@
+.preset-manager-container {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.preset-item {
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.preset-item:hover {
+    background-color: #f3f3f3;
+}
+
+.preset-item.is-active {
+    background-color: #eef4ff;
+    border-left: 3px solid #0070d2;
+}

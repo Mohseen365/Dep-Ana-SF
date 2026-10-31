@@ -1,0 +1,74 @@
+<template>
+    <div class="findings-view-container slds-p-around_medium">
+        <!-- Header & Summary -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+            <div>
+                <h3 class="slds-text-heading_small">Findings & Architectural Alerts</h3>
+                <p class="slds-text-body_small slds-text-color_weak">
+                    Detected cycles, untested high-risk nodes, unresolved symbols, and coupling hotspots
+                </p>
+            </div>
+            <template if:true={hasFindings}>
+                <div class="slds-badge slds-theme_default">
+                    {totalFindings} Findings Detected
+                </div>
+            </template>
+        </div>
+
+        <!-- Error State -->
+        <template if:true={error}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <h2>{error}</h2>
+            </div>
+        </template>
+
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <div class="slds-spinner slds-spinner_medium slds-spinner_brand" role="status">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+                <p class="slds-text-body_small slds-m-top_small">Deriving architectural findings...</p>
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template if:false={isLoading}>
+            <template if:false={hasFindings}>
+                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                    <p class="slds-text-color_weak">No findings detected matching active filter criteria.</p>
+                </div>
+            </template>
+
+            <!-- Findings List -->
+            <template if:true={hasFindings}>
+                <div class="slds-grid slds-grid_vertical">
+                    <template for:each={filteredFindings} for:item="finding">
+                        <div key={finding.id} class="slds-m-bottom_small slds-p-around_small finding-card">
+                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-start">
+                                <div>
+                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                        <span class={finding.badgeClass}>{finding.severity}</span>
+                                        <h4 class="slds-text-title_bold slds-m-left_x-small">{finding.title}</h4>
+                                    </div>
+                                    <p class="slds-text-body_regular slds-m-top_xx-small">{finding.description}</p>
+                                    <div class="slds-m-top_xx-small slds-text-body_small slds-text-color_weak">
+                                        Category: <span class="slds-text-color_default">{finding.categoryLabel}</span>
+                                        <template if:true={finding.componentName}>
+                                            | Target: <span class="slds-text-color_default">{finding.componentName}</span>
+                                        </template>
+                                        <template if:true={finding.testCoverageStatus}>
+                                            | Coverage: <span class="slds-text-color_default">{finding.testCoverageStatus}</span>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

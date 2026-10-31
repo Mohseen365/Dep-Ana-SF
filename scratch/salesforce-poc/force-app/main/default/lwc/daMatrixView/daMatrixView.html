@@ -1,0 +1,76 @@
+<template>
+    <div class="matrix-view-container slds-p-around_medium">
+        <!-- Header & Summary -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+            <div>
+                <h3 class="slds-text-heading_small">Dependency Matrix</h3>
+                <p class="slds-text-body_small slds-text-color_weak">
+                    Directed dependency counts by Source Type (rows) → Target Type (columns)
+                </p>
+            </div>
+            <template if:true={hasData}>
+                <div class="slds-badge slds-theme_default">
+                    {totalDependencies} Total Dependencies
+                </div>
+            </template>
+        </div>
+
+        <!-- Error State -->
+        <template if:true={error}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <h2>{error}</h2>
+            </div>
+        </template>
+
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <div class="slds-spinner slds-spinner_medium slds-spinner_brand" role="status">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+                <p class="slds-text-body_small slds-m-top_small">Calculating dependency matrix...</p>
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template if:false={isLoading}>
+            <template if:false={hasData}>
+                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                    <p class="slds-text-color_weak">No dependencies found matching active filter criteria.</p>
+                </div>
+            </template>
+
+            <!-- Matrix Grid -->
+            <template if:true={hasData}>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered matrix-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="source-type-col">Source \ Target</th>
+                                <template for:each={targetTypes} for:item="targetType">
+                                    <th key={targetType} scope="col">{targetType}</th>
+                                </template>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={matrixRows} for:item="row">
+                                <tr key={row.sourceType}>
+                                    <th scope="row" class="source-type-col">{row.sourceType}</th>
+                                    <template for:each={row.cells} for:item="cell">
+                                        <td key={cell.targetType} class={cell.cellClass}>
+                                            {cell.count}
+                                        </td>
+                                    </template>
+                                    <td class="cell-highlight">{row.total}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>
