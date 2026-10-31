@@ -51,12 +51,14 @@ You may grant an **Independent Limited Exception** to execute technical remediat
   - `scripts/test-export-explorer.cjs`
 - **Required Decision-Makers:** **Lead Architect & Product Owner** (both required).
 - **Required Approval Evidence:** Signed R2 authorization block below.
-- **Policy Decision Scopes:**
-  - Deterministic defect fix: `null`/`undefined`/`""` -> `UNKNOWN`.
-  - Policy Decision A: Whether `likely-covered` maps to `COVERED` or `AMBIGUOUS`.
-  - Policy Decision B: Whether failed tests map to `UNTESTED` or distinct failure state.
-- **Prohibited Actions:** Modification of UI components or Apex controllers.
-- **Completion Conditions:** Missing-value status (`null`/`undefined`/`""`) normalizes to `"UNKNOWN"`.
+- **Authorization Request Subject:** Review and approve or reject the following specified behaviors:
+  1. Mandatory missing-value normalization to `UNKNOWN` for missing, null, undefined, empty string, whitespace-only string, or unrecognized strings.
+  2. Mandatory `UnresolvedCoverageEvidenceError` fail-closed behavior for unresolved evidence labels (`likely-covered`, `failed`, `known-coverage-failure`).
+  3. Strict prohibition against silently mapping unresolved evidence into canonical coverage states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`).
+  4. Restriction that any future alternative policy (or quarantine mechanism) requires a separately approved, authenticated policy mechanism.
+  5. Proposed implementation scope and exact affected files (`scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`).
+- **Prohibited Actions:** Modification of UI components, Apex controllers, or introduction of a fifth canonical state; caller-controlled boolean flags must not authorize mappings.
+- **Completion Conditions:** Missing-value status (`null`/`undefined`/`""`/whitespace/unrecognized) normalizes to `"UNKNOWN"`; unresolved evidence (`likely-covered`, `failed`, `known-coverage-failure`) raises `UnresolvedCoverageEvidenceError`.
 - **Completion Verification:** Run `node scripts/test-export-explorer.cjs`.
 
 **Decision R2:**

@@ -135,7 +135,7 @@ class UnresolvedCoverageEvidenceError extends Error {
  * Any unresolved evidence fails closed immediately.
  */
 function normalizeTestCoverageStatus(status, componentContext = {}) {
-  // 1. Mandatory Missing-Value Invariant (Approved Deterministic Correction)
+  // 1. Mandatory Missing-Value Invariant (SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING)
   if (status === null || status === undefined || String(status).trim() === "") {
     return "UNKNOWN";
   }
