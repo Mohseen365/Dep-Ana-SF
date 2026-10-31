@@ -5,8 +5,8 @@
 | **Document Type** | Coverage Semantics Contract & Exporter Normalization Specification |
 | **Target Feature** | Wave 4 — Remediation R2 & Exporter Coverage Pipeline (`scripts/export-explorer.cjs`) |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-8629279200045229050-798dadd2` |
-| **HEAD Commit SHA** | `d8b3b273bf5d31736ad82fc244760fd5b85e3b91` |
+| **Current Branch** | `jules-12874560060273924091-5d84f2b4` |
+| **HEAD Commit SHA** | `921b8c54fb61b5b18a2e92f9821b6c8cfb1bd683` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
 
