@@ -146,7 +146,7 @@ public with sharing class DAUserPreferenceController {
                 prefRecord.Positions_JSON__c = positionsJson;
             }
             if (filtersJson != null) {
-                prefRecord.Filters_JSON__c = filtersJson;
+                prefRecord.Filters_JSON__c = mergeV1IntoV2Container(prefRecord.Filters_JSON__c, filtersJson);
             }
             if (zoomPanJson != null) {
                 prefRecord.Zoom_Pan_JSON__c = zoomPanJson;
@@ -167,6 +167,95 @@ public with sharing class DAUserPreferenceController {
             } catch (Exception e) {
                 throw new AuraHandledException('Malformed ' + fieldName + ' JSON payload: ' + e.getMessage());
             }
+        }
+    }
+
+    @TestVisible
+    private static String mergeV1IntoV2Container(String existingV2Json, String incomingFilterJson) {
+        // Empty string incoming is an explicit clear operation
+        if (incomingFilterJson != null && incomingFilterJson.trim() == '') {
+            return '';
+        }
+
+        // Null incoming or blank incoming preserves existing stored value
+        if (incomingFilterJson == null) {
+            return existingV2Json;
+        }
+
+        // If existing is blank or null, incoming replaces directly
+        if (String.isBlank(existingV2Json)) {
+            return incomingFilterJson;
+        }
+
+        try {
+            Object deserializedIncoming = JSON.deserializeUntyped(incomingFilterJson);
+            if (!(deserializedIncoming instanceof Map<String, Object>)) {
+                // Non-object incoming structure fails closed and preserves existing data
+                return existingV2Json;
+            }
+            Map<String, Object> incomingMap = (Map<String, Object>) deserializedIncoming;
+
+            // Incoming V2 payload: atomic replacement of existing container
+            if (incomingMap.containsKey('schemaVersion')) {
+                Object verObj = incomingMap.get('schemaVersion');
+                Integer incomingVer = 0;
+                if (verObj instanceof Integer || verObj instanceof Long || verObj instanceof Decimal) {
+                    incomingVer = Integer.valueOf(verObj);
+                }
+                if (incomingVer == 2) {
+                    // Valid V2 incoming container replaces existing container atomically
+                    return incomingFilterJson;
+                } else {
+                    // Unsupported schema version fails closed and preserves existing data
+                    return existingV2Json;
+                }
+            }
+
+            // Ambiguous incoming payload (contains presets but missing schemaVersion) fails closed
+            if (incomingMap.containsKey('presets')) {
+                return existingV2Json;
+            }
+
+            // Deserialize existing stored payload
+            Object deserializedExisting = JSON.deserializeUntyped(existingV2Json);
+            if (!(deserializedExisting instanceof Map<String, Object>)) {
+                // Malformed existing container fails closed and preserves existing
+                return existingV2Json;
+            }
+            Map<String, Object> existingContainer = (Map<String, Object>) deserializedExisting;
+
+            Boolean hasSchemaVer = existingContainer.containsKey('schemaVersion');
+            Boolean hasPresets = existingContainer.containsKey('presets');
+
+            // If existing is ambiguous (presets without schemaVersion), fail closed
+            if (!hasSchemaVer && hasPresets) {
+                return existingV2Json;
+            }
+
+            if (hasSchemaVer) {
+                Object existingVerObj = existingContainer.get('schemaVersion');
+                Integer existingVer = 0;
+                if (existingVerObj instanceof Integer || existingVerObj instanceof Long || existingVerObj instanceof Decimal) {
+                    existingVer = Integer.valueOf(existingVerObj);
+                }
+
+                if (existingVer == 2) {
+                    // Existing is V2 container and incoming is flat V1
+                    // Merge incoming V1 criteria into existing activeFilter while preserving presets
+                    existingContainer.put('activeFilter', incomingMap);
+                    existingContainer.put('activePresetId', null); // Ad-hoc modification clears active preset ID
+                    return JSON.serialize(existingContainer);
+                } else {
+                    // Unsupported existing version fails closed
+                    return existingV2Json;
+                }
+            }
+
+            // Existing was flat V1 and incoming is flat V1 -> standard V1 update
+            return incomingFilterJson;
+        } catch (Exception e) {
+            // FAIL-CLOSED INVARIANT: Return existing stored value intact on any error
+            return existingV2Json;
         }
     }
 }

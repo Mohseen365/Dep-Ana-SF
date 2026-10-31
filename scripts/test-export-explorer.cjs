@@ -9,7 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
-const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, normalizeSourcePath, isPathContained } = require("./export-explorer.cjs");
+const { exportExplorerData, normalizeNodeId, normalizeNodeType, normalizeTestCoverageStatus, UnresolvedCoverageEvidenceError, normalizeSourcePath, isPathContained } = require("./export-explorer.cjs");
 
 const FIXTURE_DIR = path.join(__dirname, "../temp-test-fixture-realistic");
 const ANALYZE_OUT_DIR = path.join(FIXTURE_DIR, "analyze");
@@ -363,20 +363,85 @@ function runSpecificRegressionTests() {
   console.log("\nRunning Specific Regression Tests (Test A - D)...");
   console.log("-------------------------------------------------");
 
-  // TEST A: Coverage Mapping
-  console.log("Test A: testCoverageStatus mapping");
-  assert.strictEqual(normalizeTestCoverageStatus("LIKELY_COVERED"), "COVERED");
-  assert.strictEqual(normalizeTestCoverageStatus("likely-covered"), "COVERED");
+  // TEST A: Coverage Mapping (R2 Four-State Fail-Closed Normalization Contract)
+  console.log("Test A: testCoverageStatus mapping (R2 Four-State Normalization)");
+  // 1. Canonical states: COVERED, UNTESTED, AMBIGUOUS
   assert.strictEqual(normalizeTestCoverageStatus("COVERED"), "COVERED");
   assert.strictEqual(normalizeTestCoverageStatus("covered"), "COVERED");
-  assert.strictEqual(normalizeTestCoverageStatus("KNOWN_COVERAGE_FAILURE"), "UNTESTED");
-  assert.strictEqual(normalizeTestCoverageStatus("known-coverage-failure"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("passed"), "COVERED");
   assert.strictEqual(normalizeTestCoverageStatus("UNTESTED"), "UNTESTED");
   assert.strictEqual(normalizeTestCoverageStatus("untested"), "UNTESTED");
-  assert.strictEqual(normalizeTestCoverageStatus("NO_TESTS"), "NO_TESTS");
-  assert.strictEqual(normalizeTestCoverageStatus("no-tests"), "NO_TESTS");
+  assert.strictEqual(normalizeTestCoverageStatus("NO_TESTS"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("no-tests"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("no-test-evidence"), "UNTESTED");
+  assert.strictEqual(normalizeTestCoverageStatus("AMBIGUOUS"), "AMBIGUOUS");
+  assert.strictEqual(normalizeTestCoverageStatus("ambiguous"), "AMBIGUOUS");
   assert.strictEqual(normalizeTestCoverageStatus("AMBIGUOUS_TEST"), "AMBIGUOUS");
   assert.strictEqual(normalizeTestCoverageStatus("ambiguous-test"), "AMBIGUOUS");
+  assert.strictEqual(normalizeTestCoverageStatus("ambiguous-tests"), "AMBIGUOUS");
+
+  // 2. Category A: Missing or genuinely unrecognized evidence -> UNKNOWN
+  assert.strictEqual(normalizeTestCoverageStatus(null), "UNKNOWN");
+  assert.strictEqual(normalizeTestCoverageStatus(undefined), "UNKNOWN");
+  assert.strictEqual(normalizeTestCoverageStatus(""), "UNKNOWN");
+  assert.strictEqual(normalizeTestCoverageStatus("   "), "UNKNOWN");
+  assert.strictEqual(normalizeTestCoverageStatus("completely-unknown-token"), "UNKNOWN");
+  assert.strictEqual(normalizeTestCoverageStatus("random_string_123"), "UNKNOWN");
+
+  // 3. Category B: Recognized unresolved evidence throws UnresolvedCoverageEvidenceError
+  const categoryBInputs = [
+    "likely-covered",
+    "likely_covered",
+    "LIKELY-COVERED",
+    "failed",
+    "FAILED",
+    "known-coverage-failure",
+    "KNOWN_COVERAGE_FAILURE"
+  ];
+  for (const input of categoryBInputs) {
+    assert.throws(
+      () => normalizeTestCoverageStatus(input, { id: "ApexClass:SampleClass" }),
+      (err) => {
+        assert(err instanceof UnresolvedCoverageEvidenceError);
+        assert.strictEqual(err.name, "UnresolvedCoverageEvidenceError");
+        assert.strictEqual(err.rawStatus, input);
+        assert.strictEqual(err.componentId, "ApexClass:SampleClass");
+        return true;
+      },
+      `Expected ${input} to throw UnresolvedCoverageEvidenceError`
+    );
+  }
+
+  // 4. Category C: Known legacy aliases throw UnresolvedCoverageEvidenceError
+  const categoryCInputs = [
+    "FULL_COVERAGE",
+    "full-coverage",
+    "PARTIAL_COVERAGE",
+    "partial-coverage",
+    "PARTIAL",
+    "partial",
+    "UNCOVERED",
+    "uncovered",
+    "NOT_COVERED",
+    "not-covered",
+    "TESTED",
+    "tested",
+    "TEST_COMPONENT",
+    "test-component"
+  ];
+  for (const input of categoryCInputs) {
+    assert.throws(
+      () => normalizeTestCoverageStatus(input, { id: "ApexClass:LegacyClass" }),
+      (err) => {
+        assert(err instanceof UnresolvedCoverageEvidenceError);
+        assert.strictEqual(err.name, "UnresolvedCoverageEvidenceError");
+        assert.strictEqual(err.rawStatus, input);
+        assert.strictEqual(err.componentId, "ApexClass:LegacyClass");
+        return true;
+      },
+      `Expected legacy alias ${input} to throw UnresolvedCoverageEvidenceError`
+    );
+  }
   console.log("  ✓ Test A PASSED: All testCoverageStatus mappings match schema requirement");
 
   // TEST B: Canonical Edge Types Normalization

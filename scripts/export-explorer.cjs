@@ -321,20 +321,97 @@ function normalizeSourcePath(rawPath) {
   return p || "force-app/main/default";
 }
 
+class UnresolvedCoverageEvidenceError extends Error {
+  constructor(message, rawStatus, componentContext = {}) {
+    super(message);
+    this.name = "UnresolvedCoverageEvidenceError";
+    this.rawStatus = rawStatus;
+    if (typeof componentContext === "string") {
+      this.componentId = componentContext;
+      this.componentName = null;
+    } else {
+      this.componentId = componentContext?.id || null;
+      this.componentName = componentContext?.name || null;
+    }
+  }
+}
+
 function normalizeNodeId(id, fallbackType = "ApexClass", fallbackName = "") {
   if (!id) return `${fallbackType}:${fallbackName}`;
   if (id.includes(":")) return id;
   return `${fallbackType}:${id}`;
 }
 
-function normalizeTestCoverageStatus(status) {
-  if (!status) return "UNTESTED";
-  const s = String(status).trim().toLowerCase().replace(/_/g, "-");
-  if (s === "likely-covered" || s === "covered") return "COVERED";
-  if (s === "known-coverage-failure" || s === "untested") return "UNTESTED";
-  if (s === "no-tests" || s === "no-test-evidence") return "NO_TESTS";
-  if (s === "ambiguous-test" || s === "ambiguous" || s === "ambiguous-tests") return "AMBIGUOUS";
-  return "UNTESTED";
+function normalizeTestCoverageStatus(status, componentContext = {}) {
+  // 1. Category A: Missing or genuinely unrecognized evidence -> UNKNOWN
+  if (status === null || status === undefined) {
+    return "UNKNOWN";
+  }
+  const rawStr = String(status).trim();
+  if (rawStr === "") {
+    return "UNKNOWN";
+  }
+
+  const s = rawStr.toLowerCase().replace(/_/g, "-");
+
+  // 2. Canonical Valid Passing Evidence -> COVERED
+  if (s === "covered" || s === "passed") {
+    return "COVERED";
+  }
+
+  // 3. Canonical Zero-Test Evidence -> UNTESTED
+  if (s === "untested" || s === "no-tests" || s === "no-test-evidence") {
+    return "UNTESTED";
+  }
+
+  // 4. Canonical Ambiguous Evidence -> AMBIGUOUS
+  if (s === "ambiguous" || s === "ambiguous-test" || s === "ambiguous-tests") {
+    return "AMBIGUOUS";
+  }
+
+  // 5. Category B: Recognized unresolved evidence -> UnresolvedCoverageEvidenceError
+  if (s === "likely-covered") {
+    const compId = typeof componentContext === "string" ? componentContext : componentContext?.id || "unknown";
+    throw new UnresolvedCoverageEvidenceError(
+      `Encountered unresolved static inference coverage status: "likely-covered" for component "${compId}". ` +
+      `Alternative canonical mapping is prohibited without explicit dual Lead Architect + Product Owner policy approval. Operation blocked.`,
+      status,
+      componentContext
+    );
+  }
+
+  if (s === "failed" || s === "known-coverage-failure") {
+    const compId = typeof componentContext === "string" ? componentContext : componentContext?.id || "unknown";
+    throw new UnresolvedCoverageEvidenceError(
+      `Encountered unresolved failed execution coverage status: "${status}" for component "${compId}". ` +
+      `Alternative canonical mapping is prohibited without explicit dual Lead Architect + Product Owner policy approval. Operation blocked.`,
+      status,
+      componentContext
+    );
+  }
+
+  // 6. Category C: Known legacy aliases -> UnresolvedCoverageEvidenceError
+  const categoryCLegacyAliases = [
+    "full-coverage",
+    "partial-coverage",
+    "partial",
+    "uncovered",
+    "not-covered",
+    "tested",
+    "test-component",
+  ];
+  if (categoryCLegacyAliases.includes(s)) {
+    const compId = typeof componentContext === "string" ? componentContext : componentContext?.id || "unknown";
+    throw new UnresolvedCoverageEvidenceError(
+      `Encountered non-canonical legacy coverage alias without authorized policy: "${status}" for component "${compId}". ` +
+      `Classification status is UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED. Operation blocked.`,
+      status,
+      componentContext
+    );
+  }
+
+  // 7. Category A: Genuinely unrecognized string fallback -> UNKNOWN
+  return "UNKNOWN";
 }
 
 function normalizeNodeType(type, id = "") {
@@ -627,7 +704,7 @@ function exportExplorerData(inputPath, outputPath, options = {}) {
         rawStatus = testGapResult.signal;
       }
     }
-    const testCoverageStatus = normalizeTestCoverageStatus(rawStatus);
+    const testCoverageStatus = normalizeTestCoverageStatus(rawStatus, { id, name: displayName });
 
     return {
       id,
@@ -1135,6 +1212,7 @@ module.exports = {
   normalizeNodeId,
   normalizeNodeType,
   normalizeTestCoverageStatus,
+  UnresolvedCoverageEvidenceError,
   normalizeSourcePath,
   buildImpactSummaries,
   slugify,
