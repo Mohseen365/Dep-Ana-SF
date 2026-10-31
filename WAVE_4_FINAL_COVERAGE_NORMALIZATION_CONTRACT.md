@@ -76,7 +76,15 @@ Neither policy mapping is approved. They are excluded from authoritative impleme
 
 ## 4. Authoritative Raw-to-Canonical Status Mapping Matrix
 
-| Raw Input Value | Source Location | Actual Evidence Meaning | Canonical Status / Outcome | Confidence | Approval Status |
+The canonical coverage vocabulary is strictly bounded to exactly four authorized states:
+- **`COVERED`**
+- **`UNTESTED`**
+- **`AMBIGUOUS`**
+- **`UNKNOWN`**
+
+No other status value may ever enter the canonical exporter output pipeline.
+
+| Raw Input Value | Source Location | Actual Evidence Meaning | Canonical Status / Pipeline Behavior | Confidence | Approval Status |
 |---|---|---|---|---|---|
 | `null` | Exporter / Adapter input | Missing coverage payload | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
 | `undefined` | AST parser / Node metric | Unset property | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
@@ -87,24 +95,41 @@ Neither policy mapping is approved. They are excluded from authoritative impleme
 | `no-tests` / `no-test-evidence` | `dependency-analyzer.cjs` | Confirmed no test classes found | **`UNTESTED`** | High | Standard Deterministic Contract |
 | `ambiguous-test` / `ambiguous` | `dependency-analyzer.cjs` line 4118 | Multiple tests or dynamic call | **`AMBIGUOUS`** | High | Standard Deterministic Contract |
 | `covered` / `passed` | `dependency-analyzer.cjs` line 3973 | Confirmed test profiling pass | **`COVERED`** | High | Standard Deterministic Contract |
-| `likely-covered` / `likely_covered` | `dependency-analyzer.cjs` line 4141 | Static AST naming match | **UNRESOLVED (Pending Policy Decision)** | Medium | **REQUIRES APPROVAL (Lead Arch + PO)** |
-| `failed` / `known-coverage-failure` | `dependency-analyzer.cjs` line 3955 | Test run failed / threshold breach | **UNRESOLVED (Pending Policy Decision)** | Medium | **REQUIRES APPROVAL (Lead Arch + PO)** |
+| `likely-covered` / `likely_covered` | `dependency-analyzer.cjs` line 4141 | Static AST naming match | **BLOCKED / QUARANTINED** (Fail-Closed: Throws Error or Quarantines Node; Never Leaks to Canonical Output) | Medium | **REQUIRES APPROVAL (Lead Arch + PO)** |
+| `failed` / `known-coverage-failure` | `dependency-analyzer.cjs` line 3955 | Test run failed / threshold breach | **BLOCKED / QUARANTINED** (Fail-Closed: Throws Error or Quarantines Node; Never Leaks to Canonical Output) | Medium | **REQUIRES APPROVAL (Lead Arch + PO)** |
 | Unrecognized string e.g. `"INVALID"` | Arbitrary raw payload | Unexpected value | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
 
 ---
 
 ## 5. Authoritative Proposed Exporter Implementation Contract (R2)
 
-To preserve the separation between deterministic corrections and pending policy decisions, the authoritative implementation specification for `scripts/export-explorer.cjs` is structured with explicit unresolved policy branches:
+To preserve data integrity, the authoritative implementation specification for `scripts/export-explorer.cjs` strictly separates deterministic missing-value correction from unresolved policy decisions, and ensures that **under no circumstances do noncanonical strings leak into the canonical output pipeline**.
+
+### 5.1 Fail-Closed Policy Enforcement & Pipeline Quarantine Contract
+1. **Strict 4-State Vocabulary:** Exporter output records must only contain `COVERED`, `UNTESTED`, `AMBIGUOUS`, or `UNKNOWN`. Noncanonical status strings (such as `UNRESOLVED_*` or `FAILED`) are strictly prohibited in the generated payload.
+2. **Fail-Closed Blocking for Unresolved Inputs:** If raw evidence contains an unresolved policy value (`likely-covered`, `failed`, `known-coverage-failure`) and no authorized decision policy flag is passed, the normalizer throws an explicit `UnresolvedCoveragePolicyError` (or quarantines the component record into a diagnostic quarantine collection).
+3. **No Silent Substitution:** The normalizer must **NOT** silently substitute `AMBIGUOUS`, `UNKNOWN`, `COVERED`, or `UNTESTED` for an unapproved policy decision. Missing human policy decisions represent **IMPLEMENTATION-BLOCKING POLICY GAPS**.
+4. **Deterministic Invariant Preservation:** Missing and falsey values (`null`, `undefined`, empty string, whitespace) normalize deterministically to `UNKNOWN` before any policy evaluation.
 
 ```javascript
 /**
  * Authoritative Exporter Coverage Normalization Contract (R2 Specification)
- * Strictly enforces missing-value invariant.
- * Unresolved policy mappings are gated behind pending decisions.
+ * Strictly enforces 4-state canonical vocabulary and missing-value invariant.
+ * Blocks unresolved policy inputs from leaking into canonical output.
+ *
+ * NOTE: SPECIFICATION CONTRACT ONLY — NOT YET IMPLEMENTED IN SOURCE.
+ * IMPLEMENTATION HOLD REMAINS STRICTLY ACTIVE.
  */
+class UnresolvedCoveragePolicyError extends Error {
+  constructor(message, rawStatus) {
+    super(message);
+    this.name = 'UnresolvedCoveragePolicyError';
+    this.rawStatus = rawStatus;
+  }
+}
+
 function normalizeTestCoverageStatus(status, policyDecisions = {}) {
-  // 1. Mandatory Missing-Value Invariant (Deterministic Defect Fix)
+  // 1. Mandatory Missing-Value Invariant (Approved Deterministic Correction)
   if (status === null || status === undefined || String(status).trim() === "") {
     return "UNKNOWN";
   }
@@ -132,8 +157,15 @@ function normalizeTestCoverageStatus(status, policyDecisions = {}) {
     if (policyDecisions.allowStaticInferenceAsCovered === true) {
       return "COVERED";
     }
-    // Default until approved: preserve as UNRESOLVED / AMBIGUOUS
-    return "UNRESOLVED_STATIC_INFERENCE_POLICY";
+    if (policyDecisions.allowStaticInferenceAsAmbiguous === true) {
+      return "AMBIGUOUS";
+    }
+    // Fail-Closed: Throw error to prevent noncanonical leakage into canonical output
+    throw new UnresolvedCoveragePolicyError(
+      'Encountered unresolved static inference coverage status: "likely-covered". ' +
+      'Lead Architect and Product Owner policy decision required before export.',
+      s
+    );
   }
 
   // 6. UNRESOLVED POLICY BRANCH B: Known Test Failure (failed / known-coverage-failure)
@@ -142,16 +174,27 @@ function normalizeTestCoverageStatus(status, policyDecisions = {}) {
     if (policyDecisions.mapFailedExecutionToUntested === true) {
       return "UNTESTED";
     }
-    // Default until approved: preserve as UNRESOLVED / FAILED
-    return "UNRESOLVED_FAILED_EXECUTION_POLICY";
+    if (policyDecisions.mapFailedExecutionToAmbiguous === true) {
+      return "AMBIGUOUS";
+    }
+    // Fail-Closed: Throw error to prevent noncanonical leakage into canonical output
+    throw new UnresolvedCoveragePolicyError(
+      'Encountered unresolved failed execution coverage status: "' + s + '". ' +
+      'Lead Architect and Product Owner policy decision required before export.',
+      s
+    );
   }
 
-  // 7. Unrecognized string fallback
+  // 7. Unrecognized string fallback (Deterministic Invariant)
   return "UNKNOWN";
 }
 ```
 
----
+### 5.2 Exporter Pipeline Behavior Upon Unresolved Policy Input
+When `export-explorer.cjs` encounters an `UnresolvedCoveragePolicyError` during an export run:
+- If running in standard strict mode: The exporter execution halts immediately with exit code 1, reporting the unmapped component ID and raw status to stderr. No corrupt or partially normalized `explorer-data.json` is emitted.
+- If running with an explicit `--quarantine-unresolved` flag (future feature): The unmapped components are excluded from canonical nodes and appended to an isolated `quarantine.unresolvedCoverage` array in diagnostic metadata.
+- This ensures that under all execution modes, unapproved status strings never contaminate the four canonical status filters in the UI.
 
 ## 6. Source and Test Inspection Evidence
 

@@ -67,10 +67,10 @@ To ensure mathematical precision without double-counting, every file row in the 
 
 ---
 
-## 4. Deliverables Reconciliation (The 7 Governance Specification Reports)
+## 4. Deliverables Reconciliation & Governance Report Disambiguation
 
-The 7 governance audit reports delivered as part of this specification reconciliation package are explicitly included in the 46-file inventory (Rows 40–46):
-
+### 4.1 The 7 Governance Specification Deliverables (Category D, Rows 40–46)
+The 7 governance audit and contract reports delivered as part of this specification reconciliation package are explicitly included in the 46-file inventory (Rows 40–46):
 1. `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md` (Row 40)
 2. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` (Row 41)
 3. `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md` (Row 42)
@@ -78,6 +78,22 @@ The 7 governance audit reports delivered as part of this specification reconcili
 5. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` (Row 44)
 6. `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` (Row 45)
 7. `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md` (Row 46)
+
+**Authorization Scope:** These 7 Category D documents represent the specific, authorized documentation deliverables of this documentation-only dispatch. They establish authoritative specifications, schemas, error semantics, and cross-document audit evidence.
+
+### 4.2 Disambiguation: Existing Governance Reports in Category A (Rows 34–35)
+The 46-file inventory includes two existing governance reports in Category A:
+- `docs/audits/salesforce-wave4/WAVE_4_FINAL_EVIDENCE_CLOSURE_REPORT.md` (Row 34)
+- `docs/audits/salesforce-wave4/WAVE_4_FINAL_EVIDENCE_CLOSURE_EXECUTIVE_SUMMARY.md` (Row 35)
+
+**Why Rows 34–35 are Classified as Category A (Existing Baseline — Proposed Modification) and Prohibited Under Hold:**
+1. **Ownership & Role Boundary:** Rows 34 and 35 are historical integration deliverables owned by the **Integration Coordinator / Migration Auditor**. They record past milestone closure decisions across the entire Wave 4 cycle.
+2. **Task Authorization Scope:** The current documentation dispatch is authorized solely for Governance Auditor contract correction across the 7 root specification documents (Category D). Modifying past Integration Coordinator closure reports is **NOT** authorized within this dispatch.
+3. **Classification Label:**
+   `EXISTING GOVERNANCE ARTIFACT — NOT AUTHORIZED FOR MODIFICATION IN THIS DISPATCH`
+4. **Preservation of Inventory Arithmetic:** In the original feature planning, these two documents were slated for modification by the Migration Auditor upon completion of all Wave 4 remediations. Under the current `IMPLEMENTATION HOLD — ACTIVE`, any modification to these existing files remains strictly prohibited.
+
+Therefore, the distinction between Category A governance files and Category D governance files is rooted in explicit task authorization and ownership role, not merely file extension.
 
 ---
 
@@ -89,7 +105,7 @@ The 7 governance audit reports delivered as part of this specification reconcili
 | 2 | `scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs` | C. Proposed New Test | Lane A | — | Create New File | **Prohibited by Hold** | Lead Architect |
 | 3 | `docs/audits/salesforce-wave4/WAVE_4_CANONICAL_V2_CONTRACT_FINAL_PROPOSAL.md` | B. Existing Baseline Reference | Lane A | — | Reference Only | Reference Only | Lead Architect |
 | 4 | `scripts/export-explorer.cjs` | A. Existing Baseline Mod | Lane A / Exporter | R2 | Modify Existing | **Prohibited by Hold** | Lead Architect & Product Owner |
-| 5 | `scripts/test-export-explorer.cjs` | A. Existing Baseline Mod | Lane A / Exporter | R2 | Modify Existing | **Prohibited by Hold** | Lead Architect |
+| 5 | `scripts/test-export-explorer.cjs` | A. Existing Baseline Mod | Lane A / Exporter | R2 | Modify Existing | **Prohibited by Hold** | Lead Architect & Product Owner |
 | 6 | `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` | A. Existing Baseline Mod | Lane B | R1 | Modify Existing | **Prohibited by Hold** | Lead Architect |
 | 7 | `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls-meta.xml` | B. Existing Baseline Reference | Lane B | — | Reference Only | Reference Only | Lead Architect |
 | 8 | `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls` | A. Existing Baseline Mod | Lane B | R1, R4 | Modify Existing | **Prohibited by Hold** | Lead Architect |
