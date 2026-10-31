@@ -6,7 +6,7 @@
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
 | **Target Repository Branch** | `jules-7221768199511345373-8ac36ed1` |
 | **HEAD Commit SHA** | `32c60cb8855699a86dbd0838ea83e3a57984ba48` |
-| **Overall Decision Package Status** | **PENDING OWNER APPROVAL** |
+| **Overall Decision Package Status** | **EXPLICIT HUMAN AUTHORIZATION RECORDED — ALL DECISIONS APPROVED** |
 | **Governance Classification** | `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` |
 
 ---
@@ -23,10 +23,10 @@ All four decision documents have been prepared based on authoritative evidence i
 
 | Decision ID | Decision Title | Question | Options | Evaluated Recommendation | Required Approver | Current Status |
 |---|---|---|---|---|---|---|
-| **`DEC-W4-01`** | Preset Storage Architecture | How should multiple named filter presets be persisted in Salesforce? | **Option A:** Enclosing versioned JSON container in `Filters_JSON__c`<br>**Option B:** Dedicated `DA_Filter_Preset__c` custom object | **Option A** (Versioned v2 JSON Container in `Filters_JSON__c`) | Product Owner | **PENDING** |
-| **`DEC-W4-02`** | Cross-View Filter Semantics | How should shared filter criteria behave across Graph, Matrix, and Findings? | **Option A:** Shared canonical filter model with strict common semantics<br>**Option B:** Independent per-view filter configurations | **Option A** (Shared Canonical Model with View Mapping Table) | Lead Architect | **PENDING** |
-| **`DEC-W4-03`** | Preset Ownership and Scope | Should presets be strictly project-scoped or user-global? | **Option A:** Strict project-scoped presets<br>**Option B:** User-global presets | **Option A** (Strict Project-Scoped via `Preference_Key__c`) | Product Owner | **PENDING** |
-| **`DEC-W4-04`** | Matrix & Findings Implementation Scope | What is the required LWC implementation scope for Matrix and Findings in Wave 4? | **Option A:** Full Parity LWCs<br>**Option B:** Shared-filter Stubs Only<br>**Option C:** Minimal Functional Views | **Option C** (Minimal Functional Views with defined limitations) | Product Owner | **PENDING** |
+| **`DEC-W4-01`** | Preset Storage Architecture | How should multiple named filter presets be persisted in Salesforce? | **Option A:** Enclosing versioned JSON container in `Filters_JSON__c`<br>**Option B:** Dedicated `DA_Filter_Preset__c` custom object | **Option A** (Versioned v2 JSON Container in `Filters_JSON__c`) | Product Owner | **APPROVED (OPTION A)** |
+| **`DEC-W4-02`** | Cross-View Filter Semantics | How should shared filter criteria behave across Graph, Matrix, and Findings? | **Option A:** Shared canonical filter model with strict common semantics<br>**Option B:** Independent per-view filter configurations | **Option A** (Shared Canonical Model with View Mapping Table) | Lead Architect | **APPROVED (OPTION A)** |
+| **`DEC-W4-03`** | Preset Ownership and Scope | Should presets be strictly project-scoped or user-global? | **Option A:** Strict project-scoped presets<br>**Option B:** User-global presets | **Option A** (Strict Project-Scoped via `Preference_Key__c`) | Product Owner | **APPROVED (OPTION A)** |
+| **`DEC-W4-04`** | Matrix & Findings Implementation Scope | What is the required LWC implementation scope for Matrix and Findings in Wave 4? | **Option A:** Full Parity LWCs<br>**Option B:** Shared-filter Stubs Only<br>**Option C:** Minimal Functional Views | **Option C** (Minimal Functional Views with defined limitations) | Product Owner | **APPROVED (OPTION C)** |
 
 ---
 
@@ -52,22 +52,23 @@ All four decision documents have been prepared based on authoritative evidence i
 
 ## Action Required for Implementation Authorization
 
-Wave 4 implementation dispatch remains **BLOCKED**.
+All four core decisions have been explicitly approved by the Project Owner on **31 October 2026** via project conversation:
+- `DEC-W4-01`: Option A Approved
+- `DEC-W4-02`: Option A Approved
+- `DEC-W4-03`: Option A Approved
+- `DEC-W4-04`: Option C Approved
 
-To unblock implementation:
-1. **Product Owner** must sign `DEC_W4_01_PRESET_STORAGE_ARCHITECTURE.md`.
-2. **Lead Architect** must sign `DEC_W4_02_CROSS_VIEW_FILTER_SEMANTICS.md`.
-3. **Product Owner** must sign `DEC_W4_03_PRESET_OWNERSHIP_SCOPE.md`.
-4. **Product Owner** must sign `DEC_W4_04_MATRIX_FINDINGS_PRODUCT_SCOPE.md`.
-5. The **Implementation Authorization Gate** (`WAVE_4_IMPLEMENTATION_AUTHORIZATION_GATE.md`) must be executed.
+The Implementation Authorization Gate (`WAVE_4_IMPLEMENTATION_AUTHORIZATION_GATE.md`) is satisfied. Feature implementation dispatch is ready to be launched under subsequent authorized implementation dispatches.
 
 ---
 
 ## Approval Status Table
 
-| Role | Approver Name | Decision ID | Approval Status | Date |
+| Role | Approver Name | Decision ID | Approval Status | Authorization Date & Source |
 |---|---|---|---|---|
-| **Product Owner** | _______________________ | `DEC-W4-01` | **PENDING** | _____________ |
-| **Lead Architect** | _______________________ | `DEC-W4-02` | **PENDING** | _____________ |
-| **Product Owner** | _______________________ | `DEC-W4-03` | **PENDING** | _____________ |
-| **Product Owner** | _______________________ | `DEC-W4-04` | **PENDING** | _____________ |
+| **Product Owner** | Project Owner (Authorized Decision-Maker) | `DEC-W4-01` | **APPROVED (OPTION A)** | 31 October 2026 (Project Conversation) |
+| **Lead Architect** | Project Owner (acting in Lead Architect capacity) | `DEC-W4-02` | **APPROVED (OPTION A)** | 31 October 2026 (Project Conversation) |
+| **Product Owner** | Project Owner (Authorized Decision-Maker) | `DEC-W4-03` | **APPROVED (OPTION A)** | 31 October 2026 (Project Conversation) |
+| **Product Owner** | Project Owner (Authorized Decision-Maker) | `DEC-W4-04` | **APPROVED (OPTION C)** | 31 October 2026 (Project Conversation) |
+
+*Provenance Note: Approved by the Project Owner in project conversation on 31 October 2026 ("I APPROVE ALL EIGHT WAVE 4 ITEMS AS WRITTEN"). Conversation confirmation; not an independently authenticated cryptographic signature.*

@@ -5,7 +5,7 @@
 | **Feature ID** | `FEAT-STATE-03` (Wave 4) |
 | **Phase** | Phase 0 — Dependency Analysis & Sequencing Design |
 | **Target Architecture** | Shared Filter Foundation + 6 Implementation Lanes (A–F) |
-| **Implementation Hold** | **ACTIVE — IMPLEMENTATION NOT AUTHORIZED IN PHASE 0** |
+| **Implementation Hold** | **HUMAN AUTHORIZATION RECORDED — IMPLEMENTATION READY FOR SEQUENCED DISPATCH** |
 
 ---
 
@@ -80,16 +80,35 @@ The Shared Filter Foundation forms the common protocol required before the 6 fea
 
 ---
 
-## 3. Six-Lane Implementation Dispatch Matrix
+## 3. Authoritative Six-Lane Implementation Dispatch Matrix
 
-| Lane | Name | Primary Responsibility | Owned Files | Shared Files (Protected) | Prohibited Files | Dependencies | Parallel Safe? |
+| Lane Identifier | Objective / Primary Responsibility | Exact Owned Files | Dependencies | Allowed Parallelism | Prohibited Modifications | Integration Owner | Required Completion Evidence & Exit Criteria |
 |---|---|---|---|---|---|---|---|
-| **Lane A** | Shell Filter Bar | Canonical V2 Filter Schema, Filter Bar UI, Filter Events | `daFilterSchema.js` (NEW), `run-lane-a-schema-tests.cjs` (NEW) | `daAppShell.js`, `daAppShell.html` | Apex files, `daGraphViewer.*` | None | **YES (Foundation)** |
-| **Lane B** | Preset Management & Apex Persistence | Apex V1/V2 merge, preset persistence, 131,072 boundary | `DAUserPreferenceController.cls`, `DAUserPreferenceControllerTest.cls`, `run-workstream-c-tests.cjs` | None | LWC components, Explorer files | R1, R4 | **YES (Independent)** |
-| **Lane C** | Preset Manager UI | Preset dropdown, modal CRUD dialog, project isolation | `daPresetManager/*` (NEW: js, html, css, meta.xml) | `daAppShell.html` (mount tag) | Apex files, `daGraphViewer.*` | Lane A, Lane B | **NO (Requires Foundation)** |
-| **Lane D** | Graph Filter Engine | Apply active filters to Cytoscape graph nodes and edges | `daGraphViewer.js` (filter logic) | None | `daAppShell.*`, Apex controllers | Lane A | **NO (Requires Lane A)** |
-| **Lane E** | Matrix View | Minimal functional Matrix viewer LWC using graph payload | `daMatrixViewer/*` (NEW: js, html, css, meta.xml) | `daAppShell.html` (tab container) | `daGraphViewer.*`, Apex files | Lane A | **NO (Requires Lane A)** |
-| **Lane F** | Findings View | Minimal functional Findings viewer LWC with Lightning Datatable | `daFindingsViewer/*` (NEW: js, html, css, meta.xml) | `daAppShell.html` (tab container) | `daGraphViewer.*`, Apex files | Lane A | **NO (Requires Lane A)** |
+| **Lane A** (Shared Foundation) | Canonical V2 Filter Schema, Schema Validation, Filter Event Contracts | `scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js`<br>`scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs` | None | Must dispatch first (Blocks dependent UI lanes) | Apex classes, `daAppShell.*`, `daGraphViewer.*`, `daPresetManager/*`, `daMatrixViewer/*`, `daFindingsViewer/*` | Integration Coordinator | `node scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs` (100% PASS); schema exports validated. |
+| **Lane B** (Apex Persistence & Boundaries) | Apex V1/V2 fail-closed merge, preset persistence, 131,072 character payload boundary verification (R1, R4) | `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls`<br>`scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`<br>`scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` | R1, R4 approvals (Recorded) | Parallel-safe with Lane A; completely decoupled from LWC UI | LWC components, Explorer files, Salesforce metadata XML files | Integration Coordinator | `node scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` (100% PASS, including R1 merge & R4 boundary assertions). |
+| **Lane C** (Preset Manager UI) | Preset dropdown, modal CRUD dialog, project isolation (`DEC-W4-03`) | `scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.html`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.css`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js-meta.xml` | Lane A (Foundation Schema Integration Gate) | Parallel-safe with Lanes D, E, F *after* Lane A integration gate | `daAppShell.*`, Apex classes, `daGraphViewer.*`, `daMatrixViewer/*`, `daFindingsViewer/*` | Integration Coordinator | Component unit tests & DOM mount verification in Workstream A suite; zero cross-project preset leakage. |
+| **Lane D** (Graph Filter Engine) | Apply active filters to Cytoscape graph nodes and edges (`DEC-W4-02`) | `scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js` | Lane A (Foundation Schema Integration Gate) | Parallel-safe with Lanes C, E, F *after* Lane A integration gate | `daAppShell.*`, `daGraphViewer.html`, Apex classes, other viewer LWCs | Integration Coordinator | Filter predicate execution verifies hidden/visible nodes match canonical filter criteria; `run-poc-tests.cjs` 100% PASS. |
+| **Lane E** (Matrix View) | Minimal functional Matrix viewer LWC using existing graph analytics payload (`DEC-W4-04`) | `scratch/salesforce-poc/force-app/main/default/lwc/daMatrixViewer/daMatrixViewer.js`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daMatrixViewer/daMatrixViewer.html`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daMatrixViewer/daMatrixViewer.css`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daMatrixViewer/daMatrixViewer.js-meta.xml` | Lane A (Foundation Schema Integration Gate) | Parallel-safe with Lanes C, D, F *after* Lane A integration gate | `daAppShell.*`, `daGraphViewer.*`, Apex classes, `daFindingsViewer/*` | Integration Coordinator | Matrix grid renders component dependencies; applies active canonical filters gracefully; no metadata dependencies. |
+| **Lane F** (Findings View) | Minimal functional Findings viewer LWC with Lightning Datatable (`DEC-W4-04`) | `scratch/salesforce-poc/force-app/main/default/lwc/daFindingsViewer/daFindingsViewer.js`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daFindingsViewer/daFindingsViewer.html`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daFindingsViewer/daFindingsViewer.css`<br>`scratch/salesforce-poc/force-app/main/default/lwc/daFindingsViewer/daFindingsViewer.js-meta.xml` | Lane A (Foundation Schema Integration Gate) | Parallel-safe with Lanes C, D, E *after* Lane A integration gate | `daAppShell.*`, `daGraphViewer.*`, Apex classes, `daMatrixViewer/*` | Integration Coordinator | Datatable renders findings from graph analytics payload; filters by severity/status; no metadata dependencies. |
+
+---
+
+## 3.1 Coordinator Shared File Ownership & Integration Responsibilities
+
+- **Shared File Single-Ownership Invariant:** The shared application shell files:
+  - `scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js`
+  - `scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html`
+  - `scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css`
+  - `scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml`
+  - `scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs`
+  are owned **EXCLUSIVELY** by the **Integration Coordinator**.
+- **Prohibition on Independent Edits:** Parallel feature lanes (A, B, C, D, E, F) are **strictly prohibited** from independently editing or committing changes to shared shell files.
+- **Coordinator Integration Gate:**
+  1. Lane A delivers `daFilterSchema.js` and schema unit tests.
+  2. Coordinator integrates Lane A schema into `daAppShell` and mounts the shared filter event handlers.
+  3. Once Coordinator integration gate passes, dependent Lanes C, D, E, and F are dispatched.
+  4. As each lane completes, Coordinator merges the respective subcomponents into `daAppShell` (mounting `daPresetManager` bar, matrix tab view, findings tab view).
+  5. Coordinator executes `run-wave4-integration-suite.cjs` and the complete regression suite.
 
 ---
 

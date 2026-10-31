@@ -8,35 +8,37 @@
 | **Current Branch** | `jules-2662574214828896325-f3957679` |
 | **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
 | **Audit Date** | October 31, 2026 |
-| **Status** | **GOVERNANCE RECONCILIATION COMPLETE — IMPLEMENTATION HOLD ACTIVE** |
+| **Status** | **EXPLICIT HUMAN AUTHORIZATION RECORDED — ALL EIGHT ITEMS APPROVED (31 OCTOBER 2026)** |
 
 ---
 
 ## 1. Executive Summary & Core Governance Principles
 
-In prior Wave 4 audit reports, decisions `DEC-W4-01` through `DEC-W4-04` were classified as `APPROVED` while simultaneously bearing the disclaimer:
-`APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`.
+On **31 October 2026**, the Project Owner (authorized decision-maker for the entire project across all required capacities) explicitly confirmed in the project conversation:
 
-This conflation caused confusion regarding whether human authorization had been granted. This report independently inspects the decision source files in `docs/audits/salesforce-wave4/decision-package/` and reconciles recorded status, approval evidence, provenance verification, and implementation authorization.
+> **"I APPROVE ALL EIGHT WAVE 4 ITEMS AS WRITTEN"**
 
-### Fundamental Rules
-- **Never invent a human approver, signature, or approval date.**
-- **Never infer human approval from automated commits, test passes, or report updates.**
-- **A repository-recorded status must NEVER be conflated with authenticated human authorization.**
-- **Preserve exact classification:** `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`.
+This explicitly authorizes all four technical remediations (R1, R2, R3 subject to scope reconciliation, R4) and all four architectural decisions (`DEC-W4-01` Option A, `DEC-W4-02` Option A, `DEC-W4-03` Option A, `DEC-W4-04` Option C).
+
+### Provenance Limitations & Classification
+- **Approval Source:** Explicit Project Owner confirmation in project conversation on 31 October 2026.
+- **Approving Authority:** Project Owner / authorized project decision-maker acting across all required capacities (Product Owner, Lead Architect, Migration Auditor).
+- **Authentication Boundary:** This is an explicit conversation confirmation; it is **not** an independently authenticated cryptographic signature or digital identity token.
+- **Classification Standard:** `EXPLICIT HUMAN AUTHORIZATION RECORDED IN REPOSITORY — CONVERSATION CONFIRMATION (31 OCTOBER 2026) — NOT CRYPTOGRAPHICALLY SIGNED`.
+- **Implementation Readiness:** Human authorization is recorded. Implementation dispatch is staged and ready, but actual feature implementation has NOT begun in this dispatch.
 
 ---
 
 ## 2. Decision Record Provenance Audit
 
-An inspection of the underlying decision records in `docs/audits/salesforce-wave4/decision-package/` yields the following exact evidence:
+An inspection of the underlying decision records in `docs/audits/salesforce-wave4/decision-package/` and root authorization documents yields the following reconciled status:
 
-| Decision ID | Target Subject | Source File Path | Designated Required Approver | Recorded Status | Recorded Approver Name | Recorded Signature & Date | Provenance Verification | Implementation Authorization |
+| Decision ID | Target Subject | Source File Path | Designated Required Approver | Recorded Status | Chosen Option | Approver Authority | Provenance Verification | Implementation Authorization |
 |---|---|---|---|---|---|---|---|---|
-| `DEC-W4-01` | Filter Preset Storage Architecture | `docs/audits/salesforce-wave4/decision-package/DEC_W4_01_PRESET_STORAGE_ARCHITECTURE.md` | **Product Owner** | **`PENDING`** | Blank (`______`) | Blank (`______`) | **Unverified** | **ON HOLD** |
-| `DEC-W4-02` | Cross-View Filter Semantics | `docs/audits/salesforce-wave4/decision-package/DEC_W4_02_CROSS_VIEW_FILTER_SEMANTICS.md` | **Lead Architect** | **`PENDING`** | Blank (`______`) | Blank (`______`) | **Unverified** | **ON HOLD** |
-| `DEC-W4-03` | Preset Ownership Scope | `docs/audits/salesforce-wave4/decision-package/DEC_W4_03_PRESET_OWNERSHIP_SCOPE.md` | **Product Owner** | **`PENDING`** | Blank (`______`) | Blank (`______`) | **Unverified** | **ON HOLD** |
-| `DEC-W4-04` | Matrix / Findings Product Scope | `docs/audits/salesforce-wave4/decision-package/DEC_W4_04_MATRIX_FINDINGS_PRODUCT_SCOPE.md` | **Product Owner** | **`PENDING`** | Blank (`______`) | Blank (`______`) | **Unverified** | **ON HOLD** |
+| `DEC-W4-01` | Filter Preset Storage Architecture | `docs/audits/salesforce-wave4/decision-package/DEC_W4_01_PRESET_STORAGE_ARCHITECTURE.md` | **Product Owner** | **`APPROVED`** | Option A (Versioned v2 JSON Container in `Filters_JSON__c`) | Project Owner | Conversation Confirmed (31 Oct 2026) | **Authorized for Dispatch** |
+| `DEC-W4-02` | Cross-View Filter Semantics | `docs/audits/salesforce-wave4/decision-package/DEC_W4_02_CROSS_VIEW_FILTER_SEMANTICS.md` | **Lead Architect** | **`APPROVED`** | Option A (Shared Canonical Model with View Mapping Table) | Project Owner (as Lead Architect) | Conversation Confirmed (31 Oct 2026) | **Authorized for Dispatch** |
+| `DEC-W4-03` | Preset Ownership Scope | `docs/audits/salesforce-wave4/decision-package/DEC_W4_03_PRESET_OWNERSHIP_SCOPE.md` | **Product Owner** | **`APPROVED`** | Option A (Strict Project-Scoped via `Preference_Key__c`) | Project Owner | Conversation Confirmed (31 Oct 2026) | **Authorized for Dispatch** |
+| `DEC-W4-04` | Matrix / Findings Product Scope | `docs/audits/salesforce-wave4/decision-package/DEC_W4_04_MATRIX_FINDINGS_PRODUCT_SCOPE.md` | **Product Owner** | **`APPROVED`** | Option C (Minimal Functional Views with defined limitations) | Project Owner | Conversation Confirmed (31 Oct 2026) | **Authorized for Dispatch** |
 
 ---
 
@@ -44,27 +46,27 @@ An inspection of the underlying decision records in `docs/audits/salesforce-wave
 
 To ensure zero ambiguity, four distinct governance dimensions are enforced:
 
-1. **`RECORDED STATUS`:** The status string explicitly written inside the underlying decision markdown document. For all four decisions (`DEC-W4-01`..`04`), the recorded status is **`PENDING`**.
-2. **`HUMAN APPROVAL EVIDENCE`:** Physical or cryptographic proof of human sign-off (such as a signed commit, PR approval log, or signed document). Currently: **`NONE`**.
-3. **`PROVENANCE VERIFICATION STATUS`:** Whether the record has been authenticated against a known human authority. Currently: **`UNVERIFIED`**.
-4. **`IMPLEMENTATION AUTHORIZATION STATUS`:** The operational gate determining whether code implementation is permitted. Currently: **`ON HOLD`**.
+1. **`RECORDED STATUS`:** The status string explicitly written inside the underlying decision markdown document. For all eight items (`R1`..`R4` and `DEC-W4-01`..`04`), the recorded status is **`APPROVED`**.
+2. **`HUMAN APPROVAL EVIDENCE`:** Explicit confirmation from the Project Owner in the project conversation on 31 October 2026: *"I APPROVE ALL EIGHT WAVE 4 ITEMS AS WRITTEN"*.
+3. **`PROVENANCE VERIFICATION STATUS`:** Explicit conversation approval from the authorized project decision-maker; not an independently verified cryptographic signature.
+4. **`IMPLEMENTATION AUTHORIZATION STATUS`:** Fully authorized by human approval. Feature code implementation is staged and sequenced, but hold remains active on source modifications in this dispatch.
 
 ---
 
 ## 4. Authoritative Approval Ownership Matrix
 
-The following authoritative matrix defines required decision-makers for both technical remediations (R1–R4) and feature architecture decisions (`DEC-W4-01`..`04`). Note that all R2 changes require **both** Lead Architect and Product Owner sign-off:
+The following authoritative matrix defines required decision-makers for both technical remediations (R1–R4) and feature architecture decisions (`DEC-W4-01`..`04`). Note that all items are approved by the Project Owner acting in all designated capacities:
 
-| Item / Scope | Target Area | Required Approver Role(s) | Required Approval Evidence | Scope of Authorization | Implementation Hold Status |
+| Item / Scope | Target Area | Required Approver Role(s) | Required Approval Evidence | Scope of Authorization | Authorization Status |
 |---|---|---|---|---|---|
-| **R1** | V2 Schema Merge Repair | **Lead Architect** | Signed R1 block in Authorization Gate | Apex merge defect fix in `DAUserPreferenceController.cls` | Lifted for R1 files only when signed |
-| **R2** | Coverage Normalization Exporter Fix | **Lead Architect & Product Owner** | Signed R2 block in Authorization Gate | Exporter status fix in `scripts/export-explorer.cjs` | Lifted for R2 files only when signed |
-| **R3** | Remediation File Ownership Matrix Reconciliation | **Migration Auditor & Lead Architect** | Signed R3 block in Authorization Gate | Governance inventory & matrix alignment | Governance alignment only when signed |
-| **R4** | Field Boundary Parameter Test Verification | **Lead Architect** | Signed R4 block in Authorization Gate | Test parameter correction in `run-workstream-c-tests.cjs` | Lifted for R4 test file only when signed |
-| **DEC-W4-01** | Multi-preset storage architecture | **Product Owner** | Signed DEC-W4-01 block in decision package | Multi-preset storage schema & LWC preset components | Feature hold lifted for Lanes A, C when signed |
-| **DEC-W4-02** | Cross-view filter propagation semantics | **Lead Architect** | Signed DEC-W4-02 block in decision package | Cross-view filter state synchronization | Feature hold lifted for Lane D when signed |
-| **DEC-W4-03** | Project-scoped vs global preset ownership | **Product Owner** | Signed DEC-W4-03 block in decision package | Project-scoped preset isolation | Feature hold lifted for Lanes B, C when signed |
-| **DEC-W4-04** | Matrix & Findings product scope | **Product Owner** | Signed DEC-W4-04 block in decision package | Matrix and Findings LWC views | Feature hold lifted for Lanes E, F when signed |
+| **R1** | V2 Schema Merge Repair | **Lead Architect** | Project Owner approval (31 Oct 2026) | Apex merge defect fix in `DAUserPreferenceController.cls` | **APPROVED** (Ready for Lane B implementation) |
+| **R2** | Exporter Coverage Normalization | **Lead Architect & Product Owner** | Project Owner approval (31 Oct 2026) | Fail-closed error handling in `scripts/export-explorer.cjs` | **APPROVED** (Ready for implementation) |
+| **R3** | Governance Inventory Alignment | **Migration Auditor** | Project Owner approval (31 Oct 2026) | Reconcile 46-file inventory in governance documents | **APPROVED — SCOPE RECONCILED** |
+| **R4** | Payload Boundary Test Verification | **Lead Architect** | Project Owner approval (31 Oct 2026) | Test-only 131,072 boundary in `run-workstream-c-tests.cjs` | **APPROVED** (Ready for test addition) |
+| **DEC-W4-01** | Preset Storage Architecture | **Product Owner** | Project Owner approval (31 Oct 2026) | Option A: Versioned v2 JSON Container in `Filters_JSON__c` | **APPROVED** (Ready for dispatch) |
+| **DEC-W4-02** | Cross-View Filter Semantics | **Lead Architect** | Project Owner approval (31 Oct 2026) | Option A: Shared canonical filter model | **APPROVED** (Ready for dispatch) |
+| **DEC-W4-03** | Preset Ownership Scope | **Product Owner** | Project Owner approval (31 Oct 2026) | Option A: Strict project-scoped presets | **APPROVED** (Ready for dispatch) |
+| **DEC-W4-04** | Matrix & Findings Scope | **Product Owner** | Project Owner approval (31 Oct 2026) | Option C: Minimal functional Matrix & Findings views | **APPROVED** (Ready for dispatch) |
 
 ---
 
