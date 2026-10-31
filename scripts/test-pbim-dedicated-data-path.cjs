@@ -45,27 +45,45 @@ function runTests() {
   assert.strictEqual(defaultProj.analysisPath, '/explorer-data.json');
   console.log('  ✓ Test 3 PASSED: project-manifest.json registration and analysisPath contract verified');
 
-  // Test 4: Exporter script output path and loader path agree
+  // Test 4: Exporter fail-closed rejection of unresolved Category B static inference evidence
+  // PBIM fixture contains unresolved static AST inference 'likely-covered' for ApexClass:CitizenRequestTriggerHandler.
+  // Under the approved R2 fail-closed contract, exportExplorerData must throw UnresolvedCoverageEvidenceError.
   const pbimInputPath = path.join(ROOT_DIR, 'analyze/projects/pbim');
   const tempOutputDir = path.join(ROOT_DIR, 'temp-test-export-pbim/explorer-data.json');
+  const tempParent = path.dirname(tempOutputDir);
 
+  // Record pre-export state of PBIM artifact to ensure fail-closed export does not mutate or corrupt it
+  const preExportArtifactBytes = fs.readFileSync(pbimPublicPath, 'utf8');
+
+  let caughtError = null;
   try {
-    const res = exportExplorerData(pbimInputPath, tempOutputDir, {
+    exportExplorerData(pbimInputPath, tempOutputDir, {
       project: 'pbim',
       projectName: 'PBIM',
       skipManifest: true,
     });
-
-    assert.strictEqual(res.projectMetadata.id, 'pbim');
-    assert.strictEqual(res.projectMetadata.analysisPath, '/projects/pbim/explorer-data.json');
-    assert.strictEqual(res.explorerData.summary.nodeCount, 528);
-    console.log('  ✓ Test 4 PASSED: Exporter output path and analysisPath contract agree on /projects/pbim/explorer-data.json');
+  } catch (err) {
+    caughtError = err;
   } finally {
-    const tempParent = path.dirname(tempOutputDir);
     if (fs.existsSync(tempParent)) {
       fs.rmSync(tempParent, { recursive: true, force: true });
     }
   }
+
+  assert.ok(caughtError, 'exportExplorerData must throw UnresolvedCoverageEvidenceError on PBIM fixture with likely-covered evidence');
+  assert.strictEqual(caughtError.name, 'UnresolvedCoverageEvidenceError', 'Error name must be UnresolvedCoverageEvidenceError');
+  assert.strictEqual(caughtError.rawStatus, 'likely-covered', 'caughtError.rawStatus must match raw fixture status likely-covered');
+  assert.strictEqual(caughtError.componentId, 'ApexClass:CitizenRequestTriggerHandler', 'caughtError.componentId must identify CitizenRequestTriggerHandler');
+  assert.strictEqual(caughtError.componentName, 'CitizenRequestTriggerHandler', 'caughtError.componentName must identify CitizenRequestTriggerHandler');
+  assert.ok(caughtError.message.includes('ApexClass:CitizenRequestTriggerHandler'), 'Error message must reference affected component ID');
+  assert.ok(caughtError.message.includes('likely-covered'), 'Error message must reference raw status');
+
+  // Verify pre-existing PBIM dedicated artifact was NOT mutated or corrupted by the failed export attempt
+  const postExportArtifactBytes = fs.readFileSync(pbimPublicPath, 'utf8');
+  assert.strictEqual(postExportArtifactBytes, preExportArtifactBytes, 'Pre-existing PBIM artifact must remain unchanged after rejected export attempt');
+  assert.strictEqual(fs.existsSync(tempOutputDir), false, 'Temporary output file must not exist after rejected export');
+
+  console.log('  ✓ Test 4 PASSED: Exporter correctly fails closed with UnresolvedCoverageEvidenceError for likely-covered on ApexClass:CitizenRequestTriggerHandler');
 
   // Test 5: Root default file /explorer-data.json is distinct from PBIM artifact
   const defaultPublicPath = path.join(PUBLIC_DIR, 'explorer-data.json');

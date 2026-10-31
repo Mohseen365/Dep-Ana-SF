@@ -1,40 +1,26 @@
 import { LightningElement, api, track } from 'lwc';
 import getUserPreference from '@salesforce/apex/DAUserPreferenceController.getUserPreference';
 import saveUserPreference from '@salesforce/apex/DAUserPreferenceController.saveUserPreference';
+import {
+    SCHEMA_VERSION,
+    MAX_PAYLOAD_SIZE,
+    getDefaultFilterCriteria,
+    getDefaultFilterContainer,
+    normalizeFilterCriteria,
+    migrateV1ToV2Container,
+    validateAndNormalizeContainer,
+    serializeFilterContainer,
+    matchesGraphNode,
+    matchesMatrixEdge,
+    matchesFindingItem,
+    isHighCouplingHotspot
+} from './daFilterSchema.js';
 
 const DEFAULT_VIEW_MODE = 'graph';
 const DEFAULT_LAYOUT_MODE = 'cose'; // Approved fallback layout per DEC-W3-05
 const APPROVED_VIEWS = ['graph', 'matrix', 'findings'];
-const MAX_PAYLOAD_SIZE = 131072;
 
-// Approved v1 filter preset fallback criteria schema (DEC-W3-01)
-const DEFAULT_FILTER_PRESET_CONFIG = {
-    $schema: 'https://dependency-analyzer.salesforce.com/schemas/v1/filter-preset.json',
-    version: 1,
-    activePresetId: 'default-empty',
-    presets: [
-        {
-            id: 'default-empty',
-            displayName: 'Default View (All Components)',
-            isDefault: true,
-            updatedAt: new Date().toISOString(),
-            criteria: {
-                searchQuery: '',
-                nodeTypes: [],
-                coverageStatus: [],
-                riskLevels: [],
-                layers: [],
-                includeTestNodes: true,
-                includeExternalNodes: true
-            }
-        }
-    ],
-    quickFilters: {
-        hideTestNodes: false,
-        hideIsolatedNodes: false,
-        highlightCyclesOnly: false
-    }
-};
+const DEFAULT_FILTER_PRESET_CONFIG = getDefaultFilterContainer();
 
 export default class DaAppShell extends LightningElement {
     @api activeProjectId = null;
@@ -173,15 +159,26 @@ export default class DaAppShell extends LightningElement {
                     this.activeLayout = DEFAULT_LAYOUT_MODE;
                 }
 
-                // 3. Versioned Filter Preset Schema Restoration (DEC-W3-01)
+                // 3. Canonical V2 Filter Preset Schema Restoration (DEC-W4-01, DEC-W4-03)
                 if (pref.Filters_JSON__c) {
                     try {
                         const parsed = JSON.parse(pref.Filters_JSON__c);
-                        if (parsed && typeof parsed === 'object' && parsed.version === 1) {
-                            this.filtersJson = pref.Filters_JSON__c;
-                            this.filterConfig = parsed;
+                        if (parsed && typeof parsed === 'object') {
+                            if (parsed.schemaVersion === SCHEMA_VERSION) {
+                                const normalized = validateAndNormalizeContainer(parsed, projectId);
+                                this.filtersJson = pref.Filters_JSON__c;
+                                this.filterConfig = normalized;
+                            } else if (parsed.version === 1) {
+                                // V1 payload migrated to V2 in memory without mutating stored database record
+                                const migrated = migrateV1ToV2Container(parsed, projectId);
+                                this.filtersJson = pref.Filters_JSON__c;
+                                this.filterConfig = migrated;
+                            } else {
+                                // Unsupported schema version or structure: apply safe default without overwriting DB
+                                this.filtersJson = JSON.stringify(DEFAULT_FILTER_PRESET_CONFIG);
+                                this.filterConfig = DEFAULT_FILTER_PRESET_CONFIG;
+                            }
                         } else {
-                            // Unsupported schema version or structure: apply safe default without overwriting DB
                             this.filtersJson = JSON.stringify(DEFAULT_FILTER_PRESET_CONFIG);
                             this.filterConfig = DEFAULT_FILTER_PRESET_CONFIG;
                         }
@@ -314,22 +311,75 @@ export default class DaAppShell extends LightningElement {
         }
     }
 
-    // Filter Change Handler (FEAT-DATA-03)
+    // Filter Change Handler (FEAT-DATA-03, FEAT-STATE-03)
     handleFilterChange(event) {
-        const newFiltersJson = event.detail ? event.detail.filtersJson : null;
+        const detail = event.detail || {};
+        let newFiltersJson = detail.filtersJson;
+
+        // Support container object or active filter criteria updates directly
+        if (!newFiltersJson && detail.activeFilter) {
+            const updatedContainer = {
+                ...this.filterConfig,
+                schemaVersion: SCHEMA_VERSION,
+                activePresetId: detail.activePresetId !== undefined ? detail.activePresetId : this.filterConfig.activePresetId,
+                activeFilter: normalizeFilterCriteria(detail.activeFilter)
+            };
+            try {
+                newFiltersJson = serializeFilterContainer(updatedContainer);
+            } catch (e) {
+                this.preferenceError = e.message;
+                return;
+            }
+        } else if (!newFiltersJson && detail.container) {
+            try {
+                newFiltersJson = serializeFilterContainer(detail.container);
+            } catch (e) {
+                this.preferenceError = e.message;
+                return;
+            }
+        }
+
         if (newFiltersJson && this.filtersJson !== newFiltersJson) {
             try {
                 const parsed = JSON.parse(newFiltersJson);
-                if (parsed && typeof parsed === 'object' && parsed.version === 1) {
-                    this.filtersJson = newFiltersJson;
-                    this.filterConfig = parsed;
-                    this.savePreferenceChange({ filtersJson: newFiltersJson });
+                if (parsed && typeof parsed === 'object') {
+                    if (parsed.schemaVersion === SCHEMA_VERSION) {
+                        const normalized = validateAndNormalizeContainer(parsed, this.activeProjectId);
+                        const serialized = serializeFilterContainer(normalized);
+                        this.filtersJson = serialized;
+                        this.filterConfig = normalized;
+                        this.savePreferenceChange({ filtersJson: serialized });
+                    } else if (parsed.version === 1) {
+                        // V1 update preserves presets and sets activePresetId = null per R1
+                        const migrated = migrateV1ToV2Container(parsed, this.activeProjectId);
+                        const serialized = serializeFilterContainer(migrated);
+                        this.filtersJson = serialized;
+                        this.filterConfig = migrated;
+                        this.savePreferenceChange({ filtersJson: serialized });
+                    } else {
+                        this.preferenceError = 'Invalid or unsupported filter schema version.';
+                    }
                 }
             } catch (e) {
                 // Invalid JSON criteria update rejected
                 this.preferenceError = 'Invalid filter JSON criteria format.';
             }
         }
+    }
+
+    // Active canonical filter getter for child views
+    get activeFilterCriteria() {
+        return this.filterConfig?.activeFilter || getDefaultFilterCriteria();
+    }
+
+    // Active presets list scoped to the current project
+    get activePresets() {
+        return this.filterConfig?.presets || [];
+    }
+
+    // Active preset ID if one is currently active
+    get activePresetId() {
+        return this.filterConfig?.activePresetId || null;
     }
 
     // Project Context Handler (FEAT-SHELL-03 & FEAT-DATA-03)
