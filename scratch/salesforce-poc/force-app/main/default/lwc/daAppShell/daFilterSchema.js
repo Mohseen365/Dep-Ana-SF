@@ -81,7 +81,9 @@ export function normalizeFilterCriteria(rawCriteria = {}) {
 
     const search = typeof rawCriteria.search === 'string'
         ? rawCriteria.search.trim()
-        : (typeof rawCriteria.searchTerm === 'string' ? rawCriteria.searchTerm.trim() : '');
+        : (typeof rawCriteria.searchTerm === 'string'
+            ? rawCriteria.searchTerm.trim()
+            : (typeof rawCriteria.searchQuery === 'string' ? rawCriteria.searchQuery.trim() : ''));
 
     const normalizeArray = (arr, allowedSet = null) => {
         if (!Array.isArray(arr)) return [];

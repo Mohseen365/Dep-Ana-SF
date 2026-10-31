@@ -48,6 +48,12 @@ function createProjectSelectorClass(mockApex) {
     return fn(LwcMock, CustomEvent, mockApex);
 }
 
+const filterSchemaPath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daFilterSchema.js');
+let filterSchemaModule = null;
+try {
+    filterSchemaModule = require(filterSchemaPath);
+} catch (e) {}
+
 // Helper to create daAppShell instance in Node.js simulation with mock Apex preference controller
 function createAppShellClass(mockApex = {}) {
     const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daAppShell.js');
@@ -56,6 +62,9 @@ function createAppShellClass(mockApex = {}) {
     code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]lwc['\"];?/, 'const {$1} = LwcMock;');
     code = code.replace(/import\s+getUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.getUserPreference['\"];?/, 'const getUserPreference = (params) => (mockApex.getUserPreference ? mockApex.getUserPreference(params) : Promise.resolve(null));');
     code = code.replace(/import\s+saveUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.saveUserPreference['\"];?/, 'const saveUserPreference = (params) => (mockApex.saveUserPreference ? mockApex.saveUserPreference(params) : Promise.resolve(result => mockApex.saveUserPreference(params)));');
+    code = code.replace(/import\s+\{([\s\S]*?)\}\s+from\s+['\"]\.\/daFilterSchema\.js['\"];?/, (match, imports) => {
+        return `const {${imports}} = filterSchemaModule;`;
+    });
     code = code.replace(/@api\s+/g, '');
     code = code.replace(/@track\s+/g, '');
     code = code.replace('export default class DaAppShell', 'class DaAppShell');
@@ -84,8 +93,8 @@ function createAppShellClass(mockApex = {}) {
         }
     };
 
-    const fn = new Function('LwcMock', 'CustomEvent', 'mockApex', code);
-    return fn(LwcMock, CustomEvent, mockApex);
+    const fn = new Function('LwcMock', 'CustomEvent', 'mockApex', 'filterSchemaModule', code);
+    return fn(LwcMock, CustomEvent, mockApex, filterSchemaModule);
 }
 
 let passes = 0;
@@ -365,7 +374,7 @@ async function main() {
                 return {
                     Active_View_Mode__c: 'matrix',
                     Active_Layout_Mode__c: 'orbit',
-                    Filters_JSON__c: JSON.stringify({ version: 1, activePresetId: 'test', presets: [] })
+                    Filters_JSON__c: JSON.stringify({ schemaVersion: 2, activePresetId: 'test', presets: [] })
                 };
             }
         };
@@ -378,7 +387,7 @@ async function main() {
         assert.strictEqual(queriedProjectId, 'proj_initial');
         assert.strictEqual(shell.activeView, 'matrix');
         assert.strictEqual(shell.activeLayout, 'orbit');
-        assert.strictEqual(shell.filterConfig.version, 1);
+        assert.strictEqual(shell.filterConfig.schemaVersion, 2);
     });
 
     // 15. Load preferences after changing projects
@@ -468,11 +477,10 @@ async function main() {
     // 19. Restore valid versioned filter JSON
     await runAsyncTest('19. Restore valid versioned filter JSON', async () => {
         const validFilterJson = JSON.stringify({
-            $schema: 'https://dependency-analyzer.salesforce.com/schemas/v1/filter-preset.json',
-            version: 1,
+            schemaVersion: 2,
             activePresetId: 'custom-preset-1',
-            presets: [{ id: 'custom-preset-1', criteria: { searchQuery: 'AccountController' } }],
-            quickFilters: { hideTestNodes: true }
+            activeFilter: { search: 'AccountController' },
+            presets: [{ id: 'custom-preset-1', name: 'Custom 1', projectId: 'proj_1', criteria: { search: 'AccountController' } }]
         });
         const mockApex = {
             getUserPreference: async () => ({ Filters_JSON__c: validFilterJson })
@@ -484,7 +492,7 @@ async function main() {
         await shell.loadUserPreferences('proj_1');
         assert.strictEqual(shell.filtersJson, validFilterJson);
         assert.strictEqual(shell.filterConfig.activePresetId, 'custom-preset-1');
-        assert.strictEqual(shell.filterConfig.quickFilters.hideTestNodes, true);
+        assert.strictEqual(shell.filterConfig.activeFilter.search, 'AccountController');
     });
 
     // 20. Handle missing preferences (returns null from Apex)
@@ -499,7 +507,7 @@ async function main() {
         await shell.loadUserPreferences('proj_new');
         assert.strictEqual(shell.activeView, 'graph');
         assert.strictEqual(shell.activeLayout, 'cose');
-        assert.strictEqual(shell.filterConfig.version, 1);
+        assert.strictEqual(shell.filterConfig.schemaVersion, 2);
         assert.strictEqual(shell.preferenceError, null);
     });
 
@@ -514,15 +522,15 @@ async function main() {
         shell.activeProjectId = 'proj_corrupt';
         await shell.loadUserPreferences('proj_corrupt');
         // Malformed JSON must fall back cleanly to default criteria without throwing or crashing
-        assert.strictEqual(shell.filterConfig.version, 1);
-        assert.strictEqual(shell.filterConfig.activePresetId, 'default-empty');
+        assert.strictEqual(shell.filterConfig.schemaVersion, 2);
+        assert.strictEqual(shell.filterConfig.activePresetId, null);
     });
 
     // 22. Handle unsupported schema versions
     await runAsyncTest('22. Handle unsupported schema versions', async () => {
         const mockApex = {
             getUserPreference: async () => ({
-                Filters_JSON__c: JSON.stringify({ version: 999, activePresetId: 'future-schema' })
+                Filters_JSON__c: JSON.stringify({ schemaVersion: 999, activePresetId: 'future-schema' })
             })
         };
         const DaAppShell = createAppShellClass(mockApex);
@@ -530,9 +538,9 @@ async function main() {
 
         shell.activeProjectId = 'proj_future';
         await shell.loadUserPreferences('proj_future');
-        // Unsupported version must fall back to approved v1 schema defaults
-        assert.strictEqual(shell.filterConfig.version, 1);
-        assert.strictEqual(shell.filterConfig.activePresetId, 'default-empty');
+        // Unsupported version must fall back to approved schema defaults
+        assert.strictEqual(shell.filterConfig.schemaVersion, 2);
+        assert.strictEqual(shell.filterConfig.activePresetId, null);
     });
 
     // 23. Apply approved empty-filter fallback
@@ -541,9 +549,9 @@ async function main() {
         const shell = new DaAppShell();
 
         shell.resetPreferencesToDefaults();
-        assert.strictEqual(shell.filterConfig.version, 1);
-        assert.strictEqual(shell.filterConfig.presets.length, 1);
-        assert.strictEqual(shell.filterConfig.presets[0].criteria.searchQuery, '');
+        assert.strictEqual(shell.filterConfig.schemaVersion, 2);
+        assert.strictEqual(shell.filterConfig.presets.length, 0);
+        assert.strictEqual(shell.filterConfig.activeFilter.search, '');
     });
 
     // 24. Change only layout while preserving unrelated preferences
