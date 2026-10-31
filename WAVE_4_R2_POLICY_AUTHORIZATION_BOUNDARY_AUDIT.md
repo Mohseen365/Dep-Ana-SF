@@ -5,8 +5,8 @@
 | **Document Type** | Coverage Policy Authorization & Configuration Boundary Audit |
 | **Target Feature** | Wave 4 — Remediation R2 & Exporter Coverage Pipeline (`scripts/export-explorer.cjs`) |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-12874560060273924091-5d84f2b4` |
-| **HEAD Commit SHA** | `921b8c54fb61b5b18a2e92f9821b6c8cfb1bd683` |
+| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
+| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **POLICY AUTHORIZATION BOUNDARY — NOT ESTABLISHED — IMPLEMENTATION BLOCKING** |
 | **Operational State** | **IMPLEMENTATION HOLD ACTIVE — NO IMPLEMENTATION PERMITTED** |
@@ -15,24 +15,27 @@
 
 ## 1. Context & Governance Problem Statement
 
-In `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`, the proposed normalization logic for handling non-standard coverage states relies on several configuration flags:
+In earlier drafts of `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`, normalization logic for unresolved coverage states (`likely-covered`, `failed`, `known-coverage-failure`) relied on caller-supplied boolean flags:
 
 ```javascript
-policyDecisions.allowStaticInferenceAsCovered
-policyDecisions.allowStaticInferenceAsAmbiguous
-policyDecisions.mapFailedExecutionToUntested
-policyDecisions.mapFailedExecutionToAmbiguous
+// DEFECTIVE EARLIER SPECIFICATION PATTERN:
+policyDecisions = {
+  allowStaticInferenceAsCovered,
+  allowStaticInferenceAsAmbiguous,
+  mapFailedExecutionToUntested,
+  mapFailedExecutionToAmbiguous
+}
 ```
 
-The unresolved architectural decisions behind these flags (`DEC-W4-02` and associated policies) require formal joint authorization from both the **Lead Architect** and **Product Owner**.
+This pattern introduced a critical contradiction: while governance documents explicitly stated that caller-supplied flags cannot constitute authenticated human approval, the pseudocode allowed callers to authorize unresolved mappings simply by passing `{ allowStaticInferenceAsCovered: true }`.
 
-This audit inspects the repository to evaluate how policy configuration is established, controlled, authenticated, and guarded against unauthorized bypass.
+This audit inspects the repository to evaluate policy configuration mechanisms, access controls, and boundary enforcement.
 
 ---
 
-## 2. Repository Policy Mechanism Audit
+## 2. Exhaustive Repository Policy Mechanism Audit
 
-An exhaustive inspection of `scripts/export-explorer.cjs`, CLI utilities, configuration files, and documentation yields the following findings:
+An inspection of `scripts/export-explorer.cjs`, CLI utilities, configuration files, and documentation yields the following findings:
 
 ### 2.1 Does an Authoritative Policy Configuration Mechanism Exist in the Repository?
 **Result: NO.**
@@ -40,7 +43,7 @@ There is no configuration file, schema, or system registry in the repository for
 
 ### 2.2 Who Can Change Configuration?
 **Result: UNSPECIFIED.**
-Because no configuration mechanism exists, there is no access control, role binding, or authorization matrix determining who is permitted to supply or change these policy parameters.
+Because no configuration mechanism exists, there is no access control, role binding, or authorization matrix determining who is permitted to supply or change policy parameters.
 
 ### 2.3 How are Approved Decisions Represented in the Codebase?
 **Result: NOT REPRESENTED.**
@@ -54,22 +57,22 @@ function normalizeTestCoverageStatus(status) {
 Approved human decisions are not represented in any machine-readable or verifiable form.
 
 ### 2.4 Can a Caller Supply a Boolean and Bypass Governance?
-**Result: CRITICAL RISK IDENTIFIED.**
-If an implementation were created where `policyDecisions` is passed as an in-memory argument or function parameter to `normalizeTestCoverageStatus(status, policyDecisions)`, any caller, test script, or sub-component could supply `{ allowStaticInferenceAsCovered: true }` and silently bypass the human governance process.
+**Result: CRITICAL RISK CONTAINED VIA CONTRACT REVISION.**
+Under the revised R2 contract, caller-supplied booleans, options arguments, CLI flags, environment variables, and test fixtures are explicitly invalidated as authorization. The pseudocode has been revised to reject all caller-supplied boolean authorization parameters and fail closed.
 
 **Mandatory Rule:**
-> *A caller-supplied Boolean, environment variable, arbitrary JSON value, test fixture, or source-code default does NOT constitute human approval.*
+> *None of the following independently or collectively constitutes governance authorization: function arguments, caller-supplied booleans, environment variables, CLI flags, test fixtures, local unauthenticated configs, or repository-generated approval records lacking verified human provenance.*
 
 ### 2.5 What Happens When Configuration is Missing, Invalid, Contradictory, or Unapproved?
 **Result: FAIL-CLOSED MANDATE.**
 Under the fail-closed contract established in `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`:
-1. If configuration is missing: Policy branches for static inference and failed execution must NOT execute.
-2. If contradictory flags are supplied (e.g., both `allowStaticInferenceAsCovered` and `allowStaticInferenceAsAmbiguous` are `true`): The pipeline must throw an unrecoverable `UnresolvedCoveragePolicyError` and quarantine the component.
-3. Unapproved policies must never silently map unverified inputs to `COVERED`.
+1. If an unresolved state (`likely-covered`, `failed`, `known-coverage-failure`) is encountered, the exporter throws an explicit `UnresolvedCoverageEvidenceError` or quarantines the component outside canonical output.
+2. Unresolved evidence must **never** silently map into `COVERED`, `UNTESTED`, or `AMBIGUOUS`.
+3. No fifth canonical state may be introduced into canonical node records.
 
 ### 2.6 How Can the Implementation Distinguish Genuine Approved Policy from Default or Test-Only Values?
 **Result: NO MECHANISM EXISTS.**
-Without a cryptographically signed manifest, a tamper-proof repository configuration file, or an explicit approval gate recorded in Git with Lead Architect and Product Owner sign-off, software code cannot distinguish an authorized policy from an arbitrary developer test fixture.
+Software code cannot distinguish an authorized policy from an arbitrary developer test fixture without an authenticated, tamper-evident mechanism (e.g. cryptographically signed manifest or server-side policy gate) and verified provenance from both the Lead Architect and Product Owner.
 
 ---
 
@@ -84,7 +87,7 @@ The canonical coverage vocabulary is strictly bounded to four states:
 3. `AMBIGUOUS`
 4. `UNKNOWN`
 
-No fifth state (e.g. `INFERRED_COVERED`, `FAILED_EXECUTION`, `PARTIALLY_TESTED`) may be introduced.
+No fifth state (e.g. `INFERRED_COVERED`, `FAILED_EXECUTION`, `QUARANTINED`, `PARTIALLY_TESTED`) may enter canonical output.
 
 ### 3.2 Missing-Evidence Invariant
 Any missing, empty, or unparseable input must deterministically resolve to `UNKNOWN`:
@@ -95,8 +98,8 @@ Any missing, empty, or unparseable input must deterministically resolve to `UNKN
 - Missing property $\rightarrow$ `UNKNOWN`
 - Unrecognized token $\rightarrow$ `UNKNOWN`
 
-### 3.3 Quarantine of Unresolved Inputs
-Static inference (`likely-covered`) and failed execution (`execution-failed`) must remain quarantined or fail-closed until an authenticated human authorization mechanism is established and signed off.
+### 3.3 Fail-Closed Quarantine of Unresolved Inputs
+Static inference (`likely-covered`) and failed execution (`failed`, `known-coverage-failure`) must fail closed or remain quarantined outside canonical node records until an authenticated human authorization mechanism and signed-off policy exist.
 
 ---
 
@@ -107,4 +110,8 @@ POLICY AUTHORIZATION BOUNDARY — NOT ESTABLISHED — IMPLEMENTATION BLOCKING
 ```
 
 **Required Action Prior to Implementation:**
-The Lead Architect and Product Owner must define and approve an authenticated, tamper-evident policy configuration mechanism before any flag-based coverage normalization logic is implemented in `scripts/export-explorer.cjs`.
+The **Lead Architect** and **Product Owner** must define, approve, and sign off on:
+1. The exact policy decisions for AST static inference and failed test execution.
+2. An authenticated, tamper-evident policy configuration mechanism that prevents caller-flag bypass.
+
+Until these conditions are met, any code change in `scripts/export-explorer.cjs` to map unresolved evidence remains strictly blocked under the implementation hold.

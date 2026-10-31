@@ -1,84 +1,64 @@
-# Wave 4 (`FEAT-STATE-03`): Final Contract Consistency & Fail-Closed Authorization Audit
+# Wave 4 (`FEAT-STATE-03`): Final Contract Consistency Audit
 
 | Governance Attribute | Value |
 |---|---|
-| **Document Type** | Comprehensive Independent Cross-Document Audit Report & Readiness Assessment |
-| **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters & Presets Persistence (Remediations R1–R4) |
+| **Document Type** | Comprehensive Multi-Document Consistency & Blockers Reclassification Audit |
+| **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters & Presets Persistence |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-12874560060273924091-5d84f2b4` |
-| **HEAD Commit SHA** | `921b8c54fb61b5b18a2e92f9821b6c8cfb1bd683` |
+| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
+| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
 | **Audit Date** | October 31, 2026 |
-| **Implementation Hold Status** | **IMPLEMENTATION HOLD — ACTIVE** |
-| **Dispatch Authorization** | **DOCUMENTATION ONLY — NO IMPLEMENTATION AUTHORIZED** |
-| **Final Audit Verdict** | **SPECIFICATION INTERNALLY CONSISTENT — READY FOR HUMAN REVIEW** |
+| **Status** | **CONSISTENCY AUDIT COMPLETE — BLOCKERS RECLASSIFIED — HOLD ACTIVE** |
+| **Operational State** | **IMPLEMENTATION HOLD ACTIVE — NO IMPLEMENTATION PERMITTED** |
 
 ---
 
-## 1. Executive Summary & Audit Baseline
+## 1. Executive Summary & Audit Scope
 
-This independent audit report represents the authoritative, second-pass cross-document consistency assessment for Wave 4 (`FEAT-STATE-03`). Following the identification of five critical documentation blockers in prior drafts, this audit verifies the final documentation-only corrections across the seven authoritative Wave 4 deliverables:
+This document provides the definitive cross-document consistency audit and blocker reclassification for the Wave 4 (`FEAT-STATE-03`) governance package.
 
-1. **R1 Blank-Existing Validation Bypass Eliminated:** The proposed Apex merge algorithm (`mergeV1IntoV2Container`) was restructured into a strict 10-step processing sequence. It performs incoming JSON syntax, object type, schema classification, required V2 properties, and unresolved write gates *before* inspecting existing persisted data or permitting an initial save. The unresolved incoming V2 write gate blocks universally, regardless of whether existing data is blank, null, V1, or V2.
-2. **R1 Six Validation Layers & Nested Rules Formalized:** An explicit six-layer validation matrix was created, distinguishing verified source implementations from contracts and deferred live persistence. Deep nested V2 validation rules (preset object schema, ID formatting, filter criteria enum domains, isDefault rules, timestamps) were inspected and explicitly marked as incomplete and implementation-blocking.
-3. **R2 Output Safety & Canonical Vocabulary Enforcement:** The canonical coverage vocabulary was strictly bounded to exactly four authorized states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Noncanonical policy return strings were eliminated. A fail-closed pipeline contract (`UnresolvedCoveragePolicyError` / quarantine) was specified to ensure unapproved policy inputs never leak into generated output.
-4. **R3 Exporter Test Runner Approver Reconciliation:** The ownership matrix, governance reconciliation, and human authorization gate were harmonized to uniformly require **both Lead Architect and Product Owner** for both `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`.
-5. **R3 Governance Artifact Disambiguation:** The distinction between the two Category A existing governance reports (`WAVE_4_FINAL_EVIDENCE_CLOSURE_REPORT.md` and `WAVE_4_FINAL_EVIDENCE_CLOSURE_EXECUTIVE_SUMMARY.md`) and the seven Category D deliverables was fully documented based on ownership boundaries (Migration Auditor vs. Governance Auditor) and task authorization scope.
-6. **Invariant Arithmetic Reconciled:** Mutually exclusive 46-file inventory confirmed: 24 baseline files (11 Category A + 13 Category B), 22 proposed new files (15 Category C + 7 Category D), with exactly 26 implementation targets prohibited under the hold.
+### Scope & Constraints:
+- **Strict Documentation-Only Scope:** Covers the seven authorized Category D specification documents and the six final audit deliverables.
+- **Implementation Hold:** Zero application source code, test files, Salesforce metadata, or CI workflows have been modified.
+- **Evidence Verification:** All baseline claims are reconciled against fresh local execution and rigorous source inspection.
 
 ---
 
-## 2. Repository Baseline & Final Git State
+## 2. Reclassification of Historical Blockers & Discrepancies
 
-- **Repository Root:** `/app`
-- **Active Branch:** `jules-12874560060273924091-5d84f2b4`
-- **Baseline HEAD Commit SHA:** `921b8c54fb61b5b18a2e92f9821b6c8cfb1bd683`
-- **Baseline Working Tree Status:** Clean (0 uncommitted changes prior to dispatch).
-- **Final Working Tree Status:** Only authorized Category D governance documents modified in-place; working tree contains uncommitted documentation changes awaiting user submission.
-- **Source & Test Files Inspected (NOT Modified):**
-  - `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` (Lines 61–69 inspected)
-  - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` (Lines 50–110 inspected)
-  - `scripts/export-explorer.cjs` (Line 331 inspected; defect confirmed present under hold)
-  - `scripts/test-export-explorer.cjs` (Inspected; 15 test assertions confirmed)
-  - Field metadata files in `scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/`
+Past audit reports broadly claimed that all historical blockers were "resolved." However, several blockers were only documented, contained in specification, or identified as implementation-blocking. In accordance with governance standards, every historical blocker is reclassified into exactly one of four canonical outcomes:
+1. `RESOLVED — EVIDENCE VERIFIED`
+2. `CONTAINED — IMPLEMENTATION STILL BLOCKED`
+3. `DOCUMENTED — DECISION OR EVIDENCE STILL REQUIRED`
+4. `OPEN — NOT ADEQUATELY ADDRESSED`
 
----
-
-## 3. Detailed Blocker-by-Blocker Resolution
-
-### 3.1 Blocker 1 & 2: R1 Incoming Validation Order & Six Validation Layers
-- **Defect Identified:** Prior draft algorithm returned incoming data immediately if existing data was blank (`if (String.isBlank(existingV2Json)) return incomingFilterJson;`), bypassing schema recognition and the incoming V2 decision gate.
-- **Resolution Applied:** The algorithm was rewritten in `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` Section 5.3 to validate and classify incoming payloads in Steps 1–7. Incoming V2 payloads throw an unresolved decision exception before any blank existing check.
-- **Edge-Case Matrix Reconciliation:** Expanded from 15 to 22 explicit rows covering all combinations of blank existing data with valid V1, valid V2, invalid V2, unsupported schema versions, ambiguous unversioned presets, malformed JSON, and JSON arrays.
-- **Six-Layer Status Matrix:** Layer 1 (Syntax) verified in source; Layer 2 (Object type) specified but not implemented; Layer 3 (Version recognition) specified but not implemented; Layer 4 (V2 structural) specified but not implemented; Layer 5 (Field-specific nested) incomplete and marked implementation-blocking; Layer 6 (Persistence) Apex length guard verified, live persistence deferred.
-
-### 3.2 Blocker 3: R2 Canonical Output Safety
-- **Defect Identified:** Prior normalizer contract returned noncanonical strings (`UNRESOLVED_STATIC_INFERENCE_POLICY`, `UNRESOLVED_FAILED_EXECUTION_POLICY`).
-- **Resolution Applied:** Normalizer contract rewritten to enforce strict 4-state vocabulary (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Unresolved branches throw `UnresolvedCoveragePolicyError`, causing exporter execution to fail closed and halt or quarantine unmapped nodes. Missing values deterministically map to `UNKNOWN`.
-
-### 3.3 Blocker 4: R3 Dual Approver Ownership for Exporter Files
-- **Defect Identified:** Row 5 (`scripts/test-export-explorer.cjs`) listed only Lead Architect, while Row 4 (`scripts/export-explorer.cjs`) listed Lead Architect & Product Owner.
-- **Resolution Applied:** Row 5 was updated to require **both Lead Architect & Product Owner**, achieving complete alignment across the Ownership Matrix, Authorization Gate, and Governance Reconciliation.
-
-### 3.4 Blocker 5: R3 Disambiguation of Governance Artifacts
-- **Defect Identified:** Category A contained two markdown files (`WAVE_4_FINAL_EVIDENCE_CLOSURE_REPORT.md` and executive summary) classified as prohibited under the hold, while 7 root markdown reports were authorized Category D deliverables.
-- **Resolution Applied:** Section 4 of `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` was expanded to provide the full rationale. The two Category A reports belong to the Integration Coordinator / Migration Auditor role for past milestone closure, outside the scope of this Governance Auditor documentation dispatch. They are labeled `EXISTING GOVERNANCE ARTIFACT — NOT AUTHORIZED FOR MODIFICATION IN THIS DISPATCH`.
+| # | Historical Issue / Blocker | Corrective Documentation & Specification Action | Supporting Evidence | Source Code Changed? | Underlying Risk Remains? | Outcome Classification | Remaining Decision / Evidence Required |
+|---|---|---|---|---|---|---|---|
+| **1** | **R1 Blank-Existing Write-Gate Ordering** | Revised processing order in `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` so incoming syntax, type, version, and V2 write gates (Steps 1–7) execute *before* blank-existing initial save evaluation (Step 8). | Contract specification Section 5.1–5.3; edge-case matrix rows 2–8. | **No** (Apex controller untouched) | Contained in spec; risk would recur if implemented incorrectly. | **CONTAINED — IMPLEMENTATION STILL BLOCKED** | Source-level implementation and regression tests verifying write-gate execution order. |
+| **2** | **R1 Nested Validation Layer 5 Gaps** | Formalized 12-item decision register in `WAVE_4_R1_NESTED_VALIDATION_DECISION_REGISTER.md` cataloging preset items, ID regex, names, default flags, timestamps, criteria enums, and bounds. | Source inspection confirms Apex lacks checks; register maps each rule to required approver. | **No** (No Apex validation added) | **Yes** (Unspecified nested rules could corrupt database if implemented). | **CONTAINED — IMPLEMENTATION STILL BLOCKED** | Formal human sign-off from Lead Architect and Product Owner on the 12 register items. |
+| **3** | **R2 Policy Authorization Boundary & Caller-Boolean Contradiction** | Eliminated caller-supplied Boolean authorization flags in R2 contract. Enforced fail-closed throw/quarantine outside 4 canonical states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Explicitly invalidated caller booleans, CLI flags, env vars. | `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` Section 5; `WAVE_4_R2_POLICY_AUTHORIZATION_BOUNDARY_AUDIT.md`. | **No** (Line 331 in `export-explorer.cjs` still buggy) | Contained in spec; no authenticated mechanism in codebase. | **CONTAINED — IMPLEMENTATION STILL BLOCKED** | Formal joint Lead Architect & Product Owner policy decisions; authenticated configuration mechanism. |
+| **4** | **R3 Exporter Test Runner Approver Omission** | Updated Row 5 of `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` so that modifying `scripts/test-export-explorer.cjs` requires joint sign-off from both Lead Architect and Product Owner. | Matrix Section 3 Row 5; Section 4.1. | **No** | Contained in ownership governance. | **RESOLVED — EVIDENCE VERIFIED** | None for documentation; sign-off required prior to modifying test file. |
+| **5** | **R3 Disambiguation of Governance Artifacts** | Clarified distinction between Category A historical reports (Integration Coordinator past closure) and Category D root deliverables (Governance Auditor specification package). | Matrix Section 4.2; inventory arithmetic $11+13+15+7=46$. | **No** | Resolved in documentation. | **RESOLVED — EVIDENCE VERIFIED** | None. Classification boundaries established. |
+| **6** | **R4 Field-Specific Limits vs Live Persistence Evidence** | Explicitly separated client-side toast warning (100k), Apex controller guard (131,072 chars), and Salesforce metadata capacity from live org persistence. | Source inspection of controller lines 61–69, field metadata files, and mock tests. | **No** | Live multi-tenant persistence remains unverified. | **CONTAINED — IMPLEMENTATION STILL BLOCKED** | Live Salesforce scratch/sandbox org acceptance testing (deferred to Phase 7). |
+| **7** | **Test Accounting Discrepancy (224 vs 351 vs 460)** | Reconciled counts mathematically: 224 test units across 5 suites, 351 detailed assertions within CLI suite, and 460 total invariant checks evaluated across all suites combined ($109 + 351 = 460$). Added mandatory environment qualification. | `WAVE_4_FINAL_BASELINE_TEST_EXECUTION_EVIDENCE.md` Section 1. | **No** | None. Discrepancy fully clarified and reconciled. | **RESOLVED — EVIDENCE VERIFIED** | Independent verification outside Jules environment. |
+| **8** | **Human Approval Provenance Classification** | Applied strict standard `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` across all decision registers. Preserved DEC-W4-01..04 as `PENDING (HUMAN)`. | `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md`; `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md`. | **No** | Underlying human provenance remains unverified. | **DOCUMENTED — DECISION OR EVIDENCE STILL REQUIRED** | Formal human sign-off with independent provenance verification. |
 
 ---
 
-## 4. R1 Six-Layer Validation Status Matrix
+## 3. R1 Six-Layer Validation Status Matrix
 
 | Layer | Required Validation | Defined Rules | Algorithm Coverage | Source Implementation Evidence | Status |
 |---|---|---|---|---|---|
 | **Layer 1: JSON Syntax Validation** | Input string must be well-formed JSON | Must parse via parser without syntax errors | Fully covered in proposed algorithm (try/catch around `JSON.deserializeUntyped`) | Implemented in `DAUserPreferenceController.validateJsonString()` | **Source Implementation Verified** |
 | **Layer 2: Top-Level Object Validation** | Root structure must be a JSON object (`Map<String, Object>`) | Reject arrays `[]`, primitives, null/scalar root | Fully covered in proposed algorithm (`instanceof Map<String, Object>`) | Not implemented in controller (controller only runs `validateJsonString` without type check) | **Partially Specified Contract / Not Implemented** |
-| **Layer 3: Schema-Version Recognition** | Version classification and discrimination | Version must be integer `2`; unversioned legacy is V1; unversioned + presets is Ambiguous; other versions unsupported | Fully covered in proposed algorithm (explicit classification gates) | Not implemented in controller | **Fully Specified Contract / Not Implemented** |
+| **Layer 3: Schema-Version Recognition** | Version classification and discrimination | Version must be integer `2`; unversioned legacy is V1; unversioned + presets is Ambiguous; other versions unsupported | Fully covered in proposed algorithm (explicit integer classification gates; decimal truncation guard) | Not implemented in controller | **Fully Specified Contract / Not Implemented** |
 | **Layer 4: Complete V2 Structural Validation** | Required top-level V2 properties and collection types | `schemaVersion` (Integer = 2), `presets` (List), `activeFilter` (Map) required; missing or wrong type rejected | Fully covered in proposed algorithm (type checks and presence gates) | Not implemented in controller | **Fully Specified Contract / Not Implemented** |
-| **Layer 5: Field-Specific Value Validation** | Deep nested validation of presets and active filter criteria | Nested preset structure, preset ID format, filter criteria enum domains, default flag rules, timestamps | Partially covered in algorithm (checks `presets` is List, `activeFilter` is Map; does NOT validate inner fields) | Not implemented in controller | **Incomplete Specification — Implementation Blocking** |
+| **Layer 5: Field-Specific Value Validation** | Deep nested validation of presets and active filter criteria | 12-item register: preset objects, ID regex, names, default flag uniqueness, timestamps, criteria enums, bounds | Inventoried in register; NOT checked in algorithm | Not implemented in controller | **Incomplete Specification — Implementation Blocking** |
 | **Layer 6: Persistence Validation** | Capacity constraints, field limits, and transactional safety | Character length <= 131,072 chars, atomic rollback on exception | Fully covered in contract & controller length check; offline mock passes | Implemented in controller lines 61–69 (`.length() > 131072`); live database persistence deferred | **Apex Guard Verified / Live Persistence Deferred** |
 
 ---
 
-## 5. R3 46-File Inventory Arithmetic & Classification Summary
+## 4. R3 46-File Inventory Arithmetic & Classification Summary
 
 | Primary Classification Category | Description & Inclusion Criteria | Total Unique Files | On-Disk Prior | Doc Dispatch Deliverables | Uncreated Feature / Tests | Current Hold Status |
 |---|---|---|---|---|---|---|
@@ -90,85 +70,40 @@ This independent audit report represents the authoritative, second-pass cross-do
 
 ---
 
-## 6. Test Evidence Actually Reproduced
+## 5. Test Evidence Accounting & Qualification
 
-During this dispatch, all 224 baseline regression tests were independently executed and verified in the local environment:
+During this dispatch, all 224 baseline regression tests were executed and verified in the local environment:
 
-| Test Suite / Command | Execution Status | Tests Executed | Passed | Failed | Skipped | Evidence Category |
+| Test Suite / Command | Execution Status | Tests Executed | Granular Checks | Passed | Failed | Status |
 |---|---|---|---|---|---|---|
-| `node scratch/salesforce-poc/tests/run-poc-tests.cjs` | **Executed in Dispatch** | 43 | 43 | 0 | 0 | Offline Node.js Mock Suite |
-| `node scratch/salesforce-poc/tests/run-workstream-a-tests.cjs` | **Executed in Dispatch** | 33 | 33 | 0 | 0 | Offline LWC Mock Suite |
-| `node scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` | **Executed in Dispatch** | 18 | 18 | 0 | 0 | Offline Apex/LWC Mock Suite |
-| `node scripts/test-export-explorer.cjs` | **Executed in Dispatch** | 15 | 15 | 0 | 0 | Offline Adapter Test Suite |
-| `npm run test:cli` (33 sub-suites) | **Executed in Dispatch** | 115 | 115 | 0 | 0 | Offline CLI Engine Suite |
-| **TOTAL VERIFIED BASELINE** | — | **224** | **224** | **0** | **0** | **100% PASSING OFFLINE** |
+| `node scratch/salesforce-poc/tests/run-poc-tests.cjs` | **Executed in Dispatch** | 43 | 43 | 43 | 0 | **VERIFIED PASS** |
+| `node scratch/salesforce-poc/tests/run-workstream-a-tests.cjs` | **Executed in Dispatch** | 33 | 33 | 33 | 0 | **VERIFIED PASS** |
+| `node scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` | **Executed in Dispatch** | 18 | 18 | 18 | 0 | **VERIFIED PASS** |
+| `node scripts/test-export-explorer.cjs` | **Executed in Dispatch** | 15 | 15 | 15 | 0 | **VERIFIED PASS** |
+| `npm run test:cli` (33 sub-suites) | **Executed in Dispatch** | 115 | 351 | 115 / 351 | 0 | **VERIFIED PASS** |
+| **TOTAL VERIFIED BASELINE** | — | **224 Units** | **460 Checks** | **100% Pass** | **0** | **ALL PASSED (Exit 0)** |
 
-### Deferred Salesforce Org Validation
-All 224 tests execute in offline Node.js simulation environments. The following live Salesforce validations remain **EXPLICITLY DEFERRED**:
-- Salesforce org metadata deployment.
-- Live Apex execution within Salesforce sandbox or scratch orgs.
-- Lightning Web Security (LWS) runtime validation.
-- Experience Cloud runtime site validation.
-- End-to-end transactional database persistence.
+**Mandatory Qualification:**
+`JULES-REPORTED OFFLINE TEST EVIDENCE — NOT INDEPENDENTLY REPRODUCED OUTSIDE THE JULES ENVIRONMENT`
 
 ---
 
-## 7. Stale Contradiction Search & Dispositions
+## 6. Outstanding Governance Decisions & Approver Roles
 
-A systematic grep search across all documentation files was performed:
-
-| Search Term | Target / Scope | Findings | Disposition |
-|---|---|---|---|
-| `Handle blank existing data: initial save` | All Markdown files | Found in prior version of `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` line 149 | Replaced with Step 1–7 incoming validation before existing data evaluation |
-| `UNRESOLVED_STATIC_INFERENCE_POLICY` | All Markdown files | Found in prior version of `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` | Replaced with strict 4-state vocabulary and `UnresolvedCoveragePolicyError` fail-closed throw |
-| `UNRESOLVED_FAILED_EXECUTION_POLICY` | All Markdown files | Found in prior version of `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` | Replaced with strict 4-state vocabulary and `UnresolvedCoveragePolicyError` fail-closed throw |
-| `scripts/test-export-explorer.cjs` approvers | All Markdown files | Found single-approver in `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` row 5 | Corrected to `Lead Architect & Product Owner` |
-| `March 2026` | Authoritative Wave 4 documents | None found in active document bodies | Corrected in prior dispatch |
-| `APPROVAL RECORDED IN REPOSITORY` | Decision registers | Verified present for all four feature decisions | Preserved unchanged; decisions remain `PENDING` |
+1. **`DEC-W4-01` (Preset Storage Architecture):** Product Owner approval. Status: **PENDING (HUMAN)**.
+2. **`DEC-W4-02` (Cross-View Filter Semantics):** Lead Architect approval. Status: **PENDING (HUMAN)**.
+3. **`DEC-W4-03` (Preset Ownership Scope):** Product Owner approval. Status: **PENDING (HUMAN)**.
+4. **`DEC-W4-04` (Matrix & Findings Product Scope):** Product Owner approval. Status: **PENDING (HUMAN)**.
+5. **R1 Incoming V2 Replacement vs Merge Decision:** Joint Lead Architect & Product Owner approval. Status: **PENDING (HUMAN)**.
+6. **R1 Layer 5 Nested Validation Formalization:** Lead Architect (technical rules) and Product Owner (product rules) approval. Status: **PENDING (HUMAN)**.
+7. **R2 Policy Authorization Boundary Definition:** Lead Architect & Product Owner approval for authenticated policy mechanism. Status: **PENDING (HUMAN)**.
+8. **R3 Exporter Modification Authorization:** Lead Architect & Product Owner approval for `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`. Status: **PENDING (HUMAN)**.
 
 ---
 
-## 8. Outstanding Human Decisions & Implementation Blockers
+## 7. Mandatory Operational Statuses
 
-The following items remain strictly pending human review and prevent lifting the implementation hold:
-
-1. **`DEC-W4-01` (Preset Storage Architecture):** Multi-preset storage model vs. single filter persistence. Required Approver: **Product Owner**. Status: **PENDING**.
-2. **`DEC-W4-02` (Cross-View Filter Semantics):** Filter criteria propagation across graph, matrix, and findings views. Required Approver: **Lead Architect**. Status: **PENDING**.
-3. **`DEC-W4-03` (Preset Ownership Scope):** User-private vs. project-shared presets. Required Approver: **Product Owner**. Status: **PENDING**.
-4. **`DEC-W4-04` (Matrix & Findings Product Scope):** Scope of matrix and findings viewers in Wave 4. Required Approver: **Product Owner**. Status: **PENDING**.
-5. **R1 Incoming V2 Write Semantics:** Full replacement vs. partial merge when client submits a V2 payload. Required Approvers: **Lead Architect & Product Owner**. Status: **PENDING**.
-6. **R2 Coverage Policy Decision A:** Mapping static AST inference (`likely-covered`) to `COVERED` vs. `AMBIGUOUS`. Required Approvers: **Lead Architect & Product Owner**. Status: **PENDING**.
-7. **R2 Coverage Policy Decision B:** Mapping failed test executions to `UNTESTED` vs. dedicated failure state. Required Approvers: **Lead Architect & Product Owner**. Status: **PENDING**.
-8. **R1 Layer 5 Nested Validation Specification:** Finalizing criteria enum domains, preset schema rules, and length bounds. Required Approver: **Lead Architect**. Status: **PENDING**.
-
----
-
-## 9. Final Authoritative Manifest (The 7 Deliverables)
-
-1. `WAVE_4_CANONICAL_V2_SCHEMA_AND_R1_MERGE_CONTRACT.md` (R1 Specification)
-2. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md` (R2 Specification)
-3. `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` (R3 Ownership & Inventory)
-4. `WAVE_4_R4_FIELD_SPECIFIC_PAYLOAD_BOUNDARY_CONTRACT.md` (R4 Specification)
-5. `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md` (Governance Reconciliation)
-6. `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md` (Human Authorization Package)
-7. `WAVE_4_FINAL_CONTRACT_CONSISTENCY_AUDIT.md` (Master Consistency Audit)
-
----
-
-## 10. Final Authoritative Verdict
-
-### **VERDICT: SPECIFICATION INTERNALLY CONSISTENT — READY FOR HUMAN REVIEW**
-
-All five identified blockers have been resolved:
-- R1 incoming validation order enforces all checks and decision gates before inspecting existing data.
-- R1 six validation layers and nested schema rules are thoroughly documented with implementation-blocking flags.
-- R2 strictly enforces the 4-state canonical vocabulary and fails closed on unresolved evidence without noncanonical leakage.
-- R2 dual-approver requirements are reconciled across all governance deliverables.
-- R3 inventory and authorization boundaries are mathematically reconciled and conceptually disambiguated.
-
-### Mandatory Operational Statuses
-
-```
+```text
 IMPLEMENTATION HOLD — ACTIVE
 FULL WAVE 4 FEATURE DISPATCH — NOT AUTHORIZED
 LIVE SALESFORCE ACCEPTANCE — DEFERRED
