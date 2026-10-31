@@ -5,8 +5,9 @@
 | **Document Type** | Final Human Authorization Request & Decision Gate Package |
 | **Target Feature** | Wave 4 — Proposed Remediations R1–R4 & Decisions `DEC-W4-01`..`04` |
 | **Repository Root** | `/app` |
-| **Current Verified Branch** | `jules-4975002370503412589-12672a7a` |
-| **Current Verified HEAD SHA** | `dde65b52bbf957e22f995693e566db609868fde2` |
+| **Current Verified Branch** | `jules-17466418057840108854-f10adeb2` |
+| **Current Verified HEAD SHA** | `a3de9427f248f7a6a8a62d24420a379ae0a837ef` |
+| **Prior Dispatch Baseline** | Branch `jules-4975002370503412589-12672a7a` / HEAD `dde65b52bbf957e22f995693e566db609868fde2` (Merged Baseline) |
 | **Prior Closure Baseline** | Branch `jules-15780640871563737358-c8869fd3` / HEAD `79577462c8553520c7050d405dd2c27754e454ba` (Historical Report Baseline) |
 | **Historical Source Baseline** | Branch `jules-2662574214828896325-f3957679` / HEAD `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` (Historical Gate Preparation Baseline) |
 | **Verification Scope & Date** | October 31, 2026 — Verified Clean Working Tree Baseline |
@@ -53,14 +54,17 @@ You may grant an **Independent Limited Exception** to execute technical remediat
   - `scripts/test-export-explorer.cjs`
 - **Required Decision-Makers:** **Lead Architect & Product Owner** (both required).
 - **Required Approval Evidence:** Signed R2 authorization block below.
-- **Authorization Request Subject:** Review and approve or reject the following specified behaviors:
-  1. Mandatory Category A missing-value and genuinely unrecognized input normalization to `UNKNOWN` for missing property, `null`, `undefined`, empty string `""`, whitespace-only string, or genuinely unrecognized strings.
-  2. Mandatory Category B `UnresolvedCoverageEvidenceError` fail-closed behavior for explicitly recognized unresolved evidence labels (`likely-covered`, `likely_covered`, `failed`, `known-coverage-failure`).
-  3. Strict prohibition against silently mapping unresolved evidence into canonical coverage states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`).
-  4. Explicit treatment of Category C known legacy aliases or non-canonical values discovered in repository fixtures and tests (`FULL_COVERAGE`, `PARTIAL_COVERAGE`, `PARTIAL`, `UNCOVERED`, `NOT_COVERED`, `TESTED`, `TEST_COMPONENT`) as `UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED`, which are rejected as specification gaps rather than silently coerced.
-  5. Restriction that any future alternative policy (or quarantine mechanism) requires a separately approved, authenticated policy mechanism.
-  6. Proposed implementation scope and exact affected files (`scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`).
-- **Prohibited Actions:** Modification of UI components, Apex controllers, or introduction of a fifth canonical state; caller-controlled boolean flags must not authorize mappings.
+- **Authorization Request Subject (Mandatory Deterministic Fail-Closed Behavior):**
+  Review and authorize or reject implementation of the following mandatory deterministic behaviors:
+  1. Category A normalization to `UNKNOWN` for missing property, `null`, `undefined`, empty string `""`, whitespace-only string, or genuinely unrecognized input with no recognized unresolved signal.
+  2. Category B rejection through `UnresolvedCoverageEvidenceError` for explicitly recognized unresolved evidence (`likely-covered`, `likely_covered`, `failed`, `known-coverage-failure`).
+  3. Category C rejection through `UnresolvedCoverageEvidenceError` as a specification gap for recognized legacy aliases (`FULL_COVERAGE`, `PARTIAL_COVERAGE`, `PARTIAL`, `UNCOVERED`, `NOT_COVERED`, `TESTED`, `TEST_COMPONENT`) pending a separately approved canonical mapping; do not invent a mapping.
+  4. Strict prohibition against silently mapping unresolved evidence into canonical coverage states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`).
+  5. Strict prohibition against introducing a fifth canonical coverage state.
+  6. Proposed implementation scope strictly limited to exact affected files (`scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`).
+- **Future Alternative Policy Mappings Boundary:**
+  Approval of R2 authorizes ONLY the deterministic fail-closed behavior above (which does NOT require an authenticated policy-configuration mechanism). Any future alternative canonical mapping (such as mapping Category B or Category C to canonical states, or introducing static-inference/failed-execution mapping rules) is separate and remains blocked unless it receives its own item-specific policy approval from both Lead Architect and Product Owner, documented decision provenance, and an authenticated, tamper-evident configuration mechanism where runtime-configurable policy is introduced.
+- **Prohibited Actions:** Modification of UI components, Apex controllers, or introduction of a fifth canonical state; caller-controlled boolean flags must not authorize mappings; Category C must not silently become `COVERED`, `UNTESTED`, or `AMBIGUOUS`.
 - **Completion Conditions:** Category A input (`null`/`undefined`/`""`/whitespace/unrecognized) normalizes to `"UNKNOWN"`; Category B unresolved evidence (`likely-covered`, `failed`, `known-coverage-failure`) and Category C legacy aliases raise `UnresolvedCoverageEvidenceError`.
 - **Completion Verification:** Run `node scripts/test-export-explorer.cjs`.
 
