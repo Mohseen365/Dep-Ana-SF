@@ -1,0 +1,36 @@
+.matrix-view-container {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+}
+
+.matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.matrix-table th,
+.matrix-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    border: 1px solid #e5e5e5;
+}
+
+.matrix-table th {
+    background-color: #f3f3f3;
+    font-weight: 700;
+}
+
+.matrix-table th.source-type-col {
+    text-align: left;
+}
+
+.matrix-table td.cell-highlight {
+    background-color: #f0f8ff;
+    font-weight: 600;
+}
+
+.matrix-table td.cell-zero {
+    color: #c9c7c5;
+}

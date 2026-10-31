@@ -7,9 +7,13 @@ import getUserPreference from '@salesforce/apex/DAUserPreferenceController.getUs
 import saveUserPreference from '@salesforce/apex/DAUserPreferenceController.saveUserPreference';
 import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 'c/daGraphPayloadLoader';
 import { computeArchitectureLayout } from 'c/daLayoutEngine';
+import { matchesGraphNode, normalizeFilterCriteria } from 'c/daFilterSchema';
 
 export default class DaGraphViewer extends LightningElement {
     _recordId = null;
+    _filterCriteria = null;
+    _rawGraphData = null;
+    _userPref = null;
 
     @api
     get recordId() {
@@ -23,10 +27,28 @@ export default class DaGraphViewer extends LightningElement {
             this.currentRequestId++;
             // 2. Immediately clear prior canvas, selection, and error state
             this.clearGraphState();
+            this._rawGraphData = null;
+            this._userPref = null;
             // 3. Initiate new fetch if component is DOM-attached/initialized and recordId is truthy
             if (this.cyInitialized && this._recordId) {
                 this.fetchGraphData();
             }
+        }
+    }
+
+    /**
+     * Lane D: Filter criteria input from application shell.
+     * Evaluates canonical filter criteria (search, risk, node type, layer, test coverage).
+     * Applying filters MUST NOT alter or erase persisted graph positions or view state.
+     */
+    @api
+    get filterCriteria() {
+        return this._filterCriteria;
+    }
+    set filterCriteria(value) {
+        this._filterCriteria = normalizeFilterCriteria(value);
+        if (this._rawGraphData && this.cyInitialized && !this.isLoading) {
+            this.applyFiltersToGraph();
         }
     }
 
@@ -168,6 +190,8 @@ export default class DaGraphViewer extends LightningElement {
             }
 
             const graphData = JSON.parse(jsonString);
+            this._rawGraphData = graphData;
+            this._userPref = userPref;
             this.renderGraph(graphData, userPref);
         } catch (err) {
             if (requestId === this.currentRequestId && this.cyInitialized) {
@@ -189,8 +213,20 @@ export default class DaGraphViewer extends LightningElement {
             }
             const container = this.template ? this.template.querySelector('.cy-container') : null;
 
-            const nodes = graphData.nodes || [];
-            const edges = graphData.edges || [];
+            const allNodes = graphData.nodes || [];
+            const allEdges = graphData.edges || [];
+
+            // Filter nodes based on active filter criteria if provided
+            const matchingNodes = this._filterCriteria
+                ? allNodes.filter(n => matchesGraphNode(n, this._filterCriteria))
+                : allNodes;
+
+            const matchingNodeIds = new Set(matchingNodes.map(n => n.id));
+
+            // Only include edges whose both source and target match active node set
+            const matchingEdges = allEdges.filter(e =>
+                matchingNodeIds.has(e.source) && matchingNodeIds.has(e.target)
+            );
 
             // Parse saved node positions if present
             let savedPositions = null;
@@ -212,14 +248,15 @@ export default class DaGraphViewer extends LightningElement {
                 }
             }
 
-            // Compute deterministic architecture layout positions
-            const layoutResult = computeArchitectureLayout(nodes, edges);
+            // Compute deterministic architecture layout positions for complete node set
+            // to ensure layout coordinate stability across filter toggles
+            const layoutResult = computeArchitectureLayout(allNodes, allEdges);
             const computedPositions = layoutResult.positions || {};
 
             this.isRestoringState = true;
 
             const elements = [];
-            nodes.forEach(n => {
+            matchingNodes.forEach(n => {
                 let pos = computedPositions[n.id] || { x: 0, y: 0 };
                 if (savedPositions && savedPositions[n.id]) {
                     const savedPos = savedPositions[n.id];
@@ -229,12 +266,19 @@ export default class DaGraphViewer extends LightningElement {
                     }
                 }
                 elements.push({
-                    data: { id: n.id, label: n.displayName || n.name || n.id, layer: n.layer },
+                    data: {
+                        id: n.id,
+                        label: n.displayName || n.name || n.id,
+                        layer: n.layer,
+                        type: n.type,
+                        risk: n.risk,
+                        coverage: n.refactoringReadiness?.testCoverageStatus || 'UNKNOWN'
+                    },
                     position: pos
                 });
             });
 
-            edges.forEach(e => {
+            matchingEdges.forEach(e => {
                 elements.push({
                     data: { id: e.id || `${e.source}-${e.target}`, source: e.source, target: e.target }
                 });
@@ -244,7 +288,7 @@ export default class DaGraphViewer extends LightningElement {
             if (typeof cytoscape === 'function') {
                 this.cyInstance = cytoscape({
                     container: container,
-                    elements: elements.length > 0 ? elements : (graphData.elements || graphData),
+                    elements: elements,
                     style: [
                         {
                             selector: 'node',
@@ -274,7 +318,7 @@ export default class DaGraphViewer extends LightningElement {
                         }
                     ],
                     layout: {
-                        name: elements.length > 0 ? 'preset' : 'cose',
+                        name: 'preset',
                         animate: false
                     }
                 });
@@ -311,6 +355,7 @@ export default class DaGraphViewer extends LightningElement {
                 // Mock or container-less fallback for offline/test environments
                 this.cyInstance = {
                     destroyed: false,
+                    elements: elements,
                     destroy() {
                         this.destroyed = true;
                     },
@@ -324,6 +369,15 @@ export default class DaGraphViewer extends LightningElement {
             this.error = 'Error initializing Cytoscape graph: ' + err.message;
             this.isLoading = false;
         }
+    }
+
+    /**
+     * Re-renders or filters graph elements in-place when filterCriteria changes
+     * without resetting positions or issuing a background save.
+     */
+    applyFiltersToGraph() {
+        if (!this._rawGraphData) return;
+        this.renderGraph(this._rawGraphData, this._userPref);
     }
 
     scheduleSaveState() {

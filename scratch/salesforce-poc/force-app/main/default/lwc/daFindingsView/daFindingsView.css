@@ -1,0 +1,35 @@
+.findings-view-container {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.finding-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    transition: background-color 0.1s ease;
+}
+
+.finding-card:hover {
+    background-color: #fafaf9;
+}
+
+.finding-badge-critical {
+    background-color: #ea001e;
+    color: #ffffff;
+}
+
+.finding-badge-high {
+    background-color: #fe9339;
+    color: #080707;
+}
+
+.finding-badge-medium {
+    background-color: #ffb75d;
+    color: #080707;
+}
+
+.finding-badge-low {
+    background-color: #706e6b;
+    color: #ffffff;
+}

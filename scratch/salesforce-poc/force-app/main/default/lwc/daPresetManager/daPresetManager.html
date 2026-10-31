@@ -1,0 +1,128 @@
+<template>
+    <div class="preset-manager-container slds-p-around_small">
+        <!-- Header -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+            <div>
+                <h3 class="slds-text-heading_small slds-truncate" title="Filter Presets">Filter Presets</h3>
+                <p class="slds-text-body_small slds-text-color_weak">Project-scoped criteria bookmarks</p>
+            </div>
+            <div>
+                <button
+                    class="slds-button slds-button_neutral slds-button_stateful"
+                    onclick={handleOpenSaveModal}
+                    disabled={isSaveDisabled}
+                    title="Save current filters as preset">
+                    Save Current
+                </button>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <template if:true={errorMessage}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <span class="slds-assistive-text">error</span>
+                <h2>{errorMessage}</h2>
+            </div>
+        </template>
+
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-p-around_medium slds-text-align_center">
+                <div class="slds-spinner slds-spinner_small slds-spinner_brand" role="status">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+                <p class="slds-text-body_small slds-m-top_small">Loading presets...</p>
+            </div>
+        </template>
+
+        <!-- No Project Context State -->
+        <template if:true={isMissingProject}>
+            <div class="slds-illustration slds-illustration_small slds-p-around_small slds-text-align_center">
+                <p class="slds-text-color_weak">No active project selected. Presets require project context.</p>
+            </div>
+        </template>
+
+        <!-- Presets List (when project exists and not loading) -->
+        <template if:false={isLoading}>
+            <template if:false={isMissingProject}>
+                <template if:true={hasPresets}>
+                    <ul class="slds-has-dividers_bottom-space">
+                        <template for:each={presetList} for:item="preset">
+                            <li key={preset.id} class={preset.itemClass} data-id={preset.id} onclick={handleSelectPreset}>
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-vertical_x-small slds-p-horizontal_small">
+                                    <div class="slds-truncate" style="flex: 1;">
+                                        <span class="slds-text-body_regular slds-text-title_bold">{preset.name}</span>
+                                        <template if:true={preset.isActive}>
+                                            <span class="slds-badge slds-badge_lightest slds-m-left_x-small">Active</span>
+                                        </template>
+                                    </div>
+                                    <div class="slds-no-flex slds-grid slds-grid_vertical-align-center" onclick={stopPropagation}>
+                                        <button
+                                            class="slds-button slds-button_icon slds-button_icon-border-filled slds-m-left_xx-small"
+                                            title="Update preset with current filters"
+                                            data-id={preset.id}
+                                            onclick={handleUpdatePreset}>
+                                            <span class="slds-assistive-text">Update</span>
+                                            ✎
+                                        </button>
+                                        <button
+                                            class="slds-button slds-button_icon slds-button_icon-destructive slds-m-left_xx-small"
+                                            title="Delete preset"
+                                            data-id={preset.id}
+                                            onclick={handleDeletePreset}>
+                                            <span class="slds-assistive-text">Delete</span>
+                                            ✕
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <template if:false={hasPresets}>
+                    <div class="slds-illustration slds-illustration_small slds-p-around_medium slds-text-align_center">
+                        <p class="slds-text-color_weak">No saved presets for this project.</p>
+                        <p class="slds-text-body_small slds-m-top_xx-small">Configure filters and click "Save Current" to create one.</p>
+                    </div>
+                </template>
+            </template>
+        </template>
+
+        <!-- Save Preset Modal / Prompt -->
+        <template if:true={showSaveModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseSaveModal}>
+                            ✕
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-modal__title slds-hyphenate">Save Filter Preset</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" for="preset-name-input">Preset Name</label>
+                            <div class="slds-form-element__control">
+                                <input
+                                    type="text"
+                                    id="preset-name-input"
+                                    class="slds-input"
+                                    value={newPresetName}
+                                    oninput={handlePresetNameChange}
+                                    placeholder="e.g. High Risk & Untested" />
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={handleCloseSaveModal}>Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={handleConfirmSavePreset} disabled={isConfirmSaveDisabled}>Save Preset</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+    </div>
+</template>
