@@ -5,8 +5,8 @@
 | **Document Type** | Final Human Authorization Request & Decision Gate Package |
 | **Target Feature** | Wave 4 — Proposed Remediations R1–R4 & Decisions `DEC-W4-01`..`04` |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
-| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
+| **Current Branch** | `jules-2662574214828896325-f3957679` |
+| **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **PENDING HUMAN REVIEW & SIGN-OFF — IMPLEMENTATION HOLD ACTIVE** |
 
