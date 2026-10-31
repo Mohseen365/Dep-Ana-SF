@@ -5,9 +5,9 @@
 | **Document Type** | Final Human Authorization Request & Decision Gate Package |
 | **Target Feature** | Wave 4 — Proposed Remediations R1–R4 & Decisions `DEC-W4-01`..`04` |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-5014689980934327006-a6a229d3` |
-| **HEAD Commit SHA** | `8ff54cae850a4f569da5f8ee602e142b74a110bc` |
-| **Audit Date** | March 2026 (Execution Date) / October 2026 Roadmap |
+| **Current Branch** | `jules-8629279200045229050-798dadd2` |
+| **HEAD Commit SHA** | `d8b3b273bf5d31736ad82fc244760fd5b85e3b91` |
+| **Audit Date** | October 31, 2026 |
 | **Status** | **PENDING HUMAN REVIEW & SIGN-OFF — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
@@ -25,13 +25,14 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 ## PART 1 — Limited Technical Remediation Authorization Requests (R1–R4)
 
 ### Request R1: Apex Backward Compatibility & Data Protection Fix
-- **Permitted Scope:** Modify `DAUserPreferenceController.cls`, `DAUserPreferenceControllerTest.cls`, and `run-workstream-c-tests.cjs`.
+- **Permitted Scope:** Modify `DAUserPreferenceController.cls`, `DAUserPreferenceControllerTest.cls`, and `run-workstream-c-tests.cjs` exclusively for R1 merge logic.
 - **Target Files:**
   - `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls`
   - `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`
   - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`
-- **Required Decision-Makers:** Lead Architect.
+- **Required Decision-Maker:** **Lead Architect**.
 - **Required Approval Evidence:** Signed R1 authorization block below.
+- **Shared-File Cross-Authorization Restriction:** **Approval for R1 does NOT authorize R4 changes in shared files (`DAUserPreferenceControllerTest.cls` or `run-workstream-c-tests.cjs`).**
 - **Prohibited Actions:** Modification of LWC components, live org deployments, or lifting hold on Lanes A, C, D, E, F.
 - **Completion Conditions:** 100% pass on `run-workstream-c-tests.cjs` offline suite confirming V2 presets preserved during V1 saves.
 
@@ -48,8 +49,12 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 - **Target Files:**
   - `scripts/export-explorer.cjs`
   - `scripts/test-export-explorer.cjs`
-- **Required Decision-Makers:** Lead Architect & Product Owner.
+- **Required Decision-Makers:** **Lead Architect & Product Owner** (both required).
 - **Required Approval Evidence:** Signed R2 authorization block below.
+- **Policy Decision Scopes:**
+  - Deterministic defect fix: `null`/`undefined`/`""` -> `UNKNOWN`.
+  - Policy Decision A: Whether `likely-covered` maps to `COVERED` or `AMBIGUOUS`.
+  - Policy Decision B: Whether failed tests map to `UNTESTED` or distinct failure state.
 - **Prohibited Actions:** Modification of UI components or Apex controllers.
 - **Completion Conditions:** Missing-value status (`null`/`undefined`/`""`) normalizes to `"UNKNOWN"`.
 - **Completion Verification:** Run `node scripts/test-export-explorer.cjs`.
@@ -58,7 +63,7 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 [ ] **APPROVED (Grant Limited Exception for R2)**
 [ ] **REJECTED**
 
-*Approver Name / Role:* ___________________________  *Signature & Date:* _______________________
+*Lead Architect Signature & Date:* _______________________  *Product Owner Signature & Date:* _______________________
 
 ---
 
@@ -72,9 +77,9 @@ You may grant an **Independent Limited Exception** to execute technical remediat
   5. `WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`
   6. `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md`
   7. `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md`
-- **Required Decision-Makers:** Migration Auditor & Lead Architect.
+- **Required Decision-Makers:** **Migration Auditor & Lead Architect**.
 - **Required Approval Evidence:** Signed R3 authorization block below.
-- **Completion Conditions:** Zero mathematical or path discrepancies across governance documents.
+- **Completion Conditions:** Zero mathematical or path discrepancies across governance documents; 26 prohibited implementation files accurately distinguished from 7 documentation reports.
 
 **Decision R3:**
 [ ] **APPROVED**
@@ -89,8 +94,9 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 - **Target Files:**
   - `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`
   - `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`
-- **Required Decision-Makers:** Lead Architect.
+- **Required Decision-Maker:** **Lead Architect**.
 - **Required Approval Evidence:** Signed R4 authorization block below.
+- **Shared-File Cross-Authorization Restriction:** **Approval for R4 does NOT authorize R1 changes, and gives ZERO authority to modify `DAUserPreferenceController.cls`.**
 - **Prohibited Actions:** Changes to field metadata or Apex controller logic.
 - **Completion Conditions:** Test 6 in `run-workstream-c-tests.cjs` tests `Filters_JSON__c` (param 5), `Positions_JSON__c` (param 4), and `Zoom_Pan_JSON__c` (param 6) explicitly at 131,073 characters.
 
@@ -104,7 +110,7 @@ You may grant an **Independent Limited Exception** to execute technical remediat
 
 ## PART 2 — Main Feature Parallel Dispatch Gates (`DEC-W4-01` .. `DEC-W4-04`)
 
-*(Approving these gates authorizes parallel LWC feature dispatch across Lanes A through F).*
+*(Approving these gates authorizes parallel LWC feature dispatch across Lanes A through F. Approving a remediation above does NOT authorize full feature dispatch).*
 
 | Decision ID | Target Subject | Required Approver | Current Recorded Status | Human Decision |
 |---|---|---|---|---|

@@ -5,9 +5,9 @@
 | **Document Type** | Governance Reconciliation & Decision Provenance Report |
 | **Target Feature** | Wave 4 — Decisions `DEC-W4-01` through `DEC-W4-04` & Technical Remediations R1–R4 |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-5014689980934327006-a6a229d3` |
-| **HEAD Commit SHA** | `8ff54cae850a4f569da5f8ee602e142b74a110bc` |
-| **Audit Date** | March 2026 (Execution Date) / October 2026 Roadmap |
+| **Current Branch** | `jules-8629279200045229050-798dadd2` |
+| **HEAD Commit SHA** | `d8b3b273bf5d31736ad82fc244760fd5b85e3b91` |
+| **Audit Date** | October 31, 2026 |
 | **Status** | **GOVERNANCE RECONCILIATION COMPLETE — IMPLEMENTATION HOLD ACTIVE** |
 
 ---
@@ -23,7 +23,7 @@ This conflation caused confusion regarding whether human authorization had been 
 - **Never invent a human approver, signature, or approval date.**
 - **Never infer human approval from automated commits, test passes, or report updates.**
 - **A repository-recorded status must NEVER be conflated with authenticated human authorization.**
-- **Preserve exact classification classification:** `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`.
+- **Preserve exact classification:** `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`.
 
 ---
 
@@ -53,13 +53,13 @@ To ensure zero ambiguity, four distinct governance dimensions are enforced:
 
 ## 4. Authoritative Approval Ownership Matrix
 
-To resolve prior cross-document discrepancies regarding approver roles, the following authoritative matrix defines required decision-makers for both technical remediations (R1–R4) and feature architecture decisions (`DEC-W4-01`..`04`):
+The following authoritative matrix defines required decision-makers for both technical remediations (R1–R4) and feature architecture decisions (`DEC-W4-01`..`04`). Note that all R2 changes require **both** Lead Architect and Product Owner sign-off:
 
 | Item / Scope | Target Area | Required Approver Role(s) | Required Approval Evidence | Scope of Authorization | Implementation Hold Status |
 |---|---|---|---|---|---|
 | **R1** | V2 Schema Merge Repair | **Lead Architect** | Signed R1 block in Authorization Gate | Apex merge defect fix in `DAUserPreferenceController.cls` | Lifted for R1 files only when signed |
-| **R2** | Coverage Normalization Exporter Fix | **Lead Architect + Product Owner** | Signed R2 block in Authorization Gate | Exporter status fix in `scripts/export-explorer.cjs` | Lifted for R2 files only when signed |
-| **R3** | Remediation File Ownership Matrix Reconciliation | **Migration Auditor + Lead Architect** | Signed R3 block in Authorization Gate | Governance inventory & matrix alignment | Governance alignment only when signed |
+| **R2** | Coverage Normalization Exporter Fix | **Lead Architect & Product Owner** | Signed R2 block in Authorization Gate | Exporter status fix in `scripts/export-explorer.cjs` | Lifted for R2 files only when signed |
+| **R3** | Remediation File Ownership Matrix Reconciliation | **Migration Auditor & Lead Architect** | Signed R3 block in Authorization Gate | Governance inventory & matrix alignment | Governance alignment only when signed |
 | **R4** | Field Boundary Parameter Test Verification | **Lead Architect** | Signed R4 block in Authorization Gate | Test parameter correction in `run-workstream-c-tests.cjs` | Lifted for R4 test file only when signed |
 | **DEC-W4-01** | Multi-preset storage architecture | **Product Owner** | Signed DEC-W4-01 block in decision package | Multi-preset storage schema & LWC preset components | Feature hold lifted for Lanes A, C when signed |
 | **DEC-W4-02** | Cross-view filter propagation semantics | **Lead Architect** | Signed DEC-W4-02 block in decision package | Cross-view filter state synchronization | Feature hold lifted for Lane D when signed |
@@ -68,15 +68,35 @@ To resolve prior cross-document discrepancies regarding approver roles, the foll
 
 ---
 
-## 5. Remediation Exception vs. Full Feature Dispatch
+## 5. R1 and R4 Shared-File Scope Disambiguation
 
-The proposed technical remediations (R1–R4) fix baseline software defects:
-- **Limited Technical Remediation (R1–R4):** May be authorized independently by the designated approver roles via `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md` without lifting the full feature implementation hold.
-- **Full Feature Parallel Dispatch (`DEC-W4-01` .. `DEC-W4-04`):** Governs main feature LWC development across Lanes A–F. Approving a technical remediation (e.g. R1) does NOT constitute authorization for full feature dispatch.
+A key source of governance confusion in prior reports was shared-file overlap between Remediation R1 and Remediation R4. Specifically:
+- **`scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`** is touched by both R1 (merge tests) and R4 (boundary parameter tests).
+- **`scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls`** is touched by both R1 and R4.
+- **`scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls`** is modified ONLY by R1 (merge helper); R4 only inspects existing lines 61–69.
+
+To eliminate scope creep, the table below provides an exact change-by-change authorization breakdown:
+
+| Shared File Path | R1-Specific Proposed Change | R4-Specific Proposed Change | Required Approver (R1) | Required Approver (R4) | Approval Pending? | Cross-Authorization Rule |
+|---|---|---|---|---|---|---|
+| `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` | Add unit tests verifying `mergeV1IntoV2Container` preserves V2 presets during V1 saves | Correct Test 6 parameter mapping so `filtersJson` (param 5) and `zoomPanJson` (param 6) are tested at 131,073 characters | Lead Architect | Lead Architect | **YES (Pending)** | **Approval for R1 does NOT authorize R4 changes, and approval for R4 does NOT authorize R1 changes.** |
+| `scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls` | Add Apex test methods verifying `mergeV1IntoV2Container` execution and error handling | Add Apex test methods verifying independent boundary enforcement for parameters 4, 5, and 6 | Lead Architect | Lead Architect | **YES (Pending)** | **Approval for R1 does NOT authorize R4 changes, and approval for R4 does NOT authorize R1 changes.** |
+| `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls` | Implement `mergeV1IntoV2Container` private helper and invoke in `saveUserPreference` | **NONE** (Read-only reference: existing length guards at lines 61–69 remain untouched) | Lead Architect | N/A | **YES (Pending)** | **R4 approval gives ZERO authority to edit this controller.** |
+
+### Explicit Independence Principle
+**Approval for R1 does not automatically authorize R4 changes, and approval for R4 does not automatically authorize R1 changes.** Independent sign-offs are required for each remediation workstream, and neither approval may be inferred from file proximity or shared test runners.
 
 ---
 
-## 6. Offline Test Evidence Qualification
+## 6. Remediation Exception vs. Full Feature Dispatch
+
+The proposed technical remediations (R1–R4) fix baseline software defects:
+- **Limited Technical Remediation (R1–R4):** May be authorized independently by the designated approver roles via `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md` without lifting the full feature implementation hold.
+- **Full Feature Parallel Dispatch (`DEC-W4-01` .. `DEC-W4-04`):** Governs main feature LWC development across Lanes A–F. Approving a technical remediation (e.g. R1) does NOT constitute authorization for full feature dispatch. All four feature decisions remain strictly **PENDING**.
+
+---
+
+## 7. Offline Test Evidence Qualification
 
 All test execution evidence referenced in governance reports originates from **offline Node.js test runners** executing inside the local sandbox environment (`run-workstream-c-tests.cjs`, `run-poc-tests.cjs`, `run-workstream-a-tests.cjs`, `test-export-explorer.cjs`, `npm run test:cli`).
 
