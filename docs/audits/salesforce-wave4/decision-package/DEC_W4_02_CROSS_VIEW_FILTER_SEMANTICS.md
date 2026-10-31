@@ -6,7 +6,7 @@
 | **Title** | Cross-View Filter Semantics |
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
 | **Required Approver** | Lead Architect |
-| **Approval Status** | **PENDING** |
+| **Approval Status** | **APPROVED (OPTION A)** |
 | **Approver Name** | _______________________ |
 | **Approval Date** | _______________________ |
 | **Governance Classification** | `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` |
@@ -113,6 +113,8 @@ The following explicit mapping table governs how each canonical filter attribute
 
 ## 7. Approval Block
 
-| Role | Name | Status | Signature / Date |
+| Role | Name | Status | Decision & Date |
 |---|---|---|---|
-| **Lead Architect** | _______________________ | **PENDING** | _______________________ |
+| **Lead Architect** | Project Owner (acting in Lead Architect capacity) | **APPROVED (OPTION A)** | Explicit Owner Approval via Project Conversation / 31 October 2026 |
+
+*Provenance Note: Approved by the Project Owner in the project conversation on 31 October 2026 ("I APPROVE ALL EIGHT WAVE 4 ITEMS AS WRITTEN"). Conversation confirmation; not an independently authenticated cryptographic signature.*

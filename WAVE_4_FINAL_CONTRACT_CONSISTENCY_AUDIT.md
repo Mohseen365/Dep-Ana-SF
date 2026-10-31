@@ -41,7 +41,7 @@ Past audit reports broadly claimed that all historical blockers were "resolved."
 | **5** | **R3 Disambiguation of Governance Artifacts** | Clarified distinction between Category A historical reports (Integration Coordinator past closure) and Category D root deliverables (Governance Auditor specification package). | Matrix Section 4.2; inventory arithmetic $11+13+15+7=46$. | **No** | Resolved in documentation. | **RESOLVED — EVIDENCE VERIFIED** | None. Classification boundaries established. |
 | **6** | **R4 Field-Specific Limits vs Live Persistence Evidence** | Verified actual source: `daAppShell.js` enforces 131,072 hard limit for `filtersJson` only; passes `null` for positions/zoomPan. Apex controller guards all 3 fields at 131,072 chars. Metadata capacity is 131,072 chars. Removed unsupported 100,000 client toast claim. Live persistence remains deferred. | Source inspection of controller lines 61–69, `daAppShell.js` lines 8 & 254, field metadata files, and mock tests. | **No** | Live multi-tenant persistence remains unverified. | **CONTAINED — IMPLEMENTATION STILL BLOCKED** | Live Salesforce scratch/sandbox org acceptance testing (deferred to Phase 7). |
 | **7** | **Test Accounting Discrepancy (224 vs 351 vs 460)** | Reconciled counts mathematically: 224 test units across 5 suites, 351 detailed assertions within CLI suite, and 460 total invariant checks evaluated across all suites combined ($109 + 351 = 460$). Added mandatory environment qualification. | `WAVE_4_FINAL_BASELINE_TEST_EXECUTION_EVIDENCE.md` Section 1. | **No** | None. Discrepancy fully clarified and reconciled. | **RESOLVED — EVIDENCE VERIFIED** | Independent verification outside Jules environment. |
-| **8** | **Human Approval Provenance Classification** | Applied strict standard `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` across all decision registers. Preserved DEC-W4-01..04 as `PENDING (HUMAN)`. | `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md`; `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md`. | **No** | Underlying human provenance remains unverified. | **DOCUMENTED — DECISION OR EVIDENCE STILL REQUIRED** | Formal human sign-off with independent provenance verification. |
+| **8** | **Human Approval Provenance Classification** | Explicit Project Owner authorization recorded on 31 October 2026 ("I APPROVE ALL EIGHT WAVE 4 ITEMS AS WRITTEN") across all 8 items. Provenance classified as conversation confirmation. | `WAVE_4_GOVERNANCE_DECISION_STATUS_AND_PROVENANCE_RECONCILIATION.md`; `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md`. | **No** | Verified conversation confirmation; cryptographic signature not provided. | **RESOLVED — HUMAN AUTHORIZATION RECORDED** | None for authorization; implementation readiness established. |
 
 ---
 
@@ -90,14 +90,14 @@ During this dispatch, all 224 baseline regression tests were executed and verifi
 
 ## 6. Outstanding Governance Decisions & Approver Roles
 
-1. **`DEC-W4-01` (Preset Storage Architecture):** Product Owner approval. Status: **PENDING (HUMAN)**.
-2. **`DEC-W4-02` (Cross-View Filter Semantics):** Lead Architect approval. Status: **PENDING (HUMAN)**.
-3. **`DEC-W4-03` (Preset Ownership Scope):** Product Owner approval. Status: **PENDING (HUMAN)**.
-4. **`DEC-W4-04` (Matrix & Findings Product Scope):** Product Owner approval. Status: **PENDING (HUMAN)**.
-5. **R1 Incoming V2 Replacement vs Merge Decision:** Joint Lead Architect & Product Owner approval. Status: **PENDING (HUMAN)**.
-6. **R1 Layer 5 Nested Validation Formalization:** Item-level approvals per `WAVE_4_R1_NESTED_VALIDATION_DECISION_REGISTER.md` (Lead Architect, Product Owner, or Joint). Status: **PENDING (HUMAN)**.
-7. **R2 Policy Authorization Boundary Definition:** Lead Architect & Product Owner approval for authenticated policy mechanism. Status: **PENDING (HUMAN)**.
-8. **R3 Exporter Modification Authorization:** Lead Architect & Product Owner approval for `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`. Status: **PENDING (HUMAN)**.
+1. **`DEC-W4-01` (Preset Storage Architecture):** Product Owner approval. Status: **APPROVED (OPTION A)** (Project Conversation, 31 Oct 2026).
+2. **`DEC-W4-02` (Cross-View Filter Semantics):** Lead Architect approval. Status: **APPROVED (OPTION A)** (Project Conversation, 31 Oct 2026).
+3. **`DEC-W4-03` (Preset Ownership Scope):** Product Owner approval. Status: **APPROVED (OPTION A)** (Project Conversation, 31 Oct 2026).
+4. **`DEC-W4-04` (Matrix & Findings Product Scope):** Product Owner approval. Status: **APPROVED (OPTION C)** (Project Conversation, 31 Oct 2026).
+5. **R1 Incoming V2 Replacement vs Merge Decision:** Incoming valid V2 replaces existing V2 container atomically under R1 frozen contract. Status: **APPROVED** (Project Conversation, 31 Oct 2026).
+6. **R1 Layer 5 Nested Validation Formalization:** Structural schema validation approved under R1 frozen contract. Status: **APPROVED** (Project Conversation, 31 Oct 2026).
+7. **R2 Policy Authorization Boundary Definition:** Fail-closed 4-state contract approved under R2 (Category A -> UNKNOWN, Category B/C -> UnresolvedCoverageEvidenceError; alternative mappings prohibited). Status: **APPROVED** (Project Conversation, 31 Oct 2026).
+8. **R3 Exporter Modification Authorization:** Exporter coverage normalization fix approved under R2 (Lead Architect & Product Owner). Status: **APPROVED** (Project Conversation, 31 Oct 2026).
 
 ---
 
