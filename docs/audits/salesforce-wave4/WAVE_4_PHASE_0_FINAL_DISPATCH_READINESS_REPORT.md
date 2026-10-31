@@ -6,8 +6,8 @@
 | **Phase** | Phase 0 — Coordinator Preparation & Dispatch Qualification |
 | **Final Readiness Verdict** | **DISPATCH AUTHORIZATION RECORDED — IMPLEMENTATION READY FOR SEQUENCED DISPATCH** |
 | **Date** | October 31, 2026 |
-| **Current Branch** | `jules-384984643024233713-ebe864f0` |
-| **HEAD Commit SHA** | `8557f6b93c44588a1b87b68313a36baee3c276e3` |
+| **Current Branch** | `jules-7952917717312102764-864e02d8` |
+| **HEAD Commit SHA** | `bf4b505f10c61f8c5c1cf2787e40004f118676f4` |
 | **Implementation Hold** | **HUMAN AUTHORIZATION RECORDED — SOURCE CHANGES NOT LAUNCHED IN THIS DISPATCH** |
 
 ---
@@ -59,9 +59,18 @@ All preconditions are now satisfied:
 
 ### Action 3: Recommended Next Implementation Dispatch (Phase 1)
 Upon recording the required approvals, dispatch **Phase 1: Foundation & Remediations**:
-- **Workstream 1.1**: Execute R2 (Exporter coverage normalization correction).
-- **Workstream 1.2**: Execute R1 & R4 in Lane B (`DAUserPreferenceController.cls` merge & boundary test suite).
+- **Workstream 1.1**: Execute R2 (Exporter coverage normalization correction in `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`).
+- **Workstream 1.2**: Execute R1 & R4 in Lane B (`DAUserPreferenceController.cls` fail-closed merge & 131,072 boundary test suite in `DAUserPreferenceControllerTest.cls` and `run-workstream-c-tests.cjs`). **Lane B is dispatched exactly once in Phase 1.**
 - **Workstream 1.3**: Execute Lane A Foundation (`daFilterSchema.js` canonical schema and contract tests).
-- **Workstream 1.4**: Verify Foundation via full offline test suite.
+- **Workstream 1.4**: Verify Foundation via Coordinator Integration Gate 1 (100% pass across all 224 baseline tests).
 
-**Parallel Lane Dispatch (Lanes C, D, E, F) remains strictly held until Phase 1 Foundation verification is complete.**
+**Phase 2 Parallel Feature Lane Dispatch (Lanes C, D, E, F) remains strictly held until Phase 1 Foundation verification is complete.**
+
+---
+
+## 4. Remediation R3 Exact Scope Reaffirmation
+
+Remediation R3 was approved by the Project Owner on 31 October 2026 for **governance inventory alignment across the master 46-file inventory**, subject to strict scope protection:
+- **Scope Limit:** R3 authorizes maintaining mathematical and categorical alignment across all 46 files cataloged in `WAVE_4_FINAL_REMEDIATION_FILE_OWNERSHIP_MATRIX.md` (11 Category A existing baseline modifications, 13 Category B reference files, 15 Category C new feature/test files, and 7 Category D governance reports).
+- **Subsets Preserved:** The two-document historical closure subset (`WAVE_4_FINAL_EVIDENCE_CLOSURE_REPORT.md` and `WAVE_4_FINAL_EVIDENCE_CLOSURE_EXECUTIVE_SUMMARY.md`) and the seven-document Category D governance package are distinct subsets.
+- **Strict Boundary:** R3 does **not** grant blanket permission to rewrite all 46 files or modify arbitrary governance reports. Category A and C files remain strictly unedited during governance passes.

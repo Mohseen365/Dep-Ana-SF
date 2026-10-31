@@ -7,9 +7,9 @@
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
 | **Required Approver** | Product Owner |
 | **Approval Status** | **APPROVED (OPTION A)** |
-| **Approver Name** | _______________________ |
-| **Approval Date** | _______________________ |
-| **Governance Classification** | `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` |
+| **Approver Name** | Project Owner (Authorized Decision-Maker) |
+| **Approval Date** | 31 October 2026 |
+| **Governance Classification** | `EXPLICIT HUMAN AUTHORIZATION RECORDED IN REPOSITORY — CONVERSATION CONFIRMATION (31 OCTOBER 2026) — NOT CRYPTOGRAPHICALLY SIGNED` |
 
 ---
 
@@ -90,7 +90,7 @@ If Option A is approved, implementation in `daAppShell.js` must execute the foll
    - Execute `DAUserPreferenceController.getPreference({ projectId: newProjectId })`.
 4. **State Re-Hydration:**
    - Upon successful fetch, parse `Filters_JSON__c` for `newProjectId`:
-     - If valid v2 payload present, load `activePresetId`, `activeFilters`, and `presets: []` specific to `newProjectId`.
+     - If valid v2 payload present, load `activePresetId`, `activeFilter`, and `presets: []` specific to `newProjectId`.
      - If legacy v1 or null payload, initialize default v2 container for `newProjectId`.
 5. **Child View Dispatch:**
    - Dispatch updated `filters` property down to active view (`daGraphViewer`, `daMatrixViewer`, or `daFindingsViewer`).

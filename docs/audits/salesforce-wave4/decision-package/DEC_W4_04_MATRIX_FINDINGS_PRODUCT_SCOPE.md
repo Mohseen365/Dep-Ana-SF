@@ -7,9 +7,9 @@
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
 | **Required Approver** | Product Owner |
 | **Approval Status** | **APPROVED (OPTION C)** |
-| **Approver Name** | _______________________ |
-| **Approval Date** | _______________________ |
-| **Governance Classification** | `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` |
+| **Approver Name** | Project Owner (Authorized Decision-Maker) |
+| **Approval Date** | 31 October 2026 |
+| **Governance Classification** | `EXPLICIT HUMAN AUTHORIZATION RECORDED IN REPOSITORY — CONVERSATION CONFIRMATION (31 OCTOBER 2026) — NOT CRYPTOGRAPHICALLY SIGNED` |
 
 ---
 
@@ -89,6 +89,11 @@ Build lightweight, functional LWC implementations for both Matrix and Findings v
   - Lightweight `daFindingsViewer` LWC (`lightning-datatable` with SLDS severity badges).
 - **Required Data:**
   - Existing `explorer-data.json` graph payload (utilizes `cycles`, `unresolvedReferences`, and `refactoringReadiness` already present in payload).
+- **Source-Backed Payload Verification:**
+  - `cycles`: Defined in `explorer/src/types/explorer.ts` (`ExplorerCycleGroup[]`) and produced in `scripts/export-explorer.cjs` lines 749–761. Shape: `{ id: string, size: number, nodes: string[] }`. Populated whenever cyclical dependencies are detected in analyzer data; defaults to `[]`.
+  - `unresolvedReferences`: Defined in `explorer/src/types/explorer.ts` (`ExplorerUnresolvedReference[]`) and produced in `scripts/export-explorer.cjs` lines 769–782. Shape: `{ edgeId: string, sourceNodeId: string, targetName: string, targetType: string, file?: string, line?: number, evidence?: string, reason: string }`. Produced from normalized edges marked `unresolved: true`.
+  - `refactoringReadiness`: Defined on `ExplorerNode` in `explorer/src/types/explorer.ts` and produced in `scripts/export-explorer.cjs` lines 666–671. Shape: `{ isHighRisk: boolean, hasCycles: boolean, hasUnresolved: boolean, testCoverageStatus: string }`. Present on every normalized node in the payload.
+  - **Metadata Invariant:** Zero new Salesforce custom objects or fields are required. All analytics data for Matrix and Findings is derived in-memory within the LWC tier from the existing graph payload delivered by `daGraphPayloadLoader`.
 - **Implementation Effort & Dependencies:**
   - **Medium Effort (~1-1.5 weeks).** Delivers functional end-user utility using existing graph payload data without requiring new Apex controllers or complex custom object deployments.
 - **Acceptance Criteria:**
