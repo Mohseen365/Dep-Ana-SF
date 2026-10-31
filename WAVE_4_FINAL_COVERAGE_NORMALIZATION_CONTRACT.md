@@ -5,10 +5,12 @@
 | **Document Type** | Coverage Normalization Contract & Raw-to-Canonical State Mapping Specification |
 | **Target Feature** | Wave 4 — Remediation R2 & Exporter Coverage Pipeline (`scripts/export-explorer.cjs`) |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-2662574214828896325-f3957679` |
-| **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
-| **Audit Date** | October 31, 2026 |
-| **Status** | **CONTRACT REVISED — CALLER-BOOLEAN AUTHORIZATION ELIMINATED — FAIL-CLOSED** |
+| **Current Verified Branch** | `jules-4975002370503412589-12672a7a` |
+| **Current Verified HEAD SHA** | `dde65b52bbf957e22f995693e566db609868fde2` |
+| **Prior Closure Baseline** | Branch `jules-15780640871563737358-c8869fd3` / HEAD `79577462c8553520c7050d405dd2c27754e454ba` (Historical Report Baseline) |
+| **Historical Source Baseline** | Branch `jules-2662574214828896325-f3957679` / HEAD `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` (Historical Contract Preparation Baseline) |
+| **Verification Scope & Date** | October 31, 2026 — Verified Clean Working Tree Baseline |
+| **Status** | **CONTRACT REVISED — EXPLICIT CATEGORY A/B/C INPUT CLASSIFICATION REGISTER ADDED — FAIL-CLOSED** |
 | **Operational State** | **IMPLEMENTATION HOLD ACTIVE — NO IMPLEMENTATION PERMITTED** |
 
 ---
@@ -29,13 +31,25 @@ However, governance policy strictly establishes that:
 - A caller-supplied boolean, function argument, environment variable, CLI flag, or test fixture value does **NOT** constitute human approval.
 - An arbitrary caller must never possess the technical ability to authorize unresolved coverage mappings.
 
-### 1.3 Authoritative Resolution
-This revised R2 contract eliminates caller-controlled boolean authorization. The contract is strictly fail-closed:
+### 1.3 The Genuinely Unrecognized vs. Unresolved Legacy Input Ambiguity (Specification Defect)
+Earlier versions of this contract contained potentially conflicting guidance:
+1. Stating that genuinely unrecognized strings map to `UNKNOWN` in the mapping matrix and pseudocode fallback.
+2. Stating in Section 5.1 that unresolved or prohibited evidence, "including other non-canonical legacy statuses", must throw `UnresolvedCoverageEvidenceError`.
+
+This created ambiguity over whether unexpected strings fall into `UNKNOWN` or throw an exception.
+This updated specification strictly resolves this ambiguity by establishing three distinct categories:
+- **Category A (Missing or Genuinely Unrecognized Values):** Inputs with complete absence of evidence or an unexpected token bearing no documented evidentiary meaning in the repository map deterministically to `UNKNOWN`.
+- **Category B (Explicitly Recognized Unresolved Evidence):** Inputs with known, documented unresolved evidence signals (`likely-covered`, `likely_covered`, `failed`, `known-coverage-failure`) fail closed immediately by throwing `UnresolvedCoverageEvidenceError`. They must never silently map to any canonical state.
+- **Category C (Other Known Legacy Aliases / Non-Canonical Values):** Inputs discovered in legacy fixtures, test mocks, or historical documents (`FULL_COVERAGE`, `PARTIAL_COVERAGE`, `PARTIAL`, `UNCOVERED`, `NOT_COVERED`, `TESTED`, `TEST_COMPONENT`) whose mapping to the canonical 4-state vocabulary has not received formal dual human approval are classified as `UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED`. The normalizer specification rejects these inputs as specification gaps pending human policy clarification; they do not silently map to `UNKNOWN` or canonical states.
+
+### 1.4 Authoritative Resolution Summary
+This revised R2 contract eliminates caller-controlled boolean authorization and resolves input classification ambiguity:
 1. Retains exactly four canonical coverage states: `COVERED`, `UNTESTED`, `AMBIGUOUS`, and `UNKNOWN`.
-2. Preserves the missing-value invariant (`null`, `undefined`, `""`, whitespace, and unrecognized strings map to `UNKNOWN`).
+2. Preserves the missing-value invariant (Category A: `null`, `undefined`, `""`, whitespace, and genuinely unrecognized strings map to `UNKNOWN`).
 3. Explicitly invalidates any pseudocode or contract mechanism that treats caller-supplied boolean flags as authorization.
-4. Requires unresolved evidence (`likely-covered`, `failed`, `known-coverage-failure`) to fail-closed with mandatory exception `UnresolvedCoverageEvidenceError`. It must never silently map into `COVERED`, `UNTESTED`, or `AMBIGUOUS`.
-5. Clearly specifies the governance evidence, approver roles, and authenticated tamper-evident configuration mechanism required before any future implementation.
+4. Requires Category B unresolved evidence (`likely-covered`, `failed`, `known-coverage-failure`) to fail closed with mandatory exception `UnresolvedCoverageEvidenceError`.
+5. Establishes that Category C legacy aliases require explicit human policy clarification and are blocked as specification gaps.
+6. Clearly specifies the governance evidence, approver roles, and authenticated tamper-evident configuration mechanism required before any future implementation.
 
 ---
 
@@ -82,26 +96,49 @@ The canonical coverage vocabulary is strictly bounded to exactly four authorized
 - **`AMBIGUOUS`**
 - **`UNKNOWN`**
 
-No fifth canonical state (e.g., `INFERRED_COVERED`, `FAILED_EXECUTION`, `QUARANTINED`, `PARTIALLY_TESTED`) may ever be introduced into canonical output payloads.
+No fifth canonical state (e.g., `INFERRED_COVERED`, `FAILED_EXECUTION`, `QUARANTINED`, `PARTIALLY_TESTED`, `NO_TESTS`, `FULL_COVERAGE`, `PARTIAL_COVERAGE`) may ever be introduced into canonical output payloads.
 
 ---
 
-## 4. Authoritative Raw-to-Canonical Status Mapping Matrix
+## 4. Comprehensive Raw Input Classification & Mapping Register
 
-| Raw Input Value | Source Location | Actual Evidence Meaning | Canonical Status / Pipeline Behavior | Confidence | Approval Status |
+Based on an exhaustive search of repository source files (`dependency-analyzer.cjs`, `scripts/export-explorer.cjs`, `scripts/test-export-explorer.cjs`, `explorer/src/types/explorer.ts`), test fixtures, and audit documentation, all discovered raw inputs are classified into Category A, Category B, or Category C:
+
+### 4.1 Classification Categories Defined
+- **Category A — Missing or Genuinely Unrecognized Values:** Complete absence of value, whitespace/empty tokens, or unexpected strings bearing no recognized repository evidence signal. Specified outcome: `UNKNOWN`.
+- **Category B — Explicitly Recognized Unresolved Evidence:** Values produced by analysis tools indicating coverage was inferred or failed, but for which no canonical mapping policy has been authorized. Specified outcome: Fail-closed (`UnresolvedCoverageEvidenceError`).
+- **Category C — Other Known Legacy Aliases / Non-Canonical Values:** Values found in legacy tests, fixtures, or historical schemas whose evidentiary intent is known or suspected, but whose canonical mapping has not been formally approved by the Lead Architect and Product Owner. Specified outcome: `UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED` (rejected as specification gap pending decision).
+
+### 4.2 Comprehensive Mapping Register Table
+
+| Raw Input | Repository Evidence | Evidence Meaning | Classification | Required Behavior | Approval Status |
 |---|---|---|---|---|---|
-| `null` | Exporter / Adapter input | Missing coverage payload | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `undefined` | AST parser / Node metric | Unset property | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `""` (Empty String) | Serialized JSON input | Blank field | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `"   "` (Whitespace) | User input / XML text | Whitespace-only string | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| Absent Property | `refactoringReadiness` map | Field missing from JSON | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `untested` | `dependency-analyzer.cjs` | Analyzed; zero test references | **`UNTESTED`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `no-tests` / `no-test-evidence` | `dependency-analyzer.cjs` | Confirmed no test classes found | **`UNTESTED`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `ambiguous-test` / `ambiguous` | `dependency-analyzer.cjs` line 4118 | Multiple tests or dynamic call | **`AMBIGUOUS`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `covered` / `passed` | `dependency-analyzer.cjs` line 3973 | Confirmed test profiling pass | **`COVERED`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
-| `likely-covered` / `likely_covered` | `dependency-analyzer.cjs` line 4141 | Static AST naming match | **FAIL-CLOSED** (Throws `UnresolvedCoverageEvidenceError`; never silently maps to canonical state) | Medium | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
-| `failed` / `known-coverage-failure` | `dependency-analyzer.cjs` line 3955 | Test run failed / threshold breach | **FAIL-CLOSED** (Throws `UnresolvedCoverageEvidenceError`; never silently maps to canonical state) | Medium | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
-| Unrecognized string e.g. `"INVALID"` | Arbitrary raw payload | Unexpected value | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `null` | Exporter / Adapter input | Complete absence of coverage payload | **Category A** | Returns `UNKNOWN` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `undefined` | AST parser / Node metric | Unset property in AST node | **Category A** | Returns `UNKNOWN` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `""` (Empty String) | Serialized JSON input | Blank field in raw record | **Category A** | Returns `UNKNOWN` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `"   "` (Whitespace) | User input / XML text | Whitespace-only string | **Category A** | Returns `UNKNOWN` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| Absent Property | `refactoringReadiness` map | Field missing from JSON input | **Category A** | Returns `UNKNOWN` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| Genuinely unrecognized string (e.g. `"INVALID"`, `"XYZ"`) | Arbitrary raw payload | Unexpected value with no known evidence meaning | **Category A** | Returns `UNKNOWN` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `covered` / `passed` | `dependency-analyzer.cjs` line 3973 | Confirmed test profiling pass | **Standard Canonical** | Returns `COVERED` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `COVERED` | `scripts/test-export-explorer.cjs` line 371 | Case-insensitive confirmed test pass | **Standard Canonical** | Returns `COVERED` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `untested` | `dependency-analyzer.cjs` | Explicitly analyzed; zero test references | **Standard Canonical** | Returns `UNTESTED` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `UNTESTED` | `scripts/test-export-explorer.cjs` line 375 | Case-insensitive confirmed untested | **Standard Canonical** | Returns `UNTESTED` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `no-tests` / `no-test-evidence` | `dependency-analyzer.cjs` line 4200 | Confirmed no test classes found | **Standard Canonical** | Returns `UNTESTED` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `NO_TESTS` | `scripts/test-export-explorer.cjs` line 377; fixtures | Raw legacy alias for confirmed zero tests | **Standard Canonical** | Returns `UNTESTED` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `ambiguous-test` / `ambiguous` / `ambiguous-tests` | `dependency-analyzer.cjs` line 4118 | Multiple tests or dynamic call | **Standard Canonical** | Returns `AMBIGUOUS` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `AMBIGUOUS` / `AMBIGUOUS_TEST` | `scripts/test-export-explorer.cjs` line 379 | Case-insensitive ambiguous test match | **Standard Canonical** | Returns `AMBIGUOUS` | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `likely-covered` / `likely_covered` | `dependency-analyzer.cjs` line 4141 | Static AST naming match; unverified execution | **Category B** | Throws `UnresolvedCoverageEvidenceError` | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| `LIKELY_COVERED` | `scripts/test-export-explorer.cjs` line 369 | Case-insensitive static AST naming match | **Category B** | Throws `UnresolvedCoverageEvidenceError` | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| `failed` | `dependency-analyzer.cjs` line 3951 | Test run attempted but failed / threshold breach | **Category B** | Throws `UnresolvedCoverageEvidenceError` | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| `known-coverage-failure` / `known_coverage_failure` | `dependency-analyzer.cjs` line 3955 | Runtime coverage metadata indicates failure | **Category B** | Throws `UnresolvedCoverageEvidenceError` | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| `KNOWN_COVERAGE_FAILURE` | `scripts/test-export-explorer.cjs` line 373 | Case-insensitive runtime coverage failure | **Category B** | Throws `UnresolvedCoverageEvidenceError` | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| `FULL_COVERAGE` | `scripts/test-remediation-stage0.cjs`; `explorer.ts` | Legacy stage 0/1 test fixture property | **Category C** | Rejects as specification gap pending policy decision | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
+| `PARTIAL_COVERAGE` | `explorer/src/types/explorer.ts` | Historical Explorer type union member | **Category C** | Rejects as specification gap pending policy decision | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
+| `PARTIAL` | `docs/audits/salesforce-wave4/WAVE_4_MISSING_COVERAGE_SEMANTICS.md` | Legacy alias for ambiguous coverage | **Category C** | Rejects as specification gap pending policy decision | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
+| `UNCOVERED` | `explorer/src/components/GraphView.fix12.test.tsx` | Historical test mock literal | **Category C** | Rejects as specification gap pending policy decision | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
+| `NOT_COVERED` | `explorer/src/lib/graph-builder.test.ts` | Historical test mock literal | **Category C** | Rejects as specification gap pending policy decision | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
+| `TESTED` | `docs/audits/salesforce-wave4/WAVE_4_MISSING_COVERAGE_SEMANTICS.md` | Legacy alias for covered in documentation | **Category C** | Rejects as specification gap pending policy decision | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
+| `TEST_COMPONENT` / `test-component` | `dependency-analyzer.cjs` line 3923; `scripts/export-explorer.cjs` line 624 | Component itself is a test class | **Category C** | Handled by caller before normalizer; raw input to normalizer rejects pending policy | **UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED** |
 
 ---
 
@@ -115,7 +152,8 @@ The revised normalization contract strictly eliminates caller-controlled boolean
  * Strictly enforces 4-state canonical vocabulary and missing-value invariant.
  * Fail-closed: Caller-supplied boolean flags cannot authorize unresolved mappings.
  *
- * NOTE: SPECIFICATION CONTRACT ONLY — NOT YET IMPLEMENTED IN SOURCE.
+ * NOTE: SPECIFICATION ONLY — NOT IMPLEMENTED.
+ * SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING.
  * IMPLEMENTATION HOLD REMAINS STRICTLY ACTIVE.
  */
 class UnresolvedCoverageEvidenceError extends Error {
@@ -133,9 +171,10 @@ class UnresolvedCoverageEvidenceError extends Error {
  *
  * Caller-supplied booleans are NOT accepted or evaluated.
  * Any unresolved evidence fails closed immediately.
+ * Category C legacy aliases reject as specification gaps pending human clarification.
  */
 function normalizeTestCoverageStatus(status, componentContext = {}) {
-  // 1. Mandatory Missing-Value Invariant (SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING)
+  // 1. Category A: Mandatory Missing-Value Invariant (SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING)
   if (status === null || status === undefined || String(status).trim() === "") {
     return "UNKNOWN";
   }
@@ -157,10 +196,10 @@ function normalizeTestCoverageStatus(status, componentContext = {}) {
     return "AMBIGUOUS";
   }
 
-  // 5. Unresolved Static Inferred Coverage (likely-covered)
+  // 5. Category B: Unresolved Static Inferred Coverage (likely-covered)
   // Caller-supplied booleans are INVALID and cannot authorize mapping.
   // Mandatory fail-closed behavior: raises UnresolvedCoverageEvidenceError.
-  // Never silently maps to COVERED, UNTESTED, or AMBIGUOUS.
+  // Never silently maps to COVERED, UNTESTED, AMBIGUOUS, or UNKNOWN.
   if (s === "likely-covered") {
     throw new UnresolvedCoverageEvidenceError(
       'Encountered unresolved static inference coverage status: "likely-covered" for component "' +
@@ -171,10 +210,10 @@ function normalizeTestCoverageStatus(status, componentContext = {}) {
     );
   }
 
-  // 6. Unresolved Failed Execution (failed / known-coverage-failure)
+  // 6. Category B: Unresolved Failed Execution (failed / known-coverage-failure)
   // Caller-supplied booleans are INVALID and cannot authorize mapping.
   // Mandatory fail-closed behavior: raises UnresolvedCoverageEvidenceError.
-  // Never silently maps to COVERED, UNTESTED, or AMBIGUOUS.
+  // Never silently maps to COVERED, UNTESTED, AMBIGUOUS, or UNKNOWN.
   if (s === "failed" || s === "known-coverage-failure") {
     throw new UnresolvedCoverageEvidenceError(
       'Encountered unresolved failed execution coverage status: "' + s + '" for component "' +
@@ -185,37 +224,62 @@ function normalizeTestCoverageStatus(status, componentContext = {}) {
     );
   }
 
-  // 7. Unrecognized string fallback (Deterministic Invariant)
+  // 7. Category C: Known Legacy Aliases / Non-Canonical Values Without Authorized Policy
+  // Must NOT silently map to UNKNOWN or any canonical state.
+  // Rejected as an unresolved specification gap pending human policy clarification.
+  const categoryCLegacyAliases = [
+    "full-coverage",
+    "partial-coverage",
+    "partial",
+    "uncovered",
+    "not-covered",
+    "tested",
+    "test-component"
+  ];
+  if (categoryCLegacyAliases.includes(s)) {
+    throw new UnresolvedCoverageEvidenceError(
+      'Encountered non-canonical legacy coverage alias without authorized policy: "' + s + '" for component "' +
+      (componentContext.id || 'unknown') + '". ' +
+      'Classification status is UNRESOLVED — HUMAN POLICY CLARIFICATION REQUIRED. Operation blocked.',
+      s,
+      componentContext.id
+    );
+  }
+
+  // 8. Category A: Genuinely unrecognized string fallback (Deterministic Invariant)
+  // Values bearing no documented evidence signal or legacy alias map to UNKNOWN.
   return "UNKNOWN";
 }
 ```
 
 ### 5.1 Mandatory Fail-Closed Runtime Rules & Future Quarantine Design Note
-1. **Mandatory Runtime Behavior — `UnresolvedCoverageEvidenceError`:** When unresolved or prohibited coverage evidence (`likely-covered`, `failed`, `known-coverage-failure`, or other non-canonical legacy status) is encountered, the pipeline must fail-closed immediately by throwing `UnresolvedCoverageEvidenceError`.
-2. **Strict 4-State Output:** Canonical output property `testCoverageStatus` is strictly bounded to the 4 canonical states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). No fifth canonical state may ever be emitted.
-3. **No Silent Normalization:** Unresolved evidence must never silently normalize to `UNTESTED`, `AMBIGUOUS`, `COVERED`, or `UNKNOWN`.
-4. **Diagnostic Context Preservation:** The error must preserve sufficient diagnostic context (component ID, raw status) to identify the fault without leaking sensitive credentials or PII.
-5. **Future Quarantine Note (Design Alternative Only):** Any future mechanism to isolate nodes into an external quarantine array (e.g., `metadata.quarantinedNodes`) rather than throwing an error is strictly a theoretical future architectural alternative. It is **NOT** part of the current runtime contract and requires its own formal specification, design review, and human authorization before implementation.
+1. **Mandatory Runtime Behavior — `UnresolvedCoverageEvidenceError`:** When Category B unresolved coverage evidence (`likely-covered`, `failed`, `known-coverage-failure`) or Category C non-canonical legacy aliases without authorized policy (`full-coverage`, `partial-coverage`, `partial`, `uncovered`, `not-covered`, `tested`, `test-component`) are encountered, the pipeline must fail closed immediately by throwing `UnresolvedCoverageEvidenceError`.
+2. **Genuinely Unrecognized Values (Category A):** Unexpected input strings that do not correspond to any known evidence signal or legacy alias fall through to `UNKNOWN`. Genuinely unrecognized input is treated as complete absence of evaluable signal, not failed testing.
+3. **Strict 4-State Output:** Canonical output property `testCoverageStatus` is strictly bounded to the 4 canonical states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). No fifth canonical state may ever be emitted.
+4. **No Silent Normalization:** Unresolved evidence must never silently normalize to `UNTESTED`, `AMBIGUOUS`, `COVERED`, or `UNKNOWN`.
+5. **Diagnostic Context Preservation:** The error must preserve sufficient diagnostic context (component ID, raw status) to identify the fault without leaking sensitive credentials or PII.
+6. **Future Quarantine Note (Design Alternative Only):** Any future mechanism to isolate nodes into an external quarantine array (e.g., `metadata.quarantinedNodes`) rather than throwing an error is strictly a theoretical future architectural alternative. It is **NOT** part of the current runtime contract and requires its own formal specification, design review, and human authorization before implementation.
 
 ---
 
 ## 6. Governance Evidence Required Prior to Future Implementation
 
-Before any future code implementation can handle static inference or failed execution mappings:
+Before any future code implementation can handle static inference, failed execution, or Category C legacy mappings:
 1. **Required Approver Roles:** Formal dual sign-off from both the **Lead Architect** and **Product Owner**.
 2. **Specific Decision Authorizations:**
    - Formal policy determination for AST static inference (`DEC-W4-02` policy extension).
    - Formal policy determination for failed test execution handling.
+   - Formal policy determination for Category C legacy aliases (`full-coverage`, `partial-coverage`, `partial`, `uncovered`, `not-covered`, `tested`, `test-component`).
 3. **Evidence Location:** Recorded in a dedicated Decision Record (`docs/decisions/DEC-W4-02-coverage-policy.md` or repository governance register).
 4. **Provenance Requirement:** Independent verification of human author/approver identity and timestamp (not repository self-generation).
 5. **Technical Implementation Prerequisite:** Implementation of an authenticated, tamper-evident configuration mechanism (e.g. cryptographically validated manifest or server-side configuration schema).
-6. **Test Verification Prerequisite:** Automated unit and regression tests in `scripts/test-export-explorer.cjs` asserting both deterministic missing-value correction and fail-closed handling of unauthorized inputs.
+6. **Test Verification Prerequisite:** Automated unit and regression tests in `scripts/test-export-explorer.cjs` asserting deterministic missing-value correction, fail-closed handling of unresolved evidence, and blocking of unclassified legacy aliases.
 
 ---
 
 ## 7. Current Implementation & Verification Status
 
 - **Source Code Status:** Line 331 of `scripts/export-explorer.cjs` still contains `if (!status) return "UNTESTED";`. The source defect has **not** been modified.
-- **Test Code Status:** `scripts/test-export-explorer.cjs` does **not** assert the corrected `UNKNOWN` invariant or policy authorization fail-closed behavior.
+- **Test Code Status:** `scripts/test-export-explorer.cjs` does **not** assert the corrected `UNKNOWN` invariant, Category B fail-closed behavior, or Category C policy blocking.
 - **Implementation Status:** No authenticated policy-authorization mechanism exists in the codebase.
 - **Hold Directive:** In strict compliance with `IMPLEMENTATION HOLD — ACTIVE`, zero source or test code changes have been made.
