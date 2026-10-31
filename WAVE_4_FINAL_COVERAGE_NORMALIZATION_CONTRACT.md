@@ -5,8 +5,8 @@
 | **Document Type** | Coverage Normalization Contract & Raw-to-Canonical State Mapping Specification |
 | **Target Feature** | Wave 4 — Remediation R2 & Exporter Coverage Pipeline (`scripts/export-explorer.cjs`) |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
-| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
+| **Current Branch** | `jules-2662574214828896325-f3957679` |
+| **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **CONTRACT REVISED — CALLER-BOOLEAN AUTHORIZATION ELIMINATED — FAIL-CLOSED** |
 | **Operational State** | **IMPLEMENTATION HOLD ACTIVE — NO IMPLEMENTATION PERMITTED** |
@@ -34,7 +34,7 @@ This revised R2 contract eliminates caller-controlled boolean authorization. The
 1. Retains exactly four canonical coverage states: `COVERED`, `UNTESTED`, `AMBIGUOUS`, and `UNKNOWN`.
 2. Preserves the missing-value invariant (`null`, `undefined`, `""`, whitespace, and unrecognized strings map to `UNKNOWN`).
 3. Explicitly invalidates any pseudocode or contract mechanism that treats caller-supplied boolean flags as authorization.
-4. Requires unresolved evidence (`likely-covered`, `failed`, `known-coverage-failure`) to remain quarantined or fail-closed with an explicit error. It must never silently map into `COVERED`, `UNTESTED`, or `AMBIGUOUS`.
+4. Requires unresolved evidence (`likely-covered`, `failed`, `known-coverage-failure`) to fail-closed with mandatory exception `UnresolvedCoverageEvidenceError`. It must never silently map into `COVERED`, `UNTESTED`, or `AMBIGUOUS`.
 5. Clearly specifies the governance evidence, approver roles, and authenticated tamper-evident configuration mechanism required before any future implementation.
 
 ---
@@ -90,18 +90,18 @@ No fifth canonical state (e.g., `INFERRED_COVERED`, `FAILED_EXECUTION`, `QUARANT
 
 | Raw Input Value | Source Location | Actual Evidence Meaning | Canonical Status / Pipeline Behavior | Confidence | Approval Status |
 |---|---|---|---|---|---|
-| `null` | Exporter / Adapter input | Missing coverage payload | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
-| `undefined` | AST parser / Node metric | Unset property | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
-| `""` (Empty String) | Serialized JSON input | Blank field | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
-| `"   "` (Whitespace) | User input / XML text | Whitespace-only string | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
-| Absent Property | `refactoringReadiness` map | Field missing from JSON | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
-| `untested` | `dependency-analyzer.cjs` | Analyzed; zero test references | **`UNTESTED`** | High | Standard Deterministic Contract |
-| `no-tests` / `no-test-evidence` | `dependency-analyzer.cjs` | Confirmed no test classes found | **`UNTESTED`** | High | Standard Deterministic Contract |
-| `ambiguous-test` / `ambiguous` | `dependency-analyzer.cjs` line 4118 | Multiple tests or dynamic call | **`AMBIGUOUS`** | High | Standard Deterministic Contract |
-| `covered` / `passed` | `dependency-analyzer.cjs` line 3973 | Confirmed test profiling pass | **`COVERED`** | High | Standard Deterministic Contract |
-| `likely-covered` / `likely_covered` | `dependency-analyzer.cjs` line 4141 | Static AST naming match | **FAIL-CLOSED / QUARANTINE** (Throws `UnresolvedCoverageEvidenceError` or quarantines node outside canonical records; never silently maps to canonical state) | Medium | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
-| `failed` / `known-coverage-failure` | `dependency-analyzer.cjs` line 3955 | Test run failed / threshold breach | **FAIL-CLOSED / QUARANTINE** (Throws `UnresolvedCoverageEvidenceError` or quarantines node outside canonical records; never silently maps to canonical state) | Medium | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
-| Unrecognized string e.g. `"INVALID"` | Arbitrary raw payload | Unexpected value | **`UNKNOWN`** | High | **Approved Deterministic Fix** |
+| `null` | Exporter / Adapter input | Missing coverage payload | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `undefined` | AST parser / Node metric | Unset property | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `""` (Empty String) | Serialized JSON input | Blank field | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `"   "` (Whitespace) | User input / XML text | Whitespace-only string | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| Absent Property | `refactoringReadiness` map | Field missing from JSON | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `untested` | `dependency-analyzer.cjs` | Analyzed; zero test references | **`UNTESTED`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `no-tests` / `no-test-evidence` | `dependency-analyzer.cjs` | Confirmed no test classes found | **`UNTESTED`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `ambiguous-test` / `ambiguous` | `dependency-analyzer.cjs` line 4118 | Multiple tests or dynamic call | **`AMBIGUOUS`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `covered` / `passed` | `dependency-analyzer.cjs` line 3973 | Confirmed test profiling pass | **`COVERED`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
+| `likely-covered` / `likely_covered` | `dependency-analyzer.cjs` line 4141 | Static AST naming match | **FAIL-CLOSED** (Throws `UnresolvedCoverageEvidenceError`; never silently maps to canonical state) | Medium | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| `failed` / `known-coverage-failure` | `dependency-analyzer.cjs` line 3955 | Test run failed / threshold breach | **FAIL-CLOSED** (Throws `UnresolvedCoverageEvidenceError`; never silently maps to canonical state) | Medium | **UNRESOLVED POLICY (Requires Lead Arch + PO Sign-off & Authenticated Mechanism)** |
+| Unrecognized string e.g. `"INVALID"` | Arbitrary raw payload | Unexpected value | **`UNKNOWN`** | High | **SPECIFIED — HUMAN IMPLEMENTATION AUTHORIZATION PENDING** |
 
 ---
 
@@ -159,7 +159,8 @@ function normalizeTestCoverageStatus(status, componentContext = {}) {
 
   // 5. Unresolved Static Inferred Coverage (likely-covered)
   // Caller-supplied booleans are INVALID and cannot authorize mapping.
-  // Must fail-closed or quarantine. Never silently maps to COVERED, UNTESTED, or AMBIGUOUS.
+  // Mandatory fail-closed behavior: raises UnresolvedCoverageEvidenceError.
+  // Never silently maps to COVERED, UNTESTED, or AMBIGUOUS.
   if (s === "likely-covered") {
     throw new UnresolvedCoverageEvidenceError(
       'Encountered unresolved static inference coverage status: "likely-covered" for component "' +
@@ -172,7 +173,8 @@ function normalizeTestCoverageStatus(status, componentContext = {}) {
 
   // 6. Unresolved Failed Execution (failed / known-coverage-failure)
   // Caller-supplied booleans are INVALID and cannot authorize mapping.
-  // Must fail-closed or quarantine. Never silently maps to COVERED, UNTESTED, or AMBIGUOUS.
+  // Mandatory fail-closed behavior: raises UnresolvedCoverageEvidenceError.
+  // Never silently maps to COVERED, UNTESTED, or AMBIGUOUS.
   if (s === "failed" || s === "known-coverage-failure") {
     throw new UnresolvedCoverageEvidenceError(
       'Encountered unresolved failed execution coverage status: "' + s + '" for component "' +
@@ -188,12 +190,12 @@ function normalizeTestCoverageStatus(status, componentContext = {}) {
 }
 ```
 
-### 5.1 Fail-Closed and Quarantining Rules
-1. **Strict 4-State Output:** The output property `testCoverageStatus` must always be one of the four canonical states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`).
-2. **Quarantine Outside Canonical States:** If the exporter operates in quarantine mode rather than throwing an exception:
-   - The unmapped component is omitted from canonical nodes or quarantined into an isolated metadata array (e.g. `metadata.quarantinedNodes`).
-   - The unmapped component must **never** be injected into canonical nodes with a fifth state or a falsified canonical state.
-3. **No Silent Normalization:** Unresolved evidence must never silently normalize to `UNTESTED`, `AMBIGUOUS`, or `COVERED`.
+### 5.1 Mandatory Fail-Closed Runtime Rules & Future Quarantine Design Note
+1. **Mandatory Runtime Behavior — `UnresolvedCoverageEvidenceError`:** When unresolved or prohibited coverage evidence (`likely-covered`, `failed`, `known-coverage-failure`, or other non-canonical legacy status) is encountered, the pipeline must fail-closed immediately by throwing `UnresolvedCoverageEvidenceError`.
+2. **Strict 4-State Output:** Canonical output property `testCoverageStatus` is strictly bounded to the 4 canonical states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). No fifth canonical state may ever be emitted.
+3. **No Silent Normalization:** Unresolved evidence must never silently normalize to `UNTESTED`, `AMBIGUOUS`, `COVERED`, or `UNKNOWN`.
+4. **Diagnostic Context Preservation:** The error must preserve sufficient diagnostic context (component ID, raw status) to identify the fault without leaking sensitive credentials or PII.
+5. **Future Quarantine Note (Design Alternative Only):** Any future mechanism to isolate nodes into an external quarantine array (e.g., `metadata.quarantinedNodes`) rather than throwing an error is strictly a theoretical future architectural alternative. It is **NOT** part of the current runtime contract and requires its own formal specification, design review, and human authorization before implementation.
 
 ---
 

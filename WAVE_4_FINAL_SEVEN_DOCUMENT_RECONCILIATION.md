@@ -5,8 +5,8 @@
 | **Document Type** | Comprehensive Cross-Document Reconciliation Matrix & Consistency Audit |
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters & Presets Persistence |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
-| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
+| **Current Branch** | `jules-2662574214828896325-f3957679` |
+| **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **RECONCILIATION COMPLETE — ALL SEVEN DELIVERABLES HARMONIZED** |
 | **Operational State** | **IMPLEMENTATION HOLD ACTIVE — NO IMPLEMENTATION PERMITTED** |
@@ -37,10 +37,10 @@ All seven Category D governance deliverables have been audited against the repos
 | **V1/V2 Recognition** | R1 Contract | Agrees across merge algorithm, edge cases, and audit: presence of `schemaVersion` or `presets` dictates container classification. | **CONSISTENT** |
 | **Incoming V2 Write Semantics** | R1 Contract | Agrees with Decision Register and Authorization Gate: universal write block pending human replacement vs merge decision. | **CONSISTENT** |
 | **Nested V2 Validation** | R1 Contract | Layer 5 is marked as `SPECIFICATION GAP — IMPLEMENTATION BLOCKING` across R1 contract, audit, and readiness report. | **CONSISTENT** |
-| **Coverage Normalization** | R2 Contract | Bounded strictly to 4 states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Preserves missing-value invariant. Caller booleans eliminated. | **CONSISTENT** |
+| **Coverage Normalization** | R2 Contract | Bounded strictly to 4 states (`COVERED`, `UNTESTED`, `AMBIGUOUS`, `UNKNOWN`). Preserves missing-value invariant. Caller booleans eliminated. Mandatory fail-closed `UnresolvedCoverageEvidenceError`. | **CONSISTENT** |
 | **Exporter Ownership** | R3 Matrix | Joint ownership by Lead Architect and Product Owner for both `scripts/export-explorer.cjs` and `scripts/test-export-explorer.cjs`. | **CONSISTENT** |
 | **File Inventory** | R3 Matrix | Total 46 unique files: 11 Cat A, 13 Cat B, 15 Cat C, 7 Cat D. Exactly 24 existing files, 26 prohibited modification targets. | **CONSISTENT** |
-| **Payload Limits** | R4 Contract | 131,072 character Apex length guard, metadata field capacity 131,072 chars, 100k client warning toast, live persistence deferred. | **CONSISTENT** |
+| **Payload Limits** | R4 Contract | 131,072 character client guard in `daAppShell.js` (filters only, nulls passed for positions/zoomPan); 131,072 char Apex guard across all 3 fields; 131,072 char metadata capacity; live persistence deferred. 100k client toast claim removed. | **CONSISTENT** |
 | **Decisions DEC-W4-01..04** | Governance Register | All four decisions classified as `PENDING (HUMAN)` across register, authorization gate, and audit. | **CONSISTENT** |
 | **Human Approval Provenance** | Governance Register | Strict standard applied: `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED`. | **CONSISTENT** |
 | **Implementation Hold** | All Seven Documents | Identical operational directive: `IMPLEMENTATION HOLD — ACTIVE`. Zero feature implementation permitted. | **CONSISTENT** |

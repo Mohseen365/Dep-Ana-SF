@@ -5,8 +5,8 @@
 | **Document Type** | Payload Boundary Specification & Test Suite Verification Contract |
 | **Target Feature** | Wave 4 — Remediation R4 & Preference Fields Boundary Verification |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
-| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
+| **Current Branch** | `jules-2662574214828896325-f3957679` |
+| **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **SPECIFICATION COMPLETE — READY FOR HUMAN REVIEW — IMPLEMENTATION HOLD ACTIVE** |
 
