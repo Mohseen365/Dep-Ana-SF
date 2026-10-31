@@ -108,7 +108,7 @@ class DAUserPreferenceControllerSimulator {
             record.Positions_JSON__c = positionsJson;
         }
         if (filtersJson !== undefined && filtersJson !== null) {
-            record.Filters_JSON__c = filtersJson;
+            record.Filters_JSON__c = this.mergeV1IntoV2Container(record.Filters_JSON__c, filtersJson);
         }
         if (zoomPanJson !== undefined && zoomPanJson !== null) {
             record.Zoom_Pan_JSON__c = zoomPanJson;
@@ -116,6 +116,58 @@ class DAUserPreferenceControllerSimulator {
         record.LastModifiedDate = new Date().toISOString();
 
         return JSON.parse(JSON.stringify(record));
+    }
+
+    mergeV1IntoV2Container(existingV2Json, incomingFilterJson) {
+        if (incomingFilterJson !== undefined && incomingFilterJson !== null && incomingFilterJson.trim() === '') {
+            return '';
+        }
+        if (incomingFilterJson === null || incomingFilterJson === undefined) {
+            return existingV2Json;
+        }
+        if (!existingV2Json || existingV2Json.trim() === '') {
+            return incomingFilterJson;
+        }
+
+        try {
+            const incomingObj = JSON.parse(incomingFilterJson);
+            if (!incomingObj || typeof incomingObj !== 'object' || Array.isArray(incomingObj)) {
+                return existingV2Json;
+            }
+
+            if ('schemaVersion' in incomingObj) {
+                if (incomingObj.schemaVersion === 2) {
+                    return incomingFilterJson;
+                }
+                return existingV2Json;
+            }
+
+            if ('presets' in incomingObj) {
+                return existingV2Json;
+            }
+
+            const existingObj = JSON.parse(existingV2Json);
+            if (!existingObj || typeof existingObj !== 'object' || Array.isArray(existingObj)) {
+                return existingV2Json;
+            }
+
+            if (!('schemaVersion' in existingObj) && ('presets' in existingObj)) {
+                return existingV2Json;
+            }
+
+            if ('schemaVersion' in existingObj) {
+                if (existingObj.schemaVersion === 2) {
+                    existingObj.activeFilter = incomingObj;
+                    existingObj.activePresetId = null;
+                    return JSON.stringify(existingObj);
+                }
+                return existingV2Json;
+            }
+
+            return incomingFilterJson;
+        } catch (e) {
+            return existingV2Json;
+        }
     }
 
     validateJson(str, fieldName) {
@@ -389,12 +441,38 @@ async function main() {
         }, /Malformed Positions JSON payload/);
     });
 
-    runTest('6. Oversized JSON payload detection and rejection (>131072 chars)', () => {
+    runTest('6. Oversized JSON payload detection and rejection (>131072 chars) - R4 Boundary Verification', () => {
         db.reset();
+        const maxAllowed = '{"k":"' + 'a'.repeat(131064) + '"}'; // exactly 131,072 characters
+        assert.strictEqual(maxAllowed.length, 131072);
         const oversized = 'a'.repeat(131073);
+
+        // Field 1: Positions_JSON__c (Parameter 4)
+        // 131,072 characters accepted
+        const posAccepted = prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', maxAllowed, null, null);
+        assert.strictEqual(posAccepted.Positions_JSON__c.length, 131072);
+        // 131,073 characters rejected
         assert.throws(() => {
             prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', oversized, null, null);
         }, /Positions JSON exceeds maximum allowed length/);
+
+        // Field 2: Filters_JSON__c (Parameter 5)
+        // 131,072 characters accepted
+        const filterAccepted = prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, maxAllowed, null);
+        assert.strictEqual(filterAccepted.Filters_JSON__c.length, 131072);
+        // 131,073 characters rejected
+        assert.throws(() => {
+            prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, oversized, null);
+        }, /Filters JSON exceeds maximum allowed length/);
+
+        // Field 3: Zoom_Pan_JSON__c (Parameter 6)
+        // 131,072 characters accepted
+        const zoomAccepted = prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, null, maxAllowed);
+        assert.strictEqual(zoomAccepted.Zoom_Pan_JSON__c.length, 131072);
+        // 131,073 characters rejected
+        assert.throws(() => {
+            prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, null, oversized);
+        }, /Zoom Pan JSON exceeds maximum allowed length/);
     });
 
     runTest('7. Blank or missing Project ID rejection', () => {
@@ -434,6 +512,94 @@ async function main() {
         assert.strictEqual(updated.Positions_JSON__c, '');
         assert.strictEqual(updated.Filters_JSON__c, '{"b":2}');
         assert.strictEqual(updated.Zoom_Pan_JSON__c, '{"c":3}');
+    });
+
+    runTest('7c. R1: V1 filter save over existing V2 container preserves presets and activePresetId set to null', () => {
+        db.reset();
+        const v2Container = JSON.stringify({
+            schemaVersion: 2,
+            activePresetId: 'preset-quick-1',
+            activeFilter: { search: 'OldClass', riskLevels: ['HIGH'] },
+            presets: [
+                { id: 'preset-quick-1', name: 'High Risk Focus', criteria: { riskLevels: ['HIGH'] } },
+                { id: 'preset-quick-2', name: 'Apex Only', criteria: { nodeTypes: ['ApexClass'] } }
+            ]
+        });
+
+        // Seed initial V2 container
+        prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, v2Container, null);
+
+        // V1 write updates activeFilter
+        const incomingV1 = JSON.stringify({ search: 'NewService', riskLevels: ['LOW'] });
+        const updated = prefService.saveUserPreference('001_proj_alpha', null, null, null, incomingV1, null);
+
+        const parsed = JSON.parse(updated.Filters_JSON__c);
+        assert.strictEqual(parsed.schemaVersion, 2);
+        assert.strictEqual(parsed.activePresetId, null, 'Ad-hoc V1 filter modification should clear activePresetId');
+        assert.strictEqual(parsed.activeFilter.search, 'NewService');
+        assert.deepStrictEqual(parsed.activeFilter.riskLevels, ['LOW']);
+        assert.strictEqual(parsed.presets.length, 2, 'Presets must be preserved intact');
+        assert.strictEqual(parsed.presets[0].id, 'preset-quick-1');
+        assert.strictEqual(parsed.presets[1].id, 'preset-quick-2');
+    });
+
+    runTest('7d. R1: Incoming V2 container replaces existing container atomically', () => {
+        db.reset();
+        const initialV2 = JSON.stringify({
+            schemaVersion: 2,
+            activePresetId: 'p1',
+            activeFilter: { search: 'Initial' },
+            presets: [{ id: 'p1', name: 'P1' }]
+        });
+        prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, initialV2, null);
+
+        const newV2 = JSON.stringify({
+            schemaVersion: 2,
+            activePresetId: 'p2',
+            activeFilter: { search: 'Replaced' },
+            presets: [{ id: 'p2', name: 'P2' }, { id: 'p3', name: 'P3' }]
+        });
+        const updated = prefService.saveUserPreference('001_proj_alpha', null, null, null, newV2, null);
+
+        assert.strictEqual(updated.Filters_JSON__c, newV2);
+        const parsed = JSON.parse(updated.Filters_JSON__c);
+        assert.strictEqual(parsed.activePresetId, 'p2');
+        assert.strictEqual(parsed.presets.length, 2);
+    });
+
+    runTest('7e. R1: Empty string clears Filters_JSON__c and null preserves stored value', () => {
+        db.reset();
+        const v2 = JSON.stringify({ schemaVersion: 2, presets: [], activeFilter: {} });
+        prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, v2, null);
+
+        // Null incoming preserves
+        const updatedNull = prefService.saveUserPreference('001_proj_alpha', 'matrix', null, null, null, null);
+        assert.strictEqual(updatedNull.Filters_JSON__c, v2);
+
+        // Empty string clears
+        const updatedEmpty = prefService.saveUserPreference('001_proj_alpha', 'matrix', null, null, '', null);
+        assert.strictEqual(updatedEmpty.Filters_JSON__c, '');
+    });
+
+    runTest('7f. R1: Malformed and unsupported schema fail closed and preserve existing data', () => {
+        db.reset();
+        const v2 = JSON.stringify({
+            schemaVersion: 2,
+            activePresetId: 'p1',
+            activeFilter: { search: 'Valid' },
+            presets: [{ id: 'p1', name: 'P1' }]
+        });
+        prefService.saveUserPreference('001_proj_alpha', 'graph', 'orbit', null, v2, null);
+
+        // Unsupported schemaVersion 99 fails closed
+        const unsupportedSchema = JSON.stringify({ schemaVersion: 99, activeFilter: {} });
+        const resUnsupported = prefService.saveUserPreference('001_proj_alpha', null, null, null, unsupportedSchema, null);
+        assert.strictEqual(resUnsupported.Filters_JSON__c, v2, 'Unsupported schemaVersion must fail closed');
+
+        // Ambiguous incoming (presets without schemaVersion) fails closed
+        const ambiguousIncoming = JSON.stringify({ presets: [{ id: 'x' }], activeFilter: {} });
+        const resAmbiguous = prefService.saveUserPreference('001_proj_alpha', null, null, null, ambiguousIncoming, null);
+        assert.strictEqual(resAmbiguous.Filters_JSON__c, v2, 'Ambiguous presets without schemaVersion must fail closed');
     });
 
     console.log('\n[Category 2: FEAT-DATA-02 User Annotations & Notes Tests]');

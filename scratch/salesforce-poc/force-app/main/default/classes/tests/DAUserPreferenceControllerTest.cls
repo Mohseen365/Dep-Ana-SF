@@ -270,25 +270,103 @@ private class DAUserPreferenceControllerTest {
     }
 
     @IsTest
-    static void testInputValidation_OversizedJson() {
+    static void testInputValidation_OversizedJson_R4Boundaries() {
         DA_Project__c proj = [SELECT Id FROM DA_Project__c WHERE Project_Key__c = 'PROJ_ALPHA' LIMIT 1];
-        String oversizedJson = '{"data":"' + 'x'.repeat(131070) + '"}';
+        String maxAllowedJson = '{"k":"' + 'x'.repeat(131064) + '"}'; // exactly 131,072 characters
+        String oversizedJson = '{"k":"' + 'x'.repeat(131065) + '"}'; // exactly 131,073 characters (first rejected boundary)
 
+        Test.startTest();
+
+        // 1. Positions_JSON__c: 131,072 accepted
+        DA_User_Preference__c pAccepted = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', maxAllowedJson, null, null);
+        Assert.areEqual(131072, pAccepted.Positions_JSON__c.length(), 'Positions_JSON__c must accept exactly 131,072 characters');
+
+        // 1. Positions_JSON__c: 131,073 rejected
         try {
-            Test.startTest();
-            DAUserPreferenceController.saveUserPreference(
-                proj.Id,
-                'VIEW',
-                'LAYOUT',
-                oversizedJson,
-                null,
-                null
-            );
-            Test.stopTest();
-            Assert.fail('Should have thrown exception for oversized positions JSON (>131072 chars)');
+            DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', oversizedJson, null, null);
+            Assert.fail('Should have thrown exception for oversized Positions JSON at 131,073 chars');
         } catch (AuraHandledException e) {
             Assert.isTrue(true);
         }
+
+        // 2. Filters_JSON__c: 131,072 accepted
+        DA_User_Preference__c fAccepted = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, maxAllowedJson, null);
+        Assert.areEqual(131072, fAccepted.Filters_JSON__c.length(), 'Filters_JSON__c must accept exactly 131,072 characters');
+
+        // 2. Filters_JSON__c: 131,073 rejected
+        try {
+            DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, oversizedJson, null);
+            Assert.fail('Should have thrown exception for oversized Filters JSON at 131,073 chars');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
+        }
+
+        // 3. Zoom_Pan_JSON__c: 131,072 accepted
+        DA_User_Preference__c zAccepted = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, null, maxAllowedJson);
+        Assert.areEqual(131072, zAccepted.Zoom_Pan_JSON__c.length(), 'Zoom_Pan_JSON__c must accept exactly 131,072 characters');
+
+        // 3. Zoom_Pan_JSON__c: 131,073 rejected
+        try {
+            DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, null, oversizedJson);
+            Assert.fail('Should have thrown exception for oversized Zoom/Pan JSON at 131,073 chars');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
+        }
+
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void testR1_MergeV1IntoV2Container_PreservesPresets() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c WHERE Project_Key__c = 'PROJ_ALPHA' LIMIT 1];
+        String initialV2 = '{"schemaVersion":2,"activePresetId":"p1","activeFilter":{"search":"Old"},"presets":[{"id":"p1","name":"P1"}]}';
+
+        Test.startTest();
+        // Seed V2 container
+        DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, initialV2, null);
+
+        // V1 write updates activeFilter
+        String incomingV1 = '{"search":"New","riskLevels":["HIGH"]}';
+        DA_User_Preference__c updated = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, incomingV1, null);
+
+        Test.stopTest();
+
+        Assert.isNotNull(updated.Filters_JSON__c);
+        Assert.isTrue(updated.Filters_JSON__c.contains('"schemaVersion":2'));
+        Assert.isTrue(updated.Filters_JSON__c.contains('"presets":[{"id":"p1","name":"P1"}]'), 'Presets must be preserved intact');
+        Assert.isTrue(updated.Filters_JSON__c.contains('"activePresetId":null'), 'Active preset ID must be reset to null on ad-hoc filter change');
+        Assert.isTrue(updated.Filters_JSON__c.contains('"search":"New"'), 'Active filter criteria must be updated');
+    }
+
+    @IsTest
+    static void testR1_MergeV1IntoV2Container_AtomicV2ReplacementAndFailClosed() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c WHERE Project_Key__c = 'PROJ_ALPHA' LIMIT 1];
+        String initialV2 = '{"schemaVersion":2,"activePresetId":"p1","activeFilter":{"search":"Old"},"presets":[{"id":"p1","name":"P1"}]}';
+        String replacedV2 = '{"schemaVersion":2,"activePresetId":"p2","activeFilter":{"search":"Replaced"},"presets":[{"id":"p2","name":"P2"}]}';
+
+        Test.startTest();
+        // Seed V2 container
+        DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, initialV2, null);
+
+        // Incoming V2 replaces atomically
+        DA_User_Preference__c replaced = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, replacedV2, null);
+        Assert.areEqual(replacedV2, replaced.Filters_JSON__c, 'V2 container replacement must be atomic');
+
+        // Unsupported schemaVersion 99 fails closed and preserves existing data
+        String badVersion = '{"schemaVersion":99,"activeFilter":{}}';
+        DA_User_Preference__c preservedBadVer = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, badVersion, null);
+        Assert.areEqual(replacedV2, preservedBadVer.Filters_JSON__c, 'Unsupported schema version must preserve existing stored data');
+
+        // Ambiguous incoming (presets without schemaVersion) fails closed
+        String ambiguous = '{"presets":[{"id":"x"}],"activeFilter":{}}';
+        DA_User_Preference__c preservedAmbiguous = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, ambiguous, null);
+        Assert.areEqual(replacedV2, preservedAmbiguous.Filters_JSON__c, 'Ambiguous payload must preserve existing stored data');
+
+        // Empty string clears Filters_JSON__c
+        DA_User_Preference__c cleared = DAUserPreferenceController.saveUserPreference(proj.Id, 'VIEW', 'LAYOUT', null, '', null);
+        Assert.areEqual('', cleared.Filters_JSON__c, 'Empty string should clear Filters_JSON__c');
+
+        Test.stopTest();
     }
 
     @IsTest
