@@ -5,8 +5,8 @@
 | **Document Type** | Governance Reconciliation & Decision Provenance Report |
 | **Target Feature** | Wave 4 — Decisions `DEC-W4-01` through `DEC-W4-04` & Technical Remediations R1–R4 |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-12874560060273924091-5d84f2b4` |
-| **HEAD Commit SHA** | `921b8c54fb61b5b18a2e92f9821b6c8cfb1bd683` |
+| **Current Branch** | `jules-13015635749368501739-7bab4f95` |
+| **HEAD Commit SHA** | `8bcdae35e7a4961d1517de8e40efac6b286d575a` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **GOVERNANCE RECONCILIATION COMPLETE — IMPLEMENTATION HOLD ACTIVE** |
 
