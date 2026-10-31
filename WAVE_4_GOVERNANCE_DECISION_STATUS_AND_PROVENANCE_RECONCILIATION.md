@@ -5,8 +5,8 @@
 | **Document Type** | Governance Reconciliation & Decision Provenance Report |
 | **Target Feature** | Wave 4 — Decisions `DEC-W4-01` through `DEC-W4-04` & Technical Remediations R1–R4 |
 | **Repository Root** | `/app` |
-| **Current Branch** | `jules-2662574214828896325-f3957679` |
-| **HEAD Commit SHA** | `e643416f0aac66f9d0ba231f2f5920fee4c95a5e` |
+| **Current Branch** | `jules-7952917717312102764-864e02d8` |
+| **HEAD Commit SHA** | `bf4b505f10c61f8c5c1cf2787e40004f118676f4` |
 | **Audit Date** | October 31, 2026 |
 | **Status** | **EXPLICIT HUMAN AUTHORIZATION RECORDED — ALL EIGHT ITEMS APPROVED (31 OCTOBER 2026)** |
 
@@ -92,9 +92,10 @@ To eliminate scope creep, the table below provides an exact change-by-change aut
 
 ## 6. Remediation Exception vs. Full Feature Dispatch
 
-The proposed technical remediations (R1–R4) fix baseline software defects:
-- **Limited Technical Remediation (R1–R4):** May be authorized independently by the designated approver roles via `WAVE_4_FINAL_HUMAN_AUTHORIZATION_GATE.md` without lifting the full feature implementation hold.
-- **Full Feature Parallel Dispatch (`DEC-W4-01` .. `DEC-W4-04`):** Governs main feature LWC development across Lanes A–F. Approving a technical remediation (e.g. R1) does NOT constitute authorization for full feature dispatch. All four feature decisions remain strictly **PENDING**.
+The proposed technical remediations (R1–R4) fix baseline software defects, while decisions (`DEC-W4-01` .. `DEC-W4-04`) govern feature architecture:
+- **Historical Context:** Prior to 31 October 2026, technical remediations (R1–R4) were held pending dual human approvals, and feature decisions (`DEC-W4-01` .. `DEC-W4-04`) remained pending separate product review.
+- **Current Authoritative Approval Status:** On 31 October 2026, the Project Owner explicitly approved all eight items (`R1` through `R4` and `DEC-W4-01` through `DEC-W4-04`).
+- **Sequenced Phasing Implementation Gate:** Although all eight items are approved, implementation is governed by strict phased dispatch rules: Phase 1 executes shared foundation and prerequisite remediations (R2 normalization, Lane B R1/R4 Apex persistence, Lane A shared filter schema), while full feature parallel dispatch (Lanes C, D, E, F) remains gated behind successful Phase 1 completion and Coordinator Integration Gate 1.
 
 ---
 

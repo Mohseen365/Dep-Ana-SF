@@ -7,9 +7,9 @@
 | **Target Feature** | Wave 4 — `FEAT-STATE-03`: Advanced Filters, Presets & Matrix / Findings Integration |
 | **Required Approver** | Lead Architect |
 | **Approval Status** | **APPROVED (OPTION A)** |
-| **Approver Name** | _______________________ |
-| **Approval Date** | _______________________ |
-| **Governance Classification** | `APPROVAL RECORDED IN REPOSITORY — UNDERLYING HUMAN PROVENANCE NOT INDEPENDENTLY VERIFIED` |
+| **Approver Name** | Project Owner (acting in Lead Architect capacity) |
+| **Approval Date** | 31 October 2026 |
+| **Governance Classification** | `EXPLICIT HUMAN AUTHORIZATION RECORDED IN REPOSITORY — CONVERSATION CONFIRMATION (31 OCTOBER 2026) — NOT CRYPTOGRAPHICALLY SIGNED` |
 
 ---
 
@@ -45,7 +45,9 @@ A single canonical filter state is owned by `daAppShell` and passed reactively t
 3. **View-Specific Field Translation:**
    - Each view translates canonical attributes into its local data structures via an explicit translation mapping layer.
 4. **Missing Data Behavior:**
-   - If a node or finding lacks a filtered attribute (e.g. `testCoverageStatus = null`), it is treated as `"UNTESTED"` or `"AMBIGUOUS"` based on explicit schema rules, ensuring deterministic evaluation.
+   - In strict alignment with the approved R2 coverage normalization contract (`WAVE_4_FINAL_COVERAGE_NORMALIZATION_CONTRACT.md`), missing, null, undefined, whitespace, or unrecognized coverage evidence deterministically normalizes to canonical `"UNKNOWN"`.
+   - Missing coverage evidence must never silently map to `"UNTESTED"` or `"AMBIGUOUS"`.
+   - Category B recognized unresolved signals (`likely-covered`, `failed`, `known-coverage-failure`) throw `UnresolvedCoverageEvidenceError` fail-closed in the exporter pipeline rather than normalizing to a canonical state.
 5. **Filtering versus Highlighting:**
    - **Graph View:** Filters hide non-matching nodes/edges entirely from view while retaining active selection highlight anchors.
    - **Matrix View:** Filters hide non-matching rows and columns or gray out non-matching matrix cells.
@@ -97,7 +99,7 @@ The following explicit mapping table governs how each canonical filter attribute
 | **`riskLevels`** | Array of string: `["HIGH", "MEDIUM", "LOW"]` | Filter against `node.risk`. Hides non-matching nodes. | Filter against source/target component risk level. Hides cells where neither endpoint matches. | Filter against Finding `risk` or impact rating. Hides non-matching findings. |
 | **`nodeTypes`** | Array of string: `["ApexClass", "ApexTrigger", "LWC", "Visualforce", "Flow", "CustomObject"]` | Filter against `node.type`. Hides non-matching nodes. | Filter against source and target component type. Hides non-matching rows/cols. | Filter against target component metadata type (`finding.componentType`). |
 | **`layers`** | Array of string: `["Controller", "Service", "Data", "UI", "Domain"]` | Filter against `node.layer` or `node.category`. | Filter against source/target component layer. | Filter against target component layer (`finding.layer`). |
-| **`testCoverageStatus`** | String enum: `"ALL"`, `"COVERED"`, `"UNTESTED"`, `"NO_TESTS"`, `"AMBIGUOUS"` | Filter against `node.refactoringReadiness.testCoverageStatus`. | Filter against source/target component test coverage. | **UNSUPPORTED** (Ignored by Findings view unless finding is explicitly tagged with coverage status). |
+| **`testCoverageStatus`** | Canonical Evidence States: `["COVERED", "UNTESTED", "AMBIGUOUS", "UNKNOWN"]`<br>*(UI Filter Options: `"ALL"`, `"COVERED"`, `"UNTESTED"`, `"AMBIGUOUS"`, `"UNKNOWN"`)* | Filter against `node.refactoringReadiness.testCoverageStatus`. (UI selection `"ALL"` matches all nodes; selection of a canonical state matches exactly that state; legacy UI tokens like `"NO_TESTS"` are treated as UI shortcuts for `"UNTESTED"` and are not canonical evidence states). | Filter against source/target component test coverage. | **UNSUPPORTED** (Ignored by Findings view unless finding is explicitly tagged with coverage status). |
 | **`findingsSeverity`** | Array of string: `["CRITICAL", "HIGH", "MEDIUM", "LOW"]` | **UNSUPPORTED** (Ignored by Graph view adapter). | **UNSUPPORTED** (Ignored by Matrix view adapter). | Filter against `finding.severity`. Hides non-matching finding rows. |
 | **`findingsStatus`** | Array of string: `["OPEN", "RESOLVED", "WAIVED"]` | **UNSUPPORTED** (Ignored by Graph view adapter). | **UNSUPPORTED** (Ignored by Matrix view adapter). | Filter against `finding.status`. Hides non-matching finding rows. |
 

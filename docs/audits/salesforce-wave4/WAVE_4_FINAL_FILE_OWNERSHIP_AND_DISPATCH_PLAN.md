@@ -56,27 +56,32 @@ To prevent merge conflicts, boundary leaks, or contract drift:
 ## 3. Implementation Phasing & Inter-Lane Dependency Order
 
 ```
-[Phase 1: Contract Baseline]
+[Phase 1: Shared Foundation & Remediations]
        |
-       +---> Lane A: Schema Publication (daFilterSchema.js)
+       +---> Workstream R2: Exporter Coverage Normalization (export-explorer.cjs)
        |
-[Phase 2: Core Persistence & UI Shell]
+       +---> Lane B: Apex Persistence & Boundaries (R1 Merge & R4 Boundaries - DAUserPreferenceController.cls)
+       |     (Dispatched exactly once in Phase 1)
        |
-       +---> Lane B: Apex Controller & Preset CRUD
+       +---> Lane A: Shared Filter Schema Foundation (daFilterSchema.js)
        |
-       +---> Lane C: App Shell Preset UI & Navigation
+       v
+[Coordinator Integration Gate 1: Foundation Qualification]
+  Coordinator integrates Lane A into daAppShell.js/html and verifies all baseline suites pass
        |
-[Phase 3: View-Specific Filter Consumers]
+       +--------------------+--------------------+--------------------+
+       |                    |                    |                    |
+       v                    v                    v                    v
+[Phase 2: Feature Lanes]
+  [Lane C: Preset UI]  [Lane D: Graph View] [Lane E: Matrix]     [Lane F: Findings]
+  (Parallel Dispatch)  (Parallel Dispatch)  (Parallel Dispatch)  (Parallel Dispatch)
+       |                    |                    |                    |
+       +--------------------+--------------------+--------------------+
+                                      |
+                                      v
+[Phase 3: Final Integration & Closure Audit]
        |
-       +---> Lane D: Graph Viewer Filter Integration
-       |
-       +---> Lane E: Matrix Viewer Component & Filtering
-       |
-       +---> Lane F: Findings Viewer Component & Filtering
-       |
-[Phase 4: Final Integration & Closure Audit]
-       |
-       +---> Integration Coordinator: Full Regression Gate (224 + Wave 4 Suite)
+       +---> Integration Coordinator: Full Regression Gate (224 Baseline + Wave 4 Suite)
 ```
 
 ---
