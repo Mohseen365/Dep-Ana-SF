@@ -27,9 +27,18 @@
                     </div>
                 </div>
 
-                <!-- Shared Controls & Project Selector (FEAT-SHELL-03) -->
+                <!-- Shared Controls: Project Selector & Preset Manager (FEAT-SHELL-03, DEC-W4-01, DEC-W4-03) -->
                 <div class="slds-page-header__col-controls">
                     <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control slds-m-right_small">
+                            <c-da-preset-manager
+                                project-id={activeProjectId}
+                                filter-container={scopedFilterContainer}
+                                active-filter={activeFilterCriteria}
+                                onfilterchange={handleFilterChange}
+                                oncontainerchange={handleContainerChange}>
+                            </c-da-preset-manager>
+                        </div>
                         <div class="slds-page-header__control">
                             <c-da-project-selector
                                 label="Active Project"
@@ -104,6 +113,7 @@
                                 <div class="slds-col slds-size_2-of-3">
                                     <c-da-graph-viewer
                                         record-id={activeProjectId}
+                                        filter-criteria={activeFilterCriteria}
                                         onnodeselect={handleNodeSelect}>
                                     </c-da-graph-viewer>
                                 </div>
@@ -126,35 +136,69 @@
                     </div>
                 </template>
 
-                <!-- Matrix View -->
+                <!-- Matrix View (Mounted via Phase 2C Integration) -->
                 <template if:true={isMatrixView}>
                     <div id="tab-matrix" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-matrix__item">
-                        <div class="slds-box slds-theme_default">
-                            <h2 class="slds-text-heading_medium slds-m-bottom_small">Dependency Matrix View</h2>
-                            <template if:true={activeProjectId}>
-                                <p class="slds-text-body_regular">Matrix view active for project: <strong>{displayProjectKey}</strong> ({activeProjectId}).</p>
-                                <p class="slds-text-color_weak slds-m-top_x-small">Structured relationship matrix projection enabled.</p>
+                        <template if:true={activeProjectId}>
+                            <template if:true={isLoadingGraph}>
+                                <lightning-spinner alternative-text="Loading graph data for Dependency Matrix..." size="medium"></lightning-spinner>
                             </template>
-                            <template if:false={activeProjectId}>
-                                <p class="slds-text-color_weak">No active project selected for Matrix View.</p>
+                            <template if:true={graphError}>
+                                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                                    <h2>{graphError}</h2>
+                                </div>
                             </template>
-                        </div>
+                            <template if:false={isLoadingGraph}>
+                                <template if:false={graphError}>
+                                    <c-da-matrix-view
+                                        project-id={activeProjectId}
+                                        graph-payload={activeGraphPayload}
+                                        filter-criteria={activeFilterCriteria}>
+                                    </c-da-matrix-view>
+                                </template>
+                            </template>
+                        </template>
+                        <template if:false={activeProjectId}>
+                            <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                <div class="slds-text-longform">
+                                    <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                    <p class="slds-text-body_regular">Please select a project from the dropdown header to display its dependency matrix.</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </template>
 
-                <!-- Findings View -->
+                <!-- Findings View (Mounted via Phase 2C Integration) -->
                 <template if:true={isFindingsView}>
                     <div id="tab-findings" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-findings__item">
-                        <div class="slds-box slds-theme_default">
-                            <h2 class="slds-text-heading_medium slds-m-bottom_small">Findings & Architectural Alerts</h2>
-                            <template if:true={activeProjectId}>
-                                <p class="slds-text-body_regular">Analysis findings for project: <strong>{displayProjectKey}</strong> ({activeProjectId}).</p>
-                                <p class="slds-text-color_weak slds-m-top_x-small">Architectural smells, cycle detections, and criticality flags.</p>
+                        <template if:true={activeProjectId}>
+                            <template if:true={isLoadingGraph}>
+                                <lightning-spinner alternative-text="Loading graph data for Findings & Alerts..." size="medium"></lightning-spinner>
                             </template>
-                            <template if:false={activeProjectId}>
-                                <p class="slds-text-color_weak">No active project selected for Findings View.</p>
+                            <template if:true={graphError}>
+                                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                                    <h2>{graphError}</h2>
+                                </div>
                             </template>
-                        </div>
+                            <template if:false={isLoadingGraph}>
+                                <template if:false={graphError}>
+                                    <c-da-findings-view
+                                        project-id={activeProjectId}
+                                        graph-payload={activeGraphPayload}
+                                        filter-criteria={activeFilterCriteria}>
+                                    </c-da-findings-view>
+                                </template>
+                            </template>
+                        </template>
+                        <template if:false={activeProjectId}>
+                            <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                <div class="slds-text-longform">
+                                    <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                    <p class="slds-text-body_regular">Please select a project from the dropdown header to display its findings and architectural alerts.</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </template>
             </div>

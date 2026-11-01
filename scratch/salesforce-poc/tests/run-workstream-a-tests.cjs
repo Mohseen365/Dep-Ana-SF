@@ -59,9 +59,12 @@ function createAppShellClass(mockApex = {}) {
     const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daAppShell.js');
     let code = fs.readFileSync(filePath, 'utf8');
 
-    code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]lwc['\"];?/, 'const {$1} = LwcMock;');
+    code = code.replace(/import\s+\{([^}]+)\}\s+from\s+['\"]lwc['\"];?/, (match, p1) => `const {${p1}} = LwcMock;`);
     code = code.replace(/import\s+getUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.getUserPreference['\"];?/, 'const getUserPreference = (params) => (mockApex.getUserPreference ? mockApex.getUserPreference(params) : Promise.resolve(null));');
     code = code.replace(/import\s+saveUserPreference\s+from\s+['\"]@salesforce\/apex\/DAUserPreferenceController\.saveUserPreference['\"];?/, 'const saveUserPreference = (params) => (mockApex.saveUserPreference ? mockApex.saveUserPreference(params) : Promise.resolve(result => mockApex.saveUserPreference(params)));');
+    code = code.replace(/import\s+getLatestGraphMetadataForProject\s+from\s+['\"]@salesforce\/apex\/DAGraphController\.getLatestGraphMetadataForProject['\"];?/, 'const getLatestGraphMetadataForProject = () => Promise.resolve(null);');
+    code = code.replace(/import\s+getGraphChunks\s+from\s+['\"]@salesforce\/apex\/DAGraphController\.getGraphChunks['\"];?/, 'const getGraphChunks = () => Promise.resolve([]);');
+    code = code.replace(/import\s+\{[\s\S]*?\}\s+from\s+['\"]c\/daGraphPayloadLoader['\"];?/, 'const reassembleChunks = () => "", validatePayloadIntegrity = () => false, verifyChunkSequence = () => true;');
     code = code.replace(/import\s+\{([\s\S]*?)\}\s+from\s+['\"]\.\/daFilterSchema\.js['\"];?/, (match, imports) => {
         return `const {${imports}} = filterSchemaModule;`;
     });
