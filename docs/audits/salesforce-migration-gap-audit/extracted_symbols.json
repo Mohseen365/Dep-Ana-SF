@@ -1,0 +1,6528 @@
+{
+  "fileResults": [
+    {
+      "file": "src/App.tsx",
+      "category": "Utility",
+      "exportsCount": 5,
+      "exports": [
+        "CheckIsNotAnalyzedParams",
+        "isNotAnalyzed",
+        "checkIsNotAnalyzed",
+        "NotAnalyzedScreen",
+        "App"
+      ]
+    },
+    {
+      "file": "src/components/AnalysisHistoryPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "AnalysisHistoryPanelProps",
+        "AnalysisHistoryPanel"
+      ]
+    },
+    {
+      "file": "src/components/ArchitectureDNABarcode.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "ArchitectureDNABarcodeProps",
+        "ArchitectureDNABarcode"
+      ]
+    },
+    {
+      "file": "src/components/ArchitectureTreemapPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "TreemapColorScheme",
+        "ArchitectureTreemapPanelProps",
+        "ArchitectureTreemapPanel"
+      ]
+    },
+    {
+      "file": "src/components/Breadcrumbs.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "BreadcrumbItem",
+        "BreadcrumbsProps",
+        "Breadcrumbs"
+      ]
+    },
+    {
+      "file": "src/components/CommandPalette.tsx",
+      "category": "UI Component",
+      "exportsCount": 4,
+      "exports": [
+        "PalettePanelId",
+        "CommandEntry",
+        "CommandPaletteProps",
+        "CommandPalette"
+      ]
+    },
+    {
+      "file": "src/components/ComparePanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "ComparePanelProps",
+        "ComparePanel"
+      ]
+    },
+    {
+      "file": "src/components/ConnectionControls.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "ConnectionControlsState",
+        "ConnectionControlsProps",
+        "ConnectionControls"
+      ]
+    },
+    {
+      "file": "src/components/CouplingHeatmapPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "HeatmapMetricMode",
+        "CouplingHeatmapPanelProps",
+        "CouplingHeatmapPanel"
+      ]
+    },
+    {
+      "file": "src/components/DependencyConstellationPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "DependencyConstellationPanelProps",
+        "DependencyConstellationPanel"
+      ]
+    },
+    {
+      "file": "src/components/DependencyRiverPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "DependencyRiverPanelProps",
+        "DependencyRiverPanel"
+      ]
+    },
+    {
+      "file": "src/components/DiagnosticsPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "DiagnosticsPanelProps",
+        "DiagnosticsPanel"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "ErrorBoundary"
+      ]
+    },
+    {
+      "file": "src/components/FeatureMatrixPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "FeatureMatrixPanelProps",
+        "FeatureMatrixPanel"
+      ]
+    },
+    {
+      "file": "src/components/FeatureProfilePanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "FeatureProfilePanelProps",
+        "FeatureProfilePanel"
+      ]
+    },
+    {
+      "file": "src/components/FeatureTreePanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "FeatureTreePanelProps",
+        "FeatureTreePanel"
+      ]
+    },
+    {
+      "file": "src/components/FindingsPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "FindingsPanelProps",
+        "StatusFilterOption",
+        "FindingsPanel"
+      ]
+    },
+    {
+      "file": "src/components/FocusControls.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "FocusControls"
+      ]
+    },
+    {
+      "file": "src/components/FourDirectionPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "FourDirectionPanelProps",
+        "FourDirectionPanel"
+      ]
+    },
+    {
+      "file": "src/components/GraphControls.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "GraphControlsProps",
+        "GraphControls"
+      ]
+    },
+    {
+      "file": "src/components/GraphLegend.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "GraphLegend"
+      ]
+    },
+    {
+      "file": "src/components/GraphSlot.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "GraphSlot"
+      ]
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "category": "UI Component",
+      "exportsCount": 6,
+      "exports": [
+        "setCorrelationToken",
+        "peekCorrelationToken",
+        "getCorrelationToken",
+        "GraphViewProps",
+        "GraphViewRef",
+        "GraphView"
+      ]
+    },
+    {
+      "file": "src/components/Header.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "HeaderProps",
+        "Header"
+      ]
+    },
+    {
+      "file": "src/components/HealthSummary.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "HealthSummary"
+      ]
+    },
+    {
+      "file": "src/components/HotspotPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "HotspotPanel"
+      ]
+    },
+    {
+      "file": "src/components/ImpactControls.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "ImpactControls"
+      ]
+    },
+    {
+      "file": "src/components/InvestigationDrawer.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "InvestigationDrawerProps",
+        "DrawerTab",
+        "InvestigationDrawer"
+      ]
+    },
+    {
+      "file": "src/components/KeyboardShortcutsModal.tsx",
+      "category": "UI Component",
+      "exportsCount": 4,
+      "exports": [
+        "KeyboardShortcutsModalProps",
+        "ShortcutGroup",
+        "WORKING_SHORTCUTS",
+        "KeyboardShortcutsModal"
+      ]
+    },
+    {
+      "file": "src/components/ProjectCreationModal.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "ProjectCreationModal"
+      ]
+    },
+    {
+      "file": "src/components/ProjectDashboard.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "ProjectDashboardProps",
+        "ProjectDashboard"
+      ]
+    },
+    {
+      "file": "src/components/ProjectManager.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "ProjectManagerProps",
+        "ProjectManager"
+      ]
+    },
+    {
+      "file": "src/components/ProjectSelector.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "ProjectSelectorProps",
+        "ProjectSelector"
+      ]
+    },
+    {
+      "file": "src/components/RadarPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "RadarPanelProps",
+        "getVisualNormalizedValue",
+        "RadarPanel"
+      ]
+    },
+    {
+      "file": "src/components/RefactorHandoffModal.tsx",
+      "category": "UI Component",
+      "exportsCount": 4,
+      "exports": [
+        "RefactorHandoffModalProps",
+        "RefactorHandoffModal",
+        "RefactorHandoffHarnessProps",
+        "RefactorHandoffHarness"
+      ]
+    },
+    {
+      "file": "src/components/RefactoringSimulationPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "RefactoringSimulationPanel"
+      ]
+    },
+    {
+      "file": "src/components/SearchFilterPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 3,
+      "exports": [
+        "QuickFilterPreset",
+        "SortOption",
+        "SearchFilterPanel"
+      ]
+    },
+    {
+      "file": "src/components/Sidebar.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "Sidebar"
+      ]
+    },
+    {
+      "file": "src/components/StatusBar.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "StatusBar"
+      ]
+    },
+    {
+      "file": "src/components/SubwayPanel.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "SubwayPanelProps",
+        "SubwayPanel"
+      ]
+    },
+    {
+      "file": "src/components/SummaryBar.tsx",
+      "category": "UI Component",
+      "exportsCount": 1,
+      "exports": [
+        "SummaryBar"
+      ]
+    },
+    {
+      "file": "src/components/ViewModeSwitcher.tsx",
+      "category": "UI Component",
+      "exportsCount": 2,
+      "exports": [
+        "ViewModeSwitcherProps",
+        "ViewModeSwitcher"
+      ]
+    },
+    {
+      "file": "src/components/findings/FindingsPanel.tsx",
+      "category": "Findings Component",
+      "exportsCount": 5,
+      "exports": [
+        "FindingsPanelProps",
+        "StatusFilterOption",
+        "getWhyItMatters",
+        "getWhatToDoNext",
+        "FindingsPanel"
+      ]
+    },
+    {
+      "file": "src/components/findings/findings.css",
+      "category": "Findings Component",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/components/graph-internals/EdgeHoverCard.tsx",
+      "category": "Graph Internal Component",
+      "exportsCount": 2,
+      "exports": [
+        "EdgeHoverCardProps",
+        "EdgeHoverCard"
+      ]
+    },
+    {
+      "file": "src/components/graph-internals/FeatureOverlayCanvas.tsx",
+      "category": "Graph Internal Component",
+      "exportsCount": 2,
+      "exports": [
+        "FeatureOverlayCanvasProps",
+        "FeatureOverlayCanvas"
+      ]
+    },
+    {
+      "file": "src/components/graph-internals/GraphErrorBoundary.tsx",
+      "category": "Graph Internal Component",
+      "exportsCount": 1,
+      "exports": [
+        "GraphErrorBoundary"
+      ]
+    },
+    {
+      "file": "src/components/graph-internals/NodeHoverCard.tsx",
+      "category": "Graph Internal Component",
+      "exportsCount": 2,
+      "exports": [
+        "NodeHoverCardProps",
+        "NodeHoverCard"
+      ]
+    },
+    {
+      "file": "src/components/graph-internals/graph.css",
+      "category": "Graph Internal Component",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/components/panels/panels.css",
+      "category": "Panel Component",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/components/workspace/ActiveWorkspaceRenderer.tsx",
+      "category": "Workspace Component",
+      "exportsCount": 2,
+      "exports": [
+        "ActiveWorkspaceRendererProps",
+        "ActiveWorkspaceRenderer"
+      ]
+    },
+    {
+      "file": "src/components/workspace/WorkspaceHeader.tsx",
+      "category": "Workspace Component",
+      "exportsCount": 2,
+      "exports": [
+        "WorkspaceHeaderProps",
+        "WorkspaceHeader"
+      ]
+    },
+    {
+      "file": "src/components/workspace/WorkspaceShell.tsx",
+      "category": "Workspace Component",
+      "exportsCount": 2,
+      "exports": [
+        "WorkspaceShellProps",
+        "WorkspaceShell"
+      ]
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "category": "Context Provider / State",
+      "exportsCount": 11,
+      "exports": [
+        "DrawerTab",
+        "DrawerState",
+        "InvestigationState",
+        "InvestigationAction",
+        "initialInvestigationState",
+        "investigationReducer",
+        "InvestigationContextValue",
+        "InvestigationProviderProps",
+        "InvestigationProvider",
+        "useInvestigationOptional",
+        "useInvestigation"
+      ]
+    },
+    {
+      "file": "src/context/ProjectContext.tsx",
+      "category": "Context Provider / State",
+      "exportsCount": 5,
+      "exports": [
+        "ProjectContextValue",
+        "DEFAULT_PROJECT",
+        "ProjectProvider",
+        "useProjectOptional",
+        "useProject"
+      ]
+    },
+    {
+      "file": "src/context/ProjectStateContext.tsx",
+      "category": "Context Provider / State",
+      "exportsCount": 4,
+      "exports": [
+        "ProjectStateContextValue",
+        "ProjectStateProviderProps",
+        "ProjectStateProvider",
+        "useProjectState"
+      ]
+    },
+    {
+      "file": "src/context/SelectionContext.tsx",
+      "category": "Context Provider / State",
+      "exportsCount": 3,
+      "exports": [
+        "SelectionProviderProps",
+        "SelectionProvider",
+        "useSelection"
+      ]
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "category": "Context Provider / State",
+      "exportsCount": 6,
+      "exports": [
+        "WorkspaceRouterState",
+        "WorkspaceRouterContextValue",
+        "WorkspaceRouterProviderProps",
+        "WorkspaceRouterProvider",
+        "useWorkspaceRouterOptional",
+        "useWorkspaceRouter"
+      ]
+    },
+    {
+      "file": "src/detached.tsx",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/hooks/useCommandPalette.ts",
+      "category": "React Hook",
+      "exportsCount": 3,
+      "exports": [
+        "CommandItem",
+        "UseCommandPaletteReturn",
+        "useCommandPalette"
+      ]
+    },
+    {
+      "file": "src/hooks/useCompareState.ts",
+      "category": "React Hook",
+      "exportsCount": 2,
+      "exports": [
+        "UseCompareStateReturn",
+        "useCompareState"
+      ]
+    },
+    {
+      "file": "src/hooks/useDebouncedValue.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "useDebouncedValue"
+      ]
+    },
+    {
+      "file": "src/hooks/useEvent.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "useEvent"
+      ]
+    },
+    {
+      "file": "src/hooks/useExplorerData.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "useExplorerData"
+      ]
+    },
+    {
+      "file": "src/hooks/useGraphSelection.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "useGraphSelection"
+      ]
+    },
+    {
+      "file": "src/hooks/useNavigationHistory.ts",
+      "category": "React Hook",
+      "exportsCount": 2,
+      "exports": [
+        "NavigationHistoryReturn",
+        "useNavigationHistory"
+      ]
+    },
+    {
+      "file": "src/hooks/usePrefersReducedMotion.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "usePrefersReducedMotion"
+      ]
+    },
+    {
+      "file": "src/hooks/useUserPreferences.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "useUserPreferences"
+      ]
+    },
+    {
+      "file": "src/hooks/useViewState.ts",
+      "category": "React Hook",
+      "exportsCount": 1,
+      "exports": [
+        "useViewState"
+      ]
+    },
+    {
+      "file": "src/hooks/useViewportSize.ts",
+      "category": "React Hook",
+      "exportsCount": 2,
+      "exports": [
+        "ViewportSize",
+        "useViewportSize"
+      ]
+    },
+    {
+      "file": "src/index.css",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 11,
+      "exports": [
+        "CONTRACTED_INNER_SUN_IDS",
+        "CONTRACTED_OUTER_SUN_IDS",
+        "CONTRACTED_14_SUN_IDS",
+        "ComponentConstellationRoleSymbol",
+        "ComponentConstellationNode",
+        "ComponentConstellationEdgeProvenance",
+        "ComponentConstellationEdge",
+        "ComponentConstellationSummary",
+        "ComponentConstellationAdapterOptions",
+        "ComponentConstellationProjection",
+        "adaptComponentConstellation"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 11,
+      "exports": [
+        "ComponentOrbitRoleSymbol",
+        "ComponentOrbitNode",
+        "ComponentOrbitEdgeProvenance",
+        "ComponentOrbitEdge",
+        "ComponentOrbitRing",
+        "ComponentOrbitSummary",
+        "ComponentOrbitAvailableSun",
+        "ComponentOrbitAdapterOptions",
+        "ComponentOrbitProjection",
+        "DEFAULT_COMPONENT_ORBIT_EDGE_TYPES",
+        "adaptComponentOrbit"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 10,
+      "exports": [
+        "ConstellationFocalNode",
+        "ConstellationNode",
+        "ConstellationEdgeProvenance",
+        "ConstellationEdge",
+        "ConstellationRing",
+        "ConstellationSummary",
+        "ConstellationAvailableNode",
+        "ConstellationData",
+        "ConstellationAdapterOptions",
+        "adaptConstellation"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 6,
+      "exports": [
+        "DnaBand",
+        "ComponentDna",
+        "DnaSummary",
+        "ArchitectureDnaData",
+        "DnaAdapterOptions",
+        "adaptArchitectureDna"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 9,
+      "exports": [
+        "CardinalDirection",
+        "FourDirectionSubject",
+        "FourDirectionEdgeInfo",
+        "FourDirectionItem",
+        "FourDirectionQuadrant",
+        "FourDirectionSummary",
+        "FourDirectionData",
+        "FourDirectionAdapterOptions",
+        "adaptFourDirectionView"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 6,
+      "exports": [
+        "MatrixAdapterOptions",
+        "FeatureMatrixHeader",
+        "FeatureMatrixCell",
+        "FeatureMatrixSummary",
+        "FeatureMatrixData",
+        "adaptFeatureMatrix"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/profile-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 5,
+      "exports": [
+        "ComponentProfile",
+        "ComponentProfileSummary",
+        "ComponentProfileData",
+        "ProfileAdapterOptions",
+        "adaptComponentProfile"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 6,
+      "exports": [
+        "RadarDimension",
+        "RadarSummary",
+        "MissingPrimitiveInfo",
+        "RadarData",
+        "RadarAdapterOptions",
+        "adaptRadarDimensions"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 8,
+      "exports": [
+        "SankeyAdapterOptions",
+        "SankeyEdgeProvenance",
+        "SankeyNode",
+        "SankeyFlow",
+        "SankeyStage",
+        "SankeySummary",
+        "SankeyAdapterData",
+        "adaptSankeyRiver"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 8,
+      "exports": [
+        "SubwayStation",
+        "SubwayLine",
+        "SubwayRouteSegment",
+        "SubwaySummary",
+        "SubwayMapData",
+        "SubwayAdapterOptions",
+        "generateSubwayRoutePath",
+        "adaptSubwayMap"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 6,
+      "exports": [
+        "FeatureTreeNodeType",
+        "FeatureTreeNode",
+        "FeatureTreeSummary",
+        "FeatureTreeData",
+        "TreeAdapterOptions",
+        "adaptFeatureTree"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "category": "Adapter",
+      "exportsCount": 8,
+      "exports": [
+        "TreemapNodeType",
+        "TreemapMetricMode",
+        "TreemapNodeMetrics",
+        "TreemapNode",
+        "TreemapSummary",
+        "TreemapData",
+        "TreemapAdapterOptions",
+        "adaptTreemap"
+      ]
+    },
+    {
+      "file": "src/lib/adapters/treemap-layout.ts",
+      "category": "Adapter",
+      "exportsCount": 3,
+      "exports": [
+        "TreemapRect",
+        "LayoutTreemapOptions",
+        "computeTreemapLayout"
+      ]
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "category": "Utility",
+      "exportsCount": 17,
+      "exports": [
+        "ReviewStatus",
+        "FindingReviewMetadata",
+        "Annotation",
+        "FindingReviewItem",
+        "AddAnnotationOptions",
+        "addAnnotation",
+        "getAnnotationsForNode",
+        "getAllAnnotations",
+        "deleteAnnotation",
+        "resolve",
+        "reopen",
+        "setInReview",
+        "getUnresolved",
+        "getResolved",
+        "resolveFinding",
+        "setFindingInReview",
+        "formatFindingReviewItem"
+      ]
+    },
+    {
+      "file": "src/lib/architecture-layout.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "ArchitectureLayoutOptions",
+        "ArchitectureLayoutResultWithMetadata",
+        "computeArchitectureLayout",
+        "computeArchitectureLayoutWithMetadata"
+      ]
+    },
+    {
+      "file": "src/lib/boolean-utils.ts",
+      "category": "Utility",
+      "exportsCount": 1,
+      "exports": [
+        "toBool"
+      ]
+    },
+    {
+      "file": "src/lib/canvas-lod.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "CanvasLODLevel",
+        "CanvasLODParams",
+        "CanvasLODConfig",
+        "computeCanvasLODLevel"
+      ]
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "category": "Utility",
+      "exportsCount": 7,
+      "exports": [
+        "SimulationChangeType",
+        "BlastRadiusLevel",
+        "ChangeTypeOption",
+        "CHANGE_TYPE_OPTIONS",
+        "SimulationResult",
+        "classifyBlastRadius",
+        "simulateChange"
+      ]
+    },
+    {
+      "file": "src/lib/connection-analysis.ts",
+      "category": "Utility",
+      "exportsCount": 5,
+      "exports": [
+        "ConnectionAnalysisOptions",
+        "ConnectionPathStep",
+        "ConnectionPath",
+        "ConnectionAnalysis",
+        "analyzeConnections"
+      ]
+    },
+    {
+      "file": "src/lib/detached-drawer.ts",
+      "category": "Utility",
+      "exportsCount": 5,
+      "exports": [
+        "CHANNEL_NAME",
+        "openDetachedWindow",
+        "createChannel",
+        "broadcastNodeChange",
+        "onDetachedDrill"
+      ]
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "category": "Utility",
+      "exportsCount": 15,
+      "exports": [
+        "diffSnapshots",
+        "DiffNodeState",
+        "DiffEdgeState",
+        "DiffNodeChangeProperty",
+        "DiffNodeChange",
+        "DiffNodeItem",
+        "DiffEdgeItem",
+        "DiffCycleItem",
+        "DiffUnresolvedRef",
+        "DiffSummary",
+        "DiffResult",
+        "DiffOverlayNode",
+        "DiffOverlayEdge",
+        "DiffOverlayGraph",
+        "buildDiffOverlayGraph"
+      ]
+    },
+    {
+      "file": "src/lib/drill.ts",
+      "category": "Utility",
+      "exportsCount": 2,
+      "exports": [
+        "rankDependents",
+        "rankDependencies"
+      ]
+    },
+    {
+      "file": "src/lib/export-graph.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "ExportGraphOptions",
+        "generateExportFilename",
+        "exportGraphAsPNG",
+        "exportGraphAsSVG"
+      ]
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "category": "Utility",
+      "exportsCount": 8,
+      "exports": [
+        "FocusDirection",
+        "FocusDepth",
+        "FocusState",
+        "FocusedGraphData",
+        "computeFocusedGraph",
+        "hasConnections",
+        "createEmptyFocusState",
+        "isFocusActive"
+      ]
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "category": "Utility",
+      "exportsCount": 6,
+      "exports": [
+        "GraphNodeData",
+        "GraphEdgeData",
+        "getFindingStatsForNode",
+        "buildGraphElements",
+        "createNodeMap",
+        "getNodeById"
+      ]
+    },
+    {
+      "file": "src/lib/graph-depth.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "GraphDepthDirection",
+        "GraphDepthOptions",
+        "GraphDepthResult",
+        "computeGraphDepths"
+      ]
+    },
+    {
+      "file": "src/lib/graph-diff.ts",
+      "category": "Utility",
+      "exportsCount": 2,
+      "exports": [
+        "GraphDiffResult",
+        "computeGraphDiff"
+      ]
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "category": "Utility",
+      "exportsCount": 22,
+      "exports": [
+        "InteractionCallbacks",
+        "bindGraphInteractions",
+        "fitToScreen",
+        "centerGraph",
+        "zoomToFit",
+        "getSelectedNodes",
+        "selectNode",
+        "deselectAll",
+        "highlightNodeConnections",
+        "clearHighlights",
+        "highlightCycle",
+        "clearCycleHighlight",
+        "findShortestPath",
+        "highlightPath",
+        "panToNode",
+        "zoomGraph",
+        "zoomIn",
+        "zoomOut",
+        "setMouseWheelZoom",
+        "setPanning",
+        "setBoxSelection",
+        "focusOnNode"
+      ]
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "category": "Utility",
+      "exportsCount": 9,
+      "exports": [
+        "globalWorkerClient",
+        "GraphLayoutOptions",
+        "extractNodesAndEdgesFromCy",
+        "getLayoutOptions",
+        "LAYOUT_PRESETS",
+        "createLayout",
+        "runLayout",
+        "runLayoutWithMetadata",
+        "runLayoutWithMetadataInner"
+      ]
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "category": "Utility",
+      "exportsCount": 6,
+      "exports": [
+        "NodeShape",
+        "APEX_TEST_CLASS_SHAPE",
+        "NODE_SHAPE_BY_TYPE",
+        "getNodeShape",
+        "GraphStyleOptions",
+        "getGraphStyles"
+      ]
+    },
+    {
+      "file": "src/lib/health.ts",
+      "category": "Utility",
+      "exportsCount": 3,
+      "exports": [
+        "HealthLevel",
+        "ArchitectureHealth",
+        "calculateArchitectureHealth"
+      ]
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "category": "Utility",
+      "exportsCount": 6,
+      "exports": [
+        "FocusDirection",
+        "HighlightState",
+        "OWNED_VISUAL_CLASSES",
+        "isOwnedVisualClass",
+        "deriveVisualClasses",
+        "applyHighlightState"
+      ]
+    },
+    {
+      "file": "src/lib/hotspots.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "HotspotItem",
+        "CategorizedHotspots",
+        "sortNodesDeterministically",
+        "getArchitecturalHotspots"
+      ]
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "category": "Utility",
+      "exportsCount": 8,
+      "exports": [
+        "ImpactDepth",
+        "ImpactState",
+        "ImpactMetrics",
+        "ImpactAnalysisResult",
+        "createEmptyImpactState",
+        "isImpactActive",
+        "getAffectedNodesIn",
+        "computeImpactAnalysis"
+      ]
+    },
+    {
+      "file": "src/lib/index.ts",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/lib/intelligence/context.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 3,
+      "exports": [
+        "deepFreeze",
+        "buildArchitectureIndexes",
+        "createArchitectureContext"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/finding.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 2,
+      "exports": [
+        "CreateFindingParams",
+        "createFinding"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/index.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/lib/intelligence/rules/callout-in-trigger.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "calloutInTriggerRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/cycle-detected.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "cycleDetectedRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/high-fan-in-hub.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "highFanInHubRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/index.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 2,
+      "exports": [
+        "ALL_RULES",
+        "runAllRules"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/shared-state-risk.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "sharedStateRiskRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/sobject-no-crud-check.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "sobjectNoCrudCheckRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/test-missing-for-hub.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "testMissingForHubRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/types.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "Rule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/rules/unresolved-ref.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 1,
+      "exports": [
+        "unresolvedRefRule"
+      ]
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "category": "Rule / Intelligence",
+      "exportsCount": 11,
+      "exports": [
+        "ImmutableMap",
+        "FindingSeverity",
+        "ProvenanceOriginType",
+        "FindingEvidenceItem",
+        "FindingProvenance",
+        "RuleIdentity",
+        "ArchitectureFinding",
+        "IntelligenceConfig",
+        "DEFAULT_INTELLIGENCE_CONFIG",
+        "ArchitectureIndexes",
+        "ArchitectureContext"
+      ]
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "category": "Layout Engine",
+      "exportsCount": 8,
+      "exports": [
+        "isTestNode",
+        "isFieldNode",
+        "findParentProductionNodeId",
+        "findParentObjectId",
+        "computeNodeBridgeMetrics",
+        "computeArchitectureAnalysis",
+        "applyLayerClassification",
+        "applyDomainClassification"
+      ]
+    },
+    {
+      "file": "src/lib/layout/arch-mode.ts",
+      "category": "Layout Engine",
+      "exportsCount": 4,
+      "exports": [
+        "ARCH_MODE_ORDER",
+        "getNextArchMode",
+        "ArchModeMetaItem",
+        "ARCH_MODE_META"
+      ]
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "category": "Layout Engine",
+      "exportsCount": 16,
+      "exports": [
+        "NodeSpatialRole",
+        "HubType",
+        "NodeCentralityAnalysis",
+        "BridgeExhaustionTelemetry",
+        "BridgePlacementInfo",
+        "HubPlacementInfo",
+        "CentralityOptions",
+        "clearBridgeAllocations",
+        "getPlacementExhaustionRecords",
+        "computeNodeHubMetrics",
+        "computeNodeBridgeAnalysis",
+        "computeGraphCentralityAnalysis",
+        "calculateBridgeCandidatePosition",
+        "calculateHubCandidatePosition",
+        "ConceptualNodeCategory",
+        "classifyNodeConceptualCategory"
+      ]
+    },
+    {
+      "file": "src/lib/layout/compare.ts",
+      "category": "Layout Engine",
+      "exportsCount": 2,
+      "exports": [
+        "stableCompareStrings",
+        "stableCompareByProperty"
+      ]
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 7,
+      "exports": [
+        "ComponentConstellationLayoutOptions",
+        "ComponentConstellationNodePosition",
+        "ComponentConstellationGuideRing",
+        "ComponentConstellationGuideMetadata",
+        "ComponentConstellationDiagnostics",
+        "ComponentConstellationLayoutOutput",
+        "computeComponentConstellationLayout"
+      ]
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 7,
+      "exports": [
+        "ComponentOrbitLayoutOptions",
+        "ComponentOrbitNodePosition",
+        "ComponentOrbitGuideRing",
+        "ComponentOrbitGuideMetadata",
+        "ComponentOrbitDiagnostics",
+        "ComponentOrbitLayoutOutput",
+        "computeComponentOrbitLayout"
+      ]
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "category": "Layout Engine",
+      "exportsCount": 9,
+      "exports": [
+        "ComponentRectangle",
+        "ComponentLocalLayout",
+        "ComponentPackingOptions",
+        "PlacedComponent",
+        "PackedLayoutResult",
+        "compareComponents",
+        "packComponents",
+        "calculateLocalComponentBounds",
+        "packComponentPositions"
+      ]
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 6,
+      "exports": [
+        "ConstellationLayoutNodePosition",
+        "ConstellationLayoutEdgePath",
+        "ConstellationLayoutRingGeometry",
+        "ConstellationLayoutResult",
+        "ConstellationLayoutOptions",
+        "computeConstellationLayout"
+      ]
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "category": "Layout Engine",
+      "exportsCount": 10,
+      "exports": [
+        "DomainConfidence",
+        "DomainAssignment",
+        "DomainDiscoveryResult",
+        "extractDomainStem",
+        "extractDomainFromPath",
+        "isTestNode",
+        "findProductionTarget",
+        "findParentObject",
+        "discoverDomains",
+        "classifyNodeDomain"
+      ]
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 8,
+      "exports": [
+        "CrossingEdgePair",
+        "LayerViolationEdge",
+        "SatelliteLocalityResult",
+        "EvaluatedLayoutMetrics",
+        "LayoutMetricsComparison",
+        "evaluateSatelliteLocality",
+        "evaluateLayout",
+        "compareLayoutMetrics"
+      ]
+    },
+    {
+      "file": "src/lib/layout/feature-composition.ts",
+      "category": "Layout Engine",
+      "exportsCount": 4,
+      "exports": [
+        "RectBounds",
+        "FeatureCompositionGroup",
+        "DeriveCompositionGroupOptions",
+        "deriveFeatureCompositionGroups"
+      ]
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "category": "Layout Engine",
+      "exportsCount": 12,
+      "exports": [
+        "EvidenceType",
+        "FeatureEvidence",
+        "FeatureMembershipEvidence",
+        "SeparationMarginDiagnostic",
+        "FeatureAnchorVisibilityDiagnostic",
+        "FeatureDensityDiagnostic",
+        "FeatureDiagnosticReport",
+        "getFeatureMembershipEvidence",
+        "computeSeparationMarginDiagnostics",
+        "computeFeatureAnchorVisibilityDiagnostics",
+        "computeFeatureDensityDiagnostics",
+        "generateFeatureDiagnosticReport"
+      ]
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "category": "Layout Engine",
+      "exportsCount": 15,
+      "exports": [
+        "FeatureOrderingStrategy",
+        "FeatureDependencyMatrix",
+        "Feature2DPlacement",
+        "Feature2DBandMetrics",
+        "Feature2DBandAssignmentResult",
+        "buildFeatureDependencyMatrix",
+        "orderStrategyA_Discovery",
+        "orderStrategyB_WeightedBarycenter",
+        "orderStrategyC_WeightedMedian",
+        "orderStrategyD_BarycentricSweeps",
+        "orderStrategyE_DomainAware",
+        "orderStrategyF_SharedHierarchyAware",
+        "compute2DFeatureBandOrdering",
+        "assignFeature2DBands",
+        "determineGlobalFeatureOrder"
+      ]
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "category": "Layout Engine",
+      "exportsCount": 6,
+      "exports": [
+        "FeatureRole",
+        "FeatureRoleContext",
+        "isSharedInfrastructure",
+        "isFeatureSeedCandidate",
+        "classifyFeatureRole",
+        "classifyAllFeatureRoles"
+      ]
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "category": "Layout Engine",
+      "exportsCount": 7,
+      "exports": [
+        "FeatureCluster",
+        "FeatureAssignment",
+        "FeatureDiscoveryResult",
+        "SemanticCohesionDiagnostics",
+        "FeatureDiscoveryOptions",
+        "discoverFeatures",
+        "calculateSemanticFeatureCohesion"
+      ]
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 19,
+      "exports": [
+        "DomainRelationship",
+        "DomainNode",
+        "FeatureRegion",
+        "GlobalFeatureLayoutOptions",
+        "GlobalFeatureLayoutResult",
+        "DomainGraph",
+        "DomainRegion",
+        "GlobalLayoutOptions",
+        "GlobalLayoutResult",
+        "DEFAULT_FEATURE_LAYER_SPACING",
+        "LAYER_Y_MAP",
+        "calculatePrimaryLayerRowCounts",
+        "DynamicLayerYResult",
+        "computeFeatureLayerYMap",
+        "computeDynamicLayerYMap",
+        "buildDomainGraph",
+        "determineGlobalDomainOrder",
+        "computeGlobalDomainLayout",
+        "computeGlobalFeatureLayout"
+      ]
+    },
+    {
+      "file": "src/lib/layout/graph-index.ts",
+      "category": "Layout Engine",
+      "exportsCount": 2,
+      "exports": [
+        "LayoutGraphIndex",
+        "createLayoutGraphIndex"
+      ]
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "category": "Layout Engine",
+      "exportsCount": 6,
+      "exports": [
+        "ArchitectureLayer",
+        "LayerClassificationContext",
+        "LayerClassificationResult",
+        "isTestNode",
+        "classifyNodeLayer",
+        "classifyNodeLayerWithReason"
+      ]
+    },
+    {
+      "file": "src/lib/layout/local-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 5,
+      "exports": [
+        "LocalLayoutOptions",
+        "LocalBucketLayout",
+        "LocalLayoutInput",
+        "LocalLayoutResult",
+        "computeLocalNodeLayout"
+      ]
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "category": "Layout Engine",
+      "exportsCount": 27,
+      "exports": [
+        "PositionMap",
+        "LayoutMetricOptions",
+        "FeatureBandLocality",
+        "CrossBandDependencyDistance",
+        "FeatureLocalityDiagnostics",
+        "DomainCohesionResult",
+        "ComponentSeparationResult",
+        "HubLocalityResult",
+        "BridgePlacementResult",
+        "DetailedCrossingBreakdown",
+        "ComprehensiveLayoutMetrics",
+        "edgeCrossingCount",
+        "averageEdgeLength",
+        "maxEdgeLength",
+        "nodeOverlapCount",
+        "primaryNodeOverlapCount",
+        "satelliteNodeOverlapCount",
+        "minimumNodeClearance",
+        "getLayerRank",
+        "layerViolationCount",
+        "domainCohesion",
+        "componentSeparation",
+        "hubLocality",
+        "bridgePlacement",
+        "calculateFeatureLocalityDiagnostics",
+        "calculateDetailedEdgeCrossings",
+        "calculateLayoutMetrics"
+      ]
+    },
+    {
+      "file": "src/lib/layout/orbit-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/lib/layout/orbit-semantics.ts",
+      "category": "Layout Engine",
+      "exportsCount": 5,
+      "exports": [
+        "OrbitNodeMetadata",
+        "OrbitSemanticProjectionOptions",
+        "OrbitSemanticProjectionResult",
+        "computeOrbitRingIndex",
+        "projectOrbitSemantics"
+      ]
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "category": "Layout Engine",
+      "exportsCount": 9,
+      "exports": [
+        "NodeOrderingInput",
+        "LayerRegionOrder",
+        "NodeOrderingResult",
+        "LAYER_RANK",
+        "LAYERS_IN_ORDER",
+        "computeSimulatedPositions",
+        "fastEdgeCrossingCount",
+        "estimateCrossingsForOrder",
+        "reduceEdgeCrossings"
+      ]
+    },
+    {
+      "file": "src/lib/layout/pipeline-stage-diagnostics.ts",
+      "category": "Layout Engine",
+      "exportsCount": 3,
+      "exports": [
+        "StageMetricSnapshot",
+        "PipelineDiagnosticsResult",
+        "measurePipelineStageMetrics"
+      ]
+    },
+    {
+      "file": "src/lib/layout/positions.ts",
+      "category": "Layout Engine",
+      "exportsCount": 2,
+      "exports": [
+        "ResolvePositionOptions",
+        "resolvePosition"
+      ]
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "category": "Layout Engine",
+      "exportsCount": 6,
+      "exports": [
+        "SankeyLayoutOptions",
+        "SankeyNodeGeometry",
+        "SankeyFlowGeometry",
+        "SankeyStageGeometry",
+        "SankeyLayoutResult",
+        "computeSankeyLayout"
+      ]
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "category": "Layout Engine",
+      "exportsCount": 9,
+      "exports": [
+        "STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD",
+        "SatelliteLayoutOptions",
+        "Point",
+        "Segment",
+        "SatellitePlacementResult",
+        "isTriggerNode",
+        "isHandlerNode",
+        "filterPrimarySegmentsCoarse",
+        "placeSatellites"
+      ]
+    },
+    {
+      "file": "src/lib/layout/shared-highlight.ts",
+      "category": "Layout Engine",
+      "exportsCount": 2,
+      "exports": [
+        "SharedHighlightResult",
+        "getSharedHighlightData"
+      ]
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "category": "Layout Engine",
+      "exportsCount": 9,
+      "exports": [
+        "LayerRange",
+        "DomainRange",
+        "ComponentBounds",
+        "SpacingIterationTelemetry",
+        "SpacingTelemetry",
+        "SpacingOptions",
+        "CleanupInput",
+        "SpacingResult",
+        "resolveSpacingAndCollisions"
+      ]
+    },
+    {
+      "file": "src/lib/layout/types.ts",
+      "category": "Layout Engine",
+      "exportsCount": 5,
+      "exports": [
+        "ArchitectureLayer",
+        "ArchitectureNodeAnalysis",
+        "ConnectedComponentAnalysis",
+        "ArchitectureGraphAnalysis",
+        "ArchitectureAnalysisOptions"
+      ]
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "category": "Utility",
+      "exportsCount": 12,
+      "exports": [
+        "OrbitNodeMetadata",
+        "OrbitLayoutOptions",
+        "OrbitNodePosition",
+        "OrbitGuideSector",
+        "OrbitGuideMetadata",
+        "OrbitDiagnostics",
+        "OrbitLayoutInput",
+        "OrbitLayoutOutput",
+        "normalizeAngle",
+        "checkAABBOverlap",
+        "calculateRequiredSectorRadius",
+        "computeOrbitLayout"
+      ]
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "category": "Utility",
+      "exportsCount": 7,
+      "exports": [
+        "LayoutMode",
+        "LayoutTrigger",
+        "PositionAuthorityLevel",
+        "ResolvedPosition",
+        "shouldAutoLayout",
+        "resolveAuthoritativePosition",
+        "calculateDeterministicNewNodePosition"
+      ]
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "category": "Utility",
+      "exportsCount": 11,
+      "exports": [
+        "PanelPreferences",
+        "ReviewStatus",
+        "AnnotationReviewState",
+        "UserPreferences",
+        "CURRENT_PREFERENCES_VERSION",
+        "STORAGE_KEY",
+        "createDefaultPreferences",
+        "migratePreferences",
+        "getPreferences",
+        "savePreferences",
+        "updatePreferences"
+      ]
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "category": "Utility",
+      "exportsCount": 7,
+      "exports": [
+        "SnapshotDelta",
+        "calculateSnapshotDelta",
+        "createDefaultProjectHistory",
+        "loadProjectHistory",
+        "saveProjectHistory",
+        "setActiveSnapshot",
+        "addSnapshotToHistory"
+      ]
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "category": "Utility",
+      "exportsCount": 27,
+      "exports": [
+        "SelectedComponentState",
+        "FilterUIState",
+        "GraphInteractionMode",
+        "LayoutProvenance",
+        "GraphLayoutState",
+        "ZoomPanState",
+        "SidebarUIState",
+        "InspectorUIState",
+        "NavigatorUIState",
+        "AnalysisViewMode",
+        "WorkspaceViewMode",
+        "AnalysisViewUIState",
+        "ComparisonUIState",
+        "ProjectUIState",
+        "ProjectUIStateUpdate",
+        "isValidCoordinate",
+        "sanitizePosition",
+        "sanitizePositionMap",
+        "createDefaultProjectUIState",
+        "getProjectStorageKey",
+        "loadProjectState",
+        "mergeWithDefaultState",
+        "saveProjectState",
+        "updateProjectState",
+        "clearProjectState",
+        "getAllSavedProjectIds",
+        "ProjectState"
+      ]
+    },
+    {
+      "file": "src/lib/readiness.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "ReadinessClassification",
+        "ReadinessEvaluation",
+        "READINESS_DISCLAIMER",
+        "evaluateRefactoringReadiness"
+      ]
+    },
+    {
+      "file": "src/lib/refactor-handoff.ts",
+      "category": "Utility",
+      "exportsCount": 3,
+      "exports": [
+        "HandoffTarget",
+        "buildHandoffPayload",
+        "openHandoff"
+      ]
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "category": "Utility",
+      "exportsCount": 21,
+      "exports": [
+        "runArchitectureRules",
+        "RefactoringOperationType",
+        "AddNodeOperation",
+        "RemoveNodeOperation",
+        "AddEdgeOperation",
+        "RemoveEdgeOperation",
+        "ModifyNodeOperation",
+        "RefactoringOperation",
+        "RefactoringStep",
+        "RefactoringProposal",
+        "computeGraphHash",
+        "isProposalStale",
+        "validateProposalCommit",
+        "FindingDelta",
+        "StepImpact",
+        "applySimulationOperations",
+        "computeFindingDelta",
+        "computeStepImpact",
+        "computeTemporarySimulatedPositions",
+        "createProposalFromTargetNodes",
+        "createProposalFromFinding"
+      ]
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "category": "Router / Navigation",
+      "exportsCount": 6,
+      "exports": [
+        "WorkspaceDomain",
+        "DomainDefinition",
+        "WORKSPACE_DOMAINS",
+        "getDomainForViewMode",
+        "getDefaultViewModeForDomain",
+        "isViewModeInDomain"
+      ]
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "category": "Utility",
+      "exportsCount": 17,
+      "exports": [
+        "ExplorerNodeTypeZ",
+        "ExplorerRiskLevelZ",
+        "ExplorerInventoryZ",
+        "ExplorerSummaryZ",
+        "ExplorerNodeMetricsZ",
+        "ExplorerNodeBehaviorZ",
+        "ExplorerNodeZ",
+        "ExplorerRelationshipTypeZ",
+        "ExplorerEdgeCanonicalZ",
+        "ExplorerEdgeZ",
+        "ExplorerCycleGroupZ",
+        "ExplorerUnresolvedReferenceZ",
+        "ExplorerComponentImpactSummaryZ",
+        "ProjectAnalysisStatusZ",
+        "ProjectMetadataZ",
+        "ExplorerDataSchemaZ",
+        "parseExplorerData"
+      ]
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "category": "Utility",
+      "exportsCount": 15,
+      "exports": [
+        "SearchFilterState",
+        "SearchResult",
+        "FilteredGraphData",
+        "searchNodes",
+        "filterNodesByType",
+        "filterNodesByRisk",
+        "filterEdgesByNodes",
+        "applyFilters",
+        "hasActiveFilters",
+        "getUniqueNodeTypes",
+        "getAvailableRiskLevels",
+        "filterNodesByVisibleTypes",
+        "filterEdgesByVisibleNodes",
+        "filterGraphByNodeTypes",
+        "createEmptyFilterState"
+      ]
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "category": "Utility",
+      "exportsCount": 8,
+      "exports": [
+        "selectDiscoveredFeatures",
+        "SelectFilteredGraphOptions",
+        "selectFilteredGraph",
+        "selectNodeLayers",
+        "selectCentralityScores",
+        "SelectHotspotsOptions",
+        "selectHotspots",
+        "selectDiffModel"
+      ]
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "category": "URL State",
+      "exportsCount": 6,
+      "exports": [
+        "ConnectionDirection",
+        "ConnectionDepth",
+        "ConnectionQueryState",
+        "DEFAULT_CONNECTION_STATE",
+        "fromQuery",
+        "toQuery"
+      ]
+    },
+    {
+      "file": "src/lib/url/filterQuery.ts",
+      "category": "URL State",
+      "exportsCount": 4,
+      "exports": [
+        "ViewAndFilterQueryState",
+        "FilterQueryState",
+        "fromQuery",
+        "toQuery"
+      ]
+    },
+    {
+      "file": "src/lib/url/findingsQuery.ts",
+      "category": "URL State",
+      "exportsCount": 3,
+      "exports": [
+        "FindingsQueryState",
+        "fromQuery",
+        "toQuery"
+      ]
+    },
+    {
+      "file": "src/lib/url/focusQuery.ts",
+      "category": "URL State",
+      "exportsCount": 2,
+      "exports": [
+        "fromQuery",
+        "toQuery"
+      ]
+    },
+    {
+      "file": "src/lib/url/impactQuery.ts",
+      "category": "URL State",
+      "exportsCount": 2,
+      "exports": [
+        "fromQuery",
+        "toQuery"
+      ]
+    },
+    {
+      "file": "src/lib/url/index.ts",
+      "category": "URL State",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/lib/url/investigationQuery.ts",
+      "category": "URL State",
+      "exportsCount": 3,
+      "exports": [
+        "InvestigationQueryState",
+        "fromQuery",
+        "toQuery"
+      ]
+    },
+    {
+      "file": "src/lib/views.ts",
+      "category": "Utility",
+      "exportsCount": 5,
+      "exports": [
+        "SavedView",
+        "saveView",
+        "listViews",
+        "getView",
+        "deleteView"
+      ]
+    },
+    {
+      "file": "src/lib/workers/layout-worker-client.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "LayoutWorkerClientOptions",
+        "CalculateLayoutAsyncParams",
+        "CalculateLayoutAsyncResult",
+        "LayoutWorkerClient"
+      ]
+    },
+    {
+      "file": "src/lib/workers/layout-worker-types.ts",
+      "category": "Utility",
+      "exportsCount": 5,
+      "exports": [
+        "LayoutWorkerRequest",
+        "FeatureRegionSummary",
+        "LayoutWorkerResponseSuccess",
+        "LayoutWorkerResponseError",
+        "LayoutWorkerResponse"
+      ]
+    },
+    {
+      "file": "src/lib/workers/layout.worker.ts",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/main.tsx",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "category": "Utility",
+      "exportsCount": 15,
+      "exports": [
+        "LensCapabilities",
+        "SurfaceCapabilities",
+        "LensDefinition",
+        "SurfaceDefinition",
+        "WorkspaceDefinition",
+        "LENS_REGISTRY",
+        "SURFACE_REGISTRY",
+        "getLensDefinition",
+        "getSurfaceDefinition",
+        "getWorkspaceDefinition",
+        "isLensMode",
+        "isSurfaceMode",
+        "getAllLenses",
+        "getAllSurfaces",
+        "getAllWorkspaceModes"
+      ]
+    },
+    {
+      "file": "src/test/benchmark-wave7b.ts",
+      "category": "Utility",
+      "exportsCount": 3,
+      "exports": [
+        "DatasetMetrics",
+        "ScaleBenchmarkResult",
+        "benchmarkScale"
+      ]
+    },
+    {
+      "file": "src/test/full-layout-attribution-results.json",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/test/hybrid-b6-cloud-spend-acceptance.json",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/test/mock-factories.ts",
+      "category": "Utility",
+      "exportsCount": 4,
+      "exports": [
+        "createMockNode",
+        "createMockEdge",
+        "createMockSummary",
+        "createMockDataSchema"
+      ]
+    },
+    {
+      "file": "src/test/phase3d1-reconciliation-results.json",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/test/phase4d-acceptance-report.json",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/test/phase5d-acceptance-report.json",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/test/position-test-helpers.ts",
+      "category": "Utility",
+      "exportsCount": 5,
+      "exports": [
+        "PositionMap",
+        "captureNodePositions",
+        "expectPositionsEqual",
+        "expectOnlyNodesMoved",
+        "expectNoExistingNodesMoved"
+      ]
+    },
+    {
+      "file": "src/test/scalability-generator.ts",
+      "category": "Utility",
+      "exportsCount": 2,
+      "exports": [
+        "SyntheticGraphOptions",
+        "generateSyntheticSalesforceGraph"
+      ]
+    },
+    {
+      "file": "src/test/setup.ts",
+      "category": "Utility",
+      "exportsCount": 0,
+      "exports": []
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "category": "Data Contract / Type",
+      "exportsCount": 22,
+      "exports": [
+        "Position",
+        "ProjectAnalysisStatus",
+        "ProjectMetadata",
+        "MultiProjectManifest",
+        "ProjectSnapshot",
+        "ProjectAnalysisHistory",
+        "ExplorerDataSchema",
+        "ExplorerSummary",
+        "ExplorerInventory",
+        "ExplorerNodeType",
+        "ALL_EXPLORER_NODE_TYPES",
+        "ExplorerRiskLevel",
+        "ExplorerNodeMetrics",
+        "ExplorerNodeBehavior",
+        "ExplorerNode",
+        "ExplorerRelationshipType",
+        "ExplorerEdgeCanonical",
+        "ExplorerEdge",
+        "ExplorerCycleGroup",
+        "ExplorerUnresolvedReference",
+        "ArchitectureLayoutMode",
+        "ExplorerComponentImpactSummary"
+      ]
+    }
+  ],
+  "symbolResults": [
+    {
+      "file": "src/App.tsx",
+      "symbol": "CheckIsNotAnalyzedParams",
+      "category": "Utility"
+    },
+    {
+      "file": "src/App.tsx",
+      "symbol": "isNotAnalyzed",
+      "category": "Utility"
+    },
+    {
+      "file": "src/App.tsx",
+      "symbol": "checkIsNotAnalyzed",
+      "category": "Utility"
+    },
+    {
+      "file": "src/App.tsx",
+      "symbol": "NotAnalyzedScreen",
+      "category": "Utility"
+    },
+    {
+      "file": "src/App.tsx",
+      "symbol": "App",
+      "category": "Utility"
+    },
+    {
+      "file": "src/components/AnalysisHistoryPanel.tsx",
+      "symbol": "AnalysisHistoryPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/AnalysisHistoryPanel.tsx",
+      "symbol": "AnalysisHistoryPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ArchitectureDNABarcode.tsx",
+      "symbol": "ArchitectureDNABarcodeProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ArchitectureDNABarcode.tsx",
+      "symbol": "ArchitectureDNABarcode",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ArchitectureTreemapPanel.tsx",
+      "symbol": "TreemapColorScheme",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ArchitectureTreemapPanel.tsx",
+      "symbol": "ArchitectureTreemapPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ArchitectureTreemapPanel.tsx",
+      "symbol": "ArchitectureTreemapPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/Breadcrumbs.tsx",
+      "symbol": "BreadcrumbItem",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/Breadcrumbs.tsx",
+      "symbol": "BreadcrumbsProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/Breadcrumbs.tsx",
+      "symbol": "Breadcrumbs",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CommandPalette.tsx",
+      "symbol": "PalettePanelId",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CommandPalette.tsx",
+      "symbol": "CommandEntry",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CommandPalette.tsx",
+      "symbol": "CommandPaletteProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CommandPalette.tsx",
+      "symbol": "CommandPalette",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ComparePanel.tsx",
+      "symbol": "ComparePanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ComparePanel.tsx",
+      "symbol": "ComparePanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ConnectionControls.tsx",
+      "symbol": "ConnectionControlsState",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ConnectionControls.tsx",
+      "symbol": "ConnectionControlsProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ConnectionControls.tsx",
+      "symbol": "ConnectionControls",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CouplingHeatmapPanel.tsx",
+      "symbol": "HeatmapMetricMode",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CouplingHeatmapPanel.tsx",
+      "symbol": "CouplingHeatmapPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/CouplingHeatmapPanel.tsx",
+      "symbol": "CouplingHeatmapPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/DependencyConstellationPanel.tsx",
+      "symbol": "DependencyConstellationPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/DependencyConstellationPanel.tsx",
+      "symbol": "DependencyConstellationPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/DependencyRiverPanel.tsx",
+      "symbol": "DependencyRiverPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/DependencyRiverPanel.tsx",
+      "symbol": "DependencyRiverPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/DiagnosticsPanel.tsx",
+      "symbol": "DiagnosticsPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/DiagnosticsPanel.tsx",
+      "symbol": "DiagnosticsPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ErrorBoundary.tsx",
+      "symbol": "ErrorBoundary",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FeatureMatrixPanel.tsx",
+      "symbol": "FeatureMatrixPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FeatureMatrixPanel.tsx",
+      "symbol": "FeatureMatrixPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FeatureProfilePanel.tsx",
+      "symbol": "FeatureProfilePanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FeatureProfilePanel.tsx",
+      "symbol": "FeatureProfilePanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FeatureTreePanel.tsx",
+      "symbol": "FeatureTreePanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FeatureTreePanel.tsx",
+      "symbol": "FeatureTreePanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FindingsPanel.tsx",
+      "symbol": "FindingsPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FindingsPanel.tsx",
+      "symbol": "StatusFilterOption",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FindingsPanel.tsx",
+      "symbol": "FindingsPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FocusControls.tsx",
+      "symbol": "FocusControls",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FourDirectionPanel.tsx",
+      "symbol": "FourDirectionPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/FourDirectionPanel.tsx",
+      "symbol": "FourDirectionPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphControls.tsx",
+      "symbol": "GraphControlsProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphControls.tsx",
+      "symbol": "GraphControls",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphLegend.tsx",
+      "symbol": "GraphLegend",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphSlot.tsx",
+      "symbol": "GraphSlot",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "symbol": "setCorrelationToken",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "symbol": "peekCorrelationToken",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "symbol": "getCorrelationToken",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "symbol": "GraphViewProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "symbol": "GraphViewRef",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/GraphView.tsx",
+      "symbol": "GraphView",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/Header.tsx",
+      "symbol": "HeaderProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/Header.tsx",
+      "symbol": "Header",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/HealthSummary.tsx",
+      "symbol": "HealthSummary",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/HotspotPanel.tsx",
+      "symbol": "HotspotPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ImpactControls.tsx",
+      "symbol": "ImpactControls",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/InvestigationDrawer.tsx",
+      "symbol": "InvestigationDrawerProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/InvestigationDrawer.tsx",
+      "symbol": "DrawerTab",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/InvestigationDrawer.tsx",
+      "symbol": "InvestigationDrawer",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/KeyboardShortcutsModal.tsx",
+      "symbol": "KeyboardShortcutsModalProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/KeyboardShortcutsModal.tsx",
+      "symbol": "ShortcutGroup",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/KeyboardShortcutsModal.tsx",
+      "symbol": "WORKING_SHORTCUTS",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/KeyboardShortcutsModal.tsx",
+      "symbol": "KeyboardShortcutsModal",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectCreationModal.tsx",
+      "symbol": "ProjectCreationModal",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectDashboard.tsx",
+      "symbol": "ProjectDashboardProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectDashboard.tsx",
+      "symbol": "ProjectDashboard",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectManager.tsx",
+      "symbol": "ProjectManagerProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectManager.tsx",
+      "symbol": "ProjectManager",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectSelector.tsx",
+      "symbol": "ProjectSelectorProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ProjectSelector.tsx",
+      "symbol": "ProjectSelector",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RadarPanel.tsx",
+      "symbol": "RadarPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RadarPanel.tsx",
+      "symbol": "getVisualNormalizedValue",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RadarPanel.tsx",
+      "symbol": "RadarPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RefactorHandoffModal.tsx",
+      "symbol": "RefactorHandoffModalProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RefactorHandoffModal.tsx",
+      "symbol": "RefactorHandoffModal",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RefactorHandoffModal.tsx",
+      "symbol": "RefactorHandoffHarnessProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RefactorHandoffModal.tsx",
+      "symbol": "RefactorHandoffHarness",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/RefactoringSimulationPanel.tsx",
+      "symbol": "RefactoringSimulationPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/SearchFilterPanel.tsx",
+      "symbol": "QuickFilterPreset",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/SearchFilterPanel.tsx",
+      "symbol": "SortOption",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/SearchFilterPanel.tsx",
+      "symbol": "SearchFilterPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/Sidebar.tsx",
+      "symbol": "Sidebar",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/StatusBar.tsx",
+      "symbol": "StatusBar",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/SubwayPanel.tsx",
+      "symbol": "SubwayPanelProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/SubwayPanel.tsx",
+      "symbol": "SubwayPanel",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/SummaryBar.tsx",
+      "symbol": "SummaryBar",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ViewModeSwitcher.tsx",
+      "symbol": "ViewModeSwitcherProps",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/ViewModeSwitcher.tsx",
+      "symbol": "ViewModeSwitcher",
+      "category": "UI Component"
+    },
+    {
+      "file": "src/components/findings/FindingsPanel.tsx",
+      "symbol": "FindingsPanelProps",
+      "category": "Findings Component"
+    },
+    {
+      "file": "src/components/findings/FindingsPanel.tsx",
+      "symbol": "StatusFilterOption",
+      "category": "Findings Component"
+    },
+    {
+      "file": "src/components/findings/FindingsPanel.tsx",
+      "symbol": "getWhyItMatters",
+      "category": "Findings Component"
+    },
+    {
+      "file": "src/components/findings/FindingsPanel.tsx",
+      "symbol": "getWhatToDoNext",
+      "category": "Findings Component"
+    },
+    {
+      "file": "src/components/findings/FindingsPanel.tsx",
+      "symbol": "FindingsPanel",
+      "category": "Findings Component"
+    },
+    {
+      "file": "src/components/graph-internals/EdgeHoverCard.tsx",
+      "symbol": "EdgeHoverCardProps",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/graph-internals/EdgeHoverCard.tsx",
+      "symbol": "EdgeHoverCard",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/graph-internals/FeatureOverlayCanvas.tsx",
+      "symbol": "FeatureOverlayCanvasProps",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/graph-internals/FeatureOverlayCanvas.tsx",
+      "symbol": "FeatureOverlayCanvas",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/graph-internals/GraphErrorBoundary.tsx",
+      "symbol": "GraphErrorBoundary",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/graph-internals/NodeHoverCard.tsx",
+      "symbol": "NodeHoverCardProps",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/graph-internals/NodeHoverCard.tsx",
+      "symbol": "NodeHoverCard",
+      "category": "Graph Internal Component"
+    },
+    {
+      "file": "src/components/workspace/ActiveWorkspaceRenderer.tsx",
+      "symbol": "ActiveWorkspaceRendererProps",
+      "category": "Workspace Component"
+    },
+    {
+      "file": "src/components/workspace/ActiveWorkspaceRenderer.tsx",
+      "symbol": "ActiveWorkspaceRenderer",
+      "category": "Workspace Component"
+    },
+    {
+      "file": "src/components/workspace/WorkspaceHeader.tsx",
+      "symbol": "WorkspaceHeaderProps",
+      "category": "Workspace Component"
+    },
+    {
+      "file": "src/components/workspace/WorkspaceHeader.tsx",
+      "symbol": "WorkspaceHeader",
+      "category": "Workspace Component"
+    },
+    {
+      "file": "src/components/workspace/WorkspaceShell.tsx",
+      "symbol": "WorkspaceShellProps",
+      "category": "Workspace Component"
+    },
+    {
+      "file": "src/components/workspace/WorkspaceShell.tsx",
+      "symbol": "WorkspaceShell",
+      "category": "Workspace Component"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "DrawerTab",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "DrawerState",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "InvestigationState",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "InvestigationAction",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "initialInvestigationState",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "investigationReducer",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "InvestigationContextValue",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "InvestigationProviderProps",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "InvestigationProvider",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "useInvestigationOptional",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/InvestigationContext.tsx",
+      "symbol": "useInvestigation",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectContext.tsx",
+      "symbol": "ProjectContextValue",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectContext.tsx",
+      "symbol": "DEFAULT_PROJECT",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectContext.tsx",
+      "symbol": "ProjectProvider",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectContext.tsx",
+      "symbol": "useProjectOptional",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectContext.tsx",
+      "symbol": "useProject",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectStateContext.tsx",
+      "symbol": "ProjectStateContextValue",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectStateContext.tsx",
+      "symbol": "ProjectStateProviderProps",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectStateContext.tsx",
+      "symbol": "ProjectStateProvider",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/ProjectStateContext.tsx",
+      "symbol": "useProjectState",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/SelectionContext.tsx",
+      "symbol": "SelectionProviderProps",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/SelectionContext.tsx",
+      "symbol": "SelectionProvider",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/SelectionContext.tsx",
+      "symbol": "useSelection",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "symbol": "WorkspaceRouterState",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "symbol": "WorkspaceRouterContextValue",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "symbol": "WorkspaceRouterProviderProps",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "symbol": "WorkspaceRouterProvider",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "symbol": "useWorkspaceRouterOptional",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/context/WorkspaceRouterContext.tsx",
+      "symbol": "useWorkspaceRouter",
+      "category": "Context Provider / State"
+    },
+    {
+      "file": "src/hooks/useCommandPalette.ts",
+      "symbol": "CommandItem",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useCommandPalette.ts",
+      "symbol": "UseCommandPaletteReturn",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useCommandPalette.ts",
+      "symbol": "useCommandPalette",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useCompareState.ts",
+      "symbol": "UseCompareStateReturn",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useCompareState.ts",
+      "symbol": "useCompareState",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useDebouncedValue.ts",
+      "symbol": "useDebouncedValue",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useEvent.ts",
+      "symbol": "useEvent",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useExplorerData.ts",
+      "symbol": "useExplorerData",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useGraphSelection.ts",
+      "symbol": "useGraphSelection",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useNavigationHistory.ts",
+      "symbol": "NavigationHistoryReturn",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useNavigationHistory.ts",
+      "symbol": "useNavigationHistory",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/usePrefersReducedMotion.ts",
+      "symbol": "usePrefersReducedMotion",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useUserPreferences.ts",
+      "symbol": "useUserPreferences",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useViewState.ts",
+      "symbol": "useViewState",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useViewportSize.ts",
+      "symbol": "ViewportSize",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/hooks/useViewportSize.ts",
+      "symbol": "useViewportSize",
+      "category": "React Hook"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "CONTRACTED_INNER_SUN_IDS",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "CONTRACTED_OUTER_SUN_IDS",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "CONTRACTED_14_SUN_IDS",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationRoleSymbol",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationEdgeProvenance",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationEdge",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "ComponentConstellationProjection",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-constellation-adapter.ts",
+      "symbol": "adaptComponentConstellation",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitRoleSymbol",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitEdgeProvenance",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitEdge",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitRing",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitAvailableSun",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "ComponentOrbitProjection",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "DEFAULT_COMPONENT_ORBIT_EDGE_TYPES",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/component-orbit-adapter.ts",
+      "symbol": "adaptComponentOrbit",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationFocalNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationEdgeProvenance",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationEdge",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationRing",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationAvailableNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "ConstellationAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/constellation-adapter.ts",
+      "symbol": "adaptConstellation",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "symbol": "DnaBand",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "symbol": "ComponentDna",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "symbol": "DnaSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "symbol": "ArchitectureDnaData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "symbol": "DnaAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/dna-adapter.ts",
+      "symbol": "adaptArchitectureDna",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "CardinalDirection",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionSubject",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionEdgeInfo",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionItem",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionQuadrant",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "FourDirectionAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/four-direction-adapter.ts",
+      "symbol": "adaptFourDirectionView",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "symbol": "MatrixAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "symbol": "FeatureMatrixHeader",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "symbol": "FeatureMatrixCell",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "symbol": "FeatureMatrixSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "symbol": "FeatureMatrixData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/matrix-adapter.ts",
+      "symbol": "adaptFeatureMatrix",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/profile-adapter.ts",
+      "symbol": "ComponentProfile",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/profile-adapter.ts",
+      "symbol": "ComponentProfileSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/profile-adapter.ts",
+      "symbol": "ComponentProfileData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/profile-adapter.ts",
+      "symbol": "ProfileAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/profile-adapter.ts",
+      "symbol": "adaptComponentProfile",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "symbol": "RadarDimension",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "symbol": "RadarSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "symbol": "MissingPrimitiveInfo",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "symbol": "RadarData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "symbol": "RadarAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/radar-adapter.ts",
+      "symbol": "adaptRadarDimensions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeyAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeyEdgeProvenance",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeyNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeyFlow",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeyStage",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeySummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "SankeyAdapterData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/sankey-adapter.ts",
+      "symbol": "adaptSankeyRiver",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "SubwayStation",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "SubwayLine",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "SubwayRouteSegment",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "SubwaySummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "SubwayMapData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "SubwayAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "generateSubwayRoutePath",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/subway-adapter.ts",
+      "symbol": "adaptSubwayMap",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "symbol": "FeatureTreeNodeType",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "symbol": "FeatureTreeNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "symbol": "FeatureTreeSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "symbol": "FeatureTreeData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "symbol": "TreeAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/tree-adapter.ts",
+      "symbol": "adaptFeatureTree",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapNodeType",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapMetricMode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapNodeMetrics",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapNode",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapSummary",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapData",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "TreemapAdapterOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-adapter.ts",
+      "symbol": "adaptTreemap",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-layout.ts",
+      "symbol": "TreemapRect",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-layout.ts",
+      "symbol": "LayoutTreemapOptions",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/adapters/treemap-layout.ts",
+      "symbol": "computeTreemapLayout",
+      "category": "Adapter"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "ReviewStatus",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "FindingReviewMetadata",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "Annotation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "FindingReviewItem",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "AddAnnotationOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "addAnnotation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "getAnnotationsForNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "getAllAnnotations",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "deleteAnnotation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "resolve",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "reopen",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "setInReview",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "getUnresolved",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "getResolved",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "resolveFinding",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "setFindingInReview",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/annotations.ts",
+      "symbol": "formatFindingReviewItem",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/architecture-layout.ts",
+      "symbol": "ArchitectureLayoutOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/architecture-layout.ts",
+      "symbol": "ArchitectureLayoutResultWithMetadata",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/architecture-layout.ts",
+      "symbol": "computeArchitectureLayout",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/architecture-layout.ts",
+      "symbol": "computeArchitectureLayoutWithMetadata",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/boolean-utils.ts",
+      "symbol": "toBool",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/canvas-lod.ts",
+      "symbol": "CanvasLODLevel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/canvas-lod.ts",
+      "symbol": "CanvasLODParams",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/canvas-lod.ts",
+      "symbol": "CanvasLODConfig",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/canvas-lod.ts",
+      "symbol": "computeCanvasLODLevel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "SimulationChangeType",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "BlastRadiusLevel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "ChangeTypeOption",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "CHANGE_TYPE_OPTIONS",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "SimulationResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "classifyBlastRadius",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/change-simulator.ts",
+      "symbol": "simulateChange",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/connection-analysis.ts",
+      "symbol": "ConnectionAnalysisOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/connection-analysis.ts",
+      "symbol": "ConnectionPathStep",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/connection-analysis.ts",
+      "symbol": "ConnectionPath",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/connection-analysis.ts",
+      "symbol": "ConnectionAnalysis",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/connection-analysis.ts",
+      "symbol": "analyzeConnections",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/detached-drawer.ts",
+      "symbol": "CHANNEL_NAME",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/detached-drawer.ts",
+      "symbol": "openDetachedWindow",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/detached-drawer.ts",
+      "symbol": "createChannel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/detached-drawer.ts",
+      "symbol": "broadcastNodeChange",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/detached-drawer.ts",
+      "symbol": "onDetachedDrill",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "diffSnapshots",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffNodeState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffEdgeState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffNodeChangeProperty",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffNodeChange",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffNodeItem",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffEdgeItem",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffCycleItem",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffUnresolvedRef",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffSummary",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffOverlayNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffOverlayEdge",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "DiffOverlayGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/diff-adapter.ts",
+      "symbol": "buildDiffOverlayGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/drill.ts",
+      "symbol": "rankDependents",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/drill.ts",
+      "symbol": "rankDependencies",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/export-graph.ts",
+      "symbol": "ExportGraphOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/export-graph.ts",
+      "symbol": "generateExportFilename",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/export-graph.ts",
+      "symbol": "exportGraphAsPNG",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/export-graph.ts",
+      "symbol": "exportGraphAsSVG",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "FocusDirection",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "FocusDepth",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "FocusState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "FocusedGraphData",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "computeFocusedGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "hasConnections",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "createEmptyFocusState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/focus-graph.ts",
+      "symbol": "isFocusActive",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "symbol": "GraphNodeData",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "symbol": "GraphEdgeData",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "symbol": "getFindingStatsForNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "symbol": "buildGraphElements",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "symbol": "createNodeMap",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-builder.ts",
+      "symbol": "getNodeById",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-depth.ts",
+      "symbol": "GraphDepthDirection",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-depth.ts",
+      "symbol": "GraphDepthOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-depth.ts",
+      "symbol": "GraphDepthResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-depth.ts",
+      "symbol": "computeGraphDepths",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-diff.ts",
+      "symbol": "GraphDiffResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-diff.ts",
+      "symbol": "computeGraphDiff",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "InteractionCallbacks",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "bindGraphInteractions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "fitToScreen",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "centerGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "zoomToFit",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "getSelectedNodes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "selectNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "deselectAll",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "highlightNodeConnections",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "clearHighlights",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "highlightCycle",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "clearCycleHighlight",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "findShortestPath",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "highlightPath",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "panToNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "zoomGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "zoomIn",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "zoomOut",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "setMouseWheelZoom",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "setPanning",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "setBoxSelection",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-interactions.ts",
+      "symbol": "focusOnNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "globalWorkerClient",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "GraphLayoutOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "extractNodesAndEdgesFromCy",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "getLayoutOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "LAYOUT_PRESETS",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "createLayout",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "runLayout",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "runLayoutWithMetadata",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-layout.ts",
+      "symbol": "runLayoutWithMetadataInner",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "symbol": "NodeShape",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "symbol": "APEX_TEST_CLASS_SHAPE",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "symbol": "NODE_SHAPE_BY_TYPE",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "symbol": "getNodeShape",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "symbol": "GraphStyleOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/graph-style.ts",
+      "symbol": "getGraphStyles",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/health.ts",
+      "symbol": "HealthLevel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/health.ts",
+      "symbol": "ArchitectureHealth",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/health.ts",
+      "symbol": "calculateArchitectureHealth",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "symbol": "FocusDirection",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "symbol": "HighlightState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "symbol": "OWNED_VISUAL_CLASSES",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "symbol": "isOwnedVisualClass",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "symbol": "deriveVisualClasses",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/highlight-state.ts",
+      "symbol": "applyHighlightState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/hotspots.ts",
+      "symbol": "HotspotItem",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/hotspots.ts",
+      "symbol": "CategorizedHotspots",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/hotspots.ts",
+      "symbol": "sortNodesDeterministically",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/hotspots.ts",
+      "symbol": "getArchitecturalHotspots",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "ImpactDepth",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "ImpactState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "ImpactMetrics",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "ImpactAnalysisResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "createEmptyImpactState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "isImpactActive",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "getAffectedNodesIn",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/impact-analysis.ts",
+      "symbol": "computeImpactAnalysis",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/intelligence/context.ts",
+      "symbol": "deepFreeze",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/context.ts",
+      "symbol": "buildArchitectureIndexes",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/context.ts",
+      "symbol": "createArchitectureContext",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/finding.ts",
+      "symbol": "CreateFindingParams",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/finding.ts",
+      "symbol": "createFinding",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/callout-in-trigger.ts",
+      "symbol": "calloutInTriggerRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/cycle-detected.ts",
+      "symbol": "cycleDetectedRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/high-fan-in-hub.ts",
+      "symbol": "highFanInHubRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/index.ts",
+      "symbol": "ALL_RULES",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/index.ts",
+      "symbol": "runAllRules",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/shared-state-risk.ts",
+      "symbol": "sharedStateRiskRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/sobject-no-crud-check.ts",
+      "symbol": "sobjectNoCrudCheckRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/test-missing-for-hub.ts",
+      "symbol": "testMissingForHubRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/types.ts",
+      "symbol": "Rule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/rules/unresolved-ref.ts",
+      "symbol": "unresolvedRefRule",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "ImmutableMap",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "FindingSeverity",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "ProvenanceOriginType",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "FindingEvidenceItem",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "FindingProvenance",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "RuleIdentity",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "ArchitectureFinding",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "IntelligenceConfig",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "DEFAULT_INTELLIGENCE_CONFIG",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "ArchitectureIndexes",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/intelligence/types.ts",
+      "symbol": "ArchitectureContext",
+      "category": "Rule / Intelligence"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "isTestNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "isFieldNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "findParentProductionNodeId",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "findParentObjectId",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "computeNodeBridgeMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "computeArchitectureAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "applyLayerClassification",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/analysis.ts",
+      "symbol": "applyDomainClassification",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/arch-mode.ts",
+      "symbol": "ARCH_MODE_ORDER",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/arch-mode.ts",
+      "symbol": "getNextArchMode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/arch-mode.ts",
+      "symbol": "ArchModeMetaItem",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/arch-mode.ts",
+      "symbol": "ARCH_MODE_META",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "NodeSpatialRole",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "HubType",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "NodeCentralityAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "BridgeExhaustionTelemetry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "BridgePlacementInfo",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "HubPlacementInfo",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "CentralityOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "clearBridgeAllocations",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "getPlacementExhaustionRecords",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "computeNodeHubMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "computeNodeBridgeAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "computeGraphCentralityAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "calculateBridgeCandidatePosition",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "calculateHubCandidatePosition",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "ConceptualNodeCategory",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/centrality.ts",
+      "symbol": "classifyNodeConceptualCategory",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/compare.ts",
+      "symbol": "stableCompareStrings",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/compare.ts",
+      "symbol": "stableCompareByProperty",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "ComponentConstellationLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "ComponentConstellationNodePosition",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "ComponentConstellationGuideRing",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "ComponentConstellationGuideMetadata",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "ComponentConstellationDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "ComponentConstellationLayoutOutput",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-constellation-layout.ts",
+      "symbol": "computeComponentConstellationLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "ComponentOrbitLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "ComponentOrbitNodePosition",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "ComponentOrbitGuideRing",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "ComponentOrbitGuideMetadata",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "ComponentOrbitDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "ComponentOrbitLayoutOutput",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/component-orbit-layout.ts",
+      "symbol": "computeComponentOrbitLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "ComponentRectangle",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "ComponentLocalLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "ComponentPackingOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "PlacedComponent",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "PackedLayoutResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "compareComponents",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "packComponents",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "calculateLocalComponentBounds",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/components.ts",
+      "symbol": "packComponentPositions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "symbol": "ConstellationLayoutNodePosition",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "symbol": "ConstellationLayoutEdgePath",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "symbol": "ConstellationLayoutRingGeometry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "symbol": "ConstellationLayoutResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "symbol": "ConstellationLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/constellation-layout.ts",
+      "symbol": "computeConstellationLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "DomainConfidence",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "DomainAssignment",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "DomainDiscoveryResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "extractDomainStem",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "extractDomainFromPath",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "isTestNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "findProductionTarget",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "findParentObject",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "discoverDomains",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/domains.ts",
+      "symbol": "classifyNodeDomain",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "CrossingEdgePair",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "LayerViolationEdge",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "SatelliteLocalityResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "EvaluatedLayoutMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "LayoutMetricsComparison",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "evaluateSatelliteLocality",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "evaluateLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/evaluate-layout.ts",
+      "symbol": "compareLayoutMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-composition.ts",
+      "symbol": "RectBounds",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-composition.ts",
+      "symbol": "FeatureCompositionGroup",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-composition.ts",
+      "symbol": "DeriveCompositionGroupOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-composition.ts",
+      "symbol": "deriveFeatureCompositionGroups",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "EvidenceType",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "FeatureEvidence",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "FeatureMembershipEvidence",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "SeparationMarginDiagnostic",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "FeatureAnchorVisibilityDiagnostic",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "FeatureDensityDiagnostic",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "FeatureDiagnosticReport",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "getFeatureMembershipEvidence",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "computeSeparationMarginDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "computeFeatureAnchorVisibilityDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "computeFeatureDensityDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-diagnostics.ts",
+      "symbol": "generateFeatureDiagnosticReport",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "FeatureOrderingStrategy",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "FeatureDependencyMatrix",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "Feature2DPlacement",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "Feature2DBandMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "Feature2DBandAssignmentResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "buildFeatureDependencyMatrix",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "orderStrategyA_Discovery",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "orderStrategyB_WeightedBarycenter",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "orderStrategyC_WeightedMedian",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "orderStrategyD_BarycentricSweeps",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "orderStrategyE_DomainAware",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "orderStrategyF_SharedHierarchyAware",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "compute2DFeatureBandOrdering",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "assignFeature2DBands",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-ordering.ts",
+      "symbol": "determineGlobalFeatureOrder",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "symbol": "FeatureRole",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "symbol": "FeatureRoleContext",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "symbol": "isSharedInfrastructure",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "symbol": "isFeatureSeedCandidate",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "symbol": "classifyFeatureRole",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/feature-roles.ts",
+      "symbol": "classifyAllFeatureRoles",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "FeatureCluster",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "FeatureAssignment",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "FeatureDiscoveryResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "SemanticCohesionDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "FeatureDiscoveryOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "discoverFeatures",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/features.ts",
+      "symbol": "calculateSemanticFeatureCohesion",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "DomainRelationship",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "DomainNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "FeatureRegion",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "GlobalFeatureLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "GlobalFeatureLayoutResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "DomainGraph",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "DomainRegion",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "GlobalLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "GlobalLayoutResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "DEFAULT_FEATURE_LAYER_SPACING",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "LAYER_Y_MAP",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "calculatePrimaryLayerRowCounts",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "DynamicLayerYResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "computeFeatureLayerYMap",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "computeDynamicLayerYMap",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "buildDomainGraph",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "determineGlobalDomainOrder",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "computeGlobalDomainLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/global-layout.ts",
+      "symbol": "computeGlobalFeatureLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/graph-index.ts",
+      "symbol": "LayoutGraphIndex",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/graph-index.ts",
+      "symbol": "createLayoutGraphIndex",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "symbol": "ArchitectureLayer",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "symbol": "LayerClassificationContext",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "symbol": "LayerClassificationResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "symbol": "isTestNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "symbol": "classifyNodeLayer",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/layers.ts",
+      "symbol": "classifyNodeLayerWithReason",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/local-layout.ts",
+      "symbol": "LocalLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/local-layout.ts",
+      "symbol": "LocalBucketLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/local-layout.ts",
+      "symbol": "LocalLayoutInput",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/local-layout.ts",
+      "symbol": "LocalLayoutResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/local-layout.ts",
+      "symbol": "computeLocalNodeLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "PositionMap",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "LayoutMetricOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "FeatureBandLocality",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "CrossBandDependencyDistance",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "FeatureLocalityDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "DomainCohesionResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "ComponentSeparationResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "HubLocalityResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "BridgePlacementResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "DetailedCrossingBreakdown",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "ComprehensiveLayoutMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "edgeCrossingCount",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "averageEdgeLength",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "maxEdgeLength",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "nodeOverlapCount",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "primaryNodeOverlapCount",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "satelliteNodeOverlapCount",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "minimumNodeClearance",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "getLayerRank",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "layerViolationCount",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "domainCohesion",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "componentSeparation",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "hubLocality",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "bridgePlacement",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "calculateFeatureLocalityDiagnostics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "calculateDetailedEdgeCrossings",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/metrics.ts",
+      "symbol": "calculateLayoutMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/orbit-semantics.ts",
+      "symbol": "OrbitNodeMetadata",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/orbit-semantics.ts",
+      "symbol": "OrbitSemanticProjectionOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/orbit-semantics.ts",
+      "symbol": "OrbitSemanticProjectionResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/orbit-semantics.ts",
+      "symbol": "computeOrbitRingIndex",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/orbit-semantics.ts",
+      "symbol": "projectOrbitSemantics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "NodeOrderingInput",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "LayerRegionOrder",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "NodeOrderingResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "LAYER_RANK",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "LAYERS_IN_ORDER",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "computeSimulatedPositions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "fastEdgeCrossingCount",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "estimateCrossingsForOrder",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/ordering.ts",
+      "symbol": "reduceEdgeCrossings",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/pipeline-stage-diagnostics.ts",
+      "symbol": "StageMetricSnapshot",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/pipeline-stage-diagnostics.ts",
+      "symbol": "PipelineDiagnosticsResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/pipeline-stage-diagnostics.ts",
+      "symbol": "measurePipelineStageMetrics",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/positions.ts",
+      "symbol": "ResolvePositionOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/positions.ts",
+      "symbol": "resolvePosition",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "symbol": "SankeyLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "symbol": "SankeyNodeGeometry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "symbol": "SankeyFlowGeometry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "symbol": "SankeyStageGeometry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "symbol": "SankeyLayoutResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/sankey-layout.ts",
+      "symbol": "computeSankeyLayout",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "STAGE9_COARSE_PRUNING_ACTIVATION_THRESHOLD",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "SatelliteLayoutOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "Point",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "Segment",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "SatellitePlacementResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "isTriggerNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "isHandlerNode",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "filterPrimarySegmentsCoarse",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/satellites.ts",
+      "symbol": "placeSatellites",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/shared-highlight.ts",
+      "symbol": "SharedHighlightResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/shared-highlight.ts",
+      "symbol": "getSharedHighlightData",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "LayerRange",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "DomainRange",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "ComponentBounds",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "SpacingIterationTelemetry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "SpacingTelemetry",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "SpacingOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "CleanupInput",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "SpacingResult",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/spacing.ts",
+      "symbol": "resolveSpacingAndCollisions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/types.ts",
+      "symbol": "ArchitectureLayer",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/types.ts",
+      "symbol": "ArchitectureNodeAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/types.ts",
+      "symbol": "ConnectedComponentAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/types.ts",
+      "symbol": "ArchitectureGraphAnalysis",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/layout/types.ts",
+      "symbol": "ArchitectureAnalysisOptions",
+      "category": "Layout Engine"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitNodeMetadata",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitLayoutOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitNodePosition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitGuideSector",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitGuideMetadata",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitDiagnostics",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitLayoutInput",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "OrbitLayoutOutput",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "normalizeAngle",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "checkAABBOverlap",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "calculateRequiredSectorRadius",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/orbit-layout.ts",
+      "symbol": "computeOrbitLayout",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "LayoutMode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "LayoutTrigger",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "PositionAuthorityLevel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "ResolvedPosition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "shouldAutoLayout",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "resolveAuthoritativePosition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/position-policy.ts",
+      "symbol": "calculateDeterministicNewNodePosition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "PanelPreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "ReviewStatus",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "AnnotationReviewState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "UserPreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "CURRENT_PREFERENCES_VERSION",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "STORAGE_KEY",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "createDefaultPreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "migratePreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "getPreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "savePreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/preferences.ts",
+      "symbol": "updatePreferences",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "SnapshotDelta",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "calculateSnapshotDelta",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "createDefaultProjectHistory",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "loadProjectHistory",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "saveProjectHistory",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "setActiveSnapshot",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectHistory.ts",
+      "symbol": "addSnapshotToHistory",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "SelectedComponentState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "FilterUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "GraphInteractionMode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "LayoutProvenance",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "GraphLayoutState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "ZoomPanState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "SidebarUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "InspectorUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "NavigatorUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "AnalysisViewMode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "WorkspaceViewMode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "AnalysisViewUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "ComparisonUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "ProjectUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "ProjectUIStateUpdate",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "isValidCoordinate",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "sanitizePosition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "sanitizePositionMap",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "createDefaultProjectUIState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "getProjectStorageKey",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "loadProjectState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "mergeWithDefaultState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "saveProjectState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "updateProjectState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "clearProjectState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "getAllSavedProjectIds",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/projectState.ts",
+      "symbol": "ProjectState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/readiness.ts",
+      "symbol": "ReadinessClassification",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/readiness.ts",
+      "symbol": "ReadinessEvaluation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/readiness.ts",
+      "symbol": "READINESS_DISCLAIMER",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/readiness.ts",
+      "symbol": "evaluateRefactoringReadiness",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactor-handoff.ts",
+      "symbol": "HandoffTarget",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactor-handoff.ts",
+      "symbol": "buildHandoffPayload",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactor-handoff.ts",
+      "symbol": "openHandoff",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "runArchitectureRules",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "RefactoringOperationType",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "AddNodeOperation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "RemoveNodeOperation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "AddEdgeOperation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "RemoveEdgeOperation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "ModifyNodeOperation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "RefactoringOperation",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "RefactoringStep",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "RefactoringProposal",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "computeGraphHash",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "isProposalStale",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "validateProposalCommit",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "FindingDelta",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "StepImpact",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "applySimulationOperations",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "computeFindingDelta",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "computeStepImpact",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "computeTemporarySimulatedPositions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "createProposalFromTargetNodes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/refactoring-simulation.ts",
+      "symbol": "createProposalFromFinding",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "symbol": "WorkspaceDomain",
+      "category": "Router / Navigation"
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "symbol": "DomainDefinition",
+      "category": "Router / Navigation"
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "symbol": "WORKSPACE_DOMAINS",
+      "category": "Router / Navigation"
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "symbol": "getDomainForViewMode",
+      "category": "Router / Navigation"
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "symbol": "getDefaultViewModeForDomain",
+      "category": "Router / Navigation"
+    },
+    {
+      "file": "src/lib/router/domain-mapping.ts",
+      "symbol": "isViewModeInDomain",
+      "category": "Router / Navigation"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerNodeTypeZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerRiskLevelZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerInventoryZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerSummaryZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerNodeMetricsZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerNodeBehaviorZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerNodeZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerRelationshipTypeZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerEdgeCanonicalZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerEdgeZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerCycleGroupZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerUnresolvedReferenceZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerComponentImpactSummaryZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ProjectAnalysisStatusZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ProjectMetadataZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "ExplorerDataSchemaZ",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/schema.ts",
+      "symbol": "parseExplorerData",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "SearchFilterState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "SearchResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "FilteredGraphData",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "searchNodes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "filterNodesByType",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "filterNodesByRisk",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "filterEdgesByNodes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "applyFilters",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "hasActiveFilters",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "getUniqueNodeTypes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "getAvailableRiskLevels",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "filterNodesByVisibleTypes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "filterEdgesByVisibleNodes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "filterGraphByNodeTypes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/search-filter.ts",
+      "symbol": "createEmptyFilterState",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "selectDiscoveredFeatures",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "SelectFilteredGraphOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "selectFilteredGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "selectNodeLayers",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "selectCentralityScores",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "SelectHotspotsOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "selectHotspots",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/selectors/index.ts",
+      "symbol": "selectDiffModel",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "symbol": "ConnectionDirection",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "symbol": "ConnectionDepth",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "symbol": "ConnectionQueryState",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "symbol": "DEFAULT_CONNECTION_STATE",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "symbol": "fromQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/connectionQuery.ts",
+      "symbol": "toQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/filterQuery.ts",
+      "symbol": "ViewAndFilterQueryState",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/filterQuery.ts",
+      "symbol": "FilterQueryState",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/filterQuery.ts",
+      "symbol": "fromQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/filterQuery.ts",
+      "symbol": "toQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/findingsQuery.ts",
+      "symbol": "FindingsQueryState",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/findingsQuery.ts",
+      "symbol": "fromQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/findingsQuery.ts",
+      "symbol": "toQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/focusQuery.ts",
+      "symbol": "fromQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/focusQuery.ts",
+      "symbol": "toQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/impactQuery.ts",
+      "symbol": "fromQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/impactQuery.ts",
+      "symbol": "toQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/investigationQuery.ts",
+      "symbol": "InvestigationQueryState",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/investigationQuery.ts",
+      "symbol": "fromQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/url/investigationQuery.ts",
+      "symbol": "toQuery",
+      "category": "URL State"
+    },
+    {
+      "file": "src/lib/views.ts",
+      "symbol": "SavedView",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/views.ts",
+      "symbol": "saveView",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/views.ts",
+      "symbol": "listViews",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/views.ts",
+      "symbol": "getView",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/views.ts",
+      "symbol": "deleteView",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-client.ts",
+      "symbol": "LayoutWorkerClientOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-client.ts",
+      "symbol": "CalculateLayoutAsyncParams",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-client.ts",
+      "symbol": "CalculateLayoutAsyncResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-client.ts",
+      "symbol": "LayoutWorkerClient",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-types.ts",
+      "symbol": "LayoutWorkerRequest",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-types.ts",
+      "symbol": "FeatureRegionSummary",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-types.ts",
+      "symbol": "LayoutWorkerResponseSuccess",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-types.ts",
+      "symbol": "LayoutWorkerResponseError",
+      "category": "Utility"
+    },
+    {
+      "file": "src/lib/workers/layout-worker-types.ts",
+      "symbol": "LayoutWorkerResponse",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "LensCapabilities",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "SurfaceCapabilities",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "LensDefinition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "SurfaceDefinition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "WorkspaceDefinition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "LENS_REGISTRY",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "SURFACE_REGISTRY",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "getLensDefinition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "getSurfaceDefinition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "getWorkspaceDefinition",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "isLensMode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "isSurfaceMode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "getAllLenses",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "getAllSurfaces",
+      "category": "Utility"
+    },
+    {
+      "file": "src/registry/workspace-registry.ts",
+      "symbol": "getAllWorkspaceModes",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/benchmark-wave7b.ts",
+      "symbol": "DatasetMetrics",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/benchmark-wave7b.ts",
+      "symbol": "ScaleBenchmarkResult",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/benchmark-wave7b.ts",
+      "symbol": "benchmarkScale",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/mock-factories.ts",
+      "symbol": "createMockNode",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/mock-factories.ts",
+      "symbol": "createMockEdge",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/mock-factories.ts",
+      "symbol": "createMockSummary",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/mock-factories.ts",
+      "symbol": "createMockDataSchema",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/position-test-helpers.ts",
+      "symbol": "PositionMap",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/position-test-helpers.ts",
+      "symbol": "captureNodePositions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/position-test-helpers.ts",
+      "symbol": "expectPositionsEqual",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/position-test-helpers.ts",
+      "symbol": "expectOnlyNodesMoved",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/position-test-helpers.ts",
+      "symbol": "expectNoExistingNodesMoved",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/scalability-generator.ts",
+      "symbol": "SyntheticGraphOptions",
+      "category": "Utility"
+    },
+    {
+      "file": "src/test/scalability-generator.ts",
+      "symbol": "generateSyntheticSalesforceGraph",
+      "category": "Utility"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "Position",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ProjectAnalysisStatus",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ProjectMetadata",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "MultiProjectManifest",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ProjectSnapshot",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ProjectAnalysisHistory",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerDataSchema",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerSummary",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerInventory",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerNodeType",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ALL_EXPLORER_NODE_TYPES",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerRiskLevel",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerNodeMetrics",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerNodeBehavior",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerNode",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerRelationshipType",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerEdgeCanonical",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerEdge",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerCycleGroup",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerUnresolvedReference",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ArchitectureLayoutMode",
+      "category": "Data Contract / Type"
+    },
+    {
+      "file": "src/types/explorer.ts",
+      "symbol": "ExplorerComponentImpactSummary",
+      "category": "Data Contract / Type"
+    }
+  ]
+}
