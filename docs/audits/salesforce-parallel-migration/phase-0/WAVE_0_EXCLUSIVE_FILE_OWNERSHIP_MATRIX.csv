@@ -1,0 +1,36 @@
+Repository_Path,Current_Owner,Proposed_Lane,Is_Shared,Modification_Permitted,Dependent_Lanes,Integration_Owner,Conflict_Risk
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,Integration Coordinator,Integration Coordinator,YES,PROHIBITED_TO_FEATURE_LANES,"Waves 5,6,7,8,9",Integration Coordinator,HIGH
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,Integration Coordinator,Integration Coordinator,YES,PROHIBITED_TO_FEATURE_LANES,"Waves 5,6,7,8,9",Integration Coordinator,HIGH
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css,Integration Coordinator,Integration Coordinator,YES,PROHIBITED_TO_FEATURE_LANES,"Waves 5,6,7,8,9",Integration Coordinator,MEDIUM
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js,Lane A Foundation,Integration Coordinator,YES,FROZEN_READ_ONLY,"Waves 5,6,7,8,9",Integration Coordinator,HIGH
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,Wave 4 Lane D,Wave 5 (Workstream A),NO,PERMITTED_TO_WAVE_5_ONLY,"Waves 5,8",Wave 5 Lead,HIGH
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html,Wave 4 Lane D,Wave 5 (Workstream A),NO,PERMITTED_TO_WAVE_5_ONLY,Wave 5,Wave 5 Lead,MEDIUM
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css,Wave 4 Lane D,Wave 5 (Workstream A),NO,PERMITTED_TO_WAVE_5_ONLY,Wave 5,Wave 5 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js,Wave 2/4 Shared,Wave 5 (Workstream A),YES,PERMITTED_TO_WAVE_5_ONLY,"Waves 5,8",Wave 5 Lead,MEDIUM
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js,Integration Coordinator,Integration Coordinator,YES,FROZEN_READ_ONLY,"Waves 5,6,7,8,9",Integration Coordinator,HIGH
+scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/*,Wave 4 Lane C,Integration Coordinator,NO,FROZEN_READ_ONLY,None,Integration Coordinator,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/*,Wave 4 Lane E,Wave 4 Maintenance,NO,FROZEN_READ_ONLY,None,Integration Coordinator,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/*,Wave 4 Lane F,Wave 4 Maintenance,NO,FROZEN_READ_ONLY,None,Integration Coordinator,LOW
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls,Wave 3 Prompt 3B,Wave 7 (Task W7-P1 Exclusive),YES,PERMITTED_TO_TASK_W7_P1_ONLY,"Waves 7,8",Wave 7 Lead,HIGH
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls,Wave 3 Prompt 3B,Wave 7 (Task W7-P1 Exclusive),YES,PERMITTED_TO_TASK_W7_P1_ONLY,Wave 7,Wave 7 Lead,HIGH
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls,Wave 4 Lane B,Integration Coordinator,YES,FROZEN_READ_ONLY,None,Integration Coordinator,HIGH
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls,Wave 2 Workstream C,Integration Coordinator,YES,FROZEN_READ_ONLY,None,Integration Coordinator,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/*,None (New),Wave 6 Lane B1,NO,EXCLUSIVE_NEW_LWC,None,Wave 6 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/*,None (New),Wave 6 Lane B2,NO,EXCLUSIVE_NEW_LWC,None,Wave 6 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/*,None (New),Wave 6 Lane B3,NO,EXCLUSIVE_NEW_LWC,None,Wave 6 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/*,None (New),Wave 6 Lane B4,NO,EXCLUSIVE_NEW_LWC,None,Wave 6 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/*,None (New),Wave 7 Lane C1,NO,EXCLUSIVE_NEW_LWC,None,Wave 7 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daDnaBarcode/*,None (New),Wave 7 Lane C2,NO,EXCLUSIVE_NEW_LWC,None,Wave 7 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/*,None (New),Wave 7 Lane C3,NO,EXCLUSIVE_NEW_LWC,None,Wave 7 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/*,None (New),Wave 8 Lane D1,NO,EXCLUSIVE_NEW_LWC,None,Wave 8 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/*,None (New),Wave 8 Lane D2,NO,EXCLUSIVE_NEW_LWC,None,Wave 8 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/*,None (New),Wave 8 Lane D3,NO,EXCLUSIVE_NEW_LWC,None,Wave 8 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/*,None (New),Wave 9 Lane E1,NO,EXCLUSIVE_NEW_LWC,None,Wave 9 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/*,None (New),Wave 9 Lane E2,NO,EXCLUSIVE_NEW_LWC,None,Wave 9 Lead,LOW
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/*,None (New),Wave 9 Lane E3,NO,EXCLUSIVE_NEW_LWC,None,Wave 9 Lead,LOW
+scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs,Integration Coordinator,Integration Coordinator,YES,FROZEN_READ_ONLY,All,Integration Coordinator,HIGH
+scratch/salesforce-poc/tests/run-wave5-deep-graph-tests.cjs,None (New),Wave 5 (Workstream A),NO,EXCLUSIVE_NEW_TEST,None,Wave 5 Lead,LOW
+scratch/salesforce-poc/tests/run-wave6-analytical-views-tests.cjs,None (New),Wave 6 (Workstream B),NO,EXCLUSIVE_NEW_TEST,None,Wave 6 Lead,LOW
+scratch/salesforce-poc/tests/run-wave7-diagnostics-tests.cjs,None (New),Wave 7 (Workstream C),NO,EXCLUSIVE_NEW_TEST,None,Wave 7 Lead,LOW
+scratch/salesforce-poc/tests/run-wave8-investigation-tests.cjs,None (New),Wave 8 (Workstream D),NO,EXCLUSIVE_NEW_TEST,None,Wave 8 Lead,LOW
+scratch/salesforce-poc/tests/run-wave9-refactoring-tests.cjs,None (New),Wave 9 (Workstream E),NO,EXCLUSIVE_NEW_TEST,None,Wave 9 Lead,LOW

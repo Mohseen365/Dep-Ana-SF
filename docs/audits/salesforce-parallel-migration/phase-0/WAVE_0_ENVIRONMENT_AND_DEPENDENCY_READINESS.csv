@@ -1,0 +1,11 @@
+Dependency_Name,Required_Version,Current_Status,Owning_Workstream,Purpose,Installation_Command,Lockfile_Implications
+Node.js,>= 20.0.0,Available (v22.22.1),Shared Coordinator,"JavaScript and test execution runtime",N/A,None
+npm,>= 10.0.0,Available (11.11.0),Shared Coordinator,Package and script manager,N/A,None
+@salesforce/cli,^2.0.0,Missing,Shared Coordinator,"Salesforce CLI for metadata deployments and Apex tests","npm install -g @salesforce/cli",Global tool install; no repo lockfile impact
+@salesforce/sfdx-lwc-jest,^6.0.0,Missing (Offline Harness Active),Shared Coordinator,"Unit testing framework for Lightning Web Components","npm install --save-dev @salesforce/sfdx-lwc-jest",Updates root package.json and package-lock.json
+cytoscape,^3.28.0,Available in staticresources,Wave 5,"Graph visualization and layout rendering engine",N/A (already bundled in force-app staticresources),None
+dagre,^0.8.5,Missing in Salesforce staticresources,Wave 5,"Hierarchical layout computation engine for Cytoscape","npm install --save-dev dagre",Bundled into staticresource or ported to JS
+d3-hierarchy,^3.1.2,Missing in Salesforce staticresources,Wave 6,"Treemap tiling and hierarchical data projection","npm install --save-dev d3-hierarchy",Bundled into staticresource or ported to daTreemapView
+playwright,^1.40.0,Available in explorer/scripts,Shared Integration,"Real browser E2E verification","npx playwright install chromium",Explorer package-lock.json already configured
+vitest,^1.0.0,Available in explorer,Shared Integration,Explorer unit and integration tests,N/A,None
+jsdom,^24.0.0,Available in explorer/node_modules,Waves 5-9,"Offline DOM mocking for LWC CommonJS test runners",N/A (available in workspace node_modules),None
