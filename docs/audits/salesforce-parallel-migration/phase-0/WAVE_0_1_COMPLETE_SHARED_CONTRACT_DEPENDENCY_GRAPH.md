@@ -1,5 +1,9 @@
 # Wave 0.1: Complete Shared Architectural Contract & Dependency Graph
 
+> **AUTHORITATIVE RECONCILIATION NOTICE (RECONCILED BY WAVE 0.2):**
+> This graph has been updated by Wave 0.2 to reflect the lifting of the Dagre blocker on `W9-1` (pure in-memory simulation) and the staging of `W7-P1` via Contract A minimal history API.
+> Refer to `WAVE_0_2_COMPLETE_CONTRACT_TO_TASK_TRACEABILITY.csv` and `WAVE_0_2_FINAL_IMPLEMENTATION_DISPATCH_READINESS.md` for current authoritative status.
+
 **Status:** RECONCILED & AUTHORITATIVE
 **Target Platform:** Salesforce LWC & Apex (Spring '25+)
 **Coordinator:** Jules Integration Coordinator

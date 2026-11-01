@@ -1,5 +1,9 @@
 # Wave 0: Final Parallel Launch Readiness Assessment
 
+> **HISTORICAL NOTICE (SUPERSEDED BY WAVE 0.2):**
+> This Wave 0 assessment is preserved for historical provenance.
+> For the authoritative final readiness verdict, unblocked W9-1 pure simulation, and Contract A minimal history API staging, refer to `WAVE_0_2_FINAL_IMPLEMENTATION_DISPATCH_READINESS.md`.
+
 **Coordinator Assessment Date:** November 2026
 **Auditor:** Principal Migration Architect & Independent Quality Gate Owner
 **Target Execution:** Wave 5 through Wave 9 Concurrent Migration

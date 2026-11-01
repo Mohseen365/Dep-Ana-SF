@@ -1,5 +1,9 @@
 # Wave 0: Parallel Workstream Breakdown (Waves 5 through 9)
 
+> **HISTORICAL NOTICE (SUPERSEDED BY WAVE 0.2):**
+> This Wave 0 workstream breakdown is preserved for historical provenance.
+> For the authoritative task register, unblocked W9-1 pure simulation status, and Contract A minimal history API staging, refer to `WAVE_0_2_AUTHORITATIVE_FINAL_TASK_AND_DEPENDENCY_REGISTER.csv` and `WAVE_0_2_FINAL_IMPLEMENTATION_DISPATCH_READINESS.md`.
+
 **Status:** APPROVED FOR CONCURRENT DISPATCH
 **Coordinator:** Technical Program Coordinator & Solution Architect
 **Scope:** Waves 5, 6, 7, 8, and 9
