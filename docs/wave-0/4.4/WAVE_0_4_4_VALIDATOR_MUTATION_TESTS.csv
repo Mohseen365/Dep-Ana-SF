@@ -1,0 +1,25 @@
+Mutation_ID,Description,Expected_Finding_ID,Expected_Category,Status
+MUT-01,"Duplicate task ID in register","TASK-02","staticSchema",VERIFIED
+MUT-02,"Unexpected task ID added","TASK-01","staticSchema",VERIFIED
+MUT-03,"Task count less than 21","TASK-01","staticSchema",VERIFIED
+MUT-04,"Self-dependency on task","DEP-NO-SELF-W6-1","crossDocumentConsistency",VERIFIED
+MUT-05,"Broken Wave 5 serialization chain (W5-3 does not depend on W5-2)","W5-CHAIN-3","crossDocumentConsistency",VERIFIED
+MUT-06,"Dependency cycle between W6-1 and W6-2","DEP-NO-CYCLES","crossDocumentConsistency",VERIFIED
+MUT-07,"Nonexistent dependency task reference","DEP-EXISTS-W6-1->W99-1","crossDocumentConsistency",VERIFIED
+MUT-08,"Manifest row count less than 175","MAN-01","staticSchema",VERIFIED
+MUT-09,"Manifest EXISTING count mismatch","MAN-02","staticSchema",VERIFIED
+MUT-10,"Manifest NEW count mismatch","MAN-03","staticSchema",VERIFIED
+MUT-11,"Duplicate raw path in manifest","MAN-NO-DUP-RAW","staticSchema",VERIFIED
+MUT-12,"Duplicate normalized path in manifest","MAN-NO-DUP-NORM","staticSchema",VERIFIED
+MUT-13,"Path traversal in manifest path","PATH-NO-TRAV-175","staticSchema",VERIFIED
+MUT-14,"Absolute path in manifest path","PATH-NO-ABS-175","staticSchema",VERIFIED
+MUT-15,"Windows backslash path in manifest","PATH-NO-BS-175","staticSchema",VERIFIED
+MUT-16,"Dot segment in manifest path","PATH-NO-DOT-175","staticSchema",VERIFIED
+MUT-17,"Directory path in manifest path","PATH-NO-DIR-175","staticSchema",VERIFIED
+MUT-18,"Task path not in authoritative manifest","TASK-PATH-IN-MAN-W6-1-scratch/salesforce-poc/tests/run-unknown.cjs","crossDocumentConsistency",VERIFIED
+MUT-19,"Feature task modifies frozen runner","FROZEN-PROT-W5-1-scratch/salesforce-poc/tests/run-poc-tests.cjs","crossDocumentConsistency",VERIFIED
+MUT-20,"Feature task modifies coordinator path","COORD-PROT-W5-1-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js","crossDocumentConsistency",VERIFIED
+MUT-21,"Traceability matrix count less than 9","TRACE-01","staticSchema",VERIFIED
+MUT-22,"Duplicate contract ID in traceability","TRACE-02","staticSchema",VERIFIED
+MUT-23,"Missing contract ID prefix W0-C","TRACE-PREFIX-C1","staticSchema",VERIFIED
+MUT-24,"Empty contract definition in traceability","TRACE-DEF-W0-C1","semanticReview",VERIFIED
