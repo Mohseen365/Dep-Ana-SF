@@ -1,0 +1,22 @@
+Task ID,Wave,Description,Owning Workstream,Prerequisites,Files or Components Affected,Launch Status,Blocking Condition
+W5-1,Wave 5,Shell Layout Switcher,Workstream A,Contract W0-C4,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,LAUNCHABLE,None
+W5-2,Wave 5,Orbit Layout Activation,Workstream A,"W5-1, Contract W0-C1","scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/, daGraphViewer/",DEPENDENT,Awaits W5-1
+W5-3,Wave 5,Constellation & Sankey,Workstream A,"W5-1, Contract W0-C1","scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/, daGraphViewer/",DEPENDENT,Awaits W5-1
+W5-4,Wave 5,Directional Traversal Focus,Workstream A,Contract W0-C2,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,LAUNCHABLE,None
+W5-5,Wave 5,Blast Radius & Impact,Workstream A,Contract W0-C1,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,LAUNCHABLE,None
+W5-6,Wave 5,Hover Cards,Workstream A,None (DOM/CSS),scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,LAUNCHABLE,None
+W6-1,Wave 6,Radar View,Workstream B,"Contracts W0-C1, W0-C3",scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/,LAUNCHABLE,None
+W6-2,Wave 6,Treemap View,Workstream B,"Contracts W0-C1, W0-C3",scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/,LAUNCHABLE,None
+W6-3,Wave 6,Subway View,Workstream B,"Contracts W0-C1, W0-C3",scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/,LAUNCHABLE,None
+W6-4,Wave 6,Hotspots View,Workstream B,"Contracts W0-C1, W0-C3",scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/,LAUNCHABLE,None
+W7-P1,Wave 7,Apex getAnalysisRuns,Workstream C,Contract W0-C5,scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls,CONDITIONALLY_BLOCKED,Blocked on schema decision: DA_Analysis_Run__c lacks required fields
+W7-1,Wave 7,Diagnostics Scorecard,Workstream C,Contract W0-C1,scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/,LAUNCHABLE,None
+W7-2,Wave 7,Architecture DNA Barcode,Workstream C,Contract W0-C1,scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/,LAUNCHABLE,None
+W7-3,Wave 7,Analysis History View,Workstream C,Task W7-P1,scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/,DEPENDENT,Awaits W7-P1
+W8-1,Wave 8,Investigation Drawer,Workstream D,"Contract W0-C2, W0-C6",scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/,LAUNCHABLE,None
+W8-2,Wave 8,Diff Engine,Workstream D,Contract W0-C7,scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/,LAUNCHABLE,None
+W8-3,Wave 8,Compare View,Workstream D,"Task W8-2, Task W7-P1",scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/,DEPENDENT,Awaits W8-2 and W7-P1
+W9-1,Wave 9,Refactoring Engine,Workstream E,Contract W0-C8,scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/,CONDITIONALLY_BLOCKED,Blocked on layout packaging strategy: dagre not packaged in LWC
+W9-2,Wave 9,Simulation View,Workstream E,Task W9-1,scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/,DEPENDENT,Awaits W9-1
+W9-3,Wave 9,Handoff Export Modal,Workstream E,Task W9-1,scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/,DEPENDENT,Awaits W9-1
+INT-1,Integration,Unified Application Shell Integration,Coordinator,"W5, W6, W7, W8, W9",scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/,INTEGRATION_STAGE,Awaits all feature lanes

@@ -40,7 +40,7 @@ In the upcoming implementation dispatch, five parallel agents/lanes will be laun
   - `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls` (Task W7-P1 Exclusive)
   - `scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls` (Task W7-P1 Exclusive)
   - `scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/*` (New)
-  - `scratch/salesforce-poc/force-app/main/default/lwc/daDnaBarcode/*` (New)
+  - `scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/*` (New)
   - `scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/*` (New)
   - `scratch/salesforce-poc/tests/run-wave7-diagnostics-tests.cjs` (New)
 - **Prohibited Files:** `daAppShell.*`, `daGraphViewer.*`, `DAUserPreferenceController.*`.

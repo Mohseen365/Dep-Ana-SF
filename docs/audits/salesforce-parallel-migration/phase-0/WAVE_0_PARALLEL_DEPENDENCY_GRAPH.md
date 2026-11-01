@@ -125,7 +125,7 @@ graph TD
 | **W6-4** | Wave 6 | CONTRACT_DEPENDENT | Contracts W0-C1, W0-C3 | `daHotspotsView` Component | Immediate after Wave 0 |
 | **W7-P1**| Wave 7 | CONTRACT_DEPENDENT | Contract W0-C5 | W7-3, W8-3 | Immediate after Wave 0 (Highest Apex Priority) |
 | **W7-1** | Wave 7 | CONTRACT_DEPENDENT | Contract W0-C1 | `daDiagnosticsView` | Immediate after Wave 0 |
-| **W7-2** | Wave 7 | CONTRACT_DEPENDENT | Contract W0-C1 | `daDnaBarcode` | Immediate after Wave 0 |
+| **W7-2** | Wave 7 | CONTRACT_DEPENDENT | Contract W0-C1 | `daArchitectureDnaBarcode` | Immediate after Wave 0 |
 | **W7-3** | Wave 7 | IMPLEMENTATION_DEPENDENT | Task W7-P1 | Historical Run Selection | Blocked until W7-P1 passes unit tests |
 | **W8-1** | Wave 8 | CONTRACT_DEPENDENT | Contract W0-C2, W0-C6 | `daInvestigationDrawer` | Immediate after Wave 0 |
 | **W8-2** | Wave 8 | CONTRACT_DEPENDENT | Contract W0-C7 | `daDiffEngine.js` | Immediate after Wave 0 |

@@ -22,8 +22,8 @@ The coordinator affirms that the architectural contracts, file ownership boundar
 | **1. Repository State & Working Tree** | PASS | Branch `jules-17480803246055796124-bbdb1ba1` clean at HEAD `42f39a26977387e80d7a719a8329b23854cad662`. All Phase 3 deliverables verified intact. |
 | **2. Architectural Contract Freeze** | PASS | 9 shared contracts specified in `WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` covering payload, selection invariants, filter schema, and lifecycle. |
 | **3. File Ownership Separation** | PASS | `WAVE_0_EXCLUSIVE_FILE_OWNERSHIP_MATRIX.csv` eliminates concurrent write collisions. Shared shell and schema files are frozen to feature lanes. |
-| **4. Dependency Decoupling** | PASS | `WAVE_0_PARALLEL_DEPENDENCY_GRAPH.md` establishes that 11 of 19 feature tasks can launch on Day 1 without waiting for prerequisite completions. |
-| **5. Regression Baseline Stability** | PASS | 187 of 187 offline tests passing across 9 test suites with zero flakiness. |
+| **4. Dependency Decoupling** | PASS | `WAVE_0_PARALLEL_DEPENDENCY_GRAPH.md` establishes that 12 of 20 feature tasks (see WAVE_0_1_AUTHORITATIVE_TASK_AND_DEPENDENCY_REGISTER.csv) can launch on Day 1 without waiting for prerequisite completions. |
+| **5. Regression Baseline Stability** | PASS | 187 test executions passing across 9 test suites (see WAVE_0_1_TEST_BASELINE_AND_EVIDENCE_RECONCILIATION.md). |
 | **6. Security & Invariant Protection**| PASS | 10 frozen invariants mapped to source files and regression suites in `WAVE_0_FROZEN_INVARIANT_PROTECTION_MATRIX.csv`. |
 
 ---
