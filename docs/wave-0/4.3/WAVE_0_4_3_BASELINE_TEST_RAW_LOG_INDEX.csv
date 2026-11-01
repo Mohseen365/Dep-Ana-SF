@@ -1,0 +1,10 @@
+Runner_ID,Runner_Name,Log_File_Name,SHA256_Checksum
+RUN-01,"Salesforce POC Tests",run-poc-tests.log,c4a53067ff81004c9ee4c52fe70210e38af90af55fa5a63cff26123148e5bb7d
+RUN-02,"Workstream A Tests",run-workstream-a-tests.log,14fa107cd2c7a28c2d82bf161df5e147e0a65c2fbfc3f4dae33b92039cc26148
+RUN-03,"Workstream C Tests",run-workstream-c-tests.log,4ddd9bf29421ce6d42c026758c84fa16754adbff941ceac52284b089581584bd
+RUN-04,"Wave 4 Integration Suite",run-wave4-integration-suite.log,db721f1e4d42137e3a54ea0e0cdf278aad87823005f76da7c7c20b14c4264db4
+RUN-05,"Lane A Schema Tests",run-lane-a-schema-tests.log,12d2519b3ccce9f260890569b13d9c23cecafe5b660c8590dc576567b4049089
+RUN-06,"Lane C Preset Manager Tests",run-lane-c-preset-manager-tests.log,32ee5f6f0d0937b9d92c82241fc5656d2a72c661f6f3ee89a59826fde291a3c1
+RUN-07,"Lane D Graph Filter Tests",run-lane-d-graph-filter-tests.log,c08b7a3bb58b19db94830181cd105091e1d5a0624ee7acb7e5d76bfa9e97cbf9
+RUN-08,"Lane E Matrix Tests",run-lane-e-matrix-tests.log,ac5152ccb35e2a11fa3a9a59722cda18018148686246c30abc957dc262677424
+RUN-09,"Lane F Findings Tests",run-lane-f-findings-tests.log,77b9549764a5fa65b958d0ecb032cc398eaff783bfd627a7f553a722b8f838a9

@@ -1,0 +1,34 @@
+Test_ID,Scenario_Name,Expected_Result,Run1_Status,Run2_Status,Run3_Status,Consistent
+BASE-CLEAN,"Baseline Clean Fixture",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-01,"Missing task W5-1",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-02,"Extra unauthorized task W10-1",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-03,"Duplicate task W6-1",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-04,"Invalid task dependency on non-existent W99-9",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-05,"Dependency cycle between W6-1 and W6-2",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-06,"Task self-dependency W7-1 on W7-1",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-07,"Duplicate manifest path",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-08,"Windows drive-qualified path in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-09,"UNC path in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-10,"Traversal path segment in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-11,"Feature task modifies frozen runner",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-12,"Feature task modifies coordinator-only aggregate runner",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-13,"Missing contract ID W0-C1 in traceability",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-14,"Duplicate contract ID W0-C2",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-15,"Contract status non-frozen",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-16,"Outstanding decision present on frozen contract",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-17,"Task affected files union mismatch (extra file in union)",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-18,"Unknown task path not in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-19,"Dot segment path in manifest (./path)",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-20,"Backslash path separator in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-21,"Empty manifest path row",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-22,"Empty task ID row",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-23,"Contract missing exact definition",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-24,"Broken Wave 5 serialized chain (W5-3 does not depend on W5-2)",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-25,"Manifest row count less than 175",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-26,"Task register count less than 21",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-27,"Traceability matrix count less than 9",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-28,"Absolute path starting with slash in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-29,"Existing file count mismatch in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-30,"New file count mismatch in manifest",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-31,"Contract ID missing prefix W0-C",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE
+DEF-32,"Duplicate contract ID in traceability",EXPECTED_REJECTION,PASS,PASS,PASS,TRUE

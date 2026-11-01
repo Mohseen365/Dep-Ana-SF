@@ -1,0 +1,3 @@
+Finding_ID,Severity,Category,Source_Document,Source_Section,Related_Entity,Expected_Result,Actual_Result,Status,Remediation
+FIND-W043-0001,UNVERIFIED,semanticReview,"N/A","N/A","UNVERIFIED-SF-ORG","Full platform verification","Unverified offline: No live Salesforce scratch org is connected in offline sandbox environment",OPEN,"Execute via SFDX/Salesforce CLI when authorized org environment is available"
+FIND-W043-0002,UNVERIFIED,semanticReview,"N/A","N/A","UNVERIFIED-BROWSER-E2E","Full platform verification","Unverified offline: Headless browser / Playwright execution not authorized during offline evidence gate closure",OPEN,"Execute browser test harness during full UI verification phase"
