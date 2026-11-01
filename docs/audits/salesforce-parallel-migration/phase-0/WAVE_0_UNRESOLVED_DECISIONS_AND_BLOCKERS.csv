@@ -1,0 +1,6 @@
+Issue_ID,Category,Description,Impacted_Workstreams,Blocking_Status,Required_Resolution,Resolution_Owner
+GAP-01,Apex Architecture,"Missing getAnalysisRuns(projectId, maxRuns) in DAGraphController.cls","Waves 7,8",CONDITIONAL_BLOCKER,"Implement Task W7-P1 with WITH USER_MODE and pagination limits",Wave 7 Lead Architect
+GAP-02,Visual Library,"Cytoscape dagre layout plugin missing in staticresources",Wave 5,NON_BLOCKING_PORT,"Bundle dagre into staticresource or compute hierarchical coordinates in daLayoutEngine",Wave 5 Lead
+GAP-03,Visual Library,"D3-hierarchy squarify algorithm not present in Salesforce staticresources",Wave 6,NON_BLOCKING_PORT,"Port squarify partitioning math directly into daTreemapView helper",Wave 6 Lead
+GAP-04,Memory Management,"Simultaneous dual-Cytoscape instances risk out-of-memory crashes on mobile/LWS",Wave 8,MANDATORY_DESIGN_RULE,"Enforce single-canvas diff styling or tabular comparison as specified in Contract W0-C7",Wave 8 Lead
+GAP-05,Metadata Security,"User permissions for DA_Analysis_Run__c.DNA_Barcode__c field access",Wave 7,NON_BLOCKING,"Verify field exists in object metadata and is included in profile/permset permissions",Wave 7 Lead
