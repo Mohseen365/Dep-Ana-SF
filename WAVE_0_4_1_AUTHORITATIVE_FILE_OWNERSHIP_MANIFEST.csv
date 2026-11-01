@@ -1,0 +1,176 @@
+path,file_type,status,current_owner,proposed_owner,workstream_or_task,mutability_tier,collision_status,is_baseline_test,is_salesforce_meta
+scratch/salesforce-poc/sfdx-project.json,ProjectConfig,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/config/project-scratch-def.json,ProjectConfig,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls,ApexClass,EXISTING,Workstream C Lead,Workstream C Lead,Wave 7 (W7-P1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls-meta.xml,ApexClass,EXISTING,Workstream C Lead,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls-meta.xml,ApexClass,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls,ApexTest,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls-meta.xml,ApexTest,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls,ApexTest,EXISTING,Workstream C Lead,Workstream C Lead,Wave 7 (W7-P1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls-meta.xml,ApexTest,EXISTING,Workstream C Lead,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls,ApexTest,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls-meta.xml,ApexTest,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls,ApexTest,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls-meta.xml,ApexTest,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.css,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.html,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css,LWC,EXISTING,Integration Coordinator,Integration Coordinator,INT-1 / Coordinator,INTEGRATION_COORDINATOR_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,LWC,EXISTING,Integration Coordinator,Integration Coordinator,INT-1 / Coordinator,INTEGRATION_COORDINATOR_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,LWC,EXISTING,Integration Coordinator,Integration Coordinator,INT-1 / Coordinator,INTEGRATION_COORDINATOR_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml,LWC,EXISTING,Integration Coordinator,Integration Coordinator,INT-1 / Coordinator,INTEGRATION_COORDINATOR_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js,LWC,EXISTING,Integration Coordinator,Integration Coordinator,INT-1 / Coordinator,INTEGRATION_COORDINATOR_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.css,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.html,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css,LWC,EXISTING,Workstream A Lead,Workstream A Lead,Wave 5 (W5-1 through W5-6),EXCLUSIVE_FEATURE_OWNER,SERIALIZED_OR_BUNDLED,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html,LWC,EXISTING,Workstream A Lead,Workstream A Lead,Wave 5 (W5-1 through W5-6),EXCLUSIVE_FEATURE_OWNER,SERIALIZED_OR_BUNDLED,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,LWC,EXISTING,Workstream A Lead,Workstream A Lead,Wave 5 (W5-1 through W5-6),EXCLUSIVE_FEATURE_OWNER,SERIALIZED_OR_BUNDLED,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js-meta.xml,LWC,EXISTING,Workstream A Lead,Workstream A Lead,Wave 5 (W5-1 through W5-6),EXCLUSIVE_FEATURE_OWNER,SERIALIZED_OR_BUNDLED,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js,LWC,EXISTING,Workstream A Lead,Workstream A Lead,Wave 5 (W5-1 through W5-6),EXCLUSIVE_FEATURE_OWNER,SERIALIZED_OR_BUNDLED,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js-meta.xml,LWC,EXISTING,Workstream A Lead,Workstream A Lead,Wave 5 (W5-1 through W5-6),EXCLUSIVE_FEATURE_OWNER,SERIALIZED_OR_BUNDLED,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.css,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.html,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.css,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.html,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.css,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.html,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.html,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js-meta.xml,LWC,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Author__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Finding__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Node_Id__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Project__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Resolved_At__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Status__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Text__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Chunk_Index__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/DA_Analysis_Run__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_Layout_Mode__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_View_Mode__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Filters_JSON__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Positions_JSON__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Preference_Key__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Project__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/User__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Zoom_Pan_JSON__c.field-meta.xml,CustomObjectMetadata,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js,StaticResource,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml,StaticResource,EXISTING,Repository Baseline,Repository Baseline,None,FROZEN_READ_ONLY,NONE,NO,YES
+scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-poc-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-workstream-a-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-workstream-c-tests.cjs,OfflineTestRunner,EXISTING,Integration Coordinator,Integration Coordinator,Baseline,FROZEN_READ_ONLY,NONE,YES,NO
+scratch/salesforce-poc/tests/run-wave5-tests.cjs,OfflineTestRunner,NEW,Integration Coordinator,Integration Coordinator,Integration Coordinator,COORDINATOR_EXCLUSIVE,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.html,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.css,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js-meta.xml,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-4),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-4),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-4),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml,LWC,NEW,Workstream B Lead,Workstream B Lead,Wave 6 (W6-4),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/tests/run-wave6-tests.cjs,OfflineTestRunner,NEW,Integration Coordinator,Integration Coordinator,Integration Coordinator,COORDINATOR_EXCLUSIVE,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls,ApexClass,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-P1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls-meta.xml,ApexClass,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-P1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.html,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.css,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js-meta.xml,LWC,NEW,Workstream C Lead,Workstream C Lead,Wave 7 (W7-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/tests/run-wave7-tests.cjs,OfflineTestRunner,NEW,Integration Coordinator,Integration Coordinator,Integration Coordinator,COORDINATOR_EXCLUSIVE,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js-meta.xml,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.html,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.css,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js-meta.xml,LWC,NEW,Workstream D Lead,Workstream D Lead,Wave 8 (W8-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/tests/run-wave8-tests.cjs,OfflineTestRunner,NEW,Integration Coordinator,Integration Coordinator,Integration Coordinator,COORDINATOR_EXCLUSIVE,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-1),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.html,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.css,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js-meta.xml,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-2),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml,LWC,NEW,Workstream E Lead,Workstream E Lead,Wave 9 (W9-3),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
+scratch/salesforce-poc/tests/run-wave9-tests.cjs,OfflineTestRunner,NEW,Integration Coordinator,Integration Coordinator,Integration Coordinator,COORDINATOR_EXCLUSIVE,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w5-1-tests.cjs,OfflineTestRunner,NEW,Workstream A Lead,Workstream A Lead,W5-1,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w5-2-tests.cjs,OfflineTestRunner,NEW,Workstream A Lead,Workstream A Lead,W5-2,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w5-3-tests.cjs,OfflineTestRunner,NEW,Workstream A Lead,Workstream A Lead,W5-3,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w5-4-tests.cjs,OfflineTestRunner,NEW,Workstream A Lead,Workstream A Lead,W5-4,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w5-5-tests.cjs,OfflineTestRunner,NEW,Workstream A Lead,Workstream A Lead,W5-5,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w5-6-tests.cjs,OfflineTestRunner,NEW,Workstream A Lead,Workstream A Lead,W5-6,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w6-1-tests.cjs,OfflineTestRunner,NEW,Workstream B Lead,Workstream B Lead,W6-1,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w6-2-tests.cjs,OfflineTestRunner,NEW,Workstream B Lead,Workstream B Lead,W6-2,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w6-3-tests.cjs,OfflineTestRunner,NEW,Workstream B Lead,Workstream B Lead,W6-3,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w6-4-tests.cjs,OfflineTestRunner,NEW,Workstream B Lead,Workstream B Lead,W6-4,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w7-p1-tests.cjs,OfflineTestRunner,NEW,Workstream C Lead,Workstream C Lead,W7-P1,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w7-1-tests.cjs,OfflineTestRunner,NEW,Workstream C Lead,Workstream C Lead,W7-1,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w7-2-tests.cjs,OfflineTestRunner,NEW,Workstream C Lead,Workstream C Lead,W7-2,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w7-3-tests.cjs,OfflineTestRunner,NEW,Workstream C Lead,Workstream C Lead,W7-3,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w8-1-tests.cjs,OfflineTestRunner,NEW,Workstream D Lead,Workstream D Lead,W8-1,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w8-2-tests.cjs,OfflineTestRunner,NEW,Workstream D Lead,Workstream D Lead,W8-2,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w8-3-tests.cjs,OfflineTestRunner,NEW,Workstream D Lead,Workstream D Lead,W8-3,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w9-1-tests.cjs,OfflineTestRunner,NEW,Workstream E Lead,Workstream E Lead,W9-1,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w9-2-tests.cjs,OfflineTestRunner,NEW,Workstream E Lead,Workstream E Lead,W9-2,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-w9-3-tests.cjs,OfflineTestRunner,NEW,Workstream E Lead,Workstream E Lead,W9-3,EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs,OfflineTestRunner,NEW,Integration Coordinator,Integration Coordinator,INT-1,COORDINATOR_EXCLUSIVE,NONE,NO,NO
