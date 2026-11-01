@@ -1,0 +1,3 @@
+Finding_ID,Severity,Category,Source_Doc,Source_Section,Related_Entity,Expected,Actual,Status,Remediation
+UNVERIFIED-SF-ORG,UNVERIFIED,empiricalExecution,"N/A","N/A","UNVERIFIED-SF-ORG","Full platform verification","Unverified offline: No live Salesforce org connected",OPEN,"Requires live Salesforce org or runtime verification"
+UNVERIFIED-BROWSER-E2E,UNVERIFIED,empiricalExecution,"N/A","N/A","UNVERIFIED-BROWSER-E2E","Full platform verification","Unverified offline: Headless browser prohibited offline",OPEN,"Requires live Salesforce org or runtime verification"
