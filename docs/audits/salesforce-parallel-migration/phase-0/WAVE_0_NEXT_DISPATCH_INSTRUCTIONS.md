@@ -1,5 +1,9 @@
 # Wave 0: Next Dispatch Instructions for Parallel Implementation
 
+> **HISTORICAL NOTICE (SUPERSEDED BY WAVE 0.2):**
+> This Wave 0 dispatch instruction set is preserved for historical provenance.
+> For the authoritative post-authorization dispatch sequence and rules, refer to `WAVE_0_2_FINAL_NEXT_DISPATCH_INSTRUCTIONS.md`.
+
 **Status:** APPROVED ACTIONABLE LAUNCH SPECIFICATION
 **Target:** Next Dispatch — Concurrent Execution of Waves 5, 6, 7, 8, and 9
 **Integration Coordinator:** Centralized Shell & Governance Owner

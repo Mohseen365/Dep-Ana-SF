@@ -1,0 +1,22 @@
+Task ID,Wave,Description,Owning Workstream,Prerequisites,Required Contracts,Affected Files,Launch Status,Blocking Condition,Independent Dispatch?,Prior Task Handoff Required?
+W5-1,Wave 5,Shell Layout Switcher,Workstream A,None,"W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,READY_TO_LAUNCH,None,YES,NO
+W5-2,Wave 5,Orbit Layout Activation,Workstream A,W5-1,"W0-C1, W0-C4, W0-C9","scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/, daGraphViewer/",IMPLEMENTATION_DEPENDENT,Awaits W5-1,NO,YES (W5-1)
+W5-3,Wave 5,Constellation & Sankey,Workstream A,W5-1,"W0-C1, W0-C4, W0-C9","scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/, daGraphViewer/",IMPLEMENTATION_DEPENDENT,Awaits W5-1,NO,YES (W5-1)
+W5-4,Wave 5,Directional Traversal Focus,Workstream A,None,"W0-C2, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,READY_TO_LAUNCH,None,YES,NO
+W5-5,Wave 5,Blast Radius & Impact,Workstream A,None,"W0-C1, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,READY_TO_LAUNCH,None,YES,NO
+W5-6,Wave 5,Hover Cards,Workstream A,None,"W0-C2, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/,READY_TO_LAUNCH,None,YES,NO
+W6-1,Wave 6,Radar View,Workstream B,None,"W0-C1, W0-C3, W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/,READY_TO_LAUNCH,None,YES,NO
+W6-2,Wave 6,Treemap View,Workstream B,None,"W0-C1, W0-C3, W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/,READY_TO_LAUNCH,None,YES,NO
+W6-3,Wave 6,Subway View,Workstream B,None,"W0-C1, W0-C3, W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/,READY_TO_LAUNCH,None,YES,NO
+W6-4,Wave 6,Hotspots View,Workstream B,None,"W0-C1, W0-C3, W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/,READY_TO_LAUNCH,None,YES,NO
+W7-P1,Wave 7,Apex getAnalysisRuns (Minimal),Workstream C,None,"W0-C5, W0-C9",scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls,READY_TO_LAUNCH,None (Contract A Minimal API),YES,NO
+W7-1,Wave 7,Diagnostics Scorecard,Workstream C,None,"W0-C1, W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/,READY_TO_LAUNCH,None,YES,NO
+W7-2,Wave 7,Architecture DNA Barcode,Workstream C,None,"W0-C1, W0-C4, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/,READY_TO_LAUNCH,None,YES,NO
+W7-3,Wave 7,Analysis History View,Workstream C,W7-P1,"W0-C4, W0-C5, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/,IMPLEMENTATION_DEPENDENT,Awaits W7-P1,NO,YES (W7-P1)
+W8-1,Wave 8,Investigation Drawer,Workstream D,None,"W0-C2, W0-C4, W0-C6, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/,READY_TO_LAUNCH,None,YES,NO
+W8-2,Wave 8,Diff Engine,Workstream D,None,"W0-C7, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/,READY_TO_LAUNCH,None,YES,NO
+W8-3,Wave 8,Compare View,Workstream D,"W8-2, W7-P1","W0-C1, W0-C4, W0-C5, W0-C7, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/,IMPLEMENTATION_DEPENDENT,Awaits W8-2 and W7-P1,NO,YES (W8-2 & W7-P1)
+W9-1,Wave 9,Refactoring Engine (Pure Math),Workstream E,None,"W0-C1, W0-C8, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/,READY_TO_LAUNCH,None (Dagre Decoupled),YES,NO
+W9-2,Wave 9,Simulation View,Workstream E,W9-1,"W0-C1, W0-C4, W0-C8, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/,IMPLEMENTATION_DEPENDENT,Awaits W9-1,NO,YES (W9-1)
+W9-3,Wave 9,Handoff Export Modal,Workstream E,W9-1,"W0-C8, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/,IMPLEMENTATION_DEPENDENT,Awaits W9-1,NO,YES (W9-1)
+INT-1,Integration,Unified Application Shell Integration,Coordinator,"W5, W6, W7, W8, W9","W0-C1, W0-C2, W0-C3, W0-C4, W0-C5, W0-C6, W0-C7, W0-C8, W0-C9",scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/,INTEGRATION_ONLY,Awaits feature workstreams,NO,YES (All Feature Lanes)

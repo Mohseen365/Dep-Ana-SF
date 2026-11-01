@@ -1,5 +1,8 @@
 # Wave 0: Integration and Merge Strategy
 
+> **AUTHORITATIVE OPERATIONAL UPDATE (RECONCILED BY WAVE 0.2):**
+> This integration strategy is updated by `WAVE_0_2_JULES_AGENT_HANDOFF_AND_INTEGRATION_RUNBOOK.md`, which defines the empirical patch-based (`git apply`) operational workflow, dry-run checks, regression gates, and non-destructive rollbacks.
+
 **Status:** APPROVED FOR IMPLEMENTATION LAUNCH
 **Coordinator:** Principal Migration Architect & Integration Coordinator
 

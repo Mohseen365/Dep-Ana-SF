@@ -1,5 +1,9 @@
 # Wave 0: Parallel Dependency Graph & Execution Matrix
 
+> **HISTORICAL NOTICE (SUPERSEDED BY WAVE 0.2):**
+> This Wave 0 dependency graph is preserved for historical provenance.
+> For the authoritative contract-to-task dependency mapping, unblocked W9-1 pure simulation, and minimal history API staging, refer to `WAVE_0_2_COMPLETE_CONTRACT_TO_TASK_TRACEABILITY.csv` and `WAVE_0_2_FINAL_IMPLEMENTATION_DISPATCH_READINESS.md`.
+
 **Status:** APPROVED FOR CONCURRENT DISPATCH
 **Coordinator:** Technical Program Coordinator
 

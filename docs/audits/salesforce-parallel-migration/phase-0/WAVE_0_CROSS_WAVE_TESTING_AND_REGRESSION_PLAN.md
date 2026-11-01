@@ -1,5 +1,8 @@
 # Wave 0: Cross-Wave Testing and Regression Plan
 
+> **RECONCILIATION NOTICE (RECONCILED BY WAVE 0.2):**
+> Test baseline execution figures (187 test cases across 9 suites), empirical 3-run stability, and browser tooling facts (Playwright v1.64.1 & Chromium v145.0.7632.6 available; sfdx-lwc-jest missing) are authoritatively reconciled in `WAVE_0_2_TEST_STABILITY_AND_BROWSER_TOOLING_VERIFICATION.md`.
+
 **Status:** APPROVED MANDATORY TEST FRAMEWORK
 **Coordinator:** Independent Quality Gate Owner & Lead Test Architect
 

@@ -1,6 +1,10 @@
 # Wave 0.1: Corrected Next Dispatch Instructions
 
-**Status:** PENDING EXPLICIT USER AUTHORIZATION
+> **HISTORICAL NOTICE (SUPERSEDED BY WAVE 0.2):**
+> This Wave 0.1 dispatch instruction set is preserved for historical provenance.
+> For the authoritative post-authorization dispatch sequence, unblocked pure simulation math, and minimal history API staging, refer to `WAVE_0_2_FINAL_NEXT_DISPATCH_INSTRUCTIONS.md`.
+
+**Status:** SUPERSEDED BY WAVE 0.2
 **Coordinator:** Integration Coordinator
 
 ---

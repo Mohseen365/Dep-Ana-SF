@@ -1,5 +1,8 @@
 # Wave 0: Shared Architectural Contracts Specification
 
+> **AUTHORITATIVE RECONCILIATION NOTICE (RECONCILED BY WAVE 0.2):**
+> Contracts W0-C1 through W0-C9 are frozen and mandatory. For authoritative contract-to-task traceability, unblocked W9-1 pure simulation details, minimal history Contract A specifications, and dual-snapshot retrieval requirements, refer to `WAVE_0_2_COMPLETE_CONTRACT_TO_TASK_TRACEABILITY.csv`, `WAVE_0_2_W9_REFACTORING_DEPENDENCY_CORRECTION.md`, `WAVE_0_2_HISTORY_API_STAGED_CONTRACT.md`, and `WAVE_0_2_DUAL_SNAPSHOT_RETRIEVAL_AND_DIFF_CONTRACT.md`.
+
 **Status:** FROZEN & MANDATORY
 **Target Platform:** Salesforce LWC & Apex (Spring '25+)
 **Scope:** Wave 5 (Deep Graph), Wave 6 (Analytical Views), Wave 7 (Diagnostics & History), Wave 8 (Investigation & Compare), Wave 9 (Refactoring Simulation)
