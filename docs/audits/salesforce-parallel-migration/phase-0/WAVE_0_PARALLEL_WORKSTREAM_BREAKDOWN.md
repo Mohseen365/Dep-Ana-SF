@@ -95,9 +95,9 @@ To execute the React-to-Salesforce migration with high velocity while maintainin
   - *React Reference:* `explorer/src/components/DiagnosticsPanel.tsx`
   - *Target Component:* `scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/`
   - *Output:* Overall architectural grade, cycle count, orphan node count, and unresolved reference ledger.
-- **Task W7-2: Architecture DNA Barcode (`daDnaBarcode`)**
+- **Task W7-2: Architecture DNA Barcode (`daArchitectureDnaBarcode`)**
   - *React Reference:* `explorer/src/components/ArchitectureDNABarcode.tsx`, `explorer/src/lib/adapters/dna-adapter.ts`
-  - *Target Component:* `scratch/salesforce-poc/force-app/main/default/lwc/daDnaBarcode/`
+  - *Target Component:* `scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/`
   - *Output:* Compressed visual barcode ribbon encoding layer distribution, risk spectrum, and stability index.
 - **Task W7-3: Historical Analysis Run Browser (`daAnalysisHistoryView`)**
   - *React Reference:* `explorer/src/components/AnalysisHistoryPanel.tsx`, `explorer/src/lib/projectHistory.ts`

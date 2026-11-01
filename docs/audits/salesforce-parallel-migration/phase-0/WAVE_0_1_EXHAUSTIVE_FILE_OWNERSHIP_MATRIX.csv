@@ -1,0 +1,74 @@
+File or Path Pattern,Component / Entity,Authoritative Owner,Shared?,Ownership Category,Permitted Action,Collision Validation Rule
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,daAppShell LWC Controller,Integration Coordinator,NO,COORDINATOR_ONLY,Edit during Stage C only,Feature workstreams (Waves 5-9) prohibited from editing
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,daAppShell LWC Template,Integration Coordinator,NO,COORDINATOR_ONLY,Edit during Stage C only,Feature workstreams (Waves 5-9) prohibited from editing
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css,daAppShell LWC Styles,Integration Coordinator,NO,COORDINATOR_ONLY,Edit during Stage C only,Feature workstreams (Waves 5-9) prohibited from editing
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml,daAppShell LWC Metadata,Integration Coordinator,NO,COORDINATOR_ONLY,Edit during Stage C only,Feature workstreams (Waves 5-9) prohibited from editing
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js,Canonical Filter Schema Engine,Lead Architect,NO,FROZEN_READ_ONLY,Read-only for all workstreams,Edits require Lead Architect + PO dual approval
+scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/*,daProjectSelector LWC Component,Wave 4 Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against concurrent edits
+scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/*,daPresetManager LWC Component,Wave 4 Lane C Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against concurrent edits
+scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/*,daMatrixView LWC Component,Wave 4 Lane E Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against concurrent edits
+scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/*,daFindingsView LWC Component,Wave 4 Lane F Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against concurrent edits
+scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/*,daAnnotationPanel LWC Component,Wave 4 Lane B Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against concurrent edits
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/*,daGraphPayloadLoader Utility,Lead Architect,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against concurrent edits
+scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/*,graphViewer Legacy Component,Legacy Maintenance,NO,FROZEN_READ_ONLY,Read-only / Unused,Prohibited from editing
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,daGraphViewer LWC Controller,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_WORKSTREAM,Feature development for Wave 5,Exclusive to Workstream A
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html,daGraphViewer LWC Template,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_WORKSTREAM,Feature development for Wave 5,Exclusive to Workstream A
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css,daGraphViewer LWC Styles,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_WORKSTREAM,Feature development for Wave 5,Exclusive to Workstream A
+scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js-meta.xml,daGraphViewer LWC Metadata,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_WORKSTREAM,Feature development for Wave 5,Exclusive to Workstream A
+scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js,daLayoutEngine Module,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_WORKSTREAM,Feature development for Wave 5,Exclusive to Workstream A
+scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js-meta.xml,daLayoutEngine Metadata,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_WORKSTREAM,Feature development for Wave 5,Exclusive to Workstream A
+scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/*,daRadarView LWC Component,Wave 6 Workstream B Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream B
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/*,daTreemapView LWC Component,Wave 6 Workstream B Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream B
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/*,daSubwayView LWC Component,Wave 6 Workstream B Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream B
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/*,daHotspotsView LWC Component,Wave 6 Workstream B Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream B
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/*,daDiagnosticsView LWC Component,Wave 7 Workstream C Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream C
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/*,daArchitectureDnaBarcode LWC Component,Wave 7 Workstream C Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream C
+scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/*,daAnalysisHistoryView LWC Component,Wave 7 Workstream C Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream C (Awaits W7-P1)
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/*,daInvestigationDrawer LWC Component,Wave 8 Workstream D Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream D
+scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/*,daDiffEngine LWC Module,Wave 8 Workstream D Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream D
+scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/*,daCompareView LWC Component,Wave 8 Workstream D Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream D (Awaits W8-2 & W7-P1)
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/*,daRefactoringEngine LWC Module,Wave 9 Workstream E Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream E (Blocked on Dagre)
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/*,daRefactoringView LWC Component,Wave 9 Workstream E Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream E (Awaits W9-1)
+scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/*,daRefactorHandoffModal LWC Component,Wave 9 Workstream E Lead,NO,EXCLUSIVE_NEW_LWC,Exclusive creation & edits,Exclusive to Workstream E (Awaits W9-1)
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls,DAGraphController Apex Class,Wave 7 Workstream C Lead,NO,EXCLUSIVE_APEX,Modify getAnalysisRuns after schema unblocking,Workstream C exclusive edit right
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls-meta.xml,DAGraphController Apex Metadata,Wave 7 Workstream C Lead,NO,EXCLUSIVE_APEX,Modify after schema unblocking,Workstream C exclusive edit right
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.*,DAAnnotationController Apex Class & Meta,Wave 4 Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.*,DAUserPreferenceController Apex Class & Meta,Wave 4 Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.*,DAGraphChunkService Apex Class & Meta,Apex Lead Architect,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.*,DAGraphIngestionService Apex Class & Meta,Apex Lead Architect,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/dto/*,DTO Classes & Meta,Apex Lead Architect,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.*,Legacy Controller & Meta,Legacy Maintenance,NO,FROZEN_READ_ONLY,Read-only / Deprecated,Prohibited from editing
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls,DAGraphControllerTest Apex Test,Wave 7 Workstream C Lead,NO,EXCLUSIVE_APEX_TEST,Update tests for getAnalysisRuns,Workstream C exclusive edit right
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls-meta.xml,DAGraphControllerTest Metadata,Wave 7 Workstream C Lead,NO,EXCLUSIVE_APEX_TEST,Update metadata,Workstream C exclusive edit right
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.*,DAGraphSecurityTest Apex Test & Meta,Security Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.*,DAAnnotationControllerTest Apex Test & Meta,Wave 4 Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.*,DAUserPreferenceControllerTest Apex Test & Meta,Wave 4 Lead,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Protected against modification
+scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/*,DA_Project__c Object & Fields,Schema Administrator,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Schema changes require change request
+scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/*,DA_Analysis_Run__c Object & Fields,Schema Administrator,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Schema additions require schema CR
+scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/*,DA_Graph_Chunk__c Object & Fields,Schema Administrator,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Schema changes require change request
+scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/*,DA_User_Preference__c Object & Fields,Schema Administrator,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Schema changes require change request
+scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/*,DA_Annotation__c Object & Fields,Schema Administrator,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Schema changes require change request
+scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/*,DA_Finding__c Object & Fields,Schema Administrator,NO,FROZEN_READ_ONLY,Read-only for Waves 5-9,Schema changes require change request
+scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js,Cytoscape Static Resource,Static Resource Owner,NO,FROZEN_READ_ONLY,Read-only,No modification permitted
+scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml,Cytoscape Resource Metadata,Static Resource Owner,NO,FROZEN_READ_ONLY,Read-only,No modification permitted
+scratch/salesforce-poc/force-app/main/default/staticresources/* (New),Proposed Static Resources,Lead Architect,NO,COORDINATOR_APPROVAL_REQUIRED,Requires packaging evaluation & PO approval,Independent workstreams prohibited from adding
+scratch/salesforce-poc/tests/run-poc-tests.cjs,POC Offline Verification Harness,Test Infrastructure Lead,NO,FROZEN_READ_ONLY,Regression baseline,Protected against edits
+scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs,Wave 4 Integration Suite,Integration Coordinator,NO,FROZEN_READ_ONLY,Cross-lane regression suite,Coordinator ownership only
+scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs,Lane A Schema Test Runner,Wave 4 Lane A Lead,NO,FROZEN_READ_ONLY,Regression baseline,Protected against edits
+scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs,Lane C Preset Manager Test Runner,Wave 4 Lane C Lead,NO,FROZEN_READ_ONLY,Regression baseline,Protected against edits
+scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs,Lane D Graph Viewer Filter Test Runner,Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_TEST,Extend for Wave 5 layout tests,Workstream A exclusive edit right
+scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs,Lane E Matrix Test Runner,Wave 4 Lane E Lead,NO,FROZEN_READ_ONLY,Regression baseline,Protected against edits
+scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs,Lane F Findings Test Runner,Wave 4 Lane F Lead,NO,FROZEN_READ_ONLY,Regression baseline,Protected against edits
+scratch/salesforce-poc/tests/run-workstream-a-tests.cjs,Workstream A Shell Offline Test Runner,Integration Coordinator,NO,FROZEN_READ_ONLY,AppShell regression runner,Coordinator ownership only
+scratch/salesforce-poc/tests/run-workstream-c-tests.cjs,Workstream C Verification Runner,Wave 7 Workstream C Lead,NO,EXCLUSIVE_FEATURE_TEST,Extend for getAnalysisRuns offline tests,Workstream C exclusive edit right
+scratch/salesforce-poc/tests/run-wave5-tests.cjs,Wave 5 Test Runner (New),Wave 5 Workstream A Lead,NO,EXCLUSIVE_FEATURE_TEST,Create and run Wave 5 unit tests,Workstream A exclusive edit right
+scratch/salesforce-poc/tests/run-wave6-tests.cjs,Wave 6 Test Runner (New),Wave 6 Workstream B Lead,NO,EXCLUSIVE_FEATURE_TEST,Create and run Wave 6 unit tests,Workstream B exclusive edit right
+scratch/salesforce-poc/tests/run-wave7-tests.cjs,Wave 7 Test Runner (New),Wave 7 Workstream C Lead,NO,EXCLUSIVE_FEATURE_TEST,Create and run Wave 7 unit tests,Workstream C exclusive edit right
+scratch/salesforce-poc/tests/run-wave8-tests.cjs,Wave 8 Test Runner (New),Wave 8 Workstream D Lead,NO,EXCLUSIVE_FEATURE_TEST,Create and run Wave 8 unit tests,Workstream D exclusive edit right
+scratch/salesforce-poc/tests/run-wave9-tests.cjs,Wave 9 Test Runner (New),Wave 9 Workstream E Lead,NO,EXCLUSIVE_FEATURE_TEST,Create and run Wave 9 unit tests,Workstream E exclusive edit right
+package.json,Root npm Manifest,Repository Architect,NO,FROZEN_READ_ONLY,No modification permitted,Prohibited during Waves 5-9
+package-lock.json,Root npm Lockfile,Repository Architect,NO,FROZEN_READ_ONLY,No modification permitted,Prohibited during Waves 5-9
+scratch/salesforce-poc/sfdx-project.json,Salesforce Project Manifest,Salesforce Platform Architect,NO,FROZEN_READ_ONLY,No modification permitted,Prohibited during Waves 5-9
+scratch/salesforce-poc/config/project-scratch-def.json,Scratch Org Definition,Salesforce Platform Architect,NO,FROZEN_READ_ONLY,No modification permitted,Prohibited during Waves 5-9
+explorer/*,React Explorer Source & Config,Explorer Maintainer,NO,NOT_IN_SCOPE_READ_ONLY,Read-only reference,Prohibited from modification during Salesforce migration
+docs/audits/*,Audit & Governance Documentation,Integration Coordinator,NO,COORDINATOR_ONLY,Planning & audit documentation,Managed exclusively by Coordinator
