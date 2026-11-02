@@ -1,0 +1,3 @@
+Finding_ID,Severity,Category,Description,Expected,Actual,Status,Remediation
+UNVERIFIED-SF-LIVE-ORG,INFO,empiricalExecution,"Live Salesforce org deployment & governor limit verification","LIVE_VERIFICATION","OFFLINE_RESTRICTION",UNVERIFIED,"Requires live scratch org connection"
+UNVERIFIED-BROWSER-CANVAS,INFO,empiricalExecution,"Browser DOM drag & canvas rendering verification","LIVE_VERIFICATION","OFFLINE_RESTRICTION",UNVERIFIED,"Requires browser runtime"
