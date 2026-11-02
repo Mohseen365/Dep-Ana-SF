@@ -1,0 +1,719 @@
+[
+  {
+    "sweep": 1,
+    "id": "MUT-01",
+    "expected": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "actual": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-02",
+    "expected": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "actual": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-03",
+    "expected": [
+      "FILE_EXISTS_TASK_REGISTER"
+    ],
+    "actual": [
+      "FILE_EXISTS_TASK_REGISTER"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-04",
+    "expected": [
+      "FILE_EXISTS_MANIFEST"
+    ],
+    "actual": [
+      "FILE_EXISTS_MANIFEST"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-05",
+    "expected": [
+      "FILE_EXISTS_TRACEABILITY"
+    ],
+    "actual": [
+      "FILE_EXISTS_TRACEABILITY"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-06",
+    "expected": [
+      "FILE_EXISTS_BATCH1_ALLOWLIST"
+    ],
+    "actual": [
+      "FILE_EXISTS_BATCH1_ALLOWLIST"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-07",
+    "expected": [
+      "PARSE_TASK_CSV"
+    ],
+    "actual": [
+      "PARSE_TASK_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-08",
+    "expected": [
+      "MANIFEST_COUNT_175",
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "actual": [
+      "MANIFEST_COUNT_175",
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-09",
+    "expected": [
+      "W5_SERIALIZATION_CHAIN"
+    ],
+    "actual": [
+      "W5_SERIALIZATION_CHAIN"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-10",
+    "expected": [
+      "INT1_COORDINATOR_OWNED"
+    ],
+    "actual": [
+      "INT1_COORDINATOR_OWNED"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-11",
+    "expected": [
+      "EXISTING_FILES_PHYSICALLY_PRESENT"
+    ],
+    "actual": [
+      "EXISTING_FILES_PHYSICALLY_PRESENT"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-12",
+    "expected": [
+      "BASELINE_RUNNERS_FROZEN_TIER"
+    ],
+    "actual": [
+      "BASELINE_RUNNERS_FROZEN_TIER"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-13",
+    "expected": [
+      "PROMPT_PROHIBITS_BATCH1"
+    ],
+    "actual": [
+      "PROMPT_PROHIBITS_BATCH1"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-14",
+    "expected": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_SUBSET_OF_TASKS",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "actual": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_SUBSET_OF_TASKS",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-15",
+    "expected": [
+      "TRACEABILITY_COUNT_9"
+    ],
+    "actual": [
+      "TRACEABILITY_COUNT_9"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-16",
+    "expected": [
+      "PARSE_TASK_CSV"
+    ],
+    "actual": [
+      "PARSE_TASK_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-17",
+    "expected": [
+      "PARSE_MANIFEST_CSV"
+    ],
+    "actual": [
+      "PARSE_MANIFEST_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-18",
+    "expected": [
+      "PARSE_TRACE_CSV"
+    ],
+    "actual": [
+      "PARSE_TRACE_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-19",
+    "expected": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "actual": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-20",
+    "expected": [
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "actual": [
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 1,
+    "id": "MUT-21",
+    "expected": [
+      "PARSE_BATCH1_CSV"
+    ],
+    "actual": [
+      "PARSE_BATCH1_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-01",
+    "expected": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "actual": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-02",
+    "expected": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "actual": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-03",
+    "expected": [
+      "FILE_EXISTS_TASK_REGISTER"
+    ],
+    "actual": [
+      "FILE_EXISTS_TASK_REGISTER"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-04",
+    "expected": [
+      "FILE_EXISTS_MANIFEST"
+    ],
+    "actual": [
+      "FILE_EXISTS_MANIFEST"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-05",
+    "expected": [
+      "FILE_EXISTS_TRACEABILITY"
+    ],
+    "actual": [
+      "FILE_EXISTS_TRACEABILITY"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-06",
+    "expected": [
+      "FILE_EXISTS_BATCH1_ALLOWLIST"
+    ],
+    "actual": [
+      "FILE_EXISTS_BATCH1_ALLOWLIST"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-07",
+    "expected": [
+      "PARSE_TASK_CSV"
+    ],
+    "actual": [
+      "PARSE_TASK_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-08",
+    "expected": [
+      "MANIFEST_COUNT_175",
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "actual": [
+      "MANIFEST_COUNT_175",
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-09",
+    "expected": [
+      "W5_SERIALIZATION_CHAIN"
+    ],
+    "actual": [
+      "W5_SERIALIZATION_CHAIN"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-10",
+    "expected": [
+      "INT1_COORDINATOR_OWNED"
+    ],
+    "actual": [
+      "INT1_COORDINATOR_OWNED"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-11",
+    "expected": [
+      "EXISTING_FILES_PHYSICALLY_PRESENT"
+    ],
+    "actual": [
+      "EXISTING_FILES_PHYSICALLY_PRESENT"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-12",
+    "expected": [
+      "BASELINE_RUNNERS_FROZEN_TIER"
+    ],
+    "actual": [
+      "BASELINE_RUNNERS_FROZEN_TIER"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-13",
+    "expected": [
+      "PROMPT_PROHIBITS_BATCH1"
+    ],
+    "actual": [
+      "PROMPT_PROHIBITS_BATCH1"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-14",
+    "expected": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_SUBSET_OF_TASKS",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "actual": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_SUBSET_OF_TASKS",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-15",
+    "expected": [
+      "TRACEABILITY_COUNT_9"
+    ],
+    "actual": [
+      "TRACEABILITY_COUNT_9"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-16",
+    "expected": [
+      "PARSE_TASK_CSV"
+    ],
+    "actual": [
+      "PARSE_TASK_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-17",
+    "expected": [
+      "PARSE_MANIFEST_CSV"
+    ],
+    "actual": [
+      "PARSE_MANIFEST_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-18",
+    "expected": [
+      "PARSE_TRACE_CSV"
+    ],
+    "actual": [
+      "PARSE_TRACE_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-19",
+    "expected": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "actual": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-20",
+    "expected": [
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "actual": [
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 2,
+    "id": "MUT-21",
+    "expected": [
+      "PARSE_BATCH1_CSV"
+    ],
+    "actual": [
+      "PARSE_BATCH1_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-01",
+    "expected": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "actual": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-02",
+    "expected": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "actual": [
+      "TASK_REGISTER_COUNT_21"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-03",
+    "expected": [
+      "FILE_EXISTS_TASK_REGISTER"
+    ],
+    "actual": [
+      "FILE_EXISTS_TASK_REGISTER"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-04",
+    "expected": [
+      "FILE_EXISTS_MANIFEST"
+    ],
+    "actual": [
+      "FILE_EXISTS_MANIFEST"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-05",
+    "expected": [
+      "FILE_EXISTS_TRACEABILITY"
+    ],
+    "actual": [
+      "FILE_EXISTS_TRACEABILITY"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-06",
+    "expected": [
+      "FILE_EXISTS_BATCH1_ALLOWLIST"
+    ],
+    "actual": [
+      "FILE_EXISTS_BATCH1_ALLOWLIST"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-07",
+    "expected": [
+      "PARSE_TASK_CSV"
+    ],
+    "actual": [
+      "PARSE_TASK_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-08",
+    "expected": [
+      "MANIFEST_COUNT_175",
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "actual": [
+      "MANIFEST_COUNT_175",
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-09",
+    "expected": [
+      "W5_SERIALIZATION_CHAIN"
+    ],
+    "actual": [
+      "W5_SERIALIZATION_CHAIN"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-10",
+    "expected": [
+      "INT1_COORDINATOR_OWNED"
+    ],
+    "actual": [
+      "INT1_COORDINATOR_OWNED"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-11",
+    "expected": [
+      "EXISTING_FILES_PHYSICALLY_PRESENT"
+    ],
+    "actual": [
+      "EXISTING_FILES_PHYSICALLY_PRESENT"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-12",
+    "expected": [
+      "BASELINE_RUNNERS_FROZEN_TIER"
+    ],
+    "actual": [
+      "BASELINE_RUNNERS_FROZEN_TIER"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-13",
+    "expected": [
+      "PROMPT_PROHIBITS_BATCH1"
+    ],
+    "actual": [
+      "PROMPT_PROHIBITS_BATCH1"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-14",
+    "expected": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_SUBSET_OF_TASKS",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "actual": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_SUBSET_OF_TASKS",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-15",
+    "expected": [
+      "TRACEABILITY_COUNT_9"
+    ],
+    "actual": [
+      "TRACEABILITY_COUNT_9"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-16",
+    "expected": [
+      "PARSE_TASK_CSV"
+    ],
+    "actual": [
+      "PARSE_TASK_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-17",
+    "expected": [
+      "PARSE_MANIFEST_CSV"
+    ],
+    "actual": [
+      "PARSE_MANIFEST_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-18",
+    "expected": [
+      "PARSE_TRACE_CSV"
+    ],
+    "actual": [
+      "PARSE_TRACE_CSV"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-19",
+    "expected": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "actual": [
+      "BATCH1_ROW_COUNT_49",
+      "BATCH1_TASK_COUNT_11"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-20",
+    "expected": [
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "actual": [
+      "PLANNED_NEW_FILES_COUNT_76"
+    ],
+    "exitCode": 1
+  },
+  {
+    "sweep": 3,
+    "id": "MUT-21",
+    "expected": [
+      "PARSE_BATCH1_CSV"
+    ],
+    "actual": [
+      "PARSE_BATCH1_CSV"
+    ],
+    "exitCode": 1
+  }
+]
