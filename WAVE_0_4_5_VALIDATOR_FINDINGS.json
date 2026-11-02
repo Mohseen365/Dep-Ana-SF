@@ -1,0 +1,2722 @@
+{
+  "totalPassed": 442,
+  "totalFailed": 0,
+  "totalUnverified": 2,
+  "assertionCounts": {
+    "staticSchema": {
+      "passed": 51,
+      "failed": 0,
+      "unverified": 0
+    },
+    "crossDocumentConsistency": {
+      "passed": 11,
+      "failed": 0,
+      "unverified": 0
+    },
+    "filesystem": {
+      "passed": 355,
+      "failed": 0,
+      "unverified": 0
+    },
+    "semanticReview": {
+      "passed": 25,
+      "failed": 0,
+      "unverified": 0
+    },
+    "empiricalExecution": {
+      "passed": 0,
+      "failed": 0,
+      "unverified": 2
+    }
+  },
+  "findings": [
+    {
+      "id": "UNVERIFIED-SF-LIVE-ORG",
+      "severity": "INFO",
+      "category": "empiricalExecution",
+      "desc": "Live Salesforce org deployment & governor limit verification",
+      "expected": "LIVE_VERIFICATION",
+      "actual": "OFFLINE_RESTRICTION",
+      "status": "UNVERIFIED",
+      "remediation": "Requires live scratch org connection"
+    },
+    {
+      "id": "UNVERIFIED-BROWSER-CANVAS",
+      "severity": "INFO",
+      "category": "empiricalExecution",
+      "desc": "Browser DOM drag & canvas rendering verification",
+      "expected": "LIVE_VERIFICATION",
+      "actual": "OFFLINE_RESTRICTION",
+      "status": "UNVERIFIED",
+      "remediation": "Requires browser runtime"
+    }
+  ],
+  "recordedAssertions": [
+    {
+      "code": "FS-TASK-CSV",
+      "desc": "Authoritative Task Register exists in targetDir",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "FS-MANIFEST-CSV",
+      "desc": "Authoritative Ownership Manifest exists in targetDir",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "FS-TRACE-CSV",
+      "desc": "Contract Traceability exists in targetDir",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "FS-BATCH1-CSV",
+      "desc": "Batch 1 Allowlist exists in targetDir",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "FS-PROV-CSV",
+      "desc": "Component Provenance exists in targetDir",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-COUNT-21",
+      "desc": "Task register contains exactly 21 tasks (found 21)",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-DUPLICATE",
+      "desc": "Task register contains zero duplicate Task IDs (dup: )",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W5-1",
+      "desc": "Canonical task ID W5-1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W5-2",
+      "desc": "Canonical task ID W5-2 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W5-3",
+      "desc": "Canonical task ID W5-3 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W5-4",
+      "desc": "Canonical task ID W5-4 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W5-5",
+      "desc": "Canonical task ID W5-5 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W5-6",
+      "desc": "Canonical task ID W5-6 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W6-1",
+      "desc": "Canonical task ID W6-1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W6-2",
+      "desc": "Canonical task ID W6-2 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W6-3",
+      "desc": "Canonical task ID W6-3 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W6-4",
+      "desc": "Canonical task ID W6-4 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W7-P1",
+      "desc": "Canonical task ID W7-P1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W7-1",
+      "desc": "Canonical task ID W7-1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W7-2",
+      "desc": "Canonical task ID W7-2 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W7-3",
+      "desc": "Canonical task ID W7-3 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W8-1",
+      "desc": "Canonical task ID W8-1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W8-2",
+      "desc": "Canonical task ID W8-2 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W8-3",
+      "desc": "Canonical task ID W8-3 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W9-1",
+      "desc": "Canonical task ID W9-1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W9-2",
+      "desc": "Canonical task ID W9-2 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-W9-3",
+      "desc": "Canonical task ID W9-3 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-MISSING-INT-1",
+      "desc": "Canonical task ID INT-1 must exist",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W5-1",
+      "desc": "Task ID W5-1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W5-2",
+      "desc": "Task ID W5-2 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W5-3",
+      "desc": "Task ID W5-3 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W5-4",
+      "desc": "Task ID W5-4 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W5-5",
+      "desc": "Task ID W5-5 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W5-6",
+      "desc": "Task ID W5-6 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W6-1",
+      "desc": "Task ID W6-1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W6-2",
+      "desc": "Task ID W6-2 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W6-3",
+      "desc": "Task ID W6-3 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W6-4",
+      "desc": "Task ID W6-4 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W7-P1",
+      "desc": "Task ID W7-P1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W7-1",
+      "desc": "Task ID W7-1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W7-2",
+      "desc": "Task ID W7-2 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W7-3",
+      "desc": "Task ID W7-3 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W8-1",
+      "desc": "Task ID W8-1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W8-2",
+      "desc": "Task ID W8-2 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W8-3",
+      "desc": "Task ID W8-3 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W9-1",
+      "desc": "Task ID W9-1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W9-2",
+      "desc": "Task ID W9-2 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-W9-3",
+      "desc": "Task ID W9-3 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "TASK-UNEXPECTED-INT-1",
+      "desc": "Task ID INT-1 is recognized in canonical 21-task register",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-CHAIN-W5-2",
+      "desc": "Task W5-2 depends on predecessor W5-1",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-CHAIN-W5-3",
+      "desc": "Task W5-3 depends on predecessor W5-2",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-CHAIN-W5-4",
+      "desc": "Task W5-4 depends on predecessor W5-3",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-CHAIN-W5-5",
+      "desc": "Task W5-5 depends on predecessor W5-4",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-CHAIN-W5-6",
+      "desc": "Task W5-6 depends on predecessor W5-5",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "DEP-ACYCLIC",
+      "desc": "Task dependency graph must be strictly acyclic",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-COUNT-175",
+      "desc": "Manifest contains exactly 175 paths (found 175)",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-DUPLICATE",
+      "desc": "Manifest contains zero duplicate paths (dup: )",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/sfdx-project.json",
+      "desc": "Manifest path scratch/salesforce-poc/sfdx-project.json must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/sfdx-project.json",
+      "desc": "Manifest path scratch/salesforce-poc/sfdx-project.json must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/config/project-scratch-def.json",
+      "desc": "Manifest path scratch/salesforce-poc/config/project-scratch-def.json must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/config/project-scratch-def.json",
+      "desc": "Manifest path scratch/salesforce-poc/config/project-scratch-def.json must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/GraphDataController.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnnotationController.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/controllers/DAUserPreferenceController.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel/daAnnotationPanel.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView/daFindingsView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine/daLayoutEngine.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView/daMatrixView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/graphViewer/graphViewer.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Author__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Author__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Author__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Author__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Finding__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Finding__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Finding__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Finding__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Node_Id__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Node_Id__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Node_Id__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Node_Id__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Project__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Project__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Project__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Project__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Resolved_At__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Resolved_At__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Resolved_At__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Resolved_At__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Status__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Status__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Status__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Status__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Text__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Text__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Text__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/fields/Text__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Chunk_Index__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Chunk_Index__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Chunk_Index__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Chunk_Index__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/DA_Analysis_Run__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/DA_Analysis_Run__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/DA_Analysis_Run__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/DA_Analysis_Run__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_Layout_Mode__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_Layout_Mode__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_Layout_Mode__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_Layout_Mode__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_View_Mode__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_View_Mode__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_View_Mode__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Active_View_Mode__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Filters_JSON__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Filters_JSON__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Filters_JSON__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Filters_JSON__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Positions_JSON__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Positions_JSON__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Positions_JSON__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Positions_JSON__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Preference_Key__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Preference_Key__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Preference_Key__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Preference_Key__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Project__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Project__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Project__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Project__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/User__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/User__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/User__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/User__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Zoom_Pan_JSON__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Zoom_Pan_JSON__c.field-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Zoom_Pan_JSON__c.field-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/fields/Zoom_Pan_JSON__c.field-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-poc-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-poc-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-poc-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-poc-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-workstream-a-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-workstream-a-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-workstream-a-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-workstream-a-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-workstream-c-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-workstream-c-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-workstream-c-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-workstream-c-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-wave5-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave5-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-wave5-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave5-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRadarView/daRadarView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-wave6-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave6-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-wave6-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave6-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunSummaryDTO.cls-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistoryView/daAnalysisHistoryView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-wave7-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave7-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-wave7-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave7-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daDiffEngine/daDiffEngine.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daCompareView/daCompareView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-wave8-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave8-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-wave8-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave8-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringView/daRefactoringView.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml",
+      "desc": "Manifest path scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-wave9-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave9-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-wave9-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-wave9-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w5-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-1-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w5-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-1-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w5-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-2-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w5-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-2-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w5-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-3-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w5-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-3-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w5-4-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-4-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w5-4-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-4-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w5-5-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-5-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w5-5-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-5-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w5-6-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-6-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w5-6-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w5-6-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w6-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-1-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w6-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-1-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w6-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-2-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w6-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-2-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w6-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-3-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w6-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-3-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w6-4-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-4-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w6-4-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w6-4-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w7-p1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-p1-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w7-p1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-p1-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w7-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-1-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w7-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-1-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w7-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-2-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w7-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-2-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w7-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-3-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w7-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w7-3-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w8-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w8-1-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w8-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w8-1-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w8-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w8-2-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w8-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w8-2-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w8-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w8-3-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w8-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w8-3-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w9-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w9-1-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w9-1-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w9-1-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w9-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w9-2-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w9-2-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w9-2-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-w9-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w9-3-tests.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-w9-3-tests.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-w9-3-tests.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-DIR-scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs must be a regular file, not a directory",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "MANIFEST-NO-TRAVERSAL-scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs",
+      "desc": "Manifest path scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs must not contain traversal or absolute root",
+      "category": "filesystem",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-COUNT-11",
+      "desc": "Batch 1 allowlist contains exactly 11 tasks (found 11)",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-ROW-COUNT-49",
+      "desc": "Batch 1 allowlist contains exactly 49 task/path rows (found 49)",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W5-1",
+      "desc": "Batch 1 includes W5-1",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W6-1",
+      "desc": "Batch 1 includes W6-1",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W6-2",
+      "desc": "Batch 1 includes W6-2",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W6-3",
+      "desc": "Batch 1 includes W6-3",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W6-4",
+      "desc": "Batch 1 includes W6-4",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W7-P1",
+      "desc": "Batch 1 includes W7-P1",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W7-1",
+      "desc": "Batch 1 includes W7-1",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W7-2",
+      "desc": "Batch 1 includes W7-2",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W8-1",
+      "desc": "Batch 1 includes W8-1",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W8-2",
+      "desc": "Batch 1 includes W8-2",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "BATCH1-TASK-W9-1",
+      "desc": "Batch 1 includes W9-1",
+      "category": "crossDocumentConsistency",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-1-READY",
+      "desc": "W5-1 status is READY_TO_LAUNCH",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-2-DEPENDENT",
+      "desc": "W5-2 is serialized as IMPLEMENTATION_DEPENDENT",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-3-DEPENDENT",
+      "desc": "W5-3 is serialized as IMPLEMENTATION_DEPENDENT",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-4-DEPENDENT",
+      "desc": "W5-4 is serialized as IMPLEMENTATION_DEPENDENT",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-5-DEPENDENT",
+      "desc": "W5-5 is serialized as IMPLEMENTATION_DEPENDENT",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W5-6-DEPENDENT",
+      "desc": "W5-6 is serialized as IMPLEMENTATION_DEPENDENT",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "TRACE-COUNT-9",
+      "desc": "Traceability matrix contains exactly 9 contracts (found 9)",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-SHA-MATCH",
+      "desc": "daAppShell.js SHA-256 matches verified hash",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-LINE-COUNT-593",
+      "desc": "daAppShell.js line count is 593 (found 593)",
+      "category": "staticSchema",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-L77-API",
+      "desc": "daAppShell.js line 77 declares @api activeProjectId",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-L78-API",
+      "desc": "daAppShell.js line 78 declares @api activeProjectKey",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-NO-DISPATCH-EVENT",
+      "desc": "daAppShell.js contains zero dispatchEvent calls (pure container with inbound handlers)",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-INBOUND-FILTER",
+      "desc": "daAppShell.js declares inbound handleFilterChange",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-INBOUND-CONTAINER",
+      "desc": "daAppShell.js declares inbound handleContainerChange",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-INBOUND-PROJECT",
+      "desc": "daAppShell.js declares inbound handleProjectChange",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "APPSHELL-INBOUND-NODE",
+      "desc": "daAppShell.js declares inbound handleNodeSelect",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W7-TWO-STEP-RESOLUTION",
+      "desc": "W7 contract specifies two-step resolution",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W7-RUNNAME-CANONICAL",
+      "desc": "W7 contract mandates canonical runName DTO field",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W7-REJECT-AMBIGUOUS-OR",
+      "desc": "W7 contract rejects ambiguous OR query",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W8-10MB-STRING-GUARD",
+      "desc": "Wave 8 mandates 10 MB raw-string character guard",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W8-GENERATION-TOKEN",
+      "desc": "Wave 8 enforces generation token invalidation",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "W8-SURROGATE-SAFE",
+      "desc": "Wave 8 enforces surrogate pair chunk boundary safety",
+      "category": "semanticReview",
+      "status": "PASS"
+    },
+    {
+      "code": "UNVERIFIED-SF-LIVE-ORG",
+      "desc": "Live Salesforce org deployment & governor limit verification",
+      "category": "empiricalExecution",
+      "status": "UNVERIFIED",
+      "reason": "Requires live scratch org connection"
+    },
+    {
+      "code": "UNVERIFIED-BROWSER-CANVAS",
+      "desc": "Browser DOM drag & canvas rendering verification",
+      "category": "empiricalExecution",
+      "status": "UNVERIFIED",
+      "reason": "Requires browser runtime"
+    }
+  ]
+}

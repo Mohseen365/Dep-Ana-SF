@@ -1,0 +1,5 @@
+Scenario_ID,Test_Type,Description,Expected,Actual,Status
+GEN-01,INTEGRATION,"Dynamic Git branch and HEAD inspection",NON_EMPTY,OBSERVED,PASS
+GEN-02,INTEGRATION,"Runtime environment version detection",NON_EMPTY,OBSERVED,PASS
+GEN-03,INTEGRATION,"Scenario file presence and row count validation",ALL_PRESENT,OBSERVED,PASS
+GEN-04,INTEGRATION,"Fail closed on missing mandatory log file",FAIL_ON_MISSING,OBSERVED,PASS

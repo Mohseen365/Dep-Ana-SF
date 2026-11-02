@@ -1,0 +1,31 @@
+Sweep,Mutation_ID,Description,Expected_Finding_ID,Expected_Category,Detected,Findings_Count,Log_SHA256
+1,MUT-01,"Unexpected task added to task register",TASK-COUNT-21,staticSchema,PASS,40,532d3e9277782043aebc98512e4bb263d11fa74a6447905dce66868ddbd6e578
+1,MUT-02,"Missing task from canonical register",TASK-COUNT-21,staticSchema,PASS,4,43b417571430d76064dab1ded0cea4ae029dc8f4aecfb41b3f59249ab918d904
+1,MUT-03,"Duplicate task ID in task register",TASK-DUPLICATE,staticSchema,PASS,4,ccf7baa91a6f8c02773848fa3e39b74654fcb2972541a9d608f3e817f7c41159
+1,MUT-04,"Cyclic dependency injected",DEP-ACYCLIC,semanticReview,PASS,3,b634ee837cd1f7a2a5d2a5e3d0ef11dc39d89d7991c4f528b1b7a297103a331c
+1,MUT-05,"Duplicate path in ownership manifest",MANIFEST-DUPLICATE,staticSchema,PASS,3,a74785dcabd666f0dc61b9af81d7236f7ffee23c731c67a439642d918046410e
+1,MUT-06,"Directory target inserted into manifest",MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/,filesystem,PASS,3,670479e060a94f9e24e686708c5710ec5d481d973b4f3e299c4b26e07adda79b
+1,MUT-07,"Batch 1 task count violation",BATCH1-TASK-COUNT-11,staticSchema,PASS,16,bee6a8534ae436374bc7e907d741972f37ae8914e3caf208ede3354ee7aeb9a6
+1,MUT-08,"W7 contract ambiguous OR query introduced",W7-REJECT-AMBIGUOUS-OR,semanticReview,PASS,3,2286445b86766000964add42626e5d54b757de867a0bf022d7fc5f73355345fd
+1,MUT-09,"W8 raw string limit omitted",W8-10MB-STRING-GUARD,semanticReview,PASS,3,f7ec0a127ba32a6d74421ebd0c3aa3354ebde45e6fae5a57171571284a399eb3
+1,MUT-10,"daAppShell.js dispatched event falsely introduced",APPSHELL-NO-DISPATCH-EVENT,semanticReview,PASS,5,3206c099686e99cdadb01cb6b02ff70197dfb24b2b74a665a390872e5b7fd70c
+2,MUT-01,"Unexpected task added to task register",TASK-COUNT-21,staticSchema,PASS,40,2742118d3c12ab07cdecc7189e25cb307206ca5c044a04bf72ca53b79ee0e11d
+2,MUT-02,"Missing task from canonical register",TASK-COUNT-21,staticSchema,PASS,4,77dd5a635ee149347a27bab3377759f134d11d68953c0ad0fcbb72d2e3415801
+2,MUT-03,"Duplicate task ID in task register",TASK-DUPLICATE,staticSchema,PASS,4,799212874a67ca8c1a0aa48edb28f8a8747e576eba24e6acc97c7a2df4b9edd4
+2,MUT-04,"Cyclic dependency injected",DEP-ACYCLIC,semanticReview,PASS,3,76ed4699bbeb2b4e62a651829e66a9175e972a3b5b01ae2610c52c353b4e8e7f
+2,MUT-05,"Duplicate path in ownership manifest",MANIFEST-DUPLICATE,staticSchema,PASS,3,c29312ecb9d25b62516549473b5384ebba0851640cb8b68fe41c01cc071e3878
+2,MUT-06,"Directory target inserted into manifest",MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/,filesystem,PASS,3,4e1fde318e42197aabe1e35bf349be0c1caa5b26643d45103e10b4f41cec2874
+2,MUT-07,"Batch 1 task count violation",BATCH1-TASK-COUNT-11,staticSchema,PASS,16,49b6346e05855f7f2ea585c6009bdaa0b02101a418ba2fbaf6fa8247a129312e
+2,MUT-08,"W7 contract ambiguous OR query introduced",W7-REJECT-AMBIGUOUS-OR,semanticReview,PASS,3,a70c7b68e4b7603bd44f24f80cfeddbc587261bd203b60797b6abc8306926e32
+2,MUT-09,"W8 raw string limit omitted",W8-10MB-STRING-GUARD,semanticReview,PASS,3,48bf41c6e64b207f2b7df3565b3258f6fe9079d5a818235073f4397c8a99deed
+2,MUT-10,"daAppShell.js dispatched event falsely introduced",APPSHELL-NO-DISPATCH-EVENT,semanticReview,PASS,5,c1a1a717303eba74dd666d9d9ea7b248ac914acc0cae9db82b16236592695fc3
+3,MUT-01,"Unexpected task added to task register",TASK-COUNT-21,staticSchema,PASS,40,db6c72f9e708413d78b3d68f49b9fee18c1a40aea1cb1305d2236d7f7e9a9d39
+3,MUT-02,"Missing task from canonical register",TASK-COUNT-21,staticSchema,PASS,4,509bf178c23aa3b1f84c9bb221ebcf61fe62436e4933029c9d7c929c043bddbc
+3,MUT-03,"Duplicate task ID in task register",TASK-DUPLICATE,staticSchema,PASS,4,a004c19ea62a01567b6713db216fa356b3e5bba007f6a713fca7b30661b4aacd
+3,MUT-04,"Cyclic dependency injected",DEP-ACYCLIC,semanticReview,PASS,3,8c7acea0ac5dc19cd518d10681e8666c13757534329e8a20756fd92f0c907997
+3,MUT-05,"Duplicate path in ownership manifest",MANIFEST-DUPLICATE,staticSchema,PASS,3,5fddc876c4a2ad5ec379c878be3e3ad599c033fde9f68d9a0056e528244e4ad9
+3,MUT-06,"Directory target inserted into manifest",MANIFEST-NO-DIR-scratch/salesforce-poc/force-app/main/default/lwc/,filesystem,PASS,3,807ec7ca2d2eb740a3c4e7ec4651d9d84d21428468a88eb7c3d3af6b5c444277
+3,MUT-07,"Batch 1 task count violation",BATCH1-TASK-COUNT-11,staticSchema,PASS,16,10cd50cbabfa8849d2f1df3d465bf7c9db47d9c7175ec31a67dd43562438bbe7
+3,MUT-08,"W7 contract ambiguous OR query introduced",W7-REJECT-AMBIGUOUS-OR,semanticReview,PASS,3,510ed3a459de1571786c237a547f8cca7e7681d3f6bb56798a820ef486c5709c
+3,MUT-09,"W8 raw string limit omitted",W8-10MB-STRING-GUARD,semanticReview,PASS,3,6ea99d05408ea4ab39c7b07e0531e5e0271a2af04728f0f4aa73c7ea2b491963
+3,MUT-10,"daAppShell.js dispatched event falsely introduced",APPSHELL-NO-DISPATCH-EVENT,semanticReview,PASS,5,e02dc882d5f77b3694386b4e4d732b01850c1f8cf86ad9a1af317f7c6daf06ab
