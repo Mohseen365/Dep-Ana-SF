@@ -1,0 +1,19 @@
+{
+  "sourceFile": "scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js",
+  "sha256": "b908430756f9efdf273e4574b8d2b77b7efc367687ec238348b459b5de03c80c",
+  "byteCount": 23226,
+  "lineCount": 594,
+  "publicApiProperties": [
+    { "name": "activeProjectId", "line": 77, "type": "public property (@api)" },
+    { "name": "activeProjectKey", "line": 78, "type": "public property (@api)" }
+  ],
+  "inboundEventHandlers": [
+    { "name": "handleFilterChange", "lines": "487-503", "type": "inbound handler (filterchange)" },
+    { "name": "handleContainerChange", "lines": "514-539", "type": "inbound handler (containerchange)" },
+    { "name": "handleProjectChange", "lines": "562-585", "type": "inbound handler (projectchange)" },
+    { "name": "handleNodeSelect", "lines": "588-592", "type": "inbound handler (nodeselect)" }
+  ],
+  "outboundDispatchedEvents": [],
+  "outboundDispatchCount": 0,
+  "reconciliationNote": "Wave 0.4.7 mistakenly labeled inbound event handlers as outbound dispatched events. Independent inspection confirms 0 dispatchEvent calls exist in daAppShell.js."
+}
