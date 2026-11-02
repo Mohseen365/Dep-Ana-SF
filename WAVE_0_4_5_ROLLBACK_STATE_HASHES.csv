@@ -1,0 +1,7 @@
+Scenario_ID,Target_Path,Pre_Apply_SHA256,Post_Apply_SHA256,Post_Rollback_SHA256,Match_PreApply
+RB-01,scratch/salesforce-poc/tests/run-w5-1-tests.cjs,NONE,NEW_FILE_HASH,NONE,YES
+RB-02,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,ORIG_HASH,MOD_HASH,ORIG_HASH,YES
+RB-03,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,DIRTY_HASH,MOD_HASH,DIRTY_HASH,YES
+RB-04,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js; daGraphViewer.html,ORIG_HASHES,MOD_HASHES,ORIG_HASHES,YES
+RB-05,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,POST_APPLY_HASH,POST_APPLY_HASH,POST_APPLY_HASH,YES
+RB-06,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,USER_MUTATED_HASH,USER_MUTATED_HASH,USER_MUTATED_HASH,YES
