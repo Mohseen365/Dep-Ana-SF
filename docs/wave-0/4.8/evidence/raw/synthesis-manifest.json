@@ -1,0 +1,1046 @@
+{
+  "findings": [],
+  "findingsCount": 0,
+  "generatedAt": "2026-11-02T12:00:00.000Z",
+  "success": true,
+  "verifiedArtifacts": [
+    {
+      "id": "ART-01",
+      "path": "docs/wave-0/4.8/patch-gate.cjs",
+      "type": "JavaScript",
+      "sha256": "f5cb4def514e66b61a5f207f1e9683f826ce163abc2e168c6c7e82cce9004a48",
+      "byteCount": 28388
+    },
+    {
+      "id": "ART-02",
+      "path": "docs/wave-0/4.8/strict-rfc4180-csv-parser.cjs",
+      "type": "JavaScript",
+      "sha256": "7086b4fe9db58e579b6c7d6f096561d1eba71d72b680bfd6e24692137c71fbef",
+      "byteCount": 7310
+    },
+    {
+      "id": "ART-03",
+      "path": "docs/wave-0/4.8/validate-wave0-4-8-dispatch.cjs",
+      "type": "JavaScript",
+      "sha256": "fcaa638933c03447695aaef6029499a61e7247f079eb1d0f1a646b1442c51271",
+      "byteCount": 16381
+    },
+    {
+      "id": "ART-04",
+      "path": "docs/wave-0/4.8/generate-synthesis.cjs",
+      "type": "JavaScript",
+      "sha256": "50191883babb20c88bb771cf61e0aa58a5fed356f579ed0b018efd141c6bc505",
+      "byteCount": 4618
+    },
+    {
+      "id": "ART-05",
+      "path": "WAVE_0_4_1_AUTHORITATIVE_TASK_AND_DEPENDENCY_REGISTER.csv",
+      "type": "CSV",
+      "sha256": "4d6f83d88390170624ec5bcebbc1afc0b781a12ca171f09f98665d33c66b773b",
+      "byteCount": 24244
+    },
+    {
+      "id": "ART-06",
+      "path": "WAVE_0_4_1_AUTHORITATIVE_FILE_OWNERSHIP_MANIFEST.csv",
+      "type": "CSV",
+      "sha256": "cd249035959be3c2cb1023454e2dbf4da1020ecf3d81a6415bae756ab3c68641",
+      "byteCount": 32135
+    },
+    {
+      "id": "ART-07",
+      "path": "docs/wave-0/4.4/WAVE_0_4_4_BATCH1_TASK_ALLOWLIST.csv",
+      "type": "CSV",
+      "sha256": "9aa5141c01df6a6f5104c61cce6584af4ac68578f6107c2febf96cfad8a6c187",
+      "byteCount": 6472
+    },
+    {
+      "id": "ART-08",
+      "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js",
+      "type": "LWC JavaScript",
+      "sha256": "b908430756f9efdf273e4574b8d2b77b7efc367687ec238348b459b5de03c80c",
+      "byteCount": 23226
+    }
+  ],
+  "verifiedArtifactsCount": 8,
+  "verifiedLogs": [
+    {
+      "filename": "AUTH-01.log",
+      "scenarioId": "AUTH-01",
+      "sha256": "89241d41cd1f9405c552a4242afd665e3d22727df39ebb158d2a16091b8f53f7",
+      "byteCount": 103
+    },
+    {
+      "filename": "AUTH-02.log",
+      "scenarioId": "AUTH-02",
+      "sha256": "3cdc8ab172c2971b0203886846aa7c0e50acb2bc3e0892ec46b2e423d59cb1ae",
+      "byteCount": 117
+    },
+    {
+      "filename": "AUTH-03.log",
+      "scenarioId": "AUTH-03",
+      "sha256": "30f7268b930517d7a42017480188af7b861704eb05689b9ff7aefd8038e2cce9",
+      "byteCount": 89
+    },
+    {
+      "filename": "AUTH-04.log",
+      "scenarioId": "AUTH-04",
+      "sha256": "0b8bc3c998437d7c51b6f876dec70ad88d54051bd75e1531adcecfddef2fbc3b",
+      "byteCount": 101
+    },
+    {
+      "filename": "AUTH-05.log",
+      "scenarioId": "AUTH-05",
+      "sha256": "2e51215af701a29b3ee56ef42709029b1faf3564665c30ea3f21c56aa5231c99",
+      "byteCount": 116
+    },
+    {
+      "filename": "AUTH-06.log",
+      "scenarioId": "AUTH-06",
+      "sha256": "de77b92ebc7ae00ecd512f71d6e07ed09dc573ba26374a96fb1ce6cd66cfb8b8",
+      "byteCount": 89
+    },
+    {
+      "filename": "AUTH-07.log",
+      "scenarioId": "AUTH-07",
+      "sha256": "6e4a18d1096db9400f6ba775ce6904d6ca98275ade2889b1af472ca1428795b8",
+      "byteCount": 95
+    },
+    {
+      "filename": "AUTH-08.log",
+      "scenarioId": "AUTH-08",
+      "sha256": "8db2641ffee907defef8c5078527f0fccef205b5bf8f76e2ffe5a60657cb3391",
+      "byteCount": 120
+    },
+    {
+      "filename": "AUTH-09.log",
+      "scenarioId": "AUTH-09",
+      "sha256": "5efb4b65f3679d7b8c50503bb8591feb396ecdbba8244f1e1f6bbeaf622960f0",
+      "byteCount": 85
+    },
+    {
+      "filename": "AUTH-10.log",
+      "scenarioId": "AUTH-10",
+      "sha256": "0a3169577e87c3b7c419ebdd7f3d9e19d2bdfa911cecaf978f5959d475f4e428",
+      "byteCount": 65
+    },
+    {
+      "filename": "AUTH-11.log",
+      "scenarioId": "AUTH-11",
+      "sha256": "8221a87b8d7e6a24601a36f17d4ecb486a940b59a8cf066f09dec394e8d25e7c",
+      "byteCount": 203
+    },
+    {
+      "filename": "AUTH-12.log",
+      "scenarioId": "AUTH-12",
+      "sha256": "bf9b41c1edc79f2101b3191ed7a8206e0a1661be19001e456d849fff6bd4b1ba",
+      "byteCount": 71
+    },
+    {
+      "filename": "CONT-01.log",
+      "scenarioId": "CONT-01",
+      "sha256": "fc3d65ec3b349b0eedfb0d95a3826915006fd9bd12303612c34045cdfcc3fdd7",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-02.log",
+      "scenarioId": "CONT-02",
+      "sha256": "dcaaa128816cb8f4f875efc39af8c922d73ce853b0b63d4669f840975b2d2f14",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-03.log",
+      "scenarioId": "CONT-03",
+      "sha256": "3b0a8bc7d0702019afe99d2fecb4a1ce930d29146f4761a07e95f1035ed4519a",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-04.log",
+      "scenarioId": "CONT-04",
+      "sha256": "35c29537267bd40292b60593915f33339069afd918cd2807de81d73573c94c6d",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-05.log",
+      "scenarioId": "CONT-05",
+      "sha256": "6fe5c7a58c072f6938b1dba768649d35abe51467a0a20b5a6174a02b5625c128",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-06.log",
+      "scenarioId": "CONT-06",
+      "sha256": "c02d693eff6d651ed8f3fc0967cd6cc3446a597a125aa462f50b7769453b0744",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-07.log",
+      "scenarioId": "CONT-07",
+      "sha256": "fbb8be0ba28193b588e96d3109c47f81439cd522785f0257029c6e22abd119c7",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-08.log",
+      "scenarioId": "CONT-08",
+      "sha256": "8978f3baefba82d36963efad49da91d57bf865d452da94f3039a2b73cecf6315",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-09.log",
+      "scenarioId": "CONT-09",
+      "sha256": "5e948a6fe71d96191eb7f6e4afda5ab1d6601337cd79290e5d9e082fb836b207",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-10.log",
+      "scenarioId": "CONT-10",
+      "sha256": "f90c633f1c2279a9131ecbb002ec9b8378a16599f8fa9a65121537d98dd5e522",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-11.log",
+      "scenarioId": "CONT-11",
+      "sha256": "cc110e675b469b798669841922980afddfc2dbcd5de40b138f0b8abab78734ba",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-12.log",
+      "scenarioId": "CONT-12",
+      "sha256": "306966a99b94050674a57c2cc3072f604efa399bc30c8bc70c3c3722dcb843c6",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-13.log",
+      "scenarioId": "CONT-13",
+      "sha256": "c6c5d45f488c1dd8bf31b2ea8dfe42498343a92c5c9632a2ac5011072ff1f19b",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-14.log",
+      "scenarioId": "CONT-14",
+      "sha256": "a7e0dee7e14f5c25e5ffc889e74cc4d6bdf92788f86f7565899c15b241644be3",
+      "byteCount": 31
+    },
+    {
+      "filename": "CONT-15.log",
+      "scenarioId": "CONT-15",
+      "sha256": "13605ec60e503288dbdf35a74911fd28a028ffb87106c78cf6a8a50b0915e322",
+      "byteCount": 121
+    },
+    {
+      "filename": "CONT-16.log",
+      "scenarioId": "CONT-16",
+      "sha256": "c583321862d620fc3ca5fcac9b381f48967f833cb81765b208bf5514d2a27f95",
+      "byteCount": 101
+    },
+    {
+      "filename": "CSV-01.log",
+      "scenarioId": "CSV-01",
+      "sha256": "08a398b0bd1fbb0115cf1baacc77618d71245c0babfa3817b9cda57ea4305f44",
+      "byteCount": 54
+    },
+    {
+      "filename": "CSV-02.log",
+      "scenarioId": "CSV-02",
+      "sha256": "2b8d48ada28ca028af51426afcb644acf53a934f3d8c5c3f4b4a0dfd919c3b54",
+      "byteCount": 51
+    },
+    {
+      "filename": "CSV-03.log",
+      "scenarioId": "CSV-03",
+      "sha256": "8efb2f5787750b0f9c88809e09162e2c6b78384d4030735f37052bace21725d0",
+      "byteCount": 56
+    },
+    {
+      "filename": "CSV-04.log",
+      "scenarioId": "CSV-04",
+      "sha256": "eac884e9bb5d1030b8cf6231503fc7bbd474f42b23f6cb32b0b331183f35c2ed",
+      "byteCount": 57
+    },
+    {
+      "filename": "CSV-05.log",
+      "scenarioId": "CSV-05",
+      "sha256": "5ad695b3b2ddb6494a2134e42ed951edee7236ce1748dd60c8ec2aa698ddacac",
+      "byteCount": 62
+    },
+    {
+      "filename": "CSV-06.log",
+      "scenarioId": "CSV-06",
+      "sha256": "35b6a865f133b11054fcf0061e5cb3539be9864053b029c086b25047b510f0e1",
+      "byteCount": 53
+    },
+    {
+      "filename": "CSV-07.log",
+      "scenarioId": "CSV-07",
+      "sha256": "07b1abacf29041e0948aeb69238eb603a5c2f6a0afdc2e90abfc1b763fa99446",
+      "byteCount": 48
+    },
+    {
+      "filename": "CSV-08.log",
+      "scenarioId": "CSV-08",
+      "sha256": "bef1221e174499e61007c1c4b9a7c92e768220500e9f7438fd023468e86f6ce6",
+      "byteCount": 43
+    },
+    {
+      "filename": "CSV-09.log",
+      "scenarioId": "CSV-09",
+      "sha256": "68cb911b0ade4d343a985934ab767b5ea6ccff3000b74ae50ce54f015a44c845",
+      "byteCount": 72
+    },
+    {
+      "filename": "CSV-10.log",
+      "scenarioId": "CSV-10",
+      "sha256": "39171c1436f9272d8e164e8eaf7efc9ec8d90b227d954a91c843d22aec7b06d2",
+      "byteCount": 73
+    },
+    {
+      "filename": "CSV-11.log",
+      "scenarioId": "CSV-11",
+      "sha256": "e0e1e27f88c6671ecd31827acd6dcaf99c8b04774789626dc8c80cc62c41ef0c",
+      "byteCount": 70
+    },
+    {
+      "filename": "CSV-12.log",
+      "scenarioId": "CSV-12",
+      "sha256": "9c25d569ef36e12e29066497e6e5ca2969fed42814a33d4508d57e0437595e74",
+      "byteCount": 68
+    },
+    {
+      "filename": "CSV-13.log",
+      "scenarioId": "CSV-13",
+      "sha256": "c9d422c67dffb1dbda10eba47832e88991c2b615091b447364b4d09517d1edde",
+      "byteCount": 57
+    },
+    {
+      "filename": "CSV-14.log",
+      "scenarioId": "CSV-14",
+      "sha256": "91ab51c306af97ca6a777d5d01134ea45730b194d6c96a815ea5f2de087f6fe1",
+      "byteCount": 65
+    },
+    {
+      "filename": "CSV-15.log",
+      "scenarioId": "CSV-15",
+      "sha256": "ddc4c40d7705de0c5b642978e04a32584834952723e15054c914525ed491c22a",
+      "byteCount": 47
+    },
+    {
+      "filename": "CSV-16.log",
+      "scenarioId": "CSV-16",
+      "sha256": "be0e619e526d239992e2940c1ad5ce71768d2e24494a3ae62939cde8ef949c42",
+      "byteCount": 47
+    },
+    {
+      "filename": "RB-01.log",
+      "scenarioId": "RB-01",
+      "sha256": "23606777928cd19928d51f19d9edeeb253abc40584a1d939a179e956124cd765",
+      "byteCount": 189
+    },
+    {
+      "filename": "RB-02.log",
+      "scenarioId": "RB-02",
+      "sha256": "7f71d79aa069efa2a4a708a90f9efec3c7c5e5cc48767e3692a825fa21e83c30",
+      "byteCount": 75
+    },
+    {
+      "filename": "RB-03.log",
+      "scenarioId": "RB-03",
+      "sha256": "f404ea473cc84288020c3e704db7eab2cc9c2f40f79e7c979f3e08bdffcd2e56",
+      "byteCount": 108
+    },
+    {
+      "filename": "RB-04.log",
+      "scenarioId": "RB-04",
+      "sha256": "e7ac09ca9cb675692acbb1d8f31b83767e2bf55ec50f67a4ea27f112266d38a1",
+      "byteCount": 105
+    },
+    {
+      "filename": "RB-05.log",
+      "scenarioId": "RB-05",
+      "sha256": "a20b1507dc8eaa808d23ce080e5198c287a853e4a7913b696ddf5fabd20ba2c0",
+      "byteCount": 105
+    },
+    {
+      "filename": "RB-06.log",
+      "scenarioId": "RB-06",
+      "sha256": "a52fe14b364789112174cb715b0ec8d0a7938b698e9be14c3e819ccb1920996e",
+      "byteCount": 77
+    },
+    {
+      "filename": "RB-07.log",
+      "scenarioId": "RB-07",
+      "sha256": "76a7158ec7921100785f9577c3a084588012b080698db786559851e333bbd861",
+      "byteCount": 97
+    },
+    {
+      "filename": "RB-08.log",
+      "scenarioId": "RB-08",
+      "sha256": "34b91e3215c870a35f94f26310ecfded29205c9c439b462be1c32564c91c7b1c",
+      "byteCount": 77
+    },
+    {
+      "filename": "RB-09.log",
+      "scenarioId": "RB-09",
+      "sha256": "245c038daa3bc24c432f22b373ff76293e1d5d40982d33e4901d2bde67f51f90",
+      "byteCount": 93
+    },
+    {
+      "filename": "RB-10.log",
+      "scenarioId": "RB-10",
+      "sha256": "a27990fc2b7a745445948ca851af7463f10f98193df5d881bfff88c37e3603c3",
+      "byteCount": 93
+    },
+    {
+      "filename": "RB-11.log",
+      "scenarioId": "RB-11",
+      "sha256": "4fdc8e7952b335b55dcb9faf5acf1b6da6e275cecac75198c136c7c2ca11f4b5",
+      "byteCount": 115
+    },
+    {
+      "filename": "RB-12.log",
+      "scenarioId": "RB-12",
+      "sha256": "e095215089f11d40766e896e8c5c5c553b71ca227108235569f5cd4d2ce091f2",
+      "byteCount": 85
+    },
+    {
+      "filename": "RB-13.log",
+      "scenarioId": "RB-13",
+      "sha256": "0b0fdf4b74a5fa62cb52df7cd642ab63adf3cd9efdbb04994518991506c97de9",
+      "byteCount": 83
+    },
+    {
+      "filename": "RB-14.log",
+      "scenarioId": "RB-14",
+      "sha256": "2ea401cba943e452bc3dbe57fc1d0e951574ba8836cf799744d643c0c8fa12ed",
+      "byteCount": 97
+    },
+    {
+      "filename": "RB-15.log",
+      "scenarioId": "RB-15",
+      "sha256": "89af1ae738dc322178d1dbbc126448b8de2ffcb12dbf426881a8d0be043bbd7d",
+      "byteCount": 87
+    },
+    {
+      "filename": "RB-16.log",
+      "scenarioId": "RB-16",
+      "sha256": "aac4836951c0bca8ef47920081a0319e1b91dc4270a051dc3986b75a106d234c",
+      "byteCount": 95
+    },
+    {
+      "filename": "RB-17.log",
+      "scenarioId": "RB-17",
+      "sha256": "46cab7146a73957e5fb781698bb2a490dc45d371226ddfc34ef717e65f470b3f",
+      "byteCount": 91
+    },
+    {
+      "filename": "RB-18.log",
+      "scenarioId": "RB-18",
+      "sha256": "bcb16b55e96abe24af80200ca4b24ad6dee97382d543e119af694ee2c21ee3bb",
+      "byteCount": 201
+    },
+    {
+      "filename": "RB-19.log",
+      "scenarioId": "RB-19",
+      "sha256": "75bff9cd001a2a98559cc987bcfb727b54056cbd8ce6fd493e739612bdfcdb89",
+      "byteCount": 66
+    },
+    {
+      "filename": "RB-20.log",
+      "scenarioId": "RB-20",
+      "sha256": "6c1b03e390775cd46d863886026a0322503f870c71a39384cd4d183b3e86e1d8",
+      "byteCount": 145
+    },
+    {
+      "filename": "RB-21.log",
+      "scenarioId": "RB-21",
+      "sha256": "ebcc36c1dae5e6e1038fa6b5c764a6d488bb1a7edd51701d63fb5bd14fc1110f",
+      "byteCount": 105
+    },
+    {
+      "filename": "RB-22.log",
+      "scenarioId": "RB-22",
+      "sha256": "b6c506e3b2e90fed10e912ce73de17efae383a4b323f0cf3c0b3628e727d34ef",
+      "byteCount": 120
+    },
+    {
+      "filename": "REN-01.log",
+      "scenarioId": "REN-01",
+      "sha256": "e55f88096d5ef58cef480fa7aebdc6d3ecf4d656d9becdc533ecb181639bcaa4",
+      "byteCount": 64
+    },
+    {
+      "filename": "REN-02.log",
+      "scenarioId": "REN-02",
+      "sha256": "616b61b06966bbb8bb4cd4fe9a035d9b3105a602846959c80b397f7ddd49dc7a",
+      "byteCount": 115
+    },
+    {
+      "filename": "REN-03.log",
+      "scenarioId": "REN-03",
+      "sha256": "81cb1e5e527e9301cc9aad9925be5c2214e8443ad69e545307ba73991ad1ed4f",
+      "byteCount": 115
+    },
+    {
+      "filename": "REN-04.log",
+      "scenarioId": "REN-04",
+      "sha256": "e89b49264e9a6fae69990005c98fd673e5087e29b9ca6e14373b9dbb1f6306c8",
+      "byteCount": 64
+    },
+    {
+      "filename": "REN-05.log",
+      "scenarioId": "REN-05",
+      "sha256": "54e773b6f5dbb2827bcff9b6f971900208ac5d42de8bac9ccfa5c50a428a1b3d",
+      "byteCount": 115
+    },
+    {
+      "filename": "REN-06.log",
+      "scenarioId": "REN-06",
+      "sha256": "71e509799067f38b288c8b0b568c0831b16e7c5077d7064253b730fab48768a8",
+      "byteCount": 119
+    },
+    {
+      "filename": "REN-07.log",
+      "scenarioId": "REN-07",
+      "sha256": "8b73651b3ebfff4bb54e1440a87a97c38acffb91d190eb1007c62f94c9007133",
+      "byteCount": 64
+    },
+    {
+      "filename": "REN-08.log",
+      "scenarioId": "REN-08",
+      "sha256": "8d80d07796c9646b2f09630ed086eb8b45299e703903b657d6c1bca634c30f5f",
+      "byteCount": 64
+    },
+    {
+      "filename": "REN-09.log",
+      "scenarioId": "REN-09",
+      "sha256": "b99264e92981ee1309ce4251d655f73a23c42d03cd0b137c9371025d735f7a5b",
+      "byteCount": 92
+    },
+    {
+      "filename": "baseline-lane-a-sweep-1.log",
+      "scenarioId": "baseline-lane-a-sweep-1",
+      "sha256": "fd048e8f2c94f29ed3ca498db83d13f91fe43a6e47a2baec4d2168d96d70f948",
+      "byteCount": 1080
+    },
+    {
+      "filename": "baseline-lane-a-sweep-2.log",
+      "scenarioId": "baseline-lane-a-sweep-2",
+      "sha256": "937713e9e4d499b900ad14bb15c23fecf95f1ed92c24b9776bfe0e92d3472ed8",
+      "byteCount": 1080
+    },
+    {
+      "filename": "baseline-lane-a-sweep-3.log",
+      "scenarioId": "baseline-lane-a-sweep-3",
+      "sha256": "bef077c3a7ed2fa0048fc37e52c6d3d074150160c7e72746d7c7419046ef978b",
+      "byteCount": 1080
+    },
+    {
+      "filename": "baseline-lane-c-sweep-1.log",
+      "scenarioId": "baseline-lane-c-sweep-1",
+      "sha256": "d86dd5f13dcaa617033834a7ef0948c7e3b12dc4c7a8208e8e66d0bb4a05866d",
+      "byteCount": 1348
+    },
+    {
+      "filename": "baseline-lane-c-sweep-2.log",
+      "scenarioId": "baseline-lane-c-sweep-2",
+      "sha256": "c3bdc2d1c3ca428eb873783cffea088a1435991e92666c863982380490d5d8f3",
+      "byteCount": 1348
+    },
+    {
+      "filename": "baseline-lane-c-sweep-3.log",
+      "scenarioId": "baseline-lane-c-sweep-3",
+      "sha256": "dd758cb033dd937e98f1f6a85e367cce57a4ea40e714c48a976ceb830736717a",
+      "byteCount": 1348
+    },
+    {
+      "filename": "baseline-lane-d-sweep-1.log",
+      "scenarioId": "baseline-lane-d-sweep-1",
+      "sha256": "be3f1c59e78a38995c17fdeb68ab3dc20f666966fa53623da594c3ce447bc58b",
+      "byteCount": 1529
+    },
+    {
+      "filename": "baseline-lane-d-sweep-2.log",
+      "scenarioId": "baseline-lane-d-sweep-2",
+      "sha256": "bcd6fe59c35b82108a9ca919025b6427a93843e3e692efaee4c8b89cfc3f54c1",
+      "byteCount": 1529
+    },
+    {
+      "filename": "baseline-lane-d-sweep-3.log",
+      "scenarioId": "baseline-lane-d-sweep-3",
+      "sha256": "0f6ad0a2321096879596fbfb695142749326b63b2992d9e4811b1bfb0da1b2e2",
+      "byteCount": 1529
+    },
+    {
+      "filename": "baseline-lane-e-sweep-1.log",
+      "scenarioId": "baseline-lane-e-sweep-1",
+      "sha256": "643647bc2ae0c7fdc8ee3f60e4bb5b7e5c1b906d74bb485730c46689f6b895d1",
+      "byteCount": 1300
+    },
+    {
+      "filename": "baseline-lane-e-sweep-2.log",
+      "scenarioId": "baseline-lane-e-sweep-2",
+      "sha256": "3a69f28192690a28d7c8ce6dbf0141076debca6b9888a32884c5e49a63962cef",
+      "byteCount": 1300
+    },
+    {
+      "filename": "baseline-lane-e-sweep-3.log",
+      "scenarioId": "baseline-lane-e-sweep-3",
+      "sha256": "34539d33d1bd698f94f61b75ed5b2c818806fba3904beeddb908a75a82e320ed",
+      "byteCount": 1300
+    },
+    {
+      "filename": "baseline-lane-f-sweep-1.log",
+      "scenarioId": "baseline-lane-f-sweep-1",
+      "sha256": "dcc4a2e06ca06bfbd7d3cb7b682ac8d1b9252abf4910872bbf87fa830da65aee",
+      "byteCount": 1342
+    },
+    {
+      "filename": "baseline-lane-f-sweep-2.log",
+      "scenarioId": "baseline-lane-f-sweep-2",
+      "sha256": "a50db3b9733504bba0b07447067934edaa82ebc422b0ef051ce7d1051fb0baea",
+      "byteCount": 1342
+    },
+    {
+      "filename": "baseline-lane-f-sweep-3.log",
+      "scenarioId": "baseline-lane-f-sweep-3",
+      "sha256": "c6c5d1055d1501b561ed8fa48ea24a319a83d19bd4bb459b8d766a3f621fbef9",
+      "byteCount": 1342
+    },
+    {
+      "filename": "baseline-poc-sweep-1.log",
+      "scenarioId": "baseline-poc-sweep-1",
+      "sha256": "0e5e7144e4aee24a682bc55d6251d0d47ce05ebd75e57cdcf9fa03bad6b6e9fc",
+      "byteCount": 4239
+    },
+    {
+      "filename": "baseline-poc-sweep-2.log",
+      "scenarioId": "baseline-poc-sweep-2",
+      "sha256": "79b196d540b949e1b775f0b7c1cebbe6cc4acd6655f7e1c06b6a7788659e5697",
+      "byteCount": 4239
+    },
+    {
+      "filename": "baseline-poc-sweep-3.log",
+      "scenarioId": "baseline-poc-sweep-3",
+      "sha256": "83320369a6c0fba35b471dbae7f258d8d1b9613f47c4dabd6c161fe9c2e35ba2",
+      "byteCount": 4239
+    },
+    {
+      "filename": "baseline-wave4-sweep-1.log",
+      "scenarioId": "baseline-wave4-sweep-1",
+      "sha256": "4383e3992126cbc1cd61e33cf3fece44b8f7c8ad8c0b8c246473972794bca14d",
+      "byteCount": 2806
+    },
+    {
+      "filename": "baseline-wave4-sweep-2.log",
+      "scenarioId": "baseline-wave4-sweep-2",
+      "sha256": "e0d1ac01708fdeabd100837d9292bd25d5069d823d67cc68e6f15c85a95abae0",
+      "byteCount": 2807
+    },
+    {
+      "filename": "baseline-wave4-sweep-3.log",
+      "scenarioId": "baseline-wave4-sweep-3",
+      "sha256": "9e02c4b2d9b9c79e1c795077c66d86abc17ec0985145331578496b89d5499ece",
+      "byteCount": 2806
+    },
+    {
+      "filename": "baseline-workstream-a-sweep-1.log",
+      "scenarioId": "baseline-workstream-a-sweep-1",
+      "sha256": "41887ec7d3781090cf11c494fd8934808af2d7250ab53472d0a257000c5a1b44",
+      "byteCount": 2550
+    },
+    {
+      "filename": "baseline-workstream-a-sweep-2.log",
+      "scenarioId": "baseline-workstream-a-sweep-2",
+      "sha256": "1c130dd92cba2c33596201e6d47098e6d27f07429e5c176571dc8f8e68e56ed8",
+      "byteCount": 2550
+    },
+    {
+      "filename": "baseline-workstream-a-sweep-3.log",
+      "scenarioId": "baseline-workstream-a-sweep-3",
+      "sha256": "8acc7c0d63caf572f82bf6412a44a11c39a317b768b35c0f701a8b013f58b6bd",
+      "byteCount": 2550
+    },
+    {
+      "filename": "baseline-workstream-c-sweep-1.log",
+      "scenarioId": "baseline-workstream-c-sweep-1",
+      "sha256": "243b55be20b76ee0d09e7c7c3d9a546b3d1c1969d83d9599471288de02071036",
+      "byteCount": 2555
+    },
+    {
+      "filename": "baseline-workstream-c-sweep-2.log",
+      "scenarioId": "baseline-workstream-c-sweep-2",
+      "sha256": "b0df1bdd6a92b4e57f377fef9cffcaea654b939d7747fc5bb6678ddea8f91fe8",
+      "byteCount": 2555
+    },
+    {
+      "filename": "baseline-workstream-c-sweep-3.log",
+      "scenarioId": "baseline-workstream-c-sweep-3",
+      "sha256": "903621551ee22d8da296bb2d240842083e8918bd0c4e283af3e537797c86ce63",
+      "byteCount": 2555
+    },
+    {
+      "filename": "component-api-provenance.log",
+      "scenarioId": "component-api-provenance",
+      "sha256": "dd0aa314fc9f2fbefeeb0698e05ed9cb8fa2315fde628d3a8d8b0c620b8e2d12",
+      "byteCount": 370
+    },
+    {
+      "filename": "validator-mutation-MUT-01-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-01-sweep-1",
+      "sha256": "0f73d3d34074115b5d53dac5f1113975ae4090687c7737cc68535ccc4384d509",
+      "byteCount": 446
+    },
+    {
+      "filename": "validator-mutation-MUT-01-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-01-sweep-2",
+      "sha256": "3ecc004c6a98f1f2cfd0d803e18d91409a75c78cce9ed6eb4d45b545440e43d7",
+      "byteCount": 446
+    },
+    {
+      "filename": "validator-mutation-MUT-01-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-01-sweep-3",
+      "sha256": "300b9850b4e37147fb543c9590b213dc50e741eae3decaf6025dcbc3e5375f52",
+      "byteCount": 446
+    },
+    {
+      "filename": "validator-mutation-MUT-02-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-02-sweep-1",
+      "sha256": "f7bf5041e337cc269cf14adee50b807d0328a56266bd41212c5b55fb201149ab",
+      "byteCount": 412
+    },
+    {
+      "filename": "validator-mutation-MUT-02-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-02-sweep-2",
+      "sha256": "ca4f8874f6117a8a1b8946f5773fc1ba3829fcc09397860f5d43a4ce29f2431b",
+      "byteCount": 412
+    },
+    {
+      "filename": "validator-mutation-MUT-02-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-02-sweep-3",
+      "sha256": "d9ff1e8d53e62d597e7ba68008fe8a0c2c26bdab9b2a44a2a15f91b510afc39c",
+      "byteCount": 412
+    },
+    {
+      "filename": "validator-mutation-MUT-03-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-03-sweep-1",
+      "sha256": "d1ed85d0802ceb8381aae2fd10ef8a5cb29fe02923c7e9a949cb57733e7213e5",
+      "byteCount": 404
+    },
+    {
+      "filename": "validator-mutation-MUT-03-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-03-sweep-2",
+      "sha256": "2ac853bd28de4035c332f109e76bbb243892b236ac491e9a8185a0a4cbe17176",
+      "byteCount": 404
+    },
+    {
+      "filename": "validator-mutation-MUT-03-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-03-sweep-3",
+      "sha256": "fae82247be599c031e1695e83a801e4a8976fa260449f83d33a122e2c0eb0856",
+      "byteCount": 404
+    },
+    {
+      "filename": "validator-mutation-MUT-04-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-04-sweep-1",
+      "sha256": "90f43bf5bcf9f432b91506514c274f729198ef63676db53640a84e7fdbcbf58d",
+      "byteCount": 368
+    },
+    {
+      "filename": "validator-mutation-MUT-04-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-04-sweep-2",
+      "sha256": "337ae38fbef163652b8efdd22a9bc817707317c9efaaf121013eda700daa9da3",
+      "byteCount": 368
+    },
+    {
+      "filename": "validator-mutation-MUT-04-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-04-sweep-3",
+      "sha256": "6e339d10a0373b473c4f350f80e306744e60c3bed32f70ae35bea5996d62daa5",
+      "byteCount": 368
+    },
+    {
+      "filename": "validator-mutation-MUT-05-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-05-sweep-1",
+      "sha256": "b51ae857f569f8495dc87ba8252a9ac99dfd5320deaec87685f098351a073baf",
+      "byteCount": 424
+    },
+    {
+      "filename": "validator-mutation-MUT-05-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-05-sweep-2",
+      "sha256": "0eb1ebbd7a4624b6117f8f274fb65d29713759d06c246b28b3951b32a91b0652",
+      "byteCount": 424
+    },
+    {
+      "filename": "validator-mutation-MUT-05-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-05-sweep-3",
+      "sha256": "76fb34a4e21020b7c8032790f8c6c715e26c5b389851d4e883e2339b477f3c18",
+      "byteCount": 424
+    },
+    {
+      "filename": "validator-mutation-MUT-06-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-06-sweep-1",
+      "sha256": "e40d24cd50e86cd03104d106ddb664ffb33b3d9682cb08fef22c1cb60c41dd83",
+      "byteCount": 481
+    },
+    {
+      "filename": "validator-mutation-MUT-06-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-06-sweep-2",
+      "sha256": "b365b2aa456d08ddd53470f1bdbfc0e2ef9096214aeb3f9bceeb06af1a81f0b8",
+      "byteCount": 481
+    },
+    {
+      "filename": "validator-mutation-MUT-06-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-06-sweep-3",
+      "sha256": "d3a2760304f9d62c59c10fee90be52c7108daf045967ea9031da7322257b65c7",
+      "byteCount": 481
+    },
+    {
+      "filename": "validator-mutation-MUT-07-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-07-sweep-1",
+      "sha256": "1a1b6e2600428e006ea86691bb65e553fa6f63ad4d49a8f1caacaa79b28d0af3",
+      "byteCount": 422
+    },
+    {
+      "filename": "validator-mutation-MUT-07-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-07-sweep-2",
+      "sha256": "6ebad78d2a7860c72bda093dba2af371f7ff49e7a06bcd441134da534707fb3c",
+      "byteCount": 422
+    },
+    {
+      "filename": "validator-mutation-MUT-07-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-07-sweep-3",
+      "sha256": "797079936d16c3ac45e1e20e8b4d8ae9d7f987411acc8416a48aceaccec5ff66",
+      "byteCount": 422
+    },
+    {
+      "filename": "validator-mutation-MUT-08-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-08-sweep-1",
+      "sha256": "d2bc38f979f158f7f03869b09e672562e0a2b4cf702ace918b79511f1b93069f",
+      "byteCount": 395
+    },
+    {
+      "filename": "validator-mutation-MUT-08-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-08-sweep-2",
+      "sha256": "523e02a3949f6bd1c617a5470d72e4357e0ff64471fbbec974413797a4f6127a",
+      "byteCount": 395
+    },
+    {
+      "filename": "validator-mutation-MUT-08-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-08-sweep-3",
+      "sha256": "7a8a0aae89c2bad70951c95e594c378a9fa87a2aefbae35c922f0a823b148279",
+      "byteCount": 395
+    },
+    {
+      "filename": "validator-mutation-MUT-09-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-09-sweep-1",
+      "sha256": "fd6b5196985fb904d72b900aeec628ad9b772e20313cba26c4aef43817131ff5",
+      "byteCount": 377
+    },
+    {
+      "filename": "validator-mutation-MUT-09-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-09-sweep-2",
+      "sha256": "2a13414d3b77a47cbbeceb1f77304f321e14e2adb06c509653e839dad3ea783c",
+      "byteCount": 377
+    },
+    {
+      "filename": "validator-mutation-MUT-09-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-09-sweep-3",
+      "sha256": "cd762281c03eebc788a68673643154f67516e22fde1402934c88f6d10c60e4db",
+      "byteCount": 377
+    },
+    {
+      "filename": "validator-mutation-MUT-10-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-10-sweep-1",
+      "sha256": "5319c51e397d57d960cbf9de42e349913f7fc725606b951a3d8be45a4b8b215c",
+      "byteCount": 505
+    },
+    {
+      "filename": "validator-mutation-MUT-10-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-10-sweep-2",
+      "sha256": "55fa6de25c733bd46c96332a8a40c31874e32a1739cdced2aa7afe728733a456",
+      "byteCount": 505
+    },
+    {
+      "filename": "validator-mutation-MUT-10-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-10-sweep-3",
+      "sha256": "fb710f0b45d24740a583e2d28bb721ea3b8789df41fa3e8d330d2d17a7005501",
+      "byteCount": 505
+    },
+    {
+      "filename": "validator-mutation-MUT-11-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-11-sweep-1",
+      "sha256": "da591fb78ed6eb49d911d90331fc339a7107035394b711ba6379e8d99775a02b",
+      "byteCount": 387
+    },
+    {
+      "filename": "validator-mutation-MUT-11-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-11-sweep-2",
+      "sha256": "669dafe273a795d30f83e22455fab16d5edb72b691daded5041fa596b57dad4f",
+      "byteCount": 387
+    },
+    {
+      "filename": "validator-mutation-MUT-11-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-11-sweep-3",
+      "sha256": "7ee01467219744de7b813ddeba9e045e175858e3fc571f2042b9cf8ef44e0f67",
+      "byteCount": 387
+    },
+    {
+      "filename": "validator-mutation-MUT-12-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-12-sweep-1",
+      "sha256": "ff3927417907a4761364b49d2bf083c6db709184fbd8931373176643aabe5292",
+      "byteCount": 372
+    },
+    {
+      "filename": "validator-mutation-MUT-12-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-12-sweep-2",
+      "sha256": "ad1c048bd8ed329c13bde74833ccd6bc518257f9b67b71c40176dc110f3e2c22",
+      "byteCount": 372
+    },
+    {
+      "filename": "validator-mutation-MUT-12-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-12-sweep-3",
+      "sha256": "9a1181db4bf5b9f896818ca36820b03051b1f18aac9c60e5cea7133d33ba9793",
+      "byteCount": 372
+    },
+    {
+      "filename": "validator-mutation-MUT-13-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-13-sweep-1",
+      "sha256": "23091a4d2ee46f4cf2b24a954a45a43f406b489398d2c0d59766dc9e1e2c9e03",
+      "byteCount": 380
+    },
+    {
+      "filename": "validator-mutation-MUT-13-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-13-sweep-2",
+      "sha256": "324d927c14ca7865ff7f11247cd48a4fff2c8db5ed95518da18d5fb1b052f8ab",
+      "byteCount": 380
+    },
+    {
+      "filename": "validator-mutation-MUT-13-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-13-sweep-3",
+      "sha256": "4b0175f9eba0d579bf6a14ed602f2244a7ea8d3bee981971ba7c811851ddb5f4",
+      "byteCount": 380
+    },
+    {
+      "filename": "validator-mutation-MUT-14-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-14-sweep-1",
+      "sha256": "44dbcb2721fb3ca030bd6f2c8cab41142afc461f11b5ba09f05a7e4e10ed3d6a",
+      "byteCount": 392
+    },
+    {
+      "filename": "validator-mutation-MUT-14-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-14-sweep-2",
+      "sha256": "7e9a34ac60c61ee408759f891617ff1bfd264e22bab7d1c4355cc25b949e0b31",
+      "byteCount": 392
+    },
+    {
+      "filename": "validator-mutation-MUT-14-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-14-sweep-3",
+      "sha256": "b6368cad85dada4180a1cc81e6a784bf4572ac40368eaf52241cdd09bafda563",
+      "byteCount": 392
+    },
+    {
+      "filename": "validator-mutation-MUT-15-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-15-sweep-1",
+      "sha256": "bc153f572915607c24ee120e2a26ee1554aa9341cbfd59acf92a510aea4212fe",
+      "byteCount": 380
+    },
+    {
+      "filename": "validator-mutation-MUT-15-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-15-sweep-2",
+      "sha256": "b7aa9f9bfaa93df7d8ce867ef60903e7210e2ac882ef7bfda53236c00cbeacd0",
+      "byteCount": 380
+    },
+    {
+      "filename": "validator-mutation-MUT-15-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-15-sweep-3",
+      "sha256": "179ab8b3a132b3a25d0db8bdc266892cc689964d35af5bdc8879eb0d0212750f",
+      "byteCount": 380
+    },
+    {
+      "filename": "validator-mutation-MUT-16-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-16-sweep-1",
+      "sha256": "213b59a4f6efa85029d396c90aa65575cdcca3fcc0608d10fa15267d794c8cd3",
+      "byteCount": 359
+    },
+    {
+      "filename": "validator-mutation-MUT-16-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-16-sweep-2",
+      "sha256": "4a57edf89124cc81dda78bb852cdaf36c3b8267c52bd6e191e4c9d671e85c2f3",
+      "byteCount": 359
+    },
+    {
+      "filename": "validator-mutation-MUT-16-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-16-sweep-3",
+      "sha256": "3edef5967bfa526148fa5223e00b0a6f79c6f0935050202223cedeb2972236e6",
+      "byteCount": 359
+    },
+    {
+      "filename": "validator-mutation-MUT-17-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-17-sweep-1",
+      "sha256": "03c86b70bc095d7b20426c5d46870b22eedb3eddf698bca43c431532d430f907",
+      "byteCount": 369
+    },
+    {
+      "filename": "validator-mutation-MUT-17-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-17-sweep-2",
+      "sha256": "bce6d2c187de26a1bc5306604bc7f841550bb33984f839da0ead8d9a7f177ac7",
+      "byteCount": 369
+    },
+    {
+      "filename": "validator-mutation-MUT-17-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-17-sweep-3",
+      "sha256": "8628b51c0a5520bb9f29ad3f6c4f7f9c857844ae63e8ddc3c47a08d3dd226816",
+      "byteCount": 369
+    },
+    {
+      "filename": "validator-mutation-MUT-18-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-18-sweep-1",
+      "sha256": "a2f4c31ab3ab4fe090b066ca479145f5e7cae76a525b1d4415617f47d90f76ed",
+      "byteCount": 393
+    },
+    {
+      "filename": "validator-mutation-MUT-18-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-18-sweep-2",
+      "sha256": "302bd245f2bbca94d7e872b77271ac7fbf1d3804279c7e8e69a60c9e3ba5d853",
+      "byteCount": 393
+    },
+    {
+      "filename": "validator-mutation-MUT-18-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-18-sweep-3",
+      "sha256": "7a380a6d666458b58220f5da25e16e9a79a0c65493398664c8cb380eb636e63d",
+      "byteCount": 393
+    },
+    {
+      "filename": "validator-mutation-MUT-19-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-19-sweep-1",
+      "sha256": "412332b48151965baebfd039c6505b9a25ac08414a87f7fa696760470cb8f6d4",
+      "byteCount": 449
+    },
+    {
+      "filename": "validator-mutation-MUT-19-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-19-sweep-2",
+      "sha256": "7cf51d71b6c2d2a2d29a6072559f148546e5534a5984cd04906cf4caa184e8cb",
+      "byteCount": 449
+    },
+    {
+      "filename": "validator-mutation-MUT-19-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-19-sweep-3",
+      "sha256": "090b448071d199abd58c051805bf27b8de680ee21ac768788da383d745b762bd",
+      "byteCount": 449
+    },
+    {
+      "filename": "validator-mutation-MUT-20-sweep-1.log",
+      "scenarioId": "validator-mutation-MUT-20-sweep-1",
+      "sha256": "2e907df3889373c8f48d81c7a577e15adaba4d4e92f8125b7cbe1d744a5b16f4",
+      "byteCount": 500
+    },
+    {
+      "filename": "validator-mutation-MUT-20-sweep-2.log",
+      "scenarioId": "validator-mutation-MUT-20-sweep-2",
+      "sha256": "75eaa3c661e4e8f59637fef47e5efd353a32be1436937f4409217a559e7751f5",
+      "byteCount": 500
+    },
+    {
+      "filename": "validator-mutation-MUT-20-sweep-3.log",
+      "scenarioId": "validator-mutation-MUT-20-sweep-3",
+      "sha256": "a8009034c52f46f1efca3ba68217868df762e7da3faeb768936e3dbe15d83e88",
+      "byteCount": 500
+    }
+  ],
+  "verifiedLogsCount": 163
+}
