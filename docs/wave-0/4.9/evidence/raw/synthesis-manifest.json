@@ -1,0 +1,1131 @@
+{
+  "artifacts": [
+    {
+      "id": "W049-LOG-001",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-01.log",
+      "expectedSha256": "b1257c74bb9df32e6af8e1fbf4f29786ee479b5a85715c5d456fbe99dcce61fa",
+      "expectedBytes": 242,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-002",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-02.log",
+      "expectedSha256": "b1257c74bb9df32e6af8e1fbf4f29786ee479b5a85715c5d456fbe99dcce61fa",
+      "expectedBytes": 242,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-003",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-03.log",
+      "expectedSha256": "926aa35e2b499d01ca20c3affb828d4ad37affa137f51beb939008da0dce150a",
+      "expectedBytes": 48,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-004",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-04.log",
+      "expectedSha256": "f9a1a1257beb4496578c54fb3ee6f2329be40ad466d906ceaf00cec55f7229e5",
+      "expectedBytes": 41,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-005",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-05.log",
+      "expectedSha256": "3b91e78aaa9cb50d43324f94957478aa6ad55ad4f42c7504494e8a13ada91866",
+      "expectedBytes": 34,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-006",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-06.log",
+      "expectedSha256": "3b91e78aaa9cb50d43324f94957478aa6ad55ad4f42c7504494e8a13ada91866",
+      "expectedBytes": 34,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-007",
+      "path": "docs/wave-0/4.9/evidence/raw/AUTH-07.log",
+      "expectedSha256": "6cd44ef08ebb2b968b4d6e20fb69eeae59a9346213ae138db0a0fd421d9607a7",
+      "expectedBytes": 946,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-008",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-01.log",
+      "expectedSha256": "fc3d65ec3b349b0eedfb0d95a3826915006fd9bd12303612c34045cdfcc3fdd7",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-009",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-02.log",
+      "expectedSha256": "dcaaa128816cb8f4f875efc39af8c922d73ce853b0b63d4669f840975b2d2f14",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-010",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-03.log",
+      "expectedSha256": "3b0a8bc7d0702019afe99d2fecb4a1ce930d29146f4761a07e95f1035ed4519a",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-011",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-04.log",
+      "expectedSha256": "35c29537267bd40292b60593915f33339069afd918cd2807de81d73573c94c6d",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-012",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-05.log",
+      "expectedSha256": "6fe5c7a58c072f6938b1dba768649d35abe51467a0a20b5a6174a02b5625c128",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-013",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-06.log",
+      "expectedSha256": "c02d693eff6d651ed8f3fc0967cd6cc3446a597a125aa462f50b7769453b0744",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-014",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-07.log",
+      "expectedSha256": "fbb8be0ba28193b588e96d3109c47f81439cd522785f0257029c6e22abd119c7",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-015",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-08.log",
+      "expectedSha256": "8978f3baefba82d36963efad49da91d57bf865d452da94f3039a2b73cecf6315",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-016",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-09.log",
+      "expectedSha256": "5e948a6fe71d96191eb7f6e4afda5ab1d6601337cd79290e5d9e082fb836b207",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-017",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-10.log",
+      "expectedSha256": "f90c633f1c2279a9131ecbb002ec9b8378a16599f8fa9a65121537d98dd5e522",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-018",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-11.log",
+      "expectedSha256": "cc110e675b469b798669841922980afddfc2dbcd5de40b138f0b8abab78734ba",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-019",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-12.log",
+      "expectedSha256": "306966a99b94050674a57c2cc3072f604efa399bc30c8bc70c3c3722dcb843c6",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-020",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-13.log",
+      "expectedSha256": "c6c5d45f488c1dd8bf31b2ea8dfe42498343a92c5c9632a2ac5011072ff1f19b",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-021",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-14.log",
+      "expectedSha256": "a7e0dee7e14f5c25e5ffc889e74cc4d6bdf92788f86f7565899c15b241644be3",
+      "expectedBytes": 31,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-022",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-15.log",
+      "expectedSha256": "13605ec60e503288dbdf35a74911fd28a028ffb87106c78cf6a8a50b0915e322",
+      "expectedBytes": 121,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-023",
+      "path": "docs/wave-0/4.9/evidence/raw/CONT-16.log",
+      "expectedSha256": "c583321862d620fc3ca5fcac9b381f48967f833cb81765b208bf5514d2a27f95",
+      "expectedBytes": 101,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-024",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-01.log",
+      "expectedSha256": "08a398b0bd1fbb0115cf1baacc77618d71245c0babfa3817b9cda57ea4305f44",
+      "expectedBytes": 54,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-025",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-02.log",
+      "expectedSha256": "2b8d48ada28ca028af51426afcb644acf53a934f3d8c5c3f4b4a0dfd919c3b54",
+      "expectedBytes": 51,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-026",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-03.log",
+      "expectedSha256": "8efb2f5787750b0f9c88809e09162e2c6b78384d4030735f37052bace21725d0",
+      "expectedBytes": 56,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-027",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-04.log",
+      "expectedSha256": "eac884e9bb5d1030b8cf6231503fc7bbd474f42b23f6cb32b0b331183f35c2ed",
+      "expectedBytes": 57,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-028",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-05.log",
+      "expectedSha256": "5ad695b3b2ddb6494a2134e42ed951edee7236ce1748dd60c8ec2aa698ddacac",
+      "expectedBytes": 62,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-029",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-06.log",
+      "expectedSha256": "35b6a865f133b11054fcf0061e5cb3539be9864053b029c086b25047b510f0e1",
+      "expectedBytes": 53,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-030",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-07.log",
+      "expectedSha256": "07b1abacf29041e0948aeb69238eb603a5c2f6a0afdc2e90abfc1b763fa99446",
+      "expectedBytes": 48,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-031",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-08.log",
+      "expectedSha256": "bef1221e174499e61007c1c4b9a7c92e768220500e9f7438fd023468e86f6ce6",
+      "expectedBytes": 43,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-032",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-09.log",
+      "expectedSha256": "68cb911b0ade4d343a985934ab767b5ea6ccff3000b74ae50ce54f015a44c845",
+      "expectedBytes": 72,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-033",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-10.log",
+      "expectedSha256": "39171c1436f9272d8e164e8eaf7efc9ec8d90b227d954a91c843d22aec7b06d2",
+      "expectedBytes": 73,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-034",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-11.log",
+      "expectedSha256": "e0e1e27f88c6671ecd31827acd6dcaf99c8b04774789626dc8c80cc62c41ef0c",
+      "expectedBytes": 70,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-035",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-12.log",
+      "expectedSha256": "9c25d569ef36e12e29066497e6e5ca2969fed42814a33d4508d57e0437595e74",
+      "expectedBytes": 68,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-036",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-13.log",
+      "expectedSha256": "c9d422c67dffb1dbda10eba47832e88991c2b615091b447364b4d09517d1edde",
+      "expectedBytes": 57,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-037",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-14.log",
+      "expectedSha256": "91ab51c306af97ca6a777d5d01134ea45730b194d6c96a815ea5f2de087f6fe1",
+      "expectedBytes": 65,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-038",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-15.log",
+      "expectedSha256": "ddc4c40d7705de0c5b642978e04a32584834952723e15054c914525ed491c22a",
+      "expectedBytes": 47,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-039",
+      "path": "docs/wave-0/4.9/evidence/raw/CSV-16.log",
+      "expectedSha256": "be0e619e526d239992e2940c1ad5ce71768d2e24494a3ae62939cde8ef949c42",
+      "expectedBytes": 47,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-040",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-01.log",
+      "expectedSha256": "23606777928cd19928d51f19d9edeeb253abc40584a1d939a179e956124cd765",
+      "expectedBytes": 189,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-041",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-02.log",
+      "expectedSha256": "7f71d79aa069efa2a4a708a90f9efec3c7c5e5cc48767e3692a825fa21e83c30",
+      "expectedBytes": 75,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-042",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-03.log",
+      "expectedSha256": "f404ea473cc84288020c3e704db7eab2cc9c2f40f79e7c979f3e08bdffcd2e56",
+      "expectedBytes": 108,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-043",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-04.log",
+      "expectedSha256": "e7ac09ca9cb675692acbb1d8f31b83767e2bf55ec50f67a4ea27f112266d38a1",
+      "expectedBytes": 105,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-044",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-05.log",
+      "expectedSha256": "a20b1507dc8eaa808d23ce080e5198c287a853e4a7913b696ddf5fabd20ba2c0",
+      "expectedBytes": 105,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-045",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-06.log",
+      "expectedSha256": "a52fe14b364789112174cb715b0ec8d0a7938b698e9be14c3e819ccb1920996e",
+      "expectedBytes": 77,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-046",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-07.log",
+      "expectedSha256": "76a7158ec7921100785f9577c3a084588012b080698db786559851e333bbd861",
+      "expectedBytes": 97,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-047",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-08.log",
+      "expectedSha256": "34b91e3215c870a35f94f26310ecfded29205c9c439b462be1c32564c91c7b1c",
+      "expectedBytes": 77,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-048",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-09.log",
+      "expectedSha256": "245c038daa3bc24c432f22b373ff76293e1d5d40982d33e4901d2bde67f51f90",
+      "expectedBytes": 93,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-049",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-10.log",
+      "expectedSha256": "a27990fc2b7a745445948ca851af7463f10f98193df5d881bfff88c37e3603c3",
+      "expectedBytes": 93,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-050",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-11.log",
+      "expectedSha256": "4fdc8e7952b335b55dcb9faf5acf1b6da6e275cecac75198c136c7c2ca11f4b5",
+      "expectedBytes": 115,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-051",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-12.log",
+      "expectedSha256": "e095215089f11d40766e896e8c5c5c553b71ca227108235569f5cd4d2ce091f2",
+      "expectedBytes": 85,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-052",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-13.log",
+      "expectedSha256": "0b0fdf4b74a5fa62cb52df7cd642ab63adf3cd9efdbb04994518991506c97de9",
+      "expectedBytes": 83,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-053",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-14.log",
+      "expectedSha256": "2ea401cba943e452bc3dbe57fc1d0e951574ba8836cf799744d643c0c8fa12ed",
+      "expectedBytes": 97,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-054",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-15.log",
+      "expectedSha256": "89af1ae738dc322178d1dbbc126448b8de2ffcb12dbf426881a8d0be043bbd7d",
+      "expectedBytes": 87,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-055",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-16.log",
+      "expectedSha256": "aac4836951c0bca8ef47920081a0319e1b91dc4270a051dc3986b75a106d234c",
+      "expectedBytes": 95,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-056",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-17.log",
+      "expectedSha256": "46cab7146a73957e5fb781698bb2a490dc45d371226ddfc34ef717e65f470b3f",
+      "expectedBytes": 91,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-057",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-18.log",
+      "expectedSha256": "bcb16b55e96abe24af80200ca4b24ad6dee97382d543e119af694ee2c21ee3bb",
+      "expectedBytes": 201,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-058",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-19.log",
+      "expectedSha256": "75bff9cd001a2a98559cc987bcfb727b54056cbd8ce6fd493e739612bdfcdb89",
+      "expectedBytes": 66,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-059",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-20.log",
+      "expectedSha256": "6c1b03e390775cd46d863886026a0322503f870c71a39384cd4d183b3e86e1d8",
+      "expectedBytes": 145,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-060",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-21.log",
+      "expectedSha256": "ebcc36c1dae5e6e1038fa6b5c764a6d488bb1a7edd51701d63fb5bd14fc1110f",
+      "expectedBytes": 105,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-061",
+      "path": "docs/wave-0/4.9/evidence/raw/RB-22.log",
+      "expectedSha256": "b6c506e3b2e90fed10e912ce73de17efae383a4b323f0cf3c0b3628e727d34ef",
+      "expectedBytes": 120,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-062",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-a-sweep-1.log",
+      "expectedSha256": "eb7e47d04afd9fd7d4f3c0ed5d5520502968636787efee9526a110a884be837d",
+      "expectedBytes": 1080,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-063",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-a-sweep-2.log",
+      "expectedSha256": "e6f646f2c3264904d59086fa08a66adafde1c9121f09f0ceae7b2ab3fc3071db",
+      "expectedBytes": 1080,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-064",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-a-sweep-3.log",
+      "expectedSha256": "7e9316a566feb6d46c7aef3b63aea403fd7be12d84620ceebce8f6c215ac3329",
+      "expectedBytes": 1080,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-065",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-c-sweep-1.log",
+      "expectedSha256": "91f4929a1ea51937b772010142fa034488785954c39d4f43f246fb4a081356d3",
+      "expectedBytes": 1348,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-066",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-c-sweep-2.log",
+      "expectedSha256": "0b926cdda82775710f752d4440967ea8302bd7cbf04b3ea3d56555da65f55281",
+      "expectedBytes": 1348,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-067",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-c-sweep-3.log",
+      "expectedSha256": "bd13e22018a89364c2c9494e71fa20a7e8b0375de3c5937c6de949b04b012a8c",
+      "expectedBytes": 1348,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-068",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-d-sweep-1.log",
+      "expectedSha256": "54be4ed2931cad39ba09caeb009d79c2df52cc19054c245e9465bfb2b97f6c9f",
+      "expectedBytes": 1529,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-069",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-d-sweep-2.log",
+      "expectedSha256": "d0731b1826b4392571d578a9cfd67684c27460f40899078d98fe350c67869cb3",
+      "expectedBytes": 1529,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-070",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-d-sweep-3.log",
+      "expectedSha256": "3a3cd39f773666040bbf4c52713eda2c6ab3f06ce667b1907368c64e1105a1c6",
+      "expectedBytes": 1529,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-071",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-e-sweep-1.log",
+      "expectedSha256": "7961d2588833ec3dcfb05bbe6fefed7e0efbb829439de10e6f718894a71c3cce",
+      "expectedBytes": 1300,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-072",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-e-sweep-2.log",
+      "expectedSha256": "be048024fc8041514ef1591e152f12c2c4e76746fca24e709a322395e789a277",
+      "expectedBytes": 1300,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-073",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-e-sweep-3.log",
+      "expectedSha256": "bd7f9e73fee9236e0f699d8d018cc13dfc9b80da97da94654e44225e9ea42812",
+      "expectedBytes": 1300,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-074",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-f-sweep-1.log",
+      "expectedSha256": "2d022603b88eb41e566edb4351726528605e29d26495b8a2fe7c32872f08b8c1",
+      "expectedBytes": 1342,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-075",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-f-sweep-2.log",
+      "expectedSha256": "a5a5800b733c6d6cbab4ffd966ca9c08dd6e68a67a78d6da13a016c4bb87308c",
+      "expectedBytes": 1342,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-076",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-lane-f-sweep-3.log",
+      "expectedSha256": "3e068d52ce789997b59afa927dba3a498b78a541e29bae2a8be13afb7e48bd48",
+      "expectedBytes": 1342,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-077",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-poc-sweep-1.log",
+      "expectedSha256": "80bff2daea091eebc3cc9cfec0383cf9298b8b26f9c812fc8c02f8f1e7519ea3",
+      "expectedBytes": 4239,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-078",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-poc-sweep-2.log",
+      "expectedSha256": "864bb63b58780ef8f208bbfea7d5dca96a476038cdd88b63b8d8b42f925e0178",
+      "expectedBytes": 4239,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-079",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-poc-sweep-3.log",
+      "expectedSha256": "23212c342943efa10b6d05ca09658002deffb42287ad9401db26e2dec32e1be4",
+      "expectedBytes": 4239,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-080",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-wave4-sweep-1.log",
+      "expectedSha256": "136f1c632abee582841626faf73c6a37297c7f9e01268f8293122508c9fab386",
+      "expectedBytes": 2806,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-081",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-wave4-sweep-2.log",
+      "expectedSha256": "4e6c061e81e95caaf46d0a819c3bac54e695f40fe370c4d466ae4c790c2b0fa6",
+      "expectedBytes": 2806,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-082",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-wave4-sweep-3.log",
+      "expectedSha256": "544bd0522a2ca149c30591fcf62f0a245d2c54e09fd332b1f729e456d513fa1b",
+      "expectedBytes": 2807,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-083",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-workstream-a-sweep-1.log",
+      "expectedSha256": "cf9969c715247084d1d27975906024387e081b6c0838ffd0df9a6bd467d7fa40",
+      "expectedBytes": 2551,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-084",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-workstream-a-sweep-2.log",
+      "expectedSha256": "80ab3b62b38961cce9e17cc6968ff54a48824d29dd7cdc6d95c63d38c6583f3a",
+      "expectedBytes": 2550,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-085",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-workstream-a-sweep-3.log",
+      "expectedSha256": "f8843c290daf2db6ed1f7cd03add8ba57b50f0e12e826157a8331e6fce07b89c",
+      "expectedBytes": 2550,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-086",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-workstream-c-sweep-1.log",
+      "expectedSha256": "8ced5157cb97618e15a01d7bccc0c799269b60e0f44068e091c90061c9663b7a",
+      "expectedBytes": 2555,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-087",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-workstream-c-sweep-2.log",
+      "expectedSha256": "f77948ad673453e810b4d9bad4738d709142fcae904bb27ab835d92ac3e00558",
+      "expectedBytes": 2555,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-088",
+      "path": "docs/wave-0/4.9/evidence/raw/baseline-workstream-c-sweep-3.log",
+      "expectedSha256": "f2e76f3d293d9e516f07fa860025e497ab718c93cf60023635837eb77f2988fe",
+      "expectedBytes": 2555,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-089",
+      "path": "docs/wave-0/4.9/evidence/raw/component-api-provenance.log",
+      "expectedSha256": "59f497fe67d99eb6a75c321d9ffc000dd0d78be6e429f2da92bb1dbc3ce91929",
+      "expectedBytes": 370,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-090",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-01-sweep-1.log",
+      "expectedSha256": "bebb796c7c7321bf131d417aaf2cf4333f236f59ef129e6bc304ba6c5e71b03e",
+      "expectedBytes": 446,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-091",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-01-sweep-2.log",
+      "expectedSha256": "d7020cfa60bff051740929a18de14c16752f58c2b809bcbdd18b5e8ef33741e4",
+      "expectedBytes": 446,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-092",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-01-sweep-3.log",
+      "expectedSha256": "1d50b548e73e2e234f4041dedc9faa0b118002e1ea9b50521e3a71ae8428a8f6",
+      "expectedBytes": 446,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-093",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-02-sweep-1.log",
+      "expectedSha256": "1fd8b06dc65b909337042063339b04f4687eb62f8324ee987ba6c92be3759aaf",
+      "expectedBytes": 412,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-094",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-02-sweep-2.log",
+      "expectedSha256": "b6d59e5486a536e712c53fb2fc5495e4d713ce744b3af2d7a867ea71a9c53d9a",
+      "expectedBytes": 412,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-095",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-02-sweep-3.log",
+      "expectedSha256": "175887c167efe04c39e1182f79d6def177c9b2b03115c61b6d023a44c18d0372",
+      "expectedBytes": 412,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-096",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-03-sweep-1.log",
+      "expectedSha256": "efa69fa221c9b44aede004e9d7e997c9f3b16648a24d181418f250f81b1ae8fc",
+      "expectedBytes": 404,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-097",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-03-sweep-2.log",
+      "expectedSha256": "07b851c77106a1cbf9ec77d739c0fbc092ba694c783b4136cfca7ef02122c418",
+      "expectedBytes": 404,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-098",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-03-sweep-3.log",
+      "expectedSha256": "16f24382c76ffa85d5be9a3f634039c2aa0a61ada2495398a02616b47b823031",
+      "expectedBytes": 404,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-099",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-04-sweep-1.log",
+      "expectedSha256": "0d2251b617073288fc7390bfc9ac6977e30a6dffce1847defd41485c921f251a",
+      "expectedBytes": 368,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-100",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-04-sweep-2.log",
+      "expectedSha256": "a5d143e0e196b61de7118a13f6928a9f5b31f6b9a1885c649992ca1a1da99ab9",
+      "expectedBytes": 368,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-101",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-04-sweep-3.log",
+      "expectedSha256": "bff7863a6724c64444b39bbc74a04b972c74331b54a408c90da0603094863b73",
+      "expectedBytes": 368,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-102",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-05-sweep-1.log",
+      "expectedSha256": "a3aa71b1bb69a17e4bfbee3d88f2f18172571ce2357343d8af6d8eda064fdd37",
+      "expectedBytes": 424,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-103",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-05-sweep-2.log",
+      "expectedSha256": "c56531a527a4206a9b3393bb6c9674550dba267f8b83e0c20e9d96e8a601b990",
+      "expectedBytes": 424,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-104",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-05-sweep-3.log",
+      "expectedSha256": "369fe74ad79f32e5f18b274c0bb7ee518f3bc2984fbb24aa47952843940b2667",
+      "expectedBytes": 424,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-105",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-06-sweep-1.log",
+      "expectedSha256": "fab576c5e1de1c229fdcb322474e6131a30e596239e21356089285764836f601",
+      "expectedBytes": 481,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-106",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-06-sweep-2.log",
+      "expectedSha256": "4888a1b1c36518148b40978e79f5b69da484ce0caa9967c4fbb37e8004b3125c",
+      "expectedBytes": 481,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-107",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-06-sweep-3.log",
+      "expectedSha256": "85a31e7d4856476b39eec15c0fa3c7e829d0d0fbcc86b67c72f30399a3c65545",
+      "expectedBytes": 481,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-108",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-07-sweep-1.log",
+      "expectedSha256": "8484ef009e9e083152e6e568ccdb035461fc9c9ffb4e82b64aeb4e652460bd5f",
+      "expectedBytes": 422,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-109",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-07-sweep-2.log",
+      "expectedSha256": "3561761304a83da17885e98b4a95453637fc57926d9d6538bd70b0161a677529",
+      "expectedBytes": 422,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-110",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-07-sweep-3.log",
+      "expectedSha256": "2252854772bb54cbf3783dfbabe1c5bf105985499d4a91ed2511cbfb6b3d4655",
+      "expectedBytes": 422,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-111",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-08-sweep-1.log",
+      "expectedSha256": "55dc3b58bf3581877d1509efb0ac9f2b5f53419c95207d70fed23ae72bdb2d9d",
+      "expectedBytes": 395,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-112",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-08-sweep-2.log",
+      "expectedSha256": "4bfe01dffba6f7e87d7df9d3e7a28f79dd281c90c4b1e0146037e9f16921714b",
+      "expectedBytes": 395,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-113",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-08-sweep-3.log",
+      "expectedSha256": "55423fdf2f33d7f6996293a459e1560cd92d5f38b4878c173ae4c3159fe241d6",
+      "expectedBytes": 395,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-114",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-09-sweep-1.log",
+      "expectedSha256": "95e46f7803a131d1e0eda3e0c00604108ff7e73bbb0a5c752e557367f15c7a44",
+      "expectedBytes": 377,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-115",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-09-sweep-2.log",
+      "expectedSha256": "3f2de256227db39ce53866698e4e8c3f7a532649bbac8aa1687d2946add98ef7",
+      "expectedBytes": 377,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-116",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-09-sweep-3.log",
+      "expectedSha256": "4528e6fbc93dd90a8268f2b88eaaa0c195f20ce0052ac977133739df07a891e6",
+      "expectedBytes": 377,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-117",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-10-sweep-1.log",
+      "expectedSha256": "bc234cc6cb8ec41a6e181b24d3233eb333ac1c81f67a41d7698eb7772f40d8cb",
+      "expectedBytes": 505,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-118",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-10-sweep-2.log",
+      "expectedSha256": "3d95f1a4ba1f5e653a45f660ddd31bd9ab827450a071d1a1a7d9187c0a49dd89",
+      "expectedBytes": 505,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-119",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-10-sweep-3.log",
+      "expectedSha256": "de031dbb283f83ffb2704a3b5ddbb11e0e8f454dc3e5e0ccc1ed2e3e3b9875b3",
+      "expectedBytes": 505,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-120",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-11-sweep-1.log",
+      "expectedSha256": "3999ff88fbb330847a8caa095e0a4a4a4a06efc1ca9ae2fb378dd7023d73cf13",
+      "expectedBytes": 387,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-121",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-11-sweep-2.log",
+      "expectedSha256": "663c8976fbe3e9a03f597d39da7089dc1bfb6c24089d7fc911f60ecc94877896",
+      "expectedBytes": 387,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-122",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-11-sweep-3.log",
+      "expectedSha256": "248e71b9558d91ac967d3800a159a81ffddc12dd829d7c4eb6e1c2b6b1c24502",
+      "expectedBytes": 387,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-123",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-12-sweep-1.log",
+      "expectedSha256": "6bf7a5dd8c7caf527dc37152499cd17a33ceb40b46dece1ac1daafba6a15a86d",
+      "expectedBytes": 372,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-124",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-12-sweep-2.log",
+      "expectedSha256": "fcc01f96601d8f0b5cbc93cdf51ac2372df0eb66e786971c988dd771a4d32317",
+      "expectedBytes": 372,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-125",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-12-sweep-3.log",
+      "expectedSha256": "3b5a9621052db5c491a5335be6ec0b1c93c9dace7454fa5d046328bf05328020",
+      "expectedBytes": 372,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-126",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-13-sweep-1.log",
+      "expectedSha256": "7dd376b6ffc64f112d07fd1040881117cbd580b63854a278512f6bab4bbd4b95",
+      "expectedBytes": 380,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-127",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-13-sweep-2.log",
+      "expectedSha256": "a881eb569967b7f3d9285001e01d046ca6c16fd3d9ea8629dea50f50241538f0",
+      "expectedBytes": 380,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-128",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-13-sweep-3.log",
+      "expectedSha256": "c1a806b798982cad9ed2e5ba22293d046b522a93c68875b8195b6615ce21ad06",
+      "expectedBytes": 380,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-129",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-14-sweep-1.log",
+      "expectedSha256": "4a2cae4c35cf6664659c73f06e42022717b8d2b12ea1fc7207ad8c31cc046f8d",
+      "expectedBytes": 392,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-130",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-14-sweep-2.log",
+      "expectedSha256": "73f370f704eb2d74c8677f238a486048e76c51034e861ee729074cb6b4578d7f",
+      "expectedBytes": 392,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-131",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-14-sweep-3.log",
+      "expectedSha256": "f5e706d97679f0926ed74caeefe16098254f0853e16814ae662e27334df1668d",
+      "expectedBytes": 392,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-132",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-15-sweep-1.log",
+      "expectedSha256": "f82355560f8646d3ecfe851d6452796c6e62f14391b358a1b8a1fde06792de07",
+      "expectedBytes": 380,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-133",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-15-sweep-2.log",
+      "expectedSha256": "415e942d5a5397f7f0d2b4462cc4dd8a98d36854db16ce61e19f179c90a9f87f",
+      "expectedBytes": 380,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-134",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-15-sweep-3.log",
+      "expectedSha256": "885a83ef8a963351aed6fe0f11febeb3a4311ab7a3ec8d76b040bc5ba930cef7",
+      "expectedBytes": 380,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-135",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-16-sweep-1.log",
+      "expectedSha256": "a42502e7ab15de0c1638e381d0881f3cc757f00cd512ea81b797f360a9997ab1",
+      "expectedBytes": 359,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-136",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-16-sweep-2.log",
+      "expectedSha256": "0369e41e759cd6985fa6c55f7212e9ebf0ac140ce94908254a400505526bf109",
+      "expectedBytes": 359,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-137",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-16-sweep-3.log",
+      "expectedSha256": "efac6ff332d23247fad97e4ffdb4866658824694c5916e97963237b5e31690aa",
+      "expectedBytes": 359,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-138",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-17-sweep-1.log",
+      "expectedSha256": "e8d0173c6861f4462530d902b2aee0c85f6f9e5736cfccd4c8b27f9157635b2b",
+      "expectedBytes": 369,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-139",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-17-sweep-2.log",
+      "expectedSha256": "8960b9b765745b4614d82f58b9752f6ae5e7b44a4e2eecb0e8be0815bafbb681",
+      "expectedBytes": 369,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-140",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-17-sweep-3.log",
+      "expectedSha256": "b02c6d3051d5cbf5f75c43a171a20c8e0d6d25e80065ed66724fa45e6e61b728",
+      "expectedBytes": 369,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-141",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-18-sweep-1.log",
+      "expectedSha256": "a771feebcdf5363a37e87f1a8e274db71ce10ea4852b37e249d0e77c9e47780e",
+      "expectedBytes": 393,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-142",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-18-sweep-2.log",
+      "expectedSha256": "51432292f93f7b3aca36062919326a5c11f9394ecc6bd5bd833b762809261eab",
+      "expectedBytes": 393,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-143",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-18-sweep-3.log",
+      "expectedSha256": "6e012d9964b25220abfb951595945ff2acf86e0b727598e71025d43c0873f4b7",
+      "expectedBytes": 393,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-144",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-19-sweep-1.log",
+      "expectedSha256": "413e46e6d51069b097d565f0389c9fc8452b20d4f61bb51ac3c9cb19bd768254",
+      "expectedBytes": 449,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-145",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-19-sweep-2.log",
+      "expectedSha256": "dd9469de4c3738001f5432bd7dcad1132c05141484740c70cf9231736b8923e3",
+      "expectedBytes": 449,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-146",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-19-sweep-3.log",
+      "expectedSha256": "4f731e0cbf31bfd4d2984588da9e79b355f6a3801e2fac2c986be5762c6a5b0e",
+      "expectedBytes": 449,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-147",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-20-sweep-1.log",
+      "expectedSha256": "f826c5f57e57f3c89cf788bd518307791c95e8be05aea602b59edd3bfd2051e4",
+      "expectedBytes": 500,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-148",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-20-sweep-2.log",
+      "expectedSha256": "09c41871e19d869e23ce6ef1e8b46bdc77c174be2a76243b6178f7a4e2bb1ad9",
+      "expectedBytes": 500,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-LOG-149",
+      "path": "docs/wave-0/4.9/evidence/raw/validator-mutation-MUT-20-sweep-3.log",
+      "expectedSha256": "44e857f20f06aad4a2a83dad1a16c502b937be008a3bb360d1e8234891f54991",
+      "expectedBytes": 500,
+      "type": "Raw Process Log"
+    },
+    {
+      "id": "W049-SRC-001",
+      "path": "docs/wave-0/4.9/patch-gate.cjs",
+      "expectedSha256": "b0b4cf433606b4a6c493bdcefc51a11abc0294fef4bbaa462a2d7334e0d687f7",
+      "expectedBytes": 29452,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-002",
+      "path": "docs/wave-0/4.9/strict-rfc4180-csv-parser.cjs",
+      "expectedSha256": "7086b4fe9db58e579b6c7d6f096561d1eba71d72b680bfd6e24692137c71fbef",
+      "expectedBytes": 7310,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-003",
+      "path": "docs/wave-0/4.9/validate-wave0-4-8-dispatch.cjs",
+      "expectedSha256": "fcaa638933c03447695aaef6029499a61e7247f079eb1d0f1a646b1442c51271",
+      "expectedBytes": 16381,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-004",
+      "path": "docs/wave-0/4.9/test-authorization-patch.cjs",
+      "expectedSha256": "2270cb47f6eec0b1388b9928b1e41247c903f1d49249e6b6088ef8452509fd84",
+      "expectedBytes": 10085,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-005",
+      "path": "docs/wave-0/4.9/test-rollback.cjs",
+      "expectedSha256": "963022ae1b71ec706de60e0dad561865cd7f95b56da54da7979bf17f845a2a9b",
+      "expectedBytes": 32861,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-006",
+      "path": "docs/wave-0/4.9/test-containment.cjs",
+      "expectedSha256": "0e65a240781d67f0c5abb3c68c57b1d28b938aa6bde8b4efef3b16e3e432178f",
+      "expectedBytes": 15893,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-007",
+      "path": "docs/wave-0/4.9/test-csv-parser.cjs",
+      "expectedSha256": "8e92ba13b6d9eb41e88087d6ed61006ac49fe4a223c48f9754c6549fe95ad9c7",
+      "expectedBytes": 10151,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-008",
+      "path": "docs/wave-0/4.9/test-component-provenance.cjs",
+      "expectedSha256": "4b7d418d31aa20e8cf24496c91e1a6c749886221dc0540dea83740b21ecf9c79",
+      "expectedBytes": 3947,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-009",
+      "path": "docs/wave-0/4.9/test-validator-mutations.cjs",
+      "expectedSha256": "488291d3dbfa902cceffd8ae916f54c02de6fb86e3526d46ae3ae249b50e8b96",
+      "expectedBytes": 17155,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-010",
+      "path": "docs/wave-0/4.9/test-baseline-runners.cjs",
+      "expectedSha256": "7d7987f1676ede6581b31ef58c903a934cda720ac6fb7fa63e58ba0affe0ad73",
+      "expectedBytes": 4284,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-011",
+      "path": "docs/wave-0/4.9/generate-synthesis.cjs",
+      "expectedSha256": "50191883babb20c88bb771cf61e0aa58a5fed356f579ed0b018efd141c6bc505",
+      "expectedBytes": 4618,
+      "type": "Tooling Source"
+    },
+    {
+      "id": "W049-SRC-012",
+      "path": "docs/wave-0/4.9/build-evidence-package.cjs",
+      "expectedSha256": "f4725ee698bc7ed4324d38a408bd69de00fe6ab2e5a9b1012eadcdb1a616dc09",
+      "expectedBytes": 35273,
+      "type": "Tooling Source"
+    }
+  ]
+}
