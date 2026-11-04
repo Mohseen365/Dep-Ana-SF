@@ -1,0 +1,74 @@
+[
+  {
+    "suite": "AUTH_SUITE",
+    "script": "docs/wave-0/4.12/test-authorization-patch.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-auth-suite.log",
+    "logSha256": "1b93ae538c2ecd883e9c85f58f6dbac2340f124c2fc3d3a4f30ad7d385f3df21",
+    "logBytes": 309
+  },
+  {
+    "suite": "ROLLBACK_SUITE",
+    "script": "docs/wave-0/4.12/test-rollback.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-rollback-suite.log",
+    "logSha256": "11d3181a775c1b913fa3ac97040163c6527d7685007055268743ee5a65aa0621",
+    "logBytes": 288
+  },
+  {
+    "suite": "CSV_SUITE",
+    "script": "docs/wave-0/4.12/test-csv-parser.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-csv-suite.log",
+    "logSha256": "fe05c46a8ce7e2ed7aaf743a954b8307055854ea53e8637b15ef4c6259fce4bc",
+    "logBytes": 310
+  },
+  {
+    "suite": "SYNTHESIS_SUITE",
+    "script": "docs/wave-0/4.12/test-synthesis.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-synthesis-suite.log",
+    "logSha256": "1e177aacbbcb38a303a2f2bf8896b2300112cdd5f529b700a8e7e2e771967173",
+    "logBytes": 279
+  },
+  {
+    "suite": "CONTAINMENT_SUITE",
+    "script": "docs/wave-0/4.12/test-containment.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-containment-suite.log",
+    "logSha256": "afdbf33c0de2f77771863302c65393125cc330d474628879f6fb27bacd77ca32",
+    "logBytes": 288
+  },
+  {
+    "suite": "API_SURFACE_SUITE",
+    "script": "docs/wave-0/4.12/test-api-surface.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-api-surface-suite.log",
+    "logSha256": "6715e8e69e4152805db99ff406910dd65bf112af169d84c0a5256392d80a76a0",
+    "logBytes": 302
+  },
+  {
+    "suite": "MUTATION_SUITE",
+    "script": "docs/wave-0/4.12/test-validator-mutations.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-mutation-suite.log",
+    "logSha256": "bacf48eb92e90d7aea9d675e22245001332587cee5c39e74261be11c8d4ba385",
+    "logBytes": 2210
+  },
+  {
+    "suite": "VALIDATOR_SUITE",
+    "script": "docs/wave-0/4.12/validate-wave0-4-12-dispatch.cjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "logFile": "suite-validator-suite.log",
+    "logSha256": "729b76ca826a96dccf5f1a8ae8a90c31c8b6cb850727c2832a9967531a7c399f",
+    "logBytes": 1013
+  }
+]
