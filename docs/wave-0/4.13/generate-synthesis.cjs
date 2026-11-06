@@ -1,0 +1,238 @@
+/**
+ * generate-synthesis.cjs
+ * Wave 0.4.13 Fail-Closed Deterministic Evidence Synthesis Generator
+ */
+
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+function hashBuf(buf) {
+  return crypto.createHash('sha256').update(buf).digest('hex');
+}
+
+function hashFile(filePath) {
+  const buf = fs.readFileSync(filePath);
+  return {
+    hash: crypto.createHash('sha256').update(buf).digest('hex'),
+    bytes: buf.length
+  };
+}
+
+function runSynthesis({ repoRoot, manifest, evidenceDir, dryRun = false }) {
+  if (!manifest || !Array.isArray(manifest.requiredArtifacts) || !Array.isArray(manifest.requiredLogs)) {
+    throw new Error('SYNTHESIS_ERROR: Authoritative manifest must specify requiredArtifacts and requiredLogs arrays');
+  }
+
+  const findings = [];
+  const verifiedArtifacts = [];
+  const verifiedLogs = [];
+
+  const seenArtIds = new Set();
+  const seenArtPaths = new Set();
+  for (const a of manifest.requiredArtifacts) {
+    if (!a.id || !a.path) {
+      findings.push({ code: 'MALFORMED_ARTIFACT_ENTRY', artifact: a });
+      continue;
+    }
+    if (seenArtIds.has(a.id)) {
+      findings.push({ code: 'DUPLICATE_ARTIFACT_ID', id: a.id });
+    }
+    seenArtIds.add(a.id);
+
+    const normPath = a.path.replace(/\\/g, '/');
+    if (normPath.includes('..') || path.isAbsolute(normPath)) {
+      findings.push({ code: 'TRAVERSAL_OR_ABSOLUTE_PATH', path: normPath });
+    }
+    if (seenArtPaths.has(normPath)) {
+      findings.push({ code: 'DUPLICATE_ARTIFACT_PATH', path: normPath });
+    }
+    seenArtPaths.add(normPath);
+  }
+
+  const seenLogFiles = new Set();
+  const seenScenarioIds = new Set();
+  for (const l of manifest.requiredLogs) {
+    if (!l.filename || !l.scenarioId) {
+      findings.push({ code: 'MALFORMED_LOG_ENTRY', log: l });
+      continue;
+    }
+    if (seenLogFiles.has(l.filename)) {
+      findings.push({ code: 'DUPLICATE_LOG_FILENAME', filename: l.filename });
+    }
+    seenLogFiles.add(l.filename);
+
+    if (seenScenarioIds.has(l.scenarioId)) {
+      findings.push({ code: 'DUPLICATE_SCENARIO_ID', scenarioId: l.scenarioId });
+    }
+    seenScenarioIds.add(l.scenarioId);
+  }
+
+  for (const art of manifest.requiredArtifacts) {
+    const fullPath = path.resolve(repoRoot, art.path);
+    if (!fs.existsSync(fullPath)) {
+      findings.push({ code: 'MISSING_REQUIRED_ARTIFACT', path: art.path, expectedId: art.id });
+      continue;
+    }
+    const { hash, bytes } = hashFile(fullPath);
+    if (!art.expectedSha256 || typeof art.expectedSha256 !== 'string' || art.expectedSha256.length !== 64) {
+      findings.push({ code: 'MISSING_MANDATORY_SHA256', path: art.path });
+      continue;
+    }
+    if (art.expectedBytes === undefined || art.expectedBytes === null || typeof art.expectedBytes !== 'number' || art.expectedBytes < 0) {
+      findings.push({ code: 'MISSING_MANDATORY_BYTE_COUNT', path: art.path });
+      continue;
+    }
+    if (hash !== art.expectedSha256) {
+      findings.push({ code: 'ARTIFACT_HASH_MISMATCH', path: art.path, expected: art.expectedSha256, actual: hash });
+      continue;
+    }
+    if (bytes !== art.expectedBytes) {
+      findings.push({ code: 'ARTIFACT_BYTE_MISMATCH', path: art.path, expected: art.expectedBytes, actual: bytes });
+      continue;
+    }
+    verifiedArtifacts.push({
+      id: art.id,
+      path: art.path,
+      type: art.type,
+      sha256: hash,
+      byteCount: bytes
+    });
+  }
+
+  for (const logItem of manifest.requiredLogs) {
+    const fullLogPath = path.resolve(evidenceDir, logItem.filename);
+    if (!fs.existsSync(fullLogPath)) {
+      findings.push({ code: 'MISSING_REQUIRED_LOG', filename: logItem.filename, expectedScenario: logItem.scenarioId });
+      continue;
+    }
+    const { hash, bytes } = hashFile(fullLogPath);
+    if (!logItem.expectedSha256 || typeof logItem.expectedSha256 !== 'string' || logItem.expectedSha256.length !== 64) {
+      findings.push({ code: 'MISSING_MANDATORY_LOG_SHA256', filename: logItem.filename });
+      continue;
+    }
+    if (logItem.expectedBytes === undefined || logItem.expectedBytes === null || typeof logItem.expectedBytes !== 'number' || logItem.expectedBytes < 0) {
+      findings.push({ code: 'MISSING_MANDATORY_LOG_BYTE_COUNT', filename: logItem.filename });
+      continue;
+    }
+    if (hash !== logItem.expectedSha256) {
+      findings.push({ code: 'LOG_HASH_MISMATCH', filename: logItem.filename, expected: logItem.expectedSha256, actual: hash });
+      continue;
+    }
+    if (bytes !== logItem.expectedBytes) {
+      findings.push({ code: 'LOG_BYTE_MISMATCH', filename: logItem.filename, expected: logItem.expectedBytes, actual: bytes });
+      continue;
+    }
+
+    const logContent = fs.readFileSync(fullLogPath, 'utf8');
+    const logHead = logContent.substring(0, 1000);
+    const hasRawMarker = logHead.includes('COMMAND:') && logHead.includes('EXIT_CODE:');
+    if (!hasRawMarker) {
+      findings.push({ code: 'LOG_NOT_RAW_CHILD_PROCESS', filename: logItem.filename });
+    }
+
+    verifiedLogs.push({
+      filename: logItem.filename,
+      scenarioId: logItem.scenarioId,
+      sha256: hash,
+      byteCount: bytes
+    });
+  }
+
+  if (fs.existsSync(evidenceDir)) {
+    const filesInDir = fs.readdirSync(evidenceDir);
+    const indexedSet = new Set(manifest.requiredLogs.map(l => l.filename));
+    indexedSet.add('synthesis-generator.log');
+    indexedSet.add('synthesis-manifest.json');
+
+    for (const f of filesInDir) {
+      if (!indexedSet.has(f)) {
+        findings.push({ code: 'UNINDEXED_EVIDENCE_LOG', filename: f });
+      }
+    }
+  }
+
+  const success = (findings.length === 0);
+
+  const synthesisResult = {
+    verdict: success ? 'READY_FOR_INDEPENDENT_AUTHORIZATION_REVIEW' : 'NOT_READY_EVIDENCE_INSUFFICIENT',
+    batch1DispatchAuthorized: false,
+    findings,
+    findingsCount: findings.length,
+    generatedAt: manifest.fixedTimestamp || '2026-11-04T12:00:00.000Z',
+    success,
+    verifiedArtifacts,
+    verifiedArtifactsCount: verifiedArtifacts.length,
+    verifiedLogs,
+    verifiedLogsCount: verifiedLogs.length
+  };
+
+  const outputJson = JSON.stringify(synthesisResult, null, 2);
+  const synthesisSha = hashBuf(Buffer.from(outputJson, 'utf8'));
+
+  if (!dryRun) {
+    const outPath = path.resolve(evidenceDir, 'synthesis-manifest.out.json');
+    fs.writeFileSync(outPath, outputJson, 'utf8');
+  }
+
+  return {
+    success,
+    synthesisSha,
+    outputJson,
+    findings
+  };
+}
+
+module.exports = { runSynthesis, hashFile, hashBuf };
+
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  const CANONICAL_MANIFEST_PATH = path.resolve(__dirname, 'evidence/raw/synthesis-manifest.json');
+  let manifestPath = CANONICAL_MANIFEST_PATH;
+  let repo = process.cwd();
+  let evDir = path.resolve(__dirname, 'evidence/raw');
+  let dryRun = false;
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--manifest') {
+      const customPath = path.resolve(args[++i]);
+      if (args.includes('--allow-test-fixture-manifest')) {
+        manifestPath = customPath;
+      } else {
+        console.error('CLI_ERROR: Caller substitution of arbitrary manifest is disallowed in authoritative synthesis mode');
+        process.exit(2);
+      }
+    } else if (args[i] === '--allow-test-fixture-manifest') {
+      // test flag
+    } else if (args[i] === '--repoRoot') {
+      repo = path.resolve(args[++i]);
+    } else if (args[i] === '--evidenceDir') {
+      evDir = path.resolve(args[++i]);
+    } else if (args[i] === '--dry-run') {
+      dryRun = true;
+    } else if (args[i] === '--help') {
+      console.log('Usage: node generate-synthesis.cjs [--repoRoot <path>] [--evidenceDir <path>] [--dry-run]');
+      process.exit(0);
+    }
+  }
+
+  if (!fs.existsSync(manifestPath)) {
+    console.error(`CLI_ERROR: Manifest path not found: ${manifestPath}`);
+    process.exit(2);
+  }
+
+  try {
+    const raw = fs.readFileSync(manifestPath, 'utf8');
+    const manifest = JSON.parse(raw);
+    const res = runSynthesis({ repoRoot: repo, manifest, evidenceDir: evDir, dryRun });
+    if (!res.success) {
+      console.error(`SYNTHESIS_FAILED: ${res.findings.length} findings`);
+      process.exit(1);
+    }
+    console.log(`SYNTHESIS_SUCCESS: SHA256=${res.synthesisSha}`);
+    process.exit(0);
+  } catch (err) {
+    console.error(`CLI_EXCEPTION: ${err.message}`);
+    process.exit(2);
+  }
+}
