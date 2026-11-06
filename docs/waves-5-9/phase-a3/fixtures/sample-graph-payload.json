@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "schemaVersion": "2.0.0",
+    "projectId": "a005g00003ABCDE",
+    "projectKey": "PKG_CRM",
+    "runId": "a015g00009ZYXWV",
+    "timestamp": "2025-05-15T12:00:00.000Z"
+  },
+  "summary": {
+    "nodeCount": 4,
+    "edgeCount": 4,
+    "cycleCount": 1,
+    "unresolvedCount": 1,
+    "highRiskCount": 1,
+    "mediumRiskCount": 1,
+    "lowRiskCount": 2,
+    "architectureHealthScore": 82
+  },
+  "nodes": [
+    {
+      "id": "Class.AccountSelector",
+      "label": "AccountSelector",
+      "name": "AccountSelector",
+      "type": "ApexClass",
+      "layer": "Selector",
+      "namespace": "",
+      "coverageStatus": "COVERED",
+      "coverageDensity": 92.5,
+      "risk": "LOW",
+      "coupling": 2,
+      "fanIn": 2,
+      "fanOut": 0,
+      "cyclomaticComplexity": 3,
+      "loc": 85,
+      "hasCycle": false
+    },
+    {
+      "id": "Class.AccountService",
+      "label": "AccountService",
+      "name": "AccountService",
+      "type": "ApexClass",
+      "layer": "Service",
+      "namespace": "",
+      "coverageStatus": "COVERED",
+      "coverageDensity": 88.0,
+      "risk": "MEDIUM",
+      "coupling": 4,
+      "fanIn": 1,
+      "fanOut": 3,
+      "cyclomaticComplexity": 12,
+      "loc": 240,
+      "hasCycle": true
+    },
+    {
+      "id": "Class.ContactService",
+      "label": "ContactService",
+      "name": "ContactService",
+      "type": "ApexClass",
+      "layer": "Service",
+      "namespace": "",
+      "coverageStatus": "UNTESTED",
+      "coverageDensity": 0.0,
+      "risk": "HIGH",
+      "coupling": 5,
+      "fanIn": 2,
+      "fanOut": 3,
+      "cyclomaticComplexity": 18,
+      "loc": 310,
+      "hasCycle": true
+    },
+    {
+      "id": "LWC.accountCard",
+      "label": "accountCard",
+      "name": "accountCard",
+      "type": "LightningComponentBundle",
+      "layer": "UI",
+      "namespace": "c",
+      "coverageStatus": "UNKNOWN",
+      "coverageDensity": null,
+      "risk": "LOW",
+      "coupling": 1,
+      "fanIn": 0,
+      "fanOut": 1,
+      "cyclomaticComplexity": 2,
+      "loc": 45,
+      "hasCycle": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "Class.AccountService->Class.AccountSelector",
+      "source": "Class.AccountService",
+      "target": "Class.AccountSelector",
+      "type": "calls",
+      "weight": 1.0,
+      "isUnresolved": false
+    },
+    {
+      "id": "Class.AccountService->Class.ContactService",
+      "source": "Class.AccountService",
+      "target": "Class.ContactService",
+      "type": "calls",
+      "weight": 2.0,
+      "isUnresolved": false
+    },
+    {
+      "id": "Class.ContactService->Class.AccountService",
+      "source": "Class.ContactService",
+      "target": "Class.AccountService",
+      "type": "calls",
+      "weight": 1.0,
+      "isUnresolved": false
+    },
+    {
+      "id": "Class.ContactService->External.Logger",
+      "source": "Class.ContactService",
+      "target": "External.Logger",
+      "type": "references",
+      "weight": 1.0,
+      "isUnresolved": true,
+      "targetType": "External"
+    }
+  ],
+  "cycles": [
+    {
+      "id": "cycle-1",
+      "nodeIds": [
+        "Class.AccountService",
+        "Class.ContactService"
+      ],
+      "edgeIds": [
+        "Class.AccountService->Class.ContactService",
+        "Class.ContactService->Class.AccountService"
+      ],
+      "length": 2
+    }
+  ]
+}
