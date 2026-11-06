@@ -1,0 +1,13 @@
+{
+  "id": "act-extract-001",
+  "type": "EXTRACT_CLASS",
+  "timestamp": "2025-05-15T12:00:00.000Z",
+  "description": "Extract tax calculation logic from AccountService into AccountTaxCalculator",
+  "sourceNodeId": "Class.AccountService",
+  "newClassName": "Class.AccountTaxCalculator",
+  "newClassLayer": "Domain",
+  "movedMethodList": [
+    "calculateVATTax",
+    "resolveTaxJurisdiction"
+  ]
+}
