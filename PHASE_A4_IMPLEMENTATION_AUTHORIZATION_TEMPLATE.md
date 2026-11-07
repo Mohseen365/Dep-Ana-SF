@@ -19,7 +19,7 @@ This authorization template cannot be executed until the Project Owner formally 
 | **Alternative 1: Joint Dual Signoff** | 1. Lead Architect<br>2. Product Owner | - Integration Coordinator (pre-review evidence verification)<br>- Project Owner (escalation arbitration) | Concurrent or sequential: both must formally sign before dispatch. | Rejection by either authority immediately halts dispatch order. | Any missing signature voids order fail-closed. | YES (under strict 16-point allowlist) | Lead Architect OR Product Owner (unilateral revocation). |
 | **Alternative 2: Technical Dual Signoff** | 1. Lead Architect<br>2. Integration Coordinator | - Product Owner (informational handoff)<br>- Project Owner (escalation arbitration) | Concurrent or sequential: both technical roles must formally sign. | Rejection by either technical authority immediately halts dispatch order. | Any missing signature voids order fail-closed. | YES (under strict 16-point allowlist) | Lead Architect OR Integration Coordinator (unilateral revocation). |
 | **Alternative 3: Two-Phase Sequential Dispatch [RECOMMENDED]** | **Gate 1A**:<br>1. Lead Architect<br>2. Integration Coordinator<br><br>**Gate 1B**:<br>3. Product Owner<br>4. Project Owner | None (all four signatories are mandatory across the two sequential gates). | **Strictly Sequential**:<br>1. Gate 1A signed first.<br>2. Gate 1B signed second.<br>*Zero dispatch permitted between 1A and 1B.* | Rejection at Gate 1A halts technical review. Rejection at Gate 1B halts dispatch release. | Any missing signature across 1A or 1B voids order fail-closed. | YES (under strict 16-point allowlist, only after Gate 1B) | Lead Architect, Product Owner, OR Project Owner (unilateral revocation). |
-| **Alternative 4: Executive Project Owner Exclusive** | 1. Project Owner (Executive Dispatch Order) | 1. Lead Architect (Technical Advisory)<br>2. Product Owner (Scope Advisory)<br>3. Integration Coordinator (Integration Advisory) | Advisory recommendations submitted concurrently; Project Owner executes final exclusive determination. | Project Owner rejection halts dispatch. Advisory dissent logged for executive review. | Missing Project Owner signature voids order fail-closed. | YES (under strict 16-point allowlist) | Project Owner exclusively (or delegated authority). |
+| **Alternative 4: Executive Project Owner Exclusive** | 1. Project Owner (Executive Dispatch Order) | 1. Lead Architect (Technical Advisory)<br>2. Product Owner (Scope Advisory)<br>3. Integration Coordinator (Integration Advisory) | Advisory recommendations submitted concurrently; Project Owner executes final exclusive determination. | Project Owner rejection halts dispatch. Advisory dissent logged for executive review. | Missing Project Owner signature voids order fail-closed. | YES (under strict 16-point allowlist) | Project Owner exclusively (unilateral revocation; delegated authority prohibited unless bounded delegation mechanism is explicitly approved). |
 
 ---
 
@@ -63,7 +63,13 @@ SALESFORCE PARALLEL MIGRATION — IMPLEMENTATION DISPATCH AUTHORIZATION ORDER
 
    Advisory Record 3.1.3 — Integration Coordinator (Technical Evidence Verification):
      Reviewer Name:          ____________________________________________________
-     Evidence Attestation:   [ ] VERIFIED (187/187 Tests Passing, Manifest Checked)
+     Test Execution Status:  [ ] PASSED    [ ] FAILED
+     Baseline Test Units:    ____ passing / ____ total units evaluated
+     Execution Timestamp:    ____________________________________________________
+     Test Runner Command:    ____________________________________________________
+     Evidence Artifact Ref:  ____________________________________________________
+     Manifest Invariance Ref:____________________________________________________
+     Reviewer Determination: [ ] VERIFIED  [ ] DISSENT / UNVERIFIED
      Signature / Date:       ____________________________________________________
 
    -------------------------------------------------------------------------------------------------
@@ -180,8 +186,11 @@ SALESFORCE PARALLEL MIGRATION — IMPLEMENTATION DISPATCH AUTHORIZATION ORDER
 
 9. REQUIRED TEST AND VERIFICATION EVIDENCE:
    Task-Specific Runner:     node scratch/salesforce-poc/tests/run-w<id>-tests.cjs
-   Baseline Regression Gate: All 9 offline baseline test suites (187/187 passing)
-   Expected Test Output Ref: ____________________________________________________
+   Baseline Regression Gate: All 9 offline baseline test suites
+   Pre-Dispatch Verification:[ ] FRESH EXECUTION REQUIRED AT DISPATCH (Historical 187/187 baseline does not waive fresh run)
+   Actual Passing / Total:   ____ passing / ____ total test units evaluated
+   Execution Timestamp:      ____________________________________________________
+   Raw Test Output Ref:      ____________________________________________________
 
 10. EXPLICIT EXCLUSIONS:
     [All tasks NOT explicitly authorized remain locked and prohibited.]
@@ -202,9 +211,18 @@ SALESFORCE PARALLEL MIGRATION — IMPLEMENTATION DISPATCH AUTHORIZATION ORDER
     Review Milestone:         ____________________________________________________
     Automatic Expiration:     Order expires upon sprint boundary or test regression.
 
-13. REVOCATION & ACCEPTANCE AUTHORITY:
-    Revocation Authority:     Unilateral revocation power held by Lead Architect,
-                              Product Owner, or Project Owner upon boundary breach.
+13. REVOCATION & ACCEPTANCE AUTHORITY (CONDITIONAL ON RATIFIED DEC-04 MODEL):
+    Revocation Authority Structure (Determined exclusively by adopted DEC-04 alternative):
+    - Under Alternative 1:    Unilateral revocation power held by Lead Architect OR Product Owner.
+    - Under Alternative 2:    Unilateral revocation power held by Lead Architect OR Integration Coordinator.
+    - Under Alternative 3:    Unilateral revocation power held by Lead Architect, Product Owner, OR Project Owner.
+    - Under Alternative 4:    Revocation authority held exclusively by Project Owner.
+                              (Unspecified delegated authority is strictly prohibited unless explicitly defined and approved).
+    Revocation Mechanics:     - Unilateral action: Any authorized role above may unilaterally suspend or revoke an order.
+                              - Recording requirement: Formal revocation must be recorded in writing with timestamp,
+                                rationale, and signed record committed to the repository.
+                              - Resurrection prohibition: A revoked dispatch order is permanently terminated; work
+                                cannot resume without execution of a completely fresh authorization order.
     Completion Authority:     Workstream Lead + Integration Coordinator joint signoff.
 
 14. DEFENSIVE APPLICATION BOUNDARIES & RUNTIME DEFERRAL ACKNOWLEDGEMENT:

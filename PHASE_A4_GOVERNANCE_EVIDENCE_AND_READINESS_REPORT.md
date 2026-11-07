@@ -159,7 +159,6 @@ A  PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv
 A  PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md
 A  PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md
 A  PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md
-?? update_readiness_report.py
 ```
 
 #### `git diff --stat`
@@ -191,19 +190,19 @@ PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md
 
 #### `git ls-files --others --exclude-standard`
 ```text
-update_readiness_report.py
 ```
 
-### 7.3 Detailed Reconciliation of Repository Working Tree & Ephemeral Artifacts
-In Phase A4.1, review identified a discrepancy where an ephemeral helper script (`update_deliverables.py`) and unstaged changes were noted during intermediate execution. We explicitly investigate and record the complete factual status:
+### 7.3 Detailed Reconciliation of Repository Working Tree & Ephemeral Artifacts (Scope A)
+In Phase A4.1 and Phase A4.2 reviews, discrepancies were noted where ephemeral helper scripts (`update_deliverables.py` and `generate_completion_report.py`) were referenced during intermediate execution sessions. We explicitly document the unified, verified factual status:
 
-1. **Investigation of `update_deliverables.py`**:
-   - `update_deliverables.py` was an ephemeral Python script used in bash to write formatted markdown deliverables without escape-sequence errors.
-   - Upon execution, the script was cleanly deleted via `rm update_deliverables.py` as part of the execution flow.
-   - The output of `git ls-files --others --exclude-standard` confirms that `update_deliverables.py` does **NOT** exist in the repository working tree today.
-   - No deletion, staging, unstaging, commit, reset, checkout, or stash command was executed to conceal this file; it was cleanly removed immediately upon executing its generator function.
-2. **Classification of Working-Tree State**:
-   - `git status --short` displays exactly four files staged for commit (`A` status):
+1. **Investigation and Historical Distinction of Ephemeral Scripts**:
+   - `update_deliverables.py` was an ephemeral generation script used during Phase A4.1 to perform clean multi-file formatting. It was removed immediately upon execution via `rm update_deliverables.py`.
+   - `generate_completion_report.py` was an ephemeral script used during Phase A4.2 to generate `PHASE_A4.2_COMPLETION_REPORT.md`. It was removed immediately upon execution via `rm generate_completion_report.py`.
+   - Neither file exists in the repository working tree today. Fresh execution of `git ls-files --others --exclude-standard` returns an empty string (zero untracked files).
+   - No repository mutation commands (`git reset`, `git checkout`, `git stash`) were used to manufacture this state; the ephemeral scripts were temporary shell tools deleted immediately after their one-time generation execution.
+2. **Classification of Current Working-Tree State**:
+   - All Phase A4 / Phase A4.2 deliverables are staged for commit (`A` status in `git status --short`):
+     - `PHASE_A4.2_COMPLETION_REPORT.md` (Phase A4.2 Deliverable)
      - `PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv` (Deliverable 2)
      - `PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md` (Deliverable 4)
      - `PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md` (Deliverable 3)
@@ -225,7 +224,7 @@ In Phase A4.1, review identified a discrepancy where an ephemeral helper script 
 | **DEC-03 Authority Consistency**| Consistent across docs or UNRESOLVED | **PASS** | Lead Architect concurrence explicitly classified UNRESOLVED across all documents. |
 | **DEC-04 Single Recommendation**| Preferred recommendation presented | **PASS** | Alternative 3 presented as single preferred recommendation for evaluation. |
 | **DEC-02 Safety Language** | Distinguishes defensive caps from runtime | **PASS** | Absolute claims replaced with evidence-accurate classifications. |
-| **Template Gated on DEC-04** | Complete conditional signatory blocks | **PASS** | Section 3 provides complete, distinct blocks for Alt 1, 2, 3, and 4. |
+| **Template Gated on DEC-04** | Complete conditional signatory & revocation | **PASS** | Section 3 and Section 13 provide complete, distinct blocks matching DEC-04 alternatives. |
 | **Task Register Unchanged** | 21 canonical tasks preserved | **PASS** | Register SHA-256 verified unchanged. |
 | **Ownership Manifest Unchanged**| 175 rows preserved | **PASS** | Manifest SHA-256 verified unchanged. |
 | **Protected Files Untouched** | Zero mutations to app/metadata files | **PASS** | `git status` confirms zero app changes. |

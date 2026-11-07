@@ -85,12 +85,11 @@ generate_completion_report.py
 
 ## 4. Explanation of Repository Working Tree & Ephemeral Artifacts
 
-### 4.1 Investigation of `update_deliverables.py`
-- In Phase A4.1, review noted an untracked script `update_deliverables.py`.
-- **Finding**: `update_deliverables.py` was an ephemeral Python script used in bash to perform multi-file text replacements cleanly.
-- Immediately upon completing the file generation, the script was removed via `rm update_deliverables.py`.
-- `git ls-files --others --exclude-standard` proves that `update_deliverables.py` does **NOT** exist in the repository working tree today.
-- No git reset, checkout, stash, or staging commands were executed to conceal this script; it was cleanly removed upon task completion.
+### 4.1 Investigation of Ephemeral Scripts (`update_deliverables.py` and `generate_completion_report.py`)
+- In Phase A4.1 and Phase A4.2 reviews, temporary generator scripts (`update_deliverables.py` and `generate_completion_report.py`) were used during bash sessions to safely emit complex markdown deliverables without escape-sequence errors.
+- **Finding**: Both scripts were purely temporary generation helpers and were cleanly removed via `rm` immediately upon completing their execution.
+- `git ls-files --others --exclude-standard` proves that neither script exists in the repository working tree at the verified snapshot (zero untracked files).
+- No git reset, checkout, stash, or staging commands were executed to conceal these scripts; their removal was a natural cleanup of one-time generation tools.
 
 ### 4.2 Status of Working Tree Files
 The repository working tree contains only the staged additions corresponding to the four Phase A4 deliverables:
