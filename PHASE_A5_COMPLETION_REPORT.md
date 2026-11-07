@@ -3,7 +3,7 @@
 **Document Identifier**: `PHASE_A5_COMPLETION_REPORT.md`
 **Governance Scope**: Phase A5 Decision Resolution, Canonical Task Reassessment, Controlled Dispatch Scheduling, and Baseline Evidence Verification
 **Implementation Dispatch Status**: **STRICTLY NOT AUTHORIZED (0 of 21 Tasks Authorized)**
-**Repository State**: Git Commit `247c578d6cb81c8d203202eea2e71b5e093333e7` on branch `jules-13793377750730077456-5437bebd`
+**Repository State**: Git Commit `53b31e6c5ffe9aa62fb05f85afac6c4d513d7236` (merged via PR #116 into branch `architecture-orbit-final-synthesis-1146127565082562967`)
 **Baseline Preservation**: Preserves all 21 canonical tasks in `WAVE_0_4_AUTHORITATIVE_FINAL_TASK_AND_DEPENDENCY_REGISTER.csv` and all 175 ownership manifest paths in `WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv` unmodified.
 
 ---
@@ -86,7 +86,7 @@ The controlled dispatch proposal establishes:
 
 ## 6. Technical Limitations & Defensive Boundaries
 
-1. **Defensive Character & Chunk Caps**: Offline caps (5,242,880 UTF-16 code units / 10 chunks per batch) are application guardrails designed to prevent thread blocking and memory overruns. They do not constitute empirical proof of live-org Apex heap safety under heavy multi-tenant load.
+1. **Defensive Character & Chunk Caps**: Offline caps (5,242,880 UTF-16 code units / 10 chunks per batch, estimating $1,310,720\text{ characters}$ per batch) are application guardrails and payload-size estimates designed to prevent client thread blocking. They do not constitute empirical proof of live-org Apex heap safety under multi-tenant load, as Apex heap usage includes UTF-16 string memory, JSON deserialization, object allocation, intermediate copy retention, and transaction-level heap accumulation. Live-org heap safety has not been empirically verified.
 2. **Pure In-Memory Math for Refactoring**: Task `W9-1` refactoring simulation is strictly topological calculation on in-memory node-edge sets. It does not inspect Apex ASTs, modify Salesforce classes, or generate live code.
 3. **Informational movedMethodList**: In `EXTRACT_CLASS`, method movement is captured solely as informational metadata for developers, as CONTRACT-01 contains no method-level AST nodes.
 4. **History API Payload Availability Only**: The `COMPLETED` status in CONTRACT-04 indicates chunk record existence, not external CLI pipeline validation.
@@ -147,11 +147,12 @@ for f in scratch/salesforce-poc/tests/*.cjs; do node "$f"; done
 
 ## 10. Unified Git Evidence Snapshot
 
-Captured in a single continuous session at the conclusion of Phase A5:
+Captured and reconciled across the Phase A5 delivery and subsequent Phase A5.1 verification:
 
-### 10.1 Git Branch & HEAD Commit
-- **Current Branch**: `jules-13793377750730077456-5437bebd`
-- **Current HEAD Commit**: `247c578d6cb81c8d203202eea2e71b5e093333e7`
+### 10.1 Git Branch, Lineage & HEAD Commit
+- **Historical Feature Branch (Phase A5)**: `jules-13793377750730077456-5437bebd` at commit `185898cf0cea06b72e49b39939ff8e1588acdc87`.
+- **Integrated Lineage**: Phase A5 was merged via PR #116 into the repository main branch at merge commit `53b31e6c5ffe9aa62fb05f85afac6c4d513d7236`.
+- **Merge Ancestry**: Commit `53b31e6` unifies commit `969c8321` (incorporating Phase A4.4 via PR #115) and commit `185898cf` (Phase A5 feature commit).
 
 ### 10.2 Cryptographic Checksums of Authoritative Registers
 ```bash
@@ -163,26 +164,13 @@ sha256sum WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv
 ```
 Both authoritative files are verified **100% identical and unmodified**.
 
-### 10.3 Working-Tree Status (`git status --short`)
-```text
-A  PHASE_A5_COMPLETION_REPORT.md
-A  PHASE_A5_CONTROLLED_DISPATCH_PROPOSAL.md
-A  PHASE_A5_DECISION_REGISTER.md
-A  PHASE_A5_TASK_ELIGIBILITY_AND_BLOCKER_ASSESSMENT.md
-```
-
-### 10.4 Working-Tree Diff Outputs
-- `git diff --stat`: `(empty - 0 unstaged modifications)`
-- `git diff --cached --stat`: 4 files changed, 1040 insertions(+)
-- `git diff --name-only`: `(empty)`
-- `git diff --cached --name-only`:
-  - `PHASE_A5_COMPLETION_REPORT.md`
-  - `PHASE_A5_CONTROLLED_DISPATCH_PROPOSAL.md`
-  - `PHASE_A5_DECISION_REGISTER.md`
-  - `PHASE_A5_TASK_ELIGIBILITY_AND_BLOCKER_ASSESSMENT.md`
-- `git ls-files --others --exclude-standard`: `(empty - all Phase A5 deliverables tracked in index)`
-
-All modifications are strictly confined to new Phase A5 documentation deliverables. Zero tracked application or configuration files were changed.
+### 10.3 Working-Tree Status & Git Evidence Reclassification
+- **Committed History**: In current HEAD (`53b31e6`), all four Phase A5 documents are fully committed in Git history (`185898cf`) and merged.
+- **Historical Staging Note**: In the original Phase A5 session, deliverables were prepared and staged in the index prior to commit `185898cf`.
+- **Committed vs Staged Distinction**:
+  - `git log -1 --stat 185898cf`: 4 files changed, 1041 insertions(+).
+  - Current post-merge working tree is clean prior to Phase A5.1 reconciliation.
+  - Zero application code, Apex, Salesforce metadata, or test fixtures were altered.
 
 ---
 
