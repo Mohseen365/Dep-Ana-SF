@@ -53,17 +53,24 @@ Pursuant to DEC-04 Alternative 4, eight tasks received executive authorization o
 ## 4. Tasks Blocked and Exact Reasons
 - **Lane B (W6-1, W6-2, W6-3, W6-4):**
   - Section 2 Rule: "Verify all other contracts required by the six additional tasks against their formal repository records. Do not infer ratification from a proposed or frozen status alone. If an additional required contract is not ratified, do not dispatch the affected task. Continue with other approved tasks whose prerequisites are satisfied."
-  - CONTRACT-03 is `SOURCE_CONFIRMED`; CONTRACT-08 is `FROZEN`. Neither possesses an explicit written Project Owner ratification record in the repository. Held fail-closed.
+  - W6-1 depends on CONTRACT-03 (`SOURCE_CONFIRMED`, unratified).
+  - W6-2, W6-3, and W6-4 depend on CONTRACT-08 (`FROZEN`, unratified).
+  - Neither possesses an explicit written Project Owner ratification record in the repository. Held fail-closed.
 - **Lane C (W7-1, W7-2, W7-P1, W7-3):**
-  - W7-1 and W7-2 depend on CONTRACT-08 (unratified).
-  - W7-P1 blocked on DEC-01 / CONTRACT-04 zero-schema specification; W7-3 blocked on W7-P1.
+  - W7-1 and W7-2 depend on CONTRACT-08 (unratified by Project Owner).
+  - W7-P1 blocked on DEC-01 / CONTRACT-04 zero-schema specification; W7-3 blocked on predecessor W7-P1.
 - **Lane D (W8-1, W8-2, W8-3):**
-  - W8-1 depends on CONTRACT-06 and CONTRACT-08 (unratified).
+  - W8-1 depends on CONTRACT-06 (`FROZEN`, unratified) and CONTRACT-08 (`FROZEN`, unratified).
   - W8-2 blocked on DEC-02 / CONTRACT-05; W8-3 blocked on predecessors.
 - **Lane E (W9-1, W9-2, W9-3):**
-  - Explicitly excluded by Executive Dispatch Directive; blocked on DEC-03 / CONTRACT-07.
+  - Explicitly excluded by Executive Dispatch Directive; blocked on DEC-03 / CONTRACT-07; W9-2 and W9-3 blocked on predecessors.
+- **Central Coordinator (INT-1):**
+  - Central integration task blocked on full completion and acceptance of Waves 5–9 feature waves; 5 protected paths remain pristine.
 - **Wave 5 Successors (W5-2 through W5-6):**
-  - Strictly serialized in Workstream A; blocked on formal acceptance of W5-1.
+  - Strictly serialized in Workstream A; blocked on formal joint acceptance of W5-1.
+- **Governance Dispute Mechanism (DISPUTE-01):**
+  - DISPUTE-01 (Task Acceptance Dispute Handling Mechanism) remains explicitly UNRESOLVED and pending formal ratification.
+  - Joint signoff by Workstream Lead AND Integration Coordinator remains mandatory and fail-closed for task acceptance.
 
 ---
 
