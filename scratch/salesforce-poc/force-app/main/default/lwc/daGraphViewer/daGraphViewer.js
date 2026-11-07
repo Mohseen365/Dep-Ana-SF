@@ -9,11 +9,43 @@ import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 
 import { computeArchitectureLayout } from 'c/daLayoutEngine';
 import { matchesGraphNode, normalizeFilterCriteria } from 'c/daFilterSchema';
 
+// Standard Cytoscape Layout Configuration Defaults conforming to CONTRACT-02 Section 4.1
+const CYTOSCAPE_LAYOUT_DEFAULTS = {
+    grid: {
+        name: 'grid',
+        fit: true,
+        padding: 30,
+        avoidOverlap: true,
+        nodeDimensionsIncludeLabels: true,
+        animate: false
+    },
+    circle: {
+        name: 'circle',
+        fit: true,
+        padding: 30,
+        avoidOverlap: true,
+        radius: undefined,
+        startAngle: (3 / 2) * Math.PI,
+        counterclockwise: false,
+        animate: false
+    },
+    breadthfirst: {
+        name: 'breadthfirst',
+        fit: true,
+        directed: true,
+        padding: 30,
+        spacingFactor: 1.25,
+        avoidOverlap: true,
+        animate: false
+    }
+};
+
 export default class DaGraphViewer extends LightningElement {
     _recordId = null;
     _filterCriteria = null;
     _rawGraphData = null;
     _userPref = null;
+    _currentLayout = 'breadthfirst'; // Default standard layout
 
     @api
     get recordId() {
@@ -52,6 +84,23 @@ export default class DaGraphViewer extends LightningElement {
         }
     }
 
+    /**
+     * Layout mode property (CONTRACT-02 canonical keys: 'grid', 'circle', 'breadthfirst', 'dagre', 'architecture').
+     */
+    @api
+    get layoutMode() {
+        return this._currentLayout;
+    }
+    set layoutMode(value) {
+        const target = this.resolveLayoutMode(value);
+        if (this._currentLayout !== target) {
+            this._currentLayout = target;
+            if (this.cyInstance && !this.isLoading) {
+                this.applyLayout(target);
+            }
+        }
+    }
+
     @track isLoading = true;
     @track error;
     @track selectedNodeId = null;
@@ -61,6 +110,97 @@ export default class DaGraphViewer extends LightningElement {
     currentRequestId = 0;
     saveTimeout = null;
     isRestoringState = false;
+
+    get gridButtonVariant() {
+        return this._currentLayout === 'grid' ? 'brand' : 'neutral';
+    }
+
+    get circleButtonVariant() {
+        return this._currentLayout === 'circle' ? 'brand' : 'neutral';
+    }
+
+    get breadthfirstButtonVariant() {
+        return (this._currentLayout === 'breadthfirst' || this._currentLayout === 'architecture') ? 'brand' : 'neutral';
+    }
+
+    /**
+     * Canonical layout resolution with graceful fallback for external/unavailable engines like Dagre.
+     */
+    resolveLayoutMode(mode) {
+        if (!mode) return 'breadthfirst';
+        const lower = String(mode).toLowerCase().trim();
+        if (lower === 'dagre') {
+            // Dagre is not bundled in LWC; fall back gracefully to breadthfirst per CONTRACT-02 §6.4
+            return 'breadthfirst';
+        }
+        if (lower === 'grid' || lower === 'circle' || lower === 'breadthfirst') {
+            return lower;
+        }
+        if (lower === 'architecture') {
+            return 'architecture';
+        }
+        return 'breadthfirst';
+    }
+
+    handleLayoutChangeClick(event) {
+        const selected = event.target ? event.target.value : null;
+        if (!selected) return;
+        this.setLayout(selected);
+    }
+
+    @api
+    setLayout(newLayout) {
+        const resolved = this.resolveLayoutMode(newLayout);
+        this._currentLayout = resolved;
+
+        if (this.cyInstance) {
+            this.applyLayout(resolved);
+        }
+
+        // Notify parent without navigating
+        this.dispatchEvent(new CustomEvent('layoutchange', {
+            detail: { layout: resolved },
+            bubbles: true,
+            composed: true
+        }));
+
+        this.scheduleSaveState();
+    }
+
+    applyLayout(mode) {
+        if (!this.cyInstance) return;
+
+        if (mode === 'architecture') {
+            if (this._rawGraphData && this.cyInstance.nodes) {
+                const layoutResult = computeArchitectureLayout(this._rawGraphData.nodes || [], this._rawGraphData.edges || []);
+                const posMap = layoutResult.positions || {};
+                if (typeof this.cyInstance.batch === 'function') {
+                    this.cyInstance.batch(() => {
+                        this.cyInstance.nodes().forEach(node => {
+                            const p = posMap[node.id()];
+                            if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+                                node.position({ x: p.x, y: p.y });
+                            }
+                        });
+                    });
+                }
+            }
+            return;
+        }
+
+        const layoutConfig = CYTOSCAPE_LAYOUT_DEFAULTS[mode] || CYTOSCAPE_LAYOUT_DEFAULTS.breadthfirst;
+
+        if (typeof this.cyInstance.layout === 'function') {
+            try {
+                const layout = this.cyInstance.layout(layoutConfig);
+                if (layout && typeof layout.run === 'function') {
+                    layout.run();
+                }
+            } catch (e) {
+                // Graceful fallback to breadthfirst or preset if layout execution encounters error
+            }
+        }
+    }
 
     clearGraphState() {
         if (this.saveTimeout) {
@@ -192,6 +332,11 @@ export default class DaGraphViewer extends LightningElement {
             const graphData = JSON.parse(jsonString);
             this._rawGraphData = graphData;
             this._userPref = userPref;
+
+            if (userPref && userPref.Active_Layout_Mode__c) {
+                this._currentLayout = this.resolveLayoutMode(userPref.Active_Layout_Mode__c);
+            }
+
             this.renderGraph(graphData, userPref);
         } catch (err) {
             if (requestId === this.currentRequestId && this.cyInitialized) {
@@ -201,13 +346,13 @@ export default class DaGraphViewer extends LightningElement {
         }
     }
 
-    renderGraph(graphData, userPref = null) {
+    renderGraph(graphData, userPref) {
         try {
             if (this.cyInstance) {
                 try {
                     this.cyInstance.destroy();
                 } catch (e) {
-                    // Ignore destruction errors
+                   // Ignore destruction errors
                 }
                 this.cyInstance = null;
             }
@@ -286,6 +431,10 @@ export default class DaGraphViewer extends LightningElement {
 
             /* global cytoscape */
             if (typeof cytoscape === 'function') {
+                const layoutConfig = (savedPositions || this._currentLayout === 'architecture')
+                    ? { name: 'preset', animate: false }
+                    : (CYTOSCAPE_LAYOUT_DEFAULTS[this._currentLayout] || CYTOSCAPE_LAYOUT_DEFAULTS.breadthfirst);
+
                 this.cyInstance = cytoscape({
                     container: container,
                     elements: elements,
@@ -317,10 +466,7 @@ export default class DaGraphViewer extends LightningElement {
                             }
                         }
                     ],
-                    layout: {
-                        name: 'preset',
-                        animate: false
-                    }
+                    layout: layoutConfig
                 });
 
                 // Restore saved viewport zoom and pan if present
@@ -356,8 +502,13 @@ export default class DaGraphViewer extends LightningElement {
                 this.cyInstance = {
                     destroyed: false,
                     elements: elements,
+                    currentLayout: this._currentLayout,
                     destroy() {
                         this.destroyed = true;
+                    },
+                    layout: (config) => {
+                        this.currentLayout = config.name;
+                        return { run: () => {} };
                     },
                     on: (event, selector, handler) => {}
                 };
@@ -391,6 +542,7 @@ export default class DaGraphViewer extends LightningElement {
 
         const saveProjId = this._recordId;
         const currentReq = this.currentRequestId;
+        const activeLayout = this._currentLayout;
 
         this.saveTimeout = setTimeout(async () => {
             this.saveTimeout = null;
@@ -433,7 +585,7 @@ export default class DaGraphViewer extends LightningElement {
                 await saveUserPreference({
                     projectId: saveProjId,
                     viewMode: 'graph',
-                    layoutMode: 'hierarchical',
+                    layoutMode: activeLayout,
                     positionsJson: positionsJson,
                     filtersJson: null,
                     zoomPanJson: zoomPanJson
