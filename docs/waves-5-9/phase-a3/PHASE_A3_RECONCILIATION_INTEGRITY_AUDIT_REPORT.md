@@ -273,11 +273,13 @@ Every task from `WAVE_0_4_1_AUTHORITATIVE_TASK_AND_DEPENDENCY_REGISTER.csv` was 
 
 ### Verification Summary
 - **Eligible for Implementation Review**: Exactly **8** tasks (`W5-1`, `W6-1`, `W6-2`, `W6-3`, `W6-4`, `W7-1`, `W7-2`, `W8-1`).
-- **Blocked on Predecessors**: Exactly **8** tasks (`W5-2`, `W5-3`, `W5-4`, `W5-5`, `W5-6`, `W7-3`, `W8-3`, `W9-2`, `W9-3` - note W8-3 and W9-2/W9-3 have both predecessor and contract blocks).
+- **Blocked on Predecessors**: Exactly **9** tasks (`W5-2`, `W5-3`, `W5-4`, `W5-5`, `W5-6`, `W7-3`, `W8-3`, `W9-2`, `W9-3`).
 - **Blocked on Contract Approval**: Exactly **2** tasks (`W8-2`, `W9-1`).
 - **Blocked on Unresolved Specification**: Exactly **1** task (`W7-P1`).
 - **Coordinator Exclusive**: Exactly **1** task (`INT-1`).
 - **Authorized to Implement**: Exactly **0** tasks.
+- **Total Reconciled Tasks**: $8 + 9 + 2 + 1 + 1 = \mathbf{21\text{ tasks}}$.
+*(Note: Tasks `W8-3`, `W9-2`, and `W9-3` possess secondary blocks on `CONTRACT-05` and `CONTRACT-07` approvals, but are classified under predecessor blocks in the mutually exclusive category sum).*
 
 ---
 
