@@ -93,11 +93,12 @@ In accordance with project governance mandates:
   6. *Runtime Safety Language Qualification*: Offline limits represent defensive application boundaries. Do not claim runtime safety (such as Apex heap safety or browser memory headroom) without empirical live-org profiling.
 - **Technical Rationale**:
   - The 10-chunk calculation ($10 \times 131,072 = 1,310,720\text{ characters}$) represents an offline raw payload-size estimate only and must not be presented as definitive proof of Apex runtime heap safety. Apex heap consumption is substantially higher than raw string character length due to 2-byte UTF-16 in-memory string representation, SOQL query result buffers, JSON deserialization/serialization parsing overhead, object and collection memory allocations, intermediate copy retention during string concatenation, and cumulative transaction-level heap usage.
-  - In JavaScript, `String.length` measures UTF-16 code units. A 5.24M code unit single cap and 10.48M combined cap provides predictable memory consumption across desktop and mobile browsers.
-  - The Single Cytoscape Canvas Invariant prevents browser GPU crash cascades that occur when multiple WebGL/Canvas instances compete for limited hardware contexts.
+  - In JavaScript, `String.length` measures UTF-16 code units. A 5.24M code unit single cap and 10.48M combined cap serve as proposed defensive application limits and client-side payload-size thresholds; however, predictable memory consumption across desktop and mobile browsers has not been empirically verified and remains an architectural assumption.
+  - The Single Cytoscape Canvas Invariant is designed to minimize WebGL context and canvas overhead, but claims that it prevents GPU crash cascades remain unverified architectural rationale rather than empirically benchmarked findings.
 - **Known Limitations**:
   - Very large architectural graphs (>40 chunks or >5.24M characters) cannot be compared under this defensive limit and will trigger validation errors.
   - Offline JavaScript string calculations do not verify Apex runtime heap consumption in high-concurrency production orgs.
+  - Client-side browser memory consumption and WebGL context behavior have not been empirically profiled across target device categories.
 - **Dependencies**: None. Pure client-side defensive boundary and Apex batching contract.
 - **Consequences if Deferred**:
   - Task `W8-2` remains classified as `BLOCKED_ON_CONTRACT_APPROVAL`.
@@ -210,7 +211,7 @@ In accordance with project governance mandates:
   - Section 13 of `PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md`.
   - Phase A4.4 Completion Report Section 5 (`PHASE_A4.4_COMPLETION_REPORT.md`).
 - **Eligibility Impact**: None during pre-implementation. Governs task acceptance post-implementation.
-- **Confirmation Required**: Formal ratification by the Project Owner as part of DEC-04 governance adoption.
+- **Confirmation Required**: Formal ratification by the Project Owner as an explicit governance amendment. Note that formal ratification of DEC-04 alone does not automatically approve or ratify DISPUTE-01 unless DISPUTE-01 is explicitly enacted by the Project Owner.
 
 ---
 
