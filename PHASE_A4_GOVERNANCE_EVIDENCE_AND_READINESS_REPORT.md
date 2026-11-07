@@ -1,7 +1,7 @@
 # Phase A4: Governance Evidence and Readiness Report
 
 **Document Identifier**: `PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md`
-**Governance Scope**: Factual Audit, Verification, and Reconciliation Report for Phase A4 Deliverables
+**Governance Scope**: Factual Audit, Verification, and Reconciliation Report for Phase A4 Deliverables (Phase A4.1 Correction)
 **Implementation Dispatch Status**: **STRICTLY NOT AUTHORIZED**
 **Repository State**: Git Commit `b33932269211817db90e0e35c93bbe4681e2d466` on branch `jules-5282360651344650637-f76bb64a`
 **Baseline Preservation**: Preserves all 21 canonical tasks and 175 ownership manifest paths unmodified.
@@ -10,13 +10,15 @@
 
 ## 1. Executive Summary & Purpose
 
-This factual report documents the inspection, reconciliation, deliverable generation, and verification procedures conducted during **Phase A4 (Project Owner Governance Decision Package)**.
+This factual report documents the inspection, reconciliation, deliverable generation, and verification procedures conducted during **Phase A4 (Project Owner Governance Decision Package)** and its narrow **Phase A4.1 (Governance Authority and Evidence Integrity Correction)** update.
 
 Phase A4 transitions the Salesforce parallel migration from technical investigation into formal governance review. In strict compliance with governance rules:
 - **No Implementation Authorized**: Zero tasks have been dispatched or approved for execution.
 - **No Code or Metadata Mutations**: Zero application source files, custom fields, or Salesforce metadata were modified.
 - **Blank Governance Forms**: All decision-maker identity, signature, date, and determination fields in decision records remain unpopulated.
 - **Explicit Visibility of Conflicts**: Historical authority contradictions concerning Gate 1 dispatch have been clearly surfaced for Project Owner resolution rather than silently decided.
+- **Evidence-Accurate Safety Language**: Technical claims accurately distinguish defensive application caps from unmeasured runtime heap and browser performance.
+- **Authorization Template Alignment**: The authorization template explicitly represents Gate 1A/1B and requires DEC-04 ratification prior to use.
 
 ---
 
@@ -38,9 +40,9 @@ The following source documents were inspected and verified in full:
 12. `docs/waves-5-9/phase-a3/CONTRACT_08_WORKSPACE_REGISTRATION_AND_MOUNT.md` (Workspace overlay mount contracts).
 13. `docs/waves-5-9/phase-a3/CONTRACT_09_SHARED_STATE_AND_INVARIANTS.md` (Shared state immutability, LWC inbound property rules).
 14. `docs/waves-5-9/phase-a3/PHASE_A3_DISCREPANCY_AND_DECISION_REGISTER.csv` (Baseline discrepancies D1 through D6).
-15. `docs/waves-5-9/phase-a3/PHASE_A3_2_CONTRACT_AMENDMENT_AND_DECISION_CLOSURE_PACKAGE.md` (Task readiness classifications).
+15. `docs/waves-5-9/phase-a3/PHASE_A3_2_CONTRACT_AMENDMENT_AND_DECISION_CLOSURE_PACKAGE.md` (Task readiness classifications; DEC-03 approver citations).
 16. `docs/waves-5-9/phase-a3/PHASE_A3_3_FINAL_TECHNICAL_CONSISTENCY_CORRECTIONS.md` (Six retrieval conditions, deterministic SOQL tie-breaker, Tarjan cycle proofs across 7 scenarios).
-17. `docs/waves-5-9/phase-a3/PHASE_A3_4_FINAL_BLOCKER_RESOLUTION.md` (Edge-specific cycle predicate, DTO metric compatibility).
+17. `docs/waves-5-9/phase-a3/PHASE_A3_4_FINAL_BLOCKER_RESOLUTION.md` (Edge-specific cycle predicate, DTO metric compatibility, DEC-03 approver citations).
 18. `PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md` (Metric semantics closure).
 19. `docs/waves-5-9/phase-a3/PHASE_A3_HUMAN_GOVERNANCE_DECISION_PACKAGE.md` (Initial human governance decision draft).
 20. `docs/waves-5-9/phase-a1/PHASE_A1_COMPLETION_SUMMARY.md` (Phase A1 baseline setup).
@@ -63,8 +65,8 @@ The current status of all four governance decisions DEC-01 through DEC-04 is rec
 | :---: | :--- | :--- | :--- | :--- |
 | **DEC-01** | CONTRACT-04 History API Status Semantics & Ordering | Technical blockers resolved | **PENDING PRODUCT OWNER APPROVAL** | Human review and signature of Decision Record DEC-01 (Option A recommended). |
 | **DEC-02** | CONTRACT-05 Dual-Snapshot Payload Size Caps | Technical blockers resolved | **PENDING LEAD ARCHITECT & WS-D LEAD RATIFICATION** | Human review and signature of Decision Record DEC-02 (Option A recommended). |
-| **DEC-03** | CONTRACT-07 Refactoring DTOs & Simulation Semantics | Technical blockers resolved | **PENDING WS-E LEAD & PRODUCT OWNER APPROVAL** | Human review and signature of Decision Record DEC-03 (Option A recommended). |
-| **DEC-04** | Gate 1 Dispatch Authority & Partial-Dispatch Governance | Authority conflict identified | **PENDING PROJECT OWNER EXECUTIVE RATIFICATION** | Project Owner determination of governing authority structure (Alt 1, 2, 3, or 4). |
+| **DEC-03** | CONTRACT-07 Refactoring DTOs & Simulation Semantics | Technical blockers resolved | **PENDING WS-E LEAD & PRODUCT OWNER APPROVAL** | Human review and signature of Decision Record DEC-03 (Option A recommended; Lead Architect concurrence UNRESOLVED pending DEC-04). |
+| **DEC-04** | Gate 1 Dispatch Authority & Partial-Dispatch Governance | Authority conflict identified | **PENDING PROJECT OWNER EXECUTIVE RATIFICATION** | Project Owner determination of governing authority structure (Alternative 3 recommended for evaluation). |
 
 ---
 
@@ -78,6 +80,7 @@ Direct reconciliation against `WAVE_0_4_AUTHORITATIVE_FINAL_TASK_AND_DEPENDENCY_
 ====================================================================================================
 Total Canonical Tasks:                     21
 Total Rows in Register:                    21
+SHA-256 Checksum:                          349fa9fdc8fa8cf23063c7af2577a1acd3369e190b1196013339a53f0191997c
 
 Breakdown by Primary Governance Classification:
 - READY_FOR_IMPLEMENTATION_REVIEW:         8  (W5-1, W6-1, W6-2, W6-3, W6-4, W7-1, W7-2, W8-1)
@@ -99,13 +102,14 @@ All 21 task dependencies, accountabilities, and required test runners match the 
 
 Direct reconciliation against `WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv` confirms:
 - **Total Manifest Rows**: **175 rows** (99 existing baseline files, 76 planned new files).
+- **SHA-256 Checksum**: `3c60ba8059f834e69ec70912d167c632294f231f977edd023b9488760cf62935`
 - **Coordinator Protected Paths**: 16 COORDINATOR_EXCLUSIVE_PROTECTION paths, 3 INT-1 exclusive paths (`daAppShell.js`, `daAppShell.html`, `daAppShell.css`), and 1 coordinator runner (`run-coordinator-integration-suite.cjs`) remain strictly guarded.
 - **Serialized Shared Paths**: 3 intra-workstream serial shared paths (`daGraphViewer.js`, `daGraphViewer.html`, `daLayoutEngine.js`) remain serialized within Workstream A.
 - **Zero Collision State**: No overlapping or ambiguous ownership paths exist in the manifest.
 
 ---
 
-## 6. Technical Issues That Remain Unresolved
+## 6. Technical Issues That Remain Unresolved & Evidence Boundaries
 
 The following technical boundaries cannot be proven in an offline environment and remain explicitly unresolved pending post-deployment live-org verification:
 1. **Live Apex Heap Consumption**:
@@ -119,21 +123,70 @@ The following technical boundaries cannot be proven in an offline environment an
 
 ---
 
-## 7. Git Working-Tree and Commit Verification
+## 7. Raw Git Working-Tree and Commit Verification (Scope E)
 
 ### 7.1 Commit Hash Verification
 - **Starting Git Commit**: `b33932269211817db90e0e35c93bbe4681e2d466`
 - **Current Git Commit**: `b33932269211817db90e0e35c93bbe4681e2d466`
-- Zero commits have been executed during Phase A4.
+- Zero commits have been executed during Phase A4 / Phase A4.1.
 
-### 7.2 Working Tree Status
-The only modified/untracked files in the repository working tree are the four required Phase A4 deliverables:
-1. `PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md` (Deliverable 1)
-2. `PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv` (Deliverable 2)
-3. `PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md` (Deliverable 3)
-4. `PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md` (Deliverable 4)
+### 7.2 Raw Git Command Evidence
+The exact command outputs captured directly from the execution environment are recorded below:
 
-Zero application files (`force-app/`, `explorer/`), contracts, test runners, or authoritative CSV registers were modified.
+#### `git rev-parse HEAD`
+```text
+b33932269211817db90e0e35c93bbe4681e2d466
+```
+
+#### `git status --short`
+```text
+AM PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv
+A  PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md
+AM PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md
+AM PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md
+?? update_deliverables.py
+```
+
+#### `git diff --stat`
+```text
+...E_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv |   4 +-
+ PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md  | 172 +++++++++++++--------
+ ...A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md | 138 +++++++++++------
+ 3 files changed, 199 insertions(+), 115 deletions(-)
+```
+
+#### `git diff --cached --stat`
+```text
+...E_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv |   5 +
+ ..._A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md | 167 ++++++
+ PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md  | 132 +++++
+ ...A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md | 643 +++++++++++++++++++++
+ 4 files changed, 947 insertions(+)
+```
+
+#### `git diff --name-only`
+```text
+PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv
+PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md
+PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md
+```
+
+#### `git diff --cached --name-only`
+```text
+PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv
+PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md
+PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md
+PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md
+```
+
+### 7.3 Working Tree Classification
+The repository working tree contains only the staged additions corresponding to the four mandated Phase A4 deliverables:
+1. `PHASE_A4_DECISION_AUTHORITY_AND_APPROVAL_MATRIX.csv` (Deliverable 2 - Staged New File)
+2. `PHASE_A4_GOVERNANCE_EVIDENCE_AND_READINESS_REPORT.md` (Deliverable 4 - Staged New File)
+3. `PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md` (Deliverable 3 - Staged New File)
+4. `PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md` (Deliverable 1 - Staged New File)
+
+Zero tracked application files (`force-app/`, `explorer/`), contracts, test runners, or authoritative CSV registers were modified.
 
 ---
 
@@ -141,12 +194,16 @@ Zero application files (`force-app/`, `explorer/`), contracts, test runners, or 
 
 | Verification Item | Specification Requirement | Result | Evidence / Notes |
 | :--- | :--- | :---: | :--- |
-| **Four Deliverables Produced** | All 4 deliverables created in root | **PASS** | Files exist and verified. |
+| **Four Deliverables Produced** | All 4 deliverables updated in place | **PASS** | Files exist and verified. |
 | **CSV Syntax & Consistency** | Valid RFC 4180 CSV | **PASS** | Validated via Python csv reader. |
 | **Blank Approval Fields** | All decision records have blank fields | **PASS** | Verified in Deliverables 1 and 3. |
 | **All 4 Decisions Pending** | All decisions marked pending human approval | **PASS** | Reconciled across Deliverables 1, 2, and 4. |
-| **Task Register Unchanged** | 21 canonical tasks preserved | **PASS** | Register file hash and rows verified. |
-| **Ownership Manifest Unchanged**| 175 rows preserved | **PASS** | Manifest row count verified. |
+| **DEC-03 Authority Consistency**| Consistent across docs or UNRESOLVED | **PASS** | Lead Architect concurrence explicitly classified UNRESOLVED across all documents. |
+| **DEC-04 Single Recommendation**| Preferred recommendation presented | **PASS** | Alternative 3 presented as single preferred recommendation for evaluation. |
+| **DEC-02 Safety Language** | Distinguishes defensive caps from runtime | **PASS** | Absolute claims replaced with evidence-accurate classifications. |
+| **Template Gated on DEC-04** | Explicit dependency on DEC-04 model | **PASS** | Section 1 added detailing Gate 1A/1B and prohibiting dispatch before ratification. |
+| **Task Register Unchanged** | 21 canonical tasks preserved | **PASS** | Register SHA-256 verified unchanged. |
+| **Ownership Manifest Unchanged**| 175 rows preserved | **PASS** | Manifest SHA-256 verified unchanged. |
 | **Protected Files Untouched** | Zero mutations to app/metadata files | **PASS** | `git status` confirms zero app changes. |
 | **Implementation Unauthorized**| Zero tasks dispatched | **PASS** | Confirmed across all deliverables. |
 
@@ -156,12 +213,14 @@ Zero application files (`force-app/`, `explorer/`), contracts, test runners, or 
 
 ```
 ====================================================================================================
-PHASE A4 GOVERNANCE CERTIFICATION
+PHASE A4.1 GOVERNANCE CERTIFICATION
 ====================================================================================================
-Phase A4 Deliverables Completed:          YES
+Phase A4.1 Deliverables Completed:        YES
 Decisions DEC-01 through DEC-04 Pending:  YES
 Blank Governance Forms Preserved:         YES
 Implementation Dispatch Authorized:       STRICTLY NO (0 OF 21 TASKS AUTHORIZED)
 Authoritative Register Preserved:         YES (21 TASKS / 175 MANIFEST ROWS)
+Register SHA-256 Checksum:                349fa9fdc8fa8cf23063c7af2577a1acd3369e190b1196013339a53f0191997c
+Manifest SHA-256 Checksum:                3c60ba8059f834e69ec70912d167c632294f231f977edd023b9488760cf62935
 ====================================================================================================
 ```

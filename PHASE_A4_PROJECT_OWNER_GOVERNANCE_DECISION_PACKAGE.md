@@ -1,7 +1,7 @@
 # Phase A4: Project Owner Governance Decision Package
 
 **Document Identifier**: `PHASE_A4_PROJECT_OWNER_GOVERNANCE_DECISION_PACKAGE.md`
-**Governance Scope**: Consolidated Human Governance Decision Package for Decisions DEC-01 through DEC-04
+**Governance Scope**: Consolidated Human Governance Decision Package for Decisions DEC-01 through DEC-04 (Incorporating Phase A4.1 Evidence Integrity Corrections)
 **Implementation Dispatch Status**: **STRICTLY NOT AUTHORIZED**
 **Repository State**: Git Commit `b33932269211817db90e0e35c93bbe4681e2d466` on branch `jules-5282360651344650637-f76bb64a`
 **Baseline Preservation**: Preserves all 21 canonical tasks in `WAVE_0_4_AUTHORITATIVE_FINAL_TASK_AND_DEPENDENCY_REGISTER.csv` and all 175 ownership manifest paths in `WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv` unmodified.
@@ -12,11 +12,13 @@
 
 This document provides the consolidated, evidence-backed governance decision package for the Dependency Analyzer Salesforce migration, transitioning the project from technical investigation into formal Project Owner and executive governance review.
 
-Phase A3.6.1.1 completed outstanding numerical, repository-state, and task-register documentation corrections. In accordance with strict project governance rules:
+Phase A3.6.1.1 completed outstanding numerical, repository-state, and task-register documentation corrections. Phase A4.1 refines this package to eliminate approval authority ambiguities, ensure technical safety statements do not exceed empirical evidence, present a unified preferred recommendation for DEC-04, and strengthen repository verification evidence.
+
+In accordance with strict project governance rules:
 1. **Implementation Dispatch is NOT Authorized**: Zero tasks are authorized for implementation. All code modifications, Apex metadata changes, LWC source implementations, offline test additions, and git branch dispatches remain locked.
 2. **Technical Readiness is Not Implementation Authorization**: Classification of tasks as `READY_FOR_IMPLEMENTATION_REVIEW` does not constitute dispatch authorization.
 3. **Decisions Require Explicit Human Ratification**: Neither automated subagents nor coordinator agents possess authority to resolve architectural conflicts, ratify proposed contracts, or approve implementation release. Decisions DEC-01 through DEC-04 remain explicitly **PENDING HUMAN APPROVAL**.
-4. **Separation of Recommendation from Ratification**: Proposed recommendations reflect technical engineering findings but do not constitute approved policy until formally signed by designated decision-makers.
+4. **Separation of Recommendation from Ratification**: Proposed recommendations reflect technical engineering findings but do not constitute approved policy until formally signed by designated decision-makers. The Project Owner retains full authority to select any alternative.
 5. **No Live-Org Operations**: No Salesforce org setup, authentication, deployment, or live-org validation is permitted or has occurred.
 
 ---
@@ -68,7 +70,7 @@ Furthermore, product semantics require explicit definition regarding whether `CO
 6. **Syntactic Apex Identifier Validation**:
    - In `DAGraphController.cls`, the parameter `projectId` is passed as an untyped Apex `String`. Calling `projectId instanceOf Id` is invalid Apex syntax that causes a compilation failure. Project identifier validation must use regex syntax checking (`^[a-zA-Z0-9]{15}([a-zA-Z0-9]{3})?$`) or a `try/catch` block wrapping `Id.valueOf(projectId)`.
 7. **Project Key Metadata & Deterministic Ordering**:
-   - `DA_Project__c.Project_Key__c` is verified in `scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml` as `<type>Text</type>`, `<length>100</length>`, `<unique>true</unique>`, `<caseSensitive>true</caseSensitive>`, and `<externalId>true</externalId>`. A fallback query on `Project_Key__c` is guaranteed safe against ambiguous row matching.
+   - `DA_Project__c.Project_Key__c` is verified in `scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml` as `<type>Text</type>`, `<length>100</length>`, `<unique>true</unique>`, `<caseSensitive>true</caseSensitive>`, and `<externalId>true</externalId>`. A fallback query on `Project_Key__c` is verified safe against ambiguous row matching.
    - Deterministic SOQL query ordering must use `ORDER BY CreatedDate DESC, Id DESC` to guarantee stable pagination across execution environments.
 
 ### 3.3 Available Decision Choices
@@ -109,8 +111,8 @@ Upon formal ratification of DEC-01 (Option A):
 ### 4.1 Context and Technical Background
 Task `W8-2` (`daSnapshotDiffEngine.js`) and Task `W8-3` (`daCompareView.js`) comprise Workstream D (Wave 8 Snapshot Comparison). Contract `CONTRACT_05_DUAL_SNAPSHOT_AND_DIFF_ENGINE.md` specifies payload limits and architecture constraints for retrieving and diffing two distinct graph snapshots.
 
-### 4.2 Established Numerical Facts & Unit Distinctions
-To eliminate conflation between character counts, Unicode encodings, and binary byte limits, the following verified technical facts are established:
+### 4.2 Established Numerical Facts & Evidence Boundaries
+To eliminate conflation between character counts, Unicode encodings, binary byte limits, and actual runtime memory consumption, the following technical facts and boundaries are established:
 1. **Salesforce Chunk Field Metadata**:
    - `DA_Graph_Chunk__c.Payload_Data__c` is a `LongTextArea` field with `<length>131072</length>`. This is a Salesforce platform **character-count limit**, not an explicit byte limit or proven UTF-16 code-unit limit.
 2. **JavaScript String Representation**:
@@ -122,25 +124,27 @@ To eliminate conflation between character counts, Unicode encodings, and binary 
    - At maximum chunk size (131,072 characters/code units): single-snapshot corresponds to **40 chunks**; combined dual-snapshot corresponds to **80 chunks**.
    - Maximum batch retrieval: **10 chunks** ($1,310,720$ code units) per Apex invocation.
 4. **Encoding Byte Distinctions**:
-   - In-memory UTF-16 representation (at 2 bytes per code unit): 5,242,880 code units = $10,485,760	ext{ bytes}$ ($10	ext{ MiB}$); 10,485,760 code units = $20,971,520	ext{ bytes}$ ($20	ext{ MiB}$).
+   - In-memory UTF-16 representation (at 2 bytes per code unit): 5,242,880 code units = $10,485,760\text{ bytes}$ ($10\text{ MiB}$); 10,485,760 code units = $20,971,520\text{ bytes}$ ($20\text{ MiB}$).
    - UTF-8 serialized byte representation varies by character content:
-     - Pure ASCII: 1 byte per character = $5.24	ext{ MB}$ single / $10.49	ext{ MB}$ combined.
-     - Supplementary characters (surrogate pairs): 4 bytes per character (2 code units) = $10.49	ext{ MB}$ single / $20.97	ext{ MB}$ combined.
-     - 3-byte BMP characters: 3 bytes per code unit = $15.73	ext{ MB}$ single / $31.46	ext{ MB}$ combined.
-5. **Apex Heap Governor Limits**:
+     - Pure ASCII: 1 byte per character = $5.24\text{ MB}$ single / $10.49\text{ MB}$ combined.
+     - Supplementary characters (surrogate pairs): 4 bytes per character (2 code units) = $10.49\text{ MB}$ single / $20.97\text{ MB}$ combined.
+     - 3-byte BMP characters: 3 bytes per code unit = $15.73\text{ MB}$ single / $31.46\text{ MB}$ combined.
+5. **Apex Heap Governor Limits & Qualification of Batch Estimates**:
    - Documented limits: Synchronous Apex = 6 MB; Asynchronous Apex = 12 MB.
-   - Mathematical byte conversions: $6	ext{ MiB} = 6,291,456	ext{ bytes} = 6.291456	ext{ MB}$; $12	ext{ MiB} = 12,582,912	ext{ bytes} = 12.582912	ext{ MB}$.
-   - **Theoretical Batch Estimate Disclaimer**: The theoretical estimate that 10 chunks ($pprox 1.31	ext{ M characters}$) consume $pprox 1.31	ext{ MB}$ to $3.93	ext{ MB}$ of heap is an **unverified theoretical calculation under simplified assumptions**. It does not account for SObject overhead, JSON serialization, or string duplication, and has **not** been empirically profiled in a live Salesforce org.
+   - Mathematical byte conversions: $6\text{ MiB} = 6,291,456\text{ bytes} = 6.291456\text{ MB}$; $12\text{ MiB} = 12,582,912\text{ bytes} = 12.582912\text{ MB}$.
+   - **Theoretical Batch Estimate Disclaimer**: The theoretical estimate that 10 chunks consume approximately $1.31\text{ MB}$ to $3.93\text{ MB}$ of heap is strictly an **unverified theoretical calculation under simplified assumptions**. It does not account for SObject wrappers, JSON serialization copies, or string buffer duplication. **Apex heap safety has not been measured in a live Salesforce org.**
 6. **Browser & UI Rendering Invariant**:
    - Cytoscape canvas memory and DOM constraints prohibit rendering dual concurrent graph canvases in LWC.
    - The **Single Cytoscape Canvas Invariant** (Contract W0-C7) is mandatory: comparison mode renders a single canvas displaying base nodes, with delta styling (additions, deletions, modifications) applied to visual elements.
-   - Browser memory, Lightning Web Security (LWS) isolation, GPU virtualization, and mobile viewport limits remain unverified in real browser environments.
+   - **Browser memory, Lightning Web Security (LWS) proxy overhead, GPU virtualization limits, and mobile rendering boundaries remain unverified offline.**
 
-### 4.3 Unresolved Decisions
-1. **Application Payload Caps**: Shall the proposed 5,242,880 UTF-16 code unit single-snapshot cap and 10,485,760 UTF-16 code unit combined dual-snapshot cap be ratified as binding constraints?
-2. **Retrieval & Batching Boundaries**: Shall the 10-chunk batch retrieval boundary and client-side stale request token invalidation be accepted as final design constraints?
-3. **Runtime Assumptions vs Offline Approval**: Which assumptions are accepted for offline design approval and which require mandatory post-deployment Salesforce runtime verification?
-4. **Safeguard Enforcement**: Shall explicit fail-closed client-side error handling be contractually mandated when payload code units exceed configured caps?
+### 4.3 Technical Safety Language & Boundary Classifications
+To prevent misleading claims of runtime safety, the documentation establishes five explicit categories:
+- **Defensive Application Caps**: The 5.24M / 10.48M code unit caps are architectural guardrails designed to limit client payload size; they do not guarantee browser stability.
+- **Offline Numerical Calculations**: Theoretical chunk-to-byte conversions reflect mathematical character counts, not runtime allocations.
+- **Unmeasured Apex Heap Usage**: Apex heap consumption during 10-chunk batch fetching has not been measured in an active Salesforce runtime transaction.
+- **Unverified Browser/LWS Behavior**: Browser memory, LWS DOM containment, and WebGL/canvas limits remain unverified in real browser environments.
+- **Deferred Runtime Acceptance Gates**: Conclusive validation of heap limits and canvas performance must occur during post-deployment live-org testing.
 
 ### 4.4 Available Decision Choices
 - **Option A (Ratify Proposed Caps, Invariants, and Explicit Fail-Closed Safeguards)**:
@@ -149,15 +153,15 @@ To eliminate conflation between character counts, Unicode encodings, and binary 
   - Ratify batch retrieval limit of 10 chunks per Apex invocation.
   - Ratify the Single Cytoscape Canvas Invariant with delta styling.
   - Mandate client-side pre-validation: reject payloads exceeding caps before JSON parsing.
-  - Designate live-org Apex heap profiling and browser memory verification as deferred post-deployment acceptance gates.
+  - Formally designate live-org Apex heap profiling and browser memory verification as deferred post-deployment acceptance gates.
 - **Option B (Expand Payload Caps to 10M Single / 20M Combined)**:
   - Double caps to 10,485,760 single / 20,971,520 combined code units.
 - **Option C (Defer Contract 05 Ratification)**:
   - Hold Contract 05 unratified until live Salesforce sandbox heap profiling can be conducted.
 
 ### 4.5 Consequences of Each Choice
-- **Consequences of Option A**: Establishes rigorous, defensive boundaries protecting browser and Apex transaction stability. Prevents browser tab crashes and heap exhaustion. Unblocks Task W8-2 for implementation review while explicitly deferring live runtime proof to post-deployment.
-- **Consequences of Option B**: Substantially increases the risk of unhandled Apex `LimitException: Apex heap size too large` during batch retrieval and out-of-memory browser crashes on lower-memory client devices.
+- **Consequences of Option A**: Establishes rigorous defensive application-level boundaries designed to mitigate browser memory and Apex transaction overruns. Unblocks Task W8-2 for implementation review while explicitly deferring live runtime proof to post-deployment.
+- **Consequences of Option B**: Substantially increases the risk of unhandled Apex `LimitException: Apex heap size too large` during batch retrieval and out-of-memory browser tab crashes on lower-memory client devices.
 - **Consequences of Option C**: Blocks Task W8-2 and downstream W8-3 indefinitely. Prevents Workstream D from progressing.
 
 ### 4.6 Exact Approval Authority
@@ -204,11 +208,19 @@ Task `W9-1` (`daRefactoringEngine.js`), Task `W9-2` (`daRefactoringView.js`), an
 9. **Architecture Health Calculation Boundary**:
    - `calculateArchitectureHealth` in `explorer/src/lib/health.ts` is TypeScript and depends on Explorer data schemas. It cannot run in LWC without porting. If not ported in W9-1, `architectureHealthDelta` must return `null`.
 
-### 5.3 Unresolved Decisions & Scope Choices
-1. **Simulation DTO Schema**: Shall the simulation DTO standardize on `cyclicSccCountDelta` and `breakCycleActionsApplied`, retaining `cyclesEliminated` as an optional deprecated alias for backward compatibility?
-2. **BREAK_CYCLE Strategy**: Shall `BREAK_CYCLE` standardize on the `EXTRACT_INTERFACE` strategy (introducing interface node $I_v$, redirecting $(u, v)$ to $(u, I_v)$, and adding $(v, I_v)$)?
-3. **REMOVE_NODE Cascade Handling**: Shall `REMOVE_NODE` enforce atomic cascade deletion of all incident edges (incoming, outgoing, self-loops) to prevent dangling references?
-4. **Scope of Operations for Initial Release**: Which refactoring operations are in scope for initial implementation release, and which must be formally deferred?
+### 5.3 Authority Analysis & Reconciliation (Scope A)
+An explicit inspection of baseline governance documents reveals differing historical authority statements for DEC-03:
+- **Phase A3 Final Technical Decision Proposal (§4)**: Cited **Workstream E Lead & Integration Coordinator** as required approvers.
+- **Phase A3 Human Governance Decision Package (§4.7)**: Cited **Workstream E Lead & Integration Coordinator** in the decision record, with Product Owner approval required where product scope is affected.
+- **Phase A3.2 Contract Amendment Package (§4 / §8)**: Cited **Lead Architect and Product Owner (Ratified by Project Owner)**.
+- **Phase A3.4 Blocker Resolution (§6)**: Cited **Lead Architect & Product Owner**.
+- **Phase A4 CSV Baseline**: Listed **Workstream E Lead, Integration Coordinator (Technical); Project Owner / Product Owner (Scope)** with **Lead Architect** concurrence.
+
+To eliminate inconsistency while avoiding fabricated authority, the governance roles are explicitly decomposed into four distinct jurisdictions:
+1. **Technical Contract Approval**: `Workstream E Lead` (substantive author of refactoring engine and topological logic).
+2. **Integration Concurrence**: `Integration Coordinator` (verifying integration with shared schema and coordinator test suites).
+3. **Product Scope Approval**: `Product Owner` (approving the deferral of `MOVE_METHOD` and informational status of `movedMethodList`).
+4. **Lead Architect Concurrence**: **UNRESOLVED / HELD FOR PROJECT OWNER RATIFICATION**. The requirement for Lead Architect concurrence is supported by Phase A3.2/A3.4 but omitted in early A3 drafts. In accordance with Governance Principle 7, this requirement remains explicitly **UNRESOLVED** until the Project Owner formally defines the ratification scope under DEC-04.
 
 ### 5.4 Available Decision Choices
 - **Option A (Ratify Component-Level Scoping, Defer MOVE_METHOD, Standardize SCC Metrics)**:
@@ -238,7 +250,10 @@ If Option A is approved, CONTRACT-07 will require:
 5. Incorporating the 10 reference simulation fixtures.
 
 ### 5.7 Exact Approval Authority
-- **Authority**: Workstream E Lead and Integration Coordinator for technical simulation design, with Product Owner and Project Owner approval for functional scope deferral of `MOVE_METHOD`.
+- **Primary Technical Authority**: Workstream E Lead.
+- **Technical Integration Concurrence**: Integration Coordinator.
+- **Product Scope Authority**: Product Owner (governing deferral of `MOVE_METHOD`).
+- **Lead Architect Concurrence Status**: **UNRESOLVED** pending Project Owner governance decision under DEC-04.
 
 ### 5.8 Eligibility of W9-1 Post-Approval
 Upon formal ratification of DEC-03 (Option A):
@@ -275,8 +290,8 @@ The Project Owner must formally resolve the following eight structural governanc
 - **Alternative 2: Technical Dual Signoff (Lead Architect + Integration Coordinator)**:
   - Requires joint approval of the Lead Architect and Integration Coordinator based strictly on contract freeze and test evidence verification.
 - **Alternative 3: Two-Phase Sequential Dispatch (Gate 1A Technical + Gate 1B Business)**:
-  - Gate 1A: Lead Architect and Integration Coordinator certify technical readiness and contract freeze.
-  - Gate 1B: Product Owner and Project Owner formally release implementation budget and dispatch tasks.
+  - **Gate 1A (Technical Certification)**: Lead Architect certifies technical design readiness; Integration Coordinator certifies contract freeze, test evidence (187/187 tests), and zero file ownership collisions.
+  - **Gate 1B (Business Release & Dispatch Ratification)**: Product Owner approves business scope and release readiness; Project Owner executes formal executive ratification to release implementation budget and dispatch tasks.
 - **Alternative 4: Executive Project Owner Exclusive Signoff**:
   - Implementation dispatch is granted exclusively by the Project Owner upon recommendation from Lead Architect, Product Owner, and Integration Coordinator.
 
@@ -284,14 +299,22 @@ The Project Owner must formally resolve the following eight structural governanc
 
 | Evaluation Dimension | Alternative 1: Joint Dual (Architect + PO) | Alternative 2: Technical Dual (Architect + IC) | Alternative 3: Two-Phase (1A Tech / 1B Business) | Alternative 4: Executive Project Owner |
 | :--- | :--- | :--- | :--- | :--- |
-| **Primary Decision Maker** | Lead Architect AND Product Owner | Lead Architect AND Integration Coordinator | Gate 1A: Architect + IC<br>Gate 1B: Product Owner | Project Owner |
+| **Primary Decision Maker** | Lead Architect AND Product Owner | Lead Architect AND Integration Coordinator | Gate 1A: Architect + IC<br>Gate 1B: Product Owner + Project Owner | Project Owner |
 | **Business Scope Control** | High — PO directly controls release | Low — purely technical signoff | High — separated technical & business gates | Maximum — single executive authority |
-| **Technical Rigor** | High — Architect must approve | High — Architect + IC both technical | High — IC verifies integration and tests | High — requires joint recommendations |
-| **Operational Overhead** | Moderate — requires 2 signoffs | Low — engineering-internal | Higher — requires 2 sequential gates | Moderate — single formal ratification |
+| **Technical Rigor** | High — Architect must approve | High — Architect + IC both technical | Maximum — IC verifies regression tests, Architect verifies contracts | High — requires joint recommendations |
+| **Operational Overhead** | Moderate — requires 2 signoffs | Low — engineering-internal | Structured — requires 2 sequential gates | Moderate — single formal ratification |
 | **Deadlock Resolution** | Project Owner arbitrates | Project Owner arbitrates | Project Owner arbitrates | Project Owner decides directly |
-| **Risk of Premature Release**| Low | Moderate (business scope not gated) | Lowest (strict two-stage verification)| Lowest |
+| **Risk of Premature Release**| Low | Moderate (business scope not gated) | Lowest (strict sequential gating) | Lowest |
 
-### 6.5 Strict Partial-Dispatch Governance Controls
+### 6.5 Preferred Recommendation for Evaluation (Scope B)
+- **Preferred Recommendation**: **Alternative 3 — Two-Phase Sequential Dispatch**.
+  - **Rationale**:
+    1. *Strict Separation of Concerns*: Clearly demarcates technical design verification (Gate 1A) from business scope and budget authorization (Gate 1B).
+    2. *Reconciliation of Historical Roles*: Embraces all historical stakeholders by giving the Lead Architect and Integration Coordinator clear jurisdiction over technical integrity, while ensuring the Product Owner and Project Owner hold ultimate dispatch authority.
+    3. *Elimination of Premature Dispatch*: Prevents engineering dispatch from proceeding until both technical correctness and business requirements are certified.
+  - **Status of Recommendation**: **PROPOSAL FOR EVALUATION ONLY**. This recommendation does **not** constitute an approved policy. The Project Owner retains the sole authority to adopt Alternative 1, Alternative 2, Alternative 3, Alternative 4, or an alternative governance structure.
+
+### 6.6 Strict Partial-Dispatch Governance Controls
 Regardless of the alternative selected, any partial dispatch order must satisfy strict governance criteria:
 1. **Mandatory 16-Point Authorization Record**: Must be executed using the formal implementation authorization template (`PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md`).
 2. **Explicit Task Allowlist**: Blanket authorizations are prohibited. Only specific, verified task IDs may be listed.
@@ -309,7 +332,7 @@ The table below reconciles decisions DEC-01 through DEC-04. All four decisions r
 | :---: | :--- | :--- | :--- | :--- | :--- |
 | **DEC-01** | Contract 04 (Analysis Run History API) | Technical blockers resolved. Wording and semantics pending. | Product Owner, with Lead Architect & Integration Coordinator concurrence | Status semantics (`EMPTY` vs `UNKNOWN`) and compound query ordering | Task `W7-P1` remains `BLOCKED_ON_UNRESOLVED_SPECIFICATION` pending approval. |
 | **DEC-02** | Contract 05 (Dual-Snapshot & Diff Engine) | Numerical distinctions and single canvas invariant established. | Lead Architect and Workstream D Lead, with Integration Coordinator concurrence | Ratification of 5M/10M caps, batching limits, and runtime deferrals | Task `W8-2` remains `BLOCKED_ON_CONTRACT_APPROVAL` pending approval. |
-| **DEC-03** | Contract 07 (Refactoring DTOs & Simulation) | Graph granularity, edge predicate, and metric delta formulas clarified. | Workstream E Lead & Integration Coordinator, plus Product Owner/Project Owner for scope | Simulation DTO schema, BREAK_CYCLE strategy, and deferral of MOVE_METHOD | Task `W9-1` remains `BLOCKED_ON_CONTRACT_APPROVAL` pending approval. |
+| **DEC-03** | Contract 07 (Refactoring DTOs & Simulation) | Graph granularity, edge predicate, and metric delta formulas clarified. | Workstream E Lead, Integration Coordinator (Technical); Product Owner (Scope); Lead Architect Concurrence (UNRESOLVED) | Simulation DTO schema, BREAK_CYCLE strategy, and deferral of MOVE_METHOD | Task `W9-1` remains `BLOCKED_ON_CONTRACT_APPROVAL` pending approval. |
 | **DEC-04** | Gate 1 Implementation Dispatch Authority | Foundational authority conflict across Phase A1, A2, and A3 baselines. | Project Owner (Mandatory Executive Ratification) | Authoritative structure for Gate 1 implementation dispatch and partial dispatch | All 21 tasks remain **STRICTLY UNAUTHORIZED FOR IMPLEMENTATION**. |
 
 *Note: This matrix represents a decision proposal for Project Owner review. It does not constitute an approved authority matrix.*
@@ -352,7 +375,7 @@ All 21 canonical tasks from `WAVE_0_4_AUTHORITATIVE_FINAL_TASK_AND_DEPENDENCY_RE
 - **COORDINATOR_EXCLUSIVE**: 1 task (`INT-1`)
 - **AUTHORIZED_FOR_IMPLEMENTATION**: **0 tasks**
 
-$$\mathbf{8} + \mathbf{9} + \mathbf{2} + \mathbf{1} + \mathbf{1} = \mathbf{21	ext{ Canonical Tasks}}$$
+$$\mathbf{8} + \mathbf{9} + \mathbf{2} + \mathbf{1} + \mathbf{1} = \mathbf{21\text{ Canonical Tasks}}$$
 
 ### 8.2 Invariant Boundaries Preserved
 1. **Ownership Manifest Invariance**: All 175 rows in `WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv` remain intact and unmodified.
@@ -442,7 +465,7 @@ Tasks Affected:            W8-2, W8-3
 Background & Evidence:     Salesforce LongTextArea character limit is 131,072 characters.
                            JavaScript String.length measures 16-bit UTF-16 code units.
                            Proposed caps: 5,242,880 UTF-16 code units (single) / 10,485,760 (combined).
-                           Single Cytoscape Canvas Invariant is mandatory to prevent browser crashes.
+                           Single Cytoscape Canvas Invariant is mandatory to limit browser memory consumption.
                            Batch retrieval bounded at 10 chunks per Apex invocation.
                            Live-org Apex heap profiling and browser memory remain unverified offline.
 
@@ -457,10 +480,10 @@ Available Choices:
   [ ] Option B: Expand payload caps to 10M single / 20M combined code units.
   [ ] Option C: Defer Contract 05 ratification until live Salesforce org profiling is complete.
 
-Recommended Option:        Option A. Provides proven defensive boundaries preventing browser memory
-                           exhaustion and Apex transaction limits while preserving architectural invariants.
+Recommended Option:        Option A. Establishes defensive application-level boundaries designed to mitigate
+                           browser memory and Apex transaction overruns while preserving architectural invariants.
 Consequences:              Option A unblocks W8-2 to READY_FOR_IMPLEMENTATION_REVIEW.
-                           Option B introduces severe heap and browser crash risks.
+                           Option B increases heap and browser crash risks.
                            Option C halts Workstream D indefinitely.
 
 Required Decision-Makers:  Lead Architect, Workstream D Lead
@@ -530,8 +553,10 @@ Consequences:              Option A unblocks W9-1 to READY_FOR_IMPLEMENTATION_RE
                            Option B requires massive multi-month overhaul of ingestion pipeline.
                            Option C freezes Workstream E indefinitely.
 
-Required Decision-Makers:  Workstream E Lead, Integration Coordinator (Technical Simulation Design)
-                           Project Owner / Product Owner (Scope Deferral of MOVE_METHOD)
+Required Decision-Makers:  Workstream E Lead (Technical Simulation Design)
+                           Integration Coordinator (Technical Integration Concurrence)
+                           Product Owner (Functional Scope Approval for MOVE_METHOD Deferral)
+                           Lead Architect Concurrence: [UNRESOLVED — HELD FOR PROJECT OWNER RATIFICATION]
 
 --- FORMAL APPROVAL RECORD (TO BE EXECUTED BY DESIGNATED DECISION-MAKERS) ---
 Approval Status:           [ ] PENDING    [ ] APPROVED    [ ] REJECTED    [ ] DEFERRED
@@ -539,24 +564,32 @@ Selected Choice:           [ ] Option A   [ ] Option B    [ ] Option C
 
 Workstream E Lead Determination:
   Decision-Maker Name:     ____________________________________________________
-  Role / Title:            ____________________________________________________
+  Role / Title:            Workstream E Lead (Technical Simulation Design)
   Formal Determination:    [ ] APPROVED   [ ] REJECTED    [ ] DEFERRED
   Date:                    ____________________________________________________
   Signature / Reference:   ____________________________________________________
   Conditions & Notes:      ____________________________________________________
 
-Integration Coordinator Determination:
+Integration Coordinator Concurrence:
   Decision-Maker Name:     ____________________________________________________
-  Role / Title:            ____________________________________________________
+  Role / Title:            Integration Coordinator (Technical Integration)
   Formal Determination:    [ ] APPROVED   [ ] REJECTED    [ ] DEFERRED
   Date:                    ____________________________________________________
   Signature / Reference:   ____________________________________________________
   Conditions & Notes:      ____________________________________________________
 
-Project Owner / Product Owner Scope Approval:
+Product Owner Scope Determination:
   Decision-Maker Name:     ____________________________________________________
-  Role / Title:            ____________________________________________________
+  Role / Title:            Product Owner (Functional Scope)
   Formal Determination:    [ ] APPROVED   [ ] REJECTED    [ ] DEFERRED
+  Date:                    ____________________________________________________
+  Signature / Reference:   ____________________________________________________
+  Conditions & Notes:      ____________________________________________________
+
+Lead Architect Concurrence (Subject to Project Owner Determination):
+  Decision-Maker Name:     ____________________________________________________
+  Role / Title:            Lead Architect
+  Determination:           [ ] CONCUR     [ ] DISSENT     [ ] DEFERRED
   Date:                    ____________________________________________________
   Signature / Reference:   ____________________________________________________
   Conditions & Notes:      ____________________________________________________
@@ -584,11 +617,14 @@ Available Choices:
   [ ] Alternative 1: Joint Dual Signoff — Lead Architect AND Product Owner (both mandatory).
   [ ] Alternative 2: Technical Dual Signoff — Lead Architect AND Integration Coordinator.
   [ ] Alternative 3: Two-Phase Sequential Dispatch — Gate 1A Technical (Lead Architect +
-                     Integration Coordinator) followed by Gate 1B Business (Product Owner).
+                     Integration Coordinator) followed by Gate 1B Business (Product Owner +
+                     Project Owner Executive Ratification).
   [ ] Alternative 4: Executive Project Owner Exclusive Signoff upon Joint Recommendation.
 
-Recommended Option:        Alternative 1 or Alternative 3. Guarantees that technical contract validity
-                           and business scope/budget release are both verified prior to code mutation.
+Recommended Option:        Alternative 3 (Two-Phase Sequential Dispatch) is the preferred recommendation
+                           for evaluation. It establishes strict separation between technical readiness
+                           certification and business dispatch release. The Project Owner retains the
+                           sole authority to adopt Alternative 1, 2, 3, 4, or another model.
 Consequences:              Resolves governance ambiguity. Enables lawful issuance of Partial Dispatch
                            Orders using the Phase A4 authorization template once contracts are signed.
                            Does not automatically dispatch any task.
