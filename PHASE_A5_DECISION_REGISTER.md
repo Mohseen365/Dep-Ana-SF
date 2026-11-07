@@ -92,7 +92,7 @@ In accordance with project governance mandates:
   5. *Fail-Closed Pre-Validation*: Payloads exceeding size or chunk caps must be rejected before JSON parsing to protect browser thread responsiveness.
   6. *Runtime Safety Language Qualification*: Offline limits represent defensive application boundaries. Do not claim runtime safety (such as Apex heap safety or browser memory headroom) without empirical live-org profiling.
 - **Technical Rationale**:
-  - 10 chunks per batch fetch amounts to a maximum of 1,310,720 characters per Apex transaction, staying well within synchronous Apex heap limits (6 MiB / 6,291,456 bytes) and JSON serialization boundaries.
+  - The 10-chunk calculation ($10 \times 131,072 = 1,310,720\text{ characters}$) represents an offline raw payload-size estimate only and must not be presented as definitive proof of Apex runtime heap safety. Apex heap consumption is substantially higher than raw string character length due to 2-byte UTF-16 in-memory string representation, SOQL query result buffers, JSON deserialization/serialization parsing overhead, object and collection memory allocations, intermediate copy retention during string concatenation, and cumulative transaction-level heap usage.
   - In JavaScript, `String.length` measures UTF-16 code units. A 5.24M code unit single cap and 10.48M combined cap provides predictable memory consumption across desktop and mobile browsers.
   - The Single Cytoscape Canvas Invariant prevents browser GPU crash cascades that occur when multiple WebGL/Canvas instances compete for limited hardware contexts.
 - **Known Limitations**:
