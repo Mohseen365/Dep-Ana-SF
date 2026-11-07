@@ -1,7 +1,7 @@
 # Phase A3 Human Governance Decision Package Execution Report
 
 **Document Identifier**: `docs/waves-5-9/phase-a3/PHASE_A3_HUMAN_GOVERNANCE_DECISION_PACKAGE_EXECUTION_REPORT.md`
-**Execution Objective**: Evidence-backed preparation of Phase A3 Human Governance Decisions DEC-01 through DEC-04
+**Execution Objective**: Evidence-backed preparation of Phase A3 Human Governance Decisions DEC-01 through DEC-04 (Incorporating Phase A3.1 Technical Review Corrections)
 **Implementation Dispatch Status**: **STRICTLY NOT AUTHORIZED**
 **Execution Timestamp**: 2026-11-07
 
@@ -28,7 +28,7 @@ All four formal human decisions (`DEC-01`, `DEC-02`, `DEC-03`, `DEC-04`) were th
 
 ### Working Tree Status
 - **Initial Working Tree Status**: Clean (`nothing to commit, working tree clean` on commit `85e8f4e`)
-- **Current Working Tree Status**: Contains only the two intended Phase A3 governance documentation deliverables under `docs/waves-5-9/phase-a3/`; zero source code modifications, zero Salesforce metadata modifications, zero package changes.
+- **Current Working Tree Status**: Contains the governance deliverables under `docs/waves-5-9/phase-a3/`; zero source code modifications, zero Salesforce metadata modifications, zero package changes.
 
 ---
 
@@ -57,6 +57,7 @@ The following authoritative registers, contracts, existing implementations, and 
 19. `scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml`
 20. `scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/` (Zero-schema metadata structure)
 21. `docs/audits/salesforce-parallel-migration/phase-0/WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` (Contract W0-C7, W0-C8)
+22. `explorer/src/lib/health.ts` (Architecture health heuristic formula and weighting)
 
 ---
 
@@ -66,17 +67,19 @@ The following governance deliverables were produced:
 
 1. `docs/waves-5-9/phase-a3/PHASE_A3_HUMAN_GOVERNANCE_DECISION_PACKAGE.md`
    - Complete decision packages for `DEC-01`, `DEC-02`, `DEC-03`, and `DEC-04`.
-   - Action-by-action analysis of `EXTRACT_CLASS`, `MOVE_METHOD`, `BREAK_CYCLE`, `REMOVE_NODE`.
-   - Technical investigation of zero-schema data model limitations (chunks === 0 cannot distinguish empty runs from aborted or partially persisted runs).
-   - Character counts (`String.length`) vs UTF-8 bytes vs serialized JSON bytes distinction in CONTRACT-05.
-   - Comprehensive memory analysis across raw string, parsed JS AST, diff structures, and single Cytoscape canvas.
-   - Grounded evaluation of `cascadeEdges` vs `force` on `REMOVE_NODE` to prevent dangling edges.
-   - Eight-dimension evaluation of the three Gate 1 dispatch authority alternatives.
+   - Technical investigation of zero-schema data model limitations (chunks === 0 cannot distinguish empty runs from aborted or partially persisted runs; precise distinction between payload availability and execution completion).
+   - Character counts (`String.length` UTF-16 code units) vs UTF-8 bytes distinction in CONTRACT-05.
+   - Classification of memory estimates into unverified hypotheses vs verified platform bounds; bounded offline Node.js benchmark plan vs postponed real-browser validation.
+   - Clarification of `movedMethodList` in `EXTRACT_CLASS` as non-operational informational metadata.
+   - Mathematical proof of Tarjan SCC cycle elimination under `EXTRACT_INTERFACE` ($A \to I\langle B \rangle$ and $B \to I\langle B \rangle$).
+   - Comprehensive 7-topology edge cascade rules for `REMOVE_NODE` to guarantee zero dangling edges.
+   - 3-tier classification of metric recomputations (`couplingDelta`, `cyclesEliminated`, `architectureHealthDelta`).
+   - Strict 8-point Partial Dispatch Controls for Gate 1 release under DEC-04.
    - Consolidated decision register with explicit PENDING fields.
    - Reconciled 21-task readiness matrix preserving 8 review-eligible, 9 predecessor-blocked, 2 contract-blocked, 1 specification-blocked, 1 coordinator-exclusive, and 0 authorized.
 
 2. `docs/waves-5-9/phase-a3/PHASE_A3_HUMAN_GOVERNANCE_DECISION_PACKAGE_EXECUTION_REPORT.md` (this report)
-   - Comprehensive provenance, test evidence, audit findings, and confirmation statements.
+   - Comprehensive provenance, test evidence, graph calculations, audit findings, and confirmation statements.
 
 ---
 
@@ -118,38 +121,29 @@ for (const r of runners) {
 - `scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs`: **32 PASSED**, 0 FAILED
 - **Total Assertions**: **187 PASSED, 0 FAILED** (Exit Code: 0)
 
-### 5.2 Source Evidence Verification
-1. **DEC-01 (CONTRACT-04)**:
-   - Verified that `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls` currently implements `getProjects`, `getLatestGraphMetadataForProject`, `getGraphChunks`, and `getLatestGraphForProject`. It does not contain `getAnalysisRuns`.
-   - Verified that `scratch/salesforce-poc/force-app/main/default/classes/dto/` does not contain `DAAnalysisRunSummaryDTO.cls`.
-   - Verified that `DA_Analysis_Run__c` object metadata contains zero custom fields other than `DA_Project__c`.
-   - Verified exact text contradiction in `CONTRACT_04_ANALYSIS_RUN_HISTORY_API.md`: §4 specifies `'UNKNOWN'`, while §5.2 specifies `'EMPTY'`; §5.2 specifies `ORDER BY CreatedDate DESC`, while §6.2 specifies `ORDER BY CreatedDate DESC, Id DESC`.
-   - Documented the critical limitation that zero-schema cannot distinguish empty runs from aborted or partially persisted runs. Formulated an objective definition for `EMPTY`.
-2. **DEC-02 (CONTRACT-05)**:
-   - Verified `DA_Graph_Chunk__c.Payload_Data__c` length limit is 131,072 characters in `Payload_Data__c.field-meta.xml`.
-   - Verified `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js` line 6 sets `MAX_TOTAL_PAYLOAD_SIZE = 10485760` (10 MB string length).
-   - Documented the character vs byte measurement distinction (`String.prototype.length` counts 16-bit code units, not UTF-8 bytes).
-   - Verified provenance of the Single Cytoscape Canvas Invariant in `W0-C7` (`docs/audits/salesforce-parallel-migration/phase-0/WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` §8.2).
-3. **DEC-03 (CONTRACT-07)**:
-   - Verified that `CONTRACT_01_CANONICAL_GRAPH_PAYLOAD.md` defines `CanonicalGraphNode` without a `methods[]` array and `CanonicalGraphEdge` without method invocation metadata.
-   - Recommended deferring `MOVE_METHOD` and specified structured rejection behavior.
-   - Recommended standardizing `BREAK_CYCLE` on `EXTRACT_INTERFACE` with deterministic topological replacement.
-   - Evaluated `REMOVE_NODE`: clarified that `cascadeEdges: true` must be required when incoming dependencies exist to avoid dangling edges.
-   - Defined 10 reference fixture requirements.
-4. **DEC-04 (Implementation Dispatch Authority)**:
-   - Traced the origin of conflicting dispatch authority statements between Phase A2 summary (Lead Architect + Integration Coordinator) and Phase A3 reconciliation report (Project Sponsor / Product Owner).
-   - Conducted an 8-dimension comparative analysis across the 3 alternatives, recommending Alternative 1 (Joint Dual Signoff: Lead Architect + Product Owner).
+### 5.2 Offline Mathematical Graph Calculations
+An offline Tarjan Strongly Connected Components (SCC) calculation was executed to verify the mathematical validity of `EXTRACT_INTERFACE` on a cyclic graph $A \to B \to C \to A$:
+- **Original Graph**:
+  - Edges: $(A, B), (B, C), (C, A)$
+  - Output SCCs: `[['A', 'B', 'C']]` (Cycle detected).
+- **Transformed Graph** (Severing $A \to B$ and injecting $A \to I\langle B \rangle$ and $B \to I\langle B \rangle$):
+  - Edges: $(A, I\langle B \rangle), (B, I\langle B \rangle), (B, C), (C, A)$
+  - Output SCCs: `[['I<B>'], ['A'], ['C'], ['B']]` (All singletons, cycle strictly eliminated).
+- **Adversarial Edge Inversion Test** (If edge were incorrectly directed $I\langle B \rangle \to B$):
+  - Edges: $(A, I\langle B \rangle), (I\langle B \rangle, B), (B, C), (C, A)$
+  - Output SCCs: `[['A', 'I<B>', 'B', 'C']]` (Cycle preserved!).
+  - **Empirical Conclusion**: Directing $B \to I\langle B \rangle$ (type: `implements`) is mathematically essential to eliminate cyclic connectivity.
 
 ---
 
 ## 6. Key Findings & Unresolved Questions
 
-1. **Method-Level Operations Require Contract Resolution**:
-   - `MOVE_METHOD` and method-level edge retargeting in `EXTRACT_CLASS` cannot be executed against `CONTRACT-01` canonical graph payloads without inventing unstandardized metadata or sub-entities. Option A in DEC-03 scopes Workstream E simulation to component-level operations to preserve the integrity of CONTRACT-01.
-2. **`RemoveNodeAction` DTO Schema Omission**:
-   - The `force` parameter referenced in prior narrative reports was missing from `CONTRACT_07_REFACTORING_ACTION_DTOS.md`. Replacing it with `cascadeEdges?: boolean` resolves both semantic intent and prevents dangling edge generation.
-3. **Deterministic Pagination in SOQL**:
-   - Standardizing `ORDER BY CreatedDate DESC, Id DESC` under DEC-01 is critical to avoid flaky test assertions in Apex test executions where multiple records share identical timestamps.
+1. **Distinguishing Payload Availability from Execution Completion**:
+   - `status === 'EMPTY'` strictly signifies that zero chunks were found at query time. It does not certify that analysis succeeded with an empty project, as zero-schema metadata cannot distinguish empty projects from crashed or incomplete runs.
+2. **Character Count Measurement in CONTRACT-05**:
+   - The platform limit is verified as $10,485,760$ JavaScript string characters (`rawJson.length`), which equals UTF-8 bytes for ASCII but differs for multi-byte Unicode. Memory safety hypotheses must be validated through bounded offline benchmarks rather than assumed.
+3. **Refactoring Semantics Grounded in CONTRACT-01**:
+   - Component-level scoping for `EXTRACT_CLASS`, non-operational status for `movedMethodList`, deferral of `MOVE_METHOD`, mathematical Tarjan validation of `EXTRACT_INTERFACE`, and atomic edge cascading for `REMOVE_NODE` guarantee 100% compatibility with CONTRACT-01 without dangling edges.
 4. **All Four Human Decisions Remain Pending**:
    - No human signatures or approvals have been executed. The project remains in a governance hold pending human review.
 

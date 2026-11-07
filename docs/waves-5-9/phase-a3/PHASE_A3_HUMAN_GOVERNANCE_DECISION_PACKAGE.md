@@ -1,6 +1,6 @@
 # Phase A3 Human Governance Decision Package
 **Document Identifier**: `docs/waves-5-9/phase-a3/PHASE_A3_HUMAN_GOVERNANCE_DECISION_PACKAGE.md`
-**Governance Scope**: Phase A3 Human Decisions DEC-01 through DEC-04
+**Governance Scope**: Phase A3 Human Decisions DEC-01 through DEC-04 (Incorporating Phase A3.1 Technical Review Corrections)
 **Implementation Authorization Status**: **STRICTLY NOT AUTHORIZED**
 **Repository State**: Git Commit `85e8f4e9a92b1bba13f9a72f61bbd5909c43e96b` on branch `jules-3615347302555669507-d5c1e42b`
 
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary & Governance Purpose
 
-This document provides the formal, evidence-backed human governance decision package for Phase A3 decisions `DEC-01`, `DEC-02`, `DEC-03`, and `DEC-04`.
+This document provides the formal, evidence-backed human governance decision package for Phase A3 decisions `DEC-01`, `DEC-02`, `DEC-03`, and `DEC-04`, incorporating technical corrections and consistency reviews established during project-owner evaluations.
 
 In accordance with project governance rules established in Wave 0.4.3 through Wave 0.4.10 and reaffirmed across Phase A1, Phase A2, and Phase A3 audits:
 1. **Implementation Dispatch is NOT Authorized**: Zero tasks are authorized to implement. All code modifications, Apex metadata changes, LWC source implementations, offline test additions, and git branch dispatches remain locked.
@@ -78,31 +78,36 @@ Inspection of `scratch/salesforce-poc/force-app/main/default/classes/controllers
 - `DAGraphControllerTest.cls` and `DAGraphSecurityTest.cls` test existing chunk retrieval, bounded paging, and multi-tenant isolation, but do not contain assertions for `getAnalysisRuns` or zero-chunk status semantics.
 - Downstream consumer `daAnalysisHistoryView` (`W7-3`) is not yet created.
 
-### 2.5 Zero-Chunk Semantics and Data Model Limitations (Critical Analysis)
-A critical question in architectural evaluation is: **Does `chunks === 0` always mean an analysis run completed successfully with an empty graph?**
+### 2.5 Critical Investigation: Distinguishing Payload Availability from Execution Completion
+A rigorous investigation of the Salesforce metadata and data model reveals that chunk presence does **not** establish verified analytical completion, and chunk absence does **not** prove error-free emptiness:
 
-#### Technical Finding: The Zero-Schema Indistinguishability Limitation
-Under the existing zero-schema metadata for `DA_Analysis_Run__c`, the system possesses **no status field, error field, heartbeat timestamp, chunk count field, or lifecycle flag**. An aggregate count query (`SELECT COUNT(Id) FROM DA_Graph_Chunk__c WHERE DA_Analysis_Run__c = :runId`) returns `0` in four materially distinct real-world situations:
-1. **Successful Run with Empty Graph**: An analysis was run on a project containing 0 Apex/LWC components, successfully persisting a header run with 0 chunks.
-2. **Incomplete/Aborted Run**: Graph generation was initiated (the `DA_Analysis_Run__c` header was inserted), but the CLI or ingestion process crashed or timed out before chunks were written.
-3. **Partially Persisted / In-Flight Run**: Chunks are currently in the process of being inserted asynchronously across multiple DML batches.
-4. **Chunk Ingestion/Access Failure**: The user has read access to `DA_Analysis_Run__c` but lacks Field-Level Security (FLS) or object permissions on `DA_Graph_Chunk__c` under `WITH USER_MODE`, causing SOQL to return zero chunk records.
-
-Because the database schema cannot distinguish these four states, **it is technically inaccurate to label a run with 0 chunks as 'ANALYSIS_SUCCEEDED_WITH_EMPTY_GRAPH'**.
-
-#### Recommended Precise Semantic Definition of `EMPTY`
-To prevent misleading downstream consumers without inventing unapproved schema fields, `EMPTY` must be defined strictly and objectively as:
-> **`EMPTY`**: *"No graph chunks were found associated with this analysis run header at query time. The run header exists, but contains zero retrievable graph payload chunks. This state does NOT guarantee that analysis completed without error, only that no graph chunks are currently available."*
-
-In downstream UI components (`daAnalysisHistoryView`, `daCompareView`), `EMPTY` signals to the user that no graph payload exists to load or compare, disabling comparison buttons without falsely certifying execution health.
+1. **The Zero-Schema Indistinguishability Limitation**:
+   - `DA_Analysis_Run__c` possesses no lifecycle status, error message, or completion timestamp.
+   - An aggregate count of zero chunks occurs identically if:
+     - An analysis completed on a repository with 0 components.
+     - An analysis crashed/timed out before chunks were written.
+     - Chunks are currently in-flight across asynchronous DML transactions.
+     - The user lacks FLS or object read permissions on `DA_Graph_Chunk__c` under `WITH USER_MODE`.
+   - Likewise, having $\ge 1$ chunk merely proves that **at least one chunk record was queried**; it does not prove that all chunks were written or that analysis succeeded without truncation.
+2. **Evaluation of Semantic Labels**:
+   - **`EMPTY`**: Accurately describes that zero chunks were found at query time. It indicates payload absence.
+   - **`AVAILABLE` vs `COMPLETED`**:
+     - `AVAILABLE` accurately communicates that graph payload chunks exist and are retrievable.
+     - `COMPLETED` implies lifecycle success, which cannot be proven from zero-schema data alone.
+     - However, downstream LWC consumers and legacy contract drafts reference `'COMPLETED'`.
+3. **Smallest Safe Contract Change**:
+   - To preserve legacy interface expectations without misleading users, CONTRACT-04 must formally document that the returned status string represents **payload availability at query time**:
+     - If `totalChunks > 0`: Returns `'COMPLETED'` (or `'AVAILABLE'`), formally defined as *"Payload chunks exist and are retrievable for visualization"*.
+     - If `totalChunks === 0`: Returns `'EMPTY'`, formally defined as *"Run header exists, but zero graph chunks were found at query time. No payload is available to visualize."*
+   - Downstream consumers in `daAnalysisHistoryView` (`W7-3`) and `daCompareView` (`W8-3`) use `status === 'EMPTY'` to disable comparison and load actions.
 
 ### 2.6 Exact Proposed Replacement Clauses for CONTRACT-04
 
 #### 1. Replacement for Section 4 (Zero-Schema Metadata Invariants, line 43)
 ```markdown
 - All status/timestamp attributes on the DTO must be derived safely:
-  - `status`: Derived objectively from chunk availability:
-    - If `totalChunks > 0`: `'COMPLETED'` (Graph payload chunks exist and are retrievable).
+  - `status`: Derived objectively from chunk availability at query time:
+    - If `totalChunks > 0`: `'COMPLETED'` (Payload chunks exist and are retrievable; indicates payload availability).
     - If `totalChunks == 0`: `'EMPTY'` (Run header exists, but zero graph chunks were found at query time. Indicates no payload is available to visualize).
   - `analysisTimestamp`: Uses standard `CreatedDate`.
   - `createdByName`: Queried safely via relationship `CreatedBy.Name`.
@@ -138,28 +143,7 @@ In downstream UI components (`daAnalysisHistoryView`, `daCompareView`), `EMPTY` 
    - Queries order primarily by `CreatedDate DESC, Id DESC` to guarantee strict deterministic pagination across all execution environments.
 ```
 
-### 2.7 Available Decision Options
-
-#### Option A: Standardize on `'EMPTY'` with Compound Tie-Breaker `ORDER BY CreatedDate DESC, Id DESC` (Recommended)
-- **Zero-Chunk Status**: Set `dto.status = chunks > 0 ? 'COMPLETED' : 'EMPTY'`.
-- **SOQL Ordering**: Enforce `ORDER BY CreatedDate DESC, Id DESC LIMIT :safeLimit`.
-- **Pros**: Semantically precise regarding payload availability; guarantees deterministic ordering in tests and pagination.
-- **Cons**: Requires aligning Section 4 text with Section 5.2.
-
-#### Option B: Standardize on `'UNKNOWN'` with Single Ordering `ORDER BY CreatedDate DESC`
-- **Zero-Chunk Status**: Set `dto.status = chunks > 0 ? 'COMPLETED' : 'UNKNOWN'`.
-- **SOQL Ordering**: Enforce `ORDER BY CreatedDate DESC LIMIT :safeLimit`.
-- **Pros**: Matches early draft phrasing in §4.
-- **Cons**: Ambiguous; introduces pagination flakiness in automated Apex unit testing.
-
-### 2.8 Required Tests & Verification Plan
-When task `W7-P1` is eventually dispatched for implementation, the following offline and Apex unit tests must be executed:
-1. `test_getAnalysisRuns_returns_empty_when_no_chunks`: Verifies `status === 'EMPTY'` and `totalChunks === 0`.
-2. `test_getAnalysisRuns_returns_completed_when_chunks_exist`: Verifies `status === 'COMPLETED'` and `totalChunks > 0`.
-3. `test_getAnalysisRuns_deterministic_order_with_identical_createdDate`: Inserts 3 runs in the same millisecond and verifies strict `Id DESC` ordering.
-4. `test_getAnalysisRuns_user_mode_security`: Verifies `WITH USER_MODE` respects multi-tenant project scoping.
-
-### 2.9 Decision Record DEC-01 (Explicit Human Completion Form)
+### 2.7 Decision Record DEC-01 (Explicit Human Completion Form)
 
 ```markdown
 ================================================================================
@@ -214,7 +198,7 @@ A vital engineering distinction must be established between **JavaScript string 
 
 1. **JavaScript String Characters (`String.length`)**:
    - In JavaScript, `String.prototype.length` counts the number of 16-bit UTF-16 code units.
-   - ASCII characters ('a', '{', '"') consume 1 code unit (length 1) and 1 byte in UTF-8.
+   - ASCII characters consume 1 code unit (length 1) and 1 byte in UTF-8.
    - Supplementary characters (emojis, complex Unicode) consume 2 code units (surrogate pair, length 2) and 4 bytes in UTF-8.
 2. **Existing Implementation Measurement in Code**:
    - In `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js`:
@@ -229,69 +213,43 @@ A vital engineering distinction must be established between **JavaScript string 
      ```
    - **Empirical Confirmation**: The existing implementation measures **JavaScript string character length (`rawJson.length`)**, NOT encoded byte count.
    - Citing "10 MB" is technically a shorthand for **10,485,760 UTF-16 code units / string characters**.
-   - For standard ASCII JSON payloads (component names, IDs, numbers), $1\text{ char} = 1\text{ byte}$, so $10,485,760\text{ chars} \approx 10\text{ MB}$. However, if multi-byte characters are present, the memory footprint in UTF-8 or RAM differs.
 
-### 3.3 Deep Memory-Safety Analysis Across Lifecycle Tiers
-Evaluating client-side memory safety requires analyzing all five memory tiers across the snapshot lifecycle:
+### 3.3 Memory Hypotheses vs Verified Empirical Evidence
+To maintain technical integrity, unmeasured memory multipliers must be explicitly classified as **unverified hypotheses**:
 
-```
-+-----------------------------------------------------------------------------------------+
-|                                SNAPSHOT MEMORY TIERS                                    |
-|                                                                                         |
-|  Tier 1: Raw JSON String Retention                                                      |
-|          Snapshot A (5M chars) + Snapshot B (5M chars) = 10M UTF-16 chars (~20 MB RAM)  |
-|                                                                                         |
-|  Tier 2: Parsed JavaScript AST Objects (V8 / JavaScriptCore Heap)                       |
-|          Nodes, Edges, Maps, Sets, Objects: Expansion multiplier ~4x to 8x (~40-80 MB)   |
-|                                                                                         |
-|  Tier 3: Diff Engine Transient Compute Structures                                       |
-|          daDiffEngine Maps, Set lookups, property delta objects (~10-20 MB transient)   |
-|                                                                                         |
-|  Tier 4: Cytoscape Graph Data Model & Canvas Render Tree                                |
-|          Internal Cytoscape elements, event listeners, layout geometry (~30-50 MB)      |
-|                                                                                         |
-|  Tier 5: Concurrent Dual Canvas Rendering (PROHIBITED)                                  |
-|          If two Cytoscape instances ran concurrently: WebGL/2D contexts doubled!         |
-+-----------------------------------------------------------------------------------------+
-```
+1. **Unverified Memory Hypotheses**:
+   - The assertion that parsed JavaScript AST objects occupy exactly $4\times$ to $8\times$ raw string size is an unverified hypothesis dependent on the V8 engine heap version.
+   - The assertion that Cytoscape requires exactly $30\text{ MB}$ to $50\text{ MB}$ is an unverified hypothesis dependent on browser canvas rasterization.
+   - Guaranteed browser tab safety cannot be asserted based on raw payload string limits alone.
+2. **Verified Platform Limits (Source-Confirmed Facts)**:
+   - `DA_Graph_Chunk__c.Payload_Data__c` length limit is 131,072 characters in metadata (`Payload_Data__c.field-meta.xml`).
+   - Synchronous Apex heap limit is 6 MB.
+   - Batched chunk retrieval (`maxChunks <= 10`) caps wire payloads to $\approx 1.31\text{ MB}$ per call.
+   - `daGraphPayloadLoader.js` line 6 sets `MAX_TOTAL_PAYLOAD_SIZE = 10485760` characters.
+3. **Approved Architectural Invariant**:
+   - **Single Cytoscape Canvas Invariant**: Preserved from Contract W0-C7 and CONTRACT-09 (Invariant 4). Concurrently instantiating two Cytoscape instances is strictly prohibited.
 
-1. **Tier 1 (Raw String Retention)**: Retaining two 5 MB raw strings in memory consumes $10\text{ MB}$ of characters ($\approx 20\text{ MB}$ in V8 UTF-16 string storage).
-2. **Tier 2 (Parsed Object Memory)**: When JSON is parsed into JavaScript objects (`nodes[]` and `edges[]`), object overhead in V8 (hidden classes, object headers, dictionary properties) expands the memory by approximately $4\times$ to $8\times$. Two 5 MB snapshots parsed into 60,000 entity objects can occupy $40\text{ MB}$ to $80\text{ MB}$ of browser heap.
-3. **Tier 3 (Diff Calculation)**: `daDiffEngine` constructs ID-based Maps to perform $O(N)$ comparisons. These maps are temporary, but contribute an additional $10\text{ MB}$ to $20\text{ MB}$ during active computation.
-4. **Tier 4 (Cytoscape Visualizer)**: Instantiating Cytoscape with 30,000 nodes/edges adds canvas backing stores, DOM nodes, and WebGL textures, requiring another $30\text{ MB}$ to $60\text{ MB}$.
-5. **Tier 5 (The Dual-Canvas Crash Risk)**: If two separate Cytoscape instances were instantiated (one for Baseline, one for Target), browser tab memory consumption would surge past $200\text{ MB}$, triggering tab crashes in Lightning Experience on mobile or low-memory devices.
+### 3.4 Bounded Benchmark Plan vs Postponed Real-Browser Validation
 
-### 3.4 Single Cytoscape Canvas Invariant Provenance
-The single-canvas rule is an approved architectural invariant originating in Phase 0:
-- **Contract W0-C7** (`docs/audits/salesforce-parallel-migration/phase-0/WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` §8.2):
-  > *"To operate safely within Salesforce browser memory limits: 1. No Dual-Cytoscape Instances: The comparison view must not instantiate two active Cytoscape graph instances concurrently. 2. Graph comparison must be computed as a pure JavaScript data-structure diff using Maps indexed by entity ID. 3. Diff rendering must use a single Cytoscape canvas with delta styling (Green: Added, Red: Removed, Amber: Modified) or a structured tabular diff."*
-- Reaffirmed in `CONTRACT_09_SHARED_STATE_AND_INVARIANTS.md` (Invariant 4).
+#### A. Bounded Offline Node.js Benchmark Plan (Runnable without Code Changes)
+Before implementation dispatch, an offline Node.js benchmark suite will be executed:
+1. Synthesize graph JSON payloads of 1,000, 5,000, 15,000, and 30,000 nodes (scaling up to 5,242,880 string characters).
+2. Measure baseline heap using `process.memoryUsage().heapUsed`.
+3. Parse payloads using `JSON.parse` and measure delta heap.
+4. Execute `daDiffEngine` snapshot comparison algorithm and measure peak heap.
+5. Trigger Node.js garbage collection (`gc()`) and confirm heap reclamation.
 
-### 3.5 Evidence Gap: Lack of Empirical Browser Heap Benchmarks
-**Explicit Evidence Gap**: While theoretical calculations and physical platform limits (131 KB per chunk, 6 MB Apex heap) are verified, **the repository currently contains zero automated browser memory benchmarks measuring actual V8 heap consumption in Salesforce Lightning Experience**.
+#### B. Future Real-Browser & Salesforce Lightning Experience / LWS Validation
+- **Status**: **Explicitly Postponed**.
+- Real-browser DOM rendering, WebGL context retention, and Lightning Web Security (LWS) lifecycle testing require live browser environments and scratch org deployments, which remain strictly unauthorized until project-owner release.
 
-#### Recommended Bounded Offline Benchmark Plan
-Before committing to production deployment, a dedicated benchmark script must be executed:
-1. Generate synthetic graph payloads of sizes 1 MB, 2.5 MB, 5 MB, and 10 MB.
-2. Run `daDiffEngine.computeDiff` in Node.js with `v8.getHeapStatistics()` measuring before, peak, and after heap usage.
-3. Validate that garbage collection cleanly recovers transient diff structures.
+### 3.5 Proposed Limits and Enforcement Rules
+1. **Single Snapshot String Limit**: `5,242,880` string characters (`rawJson.length <= 5242880`, ~5 MB).
+2. **Combined Dual Snapshot Limit**: `10,485,760` string characters (`(rawJsonA.length + rawJsonB.length) <= 10485760`, ~10 MB).
+3. **Enforcement Location**: `daCompareView.js` validates payload character lengths prior to triggering `daDiffEngine.computeDiff`.
+4. **Rejection Behavior**: Payloads exceeding limits are rejected with `PayloadLimitExceededError`, and a structured tabular comparison fallback is offered.
 
-### 3.6 Exact Proposed Limits and Lifecycle Enforcement Rules
-
-1. **Single Snapshot String Limit**: `5,242,880` characters (`rawJson.length <= 5242880`, ~5 MB).
-2. **Combined Dual Snapshot Limit**: `10,485,760` characters (`(rawJsonA.length + rawJsonB.length) <= 10485760`, ~10 MB).
-3. **Enforcement Points**:
-   - `daCompareView.js` validates snapshot A size upon ingestion.
-   - `daCompareView.js` validates snapshot B size upon ingestion.
-   - `daCompareView.js` validates that cumulative length does not exceed `MAX_TOTAL_PAYLOAD_SIZE` prior to triggering `daDiffEngine.computeDiff`.
-4. **Rejection Behavior**:
-   - If either snapshot exceeds 5,242,880 characters, ingestion halts with: `PayloadLimitExceededError: Snapshot payload exceeds 5 MB limit. Please filter the architecture project before comparing.`
-   - If combined payloads exceed 10,485,760 characters, diffing is suppressed and a tabular-only fallback diff is offered.
-5. **Single-Canvas Lifecycle**:
-   - `daCompareView` renders exactly one canvas instance.
-   - When switching runs, the existing Cytoscape instance is wiped (`cy.elements().remove()`) or updated via batch delta styling rather than destroying and recreating the WebGL canvas context.
-
-### 3.7 Decision Record DEC-02 (Explicit Human Completion Form)
+### 3.6 Decision Record DEC-02 (Explicit Human Completion Form)
 
 ```markdown
 ================================================================================
@@ -343,112 +301,106 @@ Contract 07 is currently **`PROPOSED`**. A rigorous audit against `CONTRACT_01_C
 
 ---
 
-### 4.2 Action-by-Action Technical Analysis & Proposed Specification
+### 4.2 Action-by-Action Technical Analysis & Corrections
 
-#### Action 1: `EXTRACT_CLASS`
-
-1. **Required Input Fields**:
-   ```typescript
-   export interface ExtractClassAction extends BaseRefactoringAction {
-     type: 'EXTRACT_CLASS';
-     sourceNodeId: string;       // Existing class node being split
-     newClassName: string;       // Unique identifier/name of proposed class
-     newClassLayer?: string;     // Defaults to sourceNode.layer if omitted
-     movedMethodList: string[];  // List of method names being relocated
-     description?: string;
-   }
-   ```
-2. **Node Identity & Naming Rules**:
-   - `newClassName` must follow CONTRACT-01 ID conventions: `Class.<Name>` (e.g. `'Class.AccountTaxCalculator'`).
-   - If user supplies a bare name (`'AccountTaxCalculator'`), the engine prefixes `'Class.'`.
-3. **Preconditions & Validation**:
-   - `sourceNodeId` must exist in `payload.nodes[]`.
-   - `newClassName` must not collide with any existing node `id` or `name` in `payload.nodes[]`.
-   - `movedMethodList` must be a non-empty array of strings.
-4. **Resulting Graph Topology**:
-   - Creates a new node in `nodes[]`:
-     `id: newClassName`, `name: bareName`, `type: 'ApexClass'`, `layer: newClassLayer || sourceNode.layer`, `fanIn: 1`, `fanOut: 0`, `coupling: 1`, `risk: 'LOW'`, `coverageStatus: 'UNKNOWN'`.
-   - Injects a directed dependency edge:
-     `id: "${sourceNodeId}->${newClassName}"`, `source: sourceNodeId`, `target: newClassName`, `type: 'references'`, `weight: 1.0`.
-   - **Method Retargeting Limitation**: External edges calling moved methods are NOT retargeted because CONTRACT-01 edges have no method annotations.
-5. **Delta Representation**:
-   - `couplingDelta`: Net change across affected nodes.
-   - `unresolvedReferencesDelta`: 0 (internal node).
-   - `architectureHealthDelta`: Recalculated.
-6. **Error Handling**: Throws `ValidationError` if `sourceNodeId` not found or `newClassName` duplicate.
-7. **Immutability**: Deep-clones graph before returning.
-8. **Fixture Status**: Fixture exists (`docs/waves-5-9/phase-a3/fixtures/sample-refactoring-action.json`).
+#### Action 1: `EXTRACT_CLASS` (Evaluation of `movedMethodList`)
+1. **The Question**: When method-specific edge retargeting is deferred because CONTRACT-01 has no method metadata, is `movedMethodList: string[]` still meaningful?
+2. **Analysis**:
+   - `movedMethodList` cannot drive graph topological changes (edges cannot be filtered by method name).
+   - However, in human architecture reviews and handoff export (`daRefactorHandoffModal` / Task `W9-3`), architects specify which methods are intended to be extracted to generate documentation checklists.
+3. **Resolution**:
+   - **Retain `movedMethodList: string[]` strictly as Non-Operational Informational Metadata**.
+   - The contract must explicitly state: `movedMethodList` is preserved for human review and handoff export documentation only; `daSimulationEngine` does not inspect method names to retarget graph edges.
+4. **Resulting Transformation**:
+   - Creates new node `Class.<Name>` in `nodes[]`.
+   - Creates directed dependency edge: `sourceNodeId -> Class.<Name>`.
 
 ---
 
 #### Action 2: `MOVE_METHOD`
-
-1. **The Incompatibility**: `CONTRACT_01_CANONICAL_GRAPH_PAYLOAD.md` defines nodes without a `methods[]` array and edges without method identifiers.
-2. **Recommended Policy**: **Defer and Mark Unsupported**.
-3. **Engine Behavior When Received**:
-   When `daSimulationEngine` receives `type: 'MOVE_METHOD'`, it must reject the action with a structured error:
-   ```json
-   {
-     "success": false,
-     "actionId": "act-move-001",
-     "errorType": "UNSUPPORTED_REFACTORING_ACTION",
-     "message": "Action MOVE_METHOD is currently unsupported: CanonicalGraphPayload (CONTRACT-01) does not contain method-level sub-entities or call-site annotations."
-   }
-   ```
-   No state is mutated, and the payload is returned unmodified.
+1. **The Incompatibility**: CONTRACT-01 has no `methods[]` array and no method-level edge annotations.
+2. **Resolution**: **Defer and Mark Unsupported**.
+3. **Engine Rejection**: Returns structured error `UNSUPPORTED_REFACTORING_ACTION` without mutating payload.
 
 ---
 
-#### Action 3: `BREAK_CYCLE`
+#### Action 3: `BREAK_CYCLE` (Deep Mathematical Graph Analysis)
 
-1. **Supported Strategy**: Standardize strictly on `EXTRACT_INTERFACE`.
-2. **Unsupported Strategies**: `EVENT_DRIVEN_DECOUPLING` and `INVERSION_OF_CONTROL` are marked unsupported until topological specifications are authored.
-3. **Proposed `ExtractInterfaceAction` Topology**:
-   - **Input Fields**: `id`, `type: 'BREAK_CYCLE'`, `edgeIdToSever`, `substitutionStrategy: 'EXTRACT_INTERFACE'`, `intermediateNodeName?`.
-   - **Preconditions**: `edgeIdToSever` (`Source -> Target`) exists in `edges[]`.
-   - **Topology Transformation**:
-     1. Direct edge `edgeIdToSever` is removed.
-     2. New node `I<Target>` is created: `id: "Interface.I" + targetName`, `type: 'ApexInterface'`, `layer: targetNode.layer`.
-     3. Edge 1 created: `Source -> I<Target>` (type: `references`).
-     4. Edge 2 created: `Target -> I<Target>` (type: `implements`).
-   - Direct cyclic dependency from `Source` to `Target` is severed.
-4. **Cycle Recalculation**: Run Tarjan's SCC algorithm on the modified edge set; decrement `cyclesEliminated`.
+##### 1. The Mathematical Investigation
+The proposed transformation replaces cyclic directed edge $A \to B$ with:
+$$A \longrightarrow I\langle B \rangle \quad \text{and} \quad B \longrightarrow I\langle B \rangle$$
+Where $I\langle B \rangle$ is an injected interface node.
 
----
+##### 2. Tarjan Strongly Connected Components (SCC) Proof
+Consider a concrete cycle: $A \to B \to C \to A$.
+- **Before Transformation**:
+  - Edges: $(A, B), (B, C), (C, A)$.
+  - Tarjan SCC: **$\{A, B, C\}$** (A single non-trivial strongly connected component of size 3; a cycle exists).
+- **Applying the Transformation**:
+  - Edge $(A, B)$ is removed.
+  - Edges added: $(A, I\langle B \rangle)$ and $(B, I\langle B \rangle)$.
+  - New Edge Set: $(A, I\langle B \rangle), (B, I\langle B \rangle), (B, C), (C, A)$.
+- **After Transformation SCC Computation**:
+  - Traversal from $B$: $B \to C \to A \to I\langle B \rangle$.
+  - Node $I\langle B \rangle$ has out-degree 0 (dead end). Node $A$ no longer reaches $B$ because edge $(A, B)$ was severed!
+  - Tarjan SCCs: **$\{I\langle B \rangle\}, \{A\}, \{C\}, \{B\}$** (All singletons!).
+  - **Mathematical Proof**: The original cycle is **eliminated** because path connectivity from $A$ to $B$ is broken.
 
-#### Action 4: `REMOVE_NODE`
-
-1. **Resolution of `force` vs `cascadeEdges`**:
-   To prevent dangling edges and maintain CONTRACT-01 integrity (`!nodeIds.has(source) || !nodeIds.has(target)` causes validation failure), `REMOVE_NODE` must enforce:
-   - **Zero Incoming Dependencies**: If `fanIn === 0`, node is safely removed along with any outbound edges (`source === nodeId`).
-   - **Incoming Dependencies Present**: If `fanIn > 0`, removal is **rejected** unless `cascadeEdges: true` is explicitly provided.
-   - When `cascadeEdges: true` is set, **all incident edges (both inbound and outbound) are removed atomically**.
-   - **NO DANGLING EDGES ARE PERMITTED**.
-2. **Proposed DTO Schema**:
-   ```typescript
-   export interface RemoveNodeAction extends BaseRefactoringAction {
-     type: 'REMOVE_NODE';
-     nodeId: string;
-     cascadeEdges?: boolean; // Required to be true if fanIn > 0
-   }
-   ```
+##### 3. Dependency Inversion Semantics Check
+- In Dependency Inversion (DIP), class $A$ depends on interface $I\langle B \rangle$ ($A \to I\langle B \rangle$), and implementation class $B$ implements interface $I\langle B \rangle$ ($B \to I\langle B \rangle$).
+- Statically, both $A$ and $B$ depend on $I\langle B \rangle$, breaking the cyclic dependency between $A$ and $B$.
+- **Edge Direction Verification**: The edge must be directed $B \to I\langle B \rangle$ (type: `implements`). If the edge were mistakenly directed $I\langle B \rangle \to B$, the cycle would NOT be broken ($A \to I\langle B \rangle \to B \to C \to A$). Directing $B \to I\langle B \rangle$ is mathematically valid.
 
 ---
 
-### 4.3 Common Action Contract
-Every refactoring simulation operation in `daSimulationEngine` must obey:
-1. **Input Immutability**: The passed `CanonicalGraphPayload` is never mutated in place. Cloned via deep structured copy.
-2. **Pure Calculation**: No DOM, Cytoscape, Apex, Salesforce wire, or network calls. Pure JavaScript math.
-3. **Deterministic Outputs**: Nodes and edges are sorted lexicographically by `id ASC` after every transformation.
-4. **Metric Integrity**: Graph summary metrics (`coupling`, `cycles`, `healthScore`) are recalculated using approved formulas.
+#### Action 4: `REMOVE_NODE` (Comprehensive Edge Topologies & Cascade Rules)
+To guarantee zero dangling edges and satisfy CONTRACT-01 integrity (`daGraphPayloadLoader.js` lines 78–82), `REMOVE_NODE` must handle all 7 topological edge scenarios:
+
+| Topology Scenario | Graph State for Node $N$ | Precondition & Action Behavior | Resulting Payload Edge State |
+| :--- | :--- | :--- | :--- |
+| **1. Zero In / Zero Out** | Isolated node ($fanIn = 0, fanOut = 0$) | Safe removal permitted without cascade flag. | Node $N$ removed; zero edge mutations. |
+| **2. Outgoing Edges Only** | $fanIn = 0, fanOut > 0$ | Safe removal permitted without cascade flag. | Node $N$ removed; all outbound edges $(N \to X)$ removed. |
+| **3. Incoming Edges Only** | $fanIn > 0, fanOut = 0$ | **Rejected** unless `cascadeEdges: true`. | If cascade true: node $N$ and all inbound edges $(X \to N)$ removed atomically. |
+| **4. Both In and Out Edges** | $fanIn > 0, fanOut > 0$ | **Rejected** unless `cascadeEdges: true`. | If cascade true: node $N$ and all incident edges (inbound and outbound) removed atomically. |
+| **5. Self-Loops** | Edge $(N \to N)$ exists | Counted as incident edges. | Self-loop edge removed atomically with node $N$. |
+| **6. Multiple Incident Edges** | Multiple edges to/from same nodes | All instances connected to $N$ purged. | Zero dangling edge references remain. |
+| **7. Invalid / Stale Edges** | Edges referencing non-existent nodes | Pre-validation rejects payload before action. | Maintains CONTRACT-01 validation invariants. |
+
+- **FanIn Calculation Rule**: $fanIn$ must be calculated by **dynamically counting actual inbound edges in `payload.edges`**, never by trusting potentially stale `node.fanIn` metadata.
+- **Atomicity**: The removal of node $N$ and all its incident edges occurs in a single immutable step. The output payload is validated against `validatePayloadIntegrity` before returning.
 
 ---
 
-### 4.4 Required Reference Fixture Coverage
-A suite of 10 test fixtures must be provisioned under `docs/waves-5-9/phase-a3/fixtures/` before Task `W9-1` dispatch:
-1. `fixture-01-extract-class.json`: Valid `EXTRACT_CLASS` action.
+### 4.5 Metric Recomputation Boundary
+
+Refactoring metrics in `SimulationDeltas` are categorized into three explicit tiers:
+
+```
++-----------------------------------------------------------------------------------------+
+|                         METRIC RECOMPUTATION BOUNDARIES                                 |
+|                                                                                         |
+|  Tier 1: Deterministically Calculable from CONTRACT-01 Payload                          |
+|          - couplingDelta: sum of degree changes across modified/removed nodes           |
+|          - cyclesEliminated: baseCycleCount - newCycleCount (via in-memory Tarjan SCC)  |
+|          - highRiskComponentsDelta: net change in nodes with risk === 'HIGH'            |
+|          - unresolvedReferencesDelta: net change in edges with isUnresolved === true    |
+|                                                                                         |
+|  Tier 2: Requiring Existing Analytical Adapter (Explorer Adapter)                       |
+|          - architectureHealthScore: Heuristic calculated via                             |
+|            calculateArchitectureHealth(payload) from explorer/src/lib/health.ts         |
+|                                                                                         |
+|  Tier 3: Unavailable / Not Reportable                                                   |
+|          - If summary block or required heuristic inputs are missing:                    |
+|            architectureHealthDelta is returned as null / undefined with warning          |
++-----------------------------------------------------------------------------------------+
+```
+
+---
+
+### 4.6 Required Reference Fixtures (Exact 10-Fixture Suite)
+1. `fixture-01-extract-class.json`: Valid `EXTRACT_CLASS` action with non-operational `movedMethodList`.
 2. `fixture-02-break-cycle-interface.json`: Valid `BREAK_CYCLE` using `EXTRACT_INTERFACE`.
-3. `fixture-03-remove-node-zero-fanin.json`: Valid `REMOVE_NODE` with zero incoming edges.
+3. `fixture-03-remove-node-zero-fanin.json`: Valid `REMOVE_NODE` on isolated component.
 4. `fixture-04-remove-node-cascade.json`: Valid `REMOVE_NODE` with `cascadeEdges: true`.
 5. `fixture-05-unsupported-move-method.json`: `MOVE_METHOD` yielding `UNSUPPORTED_REFACTORING_ACTION`.
 6. `fixture-06-unsupported-break-cycle-strategy.json`: `BREAK_CYCLE` with `INVERSION_OF_CONTROL`.
@@ -457,9 +409,7 @@ A suite of 10 test fixtures must be provisioned under `docs/waves-5-9/phase-a3/f
 9. `fixture-09-input-immutability.json`: Test payload asserting object references remain unchanged.
 10. `fixture-10-graph-integrity-post-action.json`: Payload validating CONTRACT-01 schema compliance after action.
 
----
-
-### 4.5 Decision Record DEC-03 (Explicit Human Completion Form)
+### 4.7 Decision Record DEC-03 (Explicit Human Completion Form)
 
 ```markdown
 ================================================================================
@@ -502,38 +452,22 @@ Integration Coordinator Approval:
 
 ### 5.1 The Documented Disagreement Over Gate 1 Authorization
 Across Phase A1, Phase A2, and Phase A3 documentation, conflicting statements exist regarding who possesses the authority to sign off on Gate 1 implementation dispatch:
+1. **Phase A2 Charter & Completion Summary**: Cited **Lead Architect + Integration Coordinator**.
+2. **Phase A3 Audit Findings Reconciliation Report (§5.2 & §12)**: Cited **Project Sponsor / Product Owner + Lead Architect**.
+3. **Phase A3 Integrity Audit Report (§8 & §12)**: Formalized this contradiction under `DEC-04`.
 
-1. **Phase A2 Charter & Completion Summary**:
-   Cited **Lead Architect + Integration Coordinator** as the dual technical authorities empowered to authorize task dispatch.
-2. **Phase A3 Audit Findings Reconciliation Report (§5.2 & §12)**:
-   Introduced a split interpretation, arguing that implementation dispatch commits engineering resources and impacts scope, therefore requiring **Project Sponsor / Product Owner** authorization alongside the Lead Architect.
-3. **Phase A3 Integrity Audit Report (§8 & §12)**:
-   Formalized this contradiction under `DEC-04`, documenting that the governance charter did not formally define whether Gate 1 release is a purely technical engineering milestone or a product delivery boundary.
+### 5.2 Strict Partial-Dispatch Controls
+To prevent a general Wave 5–9 approval from prematurely launching unready tasks, a Partial Dispatch Order must satisfy eight mandatory criteria:
+1. **Explicit Task Allowlist**: Must name exact task IDs (e.g. `[W5-1, W6-1, W7-1, W8-1]`). Blanket authorizations are prohibited.
+2. **Scope Boundary**: Must define permitted files from `WAVE_0_4_1_AUTHORITATIVE_FILE_OWNERSHIP_MANIFEST.csv`.
+3. **Named Task Owner**: Must specify the assigned engineer / workstream lead.
+4. **Frozen Contract References**: Must cite frozen contract IDs and versions.
+5. **Verified Predecessors**: All direct predecessors must be completed and verified by baseline regression tests.
+6. **Explicit Exclusion List**: Must explicitly enumerate all tasks remaining locked (e.g. `W5-2..6`, `W7-P1`, etc.).
+7. **Verification Requirements**: Must mandate clean execution of task runner and all 9 baseline regression runners.
+8. **Revocation Authority**: Must specify that either the Lead Architect or Product Owner can immediately suspend the order.
 
-### 5.2 Distinguishing the Three Distinct Governance Boundaries
-```
-+-------------------------------------------------------------------------+
-|                  TIER 1: TECHNICAL CONTRACT RATIFICATION                |
-|  Authority: Lead Architect + Workstream Lead + Integration Coordinator  |
-|  Scope: CONTRACT-01..09, DTO schemas, math formulas, offline test specs |
-+-------------------------------------------------------------------------+
-                                     |
-                                     v
-+-------------------------------------------------------------------------+
-|                  TIER 2: PRODUCT SCOPE & DELIVERY BOUNDARY              |
-|  Authority: Project Sponsor / Product Owner + Lead Architect            |
-|  Scope: Feature scope changes, org deployments, resource commitment     |
-+-------------------------------------------------------------------------+
-                                     |
-                                     v
-+-------------------------------------------------------------------------+
-|                  TIER 3: IMPLEMENTATION DISPATCH (GATE 1)               |
-|  Authority: UNRESOLVED GOVERNANCE SIGNATORY QUESTION (DEC-04)           |
-|  Scope: Authorizing agents to write code, modify metadata, git branch   |
-+-------------------------------------------------------------------------+
-```
-
-### 5.3 Detailed Eight-Dimension Comparative Evaluation of Alternatives
+### 5.3 Comparative Analysis Across Alternatives
 
 | Evaluation Dimension | Alternative 1: Joint Dual Signoff (Lead Architect + Product Owner) | Alternative 2: Technical Dual Signoff (Lead Architect + Integration Coordinator) | Alternative 3: Two-Phase Dispatch (Phase 1A Technical / 1B Product) |
 | :--- | :--- | :--- | :--- |
@@ -542,12 +476,12 @@ Across Phase A1, Phase A2, and Phase A3 documentation, conflicting statements ex
 | **3. Required Evidence** | Offline test logs (187/187), frozen contracts, signed DEC-01..03, sprint plan. | Offline test logs (187/187), frozen contracts, dependency trees. | Gate 1A: test evidence + contracts; Gate 1B: business release signoff. |
 | **4. Dual Signoff Mandatory?** | **YES.** Both must sign; neither can override. | **YES.** Both technical roles must sign. | **YES.** Both gates must pass sequentially. |
 | **5. Single Authority Rejection?** | Dispatch halted immediately. Returned to planning. | Dispatch halted immediately. Returned to architecture. | Gate 1A rejection halts technical review; Gate 1B rejection halts launch. |
-| **6. Partial Dispatch Permitted?** | Permitted only if explicitly bounded in written order (e.g. Batch 1 only). | Permitted on a per-workstream basis upon contract freeze. | Permitted: Batch 1 released while later waves await Gate 1B. |
+| **6. Partial Dispatch Permitted?** | Permitted only under strict 8-point Partial Dispatch Controls. | Permitted on a per-workstream basis upon contract freeze. | Permitted: Batch 1 released while later waves await Gate 1B. |
 | **7. Recording Mechanism** | Check-in of signed markdown file: `GATE_1_IMPLEMENTATION_AUTHORIZATION.md`. | Check-in of signed markdown file in repository. | Check-in of two sequential gate assessment records. |
 | **8. Revocation Authority** | Either Lead Architect OR Product Owner can revoke immediately. | Either Lead Architect OR Integration Coordinator can revoke. | Architect can revoke technical gate; Product Owner can revoke dispatch gate. |
 
 ### 5.4 Recommendation: Adopt Alternative 1 (Joint Dual Signoff)
-- **Recommendation**: **Adopt Alternative 1**. Gate 1 implementation dispatch represents a decisive transition from read-only architectural planning to active code mutation. Having the **Lead Architect** certify technical readiness and the **Project Sponsor / Product Owner** certify business and scope authorization guarantees maximum governance rigor and prevents premature resource consumption.
+- **Recommendation**: **Adopt Alternative 1**. Joint dual signoff between the Lead Architect and Product Owner guarantees both technical contract validity and business scope authorization.
 
 ### 5.5 Decision Record DEC-04 (Explicit Human Completion Form)
 
@@ -587,16 +521,16 @@ Lead Architect Concurrence:
 
 ---
 
-## 6. Consolidated Decision Matrix
+## 6. Consolidated Decision Register
 
 The table below unifies decisions `DEC-01` through `DEC-04`. All decision records remain explicitly **PENDING HUMAN APPROVAL**.
 
-| Decision ID | Current Status | Existing Conflict | Recommended Resolution | Technical Evidence | Unresolved Risks | Affected Tasks | Required Approvers | Required Contract Amendments | Acceptance Criteria | Approval Status |
-| :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
-| **DEC-01** | `PENDING` | Status `'EMPTY'` vs `'UNKNOWN'`; SOQL `ORDER BY CreatedDate DESC` vs `CreatedDate DESC, Id DESC` | Adopt Option A (`status = 'EMPTY'` and `ORDER BY CreatedDate DESC, Id DESC`) | Contract 04 §4 vs §5.2; zero custom fields in `DA_Analysis_Run__c`; standard CreatedDate | Cannot distinguish zero components from aborted run | W7-P1, W7-3, W8-3 | Lead Architect & Integration Coordinator | Amend CONTRACT-04 §4 and §5.2 to match Option A | Offline tests assert 'EMPTY' and deterministic ordering | `PENDING HUMAN APPROVAL` |
-| **DEC-02** | `PENDING` | 10MB/20MB legacy claims vs 5MB/10MB proposed bounds | Adopt Option A (5,242,880 char single cap, 10,485,760 char combined cap, single Cytoscape canvas) | `daGraphPayloadLoader.js` line 6; LongTextArea 131,072 char limit; Contract W0-C7 | Lack of empirical browser heap benchmarks in LWC | W8-2, W8-3 | Lead Architect & Workstream D Lead | Transition CONTRACT-05 from PROPOSED to FROZEN | Memory benchmark tests pass without browser tab crash | `PENDING HUMAN APPROVAL` |
-| **DEC-03** | `PENDING` | Method-level operations incompatible with CONTRACT-01; missing `force` and fixtures | Adopt Option A (Component-level scoping, defer MOVE_METHOD, EXTRACT_INTERFACE for cycles, cascadeEdges for node removal) | CONTRACT-01 has no `methods[]`; `fixtures/sample-refactoring-action.json` exists | Method retargeting deferred; IoC/Event strategies deferred | W9-1, W9-2, W9-3 | Workstream E Lead & Integration Coordinator | Amend CONTRACT-07 to reflect component-level rules | 10 reference fixtures pass deterministic offline tests | `PENDING HUMAN APPROVAL` |
-| **DEC-04** | `PENDING` | Architect + Coordinator vs Architect + Product Owner for Gate 1 release | Adopt Alternative 1 (Joint Dual Signoff: Lead Architect + Product Owner) | Phase A2 summary vs Phase A3 reconciliation §5.2; engineering resource governance | Slower dispatch if Product Owner is unavailable | All 21 Tasks | Project Sponsor / Product Owner | None (Governance charter ratification) | Signed Gate 1 authorization markdown checked into git | `PENDING HUMAN APPROVAL` |
+| Decision ID | Decision Subject | Current Status | Evidence References | Available Options | Recommended Option | Required Approver(s) | Affected Contracts | Affected Tasks | Approval Date | Approver Identity / Role | Formal Decision | Conditions or Restrictions |
+| :---: | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :--- |
+| **DEC-01** | CONTRACT-04 Zero-Chunk Status Semantics & SOQL Ordering | `PENDING` | `CONTRACT_04_ANALYSIS_RUN_HISTORY_API.md` §4, §5.2, §6.2; `DAGraphController.cls` | Option A ('EMPTY', compound order); Option B ('UNKNOWN', single order); Option C (Tri-state) | **Option A** ('EMPTY' status, `ORDER BY CreatedDate DESC, Id DESC`) | Lead Architect & Integration Coordinator | CONTRACT-04 | W7-P1, W7-3, W8-3 | *PENDING* | *PENDING* | *PENDING* | Strict zero-schema compliance; no unapproved custom fields. |
+| **DEC-02** | CONTRACT-05 Dual-Snapshot Payload Size Caps & Single Canvas Invariant | `PENDING` | `CONTRACT_05_DUAL_SNAPSHOT_AND_DIFF_ENGINE.md` §3.1; `daGraphPayloadLoader.js` line 6; Contract W0-C7 | Option A (5MB/10MB, single canvas); Option B (10MB/20MB); Option C (Dynamic) | **Option A** (5,242,880 char single, 10,485,760 char combined, single Cytoscape canvas) | Lead Architect & Workstream D Lead | CONTRACT-05 | W8-2, W8-3 | *PENDING* | *PENDING* | *PENDING* | Measured in UTF-16 code units; single Cytoscape canvas mandatory. |
+| **DEC-03** | CONTRACT-07 Refactoring Action DTOs, Topological Semantics & Missing Fixtures | `PENDING` | `CONTRACT_07_REFACTORING_ACTION_DTOS.md` §4; `CONTRACT_01_CANONICAL_GRAPH_PAYLOAD.md`; `fixtures/sample-refactoring-action.json` | Option A (Component-level scoping, schema fixes, fixtures); Option B (CONTRACT-01 method extension); Option C (Reject) | **Option A** (Component-level scoping, non-operational movedMethodList, EXTRACT_INTERFACE for cycles, cascadeEdges for node removal) | Workstream E Lead & Integration Coordinator | CONTRACT-07, CONTRACT-01 | W9-1, W9-2, W9-3 | *PENDING* | *PENDING* | *PENDING* | Pure client-side math; zero DOM/Cytoscape/Apex dependencies. |
+| **DEC-04** | Gate 1 Implementation Dispatch Signoff Authority Boundary | `PENDING` | Phase A2 Summary §1; Phase A3 Reconciliation §5.2; Phase A3 Integrity §8 | Alt 1 (Joint Architect + PO); Alt 2 (Architect + Coordinator); Alt 3 (Two-Phase Gate 1A/1B) | **Alt 1** (Joint Architect + Product Owner dual signoff) | Project Sponsor / Product Owner | CONTRACT-01 through CONTRACT-09 | All 21 Tasks (W5-1..6, W6-1..4, W7-P1..3, W8-1..3, W9-1..3, INT-1) | *PENDING* | *PENDING* | *PENDING* | Strict 8-point Partial Dispatch Controls mandatory. |
 
 ---
 
