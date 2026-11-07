@@ -27,8 +27,8 @@ All four formal human decisions (`DEC-01`, `DEC-02`, `DEC-03`, `DEC-04`) were th
 - **Execution Working Directory**: `/app` (Repository Root)
 
 ### Working Tree Status
-- **Initial Working Tree Status**: Clean (`nothing to commit, working tree clean`)
-- **Current Working Tree Status**: Untracked governance deliverables under `docs/waves-5-9/phase-a3/` only; zero source code modifications, zero Salesforce metadata modifications, zero package changes.
+- **Initial Working Tree Status**: Clean (`nothing to commit, working tree clean` on commit `85e8f4e`)
+- **Current Working Tree Status**: Contains only the two intended Phase A3 governance documentation deliverables under `docs/waves-5-9/phase-a3/`; zero source code modifications, zero Salesforce metadata modifications, zero package changes.
 
 ---
 
@@ -46,26 +46,32 @@ The following authoritative registers, contracts, existing implementations, and 
 8. `docs/waves-5-9/phase-a3/CONTRACT_04_ANALYSIS_RUN_HISTORY_API.md`
 9. `docs/waves-5-9/phase-a3/CONTRACT_05_DUAL_SNAPSHOT_AND_DIFF_ENGINE.md`
 10. `docs/waves-5-9/phase-a3/CONTRACT_07_REFACTORING_ACTION_DTOS.md`
-11. `docs/waves-5-9/phase-a3/CONTRACT_09_SHARED_STATE_AND_INVARIANTS.md`
-12. `docs/waves-5-9/phase-a3/fixtures/sample-refactoring-action.json`
-13. `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls`
-14. `scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls`
-15. `scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls`
-16. `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js`
-17. `scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml`
-18. `scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/` (Zero-schema metadata structure)
-19. `docs/audits/salesforce-parallel-migration/phase-0/WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` (Contract W0-C7, W0-C8)
+11. `docs/waves-5-9/phase-a3/CONTRACT_08_WORKSPACE_REGISTRATION_AND_MOUNT.md`
+12. `docs/waves-5-9/phase-a3/CONTRACT_09_SHARED_STATE_AND_INVARIANTS.md`
+13. `docs/waves-5-9/phase-a3/fixtures/sample-refactoring-action.json`
+14. `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls`
+15. `scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls`
+16. `scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls`
+17. `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js`
+18. `scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml`
+19. `scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml`
+20. `scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/` (Zero-schema metadata structure)
+21. `docs/audits/salesforce-parallel-migration/phase-0/WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` (Contract W0-C7, W0-C8)
 
 ---
 
-## 4. Files Created
+## 4. Files Created / Updated
 
-The following governance deliverable was produced:
+The following governance deliverables were produced:
 
 1. `docs/waves-5-9/phase-a3/PHASE_A3_HUMAN_GOVERNANCE_DECISION_PACKAGE.md`
    - Complete decision packages for `DEC-01`, `DEC-02`, `DEC-03`, and `DEC-04`.
    - Action-by-action analysis of `EXTRACT_CLASS`, `MOVE_METHOD`, `BREAK_CYCLE`, `REMOVE_NODE`.
-   - Answers to all specific prompt inquiries regarding method-level gaps, missing DTO fields, and dangling edges.
+   - Technical investigation of zero-schema data model limitations (chunks === 0 cannot distinguish empty runs from aborted or partially persisted runs).
+   - Character counts (`String.length`) vs UTF-8 bytes vs serialized JSON bytes distinction in CONTRACT-05.
+   - Comprehensive memory analysis across raw string, parsed JS AST, diff structures, and single Cytoscape canvas.
+   - Grounded evaluation of `cascadeEdges` vs `force` on `REMOVE_NODE` to prevent dangling edges.
+   - Eight-dimension evaluation of the three Gate 1 dispatch authority alternatives.
    - Consolidated decision register with explicit PENDING fields.
    - Reconciled 21-task readiness matrix preserving 8 review-eligible, 9 predecessor-blocked, 2 contract-blocked, 1 specification-blocked, 1 coordinator-exclusive, and 0 authorized.
 
@@ -118,25 +124,30 @@ for (const r of runners) {
    - Verified that `scratch/salesforce-poc/force-app/main/default/classes/dto/` does not contain `DAAnalysisRunSummaryDTO.cls`.
    - Verified that `DA_Analysis_Run__c` object metadata contains zero custom fields other than `DA_Project__c`.
    - Verified exact text contradiction in `CONTRACT_04_ANALYSIS_RUN_HISTORY_API.md`: §4 specifies `'UNKNOWN'`, while §5.2 specifies `'EMPTY'`; §5.2 specifies `ORDER BY CreatedDate DESC`, while §6.2 specifies `ORDER BY CreatedDate DESC, Id DESC`.
+   - Documented the critical limitation that zero-schema cannot distinguish empty runs from aborted or partially persisted runs. Formulated an objective definition for `EMPTY`.
 2. **DEC-02 (CONTRACT-05)**:
    - Verified `DA_Graph_Chunk__c.Payload_Data__c` length limit is 131,072 characters in `Payload_Data__c.field-meta.xml`.
-   - Verified `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js` line 6 sets `MAX_TOTAL_PAYLOAD_SIZE = 10485760` (10 MB).
+   - Verified `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js` line 6 sets `MAX_TOTAL_PAYLOAD_SIZE = 10485760` (10 MB string length).
+   - Documented the character vs byte measurement distinction (`String.prototype.length` counts 16-bit code units, not UTF-8 bytes).
    - Verified provenance of the Single Cytoscape Canvas Invariant in `W0-C7` (`docs/audits/salesforce-parallel-migration/phase-0/WAVE_0_SHARED_ARCHITECTURAL_CONTRACTS.md` §8.2).
 3. **DEC-03 (CONTRACT-07)**:
    - Verified that `CONTRACT_01_CANONICAL_GRAPH_PAYLOAD.md` defines `CanonicalGraphNode` without a `methods[]` array and `CanonicalGraphEdge` without method invocation metadata.
-   - Verified that `fixtures/sample-refactoring-action.json` represents `EXTRACT_CLASS`, but no fixtures exist for `MOVE_METHOD`, `BREAK_CYCLE`, or `REMOVE_NODE`.
-   - Verified that `CONTRACT_07_REFACTORING_ACTION_DTOS.md` §4 defines `RemoveNodeAction` without `force?: boolean`.
+   - Recommended deferring `MOVE_METHOD` and specified structured rejection behavior.
+   - Recommended standardizing `BREAK_CYCLE` on `EXTRACT_INTERFACE` with deterministic topological replacement.
+   - Evaluated `REMOVE_NODE`: clarified that `cascadeEdges: true` must be required when incoming dependencies exist to avoid dangling edges.
+   - Defined 10 reference fixture requirements.
 4. **DEC-04 (Implementation Dispatch Authority)**:
    - Traced the origin of conflicting dispatch authority statements between Phase A2 summary (Lead Architect + Integration Coordinator) and Phase A3 reconciliation report (Project Sponsor / Product Owner).
+   - Conducted an 8-dimension comparative analysis across the 3 alternatives, recommending Alternative 1 (Joint Dual Signoff: Lead Architect + Product Owner).
 
 ---
 
 ## 6. Key Findings & Unresolved Questions
 
 1. **Method-Level Operations Require Contract Resolution**:
-   - `MOVE_METHOD` and method-level edge retargeting in `EXTRACT_CLASS` cannot be executed against `CONTRACT-01` canonical graph payloads without inventing unstandardized metadata or sub-entities. Option A in DEC-03 recommends scoping Workstream E simulation to component-level operations to preserve the integrity of CONTRACT-01.
+   - `MOVE_METHOD` and method-level edge retargeting in `EXTRACT_CLASS` cannot be executed against `CONTRACT-01` canonical graph payloads without inventing unstandardized metadata or sub-entities. Option A in DEC-03 scopes Workstream E simulation to component-level operations to preserve the integrity of CONTRACT-01.
 2. **`RemoveNodeAction` DTO Schema Omission**:
-   - The `force` parameter referenced in prior narrative reports is missing from `CONTRACT_07_REFACTORING_ACTION_DTOS.md`. Furthermore, deleting a node without cascade-deleting its edges violates the edge endpoint invariant in `daGraphPayloadLoader.js`.
+   - The `force` parameter referenced in prior narrative reports was missing from `CONTRACT_07_REFACTORING_ACTION_DTOS.md`. Replacing it with `cascadeEdges?: boolean` resolves both semantic intent and prevents dangling edge generation.
 3. **Deterministic Pagination in SOQL**:
    - Standardizing `ORDER BY CreatedDate DESC, Id DESC` under DEC-01 is critical to avoid flaky test assertions in Apex test executions where multiple records share identical timestamps.
 4. **All Four Human Decisions Remain Pending**:
