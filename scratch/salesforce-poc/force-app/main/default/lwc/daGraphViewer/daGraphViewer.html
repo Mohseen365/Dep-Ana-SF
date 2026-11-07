@@ -1,5 +1,30 @@
 <template>
     <lightning-card title="Dependency Analyzer Graph Viewer" icon-name="custom:custom19">
+        <div slot="actions">
+            <lightning-button-group>
+                <lightning-button
+                    label="Grid"
+                    value="grid"
+                    variant={gridButtonVariant}
+                    onclick={handleLayoutChangeClick}
+                    title="Grid Layout"
+                ></lightning-button>
+                <lightning-button
+                    label="Circle"
+                    value="circle"
+                    variant={circleButtonVariant}
+                    onclick={handleLayoutChangeClick}
+                    title="Circle Layout"
+                ></lightning-button>
+                <lightning-button
+                    label="Breadthfirst"
+                    value="breadthfirst"
+                    variant={breadthfirstButtonVariant}
+                    onclick={handleLayoutChangeClick}
+                    title="Hierarchical Breadthfirst Layout"
+                ></lightning-button>
+            </lightning-button-group>
+        </div>
         <div class="slds-m-around_medium">
             <template if:true={isLoading}>
                 <lightning-spinner alternative-text="Loading graph..." size="medium"></lightning-spinner>
