@@ -115,32 +115,45 @@ Zero modifications outside approved paths.
 
 ## 8. Task-Specific Test Results
 - **Command:** `node scratch/salesforce-poc/tests/run-w5-1-tests.cjs`
-- **Result:** **8 PASSED, 0 FAILED** (Exit Code: 0)
-  - ✓ 1. CYTOSCAPE_LAYOUT_DEFAULTS conforms to CONTRACT-02 §4.1
-  - ✓ 2. Canonical layout modes resolved accurately with case insensitivity
-  - ✓ 3. Dagre layout gracefully falls back to breadthfirst per CONTRACT-02 §6.4
-  - ✓ 4. setLayout switches layout and dispatches layoutchange custom event
-  - ✓ 5. Layout change schedules background preference persistence
-  - ✓ 6. SELECTION != NAVIGATION invariant preserved during layout change
-  - ✓ 7. Filter criteria remain intact without mutation across layout changes
-  - ✓ 8. Degenerate and unrecognised layout modes fall back safely
+- **Result:** **17 PASSED, 0 FAILED** (Exit Code: 0)
+  - ✓ 1. Supported layout modes (grid, circle, breadthfirst) defined
+  - ✓ 2. Exact configuration property values verified per CONTRACT-02 §4.1
+  - ✓ 3. Case-insensitivity and whitespace trimming verified
+  - ✓ 4. Dagre maps gracefully to breadthfirst fallback per CONTRACT-02 §6.4
+  - ✓ 5. Unsupported, null, undefined, and empty layout values fall back safely
+  - ✓ 6. Layout switching via setLayout() and layoutMode setter operates correctly
+  - ✓ 7. layoutchange custom event verified with detail, bubbling, and composed flags
+  - ✓ 8. No navigation side effects or recordId modification on layout switch
+  - ✓ 9. Selected node and project identity preserved across layout switch
+  - ✓ 10. Existing filter criteria preserved with zero mutation
+  - ✓ 11. Production scheduleSaveState() persists canonical payload via real scheduled callback
+  - ✓ 12. Production debounce persists only latest layout and suppresses stale/project-changed requests
+  - ✓ 13. Apex save rejection handled cleanly by production callback without state corruption
+  - ✓ 14. Layout execution failure sets user-visible error state
+  - ✓ 15. Architecture layout computes and positions nodes deterministically
+  - ✓ 16. Operations safe when Cytoscape instance or DOM container unavailable
+  - ✓ 17. Layout cancellation lifecycle verified: run(L1) -> stop(L1) -> run(L2) with active instance replacement
 
 ---
 
 ## 9. Regression Test Results
 All 9 immutable offline baseline test suites were executed sequentially with zero regressions:
-1. `scratch/salesforce-poc/tests/run-poc-tests.cjs` — **43 PASSED, 0 FAILED**
-2. `scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs` — **9 PASSED, 0 FAILED**
-3. `scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs` — **10 PASSED, 0 FAILED**
-4. `scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs` — **15 PASSED, 0 FAILED**
-5. `scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs` — **11 PASSED, 0 FAILED**
-6. `scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs` — **12 PASSED, 0 FAILED**
-7. `scratch/salesforce-poc/tests/run-workstream-a-tests.cjs` — **33 PASSED, 0 FAILED**
-8. `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` — **22 PASSED, 0 FAILED**
-9. `scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs` — **32 PASSED, 0 FAILED**
+1. `scratch/salesforce-poc/tests/run-poc-tests.cjs` — **43 PASSED, 0 FAILED** (Exit Code: 0)
+2. `scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs` — **9 PASSED, 0 FAILED** (Exit Code: 0)
+3. `scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs` — **10 PASSED, 0 FAILED** (Exit Code: 0)
+4. `scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs` — **15 PASSED, 0 FAILED** (Exit Code: 0)
+5. `scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs` — **11 PASSED, 0 FAILED** (Exit Code: 0)
+6. `scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs` — **12 PASSED, 0 FAILED** (Exit Code: 0)
+7. `scratch/salesforce-poc/tests/run-workstream-a-tests.cjs` — **33 PASSED, 0 FAILED** (Exit Code: 0)
+8. `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs` — **22 PASSED, 0 FAILED** (Exit Code: 0)
+9. `scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs` — **32 PASSED, 0 FAILED** (Exit Code: 0)
 
-**Baseline Total:** **187 / 187 PASSED**
-**Combined Total (Baseline + Task W5-1):** **195 / 195 PASSED**
+**Baseline Total:** **187 / 187 PASSED** (Exit Code: 0)
+**Task W5-1 Total:** **17 / 17 PASSED** (Exit Code: 0)
+**Combined Arithmetic Total (Baseline + Task W5-1):** **204 / 204 PASSED**
+
+### Offline Test Execution vs. Runtime Environment Qualification:
+These tests represent independent offline JavaScript execution in Node.js against contract mocks. No live Salesforce org authentication, deployment, Apex heap profiling, or browser Lightning Web Security (LWS) canvas rendering has occurred.
 
 ---
 
@@ -160,16 +173,14 @@ All 9 immutable offline baseline test suites were executed sequentially with zer
 ---
 
 ## 11. Ownership and Git Audit
-- **Git Branch:** `jules-11041662194911020056-53ddff55`
-- **Base Commit:** `788b850dd21aad8a5a207186433bd1a42b7f4e03`
-- **Modified Files:**
-  - `scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html`
-  - `scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js`
-- **New Files:**
-  - `scratch/salesforce-poc/tests/run-w5-1-tests.cjs`
-  - `IMPLEMENTATION_AUTHORIZATION_ORDERS_BATCH1.md`
-  - `EXECUTIVE_DISPATCH_AND_IMPLEMENTATION_REPORT.md`
-- **Ownership Manifest Audit:** Every touched file is declared in `WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv` under Workstream A / Task W5-1 exclusive ownership. Zero unowned paths touched.
+- **Git Branch:** `jules-13464825583362349697-1c35cf96`
+- **Base Commit:** `eec28b20de2451e19805fdb4ebc811478cfcd03f`
+- **Active Working Copy Touched Files:**
+  - `scratch/salesforce-poc/tests/run-w5-1-tests.cjs` (Hardened unit & contract tests)
+  - `IMPLEMENTATION_AUTHORIZATION_ORDERS_BATCH1.md` (Reconciled implementation authorization orders)
+  - `EXECUTIVE_DISPATCH_AND_IMPLEMENTATION_REPORT.md` (Reconciled executive dispatch report)
+  - `W5_1_ACCEPTANCE_READINESS_AND_HARDENING_REPORT.md` (Evidence package report)
+- **Ownership Manifest Audit:** Every touched file is declared in `WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv` under Workstream A / Task W5-1 exclusive ownership or governance reporting paths. Zero unowned paths touched.
 
 ---
 
