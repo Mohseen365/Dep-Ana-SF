@@ -8,30 +8,18 @@
 
 ---
 
-## 1. Governance Model Dependency & Signatory Alignment (Scope D)
+## 1. Governance Model Dependency & Signatory Alignment (Scope D / Phase A4.2)
 
-This authorization template cannot be executed until the Project Owner formally ratifies the governance structure under **DEC-04**. The required signatories and approval sequence depend strictly on the DEC-04 alternative adopted:
+This authorization template cannot be executed until the Project Owner formally ratifies the governance structure under **DEC-04**. The required signatories, approval sequence, and advisory roles depend strictly on the DEC-04 alternative adopted:
 
-### Required Signatory Matrix by DEC-04 Governance Alternative:
-- **If Alternative 1 (Joint Dual Signoff) is Ratified**:
-  - *Required Signatories*: Lead Architect (Technical Design) AND Product Owner (Business Scope & Release). Both are mandatory.
-  - *Integration Coordinator Role*: Pre-review technical evidence verification.
-  - *Project Owner Role*: Escalation arbitration.
-- **If Alternative 2 (Technical Dual Signoff) is Ratified**:
-  - *Required Signatories*: Lead Architect (Technical Design) AND Integration Coordinator (Integration & Test Verification). Both are mandatory.
-  - *Product Owner Role*: Informational handoff.
-  - *Project Owner Role*: Escalation arbitration.
-- **If Alternative 3 (Two-Phase Sequential Dispatch) is Ratified [RECOMMENDED]**:
-  - *Phase 1 — Technical Gate 1A (Technical Readiness Certification)*:
-    - Lead Architect signs Technical Readiness Certification.
-    - Integration Coordinator signs Contract Freeze & Integration Verification.
-    - *Gate 1A must be fully certified before Gate 1B can be initiated.*
-  - *Phase 2 — Dispatch Gate 1B (Business Release & Executive Ratification)*:
-    - Product Owner signs Business Release & Scope Approval.
-    - Project Owner signs Executive Dispatch Ratification Order.
-- **If Alternative 4 (Executive Project Owner Exclusive Signoff) is Ratified**:
-  - *Required Signatory*: Project Owner signs Executive Dispatch Order exclusively.
-  - *Concurrence Roles*: Lead Architect, Product Owner, and Integration Coordinator submit formal joint advisory recommendations.
+### Four-Alternative Signatory Validation Matrix
+
+| Alternative | Mandatory Signatories | Advisory / Informational Roles | Required Approval Sequence | Rejection / Deferral Behavior | Missing-Signature Behavior | Partial Dispatch Permitted? | Revocation & Suspension Authority |
+| :--- | :--- | :--- | :--- | :--- | :--- | :---: | :--- |
+| **Alternative 1: Joint Dual Signoff** | 1. Lead Architect<br>2. Product Owner | - Integration Coordinator (pre-review evidence verification)<br>- Project Owner (escalation arbitration) | Concurrent or sequential: both must formally sign before dispatch. | Rejection by either authority immediately halts dispatch order. | Any missing signature voids order fail-closed. | YES (under strict 16-point allowlist) | Lead Architect OR Product Owner (unilateral revocation). |
+| **Alternative 2: Technical Dual Signoff** | 1. Lead Architect<br>2. Integration Coordinator | - Product Owner (informational handoff)<br>- Project Owner (escalation arbitration) | Concurrent or sequential: both technical roles must formally sign. | Rejection by either technical authority immediately halts dispatch order. | Any missing signature voids order fail-closed. | YES (under strict 16-point allowlist) | Lead Architect OR Integration Coordinator (unilateral revocation). |
+| **Alternative 3: Two-Phase Sequential Dispatch [RECOMMENDED]** | **Gate 1A**:<br>1. Lead Architect<br>2. Integration Coordinator<br><br>**Gate 1B**:<br>3. Product Owner<br>4. Project Owner | None (all four signatories are mandatory across the two sequential gates). | **Strictly Sequential**:<br>1. Gate 1A signed first.<br>2. Gate 1B signed second.<br>*Zero dispatch permitted between 1A and 1B.* | Rejection at Gate 1A halts technical review. Rejection at Gate 1B halts dispatch release. | Any missing signature across 1A or 1B voids order fail-closed. | YES (under strict 16-point allowlist, only after Gate 1B) | Lead Architect, Product Owner, OR Project Owner (unilateral revocation). |
+| **Alternative 4: Executive Project Owner Exclusive** | 1. Project Owner (Executive Dispatch Order) | 1. Lead Architect (Technical Advisory)<br>2. Product Owner (Scope Advisory)<br>3. Integration Coordinator (Integration Advisory) | Advisory recommendations submitted concurrently; Project Owner executes final exclusive determination. | Project Owner rejection halts dispatch. Advisory dissent logged for executive review. | Missing Project Owner signature voids order fail-closed. | YES (under strict 16-point allowlist) | Project Owner exclusively (or delegated authority). |
 
 ---
 
@@ -47,47 +35,118 @@ SALESFORCE PARALLEL MIGRATION — IMPLEMENTATION DISPATCH AUTHORIZATION ORDER
    Order Title:              ____________________________________________________
    Dispatch Scope:           [ ] Partial Dispatch (Specified Task Allowlist)
                              [ ] Full Wave Dispatch (Requires all wave contracts ratified)
-   Adopted DEC-04 Model:     [ ] Alternative 1 (Joint Dual: Architect + PO)
-                             [ ] Alternative 2 (Technical Dual: Architect + IC)
-                             [ ] Alternative 3 (Two-Phase: Gate 1A Tech + Gate 1B Business)
-                             [ ] Alternative 4 (Executive Project Owner Exclusive)
+   Adopted DEC-04 Model:     [ ] Alternative 1 (Joint Dual: Lead Architect + Product Owner)
+                             [ ] Alternative 2 (Technical Dual: Lead Architect + Integration Coordinator)
+                             [ ] Alternative 3 (Two-Phase Sequential: Gate 1A Tech + Gate 1B Business)
+                             [ ] Alternative 4 (Executive Project Owner Exclusive Signoff)
 
 2. APPROVAL DATE:
    Formal Authorization Date: ____________________________________________________
    Effective Release Date:   ____________________________________________________
 
-3. GOVERNANCE APPROVAL RECORD (STRUCTURED ACCORDING TO RATIFIED DEC-04 MODEL):
+3. GOVERNANCE APPROVAL RECORD (EXECUTE EXACT SECTION CORRESPONDING TO ADOPTED MODEL):
 
-   [SECTION 3A: MANDATORY UNDER ALTERNATIVE 3 (GATE 1A TECHNICAL CERTIFICATION)]
-   Gate 1A.1 — Lead Architect Technical Readiness Certification:
+   -------------------------------------------------------------------------------------------------
+   [USE SECTION 3.1 ONLY IF ALTERNATIVE 1 (JOINT DUAL SIGNOFF) IS RATIFIED]
+   -------------------------------------------------------------------------------------------------
+   Signatory 3.1.1 — Lead Architect (Mandatory Technical Approval):
      Decision-Maker Name:    ____________________________________________________
-     Role / Title:           Lead Architect
-     Determination:          [ ] CERTIFIED    [ ] REJECTED    [ ] DEFERRED
+     Determination:          [ ] APPROVED     [ ] REJECTED     [ ] DEFERRED
      Signature / Date:       ____________________________________________________
      Conditions & Notes:     ____________________________________________________
 
-   Gate 1A.2 — Integration Coordinator Contract Freeze & Integration Certification:
+   Signatory 3.1.2 — Product Owner (Mandatory Scope & Budget Release Approval):
      Decision-Maker Name:    ____________________________________________________
-     Role / Title:           Integration Coordinator
-     Determination:          [ ] CERTIFIED    [ ] REJECTED    [ ] DEFERRED
+     Determination:          [ ] APPROVED     [ ] REJECTED     [ ] DEFERRED
      Signature / Date:       ____________________________________________________
      Conditions & Notes:     ____________________________________________________
 
-   [SECTION 3B: MANDATORY UNDER ALTERNATIVE 1, 3 (GATE 1B), AND 4 (PRODUCT OWNER SIGN-OFF)]
-   Product Owner Scope & Business Release Sign-Off:
+   Advisory Record 3.1.3 — Integration Coordinator (Technical Evidence Verification):
+     Reviewer Name:          ____________________________________________________
+     Evidence Attestation:   [ ] VERIFIED (187/187 Tests Passing, Manifest Checked)
+     Signature / Date:       ____________________________________________________
+
+   -------------------------------------------------------------------------------------------------
+   [USE SECTION 3.2 ONLY IF ALTERNATIVE 2 (TECHNICAL DUAL SIGNOFF) IS RATIFIED]
+   -------------------------------------------------------------------------------------------------
+   Signatory 3.2.1 — Lead Architect (Mandatory Technical Contract Approval):
      Decision-Maker Name:    ____________________________________________________
-     Role / Title:           Product Owner
-     Determination:          [ ] APPROVED     [ ] REJECTED     [ ] NOT APPLICABLE
+     Determination:          [ ] APPROVED     [ ] REJECTED     [ ] DEFERRED
      Signature / Date:       ____________________________________________________
      Conditions & Notes:     ____________________________________________________
 
-   [SECTION 3C: MANDATORY UNDER ALTERNATIVE 3 (GATE 1B) AND 4 (PROJECT OWNER EXECUTIVE ORDER)]
-   Project Owner Executive Dispatch Ratification:
+   Signatory 3.2.2 — Integration Coordinator (Mandatory Integration & Test Approval):
+     Decision-Maker Name:    ____________________________________________________
+     Determination:          [ ] APPROVED     [ ] REJECTED     [ ] DEFERRED
+     Signature / Date:       ____________________________________________________
+     Conditions & Notes:     ____________________________________________________
+
+   Informational Record 3.2.3 — Product Owner (Informational Notification):
+     Recipient Name:         ____________________________________________________
+     Acknowledgment:         [ ] RECEIVED
+     Signature / Date:       ____________________________________________________
+
+   -------------------------------------------------------------------------------------------------
+   [USE SECTION 3.3 ONLY IF ALTERNATIVE 3 (TWO-PHASE SEQUENTIAL DISPATCH) IS RATIFIED — RECOMMENDED]
+   -------------------------------------------------------------------------------------------------
+   PHASE 1: TECHNICAL GATE 1A (TECHNICAL READINESS CERTIFICATION)
+   [Both Gate 1A signatures are mandatory. Zero dispatch permitted prior to Gate 1B.]
+
+   Gate 1A.1 — Lead Architect (Mandatory Technical Readiness Certification):
+     Decision-Maker Name:    ____________________________________________________
+     Determination:          [ ] CERTIFIED    [ ] REJECTED     [ ] DEFERRED
+     Signature / Date:       ____________________________________________________
+     Conditions & Notes:     ____________________________________________________
+
+   Gate 1A.2 — Integration Coordinator (Mandatory Contract Freeze & Evidence Certification):
+     Decision-Maker Name:    ____________________________________________________
+     Determination:          [ ] CERTIFIED    [ ] REJECTED     [ ] DEFERRED
+     Signature / Date:       ____________________________________________________
+     Conditions & Notes:     ____________________________________________________
+
+   GATE 1A CERTIFICATION STATUS: [ ] PASSED AND CERTIFIED (Required to initiate Gate 1B)
+   Gate 1A Certification Date:   ____________________________________________________
+
+   PHASE 2: DISPATCH GATE 1B (BUSINESS RELEASE & EXECUTIVE DISPATCH RATIFICATION)
+   [Cannot be executed until Gate 1A is certified. Both Gate 1B signatures are mandatory.]
+
+   Gate 1B.1 — Product Owner (Mandatory Scope & Business Release Signoff):
+     Decision-Maker Name:    ____________________________________________________
+     Determination:          [ ] APPROVED     [ ] REJECTED     [ ] DEFERRED
+     Signature / Date:       ____________________________________________________
+     Conditions & Notes:     ____________________________________________________
+
+   Gate 1B.2 — Project Owner (Mandatory Executive Dispatch Ratification):
      Decision-Maker Name:    ____________________________________________________
      Role / Title:           Project Owner (Executive Governance Authority)
      Determination:          [ ] RATIFIED     [ ] REJECTED     [ ] DEFERRED
      Signature / Date:       ____________________________________________________
      Conditions & Notes:     ____________________________________________________
+
+   -------------------------------------------------------------------------------------------------
+   [USE SECTION 3.4 ONLY IF ALTERNATIVE 4 (EXECUTIVE PROJECT OWNER EXCLUSIVE SIGNOFF) IS RATIFIED]
+   -------------------------------------------------------------------------------------------------
+   Mandatory Executive Determination 3.4.1 — Project Owner:
+     Decision-Maker Name:    ____________________________________________________
+     Role / Title:           Project Owner (Executive Governance Authority)
+     Determination:          [ ] EXECUTIVELY AUTHORIZED  [ ] REJECTED  [ ] DEFERRED
+     Signature / Date:       ____________________________________________________
+     Conditions & Directives:____________________________________________________
+
+   Advisory Recommendation 3.4.2 — Lead Architect (Technical Advisory Only):
+     Advisor Name:           ____________________________________________________
+     Recommendation:         [ ] RECOMMEND DISPATCH      [ ] ADVISE CAUTION / REJECT
+     Signature / Date:       ____________________________________________________
+
+   Advisory Recommendation 3.4.3 — Product Owner (Scope Advisory Only):
+     Advisor Name:           ____________________________________________________
+     Recommendation:         [ ] RECOMMEND DISPATCH      [ ] ADVISE CAUTION / REJECT
+     Signature / Date:       ____________________________________________________
+
+   Advisory Recommendation 3.4.4 — Integration Coordinator (Integration Advisory Only):
+     Advisor Name:           ____________________________________________________
+     Recommendation:         [ ] RECOMMEND DISPATCH      [ ] ADVISE CAUTION / REJECT
+     Signature / Date:       ____________________________________________________
 
 4. EXACT TASK ID ALLOWLIST:
    [Explicit enumeration of authorized task IDs. Blanket approvals are strictly invalid.]
@@ -172,7 +231,11 @@ SALESFORCE PARALLEL MIGRATION — IMPLEMENTATION DISPATCH AUTHORIZATION ORDER
 To prevent accidental, premature, or unauthorized implementation dispatch, an authorization order generated from this template is **null, void, and non-executable** if any of the following conditions exist:
 
 1. **Unratified DEC-04 Governance Model**: Until DEC-04 is formally ratified by the Project Owner, this template cannot be executed.
-2. **Missing Required Signatures**: If any required approval signature for the chosen DEC-04 model is missing, the dispatch order is void. Under Alternative 3, Gate 1A and Gate 1B must both be signed in sequential order.
+2. **Missing Required Signatures**:
+   - Under Alternative 1: Both Lead Architect and Product Owner must sign.
+   - Under Alternative 2: Both Lead Architect and Integration Coordinator must sign.
+   - Under Alternative 3: All four signatures across Gate 1A and Gate 1B must be signed in strict sequential order. Gate 1B executed without verified Gate 1A certification is null and void.
+   - Under Alternative 4: Project Owner must sign; advisory recommendations cannot substitute for executive authorization.
 3. **Missing Predecessor Verification**: If any task on the allowlist depends on an incomplete or unverified predecessor task, the order is void.
 4. **Unratified Contract Dependency**: If any task on the allowlist depends on a contract that has not been formally ratified, the order is void.
 5. **Protected File Violation**: If any path listed under Section 6 includes coordinator-exclusive protected files (`daAppShell`, `daFilterSchema.js`, `run-coordinator-integration-suite.cjs`) or frozen baseline runners, the order is rejected fail-closed.
