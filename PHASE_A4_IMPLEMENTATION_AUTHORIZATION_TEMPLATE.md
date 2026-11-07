@@ -3,7 +3,7 @@
 **Document Identifier**: `PHASE_A4_IMPLEMENTATION_AUTHORIZATION_TEMPLATE.md`
 **Governance Scope**: Mandatory 16-Point Governance Order Template for Partial or Full Implementation Dispatch
 **Implementation Dispatch Status**: **BLANK TEMPLATE — IMPLEMENTATION NOT AUTHORIZED**
-**Repository State**: Git Commit `b33932269211817db90e0e35c93bbe4681e2d466` on branch `jules-5282360651344650637-f76bb64a`
+**Repository State**: Git Commit `247c578d6cb81c8d203202eea2e71b5e093333e7` (incorporating PR #114 / A4.3 branch `jules-5282360651344650637-f76bb64a` at `b33932269211817db90e0e35c93bbe4681e2d466`)
 **Usage Instructions**: This document is a standardized, auditable instrument to record formal implementation authorization once governance determinations under DEC-01 through DEC-04 have been executed. No implementation task may be dispatched without a fully populated and signed instance of this template. All fields must be verified against repository registers before execution.
 
 ---
@@ -223,7 +223,39 @@ SALESFORCE PARALLEL MIGRATION — IMPLEMENTATION DISPATCH AUTHORIZATION ORDER
                                 rationale, and signed record committed to the repository.
                               - Resurrection prohibition: A revoked dispatch order is permanently terminated; work
                                 cannot resume without execution of a completely fresh authorization order.
-    Completion Authority:     Workstream Lead + Integration Coordinator joint signoff.
+
+    TASK COMPLETION VS PREDECESSOR ACCEPTANCE MECHANICS:
+    Four distinct, sequential, and auditable stages govern task completion and successor enablement:
+    1. Implementation Reported Complete: The assigned Workstream Lead formally certifies that coding of the task's
+       scope is finished in accordance with the task specification and file ownership boundaries.
+    2. Verification Evidence Supplied: Complete, fresh, and reproducible test run logs and artifact references
+       (task-specific test runner and regression suite outputs) are recorded and attached to the task record.
+    3. Formal Acceptance of Completion: The designated acceptance authority (Workstream Lead AND Integration Coordinator
+       joint signoff) formally reviews the verification evidence, confirms zero file collisions and contract conformance,
+       and signs the formal acceptance statement.
+    4. Eligibility to Unlock Successor: Only upon formal recorded acceptance does a completed task transition to ACCEPTED,
+       thereby satisfying predecessor requirements to unlock dependent successor tasks.
+
+    FAIL-CLOSED ACCEPTANCE AND SUCCESSOR ENFORCEMENT RULES:
+    1. Completion report alone does not authorize a successor: A claim or report of completion by a Workstream Lead,
+       developer, or agent without formal verification and dual acceptance leaves the task unaccepted; no successor may unlock.
+    2. Missing or failed required tests prevent acceptance: Any failing, omitted, skipped, or unverified required test runner
+       or regression suite strictly prevents acceptance fail-closed.
+    3. Disagreement leaves task unaccepted: Any disagreement, objection, or missing signature between the Workstream Lead
+       and the Integration Coordinator means acceptance is NOT granted, and the task remains unaccepted.
+    4. Deferred or rejected acceptance leaves dependent tasks blocked: Any explicit deferral, rejection, or conditional hold
+       prevents downstream predecessor satisfaction; all dependent successor tasks remain strictly blocked.
+    5. Serialized Wave 5 predecessor enforcement: For serialized Wave 5 (W5-1 through W5-6), each predecessor task must be
+       formally accepted and its complete verification evidence committed before the next serial task may be considered for dispatch.
+    6. Acceptance does not grant dispatch authorization: Formal acceptance of an upstream task satisfies dependency prerequisites
+       only; it does not grant implementation authorization for any successor task or override the signed dispatch allowlist.
+
+    UNRESOLVED ACCEPTANCE TIE-BREAKER AUTHORITY (REQUIRING HUMAN DETERMINATION):
+    - Outstanding Question: In the event of an unresolvable dispute or deadlock between the Workstream Lead and the
+      Integration Coordinator regarding task acceptance, baseline documents do not designate an authoritative tie-breaker.
+    - Status: Explicitly UNRESOLVED pending human governance determination under DEC-04. Potential tie-breaking authorities
+      (Lead Architect, Product Owner, or Project Owner) must be formally designated by human decision-makers. No automated
+      agent or coordinator may invent or assume tie-breaking authority.
 
 14. DEFENSIVE APPLICATION BOUNDARIES & RUNTIME DEFERRAL ACKNOWLEDGEMENT:
     [Signatories explicitly acknowledge that offline limits are defensive application guardrails]
