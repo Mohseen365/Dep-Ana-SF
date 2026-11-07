@@ -26,20 +26,27 @@
 | Lane | Assigned Workstream | Tasks Evaluated | Dispatched Tasks | Held / Blocked Tasks | Primary Reason |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Lane A** | Workstream A | W5-1, W5-2..W5-6 | **W5-1** | W5-2 through W5-6 | W5-1 prerequisites satisfied; W5-2..6 blocked on predecessor completion |
-| **Lane B** | Workstream B | W6-1, W6-2, W6-3, W6-4 | None | W6-1, W6-2, W6-3, W6-4 | Held fail-closed pending formal repository ratification records for CONTRACT-03 & CONTRACT-08 |
-| **Lane C** | Workstream C | W7-P1, W7-1, W7-2, W7-3 | None | W7-P1, W7-1, W7-2, W7-3 | W7-1/W7-2 held pending CONTRACT-08 ratification; W7-P1 blocked on spec; W7-3 on predecessor |
-| **Lane D** | Workstream D | W8-1, W8-2, W8-3 | None | W8-1, W8-2, W8-3 | W8-1 held pending CONTRACT-06/08 ratification; W8-2 on DEC-02; W8-3 on predecessor |
+| **Lane B** | Workstream B | W6-1, W6-2, W6-3, W6-4 | None (Held) | W6-1, W6-2, W6-3, W6-4 | Executively authorized under DEC-04 Alt 4, but HELD fail-closed pending formal repository ratification records for CONTRACT-03 & CONTRACT-08 |
+| **Lane C** | Workstream C | W7-P1, W7-1, W7-2, W7-3 | None (Held) | W7-P1, W7-1, W7-2, W7-3 | W7-1/W7-2 executively authorized under DEC-04 Alt 4, but HELD pending CONTRACT-08 ratification; W7-P1 blocked on spec; W7-3 on predecessor |
+| **Lane D** | Workstream D | W8-1, W8-2, W8-3 | None (Held) | W8-1, W8-2, W8-3 | W8-1 executively authorized under DEC-04 Alt 4, but HELD pending CONTRACT-06/08 ratification; W8-2 on DEC-02; W8-3 on predecessor |
 | **Lane E** | Workstream E | W9-1, W9-2, W9-3 | None | W9-1, W9-2, W9-3 | W9-1 blocked pending DEC-03 / CONTRACT-07; W9-2/W9-3 on predecessor |
 | **Coordinator** | Central INT-1 | INT-1 | None | INT-1 | Blocked on completion of Waves 5–9 feature waves; 5 protected paths pristine |
 
 ---
 
-## 3. Actual Tasks Dispatched
-- **Dispatched:** **Task W5-1 (Shell Layout Switcher)**
-  - Owning Workstream: Workstream A
-  - Accountable Owner: Workstream A Lead
-  - Governing Contracts: CONTRACT-01 (v1.0.0, FROZEN, Ratified) and CONTRACT-02 (v1.0.0, FROZEN, Ratified)
-  - Predecessors: None (Initial foundation task)
+## 3. Dispatched vs. Authorized Status Matrix
+Pursuant to DEC-04 Alternative 4, eight tasks received executive authorization orders. However, dispatch prerequisites govern whether execution may begin:
+
+| Task ID | Executive Authorization | Dispatch Prerequisites Satisfied | Dispatched for Implementation? | Implementation Status | Acceptance Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **W5-1** | **YES** (DEC-04 Alt 4) | **YES** (Contracts 01 & 02 ratified) | **YES** | **COMPLETED & HARDENED** | **PENDING JOINT SIGNOFF** (Workstream A Lead + Coordinator) |
+| **W6-1** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-03 unratified) | **NO (HELD)** | NOT STARTED | N/A |
+| **W6-2** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-08 unratified) | **NO (HELD)** | NOT STARTED | N/A |
+| **W6-3** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-08 unratified) | **NO (HELD)** | NOT STARTED | N/A |
+| **W6-4** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-08 unratified) | **NO (HELD)** | NOT STARTED | N/A |
+| **W7-1** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-08 unratified) | **NO (HELD)** | NOT STARTED | N/A |
+| **W7-2** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-08 unratified) | **NO (HELD)** | NOT STARTED | N/A |
+| **W8-1** | **YES** (DEC-04 Alt 4) | **NO** (CONTRACT-06 & 08 unratified) | **NO (HELD)** | NOT STARTED | N/A |
 
 ---
 

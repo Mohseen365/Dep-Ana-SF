@@ -110,6 +110,7 @@ export default class DaGraphViewer extends LightningElement {
     currentRequestId = 0;
     saveTimeout = null;
     isRestoringState = false;
+    _activeLayoutInstance = null;
 
     get gridButtonVariant() {
         return this._currentLayout === 'grid' ? 'brand' : 'neutral';
@@ -170,20 +171,34 @@ export default class DaGraphViewer extends LightningElement {
     applyLayout(mode) {
         if (!this.cyInstance) return;
 
+        // Stop any running layout operation before initiating a new one to prevent overlap races
+        if (this._activeLayoutInstance && typeof this._activeLayoutInstance.stop === 'function') {
+            try {
+                this._activeLayoutInstance.stop();
+            } catch (stopErr) {
+                // Ignore stop errors on completed layouts
+            }
+            this._activeLayoutInstance = null;
+        }
+
         if (mode === 'architecture') {
-            if (this._rawGraphData && this.cyInstance.nodes) {
-                const layoutResult = computeArchitectureLayout(this._rawGraphData.nodes || [], this._rawGraphData.edges || []);
-                const posMap = layoutResult.positions || {};
-                if (typeof this.cyInstance.batch === 'function') {
-                    this.cyInstance.batch(() => {
-                        this.cyInstance.nodes().forEach(node => {
-                            const p = posMap[node.id()];
-                            if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+            try {
+                if (this._rawGraphData && this.cyInstance.nodes) {
+                    const layoutResult = computeArchitectureLayout(this._rawGraphData.nodes || [], this._rawGraphData.edges || []);
+                    const posMap = layoutResult.positions || {};
+                    if (typeof this.cyInstance.batch === 'function') {
+                        this.cyInstance.batch(() => {
+                            this.cyInstance.nodes().forEach(node => {
+                                const p = posMap[node.id()];
+                                if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
                                 node.position({ x: p.x, y: p.y });
                             }
                         });
                     });
                 }
+            }
+            } catch (archErr) {
+                this.error = 'Failed to execute architecture layout: ' + (archErr.message || archErr);
             }
             return;
         }
@@ -193,11 +208,12 @@ export default class DaGraphViewer extends LightningElement {
         if (typeof this.cyInstance.layout === 'function') {
             try {
                 const layout = this.cyInstance.layout(layoutConfig);
+                this._activeLayoutInstance = layout;
                 if (layout && typeof layout.run === 'function') {
                     layout.run();
                 }
             } catch (e) {
-                // Graceful fallback to breadthfirst or preset if layout execution encounters error
+                this.error = 'Failed to apply Cytoscape layout: ' + (e.message || e);
             }
         }
     }
@@ -206,6 +222,14 @@ export default class DaGraphViewer extends LightningElement {
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
             this.saveTimeout = null;
+        }
+        if (this._activeLayoutInstance && typeof this._activeLayoutInstance.stop === 'function') {
+            try {
+                this._activeLayoutInstance.stop();
+            } catch (stopErr) {
+                // Ignore
+            }
+            this._activeLayoutInstance = null;
         }
         if (this.cyInstance) {
             try {
