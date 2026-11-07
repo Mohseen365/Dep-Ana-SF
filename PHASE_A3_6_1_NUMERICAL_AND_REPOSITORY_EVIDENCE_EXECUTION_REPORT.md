@@ -13,13 +13,15 @@
 This report documents the exact Git commands, numerical conversion outputs, heap estimate qualification statements, and task register reconciliation logs for Phase A3.6.1:
 
 - **Starting Git Commit**: `1a0ca8f3d84996296c86f078a4d3c1020d0d8350`
+- **Ending Git Commit**: `1a0ca8f3d84996296c86f078a4d3c1020d0d8350`
+- **Commit Identity Verification**: Starting and ending HEAD commits are identical (`1a0ca8f3d84996296c86f078a4d3c1020d0d8350`). Zero commits were created during this documentation correction.
 - **Current Git Branch**: `jules-1505928380438354287-a74e00b1`
 - **Zero Protected Baseline Changes**: Proved via `git diff --stat` and `git diff --cached --stat`.
 - **Zero Staging Mutations**: Existing staging state was preserved without executing `git add`, `git reset`, `git restore`, or `git commit`.
 
 ---
 
-## 2. Source Files Inspected & Created
+## 2. Source Files Inspected & Created / Modified
 
 ### 2.1 Authoritative Inputs Read in Full
 1. `PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md`
@@ -32,7 +34,7 @@ This report documents the exact Git commands, numerical conversion outputs, heap
 8. `scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader/daGraphPayloadLoader.js`
 9. `scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls`
 
-### 2.2 Deliverables Created
+### 2.2 Deliverables Maintained
 1. `PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md` (Repository Root)
 2. `PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md` (Repository Root, this file)
 
@@ -46,19 +48,21 @@ The following inspection commands were executed to capture the exact working-tre
 ```
 A  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md
 A  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md
+A  PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md
+A  PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md
 A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md
 A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md
-?? PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md
-?? PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md
 ```
 
 ### 3.2 `git diff --cached --stat`
 ```
  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md    | 254 ++++++++++++++++++
  ...5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md | 287 +++++++++++++++++++++
+ ...NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md | 154 +++++++++++
+ ...CAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md | 164 ++++++++++++
  ...HORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md | 229 ++++++++++++++++
  ...TIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md | 165 ++++++++++++
- 4 files changed, 935 insertions(+)
+ 6 files changed, 1253 insertions(+)
 ```
 
 ### 3.3 `git diff --stat`
@@ -71,15 +75,17 @@ A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md
 ```
 PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md
 PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md
+PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md
+PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md
 PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md
 PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md
 ```
 
-**Git Working-Tree Integrity Finding**: Zero modifications have been made to tracked baseline files. The staging state reflects exactly the four earlier Phase A3.5 and Phase A3.6 deliverables, while Phase A3.6.1 deliverables remain untracked. No staging operations were executed.
+**Git Working-Tree Integrity Finding**: Zero modifications have been made to tracked baseline files. The staging state reflects exactly the six newly added documentation deliverables in the repository root. No staging operations or commits were executed.
 
 ---
 
-## 4. Reproducible Numerical Conversion Log
+## 4. Reproducible Numerical Conversion Log & UTF-16 Qualification
 
 The following Node.js script was executed to verify all character, byte, decimal MB, and binary MiB conversions:
 
@@ -153,7 +159,7 @@ Async Heap: 12582912 bytes
 | **5** | 21 task identities reconciled with register; phantoms rejected | **PASS** | §6 of Correction doc; all 21 tasks reconciled; W8-4/W9-4 rejected |
 | **6** | No protected application code, metadata, or register modified | **PASS** | §3; git diff against baseline is 0 across all tracked paths |
 | **7** | No implementation dispatched or authorized | **PASS** | Implementation dispatch remains strictly unauthorized |
-| **8** | Both deliverables created and paths reported | **PASS** | Both files created in repository root |
+| **8** | Deliverables maintained and exact repository paths reported | **PASS** | Updated in repository root |
 
 ---
 
