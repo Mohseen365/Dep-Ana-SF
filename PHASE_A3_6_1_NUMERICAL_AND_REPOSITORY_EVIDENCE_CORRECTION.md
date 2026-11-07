@@ -20,29 +20,41 @@ Phase A3.6.1 provides a strictly documentation-only correction to address remain
 
 ---
 
-## 2. Scope A — Correction of Character and Byte Units
+## 2. Scope A — Correction of Character and Byte Units & UTF-16 Qualification
 
 ### 2.1 Earlier Statement Being Corrected
 In Phase A3.6 Section 4.2.5, it was stated:
 > `131,072 characters = 128 KiB of 16-bit characters`
 
-### 2.2 Rationale for Correction
-That statement conflated character counts with byte counts and binary byte units ($\text{KiB}$):
-1. In Salesforce custom field metadata (`DA_Graph_Chunk__c.Payload_Data__c.field-meta.xml`), `<length>131072</length>` defines a **character-count limit** for a standard `LongTextArea` field, not a byte limit.
-2. In JavaScript / V8 runtimes, string length measures **16-bit UTF-16 code units**. Assuming 1 UTF-16 code unit per character:
-   $$131,072\text{ UTF-16 code units} \times 2\text{ bytes per code unit} = \mathbf{262,144\text{ bytes}}$$
-3. In binary byte notation:
-   $$\frac{262,144\text{ bytes}}{1,024\text{ bytes/KiB}} = \mathbf{256\text{ KiB}}$$
-   and in binary mebibytes:
-   $$\frac{262,144\text{ bytes}}{1,048,576\text{ bytes/MiB}} = \mathbf{0.25\text{ MiB}}$$
-4. Describing 131,072 characters as "128 KiB" incorrectly divided character count directly by 1,024 bytes and labeled characters as bytes.
+### 2.2 Critical Distinction Across Numerical & Encoding Boundaries
+To prevent conflation between character lengths, character encodings, and binary byte representations, we explicitly establish the following technical boundaries:
 
-### 2.3 Corrected Definition & Boundaries
-- **Character Count Limit**: Exactly 131,072 characters.
-- **UTF-16 Code Unit Basis**: Exactly 131,072 code units (assuming BMP range where 1 char = 1 code unit).
-- **In-Memory UTF-16 Byte Footprint**: Exactly $131,072 \times 2 = \mathbf{262,144\text{ bytes}} = \mathbf{256\text{ KiB}} = \mathbf{0.25\text{ MiB}}$.
-- **UTF-8 Wire Size**: Ranges from 131,072 bytes (ASCII: $131,072 \times 1\text{ byte} = 128\text{ KiB}$) to 393,216 bytes (BMP 3-byte: $131,072 \times 3 = 384\text{ KiB}$).
-- **Authoritative Caps Unchanged**: Maximum payload remains 10,485,760 UTF-16 code units (80 chunks of 131,072 chars); proposed single snapshot remains 5,242,880 UTF-16 code units (40 chunks of 131,072 chars).
+1. **Salesforce Metadata Character-Count Limit**:
+   - `DA_Graph_Chunk__c.Payload_Data__c.field-meta.xml` sets `<length>131072</length>` with `<type>LongTextArea</type>`.
+   - In Salesforce CRM platform architecture, this defines a **character-count limit** enforced at the application/schema boundary, **not** an explicit byte limit.
+   - It is **not independently proven** that the platform's character-count limit is identical in all internal layers to a JavaScript UTF-16 code-unit limit.
+2. **Unicode Characters and Code Points**:
+   - A Unicode character or code point is an abstract numerical value (e.g., $U+0041$ for 'A', $U+1F600$ for 😀).
+   - In the Basic Multilingual Plane ($U+0000 \dots U+FFFF$), 1 code point corresponds to 1 UTF-16 code unit.
+   - In supplementary planes ($U+010000 \dots U+10FFFF$), 1 Unicode code point consumes **2 UTF-16 code units** (a surrogate pair). Therefore, not every Unicode character consumes exactly one UTF-16 code unit.
+3. **JavaScript UTF-16 Code-Unit Basis**:
+   - In JavaScript (and V8 engines used in LWC), `String.length` measures **16-bit UTF-16 code units**, not Unicode code points or UTF-8 bytes.
+   - The assumption that 131,072 characters equals 131,072 code units holds only when the payload consists entirely of BMP characters.
+4. **UTF-16 In-Memory Byte Representation**:
+   - When exactly 131,072 UTF-16 code units are held in memory, each 16-bit code unit occupies **2 bytes**:
+     $$\text{Bytes} = 131,072\text{ code units} \times 2\text{ bytes per code unit} = \mathbf{262,144\text{ bytes}}$$
+   - Converting 262,144 bytes to binary units yields:
+     $$\frac{262,144\text{ bytes}}{1,024\text{ bytes/KiB}} = \mathbf{256\text{ KiB}}$$
+     and in binary mebibytes:
+     $$\frac{262,144\text{ bytes}}{1,048,576\text{ bytes/MiB}} = \mathbf{0.25\text{ MiB}}$$
+   - The earlier phrase "128 KiB of 16-bit characters" was mathematically defective because it divided 131,072 by 1,024 and labeled characters directly as bytes, ignoring the 2 bytes/code unit factor.
+5. **UTF-8 Serialized Payload Wire Size**:
+   - If serialized to UTF-8 on the network:
+     - All-ASCII payload: $131,072 \times 1\text{ byte} = 131,072\text{ bytes} = 128\text{ KiB}$.
+     - All-BMP 3-byte payload: $131,072 \times 3\text{ bytes} = 393,216\text{ bytes} = 384\text{ KiB}$.
+     - All-surrogate supplementary payload: $(131,072 \div 2) \times 4\text{ bytes} = 262,144\text{ bytes} = 256\text{ KiB}$.
+6. **Authoritative Caps Unchanged**:
+   - The application-level configured caps remain unchanged: combined dual-snapshot cap = 10,485,760 UTF-16 code units (80 chunks of 131,072 chars); proposed single snapshot cap = 5,242,880 UTF-16 code units (40 chunks of 131,072 chars).
 
 ---
 
@@ -99,29 +111,29 @@ That estimate is strictly an **unverified theoretical payload calculation under 
 
 The repository working tree was inspected using standard Git commands.
 
-### 5.1 Status and Diff Verification
-- `git status --short`:
-  ```
-  A  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md
-  A  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md
-  A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md
-  A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md
-  ```
-- `git diff --cached --stat`:
-  ```
-   PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md    | 254 ++++++++++++++++++
-   ...5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md | 287 +++++++++++++++++++++
-   ...HORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md | 229 ++++++++++++++++
-   ...TIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md | 165 ++++++++++++
-   4 files changed, 935 insertions(+)
-  ```
+### 5.1 Complete Git Status Verification
+Executing `git status --short` yields the complete six entries:
+```
+A  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md
+A  PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md
+A  PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md
+A  PHASE_A3_6_1_NUMERICAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md
+A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md
+A  PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md
+```
+Executing `git diff --cached --stat` confirms that all changes consist entirely of newly added documentation files in the repository root:
+```
+ PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md    | 254 ++++++++++++++++++
+ ...5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md | 287 +++++++++++++++++++++
+ ...NUMERICAL_AND_REPOSITORY_EVIDENCE_CORRECTION.md | 154 +++++++++++
+ ...CAL_AND_REPOSITORY_EVIDENCE_EXECUTION_REPORT.md | 164 ++++++++++++
+ ...HORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md | 229 ++++++++++++++++
+ ...TIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md | 165 ++++++++++++
+ 6 files changed, 1253 insertions(+)
+```
 - `git diff --stat`: Empty (0 unstaged modifications).
 - `git diff --name-only`: Empty.
-- `git diff --cached --name-only`:
-  - `PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_CLOSURE.md`
-  - `PHASE_A3_5_FINAL_METRIC_AND_EVIDENCE_EXECUTION_REPORT.md`
-  - `PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_CORRECTION.md`
-  - `PHASE_A3_6_AUTHORITATIVE_REGISTER_AND_NUMERICAL_EXECUTION_REPORT.md`
+- `git diff --cached --name-only`: Lists exactly the six newly added documentation files.
 
 ### 5.2 Preservation of Existing Staging State
 In accordance with instructions, zero staging, unstaging, reset, stash, or commit operations were executed. The working tree contains only newly authored Phase A3 documentation files. Zero tracked baseline files have been modified.
