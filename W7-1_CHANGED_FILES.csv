@@ -1,0 +1,6 @@
+filepath,change_type,sha256
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js,ADDED,f025d85ba8748d007b44f820c2b5d3d4c9d16446d73eb48e204d2aa0b6522195
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html,ADDED,7b6cfb20f38f07ac4b3517d718c2b1c4e1f98022428074b5437c2108c1529592
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css,ADDED,d90a0ce460fcb9e9ffd7ceea5276a619ca35793ca746a88b6ee0b379aeed616c
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml,ADDED,68b9642a34ee3b0ea9e54abd9471fdb474c5bb340a0996938edc66032f500c60
+scratch/salesforce-poc/tests/run-w7-1-tests.cjs,ADDED,428f33ccbbc3694c6b7e3bf522918ec849c8b4916b465a8beca0df77f3c26a3e

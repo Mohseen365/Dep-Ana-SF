@@ -1,0 +1,8 @@
+task_id,task_name,workstream,lane_slot,contract_gate,predecessors,status,tests_passed,slot_action
+W6-1,Radar View Component,Workstream B,Doc Lane,CONTRACT-03,None,AUTHORIZED_BLOCKED_ON_CONTRACT_APPROVAL,N/A,Blocked on Contract Ratification
+W6-2,Treemap View Component,Workstream B,Lane 1,CONTRACT-01,None,IMPLEMENTED_PENDING_REVIEW,7/7,Slot 1 Released
+W6-3,Subway View Component,Workstream B,Lane 2,CONTRACT-01,None,IMPLEMENTED_PENDING_REVIEW,7/7,Slot 2 Released
+W6-4,Hotspots View Component,Workstream B,Lane 3,CONTRACT-01,None,IMPLEMENTED_PENDING_REVIEW,7/7,Slot 3 Released
+W7-1,Diagnostics Scorecard Component,Workstream C,Lane 4,CONTRACT-01,None,IMPLEMENTED_PENDING_REVIEW,6/6,Slot 4 Released
+W7-2,Architecture DNA Barcode Component,Workstream C,Released Slot,CONTRACT-01,None,IMPLEMENTED_PENDING_REVIEW,7/7,Handoff Completed
+W8-1,Investigation Drawer Component,Workstream D,Doc Lane,CONTRACT-06,None,AUTHORIZED_BLOCKED_ON_CONTRACT_APPROVAL,N/A,Blocked on Contract Ratification

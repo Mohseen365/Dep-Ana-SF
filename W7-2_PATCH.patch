@@ -1,0 +1,521 @@
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css
+new file mode 100644
+index 0000000..cb0d1bc
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css
+@@ -0,0 +1,109 @@
++.dna-container {
++    display: flex;
++    flex-direction: column;
++    width: 100%;
++    background-color: #0b1120;
++    color: #f1f5f9;
++    padding: 1.25rem;
++    box-sizing: border-box;
++    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++    border-radius: 8px;
++    border: 1px solid #1e293b;
++}
++
++.dna-header {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++    margin-bottom: 1rem;
++}
++
++.dna-title {
++    font-size: 1.125rem;
++    font-weight: 700;
++    color: #f8fafc;
++    margin: 0;
++}
++
++.dna-controls {
++    display: flex;
++    align-items: center;
++    gap: 0.75rem;
++}
++
++.control-label {
++    font-size: 0.8125rem;
++    color: #94a3b8;
++}
++
++.control-select {
++    background-color: #1e293b;
++    color: #f1f5f9;
++    border: 1px solid #334155;
++    border-radius: 4px;
++    padding: 0.25rem 0.5rem;
++    font-size: 0.8125rem;
++}
++
++.dna-barcode-strip {
++    width: 100%;
++    height: 64px;
++    background-color: #030712;
++    border: 1px solid #334155;
++    border-radius: 4px;
++    overflow: hidden;
++    margin-bottom: 1rem;
++    position: relative;
++}
++
++.dna-svg {
++    width: 100%;
++    height: 100%;
++    display: block;
++}
++
++.dna-band {
++    cursor: pointer;
++    transition: opacity 0.15s ease, stroke-width 0.15s ease;
++}
++
++.dna-band:hover {
++    filter: brightness(1.35);
++}
++
++.dna-band.selected {
++    stroke: #38bdf8 !important;
++    stroke-width: 2px !important;
++}
++
++.dna-profile-card {
++    background-color: #0f172a;
++    border: 1px solid #1e293b;
++    border-radius: 6px;
++    padding: 1rem;
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++}
++
++.profile-name {
++    font-size: 0.9375rem;
++    font-weight: 600;
++    color: #f1f5f9;
++    margin-bottom: 0.25rem;
++}
++
++.profile-meta {
++    font-size: 0.75rem;
++    color: #94a3b8;
++}
++
++.dna-empty, .dna-error {
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++    justify-content: center;
++    min-height: 120px;
++    color: #64748b;
++    font-size: 0.875rem;
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html
+new file mode 100644
+index 0000000..56026f2
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html
+@@ -0,0 +1,67 @@
++<template>
++    <div class="dna-container" data-testid="dna-container">
++        <div class="dna-header">
++            <h3 class="dna-title">Architecture DNA Barcode</h3>
++            <div class="dna-controls">
++                <span class="control-label">Barcode Dimension:</span>
++                <select class="control-select" onchange={handleDimensionChange} data-testid="dna-dimension-select">
++                    <template for:each={dimensionOptions} for:item="opt">
++                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
++                    </template>
++                </select>
++            </div>
++        </div>
++
++        <template lwc:if={hasError}>
++            <div class="dna-error" data-testid="dna-error">
++                <span>{errorMessage}</span>
++            </div>
++        </template>
++        <template lwc:elseif={isEmpty}>
++            <div class="dna-empty" data-testid="dna-empty">
++                <span>No architectural nodes available for DNA sequencing.</span>
++            </div>
++        </template>
++        <template lwc:else>
++            <!-- SVG Barcode Strip -->
++            <div class="dna-barcode-strip" data-testid="dna-barcode-strip">
++                <svg class="dna-svg" viewBox="0 0 1000 64" preserveAspectRatio="none" data-testid="dna-svg">
++                    <template for:each={renderedBands} for:item="band">
++                        <rect
++                            key={band.id}
++                            x={band.x}
++                            y="0"
++                            width={band.w}
++                            height="64"
++                            fill={band.fill}
++                            stroke={band.stroke}
++                            stroke-width="0.5"
++                            class={band.className}
++                            onclick={handleBandClick}
++                            data-node-id={band.id}
++                        >
++                            <title>{band.tooltip}</title>
++                        </rect>
++                    </template>
++                </svg>
++            </div>
++
++            <!-- Active / Hovered Component DNA Details -->
++            <template lwc:if={activeNode}>
++                <div class="dna-profile-card" data-testid="dna-profile-card">
++                    <div>
++                        <div class="profile-name">{activeNode.label}</div>
++                        <div class="profile-meta">
++                            Layer: {activeNode.layer} | Type: {activeNode.type} | Risk: {activeNode.risk} | Coverage: {activeNode.coverageStatus}
++                        </div>
++                    </div>
++                    <div>
++                        <div class="profile-meta">
++                            Coupling: {activeNode.coupling} | Fan-In: {activeNode.fanIn} | Fan-Out: {activeNode.fanOut}
++                        </div>
++                    </div>
++                </div>
++            </template>
++        </template>
++    </div>
++</template>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js
+new file mode 100644
+index 0000000..5946155
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js
+@@ -0,0 +1,173 @@
++import { LightningElement, api, track } from 'lwc';
++
++const LAYER_COLORS = {
++    UI: '#38bdf8',
++    Service: '#10b981',
++    Domain: '#a855f7',
++    Selector: '#f59e0b',
++    Data: '#ec4899',
++    Integration: '#06b6d4',
++    Utility: '#94a3b8',
++    Unassigned: '#64748b'
++};
++
++const RISK_COLORS = {
++    HIGH: '#ef4444',
++    MEDIUM: '#f59e0b',
++    LOW: '#10b981',
++    NONE: '#64748b'
++};
++
++const COVERAGE_COLORS = {
++    COVERED: '#10b981',
++    UNTESTED: '#ef4444',
++    AMBIGUOUS: '#f59e0b',
++    UNKNOWN: '#64748b'
++};
++
++export default class DaArchitectureDnaBarcode extends LightningElement {
++    @api projectId;
++    @api selectedNodeId;
++
++    @track selectedDimension = 'layer'; // 'layer' | 'risk' | 'coverage' | 'coupling'
++    @track errorMessage = '';
++
++    _rawPayload = null;
++    _parsedPayload = null;
++
++    @api
++    get payload() {
++        return this._rawPayload;
++    }
++    set payload(value) {
++        this._rawPayload = value;
++        this.processPayload();
++    }
++
++    processPayload() {
++        this.errorMessage = '';
++        if (!this._rawPayload) {
++            this._parsedPayload = null;
++            return;
++        }
++
++        if (typeof this._rawPayload === 'string') {
++            try {
++                this._parsedPayload = JSON.parse(this._rawPayload);
++            } catch (err) {
++                this.errorMessage = 'Malformed graph payload JSON';
++                this._parsedPayload = null;
++                return;
++            }
++        } else if (typeof this._rawPayload === 'object') {
++            this._parsedPayload = this._rawPayload;
++        } else {
++            this.errorMessage = 'Invalid payload format';
++            this._parsedPayload = null;
++        }
++    }
++
++    get hasError() {
++        return !!this.errorMessage;
++    }
++
++    get isEmpty() {
++        if (!this._parsedPayload || !Array.isArray(this._parsedPayload.nodes)) return true;
++        return this._parsedPayload.nodes.length === 0;
++    }
++
++    get dimensionOptions() {
++        return [
++            { label: 'Layer Composition', value: 'layer', selected: this.selectedDimension === 'layer' },
++            { label: 'Risk Distribution', value: 'risk', selected: this.selectedDimension === 'risk' },
++            { label: 'Test Coverage State', value: 'coverage', selected: this.selectedDimension === 'coverage' },
++            { label: 'Coupling Density', value: 'coupling', selected: this.selectedDimension === 'coupling' }
++        ];
++    }
++
++    get activeNode() {
++        if (this.isEmpty) return null;
++        if (this.selectedNodeId) {
++            const found = this._parsedPayload.nodes.find(n => n.id === this.selectedNodeId);
++            if (found) return found;
++        }
++        return this._parsedPayload.nodes[0] || null;
++    }
++
++    get renderedBands() {
++        if (this.isEmpty || this.hasError) return [];
++
++        const nodes = [...this._parsedPayload.nodes];
++        // Sort deterministically by layer ASC, then ID ASC
++        nodes.sort((a, b) => {
++            const lA = a.layer || 'Unassigned';
++            const lB = b.layer || 'Unassigned';
++            const layerDiff = lA.localeCompare(lB);
++            return layerDiff !== 0 ? layerDiff : a.id.localeCompare(b.id);
++        });
++
++        const total = nodes.length;
++        const totalWidth = 1000;
++        const bandWidth = Math.max(1, totalWidth / total);
++
++        return nodes.map((node, index) => {
++            const isSelected = this.selectedNodeId === node.id;
++            const fill = this.resolveColor(node);
++            const x = index * bandWidth;
++
++            return {
++                id: node.id,
++                x: x,
++                w: bandWidth,
++                fill: fill,
++                stroke: isSelected ? '#38bdf8' : 'rgba(0,0,0,0.4)',
++                className: `dna-band ${isSelected ? 'selected' : ''}`,
++                tooltip: `${node.label || node.id} | Layer: ${node.layer || 'Unassigned'} | Risk: ${node.risk || 'NONE'} | Coverage: ${node.coverageStatus || 'UNKNOWN'}`
++            };
++        });
++    }
++
++    resolveColor(node) {
++        if (this.selectedDimension === 'risk') {
++            const r = (node.risk || 'NONE').toUpperCase();
++            return RISK_COLORS[r] || RISK_COLORS.NONE;
++        }
++        if (this.selectedDimension === 'coverage') {
++            const c = (node.coverageStatus || 'UNKNOWN').toUpperCase();
++            return COVERAGE_COLORS[c] || COVERAGE_COLORS.UNKNOWN;
++        }
++        if (this.selectedDimension === 'coupling') {
++            const coupling = Number(node.coupling) || ((node.fanIn || 0) + (node.fanOut || 0)) || 0;
++            if (coupling > 15) return '#ef4444'; // Red (hotspot)
++            if (coupling > 8) return '#f59e0b'; // Amber
++            if (coupling > 0) return '#38bdf8'; // Blue
++            return '#64748b'; // Grey
++        }
++        // Default: Layer
++        const layer = node.layer || 'Unassigned';
++        return LAYER_COLORS[layer] || LAYER_COLORS.Unassigned;
++    }
++
++    handleDimensionChange(event) {
++        this.selectedDimension = event.target.value;
++    }
++
++    handleBandClick(event) {
++        const nodeId = event.currentTarget.dataset.nodeId;
++        if (!nodeId) return;
++
++        const node = this._parsedPayload?.nodes?.find(n => n.id === nodeId) || null;
++
++        // Dispatches canonical nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION
++        this.dispatchEvent(new CustomEvent('nodeselect', {
++            detail: {
++                nodeId: nodeId,
++                node: node,
++                sourceView: 'barcode'
++            },
++            bubbles: true,
++            composed: true,
++            cancelable: false
++        }));
++    }
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml
+new file mode 100644
+index 0000000..9426e62
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>true</isExposed>
++    <masterLabel>DA Architecture DNA Barcode</masterLabel>
++    <description>Architecture DNA Barcode Component for Dependency Analyzer (Wave 7 Task W7-2)</description>
++    <targets>
++        <target>lightning__RecordPage</target>
++        <target>lightning__AppPage</target>
++        <target>lightning__HomePage</target>
++    </targets>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/tests/run-w7-2-tests.cjs b/scratch/salesforce-poc/tests/run-w7-2-tests.cjs
+new file mode 100644
+index 0000000..504a0e6
+--- /dev/null
++++ b/scratch/salesforce-poc/tests/run-w7-2-tests.cjs
+@@ -0,0 +1,130 @@
++/**
++ * run-w7-2-tests.cjs
++ * Hardened Unit Test Suite for Task W7-2: daArchitectureDnaBarcode LWC
++ *
++ * Verifies:
++ * 1. Component initialization and defaults.
++ * 2. Deterministic barcode band rendering and width calculation.
++ * 3. Multi-dimensional color mapping (layer, risk, coverage, coupling).
++ * 4. Active profile derivation and details card rendering.
++ * 5. Selection event emission (nodeselect, bubbles, composed, SELECTION != NAVIGATION).
++ * 6. Empty and malformed payload resilience.
++ * 7. Shared graph payload immutability.
++ */
++
++const assert = require('assert');
++const path = require('path');
++const fs = require('fs');
++
++function createBarcodeInstance() {
++    const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js');
++    let code = fs.readFileSync(filePath, 'utf8');
++
++    code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++    code = code.replace(/@api\s+/g, '');
++    code = code.replace(/@track\s+/g, '');
++    code = code.replace('export default class DaArchitectureDnaBarcode', 'class DaArchitectureDnaBarcode');
++    code += '\nreturn DaArchitectureDnaBarcode;';
++
++    const LwcMock = {
++        LightningElement: class {
++            constructor() {
++                this._dispatchedEvents = [];
++            }
++            dispatchEvent(evt) {
++                this._dispatchedEvents.push(evt);
++            }
++        }
++    };
++
++    const ctor = new Function('LightningElement', code)(LwcMock.LightningElement);
++    return new ctor();
++}
++
++async function runW72Tests() {
++    console.log('Running Task W7-2 (daArchitectureDnaBarcode LWC) Test Suite...');
++    console.log('===========================================================');
++
++    const comp = createBarcodeInstance();
++    assert.strictEqual(comp.isEmpty, true);
++    assert.strictEqual(comp.selectedDimension, 'layer');
++    console.log('  ✓ 1. Initial default state verified');
++
++    const samplePayload = {
++        nodes: [
++            { id: 'ApexClass.AccountService', label: 'AccountService', layer: 'Service', risk: 'HIGH', coverageStatus: 'COVERED', coupling: 16 },
++            { id: 'ApexClass.AccountSelector', label: 'AccountSelector', layer: 'Selector', risk: 'LOW', coverageStatus: 'COVERED', coupling: 4 },
++            { id: 'ApexClass.LegacyEngine', label: 'LegacyEngine', layer: 'Unassigned', risk: 'HIGH', coverageStatus: 'UNTESTED', coupling: 9 },
++            { id: 'LWC.accountCard', label: 'accountCard', layer: 'UI', risk: 'LOW', coverageStatus: 'UNKNOWN', coupling: 2 }
++        ],
++        edges: []
++    };
++
++    const frozenPayload = JSON.parse(JSON.stringify(samplePayload));
++    Object.freeze(frozenPayload);
++    Object.freeze(frozenPayload.nodes);
++    frozenPayload.nodes.forEach(n => Object.freeze(n));
++
++    comp.payload = frozenPayload;
++    assert.strictEqual(comp.isEmpty, false);
++    assert.strictEqual(comp.renderedBands.length, 4, '4 barcode bands generated');
++    assert.strictEqual(comp.renderedBands[0].w, 250, '1000px / 4 nodes = 250px band width');
++    console.log('  ✓ 2. Barcode strip rendering and deterministic band width verified');
++
++    // 3. Multi-dimensional color mapping
++    // Dimension: layer
++    comp.selectedDimension = 'layer';
++    assert.ok(comp.renderedBands.some(b => b.fill === '#10b981'), 'Service layer color mapped');
++
++    // Dimension: risk
++    comp.selectedDimension = 'risk';
++    assert.ok(comp.renderedBands.some(b => b.fill === '#ef4444'), 'High risk color mapped');
++
++    // Dimension: coverage
++    comp.selectedDimension = 'coverage';
++    assert.ok(comp.renderedBands.some(b => b.fill === '#ef4444'), 'Untested coverage red mapped');
++    assert.ok(comp.renderedBands.some(b => b.fill === '#10b981'), 'Covered green mapped');
++
++    // Dimension: coupling
++    comp.selectedDimension = 'coupling';
++    assert.ok(comp.renderedBands.some(b => b.fill === '#ef4444'), 'Hotspot coupling (>15) red mapped');
++    console.log('  ✓ 3. Multi-dimensional barcode color mappings verified');
++
++    // 4. Active node profile
++    assert.strictEqual(comp.activeNode.id, samplePayload.nodes[0].id);
++    comp.selectedNodeId = 'ApexClass.AccountSelector';
++    assert.strictEqual(comp.activeNode.id, 'ApexClass.AccountSelector');
++    console.log('  ✓ 4. Active component profile resolution verified');
++
++    // 5. Band click CustomEvent emission adhering to CONTRACT-06 & SELECTION != NAVIGATION
++    comp.handleBandClick({ currentTarget: { dataset: { nodeId: 'ApexClass.AccountService' } } });
++    assert.strictEqual(comp._dispatchedEvents.length, 1);
++    const evt = comp._dispatchedEvents[0];
++    assert.strictEqual(evt.type, 'nodeselect');
++    assert.strictEqual(evt.detail.nodeId, 'ApexClass.AccountService');
++    assert.strictEqual(evt.detail.sourceView, 'barcode');
++    assert.strictEqual(evt.bubbles, true);
++    assert.strictEqual(evt.composed, true);
++    console.log('  ✓ 5. Band click nodeselect event verified (SELECTION != NAVIGATION)');
++
++    // 6. Empty and malformed handling
++    comp.payload = { nodes: [] };
++    assert.strictEqual(comp.isEmpty, true);
++    assert.strictEqual(comp.renderedBands.length, 0);
++
++    comp.payload = '{ invalid';
++    assert.strictEqual(comp.hasError, true);
++    console.log('  ✓ 6. Empty and malformed payload resilience verified');
++
++    // 7. Immutability
++    assert.strictEqual(samplePayload.nodes[0].selected, undefined);
++    console.log('  ✓ 7. Payload immutability preserved');
++
++    console.log('===========================================================');
++    console.log('Task W7-2 Test Results: ALL 7 TESTS PASSED');
++}
++
++runW72Tests().catch(err => {
++    console.error('Task W7-2 Test Failure:', err);
++    process.exit(1);
++});

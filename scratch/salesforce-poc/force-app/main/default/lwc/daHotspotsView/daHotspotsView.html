@@ -1,0 +1,94 @@
+<template>
+    <div class="hotspots-container" data-testid="hotspots-container">
+        <!-- Toolbar -->
+        <div class="hotspots-toolbar">
+            <div class="hotspots-controls">
+                <span class="control-label">Search Hotspot:</span>
+                <input
+                    type="text"
+                    class="control-input"
+                    placeholder="Search by component name..."
+                    value={searchQuery}
+                    oninput={handleSearchChange}
+                    data-testid="hotspots-search-input"
+                />
+
+                <span class="control-label">Risk Filter:</span>
+                <select class="control-select" onchange={handleRiskFilterChange} data-testid="hotspots-risk-select">
+                    <option value="">All Risks</option>
+                    <option value="HIGH">High Risk</option>
+                    <option value="MEDIUM">Medium Risk</option>
+                    <option value="LOW">Low Risk</option>
+                </select>
+
+                <span class="control-label">Category:</span>
+                <select class="control-select" onchange={handleCategoryFilterChange} data-testid="hotspots-category-select">
+                    <option value="all">All Hotspots</option>
+                    <option value="coupling">High Coupling (&gt;15)</option>
+                    <option value="fanIn">High Fan-In (&gt;10)</option>
+                    <option value="cycles">Cyclic Dependencies</option>
+                </select>
+            </div>
+            <div class="hotspots-summary">
+                <span class="control-label">Total Hotspots: {hotspotCount} (Ranked)</span>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="hotspots-body">
+            <template lwc:if={hasError}>
+                <div class="hotspots-error" data-testid="hotspots-error">
+                    <span>{errorMessage}</span>
+                </div>
+            </template>
+            <template lwc:elseif={isEmpty}>
+                <div class="hotspots-empty" data-testid="hotspots-empty">
+                    <span>No architectural hotspots detected in active project payload.</span>
+                </div>
+            </template>
+            <template lwc:else>
+                <table class="hotspots-table" data-testid="hotspots-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Component</th>
+                            <th>Type</th>
+                            <th>Layer</th>
+                            <th>Coupling</th>
+                            <th>Fan-In</th>
+                            <th>Fan-Out</th>
+                            <th>Complexity</th>
+                            <th>LOC</th>
+                            <th>Cycles</th>
+                            <th>Risk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={filteredHotspots} for:item="item">
+                            <tr
+                                key={item.id}
+                                class={item.rowClass}
+                                onclick={handleRowClick}
+                                data-node-id={item.id}
+                            >
+                                <td>#{item.rank}</td>
+                                <td><strong>{item.label}</strong></td>
+                                <td>{item.type}</td>
+                                <td>{item.layer}</td>
+                                <td>{item.coupling}</td>
+                                <td>{item.fanIn}</td>
+                                <td>{item.fanOut}</td>
+                                <td>{item.cyclomaticComplexity}</td>
+                                <td>{item.loc}</td>
+                                <td>{item.cycleBadge}</td>
+                                <td>
+                                    <span class={item.riskClass}>{item.risk}</span>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,603 @@
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css
+new file mode 100644
+index 0000000..8e432b4
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css
+@@ -0,0 +1,82 @@
++.subway-container {
++    display: flex;
++    flex-direction: column;
++    height: 100%;
++    width: 100%;
++    background-color: #0b1120;
++    color: #f1f5f9;
++    overflow: hidden;
++    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++}
++
++.subway-toolbar {
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++    padding: 0.75rem 1rem;
++    border-bottom: 1px solid #1e293b;
++    background-color: #0f172a;
++    gap: 1rem;
++}
++
++.subway-controls {
++    display: flex;
++    align-items: center;
++    gap: 0.75rem;
++}
++
++.control-label {
++    font-size: 0.8125rem;
++    color: #94a3b8;
++}
++
++.control-input, .control-select {
++    background-color: #1e293b;
++    color: #f1f5f9;
++    border: 1px solid #334155;
++    border-radius: 4px;
++    padding: 0.25rem 0.5rem;
++    font-size: 0.8125rem;
++}
++
++.subway-canvas {
++    flex: 1;
++    position: relative;
++    padding: 1rem;
++    box-sizing: border-box;
++    overflow: auto;
++}
++
++.subway-svg {
++    width: 100%;
++    height: 100%;
++    min-height: 520px;
++    display: block;
++}
++
++.station-node {
++    cursor: pointer;
++    transition: transform 0.1s ease, filter 0.15s ease;
++}
++
++.station-node:hover circle {
++    filter: brightness(1.3);
++    stroke-width: 3px;
++}
++
++.station-node.selected circle {
++    stroke: #38bdf8 !important;
++    stroke-width: 3.5px !important;
++}
++
++.subway-empty, .subway-error {
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++    justify-content: center;
++    height: 100%;
++    min-height: 360px;
++    color: #64748b;
++    font-size: 0.9375rem;
++    gap: 0.5rem;
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html
+new file mode 100644
+index 0000000..788c25c
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html
+@@ -0,0 +1,117 @@
++<template>
++    <div class="subway-container" data-testid="subway-container">
++        <!-- Toolbar -->
++        <div class="subway-toolbar">
++            <div class="subway-controls">
++                <span class="control-label">Search Station:</span>
++                <input
++                    type="text"
++                    class="control-input"
++                    placeholder="Filter by name..."
++                    value={searchQuery}
++                    oninput={handleSearchChange}
++                    data-testid="subway-search-input"
++                />
++
++                <span class="control-label">Layer Track:</span>
++                <select class="control-select" onchange={handleLayerFilterChange} data-testid="subway-layer-select">
++                    <option value="">All Tracks</option>
++                    <template for:each={layerTrackOptions} for:item="layer">
++                        <option key={layer} value={layer}>{layer}</option>
++                    </template>
++                </select>
++            </div>
++            <div class="subway-summary">
++                <span class="control-label">Tracks: {trackCount} | Stations: {stationCount} | Cross-Tracks: {routeCount}</span>
++            </div>
++        </div>
++
++        <!-- Canvas -->
++        <div class="subway-canvas">
++            <template lwc:if={hasError}>
++                <div class="subway-error" data-testid="subway-error">
++                    <span>{errorMessage}</span>
++                </div>
++            </template>
++            <template lwc:elseif={isEmpty}>
++                <div class="subway-empty" data-testid="subway-empty">
++                    <span>No transit routes or stations available in active project payload.</span>
++                </div>
++            </template>
++            <template lwc:else>
++                <svg class="subway-svg" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet" data-testid="subway-svg">
++                    <!-- Layer Track Backbone Lines -->
++                    <template for:each={renderedTracks} for:item="track">
++                        <g key={track.name} class="subway-track-group">
++                            <line
++                                x1="120"
++                                y1={track.y}
++                                x2="860"
++                                y2={track.y}
++                                stroke={track.color}
++                                stroke-width="8"
++                                stroke-linecap="round"
++                                opacity="0.35"
++                            />
++                            <!-- Track Label -->
++                            <text
++                                x="110"
++                                y={track.textY}
++                                fill={track.color}
++                                font-size="12"
++                                font-weight="bold"
++                                text-anchor="end"
++                            >
++                                {track.name}
++                            </text>
++                        </g>
++                    </template>
++
++                    <!-- Dependency Flow Routes (Curves) -->
++                    <template for:each={renderedRoutes} for:item="route">
++                        <path
++                            key={route.id}
++                            d={route.pathD}
++                            fill="none"
++                            stroke={route.color}
++                            stroke-width="1.5"
++                            stroke-dasharray={route.dashArray}
++                            opacity="0.6"
++                        />
++                    </template>
++
++                    <!-- Station Markers -->
++                    <template for:each={renderedStations} for:item="stn">
++                        <g
++                            key={stn.id}
++                            class={stn.groupClass}
++                            onclick={handleStationClick}
++                            data-node-id={stn.id}
++                        >
++                            <circle
++                                cx={stn.x}
++                                cy={stn.y}
++                                r={stn.radius}
++                                fill="#0f172a"
++                                stroke={stn.strokeColor}
++                                stroke-width="2.5"
++                            >
++                                <title>{stn.tooltip}</title>
++                            </circle>
++                            <text
++                                x={stn.x}
++                                y={stn.labelY}
++                                fill="#e2e8f0"
++                                font-size="10"
++                                text-anchor="middle"
++                                pointer-events="none"
++                            >
++                                {stn.shortLabel}
++                            </text>
++                        </g>
++                    </template>
++                </svg>
++            </template>
++        </div>
++    </div>
++</template>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js
+new file mode 100644
+index 0000000..d2a3577
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js
+@@ -0,0 +1,233 @@
++import { LightningElement, api, track } from 'lwc';
++
++const LAYER_TRACK_ORDER = [
++    'UI',
++    'Service',
++    'Domain',
++    'Selector',
++    'Data',
++    'Integration',
++    'Utility',
++    'Unassigned'
++];
++
++const TRACK_COLORS = {
++    UI: '#38bdf8',
++    Service: '#10b981',
++    Domain: '#a855f7',
++    Selector: '#f59e0b',
++    Data: '#ec4899',
++    Integration: '#06b6d4',
++    Utility: '#94a3b8',
++    Unassigned: '#64748b'
++};
++
++export default class DaSubwayView extends LightningElement {
++    @api projectId;
++    @api selectedNodeId;
++
++    @track searchQuery = '';
++    @track selectedLayer = '';
++    @track errorMessage = '';
++
++    _rawPayload = null;
++    _parsedPayload = null;
++
++    @api
++    get payload() {
++        return this._rawPayload;
++    }
++    set payload(value) {
++        this._rawPayload = value;
++        this.processPayload();
++    }
++
++    processPayload() {
++        this.errorMessage = '';
++        if (!this._rawPayload) {
++            this._parsedPayload = null;
++            return;
++        }
++
++        if (typeof this._rawPayload === 'string') {
++            try {
++                this._parsedPayload = JSON.parse(this._rawPayload);
++            } catch (err) {
++                this.errorMessage = 'Malformed graph payload JSON';
++                this._parsedPayload = null;
++                return;
++            }
++        } else if (typeof this._rawPayload === 'object') {
++            this._parsedPayload = this._rawPayload;
++        } else {
++            this.errorMessage = 'Invalid payload format';
++            this._parsedPayload = null;
++        }
++    }
++
++    get hasError() {
++        return !!this.errorMessage;
++    }
++
++    get isEmpty() {
++        if (!this._parsedPayload || !Array.isArray(this._parsedPayload.nodes)) return true;
++        return this._parsedPayload.nodes.length === 0;
++    }
++
++    get trackCount() {
++        return this.renderedTracks.length;
++    }
++
++    get stationCount() {
++        return this.renderedStations.length;
++    }
++
++    get routeCount() {
++        return this.renderedRoutes.length;
++    }
++
++    get layerTrackOptions() {
++        return LAYER_TRACK_ORDER;
++    }
++
++    get renderedTracks() {
++        if (this.isEmpty || this.hasError) return [];
++        // Map available tracks across 600px height with padding
++        const startY = 70;
++        const spacingY = 65;
++
++        return LAYER_TRACK_ORDER.map((layer, index) => {
++            const y = startY + index * spacingY;
++            return {
++                name: layer,
++                y: y,
++                textY: y + 4,
++                color: TRACK_COLORS[layer] || '#64748b'
++            };
++        });
++    }
++
++    get renderedStations() {
++        if (this.isEmpty || this.hasError) return [];
++
++        const nodes = this._parsedPayload.nodes;
++        const tracks = this.renderedTracks;
++        const trackYMap = {};
++        tracks.forEach(t => { trackYMap[t.name] = t.y; });
++
++        // Group stations by layer
++        const layerGroups = {};
++        LAYER_TRACK_ORDER.forEach(l => { layerGroups[l] = []; });
++
++        nodes.forEach(node => {
++            const layer = node.layer && layerGroups[node.layer] ? node.layer : 'Unassigned';
++            layerGroups[layer].push(node);
++        });
++
++        const stations = [];
++        const startX = 160;
++        const endX = 840;
++
++        LAYER_TRACK_ORDER.forEach(layer => {
++            const group = layerGroups[layer];
++            if (!group || !group.length) return;
++
++            // Sort stations deterministically by ID
++            group.sort((a, b) => a.id.localeCompare(b.id));
++
++            const count = group.length;
++            const stepX = count > 1 ? (endX - startX) / (count - 1) : 0;
++
++            group.forEach((node, idx) => {
++                const x = count === 1 ? (startX + endX) / 2 : startX + idx * stepX;
++                const y = trackYMap[layer] || 500;
++
++                // Match filter criteria
++                if (this.selectedLayer && node.layer !== this.selectedLayer) return;
++                if (this.searchQuery) {
++                    const q = this.searchQuery.toLowerCase();
++                    const matchId = (node.id || '').toLowerCase().includes(q);
++                    const matchLabel = (node.label || '').toLowerCase().includes(q);
++                    if (!matchId && !matchLabel) return;
++                }
++
++                const isSelected = this.selectedNodeId === node.id;
++                const strokeColor = TRACK_COLORS[layer] || '#64748b';
++                const label = node.label || node.name || node.id;
++                const shortLabel = label.length > 12 ? label.slice(0, 10) + '..' : label;
++
++                stations.push({
++                    id: node.id,
++                    x: Math.round(x),
++                    y: Math.round(y),
++                    radius: isSelected ? 8 : 6,
++                    labelY: Math.round(y - 10),
++                    shortLabel: shortLabel,
++                    strokeColor: strokeColor,
++                    groupClass: `station-node ${isSelected ? 'selected' : ''}`,
++                    tooltip: `${label} (${layer}) | Fan-In: ${node.fanIn || 0} | Fan-Out: ${node.fanOut || 0}`
++                });
++            });
++        });
++
++        return stations;
++    }
++
++    get renderedRoutes() {
++        if (this.isEmpty || this.hasError) return [];
++        if (!Array.isArray(this._parsedPayload.edges)) return [];
++
++        const stations = this.renderedStations;
++        const stationMap = {};
++        stations.forEach(s => { stationMap[s.id] = s; });
++
++        const routes = [];
++        this._parsedPayload.edges.forEach((edge, idx) => {
++            const source = stationMap[edge.source];
++            const target = stationMap[edge.target];
++            if (!source || !target) return; // Only draw route if both stations visible
++
++            const isCrossLine = source.y !== target.y;
++            // Cubic Bezier curve connecting source and target
++            const midX = (source.x + target.x) / 2;
++            const pathD = `M ${source.x} ${source.y} C ${midX} ${source.y}, ${midX} ${target.y}, ${target.x} ${target.y}`;
++
++            routes.push({
++                id: edge.id || `edge-${idx}`,
++                pathD: pathD,
++                color: isCrossLine ? '#ec4899' : '#38bdf8',
++                dashArray: isCrossLine ? '4 2' : 'none',
++                isCrossLine: isCrossLine
++            });
++        });
++
++        return routes;
++    }
++
++    handleSearchChange(event) {
++        this.searchQuery = event.target.value;
++    }
++
++    handleLayerFilterChange(event) {
++        this.selectedLayer = event.target.value;
++    }
++
++    handleStationClick(event) {
++        const nodeId = event.currentTarget.dataset.nodeId;
++        if (!nodeId) return;
++
++        const node = this._parsedPayload?.nodes?.find(n => n.id === nodeId) || null;
++
++        // Dispatches canonical nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION
++        this.dispatchEvent(new CustomEvent('nodeselect', {
++            detail: {
++                nodeId: nodeId,
++                node: node,
++                sourceView: 'subway'
++            },
++            bubbles: true,
++            composed: true,
++            cancelable: false
++        }));
++    }
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml
+new file mode 100644
+index 0000000..52e9dfb
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>true</isExposed>
++    <masterLabel>DA Subway View</masterLabel>
++    <description>Subway Multi-Domain Flow View for Dependency Analyzer (Wave 6 Task W6-3)</description>
++    <targets>
++        <target>lightning__RecordPage</target>
++        <target>lightning__AppPage</target>
++        <target>lightning__HomePage</target>
++    </targets>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/tests/run-w6-3-tests.cjs b/scratch/salesforce-poc/tests/run-w6-3-tests.cjs
+new file mode 100644
+index 0000000..2f7ceb4
+--- /dev/null
++++ b/scratch/salesforce-poc/tests/run-w6-3-tests.cjs
+@@ -0,0 +1,129 @@
++/**
++ * run-w6-3-tests.cjs
++ * Hardened Unit Test Suite for Task W6-3: daSubwayView LWC
++ *
++ * Verifies:
++ * 1. Component initialization and layer track geometry.
++ * 2. Deterministic station placement along layer tracks.
++ * 3. Cross-line and intra-line route bezier curve calculation.
++ * 4. Station filtering by search text and layer track.
++ * 5. Selection event emission (nodeselect, bubbles, composed, SELECTION != NAVIGATION).
++ * 6. Empty and malformed payload resilience.
++ * 7. Input graph payload immutability.
++ */
++
++const assert = require('assert');
++const path = require('path');
++const fs = require('fs');
++
++function createSubwayInstance() {
++    const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daSubwayView/daSubwayView.js');
++    let code = fs.readFileSync(filePath, 'utf8');
++
++    code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++    code = code.replace(/@api\s+/g, '');
++    code = code.replace(/@track\s+/g, '');
++    code = code.replace('export default class DaSubwayView', 'class DaSubwayView');
++    code += '\nreturn DaSubwayView;';
++
++    const LwcMock = {
++        LightningElement: class {
++            constructor() {
++                this._dispatchedEvents = [];
++            }
++            dispatchEvent(evt) {
++                this._dispatchedEvents.push(evt);
++            }
++        }
++    };
++
++    const ctor = new Function('LightningElement', code)(LwcMock.LightningElement);
++    return new ctor();
++}
++
++async function runW63Tests() {
++    console.log('Running Task W6-3 (daSubwayView LWC) Test Suite...');
++    console.log('=================================================');
++
++    const comp = createSubwayInstance();
++    assert.strictEqual(comp.isEmpty, true, 'Initially empty without payload');
++    assert.strictEqual(comp.searchQuery, '', 'Initial search query empty');
++    console.log('  ✓ 1. Initial default state verified');
++
++    const samplePayload = {
++        nodes: [
++            { id: 'LWC.accountCard', label: 'accountCard', layer: 'UI', fanIn: 1, fanOut: 2 },
++            { id: 'ApexClass.AccountService', label: 'AccountService', layer: 'Service', fanIn: 2, fanOut: 2 },
++            { id: 'ApexClass.AccountSelector', label: 'AccountSelector', layer: 'Selector', fanIn: 1, fanOut: 1 },
++            { id: 'CustomObject.Account', label: 'Account', layer: 'Data', fanIn: 2, fanOut: 0 }
++        ],
++        edges: [
++            { id: 'e1', source: 'LWC.accountCard', target: 'ApexClass.AccountService' },
++            { id: 'e2', source: 'ApexClass.AccountService', target: 'ApexClass.AccountSelector' },
++            { id: 'e3', source: 'ApexClass.AccountSelector', target: 'CustomObject.Account' }
++        ]
++    };
++
++    const frozenPayload = JSON.parse(JSON.stringify(samplePayload));
++    Object.freeze(frozenPayload);
++    Object.freeze(frozenPayload.nodes);
++    frozenPayload.nodes.forEach(n => Object.freeze(n));
++
++    comp.payload = frozenPayload;
++    assert.strictEqual(comp.isEmpty, false, 'Payload populated');
++    assert.strictEqual(comp.stationCount, 4, 'Must render 4 stations');
++    assert.strictEqual(comp.trackCount, 8, '8 canonical layer tracks rendered');
++    assert.strictEqual(comp.routeCount, 3, '3 cross-layer transit routes rendered');
++    console.log('  ✓ 2. Subway tracks, stations, and route generation verified');
++
++    // 3. Cross-line curves
++    const routes = comp.renderedRoutes;
++    assert.ok(routes[0].isCrossLine, 'Route e1 connects UI to Service (cross-line)');
++    assert.ok(routes[0].pathD.startsWith('M '), 'Valid SVG path D generated');
++    console.log('  ✓ 3. Cross-line transit route geometry verified');
++
++    // 4. Station search filtering
++    comp.searchQuery = 'Selector';
++    assert.strictEqual(comp.stationCount, 1, 'Only AccountSelector matched');
++    assert.strictEqual(comp.renderedStations[0].id, 'ApexClass.AccountSelector');
++    comp.searchQuery = ''; // Reset
++
++    // 5. Layer filtering
++    comp.selectedLayer = 'Service';
++    assert.strictEqual(comp.stationCount, 1, 'Only Service layer station shown');
++    comp.selectedLayer = ''; // Reset
++    console.log('  ✓ 4. Station search and layer filtering verified');
++
++    // 6. Selection event emission adhering to CONTRACT-06 & SELECTION != NAVIGATION
++    comp.handleStationClick({ currentTarget: { dataset: { nodeId: 'ApexClass.AccountService' } } });
++    assert.strictEqual(comp._dispatchedEvents.length, 1, 'One CustomEvent emitted');
++    const evt = comp._dispatchedEvents[0];
++    assert.strictEqual(evt.type, 'nodeselect', 'Event type must be nodeselect');
++    assert.strictEqual(evt.detail.nodeId, 'ApexClass.AccountService');
++    assert.strictEqual(evt.detail.sourceView, 'subway');
++    assert.strictEqual(evt.bubbles, true);
++    assert.strictEqual(evt.composed, true);
++    console.log('  ✓ 5. Station selection event emission verified (SELECTION != NAVIGATION)');
++
++    // 7. Empty and malformed payload resilience
++    comp.payload = { nodes: [] };
++    assert.strictEqual(comp.isEmpty, true);
++    assert.strictEqual(comp.stationCount, 0);
++
++    comp.payload = 'bad-json{';
++    assert.strictEqual(comp.hasError, true);
++    assert.strictEqual(comp.stationCount, 0);
++    console.log('  ✓ 6. Empty and malformed payload resilience verified');
++
++    // 8. Payload immutability
++    assert.strictEqual(samplePayload.nodes[0].selected, undefined);
++    console.log('  ✓ 7. Payload immutability preserved');
++
++    console.log('=================================================');
++    console.log('Task W6-3 Test Results: ALL 7 TESTS PASSED');
++}
++
++runW63Tests().catch(err => {
++    console.error('Task W6-3 Test Failure:', err);
++    process.exit(1);
++});

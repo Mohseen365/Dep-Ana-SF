@@ -1,0 +1,6 @@
+filepath,change_type,sha256
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js,ADDED,3f6d5a300a25f50d90c91b23fb8bc078a5a9da7f6680ea947b25104ef87ab1fb
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html,ADDED,fc9fe10c23c2104591ba0618e9c636155cc130e38817f790454ce94d26b94d18
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css,ADDED,a434f60d0fe537ffc036aa956dfd103ad311aa75cf43728f0a10577d6fa9e673
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml,ADDED,152e996b5bdd1d141fff897147c06bb71b51e01412f7353a28dba9b13ed42b32
+scratch/salesforce-poc/tests/run-w6-2-tests.cjs,ADDED,51d4abf13cba8fed4aa8f2fb8db2d1ec6e1662deafbf16b84655b2d1132b6543

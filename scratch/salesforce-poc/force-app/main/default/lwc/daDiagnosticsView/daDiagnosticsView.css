@@ -1,0 +1,119 @@
+.diagnostics-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: #0b1120;
+    color: #f1f5f9;
+    overflow-y: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.diagnostics-header {
+    margin-bottom: 1.5rem;
+}
+
+.diagnostics-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 0.25rem 0;
+}
+
+.diagnostics-subtitle {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.scorecards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+    border-color: #334155;
+    transform: translateY(-2px);
+}
+
+.card-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 0.25rem;
+}
+
+.card-desc {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.health-good { color: #34d399; }
+.health-warning { color: #fbbf24; }
+.health-danger { color: #f87171; }
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 0.75rem;
+}
+
+.breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.breakdown-table th {
+    background-color: #1e293b;
+    color: #94a3b8;
+    text-align: left;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid #334155;
+}
+
+.breakdown-table td {
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid #1e293b;
+    color: #e2e8f0;
+}
+
+.diagnostics-empty, .diagnostics-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    color: #64748b;
+    font-size: 0.9375rem;
+    gap: 0.5rem;
+}

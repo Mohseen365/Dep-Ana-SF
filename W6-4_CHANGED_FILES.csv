@@ -1,0 +1,6 @@
+filepath,change_type,sha256
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js,ADDED,4787c15f0dafe8ed75d99cc14646baa49c49486977ecb02d649a439444adf48f
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html,ADDED,66ce4799417f8258d7503f85df4145b4260fc1e02b1c0b3b8a830a50e28e0ac4
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css,ADDED,62b983dbce4e74a70fc260e33256285d4ecf8da9d4d28c6d23e02fe2bae19ae8
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml,ADDED,1d1e9416899f9764bb5b97daa5d8109b504d15708513910e9309048a5b65c3e5
+scratch/salesforce-poc/tests/run-w6-4-tests.cjs,ADDED,e0ebdc9aacc4c6324a793c69c85d2857a1e7bd3e4617aea042a3c3391f5ce564

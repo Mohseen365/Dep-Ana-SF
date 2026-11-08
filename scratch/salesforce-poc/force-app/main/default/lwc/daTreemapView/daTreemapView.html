@@ -1,0 +1,71 @@
+<template>
+    <div class="treemap-container" data-testid="treemap-container">
+        <!-- Toolbar -->
+        <div class="treemap-toolbar">
+            <div class="treemap-controls">
+                <span class="control-label">Sizing Metric:</span>
+                <select class="control-select" onchange={handleMetricChange} data-testid="metric-mode-select">
+                    <template for:each={metricOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
+                    </template>
+                </select>
+
+                <span class="control-label">Color Scheme:</span>
+                <select class="control-select" onchange={handleColorSchemeChange} data-testid="color-scheme-select">
+                    <template for:each={colorOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
+                    </template>
+                </select>
+            </div>
+            <div class="treemap-summary">
+                <span class="control-label">Nodes: {nodeCount} | Total Metric: {totalMetricValue}</span>
+            </div>
+        </div>
+
+        <!-- Content Body -->
+        <div class="treemap-canvas">
+            <template lwc:if={hasError}>
+                <div class="treemap-error" data-testid="treemap-error">
+                    <span>{errorMessage}</span>
+                </div>
+            </template>
+            <template lwc:elseif={isEmpty}>
+                <div class="treemap-empty" data-testid="treemap-empty">
+                    <span>No architectural nodes available in active project payload.</span>
+                </div>
+            </template>
+            <template lwc:else>
+                <svg class="treemap-svg" viewBox="0 0 800 500" preserveAspectRatio="none" data-testid="treemap-svg">
+                    <template for:each={renderedRects} for:item="rect">
+                        <g key={rect.id} class="treemap-cell" onclick={handleNodeClick} data-node-id={rect.id}>
+                            <rect
+                                x={rect.x}
+                                y={rect.y}
+                                width={rect.w}
+                                height={rect.h}
+                                fill={rect.bg}
+                                stroke={rect.border}
+                                stroke-width="1"
+                                class={rect.className}
+                            >
+                                <title>{rect.tooltip}</title>
+                            </rect>
+                            <template lwc:if={rect.showLabel}>
+                                <text
+                                    x={rect.textX}
+                                    y={rect.textY}
+                                    fill={rect.textColor}
+                                    font-size={rect.fontSize}
+                                    font-weight="500"
+                                    pointer-events="none"
+                                >
+                                    {rect.displayLabel}
+                                </text>
+                            </template>
+                        </g>
+                    </template>
+                </svg>
+            </template>
+        </div>
+    </div>
+</template>
