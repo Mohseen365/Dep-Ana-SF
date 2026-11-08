@@ -3,6 +3,8 @@
 ## 1. Branch and Starting HEAD Commit
 - **Repository Branch:** `jules-13464825583362349697-1c35cf96`
 - **Starting HEAD Commit:** `eec28b20de2451e19805fdb4ebc811478cfcd03f`
+- **Historical Authorization Target:** Commit `788b850dd21aad8a5a207186433bd1a42b7f4e03` (recorded in initial batch authorization orders on branch `jules-11041662194911020056-53ddff55`). Note: in the shallow repository clone, `788b850...` is not directly traversable, but branch commit `b448663...` identifies parent `788b850...`.
+- **Implementation PR Commit Lineage:** PR #121 (`3a14630a938dbc0a529c4c8c90a8dcd5d1b7c05b`) -> PR #122 (`aeda2c67d6e7d111061b7e830ed11d865f2079c5`) merged into HEAD commit `eec28b20de2451e19805fdb4ebc811478cfcd03f`.
 - **Base PR Reference:** PR #122 (`Merge pull request #122 from Mohseen365/jules-10479680008996852061-4a8786cc`)
 
 ---
