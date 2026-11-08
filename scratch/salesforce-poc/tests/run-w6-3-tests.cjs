@@ -64,12 +64,11 @@ async function runW63Tests() {
         ]
     };
 
-    const frozenPayload = JSON.parse(JSON.stringify(samplePayload));
-    Object.freeze(frozenPayload);
-    Object.freeze(frozenPayload.nodes);
-    frozenPayload.nodes.forEach(n => Object.freeze(n));
+    // Snapshot baseline BEFORE assigning input or executing component operations
+    const baselineSnapshot = JSON.parse(JSON.stringify(samplePayload));
 
-    comp.payload = frozenPayload;
+    // Assign actual unfrozen payload under test directly to component
+    comp.payload = samplePayload;
     assert.strictEqual(comp.isEmpty, false, 'Payload populated');
     assert.strictEqual(comp.stationCount, 4, 'Must render 4 stations');
     assert.strictEqual(comp.trackCount, 8, '8 canonical layer tracks rendered');
@@ -103,6 +102,7 @@ async function runW63Tests() {
     assert.strictEqual(evt.detail.sourceView, 'subway');
     assert.strictEqual(evt.bubbles, true);
     assert.strictEqual(evt.composed, true);
+    assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');
     console.log('  ✓ 5. Station selection event emission verified (SELECTION != NAVIGATION)');
 
     // 7. Empty and malformed payload resilience
@@ -115,8 +115,28 @@ async function runW63Tests() {
     assert.strictEqual(comp.stationCount, 0);
     console.log('  ✓ 6. Empty and malformed payload resilience verified');
 
-    // 8. Payload immutability
-    assert.strictEqual(samplePayload.nodes[0].selected, undefined);
+    // 8. Real Payload Immutability Verification (Full object integrity)
+    assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');
+
+    // Negative controls in isolated harness: verify comparison detects mutations
+    const negNodeTest = JSON.parse(JSON.stringify(baselineSnapshot));
+    negNodeTest.nodes[0].fanIn = 999;
+    assert.throws(() => {
+        assert.deepStrictEqual(negNodeTest, baselineSnapshot);
+    }, /AssertionError/, 'Integrity assertion must detect node property mutation');
+
+    const negEdgeTest = JSON.parse(JSON.stringify(baselineSnapshot));
+    negEdgeTest.edges[0].target = 'ApexClass.Mutated';
+    assert.throws(() => {
+        assert.deepStrictEqual(negEdgeTest, baselineSnapshot);
+    }, /AssertionError/, 'Integrity assertion must detect edge property mutation');
+
+    const negNestedTest = JSON.parse(JSON.stringify(baselineSnapshot));
+    negNestedTest.nodes[0].nested = { test: true };
+    assert.throws(() => {
+        assert.deepStrictEqual(negNestedTest, baselineSnapshot);
+    }, /AssertionError/, 'Integrity assertion must detect nested property mutation');
+
     console.log('  ✓ 7. Payload immutability preserved');
 
     console.log('=================================================');
