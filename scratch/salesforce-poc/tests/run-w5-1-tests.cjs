@@ -252,148 +252,174 @@ async function runTests() {
         passCount++;
     }
 
-    // 11. Correct preference persistence payload
-    {
-        savedPreferenceCalls = [];
-        const viewer = new DaGraphViewer();
-        viewer._recordId = 'proj_save_payload';
-        viewer.cyInitialized = true;
-        viewer.cyInstance = {
-            destroyed: false,
-            nodes: () => [
-                { id: () => 'node1', position: () => ({ x: 100, y: 150 }) },
-                { id: () => 'node2', position: () => ({ x: 200, y: 250 }) }
-            ],
-            zoom: () => 1.5,
-            pan: () => ({ x: 10, y: 20 }),
-            layout: () => ({ run: () => {} })
+    // Controlled timer environment for deterministic execution of production scheduleSaveState()
+    const realSetTimeout = global.setTimeout;
+    const realClearTimeout = global.clearTimeout;
+
+    let timerQueue = [];
+    let timerIdCounter = 1;
+
+    function installControlledTimers() {
+        timerQueue = [];
+        timerIdCounter = 1;
+        global.setTimeout = (callback, delay, ...args) => {
+            const id = timerIdCounter++;
+            timerQueue.push({ id, callback, delay, args });
+            return id;
         };
-
-        viewer.setLayout('circle');
-        assert.ok(viewer.saveTimeout !== null, 'Timeout scheduled');
-
-        // Fast-forward timeout and await asynchronous execution
-        await new Promise((resolve) => {
-            const originalTimeout = viewer.saveTimeout;
-            clearTimeout(originalTimeout);
-            viewer.saveTimeout = setTimeout(async () => {
-                viewer.saveTimeout = null;
-                // Execute save state callback
-                try {
-                    const positions = { node1: { x: 100, y: 150 }, node2: { x: 200, y: 250 } };
-                    const zoomPanJson = JSON.stringify({ zoom: 1.5, pan: { x: 10, y: 20 } });
-                    await mockApex.saveUserPreference({
-                        projectId: viewer._recordId,
-                        viewMode: 'graph',
-                        layoutMode: viewer._currentLayout,
-                        positionsJson: JSON.stringify(positions),
-                        filtersJson: null,
-                        zoomPanJson: zoomPanJson
-                    });
-                } catch (e) {}
-                resolve();
-            }, 10);
-        });
-
-        assert.strictEqual(savedPreferenceCalls.length, 1);
-        const call = savedPreferenceCalls[0];
-        assert.strictEqual(call.projectId, 'proj_save_payload');
-        assert.strictEqual(call.viewMode, 'graph');
-        assert.strictEqual(call.layoutMode, 'circle');
-        assert.deepStrictEqual(JSON.parse(call.positionsJson), { node1: { x: 100, y: 150 }, node2: { x: 200, y: 250 } });
-        assert.deepStrictEqual(JSON.parse(call.zoomPanJson), { zoom: 1.5, pan: { x: 10, y: 20 } });
-        console.log('  ✓ 11. Preference persistence payload matches canonical schema and values');
-        passCount++;
+        global.clearTimeout = (id) => {
+            timerQueue = timerQueue.filter(entry => entry.id !== id);
+        };
     }
 
-    // 12. Debounced persistence and rapid successive layout changes
-    {
-        savedPreferenceCalls = [];
-        const viewer = new DaGraphViewer();
-        viewer._recordId = 'proj_rapid';
-        viewer.cyInitialized = true;
-        viewer.cyInstance = {
-            destroyed: false,
-            nodes: () => [{ id: () => 'n1', position: () => ({ x: 5, y: 5 }) }],
-            zoom: () => 1.0,
-            pan: () => ({ x: 0, y: 0 }),
-            layout: () => ({ run: () => {} })
-        };
-
-        viewer.setLayout('grid');
-        const timeout1 = viewer.saveTimeout;
-        viewer.setLayout('circle');
-        const timeout2 = viewer.saveTimeout;
-        viewer.setLayout('breadthfirst');
-        const timeout3 = viewer.saveTimeout;
-
-        assert.notStrictEqual(timeout1, timeout2, 'Timeout reset on 2nd switch');
-        assert.notStrictEqual(timeout2, timeout3, 'Timeout reset on 3rd switch');
-
-        // Await final debounce
-        await new Promise((resolve) => {
-            clearTimeout(viewer.saveTimeout);
-            viewer.saveTimeout = setTimeout(async () => {
-                viewer.saveTimeout = null;
-                await mockApex.saveUserPreference({
-                    projectId: viewer._recordId,
-                    viewMode: 'graph',
-                    layoutMode: viewer._currentLayout,
-                    positionsJson: JSON.stringify({ n1: { x: 5, y: 5 } }),
-                    filtersJson: null,
-                    zoomPanJson: null
-                });
-                resolve();
-            }, 10);
-        });
-
-        assert.strictEqual(savedPreferenceCalls.length, 1, 'Only final layout persisted due to debouncing');
-        assert.strictEqual(savedPreferenceCalls[0].layoutMode, 'breadthfirst', 'Persisted latest layout');
-        console.log('  ✓ 12. Rapid layout changes debounce correctly with latest layout value persisted');
-        passCount++;
+    function restoreRealTimers() {
+        global.setTimeout = realSetTimeout;
+        global.clearTimeout = realClearTimeout;
+        timerQueue = [];
     }
 
-    // 13. Persistence failure handling
+    async function flushControlledTimers() {
+        // Drain timers in order, awaiting any async callbacks returned
+        while (timerQueue.length > 0) {
+            const nextTimer = timerQueue.shift();
+            await nextTimer.callback(...nextTimer.args);
+        }
+    }
+
+    // 11. Correct preference persistence payload via production scheduleSaveState()
     {
-        saveReject = true;
-        const viewer = new DaGraphViewer();
-        viewer._recordId = 'proj_fail_pref';
-        viewer.cyInitialized = true;
-        viewer.selectedNodeId = 'node_stable';
-        viewer.cyInstance = {
-            destroyed: false,
-            nodes: () => [{ id: () => 'n1', position: () => ({ x: 5, y: 5 }) }],
-            zoom: () => 1.0,
-            pan: () => ({ x: 0, y: 0 }),
-            layout: () => ({ run: () => {} })
-        };
+        installControlledTimers();
+        try {
+            savedPreferenceCalls = [];
+            const viewer = new DaGraphViewer();
+            viewer._recordId = 'proj_save_payload';
+            viewer.cyInitialized = true;
+            viewer.cyInstance = {
+                destroyed: false,
+                nodes: () => [
+                    { id: () => 'node1', position: () => ({ x: 100, y: 150 }) },
+                    { id: () => 'node2', position: () => ({ x: 200, y: 250 }) }
+                ],
+                zoom: () => 1.5,
+                pan: () => ({ x: 10, y: 20 }),
+                layout: () => ({ run: () => {} })
+            };
 
-        viewer.setLayout('grid');
-        // Fast forward save timeout
-        await new Promise((resolve) => {
-            clearTimeout(viewer.saveTimeout);
-            viewer.saveTimeout = setTimeout(async () => {
-                try {
-                    await mockApex.saveUserPreference({
-                        projectId: viewer._recordId,
-                        viewMode: 'graph',
-                        layoutMode: viewer._currentLayout,
-                        positionsJson: null,
-                        filtersJson: null,
-                        zoomPanJson: null
-                    });
-                } catch (e) {
-                    // Non-fatal background save error handled cleanly
-                }
-                resolve();
-            }, 10);
-        });
+            // Invoke production setLayout which invokes production scheduleSaveState()
+            viewer.setLayout('circle');
+            assert.ok(viewer.saveTimeout !== null, 'Production scheduleSaveState scheduled a debounce timer');
+            assert.strictEqual(timerQueue.length, 1, 'Exactly one debounce timer queued in controlled timer registry');
 
-        assert.strictEqual(viewer.selectedNodeId, 'node_stable', 'Selection state uncorrupted');
-        assert.strictEqual(viewer.layoutMode, 'grid', 'Active layout remains intact');
-        saveReject = false;
-        console.log('  ✓ 13. Persistence failure handled safely without corrupting graph/selection state');
-        passCount++;
+            // Flush the timer to execute the REAL production callback
+            await flushControlledTimers();
+
+            assert.strictEqual(viewer.saveTimeout, null, 'Production callback reset saveTimeout to null');
+            assert.strictEqual(savedPreferenceCalls.length, 1, 'Production code called saveUserPreference exactly once');
+            const call = savedPreferenceCalls[0];
+            assert.strictEqual(call.projectId, 'proj_save_payload');
+            assert.strictEqual(call.viewMode, 'graph');
+            assert.strictEqual(call.layoutMode, 'circle');
+            assert.deepStrictEqual(JSON.parse(call.positionsJson), { node1: { x: 100, y: 150 }, node2: { x: 200, y: 250 } });
+            assert.deepStrictEqual(JSON.parse(call.zoomPanJson), { zoom: 1.5, pan: { x: 10, y: 20 } });
+            console.log('  ✓ 11. Production scheduleSaveState() persists canonical payload via real scheduled callback');
+            passCount++;
+        } finally {
+            restoreRealTimers();
+        }
+    }
+
+    // 12. Debounced persistence and rapid successive layout changes via production scheduleSaveState()
+    {
+        installControlledTimers();
+        try {
+            savedPreferenceCalls = [];
+            const viewer = new DaGraphViewer();
+            viewer._recordId = 'proj_rapid';
+            viewer.cyInitialized = true;
+            viewer.cyInstance = {
+                destroyed: false,
+                nodes: () => [{ id: () => 'n1', position: () => ({ x: 5, y: 5 }) }],
+                zoom: () => 1.0,
+                pan: () => ({ x: 0, y: 0 }),
+                layout: () => ({ run: () => {} })
+            };
+
+            // Rapid successive switches: grid -> circle -> breadthfirst
+            viewer.setLayout('grid');
+            const timeout1 = viewer.saveTimeout;
+            assert.strictEqual(timerQueue.length, 1, '1 timer active after first switch');
+
+            viewer.setLayout('circle');
+            const timeout2 = viewer.saveTimeout;
+            assert.notStrictEqual(timeout1, timeout2, 'Timeout reset on 2nd switch');
+            assert.strictEqual(timerQueue.length, 1, 'Timer queue maintained at 1 after debounce reset');
+
+            viewer.setLayout('breadthfirst');
+            const timeout3 = viewer.saveTimeout;
+            assert.notStrictEqual(timeout2, timeout3, 'Timeout reset on 3rd switch');
+            assert.strictEqual(timerQueue.length, 1, 'Timer queue maintained at 1 after 3rd switch');
+
+            // Flush the controlled timer to execute the real scheduled callback
+            await flushControlledTimers();
+
+            assert.strictEqual(savedPreferenceCalls.length, 1, 'Only final layout persisted due to production debouncing');
+            assert.strictEqual(savedPreferenceCalls[0].layoutMode, 'breadthfirst', 'Persisted latest layout');
+
+            // Verify project changes or stale requests suppress obsolete persistence:
+            // 1) Stale request counter suppression:
+            viewer.setLayout('grid');
+            assert.ok(viewer.saveTimeout !== null);
+            viewer.currentRequestId++; // Stale request increment
+            await flushControlledTimers();
+            assert.strictEqual(savedPreferenceCalls.length, 1, 'Stale request suppressed obsolete persistence');
+
+            // 2) Project recordId change suppression:
+            viewer.setLayout('grid');
+            assert.ok(viewer.saveTimeout !== null);
+            viewer._recordId = 'proj_switched_before_save';
+            await flushControlledTimers();
+            assert.strictEqual(savedPreferenceCalls.length, 1, 'Switched project suppressed obsolete persistence for previous project');
+
+            console.log('  ✓ 12. Production debounce persists only latest layout and suppresses stale/project-changed requests');
+            passCount++;
+        } finally {
+            restoreRealTimers();
+        }
+    }
+
+    // 13. Persistence failure handling via production callback
+    {
+        installControlledTimers();
+        try {
+            saveReject = true;
+            const viewer = new DaGraphViewer();
+            viewer._recordId = 'proj_fail_pref';
+            viewer.cyInitialized = true;
+            viewer.selectedNodeId = 'node_stable';
+            viewer.cyInstance = {
+                destroyed: false,
+                nodes: () => [{ id: () => 'n1', position: () => ({ x: 5, y: 5 }) }],
+                zoom: () => 1.0,
+                pan: () => ({ x: 0, y: 0 }),
+                layout: () => ({ run: () => {} })
+            };
+
+            viewer.setLayout('grid');
+            assert.ok(viewer.saveTimeout !== null);
+
+            // Execute the real production callback; it calls saveUserPreference which rejects
+            await flushControlledTimers();
+
+            assert.strictEqual(viewer.selectedNodeId, 'node_stable', 'Selection state uncorrupted after Apex save rejection');
+            assert.strictEqual(viewer.layoutMode, 'grid', 'Active layout remains intact after Apex save rejection');
+            assert.strictEqual(viewer.saveTimeout, null, 'Save timeout cleared');
+            saveReject = false;
+            console.log('  ✓ 13. Apex save rejection handled cleanly by production callback without state corruption');
+            passCount++;
+        } finally {
+            restoreRealTimers();
+            saveReject = false;
+        }
     }
 
     // 14. Cytoscape layout execution failure handling
@@ -469,24 +495,55 @@ async function runTests() {
         passCount++;
     }
 
-    // 17. Active layout cancellation / overlap race prevention
+    // 17. Active layout cancellation / overlap race prevention lifecycle
     {
         const viewer = new DaGraphViewer();
-        let stopped = false;
-        viewer._activeLayoutInstance = {
-            stop: () => {
-                stopped = true;
+        const lifecycleEvents = [];
+
+        // Mock layout factory that produces controlled layout instances
+        let layoutCreationCount = 0;
+        const createdLayouts = [];
+
+        viewer.cyInstance = {
+            layout: (config) => {
+                const layoutId = ++layoutCreationCount;
+                const layoutInst = {
+                    id: layoutId,
+                    name: config.name,
+                    run: () => {
+                        lifecycleEvents.push({ event: 'run', id: layoutId, name: config.name });
+                    },
+                    stop: () => {
+                        lifecycleEvents.push({ event: 'stop', id: layoutId, name: config.name });
+                    }
+                };
+                createdLayouts.push(layoutInst);
+                return layoutInst;
             }
         };
-        viewer.cyInstance = {
-            layout: () => ({
-                run: () => {}
-            })
-        };
 
+        // 1. First layout is created and its run() method is invoked.
+        viewer.applyLayout('grid');
+        assert.strictEqual(createdLayouts.length, 1, 'First layout instance created');
+        assert.strictEqual(viewer._activeLayoutInstance, createdLayouts[0], 'First layout is active instance');
+        assert.deepStrictEqual(lifecycleEvents, [
+            { event: 'run', id: 1, name: 'grid' }
+        ], 'First layout run() was called');
+
+        // 2. A second layout is requested.
+        // 3. The first layout stop() method is invoked before the second layout starts.
+        // 4. The second layout becomes the active layout instance.
         viewer.applyLayout('circle');
-        assert.strictEqual(stopped, true, 'Prior active layout was stopped before initiating new layout');
-        console.log('  ✓ 17. Active running layout operation stopped before starting next layout');
+
+        assert.strictEqual(createdLayouts.length, 2, 'Second layout instance created');
+        assert.strictEqual(viewer._activeLayoutInstance, createdLayouts[1], 'Second layout becomes active instance');
+        assert.deepStrictEqual(lifecycleEvents, [
+            { event: 'run', id: 1, name: 'grid' },
+            { event: 'stop', id: 1, name: 'grid' },
+            { event: 'run', id: 2, name: 'circle' }
+        ], 'Lifecycle order strictly verified: layout 1 run -> layout 1 stop -> layout 2 run');
+
+        console.log('  ✓ 17. Layout cancellation lifecycle verified: run(L1) -> stop(L1) -> run(L2) with active instance replacement');
         passCount++;
     }
 
