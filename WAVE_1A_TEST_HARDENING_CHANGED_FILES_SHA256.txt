@@ -1,0 +1,66 @@
+# WAVE 1A TEST HARDENING SHA-256 DIGEST REGISTER
+# Generated immediately following implementation and test execution
+
+## Changed Authorized Test Runners (Before and After)
+
+File: scratch/salesforce-poc/tests/run-w6-2-tests.cjs
+  OLD SHA-256: 51d4abf13cba8fed4aa8f2fb8db2d1ec6e1662deafbf16b84655b2d1132b6543
+  NEW SHA-256: 2e5a290762c584084f2be7223baa6ef6381088b35e2983e95339f8d30c7df4a2
+
+File: scratch/salesforce-poc/tests/run-w6-3-tests.cjs
+  OLD SHA-256: 196d1c46d893b08f2d8aac7b298d95fdad04d032e84008ff575fb94dd11be7cd
+  NEW SHA-256: 252fcc0910d5b3be12ca3419c1b8f8809287e066838b6deb42fa8ae080cdd810
+
+File: scratch/salesforce-poc/tests/run-w6-4-tests.cjs
+  OLD SHA-256: e0ebdc9aacc4c6324a793c69c85d2857a1e7bd3e4617aea042a3c3391f5ce564
+  NEW SHA-256: 1b3d8d784afa1d4d577bf9e9c58e1097d1e507610e5148bfc832dbc47d208980
+
+File: scratch/salesforce-poc/tests/run-w7-1-tests.cjs
+  OLD SHA-256: 428f33ccbbc3694c6b7e3bf522918ec849c8b4916b465a8beca0df77f3c26a3e
+  NEW SHA-256: 185503a2338a9549f2726c350597158c0e8f14e958af349bb03d935c83a795e0
+
+File: scratch/salesforce-poc/tests/run-w7-2-tests.cjs
+  OLD SHA-256: 87dd62eb7b59a5ca970348ac541f0484cf718f8ddd7bc96c51dd05015eca4787
+  NEW SHA-256: 7f7262bc9f4af5040bc270d2a7ddeba60e68bd511d3365302ab5602804f29b08
+
+## Protected Governance & Contract Artifacts (Immutability Verified)
+
+WAVE_0_4_AUTHORITATIVE_FINAL_TASK_AND_DEPENDENCY_REGISTER.csv : 349fa9fdc8fa8cf23063c7af2577a1acd3369e190b1196013339a53f0191997c
+WAVE_0_4_EXHAUSTIVE_FILE_OWNERSHIP_MANIFEST.csv : 3c60ba8059f834e69ec70912d167c632294f231f977edd023b9488760cf62935
+docs/waves-5-9/phase-a3/CONTRACT_06_NODE_SELECTION_EVENT_DTO.md : 6742a2e081103a40c72f3eef57546764ae6818b6398b4d2fd5e583e938055fe8
+W6-2_PATCH.patch : efe99960fdfb98cb2e71b914ba5906ae8936b5cff20da1b6b43e95e8b232102d
+W6-3_PATCH.patch : d88a7b2bc64bd42cba240165efc17c337e37be45011353d199b80a99f7bbef59
+W6-4_PATCH.patch : 5bf1331acfadd517efe1cfc754891435a7894f491b211c308c77fef57cf23419
+W7-1_PATCH.patch : 8b64d1fe4bfbe26d2174478fee4b9f12c427914393522bac8b5d7a69603dd167
+W7-2_PATCH.patch : afd3b0f26ed1895f0084d8b459de781644115db401192b6a30b9cea7845a7e23
+
+## INT-1 Coordinator Protected Paths (Immutability Verified)
+
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js : b908430756f9efdf273e4574b8d2b77b7efc367687ec238348b459b5de03c80c
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html : aaba5a7fce25054d24ba5083999ab7fccdae2681bf5d9a18f34c5fcf7d1d02cc
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.css : 47bb1835ecc68daf1b01a18e7c1686c37bbc297ba5a1a6a6e506e3b7669e2d50
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js-meta.xml : 3c3ee3cee11b58833f4278db44f90771d33d6c75bd8bc2dca7975b941817db0e
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js : 2662f76c3958d354db09c21c60865c3cb89c801a351869c1a498cd383da7f1fc
+
+## Production Wave 1A LWC Artifacts (Immutability Verified - 20 Files)
+
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js : 3f6d5a300a25f50d90c91b23fb8bc078a5a9da7f6680ea947b25104ef87ab1fb
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html : fc9fe10c23c2104591ba0618e9c636155cc130e38817f790454ce94d26b94d18
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css : a434f60d0fe537ffc036aa956dfd103ad311aa75cf43728f0a10577d6fa9e673
+scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml : 152e996b5bdd1d141fff897147c06bb71b51e01412f7353a28dba9b13ed42b32
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js : 628c450d650be6836a6097d6d85c856e1ea7a0621880eac1db5d50094b24d3c6
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.html : 43eb1da7a7fae65221759bde43dbbfced97735f416698b6693e33b749f9ceb8a
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.css : f7edc8c301e2583faf05d3baefefa2117f59a5773f53a25e1914a0bf7ed4f15b
+scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView/daSubwayView.js-meta.xml : 5e953a63840af25dc95c1414fb436009e1f8f1d9b2b269ef610ff28a8f05a21b
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js : 4787c15f0dafe8ed75d99cc14646baa49c49486977ecb02d649a439444adf48f
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html : 66ce4799417f8258d7503f85df4145b4260fc1e02b1c0b3b8a830a50e28e0ac4
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css : 62b983dbce4e74a70fc260e33256285d4ecf8da9d4d28c6d23e02fe2bae19ae8
+scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml : 1d1e9416899f9764bb5b97daa5d8109b504d15708513910e9309048a5b65c3e5
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js : f025d85ba8748d007b44f820c2b5d3d4c9d16446d73eb48e204d2aa0b6522195
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.html : 7b6cfb20f38f07ac4b3517d718c2b1c4e1f98022428074b5437c2108c1529592
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.css : d90a0ce460fcb9e9ffd7ceea5276a619ca35793ca746a88b6ee0b379aeed616c
+scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView/daDiagnosticsView.js-meta.xml : 68b9642a34ee3b0ea9e54abd9471fdb474c5bb340a0996938edc66032f500c60
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js : 85adf6cee67647bbc4f1a4ec67b4d05ba96de30c45f15e0b49e61d1f42911e81
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.html : 57cf1f2b763c66bbb4316f9316f976a7b04392a300352267bd9354aee54978fd
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.css : 391b8ed252406bbbadee6c6a8c607cfb48940472e0b4204b699e556f7a766944
+scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode/daArchitectureDnaBarcode.js-meta.xml : 6eb886b7662baa713491056516cb8ab5e7d8eb03393dccf6ab6daf473296afd8
