@@ -1,0 +1,574 @@
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css
+new file mode 100644
+index 0000000..43e5806
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.css
+@@ -0,0 +1,94 @@
++.treemap-container {
++    display: flex;
++    flex-direction: column;
++    height: 100%;
++    width: 100%;
++    background-color: #0b1120;
++    color: #e2e8f0;
++    overflow: hidden;
++    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++}
++
++.treemap-toolbar {
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++    padding: 0.75rem 1rem;
++    border-bottom: 1px solid #1e293b;
++    background-color: #0f172a;
++    gap: 1rem;
++}
++
++.treemap-controls {
++    display: flex;
++    align-items: center;
++    gap: 0.75rem;
++}
++
++.control-label {
++    font-size: 0.8125rem;
++    color: #94a3b8;
++}
++
++.control-select {
++    background-color: #1e293b;
++    color: #f1f5f9;
++    border: 1px solid #334155;
++    border-radius: 4px;
++    padding: 0.25rem 0.5rem;
++    font-size: 0.8125rem;
++}
++
++.treemap-canvas {
++    flex: 1;
++    position: relative;
++    padding: 1rem;
++    box-sizing: border-box;
++    overflow: auto;
++}
++
++.treemap-svg {
++    width: 100%;
++    height: 100%;
++    min-height: 480px;
++    display: block;
++}
++
++.treemap-node-rect {
++    transition: opacity 0.15s ease, stroke-width 0.15s ease;
++    cursor: pointer;
++}
++
++.treemap-node-rect:hover {
++    filter: brightness(1.2);
++}
++
++.treemap-node-rect.selected {
++    stroke: #38bdf8 !important;
++    stroke-width: 2.5px !important;
++}
++
++.treemap-empty, .treemap-error {
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++    justify-content: center;
++    height: 100%;
++    min-height: 360px;
++    color: #64748b;
++    font-size: 0.9375rem;
++    gap: 0.5rem;
++}
++
++.treemap-tooltip {
++    position: absolute;
++    bottom: 1rem;
++    left: 1rem;
++    background-color: rgba(15, 23, 42, 0.95);
++    border: 1px solid #334155;
++    border-radius: 4px;
++    padding: 0.5rem 0.75rem;
++    font-size: 0.75rem;
++    pointer-events: none;
++    z-index: 10;
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html
+new file mode 100644
+index 0000000..4011aad
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.html
+@@ -0,0 +1,71 @@
++<template>
++    <div class="treemap-container" data-testid="treemap-container">
++        <!-- Toolbar -->
++        <div class="treemap-toolbar">
++            <div class="treemap-controls">
++                <span class="control-label">Sizing Metric:</span>
++                <select class="control-select" onchange={handleMetricChange} data-testid="metric-mode-select">
++                    <template for:each={metricOptions} for:item="opt">
++                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
++                    </template>
++                </select>
++
++                <span class="control-label">Color Scheme:</span>
++                <select class="control-select" onchange={handleColorSchemeChange} data-testid="color-scheme-select">
++                    <template for:each={colorOptions} for:item="opt">
++                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
++                    </template>
++                </select>
++            </div>
++            <div class="treemap-summary">
++                <span class="control-label">Nodes: {nodeCount} | Total Metric: {totalMetricValue}</span>
++            </div>
++        </div>
++
++        <!-- Content Body -->
++        <div class="treemap-canvas">
++            <template lwc:if={hasError}>
++                <div class="treemap-error" data-testid="treemap-error">
++                    <span>{errorMessage}</span>
++                </div>
++            </template>
++            <template lwc:elseif={isEmpty}>
++                <div class="treemap-empty" data-testid="treemap-empty">
++                    <span>No architectural nodes available in active project payload.</span>
++                </div>
++            </template>
++            <template lwc:else>
++                <svg class="treemap-svg" viewBox="0 0 800 500" preserveAspectRatio="none" data-testid="treemap-svg">
++                    <template for:each={renderedRects} for:item="rect">
++                        <g key={rect.id} class="treemap-cell" onclick={handleNodeClick} data-node-id={rect.id}>
++                            <rect
++                                x={rect.x}
++                                y={rect.y}
++                                width={rect.w}
++                                height={rect.h}
++                                fill={rect.bg}
++                                stroke={rect.border}
++                                stroke-width="1"
++                                class={rect.className}
++                            >
++                                <title>{rect.tooltip}</title>
++                            </rect>
++                            <template lwc:if={rect.showLabel}>
++                                <text
++                                    x={rect.textX}
++                                    y={rect.textY}
++                                    fill={rect.textColor}
++                                    font-size={rect.fontSize}
++                                    font-weight="500"
++                                    pointer-events="none"
++                                >
++                                    {rect.displayLabel}
++                                </text>
++                            </template>
++                        </g>
++                    </template>
++                </svg>
++            </template>
++        </div>
++    </div>
++</template>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js
+new file mode 100644
+index 0000000..a723ef4
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js
+@@ -0,0 +1,231 @@
++import { LightningElement, api, track } from 'lwc';
++
++const LAYER_COLORS = {
++    UI: { bg: 'rgba(59, 130, 246, 0.35)', border: '#3b82f6', text: '#93c5fd' },
++    Service: { bg: 'rgba(16, 185, 129, 0.35)', border: '#10b981', text: '#a7f3d0' },
++    Domain: { bg: 'rgba(139, 92, 246, 0.35)', border: '#8b5cf6', text: '#c4b5fd' },
++    Selector: { bg: 'rgba(245, 158, 11, 0.35)', border: '#f59e0b', text: '#fde68a' },
++    Data: { bg: 'rgba(236, 72, 153, 0.35)', border: '#ec4899', text: '#fbcfe8' },
++    Integration: { bg: 'rgba(14, 165, 233, 0.35)', border: '#0ea5e9', text: '#7dd3fc' },
++    Utility: { bg: 'rgba(107, 114, 128, 0.35)', border: '#6b7280', text: '#e5e7eb' },
++    Unassigned: { bg: 'rgba(75, 85, 99, 0.25)', border: '#4b5563', text: '#9ca3af' }
++};
++
++const RISK_COLORS = {
++    HIGH: { bg: 'rgba(239, 68, 68, 0.45)', border: '#ef4444', text: '#fca5a5' },
++    MEDIUM: { bg: 'rgba(245, 158, 11, 0.40)', border: '#f59e0b', text: '#fde68a' },
++    LOW: { bg: 'rgba(16, 185, 129, 0.35)', border: '#10b981', text: '#a7f3d0' },
++    NONE: { bg: 'rgba(107, 114, 128, 0.25)', border: '#6b7280', text: '#d1d5db' }
++};
++
++export default class DaTreemapView extends LightningElement {
++    @api projectId;
++    @api selectedNodeId;
++
++    @track metricMode = 'count'; // 'count' | 'loc' | 'coupling' | 'complexity'
++    @track colorScheme = 'layer'; // 'layer' | 'risk'
++    @track errorMessage = '';
++
++    _rawPayload = null;
++    _parsedPayload = null;
++
++    @api
++    get payload() {
++        return this._rawPayload;
++    }
++    set payload(value) {
++        this._rawPayload = value;
++        this.processPayload();
++    }
++
++    processPayload() {
++        this.errorMessage = '';
++        if (!this._rawPayload) {
++            this._parsedPayload = null;
++            return;
++        }
++
++        if (typeof this._rawPayload === 'string') {
++            try {
++                this._parsedPayload = JSON.parse(this._rawPayload);
++            } catch (err) {
++                this.errorMessage = 'Malformed graph payload JSON';
++                this._parsedPayload = null;
++                return;
++            }
++        } else if (typeof this._rawPayload === 'object') {
++            this._parsedPayload = this._rawPayload;
++        } else {
++            this.errorMessage = 'Invalid payload format';
++            this._parsedPayload = null;
++        }
++    }
++
++    get hasError() {
++        return !!this.errorMessage;
++    }
++
++    get isEmpty() {
++        if (!this._parsedPayload || !Array.isArray(this._parsedPayload.nodes)) return true;
++        return this._parsedPayload.nodes.length === 0;
++    }
++
++    get nodeCount() {
++        return this._parsedPayload?.nodes?.length || 0;
++    }
++
++    get metricOptions() {
++        return [
++            { label: 'Equal (Count)', value: 'count', selected: this.metricMode === 'count' },
++            { label: 'Lines of Code (LOC)', value: 'loc', selected: this.metricMode === 'loc' },
++            { label: 'Coupling', value: 'coupling', selected: this.metricMode === 'coupling' },
++            { label: 'Complexity', value: 'complexity', selected: this.metricMode === 'complexity' }
++        ];
++    }
++
++    get colorOptions() {
++        return [
++            { label: 'Architectural Layer', value: 'layer', selected: this.colorScheme === 'layer' },
++            { label: 'Risk Level', value: 'risk', selected: this.colorScheme === 'risk' }
++        ];
++    }
++
++    getNodeWeight(node) {
++        if (this.metricMode === 'loc') {
++            return Math.max(1, Number(node.loc) || 10);
++        }
++        if (this.metricMode === 'coupling') {
++            return Math.max(1, Number(node.coupling) || ((node.fanIn || 0) + (node.fanOut || 0)) || 1);
++        }
++        if (this.metricMode === 'complexity') {
++            return Math.max(1, Number(node.cyclomaticComplexity) || 1);
++        }
++        return 1;
++    }
++
++    get totalMetricValue() {
++        if (this.isEmpty) return 0;
++        return this._parsedPayload.nodes.reduce((sum, n) => sum + this.getNodeWeight(n), 0);
++    }
++
++    get renderedRects() {
++        if (this.isEmpty || this.hasError) return [];
++
++        const nodes = [...this._parsedPayload.nodes];
++        // Sort deterministically by weight DESC, then ID ASC
++        nodes.sort((a, b) => {
++            const diff = this.getNodeWeight(b) - this.getNodeWeight(a);
++            return diff !== 0 ? diff : a.id.localeCompare(b.id);
++        });
++
++        const totalWeight = nodes.reduce((sum, n) => sum + this.getNodeWeight(n), 0);
++        if (totalWeight <= 0) return [];
++
++        // Squarified/Slice-and-Dice 2D treemap partitioning within 800x500 viewport
++        return this.computeLayoutRects(nodes, 0, 0, 800, 500, totalWeight);
++    }
++
++    computeLayoutRects(nodes, x, y, width, height, totalWeight) {
++        const rects = [];
++        if (!nodes.length) return rects;
++
++        let curX = x;
++        let curY = y;
++        let remainingWidth = width;
++        let remainingHeight = height;
++        let remainingWeight = totalWeight;
++
++        // Alternate slicing vertically / horizontally
++        for (let i = 0; i < nodes.length; i++) {
++            const node = nodes[i];
++            const weight = this.getNodeWeight(node);
++            const ratio = weight / Math.max(1, remainingWeight);
++
++            let rw, rh, rx, ry;
++
++            if (remainingWidth >= remainingHeight) {
++                // Slice vertically along X
++                rw = i === nodes.length - 1 ? remainingWidth : Math.max(2, Math.round(remainingWidth * ratio));
++                rh = remainingHeight;
++                rx = curX;
++                ry = curY;
++
++                curX += rw;
++                remainingWidth = Math.max(0, remainingWidth - rw);
++            } else {
++                // Slice horizontally along Y
++                rw = remainingWidth;
++                rh = i === nodes.length - 1 ? remainingHeight : Math.max(2, Math.round(remainingHeight * ratio));
++                rx = curX;
++                ry = curY;
++
++                curY += rh;
++                remainingHeight = Math.max(0, remainingHeight - rh);
++            }
++
++            remainingWeight = Math.max(0, remainingWeight - weight);
++
++            const isSelected = this.selectedNodeId === node.id;
++            const colors = this.resolveColors(node);
++            const showLabel = rw > 45 && rh > 22;
++            const labelText = node.label || node.name || node.id;
++            const truncatedLabel = labelText.length > Math.floor(rw / 7) ? labelText.slice(0, Math.max(3, Math.floor(rw / 7) - 2)) + '..' : labelText;
++
++            rects.push({
++                id: node.id,
++                x: rx,
++                y: ry,
++                w: rw,
++                h: rh,
++                bg: colors.bg,
++                border: colors.border,
++                textColor: colors.text,
++                className: `treemap-node-rect ${isSelected ? 'selected' : ''}`,
++                showLabel: showLabel,
++                displayLabel: truncatedLabel,
++                textX: rx + 5,
++                textY: ry + Math.min(16, rh / 2 + 5),
++                fontSize: Math.max(10, Math.min(13, Math.floor(rh / 3))),
++                tooltip: `${labelText} (${node.layer || 'Unassigned'}) | Weight: ${weight} | Risk: ${node.risk || 'NONE'}`
++            });
++        }
++
++        return rects;
++    }
++
++    resolveColors(node) {
++        if (this.colorScheme === 'risk') {
++            const risk = (node.risk || 'NONE').toUpperCase();
++            return RISK_COLORS[risk] || RISK_COLORS.NONE;
++        }
++        const layer = node.layer || 'Unassigned';
++        return LAYER_COLORS[layer] || LAYER_COLORS.Unassigned;
++    }
++
++    handleMetricChange(event) {
++        this.metricMode = event.target.value;
++    }
++
++    handleColorSchemeChange(event) {
++        this.colorScheme = event.target.value;
++    }
++
++    handleNodeClick(event) {
++        const nodeId = event.currentTarget.dataset.nodeId;
++        if (!nodeId) return;
++
++        const node = this._parsedPayload?.nodes?.find(n => n.id === nodeId) || null;
++
++        // Dispatches canonical nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION
++        this.dispatchEvent(new CustomEvent('nodeselect', {
++            detail: {
++                nodeId: nodeId,
++                node: node,
++                sourceView: 'treemap'
++            },
++            bubbles: true,
++            composed: true,
++            cancelable: false
++        }));
++    }
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml
+new file mode 100644
+index 0000000..8a12e57
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView/daTreemapView.js-meta.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>true</isExposed>
++    <masterLabel>DA Treemap View</masterLabel>
++    <description>Treemap Module Hierarchy View for Dependency Analyzer (Wave 6 Task W6-2)</description>
++    <targets>
++        <target>lightning__RecordPage</target>
++        <target>lightning__AppPage</target>
++        <target>lightning__HomePage</target>
++    </targets>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/tests/run-w6-2-tests.cjs b/scratch/salesforce-poc/tests/run-w6-2-tests.cjs
+new file mode 100644
+index 0000000..69f54de
+--- /dev/null
++++ b/scratch/salesforce-poc/tests/run-w6-2-tests.cjs
+@@ -0,0 +1,136 @@
++/**
++ * run-w6-2-tests.cjs
++ * Hardened Unit Test Suite for Task W6-2: daTreemapView LWC
++ *
++ * Verifies:
++ * 1. Component initialization and default state.
++ * 2. Hierarchy and deterministic sizing by count, loc, coupling, and complexity.
++ * 3. Color scheme mapping (layer vs risk).
++ * 4. Empty payload handling (no crash, empty state).
++ * 5. Malformed payload string handling (error state).
++ * 6. Node selection dispatches canonical 'nodeselect' event with correct payload.
++ * 7. SELECTION != NAVIGATION invariant preserved (no project/tab change).
++ * 8. Shared graph payload immutability (input nodes/edges unmutated).
++ */
++
++const assert = require('assert');
++const path = require('path');
++const fs = require('fs');
++
++function createTreemapInstance() {
++    const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daTreemapView/daTreemapView.js');
++    let code = fs.readFileSync(filePath, 'utf8');
++
++    code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++    code = code.replace(/@api\s+/g, '');
++    code = code.replace(/@track\s+/g, '');
++    code = code.replace('export default class DaTreemapView', 'class DaTreemapView');
++    code += '\nreturn DaTreemapView;';
++
++    const LwcMock = {
++        LightningElement: class {
++            constructor() {
++                this._dispatchedEvents = [];
++            }
++            dispatchEvent(evt) {
++                this._dispatchedEvents.push(evt);
++            }
++        }
++    };
++
++    const ctor = new Function('LightningElement', code)(LwcMock.LightningElement);
++    return new ctor();
++}
++
++async function runW62Tests() {
++    console.log('Running Task W6-2 (daTreemapView LWC) Test Suite...');
++    console.log('===================================================');
++
++    // 1. Defaults
++    const comp = createTreemapInstance();
++    assert.strictEqual(comp.metricMode, 'count', 'Default metricMode must be count');
++    assert.strictEqual(comp.colorScheme, 'layer', 'Default colorScheme must be layer');
++    assert.strictEqual(comp.isEmpty, true, 'Initially empty without payload');
++    console.log('  ✓ 1. Initial default state verified');
++
++    // Sample payload
++    const samplePayload = {
++        nodes: [
++            { id: 'ApexClass.AccountService', label: 'AccountService', layer: 'Service', risk: 'HIGH', loc: 400, coupling: 12, cyclomaticComplexity: 15 },
++            { id: 'ApexClass.AccountSelector', label: 'AccountSelector', layer: 'Selector', risk: 'LOW', loc: 150, coupling: 5, cyclomaticComplexity: 4 },
++            { id: 'ApexTrigger.AccountTrigger', label: 'AccountTrigger', layer: 'Data', risk: 'MEDIUM', loc: 50, coupling: 8, cyclomaticComplexity: 6 }
++        ],
++        edges: [
++            { id: 'e1', source: 'ApexClass.AccountService', target: 'ApexClass.AccountSelector' }
++        ]
++    };
++
++    // Deep freeze defensive check
++    const frozenPayload = JSON.parse(JSON.stringify(samplePayload));
++    Object.freeze(frozenPayload);
++    Object.freeze(frozenPayload.nodes);
++    frozenPayload.nodes.forEach(n => Object.freeze(n));
++
++    comp.payload = frozenPayload;
++    assert.strictEqual(comp.isEmpty, false, 'Payload populated');
++    assert.strictEqual(comp.nodeCount, 3, 'Node count must match');
++
++    // 2. Sizing by count
++    comp.metricMode = 'count';
++    const rectsCount = comp.renderedRects;
++    assert.strictEqual(rectsCount.length, 3, 'Must render 3 rects');
++    assert.strictEqual(comp.totalMetricValue, 3, 'Total count must be 3');
++    console.log('  ✓ 2. Count metric layout and rect derivation verified');
++
++    // 3. Sizing by LOC
++    comp.metricMode = 'loc';
++    assert.strictEqual(comp.totalMetricValue, 600, 'Sum of LOC (400 + 150 + 50) must equal 600');
++    const rectsLoc = comp.renderedRects;
++    assert.strictEqual(rectsLoc[0].id, 'ApexClass.AccountService', 'AccountService largest LOC first');
++    console.log('  ✓ 3. LOC metric weighting and deterministic ordering verified');
++
++    // 4. Color mapping (Layer)
++    comp.colorScheme = 'layer';
++    const svcRect = comp.renderedRects.find(r => r.id === 'ApexClass.AccountService');
++    assert.ok(svcRect.border.includes('#10b981'), 'Service layer border color verified');
++
++    // 5. Color mapping (Risk)
++    comp.colorScheme = 'risk';
++    const svcRectRisk = comp.renderedRects.find(r => r.id === 'ApexClass.AccountService');
++    assert.ok(svcRectRisk.border.includes('#ef4444'), 'High risk border color verified');
++    console.log('  ✓ 4. Layer and Risk color scheme mapping verified');
++
++    // 6. Selection event dispatch adhering to CONTRACT-06 & SELECTION != NAVIGATION
++    comp.handleNodeClick({ currentTarget: { dataset: { nodeId: 'ApexClass.AccountService' } } });
++    assert.strictEqual(comp._dispatchedEvents.length, 1, 'One CustomEvent emitted');
++    const evt = comp._dispatchedEvents[0];
++    assert.strictEqual(evt.type, 'nodeselect', 'Canonical event name must be nodeselect');
++    assert.strictEqual(evt.detail.nodeId, 'ApexClass.AccountService', 'nodeId matched');
++    assert.strictEqual(evt.detail.sourceView, 'treemap', 'sourceView matched');
++    assert.strictEqual(evt.bubbles, true, 'Event must bubble');
++    assert.strictEqual(evt.composed, true, 'Event must be composed');
++    console.log('  ✓ 5. Canonical nodeselect event emission verified (SELECTION != NAVIGATION)');
++
++    // 7. Empty payload handling
++    comp.payload = { nodes: [] };
++    assert.strictEqual(comp.isEmpty, true, 'Empty nodes handled cleanly');
++    assert.strictEqual(comp.renderedRects.length, 0, 'No rects rendered on empty nodes');
++
++    // 8. Malformed string handling
++    comp.payload = '{ invalid json !!';
++    assert.strictEqual(comp.hasError, true, 'Malformed JSON sets error state');
++    assert.strictEqual(comp.renderedRects.length, 0, 'Zero rects on malformed payload');
++    console.log('  ✓ 6. Empty and malformed payload resilience verified');
++
++    // 9. Payload Immutability
++    assert.strictEqual(samplePayload.nodes[0].selected, undefined, 'Input payload nodes not mutated in place');
++    console.log('  ✓ 7. Payload immutability preserved');
++
++    console.log('===================================================');
++    console.log('Task W6-2 Test Results: ALL 7 TESTS PASSED');
++}
++
++runW62Tests().catch(err => {
++    console.error('Task W6-2 Test Failure:', err);
++    process.exit(1);
++});

@@ -1,0 +1,67 @@
+<template>
+    <div class="dna-container" data-testid="dna-container">
+        <div class="dna-header">
+            <h3 class="dna-title">Architecture DNA Barcode</h3>
+            <div class="dna-controls">
+                <span class="control-label">Barcode Dimension:</span>
+                <select class="control-select" onchange={handleDimensionChange} data-testid="dna-dimension-select">
+                    <template for:each={dimensionOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
+                    </template>
+                </select>
+            </div>
+        </div>
+
+        <template lwc:if={hasError}>
+            <div class="dna-error" data-testid="dna-error">
+                <span>{errorMessage}</span>
+            </div>
+        </template>
+        <template lwc:elseif={isEmpty}>
+            <div class="dna-empty" data-testid="dna-empty">
+                <span>No architectural nodes available for DNA sequencing.</span>
+            </div>
+        </template>
+        <template lwc:else>
+            <!-- SVG Barcode Strip -->
+            <div class="dna-barcode-strip" data-testid="dna-barcode-strip">
+                <svg class="dna-svg" viewBox="0 0 1000 64" preserveAspectRatio="none" data-testid="dna-svg">
+                    <template for:each={renderedBands} for:item="band">
+                        <rect
+                            key={band.id}
+                            x={band.x}
+                            y="0"
+                            width={band.w}
+                            height="64"
+                            fill={band.fill}
+                            stroke={band.stroke}
+                            stroke-width="0.5"
+                            class={band.className}
+                            onclick={handleBandClick}
+                            data-node-id={band.id}
+                        >
+                            <title>{band.tooltip}</title>
+                        </rect>
+                    </template>
+                </svg>
+            </div>
+
+            <!-- Active / Hovered Component DNA Details -->
+            <template lwc:if={activeNode}>
+                <div class="dna-profile-card" data-testid="dna-profile-card">
+                    <div>
+                        <div class="profile-name">{activeNode.label}</div>
+                        <div class="profile-meta">
+                            Layer: {activeNode.layer} | Type: {activeNode.type} | Risk: {activeNode.risk} | Coverage: {activeNode.coverageStatus}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="profile-meta">
+                            Coupling: {activeNode.coupling} | Fan-In: {activeNode.fanIn} | Fan-Out: {activeNode.fanOut}
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

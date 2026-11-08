@@ -1,0 +1,117 @@
+<template>
+    <div class="subway-container" data-testid="subway-container">
+        <!-- Toolbar -->
+        <div class="subway-toolbar">
+            <div class="subway-controls">
+                <span class="control-label">Search Station:</span>
+                <input
+                    type="text"
+                    class="control-input"
+                    placeholder="Filter by name..."
+                    value={searchQuery}
+                    oninput={handleSearchChange}
+                    data-testid="subway-search-input"
+                />
+
+                <span class="control-label">Layer Track:</span>
+                <select class="control-select" onchange={handleLayerFilterChange} data-testid="subway-layer-select">
+                    <option value="">All Tracks</option>
+                    <template for:each={layerTrackOptions} for:item="layer">
+                        <option key={layer} value={layer}>{layer}</option>
+                    </template>
+                </select>
+            </div>
+            <div class="subway-summary">
+                <span class="control-label">Tracks: {trackCount} | Stations: {stationCount} | Cross-Tracks: {routeCount}</span>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="subway-canvas">
+            <template lwc:if={hasError}>
+                <div class="subway-error" data-testid="subway-error">
+                    <span>{errorMessage}</span>
+                </div>
+            </template>
+            <template lwc:elseif={isEmpty}>
+                <div class="subway-empty" data-testid="subway-empty">
+                    <span>No transit routes or stations available in active project payload.</span>
+                </div>
+            </template>
+            <template lwc:else>
+                <svg class="subway-svg" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet" data-testid="subway-svg">
+                    <!-- Layer Track Backbone Lines -->
+                    <template for:each={renderedTracks} for:item="track">
+                        <g key={track.name} class="subway-track-group">
+                            <line
+                                x1="120"
+                                y1={track.y}
+                                x2="860"
+                                y2={track.y}
+                                stroke={track.color}
+                                stroke-width="8"
+                                stroke-linecap="round"
+                                opacity="0.35"
+                            />
+                            <!-- Track Label -->
+                            <text
+                                x="110"
+                                y={track.textY}
+                                fill={track.color}
+                                font-size="12"
+                                font-weight="bold"
+                                text-anchor="end"
+                            >
+                                {track.name}
+                            </text>
+                        </g>
+                    </template>
+
+                    <!-- Dependency Flow Routes (Curves) -->
+                    <template for:each={renderedRoutes} for:item="route">
+                        <path
+                            key={route.id}
+                            d={route.pathD}
+                            fill="none"
+                            stroke={route.color}
+                            stroke-width="1.5"
+                            stroke-dasharray={route.dashArray}
+                            opacity="0.6"
+                        />
+                    </template>
+
+                    <!-- Station Markers -->
+                    <template for:each={renderedStations} for:item="stn">
+                        <g
+                            key={stn.id}
+                            class={stn.groupClass}
+                            onclick={handleStationClick}
+                            data-node-id={stn.id}
+                        >
+                            <circle
+                                cx={stn.x}
+                                cy={stn.y}
+                                r={stn.radius}
+                                fill="#0f172a"
+                                stroke={stn.strokeColor}
+                                stroke-width="2.5"
+                            >
+                                <title>{stn.tooltip}</title>
+                            </circle>
+                            <text
+                                x={stn.x}
+                                y={stn.labelY}
+                                fill="#e2e8f0"
+                                font-size="10"
+                                text-anchor="middle"
+                                pointer-events="none"
+                            >
+                                {stn.shortLabel}
+                            </text>
+                        </g>
+                    </template>
+                </svg>
+            </template>
+        </div>
+    </div>
+</template>

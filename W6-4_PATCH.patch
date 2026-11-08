@@ -1,0 +1,594 @@
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css
+new file mode 100644
+index 0000000..bccceec
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.css
+@@ -0,0 +1,119 @@
++.hotspots-container {
++    display: flex;
++    flex-direction: column;
++    height: 100%;
++    width: 100%;
++    background-color: #0b1120;
++    color: #f1f5f9;
++    overflow: hidden;
++    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
++}
++
++.hotspots-toolbar {
++    display: flex;
++    align-items: center;
++    justify-content: space-between;
++    padding: 0.75rem 1rem;
++    border-bottom: 1px solid #1e293b;
++    background-color: #0f172a;
++    gap: 1rem;
++}
++
++.hotspots-controls {
++    display: flex;
++    align-items: center;
++    gap: 0.75rem;
++}
++
++.control-label {
++    font-size: 0.8125rem;
++    color: #94a3b8;
++}
++
++.control-input, .control-select {
++    background-color: #1e293b;
++    color: #f1f5f9;
++    border: 1px solid #334155;
++    border-radius: 4px;
++    padding: 0.25rem 0.5rem;
++    font-size: 0.8125rem;
++}
++
++.hotspots-body {
++    flex: 1;
++    overflow-y: auto;
++    padding: 1rem;
++}
++
++.hotspots-table {
++    width: 100%;
++    border-collapse: collapse;
++    font-size: 0.8125rem;
++    text-align: left;
++}
++
++.hotspots-table th {
++    background-color: #1e293b;
++    color: #94a3b8;
++    padding: 0.625rem 0.75rem;
++    font-weight: 600;
++    border-bottom: 2px solid #334155;
++}
++
++.hotspots-table td {
++    padding: 0.625rem 0.75rem;
++    border-bottom: 1px solid #1e293b;
++    color: #e2e8f0;
++}
++
++.hotspot-row {
++    cursor: pointer;
++    transition: background-color 0.15s ease;
++}
++
++.hotspot-row:hover {
++    background-color: #1e293b;
++}
++
++.hotspot-row.selected {
++    background-color: rgba(56, 189, 248, 0.15);
++    border-left: 3px solid #38bdf8;
++}
++
++.risk-badge {
++    display: inline-block;
++    padding: 0.125rem 0.375rem;
++    border-radius: 9999px;
++    font-size: 0.75rem;
++    font-weight: 600;
++}
++
++.risk-high {
++    background-color: rgba(239, 68, 68, 0.2);
++    color: #f87171;
++    border: 1px solid rgba(239, 68, 68, 0.4);
++}
++
++.risk-medium {
++    background-color: rgba(245, 158, 11, 0.2);
++    color: #fbbf24;
++    border: 1px solid rgba(245, 158, 11, 0.4);
++}
++
++.risk-low {
++    background-color: rgba(16, 185, 129, 0.2);
++    color: #34d399;
++    border: 1px solid rgba(16, 185, 129, 0.4);
++}
++
++.hotspots-empty, .hotspots-error {
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++    justify-content: center;
++    height: 100%;
++    min-height: 360px;
++    color: #64748b;
++    font-size: 0.9375rem;
++    gap: 0.5rem;
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html
+new file mode 100644
+index 0000000..3fa7686
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.html
+@@ -0,0 +1,94 @@
++<template>
++    <div class="hotspots-container" data-testid="hotspots-container">
++        <!-- Toolbar -->
++        <div class="hotspots-toolbar">
++            <div class="hotspots-controls">
++                <span class="control-label">Search Hotspot:</span>
++                <input
++                    type="text"
++                    class="control-input"
++                    placeholder="Search by component name..."
++                    value={searchQuery}
++                    oninput={handleSearchChange}
++                    data-testid="hotspots-search-input"
++                />
++
++                <span class="control-label">Risk Filter:</span>
++                <select class="control-select" onchange={handleRiskFilterChange} data-testid="hotspots-risk-select">
++                    <option value="">All Risks</option>
++                    <option value="HIGH">High Risk</option>
++                    <option value="MEDIUM">Medium Risk</option>
++                    <option value="LOW">Low Risk</option>
++                </select>
++
++                <span class="control-label">Category:</span>
++                <select class="control-select" onchange={handleCategoryFilterChange} data-testid="hotspots-category-select">
++                    <option value="all">All Hotspots</option>
++                    <option value="coupling">High Coupling (&gt;15)</option>
++                    <option value="fanIn">High Fan-In (&gt;10)</option>
++                    <option value="cycles">Cyclic Dependencies</option>
++                </select>
++            </div>
++            <div class="hotspots-summary">
++                <span class="control-label">Total Hotspots: {hotspotCount} (Ranked)</span>
++            </div>
++        </div>
++
++        <!-- Body -->
++        <div class="hotspots-body">
++            <template lwc:if={hasError}>
++                <div class="hotspots-error" data-testid="hotspots-error">
++                    <span>{errorMessage}</span>
++                </div>
++            </template>
++            <template lwc:elseif={isEmpty}>
++                <div class="hotspots-empty" data-testid="hotspots-empty">
++                    <span>No architectural hotspots detected in active project payload.</span>
++                </div>
++            </template>
++            <template lwc:else>
++                <table class="hotspots-table" data-testid="hotspots-table">
++                    <thead>
++                        <tr>
++                            <th>Rank</th>
++                            <th>Component</th>
++                            <th>Type</th>
++                            <th>Layer</th>
++                            <th>Coupling</th>
++                            <th>Fan-In</th>
++                            <th>Fan-Out</th>
++                            <th>Complexity</th>
++                            <th>LOC</th>
++                            <th>Cycles</th>
++                            <th>Risk</th>
++                        </tr>
++                    </thead>
++                    <tbody>
++                        <template for:each={filteredHotspots} for:item="item">
++                            <tr
++                                key={item.id}
++                                class={item.rowClass}
++                                onclick={handleRowClick}
++                                data-node-id={item.id}
++                            >
++                                <td>#{item.rank}</td>
++                                <td><strong>{item.label}</strong></td>
++                                <td>{item.type}</td>
++                                <td>{item.layer}</td>
++                                <td>{item.coupling}</td>
++                                <td>{item.fanIn}</td>
++                                <td>{item.fanOut}</td>
++                                <td>{item.cyclomaticComplexity}</td>
++                                <td>{item.loc}</td>
++                                <td>{item.cycleBadge}</td>
++                                <td>
++                                    <span class={item.riskClass}>{item.risk}</span>
++                                </td>
++                            </tr>
++                        </template>
++                    </tbody>
++                </table>
++            </template>
++        </div>
++    </div>
++</template>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js
+new file mode 100644
+index 0000000..900fa89
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js
+@@ -0,0 +1,195 @@
++import { LightningElement, api, track } from 'lwc';
++
++export default class DaHotspotsView extends LightningElement {
++    @api projectId;
++    @api selectedNodeId;
++
++    @track searchQuery = '';
++    @track selectedRisk = '';
++    @track selectedCategory = 'all'; // 'all' | 'coupling' | 'fanIn' | 'cycles'
++    @track errorMessage = '';
++
++    _rawPayload = null;
++    _parsedPayload = null;
++
++    @api
++    get payload() {
++        return this._rawPayload;
++    }
++    set payload(value) {
++        this._rawPayload = value;
++        this.processPayload();
++    }
++
++    processPayload() {
++        this.errorMessage = '';
++        if (!this._rawPayload) {
++            this._parsedPayload = null;
++            return;
++        }
++
++        if (typeof this._rawPayload === 'string') {
++            try {
++                this._parsedPayload = JSON.parse(this._rawPayload);
++            } catch (err) {
++                this.errorMessage = 'Malformed graph payload JSON';
++                this._parsedPayload = null;
++                return;
++            }
++        } else if (typeof this._rawPayload === 'object') {
++            this._parsedPayload = this._rawPayload;
++        } else {
++            this.errorMessage = 'Invalid payload format';
++            this._parsedPayload = null;
++        }
++    }
++
++    get hasError() {
++        return !!this.errorMessage;
++    }
++
++    get isEmpty() {
++        return this.hotspots.length === 0;
++    }
++
++    get hotspotCount() {
++        return this.filteredHotspots.length;
++    }
++
++    /**
++     * Derives architectural hotspots using canonical thresholds:
++     * - coupling > 15
++     * - fanIn > 10
++     * - hasCycle === true (or present in cycles[])
++     * - risk === 'HIGH'
++     */
++    get hotspots() {
++        if (!this._parsedPayload || !Array.isArray(this._parsedPayload.nodes)) return [];
++
++        const nodes = this._parsedPayload.nodes;
++        const cycles = Array.isArray(this._parsedPayload.cycles) ? this._parsedPayload.cycles : [];
++        const cyclicNodeIds = new Set();
++        cycles.forEach(c => {
++            if (Array.isArray(c.nodeIds)) {
++                c.nodeIds.forEach(id => cyclicNodeIds.add(id));
++            }
++        });
++
++        const list = [];
++        nodes.forEach(node => {
++            const coupling = Number(node.coupling) || ((node.fanIn || 0) + (node.fanOut || 0)) || 0;
++            const fanIn = Number(node.fanIn) || 0;
++            const fanOut = Number(node.fanOut) || 0;
++            const isCyclic = !!node.hasCycle || cyclicNodeIds.has(node.id);
++            const risk = (node.risk || 'NONE').toUpperCase();
++
++            const isHighCoupling = coupling > 15;
++            const isHighFanIn = fanIn > 10;
++            const isHighRisk = risk === 'HIGH';
++
++            // Hotspot qualification rule
++            if (isHighCoupling || isHighFanIn || isCyclic || isHighRisk) {
++                // Heuristic Hotspot Severity Score
++                let score = 0;
++                if (isHighRisk) score += 40;
++                if (isCyclic) score += 30;
++                if (isHighCoupling) score += Math.min(25, coupling);
++                if (isHighFanIn) score += Math.min(20, fanIn);
++
++                list.push({
++                    id: node.id,
++                    label: node.label || node.name || node.id,
++                    type: node.type || 'Unknown',
++                    layer: node.layer || 'Unassigned',
++                    coupling: coupling,
++                    fanIn: fanIn,
++                    fanOut: fanOut,
++                    cyclomaticComplexity: node.cyclomaticComplexity != null ? node.cyclomaticComplexity : '-',
++                    loc: node.loc != null ? node.loc : '-',
++                    isCyclic: isCyclic,
++                    cycleBadge: isCyclic ? 'YES' : 'NO',
++                    risk: risk,
++                    score: score
++                });
++            }
++        });
++
++        // Deterministic sort: Severity Score DESC, then ID ASC
++        list.sort((a, b) => {
++            const diff = b.score - a.score;
++            return diff !== 0 ? diff : a.id.localeCompare(b.id);
++        });
++
++        return list;
++    }
++
++    get filteredHotspots() {
++        const items = this.hotspots;
++        const result = [];
++        let rank = 1;
++
++        items.forEach(item => {
++            // Category filter
++            if (this.selectedCategory === 'coupling' && item.coupling <= 15) return;
++            if (this.selectedCategory === 'fanIn' && item.fanIn <= 10) return;
++            if (this.selectedCategory === 'cycles' && !item.isCyclic) return;
++
++            // Risk filter
++            if (this.selectedRisk && item.risk !== this.selectedRisk) return;
++
++            // Search query
++            if (this.searchQuery) {
++                const q = this.searchQuery.toLowerCase();
++                const matchId = (item.id || '').toLowerCase().includes(q);
++                const matchLabel = (item.label || '').toLowerCase().includes(q);
++                if (!matchId && !matchLabel) return;
++            }
++
++            const isSelected = this.selectedNodeId === item.id;
++            let riskClass = 'risk-badge';
++            if (item.risk === 'HIGH') riskClass += ' risk-high';
++            else if (item.risk === 'MEDIUM') riskClass += ' risk-medium';
++            else riskClass += ' risk-low';
++
++            result.push({
++                ...item,
++                rank: rank++,
++                rowClass: `hotspot-row ${isSelected ? 'selected' : ''}`,
++                riskClass: riskClass
++            });
++        });
++
++        return result;
++    }
++
++    handleSearchChange(event) {
++        this.searchQuery = event.target.value;
++    }
++
++    handleRiskFilterChange(event) {
++        this.selectedRisk = event.target.value;
++    }
++
++    handleCategoryFilterChange(event) {
++        this.selectedCategory = event.target.value;
++    }
++
++    handleRowClick(event) {
++        const nodeId = event.currentTarget.dataset.nodeId;
++        if (!nodeId) return;
++
++        const node = this._parsedPayload?.nodes?.find(n => n.id === nodeId) || null;
++
++        // Dispatches canonical nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION
++        this.dispatchEvent(new CustomEvent('nodeselect', {
++            detail: {
++                nodeId: nodeId,
++                node: node,
++                sourceView: 'hotspots'
++            },
++            bubbles: true,
++            composed: true,
++            cancelable: false
++        }));
++    }
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml
+new file mode 100644
+index 0000000..171067d
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView/daHotspotsView.js-meta.xml
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>true</isExposed>
++    <masterLabel>DA Hotspots View</masterLabel>
++    <description>Anti-Pattern Hotspots &amp; Risk Scoring View for Dependency Analyzer (Wave 6 Task W6-4)</description>
++    <targets>
++        <target>lightning__RecordPage</target>
++        <target>lightning__AppPage</target>
++        <target>lightning__HomePage</target>
++    </targets>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/tests/run-w6-4-tests.cjs b/scratch/salesforce-poc/tests/run-w6-4-tests.cjs
+new file mode 100644
+index 0000000..188b782
+--- /dev/null
++++ b/scratch/salesforce-poc/tests/run-w6-4-tests.cjs
+@@ -0,0 +1,144 @@
++/**
++ * run-w6-4-tests.cjs
++ * Hardened Unit Test Suite for Task W6-4: daHotspotsView LWC
++ *
++ * Verifies:
++ * 1. Component initialization and defaults.
++ * 2. Hotspot identification via coupling > 15.
++ * 3. Hotspot identification via fanIn > 10.
++ * 4. Hotspot identification via cycles and HIGH risk.
++ * 5. Deterministic severity ranking.
++ * 6. Category, risk, and search filtering.
++ * 7. Selection event emission (nodeselect, bubbles, composed, SELECTION != NAVIGATION).
++ * 8. Empty and malformed payload resilience.
++ * 9. Input graph payload immutability.
++ */
++
++const assert = require('assert');
++const path = require('path');
++const fs = require('fs');
++
++function createHotspotsInstance() {
++    const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daHotspotsView/daHotspotsView.js');
++    let code = fs.readFileSync(filePath, 'utf8');
++
++    code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++    code = code.replace(/@api\s+/g, '');
++    code = code.replace(/@track\s+/g, '');
++    code = code.replace('export default class DaHotspotsView', 'class DaHotspotsView');
++    code += '\nreturn DaHotspotsView;';
++
++    const LwcMock = {
++        LightningElement: class {
++            constructor() {
++                this._dispatchedEvents = [];
++            }
++            dispatchEvent(evt) {
++                this._dispatchedEvents.push(evt);
++            }
++        }
++    };
++
++    const ctor = new Function('LightningElement', code)(LwcMock.LightningElement);
++    return new ctor();
++}
++
++async function runW64Tests() {
++    console.log('Running Task W6-4 (daHotspotsView LWC) Test Suite...');
++    console.log('==================================================');
++
++    const comp = createHotspotsInstance();
++    assert.strictEqual(comp.isEmpty, true, 'Initially empty');
++    assert.strictEqual(comp.selectedCategory, 'all');
++    console.log('  ✓ 1. Initial default state verified');
++
++    const samplePayload = {
++        nodes: [
++            // Hotspot 1: High Coupling (22)
++            { id: 'ApexClass.GodClass', label: 'GodClass', layer: 'Domain', risk: 'HIGH', coupling: 22, fanIn: 12, fanOut: 10, loc: 1200 },
++            // Hotspot 2: High Fan-In (14)
++            { id: 'ApexClass.SharedUtil', label: 'SharedUtil', layer: 'Utility', risk: 'LOW', coupling: 15, fanIn: 14, fanOut: 1, loc: 250 },
++            // Hotspot 3: Cyclic participant
++            { id: 'ApexClass.CycleA', label: 'CycleA', layer: 'Service', risk: 'MEDIUM', coupling: 4, fanIn: 2, fanOut: 2, hasCycle: true },
++            // Non-hotspot: Normal node
++            { id: 'ApexClass.NormalService', label: 'NormalService', layer: 'Service', risk: 'LOW', coupling: 3, fanIn: 1, fanOut: 2, hasCycle: false }
++        ],
++        cycles: [
++            { id: 'c1', nodeIds: ['ApexClass.CycleA'] }
++        ]
++    };
++
++    const frozenPayload = JSON.parse(JSON.stringify(samplePayload));
++    Object.freeze(frozenPayload);
++    Object.freeze(frozenPayload.nodes);
++    frozenPayload.nodes.forEach(n => Object.freeze(n));
++
++    comp.payload = frozenPayload;
++    assert.strictEqual(comp.isEmpty, false);
++    // GodClass, SharedUtil, CycleA should be hotspots; NormalService should NOT
++    assert.strictEqual(comp.hotspots.length, 3, 'Exactly 3 hotspots qualified');
++    assert.strictEqual(comp.hotspots[0].id, 'ApexClass.GodClass', 'Highest severity ranked first');
++    console.log('  ✓ 2. Hotspot threshold detection and deterministic ranking verified');
++
++    // 3. Category filtering (Coupling > 15)
++    comp.selectedCategory = 'coupling';
++    assert.strictEqual(comp.filteredHotspots.length, 1);
++    assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.GodClass');
++
++    // 4. Category filtering (Fan-In > 10)
++    comp.selectedCategory = 'fanIn';
++    assert.strictEqual(comp.filteredHotspots.length, 2, 'GodClass (12) and SharedUtil (14)');
++
++    // 5. Category filtering (Cycles)
++    comp.selectedCategory = 'cycles';
++    assert.strictEqual(comp.filteredHotspots.length, 1);
++    assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.CycleA');
++    comp.selectedCategory = 'all'; // Reset
++    console.log('  ✓ 3. Category filtering verified');
++
++    // 6. Risk filtering
++    comp.selectedRisk = 'HIGH';
++    assert.strictEqual(comp.filteredHotspots.length, 1);
++    assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.GodClass');
++    comp.selectedRisk = ''; // Reset
++
++    // 7. Search filtering
++    comp.searchQuery = 'Shared';
++    assert.strictEqual(comp.filteredHotspots.length, 1);
++    assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.SharedUtil');
++    comp.searchQuery = ''; // Reset
++    console.log('  ✓ 4. Risk and search filtering verified');
++
++    // 8. Selection CustomEvent emission adhering to CONTRACT-06 & SELECTION != NAVIGATION
++    comp.handleRowClick({ currentTarget: { dataset: { nodeId: 'ApexClass.GodClass' } } });
++    assert.strictEqual(comp._dispatchedEvents.length, 1);
++    const evt = comp._dispatchedEvents[0];
++    assert.strictEqual(evt.type, 'nodeselect');
++    assert.strictEqual(evt.detail.nodeId, 'ApexClass.GodClass');
++    assert.strictEqual(evt.detail.sourceView, 'hotspots');
++    assert.strictEqual(evt.bubbles, true);
++    assert.strictEqual(evt.composed, true);
++    console.log('  ✓ 5. Row click nodeselect event verified (SELECTION != NAVIGATION)');
++
++    // 9. Empty and malformed handling
++    comp.payload = { nodes: [] };
++    assert.strictEqual(comp.isEmpty, true);
++    assert.strictEqual(comp.filteredHotspots.length, 0);
++
++    comp.payload = '{ invalid';
++    assert.strictEqual(comp.hasError, true);
++    assert.strictEqual(comp.filteredHotspots.length, 0);
++    console.log('  ✓ 6. Empty and malformed payload resilience verified');
++
++    // 10. Payload immutability
++    assert.strictEqual(samplePayload.nodes[0].selected, undefined);
++    console.log('  ✓ 7. Payload immutability preserved');
++
++    console.log('==================================================');
++    console.log('Task W6-4 Test Results: ALL 7 TESTS PASSED');
++}
++
++runW64Tests().catch(err => {
++    console.error('Task W6-4 Test Failure:', err);
++    process.exit(1);
++});

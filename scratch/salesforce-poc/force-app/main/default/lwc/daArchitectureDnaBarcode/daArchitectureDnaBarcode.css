@@ -1,0 +1,109 @@
+.dna-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #0b1120;
+    color: #f1f5f9;
+    padding: 1.25rem;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+}
+
+.dna-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.dna-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.dna-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.control-label {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+}
+
+.control-select {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8125rem;
+}
+
+.dna-barcode-strip {
+    width: 100%;
+    height: 64px;
+    background-color: #030712;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.dna-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.dna-band {
+    cursor: pointer;
+    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+}
+
+.dna-band:hover {
+    filter: brightness(1.35);
+}
+
+.dna-band.selected {
+    stroke: #38bdf8 !important;
+    stroke-width: 2px !important;
+}
+
+.dna-profile-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.25rem;
+}
+
+.profile-meta {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.dna-empty, .dna-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    color: #64748b;
+    font-size: 0.875rem;
+}
