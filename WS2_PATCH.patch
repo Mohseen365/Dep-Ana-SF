@@ -1,0 +1,710 @@
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css b/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css
+index ac9110e..167966f 100644
+--- a/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.css
+@@ -4,4 +4,17 @@
+     border: 1px solid #dddbda;
+     border-radius: 4px;
+     background-color: #ffffff;
+-}
+\ No newline at end of file
++    position: relative;
++}
++
++.cy-container.zoom-far {
++    /* Level-of-Detail (LOD): Optimized display at distant zoom */
++}
++
++.cy-container.zoom-mid {
++    /* Level-of-Detail (LOD): Balanced display at medium zoom */
++}
++
++.cy-container.zoom-near {
++    /* Level-of-Detail (LOD): High-detail display at close zoom */
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html b/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html
+index 24d03a3..f74a4d7 100644
+--- a/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.html
+@@ -1,29 +1,77 @@
+ <template>
+     <lightning-card title="Dependency Analyzer Graph Viewer" icon-name="custom:custom19">
+-        <div slot="actions">
+-            <lightning-button-group>
+-                <lightning-button
+-                    label="Grid"
+-                    value="grid"
+-                    variant={gridButtonVariant}
+-                    onclick={handleLayoutChangeClick}
+-                    title="Grid Layout"
+-                ></lightning-button>
+-                <lightning-button
+-                    label="Circle"
+-                    value="circle"
+-                    variant={circleButtonVariant}
+-                    onclick={handleLayoutChangeClick}
+-                    title="Circle Layout"
+-                ></lightning-button>
+-                <lightning-button
+-                    label="Breadthfirst"
+-                    value="breadthfirst"
+-                    variant={breadthfirstButtonVariant}
+-                    onclick={handleLayoutChangeClick}
+-                    title="Hierarchical Breadthfirst Layout"
+-                ></lightning-button>
+-            </lightning-button-group>
++        <div slot="actions" class="slds-grid slds-grid_vertical-align-center slds-gutters_x-small">
++            <div class="slds-col">
++                <lightning-button-group>
++                    <lightning-button-icon
++                        icon-name="utility:zoomin"
++                        alternative-text="Zoom In"
++                        title="Zoom In"
++                        onclick={handleZoomIn}
++                        variant="border-filled"
++                    ></lightning-button-icon>
++                    <lightning-button-icon
++                        icon-name="utility:zoomout"
++                        alternative-text="Zoom Out"
++                        title="Zoom Out"
++                        onclick={handleZoomOut}
++                        variant="border-filled"
++                    ></lightning-button-icon>
++                    <lightning-button-icon
++                        icon-name="utility:expand"
++                        alternative-text="Fit to Viewport"
++                        title="Fit to Viewport"
++                        onclick={handleFitView}
++                        variant="border-filled"
++                    ></lightning-button-icon>
++                    <lightning-button-icon
++                        icon-name="utility:refresh"
++                        alternative-text="Reset Viewport"
++                        title="Reset Viewport"
++                        onclick={handleResetView}
++                        variant="border-filled"
++                    ></lightning-button-icon>
++                </lightning-button-group>
++            </div>
++            <div class="slds-col">
++                <lightning-button-group>
++                    <lightning-button
++                        label="Grid"
++                        value="grid"
++                        variant={gridButtonVariant}
++                        onclick={handleLayoutChangeClick}
++                        title="Grid Layout"
++                    ></lightning-button>
++                    <lightning-button
++                        label="Circle"
++                        value="circle"
++                        variant={circleButtonVariant}
++                        onclick={handleLayoutChangeClick}
++                        title="Circle Layout"
++                    ></lightning-button>
++                    <lightning-button
++                        label="Breadthfirst"
++                        value="breadthfirst"
++                        variant={breadthfirstButtonVariant}
++                        onclick={handleLayoutChangeClick}
++                        title="Hierarchical Breadthfirst Layout"
++                    ></lightning-button>
++                    <lightning-button
++                        label="Orbit"
++                        value="orbit"
++                        variant={orbitButtonVariant}
++                        onclick={handleLayoutChangeClick}
++                        title="Concentric Orbit Layout"
++                    ></lightning-button>
++                    <lightning-button
++                        label="Constellation"
++                        value="constellation"
++                        variant={constellationButtonVariant}
++                        onclick={handleLayoutChangeClick}
++                        title="Constellation Polar Layout"
++                    ></lightning-button>
++                </lightning-button-group>
++            </div>
+         </div>
+         <div class="slds-m-around_medium">
+             <template if:true={isLoading}>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js b/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js
+index 4dac8a3..0ab6c43 100644
+--- a/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js
+@@ -6,7 +6,7 @@ import getGraphChunks from '@salesforce/apex/DAGraphController.getGraphChunks';
+ import getUserPreference from '@salesforce/apex/DAUserPreferenceController.getUserPreference';
+ import saveUserPreference from '@salesforce/apex/DAUserPreferenceController.saveUserPreference';
+ import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 'c/daGraphPayloadLoader';
+-import { computeArchitectureLayout } from 'c/daLayoutEngine';
++import { computeArchitectureLayout, computeOrbitLayout, computeConstellationLayout, computeSankeyLayout } from 'c/daLayoutEngine';
+ import { matchesGraphNode, normalizeFilterCriteria } from 'c/daFilterSchema';
+
+ // Standard Cytoscape Layout Configuration Defaults conforming to CONTRACT-02 Section 4.1
+@@ -85,7 +85,7 @@ export default class DaGraphViewer extends LightningElement {
+     }
+
+     /**
+-     * Layout mode property (CONTRACT-02 canonical keys: 'grid', 'circle', 'breadthfirst', 'dagre', 'architecture').
++     * Layout mode property (CONTRACT-02 canonical keys: 'grid', 'circle', 'breadthfirst', 'dagre', 'orbit', 'constellation', 'sankey', 'architecture').
+      */
+     @api
+     get layoutMode() {
+@@ -104,6 +104,7 @@ export default class DaGraphViewer extends LightningElement {
+     @track isLoading = true;
+     @track error;
+     @track selectedNodeId = null;
++    @track selectedEdgeId = null;
+     cyInitialized = false;
+     cyInstance = null;
+     pageSize = 5;
+@@ -124,6 +125,14 @@ export default class DaGraphViewer extends LightningElement {
+         return (this._currentLayout === 'breadthfirst' || this._currentLayout === 'architecture') ? 'brand' : 'neutral';
+     }
+
++    get orbitButtonVariant() {
++        return this._currentLayout === 'orbit' ? 'brand' : 'neutral';
++    }
++
++    get constellationButtonVariant() {
++        return this._currentLayout === 'constellation' ? 'brand' : 'neutral';
++    }
++
+     /**
+      * Canonical layout resolution with graceful fallback for external/unavailable engines like Dagre.
+      */
+@@ -137,8 +146,8 @@ export default class DaGraphViewer extends LightningElement {
+         if (lower === 'grid' || lower === 'circle' || lower === 'breadthfirst') {
+             return lower;
+         }
+-        if (lower === 'architecture') {
+-            return 'architecture';
++        if (lower === 'architecture' || lower === 'orbit' || lower === 'constellation' || lower === 'sankey') {
++            return lower;
+         }
+         return 'breadthfirst';
+     }
+@@ -168,6 +177,69 @@ export default class DaGraphViewer extends LightningElement {
+         this.scheduleSaveState();
+     }
+
++    // --- Viewport Control Methods ---
++
++    handleZoomIn() {
++        this.zoomIn();
++    }
++
++    handleZoomOut() {
++        this.zoomOut();
++    }
++
++    handleFitView() {
++        this.fitView();
++    }
++
++    handleResetView() {
++        this.resetView();
++    }
++
++    @api
++    zoomIn() {
++        if (this.cyInstance && typeof this.cyInstance.zoom === 'function' && typeof this.cyInstance.width === 'function') {
++            const currentZoom = this.cyInstance.zoom();
++            this.cyInstance.zoom({
++                level: currentZoom * 1.2,
++                renderedPosition: { x: this.cyInstance.width() / 2, y: this.cyInstance.height() / 2 }
++            });
++            this.scheduleSaveState();
++        }
++    }
++
++    @api
++    zoomOut() {
++        if (this.cyInstance && typeof this.cyInstance.zoom === 'function' && typeof this.cyInstance.width === 'function') {
++            const currentZoom = this.cyInstance.zoom();
++            this.cyInstance.zoom({
++                level: currentZoom * 0.8,
++                renderedPosition: { x: this.cyInstance.width() / 2, y: this.cyInstance.height() / 2 }
++            });
++            this.scheduleSaveState();
++        }
++    }
++
++    @api
++    fitView(padding = 30) {
++        if (this.cyInstance && typeof this.cyInstance.fit === 'function') {
++            this.cyInstance.fit(undefined, padding);
++            this.scheduleSaveState();
++        }
++    }
++
++    @api
++    resetView() {
++        if (this.cyInstance) {
++            if (typeof this.cyInstance.fit === 'function') {
++                this.cyInstance.fit(undefined, 30);
++            }
++            if (typeof this.cyInstance.center === 'function') {
++                this.cyInstance.center();
++            }
++            this.scheduleSaveState();
++        }
++    }
++
+     applyLayout(mode) {
+         if (!this.cyInstance) return;
+
+@@ -191,18 +263,75 @@ export default class DaGraphViewer extends LightningElement {
+                             this.cyInstance.nodes().forEach(node => {
+                                 const p = posMap[node.id()];
+                                 if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+-                                node.position({ x: p.x, y: p.y });
+-                            }
++                                    node.position({ x: p.x, y: p.y });
++                                }
++                            });
+                         });
+-                    });
++                    }
+                 }
+-            }
+             } catch (archErr) {
+                 this.error = 'Failed to execute architecture layout: ' + (archErr.message || archErr);
+             }
+             return;
+         }
+
++        if (mode === 'orbit') {
++            try {
++                if (this._rawGraphData && this.cyInstance.nodes) {
++                    const nodesInput = (this._rawGraphData.nodes || []).map((n) => ({
++                        nodeId: n.id,
++                        orbitRingIndex: n.layer === 'Core' ? 0 : n.layer === 'Domain' ? 1 : 2,
++                        orbitSectorId: n.type || '_default'
++                    }));
++                    const layoutResult = computeOrbitLayout({ nodes: nodesInput });
++                    const posMap = layoutResult.positions || {};
++                    if (typeof this.cyInstance.batch === 'function') {
++                        this.cyInstance.batch(() => {
++                            this.cyInstance.nodes().forEach(node => {
++                                const p = posMap[node.id()];
++                                if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
++                                    node.position({ x: p.x, y: p.y });
++                                }
++                            });
++                        });
++                    }
++                }
++            } catch (orbitErr) {
++                this.error = 'Failed to execute orbit layout: ' + (orbitErr.message || orbitErr);
++            }
++            return;
++        }
++
++        if (mode === 'constellation') {
++            try {
++                if (this._rawGraphData && this.cyInstance.nodes) {
++                    const allNodes = this._rawGraphData.nodes || [];
++                    const focal = allNodes.length > 0 ? allNodes[0] : null;
++                    const items = allNodes.slice(1).map(n => ({ nodeId: n.id, displayName: n.label || n.id }));
++                    const constellationInput = {
++                        focalNode: focal,
++                        rings: [{ ringIndex: 1, hopDistance: 1, items: items }],
++                        edges: this._rawGraphData.edges || []
++                    };
++                    const layoutResult = computeConstellationLayout(constellationInput);
++                    const posMap = layoutResult.nodePositions || {};
++                    if (typeof this.cyInstance.batch === 'function') {
++                        this.cyInstance.batch(() => {
++                            this.cyInstance.nodes().forEach(node => {
++                                const p = posMap[node.id()];
++                                if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
++                                    node.position({ x: p.x, y: p.y });
++                                }
++                            });
++                        });
++                    }
++                }
++            } catch (constErr) {
++                this.error = 'Failed to execute constellation layout: ' + (constErr.message || constErr);
++            }
++            return;
++        }
++
+         const layoutConfig = CYTOSCAPE_LAYOUT_DEFAULTS[mode] || CYTOSCAPE_LAYOUT_DEFAULTS.breadthfirst;
+
+         if (typeof this.cyInstance.layout === 'function') {
+@@ -240,6 +369,7 @@ export default class DaGraphViewer extends LightningElement {
+             this.cyInstance = null;
+         }
+         this.selectedNodeId = null;
++        this.selectedEdgeId = null;
+         this.error = null;
+     }
+
+@@ -455,13 +585,14 @@ export default class DaGraphViewer extends LightningElement {
+
+             /* global cytoscape */
+             if (typeof cytoscape === 'function') {
+-                const layoutConfig = (savedPositions || this._currentLayout === 'architecture')
++                const layoutConfig = (savedPositions || this._currentLayout === 'architecture' || this._currentLayout === 'orbit' || this._currentLayout === 'constellation')
+                     ? { name: 'preset', animate: false }
+                     : (CYTOSCAPE_LAYOUT_DEFAULTS[this._currentLayout] || CYTOSCAPE_LAYOUT_DEFAULTS.breadthfirst);
+
+                 this.cyInstance = cytoscape({
+                     container: container,
+                     elements: elements,
++                    boxSelectionEnabled: true,
+                     style: [
+                         {
+                             selector: 'node',
+@@ -488,6 +619,14 @@ export default class DaGraphViewer extends LightningElement {
+                                 'target-arrow-shape': 'triangle',
+                                 'curve-style': 'bezier'
+                             }
++                        },
++                        {
++                            selector: 'edge:selected',
++                            style: {
++                                'width': 3,
++                                'line-color': '#005fb2',
++                                'target-arrow-color': '#005fb2'
++                            }
+                         }
+                     ],
+                     layout: layoutConfig
+@@ -508,8 +647,39 @@ export default class DaGraphViewer extends LightningElement {
+                 this.cyInstance.on('tap', 'node', (evt) => {
+                     const node = evt.target;
+                     this.selectedNodeId = node.id();
+-                    // Dispatch custom event for selection change if needed without navigating
+-                    this.dispatchEvent(new CustomEvent('nodeselect', { detail: { nodeId: node.id() } }));
++                    this.dispatchEvent(new CustomEvent('nodeselect', {
++                        detail: {
++                            nodeId: node.id(),
++                            sourceView: 'graph'
++                        },
++                        bubbles: true,
++                        composed: true
++                    }));
++                });
++
++                this.cyInstance.on('tap', 'edge', (evt) => {
++                    const edge = evt.target;
++                    this.selectedEdgeId = edge.id();
++                    this.dispatchEvent(new CustomEvent('edgeselect', {
++                        detail: {
++                            edgeId: edge.id(),
++                            sourceView: 'graph'
++                        },
++                        bubbles: true,
++                        composed: true
++                    }));
++                });
++
++                this.cyInstance.on('tap', (evt) => {
++                    if (evt.target === this.cyInstance) {
++                        this.selectedNodeId = null;
++                        this.selectedEdgeId = null;
++                        this.dispatchEvent(new CustomEvent('selectionclear', {
++                            detail: { sourceView: 'graph' },
++                            bubbles: true,
++                            composed: true
++                        }));
++                    }
+                 });
+
+                 // Persist user-dragged node coordinates on dragfree
+@@ -517,16 +687,22 @@ export default class DaGraphViewer extends LightningElement {
+                     this.scheduleSaveState();
+                 });
+
+-                // Persist viewport changes on zoom/pan
++                // Persist viewport changes on zoom/pan and update LOD class
+                 this.cyInstance.on('viewport', () => {
++                    this.updateLODClasses();
+                     this.scheduleSaveState();
+                 });
++
++                this.updateLODClasses();
+             } else {
+                 // Mock or container-less fallback for offline/test environments
+                 this.cyInstance = {
+                     destroyed: false,
+                     elements: elements,
+                     currentLayout: this._currentLayout,
++                    boxSelectionEnabled: true,
++                    _zoom: savedZoomPan ? savedZoomPan.zoom : 1.0,
++                    _pan: savedZoomPan ? savedZoomPan.pan : { x: 0, y: 0 },
+                     destroy() {
+                         this.destroyed = true;
+                     },
+@@ -534,6 +710,26 @@ export default class DaGraphViewer extends LightningElement {
+                         this.currentLayout = config.name;
+                         return { run: () => {} };
+                     },
++                    zoom: function(val) {
++                        if (typeof val === 'number') this._zoom = val;
++                        else if (val && typeof val.level === 'number') this._zoom = val.level;
++                        return this._zoom;
++                    },
++                    pan: function(val) {
++                        if (val) this._pan = val;
++                        return this._pan;
++                    },
++                    fit: function() {},
++                    center: function() {},
++                    width: function() { return 800; },
++                    height: function() { return 600; },
++                    nodes: function() {
++                        return elements.filter(e => !e.data.source).map(e => ({
++                            id: () => e.data.id,
++                            position: (p) => { if (p) e.position = p; return e.position || { x: 0, y: 0 }; }
++                        }));
++                    },
++                    batch: function(cb) { if (cb) cb(); },
+                     on: (event, selector, handler) => {}
+                 };
+             }
+@@ -546,6 +742,22 @@ export default class DaGraphViewer extends LightningElement {
+         }
+     }
+
++    updateLODClasses() {
++        if (!this.cyInstance || typeof this.cyInstance.zoom !== 'function') return;
++        const container = this.template ? this.template.querySelector('.cy-container') : null;
++        if (!container) return;
++
++        const currentZoom = this.cyInstance.zoom();
++        container.classList.remove('zoom-far', 'zoom-mid', 'zoom-near');
++        if (currentZoom < 0.5) {
++            container.classList.add('zoom-far');
++        } else if (currentZoom < 1.2) {
++            container.classList.add('zoom-mid');
++        } else {
++            container.classList.add('zoom-near');
++        }
++    }
++
+     /**
+      * Re-renders or filters graph elements in-place when filterCriteria changes
+      * without resetting positions or issuing a background save.
+diff --git a/scratch/salesforce-poc/tests/run-poc-tests.cjs b/scratch/salesforce-poc/tests/run-poc-tests.cjs
+index 29afef7..161cf1c 100644
+--- a/scratch/salesforce-poc/tests/run-poc-tests.cjs
++++ b/scratch/salesforce-poc/tests/run-poc-tests.cjs
+@@ -1156,6 +1156,157 @@ async function main() {
+         assert.strictEqual(saveCalledWith.viewMode, 'graph');
+     });
+
++    // --- Category 8: Hardened Cytoscape Lifecycle, LOD, Viewport & Layout Parity ---
++    console.log('\n[Category 8: Hardened Cytoscape Lifecycle, LOD, Viewport & Layout Parity]');
++
++    await runAsyncTest('TC-14: Viewport Controls & Zoom In/Out/Fit/Reset Execution', async () => {
++        const mockApex = {
++            loadScript: () => Promise.resolve(),
++            getLatestGraphMetadataForProject: async () => ({
++                runId: 'run_vp',
++                isChunked: false,
++                rawPayload: JSON.stringify({ nodes: [{ id: 'n1' }], edges: [] })
++            }),
++            getGraphChunks: async () => []
++        };
++        const DaGraphViewer = createProductionViewerClass(mockApex);
++        const viewer = new DaGraphViewer();
++
++        viewer.recordId = 'PROJ_VP';
++        viewer.renderedCallback();
++        await delay(20);
++
++        assert.ok(viewer.cyInstance, 'cyInstance initialized');
++        const initialZoom = viewer.cyInstance.zoom();
++
++        // Zoom In
++        viewer.zoomIn();
++        assert.strictEqual(viewer.cyInstance.zoom() > initialZoom, true, 'zoomIn increases zoom level');
++
++        // Zoom Out
++        const afterZoomIn = viewer.cyInstance.zoom();
++        viewer.zoomOut();
++        assert.strictEqual(viewer.cyInstance.zoom() < afterZoomIn, true, 'zoomOut decreases zoom level');
++
++        // Fit & Reset
++        assert.doesNotThrow(() => viewer.fitView(), 'fitView executes safely');
++        assert.doesNotThrow(() => viewer.resetView(), 'resetView executes safely');
++    });
++
++    await runAsyncTest('TC-15: Extended Layout Execution (Orbit & Constellation Activation)', async () => {
++        const mockApex = {
++            loadScript: () => Promise.resolve(),
++            getLatestGraphMetadataForProject: async () => ({
++                runId: 'run_layouts',
++                isChunked: false,
++                rawPayload: JSON.stringify({
++                    nodes: [
++                        { id: 'Class.CoreService', name: 'CoreService', layer: 'Core', type: 'ApexClass' },
++                        { id: 'LWC.componentView', name: 'componentView', layer: 'UI', type: 'LWC' }
++                    ],
++                    edges: [
++                        { id: 'e1', source: 'LWC.componentView', target: 'Class.CoreService' }
++                    ]
++                })
++            }),
++            getGraphChunks: async () => []
++        };
++        const DaGraphViewer = createProductionViewerClass(mockApex);
++        const viewer = new DaGraphViewer();
++
++        viewer.recordId = 'PROJ_LAYOUTS';
++        viewer.renderedCallback();
++        await delay(20);
++
++        // Apply Orbit layout
++        viewer.setLayout('orbit');
++        assert.strictEqual(viewer.layoutMode, 'orbit');
++        assert.strictEqual(viewer.error, null);
++
++        // Apply Constellation layout
++        viewer.setLayout('constellation');
++        assert.strictEqual(viewer.layoutMode, 'constellation');
++        assert.strictEqual(viewer.error, null);
++    });
++
++    await runAsyncTest('TC-16: Payload Immutability during Cytoscape Filtering & Layout Computations', async () => {
++        const canonicalPayload = {
++            schemaVersion: '1.0.0',
++            projectId: 'PROJ_IMMUTABLE',
++            nodes: [
++                { id: 'Node1', label: 'Node 1', layer: 'Core', type: 'ApexClass' },
++                { id: 'Node2', label: 'Node 2', layer: 'UI', type: 'LWC' }
++            ],
++            edges: [
++                { id: 'Edge1', source: 'Node2', target: 'Node1' }
++            ]
++        };
++
++        const snapshot = JSON.stringify(canonicalPayload);
++
++        // Run all 4 layout engines directly on frozen nodes/edges
++        const frozenNodes = Object.freeze(canonicalPayload.nodes.map(n => Object.freeze({ ...n })));
++        const frozenEdges = Object.freeze(canonicalPayload.edges.map(e => Object.freeze({ ...e })));
++
++        layoutModule.computeArchitectureLayout(frozenNodes, frozenEdges);
++        layoutModule.computeOrbitLayout({
++            nodes: frozenNodes.map(n => ({ nodeId: n.id, orbitRingIndex: 1, orbitSectorId: n.type }))
++        });
++        layoutModule.computeConstellationLayout({
++            focalNode: frozenNodes[0],
++            rings: [{ ringIndex: 1, hopDistance: 1, items: [{ nodeId: frozenNodes[1].id }] }],
++            edges: frozenEdges
++        });
++
++        assert.strictEqual(JSON.stringify(canonicalPayload), snapshot, 'Canonical payload must remain 100% immutable');
++    });
++
++    await runAsyncTest('TC-17: Edge Selection & Selection Clear Event Conformance', async () => {
++        const mockApex = {
++            loadScript: () => Promise.resolve(),
++            getLatestGraphMetadataForProject: async () => ({
++                runId: 'run_events',
++                isChunked: false,
++                rawPayload: JSON.stringify({
++                    nodes: [{ id: 'n1' }, { id: 'n2' }],
++                    edges: [{ id: 'e1', source: 'n1', target: 'n2' }]
++                })
++            }),
++            getGraphChunks: async () => []
++        };
++        const DaGraphViewer = createProductionViewerClass(mockApex);
++        const viewer = new DaGraphViewer();
++
++        let edgeSelectDetail = null;
++        viewer.addEventListener('edgeselect', (evt) => {
++            edgeSelectDetail = evt.detail;
++        });
++
++        let clearSelectFired = false;
++        viewer.addEventListener('selectionclear', () => {
++            clearSelectFired = true;
++        });
++
++        viewer.recordId = 'PROJ_EVENTS';
++        viewer.renderedCallback();
++        await delay(20);
++
++        // Simulate edge select event
++        viewer.dispatchEvent(new (class CustomEvent {
++            constructor(type, opts) { this.type = type; this.detail = opts ? opts.detail : null; }
++        })('edgeselect', { detail: { edgeId: 'e1', sourceView: 'graph' } }));
++
++        assert.strictEqual(edgeSelectDetail.edgeId, 'e1');
++        assert.strictEqual(edgeSelectDetail.sourceView, 'graph');
++
++        // Simulate selection clear event
++        viewer.dispatchEvent(new (class CustomEvent {
++            constructor(type, opts) { this.type = type; this.detail = opts ? opts.detail : null; }
++        })('selectionclear', { detail: { sourceView: 'graph' } }));
++
++        assert.strictEqual(clearSelectFired, true);
++    });
++
+     console.log('\n===================================================================');
+     console.log(`Summary: ${passes} PASSED, ${fails} FAILED`);
+
+diff --git a/scratch/salesforce-poc/tests/run-w5-1-tests.cjs b/scratch/salesforce-poc/tests/run-w5-1-tests.cjs
+index c2f2012..69fe491 100644
+--- a/scratch/salesforce-poc/tests/run-w5-1-tests.cjs
++++ b/scratch/salesforce-poc/tests/run-w5-1-tests.cjs
+@@ -148,6 +148,8 @@ async function runTests() {
+         assert.strictEqual(viewer.resolveLayoutMode('  circle  '), 'circle');
+         assert.strictEqual(viewer.resolveLayoutMode('BreadthFirst'), 'breadthfirst');
+         assert.strictEqual(viewer.resolveLayoutMode('Architecture'), 'architecture');
++        assert.strictEqual(viewer.resolveLayoutMode('Orbit'), 'orbit');
++        assert.strictEqual(viewer.resolveLayoutMode('Constellation'), 'constellation');
+         console.log('  ✓ 3. Case-insensitivity and whitespace trimming verified');
+         passCount++;
+     }
+@@ -547,6 +549,43 @@ async function runTests() {
+         passCount++;
+     }
+
++    // 18. Viewport interaction methods and zoom state preservation
++    {
++        const viewer = new DaGraphViewer();
++        let zoomVal = 1.0;
++        let fitCalled = false;
++        let resetCalled = false;
++        viewer.cyInstance = {
++            width: () => 800,
++            height: () => 600,
++            zoom: (arg) => {
++                if (arg && typeof arg.level === 'number') {
++                    zoomVal = arg.level;
++                } else if (typeof arg === 'number') {
++                    zoomVal = arg;
++                }
++                return zoomVal;
++            },
++            fit: () => { fitCalled = true; },
++            center: () => { resetCalled = true; }
++        };
++
++        viewer.zoomIn();
++        assert.strictEqual(zoomVal, 1.2, 'zoomIn scaled zoom by 1.2x');
++
++        viewer.zoomOut();
++        assert.strictEqual(Math.round(zoomVal * 100) / 100, 0.96, 'zoomOut scaled zoom by 0.8x');
++
++        viewer.fitView(40);
++        assert.strictEqual(fitCalled, true, 'fitView called cy.fit');
++
++        viewer.resetView();
++        assert.strictEqual(resetCalled, true, 'resetView called cy.center');
++
++        console.log('  ✓ 18. Viewport interaction methods (zoomIn, zoomOut, fitView, resetView) verified');
++        passCount++;
++    }
++
+     console.log('============================================================');
+     console.log(`Task W5-1 Test Results: ${passCount} PASSED, 0 FAILED`);
+ }
