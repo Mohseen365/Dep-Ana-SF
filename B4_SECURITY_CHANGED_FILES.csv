@@ -1,0 +1,5 @@
+file_path,status,owner,lines,sha256,description
+scratch/salesforce-poc/tests/run-b4-security-tests.cjs,CREATED,Agent B4,233,6ca972131be4638e9b46403537b0e482ff2c833ffc8582f2df114cf9c5cc334c,Dedicated offline security and regression test runner
+B4_SECURITY_REMEDIATION_REPORT.md,CREATED,Agent B4,286,2ab45025108809ae81f945eb9d13a1fc518f06c2f9a7ac2fe2a803308e3f6116,Comprehensive security audit report and remediation specifications for SEC-01..04
+B4_SECURITY_TEST_EVIDENCE.md,CREATED,Agent B4,87,3bb4e4d37ebfaed5a80b29a2959820ad71c8782c7a8249154c276d2fe1c41fce,Execution evidence for 14/14 security assertions and 25/25 offline suites
+B4_SECURITY_CHANGED_FILES.csv,CREATED,Agent B4,5,6abfae3fe5f563399f9bb146279dbc9970639e3074cd2c47ca9a7e2a6b31aa0a,Inventory of changed and created files for Agent B4 deliverables
