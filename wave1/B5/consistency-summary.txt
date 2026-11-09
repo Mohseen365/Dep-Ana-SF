@@ -1,0 +1,61 @@
+SALESFORCE POC DEPLOYMENT READINESS CONSISTENCY CHECK SUMMARY
+Generated: 2026-11-09T14:49:05.662Z
+===================================================================
+Total Checks Evaluated: 13
+PASS: 8
+WARN: 3
+FAIL: 2
+
+CHECK DETAILS:
+[PASS] CHK-01-SFDX-PROJECT: sfdx-project.json Configuration
+  Evidence: Found valid sfdx-project.json at scratch/salesforce-poc/sfdx-project.json
+
+[WARN] CHK-02-MANIFEST-FORCEIGNORE: Manifest & .forceignore Detection
+  Evidence: package.xml is MISSING; .forceignore in scratch/salesforce-poc/ is MISSING
+
+[PASS] CHK-03-STATIC-RESOURCES: Static Resources Inventory & Metadata
+  Evidence: Inventoried 1 static resource(s). Cytoscape size: 146 bytes (Mock placeholder).
+
+[PASS] CHK-04-CUSTOM-OBJECTS-FIELDS: Custom Objects & Fields Inventory
+  Evidence: Discovered 6 custom objects and 35 custom fields.
+
+[FAIL] CHK-05-PERMSET-FLS-AUDIT: Permission Set & FLS Consistency (SEC-01)
+  Evidence: Found 14 custom fields without FLS in DA_Architecture_Analyst (SEC-01 confirmed blocker).
+
+[PASS] CHK-06-APEX-METADATA: Apex Classes & Meta XML Pairing
+  Evidence: All 16 Apex classes have corresponding -meta.xml files.
+
+[WARN] CHK-07-APEX-TEST-PRESENCE: Apex Test Suite Presence & Offline Verification Boundary
+  Evidence: 5 test classes present covering controllers, DTOs, security, and schema. Offline coverage percentage NOT verified.
+
+[PASS] CHK-08-LWC-BUNDLES: LWC Component Bundles & Metadata
+  Evidence: Inventoried 23 LWC bundles. All bundles contain both .js and .js-meta.xml.
+
+[WARN] CHK-09-API-VERSION-CONSISTENCY: API Version Consistency Across Metadata
+  Evidence: Detected mixed API versions: 61.0, 59.0, 60.0 (sfdx-project.json is 61.0).
+
+[PASS] CHK-10-LWC-IMPORT-RESOLUTION: LWC Cross-Reference & Import Resolution
+  Evidence: All 28 LWC import references (@salesforce/apex, @salesforce/resourceUrl, c/*) resolved successfully.
+
+[PASS] CHK-11-APEX-SCHEMA-CONSISTENCY: Apex SOQL & DML Schema Reference Integrity
+  Evidence: Apex SOQL and DML queries reference valid custom objects and fields.
+
+[FAIL] CHK-12-W9-QUARANTINE-RISK: Wave 9 Quarantined Metadata Deployment Exposure Risk
+  Evidence: Wave 9 quarantined components (daRefactoringEngine, daRefactorHandoffModal) will be shipped by default 'force-app' deploy.
+
+[PASS] CHK-13-METADATA-SIZE-LIMITS: Metadata & Static Resource Size Limits
+  Evidence: Checked 164 files. Zero files exceed 100 KB in source metadata. Production Cytoscape bundling deferred to live org provisioning.
+
+BLOCKING FINDINGS REQUIRING ATTENTION BEFORE DEPLOYMENT:
+1. CHK-05-PERMSET-FLS-AUDIT (FAIL): Missing Field-Level Security in DA_Architecture_Analyst
+   - Custom fields on DA_User_Preference__c and DA_Annotation__c have 0 fieldPermissions.
+   - Live queries/DML WITH USER_MODE will fail with System.QueryException.
+2. CHK-12-W9-QUARANTINE-RISK (FAIL): Quarantined Wave 9 Components in Deploy Path
+   - daRefactoringEngine and daRefactorHandoffModal reside directly inside force-app/main/default/lwc/.
+   - Scratch/salesforce-poc lacks a .forceignore or package.xml to exclude them.
+   - Running 'sf project deploy' will deploy unauthorized components.
+3. CHK-09-API-VERSION-CONSISTENCY (WARN): Mixed API Versions
+   - sfdx-project.json targets 61.0.
+   - Metadata files declare mixed versions: 59.0, 60.0, 61.0.
+4. CHK-02-MANIFEST-FORCEIGNORE (WARN): Missing package.xml and .forceignore in scratch/salesforce-poc/
+===================================================================

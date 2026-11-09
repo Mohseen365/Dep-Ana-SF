@@ -1,0 +1,56 @@
+{
+  "quarantineAssessment": {
+    "status": "IMPLEMENTED_UNAUTHORIZED_QUARANTINED",
+    "evaluationDate": "2026-11-09",
+    "quarantinedComponents": [
+      {
+        "name": "daRefactoringEngine",
+        "type": "LightningComponentBundle",
+        "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
+        "files": [
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js",
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml"
+        ],
+        "isExposed": false,
+        "mountedInAppShell": false,
+        "importedBy": [
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js"
+        ]
+      },
+      {
+        "name": "daRefactorHandoffModal",
+        "type": "LightningComponentBundle",
+        "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
+        "files": [
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js",
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html",
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css",
+          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml"
+        ],
+        "isExposed": true,
+        "mountedInAppShell": false,
+        "importedBy": []
+      }
+    ],
+    "packagingExposure": {
+      "defaultPackageDirectory": "force-app",
+      "sfdxProjectFile": "scratch/salesforce-poc/sfdx-project.json",
+      "manifestPackageXml": "MISSING",
+      "scratchForceIgnore": "MISSING",
+      "riskDescription": "Without a .forceignore entry or explicit manifest allowlist, running 'sf project deploy start' or 'sf project deploy validate' against scratch/salesforce-poc automatically packages and deploys all files under force-app/, including quarantined components daRefactoringEngine and daRefactorHandoffModal."
+    },
+    "recommendations": {
+      "optionA_ForceIgnore": {
+        "description": "Narrowest exclusion via .forceignore entry",
+        "recommendedEntry": "**/lwc/daRefactoringEngine/**\n**/lwc/daRefactorHandoffModal/**",
+        "targetPath": "scratch/salesforce-poc/.forceignore",
+        "actionRequestedFrom": "B1 / Project Owner"
+      },
+      "optionB_ManifestAllowlist": {
+        "description": "Deployment manifest (manifest/package.xml) specifying only authorized LightningComponentBundle members",
+        "targetPath": "scratch/salesforce-poc/manifest/package.xml",
+        "actionRequestedFrom": "B1 / Project Owner"
+      }
+    }
+  }
+}
