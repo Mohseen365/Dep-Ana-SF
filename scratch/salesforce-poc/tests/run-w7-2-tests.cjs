@@ -119,7 +119,7 @@ async function runW72Tests() {
     // 7. Real Payload Immutability Verification (Full object integrity)
     assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');
 
-    // Negative controls in isolated harness: verify comparison detects mutations
+    // Negative controls in isolated harness: verify comparison detects node, edge, and nested mutations
     const negNodeTest = JSON.parse(JSON.stringify(baselineSnapshot));
     negNodeTest.nodes[0].coupling = 999;
     assert.throws(() => {

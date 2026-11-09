@@ -3,7 +3,7 @@
 **Project:** Dependency Analyzer — Salesforce Migration
 **Scope:** Test Hardening and Acceptance Evidence Repair for Tasks W6-2, W6-3, W6-4, W7-1, and W7-2
 **Authorization:** Project Owner-authorized remediation of existing Wave 1A test defects
-**Status:** `HARDENING_COMPLETE_PENDING_INDEPENDENT_REVIEW`
+**Status:** `HARDENING_IMPLEMENTATION_COMPLETE_PENDING_INDEPENDENT_REVIEW`
 
 ---
 
@@ -13,9 +13,9 @@ This report details the execution and verification of test-hardening corrections
 
 Specifically:
 1. **Disconnected Reference Elimination**: In the original test runners, `samplePayload` was cloned into `frozenPayload`, the frozen clone was assigned to `comp.payload`, but the final immutability assertion inspected the disconnected original `samplePayload`. This masked whether the component actually mutated its input. In this remediation, the actual object `samplePayload` is directly assigned to `comp.payload`, preceded by a full baseline deep snapshot (`baselineSnapshot = JSON.parse(JSON.stringify(samplePayload))`), and succeeded by a comprehensive `assert.deepStrictEqual(samplePayload, baselineSnapshot)` verification.
-2. **Event Contract Hardening**: The four interactive runners (W6-2, W6-3, W6-4, W7-2) now explicitly assert `assert.strictEqual(evt.cancelable, false)` as mandated by `CONTRACT_06_NODE_SELECTION_EVENT_DTO.md`.
-3. **W7-1 Read-Only Protection**: W7-1 (`daDiagnosticsView`) was verified to maintain strict read-only scorecard semantics with zero event dispatches.
-4. **Negative Controls**: Every runner now incorporates targeted negative controls using isolated test objects to demonstrate that deliberate mutations of nodes, edges/cycles, or nested structures are reliably detected by the test harness.
+2. **Event Contract Hardening**: The four interactive runners (W6-2, W6-3, W6-4, W7-2) explicitly assert `assert.strictEqual(evt.cancelable, false)` as mandated by `CONTRACT_06_NODE_SELECTION_EVENT_DTO.md`.
+3. **W7-1 Read-Only Protection**: W7-1 (`daDiagnosticsView`) was verified to maintain strict read-only scorecard semantics with zero event dispatches (`comp._dispatchedEvents.length === 0`).
+4. **Negative Controls**: Every runner incorporates targeted negative controls using isolated test objects to demonstrate that deliberate mutations of nodes, edges/cycles, or nested structures are reliably detected by the test harness with `assert.throws(..., /AssertionError/)`.
 5. **Zero Production LWC or Governance Changes**: All 20 production LWC files, 5 patches, CONTRACT-06, registers, manifests, and INT-1 coordinator paths remain bit-for-bit identical to the audited HEAD (`06776e4620e2ac32941a7a3c171c1ef97d63288e`).
 
 ---
@@ -101,7 +101,7 @@ All functional and regression assertions were strictly preserved:
 
 ## 5. Protected Path and Scope Verification
 
-Modified files: Exactly 5 files (all within allowlist).
+Modified files: Exactly 5 test runner files plus updated governance documentation.
 No production LWC source, frozen contracts, task registers, or INT-1 coordinator paths were modified.
 
 ---
@@ -109,6 +109,6 @@ No production LWC source, frozen contracts, task registers, or INT-1 coordinator
 ## 6. Acceptance and Stop Conditions
 
 Per dispatch instructions:
-- Final status is `HARDENING_COMPLETE_PENDING_INDEPENDENT_REVIEW`.
+- Final status is `HARDENING_IMPLEMENTATION_COMPLETE_PENDING_INDEPENDENT_REVIEW`.
 - No sign-off or acceptance is claimed on behalf of Workstream Leads or Integration Coordinator.
-- Changes are preserved in the working tree for independent verification.
+- Changes are preserved and verified in Git.
