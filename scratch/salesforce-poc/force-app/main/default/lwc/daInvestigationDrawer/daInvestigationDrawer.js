@@ -12,6 +12,7 @@ export default class DaInvestigationDrawer extends LightningElement {
     @track activeTab = 'overview';
 
     _broadcastChannel = null;
+    _instanceId = 'drawer_' + Math.random().toString(36).substring(2, 9);
 
     connectedCallback() {
         this.initBroadcastChannel();
@@ -43,8 +44,32 @@ export default class DaInvestigationDrawer extends LightningElement {
 
     handleBroadcastMessage(data) {
         if (!data || typeof data !== 'object') return;
-        if (data.type === 'DRAWER_SELECT_NODE' && data.nodeId) {
-            this.handleNeighborSelection(data.nodeId);
+        // Echo suppression: ignore messages originating from this drawer instance
+        if (data.senderId && data.senderId === this._instanceId) return;
+
+        // Project isolation: reject messages with mismatched project
+        if (this._projectId && data.projectId && String(data.projectId).trim() !== String(this._projectId).trim()) {
+            return;
+        }
+        // If drawer has an active project but payload specifies a mismatched project, or vice versa
+        if (data.projectId && !this._projectId) {
+            // When drawer has no active project set yet, do not accept foreign project data
+            return;
+        }
+
+        // Stale message protection: ignore messages older than 15 seconds
+        if (typeof data.timestamp === 'number' && Date.now() - data.timestamp > 15000) {
+            return;
+        }
+
+        // Schema allowlist
+        const ALLOWED_ACTIONS = ['DRAWER_SELECT_NODE', 'DRAWER_TOGGLE_PIN'];
+        if (!ALLOWED_ACTIONS.includes(data.type)) return;
+
+        if (data.type === 'DRAWER_SELECT_NODE') {
+            if (typeof data.nodeId === 'string' && data.nodeId.trim() !== '') {
+                this.handleNeighborSelection(data.nodeId.trim());
+            }
         } else if (data.type === 'DRAWER_TOGGLE_PIN') {
             this.handleTogglePin();
         }
@@ -356,7 +381,9 @@ export default class DaInvestigationDrawer extends LightningElement {
                     type: 'DRAWER_DETACHED',
                     projectId: this.projectId,
                     selectedNodeId: this.selectedNodeId,
-                    isPinned: this.isPinned
+                    isPinned: this.isPinned,
+                    senderId: this._instanceId,
+                    timestamp: Date.now()
                 });
             } catch (e) {
                 // Ignore channel errors
@@ -388,7 +415,9 @@ export default class DaInvestigationDrawer extends LightningElement {
                     type: 'DRAWER_SYNC',
                     projectId: this.projectId,
                     selectedNodeId: this.selectedNodeId,
-                    isPinned: this.isPinned
+                    isPinned: this.isPinned,
+                    senderId: this._instanceId,
+                    timestamp: Date.now()
                 });
             } catch (e) {
                 // Ignore channel errors

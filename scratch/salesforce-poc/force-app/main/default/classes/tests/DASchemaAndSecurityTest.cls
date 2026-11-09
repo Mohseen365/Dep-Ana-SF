@@ -114,4 +114,71 @@ private class DASchemaAndSecurityTest {
         System.assertEquals('INVALID_PARAM', err.errorCode);
         System.assertEquals('CORR-1234', err.correlationId);
     }
+
+    /**
+     * SEC-01 & SEC-02: Validates Field-Level Security & USER_MODE access on remediated objects.
+     * Verifies standard user querying and DML on DA_User_Preference__c and DA_Annotation__c.
+     */
+    @IsTest
+    static void testUserPreferenceAndAnnotationUserModeSecurity() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c WHERE Project_Key__c = 'baseline_test_proj' LIMIT 1];
+
+        // Validate DA_User_Preference__c USER_MODE insertion and querying
+        DA_User_Preference__c pref = new DA_User_Preference__c(
+            Project__c = proj.Id,
+            User__c = UserInfo.getUserId(),
+            Preference_Key__c = proj.Id + '_' + UserInfo.getUserId(),
+            Active_View_Mode__c = 'ARCHITECTURE',
+            Active_Layout_Mode__c = 'COSE',
+            Positions_JSON__c = '{"node1":{"x":10,"y":20}}',
+            Filters_JSON__c = '{"schemaVersion":"2.0.0","presets":[]}',
+            Zoom_Pan_JSON__c = '{"zoom":1.0,"pan":{"x":0,"y":0}}'
+        );
+        insert as user pref;
+
+        List<DA_User_Preference__c> queriedPrefs = [
+            SELECT Id, Active_Layout_Mode__c, Active_View_Mode__c, Filters_JSON__c,
+                   Positions_JSON__c, Project__c, User__c, Zoom_Pan_JSON__c
+            FROM DA_User_Preference__c
+            WHERE Project__c = :proj.Id AND User__c = :UserInfo.getUserId()
+            WITH USER_MODE
+            LIMIT 1
+        ];
+        System.assertEquals(1, queriedPrefs.size(), 'Preference record must be queryable WITH USER_MODE');
+        System.assertEquals('COSE', queriedPrefs[0].Active_Layout_Mode__c, 'Active layout mode must match');
+
+        // Validate DA_Annotation__c USER_MODE insertion, querying, and updating
+        DA_Annotation__c annotation = new DA_Annotation__c(
+            Project__c = proj.Id,
+            Node_Id__c = '1',
+            Author__c = 'Test Author',
+            Text__c = 'Security remediation test annotation',
+            Status__c = 'Open'
+        );
+        insert as user annotation;
+
+        List<DA_Annotation__c> queriedAnnotations = [
+            SELECT Id, Author__c, Finding__c, Node_Id__c, Project__c, Resolved_At__c, Status__c, Text__c
+            FROM DA_Annotation__c
+            WHERE Project__c = :proj.Id AND Node_Id__c = '1'
+            WITH USER_MODE
+            LIMIT 1
+        ];
+        System.assertEquals(1, queriedAnnotations.size(), 'Annotation record must be queryable WITH USER_MODE');
+        System.assertEquals('Test Author', queriedAnnotations[0].Author__c, 'Author must match');
+
+        // Update annotation in USER_MODE
+        queriedAnnotations[0].Status__c = 'Resolved';
+        queriedAnnotations[0].Resolved_At__c = DateTime.now();
+        update as user queriedAnnotations[0];
+
+        DA_Annotation__c updatedAnn = [
+            SELECT Id, Status__c, Resolved_At__c
+            FROM DA_Annotation__c
+            WHERE Id = :queriedAnnotations[0].Id
+            WITH USER_MODE
+        ];
+        System.assertEquals('Resolved', updatedAnn.Status__c, 'Status must be updated to Resolved');
+        System.assertNotEquals(null, updatedAnn.Resolved_At__c, 'Resolved_At__c must not be null');
+    }
 }

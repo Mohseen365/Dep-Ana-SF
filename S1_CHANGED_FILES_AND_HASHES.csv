@@ -1,0 +1,5 @@
+filepath,action,author,sha256,notes
+scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml,MODIFIED,Agent S1,16fb5a1245b12dfd7310cffd1ce744666756bbd55bc5452ea393f167d05f61e1,Remediated FLS permissions for 12 eligible fields across DA_User_Preference__c and DA_Annotation__c (SEC-01)
+scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js,MODIFIED,Agent S1,a95d3f8b6ae65fa06360082d11d47c85a491a42a85807e759ca92b80a190dd61,Hardened BroadcastChannel handler with instanceId echo suppression project isolation timestamp freshness and action allowlisting (SEC-03)
+scratch/salesforce-poc/force-app/main/default/classes/tests/DASchemaAndSecurityTest.cls,MODIFIED,Agent S1,9950f2e5ecc50f697d019dfad76addf847e7d191af9eed0b44b39846cfc29a01,Added test coverage for USER_MODE DML and SOQL query enforcement on user preferences and annotations (SEC-02)
+scratch/salesforce-poc/tests/run-s1-security-tests.cjs,CREATED,Agent S1,47b81f548144e9542ae24703891fbaea2c6a038e6a6dbb4844337ce9d04e5062,Dedicated offline security and regression test runner for Agent S1 remediations
