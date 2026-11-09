@@ -72,3 +72,16 @@
     font-size: 0.7rem;
     margin-top: 2px;
 }
+
+.view-badge {
+    cursor: pointer;
+    margin: 2px 4px 2px 0;
+    user-select: none;
+    font-size: 0.7rem;
+    background-color: #f3f3f3;
+    color: #514f4d;
+}
+.view-badge:hover {
+    background-color: #0176d3;
+    color: #ffffff;
+}

@@ -48,6 +48,18 @@ describe('c-da-sidebar unit tests', () => {
         expect(biz.count).toBe(2);
     });
 
+    it('dispatches viewchange event when a navigation view is selected', () => {
+        const element = createElement('c-da-sidebar', { is: DaSidebar });
+        document.body.appendChild(element);
+
+        const handler = jest.fn();
+        element.addEventListener('viewchange', handler);
+
+        element.handleViewSelect({ currentTarget: { dataset: { view: 'matrix' } } });
+        expect(handler).toHaveBeenCalled();
+        expect(handler.mock.calls[0][0].detail.viewMode).toBe('matrix');
+    });
+
     it('dispatches nodeselect event when a tree node is clicked', () => {
         const element = createElement('c-da-sidebar', { is: DaSidebar });
         document.body.appendChild(element);

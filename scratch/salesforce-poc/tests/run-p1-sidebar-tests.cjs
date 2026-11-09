@@ -40,6 +40,7 @@ console.log('\n[Suite 3: Event Dispatch Discipline]');
 assert.ok(jsCode.includes("new CustomEvent('nodeselect'"), 'Must dispatch nodeselect custom event');
 assert.ok(jsCode.includes("new CustomEvent('collapsechange'"), 'Must dispatch collapsechange custom event');
 assert.ok(jsCode.includes("new CustomEvent('layerfilterchange'"), 'Must dispatch layerfilterchange custom event');
+assert.ok(jsCode.includes("new CustomEvent('viewchange'"), 'Must dispatch viewchange custom event');
 assert.ok(jsCode.includes('bubbles: true'), 'Events must declare bubbles: true');
 assert.ok(jsCode.includes('composed: true'), 'Events must declare composed: true');
 console.log('  ✓ CustomEvent contracts, nodeselect dispatch, and bubbles/composed discipline verified.');

@@ -5,6 +5,7 @@ export default class DaSidebar extends LightningElement {
     @api projectId;
     @api selectedNodeId;
     @api nodes = [];
+    @api currentView = 'graph';
 
     @track isCollapsed = false;
     @track searchFilter = '';
@@ -116,6 +117,17 @@ export default class DaSidebar extends LightningElement {
             bubbles: true,
             composed: true
         }));
+    }
+
+    handleViewSelect(event) {
+        const viewMode = event.currentTarget.dataset.view;
+        if (viewMode) {
+            this.dispatchEvent(new CustomEvent('viewchange', {
+                detail: { viewMode },
+                bubbles: true,
+                composed: true
+            }));
+        }
     }
 
     handleTreeNodeClick(event) {

@@ -77,6 +77,11 @@ sidebar.handleTreeNodeClick({ currentTarget: { dataset: { id: 'node-99' } } });
 assert.strictEqual(nodeEvt.type, 'nodeselect');
 assert.strictEqual(nodeEvt.detail.nodeId, 'node-99');
 assert.strictEqual(nodeEvt.detail.sourceComponent, 'daSidebar');
+let viewEvt = null;
+sidebar.dispatchEvent = (e) => { viewEvt = e; };
+sidebar.handleViewSelect({ currentTarget: { dataset: { view: 'matrix' } } });
+assert.strictEqual(viewEvt.type, 'viewchange');
+assert.strictEqual(viewEvt.detail.viewMode, 'matrix');
 console.log('  ✓ daSidebar Jest test cases all passed.');
 
 console.log('\n===================================================================');
