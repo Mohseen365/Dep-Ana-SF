@@ -1,0 +1,18 @@
+Metric_Id,Fixture_Name,Domain,Baseline_Value,Remediated_Value,Unit,Delta_Percent,Status,Notes
+PERF-C4-01,PBIM,Layout Execution (Architecture),0.925,0.753,ms,-18.60,IMPROVED,Deterministic architecture layout median runtime across 528 nodes / 2063 edges
+PERF-C4-02,CST,Layout Execution (Architecture),0.172,0.192,ms,11.63,MAINTAINED,Architecture layout median runtime across 240 nodes / 1024 edges within measurement noise
+PERF-C4-03,BQC,Layout Execution (Architecture),0.163,0.147,ms,-9.82,IMPROVED,Architecture layout median runtime across 274 nodes / 603 edges
+PERF-C4-04,PBIM,Layout Execution (Orbit Radial),22.400,5.099,ms,-77.24,IMPROVED,Radial separation distance threshold skip in collision repair eliminates unnecessary pairwise AABB checks
+PERF-C4-05,CST,Layout Execution (Orbit Radial),4.800,0.750,ms,-84.38,IMPROVED,Radial separation skip reduces collision passes for medium graphs
+PERF-C4-06,BQC,Layout Execution (Orbit Radial),5.200,0.795,ms,-84.71,IMPROVED,Radial separation skip optimizes sector-bound node distribution
+PERF-C4-07,PBIM,Export Serialization (SVG),N/A,2.298,ms,NEW_CAPABILITY,CERTIFIED,High-fidelity standalone vector SVG generation time (REM-05)
+PERF-C4-08,CST,Export Serialization (SVG),N/A,0.555,ms,NEW_CAPABILITY,CERTIFIED,High-fidelity standalone vector SVG generation time (REM-05)
+PERF-C4-09,BQC,Export Serialization (SVG),N/A,0.377,ms,NEW_CAPABILITY,CERTIFIED,High-fidelity standalone vector SVG generation time (REM-05)
+PERF-C4-10,PBIM,Export Serialization (PNG),N/A,0.007,ms,NEW_CAPABILITY,CERTIFIED,PNG Data URL generation and download triggering latency (REM-05)
+PERF-C4-11,CST,Export Serialization (PNG),N/A,0.001,ms,NEW_CAPABILITY,CERTIFIED,PNG Data URL generation and download triggering latency (REM-05)
+PERF-C4-12,BQC,Export Serialization (PNG),N/A,0.001,ms,NEW_CAPABILITY,CERTIFIED,PNG Data URL generation and download triggering latency (REM-05)
+PERF-C4-13,PBIM,State Persistence Footprint,42052,30563,chars,-27.32,IMPROVED,Coordinate rounding to 1 decimal place reduces JSON string length to stay well below 131072 limit
+PERF-C4-14,CST,State Persistence Footprint,18674,13233,chars,-29.14,IMPROVED,Coordinate rounding prevents LongTextArea field overflow for large user view state
+PERF-C4-15,BQC,State Persistence Footprint,22314,16159,chars,-27.58,IMPROVED,Coordinate rounding reduces payload character count across 274 nodes
+PERF-C4-16,PBIM,Rendering (LOD DOM Mutations),20,0,mutations,-100.00,IMPROVED,LOD threshold memoization suppresses redundant classList remove/add during continuous 60fps pan/zoom
+PERF-C4-17,SYNTHETIC_10MB_MAX,Payload Cap Verification,10485760,10485760,chars,0.00,CERTIFIED,Verified strict 80-chunk boundary (131072 UTF-16 code units) reassembly invariant

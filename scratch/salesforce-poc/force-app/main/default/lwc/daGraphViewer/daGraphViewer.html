@@ -72,6 +72,24 @@
                     ></lightning-button>
                 </lightning-button-group>
             </div>
+            <div class="slds-col">
+                <lightning-button-group>
+                    <lightning-button-icon
+                        icon-name="utility:image"
+                        alternative-text="Export PNG"
+                        title="Export Graph as PNG"
+                        onclick={handleExportPNG}
+                        variant="border-filled"
+                    ></lightning-button-icon>
+                    <lightning-button-icon
+                        icon-name="utility:download"
+                        alternative-text="Export SVG"
+                        title="Export Graph as SVG"
+                        onclick={handleExportSVG}
+                        variant="border-filled"
+                    ></lightning-button-icon>
+                </lightning-button-group>
+            </div>
         </div>
         <div class="slds-m-around_medium">
             <template if:true={isLoading}>
