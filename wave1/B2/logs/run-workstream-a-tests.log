@@ -1,0 +1,38 @@
+Running Workstream A LWC Offline Unit Tests (daAppShell & daProjectSelector)...
+================================================================================
+  ✓ 1. Application shell initial render defaults
+  ✓ 2. Navigation among approved existing views (Graph, Matrix, Findings)
+  ✓ 3. Project selector loading and populated state
+  ✓ 4. Empty project-list behavior
+  ✓ 5. Project-list request failure behavior
+  ✓ 6. Selecting a project updates parent-owned project context
+  ✓ 7. Active graph viewer receives correct project ID binding
+  ✓ 8. Switching views preserves active project context and selection
+  ✓ 9. Re-selecting the same project suppresses redundant updates
+  ✓ 10. Graph-node selection does NOT alter project or navigate views (SELECTION != NAVIGATION)
+  ✓ 11. Project switching clears prior node selection to prevent stale state
+  ✓ 12. Accessibility and tab index properties contract
+  ✓ 13. daAppShell HTML template integrates c-da-annotation-panel with active project and node bindings
+  ✓ 14. Load preferences for the initial project
+  ✓ 15. Load preferences after changing projects
+  ✓ 16. Reject a stale response from a previous project
+  ✓ 17. Restore a valid saved active view
+  ✓ 18. Restore a valid saved layout
+  ✓ 19. Restore valid versioned filter JSON
+  ✓ 20. Handle missing preferences
+  ✓ 21. Handle malformed filter JSON
+  ✓ 22. Handle unsupported schema versions
+  ✓ 23. Apply approved empty-filter fallback
+  ✓ 24. Change only layout while preserving unrelated preferences
+  ✓ 25. Change only filters while preserving unrelated preferences
+  ✓ 26. Change only active view while preserving unrelated preferences
+  ✓ 27. Ensure graph positions are not overwritten during preference saves
+  ✓ 28. Ensure zoom/pan is not overwritten during preference saves
+  ✓ 29. Prevent redundant saves
+  ✓ 30. Handle save failures
+  ✓ 31. Prevent duplicate load/save operations
+  ✓ 32. Preserve SELECTION != NAVIGATION invariant during preference changes
+  ✓ 33. Preserve existing component lifecycle cleanup
+
+================================================================================
+Summary: 33 PASSED, 0 FAILED

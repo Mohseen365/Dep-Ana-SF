@@ -1,0 +1,30 @@
+Running Central Coordinator Integration Test Suite (INT-1)...
+===================================================================
+
+[Section 1: Shell Architecture & Contract Validation]
+  ✓ 1.1 AppShell template embeds modular Header, Sidebar, Investigation Drawer, and all Approved View tabs
+  ✓ 1.2 AppShell exposes public activeProjectId and activeProjectKey APIs
+
+[Section 2: Shared Graph Payload Lifecycle]
+  ✓ 2.1 AppShell fetches, verifies, and reassembles chunked graph payload
+  ✓ 2.2 Discard stale graph responses when project changes mid-flight
+
+[Section 3: View Navigation & Invariant Enforcement]
+  ✓ 3.1 View switching among all 11 approved views updates activeView and activeViewMode
+  ✓ 3.2 Inbound viewchange event updates active view across all modes without mutating project or selection
+  ✓ 3.3 Invariant SELECTION != NAVIGATION strictly preserved across all node selection
+  ✓ 3.4 Cross-view node selection updates selectedNodeId for investigation drawer without view mutation
+
+[Section 4: User Preference & Deduplication Discipline]
+  ✓ 4.1 Null-coalescing semantics leave positionsJson and zoomPanJson untouched
+  ✓ 4.2 Deduplication prevents redundant Apex writes when preference values are unchanged
+
+[Section 5: Project Switching & Lifecycle Safety]
+  ✓ 5.1 Project switching clears prior selection and initiates clean context reset
+  ✓ 5.2 Disconnecting shell invalidates outstanding asynchronous request IDs
+
+[Section 6: Error Containment & Fallback UI States]
+  ✓ 6.1 Global status displays appropriate badge and text for idle, loading, and error states
+
+===================================================================
+Central Coordinator Integration Suite Results: 13 PASSED, 0 FAILED

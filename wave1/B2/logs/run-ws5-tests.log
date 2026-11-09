@@ -1,0 +1,27 @@
+Running Workstream 5 (WS-5) Offline Verification Suite...
+===================================================================
+
+[Suite 1: Two-Step Project Resolution & Isolation]
+  ✓ 1. Valid Salesforce ID pattern recognition
+  ✓ 2. Strict two-step project resolution: ID first, Key fallback only on non-match
+
+[Suite 2: DEC-01 Ingestion Integrity & Run Classification]
+  ✓ 3. Amended DEC-01 Ingestion Rule: AVAILABLE requires exact chunk count match
+  ✓ 4. Apex DAGraphController code enforces bulkified DEC-01 integrity filter
+
+[Suite 3: Deterministic History Ordering]
+  ✓ 5. Compound ordering: Run_Timestamp__c DESC, Id DESC
+
+[Suite 4: Preference Isolation & 131,072 Character Boundary]
+  ✓ 6. User preference key compounds UserId and ProjectId
+  ✓ 7. Preference serialization validates 131,072 boundary
+
+[Suite 5: daProjectDashboard LWC Verification]
+  ✓ 8. daProjectDashboard bundle files presence and metadata validity
+  ✓ 9. daProjectDashboard metric and trend computations
+
+[Suite 6: CONTRACT-05 Dual Snapshot Diff Compliance]
+  ✓ 10. Contract 05 diff properties: Added, Removed, Modified, and Summary Deltas
+
+===================================================================
+Workstream 5 (WS-5) Offline Verification: 10 PASSED, 0 FAILED

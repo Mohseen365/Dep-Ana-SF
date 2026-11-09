@@ -1,0 +1,38 @@
+Running P0 Foundation & Contracts Offline Verification Suite...
+===================================================================
+
+[Suite 1: Custom Object & Custom Field Definitions]
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Project_Key__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Repository_Url__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/fields/Status__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/DA_Project__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Commit_Hash__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Run_Timestamp__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Status__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Node_Count__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Edge_Count__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Cyclic_SCC_Count__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Total_Chunks__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Total_Payload_Size_Chars__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/DA_Analysis_Run__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Chunk_Index__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/fields/Payload_Data__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/fields/DA_Analysis_Run__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/fields/Rule_Id__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/fields/Severity__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/fields/Target_Node_Id__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/fields/Details__c.field-meta.xml verified
+  ✓ scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml verified
+
+[Suite 2: Permission Set Coverage]
+  ✓ All 6 DA custom objects and 17 critical custom fields protected and granted in DA_Architecture_Analyst.
+
+[Suite 3: Master-Detail Relationship Integrity]
+  ✓ Master-Detail cascade delete and integrity rules verified.
+
+===================================================================
+P0 Foundation & Contracts Offline Verification: ALL 3 SUITES PASSED

@@ -1,0 +1,47 @@
+Running Wave 4 Phase 2C Coordinator Integration Test Suite...
+================================================================
+
+[Section 1: Shared Graph Payload Lifecycle]
+  ✓ 1. Shell loads and validates chunked/raw graph payload
+  ✓ 2. Shell passes the same validated payload to Matrix and Findings
+  ✓ 4. No duplicate graph requests when shared payload is supplied
+  ✓ 5. Stale graph responses are ignored
+  ✓ 6. Project switching invalidates prior graph data
+  ✓ 7. Component disconnect invalidates in-flight requests
+  ✓ 8. Loading, empty and error states are distinct
+
+[Section 2: Preset Manager Event Responsibilities]
+  ✓ 9. Preset Manager receives correct inputs via getters
+  ✓ 10. filterchange updates active criteria without accidental container persistence
+  ✓ 11. containerchange updates and persists the V2 container
+  ✓ 12. Preset selection updates criteria without erasing presets
+  ✓ 13. Preset create/update/delete updates container and persists correctly
+
+[Section 3: Strict Project-Scoped Presets]
+  ✓ 14. Matching project preset is retained
+  ✓ 15. Different project preset and unscoped presets are excluded
+  ✓ 16. Missing project context exposes no presets
+  ✓ 17. Malformed preference JSON does not trigger destructive writes
+  ✓ 18. V1 migration remains in-memory only during load
+  ✓ 19. V2 container preserves presets and active preset ID
+
+[Section 4: Child Views Integration & Predicates]
+  ✓ 3. Graph Viewer remains functional and receives filter criteria
+  ✓ 20. Matrix receives correct shared payload and criteria
+  ✓ 21. Findings receives correct shared payload and criteria
+  ✓ 22. Graph filtering uses canonical criteria
+  ✓ 23. Coverage states retain exact canonical semantics
+  ✓ 24. UNKNOWN and UNTESTED remain distinct
+  ✓ 25. High-coupling condition uses coupling > 15 OR fanIn > 10 threshold
+  ✓ 26. Unresolved Matrix edges are preserved and classified
+
+[Section 5: Frozen Invariants & State Protection]
+  ✓ 27. Existing shell navigation remains intact
+  ✓ 28. Invariant 1: SELECTION != NAVIGATION
+  ✓ 29. Existing position and zoom/pan fields remain untouched
+  ✓ 30. Stale preference requests are ignored
+  ✓ 31. Deduplication prevents duplicate preference writes
+  ✓ 32. All 12 frozen invariants verified by source contracts
+
+================================================================
+Wave 4 Phase 2C Integration Suite Results: 32 PASSED, 0 FAILED

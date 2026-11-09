@@ -1,0 +1,194 @@
+[
+  {
+    "suite": "run-analysis-history-tests.cjs",
+    "exitCode": 0,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 49
+  },
+  {
+    "suite": "run-coordinator-integration-suite.cjs",
+    "exitCode": 0,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 71
+  },
+  {
+    "suite": "run-lane-a-schema-tests.cjs",
+    "exitCode": 0,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 53
+  },
+  {
+    "suite": "run-lane-c-preset-manager-tests.cjs",
+    "exitCode": 0,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 54
+  },
+  {
+    "suite": "run-lane-d-graph-filter-tests.cjs",
+    "exitCode": 0,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 74
+  },
+  {
+    "suite": "run-lane-e-matrix-tests.cjs",
+    "exitCode": 0,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 85
+  },
+  {
+    "suite": "run-lane-f-findings-tests.cjs",
+    "exitCode": 0,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 68
+  },
+  {
+    "suite": "run-lwc-jest-tests.cjs",
+    "exitCode": 0,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 56
+  },
+  {
+    "suite": "run-p0-verification-tests.cjs",
+    "exitCode": 0,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 43
+  },
+  {
+    "suite": "run-p1-header-tests.cjs",
+    "exitCode": 0,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 40
+  },
+  {
+    "suite": "run-p1-sidebar-tests.cjs",
+    "exitCode": 0,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 44
+  },
+  {
+    "suite": "run-poc-tests.cjs",
+    "exitCode": 0,
+    "passed": 47,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 1904
+  },
+  {
+    "suite": "run-w5-1-tests.cjs",
+    "exitCode": 0,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 846
+  },
+  {
+    "suite": "run-w6-1-tests.cjs",
+    "exitCode": 0,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 104
+  },
+  {
+    "suite": "run-w6-2-tests.cjs",
+    "exitCode": 0,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 66
+  },
+  {
+    "suite": "run-w6-3-tests.cjs",
+    "exitCode": 0,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 50
+  },
+  {
+    "suite": "run-w6-4-tests.cjs",
+    "exitCode": 0,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 57
+  },
+  {
+    "suite": "run-w7-1-tests.cjs",
+    "exitCode": 0,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 52
+  },
+  {
+    "suite": "run-w7-2-tests.cjs",
+    "exitCode": 0,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 63
+  },
+  {
+    "suite": "run-w8-1-tests.cjs",
+    "exitCode": 0,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 48
+  },
+  {
+    "suite": "run-wave4-integration-suite.cjs",
+    "exitCode": 0,
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 74
+  },
+  {
+    "suite": "run-workstream-a-tests.cjs",
+    "exitCode": 0,
+    "passed": 33,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 76
+  },
+  {
+    "suite": "run-workstream-c-tests.cjs",
+    "exitCode": 0,
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 112
+  },
+  {
+    "suite": "run-ws5-tests.cjs",
+    "exitCode": 0,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 57
+  }
+]

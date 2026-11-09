@@ -1,0 +1,23 @@
+Running Lane D (daGraphViewer Filter Integration) Test Suite...
+===============================================================
+  ✓ 1. Search filtering isolates matching nodes
+  ✓ 2. Node-type filtering isolates nodes of specified type
+  ✓ 3. Risk filtering isolates HIGH risk nodes and intact edges
+  ✓ 4. Layer filtering filters on layer attribute
+  ✓ 5. Coverage filtering distinguishes COVERED vs UNTESTED
+  ✓ 6. Missing coverage defaults to UNKNOWN, not UNTESTED
+  ✓ 7. Combined filters evaluate conjunctive boolean logic
+  ✓ 8. Clearing filters restores complete node and edge set
+  ✓ 9. Filter change during load buffers criteria safely
+  ✓ 10. Stale async responses are discarded upon request ID mismatch
+  ✓ 11. Invariant 1: SELECTION != NAVIGATION preserved
+  ✓ 12. Layout positions and zoom/pan preserved across filter applications
+  ✓ 13. Node annotations preserved across filtering
+  ✓ 14. Invariant 8: Cytoscape instance destroyed cleanly
+  ✓ 15. Invariant 3: @api recordId getter/setter normalizes and invalidates in-flight requests
+===============================================================
+Lane D Test Results: 15 PASSED, 0 FAILED
+(node:30280) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /app/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

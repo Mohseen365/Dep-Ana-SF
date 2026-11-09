@@ -1,0 +1,23 @@
+Running Lane E (daMatrixView LWC) Focused Unit Test Suite...
+============================================================
+  ✓ 1. Directed source-to-target dependency counts aggregated accurately
+  ✓ 2. Directed dependency semantics preserved (Source != Target)
+  ✓ 3. Unresolved edges with canonical target type mapped to expected target type
+  ✓ 4. Unresolved edges without target type safely fall back to "Unresolved"
+  ✓ 5. Dangling target node edge handled gracefully
+  ✓ 6. Missing source node handled safely without error
+  ✓ 7. Duplicate edge references suppressed to prevent overcounting
+  ✓ 8. Canonical search and node-type filtering correctly restrict matrix
+  ✓ 9. Empty payload yields empty matrix without crashing
+  ✓ 10. Malformed payload string handled safely
+  ✓ 11. Sum of row totals exactly matches totalDependencies
+  ✓ 12. Interactive cell click sets selectedCell and exposes sample dependency edges
+  ✓ 13. Anchor node selection emits nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION
+  ✓ 14. Layer filtering correctly restricts matrix rows and counts
+  ✓ 15. Input payload immutability preserved
+============================================================
+Lane E Test Results: 15 PASSED, 0 FAILED
+(node:30287) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /app/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

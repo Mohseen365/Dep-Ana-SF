@@ -1,0 +1,48 @@
+Running Workstream C Offline Verification & Integration Suite...
+===================================================================
+
+[Category 1: FEAT-STATE-02 ViewState & Position Persistence Tests]
+  ✓ 1. First-use behavior: returns null when no saved preference exists
+  ✓ 2. Saving and loading valid node positions and view state
+  ✓ 3. Project and user isolation: preferences are strictly scoped
+  ✓ 4. Project switch during save/load rejects cross-project pollution
+  ✓ 5. Malformed JSON payload detection and rejection
+  ✓ 6. Oversized JSON payload detection and rejection (>131072 chars) - R4 Boundary Verification
+  ✓ 7. Blank or missing Project ID rejection
+  ✓ 7a. Null arguments preserve existing saved preference values (Null-Coalescing Guard)
+  ✓ 7b. Empty string parameter updates field value and is not treated as null
+  ✓ 7c. R1: V1 filter save over existing V2 container preserves presets and activePresetId set to null
+  ✓ 7d. R1: Incoming V2 container replaces existing container atomically
+  ✓ 7e. R1: Empty string clears Filters_JSON__c and null preserves stored value
+  ✓ 7f. R1: Malformed and unsupported schema fail closed and preserve existing data
+
+[Category 2: FEAT-DATA-02 User Annotations & Notes Tests]
+  ✓ 8. Creating and loading node annotations for specific project
+  ✓ 9. Updating annotation text, status, and resolved timestamp
+  ✓ 10. Deleting annotation record
+  ✓ 11. Input validation: missing required fields and length limits
+  ✓ 12. Project switch isolation: annotations from project A do not leak to project B
+  ✓ 13. Selection Invariant Check: Annotation interactions do NOT mutate active project or view (SELECTION != NAVIGATION)
+
+[Category 3: LWC Annotation Panel Component Direct Unit Tests]
+  ✓ 14. daAnnotationPanel: fetching and creating annotations via LWC component
+  ✓ 16. daAnnotationPanel: stale request response rejection on rapid node change
+
+[Category 4: Production Apex Class Source Code Contract Verification]
+  ✓ 15. Production Apex Source Contracts: DAUserPreferenceController.cls & DAAnnotationController.cls
+
+[Category 5: Workstream 6 daInvestigationDrawer LWC Unit Tests]
+  ✓ 17. daInvestigationDrawer: Node metadata, fan-in/fan-out, and incident edge extraction
+  ✓ 18. daInvestigationDrawer: 1-hop drill-down and SELECTION != NAVIGATION invariant
+  ✓ 19. daInvestigationDrawer: Stale selection suppression on project/graph switch
+
+[Category 6: Workstream 6 Refactoring Engine & Pure Topological Math]
+  ✓ 20. daRefactoringEngine: Tarjan SCC detection & cycle counting
+  ✓ 21. daRefactoringEngine: Directed cycle edge verification vs SCC membership
+  ✓ 22. daRefactoringEngine: Immutable simulation inputs & cyclicSccCountDelta semantics
+  ✓ 23. daRefactoringEngine: Atomic REMOVE_NODE cascades across all incident edges (self-loops included)
+  ✓ 24. daRefactoringEngine: Informational movedMethodList & rejection of unsupported MOVE_METHOD
+  ✓ 25. daRefactoringEngine: Markdown and JSON handoff export generation & disclaimer
+
+===================================================================
+Summary: 31 PASSED, 0 FAILED
