@@ -1,0 +1,14 @@
+Running Task W6-1 (daRadarView LWC) Test Suite...
+=================================================
+  ✓ 1. Initial default state verified
+  ✓ 2. Payload assignment & processing verified
+  ✓ 3. 9-Dimensional Architecture Radar calculation & ordering verified
+  ✓ 4. Health summary calculation verified
+  ✓ 5. Concentric rings, axes, and polygon geometry verified
+  ✓ 6. Dimension inspection interaction verified
+  ✓ 7. Canonical nodeselect event emission verified (SELECTION != NAVIGATION)
+  ✓ 8. Strict no-invented-scoring missing primitives verified
+  ✓ 9. Empty and malformed payload resilience verified
+  ✓ 10. Graph payload immutability preserved
+=================================================
+Task W6-1 Test Results: ALL 10 TESTS PASSED

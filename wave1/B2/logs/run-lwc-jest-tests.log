@@ -1,0 +1,11 @@
+Running LWC Jest Unit Test Execution Harness...
+===================================================================
+
+[Suite 1: daHeader.test.js]
+  ✓ daHeader Jest test cases all passed.
+
+[Suite 2: daSidebar.test.js]
+  ✓ daSidebar Jest test cases all passed.
+
+===================================================================
+LWC Jest Tests: ALL 2 SUITES PASSED

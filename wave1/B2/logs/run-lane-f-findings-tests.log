@@ -1,0 +1,24 @@
+Running Lane F (daFindingsView LWC) Focused Unit Test Suite...
+==============================================================
+  ✓ 1. Circular dependencies derived from cycles[] and node flags with deduplication
+  ✓ 2. Untested high-risk items preserve distinct UNTESTED vs UNKNOWN status
+  ✓ 3. Unresolved references derived and deduplicated
+  ✓ 4. Hotspot detected when coupling > 15
+  ✓ 5. Hotspot detected when fanIn > 10
+  ✓ 6. Finding IDs are deterministic and stable across executions
+  ✓ 7. Canonical search filter matches title, description, or componentName
+  ✓ 8. Severity filtering restricts findings to requested levels
+  ✓ 9. Coverage status filter correctly isolates UNTESTED findings
+  ✓ 10. Empty payload yields 0 findings safely
+  ✓ 11. Malformed payload handled safely fail-closed
+  ✓ 12. Nodes missing optional analytics fields processed without errors
+  ✓ 13. Node selection CustomEvent emission adheres strictly to CONTRACT-06 & SELECTION != NAVIGATION
+  ✓ 14. Local review state workflow (OPEN -> IN_REVIEW -> RESOLVED -> OPEN)
+  ✓ 15. Expandable structured guidance sections (WHAT, WHY IT MATTERS, WHERE, WHAT TO DO NEXT)
+  ✓ 16. Input payload immutability preserved
+==============================================================
+Lane F Test Results: 16 PASSED, 0 FAILED
+(node:30294) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /app/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

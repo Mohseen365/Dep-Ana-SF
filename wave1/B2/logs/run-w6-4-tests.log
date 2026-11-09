@@ -1,0 +1,12 @@
+Running Task W6-4 (daHotspotsView LWC) Test Suite...
+==================================================
+  ✓ 1. Initial default state verified
+  ✓ 2. Hotspot threshold detection and deterministic ranking verified
+  ✓ 3. Category filtering verified
+  ✓ 4. Risk and search filtering verified
+  ✓ 5. Row click nodeselect event verified (SELECTION != NAVIGATION)
+  ✓ 6. Empty and malformed payload resilience verified
+  ✓ 7. Property alias graphPayload and payload verified
+  ✓ 8. Payload immutability preserved
+==================================================
+Task W6-4 Test Results: ALL 8 TESTS PASSED

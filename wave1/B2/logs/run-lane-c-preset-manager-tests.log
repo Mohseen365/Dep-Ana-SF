@@ -1,0 +1,18 @@
+Running Lane C (DaPresetManager LWC) Focused Unit Test Suite...
+================================================================
+  ✓ 1. Empty preset collection initializes safe V2 defaults
+  ✓ 2. Create preset saves criteria, activates preset, and emits containerchange/filterchange
+  ✓ 3. Apply preset updates activeFilter, activePresetId, and emits event
+  ✓ 4. Update preset persists modified criteria into target preset
+  ✓ 5. Delete preset removes item and resets activePresetId if active preset was deleted
+  ✓ 6. Project isolation excludes presets belonging to other projects
+  ✓ 7. Missing project context blocks saving and sets clear error message
+  ✓ 8. Malformed container string falls back safely to default V2 container
+  ✓ 9. Capacity check enforces 131,072 char hard boundary on preset creation
+  ✓ 10. Active preset styling correctly reflects activePresetId
+================================================================
+Lane C Test Results: 10 PASSED, 0 FAILED
+(node:30273) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /app/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,17 @@
+Running Lane A Canonical Filter Schema Offline Test Suite...
+===========================================================
+  ✓ 1. Schema version and constants integrity
+  ✓ 2. Default criteria and normalization
+  ✓ 3. Legacy V1 filter upgrade to V2 container
+  ✓ 4. Strict project-scoped preset isolation (DEC-W4-03)
+  ✓ 5. Payload serialization 131,072 boundary enforcement
+  ✓ 6. Graph node filter predicate mapping
+  ✓ 7. Matrix edge filter predicate mapping and unresolved edge handling
+  ✓ 8. Findings filter predicate mapping (Distinguishing UNTESTED vs UNKNOWN)
+  ✓ 9. High coupling criteria helper (coupling > 15 or fanIn > 10)
+===========================================================
+Summary: 9 PASSED, 0 FAILED
+(node:30266) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daFilterSchema.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /app/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

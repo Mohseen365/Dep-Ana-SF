@@ -1,0 +1,460 @@
+{
+  "environment": {
+    "osType": "Linux",
+    "osRelease": "6.8.0",
+    "osArch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor @ 2.30GHz",
+    "totalMemoryGB": "7.77",
+    "freeMemoryGB": "7.39",
+    "nodeVersion": "v22.22.1",
+    "timestamp": "2026-11-09T14:50:46.180Z"
+  },
+  "benchmarkResults": [
+    {
+      "fixture": "PBIM",
+      "charLength": 4253569,
+      "nodes": 528,
+      "edges": 2063,
+      "chunkCount": 33,
+      "chunkReassemble": {
+        "min": 0.008,
+        "median": 0.013,
+        "max": 0.2,
+        "runs": [
+          0.008,
+          0.01,
+          0.01,
+          0.013,
+          0.022,
+          0.097,
+          0.2
+        ],
+        "label": "MEASURED"
+      },
+      "layoutExecution": {
+        "min": 0.764,
+        "median": 0.973,
+        "max": 1.958,
+        "runs": [
+          0.764,
+          0.804,
+          0.871,
+          0.973,
+          1.079,
+          1.262,
+          1.958
+        ],
+        "label": "MEASURED"
+      },
+      "layoutCancellation": {
+        "min": 0,
+        "median": 0.001,
+        "max": 0.065,
+        "runs": [
+          0,
+          0.001,
+          0.001,
+          0.001,
+          0.001,
+          0.005,
+          0.065
+        ],
+        "label": "MEASURED"
+      },
+      "matrixBuild": {
+        "min": 0.68,
+        "median": 1.283,
+        "max": 14.946,
+        "runs": [
+          0.68,
+          1.173,
+          1.186,
+          1.283,
+          1.686,
+          2.748,
+          14.946
+        ],
+        "label": "MEASURED"
+      },
+      "treemapBuild": {
+        "min": 0.321,
+        "median": 0.412,
+        "max": 0.653,
+        "runs": [
+          0.321,
+          0.338,
+          0.351,
+          0.412,
+          0.426,
+          0.496,
+          0.653
+        ],
+        "label": "MEASURED"
+      },
+      "sankeyLayoutMath": {
+        "min": 0.355,
+        "median": 0.433,
+        "max": 1.19,
+        "runs": [
+          0.355,
+          0.359,
+          0.381,
+          0.433,
+          0.478,
+          0.482,
+          1.19
+        ],
+        "label": "MEASURED"
+      },
+      "snapshotDiff": {
+        "min": 5.18,
+        "median": 6.262,
+        "max": 8.013,
+        "runs": [
+          5.18,
+          5.205,
+          5.655,
+          6.262,
+          6.515,
+          6.946,
+          8.013
+        ],
+        "label": "MEASURED"
+      },
+      "cytoscapeMountUpdate": {
+        "min": 0.451,
+        "median": 0.55,
+        "max": 1.319,
+        "runs": [
+          0.451,
+          0.487,
+          0.524,
+          0.55,
+          0.844,
+          1.091,
+          1.319
+        ],
+        "label": "MOCKED (Headless Node.js)"
+      }
+    },
+    {
+      "fixture": "CST",
+      "charLength": 1860770,
+      "nodes": 240,
+      "edges": 1024,
+      "chunkCount": 15,
+      "chunkReassemble": {
+        "min": 0.003,
+        "median": 0.004,
+        "max": 0.017,
+        "runs": [
+          0.003,
+          0.003,
+          0.003,
+          0.004,
+          0.006,
+          0.007,
+          0.017
+        ],
+        "label": "MEASURED"
+      },
+      "layoutExecution": {
+        "min": 0.137,
+        "median": 0.164,
+        "max": 0.322,
+        "runs": [
+          0.137,
+          0.15,
+          0.163,
+          0.164,
+          0.173,
+          0.183,
+          0.322
+        ],
+        "label": "MEASURED"
+      },
+      "layoutCancellation": {
+        "min": 0,
+        "median": 0.001,
+        "max": 0.003,
+        "runs": [
+          0,
+          0,
+          0,
+          0.001,
+          0.001,
+          0.003,
+          0.003
+        ],
+        "label": "MEASURED"
+      },
+      "matrixBuild": {
+        "min": 0.24,
+        "median": 0.299,
+        "max": 0.501,
+        "runs": [
+          0.24,
+          0.245,
+          0.259,
+          0.299,
+          0.31,
+          0.425,
+          0.501
+        ],
+        "label": "MEASURED"
+      },
+      "treemapBuild": {
+        "min": 0.024,
+        "median": 0.029,
+        "max": 0.108,
+        "runs": [
+          0.024,
+          0.026,
+          0.028,
+          0.029,
+          0.04,
+          0.062,
+          0.108
+        ],
+        "label": "MEASURED"
+      },
+      "sankeyLayoutMath": {
+        "min": 0.134,
+        "median": 0.177,
+        "max": 1.488,
+        "runs": [
+          0.134,
+          0.138,
+          0.156,
+          0.177,
+          0.203,
+          0.227,
+          1.488
+        ],
+        "label": "MEASURED"
+      },
+      "snapshotDiff": {
+        "min": 1.383,
+        "median": 1.538,
+        "max": 3.529,
+        "runs": [
+          1.383,
+          1.427,
+          1.517,
+          1.538,
+          1.557,
+          1.872,
+          3.529
+        ],
+        "label": "MEASURED"
+      },
+      "cytoscapeMountUpdate": {
+        "min": 0.192,
+        "median": 0.236,
+        "max": 0.342,
+        "runs": [
+          0.192,
+          0.194,
+          0.203,
+          0.236,
+          0.243,
+          0.253,
+          0.342
+        ],
+        "label": "MOCKED (Headless Node.js)"
+      }
+    },
+    {
+      "fixture": "BQC",
+      "charLength": 1332083,
+      "nodes": 274,
+      "edges": 603,
+      "chunkCount": 11,
+      "chunkReassemble": {
+        "min": 0.002,
+        "median": 0.003,
+        "max": 0.012,
+        "runs": [
+          0.002,
+          0.002,
+          0.002,
+          0.003,
+          0.003,
+          0.003,
+          0.012
+        ],
+        "label": "MEASURED"
+      },
+      "layoutExecution": {
+        "min": 0.165,
+        "median": 0.177,
+        "max": 0.347,
+        "runs": [
+          0.165,
+          0.165,
+          0.167,
+          0.177,
+          0.18,
+          0.213,
+          0.347
+        ],
+        "label": "MEASURED"
+      },
+      "layoutCancellation": {
+        "min": 0,
+        "median": 0,
+        "max": 0.001,
+        "runs": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.001
+        ],
+        "label": "MEASURED"
+      },
+      "matrixBuild": {
+        "min": 0.244,
+        "median": 0.267,
+        "max": 0.407,
+        "runs": [
+          0.244,
+          0.245,
+          0.264,
+          0.267,
+          0.326,
+          0.383,
+          0.407
+        ],
+        "label": "MEASURED"
+      },
+      "treemapBuild": {
+        "min": 0.029,
+        "median": 0.031,
+        "max": 0.046,
+        "runs": [
+          0.029,
+          0.029,
+          0.03,
+          0.031,
+          0.032,
+          0.033,
+          0.046
+        ],
+        "label": "MEASURED"
+      },
+      "sankeyLayoutMath": {
+        "min": 0.083,
+        "median": 0.088,
+        "max": 0.145,
+        "runs": [
+          0.083,
+          0.085,
+          0.086,
+          0.088,
+          0.091,
+          0.118,
+          0.145
+        ],
+        "label": "MEASURED"
+      },
+      "snapshotDiff": {
+        "min": 1.466,
+        "median": 1.553,
+        "max": 3.073,
+        "runs": [
+          1.466,
+          1.476,
+          1.483,
+          1.553,
+          1.566,
+          1.703,
+          3.073
+        ],
+        "label": "MEASURED"
+      },
+      "cytoscapeMountUpdate": {
+        "min": 0.133,
+        "median": 0.148,
+        "max": 3.18,
+        "runs": [
+          0.133,
+          0.137,
+          0.144,
+          0.148,
+          0.182,
+          0.4,
+          3.18
+        ],
+        "label": "MOCKED (Headless Node.js)"
+      }
+    },
+    {
+      "fixture": "SYNTHETIC_10MB_MAX",
+      "charLength": 10485760,
+      "nodes": 0,
+      "edges": 0,
+      "chunkCount": 80,
+      "chunkReassemble": {
+        "min": 0.016,
+        "median": 0.017,
+        "max": 12.069,
+        "runs": [
+          0.016,
+          0.016,
+          0.017,
+          0.017,
+          0.018,
+          0.019,
+          12.069
+        ],
+        "label": "MEASURED"
+      },
+      "layoutExecution": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      },
+      "layoutCancellation": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      },
+      "matrixBuild": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      },
+      "treemapBuild": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      },
+      "sankeyLayoutMath": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      },
+      "snapshotDiff": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      },
+      "cytoscapeMountUpdate": {
+        "min": null,
+        "median": null,
+        "max": null,
+        "label": "NOT APPLICABLE"
+      }
+    }
+  ]
+}

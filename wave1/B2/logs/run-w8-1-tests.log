@@ -1,0 +1,14 @@
+Running Task W8-1 (daInvestigationDrawer LWC) Test Suite...
+===========================================================
+  ✓ 1. Default state: no selected node renders empty state
+  ✓ 2. Node metadata display & structural metrics calculation
+  ✓ 3. Incident edges extraction (Inbound vs Outbound)
+  ✓ 4. 1-Hop drill-down dispatches canonical nodeselect CustomEvent (CONTRACT-06)
+  ✓ 5. Breadcrumb trail tracks history on drill-down and truncation on previous crumb jump
+  ✓ 6. Stale selection suppression on graph reload
+  ✓ 7. Pinning state invariant: preserves trail and dispatches pintoggle
+  ✓ 8. Detached window BroadcastChannel cross-window IPC contract
+  ✓ 9. Invariant: SELECTION != NAVIGATION preserved
+  ✓ 10. Associated findings filtering by targetNodeId
+===========================================================
+Summary: 10 PASSED, 0 FAILED
