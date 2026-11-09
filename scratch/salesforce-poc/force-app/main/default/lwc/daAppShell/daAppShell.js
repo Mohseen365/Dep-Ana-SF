@@ -117,6 +117,10 @@ export default class DaAppShell extends LightningElement {
     }
 
     // View Navigation getters (FEAT-SHELL-01)
+    get activeViewMode() {
+        return this.activeView;
+    }
+
     get isGraphView() {
         return this.activeView === 'graph';
     }
@@ -453,6 +457,14 @@ export default class DaAppShell extends LightningElement {
 
     selectFindingsView() {
         this.switchView('findings');
+    }
+
+    handleViewChange(event) {
+        const detail = event.detail || {};
+        const targetView = detail.viewMode || detail.view;
+        if (targetView && APPROVED_VIEWS.includes(targetView)) {
+            this.switchView(targetView);
+        }
     }
 
     switchView(targetView) {

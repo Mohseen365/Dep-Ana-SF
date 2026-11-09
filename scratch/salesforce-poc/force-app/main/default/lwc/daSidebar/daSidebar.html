@@ -41,6 +41,17 @@
                     </lightning-input>
                 </div>
 
+
+                <!-- View Navigation Modes -->
+                <div class="slds-m-bottom_medium">
+                    <div class="section-title slds-text-title_caps slds-m-bottom_xx-small">Views</div>
+                    <div class="slds-grid slds-wrap view-badges">
+                        <span class="slds-badge view-badge" data-view="graph" onclick={handleViewSelect}>Graph</span>
+                        <span class="slds-badge view-badge" data-view="matrix" onclick={handleViewSelect}>Matrix</span>
+                        <span class="slds-badge view-badge" data-view="findings" onclick={handleViewSelect}>Findings</span>
+                    </div>
+                </div>
+
                 <!-- Architectural Layer Quick Filters -->
                 <div class="slds-m-bottom_medium">
                     <div class="section-title slds-text-title_caps slds-m-bottom_xx-small">Architectural Layers</div>

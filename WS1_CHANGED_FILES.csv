@@ -1,0 +1,11 @@
+RelativeFilePath,Workstream,Status,Action,Description
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,WS-1,MODIFIED,Updated,"Added activeViewMode getter, handleViewChange method, and unified view routing handling"
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,WS-1,MODIFIED,Updated,"Bound onviewchange handlers on shell host container and c-da-sidebar"
+scratch/salesforce-poc/force-app/main/default/lwc/daSidebar/daSidebar.js,WS-1,MODIFIED,Updated,"Added @api currentView and handleViewSelect event dispatcher for viewchange"
+scratch/salesforce-poc/force-app/main/default/lwc/daSidebar/daSidebar.html,WS-1,MODIFIED,Updated,"Added View Navigation modes control section"
+scratch/salesforce-poc/force-app/main/default/lwc/daSidebar/daSidebar.css,WS-1,MODIFIED,Updated,"Added SLDS-compliant view badge styles"
+scratch/salesforce-poc/force-app/main/default/lwc/daSidebar/__tests__/daSidebar.test.js,WS-1,MODIFIED,Updated,"Added unit test for viewchange event dispatching on view selection"
+scratch/salesforce-poc/tests/mocks/daSidebarMock.cjs,WS-1,MODIFIED,Updated,"Added currentView and handleViewSelect to offline mock"
+scratch/salesforce-poc/tests/run-p1-sidebar-tests.cjs,WS-1,MODIFIED,Updated,"Added assertions for @api currentView and viewchange event dispatch discipline"
+scratch/salesforce-poc/tests/run-lwc-jest-tests.cjs,WS-1,MODIFIED,Updated,"Added verification test for handleViewSelect and viewchange event emission"
+scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs,WS-1,NEW,Created,"Created 12-scenario Central Coordinator Integration Test Suite covering shell, header, sidebar, and child views"

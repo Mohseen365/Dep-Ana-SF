@@ -3,6 +3,7 @@ class DaSidebar {
         this.projectId = null;
         this.selectedNodeId = null;
         this.nodes = [];
+        this.currentView = 'graph';
         this.isCollapsed = false;
         this.searchFilter = '';
         this.activeLayers = new Set();
@@ -67,6 +68,18 @@ class DaSidebar {
 
     handleSearchChange(event) {
         this.searchFilter = event.target.value;
+    }
+
+    handleViewSelect(event) {
+        const viewMode = event.currentTarget.dataset.view;
+        if (viewMode) {
+            this.dispatchEvent({
+                type: 'viewchange',
+                detail: { viewMode },
+                bubbles: true,
+                composed: true
+            });
+        }
     }
 
     handleTreeNodeClick(event) {
