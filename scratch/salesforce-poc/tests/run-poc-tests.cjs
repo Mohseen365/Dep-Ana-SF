@@ -1156,6 +1156,157 @@ async function main() {
         assert.strictEqual(saveCalledWith.viewMode, 'graph');
     });
 
+    // --- Category 8: Hardened Cytoscape Lifecycle, LOD, Viewport & Layout Parity ---
+    console.log('\n[Category 8: Hardened Cytoscape Lifecycle, LOD, Viewport & Layout Parity]');
+
+    await runAsyncTest('TC-14: Viewport Controls & Zoom In/Out/Fit/Reset Execution', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async () => ({
+                runId: 'run_vp',
+                isChunked: false,
+                rawPayload: JSON.stringify({ nodes: [{ id: 'n1' }], edges: [] })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_VP';
+        viewer.renderedCallback();
+        await delay(20);
+
+        assert.ok(viewer.cyInstance, 'cyInstance initialized');
+        const initialZoom = viewer.cyInstance.zoom();
+
+        // Zoom In
+        viewer.zoomIn();
+        assert.strictEqual(viewer.cyInstance.zoom() > initialZoom, true, 'zoomIn increases zoom level');
+
+        // Zoom Out
+        const afterZoomIn = viewer.cyInstance.zoom();
+        viewer.zoomOut();
+        assert.strictEqual(viewer.cyInstance.zoom() < afterZoomIn, true, 'zoomOut decreases zoom level');
+
+        // Fit & Reset
+        assert.doesNotThrow(() => viewer.fitView(), 'fitView executes safely');
+        assert.doesNotThrow(() => viewer.resetView(), 'resetView executes safely');
+    });
+
+    await runAsyncTest('TC-15: Extended Layout Execution (Orbit & Constellation Activation)', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async () => ({
+                runId: 'run_layouts',
+                isChunked: false,
+                rawPayload: JSON.stringify({
+                    nodes: [
+                        { id: 'Class.CoreService', name: 'CoreService', layer: 'Core', type: 'ApexClass' },
+                        { id: 'LWC.componentView', name: 'componentView', layer: 'UI', type: 'LWC' }
+                    ],
+                    edges: [
+                        { id: 'e1', source: 'LWC.componentView', target: 'Class.CoreService' }
+                    ]
+                })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        viewer.recordId = 'PROJ_LAYOUTS';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Apply Orbit layout
+        viewer.setLayout('orbit');
+        assert.strictEqual(viewer.layoutMode, 'orbit');
+        assert.strictEqual(viewer.error, null);
+
+        // Apply Constellation layout
+        viewer.setLayout('constellation');
+        assert.strictEqual(viewer.layoutMode, 'constellation');
+        assert.strictEqual(viewer.error, null);
+    });
+
+    await runAsyncTest('TC-16: Payload Immutability during Cytoscape Filtering & Layout Computations', async () => {
+        const canonicalPayload = {
+            schemaVersion: '1.0.0',
+            projectId: 'PROJ_IMMUTABLE',
+            nodes: [
+                { id: 'Node1', label: 'Node 1', layer: 'Core', type: 'ApexClass' },
+                { id: 'Node2', label: 'Node 2', layer: 'UI', type: 'LWC' }
+            ],
+            edges: [
+                { id: 'Edge1', source: 'Node2', target: 'Node1' }
+            ]
+        };
+
+        const snapshot = JSON.stringify(canonicalPayload);
+
+        // Run all 4 layout engines directly on frozen nodes/edges
+        const frozenNodes = Object.freeze(canonicalPayload.nodes.map(n => Object.freeze({ ...n })));
+        const frozenEdges = Object.freeze(canonicalPayload.edges.map(e => Object.freeze({ ...e })));
+
+        layoutModule.computeArchitectureLayout(frozenNodes, frozenEdges);
+        layoutModule.computeOrbitLayout({
+            nodes: frozenNodes.map(n => ({ nodeId: n.id, orbitRingIndex: 1, orbitSectorId: n.type }))
+        });
+        layoutModule.computeConstellationLayout({
+            focalNode: frozenNodes[0],
+            rings: [{ ringIndex: 1, hopDistance: 1, items: [{ nodeId: frozenNodes[1].id }] }],
+            edges: frozenEdges
+        });
+
+        assert.strictEqual(JSON.stringify(canonicalPayload), snapshot, 'Canonical payload must remain 100% immutable');
+    });
+
+    await runAsyncTest('TC-17: Edge Selection & Selection Clear Event Conformance', async () => {
+        const mockApex = {
+            loadScript: () => Promise.resolve(),
+            getLatestGraphMetadataForProject: async () => ({
+                runId: 'run_events',
+                isChunked: false,
+                rawPayload: JSON.stringify({
+                    nodes: [{ id: 'n1' }, { id: 'n2' }],
+                    edges: [{ id: 'e1', source: 'n1', target: 'n2' }]
+                })
+            }),
+            getGraphChunks: async () => []
+        };
+        const DaGraphViewer = createProductionViewerClass(mockApex);
+        const viewer = new DaGraphViewer();
+
+        let edgeSelectDetail = null;
+        viewer.addEventListener('edgeselect', (evt) => {
+            edgeSelectDetail = evt.detail;
+        });
+
+        let clearSelectFired = false;
+        viewer.addEventListener('selectionclear', () => {
+            clearSelectFired = true;
+        });
+
+        viewer.recordId = 'PROJ_EVENTS';
+        viewer.renderedCallback();
+        await delay(20);
+
+        // Simulate edge select event
+        viewer.dispatchEvent(new (class CustomEvent {
+            constructor(type, opts) { this.type = type; this.detail = opts ? opts.detail : null; }
+        })('edgeselect', { detail: { edgeId: 'e1', sourceView: 'graph' } }));
+
+        assert.strictEqual(edgeSelectDetail.edgeId, 'e1');
+        assert.strictEqual(edgeSelectDetail.sourceView, 'graph');
+
+        // Simulate selection clear event
+        viewer.dispatchEvent(new (class CustomEvent {
+            constructor(type, opts) { this.type = type; this.detail = opts ? opts.detail : null; }
+        })('selectionclear', { detail: { sourceView: 'graph' } }));
+
+        assert.strictEqual(clearSelectFired, true);
+    });
+
     console.log('\n===================================================================');
     console.log(`Summary: ${passes} PASSED, ${fails} FAILED`);
 

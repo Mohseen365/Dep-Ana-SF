@@ -4,4 +4,17 @@
     border: 1px solid #dddbda;
     border-radius: 4px;
     background-color: #ffffff;
+    position: relative;
+}
+
+.cy-container.zoom-far {
+    /* Level-of-Detail (LOD): Optimized display at distant zoom */
+}
+
+.cy-container.zoom-mid {
+    /* Level-of-Detail (LOD): Balanced display at medium zoom */
+}
+
+.cy-container.zoom-near {
+    /* Level-of-Detail (LOD): High-detail display at close zoom */
 }

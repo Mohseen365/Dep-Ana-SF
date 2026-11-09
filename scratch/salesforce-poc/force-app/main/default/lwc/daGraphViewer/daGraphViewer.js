@@ -6,7 +6,7 @@ import getGraphChunks from '@salesforce/apex/DAGraphController.getGraphChunks';
 import getUserPreference from '@salesforce/apex/DAUserPreferenceController.getUserPreference';
 import saveUserPreference from '@salesforce/apex/DAUserPreferenceController.saveUserPreference';
 import { reassembleChunks, validatePayloadIntegrity, verifyChunkSequence } from 'c/daGraphPayloadLoader';
-import { computeArchitectureLayout } from 'c/daLayoutEngine';
+import { computeArchitectureLayout, computeOrbitLayout, computeConstellationLayout, computeSankeyLayout } from 'c/daLayoutEngine';
 import { matchesGraphNode, normalizeFilterCriteria } from 'c/daFilterSchema';
 
 // Standard Cytoscape Layout Configuration Defaults conforming to CONTRACT-02 Section 4.1
@@ -85,7 +85,7 @@ export default class DaGraphViewer extends LightningElement {
     }
 
     /**
-     * Layout mode property (CONTRACT-02 canonical keys: 'grid', 'circle', 'breadthfirst', 'dagre', 'architecture').
+     * Layout mode property (CONTRACT-02 canonical keys: 'grid', 'circle', 'breadthfirst', 'dagre', 'orbit', 'constellation', 'sankey', 'architecture').
      */
     @api
     get layoutMode() {
@@ -104,6 +104,7 @@ export default class DaGraphViewer extends LightningElement {
     @track isLoading = true;
     @track error;
     @track selectedNodeId = null;
+    @track selectedEdgeId = null;
     cyInitialized = false;
     cyInstance = null;
     pageSize = 5;
@@ -124,6 +125,14 @@ export default class DaGraphViewer extends LightningElement {
         return (this._currentLayout === 'breadthfirst' || this._currentLayout === 'architecture') ? 'brand' : 'neutral';
     }
 
+    get orbitButtonVariant() {
+        return this._currentLayout === 'orbit' ? 'brand' : 'neutral';
+    }
+
+    get constellationButtonVariant() {
+        return this._currentLayout === 'constellation' ? 'brand' : 'neutral';
+    }
+
     /**
      * Canonical layout resolution with graceful fallback for external/unavailable engines like Dagre.
      */
@@ -137,8 +146,8 @@ export default class DaGraphViewer extends LightningElement {
         if (lower === 'grid' || lower === 'circle' || lower === 'breadthfirst') {
             return lower;
         }
-        if (lower === 'architecture') {
-            return 'architecture';
+        if (lower === 'architecture' || lower === 'orbit' || lower === 'constellation' || lower === 'sankey') {
+            return lower;
         }
         return 'breadthfirst';
     }
@@ -168,6 +177,69 @@ export default class DaGraphViewer extends LightningElement {
         this.scheduleSaveState();
     }
 
+    // --- Viewport Control Methods ---
+
+    handleZoomIn() {
+        this.zoomIn();
+    }
+
+    handleZoomOut() {
+        this.zoomOut();
+    }
+
+    handleFitView() {
+        this.fitView();
+    }
+
+    handleResetView() {
+        this.resetView();
+    }
+
+    @api
+    zoomIn() {
+        if (this.cyInstance && typeof this.cyInstance.zoom === 'function' && typeof this.cyInstance.width === 'function') {
+            const currentZoom = this.cyInstance.zoom();
+            this.cyInstance.zoom({
+                level: currentZoom * 1.2,
+                renderedPosition: { x: this.cyInstance.width() / 2, y: this.cyInstance.height() / 2 }
+            });
+            this.scheduleSaveState();
+        }
+    }
+
+    @api
+    zoomOut() {
+        if (this.cyInstance && typeof this.cyInstance.zoom === 'function' && typeof this.cyInstance.width === 'function') {
+            const currentZoom = this.cyInstance.zoom();
+            this.cyInstance.zoom({
+                level: currentZoom * 0.8,
+                renderedPosition: { x: this.cyInstance.width() / 2, y: this.cyInstance.height() / 2 }
+            });
+            this.scheduleSaveState();
+        }
+    }
+
+    @api
+    fitView(padding = 30) {
+        if (this.cyInstance && typeof this.cyInstance.fit === 'function') {
+            this.cyInstance.fit(undefined, padding);
+            this.scheduleSaveState();
+        }
+    }
+
+    @api
+    resetView() {
+        if (this.cyInstance) {
+            if (typeof this.cyInstance.fit === 'function') {
+                this.cyInstance.fit(undefined, 30);
+            }
+            if (typeof this.cyInstance.center === 'function') {
+                this.cyInstance.center();
+            }
+            this.scheduleSaveState();
+        }
+    }
+
     applyLayout(mode) {
         if (!this.cyInstance) return;
 
@@ -191,14 +263,71 @@ export default class DaGraphViewer extends LightningElement {
                             this.cyInstance.nodes().forEach(node => {
                                 const p = posMap[node.id()];
                                 if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
-                                node.position({ x: p.x, y: p.y });
-                            }
+                                    node.position({ x: p.x, y: p.y });
+                                }
+                            });
                         });
-                    });
+                    }
                 }
-            }
             } catch (archErr) {
                 this.error = 'Failed to execute architecture layout: ' + (archErr.message || archErr);
+            }
+            return;
+        }
+
+        if (mode === 'orbit') {
+            try {
+                if (this._rawGraphData && this.cyInstance.nodes) {
+                    const nodesInput = (this._rawGraphData.nodes || []).map((n) => ({
+                        nodeId: n.id,
+                        orbitRingIndex: n.layer === 'Core' ? 0 : n.layer === 'Domain' ? 1 : 2,
+                        orbitSectorId: n.type || '_default'
+                    }));
+                    const layoutResult = computeOrbitLayout({ nodes: nodesInput });
+                    const posMap = layoutResult.positions || {};
+                    if (typeof this.cyInstance.batch === 'function') {
+                        this.cyInstance.batch(() => {
+                            this.cyInstance.nodes().forEach(node => {
+                                const p = posMap[node.id()];
+                                if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+                                    node.position({ x: p.x, y: p.y });
+                                }
+                            });
+                        });
+                    }
+                }
+            } catch (orbitErr) {
+                this.error = 'Failed to execute orbit layout: ' + (orbitErr.message || orbitErr);
+            }
+            return;
+        }
+
+        if (mode === 'constellation') {
+            try {
+                if (this._rawGraphData && this.cyInstance.nodes) {
+                    const allNodes = this._rawGraphData.nodes || [];
+                    const focal = allNodes.length > 0 ? allNodes[0] : null;
+                    const items = allNodes.slice(1).map(n => ({ nodeId: n.id, displayName: n.label || n.id }));
+                    const constellationInput = {
+                        focalNode: focal,
+                        rings: [{ ringIndex: 1, hopDistance: 1, items: items }],
+                        edges: this._rawGraphData.edges || []
+                    };
+                    const layoutResult = computeConstellationLayout(constellationInput);
+                    const posMap = layoutResult.nodePositions || {};
+                    if (typeof this.cyInstance.batch === 'function') {
+                        this.cyInstance.batch(() => {
+                            this.cyInstance.nodes().forEach(node => {
+                                const p = posMap[node.id()];
+                                if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) {
+                                    node.position({ x: p.x, y: p.y });
+                                }
+                            });
+                        });
+                    }
+                }
+            } catch (constErr) {
+                this.error = 'Failed to execute constellation layout: ' + (constErr.message || constErr);
             }
             return;
         }
@@ -240,6 +369,7 @@ export default class DaGraphViewer extends LightningElement {
             this.cyInstance = null;
         }
         this.selectedNodeId = null;
+        this.selectedEdgeId = null;
         this.error = null;
     }
 
@@ -455,13 +585,14 @@ export default class DaGraphViewer extends LightningElement {
 
             /* global cytoscape */
             if (typeof cytoscape === 'function') {
-                const layoutConfig = (savedPositions || this._currentLayout === 'architecture')
+                const layoutConfig = (savedPositions || this._currentLayout === 'architecture' || this._currentLayout === 'orbit' || this._currentLayout === 'constellation')
                     ? { name: 'preset', animate: false }
                     : (CYTOSCAPE_LAYOUT_DEFAULTS[this._currentLayout] || CYTOSCAPE_LAYOUT_DEFAULTS.breadthfirst);
 
                 this.cyInstance = cytoscape({
                     container: container,
                     elements: elements,
+                    boxSelectionEnabled: true,
                     style: [
                         {
                             selector: 'node',
@@ -488,6 +619,14 @@ export default class DaGraphViewer extends LightningElement {
                                 'target-arrow-shape': 'triangle',
                                 'curve-style': 'bezier'
                             }
+                        },
+                        {
+                            selector: 'edge:selected',
+                            style: {
+                                'width': 3,
+                                'line-color': '#005fb2',
+                                'target-arrow-color': '#005fb2'
+                            }
                         }
                     ],
                     layout: layoutConfig
@@ -508,8 +647,39 @@ export default class DaGraphViewer extends LightningElement {
                 this.cyInstance.on('tap', 'node', (evt) => {
                     const node = evt.target;
                     this.selectedNodeId = node.id();
-                    // Dispatch custom event for selection change if needed without navigating
-                    this.dispatchEvent(new CustomEvent('nodeselect', { detail: { nodeId: node.id() } }));
+                    this.dispatchEvent(new CustomEvent('nodeselect', {
+                        detail: {
+                            nodeId: node.id(),
+                            sourceView: 'graph'
+                        },
+                        bubbles: true,
+                        composed: true
+                    }));
+                });
+
+                this.cyInstance.on('tap', 'edge', (evt) => {
+                    const edge = evt.target;
+                    this.selectedEdgeId = edge.id();
+                    this.dispatchEvent(new CustomEvent('edgeselect', {
+                        detail: {
+                            edgeId: edge.id(),
+                            sourceView: 'graph'
+                        },
+                        bubbles: true,
+                        composed: true
+                    }));
+                });
+
+                this.cyInstance.on('tap', (evt) => {
+                    if (evt.target === this.cyInstance) {
+                        this.selectedNodeId = null;
+                        this.selectedEdgeId = null;
+                        this.dispatchEvent(new CustomEvent('selectionclear', {
+                            detail: { sourceView: 'graph' },
+                            bubbles: true,
+                            composed: true
+                        }));
+                    }
                 });
 
                 // Persist user-dragged node coordinates on dragfree
@@ -517,16 +687,22 @@ export default class DaGraphViewer extends LightningElement {
                     this.scheduleSaveState();
                 });
 
-                // Persist viewport changes on zoom/pan
+                // Persist viewport changes on zoom/pan and update LOD class
                 this.cyInstance.on('viewport', () => {
+                    this.updateLODClasses();
                     this.scheduleSaveState();
                 });
+
+                this.updateLODClasses();
             } else {
                 // Mock or container-less fallback for offline/test environments
                 this.cyInstance = {
                     destroyed: false,
                     elements: elements,
                     currentLayout: this._currentLayout,
+                    boxSelectionEnabled: true,
+                    _zoom: savedZoomPan ? savedZoomPan.zoom : 1.0,
+                    _pan: savedZoomPan ? savedZoomPan.pan : { x: 0, y: 0 },
                     destroy() {
                         this.destroyed = true;
                     },
@@ -534,6 +710,26 @@ export default class DaGraphViewer extends LightningElement {
                         this.currentLayout = config.name;
                         return { run: () => {} };
                     },
+                    zoom: function(val) {
+                        if (typeof val === 'number') this._zoom = val;
+                        else if (val && typeof val.level === 'number') this._zoom = val.level;
+                        return this._zoom;
+                    },
+                    pan: function(val) {
+                        if (val) this._pan = val;
+                        return this._pan;
+                    },
+                    fit: function() {},
+                    center: function() {},
+                    width: function() { return 800; },
+                    height: function() { return 600; },
+                    nodes: function() {
+                        return elements.filter(e => !e.data.source).map(e => ({
+                            id: () => e.data.id,
+                            position: (p) => { if (p) e.position = p; return e.position || { x: 0, y: 0 }; }
+                        }));
+                    },
+                    batch: function(cb) { if (cb) cb(); },
                     on: (event, selector, handler) => {}
                 };
             }
@@ -543,6 +739,22 @@ export default class DaGraphViewer extends LightningElement {
         } catch (err) {
             this.error = 'Error initializing Cytoscape graph: ' + err.message;
             this.isLoading = false;
+        }
+    }
+
+    updateLODClasses() {
+        if (!this.cyInstance || typeof this.cyInstance.zoom !== 'function') return;
+        const container = this.template ? this.template.querySelector('.cy-container') : null;
+        if (!container) return;
+
+        const currentZoom = this.cyInstance.zoom();
+        container.classList.remove('zoom-far', 'zoom-mid', 'zoom-near');
+        if (currentZoom < 0.5) {
+            container.classList.add('zoom-far');
+        } else if (currentZoom < 1.2) {
+            container.classList.add('zoom-mid');
+        } else {
+            container.classList.add('zoom-near');
         }
     }
 

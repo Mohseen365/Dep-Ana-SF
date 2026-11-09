@@ -1,29 +1,77 @@
 <template>
     <lightning-card title="Dependency Analyzer Graph Viewer" icon-name="custom:custom19">
-        <div slot="actions">
-            <lightning-button-group>
-                <lightning-button
-                    label="Grid"
-                    value="grid"
-                    variant={gridButtonVariant}
-                    onclick={handleLayoutChangeClick}
-                    title="Grid Layout"
-                ></lightning-button>
-                <lightning-button
-                    label="Circle"
-                    value="circle"
-                    variant={circleButtonVariant}
-                    onclick={handleLayoutChangeClick}
-                    title="Circle Layout"
-                ></lightning-button>
-                <lightning-button
-                    label="Breadthfirst"
-                    value="breadthfirst"
-                    variant={breadthfirstButtonVariant}
-                    onclick={handleLayoutChangeClick}
-                    title="Hierarchical Breadthfirst Layout"
-                ></lightning-button>
-            </lightning-button-group>
+        <div slot="actions" class="slds-grid slds-grid_vertical-align-center slds-gutters_x-small">
+            <div class="slds-col">
+                <lightning-button-group>
+                    <lightning-button-icon
+                        icon-name="utility:zoomin"
+                        alternative-text="Zoom In"
+                        title="Zoom In"
+                        onclick={handleZoomIn}
+                        variant="border-filled"
+                    ></lightning-button-icon>
+                    <lightning-button-icon
+                        icon-name="utility:zoomout"
+                        alternative-text="Zoom Out"
+                        title="Zoom Out"
+                        onclick={handleZoomOut}
+                        variant="border-filled"
+                    ></lightning-button-icon>
+                    <lightning-button-icon
+                        icon-name="utility:expand"
+                        alternative-text="Fit to Viewport"
+                        title="Fit to Viewport"
+                        onclick={handleFitView}
+                        variant="border-filled"
+                    ></lightning-button-icon>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Reset Viewport"
+                        title="Reset Viewport"
+                        onclick={handleResetView}
+                        variant="border-filled"
+                    ></lightning-button-icon>
+                </lightning-button-group>
+            </div>
+            <div class="slds-col">
+                <lightning-button-group>
+                    <lightning-button
+                        label="Grid"
+                        value="grid"
+                        variant={gridButtonVariant}
+                        onclick={handleLayoutChangeClick}
+                        title="Grid Layout"
+                    ></lightning-button>
+                    <lightning-button
+                        label="Circle"
+                        value="circle"
+                        variant={circleButtonVariant}
+                        onclick={handleLayoutChangeClick}
+                        title="Circle Layout"
+                    ></lightning-button>
+                    <lightning-button
+                        label="Breadthfirst"
+                        value="breadthfirst"
+                        variant={breadthfirstButtonVariant}
+                        onclick={handleLayoutChangeClick}
+                        title="Hierarchical Breadthfirst Layout"
+                    ></lightning-button>
+                    <lightning-button
+                        label="Orbit"
+                        value="orbit"
+                        variant={orbitButtonVariant}
+                        onclick={handleLayoutChangeClick}
+                        title="Concentric Orbit Layout"
+                    ></lightning-button>
+                    <lightning-button
+                        label="Constellation"
+                        value="constellation"
+                        variant={constellationButtonVariant}
+                        onclick={handleLayoutChangeClick}
+                        title="Constellation Polar Layout"
+                    ></lightning-button>
+                </lightning-button-group>
+            </div>
         </div>
         <div class="slds-m-around_medium">
             <template if:true={isLoading}>

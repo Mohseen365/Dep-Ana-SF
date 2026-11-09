@@ -148,6 +148,8 @@ async function runTests() {
         assert.strictEqual(viewer.resolveLayoutMode('  circle  '), 'circle');
         assert.strictEqual(viewer.resolveLayoutMode('BreadthFirst'), 'breadthfirst');
         assert.strictEqual(viewer.resolveLayoutMode('Architecture'), 'architecture');
+        assert.strictEqual(viewer.resolveLayoutMode('Orbit'), 'orbit');
+        assert.strictEqual(viewer.resolveLayoutMode('Constellation'), 'constellation');
         console.log('  ✓ 3. Case-insensitivity and whitespace trimming verified');
         passCount++;
     }
@@ -544,6 +546,43 @@ async function runTests() {
         ], 'Lifecycle order strictly verified: layout 1 run -> layout 1 stop -> layout 2 run');
 
         console.log('  ✓ 17. Layout cancellation lifecycle verified: run(L1) -> stop(L1) -> run(L2) with active instance replacement');
+        passCount++;
+    }
+
+    // 18. Viewport interaction methods and zoom state preservation
+    {
+        const viewer = new DaGraphViewer();
+        let zoomVal = 1.0;
+        let fitCalled = false;
+        let resetCalled = false;
+        viewer.cyInstance = {
+            width: () => 800,
+            height: () => 600,
+            zoom: (arg) => {
+                if (arg && typeof arg.level === 'number') {
+                    zoomVal = arg.level;
+                } else if (typeof arg === 'number') {
+                    zoomVal = arg;
+                }
+                return zoomVal;
+            },
+            fit: () => { fitCalled = true; },
+            center: () => { resetCalled = true; }
+        };
+
+        viewer.zoomIn();
+        assert.strictEqual(zoomVal, 1.2, 'zoomIn scaled zoom by 1.2x');
+
+        viewer.zoomOut();
+        assert.strictEqual(Math.round(zoomVal * 100) / 100, 0.96, 'zoomOut scaled zoom by 0.8x');
+
+        viewer.fitView(40);
+        assert.strictEqual(fitCalled, true, 'fitView called cy.fit');
+
+        viewer.resetView();
+        assert.strictEqual(resetCalled, true, 'resetView called cy.center');
+
+        console.log('  ✓ 18. Viewport interaction methods (zoomIn, zoomOut, fitView, resetView) verified');
         passCount++;
     }
 
