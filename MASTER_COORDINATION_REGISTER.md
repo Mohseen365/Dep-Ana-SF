@@ -3,7 +3,7 @@
 **System:** Dependency Analyzer React-to-Salesforce (LWC/Apex) Migration
 **Role:** Master Coordinator (Tracks agents, dependencies, ownership, blockers, evidence, and integration readiness; does not implement or integrate)
 **Execution Mode:** COORDINATION ONLY
-**Authoritative HEAD Commit:** `7a32c4968e2ce64f29a1514e9421252a3da82dd5`
+**Authoritative HEAD Commit:** `3b023b831c3e26de0cab675ffbd9105e171297d0` (post-PR #155 merge, integrating Agent B5 deployment readiness audit; authoritative Wave 1 baseline lineage `7a32c4968e2ce64f29a1514e9421252a3da82dd5`)
 **Governance Authority:** DEC-04 Alternative 4 (Executive Project Owner Exclusive Signoff)
 **Status Date:** 2026-11-09
 
@@ -105,7 +105,7 @@ Before any Wave 2 implementation agent may be dispatched, the Wave 0 exit gate c
 
 | Audit Item | Agent | Baseline Findings & Current Status | Gate Verdict |
 | :--- | :---: | :--- | :---: |
-| **1. Repository Baseline** | B1 | Authoritative commit identified as `7a32c4968e2ce64f29a1514e9421252a3da82dd5`. Tree clean, working directory synchronized. | **SATISFIED** |
+| **1. Repository Baseline** | B1 | Authoritative HEAD commit identified as `3b023b831c3e26de0cab675ffbd9105e171297d0` (incorporating PR #155 / Agent B5 preflight deliverables; rooted on Wave 1 baseline `7a32c4968e2ce64f29a1514e9421252a3da82dd5`). Working directory clean and synchronized. | **SATISFIED** |
 | **2. Test Baseline & Benchmarks** | B2 | 24 test suites executed cleanly (exit code 0), 359 tests passed, 0 failures. Performance benchmarks on PBIM (528 nodes, 2063 edges, 33 chunks) and Cloud Spend (240 nodes, 1024 edges) established. | **SATISFIED** |
 | **3. Parity Audit & Gap Register** | B3 | 42 migration capabilities audited: 30 Fully Implemented, 7 Partially Implemented, 1 Deferred, 2 Quarantined, 2 Not Implemented. | **SATISFIED** |
 | **4. Security Audit** | B4 | 35 custom fields audited: 12 eligible fields confirmed missing FLS in `DA_Architecture_Analyst` (SEC-01). `daInvestigationDrawer` BroadcastChannel confirmed missing `projectId` validation (SEC-02). Apex classes confirm 100% `with sharing` and `WITH USER_MODE`. | **SATISFIED** (Defects Identified for Wave 2A) |
@@ -211,7 +211,7 @@ Before any packaging agent is dispatched:
 ## 9. Project Closure Checklist & Current Migration Readiness
 
 To achieve formal project closure, the migration must satisfy all 10 closure gates:
-- [x] **Gate 1: Repository Lineage & Baseline Identified** (Commit `7a32c49` verified, working copy clean).
+- [x] **Gate 1: Repository Lineage & Baseline Identified** (Commit `3b023b8` / `7a32c49` verified, working copy clean).
 - [x] **Gate 2: Baseline Regression Suite Verified** (24 suites, 359 tests passed, 0 failures).
 - [ ] **Gate 3: All Authorized Tasks Implemented or Explicitly Deferred** (Wave 2A/2B tasks pending dispatch).
 - [ ] **Gate 4: Predecessor Gates Formally Satisfied** (Wave 2A predecessor to Wave 2B).
