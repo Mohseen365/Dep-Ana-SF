@@ -10,8 +10,8 @@ private class DAGraphSecurityTest {
         DA_Project__c projB = new DA_Project__c(Name = 'Project B', Project_Key__c = 'PROJ_B');
         insert new List<DA_Project__c>{ projA, projB };
 
-        DA_Analysis_Run__c runA = new DA_Analysis_Run__c(DA_Project__c = projA.Id, Name = 'Run A');
-        DA_Analysis_Run__c runB = new DA_Analysis_Run__c(DA_Project__c = projB.Id, Name = 'Run B');
+        DA_Analysis_Run__c runA = new DA_Analysis_Run__c(DA_Project__c = projA.Id, Name = 'Run A', Status__c = 'AVAILABLE', Total_Chunks__c = 0);
+        DA_Analysis_Run__c runB = new DA_Analysis_Run__c(DA_Project__c = projB.Id, Name = 'Run B', Status__c = 'AVAILABLE', Total_Chunks__c = 0);
         insert new List<DA_Analysis_Run__c>{ runA, runB };
 
         Test.startTest();
@@ -40,7 +40,7 @@ private class DAGraphSecurityTest {
         DA_Project__c proj = new DA_Project__c(Name = 'Restricted Proj', Project_Key__c = 'PROJ_REST');
         insert proj;
 
-        DA_Analysis_Run__c run = new DA_Analysis_Run__c(DA_Project__c = proj.Id, Name = 'Restricted Run');
+        DA_Analysis_Run__c run = new DA_Analysis_Run__c(DA_Project__c = proj.Id, Name = 'Restricted Run', Status__c = 'AVAILABLE', Total_Chunks__c = 1);
         insert run;
 
         DA_Graph_Chunk__c chunk = new DA_Graph_Chunk__c(
@@ -83,7 +83,7 @@ private class DAGraphSecurityTest {
         DA_Project__c projB = new DA_Project__c(Name = 'Project B', Project_Key__c = 'PROJ_B');
         insert new List<DA_Project__c>{ projA, projB };
 
-        DA_Analysis_Run__c runB = new DA_Analysis_Run__c(DA_Project__c = projB.Id, Name = 'Run B');
+        DA_Analysis_Run__c runB = new DA_Analysis_Run__c(DA_Project__c = projB.Id, Name = 'Run B', Status__c = 'AVAILABLE', Total_Chunks__c = 1);
         insert runB;
 
         insert new DA_Graph_Chunk__c(

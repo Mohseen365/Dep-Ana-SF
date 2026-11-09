@@ -62,6 +62,15 @@ export default class DaAnalysisHistory extends LightningElement {
             const edgeDelta = r.edgeDelta || 0;
             const cyclesDelta = r.cyclicSccDelta || 0;
 
+            let badgeClass = 'slds-theme_shade';
+            if (r.status === 'AVAILABLE') {
+                badgeClass = 'slds-theme_success';
+            } else if (r.status === 'FAILED') {
+                badgeClass = 'slds-theme_error';
+            } else if (r.status === 'EMPTY') {
+                badgeClass = 'slds-theme_warning';
+            }
+
             return {
                 ...r,
                 isActive,
@@ -69,7 +78,7 @@ export default class DaAnalysisHistory extends LightningElement {
                 shortCommit,
                 formattedTime,
                 rowClass: isActive ? 'active-run-row' : '',
-                statusBadgeClass: r.status === 'AVAILABLE' ? 'slds-theme_success' : 'slds-theme_shade',
+                statusBadgeClass: badgeClass,
                 hasNodeDelta: nodeDelta !== 0,
                 formattedNodeDelta: nodeDelta > 0 ? `+${nodeDelta}` : `${nodeDelta}`,
                 nodeDeltaClass: nodeDelta > 0 ? 'delta-positive' : 'delta-negative',

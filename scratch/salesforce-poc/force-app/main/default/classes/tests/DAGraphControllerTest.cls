@@ -1,5 +1,5 @@
 /**
- * @description Unit tests for DAGraphController including bounded chunk retrieval and sequence validation
+ * @description Unit tests for DAGraphController including bounded chunk retrieval, two-step resolution, and ingestion integrity
  */
 @IsTest
 private class DAGraphControllerTest {
@@ -14,7 +14,12 @@ private class DAGraphControllerTest {
 
         DA_Analysis_Run__c run = new DA_Analysis_Run__c(
             DA_Project__c = proj.Id,
-            Name = 'Run 1'
+            Name = 'Run 1',
+            Status__c = 'AVAILABLE',
+            Total_Chunks__c = 7,
+            Node_Count__c = 100,
+            Edge_Count__c = 200,
+            Commit_Hash__c = 'abc1234'
         );
         insert run;
 
@@ -55,8 +60,48 @@ private class DAGraphControllerTest {
     }
 
     @IsTest
+    static void testTwoStepResolutionWithKeyFallback() {
+        Test.startTest();
+        DAGraphDTO dto = DAGraphController.getLatestGraphMetadataForProject('PROJ_ALPHA');
+        Test.stopTest();
+
+        Assert.isNotNull(dto.projectId);
+        Assert.areEqual('Test Project Alpha', dto.projectName);
+        Assert.areEqual('PROJ_ALPHA', dto.projectKey);
+        Assert.areEqual(7, dto.totalChunks);
+    }
+
+    @IsTest
+    static void testIngestionIntegrityPartialChunkMismatchRejection() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
+
+        // Create an incomplete run where Status is AVAILABLE but Total_Chunks__c does not match chunk rows
+        DA_Analysis_Run__c brokenRun = new DA_Analysis_Run__c(
+            DA_Project__c = proj.Id,
+            Name = 'Incomplete Run',
+            Status__c = 'AVAILABLE',
+            Total_Chunks__c = 10,
+            Run_Timestamp__c = DateTime.now().addDays(1)
+        );
+        insert brokenRun;
+
+        // Only insert 2 chunks out of 10
+        insert new List<DA_Graph_Chunk__c>{
+            new DA_Graph_Chunk__c(DA_Analysis_Run__c = brokenRun.Id, Name = 'Chunk 0', Chunk_Index__c = 0, Payload_Data__c = '{}'),
+            new DA_Graph_Chunk__c(DA_Analysis_Run__c = brokenRun.Id, Name = 'Chunk 1', Chunk_Index__c = 1, Payload_Data__c = '{}')
+        };
+
+        Test.startTest();
+        DAGraphDTO dto = DAGraphController.getLatestGraphMetadataForProject(proj.Id);
+        Test.stopTest();
+
+        // Must reject brokenRun and fall back to valid setup run with 7 chunks
+        Assert.areEqual(7, dto.totalChunks, 'Must reject incomplete run and serve previous valid run');
+    }
+
+    @IsTest
     static void testGetGraphChunksBoundedRetrieval() {
-        DA_Analysis_Run__c run = [SELECT Id FROM DA_Analysis_Run__c LIMIT 1];
+        DA_Analysis_Run__c run = [SELECT Id FROM DA_Analysis_Run__c WHERE Total_Chunks__c = 7 LIMIT 1];
 
         Test.startTest();
         List<DA_Graph_Chunk__c> batch1 = DAGraphController.getGraphChunks(run.Id, 0, 5);

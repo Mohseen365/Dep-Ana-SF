@@ -1,0 +1,95 @@
+.project-dashboard-container {
+    background-color: #f3f3f3;
+    min-height: 100%;
+}
+
+.header-card {
+    background: #ffffff;
+    border-radius: 4px;
+}
+
+.dashboard-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.metric-grid {
+    margin-top: 12px;
+}
+
+.metric-card {
+    background: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: #706e6b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.metric-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 4px 0;
+    color: #080707;
+}
+
+.metric-trend {
+    font-size: 0.75rem;
+    color: #706e6b;
+}
+
+.font-mono {
+    font-family: monospace;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.text-danger {
+    color: #ea001e;
+}
+
+.text-success {
+    color: #2e844a;
+}
+
+.delta-pill {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.delta-positive {
+    color: #2e844a;
+}
+
+.delta-negative {
+    color: #706e6b;
+}
+
+.delta-danger {
+    color: #ea001e;
+}
+
+.delta-success {
+    color: #2e844a;
+}
+
+.active-row {
+    background-color: #f4f6fe !important;
+}
+
+.empty-illustration {
+    text-align: center;
+}
