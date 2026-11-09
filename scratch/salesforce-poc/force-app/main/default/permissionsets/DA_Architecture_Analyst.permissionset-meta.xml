@@ -147,4 +147,68 @@
         <field>DA_Finding__c.Details__c</field>
         <readable>true</readable>
     </fieldPermissions>
+
+    <!-- Remediated FLS for DA_User_Preference__c (SEC-01) -->
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.Active_Layout_Mode__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.Active_View_Mode__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.Filters_JSON__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.Positions_JSON__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.Project__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.User__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_User_Preference__c.Zoom_Pan_JSON__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+
+    <!-- Remediated FLS for DA_Annotation__c (SEC-01) -->
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Annotation__c.Author__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Annotation__c.Finding__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Annotation__c.Resolved_At__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Annotation__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Annotation__c.Text__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 </PermissionSet>
