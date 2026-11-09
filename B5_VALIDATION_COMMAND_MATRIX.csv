@@ -1,0 +1,13 @@
+validation_id,category,command,working_directory,exit_code,status,failure_reason,equivalent_offline_validation
+VAL-01,LWC Jest Unit Tests,node scratch/salesforce-poc/tests/run-lwc-jest-tests.cjs,.,0,PASS,None,Lightweight offline Jest test harness validating daHeader and daSidebar mocks
+VAL-02,Apex Static Code Analysis,which pmd,.,1,UNAVAILABLE,PMD binary and Java runtime not installed in environment,Static schema and SOQL AST validation script wave1/B5/consistency-check.cjs
+VAL-03,Salesforce Metadata Dry-Run Deploy,which sf,scratch/salesforce-poc,1,UNAVAILABLE,Salesforce CLI (sf/sfdx) not installed; live deployment prohibited,Python ElementTree validation of all 82 metadata XML files
+VAL-04,LWC ESLint Validation,npx eslint scratch/salesforce-poc/force-app/main/default/lwc,.,2,FAIL,ESLint v10 missing eslint.config.js flat configuration file,Offline ES module syntax evaluation in CommonJS test runners
+VAL-05,TypeScript Compiler Type Check,npx tsc -p tsconfig.prod.json --noEmit,explorer,0,PASS,None,Full TypeScript type check of React explorer architecture adapters and views
+VAL-06,Vitest Unit Test Suite,npx vitest run --testTimeout 5000 src/components/SummaryBar.test.tsx,explorer,0,PASS,None,Targeted Vitest execution verifies component rendering and hooks
+VAL-07,Playwright Browser E2E,node scripts/verify-phase2eu-real-browser.cjs,.,1,FAIL,Playwright npm package present but Chromium headless shell binary not downloaded,Offline geometric and coordinate calculation tests in Node.js
+VAL-08,Salesforce Package Validation,node wave1/B5/consistency-check.cjs,.,0,PASS,None,Evaluates sfdx-project.json objects fields classes and FLS permissionsets
+VAL-09,Coordinator Integration Suite,node scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs,.,0,PASS,None,Executes 13 integrated coordinator test scenarios with 0 failures
+VAL-10,Core POC Offline Unit Suite,node scratch/salesforce-poc/tests/run-poc-tests.cjs,.,0,PASS,None,Executes Apex controller mocks chunk reassembly and ingestion tests
+VAL-11,Wave 1A Hardened Task Runners,node scratch/salesforce-poc/tests/run-w6-2-tests.cjs,.,0,PASS,None,Dedicated task runner executing daTreemapView unit tests
+VAL-12,Workstream Aggregate Runners,node scratch/salesforce-poc/tests/run-workstream-a-tests.cjs,.,0,PASS,None,Executes all Workstream A visual presentation component test suites
