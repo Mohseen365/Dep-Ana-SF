@@ -107,7 +107,9 @@ runTest('1.4 Required fields (6 total) are properly classified according to Sale
     assert.ok(reqFields.includes('DA_User_Preference__c.Preference_Key__c'), 'Preference_Key__c is required');
 });
 
-runTest('1.5 Exactly 12 eligible fields are confirmed missing FLS in DA_Architecture_Analyst', () => {
+runTest('1.5 Remediated FLS verification: All 29 eligible fields granted in DA_Architecture_Analyst (0 missing)', () => {
+    // Historical note: Pre-remediation diagnostic asserted 12 eligible fields were missing (total 17).
+    // Post-remediation (Agent S1, SEC-01), all 12 missing fields were granted, bringing total to 29.
     const xml = fs.readFileSync(PERMSET_PATH, 'utf8');
     const existingFps = new Set();
     const regex = /<field>([^<]+)<\/field>/g;
@@ -115,9 +117,9 @@ runTest('1.5 Exactly 12 eligible fields are confirmed missing FLS in DA_Architec
     while ((match = regex.exec(xml)) !== null) {
         existingFps.add(match[1]);
     }
-    assert.strictEqual(existingFps.size, 17, 'Currently granted fields in permission set must be 17');
+    assert.strictEqual(existingFps.size, 29, `Currently granted fields in permission set must be 29 (17 baseline + 12 remediated), got ${existingFps.size}`);
 
-    const expectedMissing = [
+    const formerlyMissingNowRemediated = [
         'DA_User_Preference__c.Active_Layout_Mode__c',
         'DA_User_Preference__c.Active_View_Mode__c',
         'DA_User_Preference__c.Filters_JSON__c',
@@ -132,8 +134,19 @@ runTest('1.5 Exactly 12 eligible fields are confirmed missing FLS in DA_Architec
         'DA_Annotation__c.Text__c'
     ];
 
-    for (const f of expectedMissing) {
-        assert.strictEqual(existingFps.has(f), false, `Eligible field ${f} must be absent from current permission set`);
+    for (const f of formerlyMissingNowRemediated) {
+        assert.strictEqual(existingFps.has(f), true, `Remediated field ${f} must be present in permission set`);
+    }
+
+    // Negative control: Ensure un-remediated Master-Detail fields are NOT granted FLS
+    const masterDetailFields = [
+        'DA_Analysis_Run__c.DA_Project__c',
+        'DA_Annotation__c.Project__c',
+        'DA_Finding__c.DA_Analysis_Run__c',
+        'DA_Graph_Chunk__c.DA_Analysis_Run__c'
+    ];
+    for (const md of masterDetailFields) {
+        assert.strictEqual(existingFps.has(md), false, `Master-Detail field ${md} must NOT be granted FLS`);
     }
 });
 
@@ -152,12 +165,77 @@ runTest('2.1 daInvestigationDrawer.js exists and initializes BroadcastChannel co
     assert.ok(code.includes('this._broadcastChannel.close()'), 'Must close channel in disconnectedCallback');
 });
 
-runTest('2.2 Verification: handleBroadcastMessage accepts messages without projectId validation', () => {
+runTest('2.2 Verification: handleBroadcastMessage validates projectId and rejects cross-project messages', () => {
+    // Historical note: Pre-remediation diagnostic asserted handleBroadcastMessage lacked projectId check.
+    // Post-remediation (Agent S1, SEC-03), handleBroadcastMessage strictly enforces projectId validation.
     const code = fs.readFileSync(DRAWER_JS_PATH, 'utf8');
-    const methodMatch = code.match(/handleBroadcastMessage\s*\([^)]*\)\s*\{([^}]*)\}/);
+    const methodMatch = code.match(/handleBroadcastMessage\s*\([^)]*\)\s*\{([\s\S]*?)\n    \}/);
     assert.ok(methodMatch, 'handleBroadcastMessage must exist');
     const methodBody = methodMatch[1];
-    assert.strictEqual(methodBody.includes('projectId'), false, 'Current implementation fails to validate projectId');
+    assert.strictEqual(methodBody.includes('projectId'), true, 'Implementation must validate projectId');
+
+    // Functional verification in sandboxed component context
+    let cleanCode = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+    cleanCode = cleanCode.replace(/@api\s+/g, '');
+    cleanCode = cleanCode.replace(/@track\s+/g, '');
+    cleanCode = cleanCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
+    cleanCode += '\nreturn DaInvestigationDrawer;';
+
+    const LwcMock = {
+        LightningElement: class {
+            constructor() { this._dispatchedEvents = []; }
+            dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
+        }
+    };
+    class MockBroadcastChannel {
+        constructor(name) { this.name = name; this.messages = []; this.onmessage = null; }
+        postMessage(msg) { this.messages.push(msg); }
+        close() {}
+    }
+    const origBroadcastChannel = global.BroadcastChannel;
+    const origWindow = global.window;
+    try {
+        global.BroadcastChannel = MockBroadcastChannel;
+        global.window = { BroadcastChannel: MockBroadcastChannel, open: () => {} };
+
+        const ctor = new Function('LightningElement', cleanCode)(LwcMock.LightningElement);
+        const comp = new ctor();
+        comp.connectedCallback();
+        comp.projectId = 'proj_alpha';
+        comp.graphPayload = {
+            schemaVersion: '1.0.0',
+            nodes: [{ id: 'n1', label: 'Node 1' }, { id: 'n2', label: 'Node 2' }],
+            edges: []
+        };
+        comp.selectedNodeId = 'n1';
+
+        // Negative test: Mismatched projectId MUST be rejected
+        comp.handleBroadcastMessage({
+            type: 'DRAWER_SELECT_NODE',
+            projectId: 'proj_beta',
+            nodeId: 'n2'
+        });
+        assert.strictEqual(comp.selectedNodeId, 'n1', 'Cross-project selection MUST be rejected');
+
+        // Negative test: Missing projectId when drawer has active project MUST be rejected if message carries mismatched or foreign data
+        comp.handleBroadcastMessage({
+            type: 'DRAWER_SELECT_NODE',
+            projectId: 'unauthorized_proj',
+            nodeId: 'n2'
+        });
+        assert.strictEqual(comp.selectedNodeId, 'n1', 'Foreign projectId MUST be rejected');
+
+        // Positive test: Matching projectId MUST be processed
+        comp.handleBroadcastMessage({
+            type: 'DRAWER_SELECT_NODE',
+            projectId: 'proj_alpha',
+            nodeId: 'n2'
+        });
+        assert.strictEqual(comp.selectedNodeId, 'n2', 'Matching project selection MUST be accepted');
+    } finally {
+        global.BroadcastChannel = origBroadcastChannel;
+        global.window = origWindow;
+    }
 });
 
 runTest('2.3 BroadcastChannel specification disclosure: origin and source properties do NOT exist', () => {

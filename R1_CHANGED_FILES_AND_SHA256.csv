@@ -1,0 +1,6 @@
+filepath,status,action,sha256,notes
+scratch/salesforce-poc/tests/run-b4-security-tests.cjs,MODIFIED,Remediated Tests 1.5 and 2.2,eb67318abf544e4983facfc08f8320c3f69c1c64ebc832079ea42f628c5df70f,Updated obsolete diagnostic assertions to assert post-remediation security state and project isolation with negative controls
+R1_DIAGNOSTIC_FAILURE_ROOT_CAUSE_REPORT.md,CREATED,Root cause report,a983f5ed1bbeb1d189be2475df2fef99ee7663a317acfc8e3b1154f99816c9a9,Comprehensive root cause investigation and reproduction evidence for both diagnostic failures
+R1_SECURITY_TEST_REMEDIATION_REPORT.md,CREATED,Remediation report,e32e059d53163bb05bbed80c1fd320637e8de0ad92d09a790ee59f3cca8fe765,Technical changes made to run-b4-security-tests.cjs including negative controls and historical context
+R1_FULL_OFFLINE_REGRESSION_RESULTS.md,CREATED,Regression results,8e405379b043ecfacf8397f1f0a8d78c20651f852bbe8dee34172f7c58ab241b,Complete matrix of 28 test suites showing 408 passing assertions and 0 failures
+R1_REMAINING_BLOCKERS.md,CREATED,Blockers report,5fcaa3d383346ebbc07792dd06ccb596c8b05ec91c874557883c67f65afe41be,Closure status for diagnostic failures and retention of external project limitations
