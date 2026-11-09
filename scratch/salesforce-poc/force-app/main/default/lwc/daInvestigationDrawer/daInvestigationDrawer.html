@@ -1,0 +1,226 @@
+<template>
+    <div class="drawer-container slds-panel slds-size_medium slds-panel_docked slds-panel_docked-right slds-is-open">
+        <!-- Drawer Header -->
+        <div class="slds-panel__header slds-grid slds-grid_align-spread slds-p-around_small slds-theme_shade slds-border_bottom">
+            <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:search" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-panel__header-title slds-text-heading_small slds-truncate" title={panelTitle}>
+                        {panelTitle}
+                    </h2>
+                </div>
+            </div>
+            <div class="slds-panel__header-actions slds-button-group">
+                <lightning-button-icon
+                    icon-name={pinIconName}
+                    variant="border-filled"
+                    size="small"
+                    alternative-text={pinButtonTitle}
+                    title={pinButtonTitle}
+                    onclick={handleTogglePin}>
+                </lightning-button-icon>
+                <lightning-button-icon
+                    icon-name="utility:new_window"
+                    variant="border-filled"
+                    size="small"
+                    alternative-text="Detach in New Window"
+                    title="Detach in New Window"
+                    onclick={handleDetach}>
+                </lightning-button-icon>
+                <lightning-button-icon
+                    icon-name="utility:close"
+                    variant="bare"
+                    size="small"
+                    alternative-text="Close Investigation Drawer"
+                    title="Close Investigation Drawer"
+                    onclick={handleClose}>
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <!-- Drawer Body -->
+        <div class="slds-panel__body slds-p-around_medium" style="max-height: calc(100vh - 120px); overflow-y: auto;">
+            <!-- Empty State / No Node Selected -->
+            <template if:false={hasSelectedNode}>
+                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                    <div class="slds-text-heading_small slds-m-bottom_x-small">No Component Selected</div>
+                    <p class="slds-text-color_weak slds-text-body_regular">
+                        Select a node in the graph, treemap, matrix, or subway view to inspect its architectural properties, metrics, and dependencies.
+                    </p>
+                </div>
+            </template>
+
+            <!-- Node Content -->
+            <template if:true={hasSelectedNode}>
+                <!-- Breadcrumb Drill Path -->
+                <template if:true={hasBreadcrumbs}>
+                    <div class="slds-m-bottom_small slds-p-bottom_xx-small slds-border_bottom">
+                        <nav role="navigation" aria-label="Breadcrumbs">
+                            <ol class="slds-breadcrumb slds-list_horizontal slds-wrap">
+                                <template for:each={drillPath} for:item="item">
+                                    <li key={item.id} class="slds-breadcrumb__item">
+                                        <a href="javascript:void(0);" data-id={item.id} onclick={handleBreadcrumbClick}>
+                                            {item.label}
+                                        </a>
+                                    </li>
+                                </template>
+                            </ol>
+                        </nav>
+                    </div>
+                </template>
+
+                <!-- Tabs: Overview, Dependencies, Findings, Annotations -->
+                <lightning-tabset active-tab-value={activeTab}>
+                    <!-- Overview Tab -->
+                    <lightning-tab label="Overview" value="overview">
+                        <div class="slds-p-around_small">
+                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                                <span class="slds-badge">{nodeType}</span>
+                                <span class={riskBadgeClass}>{nodeRisk}</span>
+                            </div>
+
+                            <div class="slds-form slds-form_stacked slds-m-bottom_medium">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label">Node ID</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-text-body_regular slds-truncate" title={selectedNode.id}>
+                                            <code>{selectedNode.id}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label">Architectural Layer</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-text-body_regular">{nodeLayer}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metrics Grid -->
+                            <div class="slds-text-title_caps slds-m-bottom_x-small">Structural Metrics</div>
+                            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                    <div class="metric-card">
+                                        <div class="metric-value">{fanInCount}</div>
+                                        <div class="metric-label">Fan-In (Dependents)</div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                    <div class="metric-card">
+                                        <div class="metric-value">{fanOutCount}</div>
+                                        <div class="metric-label">Fan-Out (Dependencies)</div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                    <div class="metric-card">
+                                        <div class="metric-value">{linesOfCode}</div>
+                                        <div class="metric-label">Lines of Code</div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                    <div class="metric-card">
+                                        <div class="metric-value">{cyclomaticComplexity}</div>
+                                        <div class="metric-label">Complexity</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning-tab>
+
+                    <!-- Dependencies & 1-Hop Tab -->
+                    <lightning-tab label={dependencyTabLabel} value="dependencies">
+                        <div class="slds-p-around_small">
+                            <!-- Inbound Edges (Fan-In) -->
+                            <div class="slds-text-title_caps slds-m-bottom_x-small slds-grid slds-grid_align-spread">
+                                <span>Inbound (Fan-In: {fanInCount})</span>
+                            </div>
+                            <template if:false={hasInboundEdges}>
+                                <p class="slds-text-color_weak slds-text-body_small slds-m-bottom_medium">
+                                    No incoming dependencies found.
+                                </p>
+                            </template>
+                            <template if:true={hasInboundEdges}>
+                                <div class="slds-m-bottom_medium">
+                                    <template for:each={inboundEdges} for:item="edge">
+                                        <div
+                                            key={edge.id}
+                                            class="dependency-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+                                            data-id={edge.source}
+                                            onclick={handleNeighborClick}>
+                                            <div class="slds-truncate" title={edge.source}>
+                                                <strong>{edge.sourceLabel}</strong>
+                                                <span class="slds-text-color_weak slds-m-left_xx-small">({edge.type})</span>
+                                            </div>
+                                            <lightning-icon icon-name="utility:chevronright" size="xx-small"></lightning-icon>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- Outbound Edges (Fan-Out) -->
+                            <div class="slds-text-title_caps slds-m-bottom_x-small slds-grid slds-grid_align-spread">
+                                <span>Outbound (Fan-Out: {fanOutCount})</span>
+                            </div>
+                            <template if:false={hasOutboundEdges}>
+                                <p class="slds-text-color_weak slds-text-body_small slds-m-bottom_medium">
+                                    No outgoing dependencies found.
+                                </p>
+                            </template>
+                            <template if:true={hasOutboundEdges}>
+                                <div class="slds-m-bottom_medium">
+                                    <template for:each={outboundEdges} for:item="edge">
+                                        <div
+                                            key={edge.id}
+                                            class="dependency-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
+                                            data-id={edge.target}
+                                            onclick={handleNeighborClick}>
+                                            <div class="slds-truncate" title={edge.target}>
+                                                <strong>{edge.targetLabel}</strong>
+                                                <span class="slds-text-color_weak slds-m-left_xx-small">({edge.type})</span>
+                                            </div>
+                                            <lightning-icon icon-name="utility:chevronright" size="xx-small"></lightning-icon>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </lightning-tab>
+
+                    <!-- Associated Findings Tab -->
+                    <lightning-tab label={findingsTabLabel} value="findings">
+                        <div class="slds-p-around_small">
+                            <template if:false={hasNodeFindings}>
+                                <p class="slds-text-color_weak slds-text-body_small">
+                                    No rule violations or findings reported for this component.
+                                </p>
+                            </template>
+                            <template if:true={hasNodeFindings}>
+                                <template for:each={nodeFindings} for:item="finding">
+                                    <div key={finding.id} class="slds-box slds-box_x-small slds-m-bottom_x-small">
+                                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
+                                            <span class="slds-badge slds-theme_warning">{finding.severity}</span>
+                                            <span class="slds-text-color_weak slds-text-body_small">{finding.ruleId}</span>
+                                        </div>
+                                        <p class="slds-text-body_small">{finding.details}</p>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </lightning-tab>
+
+                    <!-- Annotations Tab -->
+                    <lightning-tab label="Annotations" value="annotations">
+                        <div class="slds-p-around_small">
+                            <c-da-annotation-panel
+                                project-id={projectId}
+                                selected-node-id={selectedNodeId}>
+                            </c-da-annotation-panel>
+                        </div>
+                    </lightning-tab>
+                </lightning-tabset>
+            </template>
+        </div>
+    </div>
+</template>

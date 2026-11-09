@@ -1,0 +1,64 @@
+.drawer-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.slds-panel {
+    transition: transform 0.25s ease-in-out;
+}
+
+.metric-card {
+    background-color: #f3f3f3;
+    border-radius: 4px;
+    padding: 8px;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0176d3;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: #444444;
+    text-transform: uppercase;
+}
+
+.dependency-item {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background-color: #fafaf9;
+    border: 1px solid #e5e5e5;
+}
+
+.dependency-item:hover {
+    background-color: #f0f8ff;
+    border-color: #0176d3;
+}
+
+.badge-risk-high {
+    background-color: #ea001e;
+    color: #ffffff;
+}
+
+.badge-risk-medium {
+    background-color: #fe9339;
+    color: #000000;
+}
+
+.badge-risk-low {
+    background-color: #2e844a;
+    color: #ffffff;
+}
+
+.badge-risk-unknown {
+    background-color: #706e6b;
+    color: #ffffff;
+}

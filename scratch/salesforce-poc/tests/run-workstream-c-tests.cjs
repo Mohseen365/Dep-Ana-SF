@@ -807,6 +807,342 @@ async function main() {
         assert.strictEqual(annCode.includes('isValidId'), true);
     });
 
+
+    console.log('\n[Category 5: Workstream 6 daInvestigationDrawer LWC Unit Tests]');
+
+    runTest('17. daInvestigationDrawer: Node metadata, fan-in/fan-out, and incident edge extraction', () => {
+        const drawerJsPath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
+        let drawerCode = fs.readFileSync(drawerJsPath, 'utf8');
+        drawerCode = drawerCode.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+        drawerCode = drawerCode.replace(/@api\s+/g, '');
+        drawerCode = drawerCode.replace(/@track\s+/g, '');
+        drawerCode = drawerCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
+        drawerCode += '\nreturn DaInvestigationDrawer;';
+
+        const LwcMock = {
+            LightningElement: class {
+                constructor() { this._dispatchedEvents = []; }
+                dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
+            }
+        };
+
+        class MockBroadcastChannel {
+            constructor(name) { this.name = name; this.messages = []; this.onmessage = null; }
+            postMessage(msg) { this.messages.push(msg); }
+            close() {}
+        }
+        global.BroadcastChannel = MockBroadcastChannel;
+        global.window = { BroadcastChannel: MockBroadcastChannel, open: () => ({ closed: false }) };
+
+        const ctor = new Function('LightningElement', drawerCode)(LwcMock.LightningElement);
+        const comp = new ctor();
+        comp.connectedCallback();
+
+        const testGraph = {
+            schemaVersion: '1.0.0',
+            nodes: [
+                { id: 'ApexClass:ServiceA', label: 'ServiceA', type: 'ApexClass', layer: 'Service', risk: 'HIGH', metrics: { fanIn: 1, fanOut: 2, linesOfCode: 200, cyclomaticComplexity: 8 } },
+                { id: 'ApexClass:RepoB', label: 'RepoB', type: 'ApexClass', layer: 'Domain', risk: 'LOW', metrics: { fanIn: 2, fanOut: 0, linesOfCode: 100, cyclomaticComplexity: 2 } },
+                { id: 'LWC:compC', label: 'compC', type: 'LWC', layer: 'UI', risk: 'LOW', metrics: { fanIn: 0, fanOut: 1, linesOfCode: 50, cyclomaticComplexity: 1 } }
+            ],
+            edges: [
+                { id: 'e1', source: 'LWC:compC', target: 'ApexClass:ServiceA', type: 'calls' },
+                { id: 'e2', source: 'ApexClass:ServiceA', target: 'ApexClass:RepoB', type: 'calls' }
+            ]
+        };
+
+        comp.graphPayload = testGraph;
+        comp.selectedNodeId = 'ApexClass:ServiceA';
+
+        assert.strictEqual(comp.hasSelectedNode, true);
+        assert.strictEqual(comp.nodeRisk, 'HIGH');
+        assert.strictEqual(comp.nodeLayer, 'Service');
+        assert.strictEqual(comp.fanInCount, 1);
+        assert.strictEqual(comp.fanOutCount, 2);
+        assert.strictEqual(comp.inboundEdges.length, 1);
+        assert.strictEqual(comp.inboundEdges[0].source, 'LWC:compC');
+        assert.strictEqual(comp.outboundEdges.length, 1);
+        assert.strictEqual(comp.outboundEdges[0].target, 'ApexClass:RepoB');
+    });
+
+    runTest('18. daInvestigationDrawer: 1-hop drill-down and SELECTION != NAVIGATION invariant', () => {
+        const drawerJsPath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
+        let drawerCode = fs.readFileSync(drawerJsPath, 'utf8');
+        drawerCode = drawerCode.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+        drawerCode = drawerCode.replace(/@api\s+/g, '');
+        drawerCode = drawerCode.replace(/@track\s+/g, '');
+        drawerCode = drawerCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
+        drawerCode += '\nreturn DaInvestigationDrawer;';
+
+        const LwcMock = {
+            LightningElement: class {
+                constructor() { this._dispatchedEvents = []; }
+                dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
+            }
+        };
+
+        class MockBroadcastChannel {
+            constructor(name) { this.name = name; this.messages = []; this.onmessage = null; }
+            postMessage(msg) { this.messages.push(msg); }
+            close() {}
+        }
+        global.BroadcastChannel = MockBroadcastChannel;
+        global.window = { BroadcastChannel: MockBroadcastChannel, open: () => ({ closed: false }) };
+
+        const ctor = new Function('LightningElement', drawerCode)(LwcMock.LightningElement);
+        const comp = new ctor();
+        comp.connectedCallback();
+
+        const testGraph = {
+            schemaVersion: '1.0.0',
+            nodes: [
+                { id: 'ApexClass:A', label: 'A', type: 'ApexClass' },
+                { id: 'ApexClass:B', label: 'B', type: 'ApexClass' }
+            ],
+            edges: [
+                { id: 'e1', source: 'ApexClass:A', target: 'ApexClass:B' }
+            ]
+        };
+
+        comp.graphPayload = testGraph;
+        comp.projectId = '001_proj_alpha';
+        comp.selectedNodeId = 'ApexClass:A';
+
+        comp.handleNeighborSelection('ApexClass:B');
+
+        assert.strictEqual(comp._dispatchedEvents.length >= 1, true);
+        const lastEvt = comp._dispatchedEvents[comp._dispatchedEvents.length - 1];
+        assert.strictEqual(lastEvt.type, 'nodeselect');
+        assert.strictEqual(lastEvt.detail.nodeId, 'ApexClass:B');
+        assert.strictEqual(lastEvt.detail.sourceView, 'investigationDrawer');
+        assert.strictEqual(lastEvt.bubbles, true);
+        assert.strictEqual(lastEvt.composed, true);
+
+        assert.strictEqual(comp.projectId, '001_proj_alpha');
+        const navEvents = comp._dispatchedEvents.filter(e => e.type === 'viewchange' || e.type === 'projectchange');
+        assert.strictEqual(navEvents.length, 0);
+    });
+
+    runTest('19. daInvestigationDrawer: Stale selection suppression on project/graph switch', () => {
+        const drawerJsPath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
+        let drawerCode = fs.readFileSync(drawerJsPath, 'utf8');
+        drawerCode = drawerCode.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+        drawerCode = drawerCode.replace(/@api\s+/g, '');
+        drawerCode = drawerCode.replace(/@track\s+/g, '');
+        drawerCode = drawerCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
+        drawerCode += '\nreturn DaInvestigationDrawer;';
+
+        const LwcMock = {
+            LightningElement: class {
+                constructor() { this._dispatchedEvents = []; }
+                dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
+            }
+        };
+
+        const ctor = new Function('LightningElement', drawerCode)(LwcMock.LightningElement);
+        const comp = new ctor();
+        comp.connectedCallback();
+
+        comp.graphPayload = {
+            schemaVersion: '1.0.0',
+            nodes: [{ id: 'ApexClass:A', label: 'A' }],
+            edges: []
+        };
+        comp.selectedNodeId = 'ApexClass:A';
+        assert.strictEqual(comp.hasSelectedNode, true);
+
+        comp.graphPayload = { schemaVersion: '1.0.0', nodes: [], edges: [] };
+        assert.strictEqual(comp.selectedNodeId, null);
+        assert.strictEqual(comp.hasSelectedNode, false);
+    });
+
+    console.log('\n[Category 6: Workstream 6 Refactoring Engine & Pure Topological Math]');
+
+    runTest('20. daRefactoringEngine: Tarjan SCC detection & cycle counting', () => {
+        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
+        let engineCode = fs.readFileSync(enginePath, 'utf8');
+        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
+        engineCode += '\nreturn { computeTarjanSCC, countCyclicSCCs, edgeParticipatesInDirectedCycle, simulateRefactoring, generateHandoffMarkdown, generateHandoffJson };';
+        const engine = new Function(engineCode)();
+
+        const nodes1 = [{ id: 'A' }, { id: 'B' }, { id: 'C' }];
+        const edges1 = [{ source: 'A', target: 'B' }, { source: 'B', target: 'C' }, { source: 'C', target: 'A' }];
+
+        const sccs1 = engine.computeTarjanSCC(nodes1, edges1);
+        assert.strictEqual(sccs1.length, 1);
+        assert.strictEqual(sccs1[0].length, 3);
+        assert.strictEqual(engine.countCyclicSCCs(nodes1, edges1), 1);
+
+        const edges2 = [{ source: 'A', target: 'B' }, { source: 'B', target: 'C' }];
+        assert.strictEqual(engine.countCyclicSCCs(nodes1, edges2), 0);
+
+        const edges3 = [{ source: 'A', target: 'A' }];
+        assert.strictEqual(engine.countCyclicSCCs(nodes1, edges3), 1);
+    });
+
+    runTest('21. daRefactoringEngine: Directed cycle edge verification vs SCC membership', () => {
+        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
+        let engineCode = fs.readFileSync(enginePath, 'utf8');
+        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
+        engineCode += '\nreturn { edgeParticipatesInDirectedCycle };';
+        const engine = new Function(engineCode)();
+
+        const edges = [
+            { id: 'e1', source: 'A', target: 'B' },
+            { id: 'e2', source: 'B', target: 'A' },
+            { id: 'e3', source: 'A', target: 'C' }
+        ];
+
+        assert.strictEqual(engine.edgeParticipatesInDirectedCycle(edges[0], edges), true);
+        assert.strictEqual(engine.edgeParticipatesInDirectedCycle(edges[1], edges), true);
+        assert.strictEqual(engine.edgeParticipatesInDirectedCycle(edges[2], edges), false);
+    });
+
+    runTest('22. daRefactoringEngine: Immutable simulation inputs & cyclicSccCountDelta semantics', () => {
+        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
+        let engineCode = fs.readFileSync(enginePath, 'utf8');
+        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
+        engineCode += '\nreturn { simulateRefactoring };';
+        const engine = new Function(engineCode)();
+
+        const baseGraph = {
+            schemaVersion: '1.0.0',
+            projectId: 'PROJ_001',
+            nodes: [{ id: 'A', label: 'ClassA' }, { id: 'B', label: 'ClassB' }],
+            edges: [
+                { id: 'e1', source: 'A', target: 'B' },
+                { id: 'e2', source: 'B', target: 'A' }
+            ]
+        };
+
+        const frozenCopy = JSON.parse(JSON.stringify(baseGraph));
+
+        const result = engine.simulateRefactoring(baseGraph, [
+            { id: 'act-1', type: 'BREAK_CYCLE', edgeIdToSever: 'e2' }
+        ]);
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(result.appliedActionsCount, 1);
+        assert.strictEqual(result.breakCycleActionsApplied, 1);
+
+        assert.strictEqual(result.deltas.baseCyclicSccCount, 1);
+        assert.strictEqual(result.deltas.newCyclicSccCount, 0);
+        assert.strictEqual(result.deltas.cyclicSccCountDelta, -1);
+        assert.strictEqual(result.deltas.cyclicSccReduction, 1);
+
+        assert.deepStrictEqual(baseGraph, frozenCopy);
+        assert.strictEqual(baseGraph.edges.length, 2);
+        assert.strictEqual(result.resultingPayload.edges.length, 1);
+    });
+
+    runTest('23. daRefactoringEngine: Atomic REMOVE_NODE cascades across all incident edges (self-loops included)', () => {
+        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
+        let engineCode = fs.readFileSync(enginePath, 'utf8');
+        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
+        engineCode += '\nreturn { simulateRefactoring };';
+        const engine = new Function(engineCode)();
+
+        const baseGraph = {
+            schemaVersion: '1.0.0',
+            nodes: [{ id: 'A' }, { id: 'B' }, { id: 'C' }],
+            edges: [
+                { id: 'e1', source: 'A', target: 'B' },
+                { id: 'e2', source: 'B', target: 'C' },
+                { id: 'e3', source: 'B', target: 'B' }
+            ]
+        };
+
+        const result = engine.simulateRefactoring(baseGraph, [
+            { id: 'act-del-b', type: 'REMOVE_NODE', nodeId: 'B' }
+        ]);
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(result.appliedActionsCount, 1);
+        assert.strictEqual(result.resultingPayload.nodes.length, 2);
+        assert.strictEqual(result.resultingPayload.nodes.some(n => n.id === 'B'), false);
+        assert.strictEqual(result.resultingPayload.edges.length, 0);
+    });
+
+    runTest('24. daRefactoringEngine: Informational movedMethodList & rejection of unsupported MOVE_METHOD', () => {
+        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
+        let engineCode = fs.readFileSync(enginePath, 'utf8');
+        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
+        engineCode += '\nreturn { simulateRefactoring };';
+        const engine = new Function(engineCode)();
+
+        const baseGraph = {
+            schemaVersion: '1.0.0',
+            nodes: [{ id: 'ServiceA', label: 'ServiceA', type: 'ApexClass', layer: 'Core' }],
+            edges: []
+        };
+
+        const extractResult = engine.simulateRefactoring(baseGraph, [
+            {
+                id: 'act-ext',
+                type: 'EXTRACT_CLASS',
+                sourceNodeId: 'ServiceA',
+                newClassName: 'ServiceA_Helper',
+                movedMethodList: ['validateRecord', 'formatPayload']
+            }
+        ]);
+        assert.strictEqual(extractResult.success, true);
+        const extractedNode = extractResult.resultingPayload.nodes.find(n => n.id === 'ServiceA_Helper');
+        assert.strictEqual(Boolean(extractedNode), true);
+        assert.deepStrictEqual(extractedNode.attributes.movedMethods, ['validateRecord', 'formatPayload']);
+
+        const moveResult = engine.simulateRefactoring(baseGraph, [
+            {
+                id: 'act-move',
+                type: 'MOVE_METHOD',
+                sourceNodeId: 'ServiceA',
+                targetNodeId: 'ServiceA_Helper',
+                methodId: 'validateRecord'
+            }
+        ]);
+        assert.strictEqual(moveResult.success, false);
+        assert.strictEqual(moveResult.errors.length, 1);
+        assert.strictEqual(moveResult.errors[0].includes('MOVE_METHOD is unsupported'), true);
+    });
+
+    runTest('25. daRefactoringEngine: Markdown and JSON handoff export generation & disclaimer', () => {
+        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
+        let engineCode = fs.readFileSync(enginePath, 'utf8');
+        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
+        engineCode += '\nreturn { generateHandoffMarkdown, generateHandoffJson };';
+        const engine = new Function(engineCode)();
+
+        const handoffPlan = {
+            planId: 'plan_test_01',
+            projectId: '001_proj_alpha',
+            projectKey: 'PROJ_ALPHA',
+            baseRunId: 'RUN_100',
+            author: 'Lead Architect',
+            actions: [
+                { id: '1', type: 'BREAK_CYCLE', edgeIdToSever: 'A->B', substitutionStrategy: 'EXTRACT_INTERFACE' }
+            ],
+            deltas: {
+                baseCyclicSccCount: 2,
+                newCyclicSccCount: 1,
+                cyclicSccCountDelta: -1,
+                cyclicSccReduction: 1,
+                breakCycleActionsApplied: 1,
+                couplingDelta: -1
+            }
+        };
+
+        const md = engine.generateHandoffMarkdown(handoffPlan);
+        assert.strictEqual(md.includes('# Engineering Architecture Refactoring Handoff Plan'), true);
+        assert.strictEqual(md.includes('DISCLAIMER'), true);
+        assert.strictEqual(md.includes('No source code or repository files were modified'), true);
+        assert.strictEqual(md.includes('**Cyclic SCC Delta**: -1'), true);
+
+        const json = engine.generateHandoffJson(handoffPlan);
+        assert.strictEqual(json.schemaVersion, '1.0.0');
+        assert.strictEqual(json.planId, 'plan_test_01');
+        assert.strictEqual(json.summary.cyclicSccReduction, 1);
+        assert.strictEqual(json.disclaimer.includes('No physical files modified'), true);
+    });
+
     console.log('\n===================================================================');
     console.log(`Summary: ${passes} PASSED, ${fails} FAILED`);
 
