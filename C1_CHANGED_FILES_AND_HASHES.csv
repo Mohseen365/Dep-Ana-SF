@@ -1,0 +1,6 @@
+path,sha256,action,notes
+scratch/salesforce-poc/tests/run-c1-url-sync-tests.cjs,243969294e961f8c590c290fead448d5fea2919274c8d6c374336d2d228e6142,CREATED,Dedicated Agent C1 offline test runner verifying GAP-B01/REM-04 parameter sync and invariants
+C1_DEEP_LINK_IMPLEMENTATION_REPORT.md,671960260d86b485c7f089f54c0e75544204e6aff20d90f40d87fe97935633fa,CREATED,Implementation report and technical proposal under DEC-04 Alt 4 governance gate
+C1_URL_STATE_TEST_RESULTS.md,564cde15e9f24842d14457a607e905f8a348b053a6a0bf45bb2da3f3c8f4228d,CREATED,Empirical test results from run-c1-url-sync-tests.cjs
+C1_REMAINING_BLOCKERS.md,5ed9281800527d96fa0cf85cb9a51d2dc9e200b44c274f00d75c5ead4e7228a7,CREATED,Blockers register detailing BLK-AUTH-01 and BLK-OWN-01
+C1_CHANGED_FILES_AND_HASHES.csv,self-referential,CREATED,Inventory of modified and created files with SHA-256 hashes
