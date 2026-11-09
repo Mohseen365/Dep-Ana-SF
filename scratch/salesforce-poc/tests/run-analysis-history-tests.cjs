@@ -39,16 +39,17 @@ const dtoCode = fs.readFileSync('scratch/salesforce-poc/force-app/main/default/c
 assert.ok(serviceCode.includes('with sharing'), 'Service must declare with sharing');
 assert.ok(serviceCode.includes('WITH USER_MODE'), 'Service SOQL must enforce WITH USER_MODE');
 assert.ok(serviceCode.includes('ORDER BY Run_Timestamp__c DESC, Id DESC'), 'Service must enforce deterministic compound SOQL ordering');
+assert.ok(serviceCode.includes('resolveProjectId'), 'Service must implement two-step project resolution');
 assert.ok(controllerCode.includes('with sharing'), 'Controller must declare with sharing');
 assert.ok(controllerCode.includes('@AuraEnabled(cacheable=true)'), 'Controller must expose cacheable AuraEnabled method');
 assert.ok(controllerCode.includes('AuraHandledException'), 'Controller must wrap errors in AuraHandledException');
 assert.ok(dtoCode.includes('@AuraEnabled public Integer nodeDelta'), 'DTO must provide nodeDelta for UI trends');
 assert.ok(dtoCode.includes('@AuraEnabled public Integer edgeDelta'), 'DTO must provide edgeDelta for UI trends');
 assert.ok(dtoCode.includes('@AuraEnabled public Integer cyclicSccDelta'), 'DTO must provide cyclicSccDelta for UI trends');
-console.log('  ✓ Apex security, CRUD/FLS user mode, and deterministic ordering validated.');
+console.log('  ✓ Apex security, CRUD/FLS user mode, two-step resolution, and deterministic ordering validated.');
 
-// Test 3: Simulation of Delta Metric Computations
-console.log('\n[Suite 3: Metric Delta Computation Simulation]');
+// Test 3: Simulation of Delta Metric Computations & Status Classification
+console.log('\n[Suite 3: Metric Delta Computation & Status Classification]');
 function computeRunDeltas(runs) {
     return runs.map((r, i) => {
         let nodeDelta = 0;
@@ -70,19 +71,31 @@ function computeRunDeltas(runs) {
 }
 
 const mockRuns = [
-    { runId: 'a01001', commitHash: 'abc1111', runTimestamp: 1731140000000, nodeCount: 150, edgeCount: 300, cyclicSccCount: 2 },
-    { runId: 'a01002', commitHash: 'abc2222', runTimestamp: 1731130000000, nodeCount: 140, edgeCount: 290, cyclicSccCount: 5 },
-    { runId: 'a01003', commitHash: 'abc3333', runTimestamp: 1731120000000, nodeCount: 120, edgeCount: 250, cyclicSccCount: 4 }
+    { runId: 'a01001', status: 'AVAILABLE', commitHash: 'abc1111', runTimestamp: 1731140000000, nodeCount: 150, edgeCount: 300, cyclicSccCount: 2, totalChunks: 3, actualChunks: 3 },
+    { runId: 'a01002', status: 'AVAILABLE', commitHash: 'abc2222', runTimestamp: 1731130000000, nodeCount: 140, edgeCount: 290, cyclicSccCount: 5, totalChunks: 2, actualChunks: 2 },
+    { runId: 'a01003', status: 'EMPTY', commitHash: 'abc3333', runTimestamp: 1731120000000, nodeCount: 0, edgeCount: 0, cyclicSccCount: 0, totalChunks: 0, actualChunks: 0 },
+    { runId: 'a01004', status: 'FAILED', commitHash: 'abc4444', runTimestamp: 1731110000000, nodeCount: 10, edgeCount: 5, cyclicSccCount: 0, totalChunks: 5, actualChunks: 2 } // partial ingestion mismatch
 ];
 
 const processed = computeRunDeltas(mockRuns);
 assert.strictEqual(processed[0].nodeDelta, 10, 'Expected +10 nodes in latest run');
 assert.strictEqual(processed[0].edgeDelta, 10, 'Expected +10 edges in latest run');
 assert.strictEqual(processed[0].cyclicSccDelta, -3, 'Expected -3 cycles (improvement) in latest run');
-assert.strictEqual(processed[1].nodeDelta, 20, 'Expected +20 nodes relative to base');
-assert.strictEqual(processed[1].cyclicSccDelta, 1, 'Expected +1 cycle in middle run');
-assert.strictEqual(processed[2].nodeDelta, 0, 'Oldest run in list has 0 delta relative to base');
-console.log('  ✓ Delta metric computation logic mathematically confirmed.');
+assert.strictEqual(processed[1].nodeDelta, 140, 'Expected +140 nodes relative to base empty run');
+assert.strictEqual(processed[1].cyclicSccDelta, 5, 'Expected +5 cycles relative to base empty run');
+
+// Validate DEC-01 amended integrity check:
+// Status__c == 'AVAILABLE' AND actualChunks == totalChunks
+function isRunAvailableForGraph(run) {
+    return run.status === 'AVAILABLE' && run.actualChunks === run.totalChunks;
+}
+
+assert.strictEqual(isRunAvailableForGraph(mockRuns[0]), true, 'Run 1 is complete and available');
+assert.strictEqual(isRunAvailableForGraph(mockRuns[1]), true, 'Run 2 is complete and available');
+assert.strictEqual(isRunAvailableForGraph(mockRuns[2]), false, 'Empty run is not available as graph payload');
+assert.strictEqual(isRunAvailableForGraph(mockRuns[3]), false, 'Partial chunk mismatch run must be rejected');
+
+console.log('  ✓ Delta metric computation and DEC-01 ingestion integrity rule validated.');
 
 // Test 4: LWC Event Dispatch Contract
 console.log('\n[Suite 4: LWC Contract & Event Discipline]');
