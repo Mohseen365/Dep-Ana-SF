@@ -1,0 +1,4 @@
+file_path,status,owner,lines,sha256,description
+C3_DEPENDENCY_RIVER_IMPLEMENTATION_REPORT.md,CREATED,Agent C3,128,58180b31e154568040765181775002b95e131cbe10464d749bc39cc3642e6d6c,Comprehensive blocked proposal and technical architecture report for Sankey / Dependency River visualization
+C3_VISUALIZATION_TEST_RESULTS.md,CREATED,Agent C3,79,cdb51fa451dd432e86c96d4ae7f3e9ea707adb1524ef29fd87972a6df9efdd96,Test strategy specification and baseline regression verification results for Agent C3
+C3_CHANGED_FILES_AND_HASHES.csv,CREATED,Agent C3,4,99a9d49fb8f12ad051a568349a65cc915d744d9d154b238a958432670c840736,Inventory of changed and created files with SHA-256 hashes for Agent C3 deliverables
