@@ -584,6 +584,49 @@ export default class DaAppShell extends LightningElement {
         }
     }
 
+    get activeGraphNodes() {
+        if (!this.activeGraphPayload || !Array.isArray(this.activeGraphPayload.nodes)) {
+            return [];
+        }
+        return this.activeGraphPayload.nodes;
+    }
+
+    handleHeaderActionTrigger(event) {
+        const action = event.detail?.action;
+        if (action === 'history') {
+            // Future launch history modal or view
+        } else if (action === 'compare') {
+            // Future launch compare view
+        }
+    }
+
+    handleHeaderGlobalSearch(event) {
+        const query = (event.detail?.query || '').toLowerCase().trim();
+        if (query && this.activeGraphPayload?.nodes) {
+            const match = this.activeGraphPayload.nodes.find(n =>
+                (n.label && n.label.toLowerCase().includes(query)) ||
+                (n.id && n.id.toLowerCase().includes(query))
+            );
+            if (match) {
+                this.selectedNodeId = match.id;
+            }
+        }
+    }
+
+    handleLayerFilterChange(event) {
+        const activeLayers = event.detail?.activeLayers;
+        if (Array.isArray(activeLayers)) {
+            this.handleFilterChange({
+                detail: {
+                    filterCriteria: {
+                        ...this.activeFilterCriteria,
+                        layers: activeLayers
+                    }
+                }
+            });
+        }
+    }
+
     // Node Selection Handler (Preserves invariant SELECTION ≠ NAVIGATION)
     handleNodeSelect(event) {
         const detail = event.detail || {};

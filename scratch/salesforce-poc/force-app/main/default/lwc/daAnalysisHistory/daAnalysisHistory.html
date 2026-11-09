@@ -1,0 +1,119 @@
+<template>
+    <lightning-card title="Analysis History" icon-name="standard:history">
+        <div slot="actions">
+            <lightning-button
+                label="Refresh"
+                icon-name="utility:refresh"
+                onclick={handleRefresh}
+                disabled={isLoading}>
+            </lightning-button>
+            <lightning-button
+                label="Compare Selected"
+                variant="brand"
+                icon-name="utility:metrics"
+                onclick={handleCompareSelected}
+                disabled={isCompareDisabled}
+                class="slds-m-left_x-small">
+            </lightning-button>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <template lwc:if={isLoading}>
+                <div class="slds-is-relative slds-p-around_large">
+                    <lightning-spinner alternative-text="Loading runs..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:if={errorMessage}>
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <h2>{errorMessage}</h2>
+                </div>
+            </template>
+
+            <template lwc:if={hasRuns}>
+                <div class="slds-scrollable_y history-table-container">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col" style="width: 3.25rem;">
+                                    <span class="slds-assistive-text">Select</span>
+                                </th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Commit</th>
+                                <th scope="col">Timestamp</th>
+                                <th scope="col">Nodes</th>
+                                <th scope="col">Edges</th>
+                                <th scope="col">Cyclic SCCs</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={formattedRuns} for:item="run">
+                                <tr key={run.runId} class={run.rowClass}>
+                                    <td>
+                                        <lightning-input
+                                            type="checkbox"
+                                            data-id={run.runId}
+                                            checked={run.isSelectedForCompare}
+                                            onchange={handleCheckboxChange}
+                                            label="Select run">
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-badge label={run.status} class={run.statusBadgeClass}></lightning-badge>
+                                    </td>
+                                    <td class="font-mono">
+                                        {run.shortCommit}
+                                    </td>
+                                    <td>
+                                        {run.formattedTime}
+                                    </td>
+                                    <td>
+                                        <span>{run.nodeCount}</span>
+                                        <template lwc:if={run.hasNodeDelta}>
+                                            <span class={run.nodeDeltaClass}> ({run.formattedNodeDelta})</span>
+                                        </template>
+                                    </td>
+                                    <td>
+                                        <span>{run.edgeCount}</span>
+                                        <template lwc:if={run.hasEdgeDelta}>
+                                            <span class={run.edgeDeltaClass}> ({run.formattedEdgeDelta})</span>
+                                        </template>
+                                    </td>
+                                    <td>
+                                        <span class={run.cyclesClass}>{run.cyclicSccCount}</span>
+                                        <template lwc:if={run.hasCyclesDelta}>
+                                            <span class={run.cyclesDeltaClass}> ({run.formattedCyclesDelta})</span>
+                                        </template>
+                                    </td>
+                                    <td>
+                                        <template lwc:if={run.isActive}>
+                                            <span class="slds-badge slds-theme_success">Active</span>
+                                        </template>
+                                        <template lwc:else>
+                                            <lightning-button
+                                                label="Load"
+                                                variant="base"
+                                                data-id={run.runId}
+                                                data-hash={run.commitHash}
+                                                onclick={handleLoadRun}>
+                                            </lightning-button>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+
+            <template lwc:if={isEmpty}>
+                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                    <h3 class="slds-text-heading_medium">No Analysis Runs Found</h3>
+                    <p class="slds-text-body_regular slds-m-top_x-small">No analysis snapshots have been ingested yet for this project.</p>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

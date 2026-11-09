@@ -1,0 +1,74 @@
+.sidebar-container {
+    height: 100%;
+    min-height: 600px;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e5e5;
+    transition: width 0.2s ease-in-out;
+}
+
+.sidebar-expanded {
+    width: 280px;
+}
+
+.sidebar-collapsed {
+    width: 44px;
+}
+
+.sidebar-header {
+    background-color: #fafaf9;
+    height: 48px;
+}
+
+.section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #514f4d;
+    letter-spacing: 0.05rem;
+}
+
+.layer-badge {
+    cursor: pointer;
+    margin: 2px 4px 2px 0;
+    user-select: none;
+    font-size: 0.7rem;
+}
+
+.layer-badge-active {
+    background-color: #0176d3 !important;
+    color: #ffffff !important;
+}
+
+.layer-badge-inactive {
+    background-color: #f3f3f3;
+    color: #514f4d;
+}
+
+.inventory-list {
+    max-height: 380px;
+}
+
+.inventory-item {
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.inventory-item:hover {
+    background-color: #f3f8fe;
+}
+
+.inventory-item-selected {
+    background-color: #d8e6fe !important;
+    font-weight: 600;
+}
+
+.favorite-item {
+    cursor: pointer;
+    padding: 4px 6px;
+    background-color: #fffdf5;
+}
+
+.item-meta {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}

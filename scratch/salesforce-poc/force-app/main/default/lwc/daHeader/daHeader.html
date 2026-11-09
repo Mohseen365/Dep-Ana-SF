@@ -1,0 +1,119 @@
+<template>
+    <header class="slds-page-header slds-page-header_record-home da-header">
+        <div class="slds-page-header__row header-top-row">
+            <!-- Brand & Context -->
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-apex-plugin" title="Dependency Analyzer">
+                            <lightning-icon icon-name="standard:apex_plugin" size="medium"></lightning-icon>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span class="slds-page-header__title slds-truncate" title="Dependency Analyzer">Dependency Analyzer</span>
+                                </h1>
+                            </div>
+                        </div>
+                        <p class="slds-page-header__name-meta">
+                            Architecture Exploration &amp; Technical Debt Radar &bull; {projectLabel}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Search & Actions Toolbar -->
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <!-- Global Search Box -->
+                    <div class="slds-page-header__control header-search-control">
+                        <lightning-input
+                            type="search"
+                            label="Global Search"
+                            variant="label-hidden"
+                            placeholder="Search nodes, classes, components... (Ctrl+K)"
+                            value={searchQuery}
+                            onchange={handleGlobalSearch}
+                            class="header-search-input">
+                        </lightning-input>
+                    </div>
+
+                    <!-- Project Selector -->
+                    <div class="slds-page-header__control header-project-control">
+                        <c-da-project-selector
+                            selected-project-id={projectId}
+                            onprojectchange={handleProjectChange}>
+                        </c-da-project-selector>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="slds-page-header__control">
+                        <lightning-button-group>
+                            <lightning-button
+                                label="Compare"
+                                icon-name="utility:metrics"
+                                data-action="compare"
+                                onclick={handleActionTrigger}
+                                disabled={isActionDisabled}>
+                            </lightning-button>
+                            <lightning-button
+                                label="History"
+                                icon-name="utility:history"
+                                data-action="history"
+                                onclick={handleActionTrigger}
+                                disabled={isActionDisabled}>
+                            </lightning-button>
+                            <lightning-button-icon
+                                icon-name="utility:keyboard_shortcuts"
+                                alternative-text="Keyboard Shortcuts"
+                                title="Keyboard Shortcuts (Ctrl+/)"
+                                onclick={handleKeyboardShortcutClick}>
+                            </lightning-button-icon>
+                            <lightning-button-icon
+                                icon-name="utility:help"
+                                alternative-text="Help & Documentation"
+                                title="Help & Documentation"
+                                data-action="help"
+                                onclick={handleActionTrigger}>
+                            </lightning-button-icon>
+                        </lightning-button-group>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status & Context Detail Row -->
+        <div class="slds-page-header__row slds-page-header__row_gutters header-status-row">
+            <div class="slds-page-header__col-details">
+                <ul class="slds-page-header__detail-row">
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Active Project Key">Project Key</div>
+                        <div class="slds-truncate slds-text-heading_small status-value" title={projectKey}>
+                            {displayProjectKey}
+                        </div>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Active View">Active View</div>
+                        <div class="slds-truncate slds-text-body_regular status-value">
+                            {activeViewLabel}
+                        </div>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Selected Node">Selected Node</div>
+                        <div class="slds-truncate slds-text-body_regular status-value" title={selectedNodeId}>
+                            {displaySelectedNode}
+                        </div>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                        <div class="slds-text-title slds-truncate" title="Status">Status</div>
+                        <div>
+                            <span class={statusBadgeClass}>{statusText}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+</template>

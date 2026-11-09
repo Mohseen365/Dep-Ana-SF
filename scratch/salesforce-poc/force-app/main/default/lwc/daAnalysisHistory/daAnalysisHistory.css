@@ -1,0 +1,26 @@
+.font-mono {
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.history-table-container {
+    max-height: 480px;
+}
+
+.delta-positive {
+    color: #2e844b;
+    font-weight: bold;
+}
+
+.delta-negative {
+    color: #ea001e;
+    font-weight: bold;
+}
+
+.delta-neutral {
+    color: #706e6b;
+}
+
+.active-run-row {
+    background-color: #f3f8fe !important;
+}
