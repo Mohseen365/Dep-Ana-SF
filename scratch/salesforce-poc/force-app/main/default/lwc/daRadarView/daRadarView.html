@@ -1,0 +1,216 @@
+<template>
+    <div class="radar-container" data-testid="radar-container">
+        <!-- Header & Health Summary Banner -->
+        <div class="radar-header">
+            <div class="radar-header-left">
+                <span style="font-size: 18px;">🎯</span>
+                <h2 class="radar-title">Architecture Radar</h2>
+            </div>
+            <template lwc:if={summary}>
+                <div class="radar-header-right">
+                    <span class={healthBadgeClass}>
+                        Health: {summary.architectureHealthScore}/100 ({summary.healthLevel})
+                    </span>
+                    <span class="header-meta">
+                        Risk Exposure: <strong style="color: #f59e0b;">{summary.riskPercent}%</strong>
+                    </span>
+                    <span class="header-meta">
+                        Components: <strong>{summary.totalComponents}</strong>
+                    </span>
+                    <span class="header-meta">
+                        Dependencies: <strong>{summary.totalDependencies}</strong>
+                    </span>
+                </div>
+            </template>
+        </div>
+
+        <template lwc:if={hasError}>
+            <div class="radar-error" data-testid="radar-error">
+                <span>{errorMessage}</span>
+            </div>
+        </template>
+        <template lwc:elseif={isEmpty}>
+            <div class="radar-empty" data-testid="radar-empty">
+                <span>No components available to generate architecture radar.</span>
+            </div>
+        </template>
+        <template lwc:else>
+            <!-- Content Area: SVG Canvas + Inspector Pane -->
+            <div class="radar-content-area">
+                <!-- SVG Radar Viewport -->
+                <div class="radar-svg-container" data-testid="radar-svg-container">
+                    <svg
+                        class="radar-svg"
+                        viewBox="0 0 560 440"
+                        role="img"
+                        aria-label="Architecture Radar Diagram"
+                        data-testid="radar-svg"
+                    >
+                        <defs>
+                            <linearGradient id="radarAreaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.45" />
+                                <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.25" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Concentric Reference Rings -->
+                        <template for:each={renderedRings} for:item="ring">
+                            <polygon
+                                key={ring.level}
+                                points={ring.points}
+                                fill="none"
+                                stroke="#334155"
+                                stroke-width="1"
+                                stroke-dasharray="3 3"
+                            />
+                        </template>
+
+                        <!-- Radial Axis Lines -->
+                        <template for:each={renderedAxes} for:item="axis">
+                            <line
+                                key={axis.id}
+                                x1={centerX}
+                                y1={centerY}
+                                x2={axis.xEnd}
+                                y2={axis.yEnd}
+                                stroke="#334155"
+                                stroke-width="1"
+                            />
+                        </template>
+
+                        <!-- Data Polygon -->
+                        <polygon
+                            points={polygonPointsString}
+                            fill="url(#radarAreaGrad)"
+                            stroke="#3b82f6"
+                            stroke-width="2"
+                        />
+
+                        <!-- Axis Vertices and Labels -->
+                        <template for:each={renderedAxes} for:item="axis">
+                            <g
+                                key={axis.id}
+                                class={axis.groupClass}
+                                onclick={handleAxisClick}
+                                data-dim-id={axis.id}
+                                data-testid={axis.testId}
+                            >
+                                <circle
+                                    cx={axis.xVal}
+                                    cy={axis.yVal}
+                                    r={axis.pointRadius}
+                                    fill={axis.pointFill}
+                                    stroke="#ffffff"
+                                    stroke-width={axis.pointStrokeWidth}
+                                >
+                                    <title>{axis.tooltip}</title>
+                                </circle>
+                                <text
+                                    x={axis.xLabel}
+                                    y={axis.yLabel}
+                                    text-anchor={axis.textAnchor}
+                                    dominant-baseline="middle"
+                                    fill={axis.labelColor}
+                                    font-size={axis.fontSize}
+                                    font-weight={axis.fontWeight}
+                                >
+                                    {axis.label}
+                                </text>
+                            </g>
+                        </template>
+                    </svg>
+                    <div class="disclaimer-text">
+                        ℹ️ Radial geometry scales dimensions visually for presentation. Source metrics maintain native units (score / percent / count).
+                    </div>
+                </div>
+
+                <!-- Right Inspector & Metric Table Pane -->
+                <div class="radar-inspector-pane">
+                    <!-- Dimension Inspector Card -->
+                    <div class="inspector-card">
+                        <h4 class="card-title">Dimension Inspector</h4>
+                        <template lwc:if={activeDimension}>
+                            <div class="dim-inspector-body">
+                                <div class="dim-inspector-top">
+                                    <strong style="color: #f8fafc; font-size: 14px;">
+                                        {activeDimension.label}
+                                    </strong>
+                                    <span class={activeDimension.unitBadgeClass}>
+                                        {activeDimension.unit}
+                                    </span>
+                                </div>
+                                <div class="dim-inspector-value">
+                                    <span class="dim-val-large">{activeDimension.rawValue}</span>
+                                    <span style="font-size: 11px; color: #94a3b8;">
+                                        {activeDimension.unitSuffix}
+                                    </span>
+                                </div>
+                                <p class="dim-inspector-desc">
+                                    {activeDimension.description}
+                                </p>
+                                <div class="dim-inspector-source">
+                                    <strong>Source Metric:</strong> {activeDimension.sourceMetric}
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <div style="font-size: 11px; color: #94a3b8; font-style: italic;">
+                                Select a radar vertex or table row to inspect dimension source metrics and unit semantics.
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Full Dimensions Metric Table -->
+                    <div class="table-card">
+                        <table class="dimensions-table" data-testid="radar-dimensions-table">
+                            <thead>
+                                <tr>
+                                    <th>Dimension</th>
+                                    <th style="text-align: right;">Value</th>
+                                    <th style="text-align: center;">Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={renderedDimensionsTable} for:item="dim">
+                                    <tr
+                                        key={dim.id}
+                                        class={dim.rowClass}
+                                        onclick={handleRowClick}
+                                        data-dim-id={dim.id}
+                                    >
+                                        <td style="font-weight: 500; color: #f8fafc;">
+                                            {dim.label}
+                                        </td>
+                                        <td style="text-align: right; font-family: monospace; font-weight: 600; color: #38bdf8;">
+                                            {dim.rawValue}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span class={dim.unitBadgeClass}>
+                                                {dim.unit}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Missing Primitives Section -->
+                    <template lwc:if={missingPrimitivesList.length}>
+                        <div class="missing-card">
+                            <h4 class="missing-title">Missing Architectural Primitives</h4>
+                            <p class="missing-desc">
+                                The following radar concepts are explicitly reported as unbacked primitives to prevent synthetic score fabrication:
+                            </p>
+                            <template for:each={missingPrimitivesList} for:item="mp">
+                                <div key={mp.dimension} class="missing-item">
+                                    <strong>{mp.dimension}:</strong> {mp.reason}
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
