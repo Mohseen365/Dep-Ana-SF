@@ -1,66 +1,92 @@
 <template>
-    <div class="hotspots-container" data-testid="hotspots-container">
-        <!-- Toolbar -->
-        <div class="hotspots-toolbar">
-            <div class="hotspots-controls">
-                <span class="control-label">Search Hotspot:</span>
-                <input
-                    type="text"
-                    class="control-input"
-                    placeholder="Search by component name..."
-                    value={searchQuery}
-                    oninput={handleSearchChange}
-                    data-testid="hotspots-search-input"
-                />
-
-                <span class="control-label">Risk Filter:</span>
-                <select class="control-select" onchange={handleRiskFilterChange} data-testid="hotspots-risk-select">
-                    <option value="">All Risks</option>
-                    <option value="HIGH">High Risk</option>
-                    <option value="MEDIUM">Medium Risk</option>
-                    <option value="LOW">Low Risk</option>
-                </select>
-
-                <span class="control-label">Category:</span>
-                <select class="control-select" onchange={handleCategoryFilterChange} data-testid="hotspots-category-select">
-                    <option value="all">All Hotspots</option>
-                    <option value="coupling">High Coupling (&gt;15)</option>
-                    <option value="fanIn">High Fan-In (&gt;10)</option>
-                    <option value="cycles">Cyclic Dependencies</option>
-                </select>
+    <div class="hotspots-view-container slds-p-around_medium">
+        <!-- Header & Summary Toolbar -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small toolbar-wrap">
+            <div>
+                <h3 class="slds-text-heading_small">Architectural Hotspots & Refactoring Targets</h3>
+                <p class="slds-text-body_small slds-text-color_weak">
+                    Identifies high-coupling, high-risk, and cyclic components ranked by composite severity score
+                </p>
             </div>
-            <div class="hotspots-summary">
-                <span class="control-label">Total Hotspots: {hotspotCount} (Ranked)</span>
+            <div class="slds-grid slds-grid_vertical-align-center header-actions">
+                <template if:false={isEmpty}>
+                    <span class="slds-badge slds-theme_default slds-m-right_small total-badge">
+                        {hotspotCount} Hotspots
+                    </span>
+                    <button class="slds-button slds-button_neutral slds-m-right_xx-small export-btn" onclick={handleExportCSV} title="Export Hotspots as CSV">
+                        Export CSV
+                    </button>
+                    <button class="slds-button slds-button_neutral export-btn" onclick={handleExportJSON} title="Export Hotspots as JSON">
+                        Export JSON
+                    </button>
+                </template>
             </div>
         </div>
 
-        <!-- Body -->
-        <div class="hotspots-body">
-            <template lwc:if={hasError}>
-                <div class="hotspots-error" data-testid="hotspots-error">
-                    <span>{errorMessage}</span>
-                </div>
-            </template>
-            <template lwc:elseif={isEmpty}>
-                <div class="hotspots-empty" data-testid="hotspots-empty">
-                    <span>No architectural hotspots detected in active project payload.</span>
-                </div>
-            </template>
-            <template lwc:else>
-                <table class="hotspots-table" data-testid="hotspots-table">
+        <!-- Filter Controls Bar -->
+        <div class="filter-bar slds-grid slds-wrap slds-gutters slds-m-bottom_small slds-p-around_x-small">
+            <!-- Search Query -->
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                <input
+                    type="text"
+                    class="slds-input search-input"
+                    placeholder="Search by ID or label..."
+                    value={searchQuery}
+                    oninput={handleSearchChange}
+                />
+            </div>
+
+            <!-- Risk Filter -->
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_4-of-12">
+                <select class="slds-select" onchange={handleRiskFilterChange}>
+                    <option value="">All Risk Levels</option>
+                    <option value="HIGH">High Risk Only</option>
+                    <option value="MEDIUM">Medium Risk Only</option>
+                    <option value="LOW">Low Risk Only</option>
+                </select>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="slds-col slds-size_1-of-2 slds-medium-size_4-of-12">
+                <select class="slds-select" onchange={handleCategoryFilterChange}>
+                    <option value="all">All Hotspot Categories</option>
+                    <option value="coupling">Coupling &gt; 15</option>
+                    <option value="fanIn">Fan-In &gt; 10</option>
+                    <option value="cycles">Cyclic Components</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <template if:true={hasError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <h2>{errorMessage}</h2>
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template if:true={isEmpty}>
+            <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center empty-box">
+                <p class="slds-text-color_weak">No hotspots found matching active criteria.</p>
+            </div>
+        </template>
+
+        <!-- Hotspot Table -->
+        <template if:false={isEmpty}>
+            <div class="slds-scrollable_x">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
                     <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Component</th>
-                            <th>Type</th>
-                            <th>Layer</th>
-                            <th>Coupling</th>
-                            <th>Fan-In</th>
-                            <th>Fan-Out</th>
-                            <th>Complexity</th>
-                            <th>LOC</th>
-                            <th>Cycles</th>
-                            <th>Risk</th>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" style="width: 50px;">Rank</th>
+                            <th scope="col">Component</th>
+                            <th scope="col">Layer</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Coupling</th>
+                            <th scope="col">Fan-In</th>
+                            <th scope="col">Fan-Out</th>
+                            <th scope="col">Complexity</th>
+                            <th scope="col">Cyclic</th>
+                            <th scope="col">Risk</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,27 +94,34 @@
                             <tr
                                 key={item.id}
                                 class={item.rowClass}
-                                onclick={handleRowClick}
                                 data-node-id={item.id}
+                                onclick={handleRowClick}
                             >
-                                <td>#{item.rank}</td>
-                                <td><strong>{item.label}</strong></td>
-                                <td>{item.type}</td>
+                                <td><span class="rank-badge">{item.rank}</span></td>
+                                <th scope="row">
+                                    <div class="component-cell">
+                                        <span class="component-label">{item.label}</span>
+                                        <span class="component-id">{item.id}</span>
+                                    </div>
+                                </th>
                                 <td>{item.layer}</td>
+                                <td><strong class="score-text">{item.score}</strong></td>
                                 <td>{item.coupling}</td>
                                 <td>{item.fanIn}</td>
                                 <td>{item.fanOut}</td>
                                 <td>{item.cyclomaticComplexity}</td>
-                                <td>{item.loc}</td>
-                                <td>{item.cycleBadge}</td>
                                 <td>
-                                    <span class={item.riskClass}>{item.risk}</span>
+                                    <template if:true={item.isCyclic}>
+                                        <span class="cycle-badge">YES</span>
+                                    </template>
+                                    <template if:false={item.isCyclic}>-</template>
                                 </td>
+                                <td><span class={item.riskClass}>{item.risk}</span></td>
                             </tr>
                         </template>
                     </tbody>
                 </table>
-            </template>
-        </div>
+            </div>
+        </template>
     </div>
 </template>

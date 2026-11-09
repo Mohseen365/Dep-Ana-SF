@@ -1,18 +1,60 @@
 <template>
     <div class="findings-view-container slds-p-around_medium">
-        <!-- Header & Summary -->
-        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+        <!-- Header & Summary Toolbar -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small toolbar-wrap">
             <div>
                 <h3 class="slds-text-heading_small">Findings & Architectural Alerts</h3>
                 <p class="slds-text-body_small slds-text-color_weak">
                     Detected cycles, untested high-risk nodes, unresolved symbols, and coupling hotspots
                 </p>
             </div>
-            <template if:true={hasFindings}>
-                <div class="slds-badge slds-theme_default">
-                    {totalFindings} Findings Detected
+            <div class="slds-grid slds-grid_vertical-align-center header-actions">
+                <template if:true={hasFindings}>
+                    <span class="slds-badge slds-theme_default slds-m-right_small total-badge">
+                        {totalFindings} Findings
+                    </span>
+                    <button class="slds-button slds-button_neutral slds-m-right_xx-small export-btn" onclick={handleExportCSV} title="Export Findings as CSV">
+                        Export CSV
+                    </button>
+                    <button class="slds-button slds-button_neutral export-btn" onclick={handleExportJSON} title="Export Findings as JSON">
+                        Export JSON
+                    </button>
+                </template>
+            </div>
+        </div>
+
+        <!-- Filter Controls Bar -->
+        <div class="filter-controls-bar slds-p-around_x-small slds-m-bottom_small">
+            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center filter-row">
+                <!-- Status Filter Buttons -->
+                <div class="slds-grid slds-grid_vertical-align-center status-filters">
+                    <span class="filter-group-label slds-m-right_x-small">Status:</span>
+                    <button class={isAllStatusClass} data-status="ALL" onclick={handleStatusFilterClick}>All</button>
+                    <button class={isOpenStatusClass} data-status="OPEN" onclick={handleStatusFilterClick}>Open</button>
+                    <button class={isInReviewStatusClass} data-status="IN_REVIEW" onclick={handleStatusFilterClick}>In Review</button>
+                    <button class={isResolvedStatusClass} data-status="RESOLVED" onclick={handleStatusFilterClick}>Resolved</button>
                 </div>
-            </template>
+
+                <!-- Severity Filter Buttons -->
+                <div class="slds-grid slds-grid_vertical-align-center severity-filters">
+                    <span class="filter-group-label slds-m-right_x-small">Severity:</span>
+                    <button class={isAllSeverityClass} data-severity="ALL" onclick={handleSeverityFilterClick}>All</button>
+                    <button class={isCriticalSeverityClass} data-severity="CRITICAL" onclick={handleSeverityFilterClick}>Critical</button>
+                    <button class={isHighSeverityClass} data-severity="HIGH" onclick={handleSeverityFilterClick}>High</button>
+                    <button class={isMediumSeverityClass} data-severity="MEDIUM" onclick={handleSeverityFilterClick}>Medium</button>
+                </div>
+
+                <!-- Local Search Input -->
+                <div class="search-input-wrap">
+                    <input
+                        type="text"
+                        class="slds-input slds-input_bare local-search-input"
+                        placeholder="Search findings..."
+                        value={localSearchQuery}
+                        oninput={handleLocalSearchChange}
+                    />
+                </div>
+            </div>
         </div>
 
         <!-- Error State -->
@@ -37,24 +79,25 @@
         <!-- Empty State -->
         <template if:false={isLoading}>
             <template if:false={hasFindings}>
-                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center empty-state-box">
                     <p class="slds-text-color_weak">No findings detected matching active filter criteria.</p>
                 </div>
             </template>
 
             <!-- Findings List -->
             <template if:true={hasFindings}>
-                <div class="slds-grid slds-grid_vertical">
+                <div class="slds-grid slds-grid_vertical findings-list">
                     <template for:each={filteredFindings} for:item="finding">
-                        <div key={finding.id} class="slds-m-bottom_small slds-p-around_small finding-card">
+                        <div key={finding.id} class={finding.cardClass}>
+                            <!-- Card Header -->
                             <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-start">
-                                <div>
+                                <div class="finding-meta-header">
                                     <div class="slds-grid slds-grid_vertical-align-center">
                                         <span class={finding.badgeClass}>{finding.severity}</span>
-                                        <h4 class="slds-text-title_bold slds-m-left_x-small">{finding.title}</h4>
+                                        <span class={finding.statusBadgeClass} style="margin-left: 0.35rem;">{finding.status}</span>
+                                        <h4 class="slds-text-title_bold slds-m-left_x-small finding-title">{finding.title}</h4>
                                     </div>
-                                    <p class="slds-text-body_regular slds-m-top_xx-small">{finding.description}</p>
-                                    <div class="slds-m-top_xx-small slds-text-body_small slds-text-color_weak">
+                                    <div class="slds-m-top_xx-small slds-text-body_small slds-text-color_weak meta-line">
                                         Category: <span class="slds-text-color_default">{finding.categoryLabel}</span>
                                         <template if:true={finding.componentName}>
                                             | Target: <span class="slds-text-color_default">{finding.componentName}</span>
@@ -63,6 +106,99 @@
                                             | Coverage: <span class="slds-text-color_default">{finding.testCoverageStatus}</span>
                                         </template>
                                     </div>
+                                </div>
+
+                                <!-- Toggle Details Button -->
+                                <button
+                                    class="slds-button slds-button_neutral slds-button_x-small details-toggle-btn"
+                                    data-id={finding.id}
+                                    onclick={handleToggleDetails}
+                                >
+                                    <template if:true={finding.isExpanded}>▲ Less</template>
+                                    <template if:false={finding.isExpanded}>▼ Details</template>
+                                </button>
+                            </div>
+
+                            <!-- Structured Sections (WHAT, WHY IT MATTERS, WHERE, WHAT TO DO NEXT) -->
+                            <div class="finding-structured-box slds-m-top_small">
+                                <div class="section-what">
+                                    <span class="structured-label">WHAT:</span>
+                                    <p class="slds-text-body_regular structured-text">{finding.description}</p>
+                                </div>
+
+                                <template if:true={finding.isExpanded}>
+                                    <div class="section-why slds-m-top_x-small">
+                                        <span class="structured-label">WHY IT MATTERS:</span>
+                                        <p class="slds-text-body_regular structured-text">{finding.whyItMatters}</p>
+                                    </div>
+
+                                    <div class="section-next slds-m-top_x-small">
+                                        <span class="structured-label">WHAT TO DO NEXT:</span>
+                                        <p class="slds-text-body_regular structured-text">{finding.whatToDoNext}</p>
+                                    </div>
+
+                                    <template if:true={finding.nodeIds}>
+                                        <div class="section-where slds-m-top_x-small slds-p-around_xx-small where-box">
+                                            <span class="structured-label">WHERE (COMPONENTS):</span>
+                                            <p class="slds-text-body_small where-node-list">{finding.componentName}</p>
+                                        </div>
+                                    </template>
+                                </template>
+                            </div>
+
+                            <!-- Card Actions Bar -->
+                            <div class="finding-actions slds-m-top_small slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                <div class="action-buttons-left">
+                                    <template if:true={finding.targetNodeId}>
+                                        <button
+                                            class="slds-button slds-button_brand slds-button_x-small select-node-btn"
+                                            data-node-id={finding.targetNodeId}
+                                            onclick={handleSelectNode}
+                                            title="Select node to highlight without changing view"
+                                        >
+                                            🔍 Select Node
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <!-- Review Workflow Actions -->
+                                <div class="action-buttons-right">
+                                    <template if:true={finding.isOpen}>
+                                        <button
+                                            class="slds-button slds-button_neutral slds-button_x-small slds-m-right_xx-small"
+                                            data-id={finding.id}
+                                            onclick={handleMarkInReview}
+                                        >
+                                            ⏳ Mark In Review
+                                        </button>
+                                        <button
+                                            class="slds-button slds-button_success slds-button_x-small"
+                                            data-id={finding.id}
+                                            onclick={handleResolveFinding}
+                                        >
+                                            ✓ Resolve
+                                        </button>
+                                    </template>
+
+                                    <template if:true={finding.isInReview}>
+                                        <button
+                                            class="slds-button slds-button_success slds-button_x-small"
+                                            data-id={finding.id}
+                                            onclick={handleResolveFinding}
+                                        >
+                                            ✓ Resolve
+                                        </button>
+                                    </template>
+
+                                    <template if:true={finding.isResolved}>
+                                        <button
+                                            class="slds-button slds-button_neutral slds-button_x-small"
+                                            data-id={finding.id}
+                                            onclick={handleReopenFinding}
+                                        >
+                                            🔄 Reopen
+                                        </button>
+                                    </template>
                                 </div>
                             </div>
                         </div>

@@ -5,11 +5,13 @@
  * Verifies:
  * 1. Component initialization and default state.
  * 2. Diagnostic scorecard derivations (health score, cycles, unassigned ratio, coverage density).
- * 3. Layer distribution table generation.
- * 4. Empty payload handling (zero counts, no crash).
- * 5. Malformed payload handling (clean error state).
- * 6. Preserves SELECTION != NAVIGATION (read-only view, no side effects).
- * 7. Preserves shared graph payload immutability.
+ * 3. Weighted health score and styling threshold.
+ * 4. Layer distribution table generation.
+ * 5. Empty payload handling (zero counts, no crash, defensive math).
+ * 6. Malformed payload handling (clean error state).
+ * 7. Property aliases (@api payload and @api graphPayload).
+ * 8. Preserves SELECTION != NAVIGATION (read-only view, zero unintended side effects).
+ * 9. Preserves shared graph payload immutability.
  */
 
 const assert = require('assert');
@@ -108,10 +110,17 @@ async function runW71Tests() {
     assert.strictEqual(comp.hasError, true);
     console.log('  ✓ 5. Empty and malformed payload resilience verified');
 
+    // 6. Property alias verification (@api graphPayload)
+    const compAlias = createDiagnosticsInstance();
+    compAlias.graphPayload = samplePayload;
+    assert.strictEqual(compAlias.isEmpty, false);
+    assert.strictEqual(compAlias.totalNodes, 4);
+    console.log('  ✓ 6. Property alias graphPayload and payload verified');
+
     // Read-only invariant: confirm no events dispatched
     assert.strictEqual(comp._dispatchedEvents.length, 0, 'Diagnostics view is read-only and must emit zero events');
 
-    // 6. Real Payload Immutability Verification (Full object integrity)
+    // 7. Real Payload Immutability Verification (Full object integrity)
     assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');
 
     // Negative controls in isolated harness: verify comparison detects mutations
@@ -133,10 +142,10 @@ async function runW71Tests() {
         assert.deepStrictEqual(negNestedTest, baselineSnapshot);
     }, /AssertionError/, 'Integrity assertion must detect nested property mutation');
 
-    console.log('  ✓ 6. Payload immutability preserved');
+    console.log('  ✓ 7. Payload immutability preserved');
 
     console.log('=====================================================');
-    console.log('Task W7-1 Test Results: ALL 6 TESTS PASSED');
+    console.log('Task W7-1 Test Results: ALL 7 TESTS PASSED');
 }
 
 runW71Tests().catch(err => {

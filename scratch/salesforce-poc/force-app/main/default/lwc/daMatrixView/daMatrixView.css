@@ -2,35 +2,115 @@
     background-color: #ffffff;
     border: 1px solid #dddbda;
     border-radius: 0.25rem;
-    overflow-x: auto;
+}
+
+.toolbar-wrap {
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 0.5rem;
+}
+
+.filter-toolbar {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.layer-select {
+    width: 140px;
+    height: 28px;
+    font-size: 0.75rem;
 }
 
 .matrix-table {
-    width: 100%;
     border-collapse: collapse;
 }
 
 .matrix-table th,
 .matrix-table td {
-    padding: 0.5rem 0.75rem;
     text-align: center;
     border: 1px solid #e5e5e5;
+    padding: 0.4rem;
+    font-size: 0.75rem;
 }
 
-.matrix-table th {
-    background-color: #f3f3f3;
-    font-weight: 700;
-}
-
-.matrix-table th.source-type-col {
-    text-align: left;
-}
-
-.matrix-table td.cell-highlight {
-    background-color: #f0f8ff;
+.source-type-col {
+    text-align: left !important;
     font-weight: 600;
+    background-color: #f8fafc;
+    min-width: 120px;
 }
 
-.matrix-table td.cell-zero {
-    color: #c9c7c5;
+.cell-zero {
+    color: #94a3b8;
+    background-color: #ffffff;
+}
+
+.cell-highlight {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.cell-highlight:hover {
+    background-color: #dbeafe;
+}
+
+.cell-selected {
+    background-color: #bfdbfe !important;
+    box-shadow: inset 0 0 0 2px #2563eb;
+    color: #1e40af;
+}
+
+.cell-total {
+    font-weight: 700;
+    background-color: #f1f5f9;
+}
+
+.inspector-card {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.25rem;
+    min-height: 200px;
+}
+
+.source-color {
+    color: #0369a1;
+}
+
+.target-color {
+    color: #047857;
+}
+
+.section-sub-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748b;
+    display: block;
+}
+
+.edge-list {
+    margin: 0;
+    padding-left: 1rem;
+}
+
+.edge-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: monospace;
+    font-size: 0.7rem;
+}
+
+.edge-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+}
+
+.italic-note {
+    font-style: italic;
 }

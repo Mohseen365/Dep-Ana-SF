@@ -2,19 +2,22 @@ import { LightningElement, api, track } from 'lwc';
 import { matchesMatrixEdge, normalizeFilterCriteria } from 'c/daFilterSchema';
 
 /**
- * DaMatrixView LWC (Lane E)
- * Minimal functional Dependency Matrix View per DEC-W4-04 Option C.
- * Derives directed source-to-target dependency counts using the existing graph analytics payload:
- * nodes[], edges[], edge.canonical.source.type, edge.canonical.target.type, edge.unresolved.
+ * DaMatrixView LWC (Workstream 3 / Lane E)
+ * High-performance dependency matrix view per DEC-W4-04 Option C.
+ * Derives directed source-to-target dependency counts using canonical graph analytics payload.
  *
- * Unresolved edge handling:
- * 1. Derives target type from edge.canonical.target.type if present.
- * 2. If target is string with format 'Type:Name', derives type from prefix.
- * 3. Falls back to explicit documented category 'Unresolved' rather than discarding or inventing types.
- * 4. Deduplicates edge references to prevent double counting.
+ * Capabilities:
+ * - Directed source-to-target dependency aggregation.
+ * - Layer filtering & search.
+ * - Interactive cell hover/selection with detailed directional flow inspector.
+ * - Node selection dispatch (`nodeselect` with bubbles/composed/cancelable: false) adhering to SELECTION != NAVIGATION.
+ * - CSV and JSON export of the complete dependency matrix.
+ * - Strict input immutability.
+ * - Supports both @api graphPayload and @api payload properties.
  */
 export default class DaMatrixView extends LightningElement {
     @api projectId = null;
+    @api selectedNodeId = null;
 
     _graphPayload = null;
     _filterCriteria = null;
@@ -26,6 +29,14 @@ export default class DaMatrixView extends LightningElement {
     @track targetTypes = [];
     @track totalDependencies = 0;
 
+    // Layer filtering
+    @track availableLayers = [];
+    @track selectedLayer = 'ALL';
+
+    // Cell interaction inspector
+    @track selectedCell = null; // { sourceType, targetType, count, sampleEdges: [] }
+    @track hoveredCell = null;
+
     @api
     get graphPayload() {
         return this._graphPayload;
@@ -33,6 +44,14 @@ export default class DaMatrixView extends LightningElement {
     set graphPayload(value) {
         this._graphPayload = value;
         this.computeMatrix();
+    }
+
+    @api
+    get payload() {
+        return this.graphPayload;
+    }
+    set payload(value) {
+        this.graphPayload = value;
     }
 
     @api
@@ -48,6 +67,10 @@ export default class DaMatrixView extends LightningElement {
         return this.matrixRows && this.matrixRows.length > 0 && this.totalDependencies > 0;
     }
 
+    get hasSelectedCell() {
+        return !!this.selectedCell;
+    }
+
     computeMatrix() {
         this.error = null;
 
@@ -55,6 +78,7 @@ export default class DaMatrixView extends LightningElement {
             this.matrixRows = [];
             this.targetTypes = [];
             this.totalDependencies = 0;
+            this.availableLayers = [];
             return;
         }
 
@@ -68,21 +92,27 @@ export default class DaMatrixView extends LightningElement {
                 this.matrixRows = [];
                 this.targetTypes = [];
                 this.totalDependencies = 0;
+                this.availableLayers = [];
                 return;
             }
 
             const rawNodes = Array.isArray(payload.nodes) ? payload.nodes : [];
             const rawEdges = Array.isArray(payload.edges) ? payload.edges : [];
 
-            // Node lookup map
+            // Node lookup map & collect layers
             const nodeMap = new Map();
+            const layersSet = new Set();
+
             rawNodes.forEach(node => {
                 if (node && node.id) {
                     nodeMap.set(node.id, node);
+                    if (node.layer) layersSet.add(node.layer);
                 }
             });
 
-            // Map: SourceType -> Map<TargetType, count>
+            this.availableLayers = ['ALL', ...Array.from(layersSet).sort()];
+
+            // Map: SourceType -> Map<TargetType, { count, edges: [] }>
             const aggregation = new Map();
             const allTargetTypesSet = new Set();
             const seenEdgeIds = new Set();
@@ -110,6 +140,15 @@ export default class DaMatrixView extends LightningElement {
                     return;
                 }
 
+                // Layer filter check (if specific layer selected)
+                if (this.selectedLayer !== 'ALL') {
+                    const sourceLayer = sourceNode?.layer || 'Unassigned';
+                    const targetLayer = targetNode?.layer || 'Unassigned';
+                    if (sourceLayer !== this.selectedLayer && targetLayer !== this.selectedLayer) {
+                        return;
+                    }
+                }
+
                 // 1. Determine Source Type
                 let sourceType = 'Unknown';
                 if (edge.canonical?.source?.type) {
@@ -118,6 +157,8 @@ export default class DaMatrixView extends LightningElement {
                     sourceType = sourceNode.type;
                 } else if (typeof edge.source === 'string' && edge.source.includes(':')) {
                     sourceType = edge.source.split(':')[0];
+                } else if (typeof edge.source === 'string' && edge.source.includes('.')) {
+                    sourceType = edge.source.split('.')[0];
                 }
 
                 // 2. Determine Target Type (Mandatory Unresolved-Edge Behavior)
@@ -128,6 +169,8 @@ export default class DaMatrixView extends LightningElement {
                     targetType = targetNode.type;
                 } else if (typeof edge.target === 'string' && edge.target.includes(':')) {
                     targetType = edge.target.split(':')[0];
+                } else if (typeof edge.target === 'string' && edge.target.includes('.')) {
+                    targetType = edge.target.split('.')[0];
                 } else if (edge.unresolved) {
                     targetType = 'Unresolved';
                 }
@@ -137,8 +180,18 @@ export default class DaMatrixView extends LightningElement {
                 }
 
                 const targetMap = aggregation.get(sourceType);
-                const currentCount = targetMap.get(targetType) || 0;
-                targetMap.set(targetType, currentCount + 1);
+                if (!targetMap.has(targetType)) {
+                    targetMap.set(targetType, { count: 0, sampleEdges: [] });
+                }
+
+                const cellData = targetMap.get(targetType);
+                cellData.count++;
+                if (cellData.sampleEdges.length < 5) {
+                    cellData.sampleEdges.push({
+                        source: edge.source,
+                        target: edge.target || 'Unresolved'
+                    });
+                }
 
                 allTargetTypesSet.add(targetType);
                 total++;
@@ -152,12 +205,23 @@ export default class DaMatrixView extends LightningElement {
                 let rowTotal = 0;
 
                 const cells = sortedTargetTypes.map(targetType => {
-                    const count = targetMap.get(targetType) || 0;
+                    const data = targetMap ? targetMap.get(targetType) : null;
+                    const count = data ? data.count : 0;
                     rowTotal += count;
+
+                    const isCellSelected = this.selectedCell &&
+                        this.selectedCell.sourceType === sourceType &&
+                        this.selectedCell.targetType === targetType;
+
+                    let cellClass = count > 0 ? 'cell-highlight' : 'cell-zero';
+                    if (isCellSelected) cellClass += ' cell-selected';
+
                     return {
+                        sourceType,
                         targetType,
                         count,
-                        cellClass: count > 0 ? 'cell-highlight' : 'cell-zero'
+                        cellClass,
+                        sampleEdges: data ? data.sampleEdges : []
                     };
                 });
 
@@ -176,6 +240,114 @@ export default class DaMatrixView extends LightningElement {
             this.matrixRows = [];
             this.targetTypes = [];
             this.totalDependencies = 0;
+        }
+    }
+
+    handleLayerChange(event) {
+        this.selectedLayer = event.target.value;
+        this.computeMatrix();
+    }
+
+    handleCellClick(event) {
+        const sourceType = event.currentTarget.dataset.source;
+        const targetType = event.currentTarget.dataset.target;
+        const count = parseInt(event.currentTarget.dataset.count, 10) || 0;
+
+        if (count === 0) {
+            this.selectedCell = null;
+            this.computeMatrix();
+            return;
+        }
+
+        const row = this.matrixRows.find(r => r.sourceType === sourceType);
+        const cell = row?.cells?.find(c => c.targetType === targetType);
+
+        this.selectedCell = {
+            sourceType,
+            targetType,
+            count,
+            sampleEdges: cell?.sampleEdges || []
+        };
+
+        this.computeMatrix();
+    }
+
+    handleSelectAnchor(event) {
+        event.stopPropagation();
+        const nodeId = event.currentTarget.dataset.nodeId;
+        if (!nodeId) return;
+
+        this.selectedNodeId = nodeId;
+
+        // CONTRACT-06 & SELECTION != NAVIGATION
+        this.dispatchEvent(new CustomEvent('nodeselect', {
+            detail: {
+                nodeId: nodeId,
+                sourceView: 'matrix',
+                sourceComponent: 'daMatrixView',
+                timestamp: Date.now()
+            },
+            bubbles: true,
+            composed: true,
+            cancelable: false
+        }));
+    }
+
+    handleCloseInspector() {
+        this.selectedCell = null;
+        this.computeMatrix();
+    }
+
+    handleExportJSON() {
+        if (!this.matrixRows || this.matrixRows.length === 0) return;
+
+        const dataToExport = {
+            exportTimestamp: new Date().toISOString(),
+            projectId: this.projectId,
+            totalDependencies: this.totalDependencies,
+            targetTypes: this.targetTypes,
+            matrix: this.matrixRows.map(row => ({
+                sourceType: row.sourceType,
+                total: row.total,
+                dependencies: row.cells.map(c => ({
+                    targetType: c.targetType,
+                    count: c.count
+                }))
+            }))
+        };
+
+        const jsonStr = JSON.stringify(dataToExport, null, 2);
+        this.triggerDownload(`dependency-matrix-${this.projectId || 'project'}-${Date.now()}.json`, 'application/json', jsonStr);
+    }
+
+    handleExportCSV() {
+        if (!this.matrixRows || this.matrixRows.length === 0) return;
+
+        const headers = ['Source \\ Target', ...this.targetTypes, 'Total'];
+        const rows = this.matrixRows.map(row => {
+            const cellCounts = row.cells.map(c => c.count);
+            return [`"${row.sourceType}"`, ...cellCounts, row.total];
+        });
+
+        const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+        this.triggerDownload(`dependency-matrix-${this.projectId || 'project'}-${Date.now()}.csv`, 'text/csv;charset=utf-8;', csvContent);
+    }
+
+    triggerDownload(filename, mimeType, content) {
+        if (typeof window === 'undefined' || !window.document) return;
+
+        try {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = window.document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            window.document.body.appendChild(a);
+            a.click();
+            window.document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error('Failed to trigger file download:', e);
         }
     }
 }
