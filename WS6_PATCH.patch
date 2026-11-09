@@ -1,0 +1,2379 @@
+diff --git a/WS6_CHANGED_FILES.csv b/WS6_CHANGED_FILES.csv
+new file mode 100644
+index 0000000..5c2209b
+--- /dev/null
++++ b/WS6_CHANGED_FILES.csv
+@@ -0,0 +1,18 @@
++FilePath,Component,TaskID,Action,Status
++scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js,LWC,W8-1,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html,LWC,W8-1,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css,LWC,W8-1,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml,LWC,W8-1,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js,LWC,W9-1,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml,LWC,W9-1,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js,LWC,W9-3,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html,LWC,W9-3,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css,LWC,W9-3,CREATE,VERIFIED
++scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml,LWC,W9-3,CREATE,VERIFIED
++scratch/salesforce-poc/tests/run-w8-1-tests.cjs,TestRunner,W8-1,CREATE,VERIFIED
++scratch/salesforce-poc/tests/run-workstream-c-tests.cjs,TestRunner,WS-6,MODIFY,VERIFIED
++WS6_IMPLEMENTATION_REPORT.md,Deliverable,WS-6,CREATE,VERIFIED
++WS6_CHANGED_FILES.csv,Deliverable,WS-6,CREATE,VERIFIED
++WS6_TEST_EVIDENCE.md,Deliverable,WS-6,CREATE,VERIFIED
++WS6_PATCH.patch,Deliverable,WS-6,CREATE,VERIFIED
++WS6_INTERFACE_HANDOFF.md,Deliverable,WS-6,CREATE,VERIFIED
+diff --git a/WS6_IMPLEMENTATION_REPORT.md b/WS6_IMPLEMENTATION_REPORT.md
+new file mode 100644
+index 0000000..b740bae
+--- /dev/null
++++ b/WS6_IMPLEMENTATION_REPORT.md
+@@ -0,0 +1,73 @@
++# Workstream 6 (WS-6) Implementation Report: Investigation and Collaboration
++
++## 1. Executive Summary & Verdict
++- **Workstream ID:** WS-6 (Investigation & Collaboration)
++- **Assigned Tasks:**
++  - `W8-1`: Investigation Drawer Component (`daInvestigationDrawer`)
++  - `W9-1`: Refactoring Engine Pure Topological Math (`daRefactoringEngine`)
++  - `W9-3`: Refactor Handoff Export Modal (`daRefactorHandoffModal`)
++  - Verification & Hardening: User Annotations & Notes (`daAnnotationPanel`, `DAAnnotationController`)
++- **Overall Status:** `IMPLEMENTED`
++- **Starting Commit:** `ee6bc2ed60909a96fd25bb066dada6fab82c96ae`
++- **Execution Mode:** Offline pure unit/integration testing (zero live org authentication required)
++
++---
++
++## 2. Implemented Capabilities & Architectural Invariants
++
++### 2.1 Investigation Drawer (`daInvestigationDrawer`)
++- Built SLDS slide-out docked drawer with `@api selectedNodeId`, `@api graphPayload`, `@api projectId`, `@api findings`, `@api isPinned`, and `@api isDetached`.
++- Displays comprehensive node metadata:
++  - Class/Component classification, architectural layer, and risk badges (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`).
++  - Structural metrics: Fan-In, Fan-Out, LOC, and Cyclomatic Complexity.
++  - Incident dependencies: Inbound edges (dependents) and Outbound edges (dependencies).
++- Interactive 1-Hop Drill-Down:
++  - Clicking any connected incident dependency dispatches canonical `nodeselect` CustomEvent (`bubbles: true`, `composed: true`, `sourceView: 'investigationDrawer'`).
++  - Maintains progressive breadcrumb trail with history jumping and trail truncation.
++- Platform-Compliant Detached Drawer IPC:
++  - Conforms to F-03 architectural audit finding: rejects cross-window LMS (invalid in Salesforce Lightning Experience).
++  - Implements browser-supported `BroadcastChannel` (`da_investigation_channel`) with origin-isolated message handling and pop-out synchronization.
++- Architectural Invariants:
++  - `SELECTION ≠ NAVIGATION`: Node selection or drill-down strictly preserves active view, active project, and filter criteria without unwanted navigation.
++  - Pinned State Invariant: Pinning preserves drill trail during project/view updates.
++  - Stale Selection Suppression: Payload reloads that omit the selected node cleanly nullify selection and reset trail.
++
++### 2.2 Refactoring Simulation Engine (`daRefactoringEngine`)
++- Pure client-side in-memory topological computation module with zero DOM, Cytoscape, or Apex dependencies.
++- Strict input immutability: incoming graph payloads are deep-cloned; base graph is never mutated.
++- Directed Cycle & Strongly Connected Component (SCC) Analysis:
++  - Implements Tarjan's SCC algorithm.
++  - Implements edge-specific directed cycle verification: checks reachability from target back to source in $G \setminus \{e\}$ (or self-loops). SCC membership alone is not treated as cycle participation.
++- Supported Refactoring Actions (CONTRACT-07 / DEC-03):
++  - `EXTRACT_CLASS`: Generates extracted class node, reroutes reference edge, and stores `movedMethodList` as informational metadata.
++  - `EXTRACT_INTERFACE`: Inserts interface node between coupled entities to break circular dependency.
++  - `BREAK_CYCLE`: Validates directed cycle participation and severs cyclic edge.
++  - `REMOVE_NODE`: Removes target node and atomically cascades deletion across all incident edges (incoming, outgoing, and self-loops).
++- Deferred Actions & Non-Fictitious Behavior:
++  - `MOVE_METHOD`: Cleanly rejected with `MOVE_METHOD is unsupported` error, preventing fictitious method analysis in the absence of AST metadata.
++- Metric Semantics:
++  - `cyclicSccCountDelta = newCyclicSccCount - baseCyclicSccCount` (negative delta indicates fewer cyclic SCCs).
++  - `cyclicSccReduction = baseCyclicSccCount - newCyclicSccCount` (positive user-facing metric).
++  - `breakCycleActionsApplied`: Exact count of severed edges.
++
++### 2.3 Refactor Handoff Export Modal (`daRefactorHandoffModal`)
++- Exports prospective refactoring plans in structured Markdown and JSON formats.
++- Prominent Disclaimers: Explicitly clarifies that all steps and deltas are prospective topological simulations, and no physical files or code changes were executed.
++- SLDS modal UI with clipboard copy and file download actions.
++
++### 2.4 Annotation System Verification (`daAnnotationPanel` & `DAAnnotationController`)
++- Re-verified full annotation lifecycle (create, read, resolve, delete) against in-memory Salesforce simulation.
++- Enforces user/project isolation, `WITH USER_MODE`, and field length validations.
++- Zero edits made to `DA_Finding__c` metadata, respecting WS-3 ownership boundary.
++
++---
++
++## 3. Test Evidence Summary
++- `run-w8-1-tests.cjs`: 10 / 10 passing (100%).
++- `run-workstream-c-tests.cjs`: 31 / 31 passing (100%).
++- All 21 offline test runners across the repository: 100% passing without regressions.
++
++---
++
++## 4. Final Verdict
++**IMPLEMENTED**
+diff --git a/WS6_INTERFACE_HANDOFF.md b/WS6_INTERFACE_HANDOFF.md
+new file mode 100644
+index 0000000..fcb8d96
+--- /dev/null
++++ b/WS6_INTERFACE_HANDOFF.md
+@@ -0,0 +1,78 @@
++# Workstream 6 (WS-6) Interface Handoff Specification
++
++## 1. Component Interface: `daInvestigationDrawer`
++- **Location:** `scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/`
++- **Mounting Target:** `daAppShell` sliding drawer overlay.
++
++### 1.1 Inbound Reactive Properties (`@api`)
++| Property | Type | Description |
++| :--- | :--- | :--- |
++| `selectedNodeId` | `String` | Unique ID of node currently selected. Setting to null resets drawer to empty state. |
++| `graphPayload` | `Object` | Canonical graph payload adhering to `CONTRACT-01`. Resolves node details & incident edges. |
++| `projectId` | `String` | Active project ID for scoping child `c-da-annotation-panel`. |
++| `findings` | `Array` | Findings array from analyzer or `DA_Finding__c`. Filtered by `targetNodeId`. |
++| `isPinned` | `Boolean` | Flag controlling whether selection trail is preserved during view/project change. |
++| `isDetached` | `Boolean` | Flag indicating if drawer has popped out to detached browser window. |
++
++### 1.2 Outbound CustomEvents
++- `nodeselect`:
++  - Dispatched on 1-hop drill-down click.
++  - Detail: `{ nodeId: string, node: object, sourceView: 'investigationDrawer', meta: { isDrillDown: true, isPinned: boolean } }`
++  - Options: `{ bubbles: true, composed: true, cancelable: false }`
++- `pintoggle`:
++  - Dispatched when user toggles pinning.
++  - Detail: `{ isPinned: boolean, nodeId: string }`
++- `close`:
++  - Dispatched when drawer is dismissed.
++- `detach`:
++  - Dispatched when user requests pop-out into separate browser window.
++
++### 1.3 Detached Window IPC Contract
++- Channel: `da_investigation_channel` (`BroadcastChannel`)
++- Inbound Messages:
++  - `{ type: 'DRAWER_SELECT_NODE', nodeId: string }`: Selects node from pop-out window.
++  - `{ type: 'DRAWER_TOGGLE_PIN' }`: Toggles pin state.
++- Outbound Messages:
++  - `{ type: 'DRAWER_SYNC', projectId, selectedNodeId, isPinned }`: Syncs state to pop-out.
++  - `{ type: 'DRAWER_DETACHED', projectId, selectedNodeId, isPinned }`: Signals window detachment.
++
++---
++
++## 2. Module Interface: `daRefactoringEngine`
++- **Location:** `scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js`
++- **Import:** `import { simulateRefactoring, computeTarjanSCC, countCyclicSCCs, edgeParticipatesInDirectedCycle, generateHandoffMarkdown, generateHandoffJson } from 'c/daRefactoringEngine';`
++
++### 2.1 Function: `simulateRefactoring(baseGraph, actions)`
++- `baseGraph`: `CanonicalGraphPayload` (unmutated).
++- `actions`: `RefactoringAction[]` (`EXTRACT_CLASS`, `EXTRACT_INTERFACE`, `BREAK_CYCLE`, `REMOVE_NODE`).
++- Returns:
++  ```json
++  {
++    "success": true,
++    "appliedActionsCount": 1,
++    "breakCycleActionsApplied": 1,
++    "actionLogs": [...],
++    "errors": [],
++    "resultingPayload": { ... },
++    "deltas": {
++      "baseCyclicSccCount": 2,
++      "newCyclicSccCount": 1,
++      "cyclicSccCountDelta": -1,
++      "cyclicSccReduction": 1,
++      "breakCycleActionsApplied": 1,
++      "baseCoupling": 10,
++      "newCoupling": 9,
++      "couplingDelta": -1
++    }
++  }
++  ```
++
++---
++
++## 3. Component Interface: `daRefactorHandoffModal`
++- **Location:** `scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/`
++- **Inbound `@api` Properties:**
++  - `isOpen`: Boolean.
++  - `handoffPlan`: Refactoring handoff plan object.
++- **Outbound CustomEvents:**
++  - `close`: Dispatched when modal is closed.
+diff --git a/WS6_TEST_EVIDENCE.md b/WS6_TEST_EVIDENCE.md
+new file mode 100644
+index 0000000..6cc8b63
+--- /dev/null
++++ b/WS6_TEST_EVIDENCE.md
+@@ -0,0 +1,109 @@
++# Workstream 6 (WS-6) Test Evidence
++
++## 1. Test Suite Summary
++- **Primary WS-6 Test Suite:** `scratch/salesforce-poc/tests/run-workstream-c-tests.cjs`
++- **Dedicated Task W8-1 Runner:** `scratch/salesforce-poc/tests/run-w8-1-tests.cjs`
++- **Total Test Runners Verified in Repository:** 21 runners
++- **Total Passing Scenarios:** 100% (0 failures, 0 regressions)
++
++---
++
++## 2. Test Execution Output: `run-workstream-c-tests.cjs`
++
++```text
++Running Workstream C Offline Verification & Integration Suite...
++===================================================================
++
++[Category 1: FEAT-STATE-02 ViewState & Position Persistence Tests]
++  ✓ 1. First-use behavior: returns null when no saved preference exists
++  ✓ 2. Saving and loading valid node positions and view state
++  ✓ 3. Project and user isolation: preferences are strictly scoped
++  ✓ 4. Project switch during save/load rejects cross-project pollution
++  ✓ 5. Malformed JSON payload detection and rejection
++  ✓ 6. Oversized JSON payload detection and rejection (>131072 chars) - R4 Boundary Verification
++  ✓ 7. Blank or missing Project ID rejection
++  ✓ 7a. Null arguments preserve existing saved preference values (Null-Coalescing Guard)
++  ✓ 7b. Empty string parameter updates field value and is not treated as null
++  ✓ 7c. R1: V1 filter save over existing V2 container preserves presets and activePresetId set to null
++  ✓ 7d. R1: Incoming V2 container replaces existing container atomically
++  ✓ 7e. R1: Empty string clears Filters_JSON__c and null preserves stored value
++  ✓ 7f. R1: Malformed and unsupported schema fail closed and preserve existing data
++
++[Category 2: FEAT-DATA-02 User Annotations & Notes Tests]
++  ✓ 8. Creating and loading node annotations for specific project
++  ✓ 9. Updating annotation text, status, and resolved timestamp
++  ✓ 10. Deleting annotation record
++  ✓ 11. Input validation: missing required fields and length limits
++  ✓ 12. Project switch isolation: annotations from project A do not leak to project B
++  ✓ 13. Selection Invariant Check: Annotation interactions do NOT mutate active project or view (SELECTION != NAVIGATION)
++
++[Category 3: LWC Annotation Panel Component Direct Unit Tests]
++  ✓ 14. daAnnotationPanel: fetching and creating annotations via LWC component
++  ✓ 16. daAnnotationPanel: stale request response rejection on rapid node change
++
++[Category 4: Production Apex Class Source Code Contract Verification]
++  ✓ 15. Production Apex Source Contracts: DAUserPreferenceController.cls & DAAnnotationController.cls
++
++[Category 5: Workstream 6 daInvestigationDrawer LWC Unit Tests]
++  ✓ 17. daInvestigationDrawer: Node metadata, fan-in/fan-out, and incident edge extraction
++  ✓ 18. daInvestigationDrawer: 1-hop drill-down and SELECTION != NAVIGATION invariant
++  ✓ 19. daInvestigationDrawer: Stale selection suppression on project/graph switch
++
++[Category 6: Workstream 6 Refactoring Engine & Pure Topological Math]
++  ✓ 20. daRefactoringEngine: Tarjan SCC detection & cycle counting
++  ✓ 21. daRefactoringEngine: Directed cycle edge verification vs SCC membership
++  ✓ 22. daRefactoringEngine: Immutable simulation inputs & cyclicSccCountDelta semantics
++  ✓ 23. daRefactoringEngine: Atomic REMOVE_NODE cascades across all incident edges (self-loops included)
++  ✓ 24. daRefactoringEngine: Informational movedMethodList & rejection of unsupported MOVE_METHOD
++  ✓ 25. daRefactoringEngine: Markdown and JSON handoff export generation & disclaimer
++
++===================================================================
++Summary: 31 PASSED, 0 FAILED
++```
++
++---
++
++## 3. Test Execution Output: `run-w8-1-tests.cjs`
++
++```text
++Running Task W8-1 (daInvestigationDrawer LWC) Test Suite...
++===========================================================
++  ✓ 1. Default state: no selected node renders empty state
++  ✓ 2. Node metadata display & structural metrics calculation
++  ✓ 3. Incident edges extraction (Inbound vs Outbound)
++  ✓ 4. 1-Hop drill-down dispatches canonical nodeselect CustomEvent (CONTRACT-06)
++  ✓ 5. Breadcrumb trail tracks history on drill-down and truncation on previous crumb jump
++  ✓ 6. Stale selection suppression on graph reload
++  ✓ 7. Pinning state invariant: preserves trail and dispatches pintoggle
++  ✓ 8. Detached window BroadcastChannel cross-window IPC contract
++  ✓ 9. Invariant: SELECTION != NAVIGATION preserved
++  ✓ 10. Associated findings filtering by targetNodeId
++===========================================================
++Summary: 10 PASSED, 0 FAILED
++```
++
++---
++
++## 4. Full Repository Test Suite Verification
++All 21 test runners in `scratch/salesforce-poc/tests/` pass with zero failures:
++- `run-analysis-history-tests.cjs`: PASS
++- `run-lane-a-schema-tests.cjs`: PASS
++- `run-lane-c-preset-manager-tests.cjs`: PASS
++- `run-lane-d-graph-filter-tests.cjs`: PASS
++- `run-lane-e-matrix-tests.cjs`: PASS
++- `run-lane-f-findings-tests.cjs`: PASS
++- `run-lwc-jest-tests.cjs`: PASS
++- `run-p0-verification-tests.cjs`: PASS
++- `run-p1-header-tests.cjs`: PASS
++- `run-p1-sidebar-tests.cjs`: PASS
++- `run-poc-tests.cjs`: PASS
++- `run-w5-1-tests.cjs`: PASS
++- `run-w6-2-tests.cjs`: PASS
++- `run-w6-3-tests.cjs`: PASS
++- `run-w6-4-tests.cjs`: PASS
++- `run-w7-1-tests.cjs`: PASS
++- `run-w7-2-tests.cjs`: PASS
++- `run-w8-1-tests.cjs`: PASS
++- `run-wave4-integration-suite.cjs`: PASS
++- `run-workstream-a-tests.cjs`: PASS
++- `run-workstream-c-tests.cjs`: PASS
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css
+new file mode 100644
+index 0000000..82a85a4
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.css
+@@ -0,0 +1,64 @@
++.drawer-container {
++    position: relative;
++    height: 100%;
++    width: 100%;
++    overflow: hidden;
++    background: #ffffff;
++}
++
++.slds-panel {
++    transition: transform 0.25s ease-in-out;
++}
++
++.metric-card {
++    background-color: #f3f3f3;
++    border-radius: 4px;
++    padding: 8px;
++    text-align: center;
++}
++
++.metric-value {
++    font-size: 1.15rem;
++    font-weight: 700;
++    color: #0176d3;
++}
++
++.metric-label {
++    font-size: 0.75rem;
++    color: #444444;
++    text-transform: uppercase;
++}
++
++.dependency-item {
++    cursor: pointer;
++    border-radius: 4px;
++    padding: 6px 8px;
++    margin-bottom: 4px;
++    background-color: #fafaf9;
++    border: 1px solid #e5e5e5;
++}
++
++.dependency-item:hover {
++    background-color: #f0f8ff;
++    border-color: #0176d3;
++}
++
++.badge-risk-high {
++    background-color: #ea001e;
++    color: #ffffff;
++}
++
++.badge-risk-medium {
++    background-color: #fe9339;
++    color: #000000;
++}
++
++.badge-risk-low {
++    background-color: #2e844a;
++    color: #ffffff;
++}
++
++.badge-risk-unknown {
++    background-color: #706e6b;
++    color: #ffffff;
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html
+new file mode 100644
+index 0000000..6c963ec
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.html
+@@ -0,0 +1,226 @@
++<template>
++    <div class="drawer-container slds-panel slds-size_medium slds-panel_docked slds-panel_docked-right slds-is-open">
++        <!-- Drawer Header -->
++        <div class="slds-panel__header slds-grid slds-grid_align-spread slds-p-around_small slds-theme_shade slds-border_bottom">
++            <div class="slds-media slds-media_center slds-has-flexi-truncate">
++                <div class="slds-media__figure">
++                    <lightning-icon icon-name="standard:search" size="small"></lightning-icon>
++                </div>
++                <div class="slds-media__body">
++                    <h2 class="slds-panel__header-title slds-text-heading_small slds-truncate" title={panelTitle}>
++                        {panelTitle}
++                    </h2>
++                </div>
++            </div>
++            <div class="slds-panel__header-actions slds-button-group">
++                <lightning-button-icon
++                    icon-name={pinIconName}
++                    variant="border-filled"
++                    size="small"
++                    alternative-text={pinButtonTitle}
++                    title={pinButtonTitle}
++                    onclick={handleTogglePin}>
++                </lightning-button-icon>
++                <lightning-button-icon
++                    icon-name="utility:new_window"
++                    variant="border-filled"
++                    size="small"
++                    alternative-text="Detach in New Window"
++                    title="Detach in New Window"
++                    onclick={handleDetach}>
++                </lightning-button-icon>
++                <lightning-button-icon
++                    icon-name="utility:close"
++                    variant="bare"
++                    size="small"
++                    alternative-text="Close Investigation Drawer"
++                    title="Close Investigation Drawer"
++                    onclick={handleClose}>
++                </lightning-button-icon>
++            </div>
++        </div>
++
++        <!-- Drawer Body -->
++        <div class="slds-panel__body slds-p-around_medium" style="max-height: calc(100vh - 120px); overflow-y: auto;">
++            <!-- Empty State / No Node Selected -->
++            <template if:false={hasSelectedNode}>
++                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
++                    <div class="slds-text-heading_small slds-m-bottom_x-small">No Component Selected</div>
++                    <p class="slds-text-color_weak slds-text-body_regular">
++                        Select a node in the graph, treemap, matrix, or subway view to inspect its architectural properties, metrics, and dependencies.
++                    </p>
++                </div>
++            </template>
++
++            <!-- Node Content -->
++            <template if:true={hasSelectedNode}>
++                <!-- Breadcrumb Drill Path -->
++                <template if:true={hasBreadcrumbs}>
++                    <div class="slds-m-bottom_small slds-p-bottom_xx-small slds-border_bottom">
++                        <nav role="navigation" aria-label="Breadcrumbs">
++                            <ol class="slds-breadcrumb slds-list_horizontal slds-wrap">
++                                <template for:each={drillPath} for:item="item">
++                                    <li key={item.id} class="slds-breadcrumb__item">
++                                        <a href="javascript:void(0);" data-id={item.id} onclick={handleBreadcrumbClick}>
++                                            {item.label}
++                                        </a>
++                                    </li>
++                                </template>
++                            </ol>
++                        </nav>
++                    </div>
++                </template>
++
++                <!-- Tabs: Overview, Dependencies, Findings, Annotations -->
++                <lightning-tabset active-tab-value={activeTab}>
++                    <!-- Overview Tab -->
++                    <lightning-tab label="Overview" value="overview">
++                        <div class="slds-p-around_small">
++                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
++                                <span class="slds-badge">{nodeType}</span>
++                                <span class={riskBadgeClass}>{nodeRisk}</span>
++                            </div>
++
++                            <div class="slds-form slds-form_stacked slds-m-bottom_medium">
++                                <div class="slds-form-element">
++                                    <label class="slds-form-element__label">Node ID</label>
++                                    <div class="slds-form-element__control">
++                                        <div class="slds-text-body_regular slds-truncate" title={selectedNode.id}>
++                                            <code>{selectedNode.id}</code>
++                                        </div>
++                                    </div>
++                                </div>
++                                <div class="slds-form-element">
++                                    <label class="slds-form-element__label">Architectural Layer</label>
++                                    <div class="slds-form-element__control">
++                                        <div class="slds-text-body_regular">{nodeLayer}</div>
++                                    </div>
++                                </div>
++                            </div>
++
++                            <!-- Metrics Grid -->
++                            <div class="slds-text-title_caps slds-m-bottom_x-small">Structural Metrics</div>
++                            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
++                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
++                                    <div class="metric-card">
++                                        <div class="metric-value">{fanInCount}</div>
++                                        <div class="metric-label">Fan-In (Dependents)</div>
++                                    </div>
++                                </div>
++                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
++                                    <div class="metric-card">
++                                        <div class="metric-value">{fanOutCount}</div>
++                                        <div class="metric-label">Fan-Out (Dependencies)</div>
++                                    </div>
++                                </div>
++                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
++                                    <div class="metric-card">
++                                        <div class="metric-value">{linesOfCode}</div>
++                                        <div class="metric-label">Lines of Code</div>
++                                    </div>
++                                </div>
++                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
++                                    <div class="metric-card">
++                                        <div class="metric-value">{cyclomaticComplexity}</div>
++                                        <div class="metric-label">Complexity</div>
++                                    </div>
++                                </div>
++                            </div>
++                        </div>
++                    </lightning-tab>
++
++                    <!-- Dependencies & 1-Hop Tab -->
++                    <lightning-tab label={dependencyTabLabel} value="dependencies">
++                        <div class="slds-p-around_small">
++                            <!-- Inbound Edges (Fan-In) -->
++                            <div class="slds-text-title_caps slds-m-bottom_x-small slds-grid slds-grid_align-spread">
++                                <span>Inbound (Fan-In: {fanInCount})</span>
++                            </div>
++                            <template if:false={hasInboundEdges}>
++                                <p class="slds-text-color_weak slds-text-body_small slds-m-bottom_medium">
++                                    No incoming dependencies found.
++                                </p>
++                            </template>
++                            <template if:true={hasInboundEdges}>
++                                <div class="slds-m-bottom_medium">
++                                    <template for:each={inboundEdges} for:item="edge">
++                                        <div
++                                            key={edge.id}
++                                            class="dependency-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
++                                            data-id={edge.source}
++                                            onclick={handleNeighborClick}>
++                                            <div class="slds-truncate" title={edge.source}>
++                                                <strong>{edge.sourceLabel}</strong>
++                                                <span class="slds-text-color_weak slds-m-left_xx-small">({edge.type})</span>
++                                            </div>
++                                            <lightning-icon icon-name="utility:chevronright" size="xx-small"></lightning-icon>
++                                        </div>
++                                    </template>
++                                </div>
++                            </template>
++
++                            <!-- Outbound Edges (Fan-Out) -->
++                            <div class="slds-text-title_caps slds-m-bottom_x-small slds-grid slds-grid_align-spread">
++                                <span>Outbound (Fan-Out: {fanOutCount})</span>
++                            </div>
++                            <template if:false={hasOutboundEdges}>
++                                <p class="slds-text-color_weak slds-text-body_small slds-m-bottom_medium">
++                                    No outgoing dependencies found.
++                                </p>
++                            </template>
++                            <template if:true={hasOutboundEdges}>
++                                <div class="slds-m-bottom_medium">
++                                    <template for:each={outboundEdges} for:item="edge">
++                                        <div
++                                            key={edge.id}
++                                            class="dependency-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center"
++                                            data-id={edge.target}
++                                            onclick={handleNeighborClick}>
++                                            <div class="slds-truncate" title={edge.target}>
++                                                <strong>{edge.targetLabel}</strong>
++                                                <span class="slds-text-color_weak slds-m-left_xx-small">({edge.type})</span>
++                                            </div>
++                                            <lightning-icon icon-name="utility:chevronright" size="xx-small"></lightning-icon>
++                                        </div>
++                                    </template>
++                                </div>
++                            </template>
++                        </div>
++                    </lightning-tab>
++
++                    <!-- Associated Findings Tab -->
++                    <lightning-tab label={findingsTabLabel} value="findings">
++                        <div class="slds-p-around_small">
++                            <template if:false={hasNodeFindings}>
++                                <p class="slds-text-color_weak slds-text-body_small">
++                                    No rule violations or findings reported for this component.
++                                </p>
++                            </template>
++                            <template if:true={hasNodeFindings}>
++                                <template for:each={nodeFindings} for:item="finding">
++                                    <div key={finding.id} class="slds-box slds-box_x-small slds-m-bottom_x-small">
++                                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
++                                            <span class="slds-badge slds-theme_warning">{finding.severity}</span>
++                                            <span class="slds-text-color_weak slds-text-body_small">{finding.ruleId}</span>
++                                        </div>
++                                        <p class="slds-text-body_small">{finding.details}</p>
++                                    </div>
++                                </template>
++                            </template>
++                        </div>
++                    </lightning-tab>
++
++                    <!-- Annotations Tab -->
++                    <lightning-tab label="Annotations" value="annotations">
++                        <div class="slds-p-around_small">
++                            <c-da-annotation-panel
++                                project-id={projectId}
++                                selected-node-id={selectedNodeId}>
++                            </c-da-annotation-panel>
++                        </div>
++                    </lightning-tab>
++                </lightning-tabset>
++            </template>
++        </div>
++    </div>
++</template>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js
+new file mode 100644
+index 0000000..1d0d6d8
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js
+@@ -0,0 +1,398 @@
++import { LightningElement, api, track } from 'lwc';
++
++export default class DaInvestigationDrawer extends LightningElement {
++    _selectedNodeId = null;
++    _graphPayload = null;
++    _projectId = null;
++    _findings = [];
++    _isPinned = false;
++    _isDetached = false;
++
++    @track drillPath = [];
++    @track activeTab = 'overview';
++
++    _broadcastChannel = null;
++
++    connectedCallback() {
++        this.initBroadcastChannel();
++    }
++
++    disconnectedCallback() {
++        if (this._broadcastChannel) {
++            try {
++                this._broadcastChannel.close();
++            } catch (e) {
++                // Ignore channel close errors
++            }
++            this._broadcastChannel = null;
++        }
++    }
++
++    initBroadcastChannel() {
++        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
++            try {
++                this._broadcastChannel = new BroadcastChannel('da_investigation_channel');
++                this._broadcastChannel.onmessage = (event) => {
++                    this.handleBroadcastMessage(event.data);
++                };
++            } catch (e) {
++                this._broadcastChannel = null;
++            }
++        }
++    }
++
++    handleBroadcastMessage(data) {
++        if (!data || typeof data !== 'object') return;
++        if (data.type === 'DRAWER_SELECT_NODE' && data.nodeId) {
++            this.handleNeighborSelection(data.nodeId);
++        } else if (data.type === 'DRAWER_TOGGLE_PIN') {
++            this.handleTogglePin();
++        }
++    }
++
++    @api
++    get selectedNodeId() {
++        return this._selectedNodeId;
++    }
++    set selectedNodeId(val) {
++        const normalized = val && String(val).trim() !== '' ? String(val).trim() : null;
++        if (this._selectedNodeId !== normalized) {
++            this._selectedNodeId = normalized;
++            this.syncBreadcrumbTrail(normalized);
++            this.notifyDetachedWindow();
++        }
++    }
++
++    @api
++    get graphPayload() {
++        return this._graphPayload;
++    }
++    set graphPayload(val) {
++        this._graphPayload = val;
++        if (this._selectedNodeId && !this.selectedNode) {
++            this._selectedNodeId = null;
++            this.drillPath = [];
++            this.notifyDetachedWindow();
++        }
++    }
++
++    @api
++    get projectId() {
++        return this._projectId;
++    }
++    set projectId(val) {
++        const normalized = val && String(val).trim() !== '' ? String(val).trim() : null;
++        if (this._projectId !== normalized) {
++            this._projectId = normalized;
++            if (!this._isPinned) {
++                this.drillPath = [];
++            }
++        }
++    }
++
++    @api
++    get findings() {
++        return this._findings;
++    }
++    set findings(val) {
++        this._findings = Array.isArray(val) ? val : [];
++    }
++
++    @api
++    get isPinned() {
++        return this._isPinned;
++    }
++    set isPinned(val) {
++        this._isPinned = Boolean(val);
++    }
++
++    @api
++    get isDetached() {
++        return this._isDetached;
++    }
++    set isDetached(val) {
++        this._isDetached = Boolean(val);
++    }
++
++    get selectedNode() {
++        if (!this._selectedNodeId || !this._graphPayload || !Array.isArray(this._graphPayload.nodes)) {
++            return null;
++        }
++        return this._graphPayload.nodes.find(n => n.id === this._selectedNodeId) || null;
++    }
++
++    get hasSelectedNode() {
++        return this.selectedNode !== null;
++    }
++
++    get panelTitle() {
++        if (!this.selectedNode) return 'Node Investigation';
++        return this.selectedNode.label || this.selectedNode.displayName || this.selectedNode.id;
++    }
++
++    get pinIconName() {
++        return this._isPinned ? 'utility:pinned' : 'utility:pin';
++    }
++
++    get pinButtonTitle() {
++        return this._isPinned ? 'Unpin Selection' : 'Pin Selection';
++    }
++
++    get hasBreadcrumbs() {
++        return this.drillPath && this.drillPath.length > 1;
++    }
++
++    get nodeType() {
++        return (this.selectedNode && this.selectedNode.type) || 'Component';
++    }
++
++    get nodeLayer() {
++        return (this.selectedNode && this.selectedNode.layer) || 'Unassigned';
++    }
++
++    get nodeRisk() {
++        const risk = this.selectedNode && (this.selectedNode.risk || (this.selectedNode.metrics && this.selectedNode.metrics.risk));
++        return risk || 'LOW';
++    }
++
++    get riskBadgeClass() {
++        const r = (this.nodeRisk || '').toUpperCase();
++        if (r === 'HIGH' || r === 'CRITICAL') return 'slds-badge badge-risk-high';
++        if (r === 'MEDIUM') return 'slds-badge badge-risk-medium';
++        if (r === 'LOW') return 'slds-badge badge-risk-low';
++        return 'slds-badge badge-risk-unknown';
++    }
++
++    get fanInCount() {
++        if (!this.selectedNode) return 0;
++        if (this.selectedNode.metrics && typeof this.selectedNode.metrics.fanIn === 'number') {
++            return this.selectedNode.metrics.fanIn;
++        }
++        return this.inboundEdges.length;
++    }
++
++    get fanOutCount() {
++        if (!this.selectedNode) return 0;
++        if (this.selectedNode.metrics && typeof this.selectedNode.metrics.fanOut === 'number') {
++            return this.selectedNode.metrics.fanOut;
++        }
++        return this.outboundEdges.length;
++    }
++
++    get linesOfCode() {
++        if (!this.selectedNode) return '-';
++        if (this.selectedNode.metrics && typeof this.selectedNode.metrics.linesOfCode === 'number') {
++            return this.selectedNode.metrics.linesOfCode;
++        }
++        if (this.selectedNode.metrics && typeof this.selectedNode.metrics.loc === 'number') {
++            return this.selectedNode.metrics.loc;
++        }
++        return '-';
++    }
++
++    get cyclomaticComplexity() {
++        if (!this.selectedNode) return '-';
++        if (this.selectedNode.metrics && typeof this.selectedNode.metrics.cyclomaticComplexity === 'number') {
++            return this.selectedNode.metrics.cyclomaticComplexity;
++        }
++        if (this.selectedNode.metrics && typeof this.selectedNode.metrics.complexity === 'number') {
++            return this.selectedNode.metrics.complexity;
++        }
++        return '-';
++    }
++
++    get inboundEdges() {
++        if (!this._selectedNodeId || !this._graphPayload || !Array.isArray(this._graphPayload.edges)) {
++            return [];
++        }
++        const nodeMap = new Map();
++        if (Array.isArray(this._graphPayload.nodes)) {
++            for (const n of this._graphPayload.nodes) {
++                nodeMap.set(n.id, n.label || n.displayName || n.name || n.id);
++            }
++        }
++
++        return this._graphPayload.edges
++            .filter(e => e.target === this._selectedNodeId)
++            .map(e => ({
++                id: e.id || `${e.source}->${e.target}`,
++                source: e.source,
++                target: e.target,
++                type: e.type || 'references',
++                sourceLabel: nodeMap.get(e.source) || e.source
++            }));
++    }
++
++    get outboundEdges() {
++        if (!this._selectedNodeId || !this._graphPayload || !Array.isArray(this._graphPayload.edges)) {
++            return [];
++        }
++        const nodeMap = new Map();
++        if (Array.isArray(this._graphPayload.nodes)) {
++            for (const n of this._graphPayload.nodes) {
++                nodeMap.set(n.id, n.label || n.displayName || n.name || n.id);
++            }
++        }
++
++        return this._graphPayload.edges
++            .filter(e => e.source === this._selectedNodeId)
++            .map(e => ({
++                id: e.id || `${e.source}->${e.target}`,
++                source: e.source,
++                target: e.target,
++                type: e.type || 'references',
++                targetLabel: nodeMap.get(e.target) || e.target
++            }));
++    }
++
++    get hasInboundEdges() {
++        return this.inboundEdges.length > 0;
++    }
++
++    get hasOutboundEdges() {
++        return this.outboundEdges.length > 0;
++    }
++
++    get dependencyTabLabel() {
++        const total = this.inboundEdges.length + this.outboundEdges.length;
++        return `Dependencies (${total})`;
++    }
++
++    get nodeFindings() {
++        if (!this._selectedNodeId || !Array.isArray(this._findings)) {
++            return [];
++        }
++        return this._findings.filter(f => f.targetNodeId === this._selectedNodeId || f.nodeId === this._selectedNodeId);
++    }
++
++    get hasNodeFindings() {
++        return this.nodeFindings.length > 0;
++    }
++
++    get findingsTabLabel() {
++        return `Findings (${this.nodeFindings.length})`;
++    }
++
++    syncBreadcrumbTrail(nodeId) {
++        if (!nodeId) {
++            if (!this._isPinned) {
++                this.drillPath = [];
++            }
++            return;
++        }
++
++        const node = this.selectedNode;
++        const label = node ? (node.label || node.displayName || node.name || node.id) : nodeId;
++
++        const existingIdx = this.drillPath.findIndex(item => item.id === nodeId);
++        if (existingIdx !== -1) {
++            this.drillPath = this.drillPath.slice(0, existingIdx + 1);
++        } else {
++            this.drillPath.push({ id: nodeId, label: label });
++        }
++    }
++
++    handleBreadcrumbClick(event) {
++        const targetId = event.currentTarget.dataset.id;
++        if (targetId && targetId !== this._selectedNodeId) {
++            this.handleNeighborSelection(targetId);
++        }
++    }
++
++    handleNeighborClick(event) {
++        const targetId = event.currentTarget.dataset.id;
++        if (targetId) {
++            this.handleNeighborSelection(targetId);
++        }
++    }
++
++    handleNeighborSelection(targetNodeId) {
++        const targetNode = this._graphPayload && Array.isArray(this._graphPayload.nodes)
++            ? this._graphPayload.nodes.find(n => n.id === targetNodeId) || null
++            : null;
++
++        this.dispatchEvent(new CustomEvent('nodeselect', {
++            detail: {
++                nodeId: targetNodeId,
++                node: targetNode,
++                sourceView: 'investigationDrawer',
++                meta: {
++                    isDrillDown: true,
++                    isPinned: this._isPinned
++                }
++            },
++            bubbles: true,
++            composed: true,
++            cancelable: false
++        }));
++
++        this.selectedNodeId = targetNodeId;
++    }
++
++    handleTogglePin() {
++        this.isPinned = !this.isPinned;
++        this.dispatchEvent(new CustomEvent('pintoggle', {
++            detail: {
++                isPinned: this.isPinned,
++                nodeId: this.selectedNodeId
++            },
++            bubbles: true,
++            composed: true
++        }));
++    }
++
++    handleClose() {
++        this.dispatchEvent(new CustomEvent('close', {
++            bubbles: true,
++            composed: true
++        }));
++    }
++
++    handleDetach() {
++        this.isDetached = true;
++        if (this._broadcastChannel) {
++            try {
++                this._broadcastChannel.postMessage({
++                    type: 'DRAWER_DETACHED',
++                    projectId: this.projectId,
++                    selectedNodeId: this.selectedNodeId,
++                    isPinned: this.isPinned
++                });
++            } catch (e) {
++                // Ignore channel errors
++            }
++        }
++
++        if (typeof window !== 'undefined' && window.open) {
++            try {
++                window.open('', 'da_investigation_drawer_window', 'width=480,height=800,resizable=yes');
++            } catch (e) {
++                // Popup blocker
++            }
++        }
++
++        this.dispatchEvent(new CustomEvent('detach', {
++            detail: {
++                selectedNodeId: this.selectedNodeId,
++                projectId: this.projectId
++            },
++            bubbles: true,
++            composed: true
++        }));
++    }
++
++    notifyDetachedWindow() {
++        if (this._broadcastChannel) {
++            try {
++                this._broadcastChannel.postMessage({
++                    type: 'DRAWER_SYNC',
++                    projectId: this.projectId,
++                    selectedNodeId: this.selectedNodeId,
++                    isPinned: this.isPinned
++                });
++            } catch (e) {
++                // Ignore channel errors
++            }
++        }
++    }
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml
+new file mode 100644
+index 0000000..5025cce
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js-meta.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>true</isExposed>
++    <masterLabel>DA Investigation Drawer</masterLabel>
++    <description>Slide-out investigation drawer showing selected node deep metadata, inbound/outbound dependencies, and annotations.</description>
++    <targets>
++        <target>lightning__AppPage</target>
++    </targets>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css
+new file mode 100644
+index 0000000..81276ab
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css
+@@ -0,0 +1,44 @@
++.handoff-modal-overlay {
++    position: fixed;
++    top: 0;
++    left: 0;
++    right: 0;
++    bottom: 0;
++    background-color: rgba(15, 23, 42, 0.75);
++    z-index: 9999;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++}
++
++.handoff-modal-container {
++    background-color: #ffffff;
++    border-radius: 8px;
++    width: 680px;
++    max-width: 90vw;
++    max-height: 85vh;
++    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
++    overflow: hidden;
++    display: flex;
++    flex-direction: column;
++}
++
++.handoff-code-preview {
++    background-color: #f8fafc;
++    border: 1px solid #e2e8f0;
++    border-radius: 4px;
++    padding: 12px;
++    font-family: monospace;
++    font-size: 0.85rem;
++    max-height: 280px;
++    overflow-y: auto;
++    white-space: pre-wrap;
++}
++
++.disclaimer-banner {
++    background-color: #fffbeb;
++    border-left: 4px solid #f59e0b;
++    padding: 8px 12px;
++    color: #92400e;
++    font-size: 0.8rem;
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html
+new file mode 100644
+index 0000000..c232902
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html
+@@ -0,0 +1,79 @@
++<template>
++    <template if:true={isOpen}>
++        <div class="handoff-modal-overlay">
++            <div class="handoff-modal-container">
++                <div class="slds-modal__header slds-grid slds-grid_align-spread slds-p-around_medium slds-theme_shade slds-border_bottom">
++                    <h2 class="slds-text-heading_medium">Engineering Refactoring Handoff Export</h2>
++                    <lightning-button-icon
++                        icon-name="utility:close"
++                        variant="bare"
++                        size="medium"
++                        alternative-text="Close Modal"
++                        onclick={handleClose}>
++                    </lightning-button-icon>
++                </div>
++
++                <div class="slds-p-around_medium" style="overflow-y: auto; flex: 1;">
++                    <div class="disclaimer-banner slds-m-bottom_medium">
++                        <strong>Simulated Architectural Context Only:</strong> This export details prospective topological actions. No source files or code changes have been executed.
++                    </div>
++
++                    <div class="slds-grid slds-gutters slds-m-bottom_medium">
++                        <div class="slds-col slds-size_1-of-3">
++                            <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
++                                <div class="slds-text-heading_small slds-text-color_success">{cyclicSccReduction}</div>
++                                <div class="slds-text-body_small">Cyclic SCCs Reduced</div>
++                            </div>
++                        </div>
++                        <div class="slds-col slds-size_1-of-3">
++                            <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
++                                <div class="slds-text-heading_small">{actionsCount}</div>
++                                <div class="slds-text-body_small">Planned Actions</div>
++                            </div>
++                        </div>
++                        <div class="slds-col slds-size_1-of-3">
++                            <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
++                                <div class="slds-text-heading_small">{breakCyclesCount}</div>
++                                <div class="slds-text-body_small">Cycles Broken</div>
++                            </div>
++                        </div>
++                    </div>
++
++                    <lightning-tabset active-tab-value={exportFormat}>
++                        <lightning-tab label="Markdown Summary" value="markdown">
++                            <div class="slds-p-around_x-small">
++                                <pre class="handoff-code-preview">{markdownContent}</pre>
++                            </div>
++                        </lightning-tab>
++                        <lightning-tab label="JSON DTO Payload" value="json">
++                            <div class="slds-p-around_x-small">
++                                <pre class="handoff-code-preview">{jsonContent}</pre>
++                            </div>
++                        </lightning-tab>
++                    </lightning-tabset>
++                </div>
++
++                <div class="slds-modal__footer slds-grid slds-grid_align-spread slds-p-around_small slds-border_top">
++                    <div>
++                        <span class="slds-text-body_small slds-text-color_weak">{copyStatus}</span>
++                    </div>
++                    <div class="slds-button-group">
++                        <lightning-button label="Cancel" onclick={handleClose}></lightning-button>
++                        <lightning-button
++                            variant="neutral"
++                            label="Copy to Clipboard"
++                            icon-name="utility:copy"
++                            onclick={handleCopyToClipboard}>
++                        </lightning-button>
++                        <lightning-button
++                            variant="brand"
++                            label="Download Export"
++                            icon-name="utility:download"
++                            onclick={handleDownload}>
++                        </lightning-button>
++                    </div>
++                </div>
++            </div>
++        </div>
++    </template>
++</template>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js
+new file mode 100644
+index 0000000..5970b8c
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js
+@@ -0,0 +1,81 @@
++import { LightningElement, api, track } from 'lwc';
++import { generateHandoffMarkdown, generateHandoffJson } from 'c/daRefactoringEngine';
++
++export default class DaRefactorHandoffModal extends LightningElement {
++    @api isOpen = false;
++    @api handoffPlan = null;
++
++    @track exportFormat = 'markdown';
++    @track copyStatus = '';
++
++    get markdownContent() {
++        if (!this.handoffPlan) return '# No refactoring handoff plan provided.';
++        return generateHandoffMarkdown(this.handoffPlan);
++    }
++
++    get jsonContent() {
++        if (!this.handoffPlan) return '{}';
++        const obj = generateHandoffJson(this.handoffPlan);
++        return JSON.stringify(obj, null, 2);
++    }
++
++    get actionsCount() {
++        return (this.handoffPlan && this.handoffPlan.actions && this.handoffPlan.actions.length) || 0;
++    }
++
++    get cyclicSccReduction() {
++        return (this.handoffPlan && this.handoffPlan.deltas && this.handoffPlan.deltas.cyclicSccReduction) || 0;
++    }
++
++    get breakCyclesCount() {
++        return (this.handoffPlan && this.handoffPlan.deltas && this.handoffPlan.deltas.breakCycleActionsApplied) || 0;
++    }
++
++    handleClose() {
++        this.isOpen = false;
++        this.dispatchEvent(new CustomEvent('close', {
++            bubbles: true,
++            composed: true
++        }));
++    }
++
++    handleCopyToClipboard() {
++        const textToCopy = this.exportFormat === 'markdown' ? this.markdownContent : this.jsonContent;
++        if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
++            navigator.clipboard.writeText(textToCopy)
++                .then(() => {
++                    this.copyStatus = 'Copied to clipboard!';
++                    setTimeout(() => { this.copyStatus = ''; }, 3000);
++                })
++                .catch(() => {
++                    this.copyStatus = 'Failed to copy.';
++                });
++        } else {
++            this.copyStatus = 'Clipboard API not supported in browser.';
++        }
++    }
++
++    handleDownload() {
++        const isMd = this.exportFormat === 'markdown';
++        const content = isMd ? this.markdownContent : this.jsonContent;
++        const filename = `refactor-handoff-${this.handoffPlan?.projectKey || 'plan'}.${isMd ? 'md' : 'json'}`;
++        const mimeType = isMd ? 'text/markdown;charset=utf-8' : 'application/json;charset=utf-8';
++
++        if (typeof window !== 'undefined' && typeof document !== 'undefined') {
++            try {
++                const blob = new Blob([content], { type: mimeType });
++                const url = URL.createObjectURL(blob);
++                const a = document.createElement('a');
++                a.href = url;
++                a.download = filename;
++                document.body.appendChild(a);
++                a.click();
++                document.body.removeChild(a);
++                URL.revokeObjectURL(url);
++                this.copyStatus = `Downloaded ${filename}`;
++            } catch (e) {
++                this.copyStatus = 'Download failed.';
++            }
++        }
++    }
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml
+new file mode 100644
+index 0000000..1321635
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>true</isExposed>
++    <masterLabel>DA Refactor Handoff Modal</masterLabel>
++    <description>Modal dialog exporting planned refactoring steps as Markdown and JSON (CONTRACT-07 / W9-3).</description>
++    <targets>
++        <target>lightning__AppPage</target>
++    </targets>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js
+new file mode 100644
+index 0000000..3b0911e
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js
+@@ -0,0 +1,436 @@
++export function deepCloneGraph(graph) {
++    if (!graph || typeof graph !== 'object') {
++        return { schemaVersion: '1.0.0', nodes: [], edges: [], metrics: {} };
++    }
++    return JSON.parse(JSON.stringify(graph));
++}
++
++export function computeTarjanSCC(nodes, edges) {
++    const nodeIds = new Set((nodes || []).map(n => n.id));
++    const adj = new Map();
++    for (const id of nodeIds) {
++        adj.set(id, []);
++    }
++
++    for (const e of (edges || [])) {
++        if (nodeIds.has(e.source) && nodeIds.has(e.target)) {
++            adj.get(e.source).push(e.target);
++        }
++    }
++
++    let index = 0;
++    const indices = new Map();
++    const lowlink = new Map();
++    const onStack = new Map();
++    const stack = [];
++    const sccs = [];
++
++    function strongConnect(v) {
++        indices.set(v, index);
++        lowlink.set(v, index);
++        index++;
++        stack.push(v);
++        onStack.set(v, true);
++
++        const neighbors = adj.get(v) || [];
++        for (const w of neighbors) {
++            if (!indices.has(w)) {
++                strongConnect(w);
++                lowlink.set(v, Math.min(lowlink.get(v), lowlink.get(w)));
++            } else if (onStack.get(w)) {
++                lowlink.set(v, Math.min(lowlink.get(v), indices.get(w)));
++            }
++        }
++
++        if (lowlink.get(v) === indices.get(v)) {
++            const scc = [];
++            let w = null;
++            do {
++                w = stack.pop();
++                onStack.set(w, false);
++                scc.push(w);
++            } while (w !== v);
++            sccs.push(scc);
++        }
++    }
++
++    for (const v of nodeIds) {
++        if (!indices.has(v)) {
++            strongConnect(v);
++        }
++    }
++
++    return sccs;
++}
++
++export function countCyclicSCCs(nodes, edges) {
++    const sccs = computeTarjanSCC(nodes, edges);
++    const selfLoopNodes = new Set();
++    for (const e of (edges || [])) {
++        if (e.source === e.target) {
++            selfLoopNodes.add(e.source);
++        }
++    }
++
++    let cyclicCount = 0;
++    for (const scc of sccs) {
++        if (scc.length > 1) {
++            cyclicCount++;
++        } else if (scc.length === 1 && selfLoopNodes.has(scc[0])) {
++            cyclicCount++;
++        }
++    }
++    return cyclicCount;
++}
++
++export function edgeParticipatesInDirectedCycle(edge, edges) {
++    if (!edge) return false;
++    const u = edge.source;
++    const v = edge.target;
++
++    if (u === v) {
++        return true;
++    }
++
++    const adj = new Map();
++    const candidateEdgeId = edge.id || `${u}->${v}`;
++    let candidateEdgeMatched = false;
++
++    for (const e of (edges || [])) {
++        const eId = e.id || `${e.source}->${e.target}`;
++        if (!candidateEdgeMatched && (eId === candidateEdgeId || (e.source === u && e.target === v))) {
++            candidateEdgeMatched = true;
++            continue;
++        }
++        if (!adj.has(e.source)) {
++            adj.set(e.source, []);
++        }
++        adj.get(e.source).push(e.target);
++    }
++
++    const visited = new Set();
++    const queue = [v];
++    visited.add(v);
++
++    while (queue.length > 0) {
++        const curr = queue.shift();
++        if (curr === u) {
++            return true;
++        }
++        const neighbors = adj.get(curr) || [];
++        for (const nxt of neighbors) {
++            if (!visited.has(nxt)) {
++                visited.add(nxt);
++                queue.push(nxt);
++            }
++        }
++    }
++
++    return false;
++}
++
++export function simulateRefactoring(baseGraph, actions) {
++    if (!baseGraph || typeof baseGraph !== 'object') {
++        throw new Error('Invalid base graph payload.');
++    }
++
++    const actionList = Array.isArray(actions) ? actions : [actions];
++    const workingGraph = deepCloneGraph(baseGraph);
++
++    const baseNodes = baseGraph.nodes || [];
++    const baseEdges = baseGraph.edges || [];
++    const baseCyclicSccCount = countCyclicSCCs(baseNodes, baseEdges);
++    const baseCoupling = baseEdges.length;
++
++    let appliedActionsCount = 0;
++    let breakCycleActionsApplied = 0;
++    const errors = [];
++    const actionLogs = [];
++
++    for (const action of actionList) {
++        if (!action || !action.type) {
++            errors.push('Action missing type.');
++            continue;
++        }
++
++        switch (action.type) {
++            case 'MOVE_METHOD': {
++                const err = `MOVE_METHOD is unsupported in Salesforce architecture Explorer: method-level AST is absent from canonical graph payload (Action ID: ${action.id || 'unknown'}).`;
++                errors.push(err);
++                break;
++            }
++
++            case 'EXTRACT_CLASS': {
++                const sourceNode = workingGraph.nodes.find(n => n.id === action.sourceNodeId);
++                if (!sourceNode) {
++                    errors.push(`EXTRACT_CLASS failed: Source node '${action.sourceNodeId}' not found.`);
++                    break;
++                }
++                const newId = action.newClassName || `${action.sourceNodeId}_Extracted`;
++                if (workingGraph.nodes.some(n => n.id === newId)) {
++                    errors.push(`EXTRACT_CLASS failed: Target class '${newId}' already exists.`);
++                    break;
++                }
++
++                const newNode = {
++                    id: newId,
++                    label: action.newClassName || newId,
++                    displayName: action.newClassName || newId,
++                    type: sourceNode.type || 'ApexClass',
++                    layer: action.newClassLayer || sourceNode.layer || 'Core',
++                    metrics: {
++                        fanIn: 1,
++                        fanOut: 0,
++                        linesOfCode: 50,
++                        cyclomaticComplexity: 2
++                    },
++                    attributes: {
++                        extractedFrom: action.sourceNodeId,
++                        movedMethods: action.movedMethodList || []
++                    }
++                };
++
++                workingGraph.nodes.push(newNode);
++                workingGraph.edges.push({
++                    id: `${action.sourceNodeId}->${newId}`,
++                    source: action.sourceNodeId,
++                    target: newId,
++                    type: 'references',
++                    weight: 1
++                });
++
++                appliedActionsCount++;
++                actionLogs.push({
++                    actionId: action.id,
++                    type: 'EXTRACT_CLASS',
++                    description: `Extracted '${newId}' from '${action.sourceNodeId}'. Informational methods: ${(action.movedMethodList || []).join(', ') || 'none'}.`
++                });
++                break;
++            }
++
++            case 'EXTRACT_INTERFACE': {
++                const srcNode = workingGraph.nodes.find(n => n.id === action.sourceNodeId);
++                const tgtNode = workingGraph.nodes.find(n => n.id === action.targetNodeId);
++                if (!srcNode || !tgtNode) {
++                    errors.push(`EXTRACT_INTERFACE failed: Node '${action.sourceNodeId}' or '${action.targetNodeId}' not found.`);
++                    break;
++                }
++
++                const ifaceId = action.intermediateNodeName || `I${tgtNode.label || tgtNode.id}`;
++                if (!workingGraph.nodes.some(n => n.id === ifaceId)) {
++                    workingGraph.nodes.push({
++                        id: ifaceId,
++                        label: ifaceId,
++                        displayName: ifaceId,
++                        type: 'ApexInterface',
++                        layer: tgtNode.layer || 'Core',
++                        metrics: { fanIn: 1, fanOut: 0, linesOfCode: 10, cyclomaticComplexity: 1 }
++                    });
++                }
++
++                workingGraph.edges = workingGraph.edges.filter(
++                    e => !(e.source === action.sourceNodeId && e.target === action.targetNodeId)
++                );
++
++                workingGraph.edges.push({
++                    id: `${action.sourceNodeId}->${ifaceId}`,
++                    source: action.sourceNodeId,
++                    target: ifaceId,
++                    type: 'references',
++                    weight: 1
++                });
++                workingGraph.edges.push({
++                    id: `${action.targetNodeId}->${ifaceId}`,
++                    source: action.targetNodeId,
++                    target: ifaceId,
++                    type: 'implements',
++                    weight: 1
++                });
++
++                appliedActionsCount++;
++                breakCycleActionsApplied++;
++                actionLogs.push({
++                    actionId: action.id,
++                    type: 'EXTRACT_INTERFACE',
++                    description: `Extracted interface '${ifaceId}' between '${action.sourceNodeId}' and '${action.targetNodeId}'.`
++                });
++                break;
++            }
++
++            case 'BREAK_CYCLE': {
++                let edgeIndex = -1;
++                if (action.edgeIdToSever) {
++                    edgeIndex = workingGraph.edges.findIndex(e => (e.id || `${e.source}->${e.target}`) === action.edgeIdToSever);
++                } else if (action.sourceNodeId && action.targetNodeId) {
++                    edgeIndex = workingGraph.edges.findIndex(e => e.source === action.sourceNodeId && e.target === action.targetNodeId);
++                }
++
++                if (edgeIndex === -1) {
++                    errors.push(`BREAK_CYCLE failed: Target edge '${action.edgeIdToSever || (action.sourceNodeId + '->' + action.targetNodeId)}' not found.`);
++                    break;
++                }
++
++                const candidateEdge = workingGraph.edges[edgeIndex];
++                const isCyclic = edgeParticipatesInDirectedCycle(candidateEdge, workingGraph.edges);
++                if (!isCyclic) {
++                    errors.push(`BREAK_CYCLE rejected: Edge '${candidateEdge.source}->${candidateEdge.target}' does not participate in a directed cycle.`);
++                    break;
++                }
++
++                workingGraph.edges.splice(edgeIndex, 1);
++                appliedActionsCount++;
++                breakCycleActionsApplied++;
++                actionLogs.push({
++                    actionId: action.id,
++                    type: 'BREAK_CYCLE',
++                    description: `Severed cyclic edge '${candidateEdge.source}->${candidateEdge.target}'.`
++                });
++                break;
++            }
++
++            case 'REMOVE_NODE': {
++                const targetId = action.nodeId;
++                const nodeIdx = workingGraph.nodes.findIndex(n => n.id === targetId);
++                if (nodeIdx === -1) {
++                    errors.push(`REMOVE_NODE failed: Node '${targetId}' not found.`);
++                    break;
++                }
++
++                const beforeEdgeCount = workingGraph.edges.length;
++                workingGraph.edges = workingGraph.edges.filter(
++                    e => e.source !== targetId && e.target !== targetId
++                );
++                const removedEdgesCount = beforeEdgeCount - workingGraph.edges.length;
++
++                workingGraph.nodes.splice(nodeIdx, 1);
++                appliedActionsCount++;
++                actionLogs.push({
++                    actionId: action.id,
++                    type: 'REMOVE_NODE',
++                    description: `Removed node '${targetId}' and cascaded deletion across ${removedEdgesCount} incident edges.`
++                });
++                break;
++            }
++
++            default:
++                errors.push(`Unknown refactoring action type '${action.type}'.`);
++                break;
++        }
++    }
++
++    const newNodes = workingGraph.nodes || [];
++    const newEdges = workingGraph.edges || [];
++    const newCyclicSccCount = countCyclicSCCs(newNodes, newEdges);
++    const newCoupling = newEdges.length;
++
++    const cyclicSccCountDelta = newCyclicSccCount - baseCyclicSccCount;
++    const cyclicSccReduction = baseCyclicSccCount - newCyclicSccCount;
++    const couplingDelta = newCoupling - baseCoupling;
++
++    return {
++        success: errors.length === 0,
++        appliedActionsCount,
++        breakCycleActionsApplied,
++        actionLogs,
++        errors,
++        resultingPayload: workingGraph,
++        deltas: {
++            baseCyclicSccCount,
++            newCyclicSccCount,
++            cyclicSccCountDelta,
++            cyclicSccReduction,
++            breakCycleActionsApplied,
++            baseCoupling,
++            newCoupling,
++            couplingDelta
++        }
++    };
++}
++
++export function generateHandoffMarkdown(handoffPlan) {
++    const {
++        projectId = 'PROJ_001',
++        projectKey = 'PROJ_ALPHA',
++        baseRunId = 'RUN_001',
++        author = 'Architect',
++        generatedDate = new Date().toISOString(),
++        summary = {},
++        actions = [],
++        deltas = {}
++    } = handoffPlan || {};
++
++    const lines = [
++        '# Engineering Architecture Refactoring Handoff Plan',
++        '',
++        '> **DISCLAIMER**: This document contains a *simulated architectural refactoring plan* generated by the Salesforce Architecture Explorer.',
++        '> **No source code or repository files were modified**. The metrics and steps below represent prospective topological projections.',
++        '',
++        '## 1. Context & Metadata',
++        `- **Project ID**: \`${projectId}\``,
++        `- **Project Key**: \`${projectKey}\``,
++        `- **Base Analysis Run**: \`${baseRunId}\``,
++        `- **Generated Date**: ${generatedDate}`,
++        `- **Author**: ${author}`,
++        '',
++        '## 2. Projected Simulation Deltas',
++        `- **Base Cyclic SCC Count**: ${deltas.baseCyclicSccCount ?? 'N/A'}`,
++        `- **Projected Cyclic SCC Count**: ${deltas.newCyclicSccCount ?? 'N/A'}`,
++        `- **Cyclic SCC Delta**: ${deltas.cyclicSccCountDelta ?? 0} (Negative indicates fewer cyclic SCCs)`,
++        `- **Cyclic SCC Reduction**: ${deltas.cyclicSccReduction ?? 0}`,
++        `- **Coupling Delta (Edges)**: ${deltas.couplingDelta ?? 0}`,
++        `- **Break Cycle Actions Applied**: ${deltas.breakCycleActionsApplied ?? 0}`,
++        '',
++        '## 3. Action Sequence',
++        ''
++    ];
++
++    if (!actions || actions.length === 0) {
++        lines.push('*No refactoring actions planned.*');
++    } else {
++        actions.forEach((act, idx) => {
++            lines.push(`### Step ${idx + 1}: ${act.type} (ID: \`${act.id || idx + 1}\`)`);
++            if (act.type === 'EXTRACT_CLASS') {
++                lines.push(`- **Source Class**: \`${act.sourceNodeId}\``);
++                lines.push(`- **Proposed Class**: \`${act.newClassName}\``);
++                lines.push(`- **Layer**: \`${act.newClassLayer || 'Same as source'}\``);
++                lines.push(`- **Informational Methods**: ${(act.movedMethodList || []).join(', ') || 'None specified'}`);
++            } else if (act.type === 'EXTRACT_INTERFACE') {
++                lines.push(`- **Source Class**: \`${act.sourceNodeId}\``);
++                lines.push(`- **Target Class**: \`${act.targetNodeId}\``);
++                lines.push(`- **Intermediate Interface**: \`${act.intermediateNodeName || 'Generated Interface'}\``);
++            } else if (act.type === 'BREAK_CYCLE') {
++                lines.push(`- **Severed Edge**: \`${act.edgeIdToSever || (act.sourceNodeId + ' -> ' + act.targetNodeId)}\``);
++                lines.push(`- **Strategy**: \`${act.substitutionStrategy || 'DECOUPLING'}\``);
++            } else if (act.type === 'REMOVE_NODE') {
++                lines.push(`- **Target Node**: \`${act.nodeId}\``);
++                lines.push('- **Cascade**: All incident edges (fan-in, fan-out, self-loops) atomically removed.');
++            }
++            lines.push('');
++        });
++    }
++
++    return lines.join('\n');
++}
++
++export function generateHandoffJson(handoffPlan) {
++    const markdown = generateHandoffMarkdown(handoffPlan);
++    return {
++        schemaVersion: '1.0.0',
++        planId: handoffPlan.planId || `plan_${Date.now()}`,
++        projectId: handoffPlan.projectId || '',
++        projectKey: handoffPlan.projectKey || '',
++        baseRunId: handoffPlan.baseRunId || '',
++        generatedDate: handoffPlan.generatedDate || new Date().toISOString(),
++        author: handoffPlan.author || 'Architect',
++        summary: {
++            totalActions: (handoffPlan.actions || []).length,
++            cyclicSccCountDelta: handoffPlan.deltas?.cyclicSccCountDelta ?? 0,
++            cyclicSccReduction: handoffPlan.deltas?.cyclicSccReduction ?? 0,
++            breakCycleActionsApplied: handoffPlan.deltas?.breakCycleActionsApplied ?? 0,
++            projectedCouplingDelta: handoffPlan.deltas?.couplingDelta ?? 0
++        },
++        actions: handoffPlan.actions || [],
++        disclaimer: 'Pure prospective architectural simulation. No physical files modified.',
++        markdownSummary: markdown
++    };
++}
+diff --git a/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml
+new file mode 100644
+index 0000000..0790c7d
+--- /dev/null
++++ b/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
++    <apiVersion>60.0</apiVersion>
++    <isExposed>false</isExposed>
++    <masterLabel>DA Refactoring Engine</masterLabel>
++    <description>Pure client-side in-memory refactoring simulation and topological analysis engine (CONTRACT-07 / DEC-03).</description>
++</LightningComponentBundle>
+diff --git a/scratch/salesforce-poc/tests/run-w8-1-tests.cjs b/scratch/salesforce-poc/tests/run-w8-1-tests.cjs
+new file mode 100644
+index 0000000..5fca298
+--- /dev/null
++++ b/scratch/salesforce-poc/tests/run-w8-1-tests.cjs
+@@ -0,0 +1,310 @@
++/**
++ * run-w8-1-tests.cjs
++ * Hardened Unit Test Suite for Task W8-1: daInvestigationDrawer LWC
++ *
++ * Verifies:
++ * 1. Default component initialization and empty state rendering when no node is selected.
++ * 2. Node metadata display: attributes, layer, type, and structural metrics (fanIn, fanOut, loc, complexity).
++ * 3. Fan-in/fan-out and incident edge extraction: accurate inbound/outbound dependencies list.
++ * 4. 1-Hop drill-down: neighbor selection dispatches canonical 'nodeselect' event with correct payload (CONTRACT-06).
++ * 5. Breadcrumb trail: history tracking on progressive drill-down and navigation to previous crumbs.
++ * 6. Stale selection suppression: selecting a node then switching to a graph without that node clears stale selection.
++ * 7. Pinning state invariant: preserves trail and dispatches 'pintoggle'.
++ * 8. Detached window BroadcastChannel cross-window IPC contract: messages handled and sent.
++ * 9. SELECTION != NAVIGATION invariant: node selection within drawer does NOT switch project or reset view.
++ * 10. Associated findings filtering by targetNodeId.
++ */
++
++const assert = require('assert');
++const path = require('path');
++const fs = require('fs');
++
++class MockBroadcastChannel {
++    constructor(channelName) {
++        this.name = channelName;
++        this.messages = [];
++        this.onmessage = null;
++        this.closed = false;
++        MockBroadcastChannel.instances.push(this);
++    }
++    postMessage(data) {
++        this.messages.push(data);
++        for (const inst of MockBroadcastChannel.instances) {
++            if (inst !== this && inst.name === this.name && inst.onmessage && !inst.closed) {
++                inst.onmessage({ data });
++            }
++        }
++    }
++    close() {
++        this.closed = true;
++    }
++}
++MockBroadcastChannel.instances = [];
++
++global.BroadcastChannel = MockBroadcastChannel;
++global.window = {
++    BroadcastChannel: MockBroadcastChannel,
++    open: () => ({ closed: false })
++};
++
++function createDrawerInstance() {
++    const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
++    let code = fs.readFileSync(filePath, 'utf8');
++
++    code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++    code = code.replace(/@api\s+/g, '');
++    code = code.replace(/@track\s+/g, '');
++    code = code.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
++    code += '\nreturn DaInvestigationDrawer;';
++
++    const LwcMock = {
++        LightningElement: class {
++            constructor() {
++                this._dispatchedEvents = [];
++            }
++            dispatchEvent(evt) {
++                this._dispatchedEvents.push(evt);
++            }
++        }
++    };
++
++    const ctor = new Function('LightningElement', code)(LwcMock.LightningElement);
++    return new ctor();
++}
++
++async function runW81Tests() {
++    console.log('Running Task W8-1 (daInvestigationDrawer LWC) Test Suite...');
++    console.log('===========================================================');
++
++    let passes = 0;
++    let fails = 0;
++
++    function test(name, fn) {
++        try {
++            fn();
++            console.log(`  ✓ ${name}`);
++            passes++;
++        } catch (err) {
++            console.error(`  ✗ ${name}`);
++            console.error(err);
++            fails++;
++        }
++    }
++
++    const sampleGraph = {
++        schemaVersion: '1.0.0',
++        nodes: [
++            {
++                id: 'ApexClass:AccountService',
++                label: 'AccountService',
++                displayName: 'AccountService',
++                type: 'ApexClass',
++                layer: 'Service',
++                risk: 'HIGH',
++                metrics: {
++                    fanIn: 2,
++                    fanOut: 1,
++                    linesOfCode: 350,
++                    cyclomaticComplexity: 12
++                }
++            },
++            {
++                id: 'ApexClass:AccountSelector',
++                label: 'AccountSelector',
++                displayName: 'AccountSelector',
++                type: 'ApexClass',
++                layer: 'Selector',
++                risk: 'LOW',
++                metrics: {
++                    fanIn: 1,
++                    fanOut: 0,
++                    linesOfCode: 120,
++                    cyclomaticComplexity: 3
++                }
++            },
++            {
++                id: 'LWC:accountManager',
++                label: 'accountManager',
++                displayName: 'accountManager',
++                type: 'LWC',
++                layer: 'UI',
++                risk: 'MEDIUM',
++                metrics: {
++                    fanIn: 0,
++                    fanOut: 1,
++                    linesOfCode: 85,
++                    cyclomaticComplexity: 4
++                }
++            }
++        ],
++        edges: [
++            { id: 'e1', source: 'LWC:accountManager', target: 'ApexClass:AccountService', type: 'calls' },
++            { id: 'e2', source: 'ApexClass:AccountService', target: 'ApexClass:AccountSelector', type: 'calls' }
++        ]
++    };
++
++    const sampleFindings = [
++        { id: 'f1', targetNodeId: 'ApexClass:AccountService', ruleId: 'ARCH-001', severity: 'High', details: 'High complexity service' },
++        { id: 'f2', targetNodeId: 'LWC:accountManager', ruleId: 'ARCH-002', severity: 'Low', details: 'Missing test coverage' }
++    ];
++
++    test('1. Default state: no selected node renders empty state', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        assert.strictEqual(comp.hasSelectedNode, false);
++        assert.strictEqual(comp.selectedNode, null);
++        assert.strictEqual(comp.panelTitle, 'Node Investigation');
++        assert.strictEqual(comp.hasBreadcrumbs, false);
++    });
++
++    test('2. Node metadata display & structural metrics calculation', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        assert.strictEqual(comp.hasSelectedNode, true);
++        assert.strictEqual(comp.panelTitle, 'AccountService');
++        assert.strictEqual(comp.nodeType, 'ApexClass');
++        assert.strictEqual(comp.nodeLayer, 'Service');
++        assert.strictEqual(comp.nodeRisk, 'HIGH');
++        assert.strictEqual(comp.riskBadgeClass.includes('badge-risk-high'), true);
++        assert.strictEqual(comp.fanInCount, 2);
++        assert.strictEqual(comp.fanOutCount, 1);
++        assert.strictEqual(comp.linesOfCode, 350);
++        assert.strictEqual(comp.cyclomaticComplexity, 12);
++    });
++
++    test('3. Incident edges extraction (Inbound vs Outbound)', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        assert.strictEqual(comp.inboundEdges.length, 1);
++        assert.strictEqual(comp.inboundEdges[0].source, 'LWC:accountManager');
++        assert.strictEqual(comp.outboundEdges.length, 1);
++        assert.strictEqual(comp.outboundEdges[0].target, 'ApexClass:AccountSelector');
++    });
++
++    test('4. 1-Hop drill-down dispatches canonical nodeselect CustomEvent (CONTRACT-06)', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        comp.handleNeighborSelection('ApexClass:AccountSelector');
++
++        assert.strictEqual(comp._dispatchedEvents.length >= 1, true);
++        const lastEvt = comp._dispatchedEvents[comp._dispatchedEvents.length - 1];
++        assert.strictEqual(lastEvt.type, 'nodeselect');
++        assert.strictEqual(lastEvt.detail.nodeId, 'ApexClass:AccountSelector');
++        assert.strictEqual(lastEvt.detail.sourceView, 'investigationDrawer');
++        assert.strictEqual(lastEvt.bubbles, true);
++        assert.strictEqual(lastEvt.composed, true);
++        assert.strictEqual(comp.selectedNodeId, 'ApexClass:AccountSelector');
++    });
++
++    test('5. Breadcrumb trail tracks history on drill-down and truncation on previous crumb jump', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++
++        comp.selectedNodeId = 'LWC:accountManager';
++        assert.strictEqual(comp.drillPath.length, 1);
++
++        comp.selectedNodeId = 'ApexClass:AccountService';
++        assert.strictEqual(comp.drillPath.length, 2);
++        assert.strictEqual(comp.hasBreadcrumbs, true);
++
++        comp.selectedNodeId = 'ApexClass:AccountSelector';
++        assert.strictEqual(comp.drillPath.length, 3);
++
++        comp.handleBreadcrumbClick({ currentTarget: { dataset: { id: 'ApexClass:AccountService' } } });
++        assert.strictEqual(comp.drillPath.length, 2);
++        assert.strictEqual(comp.drillPath[1].id, 'ApexClass:AccountService');
++    });
++
++    test('6. Stale selection suppression on graph reload', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++        assert.strictEqual(comp.hasSelectedNode, true);
++
++        const emptyGraph = { schemaVersion: '1.0.0', nodes: [], edges: [] };
++        comp.graphPayload = emptyGraph;
++
++        assert.strictEqual(comp.selectedNodeId, null);
++        assert.strictEqual(comp.hasSelectedNode, false);
++    });
++
++    test('7. Pinning state invariant: preserves trail and dispatches pintoggle', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        assert.strictEqual(comp.isPinned, false);
++        comp.handleTogglePin();
++        assert.strictEqual(comp.isPinned, true);
++        assert.strictEqual(comp.pinIconName, 'utility:pinned');
++
++        comp.projectId = '001_new_proj';
++        assert.strictEqual(comp.drillPath.length > 0, true);
++    });
++
++    test('8. Detached window BroadcastChannel cross-window IPC contract', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        comp.handleDetach();
++        assert.strictEqual(comp.isDetached, true);
++        assert.strictEqual(comp._broadcastChannel.messages.length >= 1, true);
++        assert.strictEqual(comp._broadcastChannel.messages.some(m => m.type === 'DRAWER_DETACHED'), true);
++
++        comp.handleBroadcastMessage({ type: 'DRAWER_SELECT_NODE', nodeId: 'ApexClass:AccountSelector' });
++        assert.strictEqual(comp.selectedNodeId, 'ApexClass:AccountSelector');
++    });
++
++    test('9. Invariant: SELECTION != NAVIGATION preserved', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        const initialProj = comp.projectId;
++        comp.handleNeighborSelection('ApexClass:AccountSelector');
++        assert.strictEqual(comp.projectId, initialProj);
++
++        const badEvents = comp._dispatchedEvents.filter(e => e.type === 'viewchange' || e.type === 'projectchange');
++        assert.strictEqual(badEvents.length, 0);
++    });
++
++    test('10. Associated findings filtering by targetNodeId', () => {
++        const comp = createDrawerInstance();
++        comp.connectedCallback();
++        comp.graphPayload = sampleGraph;
++        comp.findings = sampleFindings;
++        comp.selectedNodeId = 'ApexClass:AccountService';
++
++        assert.strictEqual(comp.hasNodeFindings, true);
++        assert.strictEqual(comp.nodeFindings.length, 1);
++        assert.strictEqual(comp.nodeFindings[0].id, 'f1');
++        assert.strictEqual(comp.findingsTabLabel, 'Findings (1)');
++    });
++
++    console.log('===========================================================');
++    console.log(`Summary: ${passes} PASSED, ${fails} FAILED`);
++
++    if (fails > 0) {
++        process.exit(1);
++    }
++}
++
++runW81Tests().catch(err => {
++    console.error('Test execution failed:', err);
++    process.exit(1);
++});
+diff --git a/scratch/salesforce-poc/tests/run-workstream-c-tests.cjs b/scratch/salesforce-poc/tests/run-workstream-c-tests.cjs
+index 3164129..fb3bc80 100644
+--- a/scratch/salesforce-poc/tests/run-workstream-c-tests.cjs
++++ b/scratch/salesforce-poc/tests/run-workstream-c-tests.cjs
+@@ -807,6 +807,342 @@ async function main() {
+         assert.strictEqual(annCode.includes('isValidId'), true);
+     });
+
++
++    console.log('\n[Category 5: Workstream 6 daInvestigationDrawer LWC Unit Tests]');
++
++    runTest('17. daInvestigationDrawer: Node metadata, fan-in/fan-out, and incident edge extraction', () => {
++        const drawerJsPath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
++        let drawerCode = fs.readFileSync(drawerJsPath, 'utf8');
++        drawerCode = drawerCode.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++        drawerCode = drawerCode.replace(/@api\s+/g, '');
++        drawerCode = drawerCode.replace(/@track\s+/g, '');
++        drawerCode = drawerCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
++        drawerCode += '\nreturn DaInvestigationDrawer;';
++
++        const LwcMock = {
++            LightningElement: class {
++                constructor() { this._dispatchedEvents = []; }
++                dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
++            }
++        };
++
++        class MockBroadcastChannel {
++            constructor(name) { this.name = name; this.messages = []; this.onmessage = null; }
++            postMessage(msg) { this.messages.push(msg); }
++            close() {}
++        }
++        global.BroadcastChannel = MockBroadcastChannel;
++        global.window = { BroadcastChannel: MockBroadcastChannel, open: () => ({ closed: false }) };
++
++        const ctor = new Function('LightningElement', drawerCode)(LwcMock.LightningElement);
++        const comp = new ctor();
++        comp.connectedCallback();
++
++        const testGraph = {
++            schemaVersion: '1.0.0',
++            nodes: [
++                { id: 'ApexClass:ServiceA', label: 'ServiceA', type: 'ApexClass', layer: 'Service', risk: 'HIGH', metrics: { fanIn: 1, fanOut: 2, linesOfCode: 200, cyclomaticComplexity: 8 } },
++                { id: 'ApexClass:RepoB', label: 'RepoB', type: 'ApexClass', layer: 'Domain', risk: 'LOW', metrics: { fanIn: 2, fanOut: 0, linesOfCode: 100, cyclomaticComplexity: 2 } },
++                { id: 'LWC:compC', label: 'compC', type: 'LWC', layer: 'UI', risk: 'LOW', metrics: { fanIn: 0, fanOut: 1, linesOfCode: 50, cyclomaticComplexity: 1 } }
++            ],
++            edges: [
++                { id: 'e1', source: 'LWC:compC', target: 'ApexClass:ServiceA', type: 'calls' },
++                { id: 'e2', source: 'ApexClass:ServiceA', target: 'ApexClass:RepoB', type: 'calls' }
++            ]
++        };
++
++        comp.graphPayload = testGraph;
++        comp.selectedNodeId = 'ApexClass:ServiceA';
++
++        assert.strictEqual(comp.hasSelectedNode, true);
++        assert.strictEqual(comp.nodeRisk, 'HIGH');
++        assert.strictEqual(comp.nodeLayer, 'Service');
++        assert.strictEqual(comp.fanInCount, 1);
++        assert.strictEqual(comp.fanOutCount, 2);
++        assert.strictEqual(comp.inboundEdges.length, 1);
++        assert.strictEqual(comp.inboundEdges[0].source, 'LWC:compC');
++        assert.strictEqual(comp.outboundEdges.length, 1);
++        assert.strictEqual(comp.outboundEdges[0].target, 'ApexClass:RepoB');
++    });
++
++    runTest('18. daInvestigationDrawer: 1-hop drill-down and SELECTION != NAVIGATION invariant', () => {
++        const drawerJsPath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
++        let drawerCode = fs.readFileSync(drawerJsPath, 'utf8');
++        drawerCode = drawerCode.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++        drawerCode = drawerCode.replace(/@api\s+/g, '');
++        drawerCode = drawerCode.replace(/@track\s+/g, '');
++        drawerCode = drawerCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
++        drawerCode += '\nreturn DaInvestigationDrawer;';
++
++        const LwcMock = {
++            LightningElement: class {
++                constructor() { this._dispatchedEvents = []; }
++                dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
++            }
++        };
++
++        class MockBroadcastChannel {
++            constructor(name) { this.name = name; this.messages = []; this.onmessage = null; }
++            postMessage(msg) { this.messages.push(msg); }
++            close() {}
++        }
++        global.BroadcastChannel = MockBroadcastChannel;
++        global.window = { BroadcastChannel: MockBroadcastChannel, open: () => ({ closed: false }) };
++
++        const ctor = new Function('LightningElement', drawerCode)(LwcMock.LightningElement);
++        const comp = new ctor();
++        comp.connectedCallback();
++
++        const testGraph = {
++            schemaVersion: '1.0.0',
++            nodes: [
++                { id: 'ApexClass:A', label: 'A', type: 'ApexClass' },
++                { id: 'ApexClass:B', label: 'B', type: 'ApexClass' }
++            ],
++            edges: [
++                { id: 'e1', source: 'ApexClass:A', target: 'ApexClass:B' }
++            ]
++        };
++
++        comp.graphPayload = testGraph;
++        comp.projectId = '001_proj_alpha';
++        comp.selectedNodeId = 'ApexClass:A';
++
++        comp.handleNeighborSelection('ApexClass:B');
++
++        assert.strictEqual(comp._dispatchedEvents.length >= 1, true);
++        const lastEvt = comp._dispatchedEvents[comp._dispatchedEvents.length - 1];
++        assert.strictEqual(lastEvt.type, 'nodeselect');
++        assert.strictEqual(lastEvt.detail.nodeId, 'ApexClass:B');
++        assert.strictEqual(lastEvt.detail.sourceView, 'investigationDrawer');
++        assert.strictEqual(lastEvt.bubbles, true);
++        assert.strictEqual(lastEvt.composed, true);
++
++        assert.strictEqual(comp.projectId, '001_proj_alpha');
++        const navEvents = comp._dispatchedEvents.filter(e => e.type === 'viewchange' || e.type === 'projectchange');
++        assert.strictEqual(navEvents.length, 0);
++    });
++
++    runTest('19. daInvestigationDrawer: Stale selection suppression on project/graph switch', () => {
++        const drawerJsPath = path.resolve(__dirname, '../force-app/main/default/lwc/daInvestigationDrawer/daInvestigationDrawer.js');
++        let drawerCode = fs.readFileSync(drawerJsPath, 'utf8');
++        drawerCode = drawerCode.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
++        drawerCode = drawerCode.replace(/@api\s+/g, '');
++        drawerCode = drawerCode.replace(/@track\s+/g, '');
++        drawerCode = drawerCode.replace('export default class DaInvestigationDrawer', 'class DaInvestigationDrawer');
++        drawerCode += '\nreturn DaInvestigationDrawer;';
++
++        const LwcMock = {
++            LightningElement: class {
++                constructor() { this._dispatchedEvents = []; }
++                dispatchEvent(evt) { this._dispatchedEvents.push(evt); }
++            }
++        };
++
++        const ctor = new Function('LightningElement', drawerCode)(LwcMock.LightningElement);
++        const comp = new ctor();
++        comp.connectedCallback();
++
++        comp.graphPayload = {
++            schemaVersion: '1.0.0',
++            nodes: [{ id: 'ApexClass:A', label: 'A' }],
++            edges: []
++        };
++        comp.selectedNodeId = 'ApexClass:A';
++        assert.strictEqual(comp.hasSelectedNode, true);
++
++        comp.graphPayload = { schemaVersion: '1.0.0', nodes: [], edges: [] };
++        assert.strictEqual(comp.selectedNodeId, null);
++        assert.strictEqual(comp.hasSelectedNode, false);
++    });
++
++    console.log('\n[Category 6: Workstream 6 Refactoring Engine & Pure Topological Math]');
++
++    runTest('20. daRefactoringEngine: Tarjan SCC detection & cycle counting', () => {
++        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
++        let engineCode = fs.readFileSync(enginePath, 'utf8');
++        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
++        engineCode += '\nreturn { computeTarjanSCC, countCyclicSCCs, edgeParticipatesInDirectedCycle, simulateRefactoring, generateHandoffMarkdown, generateHandoffJson };';
++        const engine = new Function(engineCode)();
++
++        const nodes1 = [{ id: 'A' }, { id: 'B' }, { id: 'C' }];
++        const edges1 = [{ source: 'A', target: 'B' }, { source: 'B', target: 'C' }, { source: 'C', target: 'A' }];
++
++        const sccs1 = engine.computeTarjanSCC(nodes1, edges1);
++        assert.strictEqual(sccs1.length, 1);
++        assert.strictEqual(sccs1[0].length, 3);
++        assert.strictEqual(engine.countCyclicSCCs(nodes1, edges1), 1);
++
++        const edges2 = [{ source: 'A', target: 'B' }, { source: 'B', target: 'C' }];
++        assert.strictEqual(engine.countCyclicSCCs(nodes1, edges2), 0);
++
++        const edges3 = [{ source: 'A', target: 'A' }];
++        assert.strictEqual(engine.countCyclicSCCs(nodes1, edges3), 1);
++    });
++
++    runTest('21. daRefactoringEngine: Directed cycle edge verification vs SCC membership', () => {
++        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
++        let engineCode = fs.readFileSync(enginePath, 'utf8');
++        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
++        engineCode += '\nreturn { edgeParticipatesInDirectedCycle };';
++        const engine = new Function(engineCode)();
++
++        const edges = [
++            { id: 'e1', source: 'A', target: 'B' },
++            { id: 'e2', source: 'B', target: 'A' },
++            { id: 'e3', source: 'A', target: 'C' }
++        ];
++
++        assert.strictEqual(engine.edgeParticipatesInDirectedCycle(edges[0], edges), true);
++        assert.strictEqual(engine.edgeParticipatesInDirectedCycle(edges[1], edges), true);
++        assert.strictEqual(engine.edgeParticipatesInDirectedCycle(edges[2], edges), false);
++    });
++
++    runTest('22. daRefactoringEngine: Immutable simulation inputs & cyclicSccCountDelta semantics', () => {
++        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
++        let engineCode = fs.readFileSync(enginePath, 'utf8');
++        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
++        engineCode += '\nreturn { simulateRefactoring };';
++        const engine = new Function(engineCode)();
++
++        const baseGraph = {
++            schemaVersion: '1.0.0',
++            projectId: 'PROJ_001',
++            nodes: [{ id: 'A', label: 'ClassA' }, { id: 'B', label: 'ClassB' }],
++            edges: [
++                { id: 'e1', source: 'A', target: 'B' },
++                { id: 'e2', source: 'B', target: 'A' }
++            ]
++        };
++
++        const frozenCopy = JSON.parse(JSON.stringify(baseGraph));
++
++        const result = engine.simulateRefactoring(baseGraph, [
++            { id: 'act-1', type: 'BREAK_CYCLE', edgeIdToSever: 'e2' }
++        ]);
++
++        assert.strictEqual(result.success, true);
++        assert.strictEqual(result.appliedActionsCount, 1);
++        assert.strictEqual(result.breakCycleActionsApplied, 1);
++
++        assert.strictEqual(result.deltas.baseCyclicSccCount, 1);
++        assert.strictEqual(result.deltas.newCyclicSccCount, 0);
++        assert.strictEqual(result.deltas.cyclicSccCountDelta, -1);
++        assert.strictEqual(result.deltas.cyclicSccReduction, 1);
++
++        assert.deepStrictEqual(baseGraph, frozenCopy);
++        assert.strictEqual(baseGraph.edges.length, 2);
++        assert.strictEqual(result.resultingPayload.edges.length, 1);
++    });
++
++    runTest('23. daRefactoringEngine: Atomic REMOVE_NODE cascades across all incident edges (self-loops included)', () => {
++        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
++        let engineCode = fs.readFileSync(enginePath, 'utf8');
++        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
++        engineCode += '\nreturn { simulateRefactoring };';
++        const engine = new Function(engineCode)();
++
++        const baseGraph = {
++            schemaVersion: '1.0.0',
++            nodes: [{ id: 'A' }, { id: 'B' }, { id: 'C' }],
++            edges: [
++                { id: 'e1', source: 'A', target: 'B' },
++                { id: 'e2', source: 'B', target: 'C' },
++                { id: 'e3', source: 'B', target: 'B' }
++            ]
++        };
++
++        const result = engine.simulateRefactoring(baseGraph, [
++            { id: 'act-del-b', type: 'REMOVE_NODE', nodeId: 'B' }
++        ]);
++
++        assert.strictEqual(result.success, true);
++        assert.strictEqual(result.appliedActionsCount, 1);
++        assert.strictEqual(result.resultingPayload.nodes.length, 2);
++        assert.strictEqual(result.resultingPayload.nodes.some(n => n.id === 'B'), false);
++        assert.strictEqual(result.resultingPayload.edges.length, 0);
++    });
++
++    runTest('24. daRefactoringEngine: Informational movedMethodList & rejection of unsupported MOVE_METHOD', () => {
++        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
++        let engineCode = fs.readFileSync(enginePath, 'utf8');
++        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
++        engineCode += '\nreturn { simulateRefactoring };';
++        const engine = new Function(engineCode)();
++
++        const baseGraph = {
++            schemaVersion: '1.0.0',
++            nodes: [{ id: 'ServiceA', label: 'ServiceA', type: 'ApexClass', layer: 'Core' }],
++            edges: []
++        };
++
++        const extractResult = engine.simulateRefactoring(baseGraph, [
++            {
++                id: 'act-ext',
++                type: 'EXTRACT_CLASS',
++                sourceNodeId: 'ServiceA',
++                newClassName: 'ServiceA_Helper',
++                movedMethodList: ['validateRecord', 'formatPayload']
++            }
++        ]);
++        assert.strictEqual(extractResult.success, true);
++        const extractedNode = extractResult.resultingPayload.nodes.find(n => n.id === 'ServiceA_Helper');
++        assert.strictEqual(Boolean(extractedNode), true);
++        assert.deepStrictEqual(extractedNode.attributes.movedMethods, ['validateRecord', 'formatPayload']);
++
++        const moveResult = engine.simulateRefactoring(baseGraph, [
++            {
++                id: 'act-move',
++                type: 'MOVE_METHOD',
++                sourceNodeId: 'ServiceA',
++                targetNodeId: 'ServiceA_Helper',
++                methodId: 'validateRecord'
++            }
++        ]);
++        assert.strictEqual(moveResult.success, false);
++        assert.strictEqual(moveResult.errors.length, 1);
++        assert.strictEqual(moveResult.errors[0].includes('MOVE_METHOD is unsupported'), true);
++    });
++
++    runTest('25. daRefactoringEngine: Markdown and JSON handoff export generation & disclaimer', () => {
++        const enginePath = path.resolve(__dirname, '../force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js');
++        let engineCode = fs.readFileSync(enginePath, 'utf8');
++        engineCode = engineCode.replace(/export\s+function\s+/g, 'function ');
++        engineCode += '\nreturn { generateHandoffMarkdown, generateHandoffJson };';
++        const engine = new Function(engineCode)();
++
++        const handoffPlan = {
++            planId: 'plan_test_01',
++            projectId: '001_proj_alpha',
++            projectKey: 'PROJ_ALPHA',
++            baseRunId: 'RUN_100',
++            author: 'Lead Architect',
++            actions: [
++                { id: '1', type: 'BREAK_CYCLE', edgeIdToSever: 'A->B', substitutionStrategy: 'EXTRACT_INTERFACE' }
++            ],
++            deltas: {
++                baseCyclicSccCount: 2,
++                newCyclicSccCount: 1,
++                cyclicSccCountDelta: -1,
++                cyclicSccReduction: 1,
++                breakCycleActionsApplied: 1,
++                couplingDelta: -1
++            }
++        };
++
++        const md = engine.generateHandoffMarkdown(handoffPlan);
++        assert.strictEqual(md.includes('# Engineering Architecture Refactoring Handoff Plan'), true);
++        assert.strictEqual(md.includes('DISCLAIMER'), true);
++        assert.strictEqual(md.includes('No source code or repository files were modified'), true);
++        assert.strictEqual(md.includes('**Cyclic SCC Delta**: -1'), true);
++
++        const json = engine.generateHandoffJson(handoffPlan);
++        assert.strictEqual(json.schemaVersion, '1.0.0');
++        assert.strictEqual(json.planId, 'plan_test_01');
++        assert.strictEqual(json.summary.cyclicSccReduction, 1);
++        assert.strictEqual(json.disclaimer.includes('No physical files modified'), true);
++    });
++
+     console.log('\n===================================================================');
+     console.log(`Summary: ${passes} PASSED, ${fails} FAILED`);

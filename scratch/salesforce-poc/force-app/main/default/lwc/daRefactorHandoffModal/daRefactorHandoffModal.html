@@ -1,0 +1,79 @@
+<template>
+    <template if:true={isOpen}>
+        <div class="handoff-modal-overlay">
+            <div class="handoff-modal-container">
+                <div class="slds-modal__header slds-grid slds-grid_align-spread slds-p-around_medium slds-theme_shade slds-border_bottom">
+                    <h2 class="slds-text-heading_medium">Engineering Refactoring Handoff Export</h2>
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        variant="bare"
+                        size="medium"
+                        alternative-text="Close Modal"
+                        onclick={handleClose}>
+                    </lightning-button-icon>
+                </div>
+
+                <div class="slds-p-around_medium" style="overflow-y: auto; flex: 1;">
+                    <div class="disclaimer-banner slds-m-bottom_medium">
+                        <strong>Simulated Architectural Context Only:</strong> This export details prospective topological actions. No source files or code changes have been executed.
+                    </div>
+
+                    <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                                <div class="slds-text-heading_small slds-text-color_success">{cyclicSccReduction}</div>
+                                <div class="slds-text-body_small">Cyclic SCCs Reduced</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                                <div class="slds-text-heading_small">{actionsCount}</div>
+                                <div class="slds-text-body_small">Planned Actions</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                                <div class="slds-text-heading_small">{breakCyclesCount}</div>
+                                <div class="slds-text-body_small">Cycles Broken</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <lightning-tabset active-tab-value={exportFormat}>
+                        <lightning-tab label="Markdown Summary" value="markdown">
+                            <div class="slds-p-around_x-small">
+                                <pre class="handoff-code-preview">{markdownContent}</pre>
+                            </div>
+                        </lightning-tab>
+                        <lightning-tab label="JSON DTO Payload" value="json">
+                            <div class="slds-p-around_x-small">
+                                <pre class="handoff-code-preview">{jsonContent}</pre>
+                            </div>
+                        </lightning-tab>
+                    </lightning-tabset>
+                </div>
+
+                <div class="slds-modal__footer slds-grid slds-grid_align-spread slds-p-around_small slds-border_top">
+                    <div>
+                        <span class="slds-text-body_small slds-text-color_weak">{copyStatus}</span>
+                    </div>
+                    <div class="slds-button-group">
+                        <lightning-button label="Cancel" onclick={handleClose}></lightning-button>
+                        <lightning-button
+                            variant="neutral"
+                            label="Copy to Clipboard"
+                            icon-name="utility:copy"
+                            onclick={handleCopyToClipboard}>
+                        </lightning-button>
+                        <lightning-button
+                            variant="brand"
+                            label="Download Export"
+                            icon-name="utility:download"
+                            onclick={handleDownload}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>
