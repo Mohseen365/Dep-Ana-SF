@@ -329,6 +329,10 @@ export function computeOrbitLayout(input = {}) {
             const posA = placedPosList[i];
             for (let j = i + 1; j < totalPlaced; j++) {
                 const posB = placedPosList[j];
+                // Performance optimization: radial separation threshold rejection.
+                // If radial distance >= requiredChordSeparation, AABB overlap is mathematically impossible.
+                if (Math.abs(posA.radius - posB.radius) >= requiredChordSeparation) continue;
+
                 if (checkAABBOverlap(posA, posB, effWidth, effHeight)) {
                     posB.track += 1;
                     posB.radius += trackSpacing;

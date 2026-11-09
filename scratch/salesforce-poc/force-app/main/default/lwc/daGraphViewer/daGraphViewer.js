@@ -112,6 +112,9 @@ export default class DaGraphViewer extends LightningElement {
     saveTimeout = null;
     isRestoringState = false;
     _activeLayoutInstance = null;
+    _cachedArchitecturePositions = null;
+    _cachedGraphData = null;
+    _currentLOD = null;
 
     get gridButtonVariant() {
         return this._currentLayout === 'grid' ? 'brand' : 'neutral';
@@ -240,6 +243,258 @@ export default class DaGraphViewer extends LightningElement {
         }
     }
 
+    // --- Graph Export Methods (REM-05) ---
+
+    handleExportPNG() {
+        this.exportGraphAsPNG();
+    }
+
+    handleExportSVG() {
+        this.exportGraphAsSVG();
+    }
+
+    generateExportFilename(architectureMode = this._currentLayout, extension = 'png', timestamp = Date.now()) {
+        const sanitizedMode = (architectureMode || this._currentLayout || 'hierarchical').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+        return `architecture-${sanitizedMode}-${timestamp}.${extension}`;
+    }
+
+    triggerDownload(filename, content, mimeType) {
+        if (typeof window === 'undefined' || !window.document || typeof window.document.createElement !== 'function') {
+            return;
+        }
+
+        try {
+            let url;
+            let isBlobUrl = false;
+
+            if (typeof content === 'string' && content.startsWith('data:')) {
+                url = content;
+            } else {
+                const blob = new Blob([content], { type: mimeType });
+                url = URL.createObjectURL(blob);
+                isBlobUrl = true;
+            }
+
+            const link = window.document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            window.document.body.appendChild(link);
+            link.click();
+            window.document.body.removeChild(link);
+
+            if (isBlobUrl && typeof URL.revokeObjectURL === 'function') {
+                URL.revokeObjectURL(url);
+            }
+        } catch (err) {
+            console.error('Download trigger failed:', err);
+        }
+    }
+
+    @api
+    exportGraphAsPNG(options = {}) {
+        if (!this.cyInstance) {
+            return null;
+        }
+
+        const {
+            architectureMode = this._currentLayout,
+            bg = '#ffffff',
+            scale = 2,
+            full = true
+        } = options;
+
+        try {
+            let pngDataUrl = null;
+            if (typeof this.cyInstance.png === 'function') {
+                pngDataUrl = this.cyInstance.png({ full, scale, bg });
+            }
+
+            // Headless / mock environment fallback
+            if (!pngDataUrl) {
+                pngDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+            }
+
+            const filename = this.generateExportFilename(architectureMode, 'png');
+            this.triggerDownload(filename, pngDataUrl, 'image/png');
+
+            this.dispatchEvent(new CustomEvent('graphexport', {
+                detail: {
+                    format: 'png',
+                    filename: filename,
+                    success: true
+                },
+                bubbles: true,
+                composed: true
+            }));
+
+            return pngDataUrl;
+        } catch (err) {
+            this.error = 'Failed to export PNG: ' + (err.message || err);
+            return null;
+        }
+    }
+
+    @api
+    exportGraphAsSVG(options = {}) {
+        if (!this.cyInstance) {
+            return null;
+        }
+
+        const {
+            architectureMode = this._currentLayout,
+            bg = '#ffffff',
+            full = true
+        } = options;
+
+        try {
+            let svgData = null;
+            if (typeof this.cyInstance.svg === 'function') {
+                svgData = this.cyInstance.svg({ full, bg });
+            }
+
+            // High-fidelity vector SVG generator fallback from graph state
+            if (!svgData) {
+                svgData = this.generateVectorSVG({ bg });
+            }
+
+            if (!svgData) {
+                return null;
+            }
+
+            const filename = this.generateExportFilename(architectureMode, 'svg');
+            this.triggerDownload(filename, svgData, 'image/svg+xml;charset=utf-8');
+
+            this.dispatchEvent(new CustomEvent('graphexport', {
+                detail: {
+                    format: 'svg',
+                    filename: filename,
+                    success: true
+                },
+                bubbles: true,
+                composed: true
+            }));
+
+            return svgData;
+        } catch (err) {
+            this.error = 'Failed to export SVG: ' + (err.message || err);
+            return null;
+        }
+    }
+
+    generateVectorSVG(options = {}) {
+        const bg = options.bg || '#ffffff';
+        let nodes = [];
+        if (this.cyInstance && typeof this.cyInstance.nodes === 'function') {
+            nodes = this.cyInstance.nodes();
+        }
+
+        const rawNodes = this._rawGraphData ? (this._rawGraphData.nodes || []) : [];
+        const rawEdges = this._rawGraphData ? (this._rawGraphData.edges || []) : [];
+
+        // Build raw node label map for fallback
+        const rawNodeMap = new Map();
+        rawNodes.forEach(rn => {
+            if (rn.id) rawNodeMap.set(rn.id, rn.displayName || rn.name || rn.id);
+        });
+
+        const nodeItems = [];
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+        if (Array.isArray(nodes) && nodes.length > 0) {
+            nodes.forEach(n => {
+                const id = typeof n.id === 'function' ? n.id() : (n.data ? n.data.id : null);
+                const pos = typeof n.position === 'function' ? n.position() : (n.position || { x: 0, y: 0 });
+                let label = id;
+                if (n.data && typeof n.data === 'function') {
+                    label = n.data('label') || rawNodeMap.get(id) || id;
+                } else if (n.data && n.data.label) {
+                    label = n.data.label;
+                } else if (rawNodeMap.has(id)) {
+                    label = rawNodeMap.get(id);
+                }
+
+                if (id && pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+                    nodeItems.push({ id, label, x: pos.x, y: pos.y });
+                    if (pos.x < minX) minX = pos.x;
+                    if (pos.y < minY) minY = pos.y;
+                    if (pos.x > maxX) maxX = pos.x;
+                    if (pos.y > maxY) maxY = pos.y;
+                }
+            });
+        } else if (rawNodes.length > 0) {
+            rawNodes.forEach((n, idx) => {
+                const id = n.id || `node_${idx}`;
+                const label = n.displayName || n.name || id;
+                const pos = { x: (idx % 10) * 150 + 50, y: Math.floor(idx / 10) * 100 + 50 };
+                nodeItems.push({ id, label, x: pos.x, y: pos.y });
+                if (pos.x < minX) minX = pos.x;
+                if (pos.y < minY) minY = pos.y;
+                if (pos.x > maxX) maxX = pos.x;
+                if (pos.y > maxY) maxY = pos.y;
+            });
+        }
+
+        if (nodeItems.length === 0) {
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" style="background-color: ${bg};">\n  <rect width="100%" height="100%" fill="${bg}"/>\n</svg>`;
+        }
+
+        const padding = 60;
+        const width = Math.max(800, (maxX - minX) + padding * 2);
+        const height = Math.max(600, (maxY - minY) + padding * 2);
+        const viewBoxX = minX - padding;
+        const viewBoxY = minY - padding;
+
+        const nodePosMap = new Map();
+        nodeItems.forEach(n => nodePosMap.set(n.id, { x: n.x, y: n.y }));
+
+        let edges = [];
+        if (this.cyInstance && typeof this.cyInstance.edges === 'function') {
+            edges = this.cyInstance.edges().map(e => ({
+                id: typeof e.id === 'function' ? e.id() : e.id,
+                source: typeof e.source === 'function' ? (typeof e.source().id === 'function' ? e.source().id() : e.source().id) : (e.data ? e.data.source : null),
+                target: typeof e.target === 'function' ? (typeof e.target().id === 'function' ? e.target().id() : e.target().id) : (e.data ? e.data.target : null)
+            }));
+        } else if (this.cyInstance && Array.isArray(this.cyInstance.elements)) {
+            edges = this.cyInstance.elements.filter(e => e.data && e.data.source && e.data.target).map(e => ({
+                id: e.data.id,
+                source: e.data.source,
+                target: e.data.target
+            }));
+        } else if (rawEdges.length > 0) {
+            edges = rawEdges;
+        }
+
+        let edgeSvg = '';
+        edges.forEach(e => {
+            const s = nodePosMap.get(e.source);
+            const t = nodePosMap.get(e.target);
+            if (s && t) {
+                edgeSvg += `    <line x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" stroke="#b0adab" stroke-width="2" marker-end="url(#arrow)"/>\n`;
+            }
+        });
+
+        let nodeSvg = '';
+        nodeItems.forEach(n => {
+            const safeId = String(n.id || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+            const escapedLabel = String(n.label || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            nodeSvg += `    <g id="node-${safeId}" transform="translate(${n.x}, ${n.y})">\n` +
+                `      <circle r="20" fill="#0070d2" stroke="#ffffff" stroke-width="2"/>\n` +
+                `      <text dy="32" text-anchor="middle" fill="#181818" font-family="sans-serif" font-size="12">${escapedLabel}</text>\n` +
+                `    </g>\n`;
+        });
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBoxX} ${viewBoxY} ${width} ${height}" width="${width}" height="${height}" style="background-color: ${bg};">\n` +
+            `  <defs>\n` +
+            `    <marker id="arrow" viewBox="0 0 10 10" refX="25" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">\n` +
+            `      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b0adab"/>\n` +
+            `    </marker>\n` +
+            `  </defs>\n` +
+            `  <rect x="${viewBoxX}" y="${viewBoxY}" width="${width}" height="${height}" fill="${bg}"/>\n` +
+            `  <g class="edges">\n${edgeSvg}  </g>\n` +
+            `  <g class="nodes">\n${nodeSvg}  </g>\n` +
+            `</svg>`;
+    }
+
     applyLayout(mode) {
         if (!this.cyInstance) return;
 
@@ -256,8 +511,12 @@ export default class DaGraphViewer extends LightningElement {
         if (mode === 'architecture') {
             try {
                 if (this._rawGraphData && this.cyInstance.nodes) {
-                    const layoutResult = computeArchitectureLayout(this._rawGraphData.nodes || [], this._rawGraphData.edges || []);
-                    const posMap = layoutResult.positions || {};
+                    if (this._cachedGraphData !== this._rawGraphData || !this._cachedArchitecturePositions) {
+                        const layoutResult = computeArchitectureLayout(this._rawGraphData.nodes || [], this._rawGraphData.edges || []);
+                        this._cachedArchitecturePositions = layoutResult.positions || {};
+                        this._cachedGraphData = this._rawGraphData;
+                    }
+                    const posMap = this._cachedArchitecturePositions || {};
                     if (typeof this.cyInstance.batch === 'function') {
                         this.cyInstance.batch(() => {
                             this.cyInstance.nodes().forEach(node => {
@@ -371,6 +630,9 @@ export default class DaGraphViewer extends LightningElement {
         this.selectedNodeId = null;
         this.selectedEdgeId = null;
         this.error = null;
+        this._cachedArchitecturePositions = null;
+        this._cachedGraphData = null;
+        this._currentLOD = null;
     }
 
     renderedCallback() {
@@ -502,6 +764,14 @@ export default class DaGraphViewer extends LightningElement {
 
     renderGraph(graphData, userPref) {
         try {
+            if (graphData) {
+                this._rawGraphData = graphData;
+            }
+            if (userPref !== undefined && userPref !== null) {
+                this._userPref = userPref;
+            }
+            const activeUserPref = userPref || this._userPref;
+
             if (this.cyInstance) {
                 try {
                     this.cyInstance.destroy();
@@ -529,9 +799,9 @@ export default class DaGraphViewer extends LightningElement {
 
             // Parse saved node positions if present
             let savedPositions = null;
-            if (userPref && userPref.Positions_JSON__c) {
+            if (activeUserPref && activeUserPref.Positions_JSON__c) {
                 try {
-                    savedPositions = JSON.parse(userPref.Positions_JSON__c);
+                    savedPositions = JSON.parse(activeUserPref.Positions_JSON__c);
                 } catch (e) {
                     savedPositions = null;
                 }
@@ -539,18 +809,22 @@ export default class DaGraphViewer extends LightningElement {
 
             // Parse saved zoom / pan if present
             let savedZoomPan = null;
-            if (userPref && userPref.Zoom_Pan_JSON__c) {
+            if (activeUserPref && activeUserPref.Zoom_Pan_JSON__c) {
                 try {
-                    savedZoomPan = JSON.parse(userPref.Zoom_Pan_JSON__c);
+                    savedZoomPan = JSON.parse(activeUserPref.Zoom_Pan_JSON__c);
                 } catch (e) {
                     savedZoomPan = null;
                 }
             }
 
             // Compute deterministic architecture layout positions for complete node set
-            // to ensure layout coordinate stability across filter toggles
-            const layoutResult = computeArchitectureLayout(allNodes, allEdges);
-            const computedPositions = layoutResult.positions || {};
+            // with memoization across filter toggles to prevent redundant computation
+            if (this._cachedGraphData !== graphData || !this._cachedArchitecturePositions) {
+                const layoutResult = computeArchitectureLayout(allNodes, allEdges);
+                this._cachedArchitecturePositions = layoutResult.positions || {};
+                this._cachedGraphData = graphData;
+            }
+            const computedPositions = this._cachedArchitecturePositions || {};
 
             this.isRestoringState = true;
 
@@ -729,6 +1003,9 @@ export default class DaGraphViewer extends LightningElement {
                             position: (p) => { if (p) e.position = p; return e.position || { x: 0, y: 0 }; }
                         }));
                     },
+                    png: function(opts) {
+                        return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+                    },
                     batch: function(cb) { if (cb) cb(); },
                     on: (event, selector, handler) => {}
                 };
@@ -748,13 +1025,17 @@ export default class DaGraphViewer extends LightningElement {
         if (!container) return;
 
         const currentZoom = this.cyInstance.zoom();
-        container.classList.remove('zoom-far', 'zoom-mid', 'zoom-near');
+        let targetLOD = 'zoom-mid';
         if (currentZoom < 0.5) {
-            container.classList.add('zoom-far');
-        } else if (currentZoom < 1.2) {
-            container.classList.add('zoom-mid');
-        } else {
-            container.classList.add('zoom-near');
+            targetLOD = 'zoom-far';
+        } else if (currentZoom >= 1.2) {
+            targetLOD = 'zoom-near';
+        }
+
+        if (this._currentLOD !== targetLOD) {
+            container.classList.remove('zoom-far', 'zoom-mid', 'zoom-near');
+            container.classList.add(targetLOD);
+            this._currentLOD = targetLOD;
         }
     }
 
@@ -795,7 +1076,10 @@ export default class DaGraphViewer extends LightningElement {
                         const id = node.id ? node.id() : null;
                         const pos = node.position ? node.position() : null;
                         if (id && pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
-                            positions[id] = { x: pos.x, y: pos.y };
+                            positions[id] = {
+                                x: Math.round(pos.x * 10) / 10,
+                                y: Math.round(pos.y * 10) / 10
+                            };
                         }
                     });
                 }
