@@ -1,26 +1,29 @@
 /**
  * run-lane-f-findings-tests.cjs
- * Focused Unit Test Suite for Lane F: daFindingsView LWC
+ * Hardened Unit Test Suite for Lane F: daFindingsView LWC
  *
  * Verifies:
- * 1. Circular dependency findings derivation from cycles[] and refactoringReadiness.hasCycles.
- * 2. Cycle deduplication.
- * 3. High-risk untested findings derivation.
- * 4. Preservation of UNTESTED vs UNKNOWN distinction (no conflation).
- * 5. Unresolved reference findings derivation from unresolvedReferences[].
- * 6. High-coupling hotspot findings from coupling > 15.
- * 7. High-coupling hotspot findings from fanIn > 10.
- * 8. Combined coupling condition evaluation.
- * 9. Stable finding identity generation.
- * 10. Duplicate finding prevention.
- * 11. Canonical search and filter behavior (search, nodeTypes, risk, severity, status).
- * 12. Severity and status filtering.
- * 13. Empty and malformed payload handling.
- * 14. Missing optional analytics fields handling without crashing.
+ * 1. Circular dependencies derived from cycles[] and node flags with deduplication.
+ * 2. Untested high-risk items preserve distinct UNTESTED vs UNKNOWN status.
+ * 3. Unresolved references derived and deduplicated.
+ * 4. Hotspot detected when coupling > 15.
+ * 5. Hotspot detected when fanIn > 10.
+ * 6. Finding IDs are deterministic and stable across executions.
+ * 7. Canonical search filter matches title, description, or componentName.
+ * 8. Severity filtering restricts findings to requested levels.
+ * 9. Coverage status filter correctly isolates UNTESTED findings.
+ * 10. Empty payload yields 0 findings safely.
+ * 11. Malformed payload handled safely fail-closed.
+ * 12. Nodes missing optional analytics fields processed without errors.
+ * 13. Node selection CustomEvent emission adheres strictly to CONTRACT-06 & SELECTION != NAVIGATION.
+ * 14. Local review state workflow (OPEN -> IN_REVIEW -> RESOLVED -> OPEN).
+ * 15. Expandable structured guidance sections (WHAT, WHY IT MATTERS, WHERE, WHAT TO DO NEXT).
+ * 16. Input payload immutability preserved.
  */
 
 const assert = require('assert');
 const path = require('path');
+const fs = require('fs');
 
 async function runLaneFTests() {
     console.log('Running Lane F (daFindingsView LWC) Focused Unit Test Suite...');
@@ -28,156 +31,46 @@ async function runLaneFTests() {
 
     const schemaModulePath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daFilterSchema.js');
     const daFilterSchema = await import(`file://${schemaModulePath}`);
-
     const {
         matchesFindingItem,
-        isHighCouplingHotspot,
-        normalizeFilterCriteria
+        normalizeFilterCriteria,
+        isHighCouplingHotspot
     } = daFilterSchema;
 
-    function deriveFindings(rawPayload, filterCriteria = {}) {
-        if (!rawPayload) return { findings: [], filteredFindings: [], total: 0 };
-        let payload = rawPayload;
-        if (typeof rawPayload === 'string') {
-            try {
-                payload = JSON.parse(rawPayload);
-            } catch (e) {
-                return { findings: [], filteredFindings: [], total: 0, error: 'Malformed' };
-            }
-        }
-        if (!payload || typeof payload !== 'object') {
-            return { findings: [], filteredFindings: [], total: 0 };
-        }
+    function createFindingsInstance() {
+        const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daFindingsView/daFindingsView.js');
+        let code = fs.readFileSync(filePath, 'utf8');
 
-        const findings = [];
-        const seenFindingKeys = new Set();
-        const nodes = Array.isArray(payload.nodes) ? payload.nodes : [];
+        code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+        code = code.replace(/@api\s+/g, '');
+        code = code.replace(/@track\s+/g, '');
+        code = code.replace('export default class DaFindingsView', 'class DaFindingsView');
+        code += '\nreturn DaFindingsView;';
 
-        // Category A: Cycles
-        if (Array.isArray(payload.cycles)) {
-            payload.cycles.forEach((cycle, idx) => {
-                if (!Array.isArray(cycle) || cycle.length === 0) return;
-                const sortedNodes = [...cycle].sort();
-                const cycleKey = `cycle-${sortedNodes.join('->')}`;
-                if (seenFindingKeys.has(cycleKey)) return;
-                seenFindingKeys.add(cycleKey);
-
-                findings.push({
-                    id: `finding-cycle-${idx + 1}`,
-                    category: 'cycles',
-                    categoryLabel: 'Circular Dependency',
-                    severity: 'HIGH',
-                    status: 'OPEN',
-                    title: `Cycle detected involving ${cycle.length} components`,
-                    description: `Circular dependency chain: ${cycle.join(' → ')} → ${cycle[0]}`,
-                    componentName: cycle[0],
-                    componentType: cycle[0].includes(':') ? cycle[0].split(':')[0] : null,
-                    testCoverageStatus: null
-                });
-            });
-        }
-
-        nodes.forEach(node => {
-            if (node.refactoringReadiness?.hasCycles) {
-                const cycleNodeKey = `cycle-node-${node.id}`;
-                if (!seenFindingKeys.has(cycleNodeKey)) {
-                    seenFindingKeys.add(cycleNodeKey);
-                    findings.push({
-                        id: `finding-cycle-node-${node.id}`,
-                        category: 'cycles',
-                        categoryLabel: 'Circular Dependency',
-                        severity: 'HIGH',
-                        status: 'OPEN',
-                        title: `Cyclic reference on ${node.displayName || node.name || node.id}`,
-                        description: `Component participates in dependency cycle(s).`,
-                        componentName: node.displayName || node.name || node.id,
-                        componentType: node.type || null,
-                        testCoverageStatus: node.refactoringReadiness?.testCoverageStatus || 'UNKNOWN'
-                    });
+        const LwcMock = {
+            LightningElement: class {
+                constructor() {
+                    this._dispatchedEvents = [];
+                }
+                dispatchEvent(evt) {
+                    this._dispatchedEvents.push(evt);
                 }
             }
-        });
+        };
 
-        // Category B: Untested High-Risk
-        nodes.forEach(node => {
-            const isHighRisk = (node.risk || '').toUpperCase() === 'HIGH';
-            const coverageStatus = node.refactoringReadiness?.testCoverageStatus || 'UNKNOWN';
-
-            if (isHighRisk && coverageStatus !== 'COVERED') {
-                const findingKey = `untested-high-risk-${node.id}`;
-                if (!seenFindingKeys.has(findingKey)) {
-                    seenFindingKeys.add(findingKey);
-                    const isUntested = coverageStatus === 'UNTESTED';
-                    findings.push({
-                        id: `finding-risk-${node.id}`,
-                        category: 'untested-high-risk',
-                        categoryLabel: 'Untested High-Risk Component',
-                        severity: 'CRITICAL',
-                        status: 'OPEN',
-                        title: `${isUntested ? 'Untested' : 'Unknown Coverage'} High-Risk Component: ${node.displayName || node.name || node.id}`,
-                        description: `Component has HIGH architectural risk and coverage status is ${coverageStatus}.`,
-                        componentName: node.displayName || node.name || node.id,
-                        componentType: node.type || null,
-                        testCoverageStatus: coverageStatus
-                    });
-                }
+        const CustomEvent = class {
+            constructor(type, options) {
+                this.type = type;
+                this.detail = options ? options.detail : null;
+                this.bubbles = options ? !!options.bubbles : false;
+                this.composed = options ? !!options.composed : false;
+                this.cancelable = options ? !!options.cancelable : false;
             }
-        });
+        };
 
-        // Category C: Unresolved References
-        if (Array.isArray(payload.unresolvedReferences)) {
-            payload.unresolvedReferences.forEach((unres, idx) => {
-                if (!unres) return;
-                const refSymbol = unres.symbol || unres.target || unres.name || `ref-${idx}`;
-                const sourceComp = unres.source || unres.caller || 'Unknown Source';
-                const findingKey = `unres-ref-${sourceComp}-${refSymbol}`;
-
-                if (!seenFindingKeys.has(findingKey)) {
-                    seenFindingKeys.add(findingKey);
-                    findings.push({
-                        id: `finding-unres-${idx + 1}`,
-                        category: 'unresolved-references',
-                        categoryLabel: 'Unresolved Reference',
-                        severity: 'MEDIUM',
-                        status: 'OPEN',
-                        title: `Unresolved Reference: ${refSymbol}`,
-                        description: `Reference to '${refSymbol}' from '${sourceComp}' cannot be resolved in project scope.`,
-                        componentName: sourceComp,
-                        componentType: sourceComp.includes(':') ? sourceComp.split(':')[0] : null,
-                        testCoverageStatus: null
-                    });
-                }
-            });
-        }
-
-        // Category D: High-Coupling Hotspots
-        nodes.forEach(node => {
-            if (isHighCouplingHotspot(node)) {
-                const findingKey = `coupling-hotspot-${node.id}`;
-                if (!seenFindingKeys.has(findingKey)) {
-                    seenFindingKeys.add(findingKey);
-                    const coupling = node.metrics?.coupling || 0;
-                    const fanIn = node.metrics?.fanIn || 0;
-                    findings.push({
-                        id: `finding-hotspot-${node.id}`,
-                        category: 'coupling-hotspots',
-                        categoryLabel: 'High-Coupling Hotspot',
-                        severity: 'HIGH',
-                        status: 'OPEN',
-                        title: `High Coupling Hotspot: ${node.displayName || node.name || node.id}`,
-                        description: `Component exceeds architectural coupling thresholds (Coupling: ${coupling}, Fan-In: ${fanIn}).`,
-                        componentName: node.displayName || node.name || node.id,
-                        componentType: node.type || null,
-                        testCoverageStatus: node.refactoringReadiness?.testCoverageStatus || 'UNKNOWN'
-                    });
-                }
-            }
-        });
-
-        const criteria = normalizeFilterCriteria(filterCriteria);
-        const filtered = findings.filter(f => matchesFindingItem(f, criteria));
-
-        return { findings, filteredFindings: filtered, total: filtered.length };
+        const fn = new Function('LightningElement', 'matchesFindingItem', 'normalizeFilterCriteria', 'isHighCouplingHotspot', 'CustomEvent', code);
+        const Cls = fn(LwcMock.LightningElement, matchesFindingItem, normalizeFilterCriteria, isHighCouplingHotspot, CustomEvent);
+        return new Cls();
     }
 
     const testPayload = {
@@ -205,13 +98,14 @@ async function runLaneFTests() {
         ]
     };
 
+    const baselineSnapshot = JSON.parse(JSON.stringify(testPayload));
     let passCount = 0;
 
     // 1. Circular dependency findings & deduplication
     {
-        const res = deriveFindings(testPayload);
-        const cycleFindings = res.findings.filter(f => f.category === 'cycles');
-        // 1 from cycles[] (deduplicated) + 1 from CyclicNode hasCycles
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const cycleFindings = comp.allFindings.filter(f => f.category === 'cycles');
         assert.strictEqual(cycleFindings.length, 2);
         console.log('  ✓ 1. Circular dependencies derived from cycles[] and node flags with deduplication');
         passCount++;
@@ -219,9 +113,9 @@ async function runLaneFTests() {
 
     // 2. High-risk untested vs unknown findings (Preserves UNTESTED != UNKNOWN)
     {
-        const res = deriveFindings(testPayload);
-        const riskFindings = res.findings.filter(f => f.category === 'untested-high-risk');
-        // ServiceA (UNTESTED) and ServiceB (UNKNOWN), ServiceC (COVERED) excluded
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const riskFindings = comp.allFindings.filter(f => f.category === 'untested-high-risk');
         assert.strictEqual(riskFindings.length, 2);
 
         const untestedFinding = riskFindings.find(f => f.componentName === 'ServiceA');
@@ -237,9 +131,9 @@ async function runLaneFTests() {
 
     // 3. Unresolved reference findings & deduplication
     {
-        const res = deriveFindings(testPayload);
-        const unresFindings = res.findings.filter(f => f.category === 'unresolved-references');
-        // 1 finding (duplicate reference suppressed)
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const unresFindings = comp.allFindings.filter(f => f.category === 'unresolved-references');
         assert.strictEqual(unresFindings.length, 1);
         assert.strictEqual(unresFindings[0].title.includes('System.MissingUtil'), true);
         console.log('  ✓ 3. Unresolved references derived and deduplicated');
@@ -248,8 +142,9 @@ async function runLaneFTests() {
 
     // 4. High-coupling hotspot from coupling > 15
     {
-        const res = deriveFindings(testPayload);
-        const coupledFinding = res.findings.find(f => f.componentName === 'CoupledNode');
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const coupledFinding = comp.allFindings.find(f => f.componentName === 'CoupledNode');
         assert.ok(coupledFinding);
         assert.strictEqual(coupledFinding.category, 'coupling-hotspots');
         console.log('  ✓ 4. Hotspot detected when coupling > 15');
@@ -258,8 +153,9 @@ async function runLaneFTests() {
 
     // 5. High-coupling hotspot from fanIn > 10
     {
-        const res = deriveFindings(testPayload);
-        const fanInFinding = res.findings.find(f => f.componentName === 'FanInNode');
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const fanInFinding = comp.allFindings.find(f => f.componentName === 'FanInNode');
         assert.ok(fanInFinding);
         assert.strictEqual(fanInFinding.category, 'coupling-hotspots');
         console.log('  ✓ 5. Hotspot detected when fanIn > 10');
@@ -268,19 +164,22 @@ async function runLaneFTests() {
 
     // 6. Stable finding identity
     {
-        const res1 = deriveFindings(testPayload);
-        const res2 = deriveFindings(testPayload);
-        assert.deepStrictEqual(res1.findings.map(f => f.id), res2.findings.map(f => f.id));
+        const comp1 = createFindingsInstance();
+        comp1.graphPayload = testPayload;
+        const comp2 = createFindingsInstance();
+        comp2.graphPayload = testPayload;
+        assert.deepStrictEqual(comp1.allFindings.map(f => f.id), comp2.allFindings.map(f => f.id));
         console.log('  ✓ 6. Finding IDs are deterministic and stable across executions');
         passCount++;
     }
 
     // 7. Canonical search filter matching
     {
-        const res = deriveFindings(testPayload, { search: 'ServiceA' });
-        // Finds untested-high-risk ServiceA and unresolved reference from ServiceA
-        assert.ok(res.total >= 2);
-        assert.ok(res.filteredFindings.every(f =>
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        comp.filterCriteria = { search: 'ServiceA' };
+        assert.ok(comp.totalFindings >= 2);
+        assert.ok(comp.filteredFindings.every(f =>
             (f.title && f.title.includes('ServiceA')) ||
             (f.description && f.description.includes('ServiceA')) ||
             (f.componentName && f.componentName.includes('ServiceA'))
@@ -291,18 +190,21 @@ async function runLaneFTests() {
 
     // 8. Severity filtering
     {
-        const res = deriveFindings(testPayload, { findingsSeverity: ['CRITICAL'] });
-        assert.ok(res.total > 0);
-        assert.ok(res.filteredFindings.every(f => f.severity === 'CRITICAL'));
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        comp.filterCriteria = { findingsSeverity: ['CRITICAL'] };
+        assert.ok(comp.totalFindings > 0);
+        assert.ok(comp.filteredFindings.every(f => f.severity === 'CRITICAL'));
         console.log('  ✓ 8. Severity filtering restricts findings to requested levels');
         passCount++;
     }
 
     // 9. Coverage filtering on findings
     {
-        const res = deriveFindings(testPayload, { testCoverageStatus: 'UNTESTED' });
-        // Only findings with testCoverageStatus === 'UNTESTED' or findings not associated with coverage
-        const riskFindings = res.filteredFindings.filter(f => f.category === 'untested-high-risk');
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        comp.filterCriteria = { testCoverageStatus: 'UNTESTED' };
+        const riskFindings = comp.filteredFindings.filter(f => f.category === 'untested-high-risk');
         assert.strictEqual(riskFindings.length, 1);
         assert.strictEqual(riskFindings[0].componentName, 'ServiceA');
         console.log('  ✓ 9. Coverage status filter correctly isolates UNTESTED findings');
@@ -311,32 +213,103 @@ async function runLaneFTests() {
 
     // 10. Empty payload handling
     {
-        const resEmpty = deriveFindings({ nodes: [], cycles: [], unresolvedReferences: [] });
-        assert.strictEqual(resEmpty.total, 0);
-        assert.strictEqual(resEmpty.findings.length, 0);
+        const comp = createFindingsInstance();
+        comp.graphPayload = { nodes: [], cycles: [], unresolvedReferences: [] };
+        assert.strictEqual(comp.totalFindings, 0);
+        assert.strictEqual(comp.allFindings.length, 0);
         console.log('  ✓ 10. Empty payload yields 0 findings safely');
         passCount++;
     }
 
     // 11. Malformed payload string handling
     {
-        const resMalformed = deriveFindings('MALFORMED_JSON_STRING');
-        assert.strictEqual(resMalformed.total, 0);
-        assert.strictEqual(resMalformed.findings.length, 0);
+        const comp = createFindingsInstance();
+        comp.graphPayload = 'MALFORMED_JSON_STRING';
+        assert.strictEqual(comp.totalFindings, 0);
+        assert.strictEqual(comp.allFindings.length, 0);
         console.log('  ✓ 11. Malformed payload handled safely fail-closed');
         passCount++;
     }
 
     // 12. Missing optional analytics fields handling
     {
-        const sparsePayload = {
+        const comp = createFindingsInstance();
+        comp.graphPayload = {
             nodes: [
-                { id: 'ApexClass:BareNode', name: 'BareNode' } // No risk, metrics, or refactoringReadiness
+                { id: 'ApexClass:BareNode', name: 'BareNode' }
             ]
         };
-        const res = deriveFindings(sparsePayload);
-        assert.strictEqual(res.findings.length, 0);
+        assert.strictEqual(comp.allFindings.length, 0);
         console.log('  ✓ 12. Nodes missing optional analytics fields processed without errors');
+        passCount++;
+    }
+
+    // 13. Node selection CustomEvent emission adheres to CONTRACT-06 & SELECTION != NAVIGATION
+    {
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        comp.handleSelectNode({ currentTarget: { dataset: { nodeId: 'ApexClass:ServiceA' } } });
+
+        assert.strictEqual(comp._dispatchedEvents.length, 1);
+        const evt = comp._dispatchedEvents[0];
+        assert.strictEqual(evt.type, 'nodeselect');
+        assert.strictEqual(evt.detail.nodeId, 'ApexClass:ServiceA');
+        assert.strictEqual(evt.detail.sourceView, 'findings');
+        assert.strictEqual(evt.bubbles, true);
+        assert.strictEqual(evt.composed, true);
+        assert.strictEqual(evt.cancelable, false, 'CustomEvent must have cancelable: false per CONTRACT-06');
+        assert.strictEqual(comp.selectedNodeId, 'ApexClass:ServiceA');
+        console.log('  ✓ 13. Node selection CustomEvent emission adheres strictly to CONTRACT-06 & SELECTION != NAVIGATION');
+        passCount++;
+    }
+
+    // 14. Local review state workflow
+    {
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const targetFinding = comp.filteredFindings[0];
+        const findingId = targetFinding.id;
+
+        assert.strictEqual(targetFinding.status, 'OPEN');
+
+        // Transition to IN_REVIEW
+        comp.handleMarkInReview({ stopPropagation: () => {}, currentTarget: { dataset: { id: findingId } } });
+        let updated = comp.filteredFindings.find(f => f.id === findingId);
+        assert.strictEqual(updated.status, 'IN_REVIEW');
+
+        // Transition to RESOLVED
+        comp.handleResolveFinding({ stopPropagation: () => {}, currentTarget: { dataset: { id: findingId } } });
+        updated = comp.filteredFindings.find(f => f.id === findingId);
+        assert.strictEqual(updated.status, 'RESOLVED');
+
+        // Reopen to OPEN
+        comp.handleReopenFinding({ stopPropagation: () => {}, currentTarget: { dataset: { id: findingId } } });
+        updated = comp.filteredFindings.find(f => f.id === findingId);
+        assert.strictEqual(updated.status, 'OPEN');
+        console.log('  ✓ 14. Local review state workflow (OPEN -> IN_REVIEW -> RESOLVED -> OPEN)');
+        passCount++;
+    }
+
+    // 15. Expandable structured guidance sections
+    {
+        const comp = createFindingsInstance();
+        comp.graphPayload = testPayload;
+        const f0 = comp.filteredFindings[0];
+        assert.ok(f0.whyItMatters);
+        assert.ok(f0.whatToDoNext);
+        assert.strictEqual(f0.isExpanded, false);
+
+        comp.handleToggleDetails({ stopPropagation: () => {}, currentTarget: { dataset: { id: f0.id } } });
+        const updated = comp.filteredFindings.find(f => f.id === f0.id);
+        assert.strictEqual(updated.isExpanded, true);
+        console.log('  ✓ 15. Expandable structured guidance sections (WHAT, WHY IT MATTERS, WHERE, WHAT TO DO NEXT)');
+        passCount++;
+    }
+
+    // 16. Input payload immutability preserved
+    {
+        assert.deepStrictEqual(testPayload, baselineSnapshot, 'Payload mutated during operations');
+        console.log('  ✓ 16. Input payload immutability preserved');
         passCount++;
     }
 

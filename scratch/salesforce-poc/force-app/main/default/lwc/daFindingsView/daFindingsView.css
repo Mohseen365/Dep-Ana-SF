@@ -4,32 +4,155 @@
     border-radius: 0.25rem;
 }
 
+.toolbar-wrap {
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 0.5rem;
+}
+
+.filter-controls-bar {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+}
+
+.filter-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-group-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.status-filters button,
+.severity-filters button {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.2rem;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    margin-right: 0.25rem;
+    color: #475569;
+}
+
+.status-filters button.is-active,
+.severity-filters button.is-active {
+    background: #0176d3;
+    border-color: #0176d3;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.local-search-input {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.2rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    width: 180px;
+}
+
 .finding-card {
     border: 1px solid #e5e5e5;
     border-radius: 0.25rem;
-    transition: background-color 0.1s ease;
+    background-color: #ffffff;
+    transition: all 0.15s ease;
 }
 
 .finding-card:hover {
-    background-color: #fafaf9;
+    background-color: #fbfbfc;
+    border-color: #cbd5e1;
+}
+
+.finding-card.is-selected {
+    border-color: #0176d3;
+    background-color: #f0f7fd;
+    box-shadow: 0 0 0 1px #0176d3;
 }
 
 .finding-badge-critical {
     background-color: #ea001e;
     color: #ffffff;
+    font-weight: 700;
+    font-size: 0.65rem;
 }
 
 .finding-badge-high {
     background-color: #fe9339;
     color: #080707;
+    font-weight: 700;
+    font-size: 0.65rem;
 }
 
 .finding-badge-medium {
     background-color: #ffb75d;
     color: #080707;
+    font-weight: 600;
+    font-size: 0.65rem;
 }
 
 .finding-badge-low {
     background-color: #706e6b;
     color: #ffffff;
+    font-size: 0.65rem;
+}
+
+.status-badge-open {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    font-size: 0.65rem;
+}
+
+.status-badge-review {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    font-size: 0.65rem;
+}
+
+.status-badge-resolved {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    font-size: 0.65rem;
+}
+
+.finding-title {
+    color: #1e293b;
+}
+
+.structured-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #0176d3;
+    display: block;
+    margin-bottom: 0.1rem;
+    letter-spacing: 0.05em;
+}
+
+.structured-text {
+    font-size: 0.8rem;
+    color: #334155;
+    line-height: 1.35;
+    margin: 0;
+}
+
+.where-box {
+    background-color: #f1f5f9;
+    border-radius: 0.2rem;
+}
+
+.where-node-list {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #0f172a;
+    margin: 0;
+}
+
+.export-btn {
+    font-size: 0.75rem;
 }

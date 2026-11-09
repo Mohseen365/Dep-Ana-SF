@@ -1,25 +1,28 @@
 /**
  * run-lane-e-matrix-tests.cjs
- * Focused Unit Test Suite for Lane E: daMatrixView LWC
+ * Hardened Unit Test Suite for Lane E: daMatrixView LWC
  *
  * Verifies:
- * 1. Directed source-to-target aggregation logic.
- * 2. Correct type grouping.
- * 3. Actual payload-derived counts (distinguishing ApexClass -> CustomObject from CustomObject -> ApexClass).
- * 4. Unresolved edges with canonical.target.type handled correctly.
- * 5. Unresolved edges without target type falling back to 'Unresolved'.
- * 6. Missing target node handled without crashing.
- * 7. Missing source node handled safely.
- * 8. Duplicate edge protection.
- * 9. Combined canonical filter evaluation.
- * 10. Search and node-type filtering.
- * 11. Empty payload handling.
- * 12. Malformed payload string handling.
- * 13. Count consistency before and after filtering.
+ * 1. Directed source-to-target dependency counts aggregated accurately.
+ * 2. Directed dependency semantics preserved (Source != Target).
+ * 3. Unresolved edges with canonical target type mapped to expected target type.
+ * 4. Unresolved edges without target type safely fall back to "Unresolved".
+ * 5. Dangling target node edge handled gracefully.
+ * 6. Missing source node handled safely without error.
+ * 7. Duplicate edge references suppressed to prevent overcounting.
+ * 8. Canonical search and node-type filtering correctly restrict matrix.
+ * 9. Empty payload yields empty matrix without crashing.
+ * 10. Malformed payload string handled safely.
+ * 11. Sum of row totals exactly matches totalDependencies.
+ * 12. Interactive cell click sets selectedCell and exposes sample dependency edges.
+ * 13. Anchor node selection emits nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION.
+ * 14. Layer filtering correctly restricts matrix rows and counts.
+ * 15. Input payload immutability preserved.
  */
 
 const assert = require('assert');
 const path = require('path');
+const fs = require('fs');
 
 async function runLaneETests() {
     console.log('Running Lane E (daMatrixView LWC) Focused Unit Test Suite...');
@@ -27,110 +30,50 @@ async function runLaneETests() {
 
     const schemaModulePath = path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daFilterSchema.js');
     const daFilterSchema = await import(`file://${schemaModulePath}`);
+    const { matchesMatrixEdge, normalizeFilterCriteria } = daFilterSchema;
 
-    const {
-        matchesMatrixEdge,
-        normalizeFilterCriteria
-    } = daFilterSchema;
+    function createMatrixInstance() {
+        const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daMatrixView/daMatrixView.js');
+        let code = fs.readFileSync(filePath, 'utf8');
 
-    function computeMatrix(payload, filterCriteria = {}) {
-        if (!payload) return { matrixRows: [], targetTypes: [], totalDependencies: 0 };
-        let parsed = payload;
-        if (typeof payload === 'string') {
-            try {
-                parsed = JSON.parse(payload);
-            } catch (e) {
-                return { matrixRows: [], targetTypes: [], totalDependencies: 0, error: 'Malformed' };
+        code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+        code = code.replace(/@api\s+/g, '');
+        code = code.replace(/@track\s+/g, '');
+        code = code.replace('export default class DaMatrixView', 'class DaMatrixView');
+        code += '\nreturn DaMatrixView;';
+
+        const LwcMock = {
+            LightningElement: class {
+                constructor() {
+                    this._dispatchedEvents = [];
+                }
+                dispatchEvent(evt) {
+                    this._dispatchedEvents.push(evt);
+                }
             }
-        }
-        if (!parsed || typeof parsed !== 'object') {
-            return { matrixRows: [], targetTypes: [], totalDependencies: 0 };
-        }
+        };
 
-        const rawNodes = Array.isArray(parsed.nodes) ? parsed.nodes : [];
-        const rawEdges = Array.isArray(parsed.edges) ? parsed.edges : [];
-
-        const nodeMap = new Map();
-        rawNodes.forEach(n => {
-            if (n && n.id) nodeMap.set(n.id, n);
-        });
-
-        const aggregation = new Map();
-        const allTargetTypesSet = new Set();
-        const seenEdgeIds = new Set();
-        let total = 0;
-
-        const criteria = normalizeFilterCriteria(filterCriteria);
-
-        rawEdges.forEach((edge, idx) => {
-            if (!edge || !edge.source) return;
-
-            const edgeKey = edge.id || `${edge.source}->${edge.target || 'unresolved'}-${idx}`;
-            if (seenEdgeIds.has(edgeKey)) return;
-            seenEdgeIds.add(edgeKey);
-
-            const sourceNode = nodeMap.get(edge.source) || null;
-            const targetNode = edge.target ? nodeMap.get(edge.target) : null;
-
-            if (!matchesMatrixEdge(edge, sourceNode, targetNode, criteria)) {
-                return;
+        const CustomEvent = class {
+            constructor(type, options) {
+                this.type = type;
+                this.detail = options ? options.detail : null;
+                this.bubbles = options ? !!options.bubbles : false;
+                this.composed = options ? !!options.composed : false;
+                this.cancelable = options ? !!options.cancelable : false;
             }
+        };
 
-            let sourceType = 'Unknown';
-            if (edge.canonical?.source?.type) {
-                sourceType = edge.canonical.source.type;
-            } else if (sourceNode?.type) {
-                sourceType = sourceNode.type;
-            } else if (typeof edge.source === 'string' && edge.source.includes(':')) {
-                sourceType = edge.source.split(':')[0];
-            }
-
-            let targetType = 'Unresolved';
-            if (edge.canonical?.target?.type) {
-                targetType = edge.canonical.target.type;
-            } else if (targetNode?.type) {
-                targetType = targetNode.type;
-            } else if (typeof edge.target === 'string' && edge.target.includes(':')) {
-                targetType = edge.target.split(':')[0];
-            } else if (edge.unresolved) {
-                targetType = 'Unresolved';
-            }
-
-            if (!aggregation.has(sourceType)) {
-                aggregation.set(sourceType, new Map());
-            }
-
-            const targetMap = aggregation.get(sourceType);
-            const currentCount = targetMap.get(targetType) || 0;
-            targetMap.set(targetType, currentCount + 1);
-
-            allTargetTypesSet.add(targetType);
-            total++;
-        });
-
-        const sortedTargetTypes = Array.from(allTargetTypesSet).sort();
-        const sortedSourceTypes = Array.from(aggregation.keys()).sort();
-
-        const rows = sortedSourceTypes.map(sourceType => {
-            const targetMap = aggregation.get(sourceType);
-            let rowTotal = 0;
-            const cells = sortedTargetTypes.map(targetType => {
-                const count = targetMap.get(targetType) || 0;
-                rowTotal += count;
-                return { targetType, count };
-            });
-            return { sourceType, cells, total: rowTotal };
-        });
-
-        return { matrixRows: rows, targetTypes: sortedTargetTypes, totalDependencies: total };
+        const fn = new Function('LightningElement', 'matchesMatrixEdge', 'normalizeFilterCriteria', 'CustomEvent', code);
+        const Cls = fn(LwcMock.LightningElement, matchesMatrixEdge, normalizeFilterCriteria, CustomEvent);
+        return new Cls();
     }
 
     const testPayload = {
         nodes: [
-            { id: 'ApexClass:ServiceA', name: 'ServiceA', type: 'ApexClass', risk: 'HIGH' },
-            { id: 'ApexClass:ServiceB', name: 'ServiceB', type: 'ApexClass', risk: 'LOW' },
-            { id: 'CustomObject:Account', name: 'Account', type: 'CustomObject', risk: 'LOW' },
-            { id: 'LWC:orderView', name: 'orderView', type: 'LWC', risk: 'MEDIUM' }
+            { id: 'ApexClass:ServiceA', name: 'ServiceA', type: 'ApexClass', layer: 'Service', risk: 'HIGH' },
+            { id: 'ApexClass:ServiceB', name: 'ServiceB', type: 'ApexClass', layer: 'Service', risk: 'LOW' },
+            { id: 'CustomObject:Account', name: 'Account', type: 'CustomObject', layer: 'Domain', risk: 'LOW' },
+            { id: 'LWC:orderView', name: 'orderView', type: 'LWC', layer: 'UI', risk: 'MEDIUM' }
         ],
         edges: [
             // ApexClass -> ApexClass (2)
@@ -147,15 +90,17 @@ async function runLaneETests() {
         ]
     };
 
+    const baselineSnapshot = JSON.parse(JSON.stringify(testPayload));
     let passCount = 0;
 
     // 1. Directed source-to-target aggregation
     {
-        const res = computeMatrix(testPayload);
-        assert.strictEqual(res.totalDependencies, 6);
-        assert.deepStrictEqual(res.targetTypes, ['ApexClass', 'CustomObject', 'Unresolved']);
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        assert.strictEqual(comp.totalDependencies, 6);
+        assert.deepStrictEqual(comp.targetTypes, ['ApexClass', 'CustomObject', 'Unresolved']);
 
-        const apexRow = res.matrixRows.find(r => r.sourceType === 'ApexClass');
+        const apexRow = comp.matrixRows.find(r => r.sourceType === 'ApexClass');
         assert.ok(apexRow);
         const apexToApex = apexRow.cells.find(c => c.targetType === 'ApexClass');
         assert.strictEqual(apexToApex.count, 3);
@@ -169,13 +114,14 @@ async function runLaneETests() {
 
     // 2. Distinction between Source -> Target vs Target -> Source
     {
-        const res = computeMatrix(testPayload);
-        const lwcRow = res.matrixRows.find(r => r.sourceType === 'LWC');
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        const lwcRow = comp.matrixRows.find(r => r.sourceType === 'LWC');
         assert.ok(lwcRow);
         const lwcToApex = lwcRow.cells.find(c => c.targetType === 'ApexClass');
         assert.strictEqual(lwcToApex.count, 1);
 
-        const apexRow = res.matrixRows.find(r => r.sourceType === 'ApexClass');
+        const apexRow = comp.matrixRows.find(r => r.sourceType === 'ApexClass');
         const apexToLwc = apexRow.cells.find(c => c.targetType === 'LWC');
         assert.strictEqual(apexToLwc, undefined);
         console.log('  ✓ 2. Directed dependency semantics preserved (Source != Target)');
@@ -184,8 +130,9 @@ async function runLaneETests() {
 
     // 3. Unresolved edge handling with canonical target type
     {
-        const res = computeMatrix(testPayload);
-        const apexRow = res.matrixRows.find(r => r.sourceType === 'ApexClass');
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        const apexRow = comp.matrixRows.find(r => r.sourceType === 'ApexClass');
         const apexToApex = apexRow.cells.find(c => c.targetType === 'ApexClass');
         assert.strictEqual(apexToApex.count, 3);
         console.log('  ✓ 3. Unresolved edges with canonical target type mapped to expected target type');
@@ -194,8 +141,9 @@ async function runLaneETests() {
 
     // 4. Unresolved edge without target type fallback
     {
-        const res = computeMatrix(testPayload);
-        const apexRow = res.matrixRows.find(r => r.sourceType === 'ApexClass');
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        const apexRow = comp.matrixRows.find(r => r.sourceType === 'ApexClass');
         const apexToUnres = apexRow.cells.find(c => c.targetType === 'Unresolved');
         assert.strictEqual(apexToUnres.count, 1);
         console.log('  ✓ 4. Unresolved edges without target type safely fall back to "Unresolved"');
@@ -204,82 +152,150 @@ async function runLaneETests() {
 
     // 5. Missing target node handled without crash
     {
-        const singleEdgePayload = {
+        const comp = createMatrixInstance();
+        comp.graphPayload = {
             nodes: [{ id: 'ApexClass:ServiceA', type: 'ApexClass' }],
             edges: [{ id: 'e_dangling', source: 'ApexClass:ServiceA', target: 'ApexClass:NonExistent' }]
         };
-        const res = computeMatrix(singleEdgePayload);
-        assert.strictEqual(res.totalDependencies, 1);
-        assert.strictEqual(res.targetTypes[0], 'ApexClass');
+        assert.strictEqual(comp.totalDependencies, 1);
+        assert.strictEqual(comp.targetTypes[0], 'ApexClass');
         console.log('  ✓ 5. Dangling target node edge handled gracefully');
         passCount++;
     }
 
     // 6. Missing source node handled safely
     {
-        const payloadMissingSource = {
+        const comp = createMatrixInstance();
+        comp.graphPayload = {
             nodes: [{ id: 'ApexClass:Target', type: 'ApexClass' }],
             edges: [{ id: 'e_nosrc', source: 'ApexClass:GhostSource', target: 'ApexClass:Target' }]
         };
-        const res = computeMatrix(payloadMissingSource);
-        assert.strictEqual(res.totalDependencies, 1);
-        assert.strictEqual(res.matrixRows[0].sourceType, 'ApexClass');
+        assert.strictEqual(comp.totalDependencies, 1);
+        assert.strictEqual(comp.matrixRows[0].sourceType, 'ApexClass');
         console.log('  ✓ 6. Missing source node handled safely without error');
         passCount++;
     }
 
     // 7. Duplicate edge protection
     {
-        const duplicatePayload = {
+        const comp = createMatrixInstance();
+        comp.graphPayload = {
             nodes: [{ id: 'ApexClass:A', type: 'ApexClass' }, { id: 'ApexClass:B', type: 'ApexClass' }],
             edges: [
                 { id: 'dup-1', source: 'ApexClass:A', target: 'ApexClass:B' },
                 { id: 'dup-1', source: 'ApexClass:A', target: 'ApexClass:B' }
             ]
         };
-        const res = computeMatrix(duplicatePayload);
-        assert.strictEqual(res.totalDependencies, 1);
+        assert.strictEqual(comp.totalDependencies, 1);
         console.log('  ✓ 7. Duplicate edge references suppressed to prevent overcounting');
         passCount++;
     }
 
     // 8. Canonical filter evaluation (Search & Type)
     {
-        const res = computeMatrix(testPayload, { search: 'ServiceA' });
-        assert.ok(res.totalDependencies > 0);
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        comp.filterCriteria = { search: 'ServiceA' };
+        assert.ok(comp.totalDependencies > 0);
 
-        const resApex = computeMatrix(testPayload, { nodeTypes: ['ApexClass'] });
-        assert.strictEqual(resApex.matrixRows.length, 1);
-        assert.strictEqual(resApex.matrixRows[0].sourceType, 'ApexClass');
-        assert.strictEqual(resApex.totalDependencies, 4);
+        comp.filterCriteria = { nodeTypes: ['ApexClass'] };
+        assert.strictEqual(comp.matrixRows.length, 1);
+        assert.strictEqual(comp.matrixRows[0].sourceType, 'ApexClass');
+        assert.strictEqual(comp.totalDependencies, 4);
         console.log('  ✓ 8. Canonical search and node-type filtering correctly restrict matrix');
         passCount++;
     }
 
     // 9. Empty payload
     {
-        const resEmpty = computeMatrix({ nodes: [], edges: [] });
-        assert.strictEqual(resEmpty.totalDependencies, 0);
-        assert.strictEqual(resEmpty.matrixRows.length, 0);
+        const comp = createMatrixInstance();
+        comp.graphPayload = { nodes: [], edges: [] };
+        assert.strictEqual(comp.totalDependencies, 0);
+        assert.strictEqual(comp.matrixRows.length, 0);
         console.log('  ✓ 9. Empty payload yields empty matrix without crashing');
         passCount++;
     }
 
     // 10. Malformed payload
     {
-        const resMalformed = computeMatrix('INVALID_JSON');
-        assert.strictEqual(resMalformed.totalDependencies, 0);
-        assert.strictEqual(resMalformed.matrixRows.length, 0);
+        const comp = createMatrixInstance();
+        comp.graphPayload = 'INVALID_JSON';
+        assert.strictEqual(comp.totalDependencies, 0);
+        assert.strictEqual(comp.matrixRows.length, 0);
         console.log('  ✓ 10. Malformed payload string handled safely');
         passCount++;
     }
 
     // 11. Count consistency
     {
-        const res = computeMatrix(testPayload);
-        const sumOfRowTotals = res.matrixRows.reduce((acc, r) => acc + r.total, 0);
-        assert.strictEqual(sumOfRowTotals, res.totalDependencies);
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        const sumOfRowTotals = comp.matrixRows.reduce((acc, r) => acc + r.total, 0);
+        assert.strictEqual(sumOfRowTotals, comp.totalDependencies);
         console.log('  ✓ 11. Sum of row totals exactly matches totalDependencies');
+        passCount++;
+    }
+
+    // 12. Interactive cell click & sample edge exposure
+    {
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        assert.strictEqual(comp.hasSelectedCell, false);
+
+        comp.handleCellClick({
+            currentTarget: {
+                dataset: { source: 'ApexClass', target: 'ApexClass', count: '3' }
+            }
+        });
+        assert.strictEqual(comp.hasSelectedCell, true);
+        assert.strictEqual(comp.selectedCell.sourceType, 'ApexClass');
+        assert.strictEqual(comp.selectedCell.targetType, 'ApexClass');
+        assert.strictEqual(comp.selectedCell.count, 3);
+        assert.ok(comp.selectedCell.sampleEdges.length > 0);
+        console.log('  ✓ 12. Interactive cell click sets selectedCell and exposes sample dependency edges');
+        passCount++;
+    }
+
+    // 13. Anchor node selection CustomEvent
+    {
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        comp.handleSelectAnchor({
+            stopPropagation: () => {},
+            currentTarget: { dataset: { nodeId: 'ApexClass:ServiceA' } }
+        });
+
+        assert.strictEqual(comp._dispatchedEvents.length, 1);
+        const evt = comp._dispatchedEvents[0];
+        assert.strictEqual(evt.type, 'nodeselect');
+        assert.strictEqual(evt.detail.nodeId, 'ApexClass:ServiceA');
+        assert.strictEqual(evt.detail.sourceView, 'matrix');
+        assert.strictEqual(evt.bubbles, true);
+        assert.strictEqual(evt.composed, true);
+        assert.strictEqual(evt.cancelable, false, 'CustomEvent must have cancelable: false per CONTRACT-06');
+        console.log('  ✓ 13. Anchor node selection emits nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION');
+        passCount++;
+    }
+
+    // 14. Layer filtering
+    {
+        const comp = createMatrixInstance();
+        comp.graphPayload = testPayload;
+        assert.ok(comp.availableLayers.includes('Service'));
+
+        comp.handleLayerChange({ target: { value: 'UI' } });
+        // Only LWC -> ApexClass edge involves UI layer
+        assert.strictEqual(comp.totalDependencies, 1);
+        assert.strictEqual(comp.matrixRows.length, 1);
+        assert.strictEqual(comp.matrixRows[0].sourceType, 'LWC');
+        console.log('  ✓ 14. Layer filtering correctly restricts matrix rows and counts');
+        passCount++;
+    }
+
+    // 15. Input payload immutability preserved
+    {
+        assert.deepStrictEqual(testPayload, baselineSnapshot, 'Payload was mutated during test execution');
+        console.log('  ✓ 15. Input payload immutability preserved');
         passCount++;
     }
 

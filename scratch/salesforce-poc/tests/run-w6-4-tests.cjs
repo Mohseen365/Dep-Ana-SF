@@ -3,15 +3,14 @@
  * Hardened Unit Test Suite for Task W6-4: daHotspotsView LWC
  *
  * Verifies:
- * 1. Component initialization and defaults.
- * 2. Hotspot identification via coupling > 15.
- * 3. Hotspot identification via fanIn > 10.
- * 4. Hotspot identification via cycles and HIGH risk.
- * 5. Deterministic severity ranking.
- * 6. Category, risk, and search filtering.
- * 7. Selection event emission (nodeselect, bubbles, composed, SELECTION != NAVIGATION).
- * 8. Empty and malformed payload resilience.
- * 9. Input graph payload immutability.
+ * 1. Component initialization and default state.
+ * 2. Hotspot threshold detection and deterministic ranking (Severity Score DESC, ID ASC).
+ * 3. Category filtering (all, coupling, fanIn, cycles).
+ * 4. Risk and search query filtering.
+ * 5. Row click selection event emission adhering to CONTRACT-06 & SELECTION != NAVIGATION.
+ * 6. Empty and malformed payload resilience.
+ * 7. Real payload immutability preserved.
+ * 8. @api graphPayload and @api payload property aliases.
  */
 
 const assert = require('assert');
@@ -39,7 +38,17 @@ function createHotspotsInstance() {
         }
     };
 
-    const ctor = new Function('LightningElement', code)(LwcMock.LightningElement);
+    const CustomEvent = class {
+        constructor(type, options) {
+            this.type = type;
+            this.detail = options ? options.detail : null;
+            this.bubbles = options ? !!options.bubbles : false;
+            this.composed = options ? !!options.composed : false;
+            this.cancelable = options ? !!options.cancelable : false;
+        }
+    };
+
+    const ctor = new Function('LightningElement', 'CustomEvent', code)(LwcMock.LightningElement, CustomEvent);
     return new ctor();
 }
 
@@ -48,20 +57,16 @@ async function runW64Tests() {
     console.log('==================================================');
 
     const comp = createHotspotsInstance();
-    assert.strictEqual(comp.isEmpty, true, 'Initially empty');
+    assert.strictEqual(comp.isEmpty, true, 'Initially empty without payload');
     assert.strictEqual(comp.selectedCategory, 'all');
     console.log('  ✓ 1. Initial default state verified');
 
     const samplePayload = {
         nodes: [
-            // Hotspot 1: High Coupling (22)
-            { id: 'ApexClass.GodClass', label: 'GodClass', layer: 'Domain', risk: 'HIGH', coupling: 22, fanIn: 12, fanOut: 10, loc: 1200 },
-            // Hotspot 2: High Fan-In (14)
-            { id: 'ApexClass.SharedUtil', label: 'SharedUtil', layer: 'Utility', risk: 'LOW', coupling: 15, fanIn: 14, fanOut: 1, loc: 250 },
-            // Hotspot 3: Cyclic participant
-            { id: 'ApexClass.CycleA', label: 'CycleA', layer: 'Service', risk: 'MEDIUM', coupling: 4, fanIn: 2, fanOut: 2, hasCycle: true },
-            // Non-hotspot: Normal node
-            { id: 'ApexClass.NormalService', label: 'NormalService', layer: 'Service', risk: 'LOW', coupling: 3, fanIn: 1, fanOut: 2, hasCycle: false }
+            { id: 'ApexClass.GodClass', label: 'GodClass', layer: 'Domain', risk: 'HIGH', coupling: 20, fanIn: 15, fanOut: 5, cyclomaticComplexity: 45, loc: 1200 },
+            { id: 'ApexClass.SharedUtil', label: 'SharedUtil', layer: 'Core', risk: 'MEDIUM', coupling: 12, fanIn: 18, fanOut: 2, cyclomaticComplexity: 10, loc: 300 },
+            { id: 'ApexClass.CycleA', label: 'CycleA', layer: 'Service', risk: 'LOW', coupling: 4, fanIn: 2, fanOut: 2, cyclomaticComplexity: 5, loc: 150, hasCycle: true },
+            { id: 'ApexClass.CleanService', label: 'CleanService', layer: 'Service', risk: 'LOW', coupling: 2, fanIn: 1, fanOut: 1, cyclomaticComplexity: 3, loc: 80 }
         ],
         cycles: [
             { id: 'c1', nodeIds: ['ApexClass.CycleA'] }
@@ -74,41 +79,43 @@ async function runW64Tests() {
     // Assign actual unfrozen payload under test directly to component
     comp.payload = samplePayload;
     assert.strictEqual(comp.isEmpty, false);
-    // GodClass, SharedUtil, CycleA should be hotspots; NormalService should NOT
-    assert.strictEqual(comp.hotspots.length, 3, 'Exactly 3 hotspots qualified');
-    assert.strictEqual(comp.hotspots[0].id, 'ApexClass.GodClass', 'Highest severity ranked first');
+    assert.strictEqual(comp.hotspots.length, 3, 'CleanService excluded, 3 hotspots identified');
+
+    // 2. Ranking verification (GodClass score: 40(risk) + 20(coupling) + 15(fanIn) = 75)
+    const top = comp.filteredHotspots[0];
+    assert.strictEqual(top.id, 'ApexClass.GodClass');
+    assert.strictEqual(top.rank, 1);
+    assert.strictEqual(top.score, 75);
     console.log('  ✓ 2. Hotspot threshold detection and deterministic ranking verified');
 
-    // 3. Category filtering (Coupling > 15)
+    // 3. Category filtering
     comp.selectedCategory = 'coupling';
     assert.strictEqual(comp.filteredHotspots.length, 1);
     assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.GodClass');
 
-    // 4. Category filtering (Fan-In > 10)
     comp.selectedCategory = 'fanIn';
-    assert.strictEqual(comp.filteredHotspots.length, 2, 'GodClass (12) and SharedUtil (14)');
+    assert.strictEqual(comp.filteredHotspots.length, 2);
 
-    // 5. Category filtering (Cycles)
     comp.selectedCategory = 'cycles';
     assert.strictEqual(comp.filteredHotspots.length, 1);
     assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.CycleA');
     comp.selectedCategory = 'all'; // Reset
     console.log('  ✓ 3. Category filtering verified');
 
-    // 6. Risk filtering
+    // 4. Risk filtering
     comp.selectedRisk = 'HIGH';
     assert.strictEqual(comp.filteredHotspots.length, 1);
     assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.GodClass');
     comp.selectedRisk = ''; // Reset
 
-    // 7. Search filtering
+    // 5. Search filtering
     comp.searchQuery = 'Shared';
     assert.strictEqual(comp.filteredHotspots.length, 1);
     assert.strictEqual(comp.filteredHotspots[0].id, 'ApexClass.SharedUtil');
     comp.searchQuery = ''; // Reset
     console.log('  ✓ 4. Risk and search filtering verified');
 
-    // 8. Selection CustomEvent emission adhering to CONTRACT-06 & SELECTION != NAVIGATION
+    // 6. Selection CustomEvent emission adhering to CONTRACT-06 & SELECTION != NAVIGATION
     comp.handleRowClick({ currentTarget: { dataset: { nodeId: 'ApexClass.GodClass' } } });
     assert.strictEqual(comp._dispatchedEvents.length, 1);
     const evt = comp._dispatchedEvents[0];
@@ -120,7 +127,7 @@ async function runW64Tests() {
     assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');
     console.log('  ✓ 5. Row click nodeselect event verified (SELECTION != NAVIGATION)');
 
-    // 9. Empty and malformed handling
+    // 7. Empty and malformed handling
     comp.payload = { nodes: [] };
     assert.strictEqual(comp.isEmpty, true);
     assert.strictEqual(comp.filteredHotspots.length, 0);
@@ -130,7 +137,14 @@ async function runW64Tests() {
     assert.strictEqual(comp.filteredHotspots.length, 0);
     console.log('  ✓ 6. Empty and malformed payload resilience verified');
 
-    // 10. Real Payload Immutability Verification (Full object integrity)
+    // 8. Property alias verification (@api graphPayload)
+    const compAlias = createHotspotsInstance();
+    compAlias.graphPayload = samplePayload;
+    assert.strictEqual(compAlias.isEmpty, false);
+    assert.strictEqual(compAlias.hotspots.length, 3);
+    console.log('  ✓ 7. Property alias graphPayload and payload verified');
+
+    // 9. Real Payload Immutability Verification (Full object integrity)
     assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');
 
     // Negative controls in isolated harness: verify comparison detects mutations
@@ -152,10 +166,10 @@ async function runW64Tests() {
         assert.deepStrictEqual(negNestedTest, baselineSnapshot);
     }, /AssertionError/, 'Integrity assertion must detect nested property mutation');
 
-    console.log('  ✓ 7. Payload immutability preserved');
+    console.log('  ✓ 8. Payload immutability preserved');
 
     console.log('==================================================');
-    console.log('Task W6-4 Test Results: ALL 7 TESTS PASSED');
+    console.log('Task W6-4 Test Results: ALL 8 TESTS PASSED');
 }
 
 runW64Tests().catch(err => {

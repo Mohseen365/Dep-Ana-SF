@@ -1,19 +1,42 @@
 <template>
     <div class="matrix-view-container slds-p-around_medium">
-        <!-- Header & Summary -->
-        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+        <!-- Header & Summary Toolbar -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small toolbar-wrap">
             <div>
                 <h3 class="slds-text-heading_small">Dependency Matrix</h3>
                 <p class="slds-text-body_small slds-text-color_weak">
                     Directed dependency counts by Source Type (rows) → Target Type (columns)
                 </p>
             </div>
-            <template if:true={hasData}>
-                <div class="slds-badge slds-theme_default">
-                    {totalDependencies} Total Dependencies
-                </div>
-            </template>
+            <div class="slds-grid slds-grid_vertical-align-center header-actions">
+                <template if:true={hasData}>
+                    <span class="slds-badge slds-theme_default slds-m-right_small total-badge">
+                        {totalDependencies} Total Dependencies
+                    </span>
+                    <button class="slds-button slds-button_neutral slds-m-right_xx-small export-btn" onclick={handleExportCSV} title="Export Matrix as CSV">
+                        Export CSV
+                    </button>
+                    <button class="slds-button slds-button_neutral export-btn" onclick={handleExportJSON} title="Export Matrix as JSON">
+                        Export JSON
+                    </button>
+                </template>
+            </div>
         </div>
+
+        <!-- Layer Filter Toolbar -->
+        <template if:true={hasData}>
+            <div class="slds-m-bottom_small slds-grid slds-grid_vertical-align-center filter-toolbar">
+                <label class="slds-text-body_small slds-text-color_weak slds-m-right_x-small" for="layerSelect">Filter by Layer:</label>
+                <select id="layerSelect" class="slds-select layer-select" onchange={handleLayerChange}>
+                    <template for:each={availableLayers} for:item="layer">
+                        <option key={layer} value={layer}>{layer}</option>
+                    </template>
+                </select>
+                <span class="slds-text-body_small slds-text-color_weak slds-m-left_small">
+                    Click any highlighted cell to inspect directional dependency details.
+                </span>
+            </div>
+        </template>
 
         <!-- Error State -->
         <template if:true={error}>
@@ -42,33 +65,97 @@
                 </div>
             </template>
 
-            <!-- Matrix Grid -->
+            <!-- Matrix Grid & Side Inspector Layout -->
             <template if:true={hasData}>
-                <div class="slds-scrollable_x">
-                    <table class="slds-table slds-table_cell-buffer slds-table_bordered matrix-table">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="source-type-col">Source \ Target</th>
-                                <template for:each={targetTypes} for:item="targetType">
-                                    <th key={targetType} scope="col">{targetType}</th>
-                                </template>
-                                <th scope="col">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template for:each={matrixRows} for:item="row">
-                                <tr key={row.sourceType}>
-                                    <th scope="row" class="source-type-col">{row.sourceType}</th>
-                                    <template for:each={row.cells} for:item="cell">
-                                        <td key={cell.targetType} class={cell.cellClass}>
-                                            {cell.count}
-                                        </td>
+                <div class="matrix-content-wrap slds-grid">
+                    <!-- Matrix Table -->
+                    <div class="matrix-grid-pane slds-scrollable_x slds-size_1-of-1 slds-medium-size_8-of-12">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered matrix-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="source-type-col">Source \ Target</th>
+                                    <template for:each={targetTypes} for:item="targetType">
+                                        <th key={targetType} scope="col">{targetType}</th>
                                     </template>
-                                    <td class="cell-highlight">{row.total}</td>
+                                    <th scope="col">Total</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={matrixRows} for:item="row">
+                                    <tr key={row.sourceType}>
+                                        <th scope="row" class="source-type-col">{row.sourceType}</th>
+                                        <template for:each={row.cells} for:item="cell">
+                                            <td
+                                                key={cell.targetType}
+                                                class={cell.cellClass}
+                                                data-source={cell.sourceType}
+                                                data-target={cell.targetType}
+                                                data-count={cell.count}
+                                                onclick={handleCellClick}
+                                                title={cell.count}
+                                            >
+                                                {cell.count}
+                                            </td>
+                                        </template>
+                                        <td class="cell-total">{row.total}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Side Inspector Pane -->
+                    <div class="matrix-inspector-pane slds-p-left_medium slds-size_1-of-1 slds-medium-size_4-of-12">
+                        <div class="inspector-card slds-p-around_small">
+                            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                <h4 class="slds-text-title_bold">Cell Inspector</h4>
+                                <template if:true={hasSelectedCell}>
+                                    <button class="slds-button slds-button_x-small slds-button_neutral" onclick={handleCloseInspector}>Clear</button>
+                                </template>
+                            </div>
+
+                            <template if:true={hasSelectedCell}>
+                                <div class="inspector-details">
+                                    <p class="slds-text-body_small">
+                                        Source: <strong class="source-color">{selectedCell.sourceType}</strong>
+                                    </p>
+                                    <p class="slds-text-body_small">
+                                        Target: <strong class="target-color">{selectedCell.targetType}</strong>
+                                    </p>
+                                    <p class="slds-text-body_small slds-m-top_xx-small">
+                                        Coupling Count: <span class="slds-badge slds-badge_lightest">{selectedCell.count}</span>
+                                    </p>
+
+                                    <template if:true={selectedCell.sampleEdges}>
+                                        <div class="slds-m-top_small sample-edges-box">
+                                            <span class="slds-text-title_caps section-sub-label">Sample Dependency Edges:</span>
+                                            <ul class="slds-list_dotted slds-m-top_xx-small edge-list">
+                                                <template for:each={selectedCell.sampleEdges} for:item="edge">
+                                                    <li key={edge.source} class="edge-item slds-m-bottom_xx-small">
+                                                        <span class="edge-label">{edge.source} → {edge.target}</span>
+                                                        <button
+                                                            class="slds-button slds-button_neutral slds-button_x-small slds-m-left_xx-small select-anchor-btn"
+                                                            data-node-id={edge.source}
+                                                            onclick={handleSelectAnchor}
+                                                            title="Select node to highlight in graph without navigating away"
+                                                        >
+                                                            Select
+                                                        </button>
+                                                    </li>
+                                                </template>
+                                            </ul>
+                                        </div>
+                                    </template>
+                                </div>
                             </template>
-                        </tbody>
-                    </table>
+
+                            <template if:false={hasSelectedCell}>
+                                <p class="slds-text-body_small slds-text-color_weak italic-note">
+                                    Click any active matrix cell with >0 dependencies to view directional flow breakdown and select constituent components.
+                                </p>
+                            </template>
+                        </div>
+                    </div>
                 </div>
             </template>
         </template>
