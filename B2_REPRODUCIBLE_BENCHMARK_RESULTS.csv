@@ -1,0 +1,33 @@
+Dataset,Nodes,Edges,UTF-16 Chars,Chunks,Benchmark Category,Label,Execution Environment,Iterations,Min (ms),Median (ms),Max (ms)
+PBIM,528,2063,4253569,33,Chunk Split & Reassembly,MEASURED,Node.js v22.22.1 (Linux x64),7,0.008,0.013,0.200
+PBIM,528,2063,4253569,33,Architecture Layout Execution,MEASURED,Node.js v22.22.1 (Linux x64),7,0.764,0.973,1.958
+PBIM,528,2063,4253569,33,Layout Cancellation Token,MEASURED,Node.js v22.22.1 (Linux x64),7,0.000,0.001,0.065
+PBIM,528,2063,4253569,33,Dependency Matrix Model Build,MEASURED,Node.js v22.22.1 (Linux x64),7,0.680,1.283,14.946
+PBIM,528,2063,4253569,33,Squarified Treemap Layout,MEASURED,Node.js v22.22.1 (Linux x64),7,0.321,0.412,0.653
+PBIM,528,2063,4253569,33,Sankey Layout Math,MEASURED,Node.js v22.22.1 (Linux x64),7,0.355,0.433,1.190
+PBIM,528,2063,4253569,33,Snapshot Comparison / Diff,MEASURED,Node.js v22.22.1 (Linux x64),7,5.180,6.262,8.013
+PBIM,528,2063,4253569,33,Cytoscape Element Lifecycle,MOCKED (Headless Node.js),Node.js v22.22.1 (Linux x64),7,0.451,0.550,1.319
+CST,240,1024,1860770,15,Chunk Split & Reassembly,MEASURED,Node.js v22.22.1 (Linux x64),7,0.003,0.004,0.017
+CST,240,1024,1860770,15,Architecture Layout Execution,MEASURED,Node.js v22.22.1 (Linux x64),7,0.137,0.164,0.322
+CST,240,1024,1860770,15,Layout Cancellation Token,MEASURED,Node.js v22.22.1 (Linux x64),7,0.000,0.001,0.003
+CST,240,1024,1860770,15,Dependency Matrix Model Build,MEASURED,Node.js v22.22.1 (Linux x64),7,0.240,0.299,0.501
+CST,240,1024,1860770,15,Squarified Treemap Layout,MEASURED,Node.js v22.22.1 (Linux x64),7,0.024,0.029,0.108
+CST,240,1024,1860770,15,Sankey Layout Math,MEASURED,Node.js v22.22.1 (Linux x64),7,0.134,0.177,1.488
+CST,240,1024,1860770,15,Snapshot Comparison / Diff,MEASURED,Node.js v22.22.1 (Linux x64),7,1.383,1.538,3.529
+CST,240,1024,1860770,15,Cytoscape Element Lifecycle,MOCKED (Headless Node.js),Node.js v22.22.1 (Linux x64),7,0.192,0.236,0.342
+BQC,274,603,1332083,11,Chunk Split & Reassembly,MEASURED,Node.js v22.22.1 (Linux x64),7,0.002,0.003,0.012
+BQC,274,603,1332083,11,Architecture Layout Execution,MEASURED,Node.js v22.22.1 (Linux x64),7,0.165,0.177,0.347
+BQC,274,603,1332083,11,Layout Cancellation Token,MEASURED,Node.js v22.22.1 (Linux x64),7,0.000,0.000,0.001
+BQC,274,603,1332083,11,Dependency Matrix Model Build,MEASURED,Node.js v22.22.1 (Linux x64),7,0.244,0.267,0.407
+BQC,274,603,1332083,11,Squarified Treemap Layout,MEASURED,Node.js v22.22.1 (Linux x64),7,0.029,0.031,0.046
+BQC,274,603,1332083,11,Sankey Layout Math,MEASURED,Node.js v22.22.1 (Linux x64),7,0.083,0.088,0.145
+BQC,274,603,1332083,11,Snapshot Comparison / Diff,MEASURED,Node.js v22.22.1 (Linux x64),7,1.466,1.553,3.073
+BQC,274,603,1332083,11,Cytoscape Element Lifecycle,MOCKED (Headless Node.js),Node.js v22.22.1 (Linux x64),7,0.133,0.148,3.180
+Synthetic 10 MB,0,0,10485760,80,Chunk Split & Reassembly (10MB Cap),MEASURED,Node.js v22.22.1 (Linux x64),7,0.016,0.017,12.069
+Synthetic 10 MB,0,0,10485760,80,Architecture Layout Execution,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
+Synthetic 10 MB,0,0,10485760,80,Layout Cancellation Token,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
+Synthetic 10 MB,0,0,10485760,80,Dependency Matrix Model Build,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
+Synthetic 10 MB,0,0,10485760,80,Squarified Treemap Layout,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
+Synthetic 10 MB,0,0,10485760,80,Sankey Layout Math,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
+Synthetic 10 MB,0,0,10485760,80,Snapshot Comparison / Diff,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
+Synthetic 10 MB,0,0,10485760,80,Cytoscape Element Lifecycle,NOT APPLICABLE,Node.js v22.22.1 (Linux x64),7,N/A,N/A,N/A
