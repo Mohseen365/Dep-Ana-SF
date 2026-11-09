@@ -112,3 +112,77 @@ Per dispatch instructions:
 - Final status is `HARDENING_IMPLEMENTATION_COMPLETE_PENDING_INDEPENDENT_REVIEW`.
 - No sign-off or acceptance is claimed on behalf of Workstream Leads or Integration Coordinator.
 - Changes are preserved and verified in Git.
+
+---
+
+## 7. Line-by-Line Record of Additions and Removals Across Modified Files
+
+### 7.1 `scratch/salesforce-poc/tests/run-w6-2-tests.cjs`
+- **Removed**:
+  - Assignment of defensive cloned and frozen payload: `comp.payload = frozenPayload` (and associated `Object.freeze` calls).
+  - Shallow property check: `assert.strictEqual(samplePayload.nodes[0].selected, undefined, ...)`
+  - Outdated comment: `// Negative controls in isolated harness: verify comparison detects mutations`
+- **Added**:
+  - Pre-execution deep snapshot capture: `const baselineSnapshot = JSON.parse(JSON.stringify(samplePayload));`
+  - Direct assignment of original unfrozen payload under test: `comp.payload = samplePayload;`
+  - Full object deep equality check after execution: `assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');`
+  - CONTRACT-06 event assertion: `assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');`
+  - Isolated negative controls testing detection of node property mutation (`negNodeTest.nodes[0].loc = 9999`), edge property mutation (`negEdgeTest.edges[0].target = 'ApexClass.Mutated'`), and nested-object mutation (`negNestedTest.nodes[0].nested = { test: true }`) asserting `AssertionError`.
+  - Explanatory comment: `// Negative controls in isolated harness: verify comparison detects node, edge, and nested mutations`
+
+### 7.2 `scratch/salesforce-poc/tests/run-w6-3-tests.cjs`
+- **Removed**:
+  - Assignment of defensive cloned and frozen payload: `comp.payload = frozenPayload` (and associated `Object.freeze` calls).
+  - Shallow property check: `assert.strictEqual(samplePayload.nodes[0].selected, undefined);`
+  - Outdated comment: `// Negative controls in isolated harness: verify comparison detects mutations`
+- **Added**:
+  - Pre-execution deep snapshot capture: `const baselineSnapshot = JSON.parse(JSON.stringify(samplePayload));`
+  - Direct assignment of original unfrozen payload under test: `comp.payload = samplePayload;`
+  - Full object deep equality check after execution: `assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');`
+  - CONTRACT-06 event assertion: `assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');`
+  - Isolated negative controls testing detection of node property mutation (`negNodeTest.nodes[0].fanIn = 999`), edge property mutation (`negEdgeTest.edges[0].target = 'ApexClass.Mutated'`), and nested-object mutation (`negNestedTest.nodes[0].nested = { test: true }`) asserting `AssertionError`.
+  - Explanatory comment: `// Negative controls in isolated harness: verify comparison detects node, edge, and nested mutations`
+
+### 7.3 `scratch/salesforce-poc/tests/run-w6-4-tests.cjs`
+- **Removed**:
+  - Assignment of defensive cloned and frozen payload: `comp.payload = frozenPayload` (and associated `Object.freeze` calls).
+  - Shallow property check: `assert.strictEqual(samplePayload.nodes[0].selected, undefined);`
+  - Outdated comment: `// Negative controls in isolated harness: verify comparison detects mutations`
+- **Added**:
+  - Pre-execution deep snapshot capture: `const baselineSnapshot = JSON.parse(JSON.stringify(samplePayload));`
+  - Direct assignment of original unfrozen payload under test: `comp.payload = samplePayload;`
+  - Full object deep equality check after execution: `assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');`
+  - CONTRACT-06 event assertion: `assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');`
+  - Isolated negative controls testing detection of node property mutation (`negNodeTest.nodes[0].coupling = 999`), cycles/edge property mutation (`negEdgeTest.cycles[0].nodeIds = ['ApexClass.Mutated']`), and nested-object mutation (`negNestedTest.nodes[0].nested = { test: true }`) asserting `AssertionError`.
+  - Explanatory comment: `// Negative controls in isolated harness: verify comparison detects node, edge, and nested mutations`
+
+### 7.4 `scratch/salesforce-poc/tests/run-w7-1-tests.cjs`
+- **Removed**:
+  - Assignment of defensive cloned and frozen payload: `comp.payload = frozenPayload` (and associated `Object.freeze` calls).
+  - Shallow property check: `assert.strictEqual(samplePayload.nodes[0].selected, undefined);`
+  - Outdated comment: `// Negative controls in isolated harness: verify comparison detects mutations`
+- **Added**:
+  - Pre-execution deep snapshot capture: `const baselineSnapshot = JSON.parse(JSON.stringify(samplePayload));`
+  - Direct assignment of original unfrozen payload under test: `comp.payload = samplePayload;`
+  - Read-only scorecard event assertion: `assert.strictEqual(comp._dispatchedEvents.length, 0, 'Diagnostics view is read-only and must emit zero events');`
+  - Full object deep equality check after execution: `assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');`
+  - Isolated negative controls testing detection of node property mutation (`negNodeTest.nodes[0].coverageDensity = 10`), edge property mutation (`negEdgeTest.edges[0].target = 'ApexClass.Mutated'`), and nested-object mutation (`negNestedTest.nodes[0].nested = { test: true }`) asserting `AssertionError`.
+  - Explanatory comment: `// Negative controls in isolated harness: verify comparison detects node, edge, and nested mutations`
+
+### 7.5 `scratch/salesforce-poc/tests/run-w7-2-tests.cjs`
+- **Removed**:
+  - Assignment of defensive cloned and frozen payload: `comp.payload = frozenPayload` (and associated `Object.freeze` calls).
+  - Shallow property check: `assert.strictEqual(samplePayload.nodes[0].selected, undefined);`
+  - Outdated comment: `// Negative controls in isolated harness: verify comparison detects mutations`
+- **Added**:
+  - Pre-execution deep snapshot capture: `const baselineSnapshot = JSON.parse(JSON.stringify(samplePayload));`
+  - Direct assignment of original unfrozen payload under test: `comp.payload = samplePayload;`
+  - Full object deep equality check after execution: `assert.deepStrictEqual(samplePayload, baselineSnapshot, 'Component mutated the original input payload');`
+  - CONTRACT-06 event assertion: `assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');`
+  - Isolated negative controls testing detection of node property mutation (`negNodeTest.nodes[0].coupling = 999`), edge collection mutation (`negEdgeTest.edges.push({ id: 'e_mutated', source: 'a', target: 'b' })`), and nested-object mutation (`negNestedTest.nodes[0].nested = { test: true }`) asserting `AssertionError`.
+  - Explanatory comment: `// Negative controls in isolated harness: verify comparison detects node, edge, and nested mutations`
+
+### 7.6 Governance Artifacts
+- `WAVE_1A_TEST_HARDENING_CHANGED_FILES_SHA256.txt`: Updated with authoritative SHA-256 digests across all five runners.
+- `WAVE_1A_TEST_HARDENING_FINAL_DIFF.patch`: Generated complete diff capture for the runner updates.
+- `WAVE_1A_TEST_HARDENING_FINAL_GIT_AUDIT.md`: Updated working tree status, allowlist conformance, and commit lineage.
