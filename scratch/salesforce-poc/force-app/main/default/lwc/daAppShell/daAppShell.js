@@ -21,7 +21,19 @@ import {
 
 const DEFAULT_VIEW_MODE = 'graph';
 const DEFAULT_LAYOUT_MODE = 'cose'; // Approved fallback layout per DEC-W3-05
-const APPROVED_VIEWS = ['graph', 'matrix', 'findings'];
+const APPROVED_VIEWS = [
+    'graph',
+    'matrix',
+    'findings',
+    'dashboard',
+    'history',
+    'diagnostics',
+    'hotspots',
+    'radar',
+    'treemap',
+    'subway',
+    'dna'
+];
 
 const DEFAULT_FILTER_PRESET_CONFIG = getDefaultFilterContainer();
 
@@ -116,7 +128,7 @@ export default class DaAppShell extends LightningElement {
         this.currentGraphRequestId++;
     }
 
-    // View Navigation getters (FEAT-SHELL-01)
+    // View Navigation getters (FEAT-SHELL-01 & FEAT-SHELL-02)
     get activeViewMode() {
         return this.activeView;
     }
@@ -133,6 +145,38 @@ export default class DaAppShell extends LightningElement {
         return this.activeView === 'findings';
     }
 
+    get isDashboardView() {
+        return this.activeView === 'dashboard';
+    }
+
+    get isHistoryView() {
+        return this.activeView === 'history';
+    }
+
+    get isDiagnosticsView() {
+        return this.activeView === 'diagnostics';
+    }
+
+    get isHotspotsView() {
+        return this.activeView === 'hotspots';
+    }
+
+    get isRadarView() {
+        return this.activeView === 'radar';
+    }
+
+    get isTreemapView() {
+        return this.activeView === 'treemap';
+    }
+
+    get isSubwayView() {
+        return this.activeView === 'subway';
+    }
+
+    get isDnaView() {
+        return this.activeView === 'dna';
+    }
+
     get graphTabClass() {
         return `slds-tabs_default__item${this.isGraphView ? ' slds-is-active' : ''}`;
     }
@@ -143,6 +187,38 @@ export default class DaAppShell extends LightningElement {
 
     get findingsTabClass() {
         return `slds-tabs_default__item${this.isFindingsView ? ' slds-is-active' : ''}`;
+    }
+
+    get dashboardTabClass() {
+        return `slds-tabs_default__item${this.isDashboardView ? ' slds-is-active' : ''}`;
+    }
+
+    get historyTabClass() {
+        return `slds-tabs_default__item${this.isHistoryView ? ' slds-is-active' : ''}`;
+    }
+
+    get diagnosticsTabClass() {
+        return `slds-tabs_default__item${this.isDiagnosticsView ? ' slds-is-active' : ''}`;
+    }
+
+    get hotspotsTabClass() {
+        return `slds-tabs_default__item${this.isHotspotsView ? ' slds-is-active' : ''}`;
+    }
+
+    get radarTabClass() {
+        return `slds-tabs_default__item${this.isRadarView ? ' slds-is-active' : ''}`;
+    }
+
+    get treemapTabClass() {
+        return `slds-tabs_default__item${this.isTreemapView ? ' slds-is-active' : ''}`;
+    }
+
+    get subwayTabClass() {
+        return `slds-tabs_default__item${this.isSubwayView ? ' slds-is-active' : ''}`;
+    }
+
+    get dnaTabClass() {
+        return `slds-tabs_default__item${this.isDnaView ? ' slds-is-active' : ''}`;
     }
 
     get graphTabIndex() {
@@ -157,12 +233,60 @@ export default class DaAppShell extends LightningElement {
         return this.isFindingsView ? 0 : -1;
     }
 
+    get dashboardTabIndex() {
+        return this.isDashboardView ? 0 : -1;
+    }
+
+    get historyTabIndex() {
+        return this.isHistoryView ? 0 : -1;
+    }
+
+    get diagnosticsTabIndex() {
+        return this.isDiagnosticsView ? 0 : -1;
+    }
+
+    get hotspotsTabIndex() {
+        return this.isHotspotsView ? 0 : -1;
+    }
+
+    get radarTabIndex() {
+        return this.isRadarView ? 0 : -1;
+    }
+
+    get treemapTabIndex() {
+        return this.isTreemapView ? 0 : -1;
+    }
+
+    get subwayTabIndex() {
+        return this.isSubwayView ? 0 : -1;
+    }
+
+    get dnaTabIndex() {
+        return this.isDnaView ? 0 : -1;
+    }
+
     get activeViewLabel() {
         switch (this.activeView) {
             case 'matrix':
                 return 'Dependency Matrix';
             case 'findings':
                 return 'Findings & Alerts';
+            case 'dashboard':
+                return 'Executive Dashboard';
+            case 'history':
+                return 'Analysis History';
+            case 'diagnostics':
+                return 'Architecture Diagnostics';
+            case 'hotspots':
+                return 'Hotspots & Risk';
+            case 'radar':
+                return 'Architecture Radar';
+            case 'treemap':
+                return 'Treemap View';
+            case 'subway':
+                return 'Subway Transit Map';
+            case 'dna':
+                return 'Architecture DNA Barcode';
             case 'graph':
             default:
                 return 'Graph Viewer';
@@ -459,6 +583,38 @@ export default class DaAppShell extends LightningElement {
         this.switchView('findings');
     }
 
+    selectDashboardView() {
+        this.switchView('dashboard');
+    }
+
+    selectHistoryView() {
+        this.switchView('history');
+    }
+
+    selectDiagnosticsView() {
+        this.switchView('diagnostics');
+    }
+
+    selectHotspotsView() {
+        this.switchView('hotspots');
+    }
+
+    selectRadarView() {
+        this.switchView('radar');
+    }
+
+    selectTreemapView() {
+        this.switchView('treemap');
+    }
+
+    selectSubwayView() {
+        this.switchView('subway');
+    }
+
+    selectDnaView() {
+        this.switchView('dna');
+    }
+
     handleViewChange(event) {
         const detail = event.detail || {};
         const targetView = detail.viewMode || detail.view;
@@ -603,12 +759,31 @@ export default class DaAppShell extends LightningElement {
         return this.activeGraphPayload.nodes;
     }
 
+    get activeFindings() {
+        if (!this.activeGraphPayload || !Array.isArray(this.activeGraphPayload.findings)) {
+            return [];
+        }
+        return this.activeGraphPayload.findings;
+    }
+
     handleHeaderActionTrigger(event) {
         const action = event.detail?.action;
         if (action === 'history') {
-            // Future launch history modal or view
+            this.switchView('history');
+        } else if (action === 'dashboard') {
+            this.switchView('dashboard');
         } else if (action === 'compare') {
-            // Future launch compare view
+            // Compare action: preserve active project, route to history/compare
+            this.switchView('history');
+        }
+    }
+
+    handleRunSelect(event) {
+        const detail = event.detail || {};
+        const runId = detail.runId || detail.analysisRunId;
+        if (runId && this.activeProjectId) {
+            // Reload graph payload for selected historical run if provided
+            this.loadGraphPayload(this.activeProjectId);
         }
     }
 

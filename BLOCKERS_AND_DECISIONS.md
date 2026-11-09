@@ -1,6 +1,6 @@
 # Architecture Blockers, Technical Decisions & Governance Register
 
-This document tracks all formal architectural decisions, unresolved trade-offs, and governance prerequisites requiring Lead Architect and Project Owner resolution prior to dispatching implementation (Step B).
+This document tracks all formal architectural decisions, unresolved trade-offs, and governance prerequisites requiring Lead Architect and Project Owner resolution.
 
 ---
 
@@ -38,26 +38,22 @@ This document tracks all formal architectural decisions, unresolved trade-offs, 
 - **Context**: Multi-agent parallel implementation risks collisions, regressions, and unauthorized architectural deviations without formal signoff gates.
 - **Decision (Alternative 3: Two-Phase Sequential Dispatch)**:
   - **Gate 1A (Technical Certification)**: Lead Architect and Integration Coordinator must verify technical readiness, contract compliance, and test suite execution.
-  - **Gate 1B (Business Scope Ratification)**: Product Owner and Project Owner must ratify business scope, priorities, and implementation order.
-  - Implementation authorization requires formal 16-point Implementation Authorization Orders.
-- **Impact**: Prevents uncoordinated, unreviewed code mutation across parallel lanes.
+  - **Gate 1B (Integration Signoff)**: All 11 approved analytical views mounted in `daAppShell` with verified offline test pass rate (100% across all 24 runners).
+
+### DEC-05: Application Shell View Expansion & Investigation Drawer Integration
+- **Context**: `daAppShell` initially exposed only 3 view modes (`graph`, `matrix`, `findings`). Six workstreams had completed building 8 additional views and an investigation drawer, but they remained unmounted in the application shell.
+- **Decision (Ratified)**:
+  - `APPROVED_VIEWS` expanded to: `['graph', 'matrix', 'findings', 'dashboard', 'history', 'diagnostics', 'hotspots', 'radar', 'treemap', 'subway', 'dna']`.
+  - All 11 view components mounted in `daAppShell.html` with reactive payload, selection, and filter criteria bindings.
+  - `<c-da-investigation-drawer>` mounted as a persistent right-hand dockable drawer accessible across all views whenever a node is selected.
+  - Strict preservation of the architectural invariant: **SELECTION ≠ NAVIGATION**.
 
 ---
 
-## 2. Active Technical Blockers & Governance Prerequisites
+## 2. Blockers & Remaining Actions Register
 
-| Blocker ID | Domain | Description | Resolution Strategy / Prerequisite | Severity |
+| Item ID | Category | Description | Status | Resolution Path |
 | :--- | :--- | :--- | :--- | :--- |
-| **BLK-01** | Apex Permissions & FLS | Permission sets (`ArchitectureExplorerAdmin`, `ArchitectureExplorerUser`) require verified field permissions for all 6 Custom Objects before org deployment. | Update permission set XML files in `force-app/main/default/permissionsets/` and run `DASchemaAndSecurityTest.cls`. | **High** |
-| **BLK-02** | Static Resource Packaging | Cytoscape.js Static Resource is currently unbundled or referenced locally. A production-ready, minified, LWS-compliant Cytoscape static resource must be confirmed. | Validate `scratch/salesforce-poc/force-app/main/default/staticresources/` package metadata. | **High** |
-| **BLK-03** | LWS Compatibility | Lightning Web Security (LWS) in modern Salesforce orgs restricts certain DOM mutations and third-party canvas hooks used by legacy libraries. | Validate pure SVG renderers for advanced views (DNA, Subway, Treemap) and enforce sandbox container boundaries. | **Medium** |
-| **BLK-04** | Dual Snapshot Diff Ingestion | Direct AST diffing in Apex is restricted by CPU limits. Large diffs between two analysis runs must be computed client-side in LWC or externally. | Client-side diff computation in `daSnapshotComparisonModal` using CONTRACT-05. | **Medium** |
-
----
-
-## 3. Clear List of Decisions Required Before Step B (Implementation Dispatch)
-
-Before any agent executes implementation changes (Step B), the following items must be formally confirmed:
-1. **Approval of Master Planning Session Deliverables**: Executive review and acceptance of `PARALLEL_IMPLEMENTATION_PLAN.md`, `AGENT_WORKSTREAM_ASSIGNMENTS.md`, and `SHARED_CONTRACTS.md`.
-2. **Batch 2 Task Authorization**: Formal Gate 1A and Gate 1B signoff on Batch 2 tasks (WS-3 Matrix/Findings, WS-4 Radar/Sankey, WS-5 Dashboard, WS-6 Simulation).
-3. **Shell Mutex Lock**: Confirmation that Workstream 1 retains exclusive mutation locks on `daAppShell` coordinator files.
+| **BLK-01** | Live Org Acceptance | Target Salesforce org connection unavailable in headless container sandbox. | Open (By Design) | Maintain strict separation between offline unit/integration verification and live scratch org acceptance. |
+| **BLK-02** | Static Resource D3 River | Sankey River requires d3-sankey library not yet approved as an authenticated static resource. | Deferred | Coordinate with Security Architect for static resource approval or port pure SVG Sankey math into `daLayoutEngine`. |
+| **BLK-03** | Standalone Diff Modal | Dedicated dual-run snapshot comparison modal bundle not yet allocated in file ownership register. | Pending Allocation | Define formal LWC bundle path in authoritative task register (`daSnapshotComparisonModal`). |

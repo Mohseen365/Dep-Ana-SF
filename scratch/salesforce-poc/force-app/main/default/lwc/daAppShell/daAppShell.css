@@ -36,6 +36,27 @@
 .shell-content-container {
     min-height: 500px;
     background-color: #ffffff;
+    flex: 1 1 auto;
+    overflow-x: auto;
+}
+
+.shell-workspace-grid {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: calc(100vh - 120px);
+}
+
+.sidebar-wrapper {
+    flex: 0 0 auto;
+}
+
+.drawer-wrapper {
+    flex: 0 0 380px;
+    max-width: 420px;
+    border-left: 1px solid #dddbda;
+    background-color: #ffffff;
+    z-index: 10;
 }
 
 .empty-state-padding {

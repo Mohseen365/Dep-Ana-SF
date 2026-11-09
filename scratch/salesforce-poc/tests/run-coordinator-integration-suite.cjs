@@ -145,7 +145,7 @@ async function main() {
     console.log('\n[Section 1: Shell Architecture & Contract Validation]');
     // -------------------------------------------------------------------------
 
-    runTest('1.1 AppShell template embeds modular Header, Sidebar, and View tabs', () => {
+    runTest('1.1 AppShell template embeds modular Header, Sidebar, Investigation Drawer, and all Approved View tabs', () => {
         const html = fs.readFileSync(path.resolve(__dirname, '../force-app/main/default/lwc/daAppShell/daAppShell.html'), 'utf8');
         assert.ok(html.includes('<c-da-header'), 'Must integrate c-da-header');
         assert.ok(html.includes('<c-da-sidebar'), 'Must integrate c-da-sidebar');
@@ -153,6 +153,15 @@ async function main() {
         assert.ok(html.includes('<c-da-matrix-view'), 'Must integrate c-da-matrix-view');
         assert.ok(html.includes('<c-da-findings-view'), 'Must integrate c-da-findings-view');
         assert.ok(html.includes('<c-da-annotation-panel'), 'Must integrate c-da-annotation-panel');
+        assert.ok(html.includes('<c-da-project-dashboard'), 'Must integrate c-da-project-dashboard');
+        assert.ok(html.includes('<c-da-analysis-history'), 'Must integrate c-da-analysis-history');
+        assert.ok(html.includes('<c-da-diagnostics-view'), 'Must integrate c-da-diagnostics-view');
+        assert.ok(html.includes('<c-da-hotspots-view'), 'Must integrate c-da-hotspots-view');
+        assert.ok(html.includes('<c-da-radar-view'), 'Must integrate c-da-radar-view');
+        assert.ok(html.includes('<c-da-treemap-view'), 'Must integrate c-da-treemap-view');
+        assert.ok(html.includes('<c-da-subway-view'), 'Must integrate c-da-subway-view');
+        assert.ok(html.includes('<c-da-architecture-dna-barcode'), 'Must integrate c-da-architecture-dna-barcode');
+        assert.ok(html.includes('<c-da-investigation-drawer'), 'Must integrate c-da-investigation-drawer');
     });
 
     runTest('1.2 AppShell exposes public activeProjectId and activeProjectKey APIs', () => {
@@ -240,42 +249,39 @@ async function main() {
     console.log('\n[Section 3: View Navigation & Invariant Enforcement]');
     // -------------------------------------------------------------------------
 
-    runTest('3.1 View switching among approved views updates activeView and activeViewMode', () => {
+    runTest('3.1 View switching among all 11 approved views updates activeView and activeViewMode', () => {
         const DaAppShell = createAppShellClass();
         const shell = new DaAppShell();
 
         assert.strictEqual(shell.activeView, 'graph');
         assert.strictEqual(shell.activeViewMode, 'graph');
 
-        shell.selectMatrixView();
-        assert.strictEqual(shell.activeView, 'matrix');
-        assert.strictEqual(shell.activeViewMode, 'matrix');
-        assert.strictEqual(shell.isMatrixView, true);
+        const allViews = [
+            'matrix', 'findings', 'dashboard', 'history',
+            'diagnostics', 'hotspots', 'radar', 'treemap', 'subway', 'dna', 'graph'
+        ];
 
-        shell.selectFindingsView();
-        assert.strictEqual(shell.activeView, 'findings');
-        assert.strictEqual(shell.activeViewMode, 'findings');
-        assert.strictEqual(shell.isFindingsView, true);
-
-        shell.selectGraphView();
-        assert.strictEqual(shell.activeView, 'graph');
-        assert.strictEqual(shell.activeViewMode, 'graph');
-        assert.strictEqual(shell.isGraphView, true);
+        for (const view of allViews) {
+            shell.switchView(view);
+            assert.strictEqual(shell.activeView, view);
+            assert.strictEqual(shell.activeViewMode, view);
+        }
     });
 
-    runTest('3.2 Inbound viewchange event updates active view without mutating project or selection', () => {
+    runTest('3.2 Inbound viewchange event updates active view across all modes without mutating project or selection', () => {
         const DaAppShell = createAppShellClass();
         const shell = new DaAppShell();
         shell.activeProjectId = 'PROJ_VIEW_TEST';
         shell.selectedNodeId = 'ApexClass:Service';
 
-        // Viewchange event from sidebar or child view
-        shell.handleViewChange({ detail: { viewMode: 'matrix' } });
-
-        assert.strictEqual(shell.activeView, 'matrix');
-        assert.strictEqual(shell.activeViewMode, 'matrix');
-        assert.strictEqual(shell.activeProjectId, 'PROJ_VIEW_TEST', 'Project context preserved');
-        assert.strictEqual(shell.selectedNodeId, 'ApexClass:Service', 'Selected node preserved');
+        const viewsToTest = ['matrix', 'dashboard', 'diagnostics', 'radar', 'subway', 'dna', 'hotspots'];
+        for (const view of viewsToTest) {
+            shell.handleViewChange({ detail: { viewMode: view } });
+            assert.strictEqual(shell.activeView, view);
+            assert.strictEqual(shell.activeViewMode, view);
+            assert.strictEqual(shell.activeProjectId, 'PROJ_VIEW_TEST', 'Project context preserved');
+            assert.strictEqual(shell.selectedNodeId, 'ApexClass:Service', 'Selected node preserved');
+        }
     });
 
     runTest('3.3 Invariant SELECTION != NAVIGATION strictly preserved across all node selection', () => {
@@ -298,6 +304,24 @@ async function main() {
         shell.handleNodeSelect({ detail: { nodeId: 'ApexClass:Service', sourceComponent: 'daMatrixView' } });
         assert.strictEqual(shell.selectedNodeId, 'ApexClass:Service');
         assert.strictEqual(shell.activeView, 'matrix', 'Active view must remain matrix');
+    });
+
+    runTest('3.4 Cross-view node selection updates selectedNodeId for investigation drawer without view mutation', () => {
+        const DaAppShell = createAppShellClass();
+        const shell = new DaAppShell();
+        shell.activeProjectId = 'PROJ_DRAWER_TEST';
+        shell.switchView('radar');
+
+        // Emitting nodeselect from Radar
+        shell.handleNodeSelect({ detail: { nodeId: 'ApexClass:AccountValidator', sourceComponent: 'daRadarView' } });
+        assert.strictEqual(shell.selectedNodeId, 'ApexClass:AccountValidator');
+        assert.strictEqual(shell.activeView, 'radar');
+
+        // Switch to treemap and select another node
+        shell.switchView('treemap');
+        shell.handleNodeSelect({ detail: { nodeId: 'ApexClass:OrderProcessor', sourceComponent: 'daTreemapView' } });
+        assert.strictEqual(shell.selectedNodeId, 'ApexClass:OrderProcessor');
+        assert.strictEqual(shell.activeView, 'treemap');
     });
 
     // -------------------------------------------------------------------------
