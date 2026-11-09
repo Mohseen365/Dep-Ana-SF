@@ -1,0 +1,1310 @@
+{
+  "timestamp": "2026-11-09T14:49:05.662Z",
+  "sourceRoot": "/app/scratch/salesforce-poc",
+  "checks": {
+    "CHK-01-SFDX-PROJECT": {
+      "name": "sfdx-project.json Configuration",
+      "status": "PASS",
+      "details": {
+        "sourceApiVersion": "61.0",
+        "packageDirectories": [
+          {
+            "path": "force-app",
+            "default": true
+          }
+        ],
+        "namespace": "",
+        "loginUrl": "https://login.salesforce.com"
+      },
+      "evidence": "Found valid sfdx-project.json at scratch/salesforce-poc/sfdx-project.json"
+    },
+    "CHK-02-MANIFEST-FORCEIGNORE": {
+      "name": "Manifest & .forceignore Detection",
+      "status": "WARN",
+      "details": {
+        "packageXmlPresent": false,
+        "packageXmlStatus": "MISSING",
+        "pocForceIgnorePresent": false,
+        "pocForceIgnoreStatus": "MISSING",
+        "rootForceIgnorePresent": false
+      },
+      "evidence": "package.xml is MISSING; .forceignore in scratch/salesforce-poc/ is MISSING"
+    },
+    "CHK-03-STATIC-RESOURCES": {
+      "name": "Static Resources Inventory & Metadata",
+      "status": "PASS",
+      "details": {
+        "resources": [
+          {
+            "name": "cytoscape",
+            "contentPath": "scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml",
+            "sizeBytes": 146,
+            "cacheControl": "Public",
+            "contentType": "application/javascript",
+            "hasMeta": true,
+            "hasContent": true
+          }
+        ]
+      },
+      "evidence": "Inventoried 1 static resource(s). Cytoscape size: 146 bytes (Mock placeholder)."
+    },
+    "CHK-04-CUSTOM-OBJECTS-FIELDS": {
+      "name": "Custom Objects & Fields Inventory",
+      "status": "PASS",
+      "details": {
+        "objectCount": 6,
+        "objects": {
+          "DA_Analysis_Run__c": {
+            "apiName": "DA_Analysis_Run__c",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml",
+            "fieldCount": 9,
+            "fields": [
+              {
+                "apiName": "Commit_Hash__c",
+                "fullPath": "DA_Analysis_Run__c.Commit_Hash__c",
+                "label": "Commit Hash",
+                "type": "Text",
+                "length": 40
+              },
+              {
+                "apiName": "Cyclic_SCC_Count__c",
+                "fullPath": "DA_Analysis_Run__c.Cyclic_SCC_Count__c",
+                "label": "Cyclic SCC Count",
+                "type": "Number",
+                "length": null
+              },
+              {
+                "apiName": "DA_Project__c",
+                "fullPath": "DA_Analysis_Run__c.DA_Project__c",
+                "label": "Dependency Analyzer Project",
+                "type": "MasterDetail",
+                "length": null
+              },
+              {
+                "apiName": "Edge_Count__c",
+                "fullPath": "DA_Analysis_Run__c.Edge_Count__c",
+                "label": "Edge Count",
+                "type": "Number",
+                "length": null
+              },
+              {
+                "apiName": "Node_Count__c",
+                "fullPath": "DA_Analysis_Run__c.Node_Count__c",
+                "label": "Node Count",
+                "type": "Number",
+                "length": null
+              },
+              {
+                "apiName": "Run_Timestamp__c",
+                "fullPath": "DA_Analysis_Run__c.Run_Timestamp__c",
+                "label": "Run Timestamp",
+                "type": "DateTime",
+                "length": null
+              },
+              {
+                "apiName": "Status__c",
+                "fullPath": "DA_Analysis_Run__c.Status__c",
+                "label": "Status",
+                "type": "Picklist",
+                "length": null
+              },
+              {
+                "apiName": "Total_Chunks__c",
+                "fullPath": "DA_Analysis_Run__c.Total_Chunks__c",
+                "label": "Total Chunks",
+                "type": "Number",
+                "length": null
+              },
+              {
+                "apiName": "Total_Payload_Size_Chars__c",
+                "fullPath": "DA_Analysis_Run__c.Total_Payload_Size_Chars__c",
+                "label": "Total Payload Size (Chars)",
+                "type": "Number",
+                "length": null
+              }
+            ]
+          },
+          "DA_Annotation__c": {
+            "apiName": "DA_Annotation__c",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml",
+            "fieldCount": 7,
+            "fields": [
+              {
+                "apiName": "Author__c",
+                "fullPath": "DA_Annotation__c.Author__c",
+                "label": "Author",
+                "type": "Text",
+                "length": 255
+              },
+              {
+                "apiName": "Finding__c",
+                "fullPath": "DA_Annotation__c.Finding__c",
+                "label": "Finding",
+                "type": "Lookup",
+                "length": null
+              },
+              {
+                "apiName": "Node_Id__c",
+                "fullPath": "DA_Annotation__c.Node_Id__c",
+                "label": "Node ID",
+                "type": "Text",
+                "length": 255
+              },
+              {
+                "apiName": "Project__c",
+                "fullPath": "DA_Annotation__c.Project__c",
+                "label": "Project",
+                "type": "MasterDetail",
+                "length": null
+              },
+              {
+                "apiName": "Resolved_At__c",
+                "fullPath": "DA_Annotation__c.Resolved_At__c",
+                "label": "Resolved At",
+                "type": "DateTime",
+                "length": null
+              },
+              {
+                "apiName": "Status__c",
+                "fullPath": "DA_Annotation__c.Status__c",
+                "label": "Status",
+                "type": "Text",
+                "length": 50
+              },
+              {
+                "apiName": "Text__c",
+                "fullPath": "DA_Annotation__c.Text__c",
+                "label": "Annotation Text",
+                "type": "LongTextArea",
+                "length": 32768
+              }
+            ]
+          },
+          "DA_Finding__c": {
+            "apiName": "DA_Finding__c",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml",
+            "fieldCount": 5,
+            "fields": [
+              {
+                "apiName": "DA_Analysis_Run__c",
+                "fullPath": "DA_Finding__c.DA_Analysis_Run__c",
+                "label": "Analysis Run",
+                "type": "MasterDetail",
+                "length": null
+              },
+              {
+                "apiName": "Details__c",
+                "fullPath": "DA_Finding__c.Details__c",
+                "label": "Details",
+                "type": "LongTextArea",
+                "length": 32768
+              },
+              {
+                "apiName": "Rule_Id__c",
+                "fullPath": "DA_Finding__c.Rule_Id__c",
+                "label": "Rule ID",
+                "type": "Text",
+                "length": 80
+              },
+              {
+                "apiName": "Severity__c",
+                "fullPath": "DA_Finding__c.Severity__c",
+                "label": "Severity",
+                "type": "Picklist",
+                "length": null
+              },
+              {
+                "apiName": "Target_Node_Id__c",
+                "fullPath": "DA_Finding__c.Target_Node_Id__c",
+                "label": "Target Node ID",
+                "type": "Text",
+                "length": 100
+              }
+            ]
+          },
+          "DA_Graph_Chunk__c": {
+            "apiName": "DA_Graph_Chunk__c",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml",
+            "fieldCount": 3,
+            "fields": [
+              {
+                "apiName": "Chunk_Index__c",
+                "fullPath": "DA_Graph_Chunk__c.Chunk_Index__c",
+                "label": "Chunk Index",
+                "type": "Number",
+                "length": null
+              },
+              {
+                "apiName": "DA_Analysis_Run__c",
+                "fullPath": "DA_Graph_Chunk__c.DA_Analysis_Run__c",
+                "label": "Analysis Run",
+                "type": "MasterDetail",
+                "length": null
+              },
+              {
+                "apiName": "Payload_Data__c",
+                "fullPath": "DA_Graph_Chunk__c.Payload_Data__c",
+                "label": "Payload Data",
+                "type": "LongTextArea",
+                "length": 131072
+              }
+            ]
+          },
+          "DA_Project__c": {
+            "apiName": "DA_Project__c",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml",
+            "fieldCount": 3,
+            "fields": [
+              {
+                "apiName": "Project_Key__c",
+                "fullPath": "DA_Project__c.Project_Key__c",
+                "label": "Project Key",
+                "type": "Text",
+                "length": 100
+              },
+              {
+                "apiName": "Repository_Url__c",
+                "fullPath": "DA_Project__c.Repository_Url__c",
+                "label": "Repository URL",
+                "type": "Url",
+                "length": null
+              },
+              {
+                "apiName": "Status__c",
+                "fullPath": "DA_Project__c.Status__c",
+                "label": "Status",
+                "type": "Picklist",
+                "length": null
+              }
+            ]
+          },
+          "DA_User_Preference__c": {
+            "apiName": "DA_User_Preference__c",
+            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml",
+            "fieldCount": 8,
+            "fields": [
+              {
+                "apiName": "Active_Layout_Mode__c",
+                "fullPath": "DA_User_Preference__c.Active_Layout_Mode__c",
+                "label": "Active Layout Mode",
+                "type": "Text",
+                "length": 100
+              },
+              {
+                "apiName": "Active_View_Mode__c",
+                "fullPath": "DA_User_Preference__c.Active_View_Mode__c",
+                "label": "Active View Mode",
+                "type": "Text",
+                "length": 100
+              },
+              {
+                "apiName": "Filters_JSON__c",
+                "fullPath": "DA_User_Preference__c.Filters_JSON__c",
+                "label": "Filters JSON",
+                "type": "LongTextArea",
+                "length": 131072
+              },
+              {
+                "apiName": "Positions_JSON__c",
+                "fullPath": "DA_User_Preference__c.Positions_JSON__c",
+                "label": "Positions JSON",
+                "type": "LongTextArea",
+                "length": 131072
+              },
+              {
+                "apiName": "Preference_Key__c",
+                "fullPath": "DA_User_Preference__c.Preference_Key__c",
+                "label": "Preference Key",
+                "type": "Text",
+                "length": 255
+              },
+              {
+                "apiName": "Project__c",
+                "fullPath": "DA_User_Preference__c.Project__c",
+                "label": "Project",
+                "type": "Lookup",
+                "length": null
+              },
+              {
+                "apiName": "User__c",
+                "fullPath": "DA_User_Preference__c.User__c",
+                "label": "User",
+                "type": "Lookup",
+                "length": null
+              },
+              {
+                "apiName": "Zoom_Pan_JSON__c",
+                "fullPath": "DA_User_Preference__c.Zoom_Pan_JSON__c",
+                "label": "Zoom Pan JSON",
+                "type": "LongTextArea",
+                "length": 131072
+              }
+            ]
+          }
+        },
+        "totalFields": 35
+      },
+      "evidence": "Discovered 6 custom objects and 35 custom fields."
+    },
+    "CHK-05-PERMSET-FLS-AUDIT": {
+      "name": "Permission Set & FLS Consistency (SEC-01)",
+      "status": "FAIL",
+      "details": {
+        "permissionSets": [
+          {
+            "name": "DA_Architecture_Analyst",
+            "path": "scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml",
+            "label": "DA Architecture Analyst",
+            "objectPermissions": [
+              {
+                "object": "DA_Project__c",
+                "allowRead": true,
+                "allowCreate": true,
+                "allowEdit": true,
+                "allowDelete": false,
+                "viewAllRecords": true,
+                "modifyAllRecords": false
+              },
+              {
+                "object": "DA_Analysis_Run__c",
+                "allowRead": true,
+                "allowCreate": true,
+                "allowEdit": true,
+                "allowDelete": false,
+                "viewAllRecords": true,
+                "modifyAllRecords": false
+              },
+              {
+                "object": "DA_Graph_Chunk__c",
+                "allowRead": true,
+                "allowCreate": true,
+                "allowEdit": true,
+                "allowDelete": false,
+                "viewAllRecords": true,
+                "modifyAllRecords": false
+              },
+              {
+                "object": "DA_Finding__c",
+                "allowRead": true,
+                "allowCreate": true,
+                "allowEdit": true,
+                "allowDelete": false,
+                "viewAllRecords": true,
+                "modifyAllRecords": false
+              },
+              {
+                "object": "DA_Annotation__c",
+                "allowRead": true,
+                "allowCreate": true,
+                "allowEdit": true,
+                "allowDelete": true,
+                "viewAllRecords": true,
+                "modifyAllRecords": false
+              },
+              {
+                "object": "DA_User_Preference__c",
+                "allowRead": true,
+                "allowCreate": true,
+                "allowEdit": true,
+                "allowDelete": true,
+                "viewAllRecords": true,
+                "modifyAllRecords": false
+              }
+            ],
+            "fieldPermissions": [
+              {
+                "field": "DA_Project__c.Repository_Url__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Project__c.Status__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Project__c.Project_Key__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Commit_Hash__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Run_Timestamp__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Status__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Node_Count__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Edge_Count__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Cyclic_SCC_Count__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Total_Chunks__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Analysis_Run__c.Total_Payload_Size_Chars__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Graph_Chunk__c.Chunk_Index__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Graph_Chunk__c.Payload_Data__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Finding__c.Rule_Id__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Finding__c.Severity__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Finding__c.Target_Node_Id__c",
+                "readable": true,
+                "editable": true
+              },
+              {
+                "field": "DA_Finding__c.Details__c",
+                "readable": true,
+                "editable": true
+              }
+            ]
+          }
+        ],
+        "missingFlsCount": 14,
+        "missingFlsDefects": [
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_Annotation__c.Author__c",
+            "object": "DA_Annotation__c",
+            "type": "Text"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_Annotation__c.Finding__c",
+            "object": "DA_Annotation__c",
+            "type": "Lookup"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_Annotation__c.Node_Id__c",
+            "object": "DA_Annotation__c",
+            "type": "Text"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_Annotation__c.Resolved_At__c",
+            "object": "DA_Annotation__c",
+            "type": "DateTime"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_Annotation__c.Status__c",
+            "object": "DA_Annotation__c",
+            "type": "Text"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_Annotation__c.Text__c",
+            "object": "DA_Annotation__c",
+            "type": "LongTextArea"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Active_Layout_Mode__c",
+            "object": "DA_User_Preference__c",
+            "type": "Text"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Active_View_Mode__c",
+            "object": "DA_User_Preference__c",
+            "type": "Text"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Filters_JSON__c",
+            "object": "DA_User_Preference__c",
+            "type": "LongTextArea"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Positions_JSON__c",
+            "object": "DA_User_Preference__c",
+            "type": "LongTextArea"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Preference_Key__c",
+            "object": "DA_User_Preference__c",
+            "type": "Text"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Project__c",
+            "object": "DA_User_Preference__c",
+            "type": "Lookup"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.User__c",
+            "object": "DA_User_Preference__c",
+            "type": "Lookup"
+          },
+          {
+            "permissionSet": "DA_Architecture_Analyst",
+            "field": "DA_User_Preference__c.Zoom_Pan_JSON__c",
+            "object": "DA_User_Preference__c",
+            "type": "LongTextArea"
+          }
+        ]
+      },
+      "evidence": "Found 14 custom fields without FLS in DA_Architecture_Analyst (SEC-01 confirmed blocker)."
+    },
+    "CHK-06-APEX-METADATA": {
+      "name": "Apex Classes & Meta XML Pairing",
+      "status": "PASS",
+      "details": {
+        "totalApexClasses": 16,
+        "productionClasses": 11,
+        "testClasses": 5,
+        "missingMeta": []
+      },
+      "evidence": "All 16 Apex classes have corresponding -meta.xml files."
+    },
+    "CHK-07-APEX-TEST-PRESENCE": {
+      "name": "Apex Test Suite Presence & Offline Verification Boundary",
+      "status": "WARN",
+      "details": {
+        "productionClassesCount": 11,
+        "testClassesCount": 5,
+        "productionClasses": [
+          "GraphDataController",
+          "DAAnalysisHistoryController",
+          "DAAnnotationController",
+          "DAGraphController",
+          "DAUserPreferenceController",
+          "DAAnalysisRunDTO",
+          "DAErrorResponse",
+          "DAGraphDTO",
+          "DAAnalysisHistoryService",
+          "DAGraphChunkService",
+          "DAGraphIngestionService"
+        ],
+        "testClasses": [
+          "DAAnnotationControllerTest",
+          "DAGraphControllerTest",
+          "DAGraphSecurityTest",
+          "DASchemaAndSecurityTest",
+          "DAUserPreferenceControllerTest"
+        ],
+        "offlineCoverageVerifiable": false,
+        "statement": "MOCKED / NOT VERIFIED: Apex unit test execution and code coverage percentages CANNOT be verified offline without a live Salesforce org / Apex compiler runtime."
+      },
+      "evidence": "5 test classes present covering controllers, DTOs, security, and schema. Offline coverage percentage NOT verified."
+    },
+    "CHK-08-LWC-BUNDLES": {
+      "name": "LWC Component Bundles & Metadata",
+      "status": "PASS",
+      "details": {
+        "bundleCount": 23,
+        "missingJs": [],
+        "missingMeta": [],
+        "bundles": [
+          {
+            "name": "daAnalysisHistory",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistory",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "59.0",
+            "isExposed": true,
+            "masterLabel": "DA Analysis History",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__RecordPage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 11569
+          },
+          {
+            "name": "daAnnotationPanel",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "61.0",
+            "isExposed": true,
+            "masterLabel": "Dependency Analyzer Annotation Panel",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__RecordPage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 9473
+          },
+          {
+            "name": "daAppShell",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAppShell",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "59.0",
+            "isExposed": true,
+            "masterLabel": "DA Application Shell",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 5,
+            "totalSizeBytes": 68144
+          },
+          {
+            "name": "daArchitectureDnaBarcode",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Architecture DNA Barcode",
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 11119
+          },
+          {
+            "name": "daDiagnosticsView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Diagnostics View",
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 19391
+          },
+          {
+            "name": "daFindingsView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": null,
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 39383
+          },
+          {
+            "name": "daGraphPayloadLoader",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": false,
+            "hasCss": false,
+            "apiVersion": "60.0",
+            "isExposed": false,
+            "masterLabel": null,
+            "targets": [],
+            "fileCount": 2,
+            "totalSizeBytes": 6851
+          },
+          {
+            "name": "daGraphViewer",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": null,
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 36971
+          },
+          {
+            "name": "daHeader",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHeader",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "59.0",
+            "isExposed": true,
+            "masterLabel": "DA Header",
+            "targets": [
+              "lightning__AppPage"
+            ],
+            "fileCount": 5,
+            "totalSizeBytes": 12785
+          },
+          {
+            "name": "daHotspotsView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Hotspots View",
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 19819
+          },
+          {
+            "name": "daInvestigationDrawer",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Investigation Drawer",
+            "targets": [
+              "lightning__AppPage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 27048
+          },
+          {
+            "name": "daLayoutEngine",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": false,
+            "hasCss": false,
+            "apiVersion": "60.0",
+            "isExposed": false,
+            "masterLabel": null,
+            "targets": [],
+            "fileCount": 2,
+            "totalSizeBytes": 22964
+          },
+          {
+            "name": "daMatrixView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": null,
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 24369
+          },
+          {
+            "name": "daPresetManager",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": null,
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 17866
+          },
+          {
+            "name": "daProjectDashboard",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectDashboard",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "59.0",
+            "isExposed": true,
+            "masterLabel": "Dependency Analyzer Project Dashboard",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__RecordPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 17982
+          },
+          {
+            "name": "daProjectSelector",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "59.0",
+            "isExposed": true,
+            "masterLabel": "DA Project Selector",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__RecordPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 5671
+          },
+          {
+            "name": "daRadarView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRadarView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "Architecture Radar View",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__RecordPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 34291
+          },
+          {
+            "name": "daRefactorHandoffModal",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Refactor Handoff Modal",
+            "targets": [
+              "lightning__AppPage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 8770
+          },
+          {
+            "name": "daRefactoringEngine",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": false,
+            "hasCss": false,
+            "apiVersion": "60.0",
+            "isExposed": false,
+            "masterLabel": "DA Refactoring Engine",
+            "targets": [],
+            "fileCount": 2,
+            "totalSizeBytes": 16995
+          },
+          {
+            "name": "daSidebar",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSidebar",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "59.0",
+            "isExposed": true,
+            "masterLabel": "DA Sidebar",
+            "targets": [
+              "lightning__AppPage"
+            ],
+            "fileCount": 5,
+            "totalSizeBytes": 18803
+          },
+          {
+            "name": "daSubwayView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Subway View",
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 14277
+          },
+          {
+            "name": "daTreemapView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": true,
+            "apiVersion": "60.0",
+            "isExposed": true,
+            "masterLabel": "DA Treemap View",
+            "targets": [
+              "lightning__RecordPage",
+              "lightning__AppPage",
+              "lightning__HomePage"
+            ],
+            "fileCount": 4,
+            "totalSizeBytes": 14041
+          },
+          {
+            "name": "graphViewer",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/graphViewer",
+            "hasJs": true,
+            "hasMeta": true,
+            "hasHtml": true,
+            "hasCss": false,
+            "apiVersion": "61.0",
+            "isExposed": true,
+            "masterLabel": "Graph Viewer",
+            "targets": [
+              "lightning__AppPage",
+              "lightning__RecordPage",
+              "lightning__HomePage",
+              "lightning__Tab"
+            ],
+            "fileCount": 3,
+            "totalSizeBytes": 4695
+          }
+        ]
+      },
+      "evidence": "Inventoried 23 LWC bundles. All bundles contain both .js and .js-meta.xml."
+    },
+    "CHK-09-API-VERSION-CONSISTENCY": {
+      "name": "API Version Consistency Across Metadata",
+      "status": "WARN",
+      "details": {
+        "sfdxSourceApiVersion": "61.0",
+        "versionsFoundDistribution": {
+          "61.0": 5,
+          "59.0": 10,
+          "60.0": 24
+        },
+        "divergentVersions": [
+          "59.0",
+          "60.0"
+        ],
+        "divergentFiles": [
+          {
+            "name": "DAAnalysisHistoryController",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnalysisHistoryController.cls",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "DAGraphController",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAAnalysisRunDTO",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunDTO.cls",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "DAErrorResponse",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAGraphDTO",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAAnalysisHistoryService",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/services/DAAnalysisHistoryService.cls",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "DAGraphChunkService",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAGraphIngestionService",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAAnnotationControllerTest",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAGraphControllerTest",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DAGraphSecurityTest",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "DASchemaAndSecurityTest",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DASchemaAndSecurityTest.cls",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "DAUserPreferenceControllerTest",
+            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daAnalysisHistory",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistory",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "daAppShell",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAppShell",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "daArchitectureDnaBarcode",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daDiagnosticsView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daFindingsView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daGraphPayloadLoader",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daGraphViewer",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daHeader",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHeader",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "daHotspotsView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daInvestigationDrawer",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daLayoutEngine",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daMatrixView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daPresetManager",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daProjectDashboard",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectDashboard",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "daProjectSelector",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "daRadarView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRadarView",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daRefactorHandoffModal",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daRefactoringEngine",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daSidebar",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSidebar",
+            "apiVersion": "59.0"
+          },
+          {
+            "name": "daSubwayView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView",
+            "apiVersion": "60.0"
+          },
+          {
+            "name": "daTreemapView",
+            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView",
+            "apiVersion": "60.0"
+          }
+        ]
+      },
+      "evidence": "Detected mixed API versions: 61.0, 59.0, 60.0 (sfdx-project.json is 61.0)."
+    },
+    "CHK-10-LWC-IMPORT-RESOLUTION": {
+      "name": "LWC Cross-Reference & Import Resolution",
+      "status": "PASS",
+      "details": {
+        "totalImportsChecked": 28,
+        "danglingImportsCount": 0,
+        "danglingImports": [],
+        "apexMethodsExposedCount": 12,
+        "apexMethodsExposed": [
+          "DAAnalysisHistoryController.getAnalysisRuns",
+          "DAAnnotationController.createAnnotation",
+          "DAAnnotationController.deleteAnnotation",
+          "DAAnnotationController.getAnnotations",
+          "DAAnnotationController.updateAnnotation",
+          "DAGraphController.getGraphChunks",
+          "DAGraphController.getLatestGraphForProject",
+          "DAGraphController.getLatestGraphMetadataForProject",
+          "DAGraphController.getProjects",
+          "DAUserPreferenceController.getUserPreference",
+          "DAUserPreferenceController.saveUserPreference",
+          "GraphDataController.getGraphData"
+        ]
+      },
+      "evidence": "All 28 LWC import references (@salesforce/apex, @salesforce/resourceUrl, c/*) resolved successfully."
+    },
+    "CHK-11-APEX-SCHEMA-CONSISTENCY": {
+      "name": "Apex SOQL & DML Schema Reference Integrity",
+      "status": "PASS",
+      "details": {
+        "soqlFieldDefectsCount": 0,
+        "soqlFieldDefects": []
+      },
+      "evidence": "Apex SOQL and DML queries reference valid custom objects and fields."
+    },
+    "CHK-12-W9-QUARANTINE-RISK": {
+      "name": "Wave 9 Quarantined Metadata Deployment Exposure Risk",
+      "status": "FAIL",
+      "details": {
+        "quarantinedComponentsFound": [
+          {
+            "name": "daRefactoringEngine",
+            "dir": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
+            "files": [
+              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js",
+              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml"
+            ]
+          },
+          {
+            "name": "daRefactorHandoffModal",
+            "dir": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
+            "files": [
+              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css",
+              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html",
+              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js",
+              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml"
+            ]
+          }
+        ],
+        "forceAppDefaultDirectory": true,
+        "forceIgnoreExcludesQuarantine": false,
+        "deploymentImpact": "CRITICAL DEPLOYMENT DEFECT: scratch/salesforce-poc/force-app contains daRefactoringEngine and daRefactorHandoffModal. Because neither .forceignore nor package.xml exists in scratch/salesforce-poc/, a full packageDirectory deploy ('sf project deploy validate/start') will package and deploy unauthorized Wave 9 metadata to the target org."
+      },
+      "evidence": "Wave 9 quarantined components (daRefactoringEngine, daRefactorHandoffModal) will be shipped by default 'force-app' deploy."
+    },
+    "CHK-13-METADATA-SIZE-LIMITS": {
+      "name": "Metadata & Static Resource Size Limits",
+      "status": "PASS",
+      "details": {
+        "totalPocFiles": 164,
+        "largeFilesOver100KB": [],
+        "cytoscapeResourceBytes": 146
+      },
+      "evidence": "Checked 164 files. Zero files exceed 100 KB in source metadata. Production Cytoscape bundling deferred to live org provisioning."
+    }
+  },
+  "summary": {
+    "totalChecks": 13,
+    "passedChecks": 8,
+    "warningChecks": 3,
+    "failedChecks": 2
+  }
+}

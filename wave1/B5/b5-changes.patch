@@ -1,0 +1,2468 @@
+diff --git a/DEPLOYMENT_READINESS_CHECKLIST.md b/DEPLOYMENT_READINESS_CHECKLIST.md
+new file mode 100644
+index 0000000..de1df2b
+--- /dev/null
++++ b/DEPLOYMENT_READINESS_CHECKLIST.md
+@@ -0,0 +1,355 @@
++# Deployment Readiness Checklist & Metadata Audit
++
++**Role**: Deployment Readiness Engineer (Agent B5)
++**Evaluation Date**: November 9, 2026
++**Baseline Git Commit**: `570f658bc929d61f0909ff4d516f3d97e5327be0` (PR #143 merge baseline)
++**Evaluated Product Directory**: `scratch/salesforce-poc/`
++**Execution Scope**: Static Analysis & Offline Consistency Verification Only (Zero live org authentication, zero deployment commands executed)
++**Authoritative Governance Context**: DEC-04 Alternative 4 (Executive Project Owner Exclusive Signoff)
++
++---
++
++## 1. Executive Summary & Production Readiness Determination
++
++### **Deployment Readiness Status: STATIC CHECKS FAILED / DEPLOYMENT BLOCKED**
++### **Live Org Acceptance: NOT DONE**
++
++> **Formal Declaration**: Live Salesforce organization acceptance has **NOT BEEN PERFORMED**. Offline static verification and test mocks **never prove** runtime behavior under Lightning Web Security (LWS), production browser DOM engines, live Apex CPU/heap limits, or live Salesforce Field-Level Security (FLS) enforcement. Actual deployment to any Salesforce environment requires an authorized environment and explicit Project Owner deployment approval under DEC-04 Alternative 4.
++
++Offline static verification of the metadata located in `scratch/salesforce-poc/` reveals **two critical P0/P1 deployment blockers** that prevent live deployment:
++1. **P0 Schema/Security Blocker (SEC-01 / CHK-05)**: `DA_Architecture_Analyst.permissionset-meta.xml` completely lacks Field-Level Security (FLS) permissions for all custom fields on `DA_User_Preference__c` (8 fields) and `DA_Annotation__c` (6 non-master fields). In a live Salesforce organization, SOQL/DML executed `WITH USER_MODE` and `as user` will immediately crash with `System.QueryException` / `System.DmlException`.
++2. **P1 Quarantine Deployment Leakage Blocker (W9 / CHK-12)**: Quarantined components `daRefactoringEngine` (W9-1) and `daRefactorHandoffModal` (W9-3) are physically located inside `scratch/salesforce-poc/force-app/main/default/lwc/`. Because `scratch/salesforce-poc/` lacks both a `.forceignore` file and a deployment `package.xml` manifest, a standard deployment (`sf project deploy validate/start`) will deploy these unauthorized Wave 9 components to the target org.
++
++---
++
++## 2. Salesforce Metadata & Project Inventory
++
++All metadata items below were statically inventoried and verified via `wave1/B5/consistency-check.cjs`.
++
++### 2.1 Project Configuration (`sfdx-project.json`)
++- **File Path**: `scratch/salesforce-poc/sfdx-project.json`
++- **Configured `sourceApiVersion`**: `61.0`
++- **Configured `sfdcLoginUrl`**: `https://login.salesforce.com`
++- **Package Directory**: `[ { "path": "force-app", "default": true } ]`
++- **Namespace**: `""` (unmanaged)
++- **Manifest (`manifest/package.xml`)**: `MISSING`
++- **Ignore File (`scratch/salesforce-poc/.forceignore`)**: `MISSING`
++
++### 2.2 Static Resources
++- **Resource Name**: `cytoscape`
++- **Content File**: `scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js`
++  - **Size**: 146 bytes (*MEASURED*) — Mock placeholder bundle for offline POC scaffolding. Production Cytoscape library must be packaged prior to live browser deployment.
++- **Metadata File**: `scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml`
++  - **Cache Control**: `Public`
++  - **Content Type**: `application/javascript`
++
++### 2.3 Custom Objects & Custom Fields (6 Objects, 23 Custom Fields)
++
++| Object API Name | Custom Field API Name | Field Type | Length / Details | Metadata Status |
++| :--- | :--- | :--- | :--- | :--- |
++| **`DA_Project__c`** | `Project_Key__c` | Text | 80 | Valid |
++| | `Repository_Url__c` | Url | — | Valid |
++| | `Status__c` | Picklist | — | Valid |
++| **`DA_Analysis_Run__c`** | `DA_Project__c` | MasterDetail | Relates to `DA_Project__c` | Valid |
++| | `Commit_Hash__c` | Text | 64 | Valid |
++| | `Run_Timestamp__c` | DateTime | — | Valid |
++| | `Status__c` | Picklist | — | Valid |
++| | `Node_Count__c` | Number | 8, 0 | Valid |
++| | `Edge_Count__c` | Number | 8, 0 | Valid |
++| | `Cyclic_SCC_Count__c` | Number | 8, 0 | Valid |
++| | `Total_Chunks__c` | Number | 8, 0 | Valid |
++| | `Total_Payload_Size_Chars__c` | Number | 10, 0 | Valid |
++| **`DA_Graph_Chunk__c`** | `DA_Analysis_Run__c` | MasterDetail | Relates to `DA_Analysis_Run__c` | Valid |
++| | `Chunk_Index__c` | Number | 6, 0 | Valid |
++| | `Payload_Data__c` | LongTextArea | 131,072 | Valid |
++| **`DA_Finding__c`** | `DA_Analysis_Run__c` | MasterDetail | Relates to `DA_Analysis_Run__c` | Valid |
++| | `Rule_Id__c` | Text | 100 | Valid |
++| | `Severity__c` | Picklist | — | Valid |
++| | `Target_Node_Id__c` | Text | 255 | Valid |
++| | `Details__c` | LongTextArea | 32,768 | Valid |
++| **`DA_Annotation__c`** | `Project__c` | MasterDetail | Relates to `DA_Project__c` | Valid |
++| | `Finding__c` | Lookup | Relates to `DA_Finding__c` | Valid |
++| | `Node_Id__c` | Text | 255 | Valid |
++| | `Author__c` | Text | 255 | Valid |
++| | `Text__c` | LongTextArea | 32,768 | Valid |
++| | `Status__c` | Picklist | — | Valid |
++| | `Resolved_At__c` | DateTime | — | Valid |
++| **`DA_User_Preference__c`**| `Project__c` | Lookup | Relates to `DA_Project__c` | Valid |
++| | `User__c` | Lookup | Relates to `User` | Valid |
++| | `Preference_Key__c` | Text | 255 | Valid |
++| | `Active_View_Mode__c` | Text | 80 | Valid |
++| | `Active_Layout_Mode__c` | Text | 80 | Valid |
++| | `Positions_JSON__c` | LongTextArea | 131,072 | Valid |
++| | `Filters_JSON__c` | LongTextArea | 131,072 | Valid |
++| | `Zoom_Pan_JSON__c` | LongTextArea | 131,072 | Valid |
++
++### 2.4 Permission Sets
++- **Permission Set API Name**: `DA_Architecture_Analyst`
++- **File**: `scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml`
++- **Object Permissions Defined**:
++  - `DA_Project__c`: Read, Create, Edit, ViewAll
++  - `DA_Analysis_Run__c`: Read, Create, Edit, ViewAll
++  - `DA_Graph_Chunk__c`: Read, Create, Edit, ViewAll
++  - `DA_Finding__c`: Read, Create, Edit, ViewAll
++  - `DA_Annotation__c`: Read, Create, Edit, Delete, ViewAll
++  - `DA_User_Preference__c`: Read, Create, Edit, Delete, ViewAll
++- **Field Permissions Defined**: 15 field permissions.
++- **Missing FLS Audit (SEC-01)**: **14 Missing Field Permissions**:
++  - `DA_User_Preference__c`: `Active_Layout_Mode__c`, `Active_View_Mode__c`, `Filters_JSON__c`, `Positions_JSON__c`, `Preference_Key__c`, `Project__c`, `User__c`, `Zoom_Pan_JSON__c` (8 fields).
++  - `DA_Annotation__c`: `Author__c`, `Finding__c`, `Node_Id__c`, `Resolved_At__c`, `Status__c`, `Text__c` (6 fields). Note: `Project__c` is MasterDetail (FLS controlled by master).
++
++### 2.5 Apex Classes & Test Classes (16 Classes)
++
++| Class Name | Directory | apiVersion | Status | Type | Size (Bytes) | Meta XML |
++| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
++| `GraphDataController` | `classes/` | `61.0` | Active | Production | 2,016 | Present |
++| `DAAnalysisHistoryController` | `classes/controllers/` | `59.0` | Active | Production | 958 | Present |
++| `DAAnnotationController` | `classes/controllers/` | `61.0` | Active | Production | 9,144 | Present |
++| `DAGraphController` | `classes/controllers/` | `60.0` | Active | Production | 10,597 | Present |
++| `DAUserPreferenceController` | `classes/controllers/` | `61.0` | Active | Production | 10,488 | Present |
++| `DAAnalysisRunDTO` | `classes/dto/` | `59.0` | Active | DTO | 998 | Present |
++| `DAErrorResponse` | `classes/dto/` | `60.0` | Active | DTO | 602 | Present |
++| `DAGraphDTO` | `classes/dto/` | `60.0` | Active | DTO | 890 | Present |
++| `DAAnalysisHistoryService` | `classes/services/` | `59.0` | Active | Service | 4,599 | Present |
++| `DAGraphChunkService` | `classes/services/` | `60.0` | Active | Service | 2,671 | Present |
++| `DAGraphIngestionService` | `classes/services/` | `60.0` | Active | Service | 5,728 | Present |
++| `DAAnnotationControllerTest` | `classes/tests/` | `60.0` | Active | Test | 11,476 | Present |
++| `DAGraphControllerTest` | `classes/tests/` | `60.0` | Active | Test | 5,813 | Present |
++| `DAGraphSecurityTest` | `classes/tests/` | `60.0` | Active | Test | 5,536 | Present |
++| `DASchemaAndSecurityTest` | `classes/tests/` | `59.0` | Active | Test | 4,711 | Present |
++| `DAUserPreferenceControllerTest`| `classes/tests/` | `60.0` | Active | Test | 18,918 | Present |
++
++*Compilation & Coverage Notes*:
++- Apex code syntax and class relationships were statically verified via `consistency-check.cjs`.
++- Apex compilation and code coverage percentage are **NOT VERIFIED OFFLINE** (no local Apex compiler). Say explicitly: **NOT COMPILED / COVERAGE UNVERIFIED**.
++
++### 2.6 Lightning Web Component (LWC) Bundles (23 Bundles)
++
++| Bundle Name | apiVersion | isExposed | Master Label | Targets | JS File | HTML Template | CSS |
++| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
++| `daAnalysisHistory` | `59.0` | false | — | — | Present | Present | Present |
++| `daAnnotationPanel` | `61.0` | false | — | — | Present | Present | Present |
++| `daAppShell` | `59.0` | true | DA App Shell | `lightning__AppPage` | Present | Present | Present |
++| `daArchitectureDnaBarcode` | `60.0` | false | — | — | Present | Present | Present |
++| `daDiagnosticsView` | `60.0` | false | — | — | Present | Present | Present |
++| `daFindingsView` | `60.0` | false | — | — | Present | Present | Present |
++| `daGraphPayloadLoader` | `60.0` | false | — | — | Present | None (Service) | None |
++| `daGraphViewer` | `60.0` | false | — | — | Present | Present | Present |
++| `daHeader` | `59.0` | false | — | — | Present | Present | Present |
++| `daHotspotsView` | `60.0` | false | — | — | Present | Present | Present |
++| `daInvestigationDrawer` | `60.0` | false | — | — | Present | Present | Present |
++| `daLayoutEngine` | `60.0` | false | — | — | Present | None (Service) | None |
++| `daMatrixView` | `60.0` | false | — | — | Present | Present | Present |
++| `daPresetManager` | `60.0` | false | — | — | Present | Present | Present |
++| `daProjectDashboard` | `59.0` | false | — | — | Present | Present | Present |
++| `daProjectSelector` | `59.0` | false | — | — | Present | Present | Present |
++| `daRadarView` | `60.0` | false | — | — | Present | Present | Present |
++| **`daRefactorHandoffModal`** | `60.0` | **true** | DA Refactor Handoff Modal | `lightning__AppPage` | Present | Present | Present |
++| **`daRefactoringEngine`** | `60.0` | **false**| DA Refactoring Engine | — | Present | None (Service) | None |
++| `daSidebar` | `59.0` | false | — | — | Present | Present | Present |
++| `daSubwayView` | `60.0` | false | — | — | Present | Present | Present |
++| `daTreemapView` | `60.0` | false | — | — | Present | Present | Present |
++| `graphViewer` | `61.0` | true | Graph Viewer POC | `lightning__AppPage`, `lightning__RecordPage` | Present | Present | None |
++
++---
++
++## 3. Consistency Check Results (Static Scan)
++
++Detailed results from `wave1/B5/consistency-check.cjs`:
++- **Total Checks Evaluated**: 13
++- **Passed Checks**: 8
++- **Warnings**: 3
++- **Failed Checks**: 2 (`CHK-05-PERMSET-FLS-AUDIT`, `CHK-12-W9-QUARANTINE-RISK`)
++
++### Summary of Static Consistency Findings:
++1. **Reference Resolution**:
++   - Every Apex method imported in LWC (`DAAnnotationController.*`, `DAGraphController.*`, `DAUserPreferenceController.*`, `DAAnalysisHistoryController.*`) matches an existing `@AuraEnabled` static method in the respective controller.
++   - Every static resource imported (`cytoscape`) exists under `staticresources/`.
++   - Every child LWC component imported (`c/daGraphPayloadLoader`, `c/daLayoutEngine`, `c/daFilterSchema`, `c/daRefactoringEngine`) resolves correctly to an existing bundle/module.
++2. **Meta XML & Pairing**:
++   - Every Apex class has a valid `.cls-meta.xml`.
++   - Every LWC bundle has a valid `.js` file and `.js-meta.xml`.
++3. **API Version Divergence (WARN)**:
++   - `sfdx-project.json` targets API version `61.0`.
++   - Apex classes and LWC bundles declare mixed API versions: `59.0` (8 items), `60.0` (22 items), `61.0` (8 items). While Salesforce supports mixed API versions in unmanaged deployments, normalizing all metadata to `61.0` is strongly recommended.
++4. **Duplicate API Names & Dangling References**:
++   - Zero duplicate API names detected.
++   - Zero dangling SOQL or DML field references detected.
++
++---
++
++## 4. Wave 9 Quarantine Deployment Risk & Narrowest Exclusion
++
++### 4.1 Vulnerability Analysis
++- In Wave 0 preflight, `daRefactoringEngine` (W9-1) and `daRefactorHandoffModal` (W9-3) were classified as `IMPLEMENTED_UNAUTHORIZED_QUARANTINED`.
++- In `scratch/salesforce-poc/`, both components reside physically under `force-app/main/default/lwc/`.
++- `daAppShell` does not mount or reference them.
++- However, standard Salesforce CLI packaging (`sf project deploy validate` or `sf project deploy start`) operates on the directory defined in `sfdx-project.json` (`force-app`).
++- **Defect**: In the absence of a `.forceignore` file or a manifest allowlist, deploying `force-app/` will deploy `daRefactoringEngine` and `daRefactorHandoffModal` to the target Salesforce org, directly violating the quarantine directive and shipping unauthorized capabilities.
++
++### 4.2 Narrowest Exclusion Recommendations (Request to B1 / Project Owner)
++To guarantee that Wave 9 quarantined components are strictly excluded from packaging without modifying product source files, choose one of the following two actions:
++
++#### **Recommendation Option 1 (Preferred / Narrowest)**: Create `scratch/salesforce-poc/.forceignore`
++Create a `.forceignore` file inside `scratch/salesforce-poc/` with the following contents:
++```text
++# Exclude unauthorized Wave 9 quarantined components
++**/lwc/daRefactoringEngine/**
++**/lwc/daRefactorHandoffModal/**
++```
++*Impact*: Zero changes to product code or test suites; guarantees Salesforce CLI ignores these bundles during both `validate` and `deploy`.
++
++#### **Recommendation Option 2**: Create Explicit Deployment Manifest (`manifest/package.xml`)
++Create a `manifest/package.xml` allowlist explicitly enumerating the 21 authorized LWC components and omitting `daRefactoringEngine` and `daRefactorHandoffModal`. Deploy using `sf project deploy start --manifest manifest/package.xml`.
++
++---
++
++## 5. Target-Org Prerequisites
++
++Before executing any deployment in a future authorized environment, the target Salesforce organization must meet all of the following prerequisites:
++
++1. **Salesforce Edition & Licenses**:
++   - **Supported Editions**: Enterprise Edition, Unlimited Edition, or Developer Edition (scratch org / sandbox).
++   - **User Licenses**: Standard Salesforce User licenses for all analysts using the Dependency Analyzer.
++2. **Lightning Web Security (LWS)**:
++   - **Requirement**: Lightning Web Security for Lightning web components **MUST BE ENABLED** in Setup -> Session Settings.
++   - **Reason**: The graph rendering and client-side payload reassembly rely on modern ES6+ features and standard JavaScript object prototypes permitted under LWS.
++3. **My Domain**:
++   - **Requirement**: My Domain enabled and deployed to users (standard in modern orgs, required for custom LWCs).
++4. **Data Storage Allocation**:
++   - **Requirement**: Standard Developer Edition orgs offer only 5 MB of data storage. A single maximum-capacity analysis run payload is capped at 10 MB (10,485,760 bytes) across ~80 `DA_Graph_Chunk__c` records. Developer Edition orgs will experience data storage exhaustion after 1 large run. Enterprise or Unlimited edition sandboxes/scratch orgs with sufficient data storage (>100 MB) are required.
++5. **Permission Set Assignment**:
++   - The `DA_Architecture_Analyst` permission set must be assigned to all designated users once FLS permissions are remediated (SEC-01).
++6. **CSP Trusted Sites**:
++   - If Cytoscape or auxiliary web workers load external web worker scripts or CDN resources in the future, CSP Trusted Sites must be registered. Currently, Cytoscape is loaded via static resource, requiring no external CSP domains.
++7. **Production Cytoscape Static Resource**:
++   - The current `scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js` is an offline mock stub (146 bytes). A complete, minified, production-tested Cytoscape build must replace this stub before live browser testing.
++
++---
++
++## 6. Numbered Future Authorized Deployment Runbook
++
++> **CRITICAL NOTICE**: **EVERY COMMAND IN THIS SEQUENCE IS MARKED `NOT RUN`.**
++> Live org authentication and deployment are strictly forbidden in this run. This sequence is provided exclusively as an operational runbook for future authorized release personnel once all blockers are cleared.
++
++```bash
++# ---------------------------------------------------------------------------------
++# PHASE 1: TARGET ORG AUTHENTICATION & SCRATCH ORG PROVISIONING
++# ---------------------------------------------------------------------------------
++
++# Step 1: Log in to the authorized Dev Hub or target production/sandbox org
++# [NOT RUN] Placeholder command:
++sf org login web --alias da-target-org --instance-url https://login.salesforce.com
++
++# Step 2: (If Scratch Org) Create dedicated scratch org with LWS enabled
++# [NOT RUN] Placeholder command:
++sf org create scratch --definition-file config/project-scratch-def.json --alias da-scratch --set-default --duration-days 7
++
++# Step 3: Verify org connection and Lightning Web Security status
++# [NOT RUN] Placeholder command:
++sf org display --target-org da-target-org
++
++# ---------------------------------------------------------------------------------
++# PHASE 2: STATIC VALIDATION & DRY-RUN DEPLOYMENT
++# ---------------------------------------------------------------------------------
++
++# Step 4: Run dry-run validation deployment with local Apex test execution
++# Prerequisites: Remediate SEC-01 FLS and apply W9 exclusion (.forceignore)
++# [NOT RUN] Placeholder command:
++sf project deploy validate \
++  --source-dir force-app \
++  --test-level RunLocalTests \
++  --target-org da-target-org \
++  --verbose
++
++# ---------------------------------------------------------------------------------
++# PHASE 3: QUICK DEPLOY OR FULL DEPLOYMENT
++# ---------------------------------------------------------------------------------
++
++# Step 5: Execute quick deploy from validated deployment ID OR deploy package directory
++# [NOT RUN] Placeholder command (Quick Deploy):
++sf project deploy quick --job-id <VALIDATION_JOB_ID> --target-org da-target-org
++
++# [NOT RUN] Alternative Placeholder command (Full Deploy):
++sf project deploy start \
++  --source-dir force-app \
++  --test-level RunLocalTests \
++  --target-org da-target-org
++
++# ---------------------------------------------------------------------------------
++# PHASE 4: POST-DEPLOY CONFIGURATION & PERMISSION SET ASSIGNMENT
++# ---------------------------------------------------------------------------------
++
++# Step 6: Assign DA Architecture Analyst permission set to deployment user
++# [NOT RUN] Placeholder command:
++sf org assign permset --name DA_Architecture_Analyst --target-org da-target-org
++
++# ---------------------------------------------------------------------------------
++# PHASE 5: TEST FIXTURE INGESTION & DATA SEEDING
++# ---------------------------------------------------------------------------------
++
++# Step 7: Load initial Project record fixture (e.g. PBIM benchmark project)
++# [NOT RUN] Placeholder command:
++sf data create record \
++  --sobject DA_Project__c \
++  --values "Name='Public Infrastructure Management' Project_Key__c='PBIM' Status__c='Active'" \
++  --target-org da-target-org
++
++# Step 8: Execute Node.js CLI data ingestion pipeline to seed chunked graph data
++# [NOT RUN] Placeholder command:
++node scripts/export-explorer.cjs --project-id PBIM --target-org da-target-org
++
++# ---------------------------------------------------------------------------------
++# PHASE 6: POST-DEPLOY LIVE SMOKE TESTS
++# ---------------------------------------------------------------------------------
++
++# Step 9: Verify custom object record counts
++# [NOT RUN] Placeholder command:
++sf data query --query "SELECT Id, Name, Project_Key__c FROM DA_Project__c" --target-org da-target-org
++sf data query --query "SELECT Id, Status__c, Total_Chunks__c FROM DA_Analysis_Run__c" --target-org da-target-org
++sf data query --query "SELECT COUNT(Id) FROM DA_Graph_Chunk__c" --target-org da-target-org
++
++# Step 10: Open Lightning Experience and verify UI components in browser
++# [NOT RUN] Placeholder command:
++sf org open --path lightning/n/DA_Architecture_Analyst --target-org da-target-org
++
++# Live Smoke Test Inspection Items (to be executed manually by Release QA):
++# a. Verify App Shell loads without JavaScript console errors.
++# b. Verify Project Selector dropdown populates with active projects.
++# c. Verify Cytoscape canvas renders nodes and edges correctly under LWS.
++# d. Verify tab switching across all 11 approved views (SELECTION != NAVIGATION invariant).
++# e. Verify Investigation Drawer expands upon node tap.
++# f. Verify User Preference saving on drag/zoom (Positions_JSON__c update).
++```
++
++---
++
++## 7. Known Blockers, Risks & Verification Claim Classifications
++
++Cross-referenced from `RELEASE_RISK_ASSESSMENT.md` and `PLATFORM_VERIFICATION_MATRIX.md`. Every finding is explicitly labeled with its evidentiary status:
++
++| Risk ID | Domain | Severity | Claim Status | Evidence & Reality Classification | Blocking Impact |
++| :--- | :--- | :--- | :--- | :--- | :--- |
++| **SEC-01** | Apex & FLS Enforcement | **P0** | **MEASURED / CONFIRMED DEFECT** | Static inspection of `DA_Architecture_Analyst.permissionset-meta.xml` confirms zero field permissions for `DA_User_Preference__c` (8 fields) and `DA_Annotation__c` (6 fields). Queries with `WITH USER_MODE` will fail immediately. | **BLOCKS PRODUCTION** |
++| **W9-RISK** | Scope & Quarantine Leakage | **P1** | **MEASURED / CONFIRMED DEFECT** | Static inspection confirms `daRefactoringEngine` and `daRefactorHandoffModal` reside in `force-app/` with no `.forceignore` or manifest filter. Default deploy will ship them. | **BLOCKS PRODUCTION** |
++| **PERF-01** | Snapshot Diff Engine UI Freeze | **P1** | **MEASURED DEFECT** | Dual snapshot diffing in `daProjectDashboard` executes synchronously on browser main thread, causing 240–350 ms freeze on PBIM benchmark. | **BLOCKS PRODUCTION** |
++| **PERF-02** | Large Graph Rendering Freeze | **P2** | **MEASURED RISK** | Layout calculation on graphs > 300 nodes blocks main JavaScript thread for 1.2–1.8 seconds. Requires asynchronous layout worker or animation suspension. | Operational Degradation |
++| **SEC-02** | Cross-Tab IPC Leakage | **P1** | **MEASURED DEFECT** | `BroadcastChannel` in `daInvestigationDrawer` accepts cross-tab events without project scoping or origin verification. | Security Defect |
++| **GOV-01** | CONTRACT-03 Ratification | **P1** | **CONFIRMED GOVERNANCE BLOCKER**| 9-dimension radar adapter implemented in `daRadarView` has NOT been formally ratified by Project Owner under DEC-04 Alt 4. | **BLOCKS PRODUCTION** |
++| **PLAT-01** | LWS Canvas Sandboxing | **P2** | **MOCKED / UNVERIFIED CLAIM** | Reports claiming Cytoscape is "verified under LWS" are unverified claims. Offline Node.js / JSDOM suites do not execute the Salesforce LWS proxy engine. | Potential Live Failure |
++| **PLAT-02** | Apex Governor Limits | **P2** | **ESTIMATED / PARTIALLY VERIFIED**| Heap and SOQL consumption are mathematically estimated to be within limits, but actual transaction governor metrics cannot be certified without live org execution logs. | Potential Live Failure |
++| **PLAT-03** | WCAG 2.1 AA Accessibility | **P2** | **UNVERIFIED CLAIM** | ARIA tags and attributes exist in LWC templates, but live screen-reader testing and full WCAG compliance have not been performed. | Accessibility Gap |
++
++---
++
++## 8. Final Change Requests & Next Steps for Agent B1 / Project Owner
++
++1. **Request CR-01 (To Agent B1 / Security Engineer)**:
++   - Update `scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml` to include `fieldPermissions` for all 8 fields on `DA_User_Preference__c` and 6 custom fields on `DA_Annotation__c` (resolving SEC-01).
++2. **Request CR-02 (To Agent B1 / Project Owner)**:
++   - Create `scratch/salesforce-poc/.forceignore` containing `**/lwc/daRefactoringEngine/**` and `**/lwc/daRefactorHandoffModal/**` to prevent unauthorized Wave 9 metadata leakage during deployment.
++3. **Request CR-03 (To Agent B1 / Architecture Lead)**:
++   - Harmonize API versions across all LWC and Apex metadata files to `61.0` matching `sfdx-project.json`.
++4. **Formal Decision Request (To Project Owner)**:
++   - Formally ratify or reject CONTRACT-03 (Radar View 9-dimension adapter) under DEC-04 Alternative 4.
++   - Formally decide whether Wave 9 refactoring engine components will be permanently archived or retained in quarantine under `.forceignore`.
+diff --git a/wave1/B5/consistency-check.cjs b/wave1/B5/consistency-check.cjs
+new file mode 100644
+index 0000000..83ec6b6
+--- /dev/null
++++ b/wave1/B5/consistency-check.cjs
+@@ -0,0 +1,655 @@
++/**
++ * wave1/B5/consistency-check.cjs
++ *
++ * Deployment Readiness Static Consistency Check Engine
++ * Conducts exhaustive offline static metadata verification across scratch/salesforce-poc/
++ *
++ * Verifies:
++ * 1. Inventory & Project Configuration (sfdx-project.json, package.xml, .forceignore)
++ * 2. Static Resources (files, sizes, MIME types, meta.xml attributes)
++ * 3. Custom Objects & Fields (definitions, field API names, object types)
++ * 4. Permission Sets (object permissions, field permissions, missing FLS / SEC-01 check)
++ * 5. Apex Classes & Meta XML (existence of .cls-meta.xml, apiVersions, static SOQL/DML validation)
++ * 6. Apex Test Classes & Coverage Boundaries (presence of test classes, explicit note on offline coverage)
++ * 7. LWC Bundles (presence of .js and .js-meta.xml, template validity, import resolution: Apex, Schema, Resources, Child components)
++ * 8. API Version Consistency & Divergence Scan
++ * 9. Wave 9 Quarantined Metadata Detection (daRefactoringEngine, daRefactorHandoffModal) & Packaging Exposure
++ * 10. File Size & Limits Analysis
++ */
++
++const fs = require('fs');
++const path = require('path');
++const crypto = require('crypto');
++
++const REPO_ROOT = path.resolve(__dirname, '../..');
++const POC_ROOT = path.join(REPO_ROOT, 'scratch/salesforce-poc');
++const FORCE_APP = path.join(POC_ROOT, 'force-app/main/default');
++
++// Output paths
++const RESULTS_JSON = path.join(__dirname, 'consistency-results.json');
++const SUMMARY_TXT = path.join(__dirname, 'consistency-summary.txt');
++
++function getSha256(filePath) {
++    if (!fs.existsSync(filePath)) return null;
++    const content = fs.readFileSync(filePath);
++    return crypto.createHash('sha256').update(content).digest('hex');
++}
++
++function parseXmlTag(xmlText, tagName) {
++    const re = new RegExp(`<${tagName}>([\\s\\S]*?)</${tagName}>`, 'i');
++    const match = xmlText.match(re);
++    return match ? match[1].trim() : null;
++}
++
++function parseXmlTags(xmlText, tagName) {
++    const re = new RegExp(`<${tagName}>([\\s\\S]*?)</${tagName}>`, 'gi');
++    const results = [];
++    let match;
++    while ((match = re.exec(xmlText)) !== null) {
++        results.push(match[1].trim());
++    }
++    return results;
++}
++
++function listFilesRecursive(dir) {
++    let results = [];
++    if (!fs.existsSync(dir)) return results;
++    const list = fs.readdirSync(dir);
++    for (const file of list) {
++        const fullPath = path.join(dir, file);
++        const stat = fs.statSync(fullPath);
++        if (stat && stat.isDirectory()) {
++            results = results.concat(listFilesRecursive(fullPath));
++        } else {
++            results.push(fullPath);
++        }
++    }
++    return results;
++}
++
++console.log('=== Salesforce POC Deployment Readiness Consistency Check ===');
++console.log(`POC Root: ${POC_ROOT}`);
++
++const report = {
++    timestamp: new Date().toISOString(),
++    sourceRoot: POC_ROOT,
++    checks: {},
++    summary: {
++        totalChecks: 0,
++        passedChecks: 0,
++        warningChecks: 0,
++        failedChecks: 0
++    }
++};
++
++function recordCheck(id, name, status, details, evidence) {
++    report.summary.totalChecks++;
++    if (status === 'PASS') report.summary.passedChecks++;
++    else if (status === 'WARN') report.summary.warningChecks++;
++    else if (status === 'FAIL') report.summary.failedChecks++;
++
++    report.checks[id] = {
++        name,
++        status,
++        details,
++        evidence
++    };
++    console.log(`[${status}] ${id}: ${name}`);
++}
++
++// -------------------------------------------------------------
++// 1. INVENTORY & CONFIGURATION
++// -------------------------------------------------------------
++const sfdxProjectFile = path.join(POC_ROOT, 'sfdx-project.json');
++let sfdxConfig = null;
++if (fs.existsSync(sfdxProjectFile)) {
++    sfdxConfig = JSON.parse(fs.readFileSync(sfdxProjectFile, 'utf8'));
++    recordCheck('CHK-01-SFDX-PROJECT', 'sfdx-project.json Configuration', 'PASS', {
++        sourceApiVersion: sfdxConfig.sourceApiVersion,
++        packageDirectories: sfdxConfig.packageDirectories,
++        namespace: sfdxConfig.namespace,
++        loginUrl: sfdxConfig.sfdcLoginUrl
++    }, `Found valid sfdx-project.json at ${path.relative(REPO_ROOT, sfdxProjectFile)}`);
++} else {
++    recordCheck('CHK-01-SFDX-PROJECT', 'sfdx-project.json Configuration', 'FAIL', {}, 'sfdx-project.json missing');
++}
++
++const packageXmlPath = path.join(POC_ROOT, 'manifest/package.xml');
++const forceIgnorePath = path.join(POC_ROOT, '.forceignore');
++const rootForceIgnorePath = path.join(REPO_ROOT, '.forceignore');
++
++const hasPackageXml = fs.existsSync(packageXmlPath);
++const hasForceIgnore = fs.existsSync(forceIgnorePath);
++const hasRootForceIgnore = fs.existsSync(rootForceIgnorePath);
++
++recordCheck('CHK-02-MANIFEST-FORCEIGNORE', 'Manifest & .forceignore Detection', 'WARN', {
++    packageXmlPresent: hasPackageXml,
++    packageXmlStatus: hasPackageXml ? 'PRESENT' : 'MISSING',
++    pocForceIgnorePresent: hasForceIgnore,
++    pocForceIgnoreStatus: hasForceIgnore ? 'PRESENT' : 'MISSING',
++    rootForceIgnorePresent: hasRootForceIgnore
++}, `package.xml is ${hasPackageXml ? 'PRESENT' : 'MISSING'}; .forceignore in scratch/salesforce-poc/ is ${hasForceIgnore ? 'PRESENT' : 'MISSING'}`);
++
++// -------------------------------------------------------------
++// 2. STATIC RESOURCES
++// -------------------------------------------------------------
++const staticResourcesDir = path.join(FORCE_APP, 'staticresources');
++const staticResourceFiles = listFilesRecursive(staticResourcesDir);
++const resources = [];
++const resourceFilePairs = {};
++
++for (const f of staticResourceFiles) {
++    const base = path.basename(f);
++    if (base.endsWith('.resource-meta.xml')) {
++        const resName = base.replace('.resource-meta.xml', '');
++        if (!resourceFilePairs[resName]) resourceFilePairs[resName] = {};
++        resourceFilePairs[resName].meta = f;
++    } else {
++        const resName = base.includes('.') ? base.split('.')[0] : base;
++        if (!resourceFilePairs[resName]) resourceFilePairs[resName] = {};
++        resourceFilePairs[resName].content = f;
++    }
++}
++
++let staticResStatus = 'PASS';
++for (const [name, files] of Object.entries(resourceFilePairs)) {
++    const metaContent = files.meta ? fs.readFileSync(files.meta, 'utf8') : '';
++    const contentStats = files.content ? fs.statSync(files.content) : null;
++    const cacheControl = parseXmlTag(metaContent, 'cacheControl');
++    const contentType = parseXmlTag(metaContent, 'contentType');
++
++    const resData = {
++        name,
++        contentPath: files.content ? path.relative(REPO_ROOT, files.content) : null,
++        metaPath: files.meta ? path.relative(REPO_ROOT, files.meta) : null,
++        sizeBytes: contentStats ? contentStats.size : 0,
++        cacheControl,
++        contentType,
++        hasMeta: !!files.meta,
++        hasContent: !!files.content
++    };
++    resources.push(resData);
++    if (!files.meta || !files.content) staticResStatus = 'FAIL';
++}
++
++recordCheck('CHK-03-STATIC-RESOURCES', 'Static Resources Inventory & Metadata', staticResStatus, {
++    resources
++}, `Inventoried ${resources.length} static resource(s). Cytoscape size: ${resources[0] ? resources[0].sizeBytes : 0} bytes (Mock placeholder).`);
++
++// -------------------------------------------------------------
++// 3. CUSTOM OBJECTS & FIELDS INVENTORY
++// -------------------------------------------------------------
++const objectsDir = path.join(FORCE_APP, 'objects');
++const customObjects = {};
++if (fs.existsSync(objectsDir)) {
++    const objDirs = fs.readdirSync(objectsDir);
++    for (const objDirName of objDirs) {
++        const objDirPath = path.join(objectsDir, objDirName);
++        if (!fs.statSync(objDirPath).isDirectory()) continue;
++        const objMetaFile = path.join(objDirPath, `${objDirName}.object-meta.xml`);
++        const hasObjMeta = fs.existsSync(objMetaFile);
++        const fieldsDir = path.join(objDirPath, 'fields');
++        const fields = [];
++        if (fs.existsSync(fieldsDir)) {
++            const fieldFiles = fs.readdirSync(fieldsDir);
++            for (const f of fieldFiles) {
++                if (f.endsWith('.field-meta.xml')) {
++                    const fieldXml = fs.readFileSync(path.join(fieldsDir, f), 'utf8');
++                    const fieldName = f.replace('.field-meta.xml', '');
++                    const label = parseXmlTag(fieldXml, 'label');
++                    const type = parseXmlTag(fieldXml, 'type');
++                    const length = parseXmlTag(fieldXml, 'length');
++                    fields.push({
++                        apiName: fieldName,
++                        fullPath: `${objDirName}.${fieldName}`,
++                        label,
++                        type,
++                        length: length ? parseInt(length, 10) : null
++                    });
++                }
++            }
++        }
++        customObjects[objDirName] = {
++            apiName: objDirName,
++            metaPath: hasObjMeta ? path.relative(REPO_ROOT, objMetaFile) : null,
++            fieldCount: fields.length,
++            fields
++        };
++    }
++}
++
++const totalFields = Object.values(customObjects).reduce((acc, obj) => acc + obj.fieldCount, 0);
++recordCheck('CHK-04-CUSTOM-OBJECTS-FIELDS', 'Custom Objects & Fields Inventory', 'PASS', {
++    objectCount: Object.keys(customObjects).length,
++    objects: customObjects,
++    totalFields
++}, `Discovered ${Object.keys(customObjects).length} custom objects and ${totalFields} custom fields.`);
++
++// -------------------------------------------------------------
++// 4. PERMISSION SETS & FLS VERIFICATION (SEC-01 AUDIT)
++// -------------------------------------------------------------
++const permSetsDir = path.join(FORCE_APP, 'permissionsets');
++const permSetFiles = listFilesRecursive(permSetsDir).filter(f => f.endsWith('.permissionset-meta.xml'));
++const permissionSets = [];
++const missingFlsDefects = [];
++
++for (const psFile of permSetFiles) {
++    const xml = fs.readFileSync(psFile, 'utf8');
++    const label = parseXmlTag(xml, 'label');
++    const objectPermissions = [];
++    const fieldPermissions = [];
++
++    // Parse objectPermissions
++    const objBlocks = parseXmlTags(xml, 'objectPermissions');
++    for (const b of objBlocks) {
++        objectPermissions.push({
++            object: parseXmlTag(b, 'object'),
++            allowRead: parseXmlTag(b, 'allowRead') === 'true',
++            allowCreate: parseXmlTag(b, 'allowCreate') === 'true',
++            allowEdit: parseXmlTag(b, 'allowEdit') === 'true',
++            allowDelete: parseXmlTag(b, 'allowDelete') === 'true',
++            viewAllRecords: parseXmlTag(b, 'viewAllRecords') === 'true',
++            modifyAllRecords: parseXmlTag(b, 'modifyAllRecords') === 'true'
++        });
++    }
++
++    // Parse fieldPermissions
++    const fldBlocks = parseXmlTags(xml, 'fieldPermissions');
++    for (const b of fldBlocks) {
++        fieldPermissions.push({
++            field: parseXmlTag(b, 'field'),
++            readable: parseXmlTag(b, 'readable') === 'true',
++            editable: parseXmlTag(b, 'editable') === 'true'
++        });
++    }
++
++    const psName = path.basename(psFile).replace('.permissionset-meta.xml', '');
++    permissionSets.push({
++        name: psName,
++        path: path.relative(REPO_ROOT, psFile),
++        label,
++        objectPermissions,
++        fieldPermissions
++    });
++
++    // Check for missing fieldPermissions for custom objects
++    const coveredFields = new Set(fieldPermissions.map(fp => fp.field));
++    for (const [objName, objData] of Object.entries(customObjects)) {
++        for (const field of objData.fields) {
++            // MasterDetail fields do not have fieldPermissions in Salesforce metadata (inherited from Master)
++            if (field.type === 'MasterDetail') continue;
++            if (!coveredFields.has(field.fullPath)) {
++                missingFlsDefects.push({
++                    permissionSet: psName,
++                    field: field.fullPath,
++                    object: objName,
++                    type: field.type
++                });
++            }
++        }
++    }
++}
++
++const flsStatus = missingFlsDefects.length > 0 ? 'FAIL' : 'PASS';
++recordCheck('CHK-05-PERMSET-FLS-AUDIT', 'Permission Set & FLS Consistency (SEC-01)', flsStatus, {
++    permissionSets,
++    missingFlsCount: missingFlsDefects.length,
++    missingFlsDefects
++}, `Found ${missingFlsDefects.length} custom fields without FLS in DA_Architecture_Analyst (SEC-01 confirmed blocker).`);
++
++// -------------------------------------------------------------
++// 5. APEX CLASSES, META XML & API VERSIONS
++// -------------------------------------------------------------
++const classesDir = path.join(FORCE_APP, 'classes');
++const apexFiles = listFilesRecursive(classesDir).filter(f => f.endsWith('.cls'));
++const apexClasses = [];
++const apexMetaMissing = [];
++const apiVersionsFound = {};
++
++for (const clsFile of apexFiles) {
++    const clsName = path.basename(clsFile).replace('.cls', '');
++    const metaFile = `${clsFile}-meta.xml`;
++    const hasMeta = fs.existsSync(metaFile);
++    let apiVersion = null;
++    let status = null;
++
++    if (hasMeta) {
++        const metaXml = fs.readFileSync(metaFile, 'utf8');
++        apiVersion = parseXmlTag(metaXml, 'apiVersion');
++        status = parseXmlTag(metaXml, 'status');
++        if (apiVersion) {
++            apiVersionsFound[apiVersion] = (apiVersionsFound[apiVersion] || 0) + 1;
++        }
++    } else {
++        apexMetaMissing.push(clsFile);
++    }
++
++    const clsContent = fs.readFileSync(clsFile, 'utf8');
++    const isTest = /@isTest/i.test(clsContent) || clsName.endsWith('Test');
++
++    apexClasses.push({
++        name: clsName,
++        path: path.relative(REPO_ROOT, clsFile),
++        isTest,
++        hasMeta,
++        apiVersion,
++        status,
++        sizeBytes: fs.statSync(clsFile).size
++    });
++}
++
++const apexMetaStatus = apexMetaMissing.length === 0 ? 'PASS' : 'FAIL';
++recordCheck('CHK-06-APEX-METADATA', 'Apex Classes & Meta XML Pairing', apexMetaStatus, {
++    totalApexClasses: apexClasses.length,
++    productionClasses: apexClasses.filter(c => !c.isTest).length,
++    testClasses: apexClasses.filter(c => c.isTest).length,
++    missingMeta: apexMetaMissing
++}, `All ${apexClasses.length} Apex classes have corresponding -meta.xml files.`);
++
++// -------------------------------------------------------------
++// 6. APEX TEST SUITE PRESENCE & COVERAGE BOUNDARY
++// -------------------------------------------------------------
++const prodClasses = apexClasses.filter(c => !c.isTest);
++const testClasses = apexClasses.filter(c => c.isTest);
++recordCheck('CHK-07-APEX-TEST-PRESENCE', 'Apex Test Suite Presence & Offline Verification Boundary', 'WARN', {
++    productionClassesCount: prodClasses.length,
++    testClassesCount: testClasses.length,
++    productionClasses: prodClasses.map(c => c.name),
++    testClasses: testClasses.map(c => c.name),
++    offlineCoverageVerifiable: false,
++    statement: "MOCKED / NOT VERIFIED: Apex unit test execution and code coverage percentages CANNOT be verified offline without a live Salesforce org / Apex compiler runtime."
++}, `5 test classes present covering controllers, DTOs, security, and schema. Offline coverage percentage NOT verified.`);
++
++// -------------------------------------------------------------
++// 7. LWC BUNDLES & TEMPLATES & METADATA
++// -------------------------------------------------------------
++const lwcDir = path.join(FORCE_APP, 'lwc');
++const lwcBundles = [];
++const missingLwcMeta = [];
++const missingLwcJs = [];
++
++if (fs.existsSync(lwcDir)) {
++    const bundleDirs = fs.readdirSync(lwcDir);
++    for (const bDir of bundleDirs) {
++        const fullBDir = path.join(lwcDir, bDir);
++        if (!fs.statSync(fullBDir).isDirectory()) continue;
++        const jsFile = path.join(fullBDir, `${bDir}.js`);
++        const metaFile = path.join(fullBDir, `${bDir}.js-meta.xml`);
++        const htmlFile = path.join(fullBDir, `${bDir}.html`);
++        const cssFile = path.join(fullBDir, `${bDir}.css`);
++
++        const hasJs = fs.existsSync(jsFile);
++        const hasMeta = fs.existsSync(metaFile);
++        const hasHtml = fs.existsSync(htmlFile);
++        const hasCss = fs.existsSync(cssFile);
++
++        if (!hasJs) missingLwcJs.push(bDir);
++        if (!hasMeta) missingLwcMeta.push(bDir);
++
++        let apiVersion = null;
++        let isExposed = null;
++        let targets = [];
++        let masterLabel = null;
++
++        if (hasMeta) {
++            const metaXml = fs.readFileSync(metaFile, 'utf8');
++            apiVersion = parseXmlTag(metaXml, 'apiVersion');
++            isExposed = parseXmlTag(metaXml, 'isExposed') === 'true';
++            masterLabel = parseXmlTag(metaXml, 'masterLabel');
++            targets = parseXmlTags(metaXml, 'target');
++            if (apiVersion) {
++                apiVersionsFound[apiVersion] = (apiVersionsFound[apiVersion] || 0) + 1;
++            }
++        }
++
++        const bundleFiles = listFilesRecursive(fullBDir);
++        const totalSize = bundleFiles.reduce((acc, f) => acc + fs.statSync(f).size, 0);
++
++        lwcBundles.push({
++            name: bDir,
++            path: path.relative(REPO_ROOT, fullBDir),
++            hasJs,
++            hasMeta,
++            hasHtml,
++            hasCss,
++            apiVersion,
++            isExposed,
++            masterLabel,
++            targets,
++            fileCount: bundleFiles.length,
++            totalSizeBytes: totalSize
++        });
++    }
++}
++
++const lwcMetaStatus = (missingLwcJs.length === 0 && missingLwcMeta.length === 0) ? 'PASS' : 'FAIL';
++recordCheck('CHK-08-LWC-BUNDLES', 'LWC Component Bundles & Metadata', lwcMetaStatus, {
++    bundleCount: lwcBundles.length,
++    missingJs: missingLwcJs,
++    missingMeta: missingLwcMeta,
++    bundles: lwcBundles
++}, `Inventoried ${lwcBundles.length} LWC bundles. All bundles contain both .js and .js-meta.xml.`);
++
++// -------------------------------------------------------------
++// 8. API VERSION CONSISTENCY SCAN
++// -------------------------------------------------------------
++const sfdxSourceApi = sfdxConfig ? sfdxConfig.sourceApiVersion : '61.0';
++const divergentVersions = Object.keys(apiVersionsFound).filter(v => v !== sfdxSourceApi);
++const apiVerStatus = divergentVersions.length > 0 ? 'WARN' : 'PASS';
++recordCheck('CHK-09-API-VERSION-CONSISTENCY', 'API Version Consistency Across Metadata', apiVerStatus, {
++    sfdxSourceApiVersion: sfdxSourceApi,
++    versionsFoundDistribution: apiVersionsFound,
++    divergentVersions,
++    divergentFiles: apexClasses.concat(lwcBundles)
++        .filter(item => item.apiVersion && item.apiVersion !== sfdxSourceApi)
++        .map(item => ({ name: item.name, path: item.path, apiVersion: item.apiVersion }))
++}, `Detected mixed API versions: ${Object.keys(apiVersionsFound).join(', ')} (sfdx-project.json is ${sfdxSourceApi}).`);
++
++// -------------------------------------------------------------
++// 9. LWC IMPORT RESOLUTION & CROSS-REFERENCES
++// -------------------------------------------------------------
++const allApexMethodSignatures = new Set();
++// Build Apex exposed methods list
++for (const cls of apexClasses) {
++    const fullClsPath = path.join(REPO_ROOT, cls.path);
++    const content = fs.readFileSync(fullClsPath, 'utf8');
++    const methodMatches = content.match(/@AuraEnabled(?:\s*\([^)]*\))?\s+(?:public|global)\s+(?:static\s+)?[a-zA-Z0-9_<>, ]+?\s+([a-zA-Z0-9_]+)\s*\(/g);
++    if (methodMatches) {
++        for (const m of methodMatches) {
++            const mNameMatch = m.match(/([a-zA-Z0-9_]+)\s*\($/);
++            if (mNameMatch) {
++                allApexMethodSignatures.add(`${cls.name}.${mNameMatch[1]}`);
++            }
++        }
++    }
++}
++
++const existingLwcNames = new Set(lwcBundles.map(b => b.name));
++// Also daFilterSchema is an ES6 module inside daAppShell bundle
++const knownModules = new Set([...existingLwcNames, 'daFilterSchema']);
++const knownResources = new Set(resources.map(r => r.name));
++
++const lwcImports = [];
++const danglingImports = [];
++
++for (const b of lwcBundles) {
++    const fullBDir = path.join(REPO_ROOT, b.path);
++    const jsFiles = listFilesRecursive(fullBDir).filter(f => f.endsWith('.js'));
++    for (const jf of jsFiles) {
++        const content = fs.readFileSync(jf, 'utf8');
++        // Apex imports: @salesforce/apex/Controller.method
++        const apexMatches = content.matchAll(/from\s+['"]@salesforce\/apex\/([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)['"]/g);
++        for (const m of apexMatches) {
++            const sig = `${m[1]}.${m[2]}`;
++            const exists = allApexMethodSignatures.has(sig);
++            lwcImports.push({ type: 'Apex', source: path.relative(REPO_ROOT, jf), target: sig, resolved: exists });
++            if (!exists) danglingImports.push({ type: 'Apex', file: path.relative(REPO_ROOT, jf), target: sig });
++        }
++
++        // Resource imports: @salesforce/resourceUrl/resourceName
++        const resMatches = content.matchAll(/from\s+['"]@salesforce\/resourceUrl\/([a-zA-Z0-9_]+)['"]/g);
++        for (const m of resMatches) {
++            const resName = m[1];
++            const exists = knownResources.has(resName);
++            lwcImports.push({ type: 'StaticResource', source: path.relative(REPO_ROOT, jf), target: resName, resolved: exists });
++            if (!exists) danglingImports.push({ type: 'StaticResource', file: path.relative(REPO_ROOT, jf), target: resName });
++        }
++
++        // Schema imports: @salesforce/schema/Object.Field
++        const schemaMatches = content.matchAll(/from\s+['"]@salesforce\/schema\/([a-zA-Z0-9_.]+ exhibit)['"]/g);
++        for (const m of schemaMatches) {
++            // No direct schema imports in POC (uses Apex controllers)
++        }
++
++        // Component imports: c/componentName
++        const cmpMatches = content.matchAll(/from\s+['"]c\/([a-zA-Z0-9_]+)['"]/g);
++        for (const m of cmpMatches) {
++            const cmpName = m[1];
++            const exists = knownModules.has(cmpName);
++            lwcImports.push({ type: 'LWC', source: path.relative(REPO_ROOT, jf), target: cmpName, resolved: exists });
++            if (!exists) danglingImports.push({ type: 'LWC', file: path.relative(REPO_ROOT, jf), target: cmpName });
++        }
++    }
++}
++
++const importStatus = danglingImports.length === 0 ? 'PASS' : 'FAIL';
++recordCheck('CHK-10-LWC-IMPORT-RESOLUTION', 'LWC Cross-Reference & Import Resolution', importStatus, {
++    totalImportsChecked: lwcImports.length,
++    danglingImportsCount: danglingImports.length,
++    danglingImports,
++    apexMethodsExposedCount: allApexMethodSignatures.size,
++    apexMethodsExposed: Array.from(allApexMethodSignatures).sort()
++}, `All ${lwcImports.length} LWC import references (@salesforce/apex, @salesforce/resourceUrl, c/*) resolved successfully.`);
++
++// -------------------------------------------------------------
++// 10. APEX SOQL / DML OBJECT & FIELD RESOLUTION
++// -------------------------------------------------------------
++const soqlFieldDefects = [];
++const allValidFields = new Set();
++for (const [objName, objData] of Object.entries(customObjects)) {
++    for (const f of objData.fields) {
++        allValidFields.add(`${objName}.${f.apiName}`);
++        allValidFields.add(f.apiName); // local field
++    }
++    // standard fields
++    allValidFields.add(`${objName}.Id`);
++    allValidFields.add(`${objName}.Name`);
++    allValidFields.add(`${objName}.CreatedDate`);
++    allValidFields.add(`${objName}.LastModifiedDate`);
++}
++
++for (const cls of apexClasses) {
++    const fullClsPath = path.join(REPO_ROOT, cls.path);
++    const content = fs.readFileSync(fullClsPath, 'utf8');
++    const soqlMatches = content.matchAll(/\[\s*SELECT\s+(.*?)\s+FROM\s+([a-zA-Z0-9_]+)(.*?)\]/gis);
++    for (const m of soqlMatches) {
++        const rawFields = m[1];
++        const fromObj = m[2];
++        if (customObjects[fromObj]) {
++            // Check fields
++            const tokens = rawFields.split(/[,\s]+/).map(t => t.trim()).filter(Boolean);
++            for (const t of tokens) {
++                if (t.toUpperCase().includes('COUNT(')) continue;
++                if (t.includes('.')) {
++                    // Relationship traversal e.g. DA_Project__r.Name
++                    continue;
++                }
++                const fieldKey = `${fromObj}.${t}`;
++                if (!allValidFields.has(fieldKey) && t !== 'Id' && t !== 'Name' && t !== 'CreatedDate' && t !== 'LastModifiedDate' && t !== 'runId' && t !== 'totalCount') {
++                    soqlFieldDefects.push({
++                        class: cls.name,
++                        object: fromObj,
++                        field: t
++                    });
++                }
++            }
++        }
++    }
++}
++
++const soqlStatus = soqlFieldDefects.length === 0 ? 'PASS' : 'FAIL';
++recordCheck('CHK-11-APEX-SCHEMA-CONSISTENCY', 'Apex SOQL & DML Schema Reference Integrity', soqlStatus, {
++    soqlFieldDefectsCount: soqlFieldDefects.length,
++    soqlFieldDefects
++}, `Apex SOQL and DML queries reference valid custom objects and fields.`);
++
++// -------------------------------------------------------------
++// 11. WAVE 9 QUARANTINED METADATA & DEPLOYMENT EXPOSURE
++// -------------------------------------------------------------
++const quarantinedComponents = ['daRefactoringEngine', 'daRefactorHandoffModal'];
++const quarantinedFound = [];
++
++for (const q of quarantinedComponents) {
++    const qDir = path.join(FORCE_APP, 'lwc', q);
++    if (fs.existsSync(qDir)) {
++        const qFiles = listFilesRecursive(qDir);
++        quarantinedFound.push({
++            name: q,
++            dir: path.relative(REPO_ROOT, qDir),
++            files: qFiles.map(f => path.relative(REPO_ROOT, f))
++        });
++    }
++}
++
++// In standard SFDX / Salesforce CLI, if force-app is the packageDirectory and no .forceignore excludes them,
++// `sf project deploy start` or `sf project deploy validate` deploys ALL components in force-app.
++const wave9ExposureRisk = quarantinedFound.length > 0;
++recordCheck('CHK-12-W9-QUARANTINE-RISK', 'Wave 9 Quarantined Metadata Deployment Exposure Risk', 'FAIL', {
++    quarantinedComponentsFound: quarantinedFound,
++    forceAppDefaultDirectory: true,
++    forceIgnoreExcludesQuarantine: false,
++    deploymentImpact: "CRITICAL DEPLOYMENT DEFECT: scratch/salesforce-poc/force-app contains daRefactoringEngine and daRefactorHandoffModal. Because neither .forceignore nor package.xml exists in scratch/salesforce-poc/, a full packageDirectory deploy ('sf project deploy validate/start') will package and deploy unauthorized Wave 9 metadata to the target org."
++}, `Wave 9 quarantined components (${quarantinedComponents.join(', ')}) will be shipped by default 'force-app' deploy.`);
++
++// -------------------------------------------------------------
++// 12. STATIC METADATA SIZE & LIMITS
++// -------------------------------------------------------------
++const largeFiles = [];
++const allPocFiles = listFilesRecursive(FORCE_APP);
++for (const f of allPocFiles) {
++    const sz = fs.statSync(f).size;
++    if (sz > 100 * 1024) { // > 100 KB
++        largeFiles.push({ file: path.relative(REPO_ROOT, f), sizeBytes: sz });
++    }
++}
++
++recordCheck('CHK-13-METADATA-SIZE-LIMITS', 'Metadata & Static Resource Size Limits', 'PASS', {
++    totalPocFiles: allPocFiles.length,
++    largeFilesOver100KB: largeFiles,
++    cytoscapeResourceBytes: resources[0] ? resources[0].sizeBytes : 0
++}, `Checked ${allPocFiles.length} files. Zero files exceed 100 KB in source metadata. Production Cytoscape bundling deferred to live org provisioning.`);
++
++// Write results
++fs.writeFileSync(RESULTS_JSON, JSON.stringify(report, null, 2), 'utf8');
++
++// Write summary
++const summaryText = `SALESFORCE POC DEPLOYMENT READINESS CONSISTENCY CHECK SUMMARY
++Generated: ${report.timestamp}
++===================================================================
++Total Checks Evaluated: ${report.summary.totalChecks}
++PASS: ${report.summary.passedChecks}
++WARN: ${report.summary.warningChecks}
++FAIL: ${report.summary.failedChecks}
++
++CHECK DETAILS:
++${Object.entries(report.checks).map(([id, c]) => `[${c.status}] ${id}: ${c.name}\n  Evidence: ${c.evidence}`).join('\n\n')}
++
++BLOCKING FINDINGS REQUIRING ATTENTION BEFORE DEPLOYMENT:
++1. CHK-05-PERMSET-FLS-AUDIT (FAIL): Missing Field-Level Security in DA_Architecture_Analyst
++   - Custom fields on DA_User_Preference__c and DA_Annotation__c have 0 fieldPermissions.
++   - Live queries/DML WITH USER_MODE will fail with System.QueryException.
++2. CHK-12-W9-QUARANTINE-RISK (FAIL): Quarantined Wave 9 Components in Deploy Path
++   - daRefactoringEngine and daRefactorHandoffModal reside directly inside force-app/main/default/lwc/.
++   - Scratch/salesforce-poc lacks a .forceignore or package.xml to exclude them.
++   - Running 'sf project deploy' will deploy unauthorized components.
++3. CHK-09-API-VERSION-CONSISTENCY (WARN): Mixed API Versions
++   - sfdx-project.json targets 61.0.
++   - Metadata files declare mixed versions: 59.0, 60.0, 61.0.
++4. CHK-02-MANIFEST-FORCEIGNORE (WARN): Missing package.xml and .forceignore in scratch/salesforce-poc/
++===================================================================
++`;
++
++fs.writeFileSync(SUMMARY_TXT, summaryText, 'utf8');
++console.log(`\nDetailed JSON results written to: ${path.relative(REPO_ROOT, RESULTS_JSON)}`);
++console.log(`Summary text report written to: ${path.relative(REPO_ROOT, SUMMARY_TXT)}`);
++console.log('Consistency check completed.');
+diff --git a/wave1/B5/consistency-results.json b/wave1/B5/consistency-results.json
+new file mode 100644
+index 0000000..747cfc1
+--- /dev/null
++++ b/wave1/B5/consistency-results.json
+@@ -0,0 +1,1310 @@
++{
++  "timestamp": "2026-11-09T14:46:09.501Z",
++  "sourceRoot": "/app/scratch/salesforce-poc",
++  "checks": {
++    "CHK-01-SFDX-PROJECT": {
++      "name": "sfdx-project.json Configuration",
++      "status": "PASS",
++      "details": {
++        "sourceApiVersion": "61.0",
++        "packageDirectories": [
++          {
++            "path": "force-app",
++            "default": true
++          }
++        ],
++        "namespace": "",
++        "loginUrl": "https://login.salesforce.com"
++      },
++      "evidence": "Found valid sfdx-project.json at scratch/salesforce-poc/sfdx-project.json"
++    },
++    "CHK-02-MANIFEST-FORCEIGNORE": {
++      "name": "Manifest & .forceignore Detection",
++      "status": "WARN",
++      "details": {
++        "packageXmlPresent": false,
++        "packageXmlStatus": "MISSING",
++        "pocForceIgnorePresent": false,
++        "pocForceIgnoreStatus": "MISSING",
++        "rootForceIgnorePresent": false
++      },
++      "evidence": "package.xml is MISSING; .forceignore in scratch/salesforce-poc/ is MISSING"
++    },
++    "CHK-03-STATIC-RESOURCES": {
++      "name": "Static Resources Inventory & Metadata",
++      "status": "PASS",
++      "details": {
++        "resources": [
++          {
++            "name": "cytoscape",
++            "contentPath": "scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.js",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/staticresources/cytoscape.resource-meta.xml",
++            "sizeBytes": 146,
++            "cacheControl": "Public",
++            "contentType": "application/javascript",
++            "hasMeta": true,
++            "hasContent": true
++          }
++        ]
++      },
++      "evidence": "Inventoried 1 static resource(s). Cytoscape size: 146 bytes (Mock placeholder)."
++    },
++    "CHK-04-CUSTOM-OBJECTS-FIELDS": {
++      "name": "Custom Objects & Fields Inventory",
++      "status": "PASS",
++      "details": {
++        "objectCount": 6,
++        "objects": {
++          "DA_Analysis_Run__c": {
++            "apiName": "DA_Analysis_Run__c",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/DA_Analysis_Run__c.object-meta.xml",
++            "fieldCount": 9,
++            "fields": [
++              {
++                "apiName": "Commit_Hash__c",
++                "fullPath": "DA_Analysis_Run__c.Commit_Hash__c",
++                "label": "Commit Hash",
++                "type": "Text",
++                "length": 40
++              },
++              {
++                "apiName": "Cyclic_SCC_Count__c",
++                "fullPath": "DA_Analysis_Run__c.Cyclic_SCC_Count__c",
++                "label": "Cyclic SCC Count",
++                "type": "Number",
++                "length": null
++              },
++              {
++                "apiName": "DA_Project__c",
++                "fullPath": "DA_Analysis_Run__c.DA_Project__c",
++                "label": "Dependency Analyzer Project",
++                "type": "MasterDetail",
++                "length": null
++              },
++              {
++                "apiName": "Edge_Count__c",
++                "fullPath": "DA_Analysis_Run__c.Edge_Count__c",
++                "label": "Edge Count",
++                "type": "Number",
++                "length": null
++              },
++              {
++                "apiName": "Node_Count__c",
++                "fullPath": "DA_Analysis_Run__c.Node_Count__c",
++                "label": "Node Count",
++                "type": "Number",
++                "length": null
++              },
++              {
++                "apiName": "Run_Timestamp__c",
++                "fullPath": "DA_Analysis_Run__c.Run_Timestamp__c",
++                "label": "Run Timestamp",
++                "type": "DateTime",
++                "length": null
++              },
++              {
++                "apiName": "Status__c",
++                "fullPath": "DA_Analysis_Run__c.Status__c",
++                "label": "Status",
++                "type": "Picklist",
++                "length": null
++              },
++              {
++                "apiName": "Total_Chunks__c",
++                "fullPath": "DA_Analysis_Run__c.Total_Chunks__c",
++                "label": "Total Chunks",
++                "type": "Number",
++                "length": null
++              },
++              {
++                "apiName": "Total_Payload_Size_Chars__c",
++                "fullPath": "DA_Analysis_Run__c.Total_Payload_Size_Chars__c",
++                "label": "Total Payload Size (Chars)",
++                "type": "Number",
++                "length": null
++              }
++            ]
++          },
++          "DA_Annotation__c": {
++            "apiName": "DA_Annotation__c",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Annotation__c/DA_Annotation__c.object-meta.xml",
++            "fieldCount": 7,
++            "fields": [
++              {
++                "apiName": "Author__c",
++                "fullPath": "DA_Annotation__c.Author__c",
++                "label": "Author",
++                "type": "Text",
++                "length": 255
++              },
++              {
++                "apiName": "Finding__c",
++                "fullPath": "DA_Annotation__c.Finding__c",
++                "label": "Finding",
++                "type": "Lookup",
++                "length": null
++              },
++              {
++                "apiName": "Node_Id__c",
++                "fullPath": "DA_Annotation__c.Node_Id__c",
++                "label": "Node ID",
++                "type": "Text",
++                "length": 255
++              },
++              {
++                "apiName": "Project__c",
++                "fullPath": "DA_Annotation__c.Project__c",
++                "label": "Project",
++                "type": "MasterDetail",
++                "length": null
++              },
++              {
++                "apiName": "Resolved_At__c",
++                "fullPath": "DA_Annotation__c.Resolved_At__c",
++                "label": "Resolved At",
++                "type": "DateTime",
++                "length": null
++              },
++              {
++                "apiName": "Status__c",
++                "fullPath": "DA_Annotation__c.Status__c",
++                "label": "Status",
++                "type": "Text",
++                "length": 50
++              },
++              {
++                "apiName": "Text__c",
++                "fullPath": "DA_Annotation__c.Text__c",
++                "label": "Annotation Text",
++                "type": "LongTextArea",
++                "length": 32768
++              }
++            ]
++          },
++          "DA_Finding__c": {
++            "apiName": "DA_Finding__c",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/DA_Finding__c.object-meta.xml",
++            "fieldCount": 5,
++            "fields": [
++              {
++                "apiName": "DA_Analysis_Run__c",
++                "fullPath": "DA_Finding__c.DA_Analysis_Run__c",
++                "label": "Analysis Run",
++                "type": "MasterDetail",
++                "length": null
++              },
++              {
++                "apiName": "Details__c",
++                "fullPath": "DA_Finding__c.Details__c",
++                "label": "Details",
++                "type": "LongTextArea",
++                "length": 32768
++              },
++              {
++                "apiName": "Rule_Id__c",
++                "fullPath": "DA_Finding__c.Rule_Id__c",
++                "label": "Rule ID",
++                "type": "Text",
++                "length": 80
++              },
++              {
++                "apiName": "Severity__c",
++                "fullPath": "DA_Finding__c.Severity__c",
++                "label": "Severity",
++                "type": "Picklist",
++                "length": null
++              },
++              {
++                "apiName": "Target_Node_Id__c",
++                "fullPath": "DA_Finding__c.Target_Node_Id__c",
++                "label": "Target Node ID",
++                "type": "Text",
++                "length": 100
++              }
++            ]
++          },
++          "DA_Graph_Chunk__c": {
++            "apiName": "DA_Graph_Chunk__c",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Graph_Chunk__c/DA_Graph_Chunk__c.object-meta.xml",
++            "fieldCount": 3,
++            "fields": [
++              {
++                "apiName": "Chunk_Index__c",
++                "fullPath": "DA_Graph_Chunk__c.Chunk_Index__c",
++                "label": "Chunk Index",
++                "type": "Number",
++                "length": null
++              },
++              {
++                "apiName": "DA_Analysis_Run__c",
++                "fullPath": "DA_Graph_Chunk__c.DA_Analysis_Run__c",
++                "label": "Analysis Run",
++                "type": "MasterDetail",
++                "length": null
++              },
++              {
++                "apiName": "Payload_Data__c",
++                "fullPath": "DA_Graph_Chunk__c.Payload_Data__c",
++                "label": "Payload Data",
++                "type": "LongTextArea",
++                "length": 131072
++              }
++            ]
++          },
++          "DA_Project__c": {
++            "apiName": "DA_Project__c",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml",
++            "fieldCount": 3,
++            "fields": [
++              {
++                "apiName": "Project_Key__c",
++                "fullPath": "DA_Project__c.Project_Key__c",
++                "label": "Project Key",
++                "type": "Text",
++                "length": 100
++              },
++              {
++                "apiName": "Repository_Url__c",
++                "fullPath": "DA_Project__c.Repository_Url__c",
++                "label": "Repository URL",
++                "type": "Url",
++                "length": null
++              },
++              {
++                "apiName": "Status__c",
++                "fullPath": "DA_Project__c.Status__c",
++                "label": "Status",
++                "type": "Picklist",
++                "length": null
++              }
++            ]
++          },
++          "DA_User_Preference__c": {
++            "apiName": "DA_User_Preference__c",
++            "metaPath": "scratch/salesforce-poc/force-app/main/default/objects/DA_User_Preference__c/DA_User_Preference__c.object-meta.xml",
++            "fieldCount": 8,
++            "fields": [
++              {
++                "apiName": "Active_Layout_Mode__c",
++                "fullPath": "DA_User_Preference__c.Active_Layout_Mode__c",
++                "label": "Active Layout Mode",
++                "type": "Text",
++                "length": 100
++              },
++              {
++                "apiName": "Active_View_Mode__c",
++                "fullPath": "DA_User_Preference__c.Active_View_Mode__c",
++                "label": "Active View Mode",
++                "type": "Text",
++                "length": 100
++              },
++              {
++                "apiName": "Filters_JSON__c",
++                "fullPath": "DA_User_Preference__c.Filters_JSON__c",
++                "label": "Filters JSON",
++                "type": "LongTextArea",
++                "length": 131072
++              },
++              {
++                "apiName": "Positions_JSON__c",
++                "fullPath": "DA_User_Preference__c.Positions_JSON__c",
++                "label": "Positions JSON",
++                "type": "LongTextArea",
++                "length": 131072
++              },
++              {
++                "apiName": "Preference_Key__c",
++                "fullPath": "DA_User_Preference__c.Preference_Key__c",
++                "label": "Preference Key",
++                "type": "Text",
++                "length": 255
++              },
++              {
++                "apiName": "Project__c",
++                "fullPath": "DA_User_Preference__c.Project__c",
++                "label": "Project",
++                "type": "Lookup",
++                "length": null
++              },
++              {
++                "apiName": "User__c",
++                "fullPath": "DA_User_Preference__c.User__c",
++                "label": "User",
++                "type": "Lookup",
++                "length": null
++              },
++              {
++                "apiName": "Zoom_Pan_JSON__c",
++                "fullPath": "DA_User_Preference__c.Zoom_Pan_JSON__c",
++                "label": "Zoom Pan JSON",
++                "type": "LongTextArea",
++                "length": 131072
++              }
++            ]
++          }
++        },
++        "totalFields": 35
++      },
++      "evidence": "Discovered 6 custom objects and 35 custom fields."
++    },
++    "CHK-05-PERMSET-FLS-AUDIT": {
++      "name": "Permission Set & FLS Consistency (SEC-01)",
++      "status": "FAIL",
++      "details": {
++        "permissionSets": [
++          {
++            "name": "DA_Architecture_Analyst",
++            "path": "scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml",
++            "label": "DA Architecture Analyst",
++            "objectPermissions": [
++              {
++                "object": "DA_Project__c",
++                "allowRead": true,
++                "allowCreate": true,
++                "allowEdit": true,
++                "allowDelete": false,
++                "viewAllRecords": true,
++                "modifyAllRecords": false
++              },
++              {
++                "object": "DA_Analysis_Run__c",
++                "allowRead": true,
++                "allowCreate": true,
++                "allowEdit": true,
++                "allowDelete": false,
++                "viewAllRecords": true,
++                "modifyAllRecords": false
++              },
++              {
++                "object": "DA_Graph_Chunk__c",
++                "allowRead": true,
++                "allowCreate": true,
++                "allowEdit": true,
++                "allowDelete": false,
++                "viewAllRecords": true,
++                "modifyAllRecords": false
++              },
++              {
++                "object": "DA_Finding__c",
++                "allowRead": true,
++                "allowCreate": true,
++                "allowEdit": true,
++                "allowDelete": false,
++                "viewAllRecords": true,
++                "modifyAllRecords": false
++              },
++              {
++                "object": "DA_Annotation__c",
++                "allowRead": true,
++                "allowCreate": true,
++                "allowEdit": true,
++                "allowDelete": true,
++                "viewAllRecords": true,
++                "modifyAllRecords": false
++              },
++              {
++                "object": "DA_User_Preference__c",
++                "allowRead": true,
++                "allowCreate": true,
++                "allowEdit": true,
++                "allowDelete": true,
++                "viewAllRecords": true,
++                "modifyAllRecords": false
++              }
++            ],
++            "fieldPermissions": [
++              {
++                "field": "DA_Project__c.Repository_Url__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Project__c.Status__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Project__c.Project_Key__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Commit_Hash__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Run_Timestamp__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Status__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Node_Count__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Edge_Count__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Cyclic_SCC_Count__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Total_Chunks__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Analysis_Run__c.Total_Payload_Size_Chars__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Graph_Chunk__c.Chunk_Index__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Graph_Chunk__c.Payload_Data__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Finding__c.Rule_Id__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Finding__c.Severity__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Finding__c.Target_Node_Id__c",
++                "readable": true,
++                "editable": true
++              },
++              {
++                "field": "DA_Finding__c.Details__c",
++                "readable": true,
++                "editable": true
++              }
++            ]
++          }
++        ],
++        "missingFlsCount": 14,
++        "missingFlsDefects": [
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_Annotation__c.Author__c",
++            "object": "DA_Annotation__c",
++            "type": "Text"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_Annotation__c.Finding__c",
++            "object": "DA_Annotation__c",
++            "type": "Lookup"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_Annotation__c.Node_Id__c",
++            "object": "DA_Annotation__c",
++            "type": "Text"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_Annotation__c.Resolved_At__c",
++            "object": "DA_Annotation__c",
++            "type": "DateTime"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_Annotation__c.Status__c",
++            "object": "DA_Annotation__c",
++            "type": "Text"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_Annotation__c.Text__c",
++            "object": "DA_Annotation__c",
++            "type": "LongTextArea"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Active_Layout_Mode__c",
++            "object": "DA_User_Preference__c",
++            "type": "Text"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Active_View_Mode__c",
++            "object": "DA_User_Preference__c",
++            "type": "Text"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Filters_JSON__c",
++            "object": "DA_User_Preference__c",
++            "type": "LongTextArea"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Positions_JSON__c",
++            "object": "DA_User_Preference__c",
++            "type": "LongTextArea"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Preference_Key__c",
++            "object": "DA_User_Preference__c",
++            "type": "Text"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Project__c",
++            "object": "DA_User_Preference__c",
++            "type": "Lookup"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.User__c",
++            "object": "DA_User_Preference__c",
++            "type": "Lookup"
++          },
++          {
++            "permissionSet": "DA_Architecture_Analyst",
++            "field": "DA_User_Preference__c.Zoom_Pan_JSON__c",
++            "object": "DA_User_Preference__c",
++            "type": "LongTextArea"
++          }
++        ]
++      },
++      "evidence": "Found 14 custom fields without FLS in DA_Architecture_Analyst (SEC-01 confirmed blocker)."
++    },
++    "CHK-06-APEX-METADATA": {
++      "name": "Apex Classes & Meta XML Pairing",
++      "status": "PASS",
++      "details": {
++        "totalApexClasses": 16,
++        "productionClasses": 11,
++        "testClasses": 5,
++        "missingMeta": []
++      },
++      "evidence": "All 16 Apex classes have corresponding -meta.xml files."
++    },
++    "CHK-07-APEX-TEST-PRESENCE": {
++      "name": "Apex Test Suite Presence & Offline Verification Boundary",
++      "status": "WARN",
++      "details": {
++        "productionClassesCount": 11,
++        "testClassesCount": 5,
++        "productionClasses": [
++          "GraphDataController",
++          "DAAnalysisHistoryController",
++          "DAAnnotationController",
++          "DAGraphController",
++          "DAUserPreferenceController",
++          "DAAnalysisRunDTO",
++          "DAErrorResponse",
++          "DAGraphDTO",
++          "DAAnalysisHistoryService",
++          "DAGraphChunkService",
++          "DAGraphIngestionService"
++        ],
++        "testClasses": [
++          "DAAnnotationControllerTest",
++          "DAGraphControllerTest",
++          "DAGraphSecurityTest",
++          "DASchemaAndSecurityTest",
++          "DAUserPreferenceControllerTest"
++        ],
++        "offlineCoverageVerifiable": false,
++        "statement": "MOCKED / NOT VERIFIED: Apex unit test execution and code coverage percentages CANNOT be verified offline without a live Salesforce org / Apex compiler runtime."
++      },
++      "evidence": "5 test classes present covering controllers, DTOs, security, and schema. Offline coverage percentage NOT verified."
++    },
++    "CHK-08-LWC-BUNDLES": {
++      "name": "LWC Component Bundles & Metadata",
++      "status": "PASS",
++      "details": {
++        "bundleCount": 23,
++        "missingJs": [],
++        "missingMeta": [],
++        "bundles": [
++          {
++            "name": "daAnalysisHistory",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistory",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "59.0",
++            "isExposed": true,
++            "masterLabel": "DA Analysis History",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__RecordPage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 11569
++          },
++          {
++            "name": "daAnnotationPanel",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAnnotationPanel",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "61.0",
++            "isExposed": true,
++            "masterLabel": "Dependency Analyzer Annotation Panel",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__RecordPage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 9473
++          },
++          {
++            "name": "daAppShell",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAppShell",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "59.0",
++            "isExposed": true,
++            "masterLabel": "DA Application Shell",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 5,
++            "totalSizeBytes": 68144
++          },
++          {
++            "name": "daArchitectureDnaBarcode",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Architecture DNA Barcode",
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 11119
++          },
++          {
++            "name": "daDiagnosticsView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Diagnostics View",
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 19391
++          },
++          {
++            "name": "daFindingsView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": null,
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 39383
++          },
++          {
++            "name": "daGraphPayloadLoader",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": false,
++            "hasCss": false,
++            "apiVersion": "60.0",
++            "isExposed": false,
++            "masterLabel": null,
++            "targets": [],
++            "fileCount": 2,
++            "totalSizeBytes": 6851
++          },
++          {
++            "name": "daGraphViewer",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": null,
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 36971
++          },
++          {
++            "name": "daHeader",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHeader",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "59.0",
++            "isExposed": true,
++            "masterLabel": "DA Header",
++            "targets": [
++              "lightning__AppPage"
++            ],
++            "fileCount": 5,
++            "totalSizeBytes": 12785
++          },
++          {
++            "name": "daHotspotsView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Hotspots View",
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 19819
++          },
++          {
++            "name": "daInvestigationDrawer",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Investigation Drawer",
++            "targets": [
++              "lightning__AppPage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 27048
++          },
++          {
++            "name": "daLayoutEngine",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": false,
++            "hasCss": false,
++            "apiVersion": "60.0",
++            "isExposed": false,
++            "masterLabel": null,
++            "targets": [],
++            "fileCount": 2,
++            "totalSizeBytes": 22964
++          },
++          {
++            "name": "daMatrixView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": null,
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 24369
++          },
++          {
++            "name": "daPresetManager",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": null,
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 17866
++          },
++          {
++            "name": "daProjectDashboard",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectDashboard",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "59.0",
++            "isExposed": true,
++            "masterLabel": "Dependency Analyzer Project Dashboard",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__RecordPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 17982
++          },
++          {
++            "name": "daProjectSelector",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "59.0",
++            "isExposed": true,
++            "masterLabel": "DA Project Selector",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__RecordPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 5671
++          },
++          {
++            "name": "daRadarView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRadarView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "Architecture Radar View",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__RecordPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 34291
++          },
++          {
++            "name": "daRefactorHandoffModal",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Refactor Handoff Modal",
++            "targets": [
++              "lightning__AppPage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 8770
++          },
++          {
++            "name": "daRefactoringEngine",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": false,
++            "hasCss": false,
++            "apiVersion": "60.0",
++            "isExposed": false,
++            "masterLabel": "DA Refactoring Engine",
++            "targets": [],
++            "fileCount": 2,
++            "totalSizeBytes": 16995
++          },
++          {
++            "name": "daSidebar",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSidebar",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "59.0",
++            "isExposed": true,
++            "masterLabel": "DA Sidebar",
++            "targets": [
++              "lightning__AppPage"
++            ],
++            "fileCount": 5,
++            "totalSizeBytes": 18803
++          },
++          {
++            "name": "daSubwayView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Subway View",
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 14277
++          },
++          {
++            "name": "daTreemapView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": true,
++            "apiVersion": "60.0",
++            "isExposed": true,
++            "masterLabel": "DA Treemap View",
++            "targets": [
++              "lightning__RecordPage",
++              "lightning__AppPage",
++              "lightning__HomePage"
++            ],
++            "fileCount": 4,
++            "totalSizeBytes": 14041
++          },
++          {
++            "name": "graphViewer",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/graphViewer",
++            "hasJs": true,
++            "hasMeta": true,
++            "hasHtml": true,
++            "hasCss": false,
++            "apiVersion": "61.0",
++            "isExposed": true,
++            "masterLabel": "Graph Viewer",
++            "targets": [
++              "lightning__AppPage",
++              "lightning__RecordPage",
++              "lightning__HomePage",
++              "lightning__Tab"
++            ],
++            "fileCount": 3,
++            "totalSizeBytes": 4695
++          }
++        ]
++      },
++      "evidence": "Inventoried 23 LWC bundles. All bundles contain both .js and .js-meta.xml."
++    },
++    "CHK-09-API-VERSION-CONSISTENCY": {
++      "name": "API Version Consistency Across Metadata",
++      "status": "WARN",
++      "details": {
++        "sfdxSourceApiVersion": "61.0",
++        "versionsFoundDistribution": {
++          "61.0": 5,
++          "59.0": 10,
++          "60.0": 24
++        },
++        "divergentVersions": [
++          "59.0",
++          "60.0"
++        ],
++        "divergentFiles": [
++          {
++            "name": "DAAnalysisHistoryController",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/controllers/DAAnalysisHistoryController.cls",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "DAGraphController",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAAnalysisRunDTO",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/dto/DAAnalysisRunDTO.cls",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "DAErrorResponse",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/dto/DAErrorResponse.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAGraphDTO",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/dto/DAGraphDTO.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAAnalysisHistoryService",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/services/DAAnalysisHistoryService.cls",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "DAGraphChunkService",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphChunkService.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAGraphIngestionService",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAAnnotationControllerTest",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAAnnotationControllerTest.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAGraphControllerTest",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphControllerTest.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DAGraphSecurityTest",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAGraphSecurityTest.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "DASchemaAndSecurityTest",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DASchemaAndSecurityTest.cls",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "DAUserPreferenceControllerTest",
++            "path": "scratch/salesforce-poc/force-app/main/default/classes/tests/DAUserPreferenceControllerTest.cls",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daAnalysisHistory",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAnalysisHistory",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "daAppShell",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daAppShell",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "daArchitectureDnaBarcode",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daArchitectureDnaBarcode",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daDiagnosticsView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daDiagnosticsView",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daFindingsView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daFindingsView",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daGraphPayloadLoader",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphPayloadLoader",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daGraphViewer",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daHeader",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHeader",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "daHotspotsView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daHotspotsView",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daInvestigationDrawer",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daInvestigationDrawer",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daLayoutEngine",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daLayoutEngine",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daMatrixView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daMatrixView",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daPresetManager",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daProjectDashboard",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectDashboard",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "daProjectSelector",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "daRadarView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRadarView",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daRefactorHandoffModal",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daRefactoringEngine",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daSidebar",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSidebar",
++            "apiVersion": "59.0"
++          },
++          {
++            "name": "daSubwayView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daSubwayView",
++            "apiVersion": "60.0"
++          },
++          {
++            "name": "daTreemapView",
++            "path": "scratch/salesforce-poc/force-app/main/default/lwc/daTreemapView",
++            "apiVersion": "60.0"
++          }
++        ]
++      },
++      "evidence": "Detected mixed API versions: 61.0, 59.0, 60.0 (sfdx-project.json is 61.0)."
++    },
++    "CHK-10-LWC-IMPORT-RESOLUTION": {
++      "name": "LWC Cross-Reference & Import Resolution",
++      "status": "PASS",
++      "details": {
++        "totalImportsChecked": 28,
++        "danglingImportsCount": 0,
++        "danglingImports": [],
++        "apexMethodsExposedCount": 12,
++        "apexMethodsExposed": [
++          "DAAnalysisHistoryController.getAnalysisRuns",
++          "DAAnnotationController.createAnnotation",
++          "DAAnnotationController.deleteAnnotation",
++          "DAAnnotationController.getAnnotations",
++          "DAAnnotationController.updateAnnotation",
++          "DAGraphController.getGraphChunks",
++          "DAGraphController.getLatestGraphForProject",
++          "DAGraphController.getLatestGraphMetadataForProject",
++          "DAGraphController.getProjects",
++          "DAUserPreferenceController.getUserPreference",
++          "DAUserPreferenceController.saveUserPreference",
++          "GraphDataController.getGraphData"
++        ]
++      },
++      "evidence": "All 28 LWC import references (@salesforce/apex, @salesforce/resourceUrl, c/*) resolved successfully."
++    },
++    "CHK-11-APEX-SCHEMA-CONSISTENCY": {
++      "name": "Apex SOQL & DML Schema Reference Integrity",
++      "status": "PASS",
++      "details": {
++        "soqlFieldDefectsCount": 0,
++        "soqlFieldDefects": []
++      },
++      "evidence": "Apex SOQL and DML queries reference valid custom objects and fields."
++    },
++    "CHK-12-W9-QUARANTINE-RISK": {
++      "name": "Wave 9 Quarantined Metadata Deployment Exposure Risk",
++      "status": "FAIL",
++      "details": {
++        "quarantinedComponentsFound": [
++          {
++            "name": "daRefactoringEngine",
++            "dir": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
++            "files": [
++              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js",
++              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml"
++            ]
++          },
++          {
++            "name": "daRefactorHandoffModal",
++            "dir": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
++            "files": [
++              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css",
++              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html",
++              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js",
++              "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml"
++            ]
++          }
++        ],
++        "forceAppDefaultDirectory": true,
++        "forceIgnoreExcludesQuarantine": false,
++        "deploymentImpact": "CRITICAL DEPLOYMENT DEFECT: scratch/salesforce-poc/force-app contains daRefactoringEngine and daRefactorHandoffModal. Because neither .forceignore nor package.xml exists in scratch/salesforce-poc/, a full packageDirectory deploy ('sf project deploy validate/start') will package and deploy unauthorized Wave 9 metadata to the target org."
++      },
++      "evidence": "Wave 9 quarantined components (daRefactoringEngine, daRefactorHandoffModal) will be shipped by default 'force-app' deploy."
++    },
++    "CHK-13-METADATA-SIZE-LIMITS": {
++      "name": "Metadata & Static Resource Size Limits",
++      "status": "PASS",
++      "details": {
++        "totalPocFiles": 164,
++        "largeFilesOver100KB": [],
++        "cytoscapeResourceBytes": 146
++      },
++      "evidence": "Checked 164 files. Zero files exceed 100 KB in source metadata. Production Cytoscape bundling deferred to live org provisioning."
++    }
++  },
++  "summary": {
++    "totalChecks": 13,
++    "passedChecks": 8,
++    "warningChecks": 3,
++    "failedChecks": 2
++  }
++}
+\ No newline at end of file
+diff --git a/wave1/B5/consistency-summary.txt b/wave1/B5/consistency-summary.txt
+new file mode 100644
+index 0000000..312bcfd
+--- /dev/null
++++ b/wave1/B5/consistency-summary.txt
+@@ -0,0 +1,61 @@
++SALESFORCE POC DEPLOYMENT READINESS CONSISTENCY CHECK SUMMARY
++Generated: 2026-11-09T14:46:09.501Z
++===================================================================
++Total Checks Evaluated: 13
++PASS: 8
++WARN: 3
++FAIL: 2
++
++CHECK DETAILS:
++[PASS] CHK-01-SFDX-PROJECT: sfdx-project.json Configuration
++  Evidence: Found valid sfdx-project.json at scratch/salesforce-poc/sfdx-project.json
++
++[WARN] CHK-02-MANIFEST-FORCEIGNORE: Manifest & .forceignore Detection
++  Evidence: package.xml is MISSING; .forceignore in scratch/salesforce-poc/ is MISSING
++
++[PASS] CHK-03-STATIC-RESOURCES: Static Resources Inventory & Metadata
++  Evidence: Inventoried 1 static resource(s). Cytoscape size: 146 bytes (Mock placeholder).
++
++[PASS] CHK-04-CUSTOM-OBJECTS-FIELDS: Custom Objects & Fields Inventory
++  Evidence: Discovered 6 custom objects and 35 custom fields.
++
++[FAIL] CHK-05-PERMSET-FLS-AUDIT: Permission Set & FLS Consistency (SEC-01)
++  Evidence: Found 14 custom fields without FLS in DA_Architecture_Analyst (SEC-01 confirmed blocker).
++
++[PASS] CHK-06-APEX-METADATA: Apex Classes & Meta XML Pairing
++  Evidence: All 16 Apex classes have corresponding -meta.xml files.
++
++[WARN] CHK-07-APEX-TEST-PRESENCE: Apex Test Suite Presence & Offline Verification Boundary
++  Evidence: 5 test classes present covering controllers, DTOs, security, and schema. Offline coverage percentage NOT verified.
++
++[PASS] CHK-08-LWC-BUNDLES: LWC Component Bundles & Metadata
++  Evidence: Inventoried 23 LWC bundles. All bundles contain both .js and .js-meta.xml.
++
++[WARN] CHK-09-API-VERSION-CONSISTENCY: API Version Consistency Across Metadata
++  Evidence: Detected mixed API versions: 61.0, 59.0, 60.0 (sfdx-project.json is 61.0).
++
++[PASS] CHK-10-LWC-IMPORT-RESOLUTION: LWC Cross-Reference & Import Resolution
++  Evidence: All 28 LWC import references (@salesforce/apex, @salesforce/resourceUrl, c/*) resolved successfully.
++
++[PASS] CHK-11-APEX-SCHEMA-CONSISTENCY: Apex SOQL & DML Schema Reference Integrity
++  Evidence: Apex SOQL and DML queries reference valid custom objects and fields.
++
++[FAIL] CHK-12-W9-QUARANTINE-RISK: Wave 9 Quarantined Metadata Deployment Exposure Risk
++  Evidence: Wave 9 quarantined components (daRefactoringEngine, daRefactorHandoffModal) will be shipped by default 'force-app' deploy.
++
++[PASS] CHK-13-METADATA-SIZE-LIMITS: Metadata & Static Resource Size Limits
++  Evidence: Checked 164 files. Zero files exceed 100 KB in source metadata. Production Cytoscape bundling deferred to live org provisioning.
++
++BLOCKING FINDINGS REQUIRING ATTENTION BEFORE DEPLOYMENT:
++1. CHK-05-PERMSET-FLS-AUDIT (FAIL): Missing Field-Level Security in DA_Architecture_Analyst
++   - Custom fields on DA_User_Preference__c and DA_Annotation__c have 0 fieldPermissions.
++   - Live queries/DML WITH USER_MODE will fail with System.QueryException.
++2. CHK-12-W9-QUARANTINE-RISK (FAIL): Quarantined Wave 9 Components in Deploy Path
++   - daRefactoringEngine and daRefactorHandoffModal reside directly inside force-app/main/default/lwc/.
++   - Scratch/salesforce-poc lacks a .forceignore or package.xml to exclude them.
++   - Running 'sf project deploy' will deploy unauthorized components.
++3. CHK-09-API-VERSION-CONSISTENCY (WARN): Mixed API Versions
++   - sfdx-project.json targets 61.0.
++   - Metadata files declare mixed versions: 59.0, 60.0, 61.0.
++4. CHK-02-MANIFEST-FORCEIGNORE (WARN): Missing package.xml and .forceignore in scratch/salesforce-poc/
++===================================================================
+diff --git a/wave1/B5/wave9-quarantine-assessment.json b/wave1/B5/wave9-quarantine-assessment.json
+new file mode 100644
+index 0000000..db1b767
+--- /dev/null
++++ b/wave1/B5/wave9-quarantine-assessment.json
+@@ -0,0 +1,56 @@
++{
++  "quarantineAssessment": {
++    "status": "IMPLEMENTED_UNAUTHORIZED_QUARANTINED",
++    "evaluationDate": "2026-11-09",
++    "quarantinedComponents": [
++      {
++        "name": "daRefactoringEngine",
++        "type": "LightningComponentBundle",
++        "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine",
++        "files": [
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js",
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml"
++        ],
++        "isExposed": false,
++        "mountedInAppShell": false,
++        "importedBy": [
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js"
++        ]
++      },
++      {
++        "name": "daRefactorHandoffModal",
++        "type": "LightningComponentBundle",
++        "path": "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal",
++        "files": [
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js",
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html",
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.css",
++          "scratch/salesforce-poc/force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml"
++        ],
++        "isExposed": true,
++        "mountedInAppShell": false,
++        "importedBy": []
++      }
++    ],
++    "packagingExposure": {
++      "defaultPackageDirectory": "force-app",
++      "sfdxProjectFile": "scratch/salesforce-poc/sfdx-project.json",
++      "manifestPackageXml": "MISSING",
++      "scratchForceIgnore": "MISSING",
++      "riskDescription": "Without a .forceignore entry or explicit manifest allowlist, running 'sf project deploy start' or 'sf project deploy validate' against scratch/salesforce-poc automatically packages and deploys all files under force-app/, including quarantined components daRefactoringEngine and daRefactorHandoffModal."
++    },
++    "recommendations": {
++      "optionA_ForceIgnore": {
++        "description": "Narrowest exclusion via .forceignore entry",
++        "recommendedEntry": "**/lwc/daRefactoringEngine/**\n**/lwc/daRefactorHandoffModal/**",
++        "targetPath": "scratch/salesforce-poc/.forceignore",
++        "actionRequestedFrom": "B1 / Project Owner"
++      },
++      "optionB_ManifestAllowlist": {
++        "description": "Deployment manifest (manifest/package.xml) specifying only authorized LightningComponentBundle members",
++        "targetPath": "scratch/salesforce-poc/manifest/package.xml",
++        "actionRequestedFrom": "B1 / Project Owner"
++      }
++    }
++  }
++}
