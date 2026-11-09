@@ -13,32 +13,73 @@
             onglobalsearch={handleHeaderGlobalSearch}>
         </c-da-header>
 
-        <!-- View Navigation Tab Bar (FEAT-SHELL-01) -->
+        <!-- View Navigation Tab Bar (FEAT-SHELL-01 & FEAT-SHELL-02) -->
         <div class="slds-tabs_default shell-tabs">
             <ul class="slds-tabs_default__nav" role="tablist">
                 <li class={graphTabClass} title="Graph Viewer" role="presentation">
                     <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={graphTabIndex} aria-selected={isGraphView} id="tab-graph__item" onclick={selectGraphView}>
-                        Graph Viewer
+                        Graph
                     </a>
                 </li>
                 <li class={matrixTabClass} title="Dependency Matrix" role="presentation">
                     <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={matrixTabIndex} aria-selected={isMatrixView} id="tab-matrix__item" onclick={selectMatrixView}>
-                        Dependency Matrix
+                        Matrix
                     </a>
                 </li>
                 <li class={findingsTabClass} title="Findings & Alerts" role="presentation">
                     <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={findingsTabIndex} aria-selected={isFindingsView} id="tab-findings__item" onclick={selectFindingsView}>
-                        Findings & Alerts
+                        Findings
+                    </a>
+                </li>
+                <li class={dashboardTabClass} title="Executive Dashboard" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={dashboardTabIndex} aria-selected={isDashboardView} id="tab-dashboard__item" onclick={selectDashboardView}>
+                        Dashboard
+                    </a>
+                </li>
+                <li class={historyTabClass} title="Analysis History" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={historyTabIndex} aria-selected={isHistoryView} id="tab-history__item" onclick={selectHistoryView}>
+                        History
+                    </a>
+                </li>
+                <li class={diagnosticsTabClass} title="Architecture Diagnostics" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={diagnosticsTabIndex} aria-selected={isDiagnosticsView} id="tab-diagnostics__item" onclick={selectDiagnosticsView}>
+                        Diagnostics
+                    </a>
+                </li>
+                <li class={hotspotsTabClass} title="Hotspots & Risk" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={hotspotsTabIndex} aria-selected={isHotspotsView} id="tab-hotspots__item" onclick={selectHotspotsView}>
+                        Hotspots
+                    </a>
+                </li>
+                <li class={radarTabClass} title="Architecture Radar" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={radarTabIndex} aria-selected={isRadarView} id="tab-radar__item" onclick={selectRadarView}>
+                        Radar
+                    </a>
+                </li>
+                <li class={treemapTabClass} title="Treemap View" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={treemapTabIndex} aria-selected={isTreemapView} id="tab-treemap__item" onclick={selectTreemapView}>
+                        Treemap
+                    </a>
+                </li>
+                <li class={subwayTabClass} title="Subway Transit Map" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={subwayTabIndex} aria-selected={isSubwayView} id="tab-subway__item" onclick={selectSubwayView}>
+                        Subway
+                    </a>
+                </li>
+                <li class={dnaTabClass} title="Architecture DNA Barcode" role="presentation">
+                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex={dnaTabIndex} aria-selected={isDnaView} id="tab-dna__item" onclick={selectDnaView}>
+                        DNA Barcode
                     </a>
                 </li>
             </ul>
 
-            <!-- Workspace Body: Modular Sidebar (TASK-P1-04) + Main View Container -->
+            <!-- Workspace Body: Modular Sidebar (TASK-P1-04) + Main View Container + Dockable Investigation Drawer -->
             <div class="slds-grid shell-workspace-grid">
                 <!-- Architecture Inventory Sidebar -->
                 <div class="slds-col_bump-left sidebar-wrapper">
                     <c-da-sidebar
                         project-id={activeProjectId}
+                        current-view={activeViewMode}
                         selected-node-id={selectedNodeId}
                         nodes={activeGraphNodes}
                         onnodeselect={handleNodeSelect}
@@ -96,7 +137,8 @@
                                         <c-da-matrix-view
                                             project-id={activeProjectId}
                                             graph-payload={activeGraphPayload}
-                                            filter-criteria={activeFilterCriteria}>
+                                            filter-criteria={activeFilterCriteria}
+                                            onnodeselect={handleNodeSelect}>
                                         </c-da-matrix-view>
                                     </template>
                                 </template>
@@ -129,7 +171,8 @@
                                         <c-da-findings-view
                                             project-id={activeProjectId}
                                             graph-payload={activeGraphPayload}
-                                            filter-criteria={activeFilterCriteria}>
+                                            filter-criteria={activeFilterCriteria}
+                                            onnodeselect={handleNodeSelect}>
                                         </c-da-findings-view>
                                     </template>
                                 </template>
@@ -144,7 +187,192 @@
                             </template>
                         </div>
                     </template>
+
+                    <!-- Dashboard View -->
+                    <template if:true={isDashboardView}>
+                        <div id="tab-dashboard" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-dashboard__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-project-dashboard
+                                    project-id={activeProjectId}
+                                    project-key={activeProjectKey}
+                                    onviewchange={handleViewChange}>
+                                </c-da-project-dashboard>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display its executive dashboard.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Analysis History View -->
+                    <template if:true={isHistoryView}>
+                        <div id="tab-history" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-history__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-analysis-history
+                                    project-id={activeProjectId}
+                                    onrunselect={handleRunSelect}>
+                                </c-da-analysis-history>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display its analysis history.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Architecture Diagnostics View -->
+                    <template if:true={isDiagnosticsView}>
+                        <div id="tab-diagnostics" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-diagnostics__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-diagnostics-view
+                                    project-id={activeProjectId}
+                                    payload={activeGraphPayload}
+                                    selected-node-id={selectedNodeId}>
+                                </c-da-diagnostics-view>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display architectural diagnostics.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Hotspots & Risk View -->
+                    <template if:true={isHotspotsView}>
+                        <div id="tab-hotspots" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-hotspots__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-hotspots-view
+                                    project-id={activeProjectId}
+                                    payload={activeGraphPayload}
+                                    selected-node-id={selectedNodeId}
+                                    onnodeselect={handleNodeSelect}>
+                                </c-da-hotspots-view>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display hotspots and architectural risks.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Architecture Radar View -->
+                    <template if:true={isRadarView}>
+                        <div id="tab-radar" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-radar__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-radar-view
+                                    project-id={activeProjectId}
+                                    payload={activeGraphPayload}
+                                    selected-node-id={selectedNodeId}
+                                    onnodeselect={handleNodeSelect}>
+                                </c-da-radar-view>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display the architecture radar chart.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Treemap View -->
+                    <template if:true={isTreemapView}>
+                        <div id="tab-treemap" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-treemap__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-treemap-view
+                                    project-id={activeProjectId}
+                                    payload={activeGraphPayload}
+                                    selected-node-id={selectedNodeId}
+                                    onnodeselect={handleNodeSelect}>
+                                </c-da-treemap-view>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display the component treemap.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Subway Transit Map View -->
+                    <template if:true={isSubwayView}>
+                        <div id="tab-subway" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-subway__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-subway-view
+                                    project-id={activeProjectId}
+                                    payload={activeGraphPayload}
+                                    selected-node-id={selectedNodeId}
+                                    onnodeselect={handleNodeSelect}>
+                                </c-da-subway-view>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display the subway transit map.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Architecture DNA Barcode View -->
+                    <template if:true={isDnaView}>
+                        <div id="tab-dna" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-dna__item">
+                            <template if:true={activeProjectId}>
+                                <c-da-architecture-dna-barcode
+                                    project-id={activeProjectId}
+                                    payload={activeGraphPayload}
+                                    selected-node-id={selectedNodeId}
+                                    onnodeselect={handleNodeSelect}>
+                                </c-da-architecture-dna-barcode>
+                            </template>
+                            <template if:false={activeProjectId}>
+                                <div class="slds-illustration slds-illustration_small empty-state-padding">
+                                    <div class="slds-text-longform">
+                                        <h3 class="slds-text-heading_medium">No Project Selected</h3>
+                                        <p class="slds-text-body_regular">Please select a project from the header to display the architecture DNA barcode.</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
                 </div>
+
+                <!-- Dockable Investigation Drawer (Present when a node is selected across any view) -->
+                <template if:true={selectedNodeId}>
+                    <div class="drawer-wrapper slds-col_bump-right">
+                        <c-da-investigation-drawer
+                            project-id={activeProjectId}
+                            selected-node-id={selectedNodeId}
+                            graph-payload={activeGraphPayload}
+                            findings={activeFindings}
+                            onnodeselect={handleNodeSelect}>
+                        </c-da-investigation-drawer>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
