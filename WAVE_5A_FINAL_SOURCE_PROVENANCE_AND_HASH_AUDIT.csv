@@ -1,0 +1,14 @@
+filepath,sha256,ownership_workstream,provenance_commit,audit_status
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js,df3edd44826b6c99b5422c059d85326dea1e15508d6c1b4ba5288d67f13fdef4,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.html,b97ebb43c58358652377cc507f9feb8baa521d30d51513521a67f689da05ddbe,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.css,2f4d3022363b44eba44b4fa394cabdb995ab38b7c46460efa91173378f886493,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js-meta.xml,dba7c574afe85b35870e196140d644f5064dbf5e8dd541a3cd33ed658ac65e9d,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-c2-snapshot-comparison-tests.cjs,173f7b56f1ccd6b4423e3ef24771c9f7eb11e37f07e98fa38fb3d698255f0375,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js,60c7f7970d4f0961cb58f0810477126e5273c67e6ebb0f93a5906b5598b7621d,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.html,693b07727905aa734c87842a077993118d4361411d095eaad4d07bbbf1ed043c,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.css,8fbe58fc26295a9345244465f17d56594432143a288335ee976f3cda27c22247,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js-meta.xml,dc184698850174aa51726d11acc3f1a67cb95e422cead43ea7a204a3b0231aff,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-c3-sankey-tests.cjs,00a8a00641d77e566d87acbcd3e9e7768b7b926ab6315eb6dac5c41146b8e725,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,656099c9beb5f19ac35797e3bc15045b960e460076e0c312ccf38cdd8402229e,"Coordinator",53574f30,VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,c3c7c9a837f2efbe3eee27e8c34c36580e6da3f8de1aa2f993c6aa8624f2ce26,"Coordinator",53574f30,VERIFIED_MATCH
+scratch/salesforce-poc/.forceignore,e8c1662bd120b5612f0f1c2ce140b1df18a507733d093e42d728445d7dc9e59f,"Agent R2 (Pkg)",5a66fa60,VERIFIED_MATCH
