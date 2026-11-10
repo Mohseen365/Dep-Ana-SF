@@ -679,16 +679,17 @@ export default class DaSankeyView extends LightningElement {
 
         const node = this._adaptedData?.nodeLookup.get(nodeId);
 
-        // Dispatches canonical nodeselect CustomEvent adhering to CONTRACT-06 & SELECTION != NAVIGATION
+        // Dispatches canonical nodeselect CustomEvent adhering strictly to CONTRACT-06 & SELECTION != NAVIGATION
         this.dispatchEvent(new CustomEvent('nodeselect', {
             detail: {
                 nodeId,
-                nodeType: 'component',
-                layer: node ? node.layer : 'unassigned',
+                node: node || null,
                 sourceView: 'river',
-                sourceComponent: 'daSankeyView',
-                timestamp: Date.now(),
-                rawData: node || { id: nodeId }
+                meta: {
+                    sourceComponent: 'daSankeyView',
+                    layer: node ? node.layer : 'unassigned',
+                    timestamp: Date.now()
+                }
             },
             bubbles: true,
             composed: true,

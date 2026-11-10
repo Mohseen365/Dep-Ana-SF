@@ -46,17 +46,8 @@ export function computeGraphDiff(snapshotA, snapshotB) {
 
     const TRACKED_EDGE_PROPS = ['weight', 'type'];
 
-    // Deep freeze source snapshots to guarantee immutability
-    try {
-        Object.freeze(snapshotA);
-        Object.freeze(snapshotB);
-        if (Array.isArray(snapshotA.nodes)) Object.freeze(snapshotA.nodes);
-        if (Array.isArray(snapshotB.nodes)) Object.freeze(snapshotB.nodes);
-        if (Array.isArray(snapshotA.edges)) Object.freeze(snapshotA.edges);
-        if (Array.isArray(snapshotB.edges)) Object.freeze(snapshotB.edges);
-    } catch (e) {
-        // Safe containment in environments where objects cannot be frozen
-    }
+    // Ensure caller-owned canonical snapshots are never mutated or frozen as a side effect.
+    // Pure structural comparison operates in read-only mode using internal indexes and safe references.
 
     // Index baseline entities by stable ID, safely deduplicating
     const nodesAById = new Map();
