@@ -1,0 +1,313 @@
+<template>
+    <template if:true={isOpen}>
+        <!-- Backdrop -->
+        <div class="comparison-modal-backdrop" onclick={handleBackdropClick} aria-hidden="true"></div>
+
+        <!-- Modal Container -->
+        <div class="comparison-modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-heading-01">
+            <!-- Header -->
+            <header class="slds-modal__header comparison-modal-header slds-grid slds-grid_align-spread slds-p-around_medium slds-theme_shade slds-border_bottom">
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:record_lookup" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                            Architecture Snapshot Comparison
+                        </h2>
+                        <p class="slds-text-body_small slds-text-color_weak">
+                            CONTRACT-05 Structural entity and topological metric diffing
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        variant="bare"
+                        size="medium"
+                        alternative-text="Close Snapshot Comparison"
+                        onclick={handleClose}>
+                    </lightning-button-icon>
+                </div>
+            </header>
+
+            <!-- Body -->
+            <div class="slds-p-around_medium comparison-modal-body">
+                <!-- Selectors Bar -->
+                <div class="slds-box slds-box_x-small slds-m-bottom_medium slds-theme_shade">
+                    <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_5-of-12">
+                            <lightning-combobox
+                                name="baselineRun"
+                                label="Baseline Snapshot (A)"
+                                value={selectedBaseRunId}
+                                options={runOptions}
+                                placeholder="Select Baseline Run"
+                                onchange={handleBaseRunChange}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_5-of-12">
+                            <lightning-combobox
+                                name="targetRun"
+                                label="Comparison Snapshot (B)"
+                                value={selectedTargetRunId}
+                                options={runOptions}
+                                placeholder="Select Comparison Run"
+                                onchange={handleTargetRunChange}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 slds-text-align_right slds-p-top_large">
+                            <lightning-button
+                                variant="brand"
+                                label="Compare"
+                                icon-name="utility:change_record_type"
+                                disabled={isCompareDisabled}
+                                onclick={handleCompareClick}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Alert -->
+                <template if:true={errorMessage}>
+                    <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
+                        <span class="slds-assistive-text">error</span>
+                        <lightning-icon icon-name="utility:error" variant="inverse" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        <h2>{errorMessage}</h2>
+                    </div>
+                </template>
+
+                <!-- Loading State -->
+                <template if:true={isLoading}>
+                    <div class="slds-p-around_xx-large slds-text-align_center">
+                        <lightning-spinner alternative-text="Loading Snapshot Diff" size="medium"></lightning-spinner>
+                        <p class="slds-m-top_large slds-text-heading_small slds-text-color_weak">{loadingStatusText}</p>
+                    </div>
+                </template>
+
+                <!-- Initial/Empty Selection State -->
+                <template if:true={isInitialState}>
+                    <div class="slds-p-around_xx-large slds-text-align_center slds-text-color_weak">
+                        <lightning-icon icon-name="utility:flow" size="large" class="slds-m-bottom_small"></lightning-icon>
+                        <h3 class="slds-text-heading_small">Select two snapshots to compare</h3>
+                        <p class="slds-text-body_regular">Choose a baseline and a comparison snapshot above and click "Compare" to compute entity deltas.</p>
+                    </div>
+                </template>
+
+                <!-- Comparison Results View -->
+                <template if:true={hasDiffResult}>
+                    <!-- Summary Metric KPI Strip -->
+                    <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                            <div class="stat-card added">
+                                <div class="stat-value slds-text-color_success">+{diffSummary.addedNodesCount}</div>
+                                <div class="stat-label">Nodes Added</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                            <div class="stat-card removed">
+                                <div class="stat-value slds-text-color_error">-{diffSummary.removedNodesCount}</div>
+                                <div class="stat-label">Nodes Removed</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                            <div class="stat-card modified">
+                                <div class="stat-value slds-text-color_warning">~{diffSummary.modifiedNodesCount}</div>
+                                <div class="stat-label">Nodes Modified</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                            <div class="stat-card added">
+                                <div class="stat-value slds-text-color_success">+{diffSummary.addedEdgesCount}</div>
+                                <div class="stat-label">Edges Added</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                            <div class="stat-card removed">
+                                <div class="stat-value slds-text-color_error">-{diffSummary.removedEdgesCount}</div>
+                                <div class="stat-label">Edges Removed</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_2-of-12">
+                            <div class="stat-card">
+                                <div class="stat-value">{formattedDeltaCycles}</div>
+                                <div class="stat-label">Cycles Delta</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter / Search Header -->
+                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3">
+                            <lightning-input
+                                type="search"
+                                label="Search Changed Entities"
+                                variant="label-hidden"
+                                placeholder="Search by entity ID or type..."
+                                value={searchKeyword}
+                                onchange={handleSearchChange}>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-text-align_right">
+                            <span class="slds-text-body_small slds-text-color_weak slds-m-right_small">
+                                Unchanged: {diffSummary.unchangedNodesCount} nodes, {diffSummary.unchangedEdgesCount} edges
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Entity Tabset -->
+                    <lightning-tabset active-tab-value={activeTab}>
+                        <!-- Added Entities Tab -->
+                        <lightning-tab label={addedTabLabel} value="added">
+                            <template if:true={hasAddedEntities}>
+                                <div class="slds-scrollable_y" style="max-height: 380px;">
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th scope="col" style="width: 80px;"><div class="slds-truncate">Kind</div></th>
+                                                <th scope="col"><div class="slds-truncate">Identifier</div></th>
+                                                <th scope="col"><div class="slds-truncate">Type / Details</div></th>
+                                                <th scope="col"><div class="slds-truncate">Layer / Risk</div></th>
+                                                <th scope="col" style="width: 100px;"><div class="slds-truncate">Action</div></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={filteredAddedEntities} for:item="item">
+                                                <tr key={item.key} class="entity-row" onclick={handleRowClick} data-id={item.id} data-kind={item.kind}>
+                                                    <td><span class="diff-badge diff-badge-added">{item.kind}</span></td>
+                                                    <td class="mono-text">{item.id}</td>
+                                                    <td>{item.details}</td>
+                                                    <td>{item.secondaryDetails}</td>
+                                                    <td>
+                                                        <lightning-button-icon
+                                                            icon-name="utility:preview"
+                                                            size="small"
+                                                            variant="border-filled"
+                                                            alternative-text="Select Entity"
+                                                            onclick={handleSelectEntity}
+                                                            data-id={item.id}
+                                                            data-kind={item.kind}>
+                                                        </lightning-button-icon>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                            <template if:false={hasAddedEntities}>
+                                <div class="slds-p-around_medium slds-text-align_center slds-text-color_weak">
+                                    No added entities found in this comparison.
+                                </div>
+                            </template>
+                        </lightning-tab>
+
+                        <!-- Removed Entities Tab -->
+                        <lightning-tab label={removedTabLabel} value="removed">
+                            <template if:true={hasRemovedEntities}>
+                                <div class="slds-scrollable_y" style="max-height: 380px;">
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th scope="col" style="width: 80px;"><div class="slds-truncate">Kind</div></th>
+                                                <th scope="col"><div class="slds-truncate">Identifier</div></th>
+                                                <th scope="col"><div class="slds-truncate">Type / Details</div></th>
+                                                <th scope="col"><div class="slds-truncate">Layer / Risk</div></th>
+                                                <th scope="col" style="width: 100px;"><div class="slds-truncate">Action</div></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={filteredRemovedEntities} for:item="item">
+                                                <tr key={item.key} class="entity-row" onclick={handleRowClick} data-id={item.id} data-kind={item.kind}>
+                                                    <td><span class="diff-badge diff-badge-removed">{item.kind}</span></td>
+                                                    <td class="mono-text">{item.id}</td>
+                                                    <td>{item.details}</td>
+                                                    <td>{item.secondaryDetails}</td>
+                                                    <td>
+                                                        <lightning-button-icon
+                                                            icon-name="utility:preview"
+                                                            size="small"
+                                                            variant="border-filled"
+                                                            alternative-text="Select Entity"
+                                                            onclick={handleSelectEntity}
+                                                            data-id={item.id}
+                                                            data-kind={item.kind}>
+                                                        </lightning-button-icon>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                            <template if:false={hasRemovedEntities}>
+                                <div class="slds-p-around_medium slds-text-align_center slds-text-color_weak">
+                                    No removed entities found in this comparison.
+                                </div>
+                            </template>
+                        </lightning-tab>
+
+                        <!-- Modified Entities Tab -->
+                        <lightning-tab label={modifiedTabLabel} value="modified">
+                            <template if:true={hasModifiedEntities}>
+                                <div class="slds-scrollable_y" style="max-height: 380px;">
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th scope="col" style="width: 80px;"><div class="slds-truncate">Kind</div></th>
+                                                <th scope="col"><div class="slds-truncate">Identifier</div></th>
+                                                <th scope="col"><div class="slds-truncate">Property Changes</div></th>
+                                                <th scope="col"><div class="slds-truncate">Deltas / Values</div></th>
+                                                <th scope="col" style="width: 100px;"><div class="slds-truncate">Action</div></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={filteredModifiedEntities} for:item="item">
+                                                <tr key={item.key} class="entity-row" onclick={handleRowClick} data-id={item.id} data-kind={item.kind}>
+                                                    <td><span class="diff-badge diff-badge-modified">{item.kind}</span></td>
+                                                    <td class="mono-text">{item.id}</td>
+                                                    <td>
+                                                        <template for:each={item.propertyChanges} for:item="prop">
+                                                            <span key={prop} class="property-pill">{prop}</span>
+                                                        </template>
+                                                    </td>
+                                                    <td class="mono-text">{item.deltaSummary}</td>
+                                                    <td>
+                                                        <lightning-button-icon
+                                                            icon-name="utility:preview"
+                                                            size="small"
+                                                            variant="border-filled"
+                                                            alternative-text="Select Entity"
+                                                            onclick={handleSelectEntity}
+                                                            data-id={item.id}
+                                                            data-kind={item.kind}>
+                                                        </lightning-button-icon>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                            <template if:false={hasModifiedEntities}>
+                                <div class="slds-p-around_medium slds-text-align_center slds-text-color_weak">
+                                    No modified entities found in this comparison.
+                                </div>
+                            </template>
+                        </lightning-tab>
+                    </lightning-tabset>
+                </template>
+            </div>
+
+            <!-- Footer -->
+            <footer class="slds-modal__footer comparison-modal-footer slds-grid slds-grid_align-spread slds-p-around_small slds-border_top">
+                <div class="slds-text-body_small slds-text-color_weak slds-align-middle">
+                    Single-canvas invariant enforced • Source snapshots strictly immutable
+                </div>
+                <div>
+                    <lightning-button label="Close" onclick={handleClose}></lightning-button>
+                </div>
+            </footer>
+        </div>
+    </template>
+</template>
