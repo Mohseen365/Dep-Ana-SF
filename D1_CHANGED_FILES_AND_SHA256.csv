@@ -1,0 +1,11 @@
+file_path,action,owner,sha256,description
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,MODIFIED,Integration Coordinator (Agent D1),656099c9beb5f19ac35797e3bc15045b960e460076e0c312ccf38cdd8402229e,Implemented REM-04 Deep-Link URL State Synchronization with parameter validation and deduplication
+scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs,MODIFIED,Integration Coordinator (Agent D1),72ff57a8a7787729f3830374f7d889e76c941646adf30ef2bc2ec849e120c58e,Added Section 7 verifying URL parameter serialization restoration XSS sanitization and SELECTION != NAVIGATION
+D1_WAVE5_INTEGRATION_REPORT.md,CREATED,Integration Coordinator (Agent D1),de4c4cba5ca8a448c574aba6d4cea30f352c190b01fbeae2884b4f7416366985,Consolidated Wave 5 integration report covering PKG-01 REM-04 C2/C3 readiness and full regression
+D1_PKG01_INTEGRATION_REPORT.md,CREATED,Integration Coordinator (Agent D1),e344c0a75d9eeadef7de99976f2d099ecd22ef54b42f5c3c9c7783afbb22acea,Formal integration verification of R2 PKG-01 packaging exclusion with empirical CLI evidence
+D1_REM04_DEEP_LINK_IMPLEMENTATION_REPORT.md,CREATED,Integration Coordinator (Agent D1),63e8c0e8d7db0a3f78efe5a53f39eabd86e5b50c1f8a615671397fd567b273ff,Implementation report detailing REM-04 deep-link parameter schema lifecycle hooks and invariant proofs
+D1_C2_C3_INTEGRATION_READINESS_REPORT.md,CREATED,Integration Coordinator (Agent D1),fd91b936bff2a0a10aa8dc694dc5006448f744bab0a3d0afa7031d3b05539439,Readiness inspection for Agent C2 snapshot diff and Agent C3 sankey river
+D1_FULL_REGRESSION_RESULTS.md,CREATED,Integration Coordinator (Agent D1),f179c815eac54855869d12cf782548ae3ef30883241e5a8aa85350761a895cb2,Full regression verification logs covering all 29 test suites in scratch/salesforce-poc/tests/
+D1_INTEGRATED_COMMIT_REGISTER.csv,CREATED,Integration Coordinator (Agent D1),2c9b328da78723040c50591deab4cdc693c600b2fba4f8afff429fa9b9abab11,Register of integrated commit hashes and task execution provenance
+D1_CHANGED_FILES_AND_SHA256.csv,CREATED,Integration Coordinator (Agent D1),PENDING_SELF_HASH,Cryptographic checksum register of all modified and created files
+D1_REMAINING_BLOCKERS.md,CREATED,Integration Coordinator (Agent D1),353019ba062db54fc41ed903035a43858d5cd205f53a780ebf12e4f85d6ee080,Inventory of remaining operational and environment blockers
