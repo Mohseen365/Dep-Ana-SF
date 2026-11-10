@@ -1,8 +1,8 @@
-# Phase 0 Project Owner Decision Readiness & Verification
+# Phase 0 Project Owner Decision Readiness & Verification (Corrected)
 
 ## Document Metadata
 - **Classification**: Phase 0 Executive Decision Prerequisites Verification
-- **Audit Date**: 2026-11-10
+- **Audit Date**: 2026-11-10 (Correction Pass)
 - **Auditor**: Jules Master Dispatch & Coordination Agent (Integration Coordinator D1 / Verifier D2)
 - **Status**: READINESS CONFIRMED — AWAITING PROJECT OWNER RATIFICATION
 
@@ -13,7 +13,7 @@
 This review evaluates the six Project Owner decisions documented in `MASTER_GAP_PROJECT_OWNER_DECISIONS_V2.md`. In strict adherence to governance:
 - **Historical Ratifications Preserved**: `PO-REQ-01` through `PO-REQ-05` (ratified on 2026-11-10) already approved the Dual-Snapshot & Diff Engine (`CONTRACT-05` / `REM-03`), Pure SVG Dependency River (`REM-02`), and URL synchronization (`REM-04`). Re-requesting authorization for their implementation or basic algorithmic structure would be redundant.
 - **New Executive Decisions**: The six decisions detailed below represent **genuinely new architectural, security, schema, and scope choices** that require explicit Project Owner approval before implementation code can be merged in Phase 1.
-- **Strict Separation**: Neither Jules nor Coordinator D1 possesses the authority to approve these decisions. Phase 0 prepares the complete technical briefs, governor-limit analyses, and error semantics so the Project Owner can make informed, decisive determinations.
+- **Strict Separation of Powers**: Neither Jules nor Coordinator D1 possesses the authority to approve these decisions. Phase 0 prepares the complete technical briefs, governor-limit analyses, and error semantics so the Project Owner can make informed, decisive determinations.
 
 ---
 
@@ -40,10 +40,29 @@ This review evaluates the six Project Owner decisions documented in `MASTER_GAP_
   - `413 Payload Too Large`: Total accumulated payload exceeds 10,485,760 UTF-16 code units.
   - `500 Internal Error`: Unhandled transaction exception; rolls back partial batch via savepoint.
 - **Retry & Idempotency Behavior**: Chunk ingestion requests include deterministic `chunkKey` (`{runId}_{chunkIndex}`). Re-submitting an identical payload for an existing `chunkKey` returns `200 OK` (idempotent success). Submitting a different payload for an existing key returns `409 Conflict`.
-- **Governor Limit Implications**:
-  - Maximum heap size: Apex synchronous transaction limit is 6 MB (6,291,456 bytes).
-  - Defensive Batch Limit: Max 10 chunks per batch (1,310,720 chars), well within safe heap margins (~2.6 MB UTF-8).
-  - Enforces SOQL query count (< 10 queries per request) and DML row count (< 200 rows per batch).
+
+#### Mandatory Ingestion & Apex Heap Accounting (Correction 1):
+The distinction between character lengths, wire representations, and runtime memory is critical. The following units must not be conflated:
+1. **UTF-16 Code Units**: Salesforce Apex `String.length()` counts UTF-16 code units. Max chunk size = 131,072 UTF-16 code units. Max run payload cap = 10,485,760 UTF-16 code units (80 chunks).
+2. **UTF-8 Encoded Bytes**: Multi-byte characters in AST node labels or identifiers consume 1 to 4 bytes per character over the wire.
+3. **HTTP Request Bytes**: The multipart/JSON HTTP body includes headers, JSON framing, escaping, and DTO overhead. A 10-chunk batch HTTP payload is estimated between 1.35 MB and 2.8 MB depending on character escaping.
+4. **Apex Heap Consumption**: Apex stores Strings as 16-bit characters. In addition to string buffers, deserializing JSON into DTOs allocates object headers, field references, and temporary string copies. The total heap footprint is substantially higher than the raw string size:
+   - Request body extraction: `RestContext.request.requestBody.toString()` allocates heap for raw body.
+   - JSON deserialization: `JSON.deserialize()` or custom parser allocates DTO instances + string primitives.
+   - SObject allocation: `DA_Graph_Chunk__c` record instantiation allocates further heap.
+   - Heap Peak: Peak heap during a 10-chunk batch is statically estimated between 3.5 MB and 5.2 MB.
+5. **Salesforce Governor Limits**:
+   - Synchronous Apex transaction heap limit: **6 MB** (6,291,456 bytes).
+   - Asynchronous Apex transaction heap limit: **12 MB** (12,582,912 bytes).
+   - Maximum HTTP request body size: **6 MB**.
+
+#### Evidence Classification of Heap Claims:
+- **Raw string size is safe (< 1.31 MB for 10 chunks)**: `STATICALLY ESTIMATED` (Confirmed by arithmetic).
+- **Node.js offline simulator handles 10 chunks**: `LOCALLY SIMULATED` (Simulated in V8 runtime, not Apex).
+- **Actual Apex runtime heap safety under 6 MB synchronous limit**: **`NOT VERIFIED`** (Requires live Salesforce org execution and Apex profiling with real multi-chunk payloads).
+- **Governor Limit Safety**: **`NOT VERIFIED`** (Cannot be certified until live staging org execution in Phase 1 by Agent 10).
+- **Mitigation Directive**: In Phase 1, Agent 2 & Agent 3 must implement batch chunk size configurability (e.g., dynamically downscaling from 10 chunks to 5 chunks if heap profiling exceeds 4 MB).
+
 - **Readiness Classification**: **READY FOR PROJECT OWNER APPROVAL** (Option A Recommended).
 
 ---
@@ -142,11 +161,27 @@ This review evaluates the six Project Owner decisions documented in `MASTER_GAP_
 
 ---
 
-## 3. Decision Readiness Summary Table
+## 3. Frozen Contract Reconciliation Governance (Correction 3)
+
+The ownership model for frozen technical contracts is strictly defined as follows:
+- **D1 Integration Coordinator Authority**: D1 exclusively coordinates the reconciliation of contract divergences:
+  - `CONTRACT-04` (Zero-Schema Invariant): Reconciles discrepancy with custom objects.
+  - `CONTRACT-05` (Snapshot Comparison): Reconciles header status (`PROPOSED` vs ratified `PO-REQ-02`).
+  - `CONTRACT-08` (Workspace View Modes): Reconciles approved view keys (`river` vs `sankey`).
+- **Technical Evidence Providers**:
+  - Agent 2 supplies ingestion and persistence evidence.
+  - Agent 5 supplies component and workspace mounting evidence.
+  - Agent 9 supplies React/Salesforce parity evidence.
+  - D2 independently verifies the evidence.
+- **Project Owner Exclusive Authority**: Only the Project Owner can authorize changes to frozen contract scope or ratified contract texts. Neither D1 nor any implementation agent may rewrite contracts or change approval statuses without an explicit Project Owner decision.
+
+---
+
+## 4. Decision Readiness Summary Table
 
 | Decision ID | Description | Technical Spec Complete? | Risks Addressed? | PO Approval Status | Phase 1 Blocking Impact |
 |---|---|---|---|---|---|
-| **PO-DEC-V2-01** | Apex REST Ingestion Transport | YES | Heap limits, OAuth, Idempotency | **PENDING** | BLOCKS Agent 3 & 4 implementation |
+| **PO-DEC-V2-01** | Apex REST Ingestion Transport | YES | Heap limits (NOT VERIFIED on live org), OAuth, Idempotency | **PENDING** | BLOCKS Agent 3 & 4 implementation |
 | **PO-DEC-V2-02** | Private OWD & Revocation | YES | Migration script, FLS, CRUD | **PENDING** | BLOCKS Agent 1 implementation |
 | **PO-DEC-V2-03** | Run Lifecycle & Chunk Uniqueness | YES | SOQL races, payload caps, availability | **PENDING** | BLOCKS Agent 2 implementation |
 | **PO-DEC-V2-04** | daSankeyView Shell Mount ('river') | YES | 11 -> 12 views, contract sync | **PENDING** | BLOCKS D1 shell integration |

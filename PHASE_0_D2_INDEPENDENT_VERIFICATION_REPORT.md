@@ -1,8 +1,8 @@
-# Phase 0 Independent Verifier (D2) Readiness Report
+# Phase 0 Independent Verifier (D2) Readiness Report (Corrected)
 
 ## Document Metadata
 - **Classification**: Phase 0 Read-Only Independent Verification Audit
-- **Audit Date**: 2026-11-10
+- **Audit Date**: 2026-11-10 (Correction Pass)
 - **Auditor**: Independent Verifier D2 (Strictly Read-Only)
 - **Status**: INDEPENDENT VERIFICATION COMPLETED — VERDICT: PASS WITH CONDITIONS
 
@@ -12,14 +12,21 @@
 
 As the designated Independent Verifier (D2), my mandate is strictly read-only and independent of Integration Coordinator D1 and implementation agents.
 
-I have independently inspected:
-1. **Repository Baseline & Provenance**: Checked Git HEAD commit `52e0429e77853cda0ca846cea0818e52dd05d1d2`, shallow repository status, working tree cleanliness, and runtime versions.
-2. **Gap Register Reconciliation**: Reconciled all 24 gaps in `MASTER_REMAINING_GAPS_V2.csv` and `MASTER_REMAINING_GAPS_V2.md`. Verified unique IDs, 1:1 owner allocation, and strict preservation of Wave 5A formal closure (`PO-RAT-WAVE5A-2026-11-10`) and Wave 9 quarantine exclusion.
-3. **Project Owner Decision Prerequisites**: Inspected technical specifications, governor limits, error semantics, and security boundaries across PO-DEC-V2-01 through PO-DEC-V2-06.
-4. **Ten-Agent Ownership Model**: Inspected `PHASE_0_TEN_AGENT_TASK_OWNERSHIP_MATRIX.csv` to ensure disjoint file allocations and balanced task sizing.
-5. **Coordinator Shared Shell Protection**: Verified that `daAppShell.*`, `daHeader.*`, `daSidebar.*`, and `daFilterSchema.js` are strictly guarded under D1 exclusive ownership.
-6. **Execution Dependency Graph**: Checked topological consistency of the four-wave dispatch sequence.
-7. **Environment Readiness**: Confirmed runtime availability and offline test runner execution.
+During this correction pass, I have independently inspected:
+1. **Correction 1 — Apex Heap & Ingestion Safety Evidence**:
+   - Verified that UTF-16 code units, UTF-8 encoded bytes, HTTP request bytes, and Apex heap memory allocations are rigorously distinguished.
+   - Verified that Apex synchronous heap limits (6 MB) and live org governor safety are explicitly classified as **`NOT VERIFIED`** rather than assumed.
+2. **Correction 2 — Agent 8 Preparation vs. Implementation**:
+   - Verified that Agent 8 is formally split into **Agent 8A (Read-Only Preparation)** and **Agent 8B (Implementation)**.
+   - Confirmed Agent 8B is explicitly classified as **`BLOCKED BY PROJECT OWNER DECISION`** requiring separate implementation authorization.
+3. **Correction 3 — Contract Reconciliation Ownership**:
+   - Confirmed that D1 coordinates technical divergence across `CONTRACT-04`, `CONTRACT-05`, and `CONTRACT-08`, while Project Owner retains exclusive authority over contract text and scope changes.
+4. **Correction 4 — Agent 9 Parity Matrix Authority**:
+   - Verified that Agent 9 prepares proposed parity findings and benchmark evidence, while Coordinator D1 retains authoritative adoption authority.
+5. **Correction 5 — Exhaustive Offline Test Inventory & Results**:
+   - Inspected execution results of all 31 discovered test runners in `scratch/salesforce-poc/tests/`. Confirmed 31/31 passed cleanly. Confirmed that offline tests are not represented as live org verification.
+6. **Correction 6 — Granular Rollback & Recovery Procedures**:
+   - Verified detailed rollback procedures for Security (OWD/permissions), Ingestion (lifecycle/chunks), Finding Persistence, and Component Mounting.
 
 ---
 
@@ -27,40 +34,27 @@ I have independently inspected:
 
 | Verification Dimension | Checked Parameter | D2 Inspection Finding | Status |
 |---|---|---|---|
-| **Repository Baseline** | Git Working Tree | Completely clean; 0 uncommitted changes prior to Phase 0 artifacts. | **VERIFIED** |
+| **Repository Baseline** | Git Working Tree | Completely clean; 0 uncommitted changes prior to Phase 0 deliverables. | **VERIFIED** |
 | **Git Provenance** | HEAD Commit | Commit `52e0429` verified as merge of PR #183 incorporating V2 governance baseline. | **VERIFIED** |
 | **Gap Registry Count** | Total Registered Gaps | Exactly 24 unique gaps (9 P0, 12 P1, 3 P2) in both CSV and MD. Zero duplicates. | **VERIFIED** |
 | **Historical Boundaries** | Wave 5A Closure | Wave 5A records are untouched and formally closed. Zero reopenings. | **VERIFIED** |
 | **Quarantine Boundary** | Wave 9 Exclusion | `.forceignore` excludes `daRefactoringEngine` and `daRefactorHandoffModal`. Zero Wave 9 tasks assigned. | **VERIFIED** |
-| **Decision Separation** | PO Authority | All six V2 decisions are explicitly marked as requiring Project Owner ratification. No self-approval. | **VERIFIED** |
-| **File Contention** | Shared Shell Files | `daAppShell.*` and related paths are restricted to D1 exclusive authority. Zero concurrent feature edits. | **VERIFIED** |
-| **Anti-Collision Model** | Ten-Agent Matrix | File ownership is strictly partitioned with zero overlapping paths among implementation agents. | **VERIFIED** |
-| **Critical Path Feasibility**| Predecessor Sequence | Security (Agent 1) -> Ingestion (Agent 2) -> Transport (Agent 3) -> Client (Agent 4) is technically sound. | **VERIFIED** |
-| **No-Implementation Rule** | Source Code Integrity | Zero production code, zero Salesforce metadata, and zero Apex classes were modified during Phase 0. | **VERIFIED** |
+| **Heap Evidence** | Governor Limits | Live org Apex heap safety correctly classified as `NOT VERIFIED`. No unsubstantiated claims. | **VERIFIED** |
+| **Agent 8 Separation** | Scope Division | Agent 8A (read-only prep) clearly distinguished from Agent 8B (implementation). | **VERIFIED** |
+| **Contract Authority** | Governance Roles | D1 coordinates divergence; Project Owner retains exclusive amendment authority. | **VERIFIED** |
+| **Test Inventory** | 31 Offline Suites | All 31 suites individually inventoried and executed; all 31 passed cleanly. | **VERIFIED** |
+| **Rollback Plans** | Fault Containment | Trigger conditions, owners, actions, validation, and risks documented across all 4 domains. | **VERIFIED** |
+| **No-Implementation Rule** | Source Code Integrity | Zero production code, zero Salesforce metadata, and zero Apex classes were modified. | **VERIFIED** |
 
 ---
 
-## 3. Independent Risk Analysis
+## 3. D2 Independent Verdict
 
-1. **Risk 1 (Project Owner Approval Delay)**:
-   - *Impact*: Agents 1, 2, 3, 6 cannot modify code until PO-DEC-V2-01, 02, 03, 05 are approved.
-   - *Mitigation*: The four-wave dispatch sequence permits read-only preparation, test scaffolding (Agents 5, 8, 9, 10), and documentation to proceed immediately without idling.
-2. **Risk 2 (Apex Ingestion Governor Limits)**:
-   - *Impact*: Ingesting large JSON graphs into Apex can exceed the 6 MB synchronous heap limit.
-   - *Mitigation*: PO-DEC-V2-01 and PO-DEC-V2-03 enforce a defensive 10-chunk batch cap (1.3 MB raw string) and 10 MB total run cap, leaving > 3 MB heap margin for deserialization.
-3. **Risk 3 (Live Org Staging Availability)**:
-   - *Impact*: GAP-ENV-01 cannot be certified without staging credentials.
-   - *Mitigation*: 33 offline Node.js test runners validate 100% of metadata, contracts, and LWC logic offline.
-
----
-
-## 4. D2 Independent Verdict
-
-Based on comprehensive read-only inspection of the repository, governance artifacts, and proposed dispatch architecture, Independent Verifier D2 issues a formal verdict of:
+Based on comprehensive read-only inspection of the repository, corrected governance artifacts, and verified test evidence, Independent Verifier D2 issues a formal verdict of:
 
 ### **PASS WITH CONDITIONS (CONDITIONAL GO)**
 
 #### Conditions of Pass:
 1. **Zero Code Modification Before PO Ratification**: No agent may modify Apex, metadata, or LWC production files for tasks blocked by PO-DEC-V2-01 through PO-DEC-V2-06 until explicit Project Owner approval is recorded.
 2. **Strict D1 Shell Ownership**: Under no circumstances may Agents 5, 7, or 8 touch `daAppShell.*`. All shell integration must be performed exclusively by Coordinator D1.
-3. **Read-Only Preparation Authorized**: Agents 5, 8, 9, and 10 may begin non-invasive preparation, benchmarking, and offline test scaffolding immediately.
+3. **Read-Only Preparation Authorized**: Agents 5, 8A, 9, and 10 may begin non-invasive preparation, benchmarking, and offline test scaffolding immediately.

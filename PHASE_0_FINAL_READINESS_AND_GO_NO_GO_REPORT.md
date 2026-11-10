@@ -1,8 +1,8 @@
-# Phase 0 Final Readiness & GO / NO-GO Consolidated Report
+# Phase 0 Final Readiness & GO / NO-GO Consolidated Report (Corrected)
 
 ## Document Metadata
 - **Classification**: Phase 0 Executive Readiness & Dispatch Decision Report
-- **Audit Date**: 2026-11-10
+- **Audit Date**: 2026-11-10 (Correction Pass)
 - **Auditor**: Integration Coordinator D1 & Independent Verifier D2
 - **Status**: CONSOLIDATED REPORT PUBLISHED — VERDICT: CONDITIONAL GO
 
@@ -28,8 +28,8 @@ In strict compliance with governance rules:
 | **2. Repository Readiness** | **READY** | Working tree completely clean; HEAD commit `52e0429e77853cda0ca846cea0818e52dd05d1d2` verified in `PHASE_0_REPOSITORY_BASELINE_AND_GIT_PROVENANCE.md`. |
 | **3. Technical Architecture Readiness** | **READY** | Detailed architectures for REST transport, chunk uniqueness, run lifecycle, 10MB payload caps, and river mounting completed in `PHASE_0_PROJECT_OWNER_DECISION_READINESS.md` and `PHASE_0_MASTER_DEPENDENCY_GRAPH.md`. |
 | **4. Security Readiness** | **READY FOR PO APPROVAL** | Vulnerability in `DA_Project__c` OWD (`ReadWrite`) and permission set `<viewAllRecords>true</viewAllRecords>` identified and specified for remediation under PO-DEC-V2-02. |
-| **5. Environment Readiness** | **READY (OFFLINE)** | Node.js v22.22.1, npm, pnpm, yarn, bun, Vitest, Playwright, Chrome binary, and 33 offline test runners verified in `PHASE_0_ENVIRONMENT_AND_DEPENDENCY_READINESS.md`. |
-| **6. Agent Ownership Readiness** | **READY** | Disjoint file ownership, complexity estimates, and test requirements defined across all ten implementation agents in `PHASE_0_TEN_AGENT_TASK_OWNERSHIP_MATRIX.csv`. |
+| **5. Environment Readiness** | **READY (OFFLINE)** | Node.js v22.22.1, npm, pnpm, yarn, bun, Vitest, Playwright, Chrome binary, and 31 individually executed offline test runners verified in `PHASE_0_ENVIRONMENT_AND_DEPENDENCY_READINESS.md`. |
+| **6. Agent Ownership Readiness** | **READY** | Disjoint file ownership, complexity estimates, test requirements, and preparation vs implementation separation defined in `PHASE_0_TEN_AGENT_TASK_OWNERSHIP_MATRIX.csv`. |
 | **7. Project Owner Authorization Readiness** | **PENDING EXECUTIVE RATIFICATION** | Six distinct decision briefs prepared with risk analyses and recommendations in `PHASE_0_PROJECT_OWNER_DECISION_READINESS.md`. Awaiting Project Owner decision. |
 
 ---
@@ -45,13 +45,45 @@ In strict compliance with governance rules:
 | **Agent 5** | Existing Component Integration Packages | GAP-MNT-01, GAP-MNT-02, GAP-MNT-03, GAP-CON-02, GAP-CON-03 | PREP ONLY | **READY FOR READ-ONLY PREPARATION ONLY** (Shell mount blocked by `PO-DEC-V2-04`) |
 | **Agent 6** | Finding Review Persistence | GAP-WKF-01 | NO | **BLOCKED BY PROJECT OWNER DECISION** (`PO-DEC-V2-05`) |
 | **Agent 7** | Project Creation & Upload Workflow UI | GAP-WKF-02 | NO | **BLOCKED BY TECHNICAL DEPENDENCY** (Agent 1 & Agent 3) |
-| **Agent 8** | Command Palette & Graph Hover Cards | GAP-WKF-03, GAP-WKF-04 | PREP ONLY | **READY FOR READ-ONLY PREPARATION ONLY** |
+| **Agent 8A** | Command Palette & Graph Hover (Prep) | GAP-WKF-03, GAP-WKF-04 | PREP ONLY | **READY FOR READ-ONLY PREPARATION ONLY** |
+| **Agent 8B** | Command Palette & Graph Hover (Impl) | GAP-WKF-03, GAP-WKF-04 | NO | **BLOCKED BY PROJECT OWNER DECISION** (Requires Separate Implementation Authorization) |
 | **Agent 9** | React Parity & Performance Benchmarks | GAP-PAR-01, GAP-PAR-02, GAP-PAR-03, GAP-PAR-04 | YES | **READY FOR DISPATCH** (Read-Only Analysis) |
 | **Agent 10** | Ingestion & Release Test Engineering | GAP-TEST-01, GAP-ENV-01, GAP-ENV-02 | PREP ONLY | **READY FOR DISPATCH** (Test Harness Scaffolding) |
 
 ---
 
-## 4. Consolidated GO / NO-GO Determination
+## 4. Final Authorization Gate — The Six Project Owner Decisions
+
+Implementation dispatches in Phase 1 require explicit Project Owner authorization on the following six decision briefs:
+
+1. **`PO-DEC-V2-01` (Apex REST Ingestion Transport)**:
+   - *Question*: Expose `@RestResource(urlMapping='/da/v1/ingest/*')` with chunk batching and user-mode DML?
+   - *Recommendation*: **APPROVE Option A**.
+   - *Blocks*: Agent 3 & Agent 4 implementation.
+2. **`PO-DEC-V2-02` (Private OWD & Permission Revocation)**:
+   - *Question*: Change `DA_Project__c` OWD from ReadWrite to Private and revoke `viewAllRecords` from `DA_Architecture_Analyst`?
+   - *Recommendation*: **APPROVE Option A**.
+   - *Blocks*: Agent 1 implementation and cross-project security isolation.
+3. **`PO-DEC-V2-03` (Run Lifecycle & Chunk Uniqueness Schema)**:
+   - *Question*: Expand `Status__c` to include CREATED/UPLOADING/VALIDATING and add unique `Chunk_Key__c` to `DA_Graph_Chunk__c`?
+   - *Recommendation*: **APPROVE Option A**.
+   - *Blocks*: Agent 2 implementation and reliable multi-chunk ingestion.
+4. **`PO-DEC-V2-04` (Dependency River Shell Mounting)**:
+   - *Question*: Authorize expanding `APPROVED_VIEWS` in `daAppShell.js` from 11 to 12 modes (registering `river` aliasing `sankey`)?
+   - *Recommendation*: **APPROVE Option A**.
+   - *Blocks*: Coordinator D1 shell mounting of `daSankeyView`.
+5. **`PO-DEC-V2-05` (Finding Review Persistence Schema)**:
+   - *Question*: Add `Status__c` picklist to `DA_Finding__c` and Apex persistence controller?
+   - *Recommendation*: **APPROVE Option A**.
+   - *Blocks*: Agent 6 implementation.
+6. **`PO-DEC-V2-06` (Secondary React Lens Scope)**:
+   - *Question*: Formally ratify experimental React lenses (heatmap, tree, profile, four-direction) as out-of-scope approved differences?
+   - *Recommendation*: **APPROVE Option A**.
+   - *Blocks*: Non-blocking (governance scope freeze).
+
+---
+
+## 5. Consolidated GO / NO-GO Determination
 
 Integration Coordinator D1 recommends, and Independent Verifier D2 concurs with, a formal determination of:
 
@@ -62,7 +94,7 @@ Integration Coordinator D1 recommends, and Independent Verifier D2 concurs with,
    - **Agent 9**: May begin executing performance benchmarks (PBIM, CST, BQC), analyzing Lightning Locker / LWS thresholds, and updating the feature parity matrix.
    - **Agent 10**: May begin scaffolding direct Apex ingestion test fixtures and Playwright test harnesses offline.
    - **Agent 5**: May begin isolated packaging and verification of `daSankeyView`, `daSnapshotComparisonModal`, and `daPresetManager` without touching `daAppShell.*`.
-   - **Agent 8**: May begin isolated development and testing of `daCommandPalette` and hover card utilities without touching `daAppShell.*`.
+   - **Agent 8A**: May begin drafting command palette interaction specifications and hover card contracts without touching `daAppShell.*` or production code.
 2. **STRICTLY PROHIBITED UNTIL PROJECT OWNER RATIFICATION**:
    - Implementation agents are **strictly barred** from modifying Salesforce production metadata, Apex classes, or shared shell files for assignments blocked by `PO-DEC-V2-01` through `PO-DEC-V2-06`.
 3. **MANDATORY STOP & HANDOFF**:

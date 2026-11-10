@@ -1,8 +1,8 @@
-# Phase 0 Shared File Ownership & Integration Rules
+# Phase 0 Shared File Ownership & Integration Rules (Corrected)
 
 ## Document Metadata
 - **Classification**: Phase 0 Integration Governance & Anti-Collision Protocols
-- **Audit Date**: 2026-11-10
+- **Audit Date**: 2026-11-10 (Correction Pass)
 - **Auditor**: Integration Coordinator D1
 - **Status**: AUTHORITATIVE INTEGRATION DIRECTIVE
 
@@ -35,41 +35,56 @@ The following files are strictly protected under **Coordinator-Exclusive Ownersh
 
 ---
 
-## 3. Component Handoff & Mounting Protocol (Agent 5 -> D1)
+## 3. Granular Rollback & Recovery Procedures (Correction 6)
 
-For GAP-MNT-01 (`daSankeyView` / `river`), GAP-MNT-02 (`daSnapshotComparisonModal`), and GAP-MNT-03 (`daPresetManager`):
+To ensure fault containment during Phase 1 dispatches, explicit rollback procedures are established across the four key technical remediation domains:
 
-1. **Isolation in Component Bundles**:
-   - Agent 5 owns and modifies only its assigned bundles:
-     - `scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/*`
-     - `scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/*`
-     - `scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/*`
-   - Agent 5 verifies component behavior using isolated test runners (`run-c3-sankey-tests.cjs`, `run-c2-snapshot-comparison-tests.cjs`).
-2. **Integration Package Submission**:
-   - Agent 5 prepares an Integration Package containing:
-     - Component API documentation (`@api` properties and custom event schemas).
-     - Minimal diff snippet requested for `daAppShell.html` / `daAppShell.js`.
-     - Test evidence proving standalone stability.
-3. **Coordinator Integration**:
-   - Upon Project Owner approval of `PO-DEC-V2-04`, Agent D1 merges the integration snippet into `daAppShell.*`.
-   - Agent D1 updates `APPROVED_VIEWS` in `daAppShell.js` to include `'river'`.
-   - Agent D1 runs `run-coordinator-integration-suite.cjs` to verify that all 12 views load cleanly without regression.
+### 3.1 Security Changes (OWD & Permission Sets)
+- **Trigger Conditions**: Legitimate users lose access to projects; automated integration tests encounter `INSUFFICIENT_ACCESS_ON_CROSS_REFERENCE_ENTITY`; or multi-tenant sharing calculation exceeds governor limits.
+- **Responsible Owner**: Workstream Lead WS-B & Agent 1 (under D1 supervision).
+- **Recovery Action**:
+  1. Deploy previous baseline `DA_Project__c.object-meta.xml` setting `<sharingModel>ReadWrite</sharingModel>`.
+  2. Deploy previous baseline `DA_Architecture_Analyst.permissionset-meta.xml` restoring `<viewAllRecords>true</viewAllRecords>`.
+  3. Execute automated security regression suite (`run-s1-security-tests.cjs`) to verify baseline stability.
+- **Data Preservation**: Project records and analysis runs are not deleted; only row-level visibility rules are reverted.
+- **Residual Risk & Security Assessment**: Reverting OWD to ReadWrite temporarily restores cross-project visibility flaw; must be classified as a temporary emergency recovery requiring immediate root-cause resolution.
+- **Approval Requirement**: Project Owner emergency authorization.
+
+### 3.2 Ingestion Changes (Lifecycle States, Chunk Keys, REST Transport)
+- **Trigger Conditions**: Legitimate upload payloads fail with false-positive payload cap errors; duplicate chunk key constraints cause unexpected DML exceptions; or Apex heap exceeds 6 MB during batch ingestion.
+- **Responsible Owner**: Workstream Lead WS-A, Agent 2 & Agent 3 (under D1 supervision).
+- **Recovery Action**:
+  1. Revert `DAGraphIngestionService.cls` and `DAGraphIngestionRestResource.cls` to commit `52e0429`.
+  2. Drop the `Chunk_Key__c` Unique Case-Insensitive attribute (convert to standard external text without uniqueness constraint) to allow existing ingestion flows to succeed.
+  3. Reset any stuck `UPLOADING` or `VALIDATING` runs to `FAILED` to prevent orphan locks.
+- **Data Preservation**: Existing `AVAILABLE` runs and graph chunks remain completely untouched and queryable by `daAppShell`.
+- **Validation Procedure**: Execute `run-p0-verification-tests.cjs` and `run-coordinator-integration-suite.cjs`.
+- **Residual Risk**: High-concurrency upload races may create duplicate chunks until unique index is refined.
+- **Approval Requirement**: Workstream Lead WS-A and Integration Coordinator D1 joint signoff.
+
+### 3.3 Finding Review Persistence Changes
+- **Trigger Conditions**: Finding status updates corrupt finding records, throw user-mode DML exceptions, or break `daFindingsView.js`.
+- **Responsible Owner**: Workstream Lead WS-D & Agent 6.
+- **Recovery Action**:
+  1. Revert `DAGraphController.cls` method `updateFindingStatus`.
+  2. Revert `daFindingsView.js` to in-memory status handling mode.
+  3. Schema rollback: Leave `DA_Finding__c.Status__c` in place as unmapped metadata to avoid destructive column drops.
+- **Data Preservation**: Existing finding records retain their current status values.
+- **Validation Procedure**: Execute `run-lane-f-findings-tests.cjs`.
+- **Approval Requirement**: Workstream Lead WS-D and Coordinator D1 signoff.
+
+### 3.4 Shared Shell & Component Mounting Integration
+- **Trigger Conditions**: Mounting `daSankeyView`, `daSnapshotComparisonModal`, `daPresetManager`, or `daCommandPalette` breaks `daAppShell` tab routing or violates `SELECTION != NAVIGATION`.
+- **Responsible Owner**: Integration Coordinator D1 exclusively.
+- **Recovery Action**:
+  1. Revert `daAppShell.js` and `daAppShell.html` to commit `52e0429` (restoring 11 approved views).
+  2. The standalone component bundles (`c/daSankeyView`, `c/daSnapshotComparisonModal`, `c/daPresetManager`) remain intact in the repository but unmounted in the shell.
+- **Validation Procedure**: Run `run-coordinator-integration-suite.cjs` (must pass 16/16).
+- **Approval Requirement**: Coordinator D1 exclusive authority.
 
 ---
 
-## 4. Shared Permission Set Merging Protocol (Agents 1, 2, 6 -> WS-B)
-
-`DA_Architecture_Analyst.permissionset-meta.xml` contains security permissions across the entire data model. To avoid merge races:
-1. **Agent 1 Exclusive Initial Ownership**:
-   - Agent 1 modifies `DA_Architecture_Analyst.permissionset-meta.xml` in Phase 1 to remove `<viewAllRecords>true</viewAllRecords>`.
-2. **Sequential Schema Expansion**:
-   - When Agent 2 adds `Chunk_Key__c` or Agent 6 adds `DA_Finding__c.Status__c`, the new field permissions are NOT edited directly in the permission set by Agent 2 or Agent 6.
-   - Instead, new `<fieldPermissions>` blocks are submitted to Workstream B / Agent 1 as a formal schema patch.
-   - Agent 1 applies and validates the consolidated permission set metadata.
-
----
-
-## 5. Frozen Invariants & Non-Negotiable Boundaries
+## 4. Frozen Invariants & Non-Negotiable Boundaries
 
 All agents and coordinators must maintain the following architectural invariants:
 1. **`SELECTION != NAVIGATION`**: Selecting a node or edge must never trigger an automatic view mode change. Node selection events update `selectedNodeId` and drawer context while remaining on the active view.
