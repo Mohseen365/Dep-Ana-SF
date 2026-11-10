@@ -1,0 +1,6 @@
+finding_id,component_scope,severity,description,verification_evidence,resolution_status
+F-W5A-01,daSnapshotComparisonModal,HIGH,Object.freeze on input snapshot arguments in computeGraphDiff,Removed Object.freeze; verified inputs remain unfrozen in run-c2-snapshot-comparison-tests.cjs suite 3.1,RESOLVED
+F-W5A-02,daSankeyView,HIGH,nodeselect CustomEvent detail top-level shape deviated from CONTRACT-06,Refactored detail to { nodeId node sourceView meta }; verified in run-c3-sankey-tests.cjs suite 9,RESOLVED
+F-W5A-03,daAppShell (REM-04),MEDIUM,URL deep-link state restoration and back/forward synchronization,Verified across 11 scenarios in run-c1-url-sync-tests.cjs & run-coordinator-integration-suite.cjs,RESOLVED
+F-W5A-04,.forceignore (PKG-01),MEDIUM,Quarantine packaging exclusion verification for Wave 9 refactoring bundles,Verified exclusion of 6 files and inclusion of 166 files in run-r2-packaging-validation.cjs,RESOLVED
+F-W5A-05,CI Environment,LOW,Live Salesforce org deployment limitation,Documented environmental limitation; full offline verification completed,DOCUMENTED_LIMITATION

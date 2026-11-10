@@ -262,7 +262,18 @@ async function runC3SankeyTests() {
     assert.strictEqual(evt.type, 'nodeselect', 'Canonical event name must be nodeselect');
     assert.strictEqual(evt.detail.nodeId, 'ApexClass.AccountService');
     assert.strictEqual(evt.detail.sourceView, 'river');
-    assert.strictEqual(evt.detail.sourceComponent, 'daSankeyView');
+    assert.ok(evt.detail.node, 'Canonical graph node or null must be present');
+    assert.strictEqual(evt.detail.node.id, 'ApexClass.AccountService');
+    assert.ok(evt.detail.meta, 'Supplementary metadata placed in meta object');
+    assert.strictEqual(evt.detail.meta.sourceComponent, 'daSankeyView');
+
+    // Reject non-contract top-level fields
+    assert.strictEqual(evt.detail.nodeType, undefined, 'Disallowed top-level nodeType must NOT exist');
+    assert.strictEqual(evt.detail.layer, undefined, 'Disallowed top-level layer must NOT exist');
+    assert.strictEqual(evt.detail.sourceComponent, undefined, 'Disallowed top-level sourceComponent must NOT exist');
+    assert.strictEqual(evt.detail.timestamp, undefined, 'Disallowed top-level timestamp must NOT exist');
+    assert.strictEqual(evt.detail.rawData, undefined, 'Disallowed top-level rawData must NOT exist');
+
     assert.strictEqual(evt.bubbles, true, 'Event must bubble');
     assert.strictEqual(evt.composed, true, 'Event must be composed');
     assert.strictEqual(evt.cancelable, false, 'Event cancelable must be false per CONTRACT-06');

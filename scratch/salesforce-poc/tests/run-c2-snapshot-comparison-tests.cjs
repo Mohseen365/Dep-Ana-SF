@@ -226,20 +226,48 @@ test('2.4 Deterministic lexicographical sorting by ID ASC across added, removed,
 // 3. Robustness, Immutability & Boundary Conditions
 console.log('\n[Suite 3: Robustness, Immutability & Boundary Conditions]');
 
-test('3.1 Source snapshots remain immutable (Object.freeze enforced)', () => {
-    const snapA = { nodes: [{ id: 'Imm1', risk: 'LOW' }], edges: [] };
-    const snapB = { nodes: [{ id: 'Imm1', risk: 'HIGH' }], edges: [] };
+test('3.1 Source snapshots and nested objects remain unfrozen, untouched, and usable', () => {
+    const snapA = {
+        nodes: [{ id: 'Imm1', risk: 'LOW', metrics: { count: 10 } }],
+        edges: [{ id: 'e1', source: 'Imm1', target: 'Imm2' }]
+    };
+    const snapB = {
+        nodes: [{ id: 'Imm1', risk: 'HIGH', metrics: { count: 20 } }],
+        edges: [{ id: 'e1', source: 'Imm1', target: 'Imm2' }]
+    };
 
-    computeGraphDiff(snapA, snapB);
+    const snapABackup = JSON.parse(JSON.stringify(snapA));
+    const snapBBackup = JSON.parse(JSON.stringify(snapB));
 
-    assert.ok(Object.isFrozen(snapA), 'Baseline snapshot must be frozen');
-    assert.ok(Object.isFrozen(snapB), 'Comparison snapshot must be frozen');
+    const diff1 = computeGraphDiff(snapA, snapB);
 
-    // Attempt mutation should throw or fail silently in strict mode
-    assert.throws(() => {
-        'use strict';
-        snapA.nodes.push({ id: 'Mutated' });
-    });
+    // 1. Original input object remains unfrozen
+    assert.strictEqual(Object.isFrozen(snapA), false, 'snapA must not be frozen');
+    assert.strictEqual(Object.isFrozen(snapB), false, 'snapB must not be frozen');
+
+    // 2. Original nested objects remain unfrozen
+    assert.strictEqual(Object.isFrozen(snapA.nodes[0]), false, 'snapA node must not be frozen');
+    assert.strictEqual(Object.isFrozen(snapB.nodes[0]), false, 'snapB node must not be frozen');
+    assert.strictEqual(Object.isFrozen(snapA.nodes[0].metrics), false, 'nested node metrics must not be frozen');
+
+    // 3. Original arrays remain unfrozen
+    assert.strictEqual(Object.isFrozen(snapA.nodes), false, 'snapA.nodes array must not be frozen');
+    assert.strictEqual(Object.isFrozen(snapB.nodes), false, 'snapB.nodes array must not be frozen');
+    assert.strictEqual(Object.isFrozen(snapA.edges), false, 'snapA.edges array must not be frozen');
+    assert.strictEqual(Object.isFrozen(snapB.edges), false, 'snapB.edges array must not be frozen');
+
+    // 4. Original snapshot content remains completely unchanged
+    assert.deepStrictEqual(snapA, snapABackup, 'snapA content must not be modified');
+    assert.deepStrictEqual(snapB, snapBBackup, 'snapB content must not be modified');
+
+    // 5. Comparison results remain deterministic across repeated runs
+    const diff2 = computeGraphDiff(snapA, snapB);
+    assert.deepStrictEqual(diff1, diff2, 'Diff results must be deterministic');
+
+    // 6. Repeated comparisons do not contaminate one another
+    snapA.nodes.push({ id: 'Imm2', risk: 'MEDIUM' });
+    const diff3 = computeGraphDiff(snapA, snapB);
+    assert.strictEqual(diff3.nodes.removed.length, 1, 'Imm2 should be reported as removed since not in snapB');
 });
 
 test('3.2 Safe handling of empty snapshots and missing arrays', () => {
