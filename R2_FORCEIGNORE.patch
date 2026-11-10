@@ -1,11 +1,11 @@
 diff --git a/scratch/salesforce-poc/.forceignore b/scratch/salesforce-poc/.forceignore
 new file mode 100644
-index 0000000..f6920f7
+index 0000000..2756bef
 --- /dev/null
 +++ b/scratch/salesforce-poc/.forceignore
 @@ -0,0 +1,5 @@
-+# .forceignore - Salesforce DX deployment packaging exclusion rules
-+# Quarantined unauthorized Wave 9 refactoring engine components (DEC-04 Alternative 4)
++# Quarantined Wave 9 components — excluded from Salesforce packaging
++**/lwc/daRefactoringEngine
 +**/lwc/daRefactoringEngine/**
++**/lwc/daRefactorHandoffModal
 +**/lwc/daRefactorHandoffModal/**
-+

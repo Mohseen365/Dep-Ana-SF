@@ -1,0 +1,5 @@
+# Quarantined Wave 9 components — excluded from Salesforce packaging
+**/lwc/daRefactoringEngine
+**/lwc/daRefactoringEngine/**
+**/lwc/daRefactorHandoffModal
+**/lwc/daRefactorHandoffModal/**
