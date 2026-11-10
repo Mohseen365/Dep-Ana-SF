@@ -1,14 +1,32 @@
-filepath,sha256,ownership_workstream,provenance_commit,audit_status
-scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js,df3edd44826b6c99b5422c059d85326dea1e15508d6c1b4ba5288d67f13fdef4,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.html,b97ebb43c58358652377cc507f9feb8baa521d30d51513521a67f689da05ddbe,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.css,2f4d3022363b44eba44b4fa394cabdb995ab38b7c46460efa91173378f886493,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js-meta.xml,dba7c574afe85b35870e196140d644f5064dbf5e8dd541a3cd33ed658ac65e9d,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
-scratch/salesforce-poc/tests/run-c2-snapshot-comparison-tests.cjs,173f7b56f1ccd6b4423e3ef24771c9f7eb11e37f07e98fa38fb3d698255f0375,"Agent C2 (WS-5)",37233227,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js,60c7f7970d4f0961cb58f0810477126e5273c67e6ebb0f93a5906b5598b7621d,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.html,693b07727905aa734c87842a077993118d4361411d095eaad4d07bbbf1ed043c,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.css,8fbe58fc26295a9345244465f17d56594432143a288335ee976f3cda27c22247,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js-meta.xml,dc184698850174aa51726d11acc3f1a67cb95e422cead43ea7a204a3b0231aff,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
-scratch/salesforce-poc/tests/run-c3-sankey-tests.cjs,00a8a00641d77e566d87acbcd3e9e7768b7b926ab6315eb6dac5c41146b8e725,"Agent C3 (WS-4)",9533cc3c,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,656099c9beb5f19ac35797e3bc15045b960e460076e0c312ccf38cdd8402229e,"Coordinator",53574f30,VERIFIED_MATCH
-scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,c3c7c9a837f2efbe3eee27e8c34c36580e6da3f8de1aa2f993c6aa8624f2ce26,"Coordinator",53574f30,VERIFIED_MATCH
-scratch/salesforce-poc/.forceignore,e8c1662bd120b5612f0f1c2ce140b1df18a507733d093e42d728445d7dc9e59f,"Agent R2 (Pkg)",5a66fa60,VERIFIED_MATCH
+filepath,sha256,ownership_workstream,provenance_commit,description,audit_status
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js,df3edd44826b6c99b5422c059d85326dea1e15508d6c1b4ba5288d67f13fdef4,"Agent C2 (WS-5)",37233227,"REM-03 Component Controller",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.html,b97ebb43c58358652377cc507f9feb8baa521d30d51513521a67f689da05ddbe,"Agent C2 (WS-5)",37233227,"REM-03 Component Template",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.css,2f4d3022363b44eba44b4fa394cabdb995ab38b7c46460efa91173378f886493,"Agent C2 (WS-5)",37233227,"REM-03 Component Stylesheet",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js-meta.xml,dba7c574afe85b35870e196140d644f5064dbf5e8dd541a3cd33ed658ac65e9d,"Agent C2 (WS-5)",37233227,"REM-03 Component Metadata",VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-c2-snapshot-comparison-tests.cjs,173f7b56f1ccd6b4423e3ef24771c9f7eb11e37f07e98fa38fb3d698255f0375,"Agent C2 (WS-5)",37233227,"REM-03 Test Runner",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js,60c7f7970d4f0961cb58f0810477126e5273c67e6ebb0f93a5906b5598b7621d,"Agent C3 (WS-4)",9533cc3c,"REM-02 Component Controller",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.html,693b07727905aa734c87842a077993118d4361411d095eaad4d07bbbf1ed043c,"Agent C3 (WS-4)",9533cc3c,"REM-02 Component Template",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.css,8fbe58fc26295a9345244465f17d56594432143a288335ee976f3cda27c22247,"Agent C3 (WS-4)",9533cc3c,"REM-02 Component Stylesheet",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js-meta.xml,dc184698850174aa51726d11acc3f1a67cb95e422cead43ea7a204a3b0231aff,"Agent C3 (WS-4)",9533cc3c,"REM-02 Component Metadata",VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-c3-sankey-tests.cjs,00a8a00641d77e566d87acbcd3e9e7768b7b926ab6315eb6dac5c41146b8e725,"Agent C3 (WS-4)",9533cc3c,"REM-02 Test Runner",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,656099c9beb5f19ac35797e3bc15045b960e460076e0c312ccf38cdd8402229e,"Coordinator (INT-1 / D1)",53574f30,"REM-04 AppShell Controller with Deep-Link Sync",VERIFIED_MATCH
+scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.html,c3c7c9a837f2efbe3eee27e8c34c36580e6da3f8de1aa2f993c6aa8624f2ce26,"Coordinator (INT-1 / D1)",53574f30,"REM-04 AppShell Template",VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-c1-url-sync-tests.cjs,243969294e961f8c590c290fead448d5fea2919274c8d6c374336d2d228e6142,"Agent C1 / D1",53574f30,"REM-04 URL Sync Test Runner",VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs,72ff57a8a7787729f3830374f7d889e76c941646adf30ef2bc2ec849e120c58e,"Coordinator (INT-1 / D1)",53574f30,"Coordinator Master Integration Suite",VERIFIED_MATCH
+scratch/salesforce-poc/.forceignore,e8c1662bd120b5612f0f1c2ce140b1df18a507733d093e42d728445d7dc9e59f,"Agent R2 (Packaging Lead)",5a66fa60,"PKG-01 Packaging Exclusion Rules",VERIFIED_MATCH
+scratch/salesforce-poc/tests/run-r2-packaging-validation.cjs,e4693cf4ba1a7c707c0dcef22e9f1f1629a76600747514504deb25638390254c,"Agent R2 (Packaging Lead)",5a66fa60,"PKG-01 Packaging Validation Test Runner",VERIFIED_MATCH
+C2_SNAPSHOT_IMMUTABILITY_REMEDIATION_REPORT.md,6c324aa50f4a1954232e178b5ce3980eb86b07f7a88ec70c22dc6a0eb7b11a33,"Agent C2 (WS-5)",37233227,"C2 Immutability Remediation Report",VERIFIED_MATCH
+C2_CONTRACT_05_FINAL_COMPLIANCE_REPORT.md,6a289b3e9d17adc8e435941ded0a94ebe4411152b1d741588ac5e2366ff4efd4,"Agent C2 (WS-5)",37233227,"C2 CONTRACT-05 Compliance Report",VERIFIED_MATCH
+C2_FINAL_PERFORMANCE_RESULTS.md,0f8262e69cc356bff133cbd8eec7d9c94c388d632ce475987a61dc73872881c9,"Agent C2 (WS-5)",37233227,"C2 Performance Results",VERIFIED_MATCH
+C2_CHANGED_FILES_AND_SHA256.csv,a059498e2bf82c20f8be8f2f5dfb7ec9cf6519cefbe36926bc48d377b509a7d2,"Agent C2 (WS-5)",37233227,"C2 Changed Files Manifest",VERIFIED_MATCH
+C3_CONTRACT_06_EVENT_COMPLIANCE_REPORT.md,c6b9da258fec4f84c458f7fe6b6789309948eff7f8f9357226a4021e9350466c,"Agent C3 (WS-4)",9533cc3c,"C3 CONTRACT-06 Event Compliance Report",VERIFIED_MATCH
+C3_DEPENDENCY_RIVER_FINAL_ARCHITECTURE_REPORT.md,32c2ff14a38bb4bda7a16f7678c7e778b0f93138fa9f34653d4da15075a76367,"Agent C3 (WS-4)",9533cc3c,"C3 Architecture Report",VERIFIED_MATCH
+C3_FINAL_PERFORMANCE_RESULTS.md,db0927817003a0696725bf860dcb6f7aa73d05f40e0f4f02744cbcbe58e8af74,"Agent C3 (WS-4)",9533cc3c,"C3 Performance Results",VERIFIED_MATCH
+C3_CHANGED_FILES_AND_SHA256.csv,1527f063a9fe8b88615b5b4450f19c2a169dc7acdb89d27056c66ee0417653fe,"Agent C3 (WS-4)",9533cc3c,"C3 Changed Files Manifest",VERIFIED_MATCH
+R2_PACKAGING_EXCLUSION_IMPLEMENTATION_REPORT.md,471de6ff0d8b4f1190576ab5739dd1c1026899aec44a6db98be3fee1ba9483af,"Agent R2 (Packaging Lead)",5a66fa60,"R2 Packaging Exclusion Implementation Report",VERIFIED_MATCH
+R2_FORCEIGNORE_VALIDATION_REPORT.md,ff4aaa0064c058195f1c5d75c85e5ac14a2cec9754e50d3cb8f2060545a434df,"Agent R2 (Packaging Lead)",5a66fa60,"R2 .forceignore Validation Report",VERIFIED_MATCH
+R2_PACKAGE_CONTENTS_AUDIT.md,0a294df6619b9474b2f2fbcd41fdbdd5f0545f51d85937e39cee89f06113d064,"Agent R2 (Packaging Lead)",5a66fa60,"R2 Package Contents Audit",VERIFIED_MATCH
+R2_CHANGED_FILES_AND_SHA256.csv,4072c1ff70c1241eb6fddda9c7466978dd7aec249629b170aa31c01d07543bba,"Agent R2 (Packaging Lead)",5a66fa60,"R2 Changed Files Manifest",VERIFIED_MATCH
+D1_REM04_DEEP_LINK_IMPLEMENTATION_REPORT.md,2ffb8197f52d0eae64e41f8d4ab67190cc3b02666146d5d56952b98373d27385,"Agent D1 (Coordinator)",53574f30,"D1 REM-04 Implementation Report",VERIFIED_MATCH
+D1_PKG01_INTEGRATION_REPORT.md,d5f5a1c7271199787253fbcceedee7a5af74a1289b5b700a406b3d38baca2b2a,"Agent D1 (Coordinator)",107aa74f,"D1 PKG-01 Integration Report",VERIFIED_MATCH
+D1_MASTER_INTEGRATION_REPORT.md,ef63cff5d392ec3d3b0782f8157ef74a77c72422b9f7b4d3195fd26f0369b89f,"Agent D1 (Coordinator)",53574f30,"D1 Master Integration Report",VERIFIED_MATCH

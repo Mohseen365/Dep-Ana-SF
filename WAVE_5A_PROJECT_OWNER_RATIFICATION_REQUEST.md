@@ -1,78 +1,61 @@
-# Wave 5A: Project Owner Ratification Request
+# Wave 5A: Project Owner Executive Ratification Request
 
 **To:** Project Owner
-**From:** D1 — Integration Coordinator & D2 — Independent Verifier
+**From:** D1 (Master Integration Coordinator) & D2 (Independent Verifier)
 **Date:** 2026-11-10
-**Phase:** Wave 5A Final Governance Closure
-**Request:** Formal Executive Ratification of Wave 5A Technical Closure
+**Candidate Integrated Commit:** `b96fa5c1316c16aa817c3b82f87bbc25f94cb709`
+**Current Repository HEAD:** `bd47a2bd3b16a0ef4140fa7be5c0b35d29e836ae`
+**Subject:** Formal Ratification Request for Wave 5A Candidate following Acceptance Provenance Correction
 
 ---
 
 ## 1. Executive Summary
 
-Wave 5A brings together the reconciled and remediated implementations of four key workstreams:
-1. **Agent C2 (Workstream 5 Lead)**: Snapshot Comparison Modal (`daSnapshotComparisonModal`) adhering to CONTRACT-05 v1.0.0, remediating input immutability side effects.
-2. **Agent C3 (Workstream 4 Lead)**: Dependency River View (`daSankeyView`) adhering to pure SVG architecture and CONTRACT-06 v1.0.0 event standards.
-3. **Agent D1 (Integration Coordinator)**: REM-04 Deep-Link URL State Synchronization in `daAppShell.js`.
-4. **Agent R2 / D1**: Task PKG-01 Salesforce packaging exclusion for quarantined Wave 9 bundles in `.forceignore`.
+Wave 5A has completed comprehensive acceptance provenance correction and independent governance verification under DEC-04 Alternative 4.
 
-All 31 unique test suites in the repository pass with zero regressions. Mutual joint signoff between Workstream Leads and Integration Coordinator D1 has been recorded.
+The four workstreams comprising Wave 5A are:
+1. **Agent C2 (Workstream 5 Lead)**: Task REM-03 Snapshot Comparison Modal (`daSnapshotComparisonModal`) — **JOINTLY_ACCEPTED**.
+2. **Agent C3 (Workstream 4 Lead)**: Task REM-02 Dependency River View (`daSankeyView`) — **JOINTLY_ACCEPTED**.
+3. **Agent R2 (Packaging Lead)**: Task PKG-01 Salesforce DX Packaging Quarantine Exclusion (`.forceignore`) — **JOINTLY_ACCEPTED**.
+4. **Agent D1 / INT-1**: Task REM-04 Deep-Link URL State Restoration (`daAppShell`) — **PENDING_INDEPENDENT_ACCEPTANCE**.
 
----
-
-## 2. Implementation Status Summary
-
-| Workstream | Component / Deliverable | Status |
-| :--- | :--- | :---: |
-| **C2 (WS-5)** | `daSnapshotComparisonModal` (REM-03) | **REMEDIATED & PASSING** |
-| **C3 (WS-4)** | `daSankeyView` (REM-02) | **REMEDIATED & PASSING** |
-| **D1 (WS-1)** | Deep-Link URL State Restoration (REM-04) | **IMPLEMENTED & PASSING** |
-| **R2 (Pkg)** | Packaging Exclusion (.forceignore) (PKG-01) | **VERIFIED & PASSING** |
+Technical readiness is validated:
+- 31 of 31 unique test runners pass cleanly offline in Node.js v22.
+- 0 implementation files were modified during governance correction.
+- All source files and test runners have been cryptographically audited in `WAVE_5A_FINAL_SOURCE_PROVENANCE_AND_HASH_AUDIT.csv`.
 
 ---
 
-## 3. Integration Provenance
+## 2. Provenance Correction Summary
 
-- **Integrated HEAD:** `b96fa5c1316c16aa817c3b82f87bbc25f94cb709`
-- **C2 Implementation Commit:** `37233227` (Merge PR #172 `4d527e0b`)
-- **C3 Implementation Commit:** `9533cc3c` (Merge PR #173 `bb2909d3`)
-- **REM-04 Implementation Commit:** `53574f30` (Merge PR #174 `b96fa5c1`)
-- **PKG-01 Implementation Commit:** `5a66fa60` (Merge PR #170 `107aa74f`)
-
----
-
-## 4. Regression Evidence
-
-- **Unique Test Runners:** 31
-- **Passed:** 31
-- **Failed:** 0
-- **Pass Rate:** 100.0%
-- **Evidence Reference:** `WAVE_5A_FINAL_REGRESSION_EVIDENCE_REPORT.md` and `WAVE_5A_FINAL_TEST_EXECUTION_LOG_INDEX.csv`
+In response to the Project Owner's dispatch order:
+1. **REM-04 Self-Acceptance Resolved**: Agent D1's previous self-acceptance has been removed. Task REM-04 is technically verified (11/11 tests pass in `run-c1-url-sync-tests.cjs` and `run-coordinator-integration-suite.cjs`), but held as **`PENDING_INDEPENDENT_ACCEPTANCE`** pending your executive determination.
+2. **PKG-01 Acceptance Provenance Disentangled**: Attributed explicitly to Agent R2 via `R2_PACKAGING_EXCLUSION_IMPLEMENTATION_REPORT.md` Section 7 (status PASS on commit `5a66fa60`), separate from D1's integration report.
+3. **C2 & C3 Provenance Reaffirmed**: Explicitly verified attributable signoffs from Agent C2 (commit `37233227`) and Agent C3 (commit `9533cc3c`).
+4. **Independent Governance Verification**: Agent D2 conducted an independent review in `WAVE_5A_FINAL_INDEPENDENT_GOVERNANCE_VERIFICATION.md`, verifying zero self-acceptance and complete hash alignment.
 
 ---
 
-## 5. Independent Verification (D2)
+## 3. Explicit Acceptance Status Table
 
-Independent Verifier D2 evaluated candidate `b96fa5c1` and rendered:
-**Verdict:** `PASS_WITH_DOCUMENTED_LIMITATIONS`
-**Reference:** `WAVE_5A_FINAL_INDEPENDENT_VERIFICATION_CERTIFICATION.md`
-
----
-
-## 6. Joint Acceptance
-
-All four tasks have valid Workstream Lead and Integration Coordinator signoffs recorded in `WAVE_5A_FINAL_JOINT_ACCEPTANCE_REGISTER.csv`.
+| Task ID | Component / Scope | Implementation Lead | Integration Signoff | Implementation Commit | Acceptance Status | Required PO Action |
+| :--- | :--- | :--- | :--- | :---: | :--- | :--- |
+| **REM-02** | `daSankeyView` (Pure SVG) | Agent C3 (WS-4 Lead) | Agent D1 (SIGNED) | `9533cc3c` | **JOINTLY_ACCEPTED** | Executive Ratification |
+| **REM-03** | `daSnapshotComparisonModal` | Agent C2 (WS-5 Lead) | Agent D1 (SIGNED) | `37233227` | **JOINTLY_ACCEPTED** | Executive Ratification |
+| **REM-04** | `daAppShell` Deep-Link URL Sync | PENDING_INDEPENDENT_LEAD | Agent D1 (SIGNED) | `53574f30` | **PENDING_INDEPENDENT_ACCEPTANCE** | Ratify directly or delegate review to Agent C1 |
+| **PKG-01** | Wave 9 `.forceignore` Exclusion | Agent R2 (Packaging Lead) | Agent D1 (SIGNED) | `5a66fa60` | **JOINTLY_ACCEPTED** | Executive Ratification |
 
 ---
 
-## 7. Remaining Blockers & Limitations
+## 4. Requested Executive Action
 
-- **Implementation Blockers:** ZERO
-- **Governance Blockers:** PENDING_PO_RATIFICATION (this request)
-- **Environment Limitations:** Live Salesforce org authentication and live browser DOM execution (documented in `WAVE_5A_FINAL_GOVERNANCE_AND_ENVIRONMENT_BLOCKER_REGISTER.md`)
+The Project Owner is formally requested to review this evidence package and record an executive decision:
 
----
+### Option A: Ratify Wave 5A Fully (Recommended)
+- Formally ratify joint acceptance for REM-02, REM-03, and PKG-01.
+- Exercise Project Owner executive authority to accept Task REM-04 directly, closing the governance loop on the coordinator-exclusive application shell.
+- Mark Wave 5A as **`FORMALLY_CLOSED`**.
 
-## 8. Requested Executive Action
-
-It is respectfully requested that the Project Owner formally ratify the Wave 5A technical closure, transitioning the phase status from `TECHNICALLY_COMPLETE_PENDING_GOVERNANCE` to `FORMALLY_CLOSED`.
+### Option B: Conditional Ratification with Delegated REM-04 Review
+- Formally ratify REM-02, REM-03, and PKG-01.
+- Delegate independent review of REM-04 to Agent C1 prior to final Wave 5A closure.
