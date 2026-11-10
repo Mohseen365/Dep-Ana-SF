@@ -1,20 +1,27 @@
 # R2 .forceignore Validation Report
 
-**Agent:** R2 — Salesforce Deployment Packaging and Quarantine Exclusion Engineer
-**Date:** 2026-11-09
+**Agent:** R2 — Salesforce Packaging Exclusion and Release Configuration Engineer
+**Date:** 2026-11-10
 **Harness:** `scratch/salesforce-poc/tests/run-r2-packaging-validation.cjs`
-**Execution Environment:** Node.js v22.22.1 (Offline Standalone Suite)
+**Execution Environment:** Node.js v22.22.1 & Salesforce CLI `@salesforce/cli/2.157.8`
 
 ---
 
 ## 1. Validation Objectives
 
-1. Validate that the proposed exclusion rules in `R2_FORCEIGNORE.patch` strictly exclude both quarantined Wave 9 components:
+1. Validate that the exclusion rules in `scratch/salesforce-poc/.forceignore`:
+   - `**/lwc/daRefactoringEngine`
+   - `**/lwc/daRefactoringEngine/**`
+   - `**/lwc/daRefactorHandoffModal`
+   - `**/lwc/daRefactorHandoffModal/**`
+   strictly exclude both quarantined Wave 9 components:
    - `force-app/main/default/lwc/daRefactoringEngine/`
    - `force-app/main/default/lwc/daRefactorHandoffModal/`
 2. Validate that none of the 21 approved LWC components are accidentally excluded.
 3. Validate that non-LWC metadata (Apex classes, Custom Objects, Permission Sets, Static Resources) are 100% preserved.
-4. Validate pattern matching behavior across nested directory structures and path variations.
+4. Validate directory-level and recursive path evaluation across nested directory structures.
+5. Validate actual live source conversion via Salesforce CLI (`sf project convert source`).
+6. Validate actual live manifest generation via Salesforce CLI (`sf project generate manifest`).
 
 ---
 
@@ -22,10 +29,18 @@
 
 ```text
 ======================================================================
-Agent R2 — Salesforce POC Deployment Packaging Simulation Suite
-POC Root:    /app/scratch/salesforce-poc
-force-app:   /app/scratch/salesforce-poc/force-app
+Agent R2 — Salesforce POC Deployment Packaging Validation Suite
+POC Root:        /app/scratch/salesforce-poc
+force-app:       /app/scratch/salesforce-poc/force-app
+.forceignore:    /app/scratch/salesforce-poc/.forceignore
 ======================================================================
+
+Active .forceignore rules:
+  - **/lwc/daRefactoringEngine
+  - **/lwc/daRefactoringEngine/**
+  - **/lwc/daRefactorHandoffModal
+  - **/lwc/daRefactorHandoffModal/**
+✓ All 4 required quarantine exclusion rules verified in .forceignore.
 
 Discovered 164 metadata files under force-app/
 
@@ -71,16 +86,31 @@ Packaging Simulation Results:
   ✓ Confirmed included: Permission sets (1 files)
   ✓ Confirmed included: Static resources (2 files)
 
-[TEST 4] Verifying pattern matching behavior across path variations:
+[TEST 4] Verifying directory-level and path variation pattern matching:
+  ✓ Correctly verified: force-app/main/default/lwc/daRefactoringEngine (excluded=true)
+  ✓ Correctly verified: force-app/main/default/lwc/daRefactoringEngine/ (excluded=true)
   ✓ Correctly verified: force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js (excluded=true)
-  ✓ Correctly verified: scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js (excluded=true)
-  ✓ Correctly verified: /app/scratch/salesforce-poc/force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js (excluded=true)
+  ✓ Correctly verified: force-app/main/default/lwc/daRefactoringEngine/daRefactoringEngine.js-meta.xml (excluded=true)
+  ✓ Correctly verified: force-app/main/default/lwc/daRefactorHandoffModal (excluded=true)
+  ✓ Correctly verified: force-app/main/default/lwc/daRefactorHandoffModal/ (excluded=true)
   ✓ Correctly verified: force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.html (excluded=true)
+  ✓ Correctly verified: force-app/main/default/lwc/daRefactorHandoffModal/daRefactorHandoffModal.js-meta.xml (excluded=true)
   ✓ Correctly verified: force-app/main/default/lwc/daAppShell/daAppShell.js (excluded=false)
   ✓ Correctly verified: force-app/main/default/lwc/daGraphViewer/daGraphViewer.js (excluded=false)
+  ✓ Correctly verified: force-app/main/default/classes/DAGraphController.cls (excluded=false)
+
+[TEST 5] Verifying actual Salesforce CLI source conversion and manifest generation:
+  Detected Salesforce CLI: @salesforce/cli/2.157.8 linux-x64 node-v22.22.1
+  Executing: sf project convert source --output-dir /tmp/r2-cli-convert-test-... --json
+  ✓ sf project convert source succeeded with exitCode 0
+  ✓ Both quarantined bundles are absent from converted Metadata API format
+  ✓ All 21 approved LWC bundles present in converted output
+  Executing: sf project generate manifest --source-dir force-app --output-dir /tmp/r2-cli-manifest-test-... --name package.xml --json
+  ✓ package.xml excludes daRefactoringEngine and daRefactorHandoffModal
+  ✓ All 21 approved LWC bundles present in generated package.xml
 
 ======================================================================
-ALL PACKAGING VALIDATION TESTS PASSED CLEANLY (4/4 test suites)
+ALL PACKAGING VALIDATION TESTS PASSED CLEANLY (5/5 test suites)
 ======================================================================
 ```
 
@@ -104,6 +134,22 @@ ALL PACKAGING VALIDATION TESTS PASSED CLEANLY (4/4 test suites)
 
 ---
 
-## 4. Environment Limitations
+## 4. Live Salesforce CLI Operations
 
-Salesforce CLI (`sf`/`sfdx`) is not installed in the local execution sandbox. Direct execution of `sf project deploy start --dry-run` was substituted with the exact regex/glob simulation engine conforming to Salesforce CLI `.forceignore` specification (based on the standard node-ignore / gitignore glob matching).
+Actual CLI tests were conducted with `@salesforce/cli/2.157.8`:
+
+1. **Source Conversion Test (`sf project convert source`):**
+   - Executed against `scratch/salesforce-poc/force-app` with active `.forceignore`.
+   - Result: Successful conversion to Metadata API format.
+   - Converted output inspected: Quarantined component directories (`daRefactoringEngine`, `daRefactorHandoffModal`) were **completely absent**. All 21 approved components were generated with valid metadata descriptors.
+
+2. **Manifest Generation Test (`sf project generate manifest`):**
+   - Executed against `force-app`.
+   - Result: Successful `package.xml` generated.
+   - Inspected contents: Quarantined components were **completely absent**. All 21 approved LWC components were enumerated in `<types><name>LightningComponentBundle</name>`.
+
+---
+
+## 5. Scope Boundary & Environment Limitations
+
+- **Live Org Deployment Limitation:** Full deployment validation against an active org (`sf project deploy start`) requires an authenticated scratch org. In accordance with task restrictions, no live org deployment was attempted, and this will be validated in a separately authorized scratch-org validation phase.
