@@ -30,7 +30,7 @@ The decisions enumerated below represent **genuinely new, unapproved executive c
 | **PO-DEC-V2-03** | Approval of Strict Run Lifecycle Schema & Ingestion Status Picklist | GAP-ING-03, GAP-ING-04, GAP-ING-05 | Object Schema (`Status__c`, `Chunk_Key__c`) | **APPROVE**: Add CREATED/UPLOADING/VALIDATING picklists & Unique Chunk Key | YES (Blocks reliable upload lifecycle) |
 | **PO-DEC-V2-04** | Formal Shell Mount Authorization for `daSankeyView` as 12th Official View | GAP-MNT-01, GAP-CON-03 | Application Shell Navigation Registry (`APPROVED_VIEWS`) | **APPROVE**: Expand `APPROVED_VIEWS` to 12 modes, registering view `river` | NO (Blocks UI tab exposure) |
 | **PO-DEC-V2-05** | Approval of Finding Review Persistence Schema Expansion | GAP-WKF-01 | Custom Schema (`DA_Finding__c.Status__c`) | **APPROVE**: Add review status picklist and update controller | NO (Blocks finding review persistence) |
-| **PO-DEC-V2-06** | Formal Ratification of Secondary React Lenses as Out-of-Scope Approved Differences | GAP-PAR-01, GAP-PAR-04 | Feature Parity Baseline Policy | **APPROVE**: Ratify Heatmap, Tree, Profile, and Four-Dir as Out-of-Scope | NO (Governance documentation only) |
+| **PO-DEC-V2-06** | Ratification of Secondary React Lenses (Heatmap, Tree, Profile, Four-Direction) | GAP-PAR-01, GAP-PAR-04 | Feature Parity Baseline Policy | **PROPOSED OUT-OF-SCOPE DIFFERENCES — PENDING PROJECT OWNER APPROVAL** | NO (Governance documentation only) |
 
 ---
 

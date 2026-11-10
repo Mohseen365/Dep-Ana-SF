@@ -1,0 +1,14 @@
+Agent Identifier,Assigned Responsibility,Permitted Preparation Scope,Implementation Prerequisite,Final Status Classification,Notes / Deliverable Reference
+Agent 1,Multi-Tenant Security Architecture,Read-only schema & access modeling,PO-DEC-V2-02,BLOCKED BY PROJECT OWNER DECISION,Delivered 7-point object access analysis in PHASE_0_FINAL_SECURITY_RELATIONSHIP_MODEL_PREPARATION.md
+Agent 2,Ingestion Persistence Service,Lifecycle test & heap profile design,PO-DEC-V2-03,BLOCKED BY PROJECT OWNER DECISION,Co-authored heap accounting in PHASE_0_FINAL_HEAP_AND_HTTP_PAYLOAD_ACCOUNTING.md
+Agent 3,REST Transport Endpoint,REST contract design,PO-DEC-V2-01 and Agent 2 Interface,BLOCKED BY PROJECT OWNER DECISION,Blocked pending REST decision and schema finalization
+Agent 4,Node.js Upload Client,Upload client payload specification,Stable Agent 3 REST Contract,BLOCKED BY TECHNICAL DEPENDENCY,Wire size limit discovered; blocked on Agent 3 API
+Agent 5,Existing Component Integration,Component audit & test specification,PO-DEC-V2-04,PREPARATION COMPLETE,Delivered AGENT_5_COMPONENT_INTEGRATION_PREPARATION_REPORT.md; ready for D1 shell mount
+Agent 6,Finding Review Persistence,Finding controller audit,PO-DEC-V2-05 and Agent 1 Security,BLOCKED BY PROJECT OWNER DECISION,Blocked pending finding schema and security decisions
+Agent 7,Project Creation / Upload UI,UI wireframe analysis,Approved Security & Ingestion APIs,BLOCKED BY TECHNICAL DEPENDENCY,Blocked pending ingestion and security implementation
+Agent 8A,UX Interaction Specification,Command palette & hover specifications,None (Read-Only Prep),PREPARATION COMPLETE,Delivered AGENT_8A_UX_INTERACTION_SPECIFICATION.md
+Agent 8B,Command Palette & Hover Implementation,Implementation,Separate Implementation Authorization,BLOCKED BY TECHNICAL DEPENDENCY,Awaiting separate implementation authorization
+Agent 9,React Parity & Benchmark Investigation,Parity audit & benchmark metrics,None (Read-Only Prep),PREPARATION COMPLETE,Delivered AGENT_9_REACT_SALESFORCE_PARITY_PROPOSAL.csv and AGENT_9_PERFORMANCE_BENCHMARK_PREPARATION.md
+Agent 10,Test Engineering Scaffolding,Offline runner audit & test specs,None (Read-Only Prep),PREPARATION COMPLETE,Delivered AGENT_10_TEST_ENGINEERING_PREPARATION_REPORT.md and test specifications
+Agent D1,Integration Coordinator,Overall coordination & shell ownership,Self-governing,PREPARATION COMPLETE,Maintains shared shell control and authored integration deliverables
+Agent D2,Independent Verifier,Independent audit & verification,Self-governing,PREPARATION COMPLETE,Read-only audit; authored verification report
