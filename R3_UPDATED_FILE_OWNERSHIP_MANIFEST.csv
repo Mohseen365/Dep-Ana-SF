@@ -182,4 +182,5 @@ scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSn
 scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.html,LWC,NEW,Agent C2,Agent C2,Wave 2B (REM-03),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
 scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.css,LWC,NEW,Agent C2,Agent C2,Wave 2B (REM-03),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
 scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js-meta.xml,LWC,NEW,Agent C2,Agent C2,Wave 2B (REM-03),EXCLUSIVE_FEATURE_OWNER,NONE,NO,YES
-scratch/salesforce-poc/.forceignore,PackagingConfig,NEW,Agent R2,Agent R2,Wave 2B (PKG-01),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/.forceignore,PackagingConfig,EXISTING,Agent R2,Agent R2,Wave 2B (PKG-01),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
+scratch/salesforce-poc/tests/run-r2-packaging-validation.cjs,OfflineTestRunner,EXISTING,Agent R2,Agent R2,Wave 2B (PKG-01),EXCLUSIVE_FEATURE_OWNER,NONE,NO,NO
