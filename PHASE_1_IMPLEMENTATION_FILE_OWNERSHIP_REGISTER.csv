@@ -1,0 +1,17 @@
+File_Or_Area,Primary_Owner,Allowed_Editors,Conflict_Escalation_Path,Dependency_Installation_Rules,Boundary_Constraints
+DAGraphIngestionService.cls,Agent 2,Agent 2,Integration Coordinator D1,Preserve existing package lockfile; run lane A tests,Owns ingestion lifecycle and chunk uniqueness logic
+Ingestion REST resource and DTOs,Agent 3,Agent 3,Integration Coordinator D1,Preserve existing package lockfile; run rest ingestion tests,Owns DAGraphIngestionRestResource.cls and IngestionChunkBatch*.cls
+Node.js upload transport,Agent 4,Agent 4,Integration Coordinator D1,Install missing node deps via existing package manager; preserve lockfile; run upload client tests,Must enforce 5 MiB wire ceiling and dynamic downscaling
+Project OWD and analyst permission set,Agent 1,Agent 1,Integration Coordinator D1,Preserve existing package lockfile; run s1 security tests,Owns DA_Project__c OWD and DA_Architecture_Analyst permset
+Analysis-run lifecycle metadata,Agent 2,Agent 2,Integration Coordinator D1,Preserve existing package lockfile; run schema tests,Owns DA_Analysis_Run__c.Status__c metadata
+Graph-chunk uniqueness metadata,Agent 2,Agent 2,Integration Coordinator D1,Preserve existing package lockfile; run schema tests,Owns DA_Graph_Chunk__c.Chunk_Key__c metadata
+Finding status metadata and controller,Agent 6,Agent 6,Integration Coordinator D1,Preserve existing package lockfile; run lane f tests,Owns DA_Finding__c.Status__c and DAGraphController updateFindingStatus
+Project creation and upload UI,Agent 7,Agent 7,Integration Coordinator D1,Preserve existing package lockfile; run project creation tests,Owns daProjectCreateModal and daProjectSelector
+Graph hover implementation,Agent 8B,Agent 8B,Integration Coordinator D1,Preserve existing package lockfile; run hover tests,Owns daGraphViewer hover handlers; no canvas re-instantiation
+Command palette LWC,Agent 8B,Agent 8B,Integration Coordinator D1,Preserve existing package lockfile; run command palette tests,Owns daCommandPalette component; no shell edits
+Parity matrix and benchmarks,Agent 9,Agent 9,Integration Coordinator D1,Preserve existing package lockfile; run bench harness,Owns REACT_SALESFORCE_FEATURE_PARITY_MATRIX_PROPOSED.csv and bench runners
+Test runners and evidence,Agent 10,Agent 10,Integration Coordinator D1,Install Vitest/Playwright/TS if missing via npm/pnpm; preserve lockfile; execute runners,Owns offline and concurrency test runners in scratch/salesforce-poc/tests
+daAppShell.*,Integration Coordinator D1,D1 Exclusively,Project Owner,Exclusive D1 authority; no agent edits permitted,Controls APPROVED_VIEWS mounting of river view and modal embeds
+daHeader.*,Integration Coordinator D1,D1 Exclusively,Project Owner,Exclusive D1 authority; no agent edits permitted,Controls shell header actions and global status bindings
+daSidebar.*,Integration Coordinator D1,D1 Exclusively,Project Owner,Exclusive D1 authority; no agent edits permitted,Controls shell sidebar navigation and project selector bindings
+Contract reconciliation,Integration Coordinator D1,D1 Coordinates,Project Owner,D1 coordinates divergence reviews; only PO holds executive approval authority,Preserves frozen contracts unless PO explicitly approves change
