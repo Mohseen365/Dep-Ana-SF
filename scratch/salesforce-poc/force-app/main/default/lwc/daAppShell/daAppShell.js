@@ -115,7 +115,26 @@ export default class DaAppShell extends LightningElement {
         filtersJson: null
     };
 
+    // Deep-Link URL State Synchronization (REM-04)
+    _urlStateVersion = 0;
+    _isSynchronizingUrl = false;
+    _currentUrlState = {};
+    _currentPageReference = null;
+
     connectedCallback() {
+        // Inspect window.location if present for cold start deep-linking
+        if (typeof window !== 'undefined' && window.location && window.location.search) {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const rawState = {};
+                for (const [k, v] of params.entries()) {
+                    if (k.startsWith('c__')) rawState[k] = v;
+                }
+                if (Object.keys(rawState).length > 0) {
+                    this.restoreStateFromUrl(rawState, 1);
+                }
+            } catch (e) {}
+        }
         if (this.activeProjectId) {
             this.loadUserPreferences(this.activeProjectId);
             this.loadGraphPayload(this.activeProjectId);
@@ -628,6 +647,7 @@ export default class DaAppShell extends LightningElement {
             this.activeView = targetView;
             // Switching views preserves activeProjectId and selectedNodeId context
             this.savePreferenceChange({ viewMode: targetView });
+            this.syncStateToUrl();
         }
     }
 
@@ -666,6 +686,7 @@ export default class DaAppShell extends LightningElement {
                 activeFilter: normalized
             };
             this.filterConfig = updated;
+            this.syncStateToUrl();
             // Do NOT save preference here (filter broadcast only)
         }
     }
@@ -701,6 +722,7 @@ export default class DaAppShell extends LightningElement {
 
             // Persist the updated container
             this.savePreferenceChange({ filtersJson: serialized });
+            this.syncStateToUrl();
         } catch (err) {
             this.preferenceError = 'Failed to persist filter container: ' + (err.message || err);
         }
@@ -749,6 +771,7 @@ export default class DaAppShell extends LightningElement {
                 this.resetPreferencesToDefaults();
                 this.loadGraphPayload(null);
             }
+            this.syncStateToUrl();
         }
     }
 
@@ -818,6 +841,213 @@ export default class DaAppShell extends LightningElement {
     handleNodeSelect(event) {
         const detail = event.detail || {};
         this.selectedNodeId = detail.nodeId || null;
+        this.syncStateToUrl();
         // Node selection does NOT alter activeProjectId, activeView, or trigger preference save
     }
+
+    // =========================================================================
+    // Deep-Link URL State Synchronization Methods (REM-04)
+    // =========================================================================
+
+    /**
+     * Serializes shell state into a Lightning PageReference state dictionary.
+     */
+    serializeUrlState(options = {}) {
+        const projId = options.projectId !== undefined ? options.projectId : this.activeProjectId;
+        const vMode = options.viewMode !== undefined ? options.viewMode : this.activeView;
+        const nId = options.nodeId !== undefined ? options.nodeId : this.selectedNodeId;
+        const fCrit = options.filterCriteria !== undefined ? options.filterCriteria : this.activeFilterCriteria;
+
+        const state = {};
+
+        if (projId && typeof projId === 'string') {
+            state.c__projectId = projId.trim();
+        }
+
+        if (vMode && APPROVED_VIEWS.includes(vMode)) {
+            state.c__viewMode = vMode;
+        } else {
+            state.c__viewMode = DEFAULT_VIEW_MODE;
+        }
+
+        if (nId && typeof nId === 'string' && nId.trim() !== '') {
+            state.c__nodeId = nId.trim();
+        }
+
+        if (fCrit && typeof fCrit === 'object') {
+            if (fCrit.search && typeof fCrit.search === 'string' && fCrit.search.trim() !== '') {
+                state.c__search = fCrit.search.trim();
+            }
+            if (Array.isArray(fCrit.layers) && fCrit.layers.length > 0) {
+                state.c__layers = fCrit.layers.join(',');
+            }
+            if (Array.isArray(fCrit.riskLevels) && fCrit.riskLevels.length > 0) {
+                state.c__risk = fCrit.riskLevels.join(',');
+            }
+            if (fCrit.testCoverageStatus && fCrit.testCoverageStatus !== 'ALL') {
+                state.c__coverage = fCrit.testCoverageStatus;
+            }
+        }
+
+        return state;
+    }
+
+    /**
+     * Deserializes and validates a PageReference state dictionary.
+     */
+    deserializeUrlState(rawState = {}, currentVersion = 0) {
+        if (currentVersion < this._urlStateVersion) {
+            return { isStale: true };
+        }
+        this._urlStateVersion = currentVersion;
+
+        const result = {
+            isStale: false,
+            projectId: null,
+            viewMode: DEFAULT_VIEW_MODE,
+            nodeId: null,
+            filterCriteria: getDefaultFilterCriteria()
+        };
+
+        if (!rawState || typeof rawState !== 'object') {
+            return result;
+        }
+
+        // 1. Project ID Sanitization
+        if (rawState.c__projectId && typeof rawState.c__projectId === 'string') {
+            const sanitized = rawState.c__projectId.trim();
+            if (/^[a-zA-Z0-9_\\-]{3,50}$/.test(sanitized)) {
+                result.projectId = sanitized;
+            }
+        }
+
+        // 2. View Mode Sanitization
+        if (rawState.c__viewMode && typeof rawState.c__viewMode === 'string') {
+            const v = rawState.c__viewMode.trim().toLowerCase();
+            if (APPROVED_VIEWS.includes(v)) {
+                result.viewMode = v;
+            } else {
+                result.viewMode = DEFAULT_VIEW_MODE;
+            }
+        }
+
+        // 3. Node ID Sanitization
+        if (rawState.c__nodeId && typeof rawState.c__nodeId === 'string') {
+            const n = rawState.c__nodeId.trim();
+            if (n.length > 0 && n.length <= 255 && !/[<>"']/.test(n)) {
+                result.nodeId = n;
+            }
+        }
+
+        // 4. Filter Criteria Sanitization
+        const criteria = { ...result.filterCriteria };
+        if (rawState.c__search && typeof rawState.c__search === 'string') {
+            criteria.search = rawState.c__search.replace(/[<>"']/g, '').trim();
+        }
+        if (rawState.c__layers && typeof rawState.c__layers === 'string') {
+            criteria.layers = rawState.c__layers.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        if (rawState.c__risk && typeof rawState.c__risk === 'string') {
+            const risks = rawState.c__risk.split(',').map(s => s.trim().toUpperCase());
+            criteria.riskLevels = risks.filter(r => ['HIGH', 'MEDIUM', 'LOW'].includes(r));
+        }
+        if (rawState.c__coverage && typeof rawState.c__coverage === 'string') {
+            const cov = rawState.c__coverage.trim().toUpperCase();
+            if (['COVERED', 'UNTESTED', 'AMBIGUOUS', 'UNKNOWN'].includes(cov)) {
+                criteria.testCoverageStatus = cov;
+            }
+        }
+
+        result.filterCriteria = normalizeFilterCriteria(criteria);
+        return result;
+    }
+
+    /**
+     * Restores application state from a URL PageReference state dictionary.
+     */
+    restoreStateFromUrl(state, incomingVersion = 0) {
+        const deserialized = this.deserializeUrlState(state, incomingVersion);
+        if (deserialized.isStale) {
+            return;
+        }
+
+        // 1. Project Restoration
+        if (deserialized.projectId && deserialized.projectId !== this.activeProjectId) {
+            this.handleProjectChange({
+                detail: {
+                    projectId: deserialized.projectId,
+                    projectKey: deserialized.projectId
+                }
+            });
+        }
+
+        // 2. View Mode Restoration
+        if (deserialized.viewMode && APPROVED_VIEWS.includes(deserialized.viewMode)) {
+            if (this.activeView !== deserialized.viewMode) {
+                this.activeView = deserialized.viewMode;
+            }
+        }
+
+        // 3. Node Selection Restoration (SELECTION != NAVIGATION)
+        if (deserialized.nodeId !== undefined) {
+            this.selectedNodeId = deserialized.nodeId;
+        }
+
+        // 4. Filter Restoration
+        if (deserialized.filterCriteria) {
+            this.activeFilterCriteriaState = deserialized.filterCriteria;
+        }
+
+        this._currentUrlState = { ...(state || {}) };
+    }
+
+    /**
+     * Checks if current URL state is equal to proposed state to avoid redundant history entries.
+     */
+    isEqualUrlState(stateA, stateB) {
+        if (!stateA || !stateB) return false;
+        const keysA = Object.keys(stateA).filter(k => k.startsWith('c__'));
+        const keysB = Object.keys(stateB).filter(k => k.startsWith('c__'));
+        if (keysA.length !== keysB.length) return false;
+        for (const k of keysA) {
+            if (stateA[k] !== stateB[k]) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Synchronizes internal shell state to the URL.
+     */
+    syncStateToUrl() {
+        const newState = this.serializeUrlState();
+        if (this.isEqualUrlState(this._currentUrlState, newState)) {
+            return;
+        }
+
+        this._isSynchronizingUrl = true;
+        this._currentUrlState = newState;
+
+        // In browser environments with window.history, use replaceState to prevent history clutter
+        if (typeof window !== 'undefined' && window.history && typeof window.history.replaceState === 'function') {
+            try {
+                const url = new URL(window.location.href);
+                // Clear existing c__ params
+                Array.from(url.searchParams.keys()).forEach(key => {
+                    if (key.startsWith('c__')) {
+                        url.searchParams.delete(key);
+                    }
+                });
+                // Set new c__ params
+                Object.keys(newState).forEach(key => {
+                    url.searchParams.set(key, newState[key]);
+                });
+                window.history.replaceState({ ...window.history.state, ...newState }, '', url.toString());
+            } catch (e) {
+                // Ignore URL parsing errors in restricted environments
+            }
+        }
+
+        this._isSynchronizingUrl = false;
+    }
+
 }

@@ -418,6 +418,83 @@ async function main() {
         assert.ok(shell.statusBadgeClass.includes('slds-theme_success'));
     });
 
+    // -------------------------------------------------------------------------
+    console.log('\n[Section 7: Deep-Link URL State Synchronization & Invariant Preservation (REM-04)]');
+    // -------------------------------------------------------------------------
+
+    runTest('7.1 Serializes shell state into PageReference parameters while maintaining SELECTION != NAVIGATION', () => {
+        const DaAppShell = createAppShellClass();
+        const shell = new DaAppShell();
+
+        shell.activeProjectId = 'PROJ_URL_001';
+        shell.activeView = 'matrix';
+        shell.selectedNodeId = 'ApexClass:OrderService';
+
+        const state = shell.serializeUrlState();
+        assert.strictEqual(state.c__projectId, 'PROJ_URL_001');
+        assert.strictEqual(state.c__viewMode, 'matrix');
+        assert.strictEqual(state.c__nodeId, 'ApexClass:OrderService');
+
+        // Verify selection event does not alter view navigation
+        shell.handleNodeSelect({ detail: { nodeId: 'ApexClass:PaymentGateway' } });
+        assert.strictEqual(shell.selectedNodeId, 'ApexClass:PaymentGateway');
+        assert.strictEqual(shell.activeView, 'matrix', 'View must remain matrix upon node selection');
+
+        const stateAfterSelect = shell.serializeUrlState();
+        assert.strictEqual(stateAfterSelect.c__nodeId, 'ApexClass:PaymentGateway');
+        assert.strictEqual(stateAfterSelect.c__viewMode, 'matrix');
+    });
+
+    runTest('7.2 Restores state from URL parameters safely with fallback and XSS sanitization', () => {
+        const DaAppShell = createAppShellClass();
+        const shell = new DaAppShell();
+
+        // Valid restoration
+        shell.restoreStateFromUrl({
+            c__projectId: 'PROJ_RESTORE_01',
+            c__viewMode: 'radar',
+            c__nodeId: 'CustomObject:Invoice__c',
+            c__search: 'billing',
+            c__risk: 'HIGH'
+        }, 1);
+
+        assert.strictEqual(shell.activeProjectId, 'PROJ_RESTORE_01');
+        assert.strictEqual(shell.activeView, 'radar');
+        assert.strictEqual(shell.selectedNodeId, 'CustomObject:Invoice__c');
+        assert.strictEqual(shell.activeFilterCriteria.search, 'billing');
+        assert.deepStrictEqual(shell.activeFilterCriteria.riskLevels, ['HIGH']);
+
+        // Unknown view fallback and script injection sanitization
+        shell.restoreStateFromUrl({
+            c__viewMode: 'unauthorized_view_mode',
+            c__nodeId: '<script>alert(1)</script>',
+            c__search: 'test" onerror="alert(1)'
+        }, 2);
+
+        assert.strictEqual(shell.activeView, 'graph', 'Unknown view mode must safely fall back to graph');
+        assert.strictEqual(shell.selectedNodeId, null, 'Unsafe nodeId must be rejected');
+        assert.strictEqual(shell.activeFilterCriteria.search, 'test onerror=alert(1)', 'Search query must be sanitized');
+    });
+
+    runTest('7.3 Stale URL restoration is suppressed and history state deduplication prevents loops', () => {
+        const DaAppShell = createAppShellClass();
+        const shell = new DaAppShell();
+
+        shell.restoreStateFromUrl({ c__viewMode: 'dashboard' }, 5);
+        assert.strictEqual(shell.activeView, 'dashboard');
+
+        // Stale restoration with version 4 must be ignored
+        shell.restoreStateFromUrl({ c__viewMode: 'graph' }, 4);
+        assert.strictEqual(shell.activeView, 'dashboard', 'Stale restoration must not overwrite newer state');
+
+        // State equality deduplication
+        const state1 = { c__projectId: 'P1', c__viewMode: 'graph' };
+        const state2 = { c__projectId: 'P1', c__viewMode: 'graph' };
+        const state3 = { c__projectId: 'P1', c__viewMode: 'matrix' };
+        assert.strictEqual(shell.isEqualUrlState(state1, state2), true);
+        assert.strictEqual(shell.isEqualUrlState(state1, state3), false);
+    });
+
     console.log('\n===================================================================');
     console.log(`Central Coordinator Integration Suite Results: ${passes} PASSED, ${fails} FAILED`);
 
