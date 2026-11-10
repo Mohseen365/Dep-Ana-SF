@@ -1,0 +1,5 @@
+dataset_name,raw_node_count,raw_edge_count,rendered_stages,rendered_nodes,rendered_flows,total_svg_elements,adapter_calc_ms,layout_calc_ms,total_pipeline_ms,heap_delta_mb
+CST,240,1024,5,240,610,1591,17.22,8.97,26.19,1.21
+BQC,274,603,5,274,407,1524,1.82,2.39,4.21,1.13
+PBIM,528,2063,5,528,1191,3324,4.61,3.68,8.28,3.04
+SYNTHETIC_1000,1000,3500,5,1000,1000,5021,10.79,7.69,18.48,0.00
