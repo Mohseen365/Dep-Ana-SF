@@ -19,7 +19,7 @@ This report delivers the authoritative readiness certification for the Dependenc
 
 As the sole Integration Coordinator, D1 has completed the technical reconciliation and verified that:
 1. **Decision Ratification**: All six PO decisions are recorded with `PROJECT_OWNER_APPROVED` status in `PROJECT_OWNER_SIX_DECISIONS_APPROVAL_REGISTER.md`.
-2. **Provenance Preservation**: The approval provenance accurately records the Project Owner's exact communication: *"I approve every decision. This project is between me and ChatGPT, and I am the final decision-maker."*
+2. **Provenance Preservation**: The approval provenance accurately records the Project Owner's exact communication (verbatim wording): *"this project is between you and me so i approve every decision"*.
 3. **Four Technical Corrections**:
    - *Correction A*: $10 \times 131,072 = 1,310,720$ UTF-16 code units ($2,621,440$ bytes / 2.50 MB character storage) is disambiguated from Apex heap; the 7 accounting units are established; and `PHASE_1_INGESTION_HTTP_BATCHING_ACCEPTANCE_SPEC.md` mandates the 5 MiB wire ceiling and dynamic downscaling.
    - *Correction B*: Broad `View All` and OWD rollback are banned; `PHASE_1_SECURITY_RECOVERY_AND_CONCURRENCY_TEST_ACCEPTANCE.md` mandates project-scoped, auditable temporary sharing.
@@ -52,17 +52,19 @@ Independent Verifier D2 has conducted an independent audit of the deliverables a
 
 | Agent | Responsibility | Dispatch Group | Final Dispatch Status | Prerequisites / Notes |
 |---|---|---|---|---|
-| **Agent 1** | Salesforce Security & Project Isolation | Group A | **READY FOR DISPATCH** | Root security prerequisite; Private OWD, FLS, and project sharing |
-| **Agent 2** | Ingestion Lifecycle & Persistence | Group A | **READY FOR DISPATCH** | Ingestion state machine and `Chunk_Key__c` constraint |
-| **Agent 3** | Apex REST Transport | Group B | **READY WITH PREREQUISITES** | Blocked until Agent 1 & Agent 2 publish and freeze service interfaces |
-| **Agent 4** | Node.js Upload Client | Group B | **BLOCKED BY TECHNICAL DEPENDENCY** | Blocked until Agent 3 REST API contract is frozen; enforces 5 MiB ceiling |
-| **Agent 5** | Existing Component Packages | Group A | **READY FOR DISPATCH** | Component package preparation; D1 controls shell mounting of view 12 |
-| **Agent 6** | Finding Review Persistence | Group C | **READY WITH PREREQUISITES** | Blocked until Agent 1 security interface is available |
-| **Agent 7** | Project Creation & Upload UI | Group C | **BLOCKED BY TECHNICAL DEPENDENCY** | Blocked until Agent 1 security & Agent 3 REST endpoints are frozen |
-| **Agent 8A** | UX Interaction Specification | N/A | **COMPLETED** | Specification phase complete; serves as baseline for Agent 8B |
-| **Agent 8B** | Command Palette & Graph Hover | Group A | **READY FOR DISPATCH** | Implementation authorized; strictly no shell edits, preserves `SELECTION != NAVIGATION` |
-| **Agent 9** | Parity & Performance Benchmarks | Group A | **READY FOR DISPATCH** | Parity matrix update reflecting ratified out-of-scope lenses; run bench harness |
-| **Agent 10** | Ingestion & Release Test Engineering | Group A | **READY FOR DISPATCH** | Offline test harness scaffolding & multi-threaded concurrency runner drafting |
+| **Agent 1** | Salesforce Security & Project Isolation | Group A | **UNBLOCKED_IMPLEMENTATION** | Audits metadata relationship evidence; sets Private OWD, FLS, and emergency access |
+| **Agent 2** | Ingestion Lifecycle & Persistence | Group A | **UNBLOCKED_IMPLEMENTATION** | Ingestion state machine schema and `Chunk_Key__c` constraint; security persistence awaits Agent 1 |
+| **Agent 3** | Apex REST Transport | Group B | **BLOCKED_PENDING_INTERFACE** | Blocked until Agent 1 & Agent 2 publish and freeze service interfaces |
+| **Agent 4** | Node.js Upload Client | Group B | **BLOCKED_PENDING_INTERFACE** | Blocked until Agent 3 REST API contract is frozen; enforces 5 MiB ceiling & dynamic downscaling |
+| **Agent 5** | Existing Component Packages | Group A | **PARALLEL_PREPARATION_ONLY** | Package prep for daSankeyView, daSnapshotComparisonModal, daPresetManager; D1 controls shell mounting |
+| **Agent 6** | Finding Review Persistence | Group C | **BLOCKED_PENDING_INTERFACE** | Blocked until Agent 1 security interface is published and available |
+| **Agent 7** | Project Creation & Upload UI | Group C | **BLOCKED_PENDING_INTERFACE** | Blocked until Agent 1 security & Agent 3 REST endpoints are frozen |
+| **Agent 8A** | UX Interaction Specification | N/A | **COMPLETED_PENDING_ACCEPTANCE** | Specification phase complete; serves as baseline for Agent 8B |
+| **Agent 8B** | Command Palette & Graph Hover | Group A | **UNBLOCKED_IMPLEMENTATION** | Implementation authorized; strictly no shell edits, preserves `SELECTION != NAVIGATION` |
+| **Agent 9** | Parity & Performance Benchmarks | Group A | **UNBLOCKED_IMPLEMENTATION** | Parity matrix update reflecting ratified out-of-scope lenses; run bench harness |
+| **Agent 10** | Ingestion & Release Test Engineering | Group A | **UNBLOCKED_IMPLEMENTATION** | Offline test harness scaffolding & multi-threaded concurrency runner drafting |
+| **Coordinator D1** | Shell Integration & Technical Coordination | Group D | **INTEGRATION_ONLY** | Exclusive shell authority; integrates accepted packages and mounts View 12 |
+| **Verifier D2** | Independent Post-Integration Verification | Group D | **INDEPENDENT_VERIFICATION** | Strictly read-only audit across all deliverables and test evidence |
 
 ---
 

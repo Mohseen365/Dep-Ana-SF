@@ -15,7 +15,7 @@ Previous baseline documents in Phase 0 erroneously assumed that chunk batching w
 As established in the technical corrections:
 - 10 maximum-sized chunks $= 1,310,720$ UTF-16 code units.
 - At 2 bytes per code unit, raw character storage is $2,621,440$ bytes (2.50 MB).
-- In serialized JSON over HTTP, escape expansion (such as backslashes, quotes, or JSON-escaped control sequences like `\u0001` expanding from 1 char to 6 bytes) can expand a 10-chunk payload up to **7.50 MB** ($7,864,766$ bytes).
+- In serialized JSON over HTTP, escape expansion under synthetic stress fixtures (such as backslashes, quotes, or JSON-escaped control sequences like `\u0001` expanding from 1 char to 6 bytes) can expand a 10-chunk payload up to **7.50 MB** ($7,864,766$ bytes). Note that this 7.50 MB / 7,864,766-byte figure represents a synthetic stress fixture designed to test worst-case boundaries, rather than a universal or typical expansion ratio.
 - Salesforce enforces a hard synchronous REST request-size ceiling of **6 MB** ($6,291,456$ bytes). Any request exceeding this limit is terminated with HTTP 413 Payload Too Large at the gateway before Apex execution.
 
 Therefore, upload client batching must never rely on fixed chunk counts. This document establishes the mandatory acceptance specification for Agent 4 (Node.js Upload Client) and Agent 3 (Apex REST Transport).

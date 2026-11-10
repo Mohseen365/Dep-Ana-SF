@@ -66,14 +66,12 @@ With the Project Owner's explicit authorization of all six PO decisions and Agen
 ### Group A: Foundations and Parallel Preparation
 - **Participants**: Agent 1, Agent 2, Agent 5, Agent 8B, Agent 9, Agent 10.
 - **Coordination Discipline**:
-  - Agent 1 and Agent 2 investigate and draft changes in parallel.
-  - Agent 1 defines `DAProjectSecurityService.cls` and sets `DA_Project__c` OWD to `Private`.
-  - Agent 2 defines `DA_Analysis_Run__c.Status__c` and `DA_Graph_Chunk__c.Chunk_Key__c` in `DAGraphIngestionService.cls`.
-  - Agents 1 and 2 reconcile their persistence and security interfaces before Group B launch.
-  - Agent 5 packages `daSankeyView` and `daSnapshotComparisonModal` for D1 hand-off.
-  - Agent 8B develops `daCommandPalette` and hover cards, strictly isolated from shell files.
-  - Agent 9 updates the parity matrix to reflect the approved out-of-scope classification for Heatmap, Tree, Profile, and Four-Direction lenses.
-  - Agent 10 builds multi-threaded external concurrency runners and Playwright test scaffolding.
+  - Agent 1 (`UNBLOCKED_IMPLEMENTATION`): Audits actual metadata relationships (`ControlledByParent` on `DA_Analysis_Run__c`, `DA_Graph_Chunk__c`, `DA_Finding__c`, `DA_Annotation__c`; Lookup on `DA_User_Preference__c`), implements `DAProjectSecurityService.cls` with runtime authorization-time expiry (< 4-hour lease), explicit revocation, and append-only audit protections, and sets `DA_Project__c` OWD to `Private`.
+  - Agent 2 (`UNBLOCKED_IMPLEMENTATION`): Independent lifecycle schema and persistence work unblocked; drafts `DA_Analysis_Run__c.Status__c` and `DA_Graph_Chunk__c.Chunk_Key__c` in `DAGraphIngestionService.cls`; security-dependent persistence awaits Agent 1's interface.
+  - Agent 5 (`PARALLEL_PREPARATION_ONLY`): Packages `daSankeyView`, `daSnapshotComparisonModal`, and `daPresetManager` in isolation; prepares integration contracts for D1; strictly no shell edits.
+  - Agent 8B (`UNBLOCKED_IMPLEMENTATION`): Implements `daCommandPalette` and hover cards within approved scope, strictly isolated from shell files, preserving `SELECTION != NAVIGATION`.
+  - Agent 9 (`UNBLOCKED_IMPLEMENTATION`): Updates proposed parity matrix reflecting ratified out-of-scope lenses; executes benchmark harness; no unilateral frozen contract changes.
+  - Agent 10 (`UNBLOCKED_IMPLEMENTATION`): Scaffolds shared test harnesses and external multi-threaded concurrency runners; coordinates expectations with implementation owners without tampering with code.
 
 ### Group B: Ingestion Transport Pipeline
 - **Prerequisites**: Agent 1 security interface signoff AND Agent 2 persistence interface signoff.

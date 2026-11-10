@@ -11,15 +11,16 @@
 
 ## 1. Executive Summary & Approval Provenance
 
-The Project Owner has explicitly communicated the following authoritative directive:
+The Project Owner has explicitly communicated the following authoritative directive (exact verbatim wording):
 
-> *"I approve every decision. This project is between me and ChatGPT, and I am the final decision-maker."*
+> "this project is between you and me so i approve every decision"
 
 In accordance with repository governance rules:
 - This communication constitutes explicit, unchallengeable Project Owner authorization for all six decisions (`PO-DEC-V2-01` through `PO-DEC-V2-06`), as well as the implementation scope for Agent 8B.
 - The status of each decision is formally recorded as **`PROJECT_OWNER_APPROVED`**.
-- The approval provenance is accurately preserved: **Explicitly provided in the Project Owner's current conversation instruction**.
-- No approval timestamps, external signatures, or third-party approval system identifiers are fabricated.
+- The approval provenance is accurately preserved: **Explicitly provided in the Project Owner's current conversation instruction: "this project is between you and me so i approve every decision"**.
+- Paraphrase context: The Project Owner confirms sole decision-making authority over the project alongside the AI engineer, and grants universal approval for all pending decision packages.
+- No approval timestamps, external signatures, approval IDs not already established, executive order numbers, or third-party approval system identifiers are fabricated.
 - These decisions are final and shall not be re-requested.
 
 ---
@@ -42,7 +43,7 @@ In accordance with repository governance rules:
 ### 3.1 PO-DEC-V2-01 — Apex REST Ingestion Transport
 - **Decision ID**: `PO-DEC-V2-01`
 - **Approval Status**: `PROJECT_OWNER_APPROVED`
-- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("I approve every decision...").
+- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("this project is between you and me so i approve every decision").
 - **Exact Approved Scope**:
   - Apex REST endpoint (`@RestResource(urlMapping='/da/v1/ingest/*')`) in `DAGraphIngestionRestResource.cls`.
   - Ingestion workflow: Project creation/validation -> Run creation (`Status__c = 'CREATED'`) -> Batch chunk upload (`Status__c = 'UPLOADING'`) -> Finalization & assembly validation (`Status__c = 'AVAILABLE'`).
@@ -70,7 +71,7 @@ In accordance with repository governance rules:
 ### 3.2 PO-DEC-V2-02 — Private OWD and Project Isolation
 - **Decision ID**: `PO-DEC-V2-02`
 - **Approval Status**: `PROJECT_OWNER_APPROVED`
-- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("I approve every decision...").
+- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("this project is between you and me so i approve every decision").
 - **Exact Approved Scope**:
   - Organization-Wide Default (OWD) for `DA_Project__c` set to `Private`.
   - Removal of inappropriate broad `<viewAllRecords>true</viewAllRecords>` from permission set `DA_Architecture_Analyst`.
@@ -100,7 +101,7 @@ In accordance with repository governance rules:
 ### 3.3 PO-DEC-V2-03 — Run Lifecycle and Chunk Uniqueness
 - **Decision ID**: `PO-DEC-V2-03`
 - **Approval Status**: `PROJECT_OWNER_APPROVED`
-- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("I approve every decision...").
+- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("this project is between you and me so i approve every decision").
 - **Exact Approved Scope**:
   - Run lifecycle state machine: `CREATED -> UPLOADING -> VALIDATING -> AVAILABLE`, with explicit failure (`FAILED`), expiry, and cleanup states.
   - Unique chunk key constraint (`Chunk_Key__c` as Unique External ID) on `DA_Graph_Chunk__c` formatted as `<RunId>_<ChunkIndex>`.
@@ -133,7 +134,7 @@ In accordance with repository governance rules:
 ### 3.4 PO-DEC-V2-04 — Dependency River Mounting
 - **Decision ID**: `PO-DEC-V2-04`
 - **Approval Status**: `PROJECT_OWNER_APPROVED`
-- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("I approve every decision...").
+- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("this project is between you and me so i approve every decision").
 - **Exact Approved Scope**:
   - Mounting the already-approved Dependency River component (`daSankeyView`) into the Salesforce workspace shell (`daAppShell`).
   - Preservation of identifiers: `river` as workspace view identifier, `sankey` as layout identifier, `daSankeyView` as component bundle.
@@ -158,7 +159,7 @@ In accordance with repository governance rules:
 ### 3.5 PO-DEC-V2-05 — Finding Review Persistence
 - **Decision ID**: `PO-DEC-V2-05`
 - **Approval Status**: `PROJECT_OWNER_APPROVED`
-- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("I approve every decision...").
+- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("this project is between you and me so i approve every decision").
 - **Exact Approved Scope**:
   - Custom field `Status__c` on `DA_Finding__c` with values `OPEN`, `IN_REVIEW`, `RESOLVED`, `WONT_FIX`.
   - Approved status transition logic.
@@ -185,7 +186,7 @@ In accordance with repository governance rules:
 ### 3.6 PO-DEC-V2-06 — Secondary React Lens Scope
 - **Decision ID**: `PO-DEC-V2-06`
 - **Approval Status**: `PROJECT_OWNER_APPROVED`
-- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("I approve every decision...").
+- **Approval Provenance**: Explicitly provided in the Project Owner's current conversation instruction ("this project is between you and me so i approve every decision").
 - **Exact Approved Scope**:
   - Formal ratification of the migration scope classification accepting secondary React lenses as **approved out-of-scope differences** for v1.0:
     - Heatmap
