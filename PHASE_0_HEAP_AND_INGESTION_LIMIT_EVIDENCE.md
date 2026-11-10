@@ -15,8 +15,8 @@ The following accounting metrics must not be conflated:
    - Max Chunk Size: **131,072 UTF-16 code units**.
    - Max Run Payload Cap: **10,485,760 UTF-16 code units** (80 chunks).
 2. **UTF-8 Encoded Bytes**: Wire transport bytes for JSON AST nodes. Typically 1–4 bytes per character.
-3. **HTTP Request Bytes**: Full multipart or JSON request body including HTTP headers, JSON envelope, and escaping. A 10-chunk batch body is approximately 1.35 MB to 2.8 MB.
-4. **Apex Runtime Heap Memory**: Memory allocated by the JVM/Apex runtime for Strings, objects, collections, and temporary buffers. Peak heap during 10-chunk deserialization and SObject mapping is statically estimated between 3.5 MB and 5.2 MB.
+3. **HTTP Request Bytes**: Full multipart or JSON request body including HTTP headers, JSON envelope, and escaping. A 10-chunk batch body of 1,310,720 UTF-16 code units produces 1.25 MB to 3.93 MB under standard Unicode, and up to 7.50 MB under worst-case control character escaping. Note: 1,310,720 UTF-16 code units must never be described as 1.31 MB of memory; at 2 bytes per code unit, raw UTF-16 storage is 2,621,440 bytes (2.50 MB).
+4. **Apex Runtime Heap Memory**: Memory allocated by the JVM/Apex runtime for Strings, objects, collections, and temporary buffers. Peak heap during 10-chunk deserialization and SObject mapping cannot be proven safe offline; it is classified strictly as NOT VERIFIED — LIVE SALESFORCE ORG REQUIRED.
 5. **Salesforce Governor Limits**:
    - Synchronous Apex Heap Limit: **6 MB** (6,291,456 bytes).
    - Asynchronous Apex Heap Limit: **12 MB** (12,582,912 bytes).

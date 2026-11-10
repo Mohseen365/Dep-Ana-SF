@@ -19,7 +19,7 @@ The following six decisions represent the formal executive gates required before
 | **`PO-DEC-V2-03`** | Run Lifecycle Picklist & Unique Chunk Key Constraint | GAP-ING-03..05, GAP-CON-01 | **APPROVE Option A** | Blocks Agent 2 implementation |
 | **`PO-DEC-V2-04`** | Formal Shell Mount Authorization for `daSankeyView` (12th View `river`) | GAP-MNT-01, GAP-CON-03 | **APPROVE Option A** | Blocks D1 shell mounting of `daSankeyView` |
 | **`PO-DEC-V2-05`** | Finding Review Status Metadata Field & Persistence Controller | GAP-WKF-01 | **APPROVE Option A** | Blocks Agent 6 implementation |
-| **`PO-DEC-V2-06`** | Ratification of Secondary React Lenses as Out-of-Scope Differences | GAP-PAR-01, GAP-PAR-04 | **APPROVE Option A** | Non-blocking (Governance baseline freeze) |
+| **`PO-DEC-V2-06`** | Ratification of Secondary React Lenses as Out-of-Scope Differences | GAP-PAR-01, GAP-PAR-04 | **PROPOSED OUT-OF-SCOPE DIFFERENCES — PENDING PROJECT OWNER APPROVAL** | Non-blocking (Governance baseline freeze) |
 
 ---
 

@@ -1,0 +1,30 @@
+Surface / Lens Name,Category,React Implementation,Salesforce Counterpart,Parity Status,Technical Notes / Governance Alignment
+Architecture Explorer,Workspace View,Cytoscape Graph Canvas,daGraphViewer,IMPLEMENTED,Core canvas with multi-layout algorithms
+Subway / Flow View,Workspace View,River / Sankey Flow,daSankeyView,IMPLEMENTED (PENDING MOUNT),Native SVG implementation; awaiting PO-DEC-V2-04
+Circular Dependency,Workspace View,Chord / Circular View,daCircularView,IMPLEMENTED,SVG-based circular dependency chord visualization
+Metrics Dashboard,Workspace View,Metrics Summary Table,daMetricsDashboard,IMPLEMENTED,Tabular code metrics and complexity
+Radar / Multi-Axis,Workspace View,Radar Chart,daRadarView,IMPLEMENTED,Native SVG multi-dimensional metric chart
+Matrix View,Workspace View,Adjacency Matrix,daMatrixView,IMPLEMENTED,Tabular dependency grid
+TreeMap View,Workspace View,Hierarchical Tree Map,daTreemapView,IMPLEMENTED,SVG bounding box treemap
+Timeline View,Workspace View,Temporal Evolution,daTimelineView,IMPLEMENTED,Chronological commit/run analysis
+3D Sphere View,Workspace View,3D Force Layout,daSphereView,IMPLEMENTED,Simulated 3D perspective projection
+Landscape View,Workspace View,Isometric Grid,daLandscapeView,IMPLEMENTED,Multi-tier architectural isometric rendering
+Investigation Drawer,Supporting Surface,Slide-out Detail Drawer,daInvestigationDrawer,IMPLEMENTED,Side panel with tabbed inspector & BroadcastChannel IPC
+Command Palette,Supporting Surface,Spotlight Modal (Ctrl+K),daCommandPalette,SPECIFIED (AGENT 8A),Awaiting Agent 8B implementation authorization
+Hover Cards,Supporting Surface,Interactive Tooltip Portal,daHoverCard,SPECIFIED (AGENT 8A),Awaiting Agent 8B implementation authorization
+Filter Overlay / Presets,Supporting Surface,Saved Filter Panel,daPresetManager,IMPLEMENTED,Filter criteria and user preference persistence
+Snapshot Comparison,Modal Dialog,Side-by-Side Diff,daSnapshotComparisonModal,IMPLEMENTED,Tabular diff modal; payload caps strictly enforced
+Refactoring Engine,Quarantined Feature,Automated Code Extraction,daRefactoringEngine,QUARANTINED,Wave 9 quarantine; strictly excluded from packaging
+Refactoring Handoff,Quarantined Feature,Git PR Export Modal,daRefactorHandoffModal,QUARANTINED,Wave 9 quarantine; strictly excluded from packaging
+Heatmap Lens,Workspace View,Heatmap Matrix Grid,None,PROPOSED OUT-OF-SCOPE DIFFERENCES — PENDING PROJECT OWNER APPROVAL,Auxiliary React lens; pending PO-DEC-V2-06
+Hierarchical Tree Lens,Workspace View,D3 Tree Hierarchy,None,PROPOSED OUT-OF-SCOPE DIFFERENCES — PENDING PROJECT OWNER APPROVAL,Auxiliary React lens; pending PO-DEC-V2-06
+Dependency Profile Lens,Workspace View,Node Profiler Screen,None,PROPOSED OUT-OF-SCOPE DIFFERENCES — PENDING PROJECT OWNER APPROVAL,Auxiliary React lens; pending PO-DEC-V2-06
+Four-Direction Lens,Workspace View,4-Quadrant Compass,None,PROPOSED OUT-OF-SCOPE DIFFERENCES — PENDING PROJECT OWNER APPROVAL,Auxiliary React lens; pending PO-DEC-V2-06
+COSE Layout,Layout Algorithm,Cytoscape CoSE layout,daGraphViewer (cose),IMPLEMENTED,Compound Spring Embedder layout
+Dagre Layout,Layout Algorithm,Cytoscape Dagre layout,daGraphViewer (dagre),IMPLEMENTED,Directed Acyclic Graph hierarchical layout
+Concentric Layout,Layout Algorithm,Cytoscape Concentric,daGraphViewer (concentric),IMPLEMENTED,Concentric circle layout based on degree
+Cola Layout,Layout Algorithm,Cytoscape Cola layout,daGraphViewer (cola),IMPLEMENTED,Force-directed physics layout
+Breadthfirst Layout,Layout Algorithm,Cytoscape BFS tree,daGraphViewer (breadthfirst),IMPLEMENTED,Breadth-first hierarchical layout
+Grid Layout,Layout Algorithm,Cytoscape Grid,daGraphViewer (grid),IMPLEMENTED,Standard grid layout
+Circular Layout,Layout Algorithm,Cytoscape Circle,daGraphViewer (circle),IMPLEMENTED,Single circle layout
+Preset Layout,Layout Algorithm,User Coordinate Positions,daGraphViewer (preset),IMPLEMENTED,Persisted X/Y coordinates from DA_User_Preference__c

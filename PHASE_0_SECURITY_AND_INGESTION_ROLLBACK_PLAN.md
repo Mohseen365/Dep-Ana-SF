@@ -16,8 +16,8 @@
 - **Recovery Action**: Revert `DA_Project__c.object-meta.xml` (`<sharingModel>ReadWrite</sharingModel>`) and `DA_Architecture_Analyst.permissionset-meta.xml` (`<viewAllRecords>true</viewAllRecords>`).
 - **Data Preservation**: Preserves all project records, runs, and user preferences.
 - **Validation Procedure**: Run `node scratch/salesforce-poc/tests/run-s1-security-tests.cjs`.
-- **Residual Risk**: Temporarily re-exposes multi-tenant visibility; requires urgent root-cause fix.
-- **Approval Requirement**: Project Owner emergency authorization.
+- **Residual Risk**: High. Temporarily re-exposes multi-tenant visibility. Note: Restoring broad access is strictly prohibited as an automatic rollback; see PHASE_0_FINAL_ROLLBACK_AND_DATA_RECOVERY_ADDENDUM.md for non-exposing emergency containment.
+- **Approval Requirement**: Project Owner explicit emergency authorization required under DEC-04 Alt 4.
 
 ### 2. Ingestion Lifecycle & Chunk Key Changes
 - **Trigger Condition**: Upload payloads fail with false-positive size cap errors; `Chunk_Key__c` constraint rejects legitimate chunks; or Apex heap exceeds 6 MB.
