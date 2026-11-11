@@ -22,7 +22,14 @@ Execution of **Group A** implementation tasks is authorized to commence immediat
 
 ---
 
-## 2. Group A Immediate Permitted Scope and Boundaries
+## 2. Dated Clarification: Authorization vs Implementation Status
+
+**Clarification Date**: 2026-11-10
+**Directive**: Authorization to implement does not constitute implementation completion. While specifications, designs, and governance boundaries for emergency access and audit protections are ratified, the physical implementation of classes (`DAProjectSecurityService.cls`, `DASecurityAuditLogTrigger.trigger`, `DAEmergencyAccessCleanupService.cls`) remains the assigned in-progress deliverable of Agent 1 in Group A. Independent Verifier D2 verifies specifications and existing code while classifying pending code as `NOT FOUND` until physical delivery.
+
+---
+
+## 3. Group A Immediate Permitted Scope and Boundaries
 
 The following six agents in Group A are authorized to begin work immediately:
 
@@ -61,7 +68,7 @@ The following six agents in Group A are authorized to begin work immediately:
 
 ---
 
-## 3. Independent Interface Gates for Group B and Group C
+## 4. Independent Interface Gates for Group B and Group C
 
 Implementation work in Groups B and C remains **strictly blocked** behind independent directed interface gates:
 
@@ -83,7 +90,7 @@ Implementation work in Groups B and C remains **strictly blocked** behind indepe
 
 ---
 
-## 4. Group D (Coordinator Integration, Regression, and Independent Verification)
+## 5. Group D (Coordinator Integration, Regression, and Independent Verification)
 
 - **Stage B Incremental Integration (D1)**: Integration Coordinator D1 exclusively performs shell modifications in `daAppShell.*` (registering View 12 `river`, embedding `<c-da-sankey-view>`, mounting modals, binding Command Palette) as prerequisite packages are accepted. Does not wait for unrelated tracks.
 - **Stage C Integrated Regression (Agent 10)**: Executes consolidated regression and browser E2E test suite strictly post-integration.
@@ -93,7 +100,7 @@ Implementation work in Groups B and C remains **strictly blocked** behind indepe
 
 ---
 
-## 5. Invariant & Safety Prohibitions
+## 6. Invariant & Safety Prohibitions
 
 1. **NO SALESFORCE PRODUCTION DEPLOYMENT**:
    - This dispatch authorizes local development, sandboxes, and verification harnesses only.
