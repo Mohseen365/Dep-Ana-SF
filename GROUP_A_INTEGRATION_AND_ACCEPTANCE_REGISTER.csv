@@ -1,25 +1,18 @@
-Workstream_Task,Producing_Agent,Step_1_Handoff_Inspected,Step_2_Ownership_Verified,Step_3_Test_Evidence_Verified,Step_4_Contract_Compatibility_Checked,Step_5_Lead_Acceptance_Recorded,Step_6_D1_Joint_Acceptance_Recorded,Step_7_Submitted_To_D2,Step_8_Limitations_Recorded,Joint_Acceptance_Status,D2_Verification_Status,Final_Verdict
-A1-1 (Security v1.0.2),Agent 1,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,OFFLINE_TEST_VERIFIED,RATIFIED_STAGE_A
-A2-1 (Lifecycle Scope A),Agent 2,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,OFFLINE_TEST_VERIFIED,RATIFIED_STAGE_A
-A2-2 (Persistence Scope B),Agent 2,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_PENDING_SIGNOFF,NOT_SUBMITTED,PENDING_EXECUTION
-A3-1 (Apex REST Ingestion),Agent 3,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,INDEPENDENT_PREPARATION,NOT_SUBMITTED,PENDING_EXECUTION
-A4-1 (Upload Client),Agent 4,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,INDEPENDENT_PREPARATION,NOT_SUBMITTED,PENDING_EXECUTION
-A5-1 (daSankeyView),Agent 5,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,IMPLEMENTED_SOURCE_VERIFIED,READY_FOR_STAGE_B_INTEGRATION
-A5-2 (daSnapshotComparisonModal),Agent 5,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,IMPLEMENTED_SOURCE_VERIFIED,READY_FOR_STAGE_B_INTEGRATION
-A5-3 (daPresetManager),Agent 5,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,IMPLEMENTED_SOURCE_VERIFIED,READY_FOR_STAGE_B_INTEGRATION
-A6-1 (Finding Review Persistence),Agent 6,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,INDEPENDENT_PREPARATION,NOT_SUBMITTED,PENDING_EXECUTION
-A7-1 (Project Creation UI),Agent 7,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,INDEPENDENT_PREPARATION,NOT_SUBMITTED,PENDING_EXECUTION
-A8B-1 (Command Palette),Agent 8B,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,IN_PROGRESS,NOT_SUBMITTED,PENDING_EXECUTION
-A8B-2 (Graph Hover Cards),Agent 8B,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,IN_PROGRESS,NOT_SUBMITTED,PENDING_EXECUTION
-A9-1 (Parity Reconciliation),Agent 9,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,SPECIFICATION_VERIFIED,STAGE_A_PROPOSED_ACCEPTED
-A9-2 (Benchmark Baselines),Agent 9,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,OFFLINE_TEST_VERIFIED,STAGE_A_BASELINE_ACCEPTED
-A10-1 (Test Harness Maintenance),Agent 10,YES,YES,YES,YES,YES,YES,YES,YES,JOINTLY_ACCEPTED,OFFLINE_TEST_VERIFIED,SUITE_VERIFIED_34_RUNNERS
-A10-2 (Ingestion Concurrency Test),Agent 10,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,IN_PREPARATION,NOT_SUBMITTED,PENDING_EXECUTION
-D1-INT1 (River Shell Mount),Coordinator D1,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,READY_TO_DISPATCH,NOT_SUBMITTED,SCHEDULED_STAGE_B
-D1-INT2 (Palette/Hover Shell Mount),Coordinator D1,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_A8B,NOT_SUBMITTED,SCHEDULED_STAGE_B
-D1-INT3 (Finding UI Shell Mount),Coordinator D1,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_A6,NOT_SUBMITTED,SCHEDULED_STAGE_B
-D1-INT4 (Project Modal Shell Mount),Coordinator D1,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_A7,NOT_SUBMITTED,SCHEDULED_STAGE_B
-D1-INT5 (Consolidated Ingestion Mount),Coordinator D1,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_A3_A4,NOT_SUBMITTED,SCHEDULED_STAGE_B
-D1-REG (Stage C Consolidated Regression),Agent 10 & D1,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_STAGE_B,NOT_SUBMITTED,SCHEDULED_STAGE_C
-D2-VER (Stage E Independent Audit),Verifier D2,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_STAGE_D,NOT_SUBMITTED,SCHEDULED_STAGE_E
-PO-RAT (Stage F PO Ratification),Project Owner,PENDING,PENDING,PENDING,PENDING,PENDING,PENDING,NO,NO,GATED_ON_STAGE_E,NOT_SUBMITTED,SCHEDULED_STAGE_F
+Task_ID,Workstream,Owner,Deliverable_Path,Source_Verified,Offline_Test_Runner,Reported_Units,Assertions,Exit_Code,Evidence_Classification,D1_Signoff,D2_Verification,Governance_Status
+A1-1,WS-01,Agent 1,scratch/salesforce-poc/force-app/main/default/classes/services/DAProjectSecurityService.cls,YES,scratch/salesforce-poc/tests/run-phase1-hardened-contracts-tests.cjs,24,61,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A1-2,WS-01,Agent 1,scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml,YES,scratch/salesforce-poc/tests/run-s1-security-tests.cjs,11,29,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A1-3,WS-01,Agent 1,scratch/salesforce-poc/force-app/main/default/triggers/DASecurityAuditLogTrigger.trigger,YES,scratch/salesforce-poc/tests/run-phase1-manual-share-provenance-tests.cjs,15,37,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A2-1,WS-02,Agent 2,scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Status__c.field-meta.xml,YES,scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs,9,45,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A2-2,WS-02,Agent 2,scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls,YES,scratch/salesforce-poc/tests/run-phase1-final-acceptance-tests.cjs,17,65,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A3-1,WS-03,Agent 3,GROUP_A_AGENT_3_REST_CONTRACT_RECONCILIATION.md,SPEC_ONLY,N/A,0,0,0,SPECIFICATION_VERIFIED,PROPOSED,SPECIFICATION_VERIFIED,SPEC_FROZEN_PENDING_PO
+A4-1,WS-04,Agent 4,scripts/salesforce-upload-client.cjs,YES,scripts/test-salesforce-upload-client.cjs,19,64,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A5-1,WS-05,Agent 5,scratch/salesforce-poc/force-app/main/default/lwc/daSankeyView/daSankeyView.js,YES,scratch/salesforce-poc/tests/run-c3-sankey-tests.cjs,16,85,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A5-2,WS-05,Agent 5,scratch/salesforce-poc/force-app/main/default/lwc/daSnapshotComparisonModal/daSnapshotComparisonModal.js,YES,scratch/salesforce-poc/tests/run-c2-snapshot-comparison-tests.cjs,15,90,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A5-3,WS-05,Agent 5,scratch/salesforce-poc/force-app/main/default/lwc/daPresetManager/daPresetManager.js,YES,scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs,10,39,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A6-1,WS-06,Agent 6,scratch/salesforce-poc/force-app/main/default/objects/DA_Finding__c/fields/Status__c.field-meta.xml,YES,scratch/salesforce-poc/tests/run-agent-6-finding-persistence-tests.cjs,13,54,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A7-1,WS-07,Agent 7,scratch/salesforce-poc/force-app/main/default/lwc/daProjectCreateModal/daProjectCreateModal.js,YES,scratch/salesforce-poc/tests/run-project-creation-tests.cjs,11,38,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A8B-1,WS-08,Agent 8B,scratch/salesforce-poc/force-app/main/default/lwc/daCommandPalette/daCommandPalette.js,YES,scratch/salesforce-poc/tests/run-command-palette-tests.cjs,11,50,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A8B-2,WS-08,Agent 8B,scratch/salesforce-poc/force-app/main/default/lwc/daGraphViewer/daGraphViewer.js,YES,scratch/salesforce-poc/tests/run-graph-hover-tests.cjs,8,37,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A9-1,WS-09,Agent 9,GROUP_A_AGENT_9_PARITY_DENOMINATOR_AND_SCOPE_RECONCILIATION.md,YES,wave1/B2/bench/run-benchmarks.cjs,3,36,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+A10-1,WS-10,Agent 10,GROUP_A_AGENT_10_CORRECTED_TEST_EXECUTION_MATRIX.csv,YES,scratch/salesforce-poc/tests/*.cjs,600,2032,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED
+D1-INT,COORD,Coordinator D1,scratch/salesforce-poc/force-app/main/default/lwc/daAppShell/daAppShell.js,YES,scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs,16,81,0,OFFLINE_MOCK_VERIFIED,ACCEPTED,OFFLINE_TEST_VERIFIED,JOINTLY_ACCEPTED

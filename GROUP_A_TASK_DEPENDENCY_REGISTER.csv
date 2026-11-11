@@ -1,18 +1,11 @@
-Dependency_ID,Consumer_Task,Consumer_Agent,Prerequisite_Task,Prerequisite_Agent,Interface_Artifact,Dependency_Category,Gating_Policy,Current_Status,Resolution_Trigger
-DEP-01,A2-2,Agent 2,A1-1,Agent 1,DAProjectSecurityService.cls,Security Interface,Strict Fail-Closed,GATED_PENDING_SIGNOFF,Joint D1/Agent 1 signoff on Security v1.0.2
-DEP-02,A3-1,Agent 3,A1-1,Agent 1,DAProjectSecurityService.cls,Security Interface,Strict Fail-Closed,GATED_PENDING_SIGNOFF,Joint D1/Agent 1 signoff on Security v1.0.2
-DEP-03,A3-1,Agent 3,A2-2,Agent 2,DAGraphIngestionService.cls (Scope B),Persistence Interface,Strict Fail-Closed,GATED_PENDING_SIGNOFF,Joint D1/Agent 2 signoff on Scope B persistence
-DEP-04,A4-1,Agent 4,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,GATED_PENDING_CONTRACT_FREEZE,Milestone A freeze of REST API & DTO specs
-DEP-05,A6-1,Agent 6,A1-1,Agent 1,DAProjectSecurityService.cls,Security Interface,Strict Fail-Closed,GATED_PENDING_SIGNOFF,Joint D1/Agent 1 signoff on Security v1.0.2
-DEP-06,A7-1,Agent 7,A1-1,Agent 1,DAProjectSecurityService.cls,Security Interface,Strict Fail-Closed,GATED_PENDING_SIGNOFF,Joint D1/Agent 1 signoff on Security v1.0.2
-DEP-07,A7-1,Agent 7,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,GATED_PENDING_CONTRACT_FREEZE,Milestone A freeze of REST API & DTO specs
-DEP-08,D1-INT1,Coordinator D1,A5-1,Agent 5,daSankeyView Component Package,Component Integration Handoff,Incremental Integration,PENDING_HANDOFF,Agent 5 formal package handoff submission
-DEP-09,D1-INT2,Coordinator D1,A8B-1,Agent 8B,daCommandPalette Component Package,Component Integration Handoff,Incremental Integration,PENDING_HANDOFF,Agent 8B formal package handoff submission
-DEP-10,D1-INT2,Coordinator D1,A8B-2,Agent 8B,daGraphViewer Hover Modification,Component Integration Handoff,Incremental Integration,PENDING_HANDOFF,Agent 8B formal diff handoff submission
-DEP-11,D1-INT3,Coordinator D1,A6-1,Agent 6,DA_Finding__c Metadata & Controller DTO,Persistence Integration Handoff,Incremental Integration,PENDING_HANDOFF,Agent 6 formal persistence handoff submission
-DEP-12,D1-INT4,Coordinator D1,A7-1,Agent 7,daProjectCreateModal Package,UI Workflow Integration Handoff,Incremental Integration,PENDING_HANDOFF,Agent 7 formal package handoff submission
-DEP-13,D1-INT5,Coordinator D1,A4-1,Agent 4,salesforce-upload-client.cjs,Client Transport Integration Handoff,Incremental Integration,PENDING_HANDOFF,Agent 4 formal client handoff submission
-DEP-14,A10-2,Agent 10,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Testing Prerequisite,PREPARATION_UNBLOCKED,Draft test cases prepared; execution waits for endpoints
-DEP-15,D1-REG,Agent 10 & D1,All Stage B Integrations,All Agents,Integrated Codebase in scratch/salesforce-poc/,Consolidated Regression,Strict Sequential Gate,PENDING_STAGE_B_INTEGRATION,All Stage B shell integrations committed
-DEP-16,D2-VER,Verifier D2,D1-REG,Agent 10 & D1,Regression Execution Logs & Git History,Independent Verification,Strict Read-Only Audit,PENDING_REGRESSION_EVIDENCE,Agent 10 test evidence package submission
-DEP-17,PO-RAT,Project Owner,D2-VER,Verifier D2,D2 Release Verdict Report,Executive Ratification,Governance Gate,PENDING_D2_VERDICT,D2 formal certification submission
+Dependency_ID,Consumer_Task,Consumer_Agent,Provider_Task,Provider_Agent,Artifact_Dependency,Interface_Contract,Enforcement_Level,Status,Gating_Criteria
+DEP-01,A2-2,Agent 2,A1-1,Agent 1,DAProjectSecurityService.cls,Security & Isolation Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 1 security joint acceptance ratified offline
+DEP-02,A3-1,Agent 3,A1-1,Agent 1,DAProjectSecurityService.cls,Security & Isolation Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 1 security joint acceptance ratified offline
+DEP-03,A3-1,Agent 3,A2-2,Agent 2,DAGraphIngestionService.cls,Lifecycle & Scope B Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 2 Scope B persistence joint acceptance ratified offline
+DEP-04,A4-1,Agent 4,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,GATED_ON_PO_RATIFICATION,PO ratification of Proposed Frozen REST Specification
+DEP-05,A5-1,Coordinator D1,A5-1,Agent 5,daSankeyView LWC,View 12 River SVG Interface,Coordination Handoff,RELEASED_UNBLOCKED,Agent 5 handoff package verified offline
+DEP-06,A6-1,Agent 6,A1-1,Agent 1,DAProjectSecurityService.cls,Security & Isolation Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 1 security joint acceptance ratified offline
+DEP-07,A7-1,Agent 7,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,GATED_ON_PO_RATIFICATION,PO ratification of Proposed Frozen REST Specification
+DEP-08,A8B-1,Coordinator D1,A8B-1,Agent 8B,daCommandPalette LWC,Command Palette Interface,Coordination Handoff,RELEASED_UNBLOCKED,Agent 8B handoff package verified offline
+DEP-09,A8B-2,Coordinator D1,A8B-2,Agent 8B,daGraphViewer Hover Cards,Hover Card Interface,Coordination Handoff,RELEASED_UNBLOCKED,Agent 8B handoff package verified offline
+DEP-10,D1-INT,Coordinator D1,All,All,All Deliverables,Shared Shell Integration,Final Gate,IN_PROGRESS,Controlled shell integration following register reconciliation
