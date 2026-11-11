@@ -58,10 +58,6 @@ public with sharing class DAProjectSecurityService {
     @TestVisible
     private static Boolean mockIndependentDirectShareVerified = false;
 
-    // Test-visible mock for independent direct share verification (e.g. non-manual row causes or verified provenance)
-    @TestVisible
-    private static Boolean mockIndependentDirectShareVerified = false;
-
     public class ProjectAccessContext {
         public Id projectId;
         public Id userId;
@@ -293,72 +289,44 @@ private static ProjectAccessContext validateProjectAccessInternal(
     return ctx;
 }
 
-/**
- * @description Authoritative check for independent direct sharing provenance.
- *
- * Direct authorization is established ONLY by:
- * 1. Non-Manual sharing causes (Rule, Territory, Role Hierarchy, etc.).
- * 2. Explicit independent direct authorization registered for testing.
- *
- * Ownership is checked separately by validateProjectAccessInternal.
- * Manual shares without independent entitlement evidence fail closed.
- */
-public static Boolean hasAuthoritativeDirectShare(
-    Id projectId,
-    Id userId
-) {
-    if (projectId == null || userId == null) {
-        return false;
-    }
-
-    // Explicit test-only independent authorization.
-    if (
-        Test.isRunningTest() &&
-        mockDirectAuthorizedUserIds != null &&
-        mockDirectAuthorizedUserIds.contains(userId)
-    ) {
-        return true;
-    }
-
-    try {
-        // Only non-Manual share rows establish independent
-        // direct sharing provenance.
-        List<SObject> nonManualShares = Database.query(
-            'SELECT Id FROM DA_Project__Share ' +
-            'WHERE ParentId = :projectId ' +
-            'AND UserOrGroupId = :userId ' +
-            'AND RowCause != \'Manual\' ' +
-            'LIMIT 1'
-        );
-
-        return !nonManualShares.isEmpty();
-
-    } catch (Exception e) {
-        // Fail closed if authoritative provenance cannot be verified.
-        return false;
-    }
-}
-
-
     /**
      * @description Authoritative check for non-owner direct share provenance.
-     * Inspects DA_Project__Share records for non-Manual row causes (e.g., Rule, Role, Territory)
-     * or verified independent direct sharing. Manual shares without verified independent entitlement fail-closed.
+     * Direct authorization is established ONLY by:
+     * 1. Non-Manual sharing causes (Rule, Territory, Role Hierarchy, etc.).
+     * 2. Explicit independent direct authorization registered for testing.
+     *
+     * Ownership is checked separately by validateProjectAccessInternal.
+     * Manual shares without independent entitlement evidence fail closed.
      */
     public static Boolean hasAuthoritativeDirectShare(Id projectId, Id userId) {
-        if (mockIndependentDirectShareVerified) {
+        if (projectId == null || userId == null) {
+            return false;
+        }
+
+        if (Test.isRunningTest() && mockIndependentDirectShareVerified) {
             return true;
         }
 
-        // Check for non-manual share causes on DA_Project__Share
-        List<SObject> nonManualShares = Database.query(
-            'SELECT Id FROM DA_Project__Share WHERE ParentId = :projectId AND UserOrGroupId = :userId AND RowCause != \'Manual\' LIMIT 1'
-        );
-        if (!nonManualShares.isEmpty()) {
+        // Explicit test-only independent authorization.
+        if (
+            Test.isRunningTest() &&
+            mockDirectAuthorizedUserIds != null &&
+            mockDirectAuthorizedUserIds.contains(userId)
+        ) {
             return true;
         }
 
-        return false;
+        try {
+            // Check for non-manual share causes on DA_Project__Share
+            // Only non-Manual share rows establish independent direct sharing provenance.
+            List<SObject> nonManualShares = Database.query(
+                'SELECT Id FROM DA_Project__Share WHERE ParentId = :projectId AND UserOrGroupId = :userId AND RowCause != \'Manual\' LIMIT 1'
+            );
+            return !nonManualShares.isEmpty();
+        } catch (Exception e) {
+            // Fail closed if authoritative provenance cannot be verified.
+            return false;
+        }
     }
 
     /**
