@@ -46,25 +46,69 @@ To avoid unverified assumptions regarding inherited sharing, Agent 1 conducted a
 - Applying `<viewAllRecords>true</viewAllRecords>` to permission sets or reverting `DA_Project__c` OWD to `ReadWrite` is permanently banned.
 - Emergency access is strictly project-scoped via explicit `DA_Project__Share` records (`RowCause = 'Manual'`).
 
-### 3.2 Five Distinct Dimensions of Emergency Security
-1. **Authorization-Time Expiry Enforcement (Primary Boundary)**:
-   - Every emergency grant record in `DA_Emergency_Access_Grant__c` defines `Expires_At__c` (maximum 4 hours from creation).
-   - In `DAProjectSecurityService.cls`, every runtime authorization query checks:
-     `SELECT Id FROM DA_Emergency_Access_Grant__c WHERE Project__c = :projectId AND User__c = :userId AND Expires_At__c > :Datetime.now() AND Revoked__c = FALSE`
-   - If `Expires_At__c <= Datetime.now()`, access is **immediately rejected at runtime**, even if the scheduled cleanup job has not yet executed.
-2. **Scheduled Cleanup (Supplementary Garbage Collection)**:
-   - A scheduled Apex job runs periodically to delete physical `DA_Project__Share` rows associated with expired grants.
-   - Delay or failure of the scheduled job **does not extend access**, because runtime authorization checks reject expired leases fail-closed.
-3. **Explicit Immediate Revocation**:
-   - Calling `DAProjectSecurityService.revokeEmergencyAccess(projectId, userId)` sets `Revoked__c = TRUE` and immediately deletes the corresponding `DA_Project__Share` record. Access terminates instantaneously.
+### 3.2 Six Distinct Dimensions of Emergency Security & Revocation Enforcement
+1. **Authorization-Time Dynamic Validation (Independent of Share-Row State)**:
+   - Deleting a `DA_Project__Share` row alone is **insufficient** to establish that an emergency access grant has been revoked across protected operations; a stale or lingering share row must never grant authorization.
+   - Every protected operation must invoke `DAProjectSecurityService.validateProjectAccess(projectId, userId, requiredScope)` to evaluate all 7 mandatory authorization rules:
+     1. The grant exists in `DA_Emergency_Access_Grant__c`.
+     2. The grant belongs to the expected user (`User__c = :userId`).
+     3. The grant covers the requested project (`Project__c = :projectId`).
+     4. The grant is active (`Is_Active__c = TRUE`).
+     5. The current time is before the grant expiry (`Expires_At__c > :currentDatetime`).
+     6. No explicit revocation exists (`Revoked__c = FALSE`).
+     7. The requesting operation is within the grant's authorized scope (`Scope__c = :requiredScope` or includes requested action).
+   - **Apex Bind Variable Detail**: Apex authorization queries must declare and bind a local `Datetime currentDatetime = Datetime.now();` variable rather than relying on inline method calls inside SOQL bind expressions:
+     ```apex
+     Datetime currentDatetime = Datetime.now();
+     List<DA_Emergency_Access_Grant__c> validGrants = [
+         SELECT Id, Scope__c, Expires_At__c, Revoked__c, Is_Active__c
+         FROM DA_Emergency_Access_Grant__c
+         WHERE Project__c = :projectId
+           AND User__c = :userId
+           AND Is_Active__c = TRUE
+           AND Revoked__c = FALSE
+           AND Expires_At__c > :currentDatetime
+         WITH USER_MODE
+         LIMIT 1
+     ];
+     ```
+   - The authorization path **rejects expired or revoked grants immediately even if an associated `DA_Project__Share` row remains present**.
+
+2. **Transaction-Safe Revocation Sequence**:
+   To prevent race conditions where stale shares or intermediate failures grant unauthorized access, explicit revocation must execute in exact transaction-safe order:
+   - **Step 1**: Record the revocation event in `DA_Security_Audit_Log__c` (capturing actor, target project, target user, timestamp, correlation ID).
+   - **Step 2**: Mark the grant record as revoked and inactive (`Revoked__c = TRUE`, `Revoked_At__c = currentDatetime`, `Is_Active__c = FALSE`).
+   - **Step 3**: Commit the grant status update so that any runtime authorization check in concurrent or subsequent transactions rejects immediately fail-closed.
+   - **Step 4**: Remove associated sharing records (`DA_Project__Share` where `ParentId = :projectId AND UserOrGroupId = :userId AND RowCause = 'Manual'`) as supplementary cleanup.
+   - **Step 5**: Preserve complete audit evidence in immutable audit logs.
+   - **Step 6**: Record cleanup failures (e.g., share deletion locks or timeouts) in `DA_Security_Audit_Log__c` without restoring access. Failed share cleanup does not alter the fact that authorization checks reject revoked grants.
+
+3. **Scheduled Cleanup (Supplementary Garbage Collection)**:
+   - A scheduled Apex job (`DAEmergencyAccessCleanupService.cls`) runs periodically to delete physical `DA_Project__Share` rows associated with expired grants.
+   - Delay, retry, or failure of the scheduled job **does not extend access**, because runtime authorization checks reject expired leases fail-closed dynamically.
+
 4. **Audit Immutability & Protection Controls**:
    - Audit logs are persisted in `DA_Security_Audit_Log__c`.
    - **Object Permissions**: In permission sets and profiles, `Delete` and `Edit` permissions are completely omitted on `DA_Security_Audit_Log__c` for all non-admin users.
    - **Apex Append-Only Enforcement**: The trigger `DASecurityAuditLogTrigger.trigger` aborts on `BEFORE UPDATE` and `BEFORE DELETE` with:
      `log.addError('DA_AUDIT_IMMUTABLE: Security audit log entries cannot be modified or deleted.');`
    - **Platform Event Mirroring**: Audit events publish a high-volume platform event `DA_Security_Audit_Event__e` enabling external SIEM ingestion and off-platform archival.
-5. **Administrative Controls & Failure Handling**:
-   - Failed cleanup jobs log an alert to the platform monitoring channel.
+
+5. **Mandatory Security Test Specifications**:
+   The security test suite in `DAGraphSecurityTest.cls` and `DASchemaAndSecurityTest.cls` must assert:
+   - Active, unexpired grant permits authorized operation.
+   - Expired grant (`Expires_At__c <= Datetime.now()`) is rejected fail-closed.
+   - Revoked grant (`Revoked__c = TRUE`) is rejected immediately.
+   - Stale `DA_Project__Share` row does NOT restore authorization when grant is revoked or expired.
+   - Failed share cleanup does NOT restore authorization.
+   - Revocation operation is strictly idempotent (repeated calls succeed and do not corrupt state).
+   - Repeated revocation does not corrupt audit history.
+   - Unauthorized user cannot revoke another user's grant (enforces permission check).
+   - Grant renewal does not bypass revocation (expired/revoked grants require fresh dual-approval).
+   - Cross-project grant reuse is rejected fail-closed.
+
+6. **Administrative Controls & Failure Handling**:
+   - Failed cleanup jobs log an alert to the platform monitoring channel and audit log.
    - Expired grants can never be silently renewed; a new formal request and approval are required.
 
 ---
