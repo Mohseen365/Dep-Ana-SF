@@ -11,19 +11,44 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>AVAILABLE</fullName>
+                <fullName>QUEUED</fullName>
                 <default>true</default>
-                <label>AVAILABLE</label>
+                <label>QUEUED</label>
             </value>
             <value>
-                <fullName>EMPTY</fullName>
+                <fullName>IN_PROGRESS</fullName>
                 <default>false</default>
-                <label>EMPTY</label>
+                <label>IN_PROGRESS</label>
+            </value>
+            <value>
+                <fullName>VALIDATING</fullName>
+                <default>false</default>
+                <label>VALIDATING</label>
+            </value>
+            <value>
+                <fullName>AVAILABLE</fullName>
+                <default>false</default>
+                <label>AVAILABLE</label>
             </value>
             <value>
                 <fullName>FAILED</fullName>
                 <default>false</default>
                 <label>FAILED</label>
+            </value>
+            <value>
+                <fullName>CANCELLED</fullName>
+                <default>false</default>
+                <label>CANCELLED</label>
+            </value>
+            <value>
+                <fullName>EXPIRED</fullName>
+                <default>false</default>
+                <label>EXPIRED</label>
+            </value>
+            <value>
+                <fullName>EMPTY</fullName>
+                <default>false</default>
+                <label>EMPTY</label>
             </value>
         </valueSetDefinition>
     </valueSet>

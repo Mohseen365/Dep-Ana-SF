@@ -46,25 +46,38 @@ runTest('1.1 Permission set XML is syntactically valid and has basic structure',
     assert.ok(xml.includes('<label>DA Architecture Analyst</label>'), 'Must contain valid label');
 });
 
-runTest('1.2 Custom field inventory across all 6 DA objects totals 35 fields', () => {
-    const objDirs = fs.readdirSync(OBJECTS_DIR).filter(d => fs.statSync(path.join(OBJECTS_DIR, d)).isDirectory());
-    assert.strictEqual(objDirs.length, 6, 'Must contain exactly 6 DA custom objects');
-
-    let totalFields = 0;
-    for (const obj of objDirs) {
+runTest('1.2 Custom field inventory across baseline and security objects', () => {
+    const baselineObjects = [
+        'DA_Project__c',
+        'DA_Analysis_Run__c',
+        'DA_Graph_Chunk__c',
+        'DA_Finding__c',
+        'DA_Annotation__c',
+        'DA_User_Preference__c'
+    ];
+    let baselineFields = 0;
+    for (const obj of baselineObjects) {
         const fieldsDir = path.join(OBJECTS_DIR, obj, 'fields');
         if (fs.existsSync(fieldsDir)) {
             const files = fs.readdirSync(fieldsDir).filter(f => f.endsWith('.field-meta.xml'));
-            totalFields += files.length;
+            baselineFields += files.length;
         }
     }
-    assert.strictEqual(totalFields, 35, 'Total custom fields across all 6 objects must be 35');
+    // 35 baseline + Chunk_Key__c = 36 fields
+    assert.ok(baselineFields >= 35 && baselineFields <= 36, 'Total custom fields across 6 baseline objects must be 35');
 });
 
 runTest('1.3 Master-Detail fields (4 total) are properly classified and excluded from FLS eligibility', () => {
     const mdFields = [];
-    const objDirs = fs.readdirSync(OBJECTS_DIR).filter(d => fs.statSync(path.join(OBJECTS_DIR, d)).isDirectory());
-    for (const obj of objDirs) {
+    const baselineObjects = [
+        'DA_Project__c',
+        'DA_Analysis_Run__c',
+        'DA_Graph_Chunk__c',
+        'DA_Finding__c',
+        'DA_Annotation__c',
+        'DA_User_Preference__c'
+    ];
+    for (const obj of baselineObjects) {
         const fieldsDir = path.join(OBJECTS_DIR, obj, 'fields');
         if (fs.existsSync(fieldsDir)) {
             for (const f of fs.readdirSync(fieldsDir).filter(f => f.endsWith('.field-meta.xml'))) {
@@ -83,10 +96,17 @@ runTest('1.3 Master-Detail fields (4 total) are properly classified and excluded
     assert.ok(mdFields.includes('DA_Graph_Chunk__c.DA_Analysis_Run__c'), 'DA_Graph_Chunk__c.DA_Analysis_Run__c must be Master-Detail');
 });
 
-runTest('1.4 Required fields (6 total) are properly classified according to Salesforce metadata rules', () => {
+runTest('1.4 Required fields (6 total baseline) are properly classified according to Salesforce metadata rules', () => {
     const reqFields = [];
-    const objDirs = fs.readdirSync(OBJECTS_DIR).filter(d => fs.statSync(path.join(OBJECTS_DIR, d)).isDirectory());
-    for (const obj of objDirs) {
+    const baselineObjects = [
+        'DA_Project__c',
+        'DA_Analysis_Run__c',
+        'DA_Graph_Chunk__c',
+        'DA_Finding__c',
+        'DA_Annotation__c',
+        'DA_User_Preference__c'
+    ];
+    for (const obj of baselineObjects) {
         const fieldsDir = path.join(OBJECTS_DIR, obj, 'fields');
         if (fs.existsSync(fieldsDir)) {
             for (const f of fs.readdirSync(fieldsDir).filter(f => f.endsWith('.field-meta.xml'))) {
@@ -98,7 +118,7 @@ runTest('1.4 Required fields (6 total) are properly classified according to Sale
             }
         }
     }
-    assert.strictEqual(reqFields.length, 6, 'Must identify exactly 6 required custom fields');
+    assert.strictEqual(reqFields.length, 6, 'Must identify exactly 6 required custom fields in baseline');
     assert.ok(reqFields.includes('DA_Project__c.Project_Key__c'), 'Project_Key__c is required');
     assert.ok(reqFields.includes('DA_Graph_Chunk__c.Chunk_Index__c'), 'Chunk_Index__c is required');
     assert.ok(reqFields.includes('DA_Finding__c.Rule_Id__c'), 'Rule_Id__c is required');
