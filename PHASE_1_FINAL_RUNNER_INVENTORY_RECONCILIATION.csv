@@ -17,6 +17,7 @@ run-p1-header-tests.cjs,Standalone,6,PASS,Validates application header component
 run-p1-sidebar-tests.cjs,Standalone,6,PASS,Validates navigation sidebar component
 run-phase1-final-acceptance-tests.cjs,Standalone,16,PASS,Dedicated final acceptance test runner for targeted closure
 run-phase1-hardened-contracts-tests.cjs,Standalone,24,PASS,Validates hardened contracts for Agent 1 and Agent 2 v1.0.2
+run-phase1-manual-share-provenance-tests.cjs,Standalone,15,PASS,Dedicated test runner for authoritative Manual-share provenance resolution
 run-poc-tests.cjs,Wrapper,36,PASS,Wrapper aggregate suite validating general POC functionality
 run-r2-packaging-validation.cjs,Standalone,8,PASS,Validates 2GP packaging boundaries and .forceignore exclusions
 run-s1-security-tests.cjs,Standalone,10,PASS,Validates field-level security assignments in permission sets
