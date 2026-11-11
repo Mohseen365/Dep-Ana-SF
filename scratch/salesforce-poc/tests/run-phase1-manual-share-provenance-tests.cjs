@@ -39,7 +39,7 @@ const secCode = fs.readFileSync(SEC_SERVICE_PATH, 'utf8');
 // Static Source Invariant Checks
 runTest('Source Verification: hasAuthoritativeDirectShare rejects RowCause == Manual', () => {
     assert(secCode.includes('public static Boolean hasAuthoritativeDirectShare(Id projectId, Id userId)'), 'hasAuthoritativeDirectShare method must exist');
-    assert(secCode.includes("RowCause != 'Manual'"), 'Query must strictly enforce RowCause != Manual to prevent unproven direct access');
+    assert(secCode.includes("RowCause != 'Manual'") || secCode.includes("RowCause != \\'Manual\\'"), 'Query must strictly enforce RowCause != Manual to prevent unproven direct access');
     assert(secCode.includes('proj.OwnerId == userId'), 'Project ownership must be verified directly');
     assert(!secCode.includes('RowCause == \'Manual\' &&'), 'Must never treat absence of emergency grant as proof of direct manual share authorization');
 });
