@@ -30,6 +30,7 @@
 
 const assert = require('assert');
 const crypto = require('crypto');
+const http = require('http');
 const {
   MAX_CHUNK_SIZE,
   MAX_TOTAL_PAYLOAD_CHARS,
@@ -42,6 +43,7 @@ const {
   measureEnvelopeWireBytes,
   TransportAdapter,
   InMemoryTransportAdapter,
+  SalesforceRestTransportAdapter,
   SalesforceGraphUploadClient
 } = require('./salesforce-upload-client.cjs');
 
@@ -422,6 +424,360 @@ async function runAllTests() {
     assert(progressEvents.includes('UPLOADING'), 'Should report UPLOADING');
     assert(progressEvents.includes('FINALIZING'), 'Should report FINALIZING');
     assert(progressEvents.includes('COMPLETED'), 'Should report COMPLETED');
+  });
+
+  // -----------------------------------------------------------------
+  // Suite 6: Concrete Salesforce REST Transport Adapter & Controlled Local HTTP Server
+  // -----------------------------------------------------------------
+  console.log('\n[Suite 6: Concrete Salesforce REST Transport Adapter & Local HTTP Server]');
+
+  /**
+   * Helper to create a local mock HTTP server that implements Agent 3's REST contract
+   */
+  async function createMockRestServer(customHandler) {
+    const server = http.createServer((req, res) => {
+      let bodyStr = '';
+      req.on('data', chunk => { bodyStr += chunk; });
+      req.on('end', () => {
+        let json = null;
+        try {
+          if (bodyStr) json = JSON.parse(bodyStr);
+        } catch (e) {
+          // ignore
+        }
+        if (customHandler) {
+          const handled = customHandler(req, res, json, bodyStr);
+          if (handled) return;
+        }
+
+        // Default Agent 3 router
+        const url = req.url;
+        const auth = req.headers['authorization'];
+
+        if (!auth || !auth.startsWith('Bearer valid_token')) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Session expired or invalid', errorCode: 'INVALID_SESSION_ID' }));
+          return;
+        }
+
+        if (url === '/services/apexrest/da/v1/ingest/init' && req.method === 'POST') {
+          const isEmpty = json.expectedChunks === 0 && json.expectedTotalBytes === 0;
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            runId: 'a01000000000001AAA',
+            status: isEmpty ? 'EMPTY' : 'UPLOADING',
+            chunkSizeLimit: 131072,
+            totalPayloadCap: 10485760
+          }));
+          return;
+        }
+
+        if (url === '/services/apexrest/da/v1/ingest/chunks' && req.method === 'POST') {
+          const chunks = json.chunks || [];
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            runId: json.runId,
+            persistedChunks: chunks.map(c => c.chunkIndex),
+            totalPersisted: chunks.length,
+            isComplete: false
+          }));
+          return;
+        }
+
+        if (url === '/services/apexrest/da/v1/ingest/finalize' && req.method === 'POST') {
+          const isEmpty = json.expectedChunks === 0;
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            runId: json.runId,
+            status: isEmpty ? 'EMPTY' : 'AVAILABLE',
+            nodeCount: isEmpty ? 0 : 50,
+            edgeCount: isEmpty ? 0 : 49,
+            cyclicSccCount: 0,
+            success: true
+          }));
+          return;
+        }
+
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: `Path not found: ${url}` }));
+      });
+    });
+
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    const instanceUrl = `http://127.0.0.1:${port}`;
+    return {
+      server,
+      instanceUrl,
+      close: () => new Promise(resolve => server.close(resolve))
+    };
+  }
+
+  await test('6.1 HTTP Request serialization, headers, and token injection', async () => {
+    let capturedHeaders = null;
+    let capturedBody = null;
+
+    const mockServer = await createMockRestServer((req, res, json) => {
+      if (req.url === '/services/apexrest/da/v1/ingest/init') {
+        capturedHeaders = req.headers;
+        capturedBody = json;
+      }
+      return false; // let default handler respond
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_test_123'
+      });
+
+      const res = await adapter.initRun({
+        projectId: 'a00000000000001AAA',
+        commitHash: 'commit123',
+        expectedChunks: 5,
+        expectedTotalBytes: 500000
+      });
+
+      assert.strictEqual(res.runId, 'a01000000000001AAA');
+      assert.strictEqual(capturedHeaders['authorization'], 'Bearer valid_token_test_123');
+      assert.strictEqual(capturedHeaders['content-type'], 'application/json');
+      assert.strictEqual(capturedHeaders['accept'], 'application/json');
+      assert.strictEqual(capturedBody.projectId, 'a00000000000001AAA');
+      assert.strictEqual(capturedBody.commitHash, 'commit123');
+      assert.strictEqual(capturedBody.expectedChunks, 5);
+      assert.strictEqual(capturedBody.expectedTotalBytes, 500000);
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.2 Full multi-chunk upload lifecycle over local HTTP REST server', async () => {
+    const uploadedChunkIndices = [];
+    let finalized = false;
+
+    const mockServer = await createMockRestServer((req, res, json) => {
+      if (req.url === '/services/apexrest/da/v1/ingest/chunks') {
+        (json.chunks || []).forEach(c => uploadedChunkIndices.push(c.chunkIndex));
+      } else if (req.url === '/services/apexrest/da/v1/ingest/finalize') {
+        finalized = true;
+      }
+      return false;
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_full_test'
+      });
+      const client = new SalesforceGraphUploadClient({
+        transportAdapter: adapter,
+        maxChunkSize: 50 // small chunk size to trigger multi-chunk batches
+      });
+
+      const payload = 'A'.repeat(220); // 5 chunks: 4 of 50 chars, 1 of 20 chars
+      const result = await client.uploadGraph({
+        projectId: 'a00000000000001AAA',
+        runName: 'HTTP Live Test Run',
+        payload
+      });
+
+      assert.strictEqual(result.status, 'AVAILABLE');
+      assert.strictEqual(result.totalChunks, 5);
+      assert.strictEqual(finalized, true);
+      assert.deepStrictEqual(uploadedChunkIndices, [0, 1, 2, 3, 4]);
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.3 HTTP 401/403 triggers ERR_UNAUTHORIZED without leaking credentials', async () => {
+    const mockServer = await createMockRestServer();
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'invalid_secret_token_never_leak'
+      });
+
+      await assert.rejects(async () => {
+        await adapter.initRun({ projectId: 'a00000000000001AAA' });
+      }, (err) => {
+        assert.strictEqual(err.code, ERROR_CODES.ERR_UNAUTHORIZED);
+        assert(!err.message.includes('invalid_secret_token_never_leak'), 'Error message must not leak token');
+        assert(!JSON.stringify(err.details).includes('invalid_secret_token_never_leak'), 'Error details must not leak token');
+        return true;
+      });
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.4 HTTP 409 Conflict translates to ERR_CONFLICTING_RETRY', async () => {
+    const mockServer = await createMockRestServer((req, res) => {
+      if (req.url === '/services/apexrest/da/v1/ingest/chunks') {
+        res.writeHead(409, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          errorCode: 'ERR_CONFLICTING_RETRY',
+          message: 'Conflicting payload detected for chunk index 2'
+        }));
+        return true;
+      }
+      return false;
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_conflict_test'
+      });
+
+      await assert.rejects(async () => {
+        await adapter.uploadBatch({
+          runId: 'a01000000000001AAA',
+          startIndex: 2,
+          chunks: ['Conflicting chunk data']
+        });
+      }, (err) => {
+        assert.strictEqual(err.code, ERROR_CODES.ERR_CONFLICTING_RETRY);
+        assert(err.message.includes('Conflicting chunk or run state'));
+        return true;
+      });
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.5 HTTP 500/503 server error triggers backoff retry and eventual success', async () => {
+    let attempts = 0;
+    const mockServer = await createMockRestServer((req, res) => {
+      if (req.url === '/services/apexrest/da/v1/ingest/chunks') {
+        attempts++;
+        if (attempts < 3) {
+          res.writeHead(503, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Service Temporarily Unavailable' }));
+          return true;
+        }
+      }
+      return false;
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_retry_test'
+      });
+      const client = new SalesforceGraphUploadClient({
+        transportAdapter: adapter,
+        maxRetries: 4,
+        initialRetryDelayMs: 20
+      });
+
+      const result = await client.uploadGraph({
+        projectId: 'a00000000000001AAA',
+        runName: 'Transient 503 Retry Run',
+        payload: '{"nodes": []}'
+      });
+
+      assert.strictEqual(result.status, 'AVAILABLE');
+      assert.strictEqual(attempts, 3, 'Must have attempted 3 times before succeeding');
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.6 HTTP timeout and AbortSignal cooperative cancellation', async () => {
+    const mockServer = await createMockRestServer((req, res) => {
+      // Intentionally hang chunk upload
+      if (req.url === '/services/apexrest/da/v1/ingest/chunks') {
+        // do not respond
+        return true;
+      }
+      return false;
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_timeout_test',
+        timeoutMs: 100 // 100ms timeout
+      });
+
+      await assert.rejects(async () => {
+        await adapter.uploadBatch({
+          runId: 'a01000000000001AAA',
+          startIndex: 0,
+          chunks: ['hanging chunk']
+        });
+      }, (err) => {
+        assert.strictEqual(err.code, ERROR_CODES.ERR_TRANSIENT_NETWORK);
+        assert(err.message.includes('timed out after 100ms'));
+        return true;
+      });
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.7 Empty graph upload over HTTP transitions directly to EMPTY', async () => {
+    let finalizedStatus = null;
+    const mockServer = await createMockRestServer((req, res, json) => {
+      if (req.url === '/services/apexrest/da/v1/ingest/finalize') {
+        finalizedStatus = json.expectedChunks === 0 ? 'EMPTY' : 'AVAILABLE';
+      }
+      return false;
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_empty_test'
+      });
+      const client = new SalesforceGraphUploadClient({ transportAdapter: adapter });
+
+      const result = await client.uploadGraph({
+        projectId: 'a00000000000001AAA',
+        runName: 'Empty Graph HTTP Ingestion',
+        payload: ''
+      });
+
+      assert.strictEqual(result.status, 'EMPTY');
+      assert.strictEqual(result.totalChunks, 0);
+      assert.strictEqual(finalizedStatus, 'EMPTY');
+    } finally {
+      await mockServer.close();
+    }
+  });
+
+  await test('6.8 HTTP 413 Payload Too Large translates to ERR_CHUNK_WIRE_OVERSIZE', async () => {
+    const mockServer = await createMockRestServer((req, res) => {
+      if (req.url === '/services/apexrest/da/v1/ingest/chunks') {
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Request Entity Too Large at Gateway' }));
+        return true;
+      }
+      return false;
+    });
+
+    try {
+      const adapter = new SalesforceRestTransportAdapter({
+        instanceUrl: mockServer.instanceUrl,
+        accessToken: 'valid_token_413_test'
+      });
+
+      await assert.rejects(async () => {
+        await adapter.uploadBatch({
+          runId: 'a01000000000001AAA',
+          startIndex: 0,
+          chunks: ['massive wire chunk']
+        });
+      }, (err) => {
+        assert.strictEqual(err.code, ERROR_CODES.ERR_CHUNK_WIRE_OVERSIZE);
+        assert(err.message.includes('413 Payload Too Large'));
+        return true;
+      });
+    } finally {
+      await mockServer.close();
+    }
   });
 
   console.log('===================================================================');

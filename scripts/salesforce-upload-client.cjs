@@ -598,6 +598,297 @@ class SalesforceGraphUploadClient {
   }
 }
 
+/**
+ * Concrete HTTP Transport Adapter for Salesforce Apex REST Ingestion API
+ * ======================================================================
+ * Implements communication with Agent 3's REST endpoints:
+ * - urlMapping: /services/apexrest/da/v1/ingest/*
+ * - Specification: 1.0.0-PROPOSED-FROZEN (GROUP_A_AGENT_3_REST_CONTRACT_RECONCILIATION.md)
+ *
+ * Exact Agent 3 DTO contracts:
+ * 1. POST /init -> InitRunRequest { projectId, commitHash, expectedChunks, expectedTotalBytes }
+ *    <- InitRunResponse { runId, status, chunkSizeLimit, totalPayloadCap }
+ * 2. POST /chunks -> BatchChunkUploadRequest { runId, chunks: [{ chunkIndex, payloadData }] }
+ *    <- BatchChunkUploadResponse { runId, persistedChunks, totalPersisted, isComplete }
+ * 3. POST /finalize -> FinalizeRunRequest { runId, expectedChunks, expectedChecksum }
+ *    <- FinalizeRunResponse { runId, status, nodeCount, edgeCount, cyclicSccCount, success }
+ *
+ * Security & Reliability Principles:
+ * - Bearer authorization header injected per request.
+ * - Authorization tokens and credentials are NEVER logged or leaked in error messages.
+ * - Robust error classification for HTTP 400, 401, 403, 409, 413, 5xx, and network timeouts.
+ * - Full AbortSignal cooperative cancellation support.
+ */
+class SalesforceRestTransportAdapter extends TransportAdapter {
+  /**
+   * @param {Object} config
+   * @param {string} config.instanceUrl Salesforce instance base URL (e.g. "https://my-domain.my.salesforce.com")
+   * @param {string|Function} config.accessToken Salesforce OAuth access/bearer token or async/sync function returning token
+   * @param {string} [config.basePath='/services/apexrest/da/v1/ingest'] Apex REST base path
+   * @param {number} [config.timeoutMs=30000] HTTP request timeout in milliseconds
+   * @param {Function} [config.fetchFn=globalThis.fetch] Pluggable fetch implementation
+   */
+  constructor(config = {}) {
+    super();
+    if (!config.instanceUrl || typeof config.instanceUrl !== 'string') {
+      throw new UploadClientError('instanceUrl is required for SalesforceRestTransportAdapter', ERROR_CODES.ERR_CONFIGURATION);
+    }
+    if (!config.accessToken) {
+      throw new UploadClientError('accessToken is required for SalesforceRestTransportAdapter', ERROR_CODES.ERR_CONFIGURATION);
+    }
+
+    this.instanceUrl = config.instanceUrl.replace(/\/+$/, '');
+    this.accessToken = config.accessToken;
+    this.basePath = (config.basePath || '/services/apexrest/da/v1/ingest').replace(/\/+$/, '');
+    this.timeoutMs = config.timeoutMs || 30000;
+    this.fetchFn = config.fetchFn || globalThis.fetch;
+
+    if (typeof this.fetchFn !== 'function') {
+      throw new UploadClientError('A valid fetch function is required in the runtime environment', ERROR_CODES.ERR_CONFIGURATION);
+    }
+  }
+
+  /**
+   * Retrieves bearer token without risk of logging secrets.
+   * @private
+   */
+  async _getToken() {
+    if (typeof this.accessToken === 'function') {
+      const token = await this.accessToken();
+      if (!token || typeof token !== 'string') {
+        throw new UploadClientError('accessToken provider did not return a valid string', ERROR_CODES.ERR_UNAUTHORIZED);
+      }
+      return token;
+    }
+    if (typeof this.accessToken === 'string' && this.accessToken.trim().length > 0) {
+      return this.accessToken.trim();
+    }
+    throw new UploadClientError('Valid accessToken is missing', ERROR_CODES.ERR_UNAUTHORIZED);
+  }
+
+  /**
+   * Sanitizes error message string to ensure tokens or secrets never leak.
+   * @private
+   */
+  _sanitizeString(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str
+      .replace(/Bearer\s+[A-Za-z0-9_\-.~+/]+=*/gi, 'Bearer [REDACTED]')
+      .replace(/("?(?:accessToken|token|password|client_secret)"?\s*[:=]\s*"?[^",\s]+"?)/gi, '$1: "[REDACTED]"');
+  }
+
+  /**
+   * Dispatches an HTTP request with timeout and cancellation support.
+   * @private
+   */
+  async _sendRequest(subPath, payload, options = {}) {
+    const token = await this._getToken();
+    const url = `${this.instanceUrl}${this.basePath}${subPath}`;
+
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+
+    let controller;
+    let timer;
+    let combinedSignal = options.signal;
+
+    if (this.timeoutMs > 0) {
+      controller = new AbortController();
+      if (options.signal) {
+        if (options.signal.aborted) {
+          throw new UploadClientError('Operation cancelled by caller', ERROR_CODES.ERR_UPLOAD_CANCELLED);
+        }
+        options.signal.addEventListener('abort', () => controller.abort(), { once: true });
+      }
+      timer = setTimeout(() => {
+        controller.abort(new Error(`Request timed out after ${this.timeoutMs}ms`));
+      }, this.timeoutMs);
+      combinedSignal = controller.signal;
+    }
+
+    let response;
+    try {
+      response = await this.fetchFn(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+        signal: combinedSignal
+      });
+    } catch (netErr) {
+      if (options.signal && options.signal.aborted) {
+        throw new UploadClientError('Operation cancelled by caller', ERROR_CODES.ERR_UPLOAD_CANCELLED);
+      }
+      if (controller && controller.signal.aborted && (!options.signal || !options.signal.aborted)) {
+        throw new UploadClientError(`HTTP request timed out after ${this.timeoutMs}ms to ${subPath}`, ERROR_CODES.ERR_TRANSIENT_NETWORK);
+      }
+      const safeNetMsg = this._sanitizeString(netErr.message || 'Network request failed');
+      throw new UploadClientError(`Network error communicating with Salesforce: ${safeNetMsg}`, ERROR_CODES.ERR_TRANSIENT_NETWORK, {
+        endpoint: subPath
+      });
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+
+    // Read response body safely
+    let responseText = '';
+    try {
+      responseText = await response.text();
+    } catch (bodyErr) {
+      // ignore
+    }
+
+    let responseJson = null;
+    if (responseText && responseText.trim().length > 0) {
+      try {
+        responseJson = JSON.parse(responseText);
+      } catch (jsonErr) {
+        // Response is non-JSON
+      }
+    }
+
+    if (!response.ok) {
+      this._handleHttpError(response.status, responseText, responseJson, subPath);
+    }
+
+    return responseJson || {};
+  }
+
+  /**
+   * Classifies HTTP error responses into structured UploadClientError.
+   * @private
+   */
+  _handleHttpError(status, rawText, parsedJson, subPath) {
+    const safeRaw = this._sanitizeString(rawText);
+    const serverMessage = parsedJson && (parsedJson.message || parsedJson.errorMessage || parsedJson.error)
+      ? this._sanitizeString(parsedJson.message || parsedJson.errorMessage || parsedJson.error)
+      : safeRaw;
+
+    if (status === 401 || status === 403) {
+      throw new UploadClientError(
+        `Salesforce authentication/authorization failed (${status}): ${serverMessage || 'Unauthorized'}`,
+        ERROR_CODES.ERR_UNAUTHORIZED,
+        { status, endpoint: subPath, serverResponse: parsedJson }
+      );
+    }
+
+    if (status === 409) {
+      throw new UploadClientError(
+        `Conflicting chunk or run state (${status}): ${serverMessage || 'Conflict'}`,
+        ERROR_CODES.ERR_CONFLICTING_RETRY,
+        { status, endpoint: subPath, serverResponse: parsedJson }
+      );
+    }
+
+    if (status === 413) {
+      throw new UploadClientError(
+        `Request body exceeded Salesforce gateway limit (413 Payload Too Large): ${serverMessage}`,
+        ERROR_CODES.ERR_CHUNK_WIRE_OVERSIZE,
+        { status, endpoint: subPath, serverResponse: parsedJson }
+      );
+    }
+
+    if (status >= 500 && status <= 599) {
+      throw new UploadClientError(
+        `Salesforce server error (${status}): ${serverMessage || 'Internal Server Error'}`,
+        ERROR_CODES.ERR_TRANSIENT_NETWORK,
+        { status, endpoint: subPath, serverResponse: parsedJson }
+      );
+    }
+
+    // 400 or other 4xx client errors
+    throw new UploadClientError(
+      `Salesforce rejected request (${status}): ${serverMessage || 'Bad Request'}`,
+      ERROR_CODES.ERR_INVALID_PAYLOAD,
+      { status, endpoint: subPath, serverResponse: parsedJson }
+    );
+  }
+
+  /**
+   * Agent 3 Init Run endpoint
+   * POST /services/apexrest/da/v1/ingest/init
+   * Request DTO (InitRunRequest): { projectId, commitHash, expectedChunks, expectedTotalBytes }
+   * Response DTO (InitRunResponse): { runId, status, chunkSizeLimit, totalPayloadCap }
+   */
+  async initRun(params, options = {}) {
+    const payload = {
+      projectId: params.projectId,
+      commitHash: params.commitHash || null,
+      expectedChunks: params.expectedChunks !== undefined ? params.expectedChunks : null,
+      expectedTotalBytes: params.expectedTotalBytes !== undefined ? params.expectedTotalBytes : null
+    };
+
+    const response = await this._sendRequest('/init', payload, options);
+    if (!response || !response.runId) {
+      throw new UploadClientError('Invalid response from /init: missing runId', ERROR_CODES.ERR_INVALID_PAYLOAD, { response });
+    }
+
+    return {
+      runId: response.runId,
+      status: response.status || 'UPLOADING',
+      chunkSizeLimit: response.chunkSizeLimit || MAX_CHUNK_SIZE,
+      totalPayloadCap: response.totalPayloadCap || MAX_TOTAL_PAYLOAD_CHARS
+    };
+  }
+
+  /**
+   * Agent 3 Batch Chunk Upload endpoint
+   * POST /services/apexrest/da/v1/ingest/chunks
+   * Request DTO (BatchChunkUploadRequest): { runId, chunks: [{ chunkIndex, payloadData }] }
+   * Response DTO (BatchChunkUploadResponse): { runId, persistedChunks, totalPersisted, isComplete }
+   */
+  async uploadBatch(params, options = {}) {
+    const chunks = (params.chunks || []).map((chunkStr, i) => ({
+      chunkIndex: params.startIndex + i,
+      payloadData: chunkStr
+    }));
+
+    const payload = {
+      runId: params.runId,
+      chunks
+    };
+
+    const response = await this._sendRequest('/chunks', payload, options);
+    const persistedList = response.persistedChunks || [];
+    const acknowledgedCount = Array.isArray(persistedList) ? persistedList.length : chunks.length;
+
+    return {
+      acknowledgedCount,
+      totalPersisted: response.totalPersisted || acknowledgedCount,
+      isComplete: !!response.isComplete,
+      status: response.status || 'IN_PROGRESS'
+    };
+  }
+
+  /**
+   * Agent 3 Finalize Run endpoint
+   * POST /services/apexrest/da/v1/ingest/finalize
+   * Request DTO (FinalizeRunRequest): { runId, expectedChunks, expectedChecksum }
+   * Response DTO (FinalizeRunResponse): { runId, status, nodeCount, edgeCount, cyclicSccCount, success }
+   */
+  async finalizeRun(params, options = {}) {
+    const payload = {
+      runId: params.runId,
+      expectedChunks: params.expectedChunks,
+      expectedChecksum: params.expectedChecksum
+    };
+
+    const response = await this._sendRequest('/finalize', payload, options);
+    const isSuccess = response.success === true || response.status === 'AVAILABLE' || response.status === 'EMPTY';
+
+    return {
+      isSuccess,
+      status: response.status || (isSuccess ? 'AVAILABLE' : 'FAILED'),
+      nodeCount: response.nodeCount || 0,
+      edgeCount: response.edgeCount || 0,
+      cyclicSccCount: response.cyclicSccCount || 0,
+      errorMessage: response.errorMessage || (isSuccess ? null : 'Server reported finalization failure')
+    };
+  }
+}
+
 module.exports = {
   MAX_CHUNK_SIZE,
   MAX_TOTAL_PAYLOAD_CHARS,
@@ -610,5 +901,6 @@ module.exports = {
   measureEnvelopeWireBytes,
   TransportAdapter,
   InMemoryTransportAdapter,
+  SalesforceRestTransportAdapter,
   SalesforceGraphUploadClient
 };

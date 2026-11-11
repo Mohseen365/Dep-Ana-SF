@@ -25,6 +25,8 @@ const fs = require('fs');
 const path = require('path');
 const {
   SalesforceGraphUploadClient,
+  SalesforceRestTransportAdapter,
+  InMemoryTransportAdapter,
   chunkPayloadSafe,
   computePayloadChecksum,
   measureEnvelopeWireBytes,
@@ -39,6 +41,8 @@ function parseArgs(args) {
     runName: null,
     filePath: 'analysis-snapshot.json',
     commitHash: null,
+    instanceUrl: process.env.SF_INSTANCE_URL || null,
+    accessToken: process.env.SF_ACCESS_TOKEN || null,
     dryRun: false,
     help: false
   };
@@ -55,6 +59,10 @@ function parseArgs(args) {
       options.filePath = args[++i];
     } else if (arg === '--commit-hash' && i + 1 < args.length) {
       options.commitHash = args[++i];
+    } else if (arg === '--instance-url' && i + 1 < args.length) {
+      options.instanceUrl = args[++i];
+    } else if (arg === '--access-token' && i + 1 < args.length) {
+      options.accessToken = args[++i];
     } else if (arg === '--dry-run') {
       options.dryRun = true;
     }
@@ -78,6 +86,8 @@ Options:
   --file <path>          Path to graph snapshot JSON (default: analysis-snapshot.json)
   --run-name <name>      Name of the analysis run (default: Analysis Run <ISO-timestamp>)
   --commit-hash <hash>   Git source commit SHA-1/SHA-256 (optional provenance)
+  --instance-url <url>   Salesforce instance base URL (or env SF_INSTANCE_URL)
+  --access-token <token> Salesforce OAuth bearer token (or env SF_ACCESS_TOKEN)
   --dry-run              Calculate chunks, wire sizing, and checksums without transmitting
   --help, -h             Show this help screen
 `);
@@ -157,8 +167,23 @@ async function main() {
     process.exit(0);
   }
 
+  // Configure Transport Adapter (REST if credentials provided, otherwise in-memory simulation)
+  let transport;
+  if (options.instanceUrl && options.accessToken) {
+    console.log(`\nConfiguring Salesforce REST Transport Adapter:`);
+    console.log(`  Instance URL:       ${options.instanceUrl}`);
+    console.log(`  Access Token:       [REDACTED] (${options.accessToken.length} chars)`);
+    transport = new SalesforceRestTransportAdapter({
+      instanceUrl: options.instanceUrl,
+      accessToken: options.accessToken
+    });
+  } else {
+    console.log(`\nNotice: No --instance-url / --access-token provided. Using InMemoryTransportAdapter for offline execution.`);
+    transport = new InMemoryTransportAdapter();
+  }
+
   // Normal Upload Execution
-  const client = new SalesforceGraphUploadClient();
+  const client = new SalesforceGraphUploadClient({ transportAdapter: transport });
   const runName = options.runName || `Analysis Run ${new Date().toISOString()}`;
 
   console.log(`\nInitiating upload: "${runName}"...`);
