@@ -43,9 +43,16 @@ public with sharing class DAProjectSecurityService {
         'DAGraphIngestionService'
     };
 
+    // Dedicated permission set name for emergency grant approver authority
+    public static final String APPROVER_PERMISSION_SET = 'DA_Emergency_Grant_Approver';
+
     // Test-visible token to support mock trusted internal execution in testing
     @TestVisible
     private static Boolean mockTrustedInternalContext = false;
+    @TestVisible
+    private static Set<Id> mockAuthorizedApproverIds = new Set<Id>();
+    @TestVisible
+    private static Set<Id> mockDirectAuthorizedUserIds = new Set<Id>();
 
     public class ProjectAccessContext {
         public Id projectId;
@@ -197,6 +204,16 @@ public with sharing class DAProjectSecurityService {
                 return ctx;
             }
 
+            // Explicit verification of independent direct authorization provenance:
+            // The presence of a Manual share row or project visibility alone is insufficient.
+            // Direct access requires verifiable direct entitlement evidence.
+            if (!hasAuthoritativeDirectShare(projectId, userId)) {
+                ctx.hasAccess = false;
+                ctx.accessProvenance = 'UNAUTHORIZED';
+                logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied: User lacks independent direct authorization provenance.');
+                return ctx;
+            }
+
             ctx.hasAccess = true;
             ctx.isEmergencyAccess = false;
             ctx.accessProvenance = 'DIRECT_SHARE';
@@ -208,6 +225,33 @@ public with sharing class DAProjectSecurityService {
         ctx.accessProvenance = 'UNAUTHORIZED';
         logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied for required scope: ' + requiredScope);
         return ctx;
+    }
+
+    /**
+     * @description Authoritative check for independent direct sharing provenance.
+     * Does not rely on the mere existence of a Manual share row.
+     * In Salesforce Private OWD, direct authorization is proven ONLY by:
+     * 1. Record ownership (checked prior via proj.OwnerId == userId).
+     * 2. Non-Manual sharing causes (e.g. Rule, Territory, Role Hierarchy) where RowCause != 'Manual'.
+     * 3. Explicit direct mock authorization during unit testing (mockDirectAuthorizedUserIds).
+     * Mere existence of a Manual share row without non-Manual cause or mock entitlement is rejected fail-closed.
+     */
+    public static Boolean hasAuthoritativeDirectShare(Id projectId, Id userId) {
+        if (projectId == null || userId == null) {
+            return false;
+        }
+        if (Test.isRunningTest() && mockDirectAuthorizedUserIds.contains(userId)) {
+            return true;
+        }
+        try {
+            // Only non-Manual share rows establish authoritative direct access independently of emergency grants
+            List<SObject> nonManualShares = Database.query(
+                'SELECT Id FROM DA_Project__Share WHERE ParentId = :projectId AND UserOrGroupId = :userId AND RowCause != \'Manual\''
+            );
+            return !nonManualShares.isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -307,6 +351,11 @@ public with sharing class DAProjectSecurityService {
             throw new SecurityException('Separation of duties violation: Grant issuer cannot self-approve emergency access.');
         }
 
+        // 3. Enforce authoritative approver authority mechanism:
+        if (!isAuthorizedApprover(approverId)) {
+            throw new SecurityException('Approver authority violation: Approver ' + approverId + ' lacks required emergency grant approval authority.');
+        }
+
         // Clamp lease to 4-hour maximum (14400s)
         Integer safeLease = (leaseSeconds != null && leaseSeconds > 0 && leaseSeconds <= MAX_EMERGENCY_LEASE_SECONDS)
             ? leaseSeconds : MAX_EMERGENCY_LEASE_SECONDS;
@@ -341,6 +390,33 @@ public with sharing class DAProjectSecurityService {
             'Emergency grant ' + grant.Id + ' approved by authorized approver ' + approverId);
 
         return grant.Id;
+    }
+
+    /**
+     * @description Authoritatively checks if a given user is an authorized approver.
+     * Enforces that the approver possesses the dedicated APPROVER_PERMISSION_SET ('DA_Emergency_Grant_Approver').
+     * Broad administrative permissions alone do not grant emergency approval authority without explicit assignment.
+     * Mock approvers are strictly protected by Test.isRunningTest() to prevent test shortcuts in production.
+     */
+    public static Boolean isAuthorizedApprover(Id approverId) {
+        if (approverId == null) {
+            return false;
+        }
+        if (Test.isRunningTest() && mockAuthorizedApproverIds.contains(approverId)) {
+            return true;
+        }
+        try {
+            // Dedicated permission set check
+            List<PermissionSetAssignment> psa = [
+                SELECT Id FROM PermissionSetAssignment
+                WHERE AssigneeId = :approverId
+                  AND PermissionSet.Name = :APPROVER_PERMISSION_SET
+                LIMIT 1
+            ];
+            return !psa.isEmpty();
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     /**

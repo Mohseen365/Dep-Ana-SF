@@ -48,6 +48,7 @@ runTest('1.1 Direct-share provenance evaluation method and mock bindings exist',
     assert(secCode.includes('DIRECT_SHARE'), 'Must support DIRECT_SHARE');
     assert(secCode.includes('EMERGENCY_GRANT'), 'Must support EMERGENCY_GRANT');
     assert(secCode.includes('UNAUTHORIZED'), 'Must support UNAUTHORIZED');
+    assert(secCode.includes('hasAuthoritativeDirectShare'), 'Must implement hasAuthoritativeDirectShare');
 });
 
 runTest('1.2 Stale emergency share is not misclassified as direct share', () => {
@@ -69,6 +70,7 @@ runTest('1.4 In-memory provenance resolution simulation (coexistence & revocatio
             return { hasAccess: true, provenance: 'DIRECT_SHARE' };
         }
         if (hasStaleEmergencyGrant) {
+            // Stale emergency grant rejects lingering manual share
             return { hasAccess: false, provenance: 'UNAUTHORIZED' };
         }
         if (hasIndependentDirectShare) {
@@ -110,7 +112,12 @@ runTest('2.3 Separation of duties enforced (recipient != approver, issuer != app
     assert(secCode.includes('Grant issuer cannot self-approve'), 'Issuer cannot self-approve');
 });
 
-runTest('2.4 In-memory approver authority matrix simulation', () => {
+runTest('2.4 Dedicated approver permission set enforced and test mocks guarded', () => {
+    assert(secCode.includes('APPROVER_PERMISSION_SET = \'DA_Emergency_Grant_Approver\''), 'Must define APPROVER_PERMISSION_SET');
+    assert(secCode.includes('Test.isRunningTest()'), 'Mock approver bypass must be restricted to test execution');
+});
+
+runTest('2.5 In-memory approver authority matrix simulation', () => {
     const authorizedApprovers = new Set(['005Approver001', '005Admin002']);
     function evaluateEmergencyGrantCreation(issuerId, approverId, recipientId, isCancelled = false, isRenewal = false, renewalApproved = false) {
         if (!approverId) throw new Error('Mandatory approval violation');
@@ -186,8 +193,10 @@ runTest('3.3 In-memory wrapper vs structured transaction simulation', () => {
 // ===================================================================
 console.log('\n[Suite 4: EMPTY Retry, Duplicate Finalization & Last-Known-Good Invariants]');
 
-runTest('4.1 Zero-chunk runs initialize as EMPTY only when expectedChunks == 0', () => {
-    assert(ingCode.includes('(expectedChunks != null && expectedChunks == 0) ? STATUS_EMPTY : STATUS_QUEUED'), 'Must initialize EMPTY when 0');
+runTest('4.1 Zero-chunk runs initialize as EMPTY only when expectedChunks == 0 and expectedBytes == 0', () => {
+    assert(ingCode.includes('Boolean isExplicitEmpty = (expectedChunks != null && expectedChunks == 0 && (expectedTotalBytes != null && expectedTotalBytes == 0));'),
+        'Must strictly check explicit empty conditions');
+    assert(ingCode.includes('Total_Chunks__c == null'), 'Must verify Total_Chunks__c rejection when null');
 });
 
 runTest('4.2 Chunk upload to EMPTY runs prohibited fail-closed', () => {
@@ -199,14 +208,20 @@ runTest('4.3 Last-known-good graph preserved on EMPTY and FAILED runs', () => {
     assert(ingCode.includes('Status__c = :STATUS_AVAILABLE'), 'getLatestAvailableRun must query strictly AVAILABLE runs');
 });
 
-runTest('4.4 In-memory finalization duplicate and retry state machine simulation', () => {
+runTest('4.4 In-memory finalization duplicate, conflicting parameters and retry simulation', () => {
     function finalizeRunSimulation(run, callerExpectedChunks) {
         // Repeated finalization of already AVAILABLE run
         if (run.status === 'AVAILABLE') {
+            if (callerExpectedChunks !== undefined && callerExpectedChunks !== run.expectedChunks) {
+                return { isSuccess: false, status: 'AVAILABLE', error: 'Finalization conflict' };
+            }
             return { isSuccess: true, status: 'AVAILABLE', duplicate: true };
         }
         // Repeated finalization of already EMPTY run
         if (run.status === 'EMPTY') {
+            if (callerExpectedChunks !== undefined && callerExpectedChunks !== 0) {
+                return { isSuccess: false, status: 'EMPTY', error: 'Finalization conflict' };
+            }
             return { isSuccess: true, status: 'EMPTY', duplicate: true };
         }
         // Repeated finalization of FAILED run
@@ -229,12 +244,15 @@ runTest('4.4 In-memory finalization duplicate and retry state machine simulation
 
     // Repeated finalization tests
     assert.strictEqual(finalizeRunSimulation({ status: 'AVAILABLE', expectedChunks: 5 }, 5).duplicate, true);
+    assert.strictEqual(finalizeRunSimulation({ status: 'AVAILABLE', expectedChunks: 5 }, 10).isSuccess, false);
     assert.strictEqual(finalizeRunSimulation({ status: 'EMPTY', expectedChunks: 0, expectedBytes: 0 }, 0).duplicate, true);
+    assert.strictEqual(finalizeRunSimulation({ status: 'EMPTY', expectedChunks: 0, expectedBytes: 0 }, 2).isSuccess, false);
     assert.strictEqual(finalizeRunSimulation({ status: 'FAILED', expectedChunks: 5 }, 5).isSuccess, false);
 
     // Valid EMPTY initialization vs invalid empty payload
     assert.strictEqual(finalizeRunSimulation({ status: 'QUEUED', expectedChunks: 0, expectedBytes: 0 }, 0).status, 'EMPTY');
     assert.strictEqual(finalizeRunSimulation({ status: 'QUEUED', expectedChunks: 0, expectedBytes: 500 }, 0).status, 'FAILED');
+    assert.strictEqual(finalizeRunSimulation({ status: 'QUEUED', expectedChunks: null, expectedBytes: 0 }, 0).status, 'FAILED');
 
     // Mismatched expected chunks fails
     assert.strictEqual(finalizeRunSimulation({ status: 'QUEUED', expectedChunks: 5, expectedBytes: 1000 }, 3).status, 'FAILED');

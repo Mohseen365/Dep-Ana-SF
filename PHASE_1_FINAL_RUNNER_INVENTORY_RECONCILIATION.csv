@@ -1,0 +1,34 @@
+Runner_Script,Type,Units_Reported,Status,Description
+run-analysis-history-tests.cjs,Standalone,12,PASS,Validates DAAnalysisHistoryController and DAAnalysisHistoryService
+run-b4-security-tests.cjs,Standalone,14,PASS,Validates security requirements SEC-01 through SEC-04 offline
+run-c1-url-sync-tests.cjs,Standalone,12,PASS,Validates URL synchronization state management
+run-c2-snapshot-comparison-tests.cjs,Standalone,14,PASS,Validates snapshot comparison modal and AST diffing
+run-c3-sankey-tests.cjs,Standalone,12,PASS,Validates Dependency River Sankey view SVG rendering
+run-c4-export-tests.cjs,Standalone,15,PASS,Validates graph export and performance remediations
+run-coordinator-integration-suite.cjs,Wrapper,12,PASS,Wrapper aggregate suite validating coordinator integration
+run-lane-a-schema-tests.cjs,Standalone,8,PASS,Validates lane A schema and DTO serialization
+run-lane-c-preset-manager-tests.cjs,Standalone,16,PASS,Validates preset manager state and storage
+run-lane-d-graph-filter-tests.cjs,Standalone,13,PASS,Validates graph filtering logic
+run-lane-e-matrix-tests.cjs,Standalone,11,PASS,Validates dependency matrix calculations
+run-lane-f-findings-tests.cjs,Standalone,14,PASS,Validates architectural findings drawer
+run-lwc-jest-tests.cjs,Standalone,6,PASS,Validates mock LWC Jest testing
+run-p0-verification-tests.cjs,Standalone,18,PASS,Validates foundational P0 platform and schema requirements
+run-p1-header-tests.cjs,Standalone,6,PASS,Validates application header component
+run-p1-sidebar-tests.cjs,Standalone,6,PASS,Validates navigation sidebar component
+run-phase1-final-acceptance-tests.cjs,Standalone,16,PASS,Dedicated final acceptance test runner for targeted closure
+run-phase1-hardened-contracts-tests.cjs,Standalone,24,PASS,Validates hardened contracts for Agent 1 and Agent 2 v1.0.2
+run-poc-tests.cjs,Wrapper,36,PASS,Wrapper aggregate suite validating general POC functionality
+run-r2-packaging-validation.cjs,Standalone,8,PASS,Validates 2GP packaging boundaries and .forceignore exclusions
+run-s1-security-tests.cjs,Standalone,10,PASS,Validates field-level security assignments in permission sets
+run-w5-1-tests.cjs,Standalone,18,PASS,Validates Task W5-1 graph viewer layout integration
+run-w6-1-tests.cjs,Standalone,9,PASS,Validates architecture radar 9 analytical dimensions
+run-w6-2-tests.cjs,Standalone,8,PASS,Validates treemap view layout and node selection
+run-w6-3-tests.cjs,Standalone,8,PASS,Validates subway view navigation and transit topology
+run-w6-4-tests.cjs,Standalone,9,PASS,Validates hotspots view risk calculations
+run-w7-1-tests.cjs,Standalone,8,PASS,Validates system diagnostics view
+run-w7-2-tests.cjs,Standalone,8,PASS,Validates architecture DNA barcode visualization
+run-w8-1-tests.cjs,Standalone,12,PASS,Validates investigation drawer metadata and IPC
+run-wave4-integration-suite.cjs,Standalone,26,PASS,Validates wave 4 integration across presets and filters
+run-workstream-a-tests.cjs,Standalone,25,PASS,Validates workstream A UI and view mode integration
+run-workstream-c-tests.cjs,Standalone,35,PASS,Validates workstream C refactoring and investigation tools
+run-ws5-tests.cjs,Standalone,13,PASS,Validates workstream 5 analysis history and deterministic query ordering

@@ -15,22 +15,23 @@
 
 Separation-of-duties inequalities (`approverId != userId` and `approverId != effectiveIssuerId`) are necessary but insufficient on their own:
 1. An inequality does not prove that the nominated approver possesses actual authority to approve emergency access grants.
-2. Fabricated approver IDs (such as arbitrary User IDs without administrative or security authority) could be passed to bypass security controls.
+2. Broad administrative permissions (`ModifyAllData`) without designated security assignment risk privilege escalation.
 3. Ordinary grant-creation entry points must not allow self-service bypass of mandatory approval.
-4. Cancelled, missing, unauthorized, or renewed requests must be authoritatively rejected.
+4. Test-only approval shortcuts must not leak into production execution contexts.
+5. Cancelled, missing, unauthorized, or renewed requests must be authoritatively rejected.
 
 ---
 
-## 2. Approver Authority Mechanism & Implementation
+## 2. Approver Authority Mechanism & Policy Implementation
 
 In `scratch/salesforce-poc/force-app/main/default/classes/services/DAProjectSecurityService.cls`:
 
 ### 2.1 Approver Authority Verification
 - The service enforces `isAuthorizedApprover(approverId)` in `createEmergencyGrantWithApproval`.
 - Approver authority requires that the approver possesses:
-  - An active `PermissionSetAssignment` for `APPROVER_PERMISSION_SET` (`DA_Emergency_Grant_Approver`), or
-  - Global administrative authority (`PermissionSet.PermissionsModifyAllData = TRUE`), or
-  - Programmatic mock registration via `mockAuthorizedApproverIds` during unit testing.
+  - An active `PermissionSetAssignment` for dedicated `APPROVER_PERMISSION_SET` (`DA_Emergency_Grant_Approver`).
+  - Broad administrative permissions (`PermissionsModifyAllData`) alone do NOT automatically qualify a user for emergency access grant approval without explicit assignment of `DA_Emergency_Grant_Approver`.
+  - Programmatic mock registration via `mockAuthorizedApproverIds` is strictly restricted with `Test.isRunningTest()` to prevent test shortcuts in production execution contexts.
 - If the nominated approver lacks the requisite permission set assignment, grant creation throws:
   `SecurityException('Approver authority violation: Approver ' + approverId + ' lacks required emergency grant approval authority.')`
 
@@ -67,6 +68,7 @@ Tested in `scratch/salesforce-poc/tests/run-phase1-final-acceptance-tests.cjs`:
 6. Missing approver rejected fail-closed.
 7. Approval of cancelled/revoked grant rejected.
 8. Unauthorized renewal attempt rejected.
+9. Production protection of test mock approvers (`Test.isRunningTest()` enforcement).
 
 ---
 

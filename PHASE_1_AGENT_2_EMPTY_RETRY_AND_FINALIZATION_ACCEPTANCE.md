@@ -17,27 +17,30 @@ The ingestion lifecycle state machine is defined over terminal and active states
 - Active: `QUEUED`, `IN_PROGRESS`, `VALIDATING`
 - Terminal: `AVAILABLE`, `EMPTY`, `FAILED`, `CANCELLED`, `EXPIRED`
 
-### 1.1 Valid-Empty Initialization and Payload Conditions
+### 1.1 Explicit Valid-Empty Initialization and Payload Conditions
 Zero uploaded chunks alone do not establish that a run is a valid empty analysis.
 A zero-chunk finalization (`persistedExpected == 0`) succeeds and transitions to `STATUS_EMPTY` only when:
-1. The run was explicitly created with `expectedChunks = 0` (or `null` defaulting to 0).
-2. The expected total payload size is explicitly 0 (`Total_Payload_Size_Chars__c == 0`).
-If `persistedExpected == 0` but `Total_Payload_Size_Chars__c > 0`, finalization is rejected fail-closed with `STATUS_FAILED` (`'Finalization rejected: Run initialized with 0 chunks but nonzero expected payload size'`).
+1. The run was explicitly created with `expectedChunks = 0` (`expectedChunks != null && expectedChunks == 0`).
+2. The expected total payload size is explicitly 0 (`expectedTotalBytes != null && expectedTotalBytes == 0`).
+If `expectedChunks` is omitted (null), `Total_Chunks__c` remains null and the run is initialized as `STATUS_QUEUED`. When `finalizeAnalysisRunWithResult` is called on a run with null `Total_Chunks__c`, it is rejected fail-closed with `STATUS_FAILED` (`'Finalization rejected: Run has no explicit expected chunk count configured'`).
+If `persistedExpected == 0` but `Total_Payload_Size_Chars__c` is null or `> 0`, finalization is rejected fail-closed with `STATUS_FAILED` (`'Finalization rejected: Run initialized with 0 chunks but invalid or omitted expected payload size'`).
 Furthermore, if a run was initialized with `expectedChunks > 0`, but 0 chunks were uploaded, finalization is rejected with `STATUS_FAILED` (`'Finalization failed: Expected N chunks, but found 0'`).
 
 ---
 
-## 2. Duplicate Operations and State Transition Invariants
+## 2. Duplicate Operations and Deterministic Idempotency Invariants
 
 ### 2.1 Repeated Finalization of an Already AVAILABLE Run
 - When `finalizeAnalysisRunWithResult` is called on a run where `Status__c == STATUS_AVAILABLE`:
-  - Returns `FinalizationResult(true, STATUS_AVAILABLE, 'Analysis run is already finalized in AVAILABLE state.')` idempotently without throwing.
+  - Parameter Change Check: If caller supplies a different chunk count (`callerSuppliedExpectedChunks != run.Total_Chunks__c`), returns deterministic conflict error (`'Finalization conflict: Run is already finalized as AVAILABLE with X chunks; cannot finalize with Y'`).
+  - Identical Parameters: Returns `FinalizationResult(true, STATUS_AVAILABLE, 'Analysis run is already finalized in AVAILABLE state.')` idempotently without throwing.
   - `processedChunks` reports persisted chunk count.
   - No database mutations occur.
 
 ### 2.2 Repeated Finalization of an Already EMPTY Run
 - When `finalizeAnalysisRunWithResult` is called on a run where `Status__c == STATUS_EMPTY`:
-  - Returns `FinalizationResult(true, STATUS_EMPTY, 'Analysis run is already finalized in EMPTY state.')` idempotently without throwing.
+  - Parameter Change Check: If caller supplies a nonzero chunk count (`callerSuppliedExpectedChunks != 0`), returns deterministic conflict error (`'Finalization conflict: Run is already finalized as EMPTY; cannot finalize with X chunks.'`).
+  - Identical Parameters: Returns `FinalizationResult(true, STATUS_EMPTY, 'Analysis run is already finalized in EMPTY state.')` idempotently without throwing.
   - No database mutations occur.
 
 ### 2.3 Repeated Finalization of a FAILED / Closed Run
@@ -72,8 +75,10 @@ Furthermore, if a run was initialized with `expectedChunks > 0`, but 0 chunks we
 ## 3. Test Coverage
 
 Tested in `scratch/salesforce-poc/tests/run-phase1-final-acceptance-tests.cjs`:
-- Repeated finalization of `AVAILABLE` run (idempotent success).
-- Repeated finalization of `EMPTY` run (idempotent success).
+- Repeated finalization of `AVAILABLE` run with identical parameters (idempotent success).
+- Repeated finalization of `AVAILABLE` run with conflicting chunk count (deterministic conflict failure).
+- Repeated finalization of `EMPTY` run with identical parameters (idempotent success).
+- Repeated finalization of `EMPTY` run with conflicting chunk count (deterministic conflict failure).
 - Repeated finalization of `FAILED` run (fail-closed rejection).
 - Prohibit chunk upload to `EMPTY` run.
 - Zero chunk with nonzero expected payload rejection (`STATUS_FAILED`).
