@@ -1,8 +1,9 @@
 /**
- * @description Authoritative Ingestion Lifecycle and Chunk Persistence Service (v1.0.1 Hardened)
+ * @description Authoritative Ingestion Lifecycle and Chunk Persistence Service (v1.0.2 Hardened)
  * Implements explicit lifecycle state machine (QUEUED, IN_PROGRESS, VALIDATING, AVAILABLE, FAILED, CANCELLED, EXPIRED, EMPTY),
  * deterministic chunk uniqueness (Chunk_Key__c), caller-count mismatch rejection (authoritative persisted Total_Chunks__c),
- * identical retry idempotency, conflicting retry rejection, checksum tracking (SHA-256 hex lowercase),
+ * identical retry idempotency, conflicting retry rejection, separate payload checksum tracking (Payload_Checksum__c, SHA-256 hex lowercase)
+ * distinct from Git source commit provenance (Commit_Hash__c), failure persistence with transaction safety,
  * and payload size unit reconciliation (UTF-16 code units vs UTF-8 serialized bytes vs 5 MiB wire ceiling).
  */
 public with sharing class DAGraphIngestionService {
@@ -44,7 +45,8 @@ public with sharing class DAGraphIngestionService {
     }
 
     /**
-     * @description Overloaded run creation accepting commit hash and optional SHA-256 payload checksum.
+     * @description Overloaded run creation accepting source commit hash and SHA-256 payload checksum.
+     * Strictly separates Commit_Hash__c (Git provenance) from Payload_Checksum__c (graph content integrity).
      */
     public static String createAnalysisRun(
         String projectId,
@@ -69,7 +71,8 @@ public with sharing class DAGraphIngestionService {
             Run_Timestamp__c = Datetime.now(),
             Total_Chunks__c = expectedChunks != null ? expectedChunks : 0,
             Total_Payload_Size_Chars__c = expectedTotalBytes != null ? expectedTotalBytes : 0,
-            Commit_Hash__c = commitHash
+            Commit_Hash__c = commitHash,
+            Payload_Checksum__c = expectedSha256Checksum
         );
         insert as user run;
         return run.Id;
@@ -230,19 +233,32 @@ public with sharing class DAGraphIngestionService {
         return toInsert.size() + identicalRetryCount;
     }
 
+    public class FinalizationResult {
+        public Boolean isSuccess;
+        public String status;
+        public String errorMessage;
+        public Integer processedChunks;
+
+        public FinalizationResult(Boolean isSuccess, String status, String errorMessage) {
+            this.isSuccess = isSuccess;
+            this.status = status;
+            this.errorMessage = errorMessage;
+            this.processedChunks = 0;
+        }
+    }
+
     /**
-     * @description Finalizes an analysis run.
-     * Trusts authoritative persisted Total_Chunks__c. If caller supplies a mismatched count,
-     * throws IngestionException fail-closed.
-     * Transitions run to VALIDATING, verifies continuity and completeness, then transitions to AVAILABLE (or EMPTY).
+     * @description Authoritative finalization with transaction failure persistence.
+     * Rather than throwing an unhandled exception that rolls back the FAILED status update,
+     * this method commits the FAILED state atomically and returns a structured FinalizationResult.
      */
-    public static Boolean finalizeAnalysisRun(String runId, Integer callerSuppliedExpectedChunks) {
+    public static FinalizationResult finalizeAnalysisRunWithResult(String runId, Integer callerSuppliedExpectedChunks, String expectedChecksum) {
         if (String.isBlank(runId)) {
-            throw new IllegalArgumentException('Run ID is required for finalization.');
+            return new FinalizationResult(false, STATUS_FAILED, 'Run ID is required for finalization.');
         }
 
         List<DA_Analysis_Run__c> runs = [
-            SELECT Id, DA_Project__c, Status__c, Total_Chunks__c, Total_Payload_Size_Chars__c
+            SELECT Id, DA_Project__c, Status__c, Total_Chunks__c, Total_Payload_Size_Chars__c, Payload_Checksum__c
             FROM DA_Analysis_Run__c
             WHERE Id = :runId
             WITH USER_MODE
@@ -250,14 +266,14 @@ public with sharing class DAGraphIngestionService {
         ];
 
         if (runs.isEmpty()) {
-            throw new IngestionException('Analysis run not found: ' + runId);
+            return new FinalizationResult(false, STATUS_FAILED, 'Analysis run not found: ' + runId);
         }
 
         DA_Analysis_Run__c run = runs[0];
 
         // Idempotency: if already AVAILABLE, return true safely
         if (run.Status__c == STATUS_AVAILABLE) {
-            return true;
+            return new FinalizationResult(true, STATUS_AVAILABLE, null);
         }
 
         // Authoritative persisted expectation check:
@@ -265,17 +281,19 @@ public with sharing class DAGraphIngestionService {
         if (callerSuppliedExpectedChunks != null && callerSuppliedExpectedChunks != persistedExpected) {
             run.Status__c = STATUS_FAILED;
             update as user run;
-            throw new IngestionException('Finalization rejected: Caller supplied chunk count (' +
-                callerSuppliedExpectedChunks + ') does not match persisted expected chunk count (' + persistedExpected + ').');
+            return new FinalizationResult(false, STATUS_FAILED,
+                'Finalization rejected: Caller supplied chunk count (' + callerSuppliedExpectedChunks +
+                ') does not match persisted expected chunk count (' + persistedExpected + ').');
         }
 
         // Special handling for 0-chunk / EMPTY runs
         if (persistedExpected == 0) {
             run.Status__c = STATUS_EMPTY;
             update as user run;
-            return true;
+            return new FinalizationResult(true, STATUS_EMPTY, null);
         }
 
+        // Transition to VALIDATING
         run.Status__c = STATUS_VALIDATING;
         update as user run;
 
@@ -291,7 +309,8 @@ public with sharing class DAGraphIngestionService {
         if (actualChunks.size() != persistedExpected) {
             run.Status__c = STATUS_FAILED;
             update as user run;
-            throw new IngestionException('Finalization failed: Expected ' + persistedExpected + ' chunks, but found ' + actualChunks.size());
+            return new FinalizationResult(false, STATUS_FAILED,
+                'Finalization failed: Expected ' + persistedExpected + ' chunks, but found ' + actualChunks.size());
         }
 
         // Validate chunk index continuity (0 to persistedExpected - 1)
@@ -299,13 +318,50 @@ public with sharing class DAGraphIngestionService {
             if (actualChunks[idx].Chunk_Index__c != idx) {
                 run.Status__c = STATUS_FAILED;
                 update as user run;
-                throw new IngestionException('Finalization failed: Missing chunk index ' + idx);
+                return new FinalizationResult(false, STATUS_FAILED,
+                    'Finalization failed: Missing chunk index ' + idx);
+            }
+        }
+
+        // Validate checksum if provided
+        String targetChecksum = String.isNotBlank(expectedChecksum) ? expectedChecksum : run.Payload_Checksum__c;
+        if (String.isNotBlank(targetChecksum)) {
+            String assembledPayload = '';
+            for (DA_Graph_Chunk__c c : actualChunks) {
+                if (c.Payload_Data__c != null) {
+                    assembledPayload += c.Payload_Data__c;
+                }
+            }
+            Blob payloadBlob = Blob.valueOf(assembledPayload);
+            Blob hashBlob = Crypto.generateDigest('SHA-256', payloadBlob);
+            String computedHex = EncodingUtil.convertToHex(hashBlob).toLowerCase();
+            if (computedHex != targetChecksum.toLowerCase()) {
+                run.Status__c = STATUS_FAILED;
+                update as user run;
+                return new FinalizationResult(false, STATUS_FAILED,
+                    'Finalization failed: Checksum mismatch. Expected ' + targetChecksum + ', computed ' + computedHex);
             }
         }
 
         // Successfully validated: transition to AVAILABLE
         run.Status__c = STATUS_AVAILABLE;
         update as user run;
+
+        FinalizationResult successResult = new FinalizationResult(true, STATUS_AVAILABLE, null);
+        successResult.processedChunks = actualChunks.size();
+        return successResult;
+    }
+
+    /**
+     * @description Backward-compatible boolean wrapper.
+     * Calls finalizeAnalysisRunWithResult and throws IngestionException only if caller requires exception semantics,
+     * while guaranteeing that the FAILED status was persisted beforehand.
+     */
+    public static Boolean finalizeAnalysisRun(String runId, Integer callerSuppliedExpectedChunks) {
+        FinalizationResult res = finalizeAnalysisRunWithResult(runId, callerSuppliedExpectedChunks, null);
+        if (!res.isSuccess) {
+            throw new IngestionException(res.errorMessage);
+        }
         return true;
     }
 
@@ -343,7 +399,7 @@ public with sharing class DAGraphIngestionService {
         }
 
         List<DA_Analysis_Run__c> runs = [
-            SELECT Id, Name, Status__c, Run_Timestamp__c, Total_Chunks__c, Commit_Hash__c,
+            SELECT Id, Name, Status__c, Run_Timestamp__c, Total_Chunks__c, Commit_Hash__c, Payload_Checksum__c,
                    Node_Count__c, Edge_Count__c, Cyclic_SCC_Count__c, Total_Payload_Size_Chars__c
             FROM DA_Analysis_Run__c
             WHERE DA_Project__c = :projectId

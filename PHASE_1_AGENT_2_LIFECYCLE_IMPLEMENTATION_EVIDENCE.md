@@ -1,44 +1,53 @@
-# Phase 1 Agent 2 Lifecycle Implementation Evidence
+# Phase 1 Agent 2 Lifecycle Implementation Evidence Report
 
 ## Document Identification
-- **Document Type**: Lifecycle Implementation & Evidence Report
-- **Agent**: Agent 2 (Ingestion Lifecycle & Schema Implementation Lead)
+- **Document Type**: Lifecycle Implementation Evidence & Verification Report (v1.0.2)
+- **Owner**: Agent 2 (Ingestion Lifecycle & Persistence Lead)
 - **Coordinator**: Integration Coordinator D1
 - **Verifier**: Independent Verifier D2
 - **Date**: 2026-11-11
-- **Status**: IMPLEMENTATION COMPLETE & VERIFIED
+- **Status**: IMPLEMENTED & TEST-VERIFIED
+- **Interface Version**: `v1.0.2`
 
 ---
 
-## 1. Summary of Changes
+## 1. Executive Summary
 
-The graph ingestion service `scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls` was hardened to version `v1.0.1` resolving all five lifecycle and persistence ambiguities identified in the Master Dispatch Directive:
-
-1. **`EMPTY` Lifecycle State Resolution**: Formally integrated `EMPTY` into the lifecycle state machine as the legitimate terminal state for 0-chunk / 0-node projects. Prevents chunk upload to empty runs and prevents empty runs from corrupting `AVAILABLE` graph queries.
-2. **Authoritative Persisted Expectations**: `finalizeAnalysisRun` enforces that stored `Total_Chunks__c` cannot be overridden. If a caller supplies a mismatched chunk count, finalization fails immediately with `IngestionException` and marks the run `FAILED`.
-3. **Checksum Standards**: Specified standard lowercase hex SHA-256 over canonical UTF-8 serialized JSON payload bytes, with validation hooks during run creation and finalization.
-4. **Payload Size Unit Reconciliation**: Reconciled UTF-16 code units (`Total_Payload_Size_Chars__c`, max 131,072 chars/chunk, max 10,485,760 chars total) with UTF-8 byte serialization and the 5 MiB application-level HTTP wire ceiling.
-5. **Concurrent Chunk Retry Semantics**: Implemented deterministic idempotent acceptance for identical payload retries, and strict fail-closed rejection (`IngestionException`) for conflicting retries.
+Agent 2 has implemented all required lifecycle and persistence corrections under Phase 1 v1.0.2 in `DAGraphIngestionService.cls`:
+1. **Separation of Checksum from Commit Hash**: Separated `Commit_Hash__c` (source git provenance) from payload checksum calculation. Checksum parameter is accepted in run creation and validated against canonical SHA-256 hex digests.
+2. **FAILED-State Persistence with Transaction Safety**: Implemented structured finalization method `finalizeAnalysisRunWithResult` returning a structured `FinalizationResult`, ensuring failure status is persisted atomically and visible to consumers without transaction rollback.
+3. **Removal of Unsupported Heap Claims**: Removed unsubstantiated claims of "1.3 MB max heap footprint per batch"; payload units are explicitly differentiated (UTF-16 characters, UTF-8 bytes, wire limits).
+4. **Retry Idempotency & Concurrency Semantics**: Verified idempotent identical chunk retry and fail-closed rejection of conflicting retries; external HTTP concurrency limitations are properly documented.
 
 ---
 
-## 2. Exact Changed Files
+## 2. Touch Source Artifacts
 
-| File Path | Status | Description |
+| File Path | Action | Description |
 |---|---|---|
-| `scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls` | MODIFIED | Hardened lifecycle, authoritative expectations, retry semantics, and EMPTY handling |
-| `PHASE_1_AGENT_2_LIFECYCLE_AND_PERSISTENCE_INTERFACE.md` | MODIFIED | Published v1.0.1 contract specification |
+| `scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls` | Modified | Core lifecycle service implementing checksum separation, FAILED-state persistence, and retry semantics. |
+| `scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Commit_Hash__c.field-meta.xml` | Preserved | Preserves source git commit hash provenance. |
+| `scratch/salesforce-poc/tests/run-phase1-hardened-contracts-tests.cjs` | Modified | Validates Agent 2 v1.0.2 contracts offline. |
 
 ---
 
-## 3. Verification & Test Evidence
+## 3. Test Evidence & Results
 
-The hardened implementation is tested offline by `scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs`, `scratch/salesforce-poc/tests/run-p0-verification-tests.cjs`, and the new dedicated suite `scratch/salesforce-poc/tests/run-phase1-hardened-contracts-tests.cjs`.
+Executed via Node.js offline test runner:
+`node scratch/salesforce-poc/tests/run-phase1-hardened-contracts-tests.cjs`
 
-### Capabilities Verified:
-- Static class syntax and method signature compilation.
-- Proper handling of 0-chunk runs transitioning to `EMPTY`.
-- Caller-supplied count mismatch rejection fail-closed.
-- Identical payload retry idempotency without duplicate records.
-- Conflicting payload retry rejection fail-closed.
-- Preservation of last-known-good graph on incomplete or failed runs.
+```text
+[Suite 2: Agent 2 Lifecycle & Persistence Interface v1.0.2 Hardening]
+  ✓ 2.1 EMPTY status present in metadata and service state machine
+  ✓ 2.2 Zero-chunk/empty runs transition directly to EMPTY
+  ✓ 2.3 Authoritative persisted Total_Chunks__c enforced during finalization
+  ✓ 2.4 Deterministic identical retry idempotency enforced
+  ✓ 2.5 Conflicting retry rejected fail-closed with IngestionException
+  ✓ 2.6 Checksum parameters and dedicated Payload_Checksum__c separated from Commit_Hash__c
+  ✓ 2.7 FAILED-state persistence with transaction safety
+  ✓ 2.8 Payload size units and wire ceilings reconciled
+  ✓ 2.9 Last-known-good graph preserved on incomplete or failed runs
+```
+
+Result: **9/9 Agent 2 tests passed cleanly (Exit code 0)**.
+Overall runner executes 22/22 tests with 0 failures.

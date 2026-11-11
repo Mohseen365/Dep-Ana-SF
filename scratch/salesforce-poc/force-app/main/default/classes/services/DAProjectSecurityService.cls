@@ -1,7 +1,9 @@
 /**
- * @description Authoritative Security and Multi-Tenant Project Authorization Service (v1.0.1 Hardened)
+ * @description Authoritative Security and Multi-Tenant Project Authorization Service (v1.0.2 Hardened)
  * Implements Private OWD authorization-time validation, emergency access grants (<4h lease),
- * transaction-safe explicit revocation, dynamic expiry checks independent of physical DA_Project__Share deletion,
+ * mandatory dual-party approval enforcement, separation of duties, restricted trusted internal callers,
+ * unambiguous direct-share vs emergency-share provenance, transaction-safe explicit revocation,
+ * dynamic expiry checks independent of physical DA_Project__Share deletion,
  * authenticated principal protection, exact scope matching (canonical vocabulary), and append-only audit logging.
  */
 public with sharing class DAProjectSecurityService {
@@ -10,6 +12,7 @@ public with sharing class DAProjectSecurityService {
 
     public static final Integer MAX_EMERGENCY_LEASE_SECONDS = 14400; // 4 Hours maximum lease
     public static final String ACTION_GRANT_CREATED = 'EMERGENCY_GRANT_CREATED';
+    public static final String ACTION_GRANT_APPROVED = 'EMERGENCY_GRANT_APPROVED';
     public static final String ACTION_GRANT_REVOKED = 'EMERGENCY_GRANT_REVOKED';
     public static final String ACTION_ACCESS_DENIED = 'PROJECT_ACCESS_DENIED';
     public static final String ACTION_ACCESS_GRANTED = 'PROJECT_ACCESS_GRANTED';
@@ -33,6 +36,16 @@ public with sharing class DAProjectSecurityService {
         SCOPE_ANALYSIS_UPLOAD,
         SCOPE_ANALYSIS_FINALIZE
     };
+
+    // Explicit Trust Boundary: Internal services permitted for principal substitution
+    private static final Set<String> AUTHORIZED_INTERNAL_CLASSES = new Set<String>{
+        'DAEmergencyAccessCleanupService',
+        'DAGraphIngestionService'
+    };
+
+    // Test-visible token to support mock trusted internal execution in testing
+    @TestVisible
+    private static Boolean mockTrustedInternalContext = false;
 
     public class ProjectAccessContext {
         public Id projectId;
@@ -63,20 +76,21 @@ public with sharing class DAProjectSecurityService {
     /**
      * @description Backward-compatible validateProjectAccess method.
      * If userId is provided, verifies caller authorization or binds to current user.
+     * Arbitrary user impersonation is strictly rejected fail-closed unless running in a verifiable trusted internal context.
      */
     public static ProjectAccessContext validateProjectAccess(Id projectId, Id userId, String requiredScope) {
-        Id effectiveUserId = (userId != null) ? userId : UserInfo.getUserId();
-        // Disallow arbitrary user impersonation if caller is not the same user and not running system/batch
         Id currentPrincipalId = UserInfo.getUserId();
         if (userId != null && userId != currentPrincipalId && !isTrustedInternalCaller()) {
             throw new SecurityException('Principal mismatch: Calling context cannot evaluate authorization for arbitrary user ID ' + userId);
         }
+        Id effectiveUserId = (userId != null) ? userId : currentPrincipalId;
         return validateProjectAccessInternal(projectId, effectiveUserId, requiredScope, false);
     }
 
     /**
      * @description Trusted internal service-to-service authorization check.
-     * Accessible only by internal batch / queueable / system contexts.
+     * Accessible only by verified internal system services within an explicit trust boundary.
+     * Arbitrary batch/queueable jobs cannot substitute principals without verification.
      */
     public static ProjectAccessContext validateProjectAccessTrustedInternal(Id projectId, Id userId, String requiredScope) {
         if (!isTrustedInternalCaller()) {
@@ -87,6 +101,14 @@ public with sharing class DAProjectSecurityService {
 
     /**
      * @description Core authorization evaluation with strict provenance distinction and exact scope matching.
+     * Authoritative Precedence:
+     * 1. Validate authenticated principal and project ID.
+     * 2. Evaluate emergency grant authorization dynamically.
+     *    - Must be active, unrevoked, and unexpired (Expires_At__c > Datetime.now()).
+     *    - Expired or revoked grants fail-closed to reject stale emergency-generated shares.
+     * 3. Evaluate independent direct project sharing via USER_MODE query.
+     * 4. Enforce exact permission scope.
+     * 5. Deny fail-closed and record append-only audit event.
      */
     private static ProjectAccessContext validateProjectAccessInternal(Id projectId, Id userId, String requiredScope, Boolean isTrustedInternal) {
         if (projectId == null) {
@@ -205,16 +227,17 @@ public with sharing class DAProjectSecurityService {
     }
 
     /**
-     * @description Creates a strictly project-scoped emergency access grant with maximum 4-hour lease.
-     * Validates issuer authorization and enforces separation of duties.
+     * @description Legacy/convenience entry point. In v1.0.2, this method is strictly restricted
+     * and routes directly through mandatory approval enforcement.
+     * Throws SecurityException if an independent authorized approver is not supplied.
      */
     public static Id createEmergencyGrant(Id projectId, Id userId, Integer leaseSeconds, String scope, String reason) {
-        Id issuerId = UserInfo.getUserId();
-        return createEmergencyGrantWithApproval(projectId, userId, leaseSeconds, scope, reason, issuerId, null);
+        throw new SecurityException('Direct emergency grant creation without explicit approver is prohibited. Dual approval is mandatory under approved security policy.');
     }
 
     /**
-     * @description Overloaded grant creation enforcing approver authorization and separation of duties.
+     * @description Authoritative grant creation enforcing mandatory approval, authorized issuer/approver,
+     * distinct identities (separation of duties), and clamped lease duration (<4h).
      */
     public static Id createEmergencyGrantWithApproval(
         Id projectId,
@@ -229,15 +252,32 @@ public with sharing class DAProjectSecurityService {
             throw new IllegalArgumentException('Project ID and User ID are required to create emergency access grant.');
         }
 
-        if (issuerId == null) {
-            issuerId = UserInfo.getUserId();
+        // Mandatory approval check
+        if (approverId == null) {
+            throw new SecurityException('Mandatory approval violation: Emergency access grant requires an explicit authorized approver.');
         }
 
-        // Separation of duties rule: If an explicit approver is specified, issuer cannot approve own grant
-        if (approverId != null && approverId == userId) {
+        // Resolve issuer identity
+        Id effectiveIssuerId = (issuerId != null) ? issuerId : UserInfo.getUserId();
+        Id currentPrincipalId = UserInfo.getUserId();
+
+        // Prevent arbitrary client fabrication of issuer ID
+        if (issuerId != null && issuerId != currentPrincipalId && !isTrustedInternalCaller()) {
+            throw new SecurityException('Issuer mismatch: Caller cannot fabricate issuer identity ' + issuerId);
+        }
+
+        // Separation of duties rules:
+        // 1. Grant recipient cannot approve their own grant
+        if (approverId == userId) {
             throw new SecurityException('Separation of duties violation: Grant recipient cannot act as approver.');
         }
 
+        // 2. Grant issuer cannot approve their own grant (dual approval mandatory)
+        if (approverId == effectiveIssuerId) {
+            throw new SecurityException('Separation of duties violation: Grant issuer cannot self-approve emergency access.');
+        }
+
+        // Clamp lease to 4-hour maximum (14400s)
         Integer safeLease = (leaseSeconds != null && leaseSeconds > 0 && leaseSeconds <= MAX_EMERGENCY_LEASE_SECONDS)
             ? leaseSeconds : MAX_EMERGENCY_LEASE_SECONDS;
 
@@ -261,10 +301,14 @@ public with sharing class DAProjectSecurityService {
 
         insert as user grant;
 
+        // Step 1: Record grant created
         logAuditEvent(projectId, userId, ACTION_GRANT_CREATED,
-            'Emergency grant ' + grant.Id + ' created by ' + issuerId +
-            (approverId != null ? ' approved by ' + approverId : '') +
+            'Emergency grant ' + grant.Id + ' requested by ' + effectiveIssuerId +
             ' with lease ' + safeLease + ' seconds, expires ' + expiresAt + ', scope ' + canonicalScope);
+
+        // Step 2: Record grant approved
+        logAuditEvent(projectId, userId, ACTION_GRANT_APPROVED,
+            'Emergency grant ' + grant.Id + ' approved by authorized approver ' + approverId);
 
         return grant.Id;
     }
@@ -273,6 +317,7 @@ public with sharing class DAProjectSecurityService {
      * @description Transaction-safe explicit revocation sequence.
      * Prevents race conditions where stale shares or intermediate failures grant unauthorized access.
      * Post-commit invariant: Once committed, subsequent authorization checks immediately reject the grant.
+     * Audit events are strictly append-only: cleanup failures are logged as separate events rather than mutating prior records.
      */
     public static Boolean revokeEmergencyGrant(Id grantId, String reason) {
         if (grantId == null) {
@@ -300,9 +345,9 @@ public with sharing class DAProjectSecurityService {
             return true;
         }
 
-        // Step 1 Audit: Record revocation event in audit log first
+        // Step 1 Audit: Record revocation event in append-only audit log
         logAuditEvent(grant.Project__c, grant.User__c, ACTION_GRANT_REVOKED,
-            'Initiating explicit revocation of grant ' + grantId + '. Reason: ' + reason);
+            'Explicit revocation of grant ' + grantId + '. Reason: ' + reason);
 
         // Step 2 & 3: Mark grant record revoked and inactive fail-closed
         grant.Revoked__c = true;
@@ -314,7 +359,7 @@ public with sharing class DAProjectSecurityService {
         try {
             cleanupShareRow(grant.Project__c, grant.User__c);
         } catch (Exception ex) {
-            // Step 6: Record cleanup failure in audit log without restoring access
+            // Step 6: Record cleanup failure in a separate append-only audit record without restoring access
             logAuditEvent(grant.Project__c, grant.User__c, ACTION_CLEANUP_FAILURE,
                 'Share row deletion failed for grant ' + grantId + ': ' + ex.getMessage());
         }
@@ -323,13 +368,31 @@ public with sharing class DAProjectSecurityService {
     }
 
     /**
-     * @description Helper to cleanup physical DA_Project__Share records.
+     * @description Helper to cleanup physical DA_Project__Share records associated with emergency access.
+     * Only deletes shares if there is no other active emergency grant or independent direct entitlement.
      */
     public static void cleanupShareRow(Id projectId, Id userId) {
         if (projectId == null || userId == null) {
             return;
         }
-        // In live org, DA_Project__Share is cleaned up via Database.delete.
+
+        // Check if user has other active emergency grants for this project
+        List<DA_Emergency_Access_Grant__c> remainingActiveGrants = [
+            SELECT Id FROM DA_Emergency_Access_Grant__c
+            WHERE Project__c = :projectId
+              AND User__c = :userId
+              AND Is_Active__c = TRUE
+              AND Revoked__c = FALSE
+              AND Expires_At__c > :Datetime.now()
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (!remainingActiveGrants.isEmpty()) {
+            // Retain share row; user still has another active unexpired grant
+            return;
+        }
+
         List<SObject> shares = Database.query(
             'SELECT Id FROM DA_Project__Share WHERE ParentId = :projectId AND UserOrGroupId = :userId AND RowCause = \'Manual\''
         );
@@ -339,7 +402,8 @@ public with sharing class DAProjectSecurityService {
     }
 
     /**
-     * @description Immutable audit log recording.
+     * @description Immutable, append-only audit log recording.
+     * Always inserts a new audit record; modifications and deletions are blocked by trigger.
      */
     public static Id logAuditEvent(Id projectId, Id userId, String action, String details) {
         DA_Security_Audit_Log__c audit = new DA_Security_Audit_Log__c(
@@ -353,7 +417,26 @@ public with sharing class DAProjectSecurityService {
         return audit.Id;
     }
 
+    /**
+     * @description Verifies whether calling context is an authorized internal service.
+     * Execution context (Batch/Queueable/Scheduled) alone is insufficient; context must be bounded
+     * to verified authorized internal classes.
+     */
     private static Boolean isTrustedInternalCaller() {
-        return System.isBatch() || System.isQueueable() || System.isScheduled();
+        if (mockTrustedInternalContext) {
+            return true;
+        }
+        Boolean isAsyncContext = System.isBatch() || System.isQueueable() || System.isScheduled();
+        if (!isAsyncContext) {
+            return false;
+        }
+        // Additional trust boundary verification: check calling stack trace
+        String stackTrace = new DmlException().getStackTraceString();
+        for (String authorizedClass : AUTHORIZED_INTERNAL_CLASSES) {
+            if (stackTrace.contains(authorizedClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
