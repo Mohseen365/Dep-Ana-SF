@@ -158,8 +158,20 @@ public with sharing class DAProjectSecurityService {
         }
 
         // 2. Direct project access via USER_MODE query (evaluates standard OWD / independent direct sharing)
+        // Guard against stale emergency-generated share rows:
+        // If the user has any expired or revoked emergency grant for this project, verify they are not
+        // relying solely on a lingering emergency manual share row.
+        List<DA_Emergency_Access_Grant__c> staleGrants = [
+            SELECT Id FROM DA_Emergency_Access_Grant__c
+            WHERE Project__c = :projectId
+              AND User__c = :userId
+              AND (Expires_At__c <= :currentDatetime OR Revoked__c = TRUE OR Is_Active__c = FALSE)
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
         List<DA_Project__c> directProjects = [
-            SELECT Id, Name, Status__c
+            SELECT Id, Name, Status__c, OwnerId
             FROM DA_Project__c
             WHERE Id = :projectId
             WITH USER_MODE
@@ -167,6 +179,24 @@ public with sharing class DAProjectSecurityService {
         ];
 
         if (!directProjects.isEmpty()) {
+            DA_Project__c proj = directProjects[0];
+            // If project is directly owned by user, access is authoritative direct access
+            if (proj.OwnerId == userId) {
+                ctx.hasAccess = true;
+                ctx.isEmergencyAccess = false;
+                ctx.accessProvenance = 'DIRECT_SHARE';
+                return ctx;
+            }
+
+            // If user has a stale emergency grant, ensure a lingering manual share does not falsely grant direct access
+            if (!staleGrants.isEmpty()) {
+                // Stale emergency share detected; do not misclassify lingering manual share as direct share
+                ctx.hasAccess = false;
+                ctx.accessProvenance = 'UNAUTHORIZED';
+                logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied: Stale emergency access grant detected; lingering share row rejected.');
+                return ctx;
+            }
+
             ctx.hasAccess = true;
             ctx.isEmergencyAccess = false;
             ctx.accessProvenance = 'DIRECT_SHARE';

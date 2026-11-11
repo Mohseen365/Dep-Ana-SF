@@ -1,5 +1,5 @@
 /**
- * Agent 10: Phase 1 Hardened Security & Ingestion Lifecycle Test Runner (v1.0.2)
+ * Agent 10: Phase 1 Hardened Security & Ingestion Lifecycle Test Runner (v1.0.2 Final)
  * Validates hardened contracts for Agent 1 (DAProjectSecurityService v1.0.2)
  * and Agent 2 (DAGraphIngestionService v1.0.2) offline.
  */
@@ -97,6 +97,10 @@ runTest('1.9 Revocation transaction resilience and append-only audit evidence', 
     assert(secCode.includes('cleanupShareRow'), 'Must have cleanupShareRow helper with grant awareness');
 });
 
+runTest('1.10 Direct share preservation during emergency share cleanup', () => {
+    assert(secCode.includes('remainingActiveGrants'), 'cleanupShareRow must inspect remaining grants before deleting shares');
+});
+
 // ===================================================================
 // SUITE 2: Agent 2 Lifecycle & Persistence Interface v1.0.2 Hardening
 // ===================================================================
@@ -153,6 +157,10 @@ runTest('2.8 Payload size units and wire ceilings reconciled', () => {
 runTest('2.9 Last-known-good graph preserved on incomplete or failed runs', () => {
     assert(ingCode.includes('Status__c = :STATUS_AVAILABLE'), 'getLatestAvailableRun must query strictly AVAILABLE runs');
     assert(!ingCode.includes('Status__c = :STATUS_IN_PROGRESS'), 'Must exclude in-progress runs');
+});
+
+runTest('2.10 Prohibit chunk uploads to terminal EMPTY run', () => {
+    assert(ingCode.includes('run.Status__c == STATUS_EMPTY'), 'saveGraphChunks must reject uploads to EMPTY runs');
 });
 
 // ===================================================================

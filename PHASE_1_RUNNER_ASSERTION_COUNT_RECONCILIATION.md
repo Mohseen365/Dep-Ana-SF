@@ -18,7 +18,7 @@ In the Phase 1 test execution audit, two competing historical figures were origi
 
 This created an apparent arithmetic discrepancy of **14**.
 
-Furthermore, to provide dedicated offline coverage of hardened Agent 1 and Agent 2 contracts, a 32nd runner (`run-phase1-hardened-contracts-tests.cjs`) was implemented by Agent 10, executing 22 dedicated security and lifecycle contract tests under v1.0.2.
+Furthermore, to provide dedicated offline coverage of hardened Agent 1 and Agent 2 contracts, a 32nd runner (`run-phase1-hardened-contracts-tests.cjs`) was implemented by Agent 10, executing 24 dedicated security and lifecycle contract tests under v1.0.2.
 
 ---
 
@@ -46,7 +46,7 @@ Forensic examination of test runner logs and historical documents reveals the ex
 ### 2.3 Dedicated Hardened Contracts Suite Addition (32nd Runner)
 To test the Agent 1 and Agent 2 v1.0.2 hardened contracts offline:
 - Added runner: `scratch/salesforce-poc/tests/run-phase1-hardened-contracts-tests.cjs`.
-- Reports: **22 passed tests** covering:
+- Reports: **24 passed tests** covering:
   - Grant creation approval enforcement & separation of duties (issuer != approver, recipient != approver, missing approval fail-closed).
   - Principal substitution rejection and restricted trusted internal caller boundary.
   - Direct share vs emergency grant provenance distinction.
@@ -61,9 +61,9 @@ To test the Agent 1 and Agent 2 v1.0.2 hardened contracts offline:
 | Metric Category | Baseline (31 Runners) | Current v1.0.2 (32 Runners) | Status | Explanation |
 |---|---|---|---|---|
 | Total Runner Scripts on Disk | 31 | **32** | Verified | Added `run-phase1-hardened-contracts-tests.cjs` |
-| Standalone Runner Tests (`PASS_REPRODUCED`) | 345 | **367** | Verified | $345 + 22$ new dedicated contract tests |
+| Standalone Runner Tests (`PASS_REPRODUCED`) | 345 | **369** | Verified | $345 + 24$ new dedicated contract tests |
 | Wrapper Runner Tests (`DUPLICATE_OR_WRAPPER`) | 48 | **48** | Verified | 16 in coordinator suite + 32 in wave 4 suite |
-| Cumulative Reported Test Units | **393** | **415** | Verified | Total across all runners on disk ($367 + 48 = 415$) |
+| Cumulative Reported Test Units | **393** | **417** | Verified | Total across all runners on disk ($369 + 48 = 417$) |
 | Narrative Summary Claim in Old Docs | **407** | Retracted | Retracted | $393 + 14$ double-count of `run-b4-security-tests.cjs` |
 | Unresolved Arithmetic Discrepancy | **0** | **0** | Resolved | The historical delta of 14 is fully accounted for |
 
@@ -73,8 +73,8 @@ To test the Agent 1 and Agent 2 v1.0.2 hardened contracts offline:
 
 To ensure strict precision across all Phase 1 documentation, the following standardized terms and counts are established:
 - **Runner count**: **32** runner scripts (`scratch/salesforce-poc/tests/run-*.cjs`), all executing with exit code 0.
-- **Standalone reported test units**: **367** passed test units across the 30 standalone runners.
+- **Standalone reported test units**: **369** passed test units across the 30 standalone runners.
 - **Wrapper aggregate units**: **48** passed units across the 2 wrapper runners (`run-coordinator-integration-suite.cjs` [16] and `run-wave4-integration-suite.cjs` [32]).
-- **Total reported units**: **415** passed units across all 32 scripts.
+- **Total reported units**: **417** passed units across all 32 scripts.
 - **Historical baseline reference**: **393** cumulative reported units across the 31 original scripts ($345$ standalone + $48$ wrapper).
 - **Spurious Claim of 407**: Retracted and confirmed as an arithmetic double-count of `run-b4-security-tests.cjs` (14).
