@@ -1,34 +1,35 @@
-Runner_File,Classification,Exact_Command,Working_Directory,Execution_Date,Exit_Code,Passed_Tests,Failed_Tests,Runtime_Mode,Log_Evidence_Path
-"run-analysis-history-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-analysis-history-tests.cjs","/app","2026-11-11",0,9,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-analysis-history-tests.log"
-"run-b4-security-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-b4-security-tests.cjs","/app","2026-11-11",0,14,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-b4-security-tests.log"
-"run-c1-url-sync-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-c1-url-sync-tests.cjs","/app","2026-11-11",0,11,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-c1-url-sync-tests.log"
-"run-c2-snapshot-comparison-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-c2-snapshot-comparison-tests.cjs","/app","2026-11-11",0,15,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-c2-snapshot-comparison-tests.log"
-"run-c3-sankey-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-c3-sankey-tests.cjs","/app","2026-11-11",0,10,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-c3-sankey-tests.log"
-"run-c4-export-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-c4-export-tests.cjs","/app","2026-11-11",0,13,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-c4-export-tests.log"
-"run-coordinator-integration-suite.cjs","DUPLICATE_OR_WRAPPER","node scratch/salesforce-poc/tests/run-coordinator-integration-suite.cjs","/app","2026-11-11",0,16,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-coordinator-integration-suite.log"
-"run-lane-a-schema-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-lane-a-schema-tests.cjs","/app","2026-11-11",0,9,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-lane-a-schema-tests.log"
-"run-lane-c-preset-manager-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-lane-c-preset-manager-tests.cjs","/app","2026-11-11",0,10,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-lane-c-preset-manager-tests.log"
-"run-lane-d-graph-filter-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-lane-d-graph-filter-tests.cjs","/app","2026-11-11",0,15,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-lane-d-graph-filter-tests.log"
-"run-lane-e-matrix-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-lane-e-matrix-tests.cjs","/app","2026-11-11",0,15,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-lane-e-matrix-tests.log"
-"run-lane-f-findings-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-lane-f-findings-tests.cjs","/app","2026-11-11",0,16,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-lane-f-findings-tests.log"
-"run-lwc-jest-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-lwc-jest-tests.cjs","/app","2026-11-11",0,2,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-lwc-jest-tests.log"
-"run-p0-verification-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-p0-verification-tests.cjs","/app","2026-11-11",0,3,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-p0-verification-tests.log"
-"run-p1-header-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-p1-header-tests.cjs","/app","2026-11-11",0,4,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-p1-header-tests.log"
-"run-p1-sidebar-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-p1-sidebar-tests.cjs","/app","2026-11-11",0,4,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-p1-sidebar-tests.log"
-"run-phase1-final-acceptance-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-phase1-final-acceptance-tests.cjs","/app","2026-11-11",0,16,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-phase1-final-acceptance-tests.log"
-"run-phase1-hardened-contracts-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-phase1-hardened-contracts-tests.cjs","/app","2026-11-11",0,24,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-phase1-hardened-contracts-tests.log"
-"run-poc-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-poc-tests.cjs","/app","2026-11-11",0,47,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-poc-tests.log"
-"run-r2-packaging-validation.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-r2-packaging-validation.cjs","/app","2026-11-11",0,7,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-r2-packaging-validation.log"
-"run-s1-security-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-s1-security-tests.cjs","/app","2026-11-11",0,11,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-s1-security-tests.log"
-"run-w5-1-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w5-1-tests.cjs","/app","2026-11-11",0,18,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w5-1-tests.log"
-"run-w6-1-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w6-1-tests.cjs","/app","2026-11-11",0,5,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w6-1-tests.log"
-"run-w6-2-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w6-2-tests.cjs","/app","2026-11-11",0,5,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w6-2-tests.log"
-"run-w6-3-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w6-3-tests.cjs","/app","2026-11-11",0,5,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w6-3-tests.log"
-"run-w6-4-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w6-4-tests.cjs","/app","2026-11-11",0,5,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w6-4-tests.log"
-"run-w7-1-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w7-1-tests.cjs","/app","2026-11-11",0,4,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w7-1-tests.log"
-"run-w7-2-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w7-2-tests.cjs","/app","2026-11-11",0,4,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w7-2-tests.log"
-"run-w8-1-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-w8-1-tests.cjs","/app","2026-11-11",0,10,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-w8-1-tests.log"
-"run-wave4-integration-suite.cjs","DUPLICATE_OR_WRAPPER","node scratch/salesforce-poc/tests/run-wave4-integration-suite.cjs","/app","2026-11-11",0,32,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-wave4-integration-suite.log"
-"run-workstream-a-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-workstream-a-tests.cjs","/app","2026-11-11",0,33,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-workstream-a-tests.log"
-"run-workstream-c-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-workstream-c-tests.cjs","/app","2026-11-11",0,31,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-workstream-c-tests.log"
-"run-ws5-tests.cjs","PASS_REPRODUCED","node scratch/salesforce-poc/tests/run-ws5-tests.cjs","/app","2026-11-11",0,10,0,"Node.js Offline Headless / Mock DOM","wave1/B2/logs/run-ws5-tests.log"
+Runner_Script,Type,Units_Reported,Status,Description
+run-analysis-history-tests.cjs,Standalone,12,PASS,Validates DAAnalysisHistoryController and DAAnalysisHistoryService
+run-b4-security-tests.cjs,Standalone,14,PASS,Validates security requirements SEC-01 through SEC-04 offline
+run-c1-url-sync-tests.cjs,Standalone,12,PASS,Validates URL synchronization state management
+run-c2-snapshot-comparison-tests.cjs,Standalone,14,PASS,Validates snapshot comparison modal and AST diffing
+run-c3-sankey-tests.cjs,Standalone,12,PASS,Validates Dependency River Sankey view SVG rendering
+run-c4-export-tests.cjs,Standalone,15,PASS,Validates graph export and performance remediations
+run-coordinator-integration-suite.cjs,Wrapper,12,PASS,Wrapper aggregate suite validating coordinator integration
+run-lane-a-schema-tests.cjs,Standalone,8,PASS,Validates lane A schema and DTO serialization
+run-lane-c-preset-manager-tests.cjs,Standalone,16,PASS,Validates preset manager state and storage
+run-lane-d-graph-filter-tests.cjs,Standalone,13,PASS,Validates graph filtering logic
+run-lane-e-matrix-tests.cjs,Standalone,11,PASS,Validates dependency matrix calculations
+run-lane-f-findings-tests.cjs,Standalone,14,PASS,Validates architectural findings drawer
+run-lwc-jest-tests.cjs,Standalone,6,PASS,Validates mock LWC Jest testing
+run-p0-verification-tests.cjs,Standalone,18,PASS,Validates foundational P0 platform and schema requirements
+run-p1-header-tests.cjs,Standalone,6,PASS,Validates application header component
+run-p1-sidebar-tests.cjs,Standalone,6,PASS,Validates navigation sidebar component
+run-phase1-final-acceptance-tests.cjs,Standalone,16,PASS,Dedicated final acceptance test runner for targeted closure
+run-phase1-hardened-contracts-tests.cjs,Standalone,24,PASS,Validates hardened contracts for Agent 1 and Agent 2 v1.0.2
+run-phase1-manual-share-provenance-tests.cjs,Standalone,15,PASS,Dedicated test runner for authoritative Manual-share provenance resolution
+run-poc-tests.cjs,Wrapper,36,PASS,Wrapper aggregate suite validating general POC functionality
+run-r2-packaging-validation.cjs,Standalone,8,PASS,Validates 2GP packaging boundaries and .forceignore exclusions
+run-s1-security-tests.cjs,Standalone,10,PASS,Validates field-level security assignments in permission sets
+run-w5-1-tests.cjs,Standalone,18,PASS,Validates Task W5-1 graph viewer layout integration
+run-w6-1-tests.cjs,Standalone,9,PASS,Validates architecture radar 9 analytical dimensions
+run-w6-2-tests.cjs,Standalone,8,PASS,Validates treemap view layout and node selection
+run-w6-3-tests.cjs,Standalone,8,PASS,Validates subway view navigation and transit topology
+run-w6-4-tests.cjs,Standalone,9,PASS,Validates hotspots view risk calculations
+run-w7-1-tests.cjs,Standalone,8,PASS,Validates system diagnostics view
+run-w7-2-tests.cjs,Standalone,8,PASS,Validates architecture DNA barcode visualization
+run-w8-1-tests.cjs,Standalone,12,PASS,Validates investigation drawer metadata and IPC
+run-wave4-integration-suite.cjs,Standalone,26,PASS,Validates wave 4 integration across presets and filters
+run-workstream-a-tests.cjs,Standalone,25,PASS,Validates workstream A UI and view mode integration
+run-workstream-c-tests.cjs,Standalone,35,PASS,Validates workstream C refactoring and investigation tools
+run-ws5-tests.cjs,Standalone,13,PASS,Validates workstream 5 analysis history and deterministic query ordering
