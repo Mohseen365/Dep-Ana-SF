@@ -1,16 +1,20 @@
 /**
- * Comprehensive Test Suite for Agent 7 Project Creation & Import Workflow (GAP-WKF-02)
+ * Comprehensive Test Suite for Agent 7 Project Creation & Import Workflow (GAP-WKF-02 / STAGE J)
  *
  * Scenarios tested:
  * 1. Project creation with validation (name, slug/key, description).
  * 2. Duplicate project key detection and rejection.
  * 3. Project selector list & auto-selection lifecycle.
- * 4. Security authorization enforcement via DAProjectSecurityService.
+ * 4. Security authorization enforcement via DAProjectSecurityService (Private OWD).
  * 5. Ingestion payload chunking (<= 131,072 code units) and SHA-256 calculation.
- * 6. Dynamic upload progress tracking and batch dispatch.
+ * 6. Dynamic upload progress tracking (0% to 100%) and batch dispatch.
  * 7. Failure handling and retry mechanism.
  * 8. Completion and workspace navigation event dispatching (projectcreated, importcomplete).
  * 9. Cross-project isolation and multi-project independence.
+ * 10. STAGE J: Import cancellation guards (modal close blocked while in-flight).
+ * 11. STAGE J: Empty project creation and empty analysis run behavior.
+ * 12. STAGE J: Existing project reopening via DAGraphController.resolveProject.
+ * 13. STAGE J: Single authoritative persistence path (absence of competing persistence engines).
  */
 
 const fs = require('fs');
@@ -19,7 +23,7 @@ const assert = require('assert');
 const crypto = require('crypto');
 
 console.log('===================================================================');
-console.log('Running Agent 7 Project Creation & Import Workflow Test Suite...');
+console.log('Running Agent 7 Project Creation & Import Workflow Test Suite (Stage J)...');
 console.log('===================================================================');
 
 let passes = 0;
@@ -46,6 +50,8 @@ const SELECTOR_JS = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/
 const SELECTOR_HTML = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/lwc/daProjectSelector/daProjectSelector.html');
 const CONTROLLER_CLS = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/classes/controllers/DAProjectController.cls');
 const CONTROLLER_TEST_CLS = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/classes/tests/DAProjectControllerTest.cls');
+const GRAPH_CONTROLLER_CLS = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/classes/controllers/DAGraphController.cls');
+const INGESTION_SERVICE_CLS = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls');
 
 // ===================================================================
 // SUITE 1: Static Bundle Integrity & Metadata Presence
@@ -106,6 +112,12 @@ runTest('3.1 Controller queries Project_Key__c with USER_MODE to prevent duplica
     assert(clsCode.includes('already exists'), 'Must return descriptive error for duplicates');
 });
 
+runTest('3.2 UI Modal validates projectKey availability and blocks submission on duplicate', () => {
+    const jsCode = fs.readFileSync(MODAL_JS, 'utf8');
+    assert(jsCode.includes('this.keyAvailable === false'), 'Must disable or reject when key is unavailable');
+    assert(jsCode.includes('isImportDisabled'), 'Must compute disabled state based on keyAvailable');
+});
+
 // ===================================================================
 // SUITE 4: Security Authorization & Project Isolation
 // ===================================================================
@@ -116,6 +128,12 @@ runTest('4.1 Controller integrates DAProjectSecurityService for ANALYSIS_UPLOAD 
     assert(clsCode.includes('DAProjectSecurityService.validateProjectAccessForCurrentUser'), 'Must validate user project access');
     assert(clsCode.includes('SCOPE_ANALYSIS_UPLOAD'), 'Must check for SCOPE_ANALYSIS_UPLOAD');
     assert(clsCode.includes('auth.hasAccess'), 'Must fail-closed when access is denied');
+});
+
+runTest('4.2 Private OWD compatibility and user-mode DML insertion', () => {
+    const clsCode = fs.readFileSync(CONTROLLER_CLS, 'utf8');
+    assert(clsCode.includes('insert as user newProject'), 'Must perform insert as user for OWD ownership');
+    assert(clsCode.includes('with sharing class DAProjectController'), 'Must declare with sharing');
 });
 
 // ===================================================================
@@ -171,6 +189,13 @@ runTest('6.1 Modal tracks progress from 0% to 100% and implements retry mechanis
     assert(htmlCode.includes('onclick={handleRetry}'), 'HTML must have retry button binding');
 });
 
+runTest('6.2 Import cancellation guard prevents modal closure while upload in-flight', () => {
+    const jsCode = fs.readFileSync(MODAL_JS, 'utf8');
+    // close() method must check this.isImporting
+    assert(jsCode.includes('if (this.isImporting)'), 'Must check isImporting in close()');
+    assert(jsCode.includes('return; // Prevent closing while upload in flight'), 'Must block closing during active import');
+});
+
 // ===================================================================
 // SUITE 7: Custom Event Dispatching & Workspace Navigation
 // ===================================================================
@@ -213,6 +238,54 @@ runTest('8.1 Projects maintain isolated Project_Key__c and prevent crosstalk', (
     assert.strictEqual(resolve('project-alpha').id, projectA.id);
     assert.strictEqual(resolve('project-beta').id, projectB.id);
     assert.strictEqual(resolve('unknown-key'), undefined);
+});
+
+// ===================================================================
+// SUITE 9: Stage J Reopening & Empty Project Handling
+// ===================================================================
+console.log('\n[Suite 9: Stage J Reopening & Empty Project Handling]');
+
+runTest('9.1 Existing project reopening via DAGraphController.resolveProject (strict two-step)', () => {
+    const graphCtrlCode = fs.readFileSync(GRAPH_CONTROLLER_CLS, 'utf8');
+    assert(graphCtrlCode.includes('public static DA_Project__c resolveProject(String projectIdOrKey)'), 'Must define resolveProject');
+    assert(graphCtrlCode.includes('isValidId(projectIdOrKey)'), 'Must check valid Id format first');
+    assert(graphCtrlCode.includes('WHERE Id = :projectIdOrKey'), 'Step 1: Query by record ID');
+    assert(graphCtrlCode.includes('WHERE Project_Key__c = :projectIdOrKey'), 'Step 2: Fall back to Project_Key__c');
+    assert(graphCtrlCode.includes('WITH USER_MODE'), 'Must enforce USER_MODE');
+});
+
+runTest('9.2 Empty project creation preserves project record without manifest', () => {
+    const jsCode = fs.readFileSync(MODAL_JS, 'utf8');
+    // If manifestPayload is null, project is still created, but chunks upload is bypassed
+    assert(jsCode.includes('if (this.manifestPayload)'), 'Upload stage must be guarded by manifest presence');
+    assert(jsCode.includes('this.dispatchEvent(new CustomEvent(\'projectcreated\''), 'Must still dispatch projectcreated');
+});
+
+runTest('9.3 Canonical DAGraphIngestionService enforces explicit EMPTY run lifecycle semantics', () => {
+    const ingestionCode = fs.readFileSync(INGESTION_SERVICE_CLS, 'utf8');
+    assert(ingestionCode.includes('STATUS_EMPTY = \'EMPTY\''), 'Must define STATUS_EMPTY');
+    assert(ingestionCode.includes('expectedChunks != null && expectedChunks == 0'), 'Explicit 0 chunks required for empty initialization');
+    assert(ingestionCode.includes('expectedTotalBytes != null && expectedTotalBytes == 0'), 'Explicit 0 bytes required for empty initialization');
+});
+
+// ===================================================================
+// SUITE 10: Absence of Competing Persistence Paths (One Ingestion Service)
+// ===================================================================
+console.log('\n[Suite 10: Absence of Competing Persistence Paths]');
+
+runTest('10.1 DAProjectController delegates chunk persistence exclusively to DAGraphIngestionService', () => {
+    const controllerCode = fs.readFileSync(CONTROLLER_CLS, 'utf8');
+    assert(controllerCode.includes('DAGraphIngestionService.saveGraphChunks'), 'Must delegate chunk saving to DAGraphIngestionService');
+    assert(controllerCode.includes('DAGraphIngestionService.finalizeAnalysisRunWithResult'), 'Must delegate finalization to DAGraphIngestionService');
+    // Ensure no direct DML on DA_Graph_Chunk__c inside DAProjectController
+    assert(!controllerCode.includes('insert as user toInsert'), 'DAProjectController must not directly insert chunk records');
+    assert(!controllerCode.includes('insert as user chunk'), 'DAProjectController must not directly insert chunk records');
+});
+
+runTest('10.2 Chunk key identity format (<RunId>_<ChunkIndex>) is uniquely enforced in canonical service', () => {
+    const ingestionCode = fs.readFileSync(INGESTION_SERVICE_CLS, 'utf8');
+    assert(ingestionCode.includes("String chunkKey = runId + '_' + targetIndex;"), 'Chunk key must follow <RunId>_<ChunkIndex>');
+    assert(ingestionCode.includes('Chunk_Key__c = chunkKey'), 'Must assign unique Chunk_Key__c');
 });
 
 // ===================================================================
