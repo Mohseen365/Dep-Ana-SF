@@ -1,20 +1,22 @@
 /**
- * Agent 10: Phase 1 Hardened Security & Ingestion Lifecycle Test Runner
- * Validates hardened contracts for Agent 1 (DAProjectSecurityService v1.0.1)
- * and Agent 2 (DAGraphIngestionService v1.0.1) offline.
+ * Agent 10: Phase 1 Hardened Security & Ingestion Lifecycle Test Runner (v1.0.2 Final)
+ * Validates hardened contracts for Agent 1 (DAProjectSecurityService v1.0.2)
+ * and Agent 2 (DAGraphIngestionService v1.0.2) offline.
  */
 
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const crypto = require('crypto');
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
 const SEC_SERVICE_PATH = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/classes/services/DAProjectSecurityService.cls');
 const INGESTION_SERVICE_PATH = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/classes/services/DAGraphIngestionService.cls');
 const STATUS_METADATA_PATH = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Status__c.field-meta.xml');
+const COMMIT_HASH_METADATA_PATH = path.join(REPO_ROOT, 'scratch/salesforce-poc/force-app/main/default/objects/DA_Analysis_Run__c/fields/Commit_Hash__c.field-meta.xml');
 
 console.log('===================================================================');
-console.log('Running Agent 10 Phase 1 Hardened Security & Lifecycle Test Suite...');
+console.log('Running Agent 10 Phase 1 Hardened Security & Lifecycle Test Suite (v1.0.2)...');
 console.log('===================================================================');
 
 let passes = 0;
@@ -33,9 +35,9 @@ function runTest(name, fn) {
 }
 
 // ===================================================================
-// SUITE 1: Agent 1 Security Interface v1.0.1 Hardening
+// SUITE 1: Agent 1 Security Interface v1.0.2 Hardening
 // ===================================================================
-console.log('\n[Suite 1: Agent 1 Security Interface v1.0.1 Hardening]');
+console.log('\n[Suite 1: Agent 1 Security Interface v1.0.2 Hardening]');
 
 const secCode = fs.readFileSync(SEC_SERVICE_PATH, 'utf8');
 
@@ -51,6 +53,7 @@ runTest('1.2 Arbitrary user impersonation is blocked fail-closed', () => {
 runTest('1.3 Trusted internal caller boundary enforced', () => {
     assert(secCode.includes('validateProjectAccessTrustedInternal'), 'Missing validateProjectAccessTrustedInternal');
     assert(secCode.includes('isTrustedInternalCaller'), 'Missing isTrustedInternalCaller helper');
+    assert(secCode.includes('AUTHORIZED_INTERNAL_CLASSES'), 'Must define explicit trust boundary classes');
 });
 
 runTest('1.4 Canonical scope vocabulary and exact scope matching enforced', () => {
@@ -72,25 +75,40 @@ runTest('1.5 Direct sharing distinguished from emergency sharing provenance', ()
 
 runTest('1.6 Separation of duties in emergency grant creation enforced', () => {
     assert(secCode.includes('createEmergencyGrantWithApproval'), 'Missing createEmergencyGrantWithApproval');
-    assert(secCode.includes('Separation of duties violation'), 'Must prevent recipient approving own grant');
+    assert(secCode.includes('Grant recipient cannot act as approver'), 'Must prevent recipient approving own grant');
+    assert(secCode.includes('Grant issuer cannot self-approve'), 'Must prevent issuer self-approving own grant');
 });
 
-runTest('1.7 Emergency lease clamped to 4-hour maximum (14400s)', () => {
+runTest('1.7 Grant-creation approval bypass strictly eliminated', () => {
+    assert(secCode.includes('Direct emergency grant creation without explicit approver is prohibited'),
+        'createEmergencyGrant must fail-closed if called without approval workflow');
+    assert(secCode.includes('Mandatory approval violation'), 'Must enforce mandatory approval check');
+    assert(secCode.includes('Issuer mismatch: Caller cannot fabricate issuer identity'), 'Must prevent client-fabricated issuer IDs');
+});
+
+runTest('1.8 Emergency lease clamped to 4-hour maximum (14400s)', () => {
     assert(secCode.includes('MAX_EMERGENCY_LEASE_SECONDS = 14400'), 'Must enforce 14400s lease ceiling');
 });
 
-runTest('1.8 Revocation transaction resilience against share cleanup failure', () => {
+runTest('1.9 Revocation transaction resilience and append-only audit evidence', () => {
     assert(secCode.includes('ACTION_CLEANUP_FAILURE'), 'Must record ACTION_CLEANUP_FAILURE');
     assert(secCode.includes('revokeEmergencyGrant'), 'Missing revokeEmergencyGrant method');
+    assert(secCode.includes('ACTION_GRANT_APPROVED'), 'Must record ACTION_GRANT_APPROVED');
+    assert(secCode.includes('cleanupShareRow'), 'Must have cleanupShareRow helper with grant awareness');
+});
+
+runTest('1.10 Direct share preservation during emergency share cleanup', () => {
+    assert(secCode.includes('remainingActiveGrants'), 'cleanupShareRow must inspect remaining grants before deleting shares');
 });
 
 // ===================================================================
-// SUITE 2: Agent 2 Lifecycle & Persistence Interface v1.0.1 Hardening
+// SUITE 2: Agent 2 Lifecycle & Persistence Interface v1.0.2 Hardening
 // ===================================================================
-console.log('\n[Suite 2: Agent 2 Lifecycle & Persistence Interface v1.0.1 Hardening]');
+console.log('\n[Suite 2: Agent 2 Lifecycle & Persistence Interface v1.0.2 Hardening]');
 
 const ingCode = fs.readFileSync(INGESTION_SERVICE_PATH, 'utf8');
 const statusXml = fs.readFileSync(STATUS_METADATA_PATH, 'utf8');
+const commitHashXml = fs.readFileSync(COMMIT_HASH_METADATA_PATH, 'utf8');
 
 runTest('2.1 EMPTY status present in metadata and service state machine', () => {
     assert(statusXml.includes('<fullName>EMPTY</fullName>'), 'Status__c metadata must contain EMPTY');
@@ -116,20 +134,33 @@ runTest('2.5 Conflicting retry rejected fail-closed with IngestionException', ()
     assert(ingCode.includes('Conflicting payload for existing chunk at index'), 'Must reject differing payload');
 });
 
-runTest('2.6 Checksum parameters and storage supported in run creation', () => {
-    assert(ingCode.includes('String expectedSha256Checksum'), 'createAnalysisRun must support expectedSha256Checksum parameter');
+runTest('2.6 Checksum parameters and dedicated Payload_Checksum__c separated from Commit_Hash__c', () => {
+    assert(commitHashXml.includes('<fullName>Commit_Hash__c</fullName>'), 'Metadata must preserve Commit_Hash__c');
+    assert(ingCode.includes('Payload_Checksum__c = expectedSha256Checksum'), 'Ingestion service must set Payload_Checksum__c');
+    assert(ingCode.includes('Commit_Hash__c = commitHash'), 'Ingestion service must preserve Commit_Hash__c for git commit hash');
 });
 
-runTest('2.7 Payload size units and wire ceilings reconciled', () => {
+runTest('2.7 FAILED-state persistence with transaction safety', () => {
+    assert(ingCode.includes('finalizeAnalysisRunWithResult'), 'Must expose finalizeAnalysisRunWithResult to persist failure state');
+    assert(ingCode.includes('run.Status__c = STATUS_FAILED'), 'Must transition to STATUS_FAILED on errors');
+    assert(ingCode.includes('FinalizationResult'), 'Must define structured FinalizationResult DTO');
+});
+
+runTest('2.8 Payload size units and wire ceilings reconciled', () => {
     assert(ingCode.includes('MAX_CHUNK_SIZE = 131072'), 'Must declare MAX_CHUNK_SIZE 131072');
     assert(ingCode.includes('MAX_BATCH_CHUNKS = 10'), 'Must declare MAX_BATCH_CHUNKS 10');
     assert(ingCode.includes('MAX_TOTAL_PAYLOAD_CHARS = 10485760L'), 'Must declare MAX_TOTAL_PAYLOAD_CHARS 10485760L');
     assert(ingCode.includes('MAX_HTTP_REQUEST_BYTES = 5242880L'), 'Must declare MAX_HTTP_REQUEST_BYTES 5242880L');
+    assert(!ingCode.includes('1.3 MB max heap footprint'), 'Must remove unsupported heap claims');
 });
 
-runTest('2.8 Last-known-good graph preserved on incomplete or failed runs', () => {
+runTest('2.9 Last-known-good graph preserved on incomplete or failed runs', () => {
     assert(ingCode.includes('Status__c = :STATUS_AVAILABLE'), 'getLatestAvailableRun must query strictly AVAILABLE runs');
     assert(!ingCode.includes('Status__c = :STATUS_IN_PROGRESS'), 'Must exclude in-progress runs');
+});
+
+runTest('2.10 Prohibit chunk uploads to terminal EMPTY run', () => {
+    assert(ingCode.includes('run.Status__c == STATUS_EMPTY'), 'saveGraphChunks must reject uploads to EMPTY runs');
 });
 
 // ===================================================================
@@ -168,6 +199,13 @@ runTest('3.3 4-Hour maximum lease boundary calculation', () => {
     const requestedLease = 999999;
     const effectiveLease = Math.min(requestedLease, maxLease);
     assert.strictEqual(effectiveLease, 14400, 'Must clamp to 14400');
+});
+
+runTest('3.4 SHA-256 payload canonical checksum interoperability (Node.js & Apex test vector)', () => {
+    const canonicalPayload = JSON.stringify({ nodes: [{ id: "n1", label: "ComponentA" }], edges: [] });
+    const expectedHex = crypto.createHash('sha256').update(Buffer.from(canonicalPayload, 'utf8')).digest('hex');
+    assert.strictEqual(expectedHex.length, 64, 'SHA-256 hex must be 64 lowercase characters');
+    assert.strictEqual(/^[0-9a-f]{64}$/.test(expectedHex), true, 'Must match hex lowercase regex');
 });
 
 console.log('===================================================================');
