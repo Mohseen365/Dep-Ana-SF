@@ -18,3 +18,118 @@
 .cy-container.zoom-near {
     /* Level-of-Detail (LOD): High-detail display at close zoom */
 }
+
+/* Hover Card Styling (GAP-WKF-04) */
+.graph-viewer-viewport {
+    position: relative;
+    width: 100%;
+}
+
+.graph-hover-card {
+    position: absolute;
+    width: 280px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    color: #f8fafc;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 10px;
+    z-index: 100;
+    pointer-events: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    animation: fadeIn 0.12s ease-in-out;
+}
+
+.hover-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #334155;
+    gap: 8px;
+}
+
+.hover-card-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: #f1f5f9;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hover-card-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hover-card-badge.risk-critical {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+.hover-card-badge.risk-high {
+    background-color: #991b1b;
+    color: #fca5a5;
+}
+
+.hover-card-badge.risk-medium {
+    background-color: #854d0e;
+    color: #fde047;
+}
+
+.hover-card-badge.risk-low {
+    background-color: #064e3b;
+    color: #6ee7b7;
+}
+
+.hover-card-badge.rel-type {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+}
+
+.hover-card-detail {
+    margin-bottom: 4px;
+    color: #cbd5e1;
+    word-break: break-all;
+}
+
+.hover-card-detail .label {
+    color: #94a3b8;
+    margin-right: 4px;
+}
+
+.hover-card-detail .value {
+    color: #f8fafc;
+}
+
+.hover-card-detail .divider {
+    margin: 0 6px;
+    color: #475569;
+}
+
+.hover-card-copy-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    font-size: 12px;
+    color: #38bdf8;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

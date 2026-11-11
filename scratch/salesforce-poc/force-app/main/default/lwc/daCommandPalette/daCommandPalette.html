@@ -1,0 +1,90 @@
+<template>
+    <template if:true={isOpen}>
+        <div
+            class="command-palette-backdrop"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command Palette"
+            data-testid="command-palette-overlay"
+            onclick={handleBackdropClick}
+        >
+            <div
+                class="command-palette-container"
+                onclick={handleContainerClick}
+                data-testid="command-palette-container"
+            >
+                <!-- Search Header -->
+                <div class="command-palette-header">
+                    <span class="command-palette-search-icon" aria-hidden="true">🔍</span>
+                    <input
+                        type="text"
+                        class="command-palette-input"
+                        placeholder="Type a command or search components..."
+                        value={searchQuery}
+                        oninput={handleSearchInput}
+                        onkeydown={handleInputKeyDown}
+                        aria-label="Search commands or components"
+                        aria-autocomplete="list"
+                        aria-controls="command-palette-listbox"
+                        role="combobox"
+                        aria-expanded="true"
+                        data-testid="command-palette-input"
+                    />
+                    <kbd class="command-palette-shortcut-hint">ESC to close</kbd>
+                </div>
+
+                <!-- Results Listbox -->
+                <div
+                    id="command-palette-listbox"
+                    class="command-palette-results"
+                    role="listbox"
+                    aria-label="Search suggestions"
+                    data-testid="command-palette-results"
+                >
+                    <template if:true={hasResults}>
+                        <template for:each={filteredItems} for:item="item">
+                            <div
+                                key={item.id}
+                                class={item.cssClass}
+                                role="option"
+                                aria-selected={item.isSelected}
+                                aria-disabled={item.disabled}
+                                data-id={item.id}
+                                onclick={handleItemClick}
+                                onmouseenter={handleItemMouseEnter}
+                                data-testid={item.testId}
+                            >
+                                <div class="command-palette-item-main">
+                                    <div class="command-palette-item-title">
+                                        <span>{item.icon}</span>
+                                        <span>{item.title}</span>
+                                    </div>
+                                    <template if:true={item.subtitle}>
+                                        <div class="command-palette-item-subtitle">{item.subtitle}</div>
+                                    </template>
+                                </div>
+                                <div class="command-palette-item-meta">
+                                    <template if:true={item.badge}>
+                                        <span class={item.badgeClass}>{item.badge}</span>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasResults}>
+                        <div class="command-palette-empty" data-testid="command-palette-empty">
+                            No matching commands or components found
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Footer Key Legend -->
+                <div class="command-palette-footer">
+                    <span><kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
+                    <span><kbd>↵</kbd> to select</span>
+                    <span><kbd>esc</kbd> to dismiss</span>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

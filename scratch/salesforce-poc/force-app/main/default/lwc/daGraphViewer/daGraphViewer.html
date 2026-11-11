@@ -91,7 +91,7 @@
                 </lightning-button-group>
             </div>
         </div>
-        <div class="slds-m-around_medium">
+        <div class="slds-m-around_medium graph-viewer-viewport">
             <template if:true={isLoading}>
                 <lightning-spinner alternative-text="Loading graph..." size="medium"></lightning-spinner>
             </template>
@@ -101,6 +101,70 @@
                 </div>
             </template>
             <div class="cy-container" lwc:dom="manual"></div>
+
+            <!-- Hover Card Overlay (GAP-WKF-04) -->
+            <template if:true={isHoverCardVisible}>
+                <div
+                    class="graph-hover-card"
+                    style={hoverCardStyle}
+                    role="tooltip"
+                    data-testid="graph-hover-card"
+                    onmouseleave={handleHoverCardLeave}
+                >
+                    <template if:true={hoveredNode}>
+                        <div class="hover-card-header">
+                            <span class="hover-card-title">{hoveredNode.title}</span>
+                            <span class={hoveredNode.badgeClass}>{hoveredNode.risk}</span>
+                        </div>
+                        <div class="hover-card-detail">
+                            <span class="label">Type:</span> <span class="value">{hoveredNode.type}</span>
+                            <template if:true={hoveredNode.layer}>
+                                <span class="divider">|</span>
+                                <span class="label">Layer:</span> <span class="value">{hoveredNode.layer}</span>
+                            </template>
+                        </div>
+                        <div class="hover-card-detail">
+                            <span class="label">Fan-In:</span> <span class="value">{hoveredNode.fanIn}</span>
+                            <span class="divider">|</span>
+                            <span class="label">Fan-Out:</span> <span class="value">{hoveredNode.fanOut}</span>
+                        </div>
+                        <template if:true={hoveredNode.file}>
+                            <div class="hover-card-detail" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{hoveredNode.file}</span>
+                                <button type="button" class="hover-card-copy-btn" title="Copy file path" onclick={handleCopyFilePath}>📋</button>
+                            </div>
+                        </template>
+                        <template if:true={hoveredNode.findingsCount}>
+                            <div class="hover-card-detail" style="margin-top: 6px; border-top: 1px solid #334155; padding-top: 4px; color: #f87171;">
+                                <span class="label">Findings:</span> <span class="value">⚠️ {hoveredNode.findingsCount} issue(s) ({hoveredNode.maxSeverity})</span>
+                            </div>
+                        </template>
+                    </template>
+
+                    <template if:true={hoveredEdge}>
+                        <div class="hover-card-header">
+                            <span class="hover-card-title">{hoveredEdge.title}</span>
+                            <span class="hover-card-badge rel-type">{hoveredEdge.relationshipType}</span>
+                        </div>
+                        <div class="hover-card-detail">
+                            <span class="label">From:</span> <span class="value">{hoveredEdge.source}</span>
+                        </div>
+                        <div class="hover-card-detail">
+                            <span class="label">To:</span> <span class="value">{hoveredEdge.target}</span>
+                        </div>
+                        <template if:true={hoveredEdge.evidence}>
+                            <div class="hover-card-detail">
+                                <span class="label">Evidence:</span> <span class="value">{hoveredEdge.evidence}</span>
+                            </div>
+                        </template>
+                        <template if:true={hoveredEdge.location}>
+                            <div class="hover-card-detail">
+                                <span class="label">Location:</span> <span class="value">{hoveredEdge.location}</span>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </template>
         </div>
     </lightning-card>
 </template>
