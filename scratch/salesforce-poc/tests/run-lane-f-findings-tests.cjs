@@ -41,7 +41,7 @@ async function runLaneFTests() {
         const filePath = path.resolve(__dirname, '../force-app/main/default/lwc/daFindingsView/daFindingsView.js');
         let code = fs.readFileSync(filePath, 'utf8');
 
-        code = code.replace(/import\s+\{[^}]+\}\s+from\s+['\"][^'\"]+['\"];?/g, '');
+        code = code.replace(/import\s+(?:\{[^}]+\}|[A-Za-z0-9_]+)\s+from\s+['\"][^'\"]+['\"];?/g, '');
         code = code.replace(/@api\s+/g, '');
         code = code.replace(/@track\s+/g, '');
         code = code.replace('export default class DaFindingsView', 'class DaFindingsView');

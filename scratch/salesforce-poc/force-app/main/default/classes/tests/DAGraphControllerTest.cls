@@ -157,4 +157,141 @@ private class DAGraphControllerTest {
             Assert.isTrue(true);
         }
     }
+
+    // =========================================================================
+    // AGENT 6: FINDING REVIEW PERSISTENCE TESTS
+    // =========================================================================
+
+    @IsTest
+    static void testFindingStatusTransitionsAndLifecycle() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
+        DA_Analysis_Run__c run = [SELECT Id FROM DA_Analysis_Run__c WHERE DA_Project__c = :proj.Id LIMIT 1];
+
+        DA_Finding__c finding = new DA_Finding__c(
+            DA_Analysis_Run__c = run.Id,
+            Name = 'Cyclic Reference in OrderService',
+            Finding_Key__c = 'finding-cycle-1',
+            Rule_Id__c = 'CIRCULAR_DEPENDENCY',
+            Severity__c = 'Critical',
+            Target_Node_Id__c = 'ApexClass:OrderService',
+            Status__c = 'OPEN'
+        );
+        insert finding;
+
+        Test.startTest();
+        // 1. Transition OPEN -> IN_REVIEW
+        DA_Finding__c updated1 = DAGraphController.updateFindingStatus(
+            proj.Id,
+            finding.Id,
+            'IN_REVIEW',
+            'Investigating decoupling with Interface',
+            null
+        );
+        Assert.areEqual('IN_REVIEW', updated1.Status__c);
+        Assert.areEqual(UserInfo.getName(), updated1.Reviewer__c);
+        Assert.isNotNull(updated1.Reviewed_At__c);
+        Assert.areEqual('Investigating decoupling with Interface', updated1.Review_Notes__c);
+
+        // 2. Transition IN_REVIEW -> RESOLVED
+        DA_Finding__c updated2 = DAGraphController.updateFindingStatus(
+            proj.Id,
+            finding.Id,
+            'RESOLVED',
+            'Decoupled via IOrderService',
+            null
+        );
+        Assert.areEqual('RESOLVED', updated2.Status__c);
+
+        // 3. Transition RESOLVED -> OPEN (Reopen)
+        DA_Finding__c updated3 = DAGraphController.updateFindingStatus(
+            proj.Id,
+            finding.Id,
+            'OPEN',
+            'Reopened due to regression',
+            null
+        );
+        Assert.areEqual('OPEN', updated3.Status__c);
+
+        // 4. Retrieve via paginated getFindingReviewStatuses
+        Map<String, Object> response = DAGraphController.getFindingReviewStatuses(proj.Id, 10, 0);
+        Assert.areEqual(proj.Id, (Id) response.get('projectId'));
+        Assert.areEqual(1, (Integer) response.get('totalCount'));
+        Map<String, Map<String, Object>> statusMap = (Map<String, Map<String, Object>>) response.get('statuses');
+        Assert.isTrue(statusMap.containsKey(finding.Id));
+        Assert.isTrue(statusMap.containsKey('finding-cycle-1'));
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void testFindingPersistenceDynamicUpsert() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
+
+        Test.startTest();
+        // Dynamic finding not yet in DB
+        DA_Finding__c created = DAGraphController.updateFindingStatus(
+            proj.Id,
+            'finding-risk-AccountController',
+            'IN_REVIEW',
+            'Adding unit test suite',
+            null
+        );
+        Test.stopTest();
+
+        Assert.isNotNull(created.Id);
+        Assert.areEqual('IN_REVIEW', created.Status__c);
+        Assert.areEqual('finding-risk-AccountController', created.Finding_Key__c);
+    }
+
+    @IsTest
+    static void testInvalidStatusTransitionRejection() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
+        DA_Analysis_Run__c run = [SELECT Id FROM DA_Analysis_Run__c WHERE DA_Project__c = :proj.Id LIMIT 1];
+
+        DA_Finding__c finding = new DA_Finding__c(
+            DA_Analysis_Run__c = run.Id,
+            Name = 'Hotspot Finding',
+            Finding_Key__c = 'finding-hotspot-1',
+            Rule_Id__c = 'HIGH_COUPLING',
+            Severity__c = 'Major',
+            Status__c = 'RESOLVED'
+        );
+        insert finding;
+
+        try {
+            Test.startTest();
+            // Invalid: RESOLVED -> WONT_FIX is prohibited
+            DAGraphController.updateFindingStatus(proj.Id, finding.Id, 'WONT_FIX', null, null);
+            Test.stopTest();
+            Assert.fail('Should have rejected invalid state transition RESOLVED -> WONT_FIX');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
+        }
+    }
+
+    @IsTest
+    static void testOptimisticConcurrencyConflictDetection() {
+        DA_Project__c proj = [SELECT Id FROM DA_Project__c LIMIT 1];
+        DA_Analysis_Run__c run = [SELECT Id FROM DA_Analysis_Run__c WHERE DA_Project__c = :proj.Id LIMIT 1];
+
+        DA_Finding__c finding = new DA_Finding__c(
+            DA_Analysis_Run__c = run.Id,
+            Name = 'Race Condition Target',
+            Finding_Key__c = 'finding-race-1',
+            Rule_Id__c = 'HIGH_COUPLING',
+            Severity__c = 'Major',
+            Status__c = 'OPEN'
+        );
+        insert finding;
+
+        try {
+            Test.startTest();
+            // Pass an expectedLastModified timestamp in the past (e.g. 1 hour ago)
+            Datetime staleTimestamp = Datetime.now().addHours(-1);
+            DAGraphController.updateFindingStatus(proj.Id, finding.Id, 'IN_REVIEW', 'Concurrent test', staleTimestamp);
+            Test.stopTest();
+            Assert.fail('Should have thrown CONCURRENCY_CONFLICT');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true);
+        }
+    }
 }
