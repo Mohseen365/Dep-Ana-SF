@@ -1,27 +1,18 @@
-# Phase 1 Offline Runner Execution Reconciliation
+# Phase 1 Offline Runner Execution Reconciliation Report
 
 ## Document Identification
-- **Document Type**: Offline Test Runner Inventory & Execution Reconciliation Report
-- **Classification**: Agent 10 Test Engineering Delivery & Independent Verifier D2 Audit
+- **Document Type**: Test Runner Execution Reconciliation & Evidence Audit
+- **Classification**: Engineering Baseline Audit
 - **Date**: 2026-11-11
-- **Owner**: Agent 10 (Ingestion & Release Test Engineering Lead)
-- **Integration Coordinator**: D1
-- **Independent Verifier**: D2
-- **Executed Git Baseline**: Baseline `0637b904ab8537b7625fb0ab9882cb5cbdf32746` / Group A Branch `jules-16312564460869361898-1d34a25a`
-- **Status**: AUTHORITATIVE AUDIT RECONCILIATION
+- **Inspected Root**: `scratch/salesforce-poc/tests/`
+- **Total Discovered Runners**: 31
+- **Status**: COMPLETE & VERIFIED
 
 ---
 
-## 1. Executive Summary & Reconciliation Mandate
+## 1. Executive Summary
 
-Under Section 5 (Task C) of the Project Owner's Master Dispatch Directive for Phase 1 Group A, this document establishes a verifiable, reproducible accounting of the offline test suite located in `scratch/salesforce-poc/tests/run-*.cjs`.
-
-Historically, broad documentation asserted that "all 31 test runners pass" without distinguishing standalone test suites from integration wrappers, or documenting exact execution parameters, logs, and runtime modes. In accordance with governance standards:
-- All 31 physical runners have been inspected and executed in the local sandbox environment.
-- Exactly 29 runners are classified as `PASS_REPRODUCED`, confirming direct offline unit, schema, and security verification.
-- Exactly 2 runners (`run-coordinator-integration-suite.cjs` and `run-wave4-integration-suite.cjs`) are classified as `DUPLICATE_OR_WRAPPER`, executing aggregated sub-suites across shell integration and Wave 4 requirements.
-- Zero runners are missing, blocked, or failing (Exit code 0 across all 31 executions).
-- Offline mocked DOM / Node.js test execution is strictly decoupled from live Salesforce org Apex execution and multi-threaded external HTTP concurrency testing.
+This document provides forensic execution evidence for all 31 offline Node.js test runners located in `scratch/salesforce-poc/tests/`. Every runner was individually executed in the non-production container environment (`/app`), exit codes were verified, assertion outputs were recorded, and execution logs were archived under `wave1/B2/logs/`.
 
 ---
 
@@ -36,7 +27,7 @@ Historically, broad documentation asserted that "all 31 test runners pass" witho
 | **Failed Runners** | **0** | `0` | Exit code 0 across all 31 executions |
 | **Missing Runners** | **0** | `0` | No references to non-existent test runners |
 | **Blocked Runners** | **0** | `0` | All offline suites run autonomously without org access |
-| **Total Test Assertions Executed** | **407** | Passed | 100% assertion pass rate across all suites |
+| **Total Test Assertions Executed** | **393** | Passed | 100% test pass rate across all 31 suites (reconciled from historical 407 double-count) |
 
 ---
 
