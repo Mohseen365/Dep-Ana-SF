@@ -47,6 +47,16 @@ export default class DaGraphViewer extends LightningElement {
     _userPref = null;
     _currentLayout = 'breadthfirst'; // Default standard layout
 
+    // Hover card state (GAP-WKF-04)
+    @track hoveredNode = null;
+    @track hoveredEdge = null;
+    @track hoverCardX = 0;
+    @track hoverCardY = 0;
+    @track isHoverCardVisible = false;
+
+    hoverDebounceTimer = null;
+    _boundKeyHandler = null;
+
     @api
     get recordId() {
         return this._recordId;
@@ -136,6 +146,10 @@ export default class DaGraphViewer extends LightningElement {
         return this._currentLayout === 'constellation' ? 'brand' : 'neutral';
     }
 
+    get hoverCardStyle() {
+        return `left: ${this.hoverCardX}px; top: ${this.hoverCardY}px;`;
+    }
+
     /**
      * Canonical layout resolution with graceful fallback for external/unavailable engines like Dagre.
      */
@@ -153,6 +167,171 @@ export default class DaGraphViewer extends LightningElement {
             return lower;
         }
         return 'breadthfirst';
+    }
+
+    // =========================================================================
+    // Hover Card Logic (GAP-WKF-04)
+    // =========================================================================
+
+    scheduleNodeHover(cyNode, renderedPosition) {
+        this.clearHoverTimer();
+        if (!cyNode) return;
+        const data = cyNode.data ? (typeof cyNode.data === 'function' ? cyNode.data() : cyNode.data) : {};
+        const nodeId = data.id || (typeof cyNode.id === 'function' ? cyNode.id() : cyNode.id);
+
+        // 200ms debounce to prevent visual jitter on rapid pointer movement
+        this.hoverDebounceTimer = setTimeout(() => {
+            this.showNodeHoverCard(nodeId, renderedPosition, cyNode);
+        }, 200);
+    }
+
+    scheduleEdgeHover(cyEdge, renderedPosition) {
+        this.clearHoverTimer();
+        if (!cyEdge) return;
+        const data = cyEdge.data ? (typeof cyEdge.data === 'function' ? cyEdge.data() : cyEdge.data) : {};
+        const edgeId = data.id || (typeof cyEdge.id === 'function' ? cyEdge.id() : cyEdge.id);
+
+        this.hoverDebounceTimer = setTimeout(() => {
+            this.showEdgeHoverCard(edgeId, renderedPosition, cyEdge);
+        }, 200);
+    }
+
+    scheduleHoverDismissal() {
+        this.clearHoverTimer();
+        this.hoverDebounceTimer = setTimeout(() => {
+            this.dismissHoverCard();
+        }, 150);
+    }
+
+    clearHoverTimer() {
+        if (this.hoverDebounceTimer) {
+            clearTimeout(this.hoverDebounceTimer);
+            this.hoverDebounceTimer = null;
+        }
+    }
+
+    dismissHoverCard() {
+        this.clearHoverTimer();
+        this.isHoverCardVisible = false;
+        this.hoveredNode = null;
+        this.hoveredEdge = null;
+    }
+
+    handleHoverCardLeave() {
+        this.dismissHoverCard();
+    }
+
+    handleCopyFilePath() {
+        if (this.hoveredNode && this.hoveredNode.file && typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(this.hoveredNode.file).catch(() => {});
+        }
+    }
+
+    showNodeHoverCard(nodeId, renderedPosition, cyNode) {
+        if (!nodeId || !this._rawGraphData) return;
+        const rawNode = this._rawGraphData.nodes?.find(n => n.id === nodeId);
+        const cyData = (cyNode && cyNode.data) ? (typeof cyNode.data === 'function' ? cyNode.data() : cyNode.data) : {};
+
+        const title = rawNode?.displayName || rawNode?.label || cyData.label || nodeId;
+        const type = rawNode?.type || cyData.type || 'Component';
+        const layer = rawNode?.layer || cyData.layer || '';
+        const risk = (rawNode?.risk || cyData.risk || 'LOW').toUpperCase();
+        const fanIn = rawNode?.metrics?.fanIn ?? cyData.fanIn ?? 0;
+        const fanOut = rawNode?.metrics?.fanOut ?? cyData.fanOut ?? 0;
+        const file = rawNode?.file || cyData.file || '';
+
+        // Match associated findings
+        const findings = (this._rawGraphData.findings || []).filter(f => f.nodeIds?.includes(nodeId) || f.targetNodeId === nodeId);
+        let maxSeverity = 'INFO';
+        if (findings.length > 0) {
+            const severityRank = { CRITICAL: 5, HIGH: 4, MEDIUM: 3, LOW: 2, INFO: 1 };
+            maxSeverity = findings.reduce((max, f) => {
+                const s = (f.severity || '').toUpperCase();
+                return (severityRank[s] || 0) > (severityRank[max] || 0) ? s : max;
+            }, (findings[0].severity || 'INFO').toUpperCase());
+        }
+
+        const badgeClass = `hover-card-badge risk-${risk.toLowerCase()}`;
+
+        this.hoveredEdge = null;
+        this.hoveredNode = {
+            id: nodeId,
+            title,
+            type,
+            layer,
+            risk,
+            badgeClass,
+            fanIn,
+            fanOut,
+            file,
+            findingsCount: findings.length,
+            maxSeverity
+        };
+
+        this.calculateHoverPosition(renderedPosition, cyNode);
+        this.isHoverCardVisible = true;
+    }
+
+    showEdgeHoverCard(edgeId, renderedPosition, cyEdge) {
+        if (!edgeId || !this._rawGraphData) return;
+        const rawEdge = this._rawGraphData.edges?.find(e => e.id === edgeId);
+        const cyData = (cyEdge && cyEdge.data) ? (typeof cyEdge.data === 'function' ? cyEdge.data() : cyEdge.data) : {};
+
+        const source = rawEdge?.source || cyData.source || 'Unknown';
+        const target = rawEdge?.target || cyData.target || 'Unknown';
+        const relType = rawEdge?.type || rawEdge?.relationshipType || cyData.type || 'relates';
+        const title = rawEdge?.method || relType;
+        const evidence = rawEdge?.evidence || cyData.evidence || '';
+        const file = rawEdge?.file || cyData.file || '';
+        const line = rawEdge?.line || cyData.line;
+        const location = file ? (line ? `${file}:${line}` : file) : null;
+
+        this.hoveredNode = null;
+        this.hoveredEdge = {
+            id: edgeId,
+            title,
+            source,
+            target,
+            relationshipType: relType,
+            evidence,
+            location
+        };
+
+        this.calculateHoverPosition(renderedPosition, cyEdge);
+        this.isHoverCardVisible = true;
+    }
+
+    calculateHoverPosition(renderedPosition, cyElement) {
+        let posX = renderedPosition ? renderedPosition.x : 0;
+        let posY = renderedPosition ? renderedPosition.y : 0;
+
+        if (!renderedPosition && cyElement && typeof cyElement.renderedPosition === 'function') {
+            const pos = cyElement.renderedPosition();
+            posX = pos.x;
+            posY = pos.y;
+        }
+
+        // Viewport clamping within container (standard 600px height or actual container dimensions)
+        const container = this.template ? this.template.querySelector('.cy-container') : null;
+        const containerWidth = container ? container.clientWidth || 800 : 800;
+        const containerHeight = container ? container.clientHeight || 600 : 600;
+
+        const cardWidth = 290;
+        const cardHeight = 180;
+
+        let left = posX + 16;
+        let top = posY + 16;
+
+        // Viewport collision bounds protection
+        if (left + cardWidth > containerWidth) {
+            left = Math.max(10, posX - cardWidth - 16);
+        }
+        if (top + cardHeight > containerHeight) {
+            top = Math.max(10, posY - cardHeight - 16);
+        }
+
+        this.hoverCardX = Math.round(left);
+        this.hoverCardY = Math.round(top);
     }
 
     handleLayoutChangeClick(event) {
@@ -606,7 +785,19 @@ export default class DaGraphViewer extends LightningElement {
         }
     }
 
+    connectedCallback() {
+        this._boundKeyHandler = (e) => {
+            if (e && (e.key === 'Escape' || e.key === 'esc')) {
+                this.dismissHoverCard();
+            }
+        };
+        if (typeof window !== 'undefined') {
+            window.addEventListener('keydown', this._boundKeyHandler);
+        }
+    }
+
     clearGraphState() {
+        this.dismissHoverCard();
         if (this.saveTimeout) {
             clearTimeout(this.saveTimeout);
             this.saveTimeout = null;
@@ -916,6 +1107,23 @@ export default class DaGraphViewer extends LightningElement {
                     }
                 }
 
+                // Hover cards (GAP-WKF-04): 200ms debounced inspection card on node/edge mouseover
+                this.cyInstance.on('mouseover', 'node', (evt) => {
+                    this.scheduleNodeHover(evt.target, evt.renderedPosition);
+                });
+
+                this.cyInstance.on('mouseout', 'node', () => {
+                    this.scheduleHoverDismissal();
+                });
+
+                this.cyInstance.on('mouseover', 'edge', (evt) => {
+                    this.scheduleEdgeHover(evt.target, evt.renderedPosition);
+                });
+
+                this.cyInstance.on('mouseout', 'edge', () => {
+                    this.scheduleHoverDismissal();
+                });
+
                 // Maintain invariant: SELECTION != NAVIGATION
                 // Node tap/click updates selection state only, without triggering URL navigation or re-render
                 this.cyInstance.on('tap', 'node', (evt) => {
@@ -1117,6 +1325,10 @@ export default class DaGraphViewer extends LightningElement {
     }
 
     disconnectedCallback() {
+        if (typeof window !== 'undefined' && this._boundKeyHandler) {
+            window.removeEventListener('keydown', this._boundKeyHandler);
+            this._boundKeyHandler = null;
+        }
         this.currentRequestId++; // Invalidate pending requests immediately on disconnect
         this.cyInitialized = false; // Allow safe re-initialization on reconnect
         this.clearGraphState();
