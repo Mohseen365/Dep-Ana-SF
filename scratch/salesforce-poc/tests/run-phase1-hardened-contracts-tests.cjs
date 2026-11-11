@@ -116,7 +116,7 @@ runTest('2.1 EMPTY status present in metadata and service state machine', () => 
 });
 
 runTest('2.2 Zero-chunk/empty runs transition directly to EMPTY', () => {
-    assert(ingCode.includes('(expectedChunks != null && expectedChunks == 0) ? STATUS_EMPTY : STATUS_QUEUED'), 'Zero chunk runs must initialize as EMPTY');
+    assert(ingCode.includes('isExplicitEmpty ? STATUS_EMPTY : STATUS_QUEUED') || ingCode.includes('(expectedChunks != null && expectedChunks == 0) ? STATUS_EMPTY : STATUS_QUEUED'), 'Zero chunk runs must initialize as EMPTY');
     assert(ingCode.includes('persistedExpected == 0'), 'Finalize must handle 0 chunks by setting EMPTY');
 });
 

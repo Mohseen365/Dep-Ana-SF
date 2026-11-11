@@ -64,13 +64,18 @@ public with sharing class DAGraphIngestionService {
             throw new IllegalArgumentException('Expected payload size (' + expectedTotalBytes + ') exceeds maximum allowed limit of ' + MAX_TOTAL_PAYLOAD_CHARS + ' UTF-16 characters.');
         }
 
+        // Explicit EMPTY initialization requirement:
+        // An empty run is initialized ONLY when expectedChunks is explicitly 0 AND expectedTotalBytes is explicitly 0.
+        // Omitted (null) expectedChunks defaults to 0 chunks for schema storage but does NOT silently authorize EMPTY finalization.
+        Boolean isExplicitEmpty = (expectedChunks != null && expectedChunks == 0 && (expectedTotalBytes != null && expectedTotalBytes == 0));
+
         DA_Analysis_Run__c run = new DA_Analysis_Run__c(
             DA_Project__c = projectId,
             Name = runName,
-            Status__c = (expectedChunks != null && expectedChunks == 0) ? STATUS_EMPTY : STATUS_QUEUED,
+            Status__c = isExplicitEmpty ? STATUS_EMPTY : STATUS_QUEUED,
             Run_Timestamp__c = Datetime.now(),
-            Total_Chunks__c = expectedChunks != null ? expectedChunks : 0,
-            Total_Payload_Size_Chars__c = expectedTotalBytes != null ? expectedTotalBytes : 0,
+            Total_Chunks__c = expectedChunks, // Preserves null if omitted
+            Total_Payload_Size_Chars__c = expectedTotalBytes,
             Commit_Hash__c = commitHash,
             Payload_Checksum__c = expectedSha256Checksum
         );
@@ -271,13 +276,43 @@ public with sharing class DAGraphIngestionService {
 
         DA_Analysis_Run__c run = runs[0];
 
-        // Idempotency: if already AVAILABLE, return true safely
+        // Terminal state idempotency and duplicate finalization handling:
+        // 1. Repeated finalization of an already AVAILABLE run
         if (run.Status__c == STATUS_AVAILABLE) {
-            return new FinalizationResult(true, STATUS_AVAILABLE, null);
+            // Parameter change conflict check:
+            if (callerSuppliedExpectedChunks != null && callerSuppliedExpectedChunks != run.Total_Chunks__c) {
+                return new FinalizationResult(false, STATUS_AVAILABLE,
+                    'Finalization conflict: Run is already finalized as AVAILABLE with ' + run.Total_Chunks__c + ' chunks; cannot finalize with ' + callerSuppliedExpectedChunks);
+            }
+            FinalizationResult res = new FinalizationResult(true, STATUS_AVAILABLE, 'Analysis run is already finalized in AVAILABLE state.');
+            res.processedChunks = (run.Total_Chunks__c != null) ? (Integer) run.Total_Chunks__c : 0;
+            return res;
         }
 
-        // Authoritative persisted expectation check:
-        Integer persistedExpected = (run.Total_Chunks__c != null) ? (Integer) run.Total_Chunks__c : 0;
+        // 2. Repeated finalization of an already EMPTY run
+        if (run.Status__c == STATUS_EMPTY) {
+            if (callerSuppliedExpectedChunks != null && callerSuppliedExpectedChunks != 0) {
+                return new FinalizationResult(false, STATUS_EMPTY,
+                    'Finalization conflict: Run is already finalized as EMPTY; cannot finalize with ' + callerSuppliedExpectedChunks + ' chunks.');
+            }
+            return new FinalizationResult(true, STATUS_EMPTY, 'Analysis run is already finalized in EMPTY state.');
+        }
+
+        // 3. Repeated finalization of a terminal FAILED / CANCELLED / EXPIRED run
+        if (run.Status__c == STATUS_FAILED || run.Status__c == STATUS_CANCELLED || run.Status__c == STATUS_EXPIRED) {
+            return new FinalizationResult(false, run.Status__c, 'Cannot finalize run in terminal closed status: ' + run.Status__c);
+        }
+
+        // Explicit expectation verification:
+        // Reject finalization if Total_Chunks__c was omitted (null) during run creation.
+        if (run.Total_Chunks__c == null) {
+            run.Status__c = STATUS_FAILED;
+            update as user run;
+            return new FinalizationResult(false, STATUS_FAILED,
+                'Finalization rejected: Run has no explicit expected chunk count configured.');
+        }
+
+        Integer persistedExpected = (Integer) run.Total_Chunks__c;
         if (callerSuppliedExpectedChunks != null && callerSuppliedExpectedChunks != persistedExpected) {
             run.Status__c = STATUS_FAILED;
             update as user run;
@@ -286,8 +321,17 @@ public with sharing class DAGraphIngestionService {
                 ') does not match persisted expected chunk count (' + persistedExpected + ').');
         }
 
-        // Special handling for 0-chunk / EMPTY runs
+        // Special handling for 0-chunk / EMPTY runs:
+        // A zero-chunk finalization succeeds only when the run satisfies explicit valid-empty initialization:
+        // Expected chunks must be explicitly initialized to 0, and total payload size must be explicitly 0.
+        // Omitted (null) payload size or nonzero payload size fails closed.
         if (persistedExpected == 0) {
+            if (run.Total_Payload_Size_Chars__c == null || run.Total_Payload_Size_Chars__c > 0) {
+                run.Status__c = STATUS_FAILED;
+                update as user run;
+                return new FinalizationResult(false, STATUS_FAILED,
+                    'Finalization rejected: Run initialized with 0 chunks but invalid or omitted expected payload size: ' + run.Total_Payload_Size_Chars__c);
+            }
             run.Status__c = STATUS_EMPTY;
             update as user run;
             return new FinalizationResult(true, STATUS_EMPTY, null);
@@ -356,6 +400,9 @@ public with sharing class DAGraphIngestionService {
      * @description Backward-compatible boolean wrapper.
      * Calls finalizeAnalysisRunWithResult and throws IngestionException only if caller requires exception semantics,
      * while guaranteeing that the FAILED status was persisted beforehand.
+     * Transaction Note: In standard Apex transactions, an unhandled exception thrown from this method
+     * may roll back the entire transaction (including prior DML). Structured callers MUST use
+     * finalizeAnalysisRunWithResult to ensure failure persistence without transaction rollback.
      */
     public static Boolean finalizeAnalysisRun(String runId, Integer callerSuppliedExpectedChunks) {
         FinalizationResult res = finalizeAnalysisRunWithResult(runId, callerSuppliedExpectedChunks, null);
