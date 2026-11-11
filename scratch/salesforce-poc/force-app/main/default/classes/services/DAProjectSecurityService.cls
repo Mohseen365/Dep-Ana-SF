@@ -54,6 +54,10 @@ public with sharing class DAProjectSecurityService {
     @TestVisible
     private static Set<Id> mockDirectAuthorizedUserIds = new Set<Id>();
 
+    // Test-visible mock for independent direct share verification (e.g. non-manual row causes or verified provenance)
+    @TestVisible
+    private static Boolean mockIndependentDirectShareVerified = false;
+
     public class ProjectAccessContext {
         public Id projectId;
         public Id userId;
@@ -106,153 +110,218 @@ public with sharing class DAProjectSecurityService {
         return validateProjectAccessInternal(projectId, userId, requiredScope, true);
     }
 
-    /**
-     * @description Core authorization evaluation with strict provenance distinction and exact scope matching.
-     * Authoritative Precedence:
-     * 1. Validate authenticated principal and project ID.
-     * 2. Evaluate emergency grant authorization dynamically.
-     *    - Must be active, unrevoked, and unexpired (Expires_At__c > Datetime.now()).
-     *    - Expired or revoked grants fail-closed to reject stale emergency-generated shares.
-     * 3. Evaluate independent direct project sharing via USER_MODE query.
-     * 4. Enforce exact permission scope.
-     * 5. Deny fail-closed and record append-only audit event.
-     */
-    private static ProjectAccessContext validateProjectAccessInternal(Id projectId, Id userId, String requiredScope, Boolean isTrustedInternal) {
-        if (projectId == null) {
-            throw new IllegalArgumentException('Project ID is required for security validation.');
-        }
-        if (userId == null) {
-            userId = UserInfo.getUserId();
-        }
+/**
+ * @description Core authorization evaluation with strict provenance distinction and exact scope matching.
+ * Authoritative Precedence:
+ * 1. Validate authenticated principal and project ID.
+ * 2. Evaluate emergency grant authorization dynamically.
+ *    - Must be active, unrevoked, and unexpired.
+ *    - Expired or revoked grants fail-closed to reject stale emergency-generated shares.
+ * 3. Evaluate independent direct project sharing via USER_MODE query.
+ * 4. Enforce exact permission scope.
+ * 5. Deny fail-closed and record append-only audit event.
+ */
+private static ProjectAccessContext validateProjectAccessInternal(
+    Id projectId,
+    Id userId,
+    String requiredScope,
+    Boolean isTrustedInternal
+) {
+    if (projectId == null) {
+        throw new IllegalArgumentException(
+            'Project ID is required for security validation.'
+        );
+    }
 
-        ProjectAccessContext ctx = new ProjectAccessContext();
-        ctx.projectId = projectId;
-        ctx.userId = userId;
-        ctx.requiredScope = normalizeScope(requiredScope);
+    if (userId == null) {
+        userId = UserInfo.getUserId();
+    }
 
-        // Scope validity check
-        if (String.isNotBlank(ctx.requiredScope) && !VALID_SCOPES.contains(ctx.requiredScope)) {
-            ctx.hasAccess = false;
-            ctx.accessProvenance = 'UNAUTHORIZED';
-            logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Invalid or unrecognized required scope: ' + requiredScope);
+    ProjectAccessContext ctx = new ProjectAccessContext();
+    ctx.projectId = projectId;
+    ctx.userId = userId;
+    ctx.requiredScope = normalizeScope(requiredScope);
+
+    // Scope validity check
+    if (
+        String.isNotBlank(ctx.requiredScope) &&
+        !VALID_SCOPES.contains(ctx.requiredScope)
+    ) {
+        ctx.hasAccess = false;
+        ctx.accessProvenance = 'UNAUTHORIZED';
+
+        logAuditEvent(
+            projectId,
+            userId,
+            ACTION_ACCESS_DENIED,
+            'Invalid or unrecognized required scope: ' + requiredScope
+        );
+        return ctx;
+    }
+
+    // 1. Dynamic emergency access evaluation independently of physical share rows.
+    Datetime currentDatetime = Datetime.now();
+
+    List<DA_Emergency_Access_Grant__c> validGrants = [
+        SELECT Id, Scope__c, Expires_At__c, Revoked__c,
+               Is_Active__c, Project__c, User__c
+        FROM DA_Emergency_Access_Grant__c
+        WHERE Project__c = :projectId
+          AND User__c = :userId
+          AND Is_Active__c = TRUE
+          AND Revoked__c = FALSE
+          AND Expires_At__c > :currentDatetime
+        WITH USER_MODE
+        ORDER BY Expires_At__c DESC
+        LIMIT 1
+    ];
+
+    if (!validGrants.isEmpty()) {
+        DA_Emergency_Access_Grant__c grant = validGrants[0];
+
+        if (isScopePermitted(grant.Scope__c, ctx.requiredScope)) {
+            ctx.hasAccess = true;
+            ctx.isEmergencyAccess = true;
+            ctx.grantId = grant.Id;
+            ctx.accessProvenance = 'EMERGENCY_GRANT';
             return ctx;
         }
+    }
 
-        // 1. Dynamic emergency access evaluation independently of physical share rows
-        Datetime currentDatetime = Datetime.now();
-        List<DA_Emergency_Access_Grant__c> validGrants = [
-            SELECT Id, Scope__c, Expires_At__c, Revoked__c, Is_Active__c, Project__c, User__c
-            FROM DA_Emergency_Access_Grant__c
-            WHERE Project__c = :projectId
-              AND User__c = :userId
-              AND Is_Active__c = TRUE
-              AND Revoked__c = FALSE
-              AND Expires_At__c > :currentDatetime
-            WITH USER_MODE
-            ORDER BY Expires_At__c DESC
-            LIMIT 1
-        ];
+    // 2. Detect stale emergency grants before evaluating non-owner
+    // direct access. A lingering emergency-generated Manual share
+    // must never be mistaken for independent direct authorization.
+    List<DA_Emergency_Access_Grant__c> staleGrants = [
+        SELECT Id
+        FROM DA_Emergency_Access_Grant__c
+        WHERE Project__c = :projectId
+          AND User__c = :userId
+          AND (
+              Expires_At__c <= :currentDatetime
+              OR Revoked__c = TRUE
+              OR Is_Active__c = FALSE
+          )
+        WITH USER_MODE
+        LIMIT 1
+    ];
 
-        if (!validGrants.isEmpty()) {
-            DA_Emergency_Access_Grant__c grant = validGrants[0];
-            if (isScopePermitted(grant.Scope__c, ctx.requiredScope)) {
-                ctx.hasAccess = true;
-                ctx.isEmergencyAccess = true;
-                ctx.grantId = grant.Id;
-                ctx.accessProvenance = 'EMERGENCY_GRANT';
-                return ctx;
-            }
-        }
+    // 3. Evaluate project visibility using USER_MODE.
+    List<DA_Project__c> directProjects = [
+        SELECT Id, Name, Status__c, OwnerId
+        FROM DA_Project__c
+        WHERE Id = :projectId
+        WITH USER_MODE
+        LIMIT 1
+    ];
 
-        // 2. Direct project access via USER_MODE query (evaluates standard OWD / independent direct sharing)
-        // Guard against stale emergency-generated share rows:
-        // If the user has any expired or revoked emergency grant for this project, verify they are not
-        // relying solely on a lingering emergency manual share row.
-        List<DA_Emergency_Access_Grant__c> staleGrants = [
-            SELECT Id FROM DA_Emergency_Access_Grant__c
-            WHERE Project__c = :projectId
-              AND User__c = :userId
-              AND (Expires_At__c <= :currentDatetime OR Revoked__c = TRUE OR Is_Active__c = FALSE)
-            WITH USER_MODE
-            LIMIT 1
-        ];
+    if (!directProjects.isEmpty()) {
+        DA_Project__c proj = directProjects[0];
 
-        List<DA_Project__c> directProjects = [
-            SELECT Id, Name, Status__c, OwnerId
-            FROM DA_Project__c
-            WHERE Id = :projectId
-            WITH USER_MODE
-            LIMIT 1
-        ];
-
-        if (!directProjects.isEmpty()) {
-            DA_Project__c proj = directProjects[0];
-            // If project is directly owned by user, access is authoritative direct access
-            if (proj.OwnerId == userId) {
-                ctx.hasAccess = true;
-                ctx.isEmergencyAccess = false;
-                ctx.accessProvenance = 'DIRECT_SHARE';
-                return ctx;
-            }
-
-            // If user has a stale emergency grant, ensure a lingering manual share does not falsely grant direct access
-            if (!staleGrants.isEmpty()) {
-                // Stale emergency share detected; do not misclassify lingering manual share as direct share
-                ctx.hasAccess = false;
-                ctx.accessProvenance = 'UNAUTHORIZED';
-                logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied: Stale emergency access grant detected; lingering share row rejected.');
-                return ctx;
-            }
-
-            // Explicit verification of independent direct authorization provenance:
-            // The presence of a Manual share row or project visibility alone is insufficient.
-            // Direct access requires verifiable direct entitlement evidence.
-            if (!hasAuthoritativeDirectShare(projectId, userId)) {
-                ctx.hasAccess = false;
-                ctx.accessProvenance = 'UNAUTHORIZED';
-                logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied: User lacks independent direct authorization provenance.');
-                return ctx;
-            }
-
+        // Ownership is independently authoritative direct access.
+        if (proj.OwnerId == userId) {
             ctx.hasAccess = true;
             ctx.isEmergencyAccess = false;
             ctx.accessProvenance = 'DIRECT_SHARE';
             return ctx;
         }
 
-        // Access denied fail-closed
+        // Reject non-owner access when a stale emergency grant
+        // could account for a lingering emergency-generated share.
+        if (!staleGrants.isEmpty()) {
+            ctx.hasAccess = false;
+            ctx.accessProvenance = 'UNAUTHORIZED';
+
+            logAuditEvent(
+                projectId,
+                userId,
+                ACTION_ACCESS_DENIED,
+                'Access denied: Stale emergency access grant detected; lingering share row rejected.'
+            );
+            return ctx;
+        }
+
+        // 4. Verify independent direct authorization provenance.
+        // USER_MODE visibility or a Manual share alone is insufficient.
+        if (hasAuthoritativeDirectShare(projectId, userId)) {
+            ctx.hasAccess = true;
+            ctx.isEmergencyAccess = false;
+            ctx.accessProvenance = 'DIRECT_SHARE';
+            return ctx;
+        }
+
+        // Unknown or unproven provenance fails closed.
         ctx.hasAccess = false;
         ctx.accessProvenance = 'UNAUTHORIZED';
-        logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied for required scope: ' + requiredScope);
+
+        logAuditEvent(
+            projectId,
+            userId,
+            ACTION_ACCESS_DENIED,
+            'Access denied: Unproven manual share provenance; missing authoritative entitlement proof.'
+        );
         return ctx;
     }
 
-    /**
-     * @description Authoritative check for independent direct sharing provenance.
-     * Does not rely on the mere existence of a Manual share row.
-     * In Salesforce Private OWD, direct authorization is proven ONLY by:
-     * 1. Record ownership (checked prior via proj.OwnerId == userId).
-     * 2. Non-Manual sharing causes (e.g. Rule, Territory, Role Hierarchy) where RowCause != 'Manual'.
-     * 3. Explicit direct mock authorization during unit testing (mockDirectAuthorizedUserIds).
-     * Mere existence of a Manual share row without non-Manual cause or mock entitlement is rejected fail-closed.
-     */
-    public static Boolean hasAuthoritativeDirectShare(Id projectId, Id userId) {
-        if (projectId == null || userId == null) {
-            return false;
-        }
-        if (Test.isRunningTest() && mockDirectAuthorizedUserIds.contains(userId)) {
-            return true;
-        }
-        try {
-            // Only non-Manual share rows establish authoritative direct access independently of emergency grants
-            List<SObject> nonManualShares = Database.query(
-                'SELECT Id FROM DA_Project__Share WHERE ParentId = :projectId AND UserOrGroupId = :userId AND RowCause != \'Manual\''
-            );
-            return !nonManualShares.isEmpty();
-        } catch (Exception e) {
-            return false;
-        }
+    // Access denied fail-closed.
+    ctx.hasAccess = false;
+    ctx.accessProvenance = 'UNAUTHORIZED';
+
+    logAuditEvent(
+        projectId,
+        userId,
+        ACTION_ACCESS_DENIED,
+        'Access denied for required scope: ' + requiredScope
+    );
+
+    return ctx;
+}
+
+/**
+ * @description Authoritative check for independent direct sharing provenance.
+ *
+ * Direct authorization is established ONLY by:
+ * 1. Non-Manual sharing causes (Rule, Territory, Role Hierarchy, etc.).
+ * 2. Explicit independent direct authorization registered for testing.
+ *
+ * Ownership is checked separately by validateProjectAccessInternal.
+ * Manual shares without independent entitlement evidence fail closed.
+ */
+public static Boolean hasAuthoritativeDirectShare(
+    Id projectId,
+    Id userId
+) {
+    if (projectId == null || userId == null) {
+        return false;
     }
+
+    // Explicit test-only independent authorization.
+    if (
+        Test.isRunningTest() &&
+        mockDirectAuthorizedUserIds != null &&
+        mockDirectAuthorizedUserIds.contains(userId)
+    ) {
+        return true;
+    }
+
+    try {
+        // Only non-Manual share rows establish independent
+        // direct sharing provenance.
+        List<SObject> nonManualShares = Database.query(
+            'SELECT Id FROM DA_Project__Share ' +
+            'WHERE ParentId = :projectId ' +
+            'AND UserOrGroupId = :userId ' +
+            'AND RowCause != \'Manual\' ' +
+            'LIMIT 1'
+        );
+
+        return !nonManualShares.isEmpty();
+
+    } catch (Exception e) {
+        // Fail closed if authoritative provenance cannot be verified.
+        return false;
+    }
+}
+
 
     /**
      * @description Normalizes scope strings to uppercase canonical form.
