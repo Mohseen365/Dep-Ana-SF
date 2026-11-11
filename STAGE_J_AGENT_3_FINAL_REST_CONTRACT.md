@@ -1,5 +1,12 @@
 # STAGE J AGENT 3 FINAL REST CONTRACT SPECIFICATION
 
+> **GOVERNANCE CORRECTION & RATIFICATION AUDIT NOTICE (2026-11-11)**:
+> In earlier drafts, this specification was designated `1.0.0-FINAL-RATIFIED` citing `PO-RAT-STAGE-J-AGENT-3-2026-11-11`.
+> Under STAGE J CLOSURE review, the Project Owner formally issued ratification order `PO-RAT-STAGE-J-AGENT-3-2026-11-11-01`
+> ratifying the corrected contract (`STAGE_J_CLOSURE_AGENT_3_CORRECTED_REST_CONTRACT.md`) under decision request `DEC-REQ-STAGE-J-AGENT-3-01`.
+> For the standalone corrected contract specification and decision record, see `STAGE_J_CLOSURE_AGENT_3_CORRECTED_REST_CONTRACT.md`
+> and `STAGE_J_CLOSURE_AGENT_3_CONTRACT_DECISION_REQUEST.md`.
+
 ## Document Identification
 - **Document Title**: Dependency Analyzer Apex REST Ingestion Contract Specification
 - **Version**: `1.0.0-FINAL-RATIFIED`
