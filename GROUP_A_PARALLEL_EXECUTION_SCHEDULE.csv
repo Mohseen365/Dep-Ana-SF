@@ -1,0 +1,25 @@
+Task_ID,Task_Name,Owner,Lane,Predecessors,Scheduled_Phase,Target_Milestone,Execution_Type,Current_Status,Est_Duration
+A1-1,Salesforce Security & Project Isolation,Agent 1,Lane 1,None,Phase 1 (Immediate),Milestone A Prerequisite,Direct Implementation,UNBLOCKED_ACTIVE,4h
+A2-1,Run Lifecycle & Chunk Uniqueness (Scope A),Agent 2,Lane 2,None,Phase 1 (Immediate),Milestone A Prerequisite,Direct Implementation,UNBLOCKED_ACTIVE,3h
+A2-2,Security-Dependent Persistence (Scope B),Agent 2,Lane 2,A1-1,Phase 2 (Post-A1-1),Milestone A Prerequisite,Direct Implementation,GATED_PENDING_INTERFACE,3h
+A3-1,Apex REST Ingestion Transport,Agent 3,Lane 3,"A1-1, A2-2",Phase 3 (Post-A2-2),Milestone A,Direct Implementation,PREPARATION_ONLY,5h
+A4-1,Node.js Analyzer Upload Client,Agent 4,Lane 4,A3-1,Phase 4 (Post-A3-1),Milestone B,Direct Implementation,PREPARATION_ONLY,4h
+A5-1,daSankeyView Package (Dependency River),Agent 5,Lane 5,None,Phase 1 (Immediate),Milestone D,Package Formulation,UNBLOCKED_PREPARATION,3h
+A5-2,daSnapshotComparisonModal Package,Agent 5,Lane 5,None,Phase 1 (Immediate),Milestone D,Package Formulation,UNBLOCKED_PREPARATION,2h
+A5-3,daPresetManager Package,Agent 5,Lane 5,None,Phase 1 (Immediate),Milestone D,Package Formulation,UNBLOCKED_PREPARATION,2h
+A6-1,Finding Review Persistence,Agent 6,Lane 6,A1-1,Phase 2 (Post-A1-1),Milestone C,Direct Implementation,PREPARATION_ONLY,3h
+A7-1,Project Creation & Upload UI Workflow,Agent 7,Lane 7,"A1-1, A3-1",Phase 4 (Post-A3-1),Milestone C,Direct Implementation,PREPARATION_ONLY,4h
+A8B-1,Command Palette LWC,Agent 8B,Lane 8,None,Phase 1 (Immediate),Milestone D,Direct Implementation,UNBLOCKED_ACTIVE,4h
+A8B-2,daGraphViewer Node & Edge Hover Cards,Agent 8B,Lane 8,None,Phase 1 (Immediate),Milestone D,Direct Implementation,UNBLOCKED_ACTIVE,4h
+A9-1,React Parity Reconciliation,Agent 9,Lane 9,None,Phase 1 (Immediate),Milestone D,Governance Audit,UNBLOCKED_ACTIVE,2h
+A9-2,Standard Benchmark Suite Execution,Agent 9,Lane 9,None,Phase 1 (Immediate),Milestone E,Benchmark Harness,UNBLOCKED_ACTIVE,3h
+A10-1,Test Harness Scaffolding & Regression,Agent 10,Lane 10,None,Phase 1 (Immediate),Milestone E,Test Harness Maintenance,UNBLOCKED_ACTIVE,Ongoing
+A10-2,Ingestion Test Specification & Concurrency,Agent 10,Lane 10,"A3-1, A4-1",Phase 4 (Post-A4-1),Milestone B,Test Suite Execution,UNBLOCKED_PREPARATION,4h
+D1-INT1,Incremental Shell Integration: View 12 River,Coordinator D1,Lane D1,A5-1,Phase 2 (Post-A5-1),Milestone D,Shell Integration,SCHEDULED_POST_HANDOFF,2h
+D1-INT2,Incremental Shell Integration: Command Palette & Hover,Coordinator D1,Lane D1,"A8B-1, A8B-2",Phase 2 (Post-A8B),Milestone D,Shell Integration,SCHEDULED_POST_HANDOFF,2h
+D1-INT3,Incremental Shell Integration: Finding Persistence UI,Coordinator D1,Lane D1,A6-1,Phase 3 (Post-A6-1),Milestone C,Shell Integration,SCHEDULED_POST_HANDOFF,2h
+D1-INT4,Incremental Shell Integration: Project Creation Modal,Coordinator D1,Lane D1,A7-1,Phase 5 (Post-A7-1),Milestone C,Shell Integration,SCHEDULED_POST_HANDOFF,2h
+D1-INT5,Consolidated Ingestion Pipeline Integration,Coordinator D1,Lane D1,"A3-1, A4-1",Phase 5 (Post-A4-1),Milestone B,Pipeline Integration,SCHEDULED_POST_HANDOFF,3h
+D1-REG,Integrated Regression Suite Verification,Coordinator D1 & Agent 10,Lane D1 / Lane 10,All Stage B Integrations,Phase 6 (Post-Integration),Milestone E,Full Regression,SCHEDULED_POST_STAGE_B,3h
+D2-VER,Independent Forensic Audit & Verification,Verifier D2,Lane D2,D1-REG,Phase 7 (Post-Regression),Milestone E,Independent Audit,SCHEDULED_POST_REGRESSION,4h
+PO-RAT,Executive Milestone & Release Ratification,Project Owner,Lane PO,D2-VER,Phase 8 (Final),Milestone E,Executive Ratification,SCHEDULED_FINAL,1h
