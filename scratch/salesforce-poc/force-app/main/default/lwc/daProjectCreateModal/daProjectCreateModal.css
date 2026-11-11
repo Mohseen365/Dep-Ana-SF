@@ -1,0 +1,27 @@
+:host {
+    display: block;
+}
+
+.font-mono {
+    font-family: monospace, Courier, sans-serif;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.file-picker-box {
+    border: 1px dashed #c9c7c5;
+    border-radius: 4px;
+    padding: 12px;
+    background-color: #fafaf9;
+    display: flex;
+    align-items: center;
+}
+
+.progress-container {
+    background-color: #f3f3f3;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+}

@@ -17,25 +17,41 @@
                 <div class="slds-text-color_weak slds-p-around_x-small empty-notice">No projects available</div>
             </template>
             <template if:false={isEmpty}>
-                <select
-                    id="da-project-select"
-                    class="slds-select"
-                    disabled={disabled}
-                    onchange={handleSelectChange}
-                    aria-label={label}>
-                    <template if:false={selectedProjectId}>
-                        <option value="">-- Select a Project --</option>
-                    </template>
-                    <template for:each={formattedProjects} for:item="proj">
-                        <option
-                            key={proj.value}
-                            value={proj.value}
-                            selected={proj.isSelected}>
-                            {proj.label}
-                        </option>
-                    </template>
-                </select>
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <select
+                        id="da-project-select"
+                        class="slds-select slds-grow"
+                        disabled={disabled}
+                        onchange={handleSelectChange}
+                        aria-label={label}>
+                        <template if:false={selectedProjectId}>
+                            <option value="">-- Select a Project --</option>
+                        </template>
+                        <template for:each={formattedProjects} for:item="proj">
+                            <option
+                                key={proj.value}
+                                value={proj.value}
+                                selected={proj.isSelected}>
+                                {proj.label}
+                            </option>
+                        </template>
+                    </select>
+                    <button
+                        type="button"
+                        class="slds-button slds-button_icon slds-button_icon-border-filled slds-m-left_xx-small new-project-btn"
+                        title="New Project / Import"
+                        onclick={handleOpenCreateModal}
+                        disabled={disabled}
+                        aria-label="New Project / Import">
+                        <lightning-icon icon-name="utility:add" size="x-small" alternative-text="New Project"></lightning-icon>
+                    </button>
+                </div>
             </template>
         </div>
+        <c-da-project-create-modal
+            is-open={isCreateModalOpen}
+            onprojectcreated={handleProjectCreated}
+            onmodalclose={handleCreateModalClose}>
+        </c-da-project-create-modal>
     </div>
 </template>
