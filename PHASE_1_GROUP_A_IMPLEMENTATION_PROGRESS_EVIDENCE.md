@@ -115,10 +115,10 @@ With the publication of `PHASE_1_AGENT_1_SECURITY_INTERFACE.md` and `PHASE_1_AGE
 
 | Agent | Responsibility | Previous Status | Current Authoritative Status | Prerequisites Met | Unblocked Next Actions |
 |---|---|---|---|---|---|
-| **Agent 2 [Scope B]** | Ingestion Persistence Integration | `BLOCKED_PENDING_INTERFACE` | **UNBLOCKED_IMPLEMENTATION** | Agent 1 Security Interface published | Implement security-aware project authorization in ingestion services |
-| **Agent 3** | Apex REST Transport | `BLOCKED_PENDING_INTERFACE` | **UNBLOCKED_IMPLEMENTATION** | Agent 1 Security AND Agent 2 Lifecycle published | Implement Apex REST endpoint and freeze HTTP contract |
+| **Agent 2 [Scope B]** | Ingestion Persistence Integration | `BLOCKED_PENDING_INTERFACE` | **UNBLOCKED_IMPLEMENTATION** | Agent 1 Security Interface v1.0.1 published and verified | Implement security-aware project authorization in ingestion services |
+| **Agent 3** | Apex REST Transport | `BLOCKED_PENDING_INTERFACE` | **UNBLOCKED_IMPLEMENTATION** | Agent 1 Security v1.0.1 AND Agent 2 Lifecycle v1.0.1 verified | Implement Apex REST endpoint and freeze HTTP contract |
 | **Agent 4** | Node.js Upload Client | `BLOCKED_PENDING_INTERFACE` | `BLOCKED_PENDING_INTERFACE` | Waiting on Agent 3 REST Contract | Standby; test harness preparation only |
-| **Agent 6** | Finding Review Persistence | `BLOCKED_PENDING_INTERFACE` | **UNBLOCKED_IMPLEMENTATION** | Agent 1 Security Interface published | Implement finding status persistence |
+| **Agent 6** | Finding Review Persistence | `BLOCKED_PENDING_INTERFACE` | **UNBLOCKED_IMPLEMENTATION** | Agent 1 Security Interface v1.0.1 published and verified | Implement finding status persistence |
 | **Agent 7** | Project Creation UI | `BLOCKED_PENDING_INTERFACE` | `BLOCKED_PENDING_INTERFACE` | Waiting on Agent 3 REST Endpoint | Standby; UX modal layout review only |
 
 ---

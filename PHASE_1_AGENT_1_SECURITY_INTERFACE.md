@@ -2,137 +2,139 @@
 
 ## Interface Identification & Governance
 - **Interface Name**: Multi-Tenant Project Authorization and Emergency Access Interface
-- **Interface Version**: `v1.0.0`
+- **Interface Version**: `v1.0.1` (Hardened Patch Revision)
+- **Supersedes**: `v1.0.0` (Preserved in Git history at baseline commit `6d605d7`)
 - **Owner**: Agent 1 (Salesforce Security & Project Isolation Lead)
 - **Integration Coordinator**: D1
 - **Independent Verifier**: D2
 - **Date**: 2026-11-11
 - **Status**: FROZEN FOR DOWNSTREAM CONSUMPTION
-- **Git Commit Reference**: Baseline `0637b904ab8537b7625fb0ab9882cb5cbdf32746` / Group A Branch `jules-16312564460869361898-1d34a25a`
+- **Compatibility Classification**: Backward-compatible additive hardening (Patch-compatible)
 
 ---
 
 ## 1. Executive Summary & Purpose
 
-This technical contract defines the authoritative security interface for the Dependency Analyzer Salesforce application. It establishes the programmatic rules, service signatures, data contracts, and error semantics for multi-tenant project authorization, Private Organization-Wide Default (OWD) sharing, time-bounded emergency access grants, dynamic runtime expiry checks independent of physical share rows, and tamper-proof audit trails.
+This technical contract defines the authoritative security interface for the Dependency Analyzer Salesforce application. It establishes the programmatic rules, service signatures, data contracts, and error semantics for multi-tenant project authorization, Private Organization-Wide Default (OWD) sharing, time-bounded emergency access grants, dynamic runtime expiry checks independent of physical share rows, authenticated principal protection, exact permission scope matching, explicit revocation transactions, and tamper-proof audit trails.
 
 Downstream agents—specifically **Agent 2 (Ingestion Lifecycle & Persistence [Scope B])**, **Agent 3 (REST Transport)**, **Agent 6 (Finding Review Persistence)**, and **Agent 7 (Project Creation & Upload UI)**—must adhere strictly to the signatures, access rules, and error handling specified herein.
 
 ---
 
-## 2. Exact Source Paths & Metadata Deliverables
+## 2. Exact Source Paths & Deliverables
 
 | Artifact | Source Path | Type | Description |
 |---|---|---|---|
 | **Project OWD Metadata** | `scratch/salesforce-poc/force-app/main/default/objects/DA_Project__c/DA_Project__c.object-meta.xml` | Custom Object | `sharingModel` set strictly to `Private` |
 | **Emergency Grant Object** | `scratch/salesforce-poc/force-app/main/default/objects/DA_Emergency_Access_Grant__c/` | Custom Object & Fields | Project, User, Expires_At__c, Revoked__c, Revoked_At__c, Is_Active__c, Scope__c, Reason__c |
 | **Security Audit Log Object** | `scratch/salesforce-poc/force-app/main/default/objects/DA_Security_Audit_Log__c/` | Custom Object & Fields | Project, User, Action__c, Details__c, Timestamp__c |
-| **Core Security Service** | `scratch/salesforce-poc/force-app/main/default/classes/services/DAProjectSecurityService.cls` | Apex Class | Core authorization, grant creation, 6-step revocation, dynamic validation |
+| **Core Security Service** | `scratch/salesforce-poc/force-app/main/default/classes/services/DAProjectSecurityService.cls` | Apex Class | Core authorization, grant creation, revocation, dynamic validation, scope matching |
 | **Audit Immutability Trigger** | `scratch/salesforce-poc/force-app/main/default/triggers/DASecurityAuditLogTrigger.trigger` | Apex Trigger | Blocks `BEFORE UPDATE` and `BEFORE DELETE` with `DA_AUDIT_IMMUTABLE` |
 | **Scheduled Cleanup Service** | `scratch/salesforce-poc/force-app/main/default/classes/services/DAEmergencyAccessCleanupService.cls` | Schedulable / Batch Apex | Supplementary garbage collection for expired `DA_Project__Share` rows |
 | **Security Permission Set** | `scratch/salesforce-poc/force-app/main/default/permissionsets/DA_Architecture_Analyst.permissionset-meta.xml` | Permission Set | Grants FLS across 29 custom fields; excludes Master-Detail and required fields |
 
 ---
 
-## 3. Service Signatures & Methods
+## 3. Provenance and Authorization Model
 
-All services reside in `public with sharing class DAProjectSecurityService`:
+For every authorization decision, the system distinguishes:
+1. **Independently Authorized Project Access (`DIRECT_SHARE`)**: The user has access via standard Salesforce Private OWD ownership, role hierarchy, or explicit manual share row not tied to an active emergency grant.
+2. **Emergency-Grant-Derived Access (`EMERGENCY_GRANT`)**: Access is granted exclusively because of an active, unexpired, unrevoked `DA_Emergency_Access_Grant__c` record with matching scope.
+3. **Expired Emergency Access (`UNAUTHORIZED`)**: If an emergency grant reaches `Expires_At__c <= Datetime.now()`, dynamic evaluation immediately rejects access fail-closed, regardless of whether a physical `DA_Project__Share` row remains.
+4. **Revoked Emergency Access (`UNAUTHORIZED`)**: If an emergency grant has `Revoked__c = true` or `Is_Active__c = false`, dynamic evaluation immediately rejects access.
+5. **Unauthorized Access (`UNAUTHORIZED`)**: Neither a valid emergency grant nor direct project sharing exists.
 
-### 3.1 `validateProjectAccess`
-```apex
-public static ProjectAccessContext validateProjectAccess(Id projectId, Id userId, String requiredScope)
-```
-- **Description**: Validates that the specified user has authorization to access the specified project for the required scope.
-- **Fail-Closed Guarantee**: Evaluates dynamic emergency access grants and direct project sharing using `WITH USER_MODE`. If no valid unexpired, unrevoked grant or sharing record exists, returns `hasAccess = false` and logs an audit failure.
-- **Dynamic Lease Boundary**: Binds local `Datetime currentDatetime = Datetime.now();` to check `Expires_At__c > :currentDatetime`.
+### Emergency Sharing Provenance & Stale Share Invariant:
+- Dynamic authorization queries `DA_Emergency_Access_Grant__c` first with dynamic datetime comparison `Expires_At__c > :currentDatetime`.
+- Physical `DA_Project__Share` rows with `RowCause = 'Manual'` created to support emergency access do not confer authorization on their own. Even if asynchronous cleanup of share rows is delayed or fails, authorization fails closed because the grant record is authoritative.
+- Removing an emergency grant cleans up only the emergency grant; independently authorized direct access (e.g. permanent project collaboration) remains intact if independent grants exist.
 
-### 3.2 `createEmergencyGrant`
+---
+
+## 4. Authenticated Principal Protection
+
+A client must never be allowed to supply an arbitrary `userId` to evaluate or forge authorization.
+
+### Methods:
+1. `validateProjectAccessForCurrentUser(Id projectId, String requiredScope)`:
+   - Primary user-facing controller entry point.
+   - Derives principal strictly from `UserInfo.getUserId()`.
+2. `validateProjectAccess(Id projectId, Id userId, String requiredScope)`:
+   - Backward-compatible entry point.
+   - Enforces principal matching: if caller passes a `userId != UserInfo.getUserId()` in an untrusted context (LWC, Aura, standard controller), it throws `SecurityException('Principal mismatch')`.
+3. `validateProjectAccessTrustedInternal(Id projectId, Id userId, String requiredScope)`:
+   - Service-to-service call restricted to batch Apex, Queueable, or scheduled execution (`System.isBatch() || System.isQueueable() || System.isScheduled()`).
+   - Rejects untrusted interactive callers fail-closed.
+
+---
+
+## 5. Canonical Scope Vocabulary and Exact Scope Matching
+
+Permission scope matching uses exact set membership and explicit hierarchy. Substring matching is strictly prohibited to eliminate accidental scope collisions.
+
+### Canonical Vocabulary:
+- `FULL`: Complete administrative and operational access.
+- `PROJECT_READ`: Base read access to project metadata.
+- `GRAPH_READ`: Permission to load and view graph topology and nodes/edges.
+- `FINDING_READ`: Permission to inspect findings and architectural violations.
+- `FINDING_WRITE`: Permission to review, triage, and mutate finding review statuses.
+- `ANALYSIS_UPLOAD`: Permission to initiate upload runs and write graph chunks.
+- `ANALYSIS_FINALIZE`: Permission to complete validation and publish graph runs.
+
+### Hierarchy Rules:
+- `FULL` satisfies all required scopes.
+- `ANALYSIS_FINALIZE` implies `ANALYSIS_UPLOAD`.
+- `FINDING_WRITE` implies `FINDING_READ`.
+- `GRAPH_READ` implies `PROJECT_READ`.
+- `FINDING_READ` implies `PROJECT_READ`.
+- An invalid or unrecognized scope is rejected fail-closed with `PROJECT_ACCESS_DENIED`.
+
+---
+
+## 6. Emergency Grant Creation, Approval, and Separation of Duties
+
+### Signatures:
 ```apex
 public static Id createEmergencyGrant(Id projectId, Id userId, Integer leaseSeconds, String scope, String reason)
+public static Id createEmergencyGrantWithApproval(Id projectId, Id userId, Integer leaseSeconds, String scope, String reason, Id issuerId, Id approverId)
 ```
-- **Description**: Issues a temporary, auditable emergency access grant.
-- **Constraints**: Enforces maximum lease duration `MAX_EMERGENCY_LEASE_SECONDS = 14400` (4 hours). Any requested lease exceeding 14,400 seconds is capped to 14,400 seconds.
-- **Returns**: Salesforce `Id` of the created `DA_Emergency_Access_Grant__c` record.
 
-### 3.3 `revokeEmergencyGrant`
-```apex
-public static Boolean revokeEmergencyGrant(Id grantId, String reason)
-```
-- **Description**: Executes the transaction-safe 6-step explicit revocation sequence.
-- **Behavior**:
-  1. Records revocation attempt in `DA_Security_Audit_Log__c`.
-  2. Sets `Revoked__c = true`, `Revoked_At__c = Datetime.now()`, and `Is_Active__c = false`.
-  3. Commits status update so all subsequent authorization checks fail-closed immediately.
-  4. Removes physical `DA_Project__Share` row (`RowCause = 'Manual'`).
-  5. Catches and logs any share deletion failure in `DA_Security_Audit_Log__c` without restoring access.
-- **Idempotency**: Repeated calls on an already-revoked grant safely return `true`.
-
-### 3.4 `logAuditEvent`
-```apex
-public static Id logAuditEvent(Id projectId, Id userId, String action, String details)
-```
-- **Description**: Writes an append-only audit event record to `DA_Security_Audit_Log__c`.
-- **Enforcement**: Protected against updates and deletions by `DASecurityAuditLogTrigger`.
+### Rules & Enforcements:
+1. **Four-Hour Maximum Lease**: Enforces ceiling `MAX_EMERGENCY_LEASE_SECONDS = 14400` (4 hours). Any requested lease > 14400 seconds is clamped to 14400.
+2. **Separation of Duties**: When an explicit approver is specified, the recipient user cannot approve their own grant (`approverId != userId`).
+3. **Issuer Auditing**: The grant creation transaction writes an immutable `DA_Security_Audit_Log__c` record capturing `projectId`, `userId`, `issuerId`, `approverId`, `leaseSeconds`, `expiresAt`, and `scope`.
+4. **Renewal Prohibition**: Automatic renewal is not permitted; expired grants cannot be revived. A new grant must be created and audited.
 
 ---
 
-## 4. Input & Output Data Transfer Objects (DTOs)
+## 7. Revocation Transaction Semantics
 
-### `ProjectAccessContext`
-```apex
-public class ProjectAccessContext {
-    public Id projectId;             // Target project ID evaluated
-    public Id userId;                // Requesting user ID evaluated
-    public String requiredScope;     // Scope string (e.g. 'READ', 'WRITE', 'FULL')
-    public Boolean hasAccess;        // Authoritative decision boolean
-    public Boolean isEmergencyAccess;// True if authorized via emergency grant
-    public Id grantId;               // ID of emergency grant used, if applicable
-    public Datetime evaluationTime;  // Timestamp when access was validated
-}
-```
+### Revocation Sequence:
+1. **Query & Idempotency Check**: Query target `DA_Emergency_Access_Grant__c`. If already revoked and inactive, returns `true` idempotently.
+2. **Audit Initiation**: An audit record (`EMERGENCY_GRANT_REVOKED`) is inserted immediately.
+3. **State Mutation**: Sets `Revoked__c = true`, `Revoked_At__c = Datetime.now()`, and `Is_Active__c = false`. Committed via `update as user grant`.
+4. **Physical Share Deletion**: Invokes `cleanupShareRow(projectId, userId)` using `Database.delete(shares, false)`.
+5. **Failure Tolerance**: If share deletion fails or encounters database locks, the error is recorded in the audit log (`CLEANUP_FAILURE`), but the transaction succeeds because authorization checks evaluate the grant record directly, maintaining fail-closed protection.
+6. **Post-Commit Invariant**: After the revocation transaction commits, any subsequent call to `validateProjectAccess` will immediately reject access.
 
 ---
 
-## 5. Seven Mandatory Dynamic Validation Rules
+## 8. Error Codes & Exceptions
 
-Whenever a downstream controller or service queries project data, it must enforce the 7 mandatory rules evaluated by `DAProjectSecurityService.validateProjectAccess`:
-1. **Grant Existence**: A corresponding record exists in `DA_Emergency_Access_Grant__c`.
-2. **User Identity Matching**: `grant.User__c == requestingUserId`.
-3. **Project Identity Matching**: `grant.Project__c == targetProjectId`.
-4. **Active Status**: `grant.Is_Active__c == true`.
-5. **Dynamic Expiry Check**: Current transaction time is strictly prior to grant expiry (`grant.Expires_At__c > :currentDatetime`).
-6. **Unrevoked Status**: `grant.Revoked__c == false` and `grant.Revoked_At__c == null`.
-7. **Scope Containment**: Requested operation is covered by `grant.Scope__c` (e.g., `'FULL'`, or case-insensitive inclusion of requested action).
-
-**Critical Stale Share-Row Rule**: A lingering `DA_Project__Share` row in the Salesforce database **does not** grant access if the corresponding `DA_Emergency_Access_Grant__c` is expired or revoked. Authorization is evaluated fail-closed dynamically.
-
----
-
-## 6. Error Codes & Failure Semantics
-
-| Error Code / Token | HTTP / Aura Exception | Cause / Condition | Remediation |
-|---|---|---|---|
-| `DA_SECURITY_UNAUTHORIZED` | 403 Forbidden | User lacks direct sharing and no active emergency grant exists | User must request project access or formal emergency lease |
-| `DA_SECURITY_LEASE_EXPIRED` | 403 Forbidden | Emergency grant exceeded 4-hour lease duration | Dual-approval reauthorization required; cannot be silently extended |
-| `DA_SECURITY_GRANT_REVOKED` | 403 Forbidden | Grant has been explicitly revoked by security administrator | Operation aborted fail-closed |
-| `DA_AUDIT_IMMUTABLE` | DmlException | Attempt to update or delete record in `DA_Security_Audit_Log__c` | Modifications prohibited; records are strictly append-only |
-| `DA_SECURITY_INVALID_PARAM` | 400 Bad Request | Blank or malformed `projectId` or `userId` | Provide valid Salesforce 15/18 character IDs |
-
----
-
-## 7. Downstream Consumers & Interface Gates
-
-| Consumer Agent | Dependent Scope | Unblocked Action After This Interface |
+| Code / Exception | Trigger Condition | Handling |
 |---|---|---|
-| **Agent 2 [Scope B]** | Ingestion Persistence Integration | Can now integrate project authorization checks into `DAGraphIngestionService.saveGraphChunks` |
-| **Agent 3** | REST Ingestion Transport | Unblocked once Agent 2 publishes lifecycle interface (Agent 3 depends on both Agent 1 and Agent 2) |
-| **Agent 6** | Finding Review Persistence | **UNBLOCKED IMMEDIATELY**: Agent 6 depends strictly on Agent 1 security interface |
-| **Agent 7** | Project Creation UI | Remains gated until Agent 3 REST transport contract is also frozen |
+| `IllegalArgumentException` | Null project ID or invalid scope | Fail-closed, 400 response |
+| `SecurityException('Principal mismatch')` | Client attempts to evaluate another user | Fail-closed, 403 Forbidden |
+| `SecurityException('Separation of duties')` | Grant recipient approves own emergency grant | Fail-closed, 403 Forbidden |
+| `SecurityException('Grant not found')` | Non-existent grant ID supplied to revoke | Fail-closed, 404 Not Found |
+| `DA_AUDIT_IMMUTABLE` | Attempted update or deletion of `DA_Security_Audit_Log__c` | DML exception in trigger |
 
 ---
 
-## 8. Verification & Test Evidence
+## 9. Downstream Consumer Compatibility
 
-- **Unit Test Runner**: `node scratch/salesforce-poc/tests/run-s1-security-tests.cjs` (11 passing tests).
-- **Regression Suite**: `node scratch/salesforce-poc/tests/run-b4-security-tests.cjs` (14 passing tests).
-- **Audit Verification Verdict**: **PASS** (Integration Coordinator D1 & Independent Verifier D2 ratified).
+- **Agent 2 [Scope B]**: Validates project access using `DAProjectSecurityService.validateProjectAccessForCurrentUser(projectId, 'ANALYSIS_UPLOAD')`.
+- **Agent 3 (REST Ingestion Transport)**: Uses `validateProjectAccess` or `validateProjectAccessForCurrentUser` with scopes `ANALYSIS_UPLOAD` and `ANALYSIS_FINALIZE`.
+- **Agent 6 (Finding Review Persistence)**: Uses `validateProjectAccessForCurrentUser(projectId, 'FINDING_WRITE')`.
+- **Agent 7 (Upload UI)**: Uses `validateProjectAccessForCurrentUser(projectId, 'ANALYSIS_UPLOAD')`.
+- All method signatures from v1.0.0 remain callable; v1.0.1 provides non-breaking parameter defaults and added overload protections.

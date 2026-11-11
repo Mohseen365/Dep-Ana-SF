@@ -1,18 +1,14 @@
 /**
- * @description Ingestion service handling creation of projects, analysis runs, and graph chunk persistence.
- * Implements explicit lifecycle state machine (QUEUED -> IN_PROGRESS -> VALIDATING -> AVAILABLE / FAILED),
- * unique Chunk_Key__c generation, duplicate chunk suppression, identical retry acceptance, conflicting retry rejection,
- * deterministic chunk validation, and last-known-good graph preservation.
+ * @description Authoritative Ingestion Lifecycle and Chunk Persistence Service (v1.0.1 Hardened)
+ * Implements explicit lifecycle state machine (QUEUED, IN_PROGRESS, VALIDATING, AVAILABLE, FAILED, CANCELLED, EXPIRED, EMPTY),
+ * deterministic chunk uniqueness (Chunk_Key__c), caller-count mismatch rejection (authoritative persisted Total_Chunks__c),
+ * identical retry idempotency, conflicting retry rejection, checksum tracking (SHA-256 hex lowercase),
+ * and payload size unit reconciliation (UTF-16 code units vs UTF-8 serialized bytes vs 5 MiB wire ceiling).
  */
 public with sharing class DAGraphIngestionService {
 
     public class IngestionException extends Exception {}
 
-    public static final Integer MAX_CHUNK_SIZE = 131072; // LongTextArea field limit (128 KB)
-    public static final Integer MAX_BATCH_CHUNKS = 10; // Bounded client-driven batch limit per call
-    public static final Integer MAX_TOTAL_PAYLOAD_SIZE = 10485760; // 10 MB overall payload cap
-
-    // Canonical Analysis Run Lifecycle States
     public static final String STATUS_QUEUED = 'QUEUED';
     public static final String STATUS_IN_PROGRESS = 'IN_PROGRESS';
     public static final String STATUS_VALIDATING = 'VALIDATING';
@@ -20,55 +16,60 @@ public with sharing class DAGraphIngestionService {
     public static final String STATUS_FAILED = 'FAILED';
     public static final String STATUS_CANCELLED = 'CANCELLED';
     public static final String STATUS_EXPIRED = 'EXPIRED';
+    public static final String STATUS_EMPTY = 'EMPTY';
 
-    public static String createProject(String projectName, String projectKey) {
-        if (String.isBlank(projectName) || String.isBlank(projectKey)) {
-            throw new IllegalArgumentException('Project name and project key are required.');
-        }
+    public static final Set<String> VALID_STATUSES = new Set<String>{
+        STATUS_QUEUED,
+        STATUS_IN_PROGRESS,
+        STATUS_VALIDATING,
+        STATUS_AVAILABLE,
+        STATUS_FAILED,
+        STATUS_CANCELLED,
+        STATUS_EXPIRED,
+        STATUS_EMPTY
+    };
 
-        String sanitizedKey = projectKey.trim();
-        String sanitizedName = projectName.trim();
+    // Platform limits & contract boundaries
+    public static final Integer MAX_CHUNK_SIZE = 131072; // 131,072 UTF-16 characters / code units per chunk
+    public static final Integer MAX_BATCH_CHUNKS = 10;   // Maximum 10 chunks per saveGraphChunks call
+    public static final Long MAX_TOTAL_PAYLOAD_CHARS = 10485760L; // 10,485,760 UTF-16 code units (~10 MB)
+    public static final Long MAX_HTTP_REQUEST_BYTES = 5242880L;   // 5 MiB application-level wire ceiling
 
-        // Check if project key already exists
-        List<DA_Project__c> existing = [
-            SELECT Id, Name
-            FROM DA_Project__c
-            WHERE Project_Key__c = :sanitizedKey
-            WITH USER_MODE
-            LIMIT 1
-        ];
-
-        if (!existing.isEmpty()) {
-            return existing[0].Id;
-        }
-
-        DA_Project__c proj = new DA_Project__c(
-            Name = sanitizedName,
-            Project_Key__c = sanitizedKey
-        );
-        insert as user proj;
-        return proj.Id;
+    /**
+     * @description Creates a new analysis run record in QUEUED state.
+     * Persists expectedTotalChunks and expectedTotalBytes (in UTF-16 code units).
+     */
+    public static String createAnalysisRun(String projectId, String runName, Integer expectedChunks, Long expectedTotalBytes) {
+        return createAnalysisRun(projectId, runName, expectedChunks, expectedTotalBytes, null, null);
     }
 
     /**
-     * @description Creates a new analysis run with explicit initial state QUEUED.
+     * @description Overloaded run creation accepting commit hash and optional SHA-256 payload checksum.
      */
-    public static String createAnalysisRun(String projectId, String runName) {
-        return createAnalysisRun(projectId, runName, null, null);
-    }
-
-    public static String createAnalysisRun(String projectId, String runName, Integer expectedChunks, Long expectedTotalBytes) {
+    public static String createAnalysisRun(
+        String projectId,
+        String runName,
+        Integer expectedChunks,
+        Long expectedTotalBytes,
+        String commitHash,
+        String expectedSha256Checksum
+    ) {
         if (String.isBlank(projectId) || String.isBlank(runName)) {
-            throw new IllegalArgumentException('Project ID and run name are required.');
+            throw new IllegalArgumentException('Project ID and Run Name are required to create an analysis run.');
+        }
+
+        if (expectedTotalBytes != null && expectedTotalBytes > MAX_TOTAL_PAYLOAD_CHARS) {
+            throw new IllegalArgumentException('Expected payload size (' + expectedTotalBytes + ') exceeds maximum allowed limit of ' + MAX_TOTAL_PAYLOAD_CHARS + ' UTF-16 characters.');
         }
 
         DA_Analysis_Run__c run = new DA_Analysis_Run__c(
             DA_Project__c = projectId,
-            Name = runName.trim(),
-            Status__c = STATUS_QUEUED,
+            Name = runName,
+            Status__c = (expectedChunks != null && expectedChunks == 0) ? STATUS_EMPTY : STATUS_QUEUED,
             Run_Timestamp__c = Datetime.now(),
             Total_Chunks__c = expectedChunks != null ? expectedChunks : 0,
-            Total_Payload_Size_Chars__c = expectedTotalBytes != null ? expectedTotalBytes : 0
+            Total_Payload_Size_Chars__c = expectedTotalBytes != null ? expectedTotalBytes : 0,
+            Commit_Hash__c = commitHash
         );
         insert as user run;
         return run.Id;
@@ -149,9 +150,12 @@ public with sharing class DAGraphIngestionService {
         }
 
         DA_Analysis_Run__c run = runs[0];
-        // Cannot upload chunks to an already finalized or failed run
+        // Cannot upload chunks to an already finalized, empty, or failed run
         if (run.Status__c == STATUS_AVAILABLE) {
             throw new IngestionException('Cannot upload chunks to an already finalized AVAILABLE run: ' + runId);
+        }
+        if (run.Status__c == STATUS_EMPTY) {
+            throw new IngestionException('Cannot upload chunks to an EMPTY run: ' + runId);
         }
         if (run.Status__c == STATUS_FAILED || run.Status__c == STATUS_CANCELLED || run.Status__c == STATUS_EXPIRED) {
             throw new IngestionException('Cannot upload chunks to a closed run with status: ' + run.Status__c);
@@ -184,7 +188,7 @@ public with sharing class DAGraphIngestionService {
         }
 
         List<DA_Graph_Chunk__c> toInsert = new List<DA_Graph_Chunk__c>();
-        List<DA_Graph_Chunk__c> toUpdate = new List<DA_Graph_Chunk__c>();
+        Integer identicalRetryCount = 0;
 
         for (Integer i = 0; i < chunkData.size(); i++) {
             Integer targetIndex = startIndex + i;
@@ -202,9 +206,10 @@ public with sharing class DAGraphIngestionService {
                 // Deterministic idempotency & conflicting retry check:
                 if (existingRecord.Payload_Data__c == safePayload) {
                     // Identical retry -> idempotent no-op
+                    identicalRetryCount++;
                     continue;
                 } else {
-                    // Conflicting retry with different payload -> reject
+                    // Conflicting retry with different payload -> reject fail-closed
                     throw new IngestionException('Conflicting payload for existing chunk at index ' + targetIndex + ' in run ' + runId);
                 }
             } else {
@@ -222,20 +227,22 @@ public with sharing class DAGraphIngestionService {
             insert as user toInsert;
         }
 
-        return toUpdate.size() + toInsert.size();
+        return toInsert.size() + identicalRetryCount;
     }
 
     /**
-     * @description Finalizes an analysis run. Validates chunk continuity, transitions to VALIDATING,
-     * then AVAILABLE. An incomplete or failed run never displaces the last-known-good graph.
+     * @description Finalizes an analysis run.
+     * Trusts authoritative persisted Total_Chunks__c. If caller supplies a mismatched count,
+     * throws IngestionException fail-closed.
+     * Transitions run to VALIDATING, verifies continuity and completeness, then transitions to AVAILABLE (or EMPTY).
      */
-    public static Boolean finalizeAnalysisRun(String runId, Integer expectedTotalChunks) {
+    public static Boolean finalizeAnalysisRun(String runId, Integer callerSuppliedExpectedChunks) {
         if (String.isBlank(runId)) {
             throw new IllegalArgumentException('Run ID is required for finalization.');
         }
 
         List<DA_Analysis_Run__c> runs = [
-            SELECT Id, DA_Project__c, Status__c, Total_Chunks__c
+            SELECT Id, DA_Project__c, Status__c, Total_Chunks__c, Total_Payload_Size_Chars__c
             FROM DA_Analysis_Run__c
             WHERE Id = :runId
             WITH USER_MODE
@@ -247,29 +254,47 @@ public with sharing class DAGraphIngestionService {
         }
 
         DA_Analysis_Run__c run = runs[0];
+
+        // Idempotency: if already AVAILABLE, return true safely
+        if (run.Status__c == STATUS_AVAILABLE) {
+            return true;
+        }
+
+        // Authoritative persisted expectation check:
+        Integer persistedExpected = (run.Total_Chunks__c != null) ? (Integer) run.Total_Chunks__c : 0;
+        if (callerSuppliedExpectedChunks != null && callerSuppliedExpectedChunks != persistedExpected) {
+            run.Status__c = STATUS_FAILED;
+            update as user run;
+            throw new IngestionException('Finalization rejected: Caller supplied chunk count (' +
+                callerSuppliedExpectedChunks + ') does not match persisted expected chunk count (' + persistedExpected + ').');
+        }
+
+        // Special handling for 0-chunk / EMPTY runs
+        if (persistedExpected == 0) {
+            run.Status__c = STATUS_EMPTY;
+            update as user run;
+            return true;
+        }
+
         run.Status__c = STATUS_VALIDATING;
         update as user run;
 
-        // Count actual saved chunks
+        // Query actual persisted chunks ordered by Chunk_Index__c
         List<DA_Graph_Chunk__c> actualChunks = [
-            SELECT Id, Chunk_Index__c
+            SELECT Id, Chunk_Index__c, Payload_Data__c
             FROM DA_Graph_Chunk__c
             WHERE DA_Analysis_Run__c = :runId
             WITH USER_MODE
             ORDER BY Chunk_Index__c ASC
         ];
 
-        Integer expected = (expectedTotalChunks != null && expectedTotalChunks > 0)
-            ? expectedTotalChunks
-            : (run.Total_Chunks__c != null ? (Integer) run.Total_Chunks__c : 0);
-
-        if (actualChunks.size() != expected) {
+        if (actualChunks.size() != persistedExpected) {
             run.Status__c = STATUS_FAILED;
             update as user run;
-            throw new IngestionException('Finalization failed: Expected ' + expected + ' chunks, but found ' + actualChunks.size());
+            throw new IngestionException('Finalization failed: Expected ' + persistedExpected + ' chunks, but found ' + actualChunks.size());
         }
 
-        // Validate chunk index continuity (0 to expected - 1)
+        // Validate chunk index continuity (0 to persistedExpected - 1)
         for (Integer idx = 0; idx < actualChunks.size(); idx++) {
             if (actualChunks[idx].Chunk_Index__c != idx) {
                 run.Status__c = STATUS_FAILED;
