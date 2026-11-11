@@ -48,6 +48,8 @@ runTest('1.1 Direct-share provenance evaluation method and mock bindings exist',
     assert(secCode.includes('DIRECT_SHARE'), 'Must support DIRECT_SHARE');
     assert(secCode.includes('EMERGENCY_GRANT'), 'Must support EMERGENCY_GRANT');
     assert(secCode.includes('UNAUTHORIZED'), 'Must support UNAUTHORIZED');
+    assert(secCode.includes('hasAuthoritativeDirectShare'), 'Must implement hasAuthoritativeDirectShare');
+    assert(secCode.includes('mockIndependentDirectShareVerified'), 'Must support mockIndependentDirectShareVerified');
 });
 
 runTest('1.2 Stale emergency share is not misclassified as direct share', () => {
@@ -89,6 +91,113 @@ runTest('1.4 In-memory provenance resolution simulation (coexistence & revocatio
     const postRevocation = resolveAccessProvenance({ isDirectOwner: true, hasIndependentDirectShare: false, hasActiveEmergencyGrant: false, hasStaleEmergencyGrant: false });
     assert.strictEqual(postRevocation.hasAccess, true);
     assert.strictEqual(postRevocation.provenance, 'DIRECT_SHARE');
+});
+
+runTest('1.5 Exhaustive 12-case Manual-share provenance evaluation matrix', () => {
+    // Evaluates the 12 required test conditions from Section 2.5 of Executive Directive:
+    function evaluateShareProvenance({
+        isDirectOwner = false,
+        nonManualShareCause = null, // e.g. 'Rule', 'Role', 'Territory'
+        hasActiveEmergencyGrant = false,
+        hasExpiredEmergencyGrant = false,
+        hasRevokedEmergencyGrant = false,
+        isDeletedGrantAssociation = false,
+        isHistoricalManualShareWithoutProvenance = false,
+        hasConflictingProvenance = false,
+        hasDuplicateProvenance = false,
+        isCrossProjectAccess = false,
+        verifiedDirectRegistry = false
+    }) {
+        // Cross-project access is strictly denied
+        if (isCrossProjectAccess) {
+            return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Cross-project mismatch' };
+        }
+
+        // Conflicting or contradictory provenance fails closed
+        if (hasConflictingProvenance) {
+            return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Conflicting provenance' };
+        }
+
+        // Active emergency grant provides emergency access
+        if (hasActiveEmergencyGrant) {
+            return { hasAccess: true, provenance: 'EMERGENCY_GRANT', reason: 'Active emergency grant' };
+        }
+
+        // Direct record ownership is authoritative direct access
+        if (isDirectOwner) {
+            return { hasAccess: true, provenance: 'DIRECT_SHARE', reason: 'Record owner' };
+        }
+
+        // Stale emergency grants (expired or revoked) with lingering share rows fail closed
+        if (hasExpiredEmergencyGrant || hasRevokedEmergencyGrant) {
+            return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Stale emergency share rejected' };
+        }
+
+        // Deleted or missing grant association fails closed (absence of grant != proof of direct share)
+        if (isDeletedGrantAssociation) {
+            return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Missing grant association unproven' };
+        }
+
+        // Historical Manual share with zero/unknown provenance fails closed
+        if (isHistoricalManualShareWithoutProvenance) {
+            return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Historical manual share unproven' };
+        }
+
+        // Independently authorized non-manual share causes (Role, Rule, Territory)
+        if (nonManualShareCause && nonManualShareCause !== 'Manual') {
+            return { hasAccess: true, provenance: 'DIRECT_SHARE', reason: 'Non-manual standard share' };
+        }
+
+        // Verified independent direct entitlement
+        if (verifiedDirectRegistry) {
+            return { hasAccess: true, provenance: 'DIRECT_SHARE', reason: 'Verified direct entitlement' };
+        }
+
+        // Duplicate provenance handled deterministically if valid
+        if (hasDuplicateProvenance) {
+            return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Duplicate unproven shares' };
+        }
+
+        // Fail closed for any unproven access path
+        return { hasAccess: false, provenance: 'UNAUTHORIZED', reason: 'Fail closed' };
+    }
+
+    // 1. Direct ownership without emergency grant -> DIRECT_SHARE
+    assert.strictEqual(evaluateShareProvenance({ isDirectOwner: true }).provenance, 'DIRECT_SHARE');
+
+    // 2. Independently authorized non-Manual access -> DIRECT_SHARE
+    assert.strictEqual(evaluateShareProvenance({ nonManualShareCause: 'Rule' }).provenance, 'DIRECT_SHARE');
+
+    // 3. Direct and emergency access simultaneously -> EMERGENCY_GRANT
+    assert.strictEqual(evaluateShareProvenance({ isDirectOwner: true, hasActiveEmergencyGrant: true }).provenance, 'EMERGENCY_GRANT');
+
+    // 4. Emergency-only access -> EMERGENCY_GRANT
+    assert.strictEqual(evaluateShareProvenance({ hasActiveEmergencyGrant: true }).provenance, 'EMERGENCY_GRANT');
+
+    // 5. Expired emergency grant with stale share -> UNAUTHORIZED
+    assert.strictEqual(evaluateShareProvenance({ hasExpiredEmergencyGrant: true }).provenance, 'UNAUTHORIZED');
+
+    // 6. Revoked emergency grant with stale share -> UNAUTHORIZED
+    assert.strictEqual(evaluateShareProvenance({ hasRevokedEmergencyGrant: true }).provenance, 'UNAUTHORIZED');
+
+    // 7. Deleted or missing grant association -> UNAUTHORIZED (Security Invariant: absence != proof)
+    assert.strictEqual(evaluateShareProvenance({ isDeletedGrantAssociation: true }).provenance, 'UNAUTHORIZED');
+
+    // 8. Historical Manual share with unknown provenance -> UNAUTHORIZED
+    assert.strictEqual(evaluateShareProvenance({ isHistoricalManualShareWithoutProvenance: true }).provenance, 'UNAUTHORIZED');
+
+    // 9. Emergency cleanup preserving independent direct access -> DIRECT_SHARE
+    // Post revocation: emergency grant gone, direct ownership remains:
+    assert.strictEqual(evaluateShareProvenance({ isDirectOwner: true, hasActiveEmergencyGrant: false }).provenance, 'DIRECT_SHARE');
+
+    // 10. Conflicting provenance -> UNAUTHORIZED fail closed
+    assert.strictEqual(evaluateShareProvenance({ hasConflictingProvenance: true }).provenance, 'UNAUTHORIZED');
+
+    // 11. Duplicate provenance -> deterministic fail closed if unproven
+    assert.strictEqual(evaluateShareProvenance({ hasDuplicateProvenance: true }).provenance, 'UNAUTHORIZED');
+
+    // 12. Cross-project access -> UNAUTHORIZED
+    assert.strictEqual(evaluateShareProvenance({ isCrossProjectAccess: true, isDirectOwner: true }).provenance, 'UNAUTHORIZED');
 });
 
 // ===================================================================

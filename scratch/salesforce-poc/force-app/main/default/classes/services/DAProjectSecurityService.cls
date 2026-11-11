@@ -47,6 +47,10 @@ public with sharing class DAProjectSecurityService {
     @TestVisible
     private static Boolean mockTrustedInternalContext = false;
 
+    // Test-visible mock for independent direct share verification (e.g. non-manual row causes or verified provenance)
+    @TestVisible
+    private static Boolean mockIndependentDirectShareVerified = false;
+
     public class ProjectAccessContext {
         public Id projectId;
         public Id userId;
@@ -197,9 +201,25 @@ public with sharing class DAProjectSecurityService {
                 return ctx;
             }
 
-            ctx.hasAccess = true;
-            ctx.isEmergencyAccess = false;
-            ctx.accessProvenance = 'DIRECT_SHARE';
+            // Authoritative Non-Owner Direct Access Verification:
+            // Under Salesforce Private OWD, mere query success in WITH USER_MODE does not prove why
+            // the user can access the record. An unassociated Manual share (RowCause = 'Manual')
+            // cannot be treated as proven direct authorization because its provenance may be lost or deleted.
+            // Direct share is confirmed ONLY if:
+            // 1. Proven via non-manual sharing causes (Role Hierarchy, Territory, Sharing Rules), OR
+            // 2. Verified via independent direct share registry / mock bindings.
+            // If provenance is unknown or unprovable, fail-closed to UNAUTHORIZED.
+            if (hasAuthoritativeDirectShare(projectId, userId)) {
+                ctx.hasAccess = true;
+                ctx.isEmergencyAccess = false;
+                ctx.accessProvenance = 'DIRECT_SHARE';
+                return ctx;
+            }
+
+            // Unproven or unknown provenance on Manual share fails-closed
+            ctx.hasAccess = false;
+            ctx.accessProvenance = 'UNAUTHORIZED';
+            logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied: Unproven manual share provenance; missing authoritative entitlement proof.');
             return ctx;
         }
 
@@ -208,6 +228,27 @@ public with sharing class DAProjectSecurityService {
         ctx.accessProvenance = 'UNAUTHORIZED';
         logAuditEvent(projectId, userId, ACTION_ACCESS_DENIED, 'Access denied for required scope: ' + requiredScope);
         return ctx;
+    }
+
+    /**
+     * @description Authoritative check for non-owner direct share provenance.
+     * Inspects DA_Project__Share records for non-Manual row causes (e.g., Rule, Role, Territory)
+     * or verified independent direct sharing. Manual shares without verified independent entitlement fail-closed.
+     */
+    public static Boolean hasAuthoritativeDirectShare(Id projectId, Id userId) {
+        if (mockIndependentDirectShareVerified) {
+            return true;
+        }
+
+        // Check for non-manual share causes on DA_Project__Share
+        List<SObject> nonManualShares = Database.query(
+            'SELECT Id FROM DA_Project__Share WHERE ParentId = :projectId AND UserOrGroupId = :userId AND RowCause != \'Manual\' LIMIT 1'
+        );
+        if (!nonManualShares.isEmpty()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
