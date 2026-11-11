@@ -147,6 +147,31 @@
         <field>DA_Finding__c.Details__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Finding__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Finding__c.Reviewer__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Finding__c.Reviewed_At__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Finding__c.Review_Notes__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>DA_Finding__c.Finding_Key__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 
     <!-- Remediated FLS for DA_User_Preference__c (SEC-01) -->
     <fieldPermissions>

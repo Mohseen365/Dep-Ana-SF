@@ -1,4 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
+import updateFindingStatus from '@salesforce/apex/DAGraphController.updateFindingStatus';
+import getFindingReviewStatuses from '@salesforce/apex/DAGraphController.getFindingReviewStatuses';
 import {
     matchesFindingItem,
     normalizeFilterCriteria,
@@ -25,7 +27,7 @@ import {
  * - Strict input payload immutability (zero in-place modification).
  */
 export default class DaFindingsView extends LightningElement {
-    @api projectId = null;
+    _projectId = null;
     @api selectedNodeId = null;
 
     _graphPayload = null;
@@ -37,8 +39,10 @@ export default class DaFindingsView extends LightningElement {
     @track allFindings = [];
     @track filteredFindings = [];
 
-    // Local review status tracking: Map<findingId, "OPEN" | "IN_REVIEW" | "RESOLVED">
+    // Local and persisted review status tracking: Map<findingId, "OPEN" | "IN_REVIEW" | "RESOLVED" | "WONT_FIX">
     @track reviewStatuses = {};
+    // LastModifiedDate tracking for optimistic concurrency conflict prevention
+    _findingTimestamps = {};
     // Expanded finding details tracking: Set-like object { findingId: true }
     @track expandedFindingIds = {};
     // Severity toggle filter
@@ -49,12 +53,22 @@ export default class DaFindingsView extends LightningElement {
     @track localSearchQuery = '';
 
     @api
+    get projectId() {
+        return this._projectId;
+    }
+    set projectId(val) {
+        this._projectId = val;
+        this.fetchPersistedStatuses();
+    }
+
+    @api
     get graphPayload() {
         return this._graphPayload;
     }
     set graphPayload(value) {
         this._graphPayload = value;
         this.deriveFindings();
+        this.fetchPersistedStatuses();
     }
 
     // Property alias for compatibility
@@ -456,42 +470,106 @@ export default class DaFindingsView extends LightningElement {
     }
 
     /**
+     * Fetches persisted review statuses from Salesforce for the active project
+     */
+    fetchPersistedStatuses() {
+        if (!this._projectId) return;
+
+        try {
+            if (typeof getFindingReviewStatuses === 'function') {
+                getFindingReviewStatuses({ projectId: this._projectId, pageSize: 500, offset: 0 })
+                    .then(res => {
+                        if (res && res.statuses && typeof res.statuses === 'object') {
+                            const newStatuses = { ...this.reviewStatuses };
+                            Object.keys(res.statuses).forEach(key => {
+                                const entry = res.statuses[key];
+                                if (entry && entry.status) {
+                                    newStatuses[key] = entry.status;
+                                    if (entry.lastModifiedDate) {
+                                        this._findingTimestamps[key] = entry.lastModifiedDate;
+                                    }
+                                }
+                            });
+                            this.reviewStatuses = newStatuses;
+                            this.applyFilter();
+                        }
+                    })
+                    .catch(err => {
+                        console.warn('Could not fetch persisted finding statuses (offline or unauthorized):', err);
+                    });
+            }
+        } catch (e) {
+            // Graceful offline fallback
+        }
+    }
+
+    /**
+     * Persists review status update to Salesforce with optimistic UI update and failure rollback
+     */
+    persistStatusChange(findingId, newStatus, reviewNotes) {
+        const previousStatus = this.reviewStatuses[findingId] || 'OPEN';
+        const expectedLastMod = this._findingTimestamps[findingId] || null;
+
+        // 1. Optimistic UI update
+        this.reviewStatuses = {
+            ...this.reviewStatuses,
+            [findingId]: newStatus
+        };
+        this.applyFilter();
+
+        if (!this._projectId || typeof updateFindingStatus !== 'function') {
+            return; // In-memory only fallback when no project or offline
+        }
+
+        // 2. Dispatch persistent Apex call
+        updateFindingStatus({
+            projectId: this._projectId,
+            findingIdOrKey: findingId,
+            newStatus: newStatus,
+            reviewNotes: reviewNotes || null,
+            expectedLastModified: expectedLastMod ? new Date(expectedLastMod).toISOString() : null
+        })
+            .then(updatedRecord => {
+                if (updatedRecord) {
+                    if (updatedRecord.LastModifiedDate) {
+                        this._findingTimestamps[findingId] = new Date(updatedRecord.LastModifiedDate).getTime();
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Failed to persist finding status change:', err);
+                // Rollback optimistic update
+                this.reviewStatuses = {
+                    ...this.reviewStatuses,
+                    [findingId]: previousStatus
+                };
+                this.error = 'Failed to persist status change: ' + (err.body ? err.body.message : err.message || err);
+                this.applyFilter();
+            });
+    }
+
+    /**
      * Suppression / Resolution local workflow actions
      */
     handleMarkInReview(event) {
         event.stopPropagation();
         const findingId = event.currentTarget.dataset.id;
         if (!findingId) return;
-
-        this.reviewStatuses = {
-            ...this.reviewStatuses,
-            [findingId]: 'IN_REVIEW'
-        };
-        this.applyFilter();
+        this.persistStatusChange(findingId, 'IN_REVIEW');
     }
 
     handleResolveFinding(event) {
         event.stopPropagation();
         const findingId = event.currentTarget.dataset.id;
         if (!findingId) return;
-
-        this.reviewStatuses = {
-            ...this.reviewStatuses,
-            [findingId]: 'RESOLVED'
-        };
-        this.applyFilter();
+        this.persistStatusChange(findingId, 'RESOLVED');
     }
 
     handleReopenFinding(event) {
         event.stopPropagation();
         const findingId = event.currentTarget.dataset.id;
         if (!findingId) return;
-
-        this.reviewStatuses = {
-            ...this.reviewStatuses,
-            [findingId]: 'OPEN'
-        };
-        this.applyFilter();
+        this.persistStatusChange(findingId, 'OPEN');
     }
 
     /**
