@@ -9,6 +9,7 @@ export default class DaProjectSelector extends LightningElement {
     @track projects = [];
     @track isLoading = true;
     @track error = null;
+    @track isCreateModalOpen = false;
 
     connectedCallback() {
         this.loadProjects();
@@ -64,6 +65,29 @@ export default class DaProjectSelector extends LightningElement {
         const projectKey = selectedProj ? (selectedProj.Project_Key__c || selectedProj.Name || selectedProj.label) : newProjectId;
 
         this.notifyProjectChange(newProjectId, projectKey);
+    }
+
+    handleOpenCreateModal() {
+        this.isCreateModalOpen = true;
+        this.dispatchEvent(new CustomEvent('openprojectcreate', {
+            bubbles: true,
+            composed: true
+        }));
+    }
+
+    handleCreateModalClose() {
+        this.isCreateModalOpen = false;
+    }
+
+    async handleProjectCreated(event) {
+        const detail = event.detail || {};
+        this.isCreateModalOpen = false;
+        // Reload projects list to include newly created project
+        await this.loadProjects();
+        if (detail.projectId) {
+            this.selectedProjectId = detail.projectId;
+            this.notifyProjectChange(detail.projectId, detail.projectKey || detail.projectName);
+        }
     }
 
     notifyProjectChange(projectId, projectKey) {
