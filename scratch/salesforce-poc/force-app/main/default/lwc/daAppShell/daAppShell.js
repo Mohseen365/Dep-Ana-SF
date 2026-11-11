@@ -32,7 +32,8 @@ const APPROVED_VIEWS = [
     'radar',
     'treemap',
     'subway',
-    'dna'
+    'dna',
+    'river'
 ];
 
 const DEFAULT_FILTER_PRESET_CONFIG = getDefaultFilterContainer();
@@ -95,6 +96,12 @@ export default class DaAppShell extends LightningElement {
     @track filterConfig = DEFAULT_FILTER_PRESET_CONFIG;
     @track activeFilterCriteriaState = getDefaultFilterCriteria();
     @track selectedNodeId = null;
+
+    // Supporting Modal & Overlay Surfaces (Non-View Classification)
+    @track isComparisonModalOpen = false;
+    @track comparisonBaseRunId = '';
+    @track comparisonTargetRunId = '';
+    @track isPresetManagerVisible = false;
 
     @track isLoadingPreferences = false;
     @track preferenceError = null;
@@ -196,6 +203,10 @@ export default class DaAppShell extends LightningElement {
         return this.activeView === 'dna';
     }
 
+    get isRiverView() {
+        return this.activeView === 'river';
+    }
+
     get graphTabClass() {
         return `slds-tabs_default__item${this.isGraphView ? ' slds-is-active' : ''}`;
     }
@@ -238,6 +249,10 @@ export default class DaAppShell extends LightningElement {
 
     get dnaTabClass() {
         return `slds-tabs_default__item${this.isDnaView ? ' slds-is-active' : ''}`;
+    }
+
+    get riverTabClass() {
+        return `slds-tabs_default__item${this.isRiverView ? ' slds-is-active' : ''}`;
     }
 
     get graphTabIndex() {
@@ -284,6 +299,10 @@ export default class DaAppShell extends LightningElement {
         return this.isDnaView ? 0 : -1;
     }
 
+    get riverTabIndex() {
+        return this.isRiverView ? 0 : -1;
+    }
+
     get activeViewLabel() {
         switch (this.activeView) {
             case 'matrix':
@@ -306,6 +325,8 @@ export default class DaAppShell extends LightningElement {
                 return 'Subway Transit Map';
             case 'dna':
                 return 'Architecture DNA Barcode';
+            case 'river':
+                return 'Dependency River';
             case 'graph':
             default:
                 return 'Graph Viewer';
@@ -634,6 +655,10 @@ export default class DaAppShell extends LightningElement {
         this.switchView('dna');
     }
 
+    selectRiverView() {
+        this.switchView('river');
+    }
+
     handleViewChange(event) {
         const detail = event.detail || {};
         const targetView = detail.viewMode || detail.view;
@@ -796,8 +821,43 @@ export default class DaAppShell extends LightningElement {
         } else if (action === 'dashboard') {
             this.switchView('dashboard');
         } else if (action === 'compare') {
-            // Compare action: preserve active project, route to history/compare
+            // Compare action: preserve active project, route to history/compare and open comparison modal
             this.switchView('history');
+            this.openComparisonModal();
+        } else if (action === 'presets') {
+            this.togglePresetManager();
+        }
+    }
+
+    // =========================================================================
+    // Supporting Modal & Overlay Surface Handlers (Non-View Classification)
+    // =========================================================================
+
+    openComparisonModal(baseRunId = '', targetRunId = '') {
+        this.comparisonBaseRunId = baseRunId || '';
+        this.comparisonTargetRunId = targetRunId || '';
+        this.isComparisonModalOpen = true;
+    }
+
+    closeComparisonModal() {
+        this.isComparisonModalOpen = false;
+        this.comparisonBaseRunId = '';
+        this.comparisonTargetRunId = '';
+    }
+
+    togglePresetManager() {
+        this.isPresetManagerVisible = !this.isPresetManagerVisible;
+    }
+
+    closePresetManager() {
+        this.isPresetManagerVisible = false;
+    }
+
+    handleComparisonEntitySelect(event) {
+        const detail = event.detail || {};
+        if (detail.entityId) {
+            // Enforce SELECTION != NAVIGATION: select entity without navigating view
+            this.selectedNodeId = detail.entityId;
         }
     }
 

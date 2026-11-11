@@ -2,15 +2,15 @@ Dependency_ID,Consumer_Task,Consumer_Agent,Provider_Task,Provider_Agent,Artifact
 DEP-01,A2-2,Agent 2,A1-1,Agent 1,DAProjectSecurityService.cls,Security & Isolation Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 1 security joint acceptance ratified offline
 DEP-02,A3-1,Agent 3,A1-1,Agent 1,DAProjectSecurityService.cls,Security & Isolation Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 1 security joint acceptance ratified offline
 DEP-03,A3-1,Agent 3,A2-2,Agent 2,DAGraphIngestionService.cls,Lifecycle & Scope B Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 2 Scope B persistence joint acceptance ratified offline
-DEP-04,A4-1,Agent 4,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,GATED_ON_PO_RATIFICATION,PO ratification of Proposed Frozen REST Specification
-DEP-05,A5-1,Coordinator D1,A5-1,Agent 5,daSankeyView LWC,View 12 River SVG Interface,Coordination Handoff,RELEASED_UNBLOCKED,Agent 5 handoff package verified offline
+DEP-04,A4-1,Agent 4,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 4 connected and passing 27/27 tests against frozen REST spec
+DEP-05,A5-1,Coordinator D1,A5-1,Agent 5,daSankeyView LWC,View 12 River SVG Interface,Coordination Handoff,RELEASED_UNBLOCKED,Mounted into daAppShell.html and APPROVED_VIEWS by D1
 DEP-06,A6-1,Agent 6,A1-1,Agent 1,DAProjectSecurityService.cls,Security & Isolation Interface v1.0.2,Strict Fail-Closed,RELEASED_UNBLOCKED,Agent 1 security joint acceptance ratified offline
 DEP-07,A7-1,Agent 7,A3-1,Agent 3,DAGraphIngestionRestResource.cls,REST Transport Contract,Strict Fail-Closed,GATED_ON_PO_RATIFICATION,PO ratification of Proposed Frozen REST Specification
 DEP-08,A8B-1,Coordinator D1,A8B-1,Agent 8B,daCommandPalette LWC,Command Palette Interface,Coordination Handoff,RELEASED_UNBLOCKED,Agent 8B handoff package verified offline
 DEP-09,A8B-2,Coordinator D1,A8B-2,Agent 8B,daGraphViewer Hover Cards,Hover Card Interface,Coordination Handoff,RELEASED_UNBLOCKED,Agent 8B handoff package verified offline
-DEP-10,D1-INT,Coordinator D1,All,All,All Deliverables,Shared Shell Integration,Final Gate,IN_PROGRESS,Controlled shell integration following register reconciliation
+DEP-10,D1-INT,Coordinator D1,All,All,All Deliverables,Shared Shell Integration,Final Gate,RELEASED_UNBLOCKED,River and supporting modals physically mounted in shell; all coordinator tests pass
 DEP-11,A9-1,Agent 9,A8B-1,Agent 8B,daCommandPalette LWC,Parity Matrix Accounting COMP-03,Parity Validation,RELEASED_UNBLOCKED,Agent 8B command palette verified
 DEP-12,A9-2,Agent 9,A7-1,Agent 7,daProjectCreateModal LWC,Parity Matrix Accounting COMP-05,Parity Validation,RELEASED_UNBLOCKED,Agent 7 project modal verified
-DEP-13,A9-3,Agent 9,A5-3,Agent 5,daPresetManager LWC,Parity Matrix Accounting COMP-06,Parity Validation,RELEASED_UNBLOCKED,Agent 5 preset manager verified
+DEP-13,A9-3,Agent 9,A5-3,Agent 5,daPresetManager LWC,Parity Matrix Accounting COMP-06,Parity Validation,RELEASED_UNBLOCKED,Agent 5 preset manager mounted and verified
 DEP-14,A9-4,Agent 9,A8B-2,Agent 8B,daGraphViewer Hover,Parity Matrix Accounting COMP-07,Parity Validation,RELEASED_UNBLOCKED,Agent 8B hover cards verified
 DEP-15,A10-1,Agent 10,All,All,All Test Suites,Regression Suite Consolidation,Regression Gate,RELEASED_UNBLOCKED,Consolidated offline execution verified

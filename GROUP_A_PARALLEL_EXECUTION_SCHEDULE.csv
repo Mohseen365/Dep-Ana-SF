@@ -1,10 +1,11 @@
 Schedule_ID,Wave,Task_Name,Primary_Agents,Start_Gate,Completion_Gate,Status,Notes
-SCHED-01,Wave A,Repository Truth & Provenance Audit,D1 & D2,Immediate,Committed Source Verified,COMPLETE,Audited HEAD commit aa0d772; inspected SHA-256 hashes
-SCHED-02,Wave B,REST Contract Reconciliation,Agent 3 & Agent 2 & D1,Wave A Complete,1.0.0-PROPOSED-FROZEN,COMPLETE,Canonical objects established; full REST API specified
+SCHED-01,Wave A,Repository Truth & Provenance Audit,D1 & D2,Immediate,Committed Source Verified,COMPLETE,Audited HEAD commit ad775524; verified SHA-256 hashes across all deliverables
+SCHED-02,Wave B,REST Contract Reconciliation,Agent 3 & Agent 2 & D1,Wave A Complete,1.0.0-PROPOSED-FROZEN,COMPLETE,Canonical objects established; full REST API specified & implemented
 SCHED-03,Wave C,Security & Scope B Acceptance,Agent 1 & Agent 2 & D1,Wave A Complete,Joint Acceptance Signed,COMPLETE,Security v1.0.2 and Lifecycle v1.0.2 ratified offline
-SCHED-04,Wave D,Upload Client Reconciliation,Agent 4 & D1,Wave B Spec Ready,19/19 Offline Tests Pass,COMPLETE,Client verified; pluggable adapter mapped to REST spec
-SCHED-05,Wave E,Integration Evidence (5/6/7/8B),Agents 5/6/7/8B & D1,Wave C & D Ready,Component Handoffs Verified,COMPLETE,Sankey, Compare, Presets, Findings, Project, Palette, Hover verified
-SCHED-06,Wave F,Parity Denominator Reconciliation,Agent 9 & D1,Wave E Complete,42/48 Deconflicted,COMPLETE,Forensically deconflicted 6-row delta; exact metrics calculated
-SCHED-07,Wave G,Test Evidence Reconciliation,Agent 10 & D1,Wave E Complete,40 Runners / 2096 Asserts,COMPLETE,Executed all 40 offline runners; 100% pass (exit code 0)
-SCHED-08,Wave H,Authoritative Register Reconciliation,D1 & D2,Wave G Complete,Registers Synchronized,COMPLETE,Synchronized all 6 authoritative Group A registers
-SCHED-09,Wave I,Final Independent Verification,D2,Wave H Complete,Independent Verdict Issued,IN_PROGRESS,D2 issuing final read-only audit verdict
+SCHED-04,Wave D,Upload Client Reconciliation,Agent 4 & D1,Wave B Spec Ready,27/27 Offline Tests Pass,COMPLETE,Client verified; pluggable adapter mapped to REST spec; 27 tests pass
+SCHED-05,Wave E,Integration Evidence (5/6/7/8B),Agents 5/6/7/8B & D1,Wave C & D Ready,Component Handoffs Verified,COMPLETE,River, Compare, Presets, Findings, Project, Palette, Hover verified
+SCHED-06,Wave F,Parity Denominator Reconciliation,Agent 9 & D1,Wave E Complete,42/48 Deconflicted,COMPLETE,Forensically deconflicted 6-row delta; exact 42 canonical metrics calculated
+SCHED-07,Wave G,Test Evidence Reconciliation,Agent 10 & D1,Wave E Complete,42 Suites / 2096+ Asserts,COMPLETE,Executed all 42 offline runners; 100% pass (exit code 0)
+SCHED-08,Wave H,Authoritative Register Reconciliation,D1 & D2,Wave G Complete,Registers Synchronized,COMPLETE,Synchronized all authoritative Stage J registers
+SCHED-09,Wave I,Shared Shell Component Mounting,D1 & Agent 5,Wave H Ready,Components Mounted in Shell,COMPLETE,Mounted View 12 river, snapshot comparison modal, and preset manager
+SCHED-10,Wave J,Final Independent Verification,D2,Wave I Complete,Independent Verdict Issued,IN_PROGRESS,D2 issuing final read-only audit verdict on reconciled baseline
